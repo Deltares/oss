@@ -1,0 +1,12 @@
+dependencies {
+	compileOnly group: "org.osgi", name: "osgi.cmpn", version: "6.0.0"
+	compileOnly group: "com.liferay.portal", name: "com.liferay.util.taglib", version: "2.0.0"
+}
+
+task hotDeploy(type: Copy) {
+    dependsOn clean
+    dependsOn build
+    build.shouldRunAfter clean
+    from(file('build/libs/com.worth.deltares-oss-custom-login-web-1.0.0.jar'))
+    into('/home/isaachl/Documents/workspace/worth/Deltares/liferay-ce-portal-7.0-ga5/deploy')
+}

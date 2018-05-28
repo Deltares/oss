@@ -1,0 +1,23 @@
+{
+	"name": "deltares-theme",
+	"version": "1.0.0",
+	"main": "package.json",
+	"keywords": [
+		"liferay-theme"
+	],
+	"liferayTheme": {
+		"baseTheme": "styled",
+		"screenshot": "",
+		"rubySass": false,
+		"templateLanguage": "ftl",
+		"version": "7.0"
+	},
+	"devDependencies": {
+		"liferay-theme-deps-7.0": "~1.2.1",
+		"liferay-theme-tasks": "^1.5.0"
+	},
+	"publishConfig": {
+		"tag": "7_0_x"
+	},
+	"dependencies": {}
+}

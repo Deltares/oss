@@ -1,0 +1,4 @@
+Bundle-Name: deltares-oss-user-portraits
+Bundle-SymbolicName: com.worth.deltares.user-portraits
+Bundle-Version: 1.0.0
+Export-Package: com.worth.deltares.constants

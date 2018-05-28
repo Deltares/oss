@@ -1,0 +1,18 @@
+Bundle-Name: deltares-oss-subversion-service
+Bundle-SymbolicName: com.worth.deltares.subversion.service
+Bundle-Version: 1.0.0
+Liferay-Require-SchemaVersion: 1.0.0
+Liferay-Service: true
+Import-Package: \
+    !com.swabunga.spell.*, \
+    !net.fortuna.ical4j.*, \
+    !org.antlr.stringtemplate, \
+    !org.apache.axis.tools.ant.wsdl, \
+    !org.apache.poi.*, \
+    !com.liferay.petra.lang, \
+    !com.liferay.portal.kernel.portlet, \
+    *
+Export-Package: \
+    com.worth.deltares.subversion.tasks.util
+Include-Resource: \
+    @com.liferay.util.java-2.5.6.jar

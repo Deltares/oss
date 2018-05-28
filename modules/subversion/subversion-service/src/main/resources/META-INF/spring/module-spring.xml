@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" default-destroy-method="destroy" default-init-method="afterPropertiesSet" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<bean class="com.worth.deltares.subversion.service.impl.RepositoryLocalServiceImpl" id="com.worth.deltares.subversion.service.RepositoryLocalService" />
+	<bean class="com.worth.deltares.subversion.service.impl.RepositoryServiceImpl" id="com.worth.deltares.subversion.service.RepositoryService" />
+	<bean class="com.worth.deltares.subversion.service.persistence.impl.RepositoryPersistenceImpl" id="com.worth.deltares.subversion.service.persistence.RepositoryPersistence" parent="basePersistence" />
+	<bean class="com.worth.deltares.subversion.service.impl.RepositoryFolderLocalServiceImpl" id="com.worth.deltares.subversion.service.RepositoryFolderLocalService" />
+	<bean class="com.worth.deltares.subversion.service.impl.RepositoryFolderServiceImpl" id="com.worth.deltares.subversion.service.RepositoryFolderService" />
+	<bean class="com.worth.deltares.subversion.service.persistence.impl.RepositoryFolderPersistenceImpl" id="com.worth.deltares.subversion.service.persistence.RepositoryFolderPersistence" parent="basePersistence" />
+	<bean class="com.worth.deltares.subversion.service.impl.RepositoryFolderPermissionLocalServiceImpl" id="com.worth.deltares.subversion.service.RepositoryFolderPermissionLocalService" />
+	<bean class="com.worth.deltares.subversion.service.impl.RepositoryFolderPermissionServiceImpl" id="com.worth.deltares.subversion.service.RepositoryFolderPermissionService" />
+	<bean class="com.worth.deltares.subversion.service.persistence.impl.RepositoryFolderPermissionPersistenceImpl" id="com.worth.deltares.subversion.service.persistence.RepositoryFolderPermissionPersistence" parent="basePersistence" />
+	<bean class="com.worth.deltares.subversion.service.impl.RepositoryLogLocalServiceImpl" id="com.worth.deltares.subversion.service.RepositoryLogLocalService" />
+	<bean class="com.worth.deltares.subversion.service.impl.RepositoryLogServiceImpl" id="com.worth.deltares.subversion.service.RepositoryLogService" />
+	<bean class="com.worth.deltares.subversion.service.persistence.impl.RepositoryLogPersistenceImpl" id="com.worth.deltares.subversion.service.persistence.RepositoryLogPersistence" parent="basePersistence" />
+</beans>

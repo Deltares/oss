@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="false" default-lazy="false">
+	<import class="com.worth.deltares.subversion.model.Repository" />
+	<import class="com.worth.deltares.subversion.model.RepositoryFolder" />
+	<import class="com.worth.deltares.subversion.model.RepositoryFolderPermission" />
+	<import class="com.worth.deltares.subversion.model.RepositoryLog" />
+	<class name="com.worth.deltares.subversion.model.impl.RepositoryImpl" table="deltares_Repository">
+		<id name="repositoryId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="classNameId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="classPK" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="repositoryName" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="createdDate" type="org.hibernate.type.TimestampType" />
+		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
+	</class>
+	<class name="com.worth.deltares.subversion.model.impl.RepositoryFolderImpl" table="deltares_RepositoryFolder">
+		<id name="folderId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property name="repositoryId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="name" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="worldRead" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
+		<property name="worldWrite" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
+		<property name="createDate" type="org.hibernate.type.TimestampType" />
+		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
+	</class>
+	<class name="com.worth.deltares.subversion.model.impl.RepositoryFolderPermissionImpl" table="deltares_RepositoryFolderPermission">
+		<id name="permissionId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property name="folderId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="permission" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="recurse" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
+		<property name="entityType" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="entityId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="createDate" type="org.hibernate.type.TimestampType" />
+		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
+	</class>
+	<class name="com.worth.deltares.subversion.model.impl.RepositoryLogImpl" table="deltares_RepositoryLog">
+		<id name="logId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property name="ipAddress" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="screenName" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="action" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="createDate" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="repository" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+	</class>
+</hibernate-mapping>

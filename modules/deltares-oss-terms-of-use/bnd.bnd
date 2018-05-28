@@ -1,0 +1,8 @@
+Bundle-Name: deltares-oss-terms-of-use
+Bundle-Description: Overrides core/kernel JSPs by providing new JSPs in the META-INF/jsps folder.
+Bundle-SymbolicName: com.worth.deltares-oss-terms-of-use
+Bundle-Version: 1.0.0
+Export-Package: com.worth.deltares-oss-terms-of-use
+	
+-sources: true
+-includeresource: META-INF/jsps=src/META-INF/custom_jsps

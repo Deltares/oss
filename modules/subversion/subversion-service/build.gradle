@@ -1,0 +1,17 @@
+dependencies {
+    compileOnly group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.1.0"
+    compileOnly group: "com.liferay", name: "com.liferay.osgi.util", version: "3.0.0"
+    compileOnly group: "com.liferay", name: "com.liferay.portal.spring.extender", version: "2.0.0"
+    compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "2.6.0"
+    compileInclude group: "com.liferay.portal", name: "com.liferay.util.java", version: "2.5.6"
+    compileInclude group: 'com.maxmind.geoip', name: 'geoip-api', version: '1.2.12'
+    compileInclude group: 'org.tmatesoft.svnkit', name: 'svnkit', version: '1.8.3-1'
+    compileInclude group: 'org.apache.commons', name: 'commons-lang3', version: '3.1'
+    compileOnly project(":modules:subversion:subversion-api")
+}
+
+buildService {
+    apiDir = "../subversion-api/src/main/java"
+}
+
+group = "com.worth.deltares.subversion"

@@ -1,0 +1,11 @@
+Bundle-Name: deltares-oss-subversion-api
+Bundle-SymbolicName: com.worth.deltares.subversion.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.worth.deltares.subversion.exception,\
+	com.worth.deltares.subversion.model,\
+	com.worth.deltares.subversion.service,\
+	com.worth.deltares.subversion.service.persistence
+Import-Package: \
+	com.mysql.jdbc
+-includeresource: META-INF/service.xml=../subversion-service/service.xml

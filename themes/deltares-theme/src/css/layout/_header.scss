@@ -1,0 +1,27 @@
+#banner.nohome {
+    position: relative;
+    background-repeat:repeat-x;
+    background-size: cover;
+    padding-bottom: 0;
+    margin-bottom: 2em;
+}
+
+#navbar_com_liferay_site_navigation_menu_web_portlet_SiteNavigationMenuPortlet {
+    background-color: #fff;
+}
+.nohome .navbar-header {
+    width:100%;
+    margin-bottom: 1.3em;
+}
+#banner #heading .site-name {
+    color:#fff;
+    text-shadow: 1px 1px 1px rgba(68, 68, 68, 1);
+}
+
+.nohome .navbar-header .custom-logo {
+    display:none
+}
+
+.search-input {
+    background-color: #fff !important;
+}

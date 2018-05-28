@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="com.worth.deltares.subversion.model.Repository">
+		<field name="repositoryId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="classNameId" type="long" />
+		<field name="classPK" type="long" />
+		<field name="repositoryName" type="String" />
+		<field name="createdDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+	</model>
+	<model name="com.worth.deltares.subversion.model.RepositoryFolder">
+		<field name="folderId" type="long" />
+		<field name="repositoryId" type="long" />
+		<field name="name" type="String" />
+		<field name="worldRead" type="boolean" />
+		<field name="worldWrite" type="boolean" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+	</model>
+	<model name="com.worth.deltares.subversion.model.RepositoryFolderPermission">
+		<field name="permissionId" type="long" />
+		<field name="folderId" type="long" />
+		<field name="permission" type="String" />
+		<field name="recurse" type="boolean" />
+		<field name="entityType" type="String" />
+		<field name="entityId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+	</model>
+	<model name="com.worth.deltares.subversion.model.RepositoryLog">
+		<field name="logId" type="long" />
+		<field name="ipAddress" type="String" />
+		<field name="screenName" type="String" />
+		<field name="action" type="String" />
+		<field name="createDate" type="long" />
+		<field name="repository" type="String" />
+	</model>
+</model-hints>
