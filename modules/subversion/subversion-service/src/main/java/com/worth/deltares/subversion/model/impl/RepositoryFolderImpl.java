@@ -21,7 +21,6 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.worth.deltares.subversion.model.RepositoryFolder;
 import com.worth.deltares.subversion.service.RepositoryFolderLocalServiceUtil;
-
 /**
  * The extended model implementation for the RepositoryFolder service. Represents a row in the &quot;deltares_RepositoryFolder&quot; database table, with each column mapped to a property of this class.
  *

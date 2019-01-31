@@ -39,41 +39,42 @@ public interface RepositoryFolderPermission
 	 * Never modify this interface directly. Add methods to {@link com.worth.deltares.subversion.model.impl.RepositoryFolderPermissionImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
 	public static final Accessor<RepositoryFolderPermission, Long> PERMISSION_ID_ACCESSOR =
-		new Accessor<RepositoryFolderPermission, Long>() {
-			@Override
-			public Long get(
-				RepositoryFolderPermission repositoryFolderPermission) {
-				return repositoryFolderPermission.getPermissionId();
-			}
+			new Accessor<RepositoryFolderPermission, Long>() {
+				@Override
+				public Long get(
+						RepositoryFolderPermission repositoryFolderPermission) {
+					return repositoryFolderPermission.getPermissionId();
+				}
 
-			@Override
-			public Class<Long> getAttributeClass() {
-				return Long.class;
-			}
+				@Override
+				public Class<Long> getAttributeClass() {
+					return Long.class;
+				}
 
-			@Override
-			public Class<RepositoryFolderPermission> getTypeClass() {
-				return RepositoryFolderPermission.class;
-			}
-		};
+				@Override
+				public Class<RepositoryFolderPermission> getTypeClass() {
+					return RepositoryFolderPermission.class;
+				}
+			};
 
 	public Repository getRepository()
-		throws com.liferay.portal.kernel.exception.PortalException,
+			throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 
 	public RepositoryFolder getFolder()
-		throws com.liferay.portal.kernel.exception.PortalException,
+			throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portal.kernel.model.Role getRole()
-		throws com.liferay.portal.kernel.exception.PortalException,
+			throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portal.kernel.model.User getUser()
-		throws com.liferay.portal.kernel.exception.PortalException,
+			throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portal.kernel.model.Group getGroup()
-		throws com.liferay.portal.kernel.exception.PortalException,
+			throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
+
 }

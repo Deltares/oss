@@ -22,7 +22,6 @@ import com.worth.deltares.subversion.service.base.RepositoryLogLocalServiceBaseI
 import com.worth.deltares.subversion.service.persistence.RepositoryLogUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -117,36 +116,36 @@ public class RepositoryLogLocalServiceImpl
 
   public JSONArray getLastLogs(Integer number) {
 
-    JSONArray logsArray = JSONFactoryUtil.createJSONArray();
+		JSONArray logsArray = JSONFactoryUtil.createJSONArray();
 
 		List<RepositoryLog> repositoryLogs = RepositoryLogUtil.findAll(0, number);
 
-    for (RepositoryLog log : repositoryLogs) {
-      Activity activity = new Activity(log.getAction());
+		for (RepositoryLog log : repositoryLogs) {
+			Activity activity = new Activity(log.getAction());
 
-      if (log.getCity() != null) {
-        activity.setLocation(log.getCity());
-      }
+			if (log.getCity() != null) {
+				activity.setLocation(log.getCity());
+			}
 
-      if (log.getLatitude() != null) {
-        activity.setLatitude(log.getLatitude());
-      }
+			if (log.getLatitude() != null) {
+				activity.setLatitude(log.getLatitude());
+			}
 
-      if (log.getLongitude() != null) {
-        activity.setLongitude(log.getLongitude());
-      }
+			if (log.getLongitude() != null) {
+				activity.setLongitude(log.getLongitude());
+			}
 
-      if (log.getRepository() != null) {
-        activity.setMessage("repository: " + log.getRepository());
-      }
+			if (log.getRepository() != null) {
+				activity.setMessage("repository: " + log.getRepository());
+			}
 
-      try {
-        logsArray.put(JSONFactoryUtil.createJSONObject(JSONFactoryUtil.serialize(activity)));
-      } catch (JSONException e) {
-        _log.error("Error building JSONArray: ", e);
-      }
-    }
+			try {
+				logsArray.put(JSONFactoryUtil.createJSONObject(JSONFactoryUtil.serialize(activity)));
+			} catch (JSONException e) {
+				_log.error("Error building JSONArray: ", e);
+			}
+		}
 
-    return logsArray;
-  }
+		return logsArray;
+	}
 }

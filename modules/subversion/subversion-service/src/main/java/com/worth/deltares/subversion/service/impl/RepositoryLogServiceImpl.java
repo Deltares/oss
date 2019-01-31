@@ -21,7 +21,6 @@ import com.liferay.portal.kernel.security.access.control.AccessControlled;
 import com.worth.deltares.subversion.service.RepositoryLogLocalServiceUtil;
 import com.worth.deltares.subversion.service.base.RepositoryLogServiceBaseImpl;
 
-
 /**
  * The implementation of the repository log remote service.
  *
@@ -46,7 +45,7 @@ public class RepositoryLogServiceImpl extends RepositoryLogServiceBaseImpl {
 	@JSONWebService
 	@AccessControlled(guestAccessEnabled=true)
 	public JSONArray getLastLogs(Integer number) {
-  
-	  return RepositoryLogLocalServiceUtil.getLastLogs(number);
+
+		return RepositoryLogLocalServiceUtil.getLastLogs(number);
 	}
 }

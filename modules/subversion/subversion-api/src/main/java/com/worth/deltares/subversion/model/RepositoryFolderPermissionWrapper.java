@@ -174,7 +174,6 @@ public class RepositoryFolderPermissionWrapper
 			com.liferay.portal.kernel.exception.SystemException {
 		return _repositoryFolderPermission.getFolder();
 	}
-
 	/**
 	* Returns the folder ID of this repository folder permission.
 	*
@@ -191,7 +190,6 @@ public class RepositoryFolderPermissionWrapper
 			com.liferay.portal.kernel.exception.SystemException {
 		return _repositoryFolderPermission.getGroup();
 	}
-
 	/**
 	* Returns the modified date of this repository folder permission.
 	*
@@ -267,7 +265,6 @@ public class RepositoryFolderPermissionWrapper
 			com.liferay.portal.kernel.exception.SystemException {
 		return _repositoryFolderPermission.getUser();
 	}
-
 	@Override
 	public int hashCode() {
 		return _repositoryFolderPermission.hashCode();

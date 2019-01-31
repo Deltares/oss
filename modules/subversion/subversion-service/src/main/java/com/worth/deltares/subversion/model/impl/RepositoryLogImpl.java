@@ -14,20 +14,20 @@
 
 package com.worth.deltares.subversion.model.impl;
 
-
 import aQute.bnd.annotation.ProviderType;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
 
 import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.service.persistence.CountryUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
-import com.liferay.portal.kernel.configuration.Configuration;
-import com.liferay.portal.kernel.configuration.ConfigurationFactoryUtil;
-import com.maxmind.geoip.Location;
-import com.maxmind.geoip.LookupService;
+import com.maxmind.geoip2.DatabaseReader;
+import com.maxmind.geoip2.model.CityResponse;
+import com.maxmind.geoip2.record.Location;
 
 
 /**
@@ -49,101 +49,108 @@ public class RepositoryLogImpl extends RepositoryLogBaseImpl {
 	public RepositoryLogImpl() {
 	}
 
-	private Country country;
-	private String city;
-	
-	public Location getLocation() { 
-		Location location = new Location();
+	private CityResponse cityResponse = null;
+	private Country country = null;
+	private String city = null;
+
+	private Location getLocation() {
+		if (cityResponse != null) return cityResponse.getLocation();
+
 		InetAddress inetAddress;
-    	LookupService lookupService = null;
-
 		try {
-			//Configuration configuration = ConfigurationFactoryUtil.getConfiguration(getClass().getClassLoader(), "service");
-			//String datafile = configuration.get("maxmind.geoip.database.dir") + configuration.get("maxmind.geoip.database.name");
-			String dbDir = PropsUtil.get("maxmind.geoip.database.dir");
-			String dbName = PropsUtil.get("maxmind.geoip.database.name");
-			String datafile = dbDir + "/" + dbName;
-			lookupService = new LookupService(datafile);
 			inetAddress = InetAddress.getByName(getIpAddress());
-			location = lookupService.getLocation(inetAddress);
-		} catch (IOException e) {
-		} finally {
-			if (lookupService != null){
-				lookupService.close();
-			}
-    	}
+		} catch (UnknownHostException e) {
+			return null;
+		}
 
-		return location;
+		//Configuration configuration = ConfigurationFactoryUtil.getConfiguration(getClass().getClassLoader(), "service");
+		//String datafile = configuration.get("maxmind.geoip.database.dir") + configuration.get("maxmind.geoip.database.name");
+		String dbDir = PropsUtil.get("maxmind.geoip.database.dir");
+		String dbName = PropsUtil.get("maxmind.geoip.database.name");
+
+		// A File object pointing to your GeoIP2 or GeoLite2 database
+		File database = new File(dbDir + "/" + dbName);
+		// This creates the DatabaseReader object. To improve performance, reuse
+		// the object across lookups. The object is thread-safe.
+		try (DatabaseReader reader = new DatabaseReader.Builder(database).build()){
+			// Replace "city" with the appropriate method for your database, e.g.,
+			// "country".
+			cityResponse = reader.city(inetAddress);
+			if (cityResponse == null) return null;
+			return cityResponse.getLocation();
+		} catch (Exception e) {
+			return null;
+		}
 	}
-	
+
 	public Date getDate() {
-    	long cd = this.getCreateDate();
+		long cd = this.getCreateDate();
 
 		return new Date(cd * 1000);
 	}
-	
+
 	public Country getCountry() {
 		try {
-			Country c = CountryUtil.fetchByA2(this.getLocation().countryCode);
-    		this.country = c;
+			Country c = CountryUtil.fetchByA2(cityResponse.getCountry().getIsoCode());
+			this.country = c;
 
 			return country;
 		} catch (Exception e) {}
 
 		return null;
 	}
-	
+
 	public String getCountryName() {
 		String countryName = "";
-		
+
 		if (this.getLocation() != null) {
-			countryName = this.getLocation().countryName;
+			countryName = cityResponse.getCountry().getName();
 		}
-		
+
 		return countryName;
 	}
-	
+
 	public void setCountry(Country c) {
 		this.country = c;
 	}
 
 	public String getCity() {
-        String c = "";
+		String c = "";
 
 		if (this.getLocation() != null) {
-            c = this.getLocation().city;
-            this.city = c;
-        }
+			c = cityResponse.getCity().getName();
+			this.city = c;
+		}
 
 		return c;
 	}
-	
+
 	public String getCityName() {
 		String cityName = "";
-		
+
 		if (this.getLocation() != null) {
-			cityName = this.getLocation().city;
-    	}
+			cityName = cityResponse.getCity().getName();
+		}
 
 		return cityName;
 	}
-	
+
 	public String getLatitude() {
 		String latitude = "";
-		
+
 		if (this.getLocation() != null) {
-			latitude = Float.toString(this.getLocation().latitude);
-    	}
+			latitude = Double.toString(this.getLocation().getLatitude());
+		}
 
 		return latitude;
 	}
-	
+
 	public String getLongitude() {
 		String longitude = "";
-		
+
 		if (this.getLocation() != null) {
-			longitude = Float.toString(this.getLocation().longitude);
-    	}
+			longitude = Double.toString(this.getLocation().getLongitude());
+		}
 
 		return longitude;
 	}

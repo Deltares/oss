@@ -54,7 +54,7 @@ public interface RepositoryLog extends RepositoryLogModel, PersistedModel {
 			}
 		};
 
-	public com.maxmind.geoip.Location getLocation();
+//	public Location getLocation();
 
 	public java.util.Date getDate();
 

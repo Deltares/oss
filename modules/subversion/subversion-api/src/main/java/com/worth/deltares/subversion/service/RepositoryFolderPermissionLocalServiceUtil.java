@@ -86,7 +86,6 @@ public class RepositoryFolderPermissionLocalServiceUtil {
 	public static com.worth.deltares.subversion.model.RepositoryFolderPermission createRepositoryFolderPermission() {
 		return getService().createRepositoryFolderPermission();
 	}
-
 	/**
 	* Creates a new repository folder permission with the primary key. Does not add the repository folder permission to the database.
 	*

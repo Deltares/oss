@@ -11,6 +11,9 @@ Import-Package: \
     !org.apache.poi.*, \
     !com.liferay.petra.lang, \
     !com.liferay.portal.kernel.portlet, \
+    !org.apache.avalon.framework.logger, \
+    !org.apache.log, \
+    !org.apache.log4j, \
     *
 Export-Package: \
     com.worth.deltares.subversion.tasks.util

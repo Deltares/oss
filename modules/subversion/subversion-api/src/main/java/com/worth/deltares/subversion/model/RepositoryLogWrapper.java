@@ -182,10 +182,10 @@ public class RepositoryLogWrapper implements RepositoryLog,
 		return _repositoryLog.getLatitude();
 	}
 
-	@Override
-	public com.maxmind.geoip.Location getLocation() {
-		return _repositoryLog.getLocation();
-	}
+//	@Override
+//	public Location getLocation() {
+//		return _repositoryLog.getLocation();
+//	}
 
 	/**
 	* Returns the log ID of this repository log.
