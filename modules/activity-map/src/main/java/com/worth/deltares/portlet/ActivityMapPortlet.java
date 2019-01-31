@@ -10,7 +10,7 @@ import javax.portlet.Portlet;
 import org.osgi.service.component.annotations.Component;
 
 
-/**
+/**set
  * @author Pier-Angelo Gaetani @ Worth Systems
  */
 @Component(

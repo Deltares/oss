@@ -1,7 +1,6 @@
 Bundle-Name: deltares-oss-activity-map
 Bundle-SymbolicName: com.worth.deltares.activity-map
 Bundle-Version: 1.0.0
-Export-Package: com.worth.deltares.constants
 Import-Package: \
     com.worth.deltares.subversion.service, \
     com.worth.deltares.subversion.model, \
@@ -17,5 +16,4 @@ Import-Package: \
     !org.apache.axis.tools.ant.wsdl, \
     !org.apache.poi.*, \
     *
-Include-Resource: \
-    @com.liferay.util.java-2.5.6.jar
+Export-Package: com.worth.deltares.constants
