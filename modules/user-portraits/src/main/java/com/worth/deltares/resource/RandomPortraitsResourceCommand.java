@@ -64,9 +64,9 @@ public class RandomPortraitsResourceCommand implements MVCResourceCommand {
       _log.debug(responseJson);
 
       response.setContentType("application/json");
-      response.setContentLength(responseJson.length());
-      response.getWriter().write(responseJson.toJSONString());
-
+      String jsonString = responseJson.toJSONString();
+      response.setContentLength(jsonString.length());
+      response.getWriter().write(jsonString);
       return true;
     } catch (Exception e) {
       _log.error("Error getting random portraits.", e);
@@ -139,6 +139,7 @@ public class RandomPortraitsResourceCommand implements MVCResourceCommand {
     List<User> users = getAllUsersWithPortrait();
     Set<User> randomUsers = new HashSet<>();
 
+    if (users.size() == 0) return randomUsers;
     while (randomUsers.size() < elements) {
       Random r = new Random();
       User randomUser = users.get(r.nextInt(users.size()));
