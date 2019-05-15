@@ -1,0 +1,5 @@
+.c-grid-3-cols {
+    display: grid;
+    column-gap: 44px;
+    grid-template-columns: repeat(auto-fit, minmax(370px, 1fr));
+}

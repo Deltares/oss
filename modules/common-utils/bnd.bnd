@@ -1,0 +1,16 @@
+Bundle-Name: common-utils
+Bundle-SymbolicName: nl.worth.portal.common-utils
+Bundle-Version: 1.0.0
+
+Export-Package: \
+  nl.worth.portal.utils,\
+  nl.worth.portal.utils.exceptions
+
+Import-Package: \
+  !sun.reflect.*,\
+  !groovy.lang.*,\
+  !org.codehaus.*,\
+  !net.spy.*,\
+  !org.apache.avalon.framework.logger.*,\
+  !org.apache.log.*,\
+  *

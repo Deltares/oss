@@ -1,0 +1,75 @@
+.c-new-idea {
+
+
+    &__item__content__title {
+        margin: 0 0 10px 0;
+    }
+    &__item__content__phase {
+        margin-bottom: 30px;
+
+        &.submitted .submitted,
+        &.planned .planned,
+        &.financed .financed,
+        &.started .started {
+            // font-weight: 600;
+            // color: $color-glacier; 
+            @include selected-arrow($color:$color-site-black,$f-zise:8px);
+        }
+
+        span {
+            position: relative;
+            display: inline-block;
+        }
+    }
+    
+    .c-new-idea__item__ratings {
+        .rating-label {
+            float: right;
+            // text-indent: -4.2em;
+            overflow: hidden;
+            margin: 0 5px;
+        }
+        
+        .liferay-rating-score {
+            > div {
+                display: inline;
+                margin: 0 0 0 10px;
+            }
+            float: left;
+        }
+        &__votes {
+            float: left;
+            margin: 0;
+        }
+    }
+}
+
+.asset-ratings .rating .rating-content .rating-label::after {
+    content: "(Anonymous)";
+    padding-left: 10px;
+    font-weight: 400;
+}   
+
+fieldset.add-comment * {
+    box-shadow: none;
+}
+
+.taglib-ratings.stars a {
+    color: $color-site-black;
+    text-decoration: none;
+}
+
+
+.taglib-discussion .card,
+.taglib-discussion .pannel{
+    border: 0;
+    margin-bottom: 0;
+    box-shadow: none;
+}
+.taglib-discussion .panel-body{
+    padding: 10px 0;
+}
+
+.asset-ratings+.col-md-12 {
+    padding: 0;
+}
