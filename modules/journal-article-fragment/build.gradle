@@ -1,0 +1,7 @@
+
+publishing.publications {
+    mavenJava(MavenPublication) {
+        artifactId = 'journal-article-fragment'
+        from components.java
+    }
+}

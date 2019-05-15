@@ -1,0 +1,69 @@
+$list-phases: 'submitted' 'planned' 'financed' 'started';
+.c-new-ideas {
+    overflow-x: hidden;
+
+    &__item {
+        margin-bottom: 35px;
+        display: flex;
+        flex-flow: column;
+    }
+    
+    &__item::after {
+        content: "";
+        display: block;
+        // border-bottom: 1px solid $color-silver;
+        margin: 30px -15px 0 -15px;
+    }
+    &__item__phase {
+        .submitted, .planned, .financed, .started {
+            display: none
+        }
+        
+        @each $item in $list-phases {
+            &.#{$item} > .#{$item}{
+                display: inline;
+            }
+        }
+    }
+    &__item__title {
+        flex-grow: 1;
+    }
+    &__item__summary {
+        min-height: 135px;
+        padding-bottom: 10px;
+        
+
+        p {
+            display: inline;
+            margin: 0;
+        }
+    }
+    
+}
+
+.asset-ratings.only_average {
+    font-weight: 300;
+    .liferay-rating-vote {
+        display: none;
+    }
+    p {
+        float: left;
+        margin: 0 6px 0 0;
+    }
+    .taglib-ratings.stars {
+        display: inline;
+        padding: 0;
+    }
+    .liferay-rating-score {
+        display: inline;
+        padding: 0;
+        > div {
+            float: left;
+            .rating-label {
+                float: right;
+                overflow: hidden;
+                // text-indent: -3.7em;
+            }
+        }
+    }
+}
