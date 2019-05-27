@@ -37,33 +37,51 @@ $list-phases: 'submitted' 'planned' 'financed' 'started';
             display: inline;
             margin: 0;
         }
-    }
-    
+    }   
 }
 
-.asset-ratings.only_average {
+@mixin ideas-grid-label {
+    display: inline-block;
+    min-width: 60px;
+    margin: 0 6px 0 0;
+    font-weight: 400;
+}
+
+.c-new-ideas__item__phase strong {
+    @include ideas-grid-label();
+}
+
+.asset-ratings.ideas-adt {
     font-weight: 300;
-    .liferay-rating-vote {
-        display: none;
-    }
     p {
-        float: left;
-        margin: 0 6px 0 0;
+        @include ideas-grid-label();
+        vertical-align: top;    
     }
+
     .taglib-ratings.stars {
-        display: inline;
+        display: inline-block;
         padding: 0;
     }
-    .liferay-rating-score {
+    .liferay-rating-score,
+    .liferay-rating-vote {
         display: inline;
         padding: 0;
         > div {
-            float: left;
+            
             .rating-label {
-                float: right;
-                overflow: hidden;
-                // text-indent: -3.7em;
+            
             }
         }
     }
+}
+
+.asset-ratings.only-average {
+    .liferay-rating-vote {
+        display: none;
+    }
+}
+.asset-ratings.only-votes {
+    .liferay-rating-score {
+        display: none;
+    }   
 }

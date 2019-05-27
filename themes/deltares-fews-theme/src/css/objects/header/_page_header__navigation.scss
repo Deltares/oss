@@ -1,5 +1,6 @@
 
 
+
 @media (min-width: $screen-md-min) {
     #heading {
         display: flex;
@@ -16,12 +17,13 @@
         margin: 0;
         padding: 0;  
     }
-
     .nav-menu .user_login__link {
         float: right;
         margin: 21px 15px 76px 15px;
         color: $color-glacier;
     }
+
+    
 }
 
 @media (max-width: $screen-sm-max) {
@@ -45,6 +47,11 @@
             }
         }
     }
+    .nav-menu .user_login__link {
+        display: block;
+        margin: 10px;
+        text-align: center;
+    }
 }
     
 .site-title {
@@ -67,20 +74,6 @@
             }
 
         }
-        // @media (min-width: 1440px) {
-        //     img {
-        //         max-width: 62%;
-        //     }
-
-        //     height: 201px;
-        //     line-height: 201px;  
-        //     width: 370px;
-        //     margin-left: 8.5%;
-        //     position: absolute;
-        //     border-top: 0;
-        //     top: 0;
-        
-        // }
     } 
 }
         

@@ -6,7 +6,7 @@
     margin: 0;
 }
 .page-header__background {
-    @include center_cropped($height:477px);
+    @include center_cropped($height:350px);
     @media (max-width: $screen-sm-max) {
         min-height: 45vh;
     }
@@ -18,11 +18,20 @@
     transform: translateY(50%);
     left: 0px;
     width: 100%;
+    display: none;
 
     @media (min-width: $screen-md-min) {
         padding: 0 8.5% 0 8.5%;
         
     }
+}
+ 
+.logged_in .page-header__data.user {
+    display: block;
+}
+
+.logged_out .page-header__data.guest {
+    display: block;
 }
 
 .page-header__data__title {

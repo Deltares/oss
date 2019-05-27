@@ -138,6 +138,9 @@ ul,li{
     line-height: 20px;
 }  
 
+@at-root .signed-in .toggle-container {
+    top: 56px;
+}
 
 // // Showing nav items as lines, making up the hamburger menu icon
 #toggle-menu:not(:checked) {

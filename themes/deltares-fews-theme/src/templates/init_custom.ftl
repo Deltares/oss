@@ -20,3 +20,6 @@ This file allows you to override and define new FreeMarker variables.
     <#assign footerWCArticle = journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroupId(), footerWCArticleId) >
     <#assign footerWCContent = journalArticleLocalService.getArticleContent(footerWCArticle, footerWCArticle.getDDMTemplateKey(), "VIEW", locale, themeDisplay) />
 </#if>
+
+
+<#assign google_tag_id = getterUtil.getString(themeDisplay.getThemeSetting("google-tag-id")) /> <#-- google analytics -->

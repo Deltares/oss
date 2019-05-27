@@ -2,3 +2,4 @@
 <div class="cta_box">
     <div class="h1">${journalArticleTitle}</div>
     ${content.getData()}
+</div>    
