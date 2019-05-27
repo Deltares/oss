@@ -8,20 +8,16 @@
 <#if FooterLinksLeft.LinkToPage?? && FooterLinksLeft.LinkToPage.getSiblings()?has_content && validator.isNotNull(FooterLinksLeft.LinkToPage.getSiblings()?first.getData())>
 
     <ul>
-	    <#list FooterLinksLeft.LinkToPage.getSiblings() as cur_FooterLinksLeft>
-        <li>
-            <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, cur_FooterLinksLeft.getData()) />
-                <a href="${cur_FooterLinksLeft.getFriendlyUrl()}">
-                    ${linkLayout.getName(themeDisplay.getLocale())}
-                </a>
-        </li>
+        <#list FooterLinksLeft.LinkToPage.getSiblings() as cur_FooterLinksLeft>
+            <li>
+                <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, cur_FooterLinksLeft.getData()) />
+                <a href="${cur_FooterLinksLeft.getFriendlyUrl()}">${linkLayout.getName(themeDisplay.getLocale())}</a>
+            </li>
         </#list>
     </ul>
 </#if>
 
 <p>${Copyright.getData()}</p>
-
-${FooterSocialMediaLinks.Linkedin.getData()}
 
 <div>
     <ul class="media-links">
@@ -48,15 +44,12 @@ ${FooterSocialMediaLinks.Linkedin.getData()}
     </ul>
 
     <#if FooterLinksRight.LinkToPage1?? && FooterLinksRight.LinkToPage1.getSiblings()?has_content && validator.isNotNull(FooterLinksRight.LinkToPage1.getSiblings()?first.getData())>
-
         <ul>
             <#list FooterLinksRight.LinkToPage1.getSiblings() as cur_FooterLinksRight>
-            <li>
-                <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, cur_FooterLinksRight.getData()) />
-                    <a href="${cur_FooterLinksRight.getFriendlyUrl()}">
-                        ${linkLayout.getName(themeDisplay.getLocale())}
-                    </a>
-            </li>
+                <li>
+                    <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, cur_FooterLinksRight.getData()) />
+                    <a href="${cur_FooterLinksRight.getFriendlyUrl()}">${linkLayout.getName(themeDisplay.getLocale())}</a>
+                </li>
             </#list>
         </ul>
     </#if>

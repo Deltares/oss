@@ -44,10 +44,11 @@
     }
 }
 
-.asset-ratings .rating .rating-content .rating-label::after {
+.asset-ratings .liferay-rating-vote .rating-label::after {
     content: "(Anonymous)";
     padding-left: 10px;
-    font-weight: 400;
+    font-weight: 300;
+    font-size: 12px;
 }   
 
 fieldset.add-comment * {

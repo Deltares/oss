@@ -154,6 +154,15 @@ a {
         text-decoration: none;
         font-weight: inherit;
     }
+
+}
+.type-inherit, 
+.type-inherit:hover {
+    color: inherit;
+    font-size: inherit;
+    font-style: inherit;
+    font-weight: inherit;
+    text-decoration: inherit;
 }
 
 .uppercase {

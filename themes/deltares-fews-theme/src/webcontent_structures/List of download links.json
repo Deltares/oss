@@ -6,7 +6,7 @@
     "fields": [
         {
             "label": {
-                "en_US": "File display title"
+                "en_US": "Download Link title"
             },
             "predefinedValue": {
                 "en_US": ""
@@ -20,7 +20,7 @@
             "dataType": "string",
             "indexType": "keyword",
             "localizable": true,
-            "name": "FileDisplayTitle",
+            "name": "LinkTitle",
             "readOnly": false,
             "repeatable": true,
             "required": true,
@@ -29,7 +29,7 @@
             "nestedFields": [
                 {
                     "label": {
-                        "en_US": "Upload file"
+                        "en_US": "Download Link URL"
                     },
                     "predefinedValue": {
                         "en_US": ""
@@ -40,16 +40,15 @@
                     "tip": {
                         "en_US": ""
                     },
-                    "dataType": "document-library",
-                    "fieldNamespace": "ddm",
+                    "dataType": "string",
                     "indexType": "keyword",
                     "localizable": true,
-                    "name": "UploadFile",
+                    "name": "DownloadLinkURL",
                     "readOnly": false,
                     "repeatable": false,
                     "required": true,
                     "showLabel": true,
-                    "type": "ddm-documentlibrary"
+                    "type": "text"
                 }
             ]
         }

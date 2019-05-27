@@ -18,7 +18,7 @@
         
         
         <div class="data-column">
-            <h1 class="c-featured-news__title">${entryTitle}</h1>
+            <h1 class="c-featured-news__title"><a class="type-inherit" href="${viewURL}" title="read more about ${entryTitle}">${entryTitle}</a></h1>
             <p class="c-featured-news__date">${dateUtil.getDate(entry.getPublishDate(), "d MMMM yyyy", locale)}</p>
             <p class="c-featured-news__abstract">
                 ${stringUtil.shorten(ContentOfNewsItem, 560)}
@@ -27,9 +27,12 @@
         </div>
         <#if ImageOfNewsItem?? && ImageOfNewsItem != "">
             <div class="media-column">
-                <div class="img-cropper c-featured-news__image" style="background-image:url(${ImageOfNewsItem})">
+                <a class="img-cropper c-featured-news__image display-block" 
+                    style="background-image:url(${ImageOfNewsItem})"
+                    href="${viewURL}" 
+                    title="read more about ${entryTitle}">
                     <img src="${ImageOfNewsItem}" />
-                </div>
+                </a>
             </div>
         </#if>
     </#if>

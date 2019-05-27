@@ -33,9 +33,11 @@ body{
 }
 
 a .underline,
-a .link_underline {
+a .link_underline,
+a .link-underline {
     border-bottom: 1px solid $color-alpha-blue;
     padding-bottom: 7px;
+    pointer-events: none;
 }
 
 .position-sticky {
@@ -53,4 +55,8 @@ a .link_underline {
 
 .clearList, .clear-list {
     @include cleanUL;
+}
+
+.display-block {
+    display: block;
 }
