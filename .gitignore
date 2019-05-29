@@ -232,3 +232,30 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 # End of https://www.gitignore.io/api/vim,java,maven,gradle,eclipse,java-web,sublimetext,intellij+all,visualstudiocode
+
+# Ignore file from blade tools
+**/*.iml
+**/.ivy
+**/.classpath
+**/.project
+**/.sass-cache
+**/.settings
+**/bin
+**/build
+**/build_gradle
+**/node_modules
+**/test-coverage
+**/tmp
+**/.web_bundle_build
+.gradle
+.idea
+/bundles
+/gradle-*.properties
+/plugins-sdk/**/classes
+/plugins-sdk/**/ivy.xml.MD5
+/plugins-sdk/**/liferay-hook.xml.processed
+/plugins-sdk/build.*.properties
+/plugins-sdk/dependencies/**/*.jar
+/plugins-sdk/dist
+/plugins-sdk/lib
+test-results
