@@ -1,0 +1,18 @@
+plugins {
+  id "org.sonarqube" version "2.7.1"
+}
+
+dependencies {
+    compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
+    compileOnly group: "com.liferay.portal", name: "com.liferay.util.taglib"
+    compileOnly group: "javax.portlet", name: "portlet-api"
+    compileOnly group: "javax.servlet", name: "javax.servlet-api"
+    compileOnly group: "jstl", name: "jstl"
+    compileOnly group: "org.osgi", name: "osgi.cmpn"
+}
+
+check.dependsOn resolve
+
+targetPlatform {
+    ignoreResolveFailures = true
+}
