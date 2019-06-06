@@ -14,6 +14,9 @@
  */
 --%>
 <%@ page import="com.liferay.portal.kernel.service.RoleLocalServiceUtil" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.liferay.portal.kernel.model.Role" %>
+<%@ page import="com.liferay.portal.kernel.model.RoleConstants" %>
 
 <%@ include file="/init.jsp" %>
 
@@ -383,31 +386,48 @@
 </portlet:renderURL>
 
 <aui:script use="liferay-portlet-journal">
-  new Liferay.Portlet.Journal(
-      {
-        article: {
-          editUrl: '<%= editArticleURL %>',
-          id: '<%= (article != null) ? HtmlUtil.escape(articleId) : StringPool.BLANK %>',
+    new Liferay.Portlet.Journal(
+    {
+    article: {
+    editUrl: '<%= editArticleURL %>',
+    id: '<%= (article != null) ? HtmlUtil.escape(articleId) : StringPool.BLANK %>',
 
-          <c:if test="<%= (article != null) && !article.isNew() %>">
-          previewUrl: '<%= HtmlUtil.escapeJS(previewArticleContentURL.toString()) %>',
-          </c:if>
+    <c:if test="<%= (article != null) && !article.isNew() %>">
+        previewUrl: '<%= HtmlUtil.escapeJS(previewArticleContentURL.toString()) %>',
+    </c:if>
 
-          title: '<%= (article != null) ? HtmlUtil.escapeJS(article.getTitle(locale)) : StringPool.BLANK %>'
-        },
-        namespace: '<portlet:namespace />',
-        'strings.addTemplate': '<liferay-ui:message key="please-add-a-template-to-render-this-structure" />',
-        'strings.saveAsDraftBeforePreview': '<liferay-ui:message key="in-order-to-preview-your-changes,-the-web-content-is-saved-as-a-draft" />'
-      }
-  );
+    title: '<%= (article != null) ? HtmlUtil.escapeJS(article.getTitle(locale))
+        : StringPool.BLANK %>'
+    },
+    namespace: '<portlet:namespace/>',
+    'strings.addTemplate': '<liferay-ui:message
+        key="please-add-a-template-to-render-this-structure"/>',
+    'strings.saveAsDraftBeforePreview': '<liferay-ui:message
+        key="in-order-to-preview-your-changes,-the-web-content-is-saved-as-a-draft"/>'
+    }
+    );
 </aui:script>
 
 
-<!-- WORTH Modifications -->
+<!-- WORTH changes -->
 <%
-    boolean showOptions = permissionChecker.isOmniadmin() ||
-            RoleLocalServiceUtil.getUserGroupRoles(
-                themeDisplay.getUserId(), themeDisplay.getScopeGroupId()).size() > 1;
+    List<Role> roles = RoleLocalServiceUtil.getUserGroupRoles(
+            themeDisplay.getUserId(), themeDisplay.getScopeGroupId());
+    boolean showOptions = permissionChecker.isOmniadmin() || roles.size() > 1;
+
+    if (roles.size() == 1) {
+        showOptions = showOptions || !roles.get(0).getName().equals(RoleConstants.SITE_MEMBER);
+    }
+
+    java.util.List<com.liferay.portal.kernel.model.UserGroupGroupRole> userGroupGroupRoles =
+            com.liferay.portal.kernel.service.UserGroupGroupRoleLocalServiceUtil
+                    .getUserGroupGroupRolesByUser(themeDisplay.getUserId());
+
+    for(com.liferay.portal.kernel.model.UserGroupGroupRole sel : userGroupGroupRoles){
+        if(sel.getGroup().getGroupId() == themeDisplay.getScopeGroupId()){
+            showOptions = showOptions || !sel.getRole().getName().equals(RoleConstants.SITE_MEMBER);
+        }
+    }
 %>
 
 <c:if test="<%= !showOptions %>">
@@ -417,8 +437,8 @@
         }
 
         [data-fieldname*="_hide"] {
-            display:none;
+            display: none;
         }
     </style>
 </c:if>
-<!-- END WORTH Modifications -->
+<!-- END WORTH changes -->
