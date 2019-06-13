@@ -1,0 +1,44 @@
+
+
+.portlet-content {
+    .portlet-title-text {
+        
+    }
+}
+
+/*
+
+
+.portlet-content {
+
+  .portlet-title-text {
+    color: #fff;
+    display: block;
+    padding: 0.4em 0 0.6em 0.6em;
+    max-width: 100%;
+    background-color: #5ba1c8; // Old browsers
+    @include filter-gradient(#5ba1c8, #3f7fa6, vertical); // IE6-9
+    @include background-image(linear-gradient(top, #5ba1c8 0%,#3f7fa6 100%));
+  }
+  #contact-portlet {
+    img {
+      float: left;
+      padding: 0.4em 0.6em;
+    }
+    p {
+      &.signed {
+        font-style: italic;
+        font-size: 0.9em;
+      }
+    }
+  }
+}
+
+.home {
+  background-image: url(../images/logo-home-2x.png);
+  background-repeat: no-repeat;
+  background-size: 20% auto;
+  background-position: 96% 24%;
+}
+
+*/

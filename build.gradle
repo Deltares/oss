@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    classpath group: "com.liferay", name: "com.liferay.gradle.plugins.theme.builder", version: "2.0.6"
     compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
     compileOnly group: "com.liferay.portal", name: "com.liferay.util.taglib"
     compileOnly group: "javax.portlet", name: "portlet-api"
@@ -11,7 +12,14 @@ dependencies {
     compileOnly group: "org.osgi", name: "osgi.cmpn"
 }
 
+repositories {
+    maven {
+      url "https://repository-cdn.liferay.com/nexus/content/groups/public"
+    }
+}
 check.dependsOn resolve
+
+apply plugin: "com.liferay.portal.tools.theme.builder"
 
 targetPlatform {
     ignoreResolveFailures = true
