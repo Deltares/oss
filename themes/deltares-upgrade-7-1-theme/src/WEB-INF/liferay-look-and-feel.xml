@@ -5,7 +5,7 @@
 	<compatibility>
 		<version>7.1.0+</version>
 	</compatibility>
-	<theme id="deltares-upgrade-7-1" name="Deltares Upgrade 7.1">
+	<theme id="deltares-theme" name="Deltares Upgrade 7.1">
 		<template-extension>ftl</template-extension>
 		<portlet-decorator id="barebone" name="Barebone">
 			<portlet-decorator-css-class>portlet-barebone</portlet-decorator-css-class>
