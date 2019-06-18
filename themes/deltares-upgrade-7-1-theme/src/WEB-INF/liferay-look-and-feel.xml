@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
-<!DOCTYPE look-and-feel PUBLIC "-//Liferay//DTD Look and Feel 7.0.0//EN" "http://www.liferay.com/dtd/liferay-look-and-feel_7_0_0.dtd">
+<!DOCTYPE look-and-feel PUBLIC "-//Liferay//DTD Look and Feel 7.1.0//EN" "http://www.liferay.com/dtd/liferay-look-and-feel_7_1_0.dtd">
 
 <look-and-feel>
 	<compatibility>
-		<version>7.0.0+</version>
+		<version>7.1.0+</version>
 	</compatibility>
-	<theme id="deltares-theme-previous" name="deltares-theme">
+	<theme id="deltares-theme" name="Deltares Upgrade 7.1">
 		<template-extension>ftl</template-extension>
 		<portlet-decorator id="barebone" name="Barebone">
 			<portlet-decorator-css-class>portlet-barebone</portlet-decorator-css-class>

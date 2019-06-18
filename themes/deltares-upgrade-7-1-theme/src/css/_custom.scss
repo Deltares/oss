@@ -1,0 +1,21 @@
+/* These inject tags are used for dynamically creating imports for themelet styles, you can place them where ever you like in this file. */
+
+/* inject:imports */
+/* endinject */
+
+/* This file allows you to override default styles in one central location for easier upgrade and maintenance. */
+
+@import 'aui_custom';
+@import 'variables';
+@import 'portlet_decorator';
+@import 'base';
+@import 'header';
+@import 'footer';
+@import 'pages/home';
+@import 'modules/blogs';
+@import 'modules/events';
+@import 'modules/slides';
+
+@import 'portlets/general';
+@import 'portlets/messageboard';
+@import 'portlets/activitymaps';
