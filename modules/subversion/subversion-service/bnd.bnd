@@ -1,6 +1,6 @@
-Bundle-Name: deltares-oss-subversion-service
-Bundle-SymbolicName: com.worth.deltares.subversion.service
-Bundle-Version: 1.0.0
+Bundle-Name: subversion-service
+Bundle-SymbolicName: nl.worth.deltares.oss.subversion.service
+Bundle-Version: 1.0.1
 Liferay-Require-SchemaVersion: 1.0.0
 Liferay-Service: true
 Import-Package: \
@@ -15,7 +15,3 @@ Import-Package: \
     !org.apache.log, \
     !org.apache.log4j, \
     *
-Export-Package: \
-    com.worth.deltares.subversion.tasks.util
-Include-Resource: \
-    @com.liferay.util.java-2.5.6.jar
