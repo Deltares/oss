@@ -14,4 +14,6 @@ cache:
 install: travis_wait ./gradlew initBundle
 # TO debug
 # script: ./gradlew build --debug
-script: ./gradlew clean build
+script: 
+    - rm -Rf ./themes/**/node_modules
+    - ./gradlew clean build
