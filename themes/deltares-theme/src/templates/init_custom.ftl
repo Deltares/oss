@@ -7,6 +7,7 @@ This file allows you to override and define new FreeMarker variables.
 <#assign VOID = freeMarkerPortletPreferences.setValue("portletSetupPortletDecoratorId", "barebone") />
 
 <#assign portal_url = htmlUtil.escape(theme_display.getPortalURL()) />
+
 <#assign current_url = htmlUtil.escape(theme_display.getURLCurrent()) />
 
 
