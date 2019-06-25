@@ -17,7 +17,8 @@ liferay.workspace.bundle.token.password=
 
 The `liferay.workspace.bundle.token.download` property should then be set to `true`.
 
-The current `gradle.properties` file is pointing to the latest (at the point of this writing) DXP bundle. It also has a commented CE bundle above it, in case getting a development license is not possible.
+The current `gradle.properties` file is pointing to the latest (at the point of this writing) CE bundle.
+It also has a commented DXP bundle above it, in case getting a development license is possible.
 
 Once all the necessary properties have been filled out, run the following command to download the bundle:
 
