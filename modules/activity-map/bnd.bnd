@@ -1,19 +1,7 @@
-Bundle-Name: deltares-oss-activity-map
-Bundle-SymbolicName: com.worth.deltares.activity-map
-Bundle-Version: 1.0.0
+Bundle-Name: activity-map
+Bundle-SymbolicName: nl.worth.deltares.oss.portlet.activity-map
+Bundle-Version: 1.0.1
+Export-Package: nl.worth.deltares.oss.portlet.constants
 Import-Package: \
-    com.worth.deltares.subversion.service, \
-    com.worth.deltares.subversion.model, \
-    com.liferay.portal.kernel.portlet.bridges.mvc, \
-    com.liferay.portal.kernel.json, \
-    !com.liferay.petra.lang, \
-    !com.liferay.portal.kernel.portlet, \
-    !com.liferay.portal.kernel.servlet, \
-    !com.liferay.portal.kernel.util, \
-    !com.swabunga.spell.*, \
-    !net.fortuna.ical4j.*, \
-    !org.antlr.stringtemplate, \
-    !org.apache.axis.tools.ant.wsdl, \
-    !org.apache.poi.*, \
-    *
-Export-Package: com.worth.deltares.constants
+  nl.worth.deltares.oss.subversion.service.*,\
+  *

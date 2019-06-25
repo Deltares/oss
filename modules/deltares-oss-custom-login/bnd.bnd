@@ -1,4 +1,0 @@
-Bundle-Name: deltares-oss-custom-login
-Bundle-SymbolicName: com.worth.deltares-oss-custom-login
-Bundle-Version: 1.0.0
-Export-Package: com.worth.deltares.constants, com.liferay.login.web.internal.portlet.util

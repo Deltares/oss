@@ -1,0 +1,19 @@
+language: java
+jdk:
+  - openjdk8
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.liferay/
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+install: travis_wait ./gradlew initBundle
+# TO debug
+# script: ./gradlew build --debug
+script: 
+    - rm -Rf ./themes/**/node_modules
+    - ./gradlew clean build

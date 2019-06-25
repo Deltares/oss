@@ -1,11 +1,27 @@
-Bundle-Name: deltares-oss-subversion-api
-Bundle-SymbolicName: com.worth.deltares.subversion.api
-Bundle-Version: 1.0.0
-Export-Package:\
-	com.worth.deltares.subversion.exception,\
-	com.worth.deltares.subversion.model,\
-	com.worth.deltares.subversion.service,\
-	com.worth.deltares.subversion.service.persistence
-Import-Package: \
-	com.mysql.jdbc
+Bundle-Name: subversion-api
+Bundle-SymbolicName: nl.worth.deltares.oss.subversion.api
+Bundle-Version: 1.0.1
+Export-Package: \
+	nl.worth.deltares.oss.subversion.exception,\
+	nl.worth.deltares.oss.subversion.model,\
+	nl.worth.deltares.oss.subversion.service,\
+	nl.worth.deltares.oss.subversion.service.persistence,\
+	nl.worth.deltares.oss.subversion.tasks
+-check: EXPORTS
 -includeresource: META-INF/service.xml=../subversion-service/service.xml
+Import-Package: \
+  !com.swabunga.spell.*, \
+  !net.fortuna.ical4j.*, \
+  !org.antlr.stringtemplate, \
+  !org.apache.axis.tools.ant.wsdl, \
+  !org.apache.poi.*, \
+  !com.liferay.petra.lang, \
+  !com.liferay.portal.kernel.portlet, \
+  !org.apache.avalon.framework.logger, \
+  !org.apache.log, \
+  !org.apache.log4j, \
+  com.liferay.counter.kernel.service,\
+  com.liferay.portal.kernel.*,\
+  javax.naming.*,\
+  javax.sql.*,\
+  *

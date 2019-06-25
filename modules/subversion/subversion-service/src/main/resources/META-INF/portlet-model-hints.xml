@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <model-hints>
-	<model name="com.worth.deltares.subversion.model.Repository">
+	<model name="nl.worth.deltares.oss.subversion.model.Repository">
 		<field name="repositoryId" type="long" />
 		<field name="companyId" type="long" />
 		<field name="groupId" type="long" />
@@ -11,7 +11,7 @@
 		<field name="createdDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 	</model>
-	<model name="com.worth.deltares.subversion.model.RepositoryFolder">
+	<model name="nl.worth.deltares.oss.subversion.model.RepositoryFolder">
 		<field name="folderId" type="long" />
 		<field name="repositoryId" type="long" />
 		<field name="name" type="String" />
@@ -20,7 +20,7 @@
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 	</model>
-	<model name="com.worth.deltares.subversion.model.RepositoryFolderPermission">
+	<model name="nl.worth.deltares.oss.subversion.model.RepositoryFolderPermission">
 		<field name="permissionId" type="long" />
 		<field name="folderId" type="long" />
 		<field name="permission" type="String" />
@@ -30,7 +30,7 @@
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 	</model>
-	<model name="com.worth.deltares.subversion.model.RepositoryLog">
+	<model name="nl.worth.deltares.oss.subversion.model.RepositoryLog">
 		<field name="logId" type="long" />
 		<field name="ipAddress" type="String" />
 		<field name="screenName" type="String" />

@@ -5,7 +5,7 @@
 <html class="${root_css_class}" dir="<@liferay.language key="lang.dir" />" lang="${w3c_language_id}">
 
 <head>
-	<title>${the_title} - ${company_name}</title>
+	<title>${the_title} - ${company_name} </title>
 
 	<meta content="initial-scale=1.0, width=device-width" name="viewport" />
 
@@ -14,11 +14,12 @@
 
 <body class="${css_class}">
 
-<@liferay_ui["quick-access"] contentId="#main-content" />
-
 <@liferay_util["include"] page=body_top_include />
 
 <@liferay.control_menu />
+
+
+
 
 <div id="wrapper">
 	<header class="container-fluid-1280 ${is_home}" id="banner" role="banner">
@@ -36,7 +37,6 @@
 					</#if>
 				</#if>
 
-
 				<#if is_setup_complete>
 					<button aria-controls="navigation" aria-expanded="false" class="collapsed navbar-toggle" data-target="#navigationCollapse" data-toggle="collapse" type="button">
 						<span class="icon-bar"></span>
@@ -50,14 +50,19 @@
 						<@liferay.user_personal_bar />
 					</div>
 				</#if>
+				
+
 			</div>
+
 			<#if is_home == "nohome">
 				<#include "${full_templates_path}/navigation.ftl" />
 			</#if>
 			<#if is_home == "home">
 				<#include "${full_templates_path}/navigation_home.ftl" />
 			</#if>
+
 		</div>
+
 		<#if is_home == "home">
 			<div class="row">
 				<div class="statement">
@@ -69,10 +74,11 @@
 				</div>
 			</div>
 		</#if>
+
 	</header>
 
-	<section class="container-fluid-1280" id="content">
-		<h1 class="hide-accessible">${the_title}</h1>
+		<section class="container-fluid-1280" id="content">
+			<h1 class="sr-only">${the_title}</h1>
 
 		<#if selectable>
 			<@liferay_util["include"] page=content_include />
@@ -85,24 +91,23 @@
 				<@liferay_util["include"] page=content_include />
 			</@>
 		</#if>
-		<!-- <@liferay_portlet["runtime"] defaultPreferences="${freeMarkerPortletPreferences}" portletName="com_liferay_site_navigation_site_map_web_portlet_SiteNavigationSiteMapPortlet"/> -->
-	</section>
-	<#if variable_name>
+
+		</section>
+		<#if variable_name>
 		<nav id="variable_name">
-
 		</nav>
-	</#if>
-	<footer class="container-fluid-1280" id="footer" role="contentinfo">
+		</#if>
 
-		<div class="row">
-
-		</div>
-	</footer>
 </div>
+
+
 
 <@liferay_util["include"] page=body_bottom_include />
 
 <@liferay_util["include"] page=bottom_include />
+
+<!-- inject:js -->
+<!-- endinject -->
 
 </body>
 

@@ -1,5 +1,5 @@
-create index IX_B096D6E3 on deltares_Repository (groupId);
+create index IX_FBE74BB3 on Subversion_Repository (groupId);
 
-create index IX_53031FEE on deltares_RepositoryFolder (repositoryId);
+create index IX_94F8891E on Subversion_RepositoryFolder (repositoryId);
 
-create index IX_D935B741 on deltares_RepositoryFolderPermission (folderId);
+create index IX_68E37C71 on Subversion_RepositoryFolderPermission (folderId);

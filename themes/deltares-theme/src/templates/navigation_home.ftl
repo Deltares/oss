@@ -1,3 +1,4 @@
+
 <#assign VOID = freeMarkerPortletPreferences.setValue("portletSetupPortletDecoratorId", "barebone")>
 
 <div aria-expanded="false" class="collapse navbar-collapse" id="navigationCollapse">

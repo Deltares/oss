@@ -1,4 +1,0 @@
-Bundle-Name: deltares-oss-custom-screen-name-generator
-Bundle-SymbolicName: com.worth.deltares-oss-custom-screen-name-generator
-Bundle-Version: 1.0.0
-Export-Package: com.worth.deltares.constants

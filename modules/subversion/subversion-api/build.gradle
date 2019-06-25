@@ -1,10 +1,6 @@
 dependencies {
-    compileOnly group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.1.0"
-    compileOnly group: "com.liferay", name: "com.liferay.osgi.util", version: "3.0.0"
-	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "2.0.0"
+	compileOnly group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.5.0"
+	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "3.0.0"
 	compileOnly group: "org.osgi", name: "org.osgi.core", version: "6.0.0"
-//	compileInclude group: 'org.apache.avalon.framework', name: 'avalon-framework-impl', version: '4.3.1'
-//	compileOnly group: 'org.apache.avalon.logkit', name: 'avalon-logkit', version: '2.2.1'
-//	compileInclude group: 'log4j', name: 'log4j', version: '1.2.16'
-//	compileInclude group: 'com.maxmind.geoip2', name: 'geoip2', version: '2.12.0'
+	compileInclude group: "com.maxmind.geoip2", name: "geoip2", version: "2.12.0"
 }

@@ -1,4 +1,4 @@
-create table deltares_Repository (
+create table Subversion_Repository (
 	repositoryId LONG not null primary key,
 	companyId LONG,
 	groupId LONG,
@@ -9,7 +9,7 @@ create table deltares_Repository (
 	modifiedDate DATE null
 );
 
-create table deltares_RepositoryFolder (
+create table Subversion_RepositoryFolder (
 	folderId LONG not null primary key,
 	repositoryId LONG,
 	name VARCHAR(75) null,
@@ -19,7 +19,7 @@ create table deltares_RepositoryFolder (
 	modifiedDate DATE null
 );
 
-create table deltares_RepositoryFolderPermission (
+create table Subversion_RepositoryFolderPermission (
 	permissionId LONG not null primary key,
 	folderId LONG,
 	permission VARCHAR(75) null,
@@ -30,7 +30,7 @@ create table deltares_RepositoryFolderPermission (
 	modifiedDate DATE null
 );
 
-create table deltares_RepositoryLog (
+create table Subversion_RepositoryLog (
 	logId LONG not null primary key,
 	ipAddress VARCHAR(75) null,
 	screenName VARCHAR(75) null,
