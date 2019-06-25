@@ -1,8 +1,9 @@
 {
 	"devDependencies": {
 		"gulp": "3.9.1",
-		"liferay-theme-deps-7.0": "8.0.0-rc.3",
-		"liferay-theme-tasks": "8.0.0-rc.3"
+		"liferay-theme-deps-7.0": "8.0.9",
+		"liferay-theme-tasks": "^9.1.2",
+		"minimatch": "^3.0.2"
 	},
 	"keywords": [
 		"liferay-theme"
@@ -17,5 +18,7 @@
 	"main": "package.json",
 	"name": "deltares-fews-theme",
 	"version": "1.0.0",
-	"dependencies": {}
+	"dependencies": {
+		"npm-check-updates": "^3.1.9"
+	}
 }

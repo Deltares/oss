@@ -15,12 +15,15 @@
         <!--repeatable element-->
         <div class="c-card news-item">
             <#if ImageOfNewsItem?? && ImageOfNewsItem != "">
-                <div class="img-cropper" style="background-image:url(${ImageOfNewsItem})">
+                <a class="img-cropper" 
+                    style="background-image:url(${ImageOfNewsItem})"
+                    href="${viewURL}" 
+                    title="read more about ${entryTitle}">
                     <img src="${ImageOfNewsItem}" />
-                </div>
+                </a>
             </#if>
             <p class="c-card__date">${dateUtil.getDate(entry.getPublishDate(), "d MMMM yyyy", locale)}</p>
-            <h4 class="c-card__title h1">${entry.getTitle(locale)}</h4>
+            <h4 class="c-card__title h1"><a class="type-inherit" href="${viewURL}" title="read more about ${entryTitle}">${entryTitle}</a></h4>
             <a class="c-card__link regular-text" href="${viewURL}"><span class="link_underline">Read more</span> &gt;</a>
         </div>
     </#list>

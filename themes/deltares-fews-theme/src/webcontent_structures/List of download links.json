@@ -6,7 +6,7 @@
     "fields": [
         {
             "label": {
-                "en_US": "Link title"
+                "en_US": "Download Link title"
             },
             "predefinedValue": {
                 "en_US": ""
@@ -29,7 +29,7 @@
             "nestedFields": [
                 {
                     "label": {
-                        "en_US": "Link explanatory text"
+                        "en_US": "Download Link URL"
                     },
                     "predefinedValue": {
                         "en_US": ""
@@ -43,30 +43,7 @@
                     "dataType": "string",
                     "indexType": "keyword",
                     "localizable": true,
-                    "name": "LinkExplanatoryText",
-                    "readOnly": false,
-                    "repeatable": false,
-                    "required": false,
-                    "showLabel": true,
-                    "type": "text"
-                },
-                {
-                    "label": {
-                        "en_US": "Link URL"
-                    },
-                    "predefinedValue": {
-                        "en_US": ""
-                    },
-                    "style": {
-                        "en_US": ""
-                    },
-                    "tip": {
-                        "en_US": ""
-                    },
-                    "dataType": "string",
-                    "indexType": "keyword",
-                    "localizable": true,
-                    "name": "LinkURL",
+                    "name": "DownloadLinkURL",
                     "readOnly": false,
                     "repeatable": false,
                     "required": true,

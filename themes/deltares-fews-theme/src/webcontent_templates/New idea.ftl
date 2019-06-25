@@ -34,12 +34,18 @@
         </div>
         <div class="projects-page__item__meta-data">
             <div class="projects-page__item__meta-data__expert">
+                <#assign expertExists = false />
                 <#if OptionalFields.SelectExpert_hide?? && OptionalFields.SelectExpert_hide.getData()?? &&  OptionalFields.SelectExpert_hide.getData() != "">
                     <#assign cur_webContent_map = OptionalFields.SelectExpert_hide.getData()?eval>
                     <#assign cur_webContent_classPK = cur_webContent_map.classPK>
-                    <#assign article = journalArticleLocalService.getLatestArticle(cur_webContent_classPK?number)>
+                    <#assign article = journalArticleLocalService.fetchLatestArticle(cur_webContent_classPK?number)! />
+
+                    <#if article?has_content && article.getStatus() == 0> <#-- status 0 == published-->
+                        <#assign expertExists = true />
                         ${journalContent.getContent(groupId, article.getArticleId(), viewMode, locale.getLanguage())}
-                <#else>
+                    </#if>
+                </#if>
+                <#if !expertExists >
                     <div class="expert-data">
                         <div class="expert-data__image" style="background-image:url(${OptionalFields.ExpertPhoto.getData()})">
                             <#if OptionalFields.ExpertPhoto.getData()?? && OptionalFields.ExpertPhoto.getData() != "">

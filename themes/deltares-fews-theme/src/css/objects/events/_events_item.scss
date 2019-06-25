@@ -52,6 +52,9 @@ $date-width: 60px;
     color:$color-orange;
     font-weight: bold;
 }
+.past-event .c-events__item__time-date-place__date {
+    color: $color-dark-gray;
+}
 
 .c-events__item {
     &::before {
@@ -64,6 +67,9 @@ $date-width: 60px;
         text-align: left;
         left: 0;
     }
+}
+.c-events__item.past-event::before {
+    background: $color-dark-gray;
 }
 
 .c-events__item__description,

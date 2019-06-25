@@ -16,7 +16,8 @@
         <#assign startMonthString = "" >
         <#assign startDateString = "" >
         <#assign endDateString = "" >
-        <#assign timeString = "" >      
+        <#assign timeString = "" >   
+        <#assign isEventPast = "upcoming-event" />   
         <#assign locationString = "">
     
         <#list rootElement.elements() as dynamicElement>
@@ -28,6 +29,9 @@
                     <#assign startDateString=dateUtil.getDate(startDate_DateObj, "dd MMMM yyyy" , locale) />
                     <#assign startDayString=dateUtil.getDate(startDate_DateObj, "dd" , locale) />
                     <#assign startMonthString=dateUtil.getDate(startDate_DateObj, "MMM" , locale) />
+                    <#if .now?date &gt; startDate?date("yyyy-MM-dd")>
+                        <#assign isEventPast = "past-event" />
+                    </#if>
                 </#if>
             </#if>
             <#if "EventEndDate"==dynamicElement.attributeValue("name")>
@@ -44,12 +48,12 @@
                 <#assign locationString = dynamicElement.element("dynamic-content").getData() />
             </#if>
         </#list>
-        <div class="c-events__item">
+        <div class="c-events__item ${isEventPast}">
             <div class="c-events__item__date">
                 <span>${startDayString}</span>
                 ${startMonthString}
             </div>
-            <h4 class="c-events__item__title h1">${entry.getTitle(locale)}</h4>
+            <h4 class="c-events__item__title h1"><a class="type-inherit" href="${viewURL}" title="read more about ${entryTitle}">${entryTitle}</a></h4>
             <p class="c-events__item__time-date-place">
                 <span class="c-events__item__time-date-place__date">
                     <#if endDateString != "">

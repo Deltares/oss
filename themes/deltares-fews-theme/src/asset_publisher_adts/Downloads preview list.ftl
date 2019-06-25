@@ -20,17 +20,29 @@
                             </#if>
                                 <#assign downloadItemTitle = dynamicElement.element("dynamic-content").getData() />
                                 <#assign downloadItemURL = ""/>
+                                <#assign linkItemURL = ""/>
                                 <#list dynamicElement.elements() as child>
                                     <#if child.getName()=="dynamic-element">
+                                        <#assign isDocument = false />
                                         <#if "UploadFile"==child.attributeValue("name")>
                                             <#assign downloadItemRaw = child.element("dynamic-content").getData()/>
                                             <#assign downloadItemURL = htmlUtil.escapeHREF(downloadItemRaw)/>
+                                            <#assign isDocument = true />
+                                        </#if>
+                                        <#if "DownloadLinkURL"==child.attributeValue("name")>
+                                            <#assign downloadItemRaw = child.element("dynamic-content").getData()/>
+                                            <#assign linkItemURL = htmlUtil.escapeHREF(downloadItemRaw)/> 
                                         </#if>
                                     </#if>
+                                    
                                 </#list>    
-                                <a  class="c-downloads-list__item__link regular-text"
-                                    href="${downloadItemURL}"
-                                    download>
+                                <#if isDocument > 
+                                    <a  class="c-downloads-list__item__link regular-text"
+                                        href="${downloadItemURL}" download >
+                                <#else> 
+                                    <a  class="c-downloads-list__item__link regular-text"
+                                        href="${linkItemURL}" target="_blank" >
+                                </#if>
                                     <span class="link_underline">${downloadItemTitle}</span> &gt;
                                 </a>
                             </li>

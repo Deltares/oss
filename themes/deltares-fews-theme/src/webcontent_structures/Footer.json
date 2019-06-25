@@ -17,15 +17,16 @@
             "tip": {
                 "en_US": ""
             },
-            "dataType": "string",
-            "indexType": "keyword",
+            "dataType": "html",
+            "fieldNamespace": "ddm",
+            "indexType": "text",
             "localizable": true,
             "name": "Copyright",
             "readOnly": false,
             "repeatable": false,
-            "required": false,
+            "required": true,
             "showLabel": true,
-            "type": "text"
+            "type": "ddm-text-html"
         },
         {
             "label": {
