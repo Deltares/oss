@@ -1,5 +1,9 @@
+<#assign isEventPast = "upcoming-event" />
 <#assign EventDate_Data = getterUtil.getString(EventDate.getData())>
 <#if EventDate_Data?has_content>
+    <#if .now?date &gt; EventDate_Data?date("yyyy-MM-dd")>
+        <#assign isEventPast = "past-event" />
+    </#if>
     <#assign EventDate_DateObj = dateUtil.parseDate("yyyy-MM-dd", EventDate_Data, locale)>
 </#if>
 
@@ -9,7 +13,7 @@
 </#if>
 
 <div class="c-events page">
-    <div class="c-events__item">
+    <div class="c-events__item ${isEventPast}">
         <div class="clearfix">
             <div class="media-section">
                 <#if EventImage.getData()?? && EventImage.getData() != "">

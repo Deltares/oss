@@ -6,7 +6,7 @@
     "fields": [
         {
             "label": {
-                "en_US": "Title"
+                "en_US": "For Users"
             },
             "predefinedValue": {
                 "en_US": ""
@@ -17,42 +17,19 @@
             "tip": {
                 "en_US": ""
             },
-            "dataType": "string",
+            "fieldNamespace": "ddm",
             "indexType": "keyword",
             "localizable": true,
-            "name": "Title",
+            "name": "Users",
             "readOnly": false,
             "repeatable": false,
-            "required": true,
+            "required": false,
             "showLabel": true,
-            "type": "text"
-        },
-        {
-            "label": {
-                "en_US": "Link text"
-            },
-            "predefinedValue": {
-                "en_US": ""
-            },
-            "style": {
-                "en_US": ""
-            },
-            "tip": {
-                "en_US": ""
-            },
-            "dataType": "string",
-            "indexType": "keyword",
-            "localizable": true,
-            "name": "LinkText",
-            "readOnly": false,
-            "repeatable": false,
-            "required": true,
-            "showLabel": true,
-            "type": "text",
+            "type": "ddm-separator",
             "nestedFields": [
                 {
                     "label": {
-                        "en_US": "Link URL"
+                        "en_US": "Header Title - for logged in users"
                     },
                     "predefinedValue": {
                         "en_US": ""
@@ -66,12 +43,154 @@
                     "dataType": "string",
                     "indexType": "keyword",
                     "localizable": true,
-                    "name": "LinkURL",
+                    "name": "UsersTitle",
                     "readOnly": false,
                     "repeatable": false,
                     "required": true,
                     "showLabel": true,
                     "type": "text"
+                },
+                {
+                    "label": {
+                        "en_US": "Link text - for logged in users"
+                    },
+                    "predefinedValue": {
+                        "en_US": ""
+                    },
+                    "style": {
+                        "en_US": ""
+                    },
+                    "tip": {
+                        "en_US": ""
+                    },
+                    "dataType": "string",
+                    "indexType": "keyword",
+                    "localizable": true,
+                    "name": "UsersLinkText",
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": true,
+                    "showLabel": true,
+                    "type": "text"
+                },
+                {
+                    "label": {
+                        "en_US": "Link to Page  - for logged in users"
+                    },
+                    "predefinedValue": {
+                        "en_US": ""
+                    },
+                    "style": {
+                        "en_US": ""
+                    },
+                    "tip": {
+                        "en_US": ""
+                    },
+                    "dataType": "link-to-page",
+                    "fieldNamespace": "ddm",
+                    "indexType": "keyword",
+                    "localizable": true,
+                    "name": "UsersLinkToPage",
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": true,
+                    "showLabel": true,
+                    "type": "ddm-link-to-page"
+                }
+            ]
+        },
+        {
+            "label": {
+                "en_US": "For Guests"
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "style": {
+                "en_US": ""
+            },
+            "tip": {
+                "en_US": ""
+            },
+            "fieldNamespace": "ddm",
+            "indexType": "keyword",
+            "localizable": true,
+            "name": "Guests",
+            "readOnly": false,
+            "repeatable": false,
+            "required": false,
+            "showLabel": true,
+            "type": "ddm-separator",
+            "nestedFields": [
+                {
+                    "label": {
+                        "en_US": "Header Title - for guests"
+                    },
+                    "predefinedValue": {
+                        "en_US": ""
+                    },
+                    "style": {
+                        "en_US": ""
+                    },
+                    "tip": {
+                        "en_US": ""
+                    },
+                    "dataType": "string",
+                    "indexType": "keyword",
+                    "localizable": true,
+                    "name": "GuestsTitle",
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": true,
+                    "showLabel": true,
+                    "type": "text"
+                },
+                {
+                    "label": {
+                        "en_US": "Link text - for guests"
+                    },
+                    "predefinedValue": {
+                        "en_US": ""
+                    },
+                    "style": {
+                        "en_US": ""
+                    },
+                    "tip": {
+                        "en_US": ""
+                    },
+                    "dataType": "string",
+                    "indexType": "keyword",
+                    "localizable": true,
+                    "name": "GuestsLinkText",
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": true,
+                    "showLabel": true,
+                    "type": "text"
+                },
+                {
+                    "label": {
+                        "en_US": "Link to Page  - for guests"
+                    },
+                    "predefinedValue": {
+                        "en_US": ""
+                    },
+                    "style": {
+                        "en_US": ""
+                    },
+                    "tip": {
+                        "en_US": ""
+                    },
+                    "dataType": "link-to-page",
+                    "fieldNamespace": "ddm",
+                    "indexType": "keyword",
+                    "localizable": true,
+                    "name": "GuestsLinkToPage",
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": true,
+                    "showLabel": true,
+                    "type": "ddm-link-to-page"
                 }
             ]
         },
