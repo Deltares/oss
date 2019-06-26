@@ -30,6 +30,9 @@ import com.liferay.portal.kernel.util.StringBundler;
 
 import java.io.Serializable;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationHandler;
+
 import java.sql.Types;
 
 import java.util.ArrayList;
@@ -271,6 +274,32 @@ public class RepositoryFolderPermissionModelImpl
 		getAttributeSetterBiConsumers() {
 
 		return _attributeSetterBiConsumers;
+	}
+
+	private static Function<InvocationHandler, RepositoryFolderPermission>
+		_getProxyProviderFunction() {
+
+		Class<?> proxyClass = ProxyUtil.getProxyClass(
+			RepositoryFolderPermission.class.getClassLoader(),
+			RepositoryFolderPermission.class, ModelWrapper.class);
+
+		try {
+			Constructor<RepositoryFolderPermission> constructor =
+				(Constructor<RepositoryFolderPermission>)
+					proxyClass.getConstructor(InvocationHandler.class);
+
+			return invocationHandler -> {
+				try {
+					return constructor.newInstance(invocationHandler);
+				}
+				catch (ReflectiveOperationException roe) {
+					throw new InternalError(roe);
+				}
+			};
+		}
+		catch (NoSuchMethodException nsme) {
+			throw new InternalError(nsme);
+		}
 	}
 
 	private static final Map
@@ -643,10 +672,8 @@ public class RepositoryFolderPermissionModelImpl
 	@Override
 	public RepositoryFolderPermission toEscapedModel() {
 		if (_escapedModel == null) {
-			_escapedModel =
-				(RepositoryFolderPermission)ProxyUtil.newProxyInstance(
-					_classLoader, _escapedModelInterfaces,
-					new AutoEscapeBeanHandler(this));
+			_escapedModel = _escapedModelProxyProviderFunction.apply(
+				new AutoEscapeBeanHandler(this));
 		}
 
 		return _escapedModel;
@@ -861,11 +888,8 @@ public class RepositoryFolderPermissionModelImpl
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader =
-		RepositoryFolderPermission.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-		RepositoryFolderPermission.class, ModelWrapper.class
-	};
+	private static final Function<InvocationHandler, RepositoryFolderPermission>
+		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
 
 	private long _permissionId;
 	private long _folderId;

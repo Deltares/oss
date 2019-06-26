@@ -87,7 +87,7 @@ public interface RepositoryFolderPermissionLocalService
 	public List<RepositoryFolderPermission> addRepositoryFolderPermissions(
 			RepositoryFolder repositoryFolder,
 			List<RepositoryFolderPermission> permissions, boolean recurse)
-		throws SystemException, PortalException;
+		throws PortalException, SystemException;
 
 	public RepositoryFolderPermission createRepositoryFolderPermission();
 
