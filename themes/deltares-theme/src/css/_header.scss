@@ -8,12 +8,8 @@
 		text-decoration: none;
     }
 
-    @media only screen and (min-width: 768px) {
-        padding: 40px 0 0 0;
-    }
-
     @include sm {
-		padding: 40px 0 30px;
+		padding: 40px 0 0;
 	}
 
     .portlet-topper {
@@ -173,10 +169,10 @@ body.signed-in #banner .user-personal-bar { display:none;}
 		}
 
 		.form-control {
-			background-color: transparent;
 			border-bottom-width: 1px;
 			border-color: #D6DCE2;
 			margin-top: 2px;
+			border-radius:0;
 
 			@include media-query(null, $screen-xs-max) {
 				border-width: 0;
@@ -199,9 +195,6 @@ body.signed-in #banner .user-personal-bar { display:none;}
 		}
 
 		.field-wrapper {
-			position: absolute;
-			right: 0;
-			top: 0;
 
 			a {
 				color: $complementary-color;
@@ -327,14 +320,18 @@ body.signed-in #banner .user-personal-bar { display:none;}
 
 #banner #_com_liferay_portal_search_web_portlet_SearchPortlet_fm .btn.btn-light.btn-unstyled {
     position: absolute;
-    right:5px;
-    top:3px;
+    right:0;
+    top:0;
 
     &:hover {
         color: $shark-grey;
         background-color: transparent;
         border-color: transparent;
-    }
+	}
+	
+	svg {
+		fill: #47647A;
+	}
 
     
 }
