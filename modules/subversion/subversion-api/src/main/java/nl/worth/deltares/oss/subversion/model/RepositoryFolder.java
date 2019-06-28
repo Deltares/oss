@@ -32,7 +32,7 @@ import com.liferay.portal.kernel.util.Accessor;
 )
 @ProviderType
 public interface RepositoryFolder
-	extends RepositoryFolderModel, PersistedModel {
+	extends PersistedModel, RepositoryFolderModel {
 
 	/*
 	 * NOTE FOR DEVELOPERS:

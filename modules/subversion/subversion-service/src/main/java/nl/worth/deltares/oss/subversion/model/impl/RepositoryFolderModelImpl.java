@@ -30,6 +30,9 @@ import com.liferay.portal.kernel.util.StringBundler;
 
 import java.io.Serializable;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationHandler;
+
 import java.sql.Types;
 
 import java.util.ArrayList;
@@ -263,6 +266,32 @@ public class RepositoryFolderModelImpl
 		getAttributeSetterBiConsumers() {
 
 		return _attributeSetterBiConsumers;
+	}
+
+	private static Function<InvocationHandler, RepositoryFolder>
+		_getProxyProviderFunction() {
+
+		Class<?> proxyClass = ProxyUtil.getProxyClass(
+			RepositoryFolder.class.getClassLoader(), RepositoryFolder.class,
+			ModelWrapper.class);
+
+		try {
+			Constructor<RepositoryFolder> constructor =
+				(Constructor<RepositoryFolder>)proxyClass.getConstructor(
+					InvocationHandler.class);
+
+			return invocationHandler -> {
+				try {
+					return constructor.newInstance(invocationHandler);
+				}
+				catch (ReflectiveOperationException roe) {
+					throw new InternalError(roe);
+				}
+			};
+		}
+		catch (NoSuchMethodException nsme) {
+			throw new InternalError(nsme);
+		}
 	}
 
 	private static final Map<String, Function<RepositoryFolder, Object>>
@@ -573,8 +602,7 @@ public class RepositoryFolderModelImpl
 	@Override
 	public RepositoryFolder toEscapedModel() {
 		if (_escapedModel == null) {
-			_escapedModel = (RepositoryFolder)ProxyUtil.newProxyInstance(
-				_classLoader, _escapedModelInterfaces,
+			_escapedModel = _escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -775,11 +803,8 @@ public class RepositoryFolderModelImpl
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader =
-		RepositoryFolder.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-		RepositoryFolder.class, ModelWrapper.class
-	};
+	private static final Function<InvocationHandler, RepositoryFolder>
+		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
 
 	private long _folderId;
 	private long _repositoryId;

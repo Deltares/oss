@@ -1,3 +1,30 @@
 plugins {
   id "org.sonarqube" version "2.7.1"
 }
+
+task geoipDownload{
+    group = 'Deltares'
+    description = 'Downloads GeoIp2-Lite database'
+
+    doLast {
+        def bundlePath = ('bundles/geoip2/')
+        def geoLiteTar = ('GeoLite2-City.tar.gz')
+
+        def f = new File(bundlePath + geoLiteTar)
+
+        if (!f.exists()) {
+            new URL('https://geolite.maxmind.com/download/geoip/database/' + geoLiteTar).withInputStream{ i -> f.withOutputStream{ it << i }}
+        }
+
+        copy {
+            from (tarTree(resources.gzip(bundlePath + geoLiteTar))) {
+                include "**/*.mmdb"
+                eachFile { fcd ->
+                    fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(1))
+                }
+                includeEmptyDirs = false
+            }
+            into bundlePath
+        }
+    }
+}

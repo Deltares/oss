@@ -91,8 +91,8 @@ public class RepositoryFolderPermissionLocalServiceUtil {
 						<nl.worth.deltares.oss.subversion.model.
 							RepositoryFolderPermission> permissions,
 					boolean recurse)
-			throws com.liferay.portal.kernel.exception.SystemException,
-				   com.liferay.portal.kernel.exception.PortalException {
+			throws com.liferay.portal.kernel.exception.PortalException,
+				   com.liferay.portal.kernel.exception.SystemException {
 
 		return getService().addRepositoryFolderPermissions(
 			repositoryFolder, permissions, recurse);

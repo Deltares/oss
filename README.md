@@ -34,6 +34,13 @@ blade server start
 
 If you do not wish to use Blade, you can also start the server with tomcat's `startup.sh` or `startup.bat` script within the `bundles/tomcat-x/bin/` folder.
 
+# Misc.
+An extra gradle task was created to download the GeoIp2 Lite city database. Run the following command so that it can be placed in the right location in the bundles folder:
+
+```
+./gradlew geoipDownload
+```
+
 # Useful links
 - [Liferay documentation index](https://portal.liferay.dev/docs/7-1/tutorials/-/knowledge_base/t/introduction-to-liferay-development)
 - [Liferay portlet documentation](https://portal.liferay.dev/docs/7-1/tutorials/-/knowledge_base/t/portlets)

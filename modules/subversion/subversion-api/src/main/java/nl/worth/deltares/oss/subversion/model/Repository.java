@@ -31,7 +31,7 @@ import com.liferay.portal.kernel.util.Accessor;
 	"nl.worth.deltares.oss.subversion.model.impl.RepositoryImpl"
 )
 @ProviderType
-public interface Repository extends RepositoryModel, PersistedModel {
+public interface Repository extends PersistedModel, RepositoryModel {
 
 	/*
 	 * NOTE FOR DEVELOPERS:
