@@ -8,14 +8,13 @@
 @import 'aui_custom';
 @import 'variables';
 @import 'portlet_decorator';
-@import 'base';
+@import 'custom_base';
 @import 'header';
 @import 'footer';
 @import 'pages/home';
 @import 'modules/blogs';
 @import 'modules/events';
 @import 'modules/slides';
-
 @import 'portlets/general';
 @import 'portlets/messageboard';
 @import 'portlets/activitymaps';
