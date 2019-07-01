@@ -46,8 +46,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
     immediate = true,
     property = {
-//        "cron.expression=0 0,30 * * * ?"
-        "cron.expression=0 * * * * ?"
+        "cron.expression=0 0,30 * * * ?"
     },
     service = RepositoryLogTask.class
 )
