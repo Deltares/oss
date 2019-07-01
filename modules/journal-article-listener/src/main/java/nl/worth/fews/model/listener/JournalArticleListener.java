@@ -60,11 +60,8 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
             folderName);
 
         model.setFolderId(journalFolder.getFolderId());
-
       }
-
     }
-
   }
 
   private JournalFolder fetchOrCreateJournalFolder(long userId, long groupId, String name) {
@@ -84,7 +81,6 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
 
     return journalFolder;
   }
-
 
   @Activate
   @Modified
@@ -112,5 +108,4 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
 
   @Reference
   private JournalFolderLocalService _journalFolderLocalService;
-
 }
