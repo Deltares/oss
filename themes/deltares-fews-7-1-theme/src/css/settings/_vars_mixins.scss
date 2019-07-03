@@ -1,0 +1,107 @@
+// COLORS
+$color-silver:     #e7e7ec;
+$color-gray:       #A09E8D;
+$color-dark-gray:  #9B9B9B;
+$color-orange:     #FF7200;
+$color-glacier:    #80A9BF;
+$color-link:       #148CC0;
+$color-site-black: #222222;
+$color-light-blue: #E6EEF2;
+$color-alpha-gray: rgba(151, 151, 151, 0.2);
+$color-alpha-blue: rgba(128, 169, 191, 0.2);
+// END COLORS
+
+$title-line-height: 48px;
+$font-sansa-pro: 'Sansa Pro', Verdana, Arial, sans-serif !default;
+$font-general: $font-sansa-pro;
+
+
+
+@mixin clearfix {
+    &::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}
+@mixin selected-arrow($color:$color-glacier, $f-zise:14px) {
+    &::after {
+        content: "\25E4";
+        height: 1em;
+        line-height: 1em;
+        position: absolute;
+        bottom: -1.1em;
+        left: 50%;
+        transform: translateX(-50%) rotate(45deg);
+        font-family: sans-serif;
+        font-size: $f-zise;
+        color: $color;
+    } 
+}
+
+@mixin clear_padding {
+    padding: 0;
+}
+@mixin clear_margin {
+    margin: 0;
+}
+@mixin clear_padding_and_margin {
+    @include clear_padding;
+    @include clear_margin;
+}
+@mixin cleanUL {
+    list-style-type: none;
+    @include clear_padding_and_margin;
+}
+@mixin cleanLink {
+    text-decoration: none;
+    color: inherit;
+}
+
+//FONTS
+
+@mixin font_general {
+    font-family: $font-general;
+}
+
+@mixin center_cropped($width: 100%, $height: 100%) {
+    width: $width;
+    max-height: $height;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow: hidden;
+    
+    /* Set the image to fill its parent and make transparent */
+    img {
+        min-height: 100%;
+        max-height: 100%;
+        min-width: 100%;
+        max-width: 100%;
+        /* IE 8 */
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        /* IE 5-7 */
+        filter: alpha(opacity=0);
+        /* modern browsers */
+        opacity: 0;
+    }
+}
+
+@mixin default_button {
+    cursor: pointer;
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    background-image: none;
+    border: 1px solid ccc;
+    white-space: nowrap;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857;
+    border-radius: 4px;
+    color:$color-site-black;
+    background-color: #fff; 
+}
