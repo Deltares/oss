@@ -67,12 +67,11 @@ public class RepositoryFolderLocalServiceImpl
 		try {
 			repositoryFolder = RepositoryFolderLocalServiceUtil.createRepositoryFolder(
 					CounterLocalServiceUtil.increment(RepositoryFolder.class.getName()));
+			repositoryFolder.setCreateDate(DateUtil.newDate());
+			repositoryFolder.setModifiedDate(DateUtil.newDate());
 		} catch (SystemException e) {
 			LOG.error("Error creating RepositoryFolder", e);
 		}
-
-		repositoryFolder.setCreateDate(DateUtil.newDate());
-		repositoryFolder.setModifiedDate(DateUtil.newDate());
 
 		return repositoryFolder;
 	}

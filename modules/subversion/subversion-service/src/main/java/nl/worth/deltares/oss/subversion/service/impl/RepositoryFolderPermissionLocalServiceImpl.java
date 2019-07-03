@@ -70,12 +70,11 @@ public class RepositoryFolderPermissionLocalServiceImpl
 		try {
 			repositoryFolderPermission = RepositoryFolderPermissionLocalServiceUtil.createRepositoryFolderPermission(
 					CounterLocalServiceUtil.increment(RepositoryFolderPermission.class.getName()));
+			repositoryFolderPermission.setCreateDate(DateUtil.newDate());
+			repositoryFolderPermission.setModifiedDate(DateUtil.newDate());
 		} catch (SystemException e) {
 			LOG.error("Error creating RepositoryFolderPermission", e);
 		}
-
-		repositoryFolderPermission.setCreateDate(DateUtil.newDate());
-		repositoryFolderPermission.setModifiedDate(DateUtil.newDate());
 
 		return repositoryFolderPermission;
 	}
