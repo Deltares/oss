@@ -46,7 +46,8 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
     immediate = true,
     property = {
-        "cron.expression=0 0,30 * * * ?"
+//        "cron.expression=0 0,30 * * * ?"
+        "cron.expression=0 * * * * ?"
     },
     service = RepositoryLogTask.class
 )
@@ -75,49 +76,28 @@ public class RepositoryLogTask extends BaseMessageListener {
     ClassLoader originalLoader = thread.getContextClassLoader();
     thread.setContextClassLoader(PortalClassLoaderUtil.getClassLoader());
 
+    InitialContext ctx = null;
+    DataSource dataSource = null;
     try {
-      InitialContext ctx = new InitialContext();
-      DataSource dataSource = (DataSource) ctx.lookup("java:comp/env/"
+      ctx = new InitialContext();
+      dataSource = (DataSource) ctx.lookup("java:comp/env/"
           + PropsUtil.get(SubversionServiceConstants.APACHE_LOGS_JNDI_PROP));
+    } catch (NamingException e) {
+      LOG.error("Error setting classpath", e);
+      return;
+    }
 
-      Connection conn = dataSource.getConnection();
+    long maxCreateDate = 0;
 
-      Statement stat = conn.createStatement();
-      long maxCreateDate = 0;
-
-      if (RepositoryLogLocalServiceUtil.getRepositoryLogsCount() > 0) {
-        DynamicQuery query = DynamicQueryFactoryUtil.forClass(RepositoryLog.class, originalLoader);
-        query.setProjection(ProjectionFactoryUtil.max("createDate"));
-        List<?> maxResult = RepositoryLogLocalServiceUtil.dynamicQuery(query);
-        maxCreateDate = (Long) maxResult.get(0);
-      }
-
-      ResultSet results = stat.executeQuery(
-          "SELECT agg_method AS request_method, remote_host, remote_user, time_stamp, request_uri "
-              +
-              "FROM " +
-              "  (" +
-              "    (SELECT 'CHECKOUT' as agg_method, remote_host, remote_user, request_method, time_stamp, request_uri "
-              +
-              "    FROM oss_svn as a " +
-              "    WHERE request_method IN ('OPTIONS', 'PROPFIND') " +
-              "    GROUP BY remote_user " +
-              "    ORDER BY time_stamp)" +
-              "  UNION " +
-              "    (SELECT 'COMMIT' as agg_method, remote_host, remote_user, request_method, time_stamp, request_uri "
-              +
-              "    FROM oss_svn as a " +
-              "    WHERE request_method IN ('COPY', 'MOVE', 'DELETE', 'PUT', 'PROPPATCH', 'MKCOL') "
-              +
-              "    GROUP BY DATE(FROM_UNIXTIME(time_stamp))) " +
-              "  ) AS oss " +
-              "WHERE remote_user LIKE '%.x' " +
-              "  AND NOT remote_user = '-' " +
-              "  AND NOT remote_user = '\"\"' " +
-              "  AND time_stamp > " + maxCreateDate + " " +
-              "ORDER BY time_stamp"
-      );
-
+    if (RepositoryLogLocalServiceUtil.getRepositoryLogsCount() > 0) {
+      DynamicQuery query = DynamicQueryFactoryUtil.forClass(RepositoryLog.class, originalLoader);
+      query.setProjection(ProjectionFactoryUtil.max("createDate"));
+      List<?> maxResult = RepositoryLogLocalServiceUtil.dynamicQuery(query);
+      maxCreateDate = (Long) maxResult.get(0);
+    }
+    try (Connection conn = dataSource.getConnection();
+        Statement stat = conn.createStatement();
+        ResultSet results = stat.executeQuery(getSql(maxCreateDate))){
       while (results.next()) {
         String repository = "";
 
@@ -152,19 +132,41 @@ public class RepositoryLogTask extends BaseMessageListener {
       }
 
       stat.execute("DELETE FROM oss_svn");
-      stat.close();
-      conn.close();
 
     } catch (SQLException | SystemException e) {
       LOG.error("Error executing RepositoryLog update task", e);
-    } catch (NamingException e) {
-      LOG.error("Error setting classpath", e);
     } catch (Exception e) {
       LOG.error("Unhandled exception", e);
     } finally {
       thread.setContextClassLoader(originalLoader);
       LOG.info("RepositoryLog update task completed");
     }
+  }
+
+  private String getSql(long maxCreateDate) {
+    return "SELECT agg_method AS request_method, remote_host, remote_user, time_stamp, request_uri "
+        +
+        "FROM " +
+        "  (" +
+        "    (SELECT 'CHECKOUT' as agg_method, remote_host, remote_user, request_method, time_stamp, request_uri "
+        +
+        "    FROM oss_svn as a " +
+        "    WHERE request_method IN ('OPTIONS', 'PROPFIND') " +
+        "    GROUP BY remote_user " +
+        "    ORDER BY time_stamp)" +
+        "  UNION " +
+        "    (SELECT 'COMMIT' as agg_method, remote_host, remote_user, request_method, time_stamp, request_uri "
+        +
+        "    FROM oss_svn as a " +
+        "    WHERE request_method IN ('COPY', 'MOVE', 'DELETE', 'PUT', 'PROPPATCH', 'MKCOL') "
+        +
+        "    GROUP BY DATE(FROM_UNIXTIME(time_stamp))) " +
+        "  ) AS oss " +
+        "WHERE remote_user LIKE '%.x' " +
+        "  AND NOT remote_user = '-' " +
+        "  AND NOT remote_user = '\"\"' " +
+        "  AND time_stamp > " + maxCreateDate + " " +
+        "ORDER BY time_stamp";
   }
 
   @Activate
