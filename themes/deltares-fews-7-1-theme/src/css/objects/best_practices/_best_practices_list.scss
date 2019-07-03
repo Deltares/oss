@@ -1,0 +1,28 @@
+.bestpractice-page__item{
+    padding: 40px 54px 40px 54px;  
+    margin:  0; 
+    border-bottom: 1px solid silver;
+    
+    &::after{
+        content: "";
+        display: block;
+    }
+    
+    &:last-child{
+        border: none;
+    }
+    &:last-child::after{
+        display:none;
+    }
+    
+    &__meta-data__title,
+    &__meta-data__content{
+        max-width: 786px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+}
+.bestpractice-page .bestpractice-page__item:first-child {
+    padding-top: 0;
+}
