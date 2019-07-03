@@ -6,6 +6,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.security.SecureRandom;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -13,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
@@ -48,6 +48,8 @@ public class UserPortraitsPortlet extends MVCPortlet {
 	private static final Log LOG = LogFactoryUtil.getLog(UserPortraitsPortlet.class);
 
 	private static final int DEFAULT_PORTRAITS = 12;
+
+	private SecureRandom random = new SecureRandom();
 
 	public void render(RenderRequest request, RenderResponse response) throws IOException, PortletException {
 
@@ -85,7 +87,6 @@ public class UserPortraitsPortlet extends MVCPortlet {
 		}
 
 		while (randomUsers.size() < number) {
-			Random random = new Random();
 			User randomUser = users.get(random.nextInt(users.size()));
 
 			randomUsers.add(randomUser);

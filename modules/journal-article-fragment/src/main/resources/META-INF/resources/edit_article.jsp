@@ -439,7 +439,7 @@
     }
 %>
 
-<c:if test="<%= showOptions %>">
+<c:if test="<%= !showOptions %>">
     <style>
         #p_p_id<portlet:namespace /> fieldset.panel:not(:first-child) {
             display: none;
