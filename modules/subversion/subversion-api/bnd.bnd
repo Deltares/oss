@@ -1,6 +1,6 @@
 Bundle-Name: subversion-api
 Bundle-SymbolicName: nl.worth.deltares.oss.subversion.api
-Bundle-Version: 1.0.1
+Bundle-Version: 1.0.0
 Export-Package: \
 	nl.worth.deltares.oss.subversion.exception,\
 	nl.worth.deltares.oss.subversion.model,\
