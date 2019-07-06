@@ -1,19 +1,17 @@
-/**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
- *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- */
-
 package nl.worth.deltares.oss.subversion.service.impl;
 
+import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
+import nl.worth.deltares.oss.subversion.model.RepositoryLog;
+import nl.worth.deltares.oss.subversion.service.RepositoryLogLocalServiceUtil;
 import nl.worth.deltares.oss.subversion.service.base.RepositoryLogServiceBaseImpl;
 
 /**
@@ -31,9 +29,101 @@ import nl.worth.deltares.oss.subversion.service.base.RepositoryLogServiceBaseImp
  */
 public class RepositoryLogServiceImpl extends RepositoryLogServiceBaseImpl {
 
+	private static Log LOG = LogFactoryUtil.getLog(RepositoryLogServiceImpl.class);
+
+	private long companyId = 1;
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never reference this class directly. Always use <code>nl.worth.deltares.oss.subversion.service.RepositoryLogServiceUtil</code> to access the repository log remote service.
 	 */
+	public void addRepositoryLog(String requestMethod, String remoteHost, String remoteUser, String requestUri){
+
+		if (requestMethod == null) {
+			throw new IllegalArgumentException("requestMethod == null");
+		}
+		if (remoteHost == null) {
+			throw new IllegalArgumentException("remoteHost == null");
+		}
+		if (remoteUser == null) {
+			throw new IllegalArgumentException("remoteUser == null");
+		}
+		if (requestUri == null) {
+			throw new IllegalArgumentException("requestUri == null");
+		}
+
+		String aggMethod;
+		switch (requestMethod) {
+			case "OPTIONS":
+			case "PROPFIND":
+				aggMethod = "CHECKOUT";
+				break;
+			case "COPY":
+			case "MOVE":
+			case "DELETE":
+			case "PUT":
+			case "PROPPATCH":
+			case "MKCOL":
+				aggMethod = "COMMIT";
+				break;
+			default:
+				throw new UnsupportedOperationException("Unsupported requestMethod: " + requestMethod);
+
+		}
+		String repository;
+		int index = requestUri.indexOf("/repos/");
+		if (index > -1) {
+			repository = requestUri.substring(index + "/repos/".length());
+			if (repository.contains("/")) {
+				repository = repository.substring(0, repository.indexOf("/"));
+			}
+		} else {
+			throw new UnsupportedOperationException("Unexpected repository URI format: " + requestUri);
+		}
+
+		if (remoteUser.toLowerCase().endsWith("@deltares.nl")) {
+			LOG.info("Not logging repository action for Deltares user: " + remoteUser);
+			return;
+		}
+		String screenName = null;
+        if (remoteHost.indexOf('@') > 0){
+            try {
+                User user = UserLocalServiceUtil.getUserByEmailAddress(getCompanyId(), remoteUser);
+                screenName = user.getScreenName();
+            } catch (PortalException e) {
+                LOG.error("Error getting user for email " + remoteUser + ": " + e.getMessage());
+                return;
+            }
+        }
+		long logId = CounterLocalServiceUtil.increment(RepositoryLog.class.getName());
+		RepositoryLog repositoryLog = RepositoryLogLocalServiceUtil.createRepositoryLog(logId);
+		repositoryLog.setAction(aggMethod);
+		repositoryLog.setIpAddress(remoteHost);
+		repositoryLog.setScreenName(remoteUser);
+		repositoryLog.setCreateDate(System.currentTimeMillis());
+		repositoryLog.setRepository(repository);
+		repositoryLog.setPrimaryKey(logId);
+
+		if (repositoryLog.getAction().equals("COMMIT")) {
+			if (RepositoryLogLocalServiceUtil
+					.getRepositoryLogsCount(repositoryLog.getScreenName(), repositoryLog.getIpAddress(),
+							repositoryLog.getRepository()) == 0) {
+				RepositoryLogLocalServiceUtil.addRepositoryLog(repositoryLog);
+			}
+		} else {
+			RepositoryLogLocalServiceUtil.addRepositoryLog(repositoryLog);
+		}
+	}
+
+	private long getCompanyId(){
+
+	    if (companyId > -1) return companyId;
+	    try {
+            Company company = CompanyLocalServiceUtil.getCompanyByMx(PropsUtil.get(PropsKeys.COMPANY_DEFAULT_WEB_ID));
+            companyId = company.getGroup().getGroupId();
+        } catch (Exception e){
+	        LOG.error("Error getting companyId: " + e.getMessage());
+        }
+        return  companyId;
+    }
 }
