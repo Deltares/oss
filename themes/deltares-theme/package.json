@@ -15,5 +15,11 @@
 	},
 	"main": "package.json",
 	"name": "deltares-theme",
-	"version": "1.0.0"
+	"version": "1.0.1",
+	"description": "",
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:Deltares/oss.git"
+	},
+	"license": "GPL-3.0-only"
 }

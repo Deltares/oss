@@ -5,10 +5,13 @@
 <html class="${root_css_class}" dir="<@liferay.language key="lang.dir" />" lang="${w3c_language_id}">
 
 <head>
-    <title>${the_title} - ${company_name}</title>
-    <meta content="initial-scale=1.0, width=device-width" name="viewport" />
-    <@liferay_util["include"] page=top_head_include />
-    <#if google_tag_id?? && google_tag_id?has_content >
+	<title>${the_title} - ${company_name}</title>
+
+	<meta content="initial-scale=1.0, width=device-width" name="viewport" />
+
+	<@liferay_util["include"] page=top_head_include />
+
+	 <#if google_tag_id?? && google_tag_id?has_content >
         <!-- Google Tag Manager -->
         <script>
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -19,66 +22,50 @@
         </script>
         <!-- End Google Tag Manager -->
     </#if>
+
 </head>
 
 <body class="${css_class}">
-    <#if google_tag_id?? && google_tag_id?has_content >
+
+<#if google_tag_id?? && google_tag_id?has_content >
         <!-- Google Tag Manager (noscript) --><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${google_tag_id}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript><!-- End Google Tag Manager (noscript) -->
-    </#if>
-    <@liferay_ui["quick-access"] contentId="#main-content" />
+</#if>
 
-    <@liferay_util["include"] page=body_top_include />
+<@liferay_ui["quick-access"] contentId="#main-content" />
 
-    <@liferay.control_menu />
+<@liferay_util["include"] page=body_top_include />
 
-    <div id="wrapper">
-        <header id="banner" role="banner" class="container-fluid-1280">
-            <div id="heading">
-                <#if has_navigation && is_setup_complete>
-                    <#include "${full_templates_path}/navigation.ftl" />
-                </#if>
-                <h1 class="site-title">
-                    <a class="custom-logo" href="${site_default_url}" title="<@liferay.language_format arguments="${site_name}" key="go-to-x" />">
-                        <img alt="${logo_description}" src="${logo_img}" />
-                    </a>
-                </h1>
-            </div>
-        </header>
+<@liferay.control_menu />
 
-        <section id="content">
-            <h1 class="hide-accessible">${the_title}</h1>
+<div id="wrapper">
+	<#include "${full_templates_path}/header.ftl" />
 
-            <#if selectable>
-                <@liferay_util["include"] page=content_include />
-            <#else>
-                ${portletDisplay.recycle()}
+	<section id="content">
+			<h1 class="hide-accessible">${the_title}</h1>
 
-                ${portletDisplay.setTitle(the_title)}
+				<#if selectable>
+					<@liferay_util["include"] page=content_include />
+				<#else>
+					${portletDisplay.recycle()}
 
-                <@liferay_theme["wrap-portlet"] page="portlet.ftl">
-                    <@liferay_util["include"] page=content_include />
-                </@>
-            </#if>
-        </section>
+					${portletDisplay.setTitle(the_title)}
 
-        <footer id="footer" role="contentinfo">
-            <div class="container-fluid-1280">
-                <#if footerWCContent?has_content>
-                    ${footerWCContent}
-                </#if>
-            </div>
-        </footer>
-    </div>
+					<@liferay_theme["wrap-portlet"] page="portlet.ftl">
+						<@liferay_util["include"] page=content_include />
+					</@>
+				</#if>
+	</section>
 
-    <@liferay_util["include"] page=body_bottom_include />
+	<#include "${full_templates_path}/footer.ftl" />
+</div>
 
-    <@liferay_util["include"] page=bottom_include />
+<@liferay_util["include"] page=body_bottom_include />
 
-    <!-- inject:js -->
-    <!-- endinject -->
+<@liferay_util["include"] page=bottom_include />
 
-    <!-- inject:js -->
-    <!-- endinject -->
+<!-- inject:js -->
+<!-- endinject -->
+
 </body>
 
 </html>
