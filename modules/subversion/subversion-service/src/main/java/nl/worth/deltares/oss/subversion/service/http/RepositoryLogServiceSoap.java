@@ -16,9 +16,16 @@ package nl.worth.deltares.oss.subversion.service.http;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+
+import java.rmi.RemoteException;
+
+import nl.worth.deltares.oss.subversion.service.RepositoryLogServiceUtil;
+
 /**
  * Provides the SOAP utility for the
- * <code>nl.worth.deltares.oss.subversion.service.RepositoryLogServiceUtil</code> service
+ * <code>RepositoryLogServiceUtil</code> service
  * utility. The static methods of this class call the same methods of the
  * service utility. However, the signatures are different because it is
  * difficult for SOAP to support certain types.
@@ -57,4 +64,24 @@ import aQute.bnd.annotation.ProviderType;
  */
 @ProviderType
 public class RepositoryLogServiceSoap {
+
+	public static void addRepositoryLog(
+			String requestMethod, String remoteHost, String remoteUser,
+			String requestUri)
+		throws RemoteException {
+
+		try {
+			RepositoryLogServiceUtil.addRepositoryLog(
+				requestMethod, remoteHost, remoteUser, requestUri);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	private static Log _log = LogFactoryUtil.getLog(
+		RepositoryLogServiceSoap.class);
+
 }

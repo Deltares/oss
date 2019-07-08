@@ -1,12 +1,11 @@
 Bundle-Name: subversion-api
 Bundle-SymbolicName: nl.worth.deltares.oss.subversion.api
-Bundle-Version: 1.0.1
+Bundle-Version: 1.0.0
 Export-Package: \
 	nl.worth.deltares.oss.subversion.exception,\
 	nl.worth.deltares.oss.subversion.model,\
 	nl.worth.deltares.oss.subversion.service,\
 	nl.worth.deltares.oss.subversion.service.persistence,\
-	nl.worth.deltares.oss.subversion.tasks
 -check: EXPORTS
 -includeresource: META-INF/service.xml=../subversion-service/service.xml
 Import-Package: \

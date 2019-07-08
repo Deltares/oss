@@ -7,7 +7,7 @@ task geoipDownload{
     description = 'Downloads GeoIp2-Lite database'
 
     doLast {
-        def bundlePath = ('bundles/geoip2/')
+        def bundlePath = ('/liferay/home/geoip2/')
         def geoLiteTar = ('GeoLite2-City.tar.gz')
 
         def f = new File(bundlePath + geoLiteTar)
