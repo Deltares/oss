@@ -74,4 +74,4 @@
   });
 </script>
 
-<script async defer src="http://maps.googleapis.com/maps/api/js?key=<%=googleMapsApiKey %>&callback=initMap"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=<%=googleMapsApiKey %>&callback=initMap"></script>
