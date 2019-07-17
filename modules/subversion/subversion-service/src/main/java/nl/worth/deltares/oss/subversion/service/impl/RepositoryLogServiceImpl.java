@@ -81,20 +81,18 @@ public class RepositoryLogServiceImpl extends RepositoryLogServiceBaseImpl {
 			throw new UnsupportedOperationException("Unexpected repository URI format: " + requestUri);
 		}
 
-		if (remoteUser.toLowerCase().endsWith("@deltares.nl")) {
-			LOG.info("Not logging repository action for Deltares user: " + remoteUser);
+		try {
+			User user = UserLocalServiceUtil.getUserByScreenName(getCompanyId(), remoteUser);
+			String emailAddress = user.getEmailAddress();
+			if (emailAddress.toLowerCase().endsWith("@deltares.nl")) {
+				LOG.debug("Not logging repository action for Deltares user: " + remoteUser);
+				return;
+			}
+		} catch (PortalException e) {
+			LOG.error("Error getting user for screenName " + remoteUser + ": " + e.getMessage());
 			return;
 		}
-		String screenName = null;
-        if (remoteHost.indexOf('@') > 0){
-            try {
-                User user = UserLocalServiceUtil.getUserByEmailAddress(getCompanyId(), remoteUser);
-                screenName = user.getScreenName();
-            } catch (PortalException e) {
-                LOG.error("Error getting user for email " + remoteUser + ": " + e.getMessage());
-                return;
-            }
-        }
+
 		long logId = CounterLocalServiceUtil.increment(RepositoryLog.class.getName());
 		RepositoryLog repositoryLog = RepositoryLogLocalServiceUtil.createRepositoryLog(logId);
 		repositoryLog.setAction(aggMethod);
