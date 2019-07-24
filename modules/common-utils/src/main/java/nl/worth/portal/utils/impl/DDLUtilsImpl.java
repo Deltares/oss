@@ -1,5 +1,6 @@
 package nl.worth.portal.utils.impl;
 
+
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -7,6 +8,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
+
 import lombok.extern.slf4j.Slf4j;
 import nl.worth.portal.utils.DDLUtils;
 import org.osgi.service.component.annotations.Component;
@@ -37,10 +39,10 @@ public class DDLUtilsImpl implements DDLUtils {
 
             FileEntry fileEntry =
                     dlAppLocalService.getFileEntryByUuidAndGroupId(uuid, groupId);
-            return DLUtil.getFileEntryImage(fileEntry, null);
+
+            return DLUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), null, StringPool.BLANK, false, true);
         } catch (Exception e) {
-            log.info(e.getLocalizedMessage(), e);
-            return StringPool.BLANK;
+            return e.getMessage();
         }
     }
 }
