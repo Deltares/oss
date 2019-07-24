@@ -9,7 +9,7 @@
         <#assign rootElement = document.getRootElement() />
         <#if rootElement?? && rootElement != "">
             <#assign overviewPhotoSelector = saxReaderUtil.createXPath("dynamic-element[@name='ImageOfNewsItem']") />
-            <#assign ImageOfNewsItem = htmlUtil.escapeHREF(overviewPhotoSelector.selectSingleNode(rootElement).getStringValue()) />
+            <#assign ImageOfNewsItem = ddlUtils.getFileEntryImage(htmlUtil.escapeHREF(overviewPhotoSelector.selectSingleNode(rootElement).getStringValue())) />
         </#if>
         <#assign viewURL = htmlUtil.escapeHREF(assetPublisherHelper.getAssetViewURL(renderRequest, renderResponse, entry, true)) />
         <!--repeatable element-->
