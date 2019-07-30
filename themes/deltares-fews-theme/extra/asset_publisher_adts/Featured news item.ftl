@@ -11,7 +11,7 @@
             <#assign overviewContentSelector = saxReaderUtil.createXPath("dynamic-element[@name='ContentOfNewsItem']") />
             <#assign ContentOfNewsItem = htmlUtil.extractText(overviewContentSelector.selectSingleNode(rootElement).getStringValue()) />
             <#assign overviewPhotoSelector = saxReaderUtil.createXPath("dynamic-element[@name='ImageOfNewsItem']") />
-            <#assign ImageOfNewsItem = htmlUtil.escapeHREF(overviewPhotoSelector.selectSingleNode(rootElement).getStringValue()) />
+            <#assign ImageOfNewsItem = ddlUtils.getFileEntryImage(overviewPhotoSelector.selectSingleNode(rootElement).getStringValue()) />
         </#if> 
 
         <#assign viewURL = htmlUtil.escapeHREF(assetPublisherHelper.getAssetViewURL(renderRequest, renderResponse, entry, true)) />
