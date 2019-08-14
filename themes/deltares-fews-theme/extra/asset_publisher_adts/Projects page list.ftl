@@ -31,7 +31,7 @@
                     <#list rootElement.elements() as dynamicElement>
                     <#if "ProjectImage"==dynamicElement.attributeValue("name")>
                         <#assign overviewPhotoData = dynamicElement.element("dynamic-content").getData()/>
-                        <#assign ProjectImage = htmlUtil.escapeHREF(overviewPhotoData) />
+                        <#assign ProjectImage = ddlUtils.getFileEntryImage(overviewPhotoData) />
                     </#if>
                     </#list>
                 </#if>

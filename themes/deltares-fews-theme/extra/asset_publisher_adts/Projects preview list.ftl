@@ -30,8 +30,8 @@
                 <#if rootElement?has_content>
                     <#list rootElement.elements() as dynamicElement>
                     <#if "ProjectImage"==dynamicElement.attributeValue("name")>
-                        <#assign overviewPhotoData = dynamicElement.element("dynamic-content").getData()/>
-                        <#assign ProjectImage = htmlUtil.escapeHREF(overviewPhotoData) />
+                        <#assign overviewPhotoSelector = saxReaderUtil.createXPath("dynamic-element[@name='ProjectImage']") />
+                        <#assign ProjectImage =  ddlUtils.getFileEntryImage(overviewPhotoSelector.selectSingleNode(rootElement).getStringValue())  />
                     </#if>
                     </#list>
                 </#if>

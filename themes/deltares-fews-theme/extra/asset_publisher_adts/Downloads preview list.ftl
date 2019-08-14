@@ -26,12 +26,12 @@
                                         <#assign isDocument = false />
                                         <#if "UploadFile"==child.attributeValue("name")>
                                             <#assign downloadItemRaw = child.element("dynamic-content").getData()/>
-                                            <#assign downloadItemURL = htmlUtil.escapeHREF(downloadItemRaw)/>
+                                            <#assign downloadItemURL = ddlUtils.getFileEntryImage(downloadItemRaw)/>
                                             <#assign isDocument = true />
                                         </#if>
                                         <#if "DownloadLinkURL"==child.attributeValue("name")>
                                             <#assign downloadItemRaw = child.element("dynamic-content").getData()/>
-                                            <#assign linkItemURL = htmlUtil.escapeHREF(downloadItemRaw)/> 
+                                            <#assign linkItemURL = ddlUtils.getFileEntryImage(downloadItemRaw)/> 
                                         </#if>
                                     </#if>
                                     

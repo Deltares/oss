@@ -47,7 +47,8 @@
                                         <#assign cur_content = child.element("dynamic-content").getData()/>
                                     </#if>
                                     <#if "BlogImage"==child.attributeValue("name")>
-                                        <#assign cur_image = child.element("dynamic-content").getData()/>
+                                        <#assign overviewPhotoSelector = saxReaderUtil.createXPath("dynamic-element[@name='BlogImage']") />
+                                        <#assign cur_image = ddlUtils.getFileEntryImage(overviewPhotoSelector.selectSingleNode(dynamicElement).getStringValue())  />
                                     </#if>
                                     <#if "ExpertName"==child.attributeValue("name")>
                                         <#assign cur_expertName = child.element("dynamic-content").getData()/>

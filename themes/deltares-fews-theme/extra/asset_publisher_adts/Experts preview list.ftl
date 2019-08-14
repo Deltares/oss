@@ -23,7 +23,7 @@
                         <#if child.getName()=="dynamic-element">
                             <#if "ExpertImage"==child.attributeValue("name")>
                                 <#assign overviewPhotoData = child.element("dynamic-content").getData()/>
-                                <#assign cur_expertImage = htmlUtil.escapeHREF(overviewPhotoData) />
+                                <#assign cur_expertImage = ddlUtils.getFileEntryImage(overviewPhotoData) />
                             </#if>
                             <#if "ExpertJobTitle"==child.attributeValue("name")>
                                 <#assign cur_expertJobTitle = child.element("dynamic-content").getData() />
