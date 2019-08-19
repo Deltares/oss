@@ -67,7 +67,7 @@ public class RepositoryLogServiceImpl extends RepositoryLogServiceBaseImpl {
 				aggMethod = "COMMIT";
 				break;
 			default:
-				throw new UnsupportedOperationException("Unsupported requestMethod: " + requestMethod);
+				return;
 
 		}
 		String repository;
