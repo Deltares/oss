@@ -58,7 +58,7 @@ public class RepositoryLogLocalServiceImpl
 
 	public int getRepositoryLogsCount(String screenName, String ipAddress, String repository) {
 
-		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(RepositoryLog.class)
+		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(RepositoryLog.class, "subversion-service")
 				.add(PropertyFactoryUtil.forName(PropConstants.SCREENNAME).eq(screenName))
 				.add(PropertyFactoryUtil.forName(PropConstants.IP_ADDRESS).eq(ipAddress))
 				.add(PropertyFactoryUtil.forName(PropConstants.REPOSITORY).eq(repository))
@@ -77,7 +77,7 @@ public class RepositoryLogLocalServiceImpl
 
 	public int getRepositoryLogsCount(String repository, String action) {
 
-		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(RepositoryLog.class)
+		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(RepositoryLog.class, "subversion-service")
 				.add(PropertyFactoryUtil.forName(PropConstants.REPOSITORY).eq(repository))
 				.add(PropertyFactoryUtil.forName(PropConstants.ACTION).eq(action));
 
@@ -94,7 +94,7 @@ public class RepositoryLogLocalServiceImpl
 
 	public int getRepositorLogsCount(String action) {
 
-		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(RepositoryLog.class)
+		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(RepositoryLog.class, "subversion-service")
 				.add(PropertyFactoryUtil.forName(PropConstants.ACTION).eq(action));
 
 		dynamicQuery.setProjection(ProjectionFactoryUtil.projectionList().add(ProjectionFactoryUtil.count(PropConstants.LOG_ID)));
