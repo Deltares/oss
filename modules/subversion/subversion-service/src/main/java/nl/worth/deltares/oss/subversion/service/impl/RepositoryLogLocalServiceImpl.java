@@ -27,12 +27,10 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import java.util.List;
 
-import com.liferay.portal.kernel.portlet.PortletClassLoaderUtil;
 import nl.worth.deltares.oss.subversion.constants.PropConstants;
 import nl.worth.deltares.oss.subversion.model.Activity;
 import nl.worth.deltares.oss.subversion.model.RepositoryLog;
 import nl.worth.deltares.oss.subversion.service.RepositoryLogLocalServiceUtil;
-import nl.worth.deltares.oss.subversion.service.RepositoryLogServiceUtil;
 import nl.worth.deltares.oss.subversion.service.base.RepositoryLogLocalServiceBaseImpl;
 import nl.worth.deltares.oss.subversion.service.persistence.RepositoryLogUtil;
 
