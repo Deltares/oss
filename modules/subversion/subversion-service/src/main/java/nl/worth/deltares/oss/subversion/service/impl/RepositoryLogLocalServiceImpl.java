@@ -31,6 +31,8 @@ import com.liferay.portal.kernel.portlet.PortletClassLoaderUtil;
 import nl.worth.deltares.oss.subversion.constants.PropConstants;
 import nl.worth.deltares.oss.subversion.model.Activity;
 import nl.worth.deltares.oss.subversion.model.RepositoryLog;
+import nl.worth.deltares.oss.subversion.service.RepositoryLogLocalServiceUtil;
+import nl.worth.deltares.oss.subversion.service.RepositoryLogServiceUtil;
 import nl.worth.deltares.oss.subversion.service.base.RepositoryLogLocalServiceBaseImpl;
 import nl.worth.deltares.oss.subversion.service.persistence.RepositoryLogUtil;
 
@@ -60,8 +62,8 @@ public class RepositoryLogLocalServiceImpl
 
 	public int getRepositoryLogsCount(String screenName, String ipAddress, String repository) {
 
-		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(RepositoryLog.class, "subversion-service", PortletClassLoaderUtil.getClassLoader())
-				.add(PropertyFactoryUtil.forName(PropConstants.SCREENNAME).eq(screenName))
+		DynamicQuery dynamicQuery = RepositoryLogLocalServiceUtil.getService().dynamicQuery();
+		dynamicQuery.add(PropertyFactoryUtil.forName(PropConstants.SCREENNAME).eq(screenName))
 				.add(PropertyFactoryUtil.forName(PropConstants.IP_ADDRESS).eq(ipAddress))
 				.add(PropertyFactoryUtil.forName(PropConstants.REPOSITORY).eq(repository))
 				.add(PropertyFactoryUtil.forName(PropConstants.ACTION).eq(PropConstants.ACTION_CHECKOUT));
@@ -79,8 +81,8 @@ public class RepositoryLogLocalServiceImpl
 
 	public int getRepositoryLogsCount(String repository, String action) {
 
-		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(RepositoryLog.class, "subversion-service", PortletClassLoaderUtil.getClassLoader())
-				.add(PropertyFactoryUtil.forName(PropConstants.REPOSITORY).eq(repository))
+		DynamicQuery dynamicQuery = RepositoryLogLocalServiceUtil.getService().dynamicQuery();
+		dynamicQuery.add(PropertyFactoryUtil.forName(PropConstants.REPOSITORY).eq(repository))
 				.add(PropertyFactoryUtil.forName(PropConstants.ACTION).eq(action));
 
 		int count = 0;
@@ -96,9 +98,8 @@ public class RepositoryLogLocalServiceImpl
 
 	public int getRepositorLogsCount(String action) {
 
-		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(RepositoryLog.class, "subversion-service", PortletClassLoaderUtil.getClassLoader())
-				.add(PropertyFactoryUtil.forName(PropConstants.ACTION).eq(action));
-
+		DynamicQuery dynamicQuery = RepositoryLogLocalServiceUtil.getService().dynamicQuery();
+		dynamicQuery.add(PropertyFactoryUtil.forName(PropConstants.ACTION).eq(action));
 		dynamicQuery.setProjection(ProjectionFactoryUtil.projectionList().add(ProjectionFactoryUtil.count(PropConstants.LOG_ID)));
 
 		int count = 0;
