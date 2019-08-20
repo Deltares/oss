@@ -26,6 +26,8 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import java.util.List;
+
+import com.liferay.portal.kernel.portlet.PortletClassLoaderUtil;
 import nl.worth.deltares.oss.subversion.constants.PropConstants;
 import nl.worth.deltares.oss.subversion.model.Activity;
 import nl.worth.deltares.oss.subversion.model.RepositoryLog;
@@ -58,7 +60,7 @@ public class RepositoryLogLocalServiceImpl
 
 	public int getRepositoryLogsCount(String screenName, String ipAddress, String repository) {
 
-		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(RepositoryLog.class, "subversion-service")
+		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(RepositoryLog.class, "subversion-service", PortletClassLoaderUtil.getClassLoader())
 				.add(PropertyFactoryUtil.forName(PropConstants.SCREENNAME).eq(screenName))
 				.add(PropertyFactoryUtil.forName(PropConstants.IP_ADDRESS).eq(ipAddress))
 				.add(PropertyFactoryUtil.forName(PropConstants.REPOSITORY).eq(repository))
@@ -77,7 +79,7 @@ public class RepositoryLogLocalServiceImpl
 
 	public int getRepositoryLogsCount(String repository, String action) {
 
-		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(RepositoryLog.class, "subversion-service")
+		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(RepositoryLog.class, "subversion-service", PortletClassLoaderUtil.getClassLoader())
 				.add(PropertyFactoryUtil.forName(PropConstants.REPOSITORY).eq(repository))
 				.add(PropertyFactoryUtil.forName(PropConstants.ACTION).eq(action));
 
@@ -94,7 +96,7 @@ public class RepositoryLogLocalServiceImpl
 
 	public int getRepositorLogsCount(String action) {
 
-		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(RepositoryLog.class, "subversion-service")
+		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(RepositoryLog.class, "subversion-service", PortletClassLoaderUtil.getClassLoader())
 				.add(PropertyFactoryUtil.forName(PropConstants.ACTION).eq(action));
 
 		dynamicQuery.setProjection(ProjectionFactoryUtil.projectionList().add(ProjectionFactoryUtil.count(PropConstants.LOG_ID)));
