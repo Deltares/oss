@@ -8,11 +8,12 @@ import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
 import nl.worth.deltares.oss.subversion.model.RepositoryLog;
 import nl.worth.deltares.oss.subversion.service.RepositoryLogLocalServiceUtil;
 import nl.worth.deltares.oss.subversion.service.base.RepositoryLogServiceBaseImpl;
+import nl.worth.deltares.oss.subversion.service.persistence.RepositoryLogUtil;
+
+import java.util.List;
 
 /**
  * The implementation of the repository log remote service.
@@ -31,7 +32,7 @@ public class RepositoryLogServiceImpl extends RepositoryLogServiceBaseImpl {
 
 	private static Log LOG = LogFactoryUtil.getLog(RepositoryLogServiceImpl.class);
 
-	private long companyId = 1;
+	private long companyId = -1;
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -102,14 +103,19 @@ public class RepositoryLogServiceImpl extends RepositoryLogServiceBaseImpl {
 		repositoryLog.setRepository(repository);
 		repositoryLog.setPrimaryKey(logId);
 
-		if (repositoryLog.getAction().equals("COMMIT")) {
-			if (RepositoryLogLocalServiceUtil
-					.getRepositoryLogsCount(repositoryLog.getScreenName(), repositoryLog.getIpAddress(),
-							repositoryLog.getRepository()) == 0) {
-				RepositoryLogLocalServiceUtil.addRepositoryLog(repositoryLog);
-			}
-		} else {
+		if (RepositoryLogLocalServiceUtil
+				.getRepositoryLogsCount(repositoryLog.getScreenName(), repositoryLog.getIpAddress(),
+						repositoryLog.getRepository()) == 0) {
 			RepositoryLogLocalServiceUtil.addRepositoryLog(repositoryLog);
+		}
+
+		cleanupRows();
+	}
+
+	private void cleanupRows() {
+		int logCount = RepositoryLogUtil.countAll();
+		if (logCount > 1000){
+			RepositoryLogUtil.removeAll();
 		}
 	}
 
@@ -117,8 +123,12 @@ public class RepositoryLogServiceImpl extends RepositoryLogServiceBaseImpl {
 
 	    if (companyId > -1) return companyId;
 	    try {
-            Company company = CompanyLocalServiceUtil.getCompanyByMx(PropsUtil.get(PropsKeys.COMPANY_DEFAULT_WEB_ID));
-            companyId = company.getGroup().getGroupId();
+			List<Company> companies = CompanyLocalServiceUtil.getCompanies();
+			if (companies.size() != 1) {
+				LOG.error("Expected only single company but found " + companies.size());
+			}
+			if (companies.size() == 0) return -1;
+            companyId = companies.get(0).getCompanyId();
         } catch (Exception e){
 	        LOG.error("Error getting companyId: " + e.getMessage());
         }
