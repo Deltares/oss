@@ -11,6 +11,7 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import nl.worth.deltares.oss.subversion.model.RepositoryLog;
 import nl.worth.deltares.oss.subversion.service.RepositoryLogLocalServiceUtil;
 import nl.worth.deltares.oss.subversion.service.base.RepositoryLogServiceBaseImpl;
+import nl.worth.deltares.oss.subversion.service.persistence.RepositoryLogUtil;
 
 import java.util.List;
 
@@ -113,12 +114,9 @@ public class RepositoryLogServiceImpl extends RepositoryLogServiceBaseImpl {
 
 	private void cleanupRows() {
 
-		int logCount = RepositoryLogLocalServiceUtil.getRepositoryLogsCount();
+		int logCount = RepositoryLogUtil.countAll();
 		if (logCount > 1000){
-            List<RepositoryLog> repositoryLogs = RepositoryLogLocalServiceUtil.getRepositoryLogs(0, logCount - 10);
-            for (RepositoryLog repositoryLog : repositoryLogs) {
-                RepositoryLogLocalServiceUtil.deleteRepositoryLog(repositoryLog);
-            }
+			RepositoryLogUtil.removeAll();
 		}
 	}
 
