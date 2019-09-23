@@ -85,12 +85,19 @@ public class UserPortraitsPortlet extends MVCPortlet {
 
 		try {
 			//Retrieve only 200 users to search for portraits. Start position is random.
-			int allUserser = userLocalService.getUsersCount();
-			int startIndex = random.nextInt(allUserser - 200);
-			if (startIndex < 0) startIndex = 0;
+			int allUserCount = userLocalService.getUsersCount();
+			int startIndex;
+			int endIndex;
+			if (allUserCount < 200){
+			    startIndex = 0;
+			    endIndex = allUserCount;
+            } else {
+                startIndex = random.nextInt(allUserCount - 200);
+                endIndex = startIndex + 200;
+            }
 
 			List<User> allUsers = userLocalService.getCompanyUsers(themeDisplay.getCompanyId(),
-					startIndex, startIndex + 200);
+					startIndex, endIndex);
 
 			int countUsersWithPortrait = 0;
 			for (User user : allUsers) {
