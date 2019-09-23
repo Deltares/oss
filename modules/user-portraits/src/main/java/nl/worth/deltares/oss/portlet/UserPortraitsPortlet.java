@@ -84,22 +84,24 @@ public class UserPortraitsPortlet extends MVCPortlet {
 		Set<User> usersWithPortrait = new HashSet<>();
 
 		try {
-			//Retrieve only 200 users to search for portraits. Start position is random.
+			//Retrieve only 1000 users to search for portraits. Start position is random.
 			int allUserCount = userLocalService.getUsersCount();
+
+			int countUsersWithPortrait = 0;
+
 			int startIndex;
 			int endIndex;
-			if (allUserCount < 200){
+			if (allUserCount < 1000){
 			    startIndex = 0;
 			    endIndex = allUserCount;
             } else {
-                startIndex = random.nextInt(allUserCount - 200);
-                endIndex = startIndex + 200;
+                startIndex = random.nextInt(allUserCount - 1000);
+                endIndex = startIndex + 1000;
             }
 
 			List<User> allUsers = userLocalService.getCompanyUsers(themeDisplay.getCompanyId(),
 					startIndex, endIndex);
 
-			int countUsersWithPortrait = 0;
 			for (User user : allUsers) {
 				if (countUsersWithPortrait > number) break; // we have enough portraits
 				if (user.getPortraitId() != 0L) {
