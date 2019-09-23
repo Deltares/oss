@@ -1,12 +1,13 @@
 package nl.worth.deltares.oss.portlet;
 
 
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Image;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.SecureRandom;
+import com.liferay.portal.kernel.service.ImageLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -68,7 +69,8 @@ public class UserPortraitsPortlet extends MVCPortlet {
 
 		try {
 			for (User user : usersWithPortraits) {
-				portraitUrlList.add(user.getPortraitURL(themeDisplay));
+				String portraitURL = user.getPortraitURL(themeDisplay);
+				portraitUrlList.add(portraitURL);
 			}
 		} catch (PortalException e) {
 			LOG.error("Error retrieving portrait URLs", e);
@@ -79,33 +81,39 @@ public class UserPortraitsPortlet extends MVCPortlet {
 
 	private Set<User> getRandomUsersWithPortrait(ThemeDisplay themeDisplay ,int number) {
 
-		List<User> users = getAllUsersWithPortrait(themeDisplay);
-		Set<User> randomUsers = new HashSet<>();
-
-		if (users.size() == 0) {
-			return randomUsers;
-		}
-
-		while (randomUsers.size() < number) {
-			User randomUser = users.get(random.nextInt(users.size()));
-
-			randomUsers.add(randomUser);
-		}
-
-		return randomUsers;
-	}
-
-	private List<User> getAllUsersWithPortrait(ThemeDisplay themeDisplay) {
-
-		List<User> usersWithPortrait = new ArrayList<>();
+		Set<User> usersWithPortrait = new HashSet<>();
 
 		try {
-			List<User> allUsers = userLocalService.getCompanyUsers(themeDisplay.getCompanyId(),
-			    QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+			//Retrieve only 200 users to search for portraits. Start position is random.
+			int allUserser = userLocalService.getUsersCount();
+			int startIndex = random.nextInt(allUserser - 200);
+			if (startIndex < 0) startIndex = 0;
 
+			List<User> allUsers = userLocalService.getCompanyUsers(themeDisplay.getCompanyId(),
+					startIndex, startIndex + 200);
+
+			int countUsersWithPortrait = 0;
 			for (User user : allUsers) {
+				if (countUsersWithPortrait > number) break; // we have enough portraits
 				if (user.getPortraitId() != 0L) {
-					usersWithPortrait.add(user);
+
+					try {
+						Image image = imageLocalService.getImage(user.getPortraitId());
+						if (image == null || image.getTextObj() == null){
+							//This portraitId is not valid so remove it.
+							LOG.warn(String.format("Un-setting portrait %d for user %s", user.getPortraitId(),  user.getScreenName()));
+							user.setPortraitId(0);
+							userLocalService.updateUser(user);
+						} else {
+							//Found a portrait so add it.
+							usersWithPortrait.add(user);
+							countUsersWithPortrait++;
+						}
+					} catch (Exception e){
+						LOG.warn(String.format("Un-setting portrait %d for user %s", user.getPortraitId(),  user.getScreenName()));
+						user.setPortraitId(0);
+						userLocalService.updateUser(user);
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -115,10 +123,17 @@ public class UserPortraitsPortlet extends MVCPortlet {
 		return usersWithPortrait;
 	}
 
+
 	private UserLocalService userLocalService;
+	private ImageLocalService imageLocalService;
 
 	@Reference(unbind = "-")
 	private void setUserLocalService(UserLocalService userLocalService) {
 		this.userLocalService = userLocalService;
+	}
+
+	@Reference(unbind = "-")
+	private void setImageLocalService(ImageLocalService imageLocalService) {
+		this.imageLocalService = imageLocalService;
 	}
 }
