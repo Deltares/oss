@@ -109,9 +109,6 @@
     }
     
     .list-group {
-        margin: 0 auto;
-        max-width: 900px;
-        padding: 0;
         
         .autofit-col .sticker {
             background: $color-alpha-blue;;
@@ -562,3 +559,11 @@
         }
     }
 } 
+
+.portlet-message-boards .portlet-content {
+     .thread-container, .list-group {
+        margin: 0 auto;
+        max-width: 900px;
+        padding: 0;
+    }
+}
