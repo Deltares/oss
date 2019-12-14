@@ -35,7 +35,9 @@
 
 <@liferay_util["include"] page=body_top_include />
 
-<@liferay.control_menu />
+<#if is_site_admin>
+	<@liferay.control_menu />
+</#if>
 
 <div id="wrapper">
 	<#include "${full_templates_path}/header.ftl" />

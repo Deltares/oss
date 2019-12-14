@@ -1,10 +1,4 @@
 <div class="nav-menu">
-	<#if !is_signed_in>
-		<a class="user_login__link fs-smallest" data-redirect="${is_login_redirect_required?string}" href="${sign_in_url}" id="sign-in" rel="nofollow">Login</a>
-	<#else>
-		<a class="user_login__link fs-smallest" href="/c/portal/logout">${user_name} -- Logout</a>
-	</#if>
-
 	<#assign preferences = freeMarkerPortletPreferences.getPreferences("portletSetupPortletDecoratorId", "barebone") />
 	<div class="header_search navbar-form" role="search">
 		<@liferay.search default_preferences="${preferences}" />

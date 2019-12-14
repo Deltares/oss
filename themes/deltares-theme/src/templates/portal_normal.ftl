@@ -16,12 +16,16 @@
 
 <@liferay_util["include"] page=body_top_include />
 
-<@liferay.control_menu />
-
-
-
+<#if is_site_admin>
+	<@liferay.control_menu />
+</#if>
 
 <div id="wrapper">
+	<header class="container-fluid-1280" >
+		<div class="pull-right">
+			<#include "${full_templates_path}/user_personal.ftl" />
+		</div>
+	</header>
 	<header class="container-fluid-1280 ${is_home}" id="banner" role="banner">
 		<div class="row">
 			<div class="navbar-header" id="heading">
@@ -46,11 +50,8 @@
 						<span class="icon-bar"></span>
 					</button>
 
-					<div class="pull-right user-personal-bar">
-						<@liferay.user_personal_bar />
-					</div>
 				</#if>
-				
+
 
 			</div>
 
