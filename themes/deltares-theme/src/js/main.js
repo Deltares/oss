@@ -7,12 +7,6 @@ AUI().ready(	'liferay-sign-in-modal', 	function(A) {
     }
 });
 
-// AUI().use('liferay-portlet-url', function(A) {
-//     var actionURL = Liferay.PortletURL.createActionURL();
-//     actionURL.setParameter("javax.portlet.action", "/command/user-avatar");
-//     A.one("#avatar-a").set('href',actionURL.toString());
-// });
-
 $(document).ready(function() {
     $("#all-events").hide();
     $(".view-toggle-featured").text("  back");
@@ -60,4 +54,5 @@ $(document).ready(function() {
             });
 
         });
+
 });

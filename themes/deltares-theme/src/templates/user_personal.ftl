@@ -2,16 +2,24 @@
     <#if is_signed_in>
         <div class="dropbtn">
             <a class="fs-smallest" href="${user_signout_url}" >
-                <#if has_user_avatar_url>
-                    <div class="aspect-ratio-bg-cover user-icon" style="background-image:url(${user_avatar_url})"></div>
+                <#if user_avatar_url?? >
+                    <div id="user-avatar" class="aspect-ratio-bg-cover user-icon" style="background-image:url(${user_avatar_url})" ></div>
                 </#if>
                 <span>${user_name} -- Logout</span>
             </a>
-        </di>
-        <div class="dropdown-content">
-            <a class="fs-smallest" href="${user_account_url}" >My Account</a>
-            <a class="fs-smallest" href="${user_mailing_url}" >My Mailings</a>
         </div>
+        <div class="dropdown-content">
+            <#if user_account_url?? >
+                <a class="fs-smallest" href="${user_account_url}" target="_blank" >My Account</a>
+            </#if>
+            <#if user_mailing_url?? >
+                <a class="fs-smallest" href="${user_mailing_url}" target="_blank" >My Mailings</a>
+            </#if>
+        </div>
+        <#if user_avatar_url??>
+            <img id="user-image"  src="${user_avatar_url}" hidden>
+        </#if>
+
     <#else>
         <div class="dropbtn">
             <a class="fs-smallest" href="${sign_in_url}" >Login</a>

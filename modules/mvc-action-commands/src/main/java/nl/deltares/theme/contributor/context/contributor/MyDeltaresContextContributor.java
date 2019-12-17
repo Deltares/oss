@@ -9,6 +9,7 @@ import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
+import nl.deltares.common.MyDeltaresUtil;
 import org.osgi.service.component.annotations.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,10 +23,10 @@ import java.util.Map;
 	property = {"type=" + com.liferay.portal.kernel.template.TemplateContextContributor.TYPE_THEME},
 	service = com.liferay.portal.kernel.template.TemplateContextContributor.class
 )
-public class TemplateContextContributor
+public class MyDeltaresContextContributor
 	implements com.liferay.portal.kernel.template.TemplateContextContributor {
 
-	private static final Log LOG = LogFactoryUtil.getLog(TemplateContextContributor.class);
+	private static final Log LOG = LogFactoryUtil.getLog(MyDeltaresContextContributor.class);
 
 	@Override
 	public void prepare(
@@ -48,12 +49,15 @@ public class TemplateContextContributor
 		contextObjects.put("is_site_admin", isAdmin);
 
 		contextObjects.put("user_signout_url", themeDisplay.getURLSignOut());
-		contextObjects.put("user_mailing_url", "/web/open-source-software-community-portal/user-mailing-page");
-		contextObjects.put("user_account_url", "/web/open-source-software-community-portal/user-profile-page");
+		try {
+			contextObjects.put("user_mailing_url", MyDeltaresUtil.getMailingPath() );
+			contextObjects.put("user_account_url", MyDeltaresUtil.getAccountPath());
+			contextObjects.put("user_avatar_url", MyDeltaresUtil.getAvatarPath());
+			contextObjects.put("has_user_avatar_url", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-		//todo: Store Keycloak avatar in liferay db and get avatars from liferay
-		contextObjects.put("user_avatar_url", "/web/open-source-software-community-portal/user-avatar-page");
-		contextObjects.put("has_user_avatar_url", true);
 //		try {
 //			String portraitURL = themeDisplay.getUser().getPortraitURL(themeDisplay);
 //			contextObjects.put("has_user_avatar_url", portraitURL != null);
