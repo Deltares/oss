@@ -1,6 +1,0 @@
-Bundle-Name: mvc-action-commands
-Bundle-SymbolicName: nl.deltares.mvc.commands
-Bundle-Version: 1.0.0
-Export-Package: nl.deltares.mvc.commands.constants
-Import-Package: \
-  *
