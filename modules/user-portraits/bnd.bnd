@@ -2,3 +2,4 @@ Bundle-Name: user-portraits
 Bundle-SymbolicName: nl.worth.deltares.oss.portlet.user-portraits
 Bundle-Version: 1.0.0
 Export-Package: nl.worth.deltares.oss.portlet.constants
+Web-ContextPath: /user-portraits

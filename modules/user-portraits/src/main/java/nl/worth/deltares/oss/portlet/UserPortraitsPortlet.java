@@ -6,24 +6,26 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Image;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.security.SecureRandom;
 import com.liferay.portal.kernel.service.ImageLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
+import nl.worth.deltares.oss.portlet.constants.UserPortraitsPortletKeys;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+import javax.portlet.Portlet;
+import javax.portlet.PortletException;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.portlet.PortletException;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
-import nl.worth.deltares.oss.portlet.constants.UserPortraitsPortletKeys;
-import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import javax.portlet.Portlet;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 
 /**
@@ -56,10 +58,36 @@ public class UserPortraitsPortlet extends MVCPortlet {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
 		// TODO: make portrait load amount configurable
+		List<String> randomPortraits = getRandomPortraits(themeDisplay, DEFAULT_PORTRAITS);
+		Principal userPrincipal = request.getUserPrincipal();
+		if (userPrincipal != null) {
+			randomPortraits.add(0, getPortrait(Long.parseLong(userPrincipal.getName()), themeDisplay));
+		};
 		request.setAttribute("userPortraitsList",
-				getRandomPortraits(themeDisplay, DEFAULT_PORTRAITS));
+				randomPortraits);
 
 		super.render(request, response);
+	}
+
+	private String getPortrait(long userId, ThemeDisplay themeDisplay) {
+
+		try {
+			User user = userLocalService.getUser(userId);
+			if (user.getPortraitId() != 0L){
+				Image image = imageLocalService.getImage(user.getPortraitId());
+				if (image == null || image.getTextObj() == null){
+					//This portraitId is not valid so remove it.
+					LOG.warn(String.format("Un-setting portrait %d for user %s", user.getPortraitId(),  user.getScreenName()));
+					user.setPortraitId(0);
+					userLocalService.updateUser(user);
+					return "/o/user-portraits/images/missing_avatar.png";
+				}
+				return user.getPortraitURL(themeDisplay);
+			}
+		} catch (Exception e){
+			LOG.error("Error retrieving portrait URL for user " + userId, e);
+		}
+		return "/o/user-portraits/images/missing_avatar.png";
 	}
 
 	private List<String> getRandomPortraits(ThemeDisplay themeDisplay, int number) {
