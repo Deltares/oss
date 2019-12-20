@@ -9,6 +9,8 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.template.TemplateContextContributor;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.worth.portal.utils.DDLUtils;
@@ -65,8 +67,31 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
         }
         contextObjects.put("is_site_admin", isAdmin);
         contextObjects.put("user_signout_url", themeDisplay.getURLSignOut());
-        contextObjects.put("user_mailing_url", keycloakUtils.getMailingPath());
-        contextObjects.put("user_account_url", keycloakUtils.getAccountPath());
+        contextObjects.put("user_mailing_url", appendWithReferrer(keycloakUtils.getMailingPath(), themeDisplay));
+        contextObjects.put("user_account_url", appendWithReferrer(keycloakUtils.getAccountPath(), themeDisplay));
         contextObjects.put("user_avatar_url", keycloakUtils.getAvatarPath());
     }
+
+    private String appendWithReferrer(String accountPath, ThemeDisplay themeDisplay) {
+
+        int startPath = accountPath.indexOf('?');
+        if (startPath > 0) {
+            if (startPath == accountPath.length() - 1) {
+                accountPath += getReferrerPath(themeDisplay);
+                return accountPath;
+            }
+        }
+        accountPath += '?';
+        accountPath += getReferrerPath(themeDisplay);
+        return accountPath;
+    }
+
+    private String getReferrerPath(ThemeDisplay themeDisplay) {
+        String path = "referrer_uri=" + themeDisplay.getCDNBaseURL() + themeDisplay.getURLCurrent();
+        if (PropsUtil.contains("keycloak.saml.clientid")) {
+            path += "&referrer=" + PropsUtil.get("keycloak.saml.clientid");
+        }
+        return HttpUtil.encodeParameters(path);
+    }
+
 }
