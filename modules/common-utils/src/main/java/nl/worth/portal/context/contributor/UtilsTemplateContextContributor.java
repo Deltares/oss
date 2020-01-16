@@ -10,7 +10,6 @@ import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.template.TemplateContextContributor;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HttpUtil;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.worth.portal.utils.DDLUtils;
@@ -88,9 +87,14 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
 
     private String getReferrerPath(ThemeDisplay themeDisplay) {
         String path = "referrer_uri=" + themeDisplay.getCDNBaseURL() + themeDisplay.getURLCurrent();
-        if (PropsUtil.contains("keycloak.saml.clientid")) {
-            path += "&referrer=" + PropsUtil.get("keycloak.saml.clientid");
+        String descriptiveName;
+        try {
+            descriptiveName = themeDisplay.getScopeGroup().getDescriptiveName();
+        } catch (PortalException e) {
+            descriptiveName = "OSS Community Portal";
         }
+        path += "&referrer=" + descriptiveName;
+
         return HttpUtil.encodeParameters(path);
     }
 

@@ -45,26 +45,31 @@ public class KeycloakUtilsImpl implements KeycloakUtils {
 
     public String getAccountPath(){
         String basePath = getKeycloakBasePath();
+        if (basePath == null) return null;
         return basePath + KEYCLOAK_ACCOUNT_PATH;
     }
 
     public String getMailingPath(){
         String basePath = getKeycloakBasePath();
+        if (basePath == null) return null;
         return basePath + KEYCLOAK_MAILING_PATH;
     }
 
     public String getAvatarPath(){
         String basePath = getKeycloakBasePath();
+        if (basePath == null) return null;
         return basePath + KEYCLOAK_AVATAR_PATH;
     }
 
     public String getAdminAvatarPath(){
         String basePath = getKeycloakBasePath();
+        if (basePath == null) return null;
         return basePath + KEYCLOAK_ADMIN_AVATAR_PATH;
     }
 
     @Override
     public byte[] getUserAvatar(String email) {
+        if (!validate()) return null;
         URL url;
         try {
             url = new URL(getAdminAvatarPath() + "?email=" + email);
@@ -84,6 +89,12 @@ public class KeycloakUtilsImpl implements KeycloakUtils {
             LOG.warn(String.format("Error getting user avatar for %s: %s", email, e.getMessage()));
         }
         return null;
+    }
+
+    private boolean validate() {
+        return getKeycloakBasePath() != null &&
+                getOpenIdClientId() != null &&
+                getOpenIdClientSecret() != null;
     }
 
     private String getTokenPath(){
@@ -129,21 +140,24 @@ public class KeycloakUtilsImpl implements KeycloakUtils {
 
     private static String getOpenIdClientId(){
         if (!PropsUtil.contains(KEYCLOAK_CLIENTID_KEY)) {
-            throw new IllegalStateException(String.format("Missing property %s in portal-ext.properties file", KEYCLOAK_CLIENTID_KEY));
+            LOG.info(String.format("Missing property %s in portal-ext.properties file", KEYCLOAK_CLIENTID_KEY));
+            return null;
         }
         return PropsUtil.get(KEYCLOAK_CLIENTID_KEY);
     }
 
     private static String getOpenIdClientSecret(){
         if (!PropsUtil.contains(KEYCLOAK_CLIENTSECRET_KEY)) {
-            throw new IllegalStateException(String.format("Missing property %s in portal-ext.properties file", KEYCLOAK_CLIENTSECRET_KEY));
+            LOG.info(String.format("Missing property %s in portal-ext.properties file", KEYCLOAK_CLIENTSECRET_KEY));
+            return null;
         }
         return PropsUtil.get(KEYCLOAK_CLIENTSECRET_KEY);
     }
 
     private static String getKeycloakBasePath() {
         if (!PropsUtil.contains(KEYCLOAK_BASEURL_KEY)) {
-            throw new IllegalStateException(String.format("Missing property %s in portal-ext.properties file", KEYCLOAK_BASEURL_KEY));
+            LOG.info(String.format("Missing property %s in portal-ext.properties file", KEYCLOAK_BASEURL_KEY));
+            return null;
         }
         String basePath =  PropsUtil.get(KEYCLOAK_BASEURL_KEY);
 
