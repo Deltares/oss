@@ -15,6 +15,9 @@
             <#if user_mailing_url?? >
                 <a class="fs-smallest" href="${user_mailing_url}"  >My Mailings</a>
             </#if>
+            <hr>
+            <a class="fs-smallest" href="${user_signout_url}"  >Logout</a>
+
         </div>
         <#if user_avatar_url??>
             <img id="user-image"  src="${user_avatar_url}" hidden>

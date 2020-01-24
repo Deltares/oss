@@ -27,7 +27,15 @@
 .dropdown-content a {
     display: inline-block;
     text-transform: uppercase;
-    padding: 10px 10px;
+    padding: 5px 5px;
+    width: 100%;
+    text-align: right;
+}
+
+/* Links inside the dropdown */
+.dropdown-content hr {
+    margin-top: 0rem;
+    margin-bottom: 0rem;
     width: 100%;
     text-align: right;
 }
