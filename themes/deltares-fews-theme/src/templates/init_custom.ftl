@@ -22,3 +22,7 @@ This file allows you to override and define new FreeMarker variables.
     <#assign footerWCArticle = journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroupId(), footerWCArticleId) >
     <#assign footerWCContent = journalArticleLocalService.getArticleContent(footerWCArticle, footerWCArticle.getDDMTemplateKey(), "VIEW", locale, themeDisplay) />
 </#if>
+
+<#if !is_site_admin >
+    <#assign css_class = stringUtil.replace(css_class, "open", "closed") />
+</#if>
