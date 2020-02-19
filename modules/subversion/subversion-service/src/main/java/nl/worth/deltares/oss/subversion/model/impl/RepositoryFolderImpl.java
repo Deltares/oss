@@ -16,10 +16,10 @@ package nl.worth.deltares.oss.subversion.model.impl;
 
 
 import aQute.bnd.annotation.ProviderType;
-import java.util.List;
-
 import nl.worth.deltares.oss.subversion.model.RepositoryFolder;
 import nl.worth.deltares.oss.subversion.service.RepositoryFolderLocalServiceUtil;
+
+import java.util.List;
 
 
 /**
@@ -45,6 +45,6 @@ public class RepositoryFolderImpl extends RepositoryFolderBaseImpl {
 	private static final long serialVersionUID = -6125541187749420969L;
 
 	public List<RepositoryFolder> getChildren() {
-		return RepositoryFolderLocalServiceUtil.getRepositoryFolders(getRepositoryId(), getName());
+		return RepositoryFolderLocalServiceUtil.getRepositoryFolders(getRepositoryId());
 	}
 }

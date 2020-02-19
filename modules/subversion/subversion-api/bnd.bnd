@@ -22,5 +22,4 @@ Import-Package: \
   com.liferay.counter.kernel.service,\
   com.liferay.portal.kernel.*,\
   javax.naming.*,\
-  javax.sql.*,\
   *

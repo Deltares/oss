@@ -15,18 +15,16 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.ModelListener;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.service.ServiceContextFactory;
-import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import java.util.Map;
 import nl.worth.fews.configuration.JournalArticleManagementConfiguration;
 import nl.worth.fews.constants.JournalArticleManagementConstants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
+
+import java.util.Map;
 
 
 /**
@@ -72,7 +70,7 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
       try {
         ServiceContext serviceContext = new ServiceContext();
         journalFolder = _journalFolderLocalService
-            .addFolder(userId, groupId, 0, name, StringPool.BLANK,
+            .addFolder(userId, groupId, 0, name, "",
                 serviceContext);
       } catch (PortalException e) {
         LOGGER.error(e.getLocalizedMessage(), e);
