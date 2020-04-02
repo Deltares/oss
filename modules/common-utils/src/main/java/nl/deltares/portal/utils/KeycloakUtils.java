@@ -1,13 +1,21 @@
 package nl.deltares.portal.utils;
 
+import java.io.IOException;
+import java.util.Map;
+
 public interface KeycloakUtils {
-    String getMailingPath();
+
+    boolean isActive();
+
+    String getUserMailingPath();
 
     String getAccountPath();
 
-    String getAvatarPath();
-
     String getAdminAvatarPath();
 
-    byte[] getUserAvatar(String email);
+    byte[] getUserAvatar(String email) throws IOException;
+
+    int updateUserAttributes(String email, Map<String, Object> attributes) throws IOException;
+
+    Map<String, Object> getUserAttributes(String email) throws IOException;
 }

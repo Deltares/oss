@@ -1,4 +1,35 @@
-<%--
+<%@ page import="com.liferay.document.library.kernel.exception.FileSizeException" %>
+<%@ page import="com.liferay.document.library.kernel.util.DLValidatorUtil" %>
+<%@ page import="com.liferay.dynamic.data.mapping.kernel.DDMStructure" %>
+<%@ page import="com.liferay.dynamic.data.mapping.kernel.DDMTemplate" %>
+<%@ page import="com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil" %>
+<%@ page import="com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil" %>
+<%@ page import="com.liferay.dynamic.data.mapping.service.DDMTemplateServiceUtil" %>
+<%@ page import="com.liferay.exportimport.kernel.exception.ExportImportContentValidationException" %>
+<%@ page import="com.liferay.journal.model.JournalArticle" %>
+<%@ page import="com.liferay.journal.model.JournalArticleConstants" %>
+<%@ page import="com.liferay.journal.model.JournalFolder" %>
+<%@ page import="com.liferay.journal.model.JournalFolderConstants" %>
+<%@ page import="com.liferay.journal.service.JournalFolderLocalServiceUtil" %>
+<%@ page import="com.liferay.journal.web.internal.portlet.JournalPortlet" %>
+<%@ page import="com.liferay.journal.web.internal.security.permission.resource.JournalArticlePermission" %>
+<%@ page import="com.liferay.journal.web.internal.security.permission.resource.JournalFolderPermission" %>
+<%@ page import="com.liferay.journal.web.util.JournalUtil" %>
+<%@ page import="com.liferay.portal.kernel.bean.BeanParamUtil" %>
+<%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
+<%@ page import="com.liferay.portal.kernel.model.Role" %>
+<%@ page import="com.liferay.portal.kernel.model.RoleConstants" %>
+<%@ page import="com.liferay.portal.kernel.model.UserGroupGroupRole" %>
+<%@ page import="com.liferay.portal.kernel.portlet.LiferayWindowState" %>
+<%@ page import="com.liferay.portal.kernel.security.permission.ActionKeys" %>
+<%@ page import="com.liferay.portal.kernel.service.RoleLocalServiceUtil" %>
+<%@ page import="com.liferay.portal.kernel.service.UserGroupGroupRoleLocalServiceUtil" %>
+<%@ page import="com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalServiceUtil" %>
+<%@ page import="com.liferay.portal.kernel.servlet.taglib.ui.FormNavigatorConstants" %>
+<%@ page import="com.liferay.portal.kernel.util.*" %>
+<%@ page import="com.liferay.portal.kernel.workflow.WorkflowConstants" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Objects" %><%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -15,7 +46,6 @@
 --%>
 
 <%@ include file="/init.jsp" %>
-<%@ page import="com.liferay.portal.kernel.util.*" %>
 
 <%
     String redirect = ParamUtil.getString(request, "redirect");
@@ -129,7 +159,7 @@
             portletDisplay.setURLBack(backURL.toString());
         }
 
-        String title = StringPool.BLANK;
+        String title;
 
         if (classNameId > JournalArticleConstants.CLASSNAME_ID_DEFAULT) {
             title = LanguageUtil.get(request, "structure-default-values");

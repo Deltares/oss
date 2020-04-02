@@ -47,14 +47,16 @@ public class PostLoginAction implements LifecycleAction {
 			LOG.warn("Could not fine user for principal " + userPrincipal.getName());
 			return;
 		}
-		LOG.info("Updating avatar for user " + user.getFullName());
 
 		try {
-			byte[] bytes = keycloakUtils.getUserAvatar(user.getEmailAddress());
-			if (bytes != null && bytes.length > 0) {
-				userLocalService.updatePortrait(user.getUserId(), bytes);
-			} else {
-				userLocalService.deletePortrait(user.getUserId());
+			if (keycloakUtils.isActive()){
+				LOG.info("Updating avatar for user " + user.getFullName());
+				byte[] bytes = keycloakUtils.getUserAvatar(user.getEmailAddress());
+				if (bytes != null && bytes.length > 0) {
+					userLocalService.updatePortrait(user.getUserId(), bytes);
+				} else {
+					userLocalService.deletePortrait(user.getUserId());
+				}
 			}
 		} catch (Exception e) {
 			LOG.warn(String.format("Error updating portrait %d for user %s", user.getPortraitId(), user.getScreenName()), e);
