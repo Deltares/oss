@@ -30,7 +30,7 @@ public class KeycloakUtilsImpl implements KeycloakUtils {
     private static final String CACHED_TOKEN_KEY = "keycloak.token";
     private static final String CACHED_EXPIRY_KEY = "keycloak.expirytime";
 
-    private static final String KEYCLOAK_USER_MAILING_PATH = "user-mailings";
+    private static final String KEYCLOAK_USER_MAILING_PATH = "user-mailings/mailings-page";
     private static final String KEYCLOAK_ACCOUNT_PATH = "account";
     private static final String KEYCLOAK_BASEURL_KEY = "keycloak.baseurl";
     private static final String KEYCLOAK_BASEAPIURL_KEY = "keycloak.baseapiurl";
