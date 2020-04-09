@@ -1,0 +1,4 @@
+Bundle-Name: rest
+Bundle-SymbolicName: nl.deltares.services.rest
+Bundle-Version: 1.0.0
+Liferay-Configuration-Path: /configuration
