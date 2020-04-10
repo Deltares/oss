@@ -5,6 +5,7 @@ import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.services.rest.exception.JsonProcessingExceptionMapper;
 import nl.deltares.services.rest.exception.LiferayRestExceptionMapper;
 import nl.deltares.services.rest.exception.PortalExceptionMapper;
+import nl.deltares.services.rest.fullcalendar.DsdFullcalendarService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
@@ -54,6 +55,8 @@ public class DsdRestPublicServices extends Application {
     public Set getSingletons() {
         Set singletons = new HashSet();
         singletons.add(this);
+        //Services for FullCalendar
+        singletons.add(new DsdFullcalendarService(journalArticleLocalService));
         return singletons;
     }
 

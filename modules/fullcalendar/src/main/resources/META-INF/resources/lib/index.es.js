@@ -7,7 +7,7 @@ import resourceTimeGrid from '@fullcalendar/resource-timegrid'
 
 function loadStartDate(props) {
 	$.ajax({
-		url: props.baseUrl + "/startTime/" + props.eventId,
+		url: props.baseUrl + "/startTime",
 		type: "GET",
 		success: function(json) {
 			return  json;
@@ -42,7 +42,7 @@ class Calendar extends React.Component {
 			eventLimit : false,
 			startDate : start,
 			resources : {
-                url:  this.props.baseUrl + '/resources/' + this.props.eventId,
+                url:  this.props.baseUrl + '/resources',
                 method: 'GET',
 				// data: {
 				// 	username: this.props.authUser,
@@ -50,7 +50,7 @@ class Calendar extends React.Component {
 				// }
             },
 			events : {
-                url: this.props.baseUrl + '/events/' + this.props.eventId,
+                url: this.props.baseUrl + '/events',
                 method: 'GET',
 				// data: {
 				// 	username: this.props.authUser,
@@ -70,7 +70,6 @@ class Calendar extends React.Component {
 		newEvent.start = args.start;
 		newEvent.end = args.end;
 		newEvent.resourceId = args.resource.id;
-
 
 		//todo
 		saveEvent(newEvent);
@@ -121,6 +120,6 @@ class Calendar extends React.Component {
 	}
 }
 
-export default function (elementId, canEdit, eventId, baseUrl) {
-	ReactDOM.render( <Calendar editable={canEdit} selectable={canEdit} eventId={eventId} baseUrl={baseUrl}/>, document.getElementById(elementId))
+export default function (elementId, canEdit, baseUrl) {
+	ReactDOM.render( <Calendar class="fc" editable={canEdit} selectable={canEdit} baseUrl={baseUrl} />, document.getElementById(elementId))
 }

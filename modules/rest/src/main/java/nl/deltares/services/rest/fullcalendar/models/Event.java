@@ -5,9 +5,18 @@ import java.io.Serializable;
 public class Event implements Serializable {
     private String resourceId;
     private String id;
-    private String start;
-    private String end;
+    private long start;
+    private long end;
     private String url;
+    private String title;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public void setResourceId(String resourceId) {
         this.resourceId = resourceId;
@@ -25,19 +34,19 @@ public class Event implements Serializable {
         return id;
     }
 
-    public void setStart(String start) {
+    public void setStart(long start) {
         this.start = start;
     }
 
-    public String getStart() {
+    public long getStart() {
         return start;
     }
 
-    public void setEnd(String end) {
+    public void setEnd(long end) {
         this.end = end;
     }
 
-    public String getEnd() {
+    public long getEnd() {
         return end;
     }
 

@@ -26,9 +26,11 @@ import java.util.Map;
         configurationPid = "nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration",
         immediate = true,
         property = {
-                "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.header-portlet-css=/css/index.css",
+                "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.instanceable=true",
+                "javax.portlet.display-name=FullCalendar Portlet",
+                "javax.portlet.init-param.config-template=/configuration.jsp",
                 "javax.portlet.init-param.template-path=/",
                 "javax.portlet.init-param.view-template=/view.jsp",
                 "javax.portlet.name=" + FullCalendarPortletKeys.FullCalendar,
@@ -40,45 +42,35 @@ import java.util.Map;
 )
 public class FullCalendarPortlet extends MVCPortlet {
 
-    private volatile FullCalendarConfiguration _configuration;
-    /*
-     *
-     * (1)If a method is annoted with @Activate then the method will be called at the time of activation of the component
-     *  so that we can perform initialization task
-     *
-     * (2) This class is annoted with @Component where we have used configurationPid with id com.proliferay.configuration.DemoConfiguration
-     * So if we modify any configuration then this method will be called.
-     */
-
-    @Activate
-    @Modified
-    protected void activate(Map<Object, Object> properties) {
-        _configuration = ConfigurableUtil.createConfigurable(FullCalendarConfiguration.class, properties);
-    }
-
     @Override
     public void doView(
             RenderRequest renderRequest, RenderResponse renderResponse)
             throws IOException, PortletException {
 
-        renderRequest.setAttribute(FullCalendarConfiguration.class.getName(), _configuration);
+        renderRequest.setAttribute(
+                FullCalendarConfiguration.class.getName(),
+                _configuration);
+
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
-
-//todo
-//			Now we user a rest service to get the resources and events. this requires users to loging.
-//			to avoid this we can pass csv and then parse the content in fullcallender module.
-//			I do not know why but it seems impossible to pass JSON. there are problems with single and double quotes.
-
         PermissionChecker permissionChecker = themeDisplay.getPermissionChecker();
         renderRequest.setAttribute(
                 "mainRequire",
                 _npmResolver.resolveModuleName("fullcalendar") + " as main");
+
         renderRequest.setAttribute("hasEditPermission", permissionChecker.isGroupAdmin(themeDisplay.getSiteGroupId()));
 
         super.doView(renderRequest, renderResponse);
     }
 
+    @Activate
+    @Modified
+    protected void activate(Map<Object, Object> properties) {
+        _configuration = ConfigurableUtil.createConfigurable(
+                FullCalendarConfiguration.class, properties);
+    }
+
     @Reference
     private NPMResolver _npmResolver;
 
+    private volatile FullCalendarConfiguration _configuration;
 }

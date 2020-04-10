@@ -1,6 +1,4 @@
 Bundle-Name: fullcalendar
 Bundle-SymbolicName: nl.deltares.npm.react.portlet.fullcalendar
 Bundle-Version: 1.0.0
-Export-Package: nl.deltares.npm.react.portlet.fullcalendar.constants
-Web-ContextPath: /fullcalendar
--metatype: *
+-sources: true

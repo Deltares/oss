@@ -1,40 +1,59 @@
-<%@ include file="/init.jsp" %>
-<%@ page import="com.liferay.portal.kernel.util.Constants" %>
-<%@ taglib prefix="aui" uri="http://liferay.com/tld/aui" %>
-<%@ taglib prefix="liferay-portlet" uri="http://liferay.com/tld/portlet" %>
 <%--
-  Created by IntelliJ IDEA.
-  User: rooij_e
-  Date: 22-3-2020
-  Time: 07:30
-  To change this template use File | Settings | File Templates.
+/**
+ * Copyright 2000-present Liferay, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 --%>
-<%--<%@ include file="/init.jsp" %>--%>
-<liferay-portlet:actionURL portletConfiguration="<%=true%>"
-                           var="configurationActionURL" />
 
-<liferay-portlet:renderURL portletConfiguration="<%=true%>"
-                           var="configurationRenderURL" />
+<%@ page import="com.liferay.portal.kernel.util.Constants" %>
 
-<aui:form action="<%=configurationActionURL%>" method="post" name="fm">
-    <aui:input name="<%=Constants.CMD%>" type="hidden"
-               value="<%=Constants.UPDATE%>" />
+<%@ include file="/init.jsp" %>
 
-    <aui:input name="redirect" type="hidden"
-               value="<%=configurationRenderURL%>" />
+<liferay-portlet:actionURL
+        portletConfiguration="<%= true %>"
+        var="configurationActionURL"
+/>
+
+<liferay-portlet:renderURL
+        portletConfiguration="<%= true %>"
+        var="configurationRenderURL"
+/>
+
+<aui:form action="<%= configurationActionURL %>" method="post" name="fm">
+    <aui:input
+            name="<%= Constants.CMD %>"
+            type="hidden"
+            value="<%= Constants.UPDATE %>"
+    />
+
+    <aui:input
+            name="redirect"
+            type="hidden"
+            value="<%= configurationRenderURL %>"
+    />
 
     <aui:fieldset>
-        <aui:input type="text" name="eventId" label="Event ID" value="<%=eventId%>"/>
+        <aui:input
+                label="Calender Base URL"
+                name="baseUrl"
+                value="<%= baseUrl %>"
+                >
 
-        <aui:input type="text" name="baseUrl" label="Path to rest event services URL" value="<%=baseUrl%>" />
-
-<%--        <aui:input type="text" name="authUser" label="Authentication User name" />--%>
-
-<%--        <aui:input type="password" name="authPassword" label="Authentication Password" />--%>
-
+        </aui:input>
     </aui:fieldset>
 
     <aui:button-row>
-        <aui:button type="submit" />
+        <aui:button type="submit"></aui:button>
     </aui:button-row>
 </aui:form>
