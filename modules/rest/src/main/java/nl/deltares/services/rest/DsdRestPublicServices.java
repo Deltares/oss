@@ -5,8 +5,6 @@ import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.services.rest.exception.JsonProcessingExceptionMapper;
 import nl.deltares.services.rest.exception.LiferayRestExceptionMapper;
 import nl.deltares.services.rest.exception.PortalExceptionMapper;
-import nl.deltares.services.rest.fullcalendar.DsdFullcalendarService;
-import nl.deltares.services.rest.registration.UserInformationService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
@@ -23,13 +21,17 @@ import java.util.Set;
  */
 @Component(
         property = {
-			JaxrsWhiteboardConstants.JAX_RS_APPLICATION_BASE + "=/dsd",
-			JaxrsWhiteboardConstants.JAX_RS_NAME + "=DSD.Rest"
+
+			JaxrsWhiteboardConstants.JAX_RS_APPLICATION_BASE + "=/public/dsd/",
+			JaxrsWhiteboardConstants.JAX_RS_NAME + "=DSD.Rest.Public",
+				"oauth2.scopechecker.type=none",
+				"auth.verifier.guest.allowed=true",
+				"auth.verifier.auth.verifier.PortalSessionAuthVerifier.urls.includes=/*"
         },
         service = Application.class
 )
 
-public class DsdRestServices extends Application {
+public class DsdRestPublicServices extends Application {
 
     @Reference
     JournalArticleLocalService journalArticleLocalService;
@@ -52,16 +54,13 @@ public class DsdRestServices extends Application {
     public Set getSingletons() {
         Set singletons = new HashSet();
         singletons.add(this);
-        //Services for FullCalendar
-        singletons.add(new DsdFullcalendarService(journalArticleLocalService));
-        // Services for registration
-        singletons.add(new UserInformationService(keycloakUtils));
         return singletons;
     }
 
     @GET
     @Path("/")
     public Response test(){
-        return Response.ok().entity("DSD.Rest service is up and running").build();
+        return Response.ok().entity("DSD.Rest.Public service is up and running").build();
     }
+
 }
