@@ -74,7 +74,7 @@ public class KeycloakUtilsImpl implements KeycloakUtils {
     }
 
     @Override
-    public Map<String, Object> getUserAttributes(String email) throws IOException {
+    public Map<String, String> getUserAttributes(String email) throws IOException {
         HttpURLConnection urlConnection = getConnection(getAdminUserAttributesPath() + "?email=" + email, "GET", getAccessToken(), null);
         checkResponse(urlConnection);
         String response = readAll(urlConnection.getInputStream());
@@ -84,16 +84,16 @@ public class KeycloakUtilsImpl implements KeycloakUtils {
         } catch (JSONException e) {
             throw new IOException("Error parsing json response: " + e.getMessage());
         }
-        HashMap<String, Object> attributesMap = new HashMap<>();
+        HashMap<String, String> attributesMap = new HashMap<>();
         for (Iterator<String> it = jsonAttributes.keys(); it.hasNext(); ) {
             String key = it.next();
-            attributesMap.put(key, jsonAttributes.get(key));
+            attributesMap.put(key, (String) jsonAttributes.get(key));
         }
         return attributesMap;
     }
 
     @Override
-    public int updateUserAttributes(String email, Map<String, Object> attributes) throws IOException {
+    public int updateUserAttributes(String email, Map<String, String> attributes) throws IOException {
         HashMap<String, String> map = new HashMap<>();
         map.put("Content-Type", "application/json");
         HttpURLConnection urlConnection = getConnection(getAdminUserAttributesPath(), "PUT", getAccessToken(), map);
@@ -102,7 +102,7 @@ public class KeycloakUtilsImpl implements KeycloakUtils {
         jsonBody.put("email", email);
         JSONObject jsonAtts = JSONFactoryUtil.createJSONObject();
         jsonBody.put("attributes", jsonAtts);
-        for (Map.Entry<String, Object> keyValue : attributes.entrySet()) {
+        for (Map.Entry<String, String> keyValue : attributes.entrySet()) {
             jsonAtts.put(keyValue.getKey(), keyValue.getValue());
         }
         try (OutputStreamWriter writer = new OutputStreamWriter(urlConnection.getOutputStream())) {
