@@ -1,0 +1,7 @@
+Bundle-Name: dsd-forms
+Bundle-SymbolicName: nl.deltares.dsd.forms
+Bundle-Version: 1.0.0
+Export-Package: nl.deltares.dsd.forms.constants
+Import-Package: \
+    nl.deltares.portal.utils.*, \
+    *

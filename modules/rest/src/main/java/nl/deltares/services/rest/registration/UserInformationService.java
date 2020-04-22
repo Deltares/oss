@@ -67,13 +67,11 @@ public class UserInformationService {
     }
 
     private void loadUserAttributes(User user, UserDetails userDetails) throws LiferayRestException {
-
-        userDetails.getAttributes().put("test", "Hello");
         if (!keycloakUtils.isActive()) return;
         try {
             userDetails.getAttributes().putAll(keycloakUtils.getUserAttributes(user.getEmailAddress()));
         } catch (IOException e) {
-            String msg = String.format("Error retrieving user attributes for user %s: %s", user.getEmailAddresses(), e.getMessage());
+            String msg = String.format("Error retrieving user attributes for user %s: %s", user.getEmailAddress(), e.getMessage());
             LOG.warn(msg);
             throw new LiferayRestException(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), msg);
         }

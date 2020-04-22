@@ -5,6 +5,9 @@ import java.util.Map;
 
 public interface KeycloakUtils {
 
+    enum ATTRIBUTES {org_address, org_city, org_country, org_name, org_postal, org_preferred_payment, org_vat, pay_reference}
+
+
     boolean isActive();
 
     String getUserMailingPath();

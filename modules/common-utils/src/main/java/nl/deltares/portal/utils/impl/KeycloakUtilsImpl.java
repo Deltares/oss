@@ -2,6 +2,7 @@ package nl.deltares.portal.utils.impl;
 
 import com.liferay.portal.kernel.cache.MultiVMPoolUtil;
 import com.liferay.portal.kernel.cache.PortalCache;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -32,16 +33,25 @@ public class KeycloakUtilsImpl implements KeycloakUtils {
 
     private static final String KEYCLOAK_USER_MAILING_PATH = "user-mailings/mailings-page";
     private static final String KEYCLOAK_ACCOUNT_PATH = "account";
+    private static final String KEYCLOAK_USERS_PATH = "users";
     private static final String KEYCLOAK_BASEURL_KEY = "keycloak.baseurl";
-    private static final String KEYCLOAK_BASEAPIURL_KEY = "keycloak.baseapiurl";
     private static final String KEYCLOAK_AVATAR_PATH = "avatar-provider";
-    private static final String KEYCLOAK_USER_ATTRIBUTES_PATH = "user-attributes";
     private static final String KEYCLOAK_ADMIN_AVATAR_PATH = KEYCLOAK_AVATAR_PATH + "/admin";
 
     private static final String KEYCLOAK_OPENID_TOKEN_PATH = "protocol/openid-connect/token";
     private static final String KEYCLOAK_CLIENTID_KEY = "keycloak.clientid";
     private static final String KEYCLOAK_CLIENTSECRET_KEY = "keycloak.clientsecret";
 
+    private static String basePath;
+    private String baseApiPath;
+    private boolean cacheToken;
+
+    public KeycloakUtilsImpl() {
+
+        String cache = PropsUtil.get("cacheToken");
+        cacheToken = cache == null || Boolean.parseBoolean(cache);
+
+    }
 
     @Override
     public boolean isActive() {
@@ -75,69 +85,95 @@ public class KeycloakUtilsImpl implements KeycloakUtils {
 
     @Override
     public Map<String, String> getUserAttributes(String email) throws IOException {
-        HttpURLConnection urlConnection = getConnection(getAdminUserAttributesPath() + "?email=" + email, "GET", getAccessToken(), null);
+        HttpURLConnection urlConnection = getConnection(getKeycloakUsersPath() + "?email=" + email, "GET", getAccessToken(), null);
         checkResponse(urlConnection);
+        JSONObject jsonUser = getJsonObject(urlConnection);
+        if (jsonUser == null) return null;
+        return toAttributes(jsonUser);
+    }
+
+    private JSONObject getJsonObject(HttpURLConnection urlConnection) throws IOException {
         String response = readAll(urlConnection.getInputStream());
-        JSONObject jsonAttributes;
+        JSONArray jsonUsers;
         try {
-            jsonAttributes = JSONFactoryUtil.createJSONObject(response);
+            jsonUsers = JSONFactoryUtil.createJSONArray(response);
         } catch (JSONException e) {
             throw new IOException("Error parsing json response: " + e.getMessage());
         }
-        HashMap<String, String> attributesMap = new HashMap<>();
-        for (Iterator<String> it = jsonAttributes.keys(); it.hasNext(); ) {
-            String key = it.next();
-            attributesMap.put(key, (String) jsonAttributes.get(key));
+        if (jsonUsers.length() == 0) return null;
+        return jsonUsers.getJSONObject(0);
+    }
+
+    private HashMap<String, String> toAttributes(JSONObject jsonUser) {
+
+        JSONObject jsonAttributes = jsonUser.getJSONObject("attributes");
+
+        HashMap<String, String> attributes = new HashMap<>();
+        for (ATTRIBUTES attributeKey : ATTRIBUTES.values()) {
+            JSONArray attributeObject = jsonAttributes.getJSONArray(attributeKey.name());
+            if (attributeObject == null || attributeObject.length() == 0) continue;
+            String attributeValue = attributeObject.getString(0);
+            attributes.put(attributeKey.name(), attributeValue);
         }
-        return attributesMap;
+        return attributes;
+
     }
 
     @Override
     public int updateUserAttributes(String email, Map<String, String> attributes) throws IOException {
+        //get user representation
+        HttpURLConnection urlConnection = getConnection(getKeycloakUsersPath() + "?email=" + email, "GET", getAccessToken(), null);
+        checkResponse(urlConnection);
+        JSONObject jsonUser = getJsonObject(urlConnection);
+        if (jsonUser == null) return -1;
+        fromAttributes(jsonUser, attributes);
+
+        //write updated user representation
         HashMap<String, String> map = new HashMap<>();
         map.put("Content-Type", "application/json");
-        HttpURLConnection urlConnection = getConnection(getAdminUserAttributesPath(), "PUT", getAccessToken(), map);
-
-        JSONObject jsonBody = JSONFactoryUtil.createJSONObject();
-        jsonBody.put("email", email);
-        JSONObject jsonAtts = JSONFactoryUtil.createJSONObject();
-        jsonBody.put("attributes", jsonAtts);
-        for (Map.Entry<String, String> keyValue : attributes.entrySet()) {
-            jsonAtts.put(keyValue.getKey(), keyValue.getValue());
-        }
+        urlConnection = getConnection(getKeycloakUsersPath() + '/' + jsonUser.getString("id"), "PUT", getAccessToken(), map);
         try (OutputStreamWriter writer = new OutputStreamWriter(urlConnection.getOutputStream())) {
-            jsonBody.write(writer);
+            jsonUser.write(writer);
         } catch (JSONException e) {
             LOG.error(String.format("Error updating user attributes for user %s: %s", email, e.getMessage()), e);
         }
         return checkResponse(urlConnection);
     }
 
-    private String getAdminUserAttributesPath() {
-        String basePath = getKeycloakBaseApiPath();
-        return basePath + KEYCLOAK_USER_ATTRIBUTES_PATH;
+    private void fromAttributes(JSONObject jsonUser, Map<String, String> attributes) {
+        JSONObject jsonAttributes = jsonUser.getJSONObject("attributes");
+        for (String key : attributes.keySet()) {
+            String value = attributes.get(key);
+            jsonAttributes.put(key, JSONFactoryUtil.createJSONArray().put(value));
+        }
     }
 
-    private static String getKeycloakBasePath() {
+    private String getKeycloakUsersPath() {
+        String basePath = getKeycloakBaseApiPath();
+        return basePath + KEYCLOAK_USERS_PATH;
+    }
+
+    private String getKeycloakBasePath() {
+        if (basePath != null) return basePath;
         if (!PropsUtil.contains(KEYCLOAK_BASEURL_KEY)) {
             LOG.info(String.format("Missing property %s in portal-ext.properties file", KEYCLOAK_BASEURL_KEY));
             return null;
         }
-        String basePath =  PropsUtil.get(KEYCLOAK_BASEURL_KEY);
+        basePath =  PropsUtil.get(KEYCLOAK_BASEURL_KEY);
 
         if(basePath.endsWith("/")){
             return basePath;
         }
-        return basePath + '/';
+        basePath += '/';
+        return basePath;
     }
 
     private String getKeycloakBaseApiPath() {
-        String basePath =PropsUtil.get(KEYCLOAK_BASEAPIURL_KEY);
-
-        if (basePath.endsWith("/")) {
-            return basePath;
-        }
-        return basePath + '/';
+        if (baseApiPath != null) return baseApiPath;
+        String basePath = getKeycloakBasePath();
+        if (basePath == null) return null;
+        baseApiPath = basePath.replace("auth/realms", "auth/admin/realms");
+        return baseApiPath;
     }
 
     private String getTokenPath(){
@@ -147,9 +183,11 @@ public class KeycloakUtilsImpl implements KeycloakUtils {
 
     private String getAccessToken(){
 
-        String cachedToken = getCachedToken();
+        String cachedToken = null;
+        if (cacheToken) {
+            cachedToken = getCachedToken();
+        }
         if (cachedToken != null) return cachedToken;
-
         try {
             String jsonResponse = getAccessTokenJson(
                     getTokenPath(),
@@ -169,7 +207,10 @@ public class KeycloakUtilsImpl implements KeycloakUtils {
         long expTimeMillis = expMillis + System.currentTimeMillis();
 
         String accessToken = jsonObject.getString("access_token");
-        setCachedToken(accessToken, expTimeMillis);
+
+        if (cacheToken) {
+            setCachedToken(accessToken, expTimeMillis);
+        }
         return accessToken;
     }
 
@@ -186,6 +227,9 @@ public class KeycloakUtilsImpl implements KeycloakUtils {
     }
 
     private void setCachedToken(String token, long expiryTimeMillis){
+        String nocache = PropsUtil.get("nocache");
+        if (!Boolean.parseBoolean(nocache)) return;
+
         PortalCache<String, Serializable> keycloakCache = MultiVMPoolUtil.getPortalCache("keycloak", true);
         keycloakCache.put(CACHED_TOKEN_KEY, token);
         keycloakCache.put(CACHED_EXPIRY_KEY, expiryTimeMillis);
