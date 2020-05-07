@@ -14,6 +14,8 @@ public interface KeycloakUtils {
 
     String getAccountPath();
 
+    String getAvatarPath();
+
     String getAdminAvatarPath();
 
     byte[] getUserAvatar(String email) throws IOException;

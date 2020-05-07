@@ -65,6 +65,12 @@ public class KeycloakUtilsImpl implements KeycloakUtils {
     }
 
     @Override
+    public String getAvatarPath() {
+        String basePath = getKeycloakBasePath();
+        return basePath + KEYCLOAK_AVATAR_PATH;
+    }
+
+    @Override
     public String getUserMailingPath() {
         String basePath = getKeycloakBasePath();
         return basePath + KEYCLOAK_USER_MAILING_PATH;

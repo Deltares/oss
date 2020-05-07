@@ -5,6 +5,7 @@ import com.liferay.journal.util.JournalContent;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.template.TemplateContextContributor;
@@ -69,7 +70,17 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
         if (keycloakUtils.isActive()) {
             contextObjects.put("user_mailing_url", appendWithReferrer(keycloakUtils.getUserMailingPath(), themeDisplay));
             contextObjects.put("user_account_url", appendWithReferrer(keycloakUtils.getAccountPath(), themeDisplay));
-            contextObjects.put("user_avatar_url", keycloakUtils.getAdminAvatarPath());
+            contextObjects.put("user_avatar_url", keycloakUtils.getAvatarPath());
+        } else {
+            User user = themeDisplay.getUser();
+            long portraitId = user.getPortraitId();
+            if (portraitId > 0) {
+                try {
+                    contextObjects.put("user_avatar_url", user.getPortraitURL(themeDisplay));
+                } catch (PortalException e) {
+                    //
+                }
+            }
         }
     }
 
