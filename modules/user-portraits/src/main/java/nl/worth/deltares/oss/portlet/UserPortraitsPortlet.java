@@ -147,9 +147,9 @@ public class UserPortraitsPortlet extends MVCPortlet {
 							countUsersWithPortrait++;
 						}
 					} catch (Exception e){
-						LOG.warn(String.format("Un-setting portrait %d for user %s", user.getPortraitId(),  user.getScreenName()));
-						user.setPortraitId(0);
-						userLocalService.updateUser(user);
+						LOG.warn(String.format("Error getting portrait %d for user %s: %s", user.getPortraitId(),  user.getScreenName(), e.getMessage()));
+//						user.setPortraitId(0);
+//						userLocalService.updateUser(user);
 					}
 				}
 			}
