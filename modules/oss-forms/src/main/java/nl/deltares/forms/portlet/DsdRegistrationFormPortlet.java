@@ -27,6 +27,7 @@ import java.util.Map;
 @Component(
 	immediate = true,
 	property = {
+        "com.liferay.fragment.entry.processor.portlet.alias=registration-buttons",
 		"com.liferay.portlet.display-category=OSS",
 		"com.liferay.portlet.header-portlet-css=/css/main.css",
 		"com.liferay.portlet.instanceable=true",
