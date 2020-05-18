@@ -1,0 +1,19 @@
+// Sansa Pro Semibold (served as regular weight)
+// --------------------------------------------------
+
+$path-fonts: 'settings/fonts/' !default;
+
+// Import the font file as regular weight
+// --------------------------------------------------
+
+@font-face {
+  font-family: 'Sansa Pro';
+  font-style: italic;
+  font-weight: 400;
+  src: url('#{$path-fonts}sansa-pro-italic.eot');
+  src: url('#{$path-fonts}sansa-pro-italic.eot?#iefix') format('embedded-opentype'),
+  url('#{$path-fonts}sansa-pro-italic.woff') format('woff'),
+  url('#{$path-fonts}sansa-pro-italic.ttf')  format('truetype'),
+  url('#{$path-fonts}sansa-pro-italic.svg#sansa-pro-italic') format('svg');
+}
+

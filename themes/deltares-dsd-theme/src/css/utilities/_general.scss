@@ -1,0 +1,70 @@
+
+html,
+body {
+    @include font_general;
+}
+
+html {
+    font-size: 62.5%;
+}
+body{
+    font-size: 16px; font-size: 1.6rem;
+    color: $color-site-black;
+    line-height: 32px;
+}
+
+
+.flex-row {
+    flex-direction: row;
+    display: flex;
+}
+
+.flex-column {
+    flex-direction: column;
+    display: flex;
+}
+
+.font-sansa-pro {
+    font-family: $font-sansa-pro;
+}
+.font-sansa-pro-bold {
+    font-family: $font-sansa-pro;
+    font-weight: 700;
+}
+
+.font-arial {
+    font-family: $font-arial;
+}
+.font-arial-bold {
+    font-family: $font-arial;
+    font-weight: 700;
+}
+
+a .underline,
+a .link_underline,
+a .link-underline {
+    border-bottom: 1px solid $color-alpha-blue;
+    padding-bottom: 7px;
+    pointer-events: none;
+}
+
+.position-sticky {
+    position: sticky;
+    top: 0;
+}
+
+.blue-background {
+    background: $color-alpha-blue;
+}
+
+.clear-margin {
+    @include clear_margin;
+}
+
+.clearList, .clear-list {
+    @include cleanUL;
+}
+
+.display-block {
+    display: block;
+}
