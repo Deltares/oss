@@ -1,8 +1,8 @@
 <div class="nav-menu">
 	<#assign preferences = freeMarkerPortletPreferences.getPreferences("portletSetupPortletDecoratorId", "barebone") />
-<#--	<div class="header_search navbar-form" role="search">-->
-<#--		<@liferay.search default_preferences="${preferences}" />-->
-<#--	</div>-->
+	<div class="header_search navbar-form" role="search">
+		<@liferay.search default_preferences="${preferences}" />
+	</div>
 
 	
 	<input id="toggle-menu" type="checkbox">

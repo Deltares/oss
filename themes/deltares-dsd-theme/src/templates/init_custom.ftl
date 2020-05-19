@@ -2,6 +2,9 @@
 This file allows you to override and define new FreeMarker variables.
 -->
 
+<#assign logo_img = images_folder + '/logo.png' />
+
+
 <#assign journalArticleLocalService = serviceLocator.findService("com.liferay.journal.service.JournalArticleLocalService") />
 
 <#assign footerWC = "" />
