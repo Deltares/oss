@@ -1,5 +1,109 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+import org.codehaus.groovy.runtime.GStringImpl
+
 plugins {
   id "org.sonarqube" version "2.7.1"
+  id 'net.saliman.properties' version '1.4.6'
+}
+
+project.ext {
+    environment = getEnvProperty('env', 'local')
+    bundleDir = getEnvProperty('liferay.workspace.home.dir', project.projectDir.toString() + '/bundles')
+    liferayMount = project.projectDir.toString() + '/docker/liferay/mount/files'
+    dockerContainerPrefix = getEnvProperty('liferay.docker.container.prefix', 'oss')
+    dockerComposeFilePath = getEnvProperty('liferay.docker.compose.path', project.projectDir.toString() + '/docker/docker-compose.yml')
+    deployFolder = "${bundleDir}/deploy" as GStringImpl
+    dbName = getEnvProperty('dbName', 'liferay')
+    dbUser = getEnvProperty('dbUser', 'liferay')
+    dbPassword = getEnvProperty('dbPassword', 'liferay')
+    defaultLiferayAdminPassword = getEnvProperty('default.admin.password', 'test')
+}
+
+task startContainers(
+        description: 'Start all docker containers',
+        group: 'docker'
+) {
+    doLast {
+        exec {
+            executable 'docker-compose'
+            args('-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'up', '--build', '--force-recreate', '-d')
+            environment('LIFERAY_BUNDLE_DIR', bundleDir)
+        }
+    }
+}
+
+task startLiferay(
+        'description': 'Start Liferay stack',
+        'group': 'docker'
+) {
+    doLast {
+        delete "$liferayMount"
+        copy {
+            from("$projectDir/configs/$environment/")
+            into("$liferayMount")
+            include("*.properties")
+            filter(ReplaceTokens, tokens: [
+                    'MYSQL_DATABASE'        : dbName,
+                    'MYSQL_USER'            : dbUser,
+                    'MYSQL_PASSWORD'        : dbPassword,
+                    'DEFAULT_ADMIN_PASSWORD': defaultLiferayAdminPassword
+            ])
+        }
+        copy {
+            from("$projectDir/configs/$environment/") {
+                exclude "osgi", "**.properties"
+            }
+            into("$liferayMount")
+        }
+        copy {
+            from("$projectDir/configs/common/")
+            into("$liferayMount")
+            include "**/**"
+        }
+        copy {
+            from("$projectDir/configs/$environment/osgi/configs/")
+            into("$liferayMount/osgi/configs")
+            include "*.config"
+        }
+        copy {
+            from projectDir
+            into deployFolder
+            include "license.xml"
+        }
+    }
+    finalizedBy startContainers
+}
+
+task stopLiferay(
+        'description': 'Stop all containers',
+        'group': 'docker'
+) {
+    doLast {
+        exec {
+            executable 'docker-compose'
+            args('-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'down', '--rmi', 'local')
+        }
+        print "stop"
+    }
+}
+
+task dumpDB(
+        description: 'Dump the database into the file system.',
+        group: 'docker'
+) {
+    doLast {
+        exec {
+            executable 'docker'
+            args('exec', '-t', "${dockerContainerPrefix}-mariadb", 'mysqldump', "-u${dbUser}", "-p${dbPassword}",
+                    '--extended-insert=FALSE', '--no-autocommit', '--opt', "${dbName}")
+            standardOutput new FileOutputStream("${projectDir}/docker/mariadb/docker-entrypoint-initdb.d/${dbName}.sql")
+        }
+        exec {
+            executable 'bash'
+            args('-c', "sed -i'' -e '1d' ${projectDir}/docker/mariadb/docker-entrypoint-initdb.d/${dbName}.sql")
+        }
+        delete("${projectDir}/docker/mariadb/docker-entrypoint-initdb.d/${dbName}.sql-e")
+    }
 }
 
 task geoipDownload{
@@ -27,4 +131,11 @@ task geoipDownload{
             into bundlePath
         }
     }
+}
+
+def getEnvProperty(String propertyName, String defaultValue) {
+    if (project.hasProperty(propertyName)) {
+        return project.getProperty(propertyName) ?: defaultValue
+    }
+    return defaultValue
 }
