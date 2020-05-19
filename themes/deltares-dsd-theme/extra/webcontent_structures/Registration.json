@@ -1,0 +1,390 @@
+{
+  "availableLanguageIds": [
+    "en_US"
+  ],
+  "defaultLanguageId": "en_US",
+  "fields": [
+    {
+      "label": {
+        "en_US": "Name"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "name",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "text"
+    },
+    {
+      "label": {
+        "en_US": "Start date"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "date",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "start",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-date"
+    },
+    {
+      "label": {
+        "en_US": "End date"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "date",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "end",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-date"
+    },
+    {
+      "label": {
+        "en_US": "Session type"
+      },
+      "options": [
+        {
+          "value": "Parallel",
+          "label": {
+            "en_US": "Parallel"
+          }
+        },
+        {
+          "value": "Course",
+          "label": {
+            "en_US": "Course"
+          }
+        },
+        {
+          "value": "Diner",
+          "label": {
+            "en_US": "Diner"
+          }
+        },
+        {
+          "value": "Presentation",
+          "label": {
+            "en_US": "Presentation"
+          }
+        },
+        {
+          "value": "Symposium",
+          "label": {
+            "en_US": "Symposium"
+          }
+        },
+        {
+          "value": "UserDays",
+          "label": {
+            "en_US": "UserDays"
+          }
+        },
+        {
+          "value": "Workshop",
+          "label": {
+            "en_US": "Workshop"
+          }
+        },
+        {
+          "value": "BusTransfer",
+          "label": {
+            "en_US": "BusTransfer"
+          }
+        }
+      ],
+      "predefinedValue": {
+        "en_US": [
+          ""
+        ]
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "multiple": false,
+      "name": "type",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "select"
+    },
+    {
+      "label": {
+        "en_US": "Topic"
+      },
+      "options": [
+        {
+          "value": "Danubius",
+          "label": {
+            "en_US": "Danubius"
+          }
+        },
+        {
+          "value": "Delft Fews",
+          "label": {
+            "en_US": "Delft Fews"
+          }
+        },
+        {
+          "value": "Delft3D",
+          "label": {
+            "en_US": "Delft3D"
+          }
+        },
+        {
+          "value": "D-Hydro",
+          "label": {
+            "en_US": "D-Hydro"
+          }
+        },
+        {
+          "value": "D-Stability",
+          "label": {
+            "en_US": "D-Stability"
+          }
+        },
+        {
+          "value": "D-Waterquality",
+          "label": {
+            "en_US": "D-Waterquality"
+          }
+        },
+        {
+          "value": "Flexiblemesh",
+          "label": {
+            "en_US": "Flexiblemesh"
+          }
+        },
+        {
+          "value": "i-Mod",
+          "label": {
+            "en_US": "i-Mod"
+          }
+        },
+        {
+          "value": "Rivertab",
+          "label": {
+            "en_US": "Rivertab"
+          }
+        },
+        {
+          "value": "RTC Tools",
+          "label": {
+            "en_US": "RTC Tools"
+          }
+        },
+        {
+          "value": "Simona",
+          "label": {
+            "en_US": "Simona"
+          }
+        },
+        {
+          "value": "Swan",
+          "label": {
+            "en_US": "Swan"
+          }
+        },
+        {
+          "value": "WANDA",
+          "label": {
+            "en_US": "WANDA"
+          }
+        },
+        {
+          "value": "WFLOW",
+          "label": {
+            "en_US": "WFLOW"
+          }
+        },
+        {
+          "value": "XBeach",
+          "label": {
+            "en_US": "XBeach"
+          }
+        }
+      ],
+      "predefinedValue": {
+        "en_US": [
+          ""
+        ]
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "multiple": false,
+      "name": "topic",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "select"
+    },
+    {
+      "label": {
+        "en_US": "Price"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "double",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "price",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-decimal"
+    },
+    {
+      "label": {
+        "en_US": "Capacity"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "integer",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "capacity",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-integer"
+    },
+    {
+      "label": {
+        "en_US": "Open"
+      },
+      "predefinedValue": {
+        "en_US": false
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "boolean",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "open",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "checkbox"
+    },
+    {
+      "label": {
+        "en_US": "Visible"
+      },
+      "predefinedValue": {
+        "en_US": false
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "boolean",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "visible",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "checkbox"
+    },
+    {
+      "label": {
+        "en_US": "Highlight"
+      },
+      "predefinedValue": {
+        "en_US": false
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "boolean",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "highlight",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "checkbox"
+    }
+  ]
+}
