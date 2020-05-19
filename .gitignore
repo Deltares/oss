@@ -259,3 +259,9 @@ gradle-app.setting
 /plugins-sdk/dist
 /plugins-sdk/lib
 test-results
+
+.env
+license*.xml
+/docker/liferay/mount
+/docker/liferay/data
+/docker/mariadb/docker-entrypoint-initdb.d
