@@ -1,0 +1,29 @@
+{
+  "layoutTemplateId": "1-column-restricted",
+  "privatePages": [
+    {
+      "friendlyURL": "/private-page",
+      "name": "Private Page",
+      "title": "Private Page"
+    }
+  ],
+  "publicPages": [
+    {
+      "columns": [
+        [
+          {
+            "portletId": "com_liferay_site_my_sites_web_portlet_MySitesPortlet"
+          }
+        ]
+      ],
+      "friendlyURL": "/home",
+      "nameMap": {
+        "en_US": "Welcome",
+        "nl_NL": "Welkom"
+      },
+      "title": "Welcome"
+    }
+  ],
+  "themeId" : "deltaresdsdtheme_WAR_deltaresdsdtheme",
+  "title" : "DSD Site Template"
+}
