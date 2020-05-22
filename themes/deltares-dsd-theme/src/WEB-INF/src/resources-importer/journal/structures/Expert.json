@@ -63,7 +63,7 @@
                 {
                     "label": {
                         "en_US": "Expert job title",
-                        "nl_NL": "Expert baan titel"
+                        "nl_NL": "Expert functieomschrijving"
                     },
                     "predefinedValue": {
                         "en_US": "",
@@ -140,6 +140,33 @@
                     "required": true,
                     "showLabel": true,
                     "type": "text"
+                },
+                {
+                    "label": {
+                        "en_US": "Fill missing fields",
+                        "nl_NL": "Vul ontbrekende velden"
+                    },
+                    "predefinedValue": {
+                        "en_US": false,
+                        "nl_NL": false
+                    },
+                    "style": {
+                        "en_US": "",
+                        "nl_NL": ""
+                    },
+                    "tip": {
+                        "en_US": "Automatically fill missing fields with values from the database.",
+                        "nl_NL": "Vul automatisch ontbrekende velden met waarden uit de database."
+                    },
+                    "dataType": "boolean",
+                    "indexType": "keyword",
+                    "localizable": true,
+                    "name": "highlight",
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": false,
+                    "showLabel": true,
+                    "type": "checkbox"
                 }
             ]
         }

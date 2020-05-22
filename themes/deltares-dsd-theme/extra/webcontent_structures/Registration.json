@@ -1,21 +1,26 @@
 {
   "availableLanguageIds": [
-    "en_US"
+    "en_US",
+    "nl_NL"
   ],
   "defaultLanguageId": "en_US",
   "fields": [
     {
       "label": {
-        "en_US": "Name"
+        "en_US": "Name",
+        "nl_NL": "Naam"
       },
       "predefinedValue": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "style": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "tip": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "dataType": "string",
       "indexType": "keyword",
@@ -29,16 +34,20 @@
     },
     {
       "label": {
-        "en_US": "Start date"
+        "en_US": "Start date",
+        "nl_NL": "Begin datum"
       },
       "predefinedValue": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "style": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "tip": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "dataType": "date",
       "fieldNamespace": "ddm",
@@ -53,16 +62,20 @@
     },
     {
       "label": {
-        "en_US": "End date"
+        "en_US": "End date",
+        "nl_NL": "Eind datum"
       },
       "predefinedValue": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "style": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "tip": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "dataType": "date",
       "fieldNamespace": "ddm",
@@ -77,68 +90,82 @@
     },
     {
       "label": {
-        "en_US": "Session type"
+        "en_US": "Session type",
+        "nl_NL": "Sessie type"
       },
       "options": [
         {
           "value": "Parallel",
           "label": {
-            "en_US": "Parallel"
+            "en_US": "Parallel",
+            "nl_NL": "Parallel"
           }
         },
         {
           "value": "Course",
           "label": {
-            "en_US": "Course"
+            "en_US": "Course",
+            "nl_NL": "Cursus"
           }
         },
         {
           "value": "Diner",
           "label": {
-            "en_US": "Diner"
+            "en_US": "Diner",
+            "nl_NL": "Diner"
           }
         },
         {
           "value": "Presentation",
           "label": {
-            "en_US": "Presentation"
+            "en_US": "Presentation",
+            "nl_NL": "Presentatie"
           }
         },
         {
           "value": "Symposium",
           "label": {
-            "en_US": "Symposium"
+            "en_US": "Symposium",
+            "nl_NL": "Symposium"
           }
         },
         {
           "value": "UserDays",
           "label": {
-            "en_US": "UserDays"
+            "en_US": "User Days",
+            "nl_NL": "Gebruikers Dagen"
           }
         },
         {
           "value": "Workshop",
           "label": {
-            "en_US": "Workshop"
+            "en_US": "Workshop",
+            "nl_NL": "Workshop"
           }
         },
         {
           "value": "BusTransfer",
           "label": {
-            "en_US": "BusTransfer"
+            "en_US": "Bus Transfer",
+            "nl_NL": "Bus Vervoer"
           }
         }
       ],
       "predefinedValue": {
         "en_US": [
           ""
+        ],
+        "nl_NL": [
+          ""
         ]
       },
       "style": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "tip": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "dataType": "string",
       "indexType": "keyword",
@@ -153,110 +180,131 @@
     },
     {
       "label": {
-        "en_US": "Topic"
+        "en_US": "Topic",
+        "nl_NL": "Onderwerp"
       },
       "options": [
         {
           "value": "Danubius",
           "label": {
-            "en_US": "Danubius"
+            "en_US": "Danubius",
+            "nl_NL": "Danubius"
           }
         },
         {
           "value": "Delft Fews",
           "label": {
-            "en_US": "Delft Fews"
+            "en_US": "Delft Fews",
+            "nl_NL": "Delft Fews"
           }
         },
         {
           "value": "Delft3D",
           "label": {
-            "en_US": "Delft3D"
+            "en_US": "Delft3D",
+            "nl_NL": "Delft3D"
           }
         },
         {
           "value": "D-Hydro",
           "label": {
-            "en_US": "D-Hydro"
+            "en_US": "D-Hydro",
+            "nl_NL": "D-Hydro"
           }
         },
         {
           "value": "D-Stability",
           "label": {
-            "en_US": "D-Stability"
+            "en_US": "D-Stability",
+            "nl_NL": "D-Stability"
           }
         },
         {
           "value": "D-Waterquality",
           "label": {
-            "en_US": "D-Waterquality"
+            "en_US": "D-Waterquality",
+            "nl_NL": "D-Waterquality"
           }
         },
         {
           "value": "Flexiblemesh",
           "label": {
-            "en_US": "Flexiblemesh"
+            "en_US": "Flexiblemesh",
+            "nl_NL": "Flexiblemesh"
           }
         },
         {
           "value": "i-Mod",
           "label": {
-            "en_US": "i-Mod"
+            "en_US": "i-Mod",
+            "nl_NL": "i-Mod"
           }
         },
         {
-          "value": "Rivertab",
+          "value": "Riverlab",
           "label": {
-            "en_US": "Rivertab"
+            "en_US": "Riverlab",
+            "nl_NL": "Riverlab"
           }
         },
         {
           "value": "RTC Tools",
           "label": {
-            "en_US": "RTC Tools"
+            "en_US": "RTC Tools",
+            "nl_NL": "RTC Tools"
           }
         },
         {
           "value": "Simona",
           "label": {
-            "en_US": "Simona"
+            "en_US": "Simona",
+            "nl_NL": "Simona"
           }
         },
         {
           "value": "Swan",
           "label": {
-            "en_US": "Swan"
+            "en_US": "Swan",
+            "nl_NL": "Swan"
           }
         },
         {
           "value": "WANDA",
           "label": {
-            "en_US": "WANDA"
+            "en_US": "WANDA",
+            "nl_NL": "WANDA"
           }
         },
         {
           "value": "WFLOW",
           "label": {
-            "en_US": "WFLOW"
+            "en_US": "WFLOW",
+            "nl_NL": "WFLOW"
           }
         },
         {
           "value": "XBeach",
           "label": {
-            "en_US": "XBeach"
+            "en_US": "XBeach",
+            "nl_NL": "XBeach"
           }
         }
       ],
       "predefinedValue": {
         "en_US": [
           ""
+        ],
+        "nl_NL": [
+          ""
         ]
       },
       "style": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "tip": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "dataType": "string",
       "indexType": "keyword",
@@ -271,16 +319,20 @@
     },
     {
       "label": {
-        "en_US": "Price"
+        "en_US": "Price",
+        "nl_NL": "Prijs"
       },
       "predefinedValue": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "style": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "tip": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "dataType": "double",
       "fieldNamespace": "ddm",
@@ -295,16 +347,20 @@
     },
     {
       "label": {
-        "en_US": "Capacity"
+        "en_US": "Capacity",
+        "nl_NL": "Capaciteit"
       },
       "predefinedValue": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "style": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "tip": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "dataType": "integer",
       "fieldNamespace": "ddm",
@@ -319,16 +375,20 @@
     },
     {
       "label": {
-        "en_US": "Open"
+        "en_US": "Open",
+        "nl_NL": "Open"
       },
       "predefinedValue": {
-        "en_US": false
+        "en_US": false,
+        "nl_NL": false
       },
       "style": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "tip": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "dataType": "boolean",
       "indexType": "keyword",
@@ -342,16 +402,20 @@
     },
     {
       "label": {
-        "en_US": "Visible"
+        "en_US": "Visible",
+        "nl_NL": "Zichtbaar"
       },
       "predefinedValue": {
-        "en_US": false
+        "en_US": false,
+        "nl_NL": false
       },
       "style": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "tip": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "dataType": "boolean",
       "indexType": "keyword",
@@ -365,16 +429,20 @@
     },
     {
       "label": {
-        "en_US": "Highlight"
+        "en_US": "Highlight",
+        "nl_NL": "Highlight"
       },
       "predefinedValue": {
-        "en_US": false
+        "en_US": false,
+        "nl_NL": false
       },
       "style": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "tip": {
-        "en_US": ""
+        "en_US": "",
+        "nl_NL": ""
       },
       "dataType": "boolean",
       "indexType": "keyword",
