@@ -1,21 +1,26 @@
 {
     "availableLanguageIds": [
-        "en_US"
+        "en_US",
+        "nl_NL"
     ],
     "defaultLanguageId": "en_US",
     "fields": [
         {
             "label": {
-                "en_US": "Expert name"
+                "en_US": "Expert name",
+                "nl_NL": "Expert naam"
             },
             "predefinedValue": {
-                "en_US": ""
+                "en_US": "",
+                "nl_NL": ""
             },
             "style": {
-                "en_US": ""
+                "en_US": "",
+                "nl_NL": ""
             },
             "tip": {
-                "en_US": ""
+                "en_US": "",
+                "nl_NL": ""
             },
             "dataType": "string",
             "indexType": "keyword",
@@ -29,16 +34,20 @@
             "nestedFields": [
                 {
                     "label": {
-                        "en_US": "Expert image"
+                        "en_US": "Expert image",
+                        "nl_NL": "Expert foto"
                     },
                     "predefinedValue": {
-                        "en_US": ""
+                        "en_US": "",
+                        "nl_NL": ""
                     },
                     "style": {
-                        "en_US": ""
+                        "en_US": "",
+                        "nl_NL": ""
                     },
                     "tip": {
-                        "en_US": ""
+                        "en_US": "",
+                        "nl_NL": ""
                     },
                     "dataType": "image",
                     "fieldNamespace": "ddm",
@@ -53,16 +62,20 @@
                 },
                 {
                     "label": {
-                        "en_US": "Expert job title"
+                        "en_US": "Expert job title",
+                        "nl_NL": "Expert baan titel"
                     },
                     "predefinedValue": {
-                        "en_US": ""
+                        "en_US": "",
+                        "nl_NL": ""
                     },
                     "style": {
-                        "en_US": ""
+                        "en_US": "",
+                        "nl_NL": ""
                     },
                     "tip": {
-                        "en_US": ""
+                        "en_US": "",
+                        "nl_NL": ""
                     },
                     "dataType": "string",
                     "indexType": "keyword",
@@ -76,16 +89,20 @@
                 },
                 {
                     "label": {
-                        "en_US": "Expert company"
+                        "en_US": "Expert company",
+                        "nl_NL": "Expert bedrijf"
                     },
                     "predefinedValue": {
-                        "en_US": ""
+                        "en_US": "",
+                        "nl_NL": ""
                     },
                     "style": {
-                        "en_US": ""
+                        "en_US": "",
+                        "nl_NL": ""
                     },
                     "tip": {
-                        "en_US": ""
+                        "en_US": "",
+                        "nl_NL": ""
                     },
                     "dataType": "string",
                     "indexType": "keyword",
@@ -99,16 +116,20 @@
                 },
                 {
                     "label": {
-                        "en_US": "Expert email address"
+                        "en_US": "Expert email address",
+                        "nl_NL": "Expert email adres"
                     },
                     "predefinedValue": {
-                        "en_US": ""
+                        "en_US": "",
+                        "nl_NL": ""
                     },
                     "style": {
-                        "en_US": ""
+                        "en_US": "",
+                        "nl_NL": ""
                     },
                     "tip": {
-                        "en_US": ""
+                        "en_US": "",
+                        "nl_NL": ""
                     },
                     "dataType": "string",
                     "indexType": "keyword",
