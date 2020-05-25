@@ -83,7 +83,7 @@
       "localizable": true,
       "name": "rooms",
       "readOnly": false,
-      "repeatable": false,
+      "repeatable": true,
       "required": true,
       "showLabel": true,
       "type": "ddm-journal-article"
