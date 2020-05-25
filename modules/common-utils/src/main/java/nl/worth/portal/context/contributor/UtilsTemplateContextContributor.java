@@ -86,6 +86,11 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
         }
 
         //set languages
+        setLanguages(contextObjects, themeDisplay);
+
+    }
+
+    private void setLanguages(Map<String, Object> contextObjects, ThemeDisplay themeDisplay) {
         ArrayList<LanguageImpl> languages = new ArrayList<>();
         String urlCurrent = themeDisplay.getURLCurrent();
         String idCurrent = "en";
@@ -94,17 +99,14 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
             idCurrent = urlCurrent.substring(1, startIndex);
             urlCurrent = urlCurrent.substring(startIndex);
         }
-        languages.add(new LanguageImpl("en", "EN", themeDisplay.getURLPortal() + "/en" + urlCurrent, themeDisplay));
-        languages.add(new LanguageImpl("nl", "NL", themeDisplay.getURLPortal() + "/nl" + urlCurrent, themeDisplay));
-        LanguageImpl currLang = null;
-        for (LanguageImpl language : languages) {
-            if (language.getId().equals(idCurrent)){
-                currLang = language;
-            }
+        if (idCurrent.equals("en")){
+            languages.add(new LanguageImpl("nl", "NL", themeDisplay.getURLPortal() + "/nl" + urlCurrent, themeDisplay));
+            contextObjects.put("curr_language", new LanguageImpl("en", "EN", themeDisplay.getURLPortal() + "/en" + urlCurrent, themeDisplay));
+        } else {
+            languages.add(new LanguageImpl("en", "EN", themeDisplay.getURLPortal() + "/en" + urlCurrent, themeDisplay));
+            contextObjects.put("curr_language", new LanguageImpl("nl", "NL", themeDisplay.getURLPortal() + "/nl" + urlCurrent, themeDisplay));
         }
-        contextObjects.put("curr_language", currLang != null? currLang : languages.get(0));
         contextObjects.put("languages", languages);
-
     }
 
     private String appendWithReferrer(String accountPath, ThemeDisplay themeDisplay) {
