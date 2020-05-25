@@ -1,0 +1,174 @@
+{
+    "availableLanguageIds": [
+        "en_US",
+        "nl_NL"
+    ],
+    "defaultLanguageId": "en_US",
+    "fields": [
+        {
+            "label": {
+                "en_US": "Expert name",
+                "nl_NL": "Expert naam"
+            },
+            "predefinedValue": {
+                "en_US": "",
+                "nl_NL": ""
+            },
+            "style": {
+                "en_US": "",
+                "nl_NL": ""
+            },
+            "tip": {
+                "en_US": "",
+                "nl_NL": ""
+            },
+            "dataType": "string",
+            "indexType": "keyword",
+            "localizable": true,
+            "name": "ExpertName",
+            "readOnly": false,
+            "repeatable": false,
+            "required": true,
+            "showLabel": true,
+            "type": "text",
+            "nestedFields": [
+                {
+                    "label": {
+                        "en_US": "Expert image",
+                        "nl_NL": "Expert foto"
+                    },
+                    "predefinedValue": {
+                        "en_US": "",
+                        "nl_NL": ""
+                    },
+                    "style": {
+                        "en_US": "",
+                        "nl_NL": ""
+                    },
+                    "tip": {
+                        "en_US": "",
+                        "nl_NL": ""
+                    },
+                    "dataType": "image",
+                    "fieldNamespace": "ddm",
+                    "indexType": "text",
+                    "localizable": true,
+                    "name": "ExpertImage",
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": false,
+                    "showLabel": true,
+                    "type": "ddm-image"
+                },
+                {
+                    "label": {
+                        "en_US": "Expert job title",
+                        "nl_NL": "Expert functieomschrijving"
+                    },
+                    "predefinedValue": {
+                        "en_US": "",
+                        "nl_NL": ""
+                    },
+                    "style": {
+                        "en_US": "",
+                        "nl_NL": ""
+                    },
+                    "tip": {
+                        "en_US": "",
+                        "nl_NL": ""
+                    },
+                    "dataType": "string",
+                    "indexType": "keyword",
+                    "localizable": true,
+                    "name": "ExpertJobTitle",
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": false,
+                    "showLabel": true,
+                    "type": "text"
+                },
+                {
+                    "label": {
+                        "en_US": "Expert company",
+                        "nl_NL": "Expert bedrijf"
+                    },
+                    "predefinedValue": {
+                        "en_US": "",
+                        "nl_NL": ""
+                    },
+                    "style": {
+                        "en_US": "",
+                        "nl_NL": ""
+                    },
+                    "tip": {
+                        "en_US": "",
+                        "nl_NL": ""
+                    },
+                    "dataType": "string",
+                    "indexType": "keyword",
+                    "localizable": true,
+                    "name": "ExpertCompany",
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": false,
+                    "showLabel": true,
+                    "type": "text"
+                },
+                {
+                    "label": {
+                        "en_US": "Expert email address",
+                        "nl_NL": "Expert email adres"
+                    },
+                    "predefinedValue": {
+                        "en_US": "",
+                        "nl_NL": ""
+                    },
+                    "style": {
+                        "en_US": "",
+                        "nl_NL": ""
+                    },
+                    "tip": {
+                        "en_US": "",
+                        "nl_NL": ""
+                    },
+                    "dataType": "string",
+                    "indexType": "keyword",
+                    "localizable": true,
+                    "name": "ExpertEmailAddress",
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": true,
+                    "showLabel": true,
+                    "type": "text"
+                },
+                {
+                    "label": {
+                        "en_US": "Fill missing fields",
+                        "nl_NL": "Vul ontbrekende velden"
+                    },
+                    "predefinedValue": {
+                        "en_US": false,
+                        "nl_NL": false
+                    },
+                    "style": {
+                        "en_US": "",
+                        "nl_NL": ""
+                    },
+                    "tip": {
+                        "en_US": "Automatically fill missing fields with values from the database.",
+                        "nl_NL": "Vul automatisch ontbrekende velden met waarden uit de database."
+                    },
+                    "dataType": "boolean",
+                    "indexType": "keyword",
+                    "localizable": true,
+                    "name": "highlight",
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": false,
+                    "showLabel": true,
+                    "type": "checkbox"
+                }
+            ]
+        }
+    ]
+}
