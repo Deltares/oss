@@ -1,9 +1,7 @@
-<header class="container-fluid-1280" >
-    <div class="pull-right">
-        <#include "${full_templates_path}/user_personal.ftl" />
-    </div>
-</header>
 <header id="banner" role="banner" class="container-fluid-1280">
+<#--    <div class="pull-right">-->
+<#--        <#include "${full_templates_path}/user_personal.ftl" />-->
+<#--    </div>-->
     <div id="heading">
         <#if has_navigation && is_setup_complete>
             <#include "${full_templates_path}/navigation.ftl" />

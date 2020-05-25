@@ -15,10 +15,12 @@ import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.worth.portal.utils.DDLUtils;
 import nl.worth.portal.utils.LayoutUtils;
+import nl.worth.portal.utils.impl.LanguageImpl;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Map;
 
 @Component(
@@ -82,6 +84,27 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
                 }
             }
         }
+
+        //set languages
+        ArrayList<LanguageImpl> languages = new ArrayList<>();
+        String urlCurrent = themeDisplay.getURLCurrent();
+        String idCurrent = "en";
+        int startIndex = urlCurrent.indexOf("/web");
+        if (startIndex > 0){
+            idCurrent = urlCurrent.substring(1, startIndex);
+            urlCurrent = urlCurrent.substring(startIndex);
+        }
+        languages.add(new LanguageImpl("en", "EN", themeDisplay.getURLPortal() + "/en" + urlCurrent, themeDisplay));
+        languages.add(new LanguageImpl("nl", "NL", themeDisplay.getURLPortal() + "/nl" + urlCurrent, themeDisplay));
+        LanguageImpl currLang = null;
+        for (LanguageImpl language : languages) {
+            if (language.getId().equals(idCurrent)){
+                currLang = language;
+            }
+        }
+        contextObjects.put("curr_language", currLang != null? currLang : languages.get(0));
+        contextObjects.put("languages", languages);
+
     }
 
     private String appendWithReferrer(String accountPath, ThemeDisplay themeDisplay) {
