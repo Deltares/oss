@@ -1,0 +1,207 @@
+{
+  "availableLanguageIds": [
+    "nl_NL",
+    "en_US"
+  ],
+  "defaultLanguageId": "en_US",
+  "fields": [
+    {
+      "label": {
+        "nl_NL": "Presenters",
+        "en_US": "Presenters"
+      },
+      "predefinedValue": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "style": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "tip": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "dataType": "journal-article",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "presenters",
+      "readOnly": false,
+      "repeatable": true,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-journal-article"
+    },
+    {
+      "label": {
+        "nl_NL": "Description",
+        "en_US": "Description"
+      },
+      "predefinedValue": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "style": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "tip": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "dataType": "html",
+      "fieldNamespace": "ddm",
+      "indexType": "text",
+      "localizable": true,
+      "name": "description",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-text-html"
+    },
+    {
+      "label": {
+        "nl_NL": "Room",
+        "en_US": "Room"
+      },
+      "predefinedValue": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "style": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "tip": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "dataType": "journal-article",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "room",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-journal-article"
+    },
+    {
+      "label": {
+        "nl_NL": "Children",
+        "en_US": "Children"
+      },
+      "predefinedValue": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "style": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "tip": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "dataType": "journal-article",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "children",
+      "readOnly": false,
+      "repeatable": true,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-journal-article"
+    },
+    {
+      "label": {
+        "nl_NL": "Schedule",
+        "en_US": "Schedules"
+      },
+      "predefinedValue": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "style": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "tip": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "dataType": "journal-article",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "schedules",
+      "readOnly": false,
+      "repeatable": true,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-journal-article",
+      "nestedFields": [
+        {
+          "label": {
+            "nl_NL": "Date",
+            "en_US": "Date"
+          },
+          "predefinedValue": {
+            "nl_NL": "",
+            "en_US": ""
+          },
+          "style": {
+            "nl_NL": "",
+            "en_US": ""
+          },
+          "tip": {
+            "nl_NL": "",
+            "en_US": ""
+          },
+          "dataType": "date",
+          "fieldNamespace": "ddm",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "date",
+          "readOnly": false,
+          "repeatable": false,
+          "required": true,
+          "showLabel": true,
+          "type": "ddm-date"
+        },
+        {
+          "label": {
+            "nl_NL": "Schedule",
+            "en_US": "Schedule"
+          },
+          "predefinedValue": {
+            "nl_NL": "",
+            "en_US": ""
+          },
+          "style": {
+            "nl_NL": "",
+            "en_US": ""
+          },
+          "tip": {
+            "nl_NL": "",
+            "en_US": ""
+          },
+          "dataType": "html",
+          "fieldNamespace": "ddm",
+          "indexType": "text",
+          "localizable": true,
+          "name": "schedule",
+          "readOnly": false,
+          "repeatable": false,
+          "required": true,
+          "showLabel": true,
+          "type": "ddm-text-html"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "availableLanguageIds": [
+    "en_US",
+    "nl_NL"
+  ],
+  "defaultLanguageId": "en_US",
+  "fields": [
+    {
+      "label": {
+        "en_US": "Name",
+        "nl_NL": "Name"
+      },
+      "predefinedValue": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "style": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "tip": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "name",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "text"
+    },
+    {
+      "label": {
+        "en_US": "Location",
+        "nl_NL": "Location"
+      },
+      "predefinedValue": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "style": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "tip": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "dataType": "geolocation",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": false,
+      "name": "location",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-geolocation"
+    },
+    {
+      "label": {
+        "en_US": "Rooms",
+        "nl_NL": "Rooms"
+      },
+      "predefinedValue": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "style": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "tip": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "dataType": "journal-article",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "rooms",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-journal-article"
+    }
+  ]
+}
