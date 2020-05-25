@@ -8,7 +8,7 @@
     {
       "label": {
         "en_US": "Name",
-        "nl_NL": "Name"
+        "nl_NL": "Naam"
       },
       "predefinedValue": {
         "en_US": "",
@@ -35,7 +35,7 @@
     {
       "label": {
         "en_US": "Address",
-        "nl_NL": "Address"
+        "nl_NL": "Adres"
       },
       "predefinedValue": {
         "en_US": "",
@@ -61,8 +61,8 @@
     },
     {
       "label": {
-        "en_US": "Postalcode",
-        "nl_NL": "Postalcode"
+        "en_US": "Postal code",
+        "nl_NL": "Postcode"
       },
       "predefinedValue": {
         "en_US": "",
@@ -89,7 +89,7 @@
     {
       "label": {
         "en_US": "City",
-        "nl_NL": "City"
+        "nl_NL": "Stad"
       },
       "predefinedValue": {
         "en_US": "",
@@ -116,7 +116,7 @@
     {
       "label": {
         "en_US": "Country",
-        "nl_NL": "Country"
+        "nl_NL": "Land"
       },
       "predefinedValue": {
         "en_US": "",
@@ -143,7 +143,7 @@
     {
       "label": {
         "en_US": "Location",
-        "nl_NL": "Location"
+        "nl_NL": "Locatie"
       },
       "predefinedValue": {
         "en_US": "",
@@ -171,7 +171,7 @@
     {
       "label": {
         "en_US": "Website",
-        "nl_NL": "Website"
+        "nl_NL": "Webpagina"
       },
       "predefinedValue": {
         "en_US": "",

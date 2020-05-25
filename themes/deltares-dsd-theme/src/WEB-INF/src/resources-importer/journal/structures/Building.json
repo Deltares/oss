@@ -8,7 +8,7 @@
     {
       "label": {
         "en_US": "Name",
-        "nl_NL": "Name"
+        "nl_NL": "Naam"
       },
       "predefinedValue": {
         "en_US": "",
@@ -35,7 +35,7 @@
     {
       "label": {
         "en_US": "Location",
-        "nl_NL": "Location"
+        "nl_NL": "Locatie"
       },
       "predefinedValue": {
         "en_US": "",
@@ -63,7 +63,7 @@
     {
       "label": {
         "en_US": "Rooms",
-        "nl_NL": "Rooms"
+        "nl_NL": "Kamers"
       },
       "predefinedValue": {
         "en_US": "",

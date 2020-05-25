@@ -8,7 +8,7 @@
     {
       "label": {
         "en_US": "Buildings",
-        "nl_NL": "Buildings"
+        "nl_NL": "Gebouwen"
       },
       "predefinedValue": {
         "en_US": "",
@@ -36,7 +36,7 @@
     {
       "label": {
         "en_US": "Rooms",
-        "nl_NL": "Rooms"
+        "nl_NL": "Kamers"
       },
       "predefinedValue": {
         "en_US": "",
