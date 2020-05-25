@@ -1,0 +1,64 @@
+{
+  "availableLanguageIds": [
+    "en_US",
+    "nl_NL"
+  ],
+  "defaultLanguageId": "en_US",
+  "fields": [
+    {
+      "label": {
+        "en_US": "Name",
+        "nl_NL": "Name"
+      },
+      "predefinedValue": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "style": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "tip": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "name",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "text"
+    },
+    {
+      "label": {
+        "en_US": "Capacity",
+        "nl_NL": "Capacity"
+      },
+      "predefinedValue": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "style": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "tip": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "dataType": "integer",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "capacity",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-integer"
+    }
+  ]
+}

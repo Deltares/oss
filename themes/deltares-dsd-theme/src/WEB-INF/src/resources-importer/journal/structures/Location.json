@@ -1,0 +1,199 @@
+{
+  "availableLanguageIds": [
+    "en_US",
+    "nl_NL"
+  ],
+  "defaultLanguageId": "en_US",
+  "fields": [
+    {
+      "label": {
+        "en_US": "Name",
+        "nl_NL": "Name"
+      },
+      "predefinedValue": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "style": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "tip": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "name",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "text"
+    },
+    {
+      "label": {
+        "en_US": "Address",
+        "nl_NL": "Address"
+      },
+      "predefinedValue": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "style": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "tip": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "address",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "text"
+    },
+    {
+      "label": {
+        "en_US": "Postalcode",
+        "nl_NL": "Postalcode"
+      },
+      "predefinedValue": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "style": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "tip": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "postalcode",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "text"
+    },
+    {
+      "label": {
+        "en_US": "City",
+        "nl_NL": "City"
+      },
+      "predefinedValue": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "style": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "tip": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "city",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "text"
+    },
+    {
+      "label": {
+        "en_US": "Country",
+        "nl_NL": "Country"
+      },
+      "predefinedValue": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "style": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "tip": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "country",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "text"
+    },
+    {
+      "label": {
+        "en_US": "Location",
+        "nl_NL": "Location"
+      },
+      "predefinedValue": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "style": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "tip": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "dataType": "geolocation",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": false,
+      "name": "location",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-geolocation"
+    },
+    {
+      "label": {
+        "en_US": "Website",
+        "nl_NL": "Website"
+      },
+      "predefinedValue": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "style": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "tip": {
+        "en_US": "",
+        "nl_NL": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "website",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "text"
+    }
+  ]
+}
