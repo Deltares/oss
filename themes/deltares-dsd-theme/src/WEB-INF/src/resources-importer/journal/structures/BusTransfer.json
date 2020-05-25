@@ -7,7 +7,7 @@
   "fields": [
     {
       "label": {
-        "nl_NL": "Bus stop",
+        "nl_NL": "Halten",
         "en_US": "Stops"
       },
       "predefinedValue": {
@@ -35,7 +35,7 @@
       "nestedFields": [
         {
           "label": {
-            "nl_NL": "Time",
+            "nl_NL": "Tijd",
             "en_US": "Time"
           },
           "predefinedValue": {

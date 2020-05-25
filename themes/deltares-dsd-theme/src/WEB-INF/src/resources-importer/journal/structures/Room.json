@@ -8,7 +8,7 @@
     {
       "label": {
         "en_US": "Name",
-        "nl_NL": "Name"
+        "nl_NL": "Naam"
       },
       "predefinedValue": {
         "en_US": "",
@@ -35,7 +35,7 @@
     {
       "label": {
         "en_US": "Capacity",
-        "nl_NL": "Capacity"
+        "nl_NL": "Capaciteit"
       },
       "predefinedValue": {
         "en_US": "",
