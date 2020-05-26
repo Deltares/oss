@@ -34,7 +34,7 @@ public class DsdFullcalendarService {
     @Path("/startTime/{siteId}")
     @Produces("application/json")
     public Response startTime(@Context HttpServletRequest request, @PathParam("siteId") long siteId) {
-        return  Response.ok().entity(System.currentTimeMillis()).build();
+        return  Response.ok().entity(String.valueOf(System.currentTimeMillis())).build();
     }
 
     @GET
