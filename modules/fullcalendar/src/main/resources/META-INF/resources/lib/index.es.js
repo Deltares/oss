@@ -7,7 +7,7 @@ import resourceTimeGrid from '@fullcalendar/resource-timegrid'
 
 function loadStartDate(props) {
 	$.ajax({
-		url: props.baseUrl + "/startTime",
+		url: props.baseUrl + "/startTime/" + props.siteId,
 		type: "GET",
 		success: function(json) {
 			return  json;
@@ -42,7 +42,7 @@ class Calendar extends React.Component {
 			eventLimit : false,
 			startDate : start,
 			resources : {
-                url:  this.props.baseUrl + '/resources',
+                url:  this.props.baseUrl + '/resources/' + this.props.siteId ,
                 method: 'GET',
 				// data: {
 				// 	username: this.props.authUser,
@@ -50,7 +50,7 @@ class Calendar extends React.Component {
 				// }
             },
 			events : {
-                url: this.props.baseUrl + '/events',
+                url: this.props.baseUrl + '/events/' + this.props.siteId,
                 method: 'GET',
 				// data: {
 				// 	username: this.props.authUser,
@@ -120,6 +120,6 @@ class Calendar extends React.Component {
 	}
 }
 
-export default function (elementId, canEdit, baseUrl) {
-	ReactDOM.render( <Calendar class="fc" editable={canEdit} selectable={canEdit} baseUrl={baseUrl} />, document.getElementById(elementId))
+export default function (elementId, canEdit, baseUrl, siteId) {
+	ReactDOM.render( <Calendar class="fc" editable={canEdit} selectable={canEdit} baseUrl={baseUrl} siteId={siteId} />, document.getElementById(elementId))
 }

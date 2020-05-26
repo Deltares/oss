@@ -41,8 +41,10 @@
 
     boolean canEdit = true;
     String baseUrl = "";
+    long siteId = 0;
 
     if (Validator.isNotNull(configuration)) {
         baseUrl = portletPreferences.getValue("baseUrl", configuration.baseUrl());
+        siteId = Long.parseLong(portletPreferences.getValue("siteId", String.valueOf(configuration.siteID())));
     }
 %>

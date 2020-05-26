@@ -2,5 +2,5 @@
 <div id="<portlet:namespace />-root"></div>
 
 <aui:script require="<%= mainRequire %>">
-	main.default('<portlet:namespace />-root', "<%= canEdit %>", "<%= baseUrl %>");
+	main.default('<portlet:namespace />-root', "<%= canEdit %>", "<%= baseUrl %>", "<%= siteId %>");
 </aui:script>

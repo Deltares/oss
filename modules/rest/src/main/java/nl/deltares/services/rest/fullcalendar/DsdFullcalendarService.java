@@ -7,6 +7,7 @@ import nl.deltares.services.rest.fullcalendar.models.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -30,16 +31,16 @@ public class DsdFullcalendarService {
     }
 
     @GET
-    @Path("/startTime")
+    @Path("/startTime/{siteId}")
     @Produces("application/json")
-    public Response startTime(@Context HttpServletRequest request) {
+    public Response startTime(@Context HttpServletRequest request, @PathParam("siteId") long siteId) {
         return  Response.ok().entity(System.currentTimeMillis()).build();
     }
 
     @GET
-    @Path("/events")
+    @Path("/events/{siteId}")
     @Produces("application/json")
-    public Response events() {
+    public Response events( @PathParam("siteId") long siteId) {
 
         String[] rooms = {"a", "b", "c", "d", "e"};
         String[] titles = {"Basic Course", "Advanced course", "Work shop", "User Days", "Dinner"};
@@ -63,9 +64,9 @@ public class DsdFullcalendarService {
     }
 
     @GET
-    @Path("/resources")
+    @Path("/resources/{siteId}")
     @Produces("application/json")
-    public Response resources() {
+    public Response resources( @PathParam("siteId") long siteId) {
 
         String[] rooms = {"a", "b", "c", "d", "e"};
         String[] colors = {"red", "green", "blue", "yellow", "orange"};

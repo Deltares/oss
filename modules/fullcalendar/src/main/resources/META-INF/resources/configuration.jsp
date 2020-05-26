@@ -51,6 +51,13 @@
                 >
 
         </aui:input>
+        <aui:input
+                label="Calender Site ID"
+                name="siteId"
+                value="<%= siteId %>"
+        >
+
+        </aui:input>
     </aui:fieldset>
 
     <aui:button-row>

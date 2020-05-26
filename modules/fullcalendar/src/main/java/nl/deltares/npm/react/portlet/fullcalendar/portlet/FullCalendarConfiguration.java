@@ -10,16 +10,9 @@ import aQute.bnd.annotation.metatype.Meta;
 )
 public interface FullCalendarConfiguration {
 
-    @Meta.AD(required = false)
-    public String baseUrl();
+    @Meta.AD(required = false, deflt = "/o/public/dsd/calendar")
+    String baseUrl();
 
-    @Meta.AD(required = false)
-    public String fontColor();
-
-    @Meta.AD(required = false)
-    public String fontFamily();
-
-    @Meta.AD(required = false)
-    public int fontSize();
-
+    @Meta.AD(required = false, deflt = "0")
+    long siteID();
 }
