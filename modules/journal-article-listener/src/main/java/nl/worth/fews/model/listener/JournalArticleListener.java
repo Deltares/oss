@@ -79,7 +79,8 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
     try {
       Group site = _groupLocalService.getGroup(groupId);
       if (Validator.isNotNull(journalArticleManagementConfiguration.dsdParentSiteID())) {
-        isDSDSite = site.getParentGroupId() == journalArticleManagementConfiguration.dsdParentSiteID();
+        isDSDSite = (site.getParentGroupId() == journalArticleManagementConfiguration.dsdParentSiteID() ||
+                groupId == journalArticleManagementConfiguration.dsdParentSiteID());
       }
     } catch (PortalException e) {
       LOGGER.error("Could not find site ["+ groupId+"]", e);
