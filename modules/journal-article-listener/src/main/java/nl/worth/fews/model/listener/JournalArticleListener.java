@@ -13,7 +13,9 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModelListener;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.ModelListener;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -45,21 +47,45 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
     long groupId = model.getGroupId();
 
     if (StringUtil.contains(journalArticleManagementConfiguration.configuredGroupIds(),
-        String.valueOf(groupId))) {
+      String.valueOf(groupId)) || isDSDSite(groupId)) {
 
       String structureKey = model.getDDMStructureKey();
+
+      if (structureKey.matches("([A-Z])+-(\\d+\\.)(\\d+\\.)(\\d+)")) {
+        structureKey = structureKey.substring(0, 1).toUpperCase()
+          + structureKey.substring(1, structureKey.lastIndexOf("-")).toLowerCase();
+      }
 
       if (structure_folderJsonMap.has(structureKey)) {
 
         String folderName = Validator.isNotNull(structure_folderJsonMap.getString(structureKey))
-            ? structure_folderJsonMap.getString(structureKey) : structureKey;
+          ? structure_folderJsonMap.getString(structureKey) : structureKey;
 
-        JournalFolder journalFolder = fetchOrCreateJournalFolder(model.getUserId(), groupId,
-            folderName);
+        if (isDSDSite(groupId)) {
+          groupId = journalArticleManagementConfiguration.dsdParentSiteID();
+          model.setGroupId(groupId);
+        }
+
+        JournalFolder journalFolder = fetchOrCreateJournalFolder(model.getUserId(), groupId, folderName);
 
         model.setFolderId(journalFolder.getFolderId());
       }
     }
+  }
+
+  private boolean isDSDSite(long groupId) {
+    boolean isDSDSite = false;
+
+    try {
+      Group site = _groupLocalService.getGroup(groupId);
+      if (Validator.isNotNull(journalArticleManagementConfiguration.dsdParentSiteID())) {
+        isDSDSite = site.getParentGroupId() == journalArticleManagementConfiguration.dsdParentSiteID();
+      }
+    } catch (PortalException e) {
+      LOGGER.error("Could not find site ["+ groupId+"]", e);
+    }
+
+    return isDSDSite;
   }
 
   private JournalFolder fetchOrCreateJournalFolder(long userId, long groupId, String name) {
@@ -106,4 +132,7 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
 
   @Reference
   private JournalFolderLocalService _journalFolderLocalService;
+
+  @Reference
+  private GroupLocalService _groupLocalService;
 }
