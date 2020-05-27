@@ -1,5 +1,6 @@
 package nl.deltares.npm.react.portlet.fullcalendar.portlet;
 
+import com.liferay.frontend.js.loader.modules.extender.npm.JSPackage;
 import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
@@ -26,7 +27,7 @@ import java.util.Map;
         configurationPid = "nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration",
         immediate = true,
         property = {
-                "com.liferay.portlet.header-portlet-css=/css/index.css",
+                "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.instanceable=true",
                 "javax.portlet.display-name=FullCalendar Portlet",
@@ -46,6 +47,12 @@ public class FullCalendarPortlet extends MVCPortlet {
     public void doView(
             RenderRequest renderRequest, RenderResponse renderResponse)
             throws IOException, PortletException {
+
+        JSPackage jsPackage = _npmResolver.getJSPackage();
+
+        renderRequest.setAttribute(
+                FullCalendarPortletKeys.BOOTSTRAP_REQUIRE,
+                jsPackage.getResolvedId() + " as bootstrapRequire");
 
         renderRequest.setAttribute(
                 FullCalendarConfiguration.class.getName(),

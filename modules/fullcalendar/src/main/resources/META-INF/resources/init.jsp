@@ -27,6 +27,7 @@
 
 <%@ page import="nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration" %>
 <%@ page import="com.liferay.portal.kernel.util.Validator" %>
+<%@ page import="nl.deltares.npm.react.portlet.fullcalendar.constants.FullCalendarPortletKeys" %>
 
 <liferay-theme:defineObjects/>
 
@@ -34,7 +35,7 @@
 
 <%
 
-    String mainRequire = (String)renderRequest.getAttribute("mainRequire");
+    String bootstrapRequire = (String)renderRequest.getAttribute(FullCalendarPortletKeys.BOOTSTRAP_REQUIRE);
     FullCalendarConfiguration configuration =
             (FullCalendarConfiguration)
                     renderRequest.getAttribute(FullCalendarConfiguration.class.getName());
