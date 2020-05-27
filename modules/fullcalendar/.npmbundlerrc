@@ -1,8 +1,2 @@
 {
-    "rules": [
-        {
-          "test": "\\.css$",
-          "use": ["style-loader"]
-        }
-    ]
 }
