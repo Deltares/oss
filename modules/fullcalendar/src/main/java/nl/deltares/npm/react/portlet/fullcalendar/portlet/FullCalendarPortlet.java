@@ -28,6 +28,7 @@ import java.util.Map;
         immediate = true,
         property = {
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
+                "com.liferay.portlet.header-portlet-js=/lib/index.es.js",
                 "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.instanceable=true",
                 "javax.portlet.display-name=FullCalendar Portlet",
