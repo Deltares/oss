@@ -161,7 +161,7 @@
                     "dataType": "boolean",
                     "indexType": "keyword",
                     "localizable": true,
-                    "name": "highlight",
+                    "name": "AutoFill",
                     "readOnly": false,
                     "repeatable": false,
                     "required": false,

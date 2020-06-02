@@ -1,0 +1,10 @@
+Bundle-Name: registration-service-api
+Bundle-SymbolicName: nl.deltares.dsd.registration.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	nl.deltares.dsd.registration.exception,\
+	nl.deltares.dsd.registration.model,\
+	nl.deltares.dsd.registration.service,\
+	nl.deltares.dsd.registration.service.persistence
+-check: EXPORTS
+-includeresource: META-INF/service.xml=../registration-service-service/service.xml

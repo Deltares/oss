@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<hint-collection name="TEXTAREA">
+		<hint name="max-length">500</hint>
+	</hint-collection>
+	<model name="nl.deltares.dsd.registration.model.Registration">
+		<field name="uuid" type="String" />
+		<field name="registrationId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="userId" type="long" />
+		<field name="articleId" type="long" />
+		<field name="userPreferences" type="String">
+			<hint-collection name="TEXTAREA" />
+		</field>
+		<field name="startTime" type="Date" />
+		<field name="endTime" type="Date" />
+	</model>
+</model-hints>

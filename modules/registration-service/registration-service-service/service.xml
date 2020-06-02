@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.2.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_2_0.dtd">
+
+<service-builder dependency-injector="ds" package-path="nl.deltares.dsd.registration">
+	<namespace>Registrations</namespace>
+	<entity local-service="true" name="Registration" remote-service="false" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="registrationId" primary="true" type="long" />
+
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="articleId" type="long" />
+
+		<!-- Other fields -->
+
+		<column name="userPreferences" type="String" />
+		<column name="startTime" type="Date" />
+		<column name="endTime" type="Date" />
+
+		<!-- Order -->
+
+		<order by="asc">
+			<order-column name="registrationId" />
+		</order>
+
+		<!-- Finder methods -->
+
+		<finder name="UserRegistrations" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="userId" />
+		</finder>
+
+		<finder name="UserRegistrationsBijPeriod" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="userId" />
+			<finder-column name="startTime" />
+			<finder-column name="endTime" />
+		</finder>
+
+		<finder name="ArticleRegistrations" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="articleId" />
+		</finder>
+
+		<finder name="RegistrationsBijPeriod" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="startTime" />
+			<finder-column name="endTime" />
+		</finder>
+
+		<!-- References -->
+
+<!--		<reference entity="JournalArticle" package-path="com.liferay.journal" />-->
+	</entity>
+</service-builder>
