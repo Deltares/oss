@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -14,15 +14,26 @@
 
 package nl.deltares.dsd.registration.service.impl;
 
-import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.portal.aop.AopService;
-
+import com.liferay.portal.kernel.dao.orm.Criterion;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import nl.deltares.dsd.registration.exception.OverlappingPeriodException;
+import nl.deltares.dsd.registration.exception.RegistrationClosedException;
+import nl.deltares.dsd.registration.exception.RegistrationFullException;
+import nl.deltares.dsd.registration.exception.ValidationException;
 import nl.deltares.dsd.registration.model.Registration;
+import nl.deltares.dsd.registration.model.impl.RegistrationJournalArtical;
 import nl.deltares.dsd.registration.service.base.RegistrationLocalServiceBaseImpl;
-
+import nl.deltares.dsd.registration.service.persistence.RegistrationUtil;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import java.util.List;
 
@@ -46,9 +57,77 @@ import java.util.List;
 public class RegistrationLocalServiceImpl
 	extends RegistrationLocalServiceBaseImpl {
 
+
+	private static final Log LOG = LogFactoryUtil.getLog(
+			RegistrationLocalServiceImpl.class);
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never reference this class directly. Use <code>nl.deltares.dsd.registration.service.RegistrationLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil</code>.
 	 */
+
+	public void validateRegistration(long groupId, long articleId, long userId) throws PortalException {
+		JournalArticle article = journalArticleLocalService.getLatestArticle(groupId, String.valueOf(articleId));
+
+		RegistrationJournalArtical registration = RegistrationJournalArtical.getInstance(article);
+
+		//check if article is open for registration
+		validateOpenForRegistration(registration);
+
+		//check if room limit is exceeded
+		validateRegistrationCapacity(registration);
+
+		//check if period overlaps
+		validateRegistrationPeriod(registration, userId);
+
+	}
+
+	private void validateRegistrationPeriod(RegistrationJournalArtical registration, long userId) throws OverlappingPeriodException {
+
+		Criterion checkUserId = PropertyFactoryUtil.forName("userId").eq(userId);
+		Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(registration.getGroupId());
+		Criterion checkStart = PropertyFactoryUtil.forName("startTime").between(registration.getStartTime(), registration.getEndTime());
+		Criterion checkEnd = PropertyFactoryUtil.forName("endTime").between(registration.getStartTime(), registration.getEndTime());
+		DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader()).add(checkGroupId).add(checkUserId).add(checkStart).add(checkEnd);
+		List<Registration> overlappingRegistrations = RegistrationUtil.findWithDynamicQuery(query);
+		if (overlappingRegistrations.size() == 0) return;
+
+		StringBuilder sb = new StringBuilder();
+		for (Registration overlappingRegistration : overlappingRegistrations) {
+			try {
+				JournalArticle latestArticle = journalArticleLocalService.getLatestArticle(overlappingRegistration.getGroupId(), String.valueOf(overlappingRegistration.getArticleId()));
+				sb.append(latestArticle.getUrlTitle());
+				sb.append(',');
+			} catch (PortalException e) {
+				LOG.warn( String.format("Error getting latest article for '%s': %s", overlappingRegistration.getArticleId(), e.getMessage()) );
+				sb.append(overlappingRegistration.getArticleId());
+				sb.append(',');
+			}
+		}
+		throw new OverlappingPeriodException(String.format("Period of registration '%s' overlaps with existing user registrations: [%s]", registration.getArticleId(), sb.toString().trim()));
+	}
+
+	private void validateRegistrationCapacity(RegistrationJournalArtical articleContent) throws ValidationException {
+
+		int capacity = articleContent.getCapacity();
+		int registrationCount = RegistrationUtil.countByArticleRegistrations(articleContent.getGroupId(), articleContent.getArticleId());
+		if (registrationCount < capacity) return;
+
+		throw new RegistrationFullException(String.format("Capacity '%d' of registration '%s' has been reached!", registrationCount, articleContent.getArticleId()));
+
+	}
+
+	private void validateOpenForRegistration(RegistrationJournalArtical articleContent) throws ValidationException {
+		if (!articleContent.isOpen()){
+			throw new RegistrationClosedException(String.format("Registration '%s' is closed !", articleContent.getArticleId()));
+		}
+	}
+
+	private JournalArticleLocalService journalArticleLocalService;
+
+	@Reference(unbind = "-")
+	private void setJournalArticalLocalService(JournalArticleLocalService journalArticleLocalService) {
+
+		this.journalArticleLocalService = journalArticleLocalService;
+	}
 }

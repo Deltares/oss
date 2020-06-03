@@ -286,4 +286,7 @@ public interface RegistrationLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public Registration updateRegistration(Registration registration);
 
+	public void validateRegistration(long groupId, long articleId, long userId)
+		throws PortalException;
+
 }

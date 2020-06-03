@@ -1,4 +1,4 @@
-package nl.deltares.portal.utils.impl;
+package nl.deltares.dsd.registration.service.impl;
 
 import com.liferay.portal.kernel.exception.SystemException;
 import org.w3c.dom.Document;
@@ -22,11 +22,8 @@ public class JournalArticleUtils {
     static String ARTICLE_ROOT= "/root";
     static String ARTICLE_DYNAMIC_ELEMENT= "/dynamic-element";
     static String ARTICLE_NAME_ATTRIBUTE_START= "[@name='";
-
-    static String ARTICLE_CONTENT_XML_NODE_START= "/root/dynamic-element";
-    static String ARTICLE_CONTENT_XML_NODE_END= "']/dynamic-content";
-    static String ARTICLE_STATUS= "STATUS";
-    static String ARTICLE_ACTIVE= "Active";
+    static String ARTICLE_NAME_ATTRIBUTE_END= "']";
+    static String ARTICLE_CONTENT_XML_NODE_END= "/dynamic-content";
 
     public static Document parseContent(String xmlString) throws ParserConfigurationException, IOException, SAXException {
         return  parseContent(new ByteArrayInputStream(xmlString.getBytes()));
@@ -43,25 +40,45 @@ public class JournalArticleUtils {
 
     }
 
-    public static String getNodeValue(Document xmlDocument, String nodeName) throws IOException {
+    public static Object getNodeValue(Document xmlDocument, String nodeName) throws IOException {
 
         String[] searchLevels = {
-                ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_CONTENT_XML_NODE_END,
-                ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_CONTENT_XML_NODE_END
+                ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END + ARTICLE_CONTENT_XML_NODE_END,
+                ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END + ARTICLE_CONTENT_XML_NODE_END
         };
-        Node node = null;
+        Node node;
 
-        for (int i = 0; i < searchLevels.length; i++) {
-            String expression = searchLevels[i];
+        for (String expression : searchLevels) {
             try {
                 node = getNode(xmlDocument, expression);
-                if (node != null) return node.getTextContent();
+                if (node != null) {
+                    return getNodeValue(node);
+                }
             } catch (XPathExpressionException e) {
                 //ignore
             }
         }
         throw new IOException(String.format("Node name '%s' not found in document! ", nodeName));
 
+    }
+
+    private static Object getNodeValue(Node node) {
+
+        Node parentNode = node.getParentNode();
+        Node typeNode = parentNode.getAttributes().getNamedItem("type");
+        String type = typeNode.getTextContent();
+        String textValue = node.getTextContent();
+
+        if ("boolean".equals(type)){
+            return Boolean.valueOf(textValue);
+        }
+        if ("integer".equals(type)){
+            return Integer.valueOf(textValue);
+        }
+        if ("double".equals(type)){
+            return Double.valueOf(textValue);
+        }
+        return textValue;
     }
 
     public static Node getNode(Document xmlDocument, String expression) throws SystemException, XPathExpressionException, IOException {

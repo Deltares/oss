@@ -20,7 +20,6 @@
 		<column name="articleId" type="long" />
 
 		<!-- Other fields -->
-
 		<column name="userPreferences" type="String" />
 		<column name="startTime" type="Date" />
 		<column name="endTime" type="Date" />
@@ -38,26 +37,10 @@
 			<finder-column name="userId" />
 		</finder>
 
-		<finder name="UserRegistrationsBijPeriod" return-type="Collection">
-			<finder-column name="groupId" />
-			<finder-column name="userId" />
-			<finder-column name="startTime" />
-			<finder-column name="endTime" />
-		</finder>
-
 		<finder name="ArticleRegistrations" return-type="Collection">
 			<finder-column name="groupId" />
 			<finder-column name="articleId" />
 		</finder>
 
-		<finder name="RegistrationsBijPeriod" return-type="Collection">
-			<finder-column name="groupId" />
-			<finder-column name="startTime" />
-			<finder-column name="endTime" />
-		</finder>
-
-		<!-- References -->
-
-<!--		<reference entity="JournalArticle" package-path="com.liferay.journal" />-->
 	</entity>
 </service-builder>

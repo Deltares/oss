@@ -1,4 +1,4 @@
-package nl.deltares.portal.utils.impl;
+package nl.deltares.dsd.registration.service.impl;
 
 
 import org.junit.Assert;
@@ -30,10 +30,13 @@ public class JournalArticleUtilsTest {
 
         Document document = JournalArticleUtils.parseContent(new FileInputStream(expertXml.getFile()));
 
+        Assert.assertEquals(
+                "{\"classPK\":\"52262\",\"groupId\":\"52076\",\"name\":\"sam.jpg\",\"alt\":\"Erik INT\",\"title\":\"sam.jpg\",\"type\":\"journal\",\"uuid\":\"75bccfc6-2d24-26eb-84e1-46ca05fa50fa\",\"fileEntryId\":\"52270\",\"resourcePrimKey\":\"52268\"}",
+                JournalArticleUtils.getNodeValue(document, "ExpertImage"));
         Assert.assertEquals("Erik INT", JournalArticleUtils.getNodeValue(document, "ExpertName"));
 
         Assert.assertEquals("Deltares", JournalArticleUtils.getNodeValue(document, "ExpertCompany"));
 
-        Assert.assertEquals("", JournalArticleUtils.getNodeValue(document, "AutoFill"));
+        Assert.assertEquals(false, JournalArticleUtils.getNodeValue(document, "AutoFill"));
     }
 }

@@ -356,6 +356,14 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	@Override
+	public void validateRegistration(long groupId, long articleId, long userId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_registrationLocalService.validateRegistration(
+			groupId, articleId, userId);
+	}
+
+	@Override
 	public RegistrationLocalService getWrappedService() {
 		return _registrationLocalService;
 	}

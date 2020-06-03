@@ -115,17 +115,13 @@ public class RegistrationModelImpl
 
 	public static final long COMPANYID_COLUMN_BITMASK = 2L;
 
-	public static final long ENDTIME_COLUMN_BITMASK = 4L;
+	public static final long GROUPID_COLUMN_BITMASK = 4L;
 
-	public static final long GROUPID_COLUMN_BITMASK = 8L;
+	public static final long USERID_COLUMN_BITMASK = 8L;
 
-	public static final long STARTTIME_COLUMN_BITMASK = 16L;
+	public static final long UUID_COLUMN_BITMASK = 16L;
 
-	public static final long USERID_COLUMN_BITMASK = 32L;
-
-	public static final long UUID_COLUMN_BITMASK = 64L;
-
-	public static final long REGISTRATIONID_COLUMN_BITMASK = 128L;
+	public static final long REGISTRATIONID_COLUMN_BITMASK = 32L;
 
 	public static void setEntityCacheEnabled(boolean entityCacheEnabled) {
 		_entityCacheEnabled = entityCacheEnabled;
@@ -466,17 +462,7 @@ public class RegistrationModelImpl
 
 	@Override
 	public void setStartTime(Date startTime) {
-		_columnBitmask |= STARTTIME_COLUMN_BITMASK;
-
-		if (_originalStartTime == null) {
-			_originalStartTime = _startTime;
-		}
-
 		_startTime = startTime;
-	}
-
-	public Date getOriginalStartTime() {
-		return _originalStartTime;
 	}
 
 	@Override
@@ -486,17 +472,7 @@ public class RegistrationModelImpl
 
 	@Override
 	public void setEndTime(Date endTime) {
-		_columnBitmask |= ENDTIME_COLUMN_BITMASK;
-
-		if (_originalEndTime == null) {
-			_originalEndTime = _endTime;
-		}
-
 		_endTime = endTime;
-	}
-
-	public Date getOriginalEndTime() {
-		return _originalEndTime;
 	}
 
 	public long getColumnBitmask() {
@@ -631,11 +607,6 @@ public class RegistrationModelImpl
 			registrationModelImpl._articleId;
 
 		registrationModelImpl._setOriginalArticleId = false;
-
-		registrationModelImpl._originalStartTime =
-			registrationModelImpl._startTime;
-
-		registrationModelImpl._originalEndTime = registrationModelImpl._endTime;
 
 		registrationModelImpl._columnBitmask = 0;
 	}
@@ -782,9 +753,7 @@ public class RegistrationModelImpl
 	private boolean _setOriginalArticleId;
 	private String _userPreferences;
 	private Date _startTime;
-	private Date _originalStartTime;
 	private Date _endTime;
-	private Date _originalEndTime;
 	private long _columnBitmask;
 	private Registration _escapedModel;
 

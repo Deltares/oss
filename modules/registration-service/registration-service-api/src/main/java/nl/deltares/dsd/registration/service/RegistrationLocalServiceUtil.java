@@ -341,6 +341,13 @@ public class RegistrationLocalServiceUtil {
 		return getService().updateRegistration(registration);
 	}
 
+	public static void validateRegistration(
+			long groupId, long articleId, long userId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		getService().validateRegistration(groupId, articleId, userId);
+	}
+
 	public static RegistrationLocalService getService() {
 		return _serviceTracker.getService();
 	}
