@@ -1,0 +1,2 @@
+${name.getData()}
+${capacity.getData()}
