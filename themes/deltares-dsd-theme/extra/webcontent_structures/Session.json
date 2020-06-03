@@ -134,20 +134,20 @@
         "nl_NL": "",
         "en_US": ""
       },
-      "dataType": "journal-article",
+      "dataType": "html",
       "fieldNamespace": "ddm",
-      "indexType": "keyword",
+      "indexType": "text",
       "localizable": true,
       "name": "schedules",
       "readOnly": false,
       "repeatable": true,
       "required": true,
       "showLabel": true,
-      "type": "ddm-journal-article",
+      "type": "ddm-text-html",
       "nestedFields": [
         {
           "label": {
-            "nl_NL": "Datum",
+            "nl_NL": "Date",
             "en_US": "Date"
           },
           "predefinedValue": {
@@ -169,37 +169,9 @@
           "name": "date",
           "readOnly": false,
           "repeatable": false,
-          "required": true,
+          "required": false,
           "showLabel": true,
           "type": "ddm-date"
-        },
-        {
-          "label": {
-            "nl_NL": "Schema",
-            "en_US": "Schedule"
-          },
-          "predefinedValue": {
-            "nl_NL": "",
-            "en_US": ""
-          },
-          "style": {
-            "nl_NL": "",
-            "en_US": ""
-          },
-          "tip": {
-            "nl_NL": "",
-            "en_US": ""
-          },
-          "dataType": "html",
-          "fieldNamespace": "ddm",
-          "indexType": "text",
-          "localizable": true,
-          "name": "schedule",
-          "readOnly": false,
-          "repeatable": false,
-          "required": true,
-          "showLabel": true,
-          "type": "ddm-text-html"
         }
       ]
     }
