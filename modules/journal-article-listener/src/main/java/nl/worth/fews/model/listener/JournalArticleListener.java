@@ -2,7 +2,9 @@ package nl.worth.fews.model.listener;
 
 
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.model.JournalArticleResource;
 import com.liferay.journal.model.JournalFolder;
+import com.liferay.journal.service.JournalArticleResourceLocalServiceUtil;
 import com.liferay.journal.service.JournalFolderLocalService;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.exception.ModelListenerException;
@@ -64,11 +66,20 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
         if (isDSDSite(groupId)) {
           groupId = journalArticleManagementConfiguration.dsdParentSiteID();
           model.setGroupId(groupId);
+
+          try {
+            JournalArticleResource articleResource = model.getArticleResource();
+            articleResource.setGroupId(groupId);
+            JournalArticleResourceLocalServiceUtil.updateJournalArticleResource(articleResource);
+          } catch (PortalException e) {
+            LOG.debug("Could not update article resource for [" + model + "]");
+          }
         }
 
         JournalFolder journalFolder = fetchOrCreateJournalFolder(model.getUserId(), groupId, folderName);
 
         model.setFolderId(journalFolder.getFolderId());
+        model.setTreePath(journalFolder.getTreePath());
       }
     }
   }
@@ -136,4 +147,6 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
 
   @Reference
   private GroupLocalService _groupLocalService;
+
+  private static final Log LOG = LogFactoryUtil.getLog(JournalArticleListener.class);
 }
