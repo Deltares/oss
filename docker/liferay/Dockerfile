@@ -1,4 +1,4 @@
-FROM liferay/dxp:7.1.10.2
+FROM liferay/dxp:7.1.10-sp4
 
 MAINTAINER Allan Revolorio <allan@firelay.com>
 
