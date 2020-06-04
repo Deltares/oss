@@ -63,7 +63,7 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
         String folderName = Validator.isNotNull(structure_folderJsonMap.getString(structureKey))
           ? structure_folderJsonMap.getString(structureKey) : structureKey;
 
-        if (isDSDSite(groupId)) {
+        if (isDSDSite(groupId) && isSharedContent(structureKey)) {
           groupId = journalArticleManagementConfiguration.dsdParentSiteID();
           model.setGroupId(groupId);
 
@@ -82,6 +82,10 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
         model.setTreePath(journalFolder.getTreePath());
       }
     }
+  }
+
+  private boolean isSharedContent(String structureKey) {
+    return StringUtil.contains(journalArticleManagementConfiguration.structureKeyForSharedStructures(), structureKey, " ");
   }
 
   private boolean isDSDSite(long groupId) {
