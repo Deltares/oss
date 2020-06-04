@@ -1,6 +1,6 @@
 package nl.deltares.dsd.registration.exception;
 
-public class RegistrationClosedException extends ValidationException{
+public class RegistrationClosedException extends ValidationException {
     public RegistrationClosedException(String msg) {
         super(msg);
     }

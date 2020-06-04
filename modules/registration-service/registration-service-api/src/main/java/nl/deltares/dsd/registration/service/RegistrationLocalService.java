@@ -14,6 +14,8 @@
 
 package nl.deltares.dsd.registration.service;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
@@ -36,15 +38,13 @@ import java.util.List;
 
 import nl.deltares.dsd.registration.model.Registration;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * Provides the local service interface for Registration. Methods of this
  * service will not have security checks based on the propagated JAAS
  * credentials because this service can only be accessed from within the same
  * VM.
  *
- * @author Brian Wing Shun Chan
+ * @author Erik de Rooij @ Deltares
  * @see RegistrationLocalServiceUtil
  * @generated
  */
@@ -176,17 +176,6 @@ public interface RegistrationLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Registration fetchRegistration(long registrationId);
 
-	/**
-	 * Returns the registration matching the UUID and group.
-	 *
-	 * @param uuid the registration's UUID
-	 * @param groupId the primary key of the group
-	 * @return the matching registration, or <code>null</code> if a matching registration could not be found
-	 */
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Registration fetchRegistrationByUuidAndGroupId(
-		String uuid, long groupId);
-
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
@@ -217,19 +206,6 @@ public interface RegistrationLocalService
 		throws PortalException;
 
 	/**
-	 * Returns the registration matching the UUID and group.
-	 *
-	 * @param uuid the registration's UUID
-	 * @param groupId the primary key of the group
-	 * @return the matching registration
-	 * @throws PortalException if a matching registration could not be found
-	 */
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Registration getRegistrationByUuidAndGroupId(
-			String uuid, long groupId)
-		throws PortalException;
-
-	/**
 	 * Returns a range of all the registrations.
 	 *
 	 * <p>
@@ -242,32 +218,6 @@ public interface RegistrationLocalService
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Registration> getRegistrations(int start, int end);
-
-	/**
-	 * Returns all the registrations matching the UUID and company.
-	 *
-	 * @param uuid the UUID of the registrations
-	 * @param companyId the primary key of the company
-	 * @return the matching registrations, or an empty list if no matches were found
-	 */
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<Registration> getRegistrationsByUuidAndCompanyId(
-		String uuid, long companyId);
-
-	/**
-	 * Returns a range of registrations matching the UUID and company.
-	 *
-	 * @param uuid the UUID of the registrations
-	 * @param companyId the primary key of the company
-	 * @param start the lower bound of the range of registrations
-	 * @param end the upper bound of the range of registrations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the range of matching registrations, or an empty list if no matches were found
-	 */
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<Registration> getRegistrationsByUuidAndCompanyId(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<Registration> orderByComparator);
 
 	/**
 	 * Returns the number of registrations.

@@ -14,38 +14,50 @@
 
 package nl.deltares.dsd.registration.model;
 
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.portal.kernel.model.ModelWrapper;
-import com.liferay.portal.kernel.model.wrapper.BaseModelWrapper;
+import com.liferay.portal.kernel.service.ServiceContext;
+
+import java.io.Serializable;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.osgi.annotation.versioning.ProviderType;
+import java.util.Objects;
 
 /**
  * <p>
  * This class is a wrapper for {@link Registration}.
  * </p>
  *
- * @author Brian Wing Shun Chan
+ * @author Erik de Rooij @ Deltares
  * @see Registration
  * @generated
  */
 @ProviderType
 public class RegistrationWrapper
-	extends BaseModelWrapper<Registration>
 	implements Registration, ModelWrapper<Registration> {
 
 	public RegistrationWrapper(Registration registration) {
-		super(registration);
+		_registration = registration;
+	}
+
+	@Override
+	public Class<?> getModelClass() {
+		return Registration.class;
+	}
+
+	@Override
+	public String getModelClassName() {
+		return Registration.class.getName();
 	}
 
 	@Override
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("uuid", getUuid());
 		attributes.put("registrationId", getRegistrationId());
 		attributes.put("groupId", getGroupId());
 		attributes.put("companyId", getCompanyId());
@@ -60,12 +72,6 @@ public class RegistrationWrapper
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		String uuid = (String)attributes.get("uuid");
-
-		if (uuid != null) {
-			setUuid(uuid);
-		}
-
 		Long registrationId = (Long)attributes.get("registrationId");
 
 		if (registrationId != null) {
@@ -115,6 +121,18 @@ public class RegistrationWrapper
 		}
 	}
 
+	@Override
+	public Object clone() {
+		return new RegistrationWrapper((Registration)_registration.clone());
+	}
+
+	@Override
+	public int compareTo(
+		nl.deltares.dsd.registration.model.Registration registration) {
+
+		return _registration.compareTo(registration);
+	}
+
 	/**
 	 * Returns the article ID of this registration.
 	 *
@@ -122,7 +140,7 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public long getArticleId() {
-		return model.getArticleId();
+		return _registration.getArticleId();
 	}
 
 	/**
@@ -132,7 +150,7 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public long getCompanyId() {
-		return model.getCompanyId();
+		return _registration.getCompanyId();
 	}
 
 	/**
@@ -142,7 +160,12 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public Date getEndTime() {
-		return model.getEndTime();
+		return _registration.getEndTime();
+	}
+
+	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return _registration.getExpandoBridge();
 	}
 
 	/**
@@ -152,7 +175,7 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public long getGroupId() {
-		return model.getGroupId();
+		return _registration.getGroupId();
 	}
 
 	/**
@@ -162,7 +185,12 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public long getPrimaryKey() {
-		return model.getPrimaryKey();
+		return _registration.getPrimaryKey();
+	}
+
+	@Override
+	public Serializable getPrimaryKeyObj() {
+		return _registration.getPrimaryKeyObj();
 	}
 
 	/**
@@ -172,7 +200,7 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public long getRegistrationId() {
-		return model.getRegistrationId();
+		return _registration.getRegistrationId();
 	}
 
 	/**
@@ -182,7 +210,7 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public Date getStartTime() {
-		return model.getStartTime();
+		return _registration.getStartTime();
 	}
 
 	/**
@@ -192,7 +220,7 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public long getUserId() {
-		return model.getUserId();
+		return _registration.getUserId();
 	}
 
 	/**
@@ -202,7 +230,7 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public String getUserPreferences() {
-		return model.getUserPreferences();
+		return _registration.getUserPreferences();
 	}
 
 	/**
@@ -212,22 +240,32 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public String getUserUuid() {
-		return model.getUserUuid();
+		return _registration.getUserUuid();
 	}
 
-	/**
-	 * Returns the uuid of this registration.
-	 *
-	 * @return the uuid of this registration
-	 */
 	@Override
-	public String getUuid() {
-		return model.getUuid();
+	public int hashCode() {
+		return _registration.hashCode();
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _registration.isCachedModel();
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _registration.isEscapedModel();
+	}
+
+	@Override
+	public boolean isNew() {
+		return _registration.isNew();
 	}
 
 	@Override
 	public void persist() {
-		model.persist();
+		_registration.persist();
 	}
 
 	/**
@@ -237,7 +275,12 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public void setArticleId(long articleId) {
-		model.setArticleId(articleId);
+		_registration.setArticleId(articleId);
+	}
+
+	@Override
+	public void setCachedModel(boolean cachedModel) {
+		_registration.setCachedModel(cachedModel);
 	}
 
 	/**
@@ -247,7 +290,7 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public void setCompanyId(long companyId) {
-		model.setCompanyId(companyId);
+		_registration.setCompanyId(companyId);
 	}
 
 	/**
@@ -257,7 +300,24 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public void setEndTime(Date endTime) {
-		model.setEndTime(endTime);
+		_registration.setEndTime(endTime);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
+
+		_registration.setExpandoBridgeAttributes(baseModel);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
+		_registration.setExpandoBridgeAttributes(expandoBridge);
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
+		_registration.setExpandoBridgeAttributes(serviceContext);
 	}
 
 	/**
@@ -267,7 +327,12 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public void setGroupId(long groupId) {
-		model.setGroupId(groupId);
+		_registration.setGroupId(groupId);
+	}
+
+	@Override
+	public void setNew(boolean n) {
+		_registration.setNew(n);
 	}
 
 	/**
@@ -277,7 +342,12 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public void setPrimaryKey(long primaryKey) {
-		model.setPrimaryKey(primaryKey);
+		_registration.setPrimaryKey(primaryKey);
+	}
+
+	@Override
+	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
+		_registration.setPrimaryKeyObj(primaryKeyObj);
 	}
 
 	/**
@@ -287,7 +357,7 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public void setRegistrationId(long registrationId) {
-		model.setRegistrationId(registrationId);
+		_registration.setRegistrationId(registrationId);
 	}
 
 	/**
@@ -297,7 +367,7 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public void setStartTime(Date startTime) {
-		model.setStartTime(startTime);
+		_registration.setStartTime(startTime);
 	}
 
 	/**
@@ -307,7 +377,7 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public void setUserId(long userId) {
-		model.setUserId(userId);
+		_registration.setUserId(userId);
 	}
 
 	/**
@@ -317,7 +387,7 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public void setUserPreferences(String userPreferences) {
-		model.setUserPreferences(userPreferences);
+		_registration.setUserPreferences(userPreferences);
 	}
 
 	/**
@@ -327,22 +397,75 @@ public class RegistrationWrapper
 	 */
 	@Override
 	public void setUserUuid(String userUuid) {
-		model.setUserUuid(userUuid);
-	}
-
-	/**
-	 * Sets the uuid of this registration.
-	 *
-	 * @param uuid the uuid of this registration
-	 */
-	@Override
-	public void setUuid(String uuid) {
-		model.setUuid(uuid);
+		_registration.setUserUuid(userUuid);
 	}
 
 	@Override
-	protected RegistrationWrapper wrap(Registration registration) {
-		return new RegistrationWrapper(registration);
+	public com.liferay.portal.kernel.model.CacheModel
+		<nl.deltares.dsd.registration.model.Registration> toCacheModel() {
+
+		return _registration.toCacheModel();
 	}
+
+	@Override
+	public nl.deltares.dsd.registration.model.Registration toEscapedModel() {
+		return new RegistrationWrapper(_registration.toEscapedModel());
+	}
+
+	@Override
+	public String toString() {
+		return _registration.toString();
+	}
+
+	@Override
+	public nl.deltares.dsd.registration.model.Registration toUnescapedModel() {
+		return new RegistrationWrapper(_registration.toUnescapedModel());
+	}
+
+	@Override
+	public String toXmlString() {
+		return _registration.toXmlString();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof RegistrationWrapper)) {
+			return false;
+		}
+
+		RegistrationWrapper registrationWrapper = (RegistrationWrapper)obj;
+
+		if (Objects.equals(_registration, registrationWrapper._registration)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public Registration getWrappedModel() {
+		return _registration;
+	}
+
+	@Override
+	public boolean isEntityCacheEnabled() {
+		return _registration.isEntityCacheEnabled();
+	}
+
+	@Override
+	public boolean isFinderCacheEnabled() {
+		return _registration.isFinderCacheEnabled();
+	}
+
+	@Override
+	public void resetOriginalValues() {
+		_registration.resetOriginalValues();
+	}
+
+	private final Registration _registration;
 
 }

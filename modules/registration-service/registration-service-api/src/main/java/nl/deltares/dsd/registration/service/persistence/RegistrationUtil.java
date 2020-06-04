@@ -14,6 +14,8 @@
 
 package nl.deltares.dsd.registration.service.persistence;
 
+import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -26,7 +28,6 @@ import java.util.Set;
 
 import nl.deltares.dsd.registration.model.Registration;
 
-import org.osgi.annotation.versioning.ProviderType;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.util.tracker.ServiceTracker;
@@ -38,7 +39,7 @@ import org.osgi.util.tracker.ServiceTracker;
  * Caching information and settings can be found in <code>portal.properties</code>
  * </p>
  *
- * @author Brian Wing Shun Chan
+ * @author Erik de Rooij @ Deltares
  * @see RegistrationPersistence
  * @generated
  */
@@ -124,425 +125,6 @@ public class RegistrationUtil {
 		Registration registration, ServiceContext serviceContext) {
 
 		return getPersistence().update(registration, serviceContext);
-	}
-
-	/**
-	 * Returns all the registrations where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the matching registrations
-	 */
-	public static List<Registration> findByUuid(String uuid) {
-		return getPersistence().findByUuid(uuid);
-	}
-
-	/**
-	 * Returns a range of all the registrations where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of registrations
-	 * @param end the upper bound of the range of registrations (not inclusive)
-	 * @return the range of matching registrations
-	 */
-	public static List<Registration> findByUuid(
-		String uuid, int start, int end) {
-
-		return getPersistence().findByUuid(uuid, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the registrations where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of registrations
-	 * @param end the upper bound of the range of registrations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching registrations
-	 */
-	public static List<Registration> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<Registration> orderByComparator) {
-
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the registrations where uuid = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param start the lower bound of the range of registrations
-	 * @param end the upper bound of the range of registrations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the ordered range of matching registrations
-	 */
-	public static List<Registration> findByUuid(
-		String uuid, int start, int end,
-		OrderByComparator<Registration> orderByComparator,
-		boolean retrieveFromCache) {
-
-		return getPersistence().findByUuid(
-			uuid, start, end, orderByComparator, retrieveFromCache);
-	}
-
-	/**
-	 * Returns the first registration in the ordered set where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching registration
-	 * @throws NoSuchRegistrationException if a matching registration could not be found
-	 */
-	public static Registration findByUuid_First(
-			String uuid, OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByUuid_First(uuid, orderByComparator);
-	}
-
-	/**
-	 * Returns the first registration in the ordered set where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
-	 */
-	public static Registration fetchByUuid_First(
-		String uuid, OrderByComparator<Registration> orderByComparator) {
-
-		return getPersistence().fetchByUuid_First(uuid, orderByComparator);
-	}
-
-	/**
-	 * Returns the last registration in the ordered set where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration
-	 * @throws NoSuchRegistrationException if a matching registration could not be found
-	 */
-	public static Registration findByUuid_Last(
-			String uuid, OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByUuid_Last(uuid, orderByComparator);
-	}
-
-	/**
-	 * Returns the last registration in the ordered set where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
-	 */
-	public static Registration fetchByUuid_Last(
-		String uuid, OrderByComparator<Registration> orderByComparator) {
-
-		return getPersistence().fetchByUuid_Last(uuid, orderByComparator);
-	}
-
-	/**
-	 * Returns the registrations before and after the current registration in the ordered set where uuid = &#63;.
-	 *
-	 * @param registrationId the primary key of the current registration
-	 * @param uuid the uuid
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next registration
-	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
-	 */
-	public static Registration[] findByUuid_PrevAndNext(
-			long registrationId, String uuid,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByUuid_PrevAndNext(
-			registrationId, uuid, orderByComparator);
-	}
-
-	/**
-	 * Removes all the registrations where uuid = &#63; from the database.
-	 *
-	 * @param uuid the uuid
-	 */
-	public static void removeByUuid(String uuid) {
-		getPersistence().removeByUuid(uuid);
-	}
-
-	/**
-	 * Returns the number of registrations where uuid = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @return the number of matching registrations
-	 */
-	public static int countByUuid(String uuid) {
-		return getPersistence().countByUuid(uuid);
-	}
-
-	/**
-	 * Returns the registration where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchRegistrationException</code> if it could not be found.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching registration
-	 * @throws NoSuchRegistrationException if a matching registration could not be found
-	 */
-	public static Registration findByUUID_G(String uuid, long groupId)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByUUID_G(uuid, groupId);
-	}
-
-	/**
-	 * Returns the registration where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the matching registration, or <code>null</code> if a matching registration could not be found
-	 */
-	public static Registration fetchByUUID_G(String uuid, long groupId) {
-		return getPersistence().fetchByUUID_G(uuid, groupId);
-	}
-
-	/**
-	 * Returns the registration where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the matching registration, or <code>null</code> if a matching registration could not be found
-	 */
-	public static Registration fetchByUUID_G(
-		String uuid, long groupId, boolean retrieveFromCache) {
-
-		return getPersistence().fetchByUUID_G(uuid, groupId, retrieveFromCache);
-	}
-
-	/**
-	 * Removes the registration where uuid = &#63; and groupId = &#63; from the database.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the registration that was removed
-	 */
-	public static Registration removeByUUID_G(String uuid, long groupId)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().removeByUUID_G(uuid, groupId);
-	}
-
-	/**
-	 * Returns the number of registrations where uuid = &#63; and groupId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param groupId the group ID
-	 * @return the number of matching registrations
-	 */
-	public static int countByUUID_G(String uuid, long groupId) {
-		return getPersistence().countByUUID_G(uuid, groupId);
-	}
-
-	/**
-	 * Returns all the registrations where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the matching registrations
-	 */
-	public static List<Registration> findByUuid_C(String uuid, long companyId) {
-		return getPersistence().findByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of all the registrations where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of registrations
-	 * @param end the upper bound of the range of registrations (not inclusive)
-	 * @return the range of matching registrations
-	 */
-	public static List<Registration> findByUuid_C(
-		String uuid, long companyId, int start, int end) {
-
-		return getPersistence().findByUuid_C(uuid, companyId, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the registrations where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of registrations
-	 * @param end the upper bound of the range of registrations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching registrations
-	 */
-	public static List<Registration> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<Registration> orderByComparator) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the registrations where uuid = &#63; and companyId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param start the lower bound of the range of registrations
-	 * @param end the upper bound of the range of registrations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the ordered range of matching registrations
-	 */
-	public static List<Registration> findByUuid_C(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<Registration> orderByComparator,
-		boolean retrieveFromCache) {
-
-		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator, retrieveFromCache);
-	}
-
-	/**
-	 * Returns the first registration in the ordered set where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching registration
-	 * @throws NoSuchRegistrationException if a matching registration could not be found
-	 */
-	public static Registration findByUuid_C_First(
-			String uuid, long companyId,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByUuid_C_First(
-			uuid, companyId, orderByComparator);
-	}
-
-	/**
-	 * Returns the first registration in the ordered set where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
-	 */
-	public static Registration fetchByUuid_C_First(
-		String uuid, long companyId,
-		OrderByComparator<Registration> orderByComparator) {
-
-		return getPersistence().fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-	}
-
-	/**
-	 * Returns the last registration in the ordered set where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration
-	 * @throws NoSuchRegistrationException if a matching registration could not be found
-	 */
-	public static Registration findByUuid_C_Last(
-			String uuid, long companyId,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByUuid_C_Last(
-			uuid, companyId, orderByComparator);
-	}
-
-	/**
-	 * Returns the last registration in the ordered set where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
-	 */
-	public static Registration fetchByUuid_C_Last(
-		String uuid, long companyId,
-		OrderByComparator<Registration> orderByComparator) {
-
-		return getPersistence().fetchByUuid_C_Last(
-			uuid, companyId, orderByComparator);
-	}
-
-	/**
-	 * Returns the registrations before and after the current registration in the ordered set where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param registrationId the primary key of the current registration
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next registration
-	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
-	 */
-	public static Registration[] findByUuid_C_PrevAndNext(
-			long registrationId, String uuid, long companyId,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByUuid_C_PrevAndNext(
-			registrationId, uuid, companyId, orderByComparator);
-	}
-
-	/**
-	 * Removes all the registrations where uuid = &#63; and companyId = &#63; from the database.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 */
-	public static void removeByUuid_C(String uuid, long companyId) {
-		getPersistence().removeByUuid_C(uuid, companyId);
-	}
-
-	/**
-	 * Returns the number of registrations where uuid = &#63; and companyId = &#63;.
-	 *
-	 * @param uuid the uuid
-	 * @param companyId the company ID
-	 * @return the number of matching registrations
-	 */
-	public static int countByUuid_C(String uuid, long companyId) {
-		return getPersistence().countByUuid_C(uuid, companyId);
 	}
 
 	/**
@@ -928,6 +510,215 @@ public class RegistrationUtil {
 		long groupId, long articleId) {
 
 		return getPersistence().countByArticleRegistrations(groupId, articleId);
+	}
+
+	/**
+	 * Returns all the registrations where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param articleId the article ID
+	 * @return the matching registrations
+	 */
+	public static List<Registration> findByUserArticleRegistrations(
+		long groupId, long userId, long articleId) {
+
+		return getPersistence().findByUserArticleRegistrations(
+			groupId, userId, articleId);
+	}
+
+	/**
+	 * Returns a range of all the registrations where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param articleId the article ID
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @return the range of matching registrations
+	 */
+	public static List<Registration> findByUserArticleRegistrations(
+		long groupId, long userId, long articleId, int start, int end) {
+
+		return getPersistence().findByUserArticleRegistrations(
+			groupId, userId, articleId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param articleId the article ID
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching registrations
+	 */
+	public static List<Registration> findByUserArticleRegistrations(
+		long groupId, long userId, long articleId, int start, int end,
+		OrderByComparator<Registration> orderByComparator) {
+
+		return getPersistence().findByUserArticleRegistrations(
+			groupId, userId, articleId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param articleId the article ID
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching registrations
+	 */
+	public static List<Registration> findByUserArticleRegistrations(
+		long groupId, long userId, long articleId, int start, int end,
+		OrderByComparator<Registration> orderByComparator,
+		boolean retrieveFromCache) {
+
+		return getPersistence().findByUserArticleRegistrations(
+			groupId, userId, articleId, start, end, orderByComparator,
+			retrieveFromCache);
+	}
+
+	/**
+	 * Returns the first registration in the ordered set where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param articleId the article ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching registration
+	 * @throws NoSuchRegistrationException if a matching registration could not be found
+	 */
+	public static Registration findByUserArticleRegistrations_First(
+			long groupId, long userId, long articleId,
+			OrderByComparator<Registration> orderByComparator)
+		throws nl.deltares.dsd.registration.exception.
+			NoSuchRegistrationException {
+
+		return getPersistence().findByUserArticleRegistrations_First(
+			groupId, userId, articleId, orderByComparator);
+	}
+
+	/**
+	 * Returns the first registration in the ordered set where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param articleId the article ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
+	 */
+	public static Registration fetchByUserArticleRegistrations_First(
+		long groupId, long userId, long articleId,
+		OrderByComparator<Registration> orderByComparator) {
+
+		return getPersistence().fetchByUserArticleRegistrations_First(
+			groupId, userId, articleId, orderByComparator);
+	}
+
+	/**
+	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param articleId the article ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching registration
+	 * @throws NoSuchRegistrationException if a matching registration could not be found
+	 */
+	public static Registration findByUserArticleRegistrations_Last(
+			long groupId, long userId, long articleId,
+			OrderByComparator<Registration> orderByComparator)
+		throws nl.deltares.dsd.registration.exception.
+			NoSuchRegistrationException {
+
+		return getPersistence().findByUserArticleRegistrations_Last(
+			groupId, userId, articleId, orderByComparator);
+	}
+
+	/**
+	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param articleId the article ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
+	 */
+	public static Registration fetchByUserArticleRegistrations_Last(
+		long groupId, long userId, long articleId,
+		OrderByComparator<Registration> orderByComparator) {
+
+		return getPersistence().fetchByUserArticleRegistrations_Last(
+			groupId, userId, articleId, orderByComparator);
+	}
+
+	/**
+	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 *
+	 * @param registrationId the primary key of the current registration
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param articleId the article ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next registration
+	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
+	 */
+	public static Registration[] findByUserArticleRegistrations_PrevAndNext(
+			long registrationId, long groupId, long userId, long articleId,
+			OrderByComparator<Registration> orderByComparator)
+		throws nl.deltares.dsd.registration.exception.
+			NoSuchRegistrationException {
+
+		return getPersistence().findByUserArticleRegistrations_PrevAndNext(
+			registrationId, groupId, userId, articleId, orderByComparator);
+	}
+
+	/**
+	 * Removes all the registrations where groupId = &#63; and userId = &#63; and articleId = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param articleId the article ID
+	 */
+	public static void removeByUserArticleRegistrations(
+		long groupId, long userId, long articleId) {
+
+		getPersistence().removeByUserArticleRegistrations(
+			groupId, userId, articleId);
+	}
+
+	/**
+	 * Returns the number of registrations where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param articleId the article ID
+	 * @return the number of matching registrations
+	 */
+	public static int countByUserArticleRegistrations(
+		long groupId, long userId, long articleId) {
+
+		return getPersistence().countByUserArticleRegistrations(
+			groupId, userId, articleId);
 	}
 
 	/**

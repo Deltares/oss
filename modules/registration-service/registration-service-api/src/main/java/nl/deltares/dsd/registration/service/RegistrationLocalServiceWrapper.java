@@ -14,14 +14,14 @@
 
 package nl.deltares.dsd.registration.service;
 
-import com.liferay.portal.kernel.service.ServiceWrapper;
+import aQute.bnd.annotation.ProviderType;
 
-import org.osgi.annotation.versioning.ProviderType;
+import com.liferay.portal.kernel.service.ServiceWrapper;
 
 /**
  * Provides a wrapper for {@link RegistrationLocalService}.
  *
- * @author Brian Wing Shun Chan
+ * @author Erik de Rooij @ Deltares
  * @see RegistrationLocalService
  * @generated
  */
@@ -198,21 +198,6 @@ public class RegistrationLocalServiceWrapper
 		return _registrationLocalService.fetchRegistration(registrationId);
 	}
 
-	/**
-	 * Returns the registration matching the UUID and group.
-	 *
-	 * @param uuid the registration's UUID
-	 * @param groupId the primary key of the group
-	 * @return the matching registration, or <code>null</code> if a matching registration could not be found
-	 */
-	@Override
-	public nl.deltares.dsd.registration.model.Registration
-		fetchRegistrationByUuidAndGroupId(String uuid, long groupId) {
-
-		return _registrationLocalService.fetchRegistrationByUuidAndGroupId(
-			uuid, groupId);
-	}
-
 	@Override
 	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
@@ -261,23 +246,6 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	/**
-	 * Returns the registration matching the UUID and group.
-	 *
-	 * @param uuid the registration's UUID
-	 * @param groupId the primary key of the group
-	 * @return the matching registration
-	 * @throws PortalException if a matching registration could not be found
-	 */
-	@Override
-	public nl.deltares.dsd.registration.model.Registration
-			getRegistrationByUuidAndGroupId(String uuid, long groupId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		return _registrationLocalService.getRegistrationByUuidAndGroupId(
-			uuid, groupId);
-	}
-
-	/**
 	 * Returns a range of all the registrations.
 	 *
 	 * <p>
@@ -293,43 +261,6 @@ public class RegistrationLocalServiceWrapper
 		getRegistrations(int start, int end) {
 
 		return _registrationLocalService.getRegistrations(start, end);
-	}
-
-	/**
-	 * Returns all the registrations matching the UUID and company.
-	 *
-	 * @param uuid the UUID of the registrations
-	 * @param companyId the primary key of the company
-	 * @return the matching registrations, or an empty list if no matches were found
-	 */
-	@Override
-	public java.util.List<nl.deltares.dsd.registration.model.Registration>
-		getRegistrationsByUuidAndCompanyId(String uuid, long companyId) {
-
-		return _registrationLocalService.getRegistrationsByUuidAndCompanyId(
-			uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of registrations matching the UUID and company.
-	 *
-	 * @param uuid the UUID of the registrations
-	 * @param companyId the primary key of the company
-	 * @param start the lower bound of the range of registrations
-	 * @param end the upper bound of the range of registrations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the range of matching registrations, or an empty list if no matches were found
-	 */
-	@Override
-	public java.util.List<nl.deltares.dsd.registration.model.Registration>
-		getRegistrationsByUuidAndCompanyId(
-			String uuid, long companyId, int start, int end,
-			com.liferay.portal.kernel.util.OrderByComparator
-				<nl.deltares.dsd.registration.model.Registration>
-					orderByComparator) {
-
-		return _registrationLocalService.getRegistrationsByUuidAndCompanyId(
-			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**

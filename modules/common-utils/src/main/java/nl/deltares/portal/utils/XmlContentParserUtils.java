@@ -1,6 +1,10 @@
 package nl.deltares.portal.utils;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.DateUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -16,9 +20,12 @@ import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.util.Locale;
 
 public class XmlContentParserUtils {
 
+    private static final Log LOG = LogFactoryUtil.getLog(XmlContentParserUtils.class);
     static String ARTICLE_ROOT= "/root";
     static String ARTICLE_DYNAMIC_ELEMENT= "/dynamic-element";
     static String ARTICLE_NAME_ATTRIBUTE_START= "[@name='";
@@ -40,7 +47,7 @@ public class XmlContentParserUtils {
 
     }
 
-    public static Object getNodeValue(Document xmlDocument, String nodeName) throws IOException {
+    public static Object getNodeValue(Document xmlDocument, String nodeName) throws PortalException {
 
         String[] searchLevels = {
                 ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END + ARTICLE_CONTENT_XML_NODE_END,
@@ -52,17 +59,21 @@ public class XmlContentParserUtils {
             try {
                 node = getNode(xmlDocument, expression);
                 if (node != null) {
-                    return getNodeValue(node);
+                    try {
+                        return getNodeValue(node);
+                    } catch (ParseException e) {
+                        LOG.error("Error parsing node value: " + e.getMessage());
+                    }
                 }
-            } catch (XPathExpressionException e) {
-                //ignore
+            } catch (XPathExpressionException | IOException e) {
+                LOG.error(String.format("Error retrieving node value %s from content: %s", nodeName, e.getMessage()));
             }
         }
-        throw new IOException(String.format("Node name '%s' not found in document! ", nodeName));
+        throw new PortalException(String.format("Node name '%s' not found in document! ", nodeName));
 
     }
 
-    private static Object getNodeValue(Node node) {
+    private static Object getNodeValue(Node node) throws ParseException {
 
         Node parentNode = node.getParentNode();
         Node typeNode = parentNode.getAttributes().getNamedItem("type");
@@ -77,6 +88,9 @@ public class XmlContentParserUtils {
         }
         if ("double".equals(type)){
             return Double.valueOf(textValue);
+        }
+        if ("ddm-date".equals(type)){
+            return DateUtil.parseDate(textValue, Locale.US);
         }
         return textValue;
     }

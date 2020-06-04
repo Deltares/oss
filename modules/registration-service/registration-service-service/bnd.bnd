@@ -4,3 +4,15 @@ Bundle-Version: 1.0.0
 Liferay-Require-SchemaVersion: 1.0.0
 Liferay-Service: true
 -dsannotations-options: inherit
+Import-Package: \
+    !com.swabunga.spell.*, \
+    !net.fortuna.ical4j.*, \
+    !org.antlr.stringtemplate, \
+    !org.apache.axis.tools.ant.wsdl, \
+    !org.apache.poi.*, \
+    !com.liferay.petra.lang, \
+    !com.liferay.portal.kernel.portlet, \
+    !org.apache.avalon.framework.logger, \
+    !org.apache.log, \
+    !org.apache.log4j, \
+    *

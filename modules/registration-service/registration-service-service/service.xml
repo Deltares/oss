@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
-<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.2.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_2_0.dtd">
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.0.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_1_0.dtd">
 
-<service-builder dependency-injector="ds" package-path="nl.deltares.dsd.registration">
+<service-builder package-path="nl.deltares.dsd.registration">
+	<author>Erik de Rooij @ Deltares</author>
 	<namespace>Registrations</namespace>
-	<entity local-service="true" name="Registration" remote-service="false" uuid="true">
+	<entity local-service="true" name="Registration" remote-service="false" uuid="false">
 
 		<!-- PK fields -->
 
@@ -26,8 +27,8 @@
 
 		<!-- Order -->
 
-		<order by="asc">
-			<order-column name="registrationId" />
+		<order by="desc">
+			<order-column name="startTime" />
 		</order>
 
 		<!-- Finder methods -->
@@ -39,6 +40,12 @@
 
 		<finder name="ArticleRegistrations" return-type="Collection">
 			<finder-column name="groupId" />
+			<finder-column name="articleId" />
+		</finder>
+
+		<finder name="UserArticleRegistrations" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="userId" />
 			<finder-column name="articleId" />
 		</finder>
 

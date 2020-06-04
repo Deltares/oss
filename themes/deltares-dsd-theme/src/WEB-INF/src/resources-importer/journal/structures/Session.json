@@ -7,8 +7,8 @@
   "fields": [
     {
       "label": {
-        "nl_NL": "Presenters",
-        "en_US": "Presentatoren"
+        "nl_NL": "Presentatoren",
+        "en_US": "Presenters"
       },
       "predefinedValue": {
         "nl_NL": "",
@@ -35,8 +35,8 @@
     },
     {
       "label": {
-        "nl_NL": "Description",
-        "en_US": "Omschrijving"
+        "nl_NL": "Omschrijving",
+        "en_US": "Description"
       },
       "predefinedValue": {
         "nl_NL": "",
@@ -63,8 +63,8 @@
     },
     {
       "label": {
-        "nl_NL": "Room",
-        "en_US": "Kamer"
+        "nl_NL": "Kamer",
+        "en_US": "Room"
       },
       "predefinedValue": {
         "nl_NL": "",
@@ -91,8 +91,8 @@
     },
     {
       "label": {
-        "nl_NL": "Children",
-        "en_US": "Children"
+        "nl_NL": "Ouder registratie",
+        "en_US": "Parent registration"
       },
       "predefinedValue": {
         "nl_NL": "",
@@ -110,9 +110,9 @@
       "fieldNamespace": "ddm",
       "indexType": "keyword",
       "localizable": true,
-      "name": "children",
+      "name": "parent",
       "readOnly": false,
-      "repeatable": true,
+      "repeatable": false,
       "required": false,
       "showLabel": true,
       "type": "ddm-journal-article"
@@ -147,7 +147,7 @@
       "nestedFields": [
         {
           "label": {
-            "nl_NL": "Date",
+            "nl_NL": "Datum",
             "en_US": "Date"
           },
           "predefinedValue": {

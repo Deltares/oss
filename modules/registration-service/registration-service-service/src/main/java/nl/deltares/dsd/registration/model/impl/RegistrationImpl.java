@@ -14,7 +14,7 @@
 
 package nl.deltares.dsd.registration.model.impl;
 
-import org.osgi.annotation.versioning.ProviderType;
+import aQute.bnd.annotation.ProviderType;
 
 /**
  * The extended model implementation for the Registration service. Represents a row in the &quot;Registrations_Registration&quot; database table, with each column mapped to a property of this class.
@@ -23,7 +23,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>nl.deltares.dsd.registration.model.Registration<code> interface.
  * </p>
  *
- * @author Brian Wing Shun Chan
+ * @author Erik de Rooij @ Deltares
  */
 @ProviderType
 public class RegistrationImpl extends RegistrationBaseImpl {

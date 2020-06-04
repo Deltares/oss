@@ -14,18 +14,18 @@
 
 package nl.deltares.dsd.registration.model;
 
+import aQute.bnd.annotation.ProviderType;
+
 import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * This class is used by SOAP remote services.
  *
- * @author Brian Wing Shun Chan
+ * @author Erik de Rooij @ Deltares
  * @generated
  */
 @ProviderType
@@ -34,7 +34,6 @@ public class RegistrationSoap implements Serializable {
 	public static RegistrationSoap toSoapModel(Registration model) {
 		RegistrationSoap soapModel = new RegistrationSoap();
 
-		soapModel.setUuid(model.getUuid());
 		soapModel.setRegistrationId(model.getRegistrationId());
 		soapModel.setGroupId(model.getGroupId());
 		soapModel.setCompanyId(model.getCompanyId());
@@ -94,14 +93,6 @@ public class RegistrationSoap implements Serializable {
 
 	public void setPrimaryKey(long pk) {
 		setRegistrationId(pk);
-	}
-
-	public String getUuid() {
-		return _uuid;
-	}
-
-	public void setUuid(String uuid) {
-		_uuid = uuid;
 	}
 
 	public long getRegistrationId() {
@@ -168,7 +159,6 @@ public class RegistrationSoap implements Serializable {
 		_endTime = endTime;
 	}
 
-	private String _uuid;
 	private long _registrationId;
 	private long _groupId;
 	private long _companyId;

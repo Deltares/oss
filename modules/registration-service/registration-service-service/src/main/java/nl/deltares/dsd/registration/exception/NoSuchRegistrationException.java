@@ -13,12 +13,12 @@
  */
 package nl.deltares.dsd.registration.exception;
 
-import aQute.bnd.annotation.ProviderType;
+import org.osgi.annotation.versioning.ProviderType;
 
 import com.liferay.portal.kernel.exception.NoSuchModelException;
 
 /**
- * @author Erik de Rooij @ Deltares
+ * @author Brian Wing Shun Chan
  */
 @ProviderType
 public class NoSuchRegistrationException extends NoSuchModelException {

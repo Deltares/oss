@@ -14,7 +14,8 @@
 
 package nl.deltares.dsd.registration.service;
 
-import org.osgi.annotation.versioning.ProviderType;
+import aQute.bnd.annotation.ProviderType;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.util.tracker.ServiceTracker;
@@ -27,7 +28,7 @@ import org.osgi.util.tracker.ServiceTracker;
  * based on the propagated JAAS credentials because this service can only be
  * accessed from within the same VM.
  *
- * @author Brian Wing Shun Chan
+ * @author Erik de Rooij @ Deltares
  * @see RegistrationLocalService
  * @generated
  */
@@ -194,19 +195,6 @@ public class RegistrationLocalServiceUtil {
 		return getService().fetchRegistration(registrationId);
 	}
 
-	/**
-	 * Returns the registration matching the UUID and group.
-	 *
-	 * @param uuid the registration's UUID
-	 * @param groupId the primary key of the group
-	 * @return the matching registration, or <code>null</code> if a matching registration could not be found
-	 */
-	public static nl.deltares.dsd.registration.model.Registration
-		fetchRegistrationByUuidAndGroupId(String uuid, long groupId) {
-
-		return getService().fetchRegistrationByUuidAndGroupId(uuid, groupId);
-	}
-
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 
@@ -251,21 +239,6 @@ public class RegistrationLocalServiceUtil {
 	}
 
 	/**
-	 * Returns the registration matching the UUID and group.
-	 *
-	 * @param uuid the registration's UUID
-	 * @param groupId the primary key of the group
-	 * @return the matching registration
-	 * @throws PortalException if a matching registration could not be found
-	 */
-	public static nl.deltares.dsd.registration.model.Registration
-			getRegistrationByUuidAndGroupId(String uuid, long groupId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		return getService().getRegistrationByUuidAndGroupId(uuid, groupId);
-	}
-
-	/**
 	 * Returns a range of all the registrations.
 	 *
 	 * <p>
@@ -281,42 +254,6 @@ public class RegistrationLocalServiceUtil {
 			int start, int end) {
 
 		return getService().getRegistrations(start, end);
-	}
-
-	/**
-	 * Returns all the registrations matching the UUID and company.
-	 *
-	 * @param uuid the UUID of the registrations
-	 * @param companyId the primary key of the company
-	 * @return the matching registrations, or an empty list if no matches were found
-	 */
-	public static java.util.List
-		<nl.deltares.dsd.registration.model.Registration>
-			getRegistrationsByUuidAndCompanyId(String uuid, long companyId) {
-
-		return getService().getRegistrationsByUuidAndCompanyId(uuid, companyId);
-	}
-
-	/**
-	 * Returns a range of registrations matching the UUID and company.
-	 *
-	 * @param uuid the UUID of the registrations
-	 * @param companyId the primary key of the company
-	 * @param start the lower bound of the range of registrations
-	 * @param end the upper bound of the range of registrations (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the range of matching registrations, or an empty list if no matches were found
-	 */
-	public static java.util.List
-		<nl.deltares.dsd.registration.model.Registration>
-			getRegistrationsByUuidAndCompanyId(
-				String uuid, long companyId, int start, int end,
-				com.liferay.portal.kernel.util.OrderByComparator
-					<nl.deltares.dsd.registration.model.Registration>
-						orderByComparator) {
-
-		return getService().getRegistrationsByUuidAndCompanyId(
-			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
