@@ -7,34 +7,6 @@
   "fields": [
     {
       "label": {
-        "nl_NL": "Datum",
-        "en_US": "Date"
-      },
-      "predefinedValue": {
-        "nl_NL": "",
-        "en_US": ""
-      },
-      "style": {
-        "nl_NL": "",
-        "en_US": ""
-      },
-      "tip": {
-        "nl_NL": "",
-        "en_US": ""
-      },
-      "dataType": "date",
-      "fieldNamespace": "ddm",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "date",
-      "readOnly": false,
-      "repeatable": false,
-      "required": true,
-      "showLabel": true,
-      "type": "ddm-date"
-    },
-    {
-      "label": {
         "nl_NL": "Halten",
         "en_US": "Stops"
       },
