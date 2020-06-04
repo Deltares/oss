@@ -21,13 +21,18 @@ import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import nl.deltares.portal.utils.XmlContentParserUtils;
 import nl.worth.fews.configuration.JournalArticleManagementConfiguration;
 import nl.worth.fews.constants.JournalArticleManagementConstants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.util.Map;
 
 
@@ -63,7 +68,7 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
         String folderName = Validator.isNotNull(structure_folderJsonMap.getString(structureKey))
           ? structure_folderJsonMap.getString(structureKey) : structureKey;
 
-        if (isDSDSite(groupId) && isSharedContent(structureKey)) {
+        if (isDSDSite(groupId) && storeInParentSite(model)) {
           groupId = journalArticleManagementConfiguration.dsdParentSiteID();
           model.setGroupId(groupId);
 
@@ -84,8 +89,22 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
     }
   }
 
-  private boolean isSharedContent(String structureKey) {
-    return StringUtil.contains(journalArticleManagementConfiguration.structureKeyForSharedStructures(), structureKey, " ");
+  private boolean storeInParentSite(JournalArticle article) {
+    long groupId = article.getGroupId();
+    try {
+      Group site = _groupLocalService.getGroup(groupId);
+      Group parentGroup = site.getParentGroup();
+      if (parentGroup == null) return false;
+
+      Document document = XmlContentParserUtils.parseContent(article.getContent());
+      Object storeInParentSite = XmlContentParserUtils.getNodeValue(document, "storeInParentSite");
+      return storeInParentSite != null && (Boolean)storeInParentSite;
+    } catch (PortalException e) {
+      LOGGER.error("Could not find site ["+ groupId+"]", e);
+    } catch (ParserConfigurationException | IOException | SAXException e) {
+      LOGGER.error(String.format("Could not parse content for site %s: %s", groupId, e));
+    }
+    return false;
   }
 
   private boolean isDSDSite(long groupId) {

@@ -7,6 +7,33 @@
     "fields": [
         {
             "label": {
+                "nl_NL": "Opslaan in overkoepelende site",
+                "en_US": "Store in parent site"
+            },
+            "predefinedValue": {
+                "nl_NL": "true",
+                "en_US": true
+            },
+            "style": {
+                "nl_NL": "",
+                "en_US": ""
+            },
+            "tip": {
+                "nl_NL": "Selecteer om op te slaan in overkoepelende site.",
+                "en_US": "Choose to store content under parent site."
+            },
+            "dataType": "boolean",
+            "indexType": "keyword",
+            "localizable": true,
+            "name": "storeInParentSite",
+            "readOnly": false,
+            "repeatable": false,
+            "required": false,
+            "showLabel": true,
+            "type": "checkbox"
+        },
+        {
+            "label": {
                 "en_US": "Expert name",
                 "nl_NL": "Expert naam"
             },

@@ -1,4 +1,4 @@
-package nl.deltares.dsd.registration.service.impl;
+package nl.deltares.portal.utils;
 
 import com.liferay.portal.kernel.exception.SystemException;
 import org.w3c.dom.Document;
@@ -17,7 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class JournalArticleUtils {
+public class XmlContentParserUtils {
 
     static String ARTICLE_ROOT= "/root";
     static String ARTICLE_DYNAMIC_ELEMENT= "/dynamic-element";

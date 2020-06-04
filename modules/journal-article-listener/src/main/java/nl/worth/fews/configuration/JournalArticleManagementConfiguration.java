@@ -8,7 +8,7 @@ import nl.worth.fews.constants.JournalArticleManagementConstants;
 )
 public interface JournalArticleManagementConfiguration {
 
-  @Meta.AD(required = false, deflt = "", description = "Configure siteIds of all DSD sites.")
+  @Meta.AD(required = false, deflt = "", description = "Configure siteIds of all sites for which to apply folder mapping.")
   String configuredGroupIds();
 
   @Meta.AD(required = false, deflt = "0", description = "Configure the siteId of the Parent DSD site.")
@@ -20,6 +20,4 @@ public interface JournalArticleManagementConfiguration {
           "\"BusTransfer\":\"Registrations\"}", description = "Configure the folders in which to create instances of the different structures.")
   String structureKeyToFolderJsonMap();
 
-  @Meta.AD(required = false, deflt = "Expert EventLocation Location Building Room", description = "Configure what structures are to be shared between all DSD sites.")
-  String structureKeyForSharedStructures();
 }
