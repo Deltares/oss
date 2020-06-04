@@ -15,7 +15,6 @@
 package nl.deltares.dsd.registration.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
@@ -30,24 +29,16 @@ import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-
-import java.io.Serializable;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationHandler;
-
-import java.sql.Types;
-
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-
 import nl.deltares.dsd.registration.model.Registration;
 import nl.deltares.dsd.registration.model.RegistrationModel;
+
+import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationHandler;
+import java.sql.Types;
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * The base model implementation for the Registration service. Represents a row in the &quot;Registrations_Registration&quot; database table, with each column mapped to a property of this class.
@@ -93,7 +84,7 @@ public class RegistrationModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table Registrations_Registration (registrationId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,articleId LONG,userPreferences VARCHAR(75) null,startTime DATE null,endTime DATE null)";
+		"create table Registrations_Registration (registrationId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,articleId LONG,userPreferences STRING null,startTime DATE null,endTime DATE null)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table Registrations_Registration";

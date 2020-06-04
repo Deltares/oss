@@ -4,7 +4,7 @@ create table Registrations_Registration (
 	companyId LONG,
 	userId LONG,
 	articleId LONG,
-	userPreferences VARCHAR(75) null,
+	userPreferences STRING null,
 	startTime DATE null,
 	endTime DATE null
 );
