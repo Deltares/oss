@@ -243,6 +243,13 @@
       },
       "options": [
         {
+          "value": "General",
+          "label": {
+            "nl_NL": "Algemeen",
+            "en_US": "General"
+          }
+        },
+        {
           "value": "Danubius",
           "label": {
             "nl_NL": "Danubius",

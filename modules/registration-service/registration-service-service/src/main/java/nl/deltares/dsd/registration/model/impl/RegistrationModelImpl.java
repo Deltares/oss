@@ -15,6 +15,7 @@
 package nl.deltares.dsd.registration.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
@@ -29,16 +30,24 @@ import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import nl.deltares.dsd.registration.model.Registration;
-import nl.deltares.dsd.registration.model.RegistrationModel;
 
 import java.io.Serializable;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
+
 import java.sql.Types;
-import java.util.*;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+
+import nl.deltares.dsd.registration.model.Registration;
+import nl.deltares.dsd.registration.model.RegistrationModel;
 
 /**
  * The base model implementation for the Registration service. Represents a row in the &quot;Registrations_Registration&quot; database table, with each column mapped to a property of this class.
@@ -66,7 +75,8 @@ public class RegistrationModelImpl
 		{"registrationId", Types.BIGINT}, {"groupId", Types.BIGINT},
 		{"companyId", Types.BIGINT}, {"userId", Types.BIGINT},
 		{"articleId", Types.BIGINT}, {"userPreferences", Types.VARCHAR},
-		{"startTime", Types.TIMESTAMP}, {"endTime", Types.TIMESTAMP}
+		{"startTime", Types.TIMESTAMP}, {"endTime", Types.TIMESTAMP},
+		{"parentArticleId", Types.BIGINT}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -81,10 +91,11 @@ public class RegistrationModelImpl
 		TABLE_COLUMNS_MAP.put("userPreferences", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("startTime", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("endTime", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("parentArticleId", Types.BIGINT);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table Registrations_Registration (registrationId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,articleId LONG,userPreferences STRING null,startTime DATE null,endTime DATE null)";
+		"create table Registrations_Registration (registrationId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,articleId LONG,userPreferences STRING null,startTime DATE null,endTime DATE null,parentArticleId LONG)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table Registrations_Registration";
@@ -120,9 +131,11 @@ public class RegistrationModelImpl
 
 	public static final long GROUPID_COLUMN_BITMASK = 2L;
 
-	public static final long USERID_COLUMN_BITMASK = 4L;
+	public static final long PARENTARTICLEID_COLUMN_BITMASK = 4L;
 
-	public static final long STARTTIME_COLUMN_BITMASK = 8L;
+	public static final long USERID_COLUMN_BITMASK = 8L;
+
+	public static final long STARTTIME_COLUMN_BITMASK = 16L;
 
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(
 		nl.deltares.dsd.registration.service.util.ServiceProps.get(
@@ -423,6 +436,28 @@ public class RegistrationModelImpl
 				}
 
 			});
+		attributeGetterFunctions.put(
+			"parentArticleId",
+			new Function<Registration, Object>() {
+
+				@Override
+				public Object apply(Registration registration) {
+					return registration.getParentArticleId();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"parentArticleId",
+			new BiConsumer<Registration, Object>() {
+
+				@Override
+				public void accept(
+					Registration registration, Object parentArticleId) {
+
+					registration.setParentArticleId((Long)parentArticleId);
+				}
+
+			});
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -569,6 +604,28 @@ public class RegistrationModelImpl
 		_endTime = endTime;
 	}
 
+	@Override
+	public long getParentArticleId() {
+		return _parentArticleId;
+	}
+
+	@Override
+	public void setParentArticleId(long parentArticleId) {
+		_columnBitmask |= PARENTARTICLEID_COLUMN_BITMASK;
+
+		if (!_setOriginalParentArticleId) {
+			_setOriginalParentArticleId = true;
+
+			_originalParentArticleId = _parentArticleId;
+		}
+
+		_parentArticleId = parentArticleId;
+	}
+
+	public long getOriginalParentArticleId() {
+		return _originalParentArticleId;
+	}
+
 	public long getColumnBitmask() {
 		return _columnBitmask;
 	}
@@ -613,6 +670,7 @@ public class RegistrationModelImpl
 		registrationImpl.setUserPreferences(getUserPreferences());
 		registrationImpl.setStartTime(getStartTime());
 		registrationImpl.setEndTime(getEndTime());
+		registrationImpl.setParentArticleId(getParentArticleId());
 
 		registrationImpl.resetOriginalValues();
 
@@ -688,6 +746,11 @@ public class RegistrationModelImpl
 
 		registrationModelImpl._setOriginalArticleId = false;
 
+		registrationModelImpl._originalParentArticleId =
+			registrationModelImpl._parentArticleId;
+
+		registrationModelImpl._setOriginalParentArticleId = false;
+
 		registrationModelImpl._columnBitmask = 0;
 	}
 
@@ -731,6 +794,8 @@ public class RegistrationModelImpl
 		else {
 			registrationCacheModel.endTime = Long.MIN_VALUE;
 		}
+
+		registrationCacheModel.parentArticleId = getParentArticleId();
 
 		return registrationCacheModel;
 	}
@@ -819,6 +884,9 @@ public class RegistrationModelImpl
 	private String _userPreferences;
 	private Date _startTime;
 	private Date _endTime;
+	private long _parentArticleId;
+	private long _originalParentArticleId;
+	private boolean _setOriginalParentArticleId;
 	private long _columnBitmask;
 	private Registration _escapedModel;
 

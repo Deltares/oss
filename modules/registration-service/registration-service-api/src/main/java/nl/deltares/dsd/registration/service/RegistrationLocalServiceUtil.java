@@ -217,6 +217,13 @@ public class RegistrationLocalServiceUtil {
 		return getService().getOSGiServiceIdentifier();
 	}
 
+	public static int getParentRegistrationsCount(
+		long groupId, long userId, long parentRegistrationId) {
+
+		return getService().getParentRegistrationsCount(
+			groupId, userId, parentRegistrationId);
+	}
+
 	public static com.liferay.portal.kernel.model.PersistedModel
 			getPersistedModel(java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -265,6 +272,18 @@ public class RegistrationLocalServiceUtil {
 		return getService().getRegistrationsCount();
 	}
 
+	public static int getRegistrationsCount(long groupId, long articleId) {
+		return getService().getRegistrationsCount(groupId, articleId);
+	}
+
+	public static long[] getRegistrationsWithOverlappingPeriod(
+		long groupId, long userId, java.util.Date startTime,
+		java.util.Date endTime) {
+
+		return getService().getRegistrationsWithOverlappingPeriod(
+			groupId, userId, startTime, endTime);
+	}
+
 	/**
 	 * Updates the registration in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -276,13 +295,6 @@ public class RegistrationLocalServiceUtil {
 			nl.deltares.dsd.registration.model.Registration registration) {
 
 		return getService().updateRegistration(registration);
-	}
-
-	public static void validateRegistration(
-			long groupId, long articleId, long userId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		getService().validateRegistration(groupId, articleId, userId);
 	}
 
 	public static RegistrationLocalService getService() {

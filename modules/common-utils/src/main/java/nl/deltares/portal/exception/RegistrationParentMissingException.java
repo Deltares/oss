@@ -1,4 +1,4 @@
-package nl.deltares.dsd.registration.exception;
+package nl.deltares.portal.exception;
 
 public class RegistrationParentMissingException extends ValidationException {
 

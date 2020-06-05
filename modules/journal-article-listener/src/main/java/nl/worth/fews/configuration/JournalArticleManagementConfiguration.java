@@ -17,7 +17,9 @@ public interface JournalArticleManagementConfiguration {
   @Meta.AD(required = false, deflt = "{\"Blog\":\"Blogs\", \"New idea\":\"New ideas\", \"Best practice\":\"Best practices\", " +
           "\"Location\":\"Locations\", \"Eventlocation\":\"Locations\",  \"Building\":\"Locations\",  \"Room\":\"Locations\", " +
           "\"Expert\":\"Experts\", \"Registration\":\"Registrations\", \"Session\":\"Registrations\", \"Dinner\":\"Registrations\", " +
-          "\"BusTransfer\":\"Registrations\"}", description = "Configure the folders in which to create instances of the different structures.")
+          "\"Bustransfer\":\"Registrations\"}", description = "Configure the folders in which to create instances of the different structures.")
   String structureKeyToFolderJsonMap();
 
+  @Meta.AD(required = false, deflt = "Session", description = "Configure the structure key for DSD Sessions.")
+  String dsdSessionStructureKey();
 }

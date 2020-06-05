@@ -191,6 +191,20 @@ public interface RegistrationModel
 	 */
 	public void setEndTime(Date endTime);
 
+	/**
+	 * Returns the parent article ID of this registration.
+	 *
+	 * @return the parent article ID of this registration
+	 */
+	public long getParentArticleId();
+
+	/**
+	 * Sets the parent article ID of this registration.
+	 *
+	 * @param parentArticleId the parent article ID of this registration
+	 */
+	public void setParentArticleId(long parentArticleId);
+
 	@Override
 	public boolean isNew();
 

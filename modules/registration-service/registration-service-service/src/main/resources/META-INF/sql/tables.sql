@@ -6,5 +6,6 @@ create table Registrations_Registration (
 	articleId LONG,
 	userPreferences STRING null,
 	startTime DATE null,
-	endTime DATE null
+	endTime DATE null,
+	parentArticleId LONG
 );

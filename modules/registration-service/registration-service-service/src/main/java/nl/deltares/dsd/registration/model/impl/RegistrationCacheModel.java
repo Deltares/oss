@@ -66,7 +66,7 @@ public class RegistrationCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(17);
+		StringBundler sb = new StringBundler(19);
 
 		sb.append("{registrationId=");
 		sb.append(registrationId);
@@ -84,6 +84,8 @@ public class RegistrationCacheModel
 		sb.append(startTime);
 		sb.append(", endTime=");
 		sb.append(endTime);
+		sb.append(", parentArticleId=");
+		sb.append(parentArticleId);
 		sb.append("}");
 
 		return sb.toString();
@@ -120,6 +122,8 @@ public class RegistrationCacheModel
 			registrationImpl.setEndTime(new Date(endTime));
 		}
 
+		registrationImpl.setParentArticleId(parentArticleId);
+
 		registrationImpl.resetOriginalValues();
 
 		return registrationImpl;
@@ -139,6 +143,8 @@ public class RegistrationCacheModel
 		userPreferences = objectInput.readUTF();
 		startTime = objectInput.readLong();
 		endTime = objectInput.readLong();
+
+		parentArticleId = objectInput.readLong();
 	}
 
 	@Override
@@ -162,6 +168,8 @@ public class RegistrationCacheModel
 
 		objectOutput.writeLong(startTime);
 		objectOutput.writeLong(endTime);
+
+		objectOutput.writeLong(parentArticleId);
 	}
 
 	public long registrationId;
@@ -172,5 +180,6 @@ public class RegistrationCacheModel
 	public String userPreferences;
 	public long startTime;
 	public long endTime;
+	public long parentArticleId;
 
 }

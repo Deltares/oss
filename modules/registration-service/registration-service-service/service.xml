@@ -24,6 +24,7 @@
 		<column name="userPreferences" type="String" />
 		<column name="startTime" type="Date" />
 		<column name="endTime" type="Date" />
+		<column name="parentArticleId" type="long" />
 
 		<!-- Order -->
 
@@ -47,6 +48,12 @@
 			<finder-column name="groupId" />
 			<finder-column name="userId" />
 			<finder-column name="articleId" />
+		</finder>
+
+		<finder name="UserChildArticleRegistrations" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="userId" />
+			<finder-column name="parentArticleId" />
 		</finder>
 
 	</entity>

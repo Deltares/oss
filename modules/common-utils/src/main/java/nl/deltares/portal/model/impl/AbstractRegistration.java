@@ -1,4 +1,4 @@
-package nl.deltares.dsd.registration.model.impl;
+package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -27,10 +27,7 @@ public abstract class AbstractRegistration {
         return article.getGroupId();
     }
 
-    public int getCapacity() throws PortalException {
-        if (this.capacity != -1) return this.capacity;
-        Object capacity = XmlContentParserUtils.getNodeValue(content, "capacity");
-        this.capacity =  capacity == null ? Integer.MAX_VALUE : (int) capacity;
+    public int getCapacity() {
         return this.capacity;
     }
 
@@ -50,7 +47,9 @@ public abstract class AbstractRegistration {
     AbstractRegistration(JournalArticle article) throws PortalException {
         this.article = article;
         try {
-            this.content = XmlContentParserUtils.parseContent(article.getContent());
+            this.content = XmlContentParserUtils.parseContent(article);
+            Object capacity = XmlContentParserUtils.getNodeValue(content, "capacity", false);
+            this.capacity =  capacity == null ? Integer.MAX_VALUE : (int) capacity;
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", article.getArticleId(), e.getMessage()), e);
         }

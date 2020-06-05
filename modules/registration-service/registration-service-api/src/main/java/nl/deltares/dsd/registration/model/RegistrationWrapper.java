@@ -66,6 +66,7 @@ public class RegistrationWrapper
 		attributes.put("userPreferences", getUserPreferences());
 		attributes.put("startTime", getStartTime());
 		attributes.put("endTime", getEndTime());
+		attributes.put("parentArticleId", getParentArticleId());
 
 		return attributes;
 	}
@@ -118,6 +119,12 @@ public class RegistrationWrapper
 
 		if (endTime != null) {
 			setEndTime(endTime);
+		}
+
+		Long parentArticleId = (Long)attributes.get("parentArticleId");
+
+		if (parentArticleId != null) {
+			setParentArticleId(parentArticleId);
 		}
 	}
 
@@ -176,6 +183,16 @@ public class RegistrationWrapper
 	@Override
 	public long getGroupId() {
 		return _registration.getGroupId();
+	}
+
+	/**
+	 * Returns the parent article ID of this registration.
+	 *
+	 * @return the parent article ID of this registration
+	 */
+	@Override
+	public long getParentArticleId() {
+		return _registration.getParentArticleId();
 	}
 
 	/**
@@ -333,6 +350,16 @@ public class RegistrationWrapper
 	@Override
 	public void setNew(boolean n) {
 		_registration.setNew(n);
+	}
+
+	/**
+	 * Sets the parent article ID of this registration.
+	 *
+	 * @param parentArticleId the parent article ID of this registration
+	 */
+	@Override
+	public void setParentArticleId(long parentArticleId) {
+		_registration.setParentArticleId(parentArticleId);
 	}
 
 	/**

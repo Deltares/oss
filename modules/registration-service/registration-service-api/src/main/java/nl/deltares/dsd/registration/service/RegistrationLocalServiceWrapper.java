@@ -223,6 +223,14 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	@Override
+	public int getParentRegistrationsCount(
+		long groupId, long userId, long parentRegistrationId) {
+
+		return _registrationLocalService.getParentRegistrationsCount(
+			groupId, userId, parentRegistrationId);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
 			java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -273,6 +281,21 @@ public class RegistrationLocalServiceWrapper
 		return _registrationLocalService.getRegistrationsCount();
 	}
 
+	@Override
+	public int getRegistrationsCount(long groupId, long articleId) {
+		return _registrationLocalService.getRegistrationsCount(
+			groupId, articleId);
+	}
+
+	@Override
+	public long[] getRegistrationsWithOverlappingPeriod(
+		long groupId, long userId, java.util.Date startTime,
+		java.util.Date endTime) {
+
+		return _registrationLocalService.getRegistrationsWithOverlappingPeriod(
+			groupId, userId, startTime, endTime);
+	}
+
 	/**
 	 * Updates the registration in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -284,14 +307,6 @@ public class RegistrationLocalServiceWrapper
 		nl.deltares.dsd.registration.model.Registration registration) {
 
 		return _registrationLocalService.updateRegistration(registration);
-	}
-
-	@Override
-	public void validateRegistration(long groupId, long articleId, long userId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		_registrationLocalService.validateRegistration(
-			groupId, articleId, userId);
 	}
 
 	@Override

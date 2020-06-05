@@ -15,6 +15,7 @@
 package nl.deltares.dsd.registration.service;
 
 import aQute.bnd.annotation.ProviderType;
+
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
@@ -30,10 +31,13 @@ import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import nl.deltares.dsd.registration.model.Registration;
 
 import java.io.Serializable;
+
+import java.util.Date;
 import java.util.List;
+
+import nl.deltares.dsd.registration.model.Registration;
 
 /**
  * Provides the local service interface for Registration. Methods of this
@@ -186,6 +190,10 @@ public interface RegistrationLocalService
 	 */
 	public String getOSGiServiceIdentifier();
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getParentRegistrationsCount(
+		long groupId, long userId, long parentRegistrationId);
+
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
@@ -224,6 +232,13 @@ public interface RegistrationLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getRegistrationsCount();
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getRegistrationsCount(long groupId, long articleId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public long[] getRegistrationsWithOverlappingPeriod(
+		long groupId, long userId, Date startTime, Date endTime);
+
 	/**
 	 * Updates the registration in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -232,8 +247,5 @@ public interface RegistrationLocalService
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	public Registration updateRegistration(Registration registration);
-
-	public void validateRegistration(long groupId, long articleId, long userId)
-		throws PortalException;
 
 }

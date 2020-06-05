@@ -12,5 +12,6 @@
 		</field>
 		<field name="startTime" type="Date" />
 		<field name="endTime" type="Date" />
+		<field name="parentArticleId" type="long" />
 	</model>
 </model-hints>

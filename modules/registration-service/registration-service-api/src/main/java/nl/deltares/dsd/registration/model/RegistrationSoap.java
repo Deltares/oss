@@ -42,6 +42,7 @@ public class RegistrationSoap implements Serializable {
 		soapModel.setUserPreferences(model.getUserPreferences());
 		soapModel.setStartTime(model.getStartTime());
 		soapModel.setEndTime(model.getEndTime());
+		soapModel.setParentArticleId(model.getParentArticleId());
 
 		return soapModel;
 	}
@@ -159,6 +160,14 @@ public class RegistrationSoap implements Serializable {
 		_endTime = endTime;
 	}
 
+	public long getParentArticleId() {
+		return _parentArticleId;
+	}
+
+	public void setParentArticleId(long parentArticleId) {
+		_parentArticleId = parentArticleId;
+	}
+
 	private long _registrationId;
 	private long _groupId;
 	private long _companyId;
@@ -167,5 +176,6 @@ public class RegistrationSoap implements Serializable {
 	private String _userPreferences;
 	private Date _startTime;
 	private Date _endTime;
+	private long _parentArticleId;
 
 }

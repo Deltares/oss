@@ -14,21 +14,15 @@
 
 package nl.deltares.dsd.registration.service.impl;
 
-import com.liferay.journal.model.JournalArticle;
-import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.Criterion;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
-import nl.deltares.dsd.registration.exception.*;
 import nl.deltares.dsd.registration.model.Registration;
-import nl.deltares.dsd.registration.model.impl.AbstractRegistration;
 import nl.deltares.dsd.registration.service.base.RegistrationLocalServiceBaseImpl;
 import nl.deltares.dsd.registration.service.persistence.RegistrationUtil;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,88 +41,34 @@ import java.util.List;
 public class RegistrationLocalServiceImpl
 	extends RegistrationLocalServiceBaseImpl {
 
-	private static final Log LOG = LogFactoryUtil.getLog(RegistrationLocalServiceImpl.class);
-
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never reference this class directly. Use <code>nl.deltares.dsd.registration.service.RegistrationLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil</code>.
 	 */
-
-	public void validateRegistration(long groupId, long articleId, long userId) throws PortalException {
-		JournalArticle article = JournalArticleLocalServiceUtil.getLatestArticle(groupId, String.valueOf(articleId));
-
-		AbstractRegistration registration = AbstractRegistration.getInstance(article);
-
-		//check if article is open for registration
-		validateOpenForRegistration(registration);
-
-		//check if room limit is exceeded
-		validateRegistrationCapacity(registration);
-
-		//check if period overlaps
-		validateRegistrationPeriod(registration, userId);
-
-		//check if user is registered for required parent registrations
-		validateParentChildRelation(registration, userId);
-
-	}
-
-	private void validateRegistrationPeriod(AbstractRegistration registration, long userId) throws RegistrationPeriodOverlapException {
+	public long[] getRegistrationsWithOverlappingPeriod(long groupId, long userId, Date startTime, Date endTime){
 
 		Criterion checkUserId = PropertyFactoryUtil.forName("userId").eq(userId);
-		Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(registration.getGroupId());
-		Criterion checkStart = PropertyFactoryUtil.forName("startTime").between(registration.getStartTime(), registration.getEndTime());
-		Criterion checkEnd = PropertyFactoryUtil.forName("endTime").between(registration.getStartTime(), registration.getEndTime());
+		Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
+		Criterion checkStart = PropertyFactoryUtil.forName("startTime").between(startTime, endTime);
+		Criterion checkEnd = PropertyFactoryUtil.forName("endTime").between(startTime, endTime);
 		DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader()).add(checkGroupId).add(checkUserId).add(checkStart).add(checkEnd);
 		List<Registration> overlappingRegistrations = RegistrationUtil.findWithDynamicQuery(query);
-		if (overlappingRegistrations.size() == 0) return;
+		if (overlappingRegistrations.size() == 0) return new long[0];
 
-		StringBuilder sb = new StringBuilder();
+		long[] articleIds = new long[overlappingRegistrations.size()];
+		int i = 0;
 		for (Registration overlappingRegistration : overlappingRegistrations) {
-			sb.append(getUrlTitle(overlappingRegistration.getGroupId(), overlappingRegistration.getArticleId()));
-			sb.append(',');
+			articleIds[i++] = overlappingRegistration.getArticleId();
 		}
-		throw new RegistrationPeriodOverlapException(String.format("Period of registration '%s' overlaps with existing user registrations: [%s]", registration.getArticleId(), sb.toString().trim()));
+		return articleIds;
 	}
 
-	private void validateRegistrationCapacity(AbstractRegistration registration) throws PortalException {
-
-		int capacity = registration.getCapacity();
-		int registrationCount = RegistrationUtil.countByArticleRegistrations(registration.getGroupId(), registration.getArticleId());
-		if (registrationCount < capacity) return;
-
-		throw new RegistrationFullException(String.format("Capacity '%d' of registration '%s' has been reached!", registrationCount, registration.getArticleId()));
-
+	public int getRegistrationsCount(long groupId, long articleId){
+		return RegistrationUtil.countByArticleRegistrations(groupId, articleId);
 	}
 
-	private void validateOpenForRegistration(AbstractRegistration registration) throws ValidationException {
-		if (!registration.isOpen()){
-			throw new RegistrationClosedException(String.format("Registration '%s' is closed !", registration.getArticleId()));
-		}
-	}
-
-	private void validateParentChildRelation(AbstractRegistration registration, long userId) throws ValidationException {
-		if (!registration.hasParentRegistration()) return;
-
-		long parentRegistrationId = registration.getParentRegistrationId();
-		List<Registration> parentRegistrations = RegistrationUtil.findByUserArticleRegistrations(registration.getGroupId(), userId, parentRegistrationId);
-		if (parentRegistrations.size() > 0) return;
-
-		String childName = getUrlTitle(registration.getGroupId(), registration.getArticleId());
-		String parentName = getUrlTitle(registration.getGroupId(), parentRegistrationId);
-
-		throw new RegistrationParentMissingException(String.format("Required parent registration '%s' is missing for '%s!", parentName, childName));
-
-	}
-
-	private String getUrlTitle(long groupId, long articleId) {
-		try {
-			JournalArticle article = JournalArticleLocalServiceUtil.getLatestArticle(groupId, String.valueOf(articleId));
-			return article.getUrlTitle();
-		} catch (PortalException e) {
-			LOG.warn(String.format("Error getting latest article for '%s': %s", articleId, e.getMessage()));
-		}
-		return String.valueOf(articleId);
+	public int getParentRegistrationsCount(long groupId, long userId, long parentRegistrationId)  {
+		return  RegistrationUtil.countByUserArticleRegistrations(groupId, userId, parentRegistrationId);
 	}
 }

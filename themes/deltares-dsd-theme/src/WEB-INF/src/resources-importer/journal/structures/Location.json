@@ -218,7 +218,7 @@
       "name": "website",
       "readOnly": false,
       "repeatable": false,
-      "required": true,
+      "required": false,
       "showLabel": true,
       "type": "text"
     }
