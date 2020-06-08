@@ -5,7 +5,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.DateUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -22,7 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
-import java.util.Locale;
 
 public class XmlContentParserUtils {
 
@@ -89,18 +87,22 @@ public class XmlContentParserUtils {
         Node typeNode = parentNode.getAttributes().getNamedItem("type");
         String type = typeNode.getTextContent();
         String textValue = node.getTextContent();
+        if (textValue != null){
+            textValue = textValue.trim();
+            if (textValue.isEmpty()) return null;
+        }
 
         if ("boolean".equals(type)){
             return Boolean.valueOf(textValue);
         }
-        if ("integer".equals(type) || "ddm-integer".equals(type)){
+        if ("ddm-integer".equals(type)){
             return Integer.valueOf(textValue);
         }
-        if ("double".equals(type)){
+        if ("ddm-decimal".equals(type)){
             return Double.valueOf(textValue);
         }
         if ("ddm-date".equals(type)){
-            return DateUtil.parseDate(textValue, Locale.US);
+            return textValue;
         }
         return textValue;
     }

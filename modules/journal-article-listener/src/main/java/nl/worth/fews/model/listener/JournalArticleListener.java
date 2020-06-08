@@ -21,15 +21,16 @@ import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import nl.deltares.portal.utils.DsdValidationUtils;
-import nl.deltares.portal.utils.XmlContentParserUtils;
+import nl.deltares.portal.model.impl.AbsDsdArticle;
+import nl.deltares.portal.model.impl.Registration;
+import nl.deltares.portal.model.impl.SessionRegistration;
+import nl.deltares.portal.utils.DsdRegistrationUtils;
 import nl.worth.fews.configuration.JournalArticleManagementConfiguration;
 import nl.worth.fews.constants.JournalArticleManagementConstants;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
-import org.w3c.dom.Document;
 
 import java.util.Map;
 
@@ -47,6 +48,23 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
     private static final Log LOGGER = LogFactoryUtil.getLog(JournalArticleListener.class);
 
     @Override
+    public void onAfterRemove(JournalArticle model) throws ModelListenerException {
+
+        //When removing an article clean up records in registrations table.
+        if (AbsDsdArticle.isDsdArticle(model)) {
+            try {
+                AbsDsdArticle instance = AbsDsdArticle.getInstance(model);
+                if (instance instanceof Registration) {
+                    dsdRegistrationUtils.deleteRegistrationsFor((Registration)instance);
+                }
+            } catch (PortalException e) {
+                LOG.error("Error removing journal article: " + e.getMessage());
+                throw new ModelListenerException(e.getMessage());
+            }
+        }
+    }
+
+    @Override
     public void onBeforeCreate(JournalArticle model) throws ModelListenerException {
 
         long groupId = model.getGroupId();
@@ -54,30 +72,29 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
         if (StringUtil.contains(journalArticleManagementConfiguration.configuredGroupIds(),
                 String.valueOf(groupId)) || isDSDSite(groupId)) {
 
-            String structureKey = model.getDDMStructureKey();
-
-            if (structureKey.matches("([A-Z])+-(\\d+\\.)(\\d+\\.)(\\d+)")) {
-                structureKey = structureKey.substring(0, 1).toUpperCase()
-                        + structureKey.substring(1, structureKey.lastIndexOf("-")).toLowerCase();
+            AbsDsdArticle dsdArticle;
+            try {
+                dsdArticle = AbsDsdArticle.getInstance(model);
+            } catch (PortalException e) {
+                LOG.error("Error parsing DSD Article: " + e.getMessage());
+                throw new ModelListenerException(e.getMessage());
             }
 
-            Document parsedContent = null; //cache content for re-use
-            if (isDSDSession(structureKey)) {
+            if (dsdArticle instanceof SessionRegistration){
                 try {
-                    parsedContent = XmlContentParserUtils.parseContent(model);
-                    DsdValidationUtils.validateSessionCapacityMatchesRoomCapacity(model, parsedContent);
+                    dsdRegistrationUtils.validateRoomCapacity((SessionRegistration) dsdArticle);
                 } catch (PortalException e) {
                     LOG.error("Error validating session capacity: " + e.getMessage());
                     throw new ModelListenerException(e.getMessage());
                 }
             }
-
+            String structureKey = dsdArticle.getStructureKey();
             if (structure_folderJsonMap.has(structureKey)) {
 
                 String folderName = Validator.isNotNull(structure_folderJsonMap.getString(structureKey))
                         ? structure_folderJsonMap.getString(structureKey) : structureKey;
 
-                if (isDSDSite(groupId) && storeInParentSite(model, parsedContent)) {
+                if (dsdArticle.storeInParentSite()) {
                     groupId = journalArticleManagementConfiguration.dsdParentSiteID();
                     model.setGroupId(groupId);
 
@@ -96,32 +113,6 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
                 model.setTreePath(journalFolder.getTreePath());
             }
         }
-    }
-
-    private boolean storeInParentSite(JournalArticle article, Document parsedContent) throws ModelListenerException{
-        long groupId = article.getGroupId();
-        try {
-            Group site = _groupLocalService.getGroup(groupId);
-            Group parentGroup = site.getParentGroup();
-            if (parentGroup == null) return false;
-
-            if (parsedContent == null) {
-                parsedContent = XmlContentParserUtils.parseContent(article);
-            }
-            Object storeInParentSite = XmlContentParserUtils.getNodeValue(parsedContent, "storeInParentSite", true);
-            return storeInParentSite != null && (Boolean) storeInParentSite;
-        } catch (PortalException e) {
-            LOGGER.error("Could not find site [" + groupId + "]", e);
-        }
-        return false;
-    }
-
-    private boolean isDSDSession(String structureKey)  {
-        if (Validator.isNotNull(journalArticleManagementConfiguration.dsdSessionStructureKey())){
-            return journalArticleManagementConfiguration.dsdSessionStructureKey().equals(structureKey);
-        }
-        LOGGER.error("Session structure key value not configured!");
-        return false;
     }
 
     private boolean isDSDSite(long groupId) {
@@ -187,6 +178,9 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
 
     @Reference
     private GroupLocalService _groupLocalService;
+
+    @Reference
+    private DsdRegistrationUtils dsdRegistrationUtils;
 
     private static final Log LOG = LogFactoryUtil.getLog(JournalArticleListener.class);
 }

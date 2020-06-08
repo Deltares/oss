@@ -91,34 +91,6 @@
     },
     {
       "label": {
-        "nl_NL": "Ouder registratie",
-        "en_US": "Parent registration"
-      },
-      "predefinedValue": {
-        "nl_NL": "",
-        "en_US": ""
-      },
-      "style": {
-        "nl_NL": "",
-        "en_US": ""
-      },
-      "tip": {
-        "nl_NL": "",
-        "en_US": ""
-      },
-      "dataType": "journal-article",
-      "fieldNamespace": "ddm",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "parent",
-      "readOnly": false,
-      "repeatable": false,
-      "required": false,
-      "showLabel": true,
-      "type": "ddm-journal-article"
-    },
-    {
-      "label": {
         "nl_NL": "Schemas",
         "en_US": "Schedules"
       },
@@ -141,7 +113,7 @@
       "name": "schedules",
       "readOnly": false,
       "repeatable": true,
-      "required": true,
+      "required": false,
       "showLabel": true,
       "type": "ddm-text-html",
       "nestedFields": [

@@ -1,11 +1,11 @@
 package nl.deltares.services.rest;
 
-import com.liferay.journal.service.JournalArticleLocalService;
+import nl.deltares.portal.utils.DsdRegistrationUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.services.rest.exception.JsonProcessingExceptionMapper;
 import nl.deltares.services.rest.exception.LiferayRestExceptionMapper;
 import nl.deltares.services.rest.exception.PortalExceptionMapper;
-import nl.deltares.services.rest.registration.UserInformationService;
+import nl.deltares.services.rest.registration.UserRegistrationService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
@@ -21,9 +21,13 @@ import java.util.Set;
  * @author rooij_e
  */
 @Component(
+        //todo: DO NOT FORGET TO REMOVE AUTH entries!!!!!
         property = {
 			JaxrsWhiteboardConstants.JAX_RS_APPLICATION_BASE + "=/dsd",
-			JaxrsWhiteboardConstants.JAX_RS_NAME + "=DSD.Rest"
+			JaxrsWhiteboardConstants.JAX_RS_NAME + "=DSD.Rest",
+                "oauth2.scopechecker.type=none",
+                "auth.verifier.guest.allowed=true",
+                "auth.verifier.auth.verifier.PortalSessionAuthVerifier.urls.includes=/*"
         },
         service = Application.class
 )
@@ -31,7 +35,7 @@ import java.util.Set;
 public class DsdRestServices extends Application {
 
     @Reference
-    JournalArticleLocalService journalArticleLocalService;
+    DsdRegistrationUtils registrationUtil;
 
     @Reference
     KeycloakUtils keycloakUtils;
@@ -48,11 +52,11 @@ public class DsdRestServices extends Application {
     }
 
     @Override
-    public Set getSingletons() {
-        Set singletons = new HashSet();
+    public Set<Object> getSingletons() {
+        Set<Object> singletons = new HashSet<>();
         singletons.add(this);
         // Services for registration
-        singletons.add(new UserInformationService(keycloakUtils));
+        singletons.add(new UserRegistrationService(registrationUtil, keycloakUtils));
         return singletons;
     }
 

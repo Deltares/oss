@@ -56,5 +56,10 @@
 			<finder-column name="parentArticleId" />
 		</finder>
 
+		<finder name="ChildArticleRegistrations" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="parentArticleId" />
+		</finder>
+
 	</entity>
 </service-builder>

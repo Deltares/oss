@@ -243,13 +243,6 @@
       },
       "options": [
         {
-          "value": "General",
-          "label": {
-            "nl_NL": "Algemeen",
-            "en_US": "General"
-          }
-        },
-        {
           "value": "Danubius",
           "label": {
             "nl_NL": "Danubius",
@@ -437,6 +430,34 @@
       "required": true,
       "showLabel": true,
       "type": "ddm-integer"
+    },
+    {
+      "label": {
+        "nl_NL": "Ouder registratie",
+        "en_US": "Parent registration"
+      },
+      "predefinedValue": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "style": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "tip": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "dataType": "journal-article",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "parent",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "ddm-journal-article"
     },
     {
       "label": {

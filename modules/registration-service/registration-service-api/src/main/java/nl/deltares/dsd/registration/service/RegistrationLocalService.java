@@ -72,6 +72,10 @@ public interface RegistrationLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public Registration addRegistration(Registration registration);
 
+	public void addUserRegistration(
+		long companyId, long groupId, long articleId, long parentArticleId,
+		long userId, Date startTime, Date endTime, String preferences);
+
 	/**
 	 * Creates a new registration with the primary key. Does not add the registration to the database.
 	 *
@@ -80,6 +84,16 @@ public interface RegistrationLocalService
 	 */
 	@Transactional(enabled = false)
 	public Registration createRegistration(long registrationId);
+
+	/**
+	 * Delete all registrations related to 'articleId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'articleId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param articleId Article Identifier being removed.
+	 */
+	public void deleteAllRegistrationsAndChildRegistrations(
+		long groupId, long articleId);
 
 	/**
 	 * @throws PortalException
@@ -107,6 +121,17 @@ public interface RegistrationLocalService
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	public Registration deleteRegistration(Registration registration);
+
+	/**
+	 * Delete user registrations for 'articleId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'articleId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param articleId Article Identifier being removed.
+	 * @param userId User for which to remove registration
+	 */
+	public void deleteUserRegistrationAndChildRegistrations(
+		long groupId, long articleId, long userId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public DynamicQuery dynamicQuery();
@@ -190,10 +215,6 @@ public interface RegistrationLocalService
 	 */
 	public String getOSGiServiceIdentifier();
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getParentRegistrationsCount(
-		long groupId, long userId, long parentRegistrationId);
-
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
@@ -234,6 +255,9 @@ public interface RegistrationLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getRegistrationsCount(long groupId, long articleId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getRegistrationsCount(long groupId, long userId, long articleId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public long[] getRegistrationsWithOverlappingPeriod(

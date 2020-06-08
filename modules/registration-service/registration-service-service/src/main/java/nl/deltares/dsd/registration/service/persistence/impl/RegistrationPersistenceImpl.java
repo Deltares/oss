@@ -2395,6 +2395,574 @@ public class RegistrationPersistenceImpl
 		_FINDER_COLUMN_USERCHILDARTICLEREGISTRATIONS_PARENTARTICLEID_2 =
 			"registration.parentArticleId = ?";
 
+	private FinderPath _finderPathWithPaginationFindByChildArticleRegistrations;
+	private FinderPath
+		_finderPathWithoutPaginationFindByChildArticleRegistrations;
+	private FinderPath _finderPathCountByChildArticleRegistrations;
+
+	/**
+	 * Returns all the registrations where groupId = &#63; and parentArticleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentArticleId the parent article ID
+	 * @return the matching registrations
+	 */
+	@Override
+	public List<Registration> findByChildArticleRegistrations(
+		long groupId, long parentArticleId) {
+
+		return findByChildArticleRegistrations(
+			groupId, parentArticleId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+			null);
+	}
+
+	/**
+	 * Returns a range of all the registrations where groupId = &#63; and parentArticleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentArticleId the parent article ID
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @return the range of matching registrations
+	 */
+	@Override
+	public List<Registration> findByChildArticleRegistrations(
+		long groupId, long parentArticleId, int start, int end) {
+
+		return findByChildArticleRegistrations(
+			groupId, parentArticleId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the registrations where groupId = &#63; and parentArticleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentArticleId the parent article ID
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching registrations
+	 */
+	@Override
+	public List<Registration> findByChildArticleRegistrations(
+		long groupId, long parentArticleId, int start, int end,
+		OrderByComparator<Registration> orderByComparator) {
+
+		return findByChildArticleRegistrations(
+			groupId, parentArticleId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the registrations where groupId = &#63; and parentArticleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param parentArticleId the parent article ID
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching registrations
+	 */
+	@Override
+	public List<Registration> findByChildArticleRegistrations(
+		long groupId, long parentArticleId, int start, int end,
+		OrderByComparator<Registration> orderByComparator,
+		boolean retrieveFromCache) {
+
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
+
+			pagination = false;
+			finderPath =
+				_finderPathWithoutPaginationFindByChildArticleRegistrations;
+			finderArgs = new Object[] {groupId, parentArticleId};
+		}
+		else {
+			finderPath =
+				_finderPathWithPaginationFindByChildArticleRegistrations;
+			finderArgs = new Object[] {
+				groupId, parentArticleId, start, end, orderByComparator
+			};
+		}
+
+		List<Registration> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<Registration>)finderCache.getResult(
+				finderPath, finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (Registration registration : list) {
+					if ((groupId != registration.getGroupId()) ||
+						(parentArticleId !=
+							registration.getParentArticleId())) {
+
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(
+					4 + (orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(4);
+			}
+
+			query.append(_SQL_SELECT_REGISTRATION_WHERE);
+
+			query.append(_FINDER_COLUMN_CHILDARTICLEREGISTRATIONS_GROUPID_2);
+
+			query.append(
+				_FINDER_COLUMN_CHILDARTICLEREGISTRATIONS_PARENTARTICLEID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+			}
+			else if (pagination) {
+				query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(parentArticleId);
+
+				if (!pagination) {
+					list = (List<Registration>)QueryUtil.list(
+						q, getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<Registration>)QueryUtil.list(
+						q, getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first registration in the ordered set where groupId = &#63; and parentArticleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentArticleId the parent article ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching registration
+	 * @throws NoSuchRegistrationException if a matching registration could not be found
+	 */
+	@Override
+	public Registration findByChildArticleRegistrations_First(
+			long groupId, long parentArticleId,
+			OrderByComparator<Registration> orderByComparator)
+		throws NoSuchRegistrationException {
+
+		Registration registration = fetchByChildArticleRegistrations_First(
+			groupId, parentArticleId, orderByComparator);
+
+		if (registration != null) {
+			return registration;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", parentArticleId=");
+		msg.append(parentArticleId);
+
+		msg.append("}");
+
+		throw new NoSuchRegistrationException(msg.toString());
+	}
+
+	/**
+	 * Returns the first registration in the ordered set where groupId = &#63; and parentArticleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentArticleId the parent article ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
+	 */
+	@Override
+	public Registration fetchByChildArticleRegistrations_First(
+		long groupId, long parentArticleId,
+		OrderByComparator<Registration> orderByComparator) {
+
+		List<Registration> list = findByChildArticleRegistrations(
+			groupId, parentArticleId, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last registration in the ordered set where groupId = &#63; and parentArticleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentArticleId the parent article ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching registration
+	 * @throws NoSuchRegistrationException if a matching registration could not be found
+	 */
+	@Override
+	public Registration findByChildArticleRegistrations_Last(
+			long groupId, long parentArticleId,
+			OrderByComparator<Registration> orderByComparator)
+		throws NoSuchRegistrationException {
+
+		Registration registration = fetchByChildArticleRegistrations_Last(
+			groupId, parentArticleId, orderByComparator);
+
+		if (registration != null) {
+			return registration;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", parentArticleId=");
+		msg.append(parentArticleId);
+
+		msg.append("}");
+
+		throw new NoSuchRegistrationException(msg.toString());
+	}
+
+	/**
+	 * Returns the last registration in the ordered set where groupId = &#63; and parentArticleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentArticleId the parent article ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
+	 */
+	@Override
+	public Registration fetchByChildArticleRegistrations_Last(
+		long groupId, long parentArticleId,
+		OrderByComparator<Registration> orderByComparator) {
+
+		int count = countByChildArticleRegistrations(groupId, parentArticleId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Registration> list = findByChildArticleRegistrations(
+			groupId, parentArticleId, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and parentArticleId = &#63;.
+	 *
+	 * @param registrationId the primary key of the current registration
+	 * @param groupId the group ID
+	 * @param parentArticleId the parent article ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next registration
+	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
+	 */
+	@Override
+	public Registration[] findByChildArticleRegistrations_PrevAndNext(
+			long registrationId, long groupId, long parentArticleId,
+			OrderByComparator<Registration> orderByComparator)
+		throws NoSuchRegistrationException {
+
+		Registration registration = findByPrimaryKey(registrationId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Registration[] array = new RegistrationImpl[3];
+
+			array[0] = getByChildArticleRegistrations_PrevAndNext(
+				session, registration, groupId, parentArticleId,
+				orderByComparator, true);
+
+			array[1] = registration;
+
+			array[2] = getByChildArticleRegistrations_PrevAndNext(
+				session, registration, groupId, parentArticleId,
+				orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Registration getByChildArticleRegistrations_PrevAndNext(
+		Session session, Registration registration, long groupId,
+		long parentArticleId, OrderByComparator<Registration> orderByComparator,
+		boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(4);
+		}
+
+		query.append(_SQL_SELECT_REGISTRATION_WHERE);
+
+		query.append(_FINDER_COLUMN_CHILDARTICLEREGISTRATIONS_GROUPID_2);
+
+		query.append(
+			_FINDER_COLUMN_CHILDARTICLEREGISTRATIONS_PARENTARTICLEID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(parentArticleId);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(registration)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<Registration> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the registrations where groupId = &#63; and parentArticleId = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param parentArticleId the parent article ID
+	 */
+	@Override
+	public void removeByChildArticleRegistrations(
+		long groupId, long parentArticleId) {
+
+		for (Registration registration :
+				findByChildArticleRegistrations(
+					groupId, parentArticleId, QueryUtil.ALL_POS,
+					QueryUtil.ALL_POS, null)) {
+
+			remove(registration);
+		}
+	}
+
+	/**
+	 * Returns the number of registrations where groupId = &#63; and parentArticleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param parentArticleId the parent article ID
+	 * @return the number of matching registrations
+	 */
+	@Override
+	public int countByChildArticleRegistrations(
+		long groupId, long parentArticleId) {
+
+		FinderPath finderPath = _finderPathCountByChildArticleRegistrations;
+
+		Object[] finderArgs = new Object[] {groupId, parentArticleId};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(3);
+
+			query.append(_SQL_COUNT_REGISTRATION_WHERE);
+
+			query.append(_FINDER_COLUMN_CHILDARTICLEREGISTRATIONS_GROUPID_2);
+
+			query.append(
+				_FINDER_COLUMN_CHILDARTICLEREGISTRATIONS_PARENTARTICLEID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(parentArticleId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String
+		_FINDER_COLUMN_CHILDARTICLEREGISTRATIONS_GROUPID_2 =
+			"registration.groupId = ? AND ";
+
+	private static final String
+		_FINDER_COLUMN_CHILDARTICLEREGISTRATIONS_PARENTARTICLEID_2 =
+			"registration.parentArticleId = ?";
+
 	public RegistrationPersistenceImpl() {
 		setModelClass(Registration.class);
 	}
@@ -2676,6 +3244,17 @@ public class RegistrationPersistenceImpl
 				_finderPathWithoutPaginationFindByUserChildArticleRegistrations,
 				args);
 
+			args = new Object[] {
+				registrationModelImpl.getGroupId(),
+				registrationModelImpl.getParentArticleId()
+			};
+
+			finderCache.removeResult(
+				_finderPathCountByChildArticleRegistrations, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByChildArticleRegistrations,
+				args);
+
 			finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
 			finderCache.removeResult(
 				_finderPathWithoutPaginationFindAll, FINDER_ARGS_EMPTY);
@@ -2788,6 +3367,33 @@ public class RegistrationPersistenceImpl
 					_finderPathCountByUserChildArticleRegistrations, args);
 				finderCache.removeResult(
 					_finderPathWithoutPaginationFindByUserChildArticleRegistrations,
+					args);
+			}
+
+			if ((registrationModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByChildArticleRegistrations.
+					 getColumnBitmask()) != 0) {
+
+				Object[] args = new Object[] {
+					registrationModelImpl.getOriginalGroupId(),
+					registrationModelImpl.getOriginalParentArticleId()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByChildArticleRegistrations, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByChildArticleRegistrations,
+					args);
+
+				args = new Object[] {
+					registrationModelImpl.getGroupId(),
+					registrationModelImpl.getParentArticleId()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByChildArticleRegistrations, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByChildArticleRegistrations,
 					args);
 			}
 		}
@@ -3348,6 +3954,37 @@ public class RegistrationPersistenceImpl
 			new String[] {
 				Long.class.getName(), Long.class.getName(), Long.class.getName()
 			});
+
+		_finderPathWithPaginationFindByChildArticleRegistrations =
+			new FinderPath(
+				RegistrationModelImpl.ENTITY_CACHE_ENABLED,
+				RegistrationModelImpl.FINDER_CACHE_ENABLED,
+				RegistrationImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+				"findByChildArticleRegistrations",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Integer.class.getName(), Integer.class.getName(),
+					OrderByComparator.class.getName()
+				});
+
+		_finderPathWithoutPaginationFindByChildArticleRegistrations =
+			new FinderPath(
+				RegistrationModelImpl.ENTITY_CACHE_ENABLED,
+				RegistrationModelImpl.FINDER_CACHE_ENABLED,
+				RegistrationImpl.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+				"findByChildArticleRegistrations",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				RegistrationModelImpl.GROUPID_COLUMN_BITMASK |
+				RegistrationModelImpl.PARENTARTICLEID_COLUMN_BITMASK |
+				RegistrationModelImpl.STARTTIME_COLUMN_BITMASK);
+
+		_finderPathCountByChildArticleRegistrations = new FinderPath(
+			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
+			RegistrationModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByChildArticleRegistrations",
+			new String[] {Long.class.getName(), Long.class.getName()});
 	}
 
 	public void destroy() {

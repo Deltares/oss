@@ -49,6 +49,17 @@ public class RegistrationLocalServiceWrapper
 		return _registrationLocalService.addRegistration(registration);
 	}
 
+	@Override
+	public void addUserRegistration(
+		long companyId, long groupId, long articleId, long parentArticleId,
+		long userId, java.util.Date startTime, java.util.Date endTime,
+		String preferences) {
+
+		_registrationLocalService.addUserRegistration(
+			companyId, groupId, articleId, parentArticleId, userId, startTime,
+			endTime, preferences);
+	}
+
 	/**
 	 * Creates a new registration with the primary key. Does not add the registration to the database.
 	 *
@@ -60,6 +71,21 @@ public class RegistrationLocalServiceWrapper
 		long registrationId) {
 
 		return _registrationLocalService.createRegistration(registrationId);
+	}
+
+	/**
+	 * Delete all registrations related to 'articleId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'articleId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param articleId Article Identifier being removed.
+	 */
+	@Override
+	public void deleteAllRegistrationsAndChildRegistrations(
+		long groupId, long articleId) {
+
+		_registrationLocalService.deleteAllRegistrationsAndChildRegistrations(
+			groupId, articleId);
 	}
 
 	/**
@@ -99,6 +125,22 @@ public class RegistrationLocalServiceWrapper
 		nl.deltares.dsd.registration.model.Registration registration) {
 
 		return _registrationLocalService.deleteRegistration(registration);
+	}
+
+	/**
+	 * Delete user registrations for 'articleId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'articleId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param articleId Article Identifier being removed.
+	 * @param userId User for which to remove registration
+	 */
+	@Override
+	public void deleteUserRegistrationAndChildRegistrations(
+		long groupId, long articleId, long userId) {
+
+		_registrationLocalService.deleteUserRegistrationAndChildRegistrations(
+			groupId, articleId, userId);
 	}
 
 	@Override
@@ -223,14 +265,6 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	@Override
-	public int getParentRegistrationsCount(
-		long groupId, long userId, long parentRegistrationId) {
-
-		return _registrationLocalService.getParentRegistrationsCount(
-			groupId, userId, parentRegistrationId);
-	}
-
-	@Override
 	public com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
 			java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -285,6 +319,14 @@ public class RegistrationLocalServiceWrapper
 	public int getRegistrationsCount(long groupId, long articleId) {
 		return _registrationLocalService.getRegistrationsCount(
 			groupId, articleId);
+	}
+
+	@Override
+	public int getRegistrationsCount(
+		long groupId, long userId, long articleId) {
+
+		return _registrationLocalService.getRegistrationsCount(
+			groupId, userId, articleId);
 	}
 
 	@Override

@@ -3,15 +3,18 @@ package nl.deltares.portal.model.impl;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 
-public class BusTransferRegistration extends Registration {
-    public BusTransferRegistration(JournalArticle article) throws PortalException {
-        super(article);
-    }
+public class GenericArticle extends AbsDsdArticle {
 
+    private final String structureKey;
+
+    GenericArticle(JournalArticle article, String structureKey) throws PortalException {
+        super(article);
+        this.structureKey = structureKey;
+    }
 
     @Override
     public String getStructureKey() {
-        return DSD_STRUCTURE_KEYS.Bustransfer.name();
+        return structureKey;
     }
 
     @Override

@@ -54,6 +54,16 @@ public class RegistrationLocalServiceUtil {
 		return getService().addRegistration(registration);
 	}
 
+	public static void addUserRegistration(
+		long companyId, long groupId, long articleId, long parentArticleId,
+		long userId, java.util.Date startTime, java.util.Date endTime,
+		String preferences) {
+
+		getService().addUserRegistration(
+			companyId, groupId, articleId, parentArticleId, userId, startTime,
+			endTime, preferences);
+	}
+
 	/**
 	 * Creates a new registration with the primary key. Does not add the registration to the database.
 	 *
@@ -64,6 +74,20 @@ public class RegistrationLocalServiceUtil {
 		createRegistration(long registrationId) {
 
 		return getService().createRegistration(registrationId);
+	}
+
+	/**
+	 * Delete all registrations related to 'articleId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'articleId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param articleId Article Identifier being removed.
+	 */
+	public static void deleteAllRegistrationsAndChildRegistrations(
+		long groupId, long articleId) {
+
+		getService().deleteAllRegistrationsAndChildRegistrations(
+			groupId, articleId);
 	}
 
 	/**
@@ -102,6 +126,21 @@ public class RegistrationLocalServiceUtil {
 			nl.deltares.dsd.registration.model.Registration registration) {
 
 		return getService().deleteRegistration(registration);
+	}
+
+	/**
+	 * Delete user registrations for 'articleId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'articleId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param articleId Article Identifier being removed.
+	 * @param userId User for which to remove registration
+	 */
+	public static void deleteUserRegistrationAndChildRegistrations(
+		long groupId, long articleId, long userId) {
+
+		getService().deleteUserRegistrationAndChildRegistrations(
+			groupId, articleId, userId);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery
@@ -217,13 +256,6 @@ public class RegistrationLocalServiceUtil {
 		return getService().getOSGiServiceIdentifier();
 	}
 
-	public static int getParentRegistrationsCount(
-		long groupId, long userId, long parentRegistrationId) {
-
-		return getService().getParentRegistrationsCount(
-			groupId, userId, parentRegistrationId);
-	}
-
 	public static com.liferay.portal.kernel.model.PersistedModel
 			getPersistedModel(java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -274,6 +306,12 @@ public class RegistrationLocalServiceUtil {
 
 	public static int getRegistrationsCount(long groupId, long articleId) {
 		return getService().getRegistrationsCount(groupId, articleId);
+	}
+
+	public static int getRegistrationsCount(
+		long groupId, long userId, long articleId) {
+
+		return getService().getRegistrationsCount(groupId, userId, articleId);
 	}
 
 	public static long[] getRegistrationsWithOverlappingPeriod(

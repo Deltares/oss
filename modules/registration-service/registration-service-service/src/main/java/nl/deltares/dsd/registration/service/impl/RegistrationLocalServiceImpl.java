@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -14,11 +14,13 @@
 
 package nl.deltares.dsd.registration.service.impl;
 
+import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.Criterion;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import nl.deltares.dsd.registration.model.Registration;
+import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.dsd.registration.service.base.RegistrationLocalServiceBaseImpl;
 import nl.deltares.dsd.registration.service.persistence.RegistrationUtil;
 
@@ -46,6 +48,58 @@ public class RegistrationLocalServiceImpl
 	 *
 	 * Never reference this class directly. Use <code>nl.deltares.dsd.registration.service.RegistrationLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil</code>.
 	 */
+	public void addUserRegistration(long companyId, long groupId, long articleId, long parentArticleId,
+									long userId, Date startTime, Date endTime, String preferences) {
+
+		//do not validate here. validation has already taken place
+
+		Registration registration = RegistrationLocalServiceUtil.createRegistration(CounterLocalServiceUtil.increment(Registration.class.getName()));
+		registration.setCompanyId(companyId);
+		registration.setGroupId(groupId);
+		registration.setArticleId(articleId);
+		registration.setParentArticleId(parentArticleId);
+		registration.setUserId(userId);
+		registration.setStartTime(startTime);
+		registration.setEndTime(endTime);
+		registration.setUserPreferences(preferences);
+
+		addRegistration(registration);
+
+	}
+
+	/**
+	 * Delete all registrations related to 'articleId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'articleId'.
+	 * @param groupId Site Identifier
+	 * @param articleId Article Identifier being removed.
+	 */
+	public void deleteAllRegistrationsAndChildRegistrations(long groupId, long articleId){
+
+		//Remove all registrations with a parentArticleId equal to articleId
+		RegistrationUtil.removeByChildArticleRegistrations(groupId, articleId);
+
+		//Remove all registrations for articleId
+		RegistrationUtil.removeByArticleRegistrations(groupId, articleId);
+
+	}
+
+	/**
+	 * Delete user registrations for 'articleId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'articleId'.
+	 * @param groupId Site Identifier
+	 * @param articleId Article Identifier being removed.
+	 * @param userId User for which to remove registration
+	 */
+	public void deleteUserRegistrationAndChildRegistrations(long groupId, long articleId, long userId){
+
+		//Remove all registrations with a parentArticleId equal to articleId
+		RegistrationUtil.removeByUserChildArticleRegistrations(groupId, userId, articleId);
+
+		//Remove all registrations for articleId
+		RegistrationUtil.removeByUserArticleRegistrations(groupId, userId, articleId);
+
+	}
+
 	public long[] getRegistrationsWithOverlappingPeriod(long groupId, long userId, Date startTime, Date endTime){
 
 		Criterion checkUserId = PropertyFactoryUtil.forName("userId").eq(userId);
@@ -68,7 +122,7 @@ public class RegistrationLocalServiceImpl
 		return RegistrationUtil.countByArticleRegistrations(groupId, articleId);
 	}
 
-	public int getParentRegistrationsCount(long groupId, long userId, long parentRegistrationId)  {
-		return  RegistrationUtil.countByUserArticleRegistrations(groupId, userId, parentRegistrationId);
+	public int getRegistrationsCount(long groupId, long userId, long articleId)  {
+		return  RegistrationUtil.countByUserArticleRegistrations(groupId, userId, articleId);
 	}
 }
