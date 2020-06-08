@@ -1,5 +1,9 @@
 package nl.deltares.services.rest;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import nl.deltares.portal.utils.DsdRegistrationUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.services.rest.exception.JsonProcessingExceptionMapper;
@@ -55,6 +59,7 @@ public class DsdRestServices extends Application {
     public Set<Object> getSingletons() {
         Set<Object> singletons = new HashSet<>();
         singletons.add(this);
+        singletons.add(getJacksonJsonProvider());
         // Services for registration
         singletons.add(new UserRegistrationService(registrationUtil, keycloakUtils));
         return singletons;
@@ -64,5 +69,20 @@ public class DsdRestServices extends Application {
     @Path("/")
     public Response test(){
         return Response.ok().entity("DSD.Rest service is up and running").build();
+    }
+
+    private JacksonJsonProvider getJacksonJsonProvider() {
+
+        JacksonJsonProvider jacksonJsonProvider = new JacksonJsonProvider();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // Prevent serialization of null and empty string values
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+
+        jacksonJsonProvider.setMapper(objectMapper);
+        jacksonJsonProvider.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        return jacksonJsonProvider;
     }
 }

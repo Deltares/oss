@@ -7,6 +7,7 @@ dependencies {
 	compileOnly group: "javax.servlet", name: "javax.servlet-api", version: "3.0.1"
 	compileOnly group: "com.fasterxml.jackson.core", name: "jackson-core" , version: "2.9.5"
 	compileOnly group: "com.fasterxml.jackson.core", name: "jackson-databind" , version: "2.9.5"
+	compileOnly group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.9.10'
 	compileOnly project(":modules:common-utils")
 }
 

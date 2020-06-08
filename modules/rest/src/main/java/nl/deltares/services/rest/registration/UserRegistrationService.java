@@ -115,7 +115,10 @@ public class UserRegistrationService {
     }
 
     private void updateUserAttributes(UserDetails userDetails, User user) throws LiferayRestException {
-        if (!keycloakUtils.isActive()) return;
+        if (!keycloakUtils.isActive()) {
+            LOG.warn("Keycloak not active. Cannot update user attributes!");
+            return;
+        }
         try {
             keycloakUtils.updateUserAttributes(user.getEmailAddress(), userDetails.getAttributes());
         } catch (IOException e) {
