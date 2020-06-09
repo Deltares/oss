@@ -246,6 +246,7 @@ gradle-app.setting
 **/node_modules
 **/test-coverage
 **/tmp
+**/out
 **/.web_bundle_build
 .gradle
 .idea
