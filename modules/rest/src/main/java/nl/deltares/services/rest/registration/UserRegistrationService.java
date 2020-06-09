@@ -55,10 +55,9 @@ public class UserRegistrationService {
         } catch (ValidationException e) {
             String msg = "Validation Exception: " + e.getMessage();
             LOG.warn(msg);
-            return Response.serverError().entity(msg).type(MediaType.TEXT_PLAIN).build();
+            return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
         }
-
-        return Response.accepted("User registered for " + registration.getTitle()).type(MediaType.TEXT_PLAIN).build();
+        return Response.accepted(String.format("User %s registered for '%s'", user.getEmailAddress(), registration.getTitle())).type(MediaType.APPLICATION_JSON).build();
     }
 
     @DELETE
@@ -70,7 +69,7 @@ public class UserRegistrationService {
 
         Registration registration = getRegistrationArticle(siteId, registrationId);
         registrationUtils.unRegisterUser(user, registration);
-        return Response.accepted("User un-registered for " + registration.getTitle()).type(MediaType.TEXT_PLAIN).build();
+        return Response.accepted(String.format("User %s un-registered for '%s'", user.getEmailAddress(), registration.getTitle())).type(MediaType.APPLICATION_JSON).build();
     }
 
     private Registration getRegistrationArticle(long siteId, long registrationId) throws PortalException {
@@ -98,9 +97,16 @@ public class UserRegistrationService {
     @POST
     @Path("/info")
     @Consumes("application/json")
-    public void setUserAttributes(@Context HttpServletRequest request, UserDetails userDetails) throws Exception {
+    public Response setUserAttributes(@Context HttpServletRequest request, UserDetails userDetails) throws Exception {
         User user = getRemoteUser(request);
-        updateUserAttributes(userDetails, user);
+        try {
+            updateUserAttributes(userDetails, user);
+        } catch (LiferayRestException e) {
+            String msg = "Error Updating user: " + e.getMessage();
+            LOG.warn(msg);
+            return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
+        }
+        return Response.accepted(String.format("User %s has been updated!", user.getEmailAddress())).type(MediaType.APPLICATION_JSON).build();
     }
 
     private UserDetails getUserDetails(User user) throws LiferayRestException {

@@ -4,6 +4,7 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.DsdArticle;
@@ -61,6 +62,10 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
             throw new ValidationException(String.format("Registration %s is not open!", registration.getTitle()));
         }
 
+        if (isUserRegisteredFor(user, registration)){
+            throw new ValidationException(String.format("User already registered for %s !", registration.getTitle()));
+        }
+
         if (registration.getCapacity() != Integer.MAX_VALUE && getRegistrationCount(registration) >= registration.getCapacity()){
             throw new ValidationException(String.format("Registration %s is full!", registration.getTitle()));
         }
@@ -86,8 +91,24 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
     }
 
     private long[] getOverlappingRegistrationIds(User user, Registration registration){
-        return RegistrationLocalServiceUtil.getRegistrationsWithOverlappingPeriod(registration.getGroupId(), user.getUserId(),
+        long[] registrationsWithOverlappingPeriod = RegistrationLocalServiceUtil.getRegistrationsWithOverlappingPeriod(registration.getGroupId(), user.getUserId(),
                 registration.getStartTime(), registration.getEndTime());
+
+        /*
+         * Some parallel sessions can overlap with their parent session. These need to be removed.
+         */
+        if (registrationsWithOverlappingPeriod.length == 0 || registration.getParentRegistration() == null) {
+            return registrationsWithOverlappingPeriod;
+        }
+        long parentId = registration.getParentRegistration().getArticleId();
+        boolean overlapWithParent = registration.isOverlapWithParent();
+
+        for (int i = 0; i < registrationsWithOverlappingPeriod.length; i++) {
+            if (registrationsWithOverlappingPeriod[i] == parentId && overlapWithParent){
+                registrationsWithOverlappingPeriod[i] = 0;
+            }
+        }
+        return ArrayUtil.remove(registrationsWithOverlappingPeriod, 0);
     }
 
     @Override
@@ -149,9 +170,7 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
 
     @Override
     public boolean isUserRegisteredFor(User user, Registration registration) {
-        Registration parentRegistration = registration.getParentRegistration();
-        if (parentRegistration == null) return false;
-        int registrationsCount = RegistrationLocalServiceUtil.getRegistrationsCount(parentRegistration.getGroupId(), user.getUserId(), parentRegistration.getArticleId());
+        int registrationsCount = RegistrationLocalServiceUtil.getRegistrationsCount(registration.getGroupId(), user.getUserId(), registration.getArticleId());
         return registrationsCount > 0;
     }
 }

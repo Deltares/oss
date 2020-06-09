@@ -94,7 +94,7 @@ public class KeycloakUtilsImpl implements KeycloakUtils {
         HttpURLConnection urlConnection = getConnection(getKeycloakUsersPath() + "?email=" + email, "GET", getAccessToken(), null);
         checkResponse(urlConnection);
         JSONObject jsonUser = getJsonObject(urlConnection);
-        if (jsonUser == null) return null;
+        if (jsonUser == null) return Collections.emptyMap();
         return toAttributes(jsonUser);
     }
 
@@ -113,8 +113,8 @@ public class KeycloakUtilsImpl implements KeycloakUtils {
     private HashMap<String, String> toAttributes(JSONObject jsonUser) {
 
         JSONObject jsonAttributes = jsonUser.getJSONObject("attributes");
-
         HashMap<String, String> attributes = new HashMap<>();
+        if (jsonAttributes == null) return attributes;
         for (ATTRIBUTES attributeKey : ATTRIBUTES.values()) {
             JSONArray attributeObject = jsonAttributes.getJSONArray(attributeKey.name());
             if (attributeObject == null || attributeObject.length() == 0) continue;
@@ -148,6 +148,10 @@ public class KeycloakUtilsImpl implements KeycloakUtils {
 
     private void fromAttributes(JSONObject jsonUser, Map<String, String> attributes) {
         JSONObject jsonAttributes = jsonUser.getJSONObject("attributes");
+        if (jsonAttributes == null) {
+            jsonAttributes = JSONFactoryUtil.createJSONObject();
+            jsonUser.put("attributes", jsonAttributes);
+        }
         for (String key : attributes.keySet()) {
             String value = attributes.get(key);
             jsonAttributes.put(key, JSONFactoryUtil.createJSONArray().put(value));

@@ -15,10 +15,7 @@
 package nl.deltares.dsd.registration.service.impl;
 
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
-import com.liferay.portal.kernel.dao.orm.Criterion;
-import com.liferay.portal.kernel.dao.orm.DynamicQuery;
-import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.*;
 import nl.deltares.dsd.registration.model.Registration;
 import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.dsd.registration.service.base.RegistrationLocalServiceBaseImpl;
@@ -102,11 +99,13 @@ public class RegistrationLocalServiceImpl
 
 	public long[] getRegistrationsWithOverlappingPeriod(long groupId, long userId, Date startTime, Date endTime){
 
+
 		Criterion checkUserId = PropertyFactoryUtil.forName("userId").eq(userId);
 		Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
-		Criterion checkStart = PropertyFactoryUtil.forName("startTime").between(startTime, endTime);
-		Criterion checkEnd = PropertyFactoryUtil.forName("endTime").between(startTime, endTime);
-		DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader()).add(checkGroupId).add(checkUserId).add(checkStart).add(checkEnd);
+		Criterion checkStart = RestrictionsFactoryUtil.and(PropertyFactoryUtil.forName("startTime").le(startTime), PropertyFactoryUtil.forName("endTime").ge(startTime));
+		Criterion checkEnd = RestrictionsFactoryUtil.and(PropertyFactoryUtil.forName("startTime").le(endTime), PropertyFactoryUtil.forName("endTime").ge(endTime));
+		Criterion checkPeriod = RestrictionsFactoryUtil.or(checkStart, checkEnd);
+		DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader()).add(checkGroupId).add(checkUserId).add(checkPeriod);
 		List<Registration> overlappingRegistrations = RegistrationUtil.findWithDynamicQuery(query);
 		if (overlappingRegistrations.size() == 0) return new long[0];
 

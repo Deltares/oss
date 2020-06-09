@@ -54,16 +54,13 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 		ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
 		User user = themeDisplay.getUser();
 		if (!user.isDefaultUser()) {
-            Map<String, String> attributes = null;
             try {
-                attributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
+				Map<String, String> attributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
+				request.setAttribute("attributes", attributes);
             } catch (IOException e) {
                 SessionErrors.add(request, "update-attributes-failed",  e.getMessage());
             }
-            if (attributes == null) {
-				attributes = new HashMap<>();
-			}
-			request.setAttribute("attributes", attributes);
+
 		}
 		super.render(request, response);
 	}
