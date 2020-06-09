@@ -33,7 +33,7 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
 
     @Override
     public void deleteRegistrationsFor(Registration registration) {
-        RegistrationLocalServiceUtil.deleteAllRegistrationsAndChildRegistrations(registration.getGroupId(), registration.getArticleId());
+        RegistrationLocalServiceUtil.deleteAllRegistrationsAndChildRegistrations(registration.getGroupId(), registration.getResourceId());
     }
 
     @Override
@@ -41,9 +41,9 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
 
         validateRegistration(user, registration);
 
-        long parentId = registration.getParentRegistration() == null ? 0 : registration.getParentRegistration().getArticleId();
+        long parentId = registration.getParentRegistration() == null ? 0 : registration.getParentRegistration().getResourceId();
         RegistrationLocalServiceUtil.addUserRegistration(
-                registration.getCompanyId(), registration.getGroupId(), registration.getArticleId(),
+                registration.getCompanyId(), registration.getGroupId(), registration.getResourceId(),
                 parentId, user.getUserId(),
                 registration.getStartTime(), registration.getEndTime(), userProperties);
     }
@@ -52,7 +52,7 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
     public void unRegisterUser(User user, Registration registration) {
 
         RegistrationLocalServiceUtil.deleteUserRegistrationAndChildRegistrations(
-                registration.getGroupId(), registration.getArticleId(), user.getUserId());
+                registration.getGroupId(), registration.getResourceId(), user.getUserId());
     }
 
     @Override
@@ -87,7 +87,7 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
 
     @Override
     public int getRegistrationCount(Registration registration) {
-        return RegistrationLocalServiceUtil.getRegistrationsCount(registration.getGroupId(), registration.getArticleId());
+        return RegistrationLocalServiceUtil.getRegistrationsCount(registration.getGroupId(), registration.getResourceId());
     }
 
     private long[] getOverlappingRegistrationIds(User user, Registration registration){
@@ -100,7 +100,7 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
         if (registrationsWithOverlappingPeriod.length == 0 || registration.getParentRegistration() == null) {
             return registrationsWithOverlappingPeriod;
         }
-        long parentId = registration.getParentRegistration().getArticleId();
+        long parentId = registration.getParentRegistration().getResourceId();
         boolean overlapWithParent = registration.isOverlapWithParent();
 
         for (int i = 0; i < registrationsWithOverlappingPeriod.length; i++) {
@@ -113,12 +113,12 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
 
     @Override
     public List<Registration> getOverlappingRegistrations(User user, Registration registration) throws PortalException {
-        long[] overlappingArticleId = RegistrationLocalServiceUtil.getRegistrationsWithOverlappingPeriod(registration.getGroupId(), user.getUserId(),
+        long[] overlappingResourceIds = RegistrationLocalServiceUtil.getRegistrationsWithOverlappingPeriod(registration.getGroupId(), user.getUserId(),
                 registration.getStartTime(), registration.getEndTime());
 
         ArrayList<Registration> overlapping = new ArrayList<>();
-        for (long articleId : overlappingArticleId) {
-            JournalArticle overlappingArticle = JournalArticleLocalServiceUtil.getLatestArticle(registration.getGroupId(), String.valueOf(articleId));
+        for (long resourceId : overlappingResourceIds) {
+            JournalArticle overlappingArticle = JournalArticleLocalServiceUtil.getLatestArticle(resourceId);
             overlapping.add((Registration) AbsDsdArticle.getInstance(overlappingArticle));
         }
         return overlapping;
@@ -170,7 +170,7 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
 
     @Override
     public boolean isUserRegisteredFor(User user, Registration registration) {
-        int registrationsCount = RegistrationLocalServiceUtil.getRegistrationsCount(registration.getGroupId(), user.getUserId(), registration.getArticleId());
+        int registrationsCount = RegistrationLocalServiceUtil.getRegistrationsCount(registration.getGroupId(), user.getUserId(), registration.getResourceId());
         return registrationsCount > 0;
     }
 }

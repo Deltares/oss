@@ -3,9 +3,9 @@ create table Registrations_Registration (
 	groupId LONG,
 	companyId LONG,
 	userId LONG,
-	articleId LONG,
+	resourcePrimaryKey LONG,
 	userPreferences STRING null,
 	startTime DATE null,
 	endTime DATE null,
-	parentArticleId LONG
+	parentResourcePrimaryKey LONG
 );

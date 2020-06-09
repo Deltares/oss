@@ -15,6 +15,8 @@
 package nl.deltares.dsd.registration.service;
 
 import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.dao.orm.*;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
@@ -30,11 +32,13 @@ import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import nl.deltares.dsd.registration.model.Registration;
 
 import java.io.Serializable;
+
 import java.util.Date;
 import java.util.List;
+
+import nl.deltares.dsd.registration.model.Registration;
 
 /**
  * Provides the local service interface for Registration. Methods of this
@@ -70,7 +74,7 @@ public interface RegistrationLocalService
 	public Registration addRegistration(Registration registration);
 
 	public void addUserRegistration(
-		long companyId, long groupId, long articleId, long parentArticleId,
+		long companyId, long groupId, long resouceId, long parentResourceId,
 		long userId, Date startTime, Date endTime, String preferences);
 
 	/**
@@ -83,14 +87,14 @@ public interface RegistrationLocalService
 	public Registration createRegistration(long registrationId);
 
 	/**
-	 * Delete all registrations related to 'articleId'. This inlcudes all registration with a parentArticleId
-	 * that matches 'articleId'.
+	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
-	 * @param articleId Article Identifier being removed.
+	 * @param resourceId Article Identifier being removed.
 	 */
 	public void deleteAllRegistrationsAndChildRegistrations(
-		long groupId, long articleId);
+		long groupId, long resourceId);
 
 	/**
 	 * @throws PortalException
@@ -120,15 +124,15 @@ public interface RegistrationLocalService
 	public Registration deleteRegistration(Registration registration);
 
 	/**
-	 * Delete user registrations for 'articleId'. This inlcudes all registration with a parentArticleId
-	 * that matches 'articleId'.
+	 * Delete user registrations for 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
-	 * @param articleId Article Identifier being removed.
+	 * @param resourceId Article Identifier being removed.
 	 * @param userId User for which to remove registration
 	 */
 	public void deleteUserRegistrationAndChildRegistrations(
-		long groupId, long articleId, long userId);
+		long groupId, long resourceId, long userId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public DynamicQuery dynamicQuery();
@@ -251,10 +255,11 @@ public interface RegistrationLocalService
 	public int getRegistrationsCount();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getRegistrationsCount(long groupId, long articleId);
+	public int getRegistrationsCount(long groupId, long resourceId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getRegistrationsCount(long groupId, long userId, long articleId);
+	public int getRegistrationsCount(
+		long groupId, long userId, long resourceId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public long[] getRegistrationsWithOverlappingPeriod(

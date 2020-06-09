@@ -135,18 +135,18 @@ public interface RegistrationModel
 	public void setUserUuid(String userUuid);
 
 	/**
-	 * Returns the article ID of this registration.
+	 * Returns the resource primary key of this registration.
 	 *
-	 * @return the article ID of this registration
+	 * @return the resource primary key of this registration
 	 */
-	public long getArticleId();
+	public long getResourcePrimaryKey();
 
 	/**
-	 * Sets the article ID of this registration.
+	 * Sets the resource primary key of this registration.
 	 *
-	 * @param articleId the article ID of this registration
+	 * @param resourcePrimaryKey the resource primary key of this registration
 	 */
-	public void setArticleId(long articleId);
+	public void setResourcePrimaryKey(long resourcePrimaryKey);
 
 	/**
 	 * Returns the user preferences of this registration.
@@ -192,18 +192,18 @@ public interface RegistrationModel
 	public void setEndTime(Date endTime);
 
 	/**
-	 * Returns the parent article ID of this registration.
+	 * Returns the parent resource primary key of this registration.
 	 *
-	 * @return the parent article ID of this registration
+	 * @return the parent resource primary key of this registration
 	 */
-	public long getParentArticleId();
+	public long getParentResourcePrimaryKey();
 
 	/**
-	 * Sets the parent article ID of this registration.
+	 * Sets the parent resource primary key of this registration.
 	 *
-	 * @param parentArticleId the parent article ID of this registration
+	 * @param parentResourcePrimaryKey the parent resource primary key of this registration
 	 */
-	public void setParentArticleId(long parentArticleId);
+	public void setParentResourcePrimaryKey(long parentResourcePrimaryKey);
 
 	@Override
 	public boolean isNew();

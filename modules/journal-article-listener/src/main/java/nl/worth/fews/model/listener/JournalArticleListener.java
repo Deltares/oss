@@ -48,7 +48,7 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
     private static final Log LOGGER = LogFactoryUtil.getLog(JournalArticleListener.class);
 
     @Override
-    public void onAfterRemove(JournalArticle model) throws ModelListenerException {
+    public void onBeforeRemove(JournalArticle model) throws ModelListenerException {
 
         //When removing an article clean up records in registrations table.
         if (AbsDsdArticle.isDsdArticle(model)) {

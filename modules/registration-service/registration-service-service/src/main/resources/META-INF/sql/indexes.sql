@@ -1,4 +1,4 @@
-create index IX_7B15BB on Registrations_Registration (groupId, articleId);
-create index IX_6EAC14B1 on Registrations_Registration (groupId, parentArticleId);
-create index IX_80ABFB41 on Registrations_Registration (groupId, userId, articleId);
-create index IX_AE603DB7 on Registrations_Registration (groupId, userId, parentArticleId);
+create index IX_EF4176CF on Registrations_Registration (groupId, parentResourcePrimaryKey);
+create index IX_CAA20105 on Registrations_Registration (groupId, resourcePrimaryKey);
+create index IX_96E41489 on Registrations_Registration (groupId, userId, parentResourcePrimaryKey);
+create index IX_1113F23F on Registrations_Registration (groupId, userId, resourcePrimaryKey);

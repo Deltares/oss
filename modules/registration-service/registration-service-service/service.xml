@@ -18,13 +18,13 @@
 
 		<column name="companyId" type="long" />
 		<column name="userId" type="long" />
-		<column name="articleId" type="long" />
+		<column name="resourcePrimaryKey" type="long" />
 
 		<!-- Other fields -->
 		<column name="userPreferences" type="String" />
 		<column name="startTime" type="Date" />
 		<column name="endTime" type="Date" />
-		<column name="parentArticleId" type="long" />
+		<column name="parentResourcePrimaryKey" type="long" />
 
 		<!-- Order -->
 
@@ -41,24 +41,24 @@
 
 		<finder name="ArticleRegistrations" return-type="Collection">
 			<finder-column name="groupId" />
-			<finder-column name="articleId" />
+			<finder-column name="resourcePrimaryKey" />
 		</finder>
 
 		<finder name="UserArticleRegistrations" return-type="Collection">
 			<finder-column name="groupId" />
 			<finder-column name="userId" />
-			<finder-column name="articleId" />
+			<finder-column name="resourcePrimaryKey" />
 		</finder>
 
 		<finder name="UserChildArticleRegistrations" return-type="Collection">
 			<finder-column name="groupId" />
 			<finder-column name="userId" />
-			<finder-column name="parentArticleId" />
+			<finder-column name="parentResourcePrimaryKey" />
 		</finder>
 
 		<finder name="ChildArticleRegistrations" return-type="Collection">
 			<finder-column name="groupId" />
-			<finder-column name="parentArticleId" />
+			<finder-column name="parentResourcePrimaryKey" />
 		</finder>
 
 	</entity>

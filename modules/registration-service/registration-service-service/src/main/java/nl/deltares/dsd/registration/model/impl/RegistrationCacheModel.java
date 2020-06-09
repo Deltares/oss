@@ -76,16 +76,16 @@ public class RegistrationCacheModel
 		sb.append(companyId);
 		sb.append(", userId=");
 		sb.append(userId);
-		sb.append(", articleId=");
-		sb.append(articleId);
+		sb.append(", resourcePrimaryKey=");
+		sb.append(resourcePrimaryKey);
 		sb.append(", userPreferences=");
 		sb.append(userPreferences);
 		sb.append(", startTime=");
 		sb.append(startTime);
 		sb.append(", endTime=");
 		sb.append(endTime);
-		sb.append(", parentArticleId=");
-		sb.append(parentArticleId);
+		sb.append(", parentResourcePrimaryKey=");
+		sb.append(parentResourcePrimaryKey);
 		sb.append("}");
 
 		return sb.toString();
@@ -99,7 +99,7 @@ public class RegistrationCacheModel
 		registrationImpl.setGroupId(groupId);
 		registrationImpl.setCompanyId(companyId);
 		registrationImpl.setUserId(userId);
-		registrationImpl.setArticleId(articleId);
+		registrationImpl.setResourcePrimaryKey(resourcePrimaryKey);
 
 		if (userPreferences == null) {
 			registrationImpl.setUserPreferences("");
@@ -122,7 +122,7 @@ public class RegistrationCacheModel
 			registrationImpl.setEndTime(new Date(endTime));
 		}
 
-		registrationImpl.setParentArticleId(parentArticleId);
+		registrationImpl.setParentResourcePrimaryKey(parentResourcePrimaryKey);
 
 		registrationImpl.resetOriginalValues();
 
@@ -139,12 +139,12 @@ public class RegistrationCacheModel
 
 		userId = objectInput.readLong();
 
-		articleId = objectInput.readLong();
+		resourcePrimaryKey = objectInput.readLong();
 		userPreferences = objectInput.readUTF();
 		startTime = objectInput.readLong();
 		endTime = objectInput.readLong();
 
-		parentArticleId = objectInput.readLong();
+		parentResourcePrimaryKey = objectInput.readLong();
 	}
 
 	@Override
@@ -157,7 +157,7 @@ public class RegistrationCacheModel
 
 		objectOutput.writeLong(userId);
 
-		objectOutput.writeLong(articleId);
+		objectOutput.writeLong(resourcePrimaryKey);
 
 		if (userPreferences == null) {
 			objectOutput.writeUTF("");
@@ -169,17 +169,17 @@ public class RegistrationCacheModel
 		objectOutput.writeLong(startTime);
 		objectOutput.writeLong(endTime);
 
-		objectOutput.writeLong(parentArticleId);
+		objectOutput.writeLong(parentResourcePrimaryKey);
 	}
 
 	public long registrationId;
 	public long groupId;
 	public long companyId;
 	public long userId;
-	public long articleId;
+	public long resourcePrimaryKey;
 	public String userPreferences;
 	public long startTime;
 	public long endTime;
-	public long parentArticleId;
+	public long parentResourcePrimaryKey;
 
 }

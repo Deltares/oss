@@ -38,11 +38,12 @@ public class RegistrationSoap implements Serializable {
 		soapModel.setGroupId(model.getGroupId());
 		soapModel.setCompanyId(model.getCompanyId());
 		soapModel.setUserId(model.getUserId());
-		soapModel.setArticleId(model.getArticleId());
+		soapModel.setResourcePrimaryKey(model.getResourcePrimaryKey());
 		soapModel.setUserPreferences(model.getUserPreferences());
 		soapModel.setStartTime(model.getStartTime());
 		soapModel.setEndTime(model.getEndTime());
-		soapModel.setParentArticleId(model.getParentArticleId());
+		soapModel.setParentResourcePrimaryKey(
+			model.getParentResourcePrimaryKey());
 
 		return soapModel;
 	}
@@ -128,12 +129,12 @@ public class RegistrationSoap implements Serializable {
 		_userId = userId;
 	}
 
-	public long getArticleId() {
-		return _articleId;
+	public long getResourcePrimaryKey() {
+		return _resourcePrimaryKey;
 	}
 
-	public void setArticleId(long articleId) {
-		_articleId = articleId;
+	public void setResourcePrimaryKey(long resourcePrimaryKey) {
+		_resourcePrimaryKey = resourcePrimaryKey;
 	}
 
 	public String getUserPreferences() {
@@ -160,22 +161,22 @@ public class RegistrationSoap implements Serializable {
 		_endTime = endTime;
 	}
 
-	public long getParentArticleId() {
-		return _parentArticleId;
+	public long getParentResourcePrimaryKey() {
+		return _parentResourcePrimaryKey;
 	}
 
-	public void setParentArticleId(long parentArticleId) {
-		_parentArticleId = parentArticleId;
+	public void setParentResourcePrimaryKey(long parentResourcePrimaryKey) {
+		_parentResourcePrimaryKey = parentResourcePrimaryKey;
 	}
 
 	private long _registrationId;
 	private long _groupId;
 	private long _companyId;
 	private long _userId;
-	private long _articleId;
+	private long _resourcePrimaryKey;
 	private String _userPreferences;
 	private Date _startTime;
 	private Date _endTime;
-	private long _parentArticleId;
+	private long _parentResourcePrimaryKey;
 
 }
