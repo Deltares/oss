@@ -1,0 +1,5 @@
+dependencies {
+    compileOnly group: "com.liferay", name: "com.liferay.journal.api", version: "3.0.0"
+    compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "3.0.0"
+    compileOnly project(":modules:common-utils")
+}

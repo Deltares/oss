@@ -2,6 +2,8 @@ package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.utils.XmlContentParserUtils;
 import org.w3c.dom.Document;
@@ -97,5 +99,13 @@ public abstract class AbsDsdArticle implements DsdArticle {
                     + structureKey.substring(1, structureKey.lastIndexOf("-")).toLowerCase();
         }
         return structureKey;
+    }
+
+    public String getSmallImageURL(ThemeDisplay themeDisplay) {
+        String url = article.getSmallImageURL();
+        if (Validator.isNull(url)) {
+            url = article.getArticleImageURL(themeDisplay);
+        }
+        return url;
     }
 }
