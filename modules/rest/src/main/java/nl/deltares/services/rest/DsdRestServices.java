@@ -30,7 +30,7 @@ import java.util.Set;
 			JaxrsWhiteboardConstants.JAX_RS_APPLICATION_BASE + "=/dsd",
 			JaxrsWhiteboardConstants.JAX_RS_NAME + "=DSD.Rest",
                 "oauth2.scopechecker.type=none",
-                "auth.verifier.guest.allowed=true",
+                "auth.verifier.guest.allowed=false",
                 "auth.verifier.auth.verifier.PortalSessionAuthVerifier.urls.includes=/*"
         },
         service = Application.class

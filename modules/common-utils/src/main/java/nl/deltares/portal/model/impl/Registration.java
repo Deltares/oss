@@ -17,8 +17,10 @@ public abstract class Registration extends AbsDsdArticle {
     private double price;
     private boolean open;
     private Registration parentRegistration;
+    private boolean overlapWithParent;
     private Date startTime;
     private Date endTime;
+
 
     public Registration(JournalArticle article) throws PortalException {
         super(article);
@@ -36,6 +38,10 @@ public abstract class Registration extends AbsDsdArticle {
             this.open = open == null || (boolean) open;
             Object parentJson = XmlContentParserUtils.getNodeValue(document, "parent", true);
             parentRegistration = parentJson == null ? null : parseParentRegistration((String) parentJson);
+            if (parentJson != null) {
+                Object overlap = XmlContentParserUtils.getNodeValue(document, "overlaps", true);
+                overlapWithParent = overlap != null && (boolean)overlap;
+            }
             dateTimeFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
             startTime = parseDateTime("start", "starttime");
             endTime = parseDateTime("end", "endtime");
@@ -79,9 +85,16 @@ public abstract class Registration extends AbsDsdArticle {
         return price;
     }
 
-
     public Registration getParentRegistration() {
         return parentRegistration;
+    }
+
+    public boolean isOverlapWithParent() {
+        return overlapWithParent;
+    }
+
+    public void setOverlapWithParent(boolean overlapWithParent) {
+        this.overlapWithParent = overlapWithParent;
     }
 
     public Date getStartTime() {

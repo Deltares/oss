@@ -457,7 +457,36 @@
       "repeatable": false,
       "required": false,
       "showLabel": true,
-      "type": "ddm-journal-article"
+      "type": "ddm-journal-article",
+      "nestedFields": [
+        {
+          "label": {
+            "nl_NL": "Overlapt",
+            "en_US": "Overlaps"
+          },
+          "predefinedValue": {
+            "nl_NL": false,
+            "en_US": false
+          },
+          "style": {
+            "nl_NL": "",
+            "en_US": ""
+          },
+          "tip": {
+            "nl_NL": "Als registratieperiod mag overlappen met de registratieperiode van ouder.",
+            "en_US": "If registration period is expected to overlap with parent registration period."
+          },
+          "dataType": "boolean",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "overlaps",
+          "readOnly": false,
+          "repeatable": false,
+          "required": false,
+          "showLabel": true,
+          "type": "checkbox"
+        }
+      ]
     },
     {
       "label": {
