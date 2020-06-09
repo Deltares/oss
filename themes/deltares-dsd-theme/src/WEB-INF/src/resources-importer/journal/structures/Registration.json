@@ -7,33 +7,6 @@
   "fields": [
     {
       "label": {
-        "nl_NL": "Naam",
-        "en_US": "Name"
-      },
-      "predefinedValue": {
-        "nl_NL": "",
-        "en_US": ""
-      },
-      "style": {
-        "nl_NL": "",
-        "en_US": ""
-      },
-      "tip": {
-        "nl_NL": "",
-        "en_US": ""
-      },
-      "dataType": "string",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "name",
-      "readOnly": false,
-      "repeatable": false,
-      "required": true,
-      "showLabel": true,
-      "type": "text"
-    },
-    {
-      "label": {
         "nl_NL": "Begin datum",
         "en_US": "Start date"
       },
