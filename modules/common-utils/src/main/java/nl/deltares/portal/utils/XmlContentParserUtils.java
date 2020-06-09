@@ -87,10 +87,6 @@ public class XmlContentParserUtils {
         Node typeNode = parentNode.getAttributes().getNamedItem("type");
         String type = typeNode.getTextContent();
         String textValue = node.getTextContent();
-        if (textValue != null){
-            textValue = textValue.trim();
-            if (textValue.isEmpty()) return null;
-        }
 
         if ("boolean".equals(type)){
             return Boolean.valueOf(textValue);
@@ -101,8 +97,12 @@ public class XmlContentParserUtils {
         if ("ddm-decimal".equals(type)){
             return Double.valueOf(textValue);
         }
-        if ("ddm-date".equals(type)){
-            return textValue;
+//        if ("ddm-date".equals(type)){
+//            return textValue;
+//        }
+        if (textValue != null){
+            textValue = textValue.trim();
+            if (textValue.isEmpty()) return null;
         }
         return textValue;
     }

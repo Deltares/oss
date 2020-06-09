@@ -32,9 +32,9 @@ public class JournalArticleUtilsTest {
         Document document = parseContent("testGetNodeValue", new FileInputStream(expertXml.getFile()));
 
         Assert.assertEquals(
-                "{\"classPK\":\"52262\",\"groupId\":\"52076\",\"name\":\"sam.jpg\",\"alt\":\"Erik INT\",\"title\":\"sam.jpg\",\"type\":\"journal\",\"uuid\":\"75bccfc6-2d24-26eb-84e1-46ca05fa50fa\",\"fileEntryId\":\"52270\",\"resourcePrimKey\":\"52268\"}",
+                "{\"classPK\":\"37435\",\"groupId\":\"36299\",\"name\":\"erik.jpg\",\"alt\":\"me\",\"title\":\"erik.jpg\",\"type\":\"journal\",\"uuid\":\"1e749f9b-e55c-9777-6fa9-f422291ff0de\",\"fileEntryId\":\"37443\",\"resourcePrimKey\":\"37441\"}",
                 XmlContentParserUtils.getNodeValue(document, "ExpertImage", true));
-        Assert.assertEquals("Erik INT", XmlContentParserUtils.getNodeValue(document, "ExpertName", false));
+        Assert.assertEquals("Erik de Rooij", XmlContentParserUtils.getNodeValue(document, "ExpertName", false));
 
         Assert.assertEquals("Deltares", XmlContentParserUtils.getNodeValue(document, "ExpertCompany", false));
 
