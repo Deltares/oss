@@ -51,12 +51,12 @@ public class RegistrationLocalServiceWrapper
 
 	@Override
 	public void addUserRegistration(
-		long companyId, long groupId, long articleId, long parentArticleId,
+		long companyId, long groupId, long resouceId, long parentResourceId,
 		long userId, java.util.Date startTime, java.util.Date endTime,
 		String preferences) {
 
 		_registrationLocalService.addUserRegistration(
-			companyId, groupId, articleId, parentArticleId, userId, startTime,
+			companyId, groupId, resouceId, parentResourceId, userId, startTime,
 			endTime, preferences);
 	}
 
@@ -74,18 +74,18 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	/**
-	 * Delete all registrations related to 'articleId'. This inlcudes all registration with a parentArticleId
-	 * that matches 'articleId'.
+	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
-	 * @param articleId Article Identifier being removed.
+	 * @param resourceId Article Identifier being removed.
 	 */
 	@Override
 	public void deleteAllRegistrationsAndChildRegistrations(
-		long groupId, long articleId) {
+		long groupId, long resourceId) {
 
 		_registrationLocalService.deleteAllRegistrationsAndChildRegistrations(
-			groupId, articleId);
+			groupId, resourceId);
 	}
 
 	/**
@@ -128,19 +128,19 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	/**
-	 * Delete user registrations for 'articleId'. This inlcudes all registration with a parentArticleId
-	 * that matches 'articleId'.
+	 * Delete user registrations for 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
-	 * @param articleId Article Identifier being removed.
+	 * @param resourceId Article Identifier being removed.
 	 * @param userId User for which to remove registration
 	 */
 	@Override
 	public void deleteUserRegistrationAndChildRegistrations(
-		long groupId, long articleId, long userId) {
+		long groupId, long resourceId, long userId) {
 
 		_registrationLocalService.deleteUserRegistrationAndChildRegistrations(
-			groupId, articleId, userId);
+			groupId, resourceId, userId);
 	}
 
 	@Override
@@ -316,17 +316,17 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	@Override
-	public int getRegistrationsCount(long groupId, long articleId) {
+	public int getRegistrationsCount(long groupId, long resourceId) {
 		return _registrationLocalService.getRegistrationsCount(
-			groupId, articleId);
+			groupId, resourceId);
 	}
 
 	@Override
 	public int getRegistrationsCount(
-		long groupId, long userId, long articleId) {
+		long groupId, long userId, long resourceId) {
 
 		return _registrationLocalService.getRegistrationsCount(
-			groupId, userId, articleId);
+			groupId, userId, resourceId);
 	}
 
 	@Override

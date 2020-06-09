@@ -62,11 +62,12 @@ public class RegistrationWrapper
 		attributes.put("groupId", getGroupId());
 		attributes.put("companyId", getCompanyId());
 		attributes.put("userId", getUserId());
-		attributes.put("articleId", getArticleId());
+		attributes.put("resourcePrimaryKey", getResourcePrimaryKey());
 		attributes.put("userPreferences", getUserPreferences());
 		attributes.put("startTime", getStartTime());
 		attributes.put("endTime", getEndTime());
-		attributes.put("parentArticleId", getParentArticleId());
+		attributes.put(
+			"parentResourcePrimaryKey", getParentResourcePrimaryKey());
 
 		return attributes;
 	}
@@ -97,10 +98,10 @@ public class RegistrationWrapper
 			setUserId(userId);
 		}
 
-		Long articleId = (Long)attributes.get("articleId");
+		Long resourcePrimaryKey = (Long)attributes.get("resourcePrimaryKey");
 
-		if (articleId != null) {
-			setArticleId(articleId);
+		if (resourcePrimaryKey != null) {
+			setResourcePrimaryKey(resourcePrimaryKey);
 		}
 
 		String userPreferences = (String)attributes.get("userPreferences");
@@ -121,10 +122,11 @@ public class RegistrationWrapper
 			setEndTime(endTime);
 		}
 
-		Long parentArticleId = (Long)attributes.get("parentArticleId");
+		Long parentResourcePrimaryKey = (Long)attributes.get(
+			"parentResourcePrimaryKey");
 
-		if (parentArticleId != null) {
-			setParentArticleId(parentArticleId);
+		if (parentResourcePrimaryKey != null) {
+			setParentResourcePrimaryKey(parentResourcePrimaryKey);
 		}
 	}
 
@@ -138,16 +140,6 @@ public class RegistrationWrapper
 		nl.deltares.dsd.registration.model.Registration registration) {
 
 		return _registration.compareTo(registration);
-	}
-
-	/**
-	 * Returns the article ID of this registration.
-	 *
-	 * @return the article ID of this registration
-	 */
-	@Override
-	public long getArticleId() {
-		return _registration.getArticleId();
 	}
 
 	/**
@@ -186,13 +178,13 @@ public class RegistrationWrapper
 	}
 
 	/**
-	 * Returns the parent article ID of this registration.
+	 * Returns the parent resource primary key of this registration.
 	 *
-	 * @return the parent article ID of this registration
+	 * @return the parent resource primary key of this registration
 	 */
 	@Override
-	public long getParentArticleId() {
-		return _registration.getParentArticleId();
+	public long getParentResourcePrimaryKey() {
+		return _registration.getParentResourcePrimaryKey();
 	}
 
 	/**
@@ -218,6 +210,16 @@ public class RegistrationWrapper
 	@Override
 	public long getRegistrationId() {
 		return _registration.getRegistrationId();
+	}
+
+	/**
+	 * Returns the resource primary key of this registration.
+	 *
+	 * @return the resource primary key of this registration
+	 */
+	@Override
+	public long getResourcePrimaryKey() {
+		return _registration.getResourcePrimaryKey();
 	}
 
 	/**
@@ -285,16 +287,6 @@ public class RegistrationWrapper
 		_registration.persist();
 	}
 
-	/**
-	 * Sets the article ID of this registration.
-	 *
-	 * @param articleId the article ID of this registration
-	 */
-	@Override
-	public void setArticleId(long articleId) {
-		_registration.setArticleId(articleId);
-	}
-
 	@Override
 	public void setCachedModel(boolean cachedModel) {
 		_registration.setCachedModel(cachedModel);
@@ -353,13 +345,13 @@ public class RegistrationWrapper
 	}
 
 	/**
-	 * Sets the parent article ID of this registration.
+	 * Sets the parent resource primary key of this registration.
 	 *
-	 * @param parentArticleId the parent article ID of this registration
+	 * @param parentResourcePrimaryKey the parent resource primary key of this registration
 	 */
 	@Override
-	public void setParentArticleId(long parentArticleId) {
-		_registration.setParentArticleId(parentArticleId);
+	public void setParentResourcePrimaryKey(long parentResourcePrimaryKey) {
+		_registration.setParentResourcePrimaryKey(parentResourcePrimaryKey);
 	}
 
 	/**
@@ -385,6 +377,16 @@ public class RegistrationWrapper
 	@Override
 	public void setRegistrationId(long registrationId) {
 		_registration.setRegistrationId(registrationId);
+	}
+
+	/**
+	 * Sets the resource primary key of this registration.
+	 *
+	 * @param resourcePrimaryKey the resource primary key of this registration
+	 */
+	@Override
+	public void setResourcePrimaryKey(long resourcePrimaryKey) {
+		_registration.setResourcePrimaryKey(resourcePrimaryKey);
 	}
 
 	/**

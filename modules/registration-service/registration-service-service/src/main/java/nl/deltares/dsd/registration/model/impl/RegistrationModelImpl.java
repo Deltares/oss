@@ -74,9 +74,9 @@ public class RegistrationModelImpl
 	public static final Object[][] TABLE_COLUMNS = {
 		{"registrationId", Types.BIGINT}, {"groupId", Types.BIGINT},
 		{"companyId", Types.BIGINT}, {"userId", Types.BIGINT},
-		{"articleId", Types.BIGINT}, {"userPreferences", Types.VARCHAR},
-		{"startTime", Types.TIMESTAMP}, {"endTime", Types.TIMESTAMP},
-		{"parentArticleId", Types.BIGINT}
+		{"resourcePrimaryKey", Types.BIGINT},
+		{"userPreferences", Types.VARCHAR}, {"startTime", Types.TIMESTAMP},
+		{"endTime", Types.TIMESTAMP}, {"parentResourcePrimaryKey", Types.BIGINT}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -87,15 +87,15 @@ public class RegistrationModelImpl
 		TABLE_COLUMNS_MAP.put("groupId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("companyId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("userId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("articleId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("resourcePrimaryKey", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("userPreferences", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("startTime", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("endTime", Types.TIMESTAMP);
-		TABLE_COLUMNS_MAP.put("parentArticleId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("parentResourcePrimaryKey", Types.BIGINT);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table Registrations_Registration (registrationId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,articleId LONG,userPreferences STRING null,startTime DATE null,endTime DATE null,parentArticleId LONG)";
+		"create table Registrations_Registration (registrationId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,resourcePrimaryKey LONG,userPreferences STRING null,startTime DATE null,endTime DATE null,parentResourcePrimaryKey LONG)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table Registrations_Registration";
@@ -127,11 +127,11 @@ public class RegistrationModelImpl
 			"value.object.column.bitmask.enabled.nl.deltares.dsd.registration.model.Registration"),
 		true);
 
-	public static final long ARTICLEID_COLUMN_BITMASK = 1L;
+	public static final long GROUPID_COLUMN_BITMASK = 1L;
 
-	public static final long GROUPID_COLUMN_BITMASK = 2L;
+	public static final long PARENTRESOURCEPRIMARYKEY_COLUMN_BITMASK = 2L;
 
-	public static final long PARENTARTICLEID_COLUMN_BITMASK = 4L;
+	public static final long RESOURCEPRIMARYKEY_COLUMN_BITMASK = 4L;
 
 	public static final long USERID_COLUMN_BITMASK = 8L;
 
@@ -351,24 +351,25 @@ public class RegistrationModelImpl
 
 			});
 		attributeGetterFunctions.put(
-			"articleId",
+			"resourcePrimaryKey",
 			new Function<Registration, Object>() {
 
 				@Override
 				public Object apply(Registration registration) {
-					return registration.getArticleId();
+					return registration.getResourcePrimaryKey();
 				}
 
 			});
 		attributeSetterBiConsumers.put(
-			"articleId",
+			"resourcePrimaryKey",
 			new BiConsumer<Registration, Object>() {
 
 				@Override
 				public void accept(
-					Registration registration, Object articleId) {
+					Registration registration, Object resourcePrimaryKey) {
 
-					registration.setArticleId((Long)articleId);
+					registration.setResourcePrimaryKey(
+						(Long)resourcePrimaryKey);
 				}
 
 			});
@@ -437,24 +438,26 @@ public class RegistrationModelImpl
 
 			});
 		attributeGetterFunctions.put(
-			"parentArticleId",
+			"parentResourcePrimaryKey",
 			new Function<Registration, Object>() {
 
 				@Override
 				public Object apply(Registration registration) {
-					return registration.getParentArticleId();
+					return registration.getParentResourcePrimaryKey();
 				}
 
 			});
 		attributeSetterBiConsumers.put(
-			"parentArticleId",
+			"parentResourcePrimaryKey",
 			new BiConsumer<Registration, Object>() {
 
 				@Override
 				public void accept(
-					Registration registration, Object parentArticleId) {
+					Registration registration,
+					Object parentResourcePrimaryKey) {
 
-					registration.setParentArticleId((Long)parentArticleId);
+					registration.setParentResourcePrimaryKey(
+						(Long)parentResourcePrimaryKey);
 				}
 
 			});
@@ -546,25 +549,25 @@ public class RegistrationModelImpl
 	}
 
 	@Override
-	public long getArticleId() {
-		return _articleId;
+	public long getResourcePrimaryKey() {
+		return _resourcePrimaryKey;
 	}
 
 	@Override
-	public void setArticleId(long articleId) {
-		_columnBitmask |= ARTICLEID_COLUMN_BITMASK;
+	public void setResourcePrimaryKey(long resourcePrimaryKey) {
+		_columnBitmask |= RESOURCEPRIMARYKEY_COLUMN_BITMASK;
 
-		if (!_setOriginalArticleId) {
-			_setOriginalArticleId = true;
+		if (!_setOriginalResourcePrimaryKey) {
+			_setOriginalResourcePrimaryKey = true;
 
-			_originalArticleId = _articleId;
+			_originalResourcePrimaryKey = _resourcePrimaryKey;
 		}
 
-		_articleId = articleId;
+		_resourcePrimaryKey = resourcePrimaryKey;
 	}
 
-	public long getOriginalArticleId() {
-		return _originalArticleId;
+	public long getOriginalResourcePrimaryKey() {
+		return _originalResourcePrimaryKey;
 	}
 
 	@Override
@@ -605,25 +608,25 @@ public class RegistrationModelImpl
 	}
 
 	@Override
-	public long getParentArticleId() {
-		return _parentArticleId;
+	public long getParentResourcePrimaryKey() {
+		return _parentResourcePrimaryKey;
 	}
 
 	@Override
-	public void setParentArticleId(long parentArticleId) {
-		_columnBitmask |= PARENTARTICLEID_COLUMN_BITMASK;
+	public void setParentResourcePrimaryKey(long parentResourcePrimaryKey) {
+		_columnBitmask |= PARENTRESOURCEPRIMARYKEY_COLUMN_BITMASK;
 
-		if (!_setOriginalParentArticleId) {
-			_setOriginalParentArticleId = true;
+		if (!_setOriginalParentResourcePrimaryKey) {
+			_setOriginalParentResourcePrimaryKey = true;
 
-			_originalParentArticleId = _parentArticleId;
+			_originalParentResourcePrimaryKey = _parentResourcePrimaryKey;
 		}
 
-		_parentArticleId = parentArticleId;
+		_parentResourcePrimaryKey = parentResourcePrimaryKey;
 	}
 
-	public long getOriginalParentArticleId() {
-		return _originalParentArticleId;
+	public long getOriginalParentResourcePrimaryKey() {
+		return _originalParentResourcePrimaryKey;
 	}
 
 	public long getColumnBitmask() {
@@ -666,11 +669,12 @@ public class RegistrationModelImpl
 		registrationImpl.setGroupId(getGroupId());
 		registrationImpl.setCompanyId(getCompanyId());
 		registrationImpl.setUserId(getUserId());
-		registrationImpl.setArticleId(getArticleId());
+		registrationImpl.setResourcePrimaryKey(getResourcePrimaryKey());
 		registrationImpl.setUserPreferences(getUserPreferences());
 		registrationImpl.setStartTime(getStartTime());
 		registrationImpl.setEndTime(getEndTime());
-		registrationImpl.setParentArticleId(getParentArticleId());
+		registrationImpl.setParentResourcePrimaryKey(
+			getParentResourcePrimaryKey());
 
 		registrationImpl.resetOriginalValues();
 
@@ -741,15 +745,15 @@ public class RegistrationModelImpl
 
 		registrationModelImpl._setOriginalUserId = false;
 
-		registrationModelImpl._originalArticleId =
-			registrationModelImpl._articleId;
+		registrationModelImpl._originalResourcePrimaryKey =
+			registrationModelImpl._resourcePrimaryKey;
 
-		registrationModelImpl._setOriginalArticleId = false;
+		registrationModelImpl._setOriginalResourcePrimaryKey = false;
 
-		registrationModelImpl._originalParentArticleId =
-			registrationModelImpl._parentArticleId;
+		registrationModelImpl._originalParentResourcePrimaryKey =
+			registrationModelImpl._parentResourcePrimaryKey;
 
-		registrationModelImpl._setOriginalParentArticleId = false;
+		registrationModelImpl._setOriginalParentResourcePrimaryKey = false;
 
 		registrationModelImpl._columnBitmask = 0;
 	}
@@ -767,7 +771,7 @@ public class RegistrationModelImpl
 
 		registrationCacheModel.userId = getUserId();
 
-		registrationCacheModel.articleId = getArticleId();
+		registrationCacheModel.resourcePrimaryKey = getResourcePrimaryKey();
 
 		registrationCacheModel.userPreferences = getUserPreferences();
 
@@ -795,7 +799,8 @@ public class RegistrationModelImpl
 			registrationCacheModel.endTime = Long.MIN_VALUE;
 		}
 
-		registrationCacheModel.parentArticleId = getParentArticleId();
+		registrationCacheModel.parentResourcePrimaryKey =
+			getParentResourcePrimaryKey();
 
 		return registrationCacheModel;
 	}
@@ -878,15 +883,15 @@ public class RegistrationModelImpl
 	private long _userId;
 	private long _originalUserId;
 	private boolean _setOriginalUserId;
-	private long _articleId;
-	private long _originalArticleId;
-	private boolean _setOriginalArticleId;
+	private long _resourcePrimaryKey;
+	private long _originalResourcePrimaryKey;
+	private boolean _setOriginalResourcePrimaryKey;
 	private String _userPreferences;
 	private Date _startTime;
 	private Date _endTime;
-	private long _parentArticleId;
-	private long _originalParentArticleId;
-	private boolean _setOriginalParentArticleId;
+	private long _parentResourcePrimaryKey;
+	private long _originalParentResourcePrimaryKey;
+	private boolean _setOriginalParentResourcePrimaryKey;
 	private long _columnBitmask;
 	private Registration _escapedModel;
 

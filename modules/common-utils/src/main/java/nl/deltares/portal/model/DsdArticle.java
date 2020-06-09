@@ -9,8 +9,8 @@ public interface DsdArticle {
     enum DSD_STRUCTURE_KEYS {Expert, Location, Building, Room, Eventlocation, Registration, Session, Bustransfer, Dinner}
     String getTitle();
     long getCompanyId();
-    long getArticleId();
     long getGroupId();
+    long getResourceId();
     String getStructureKey();
     Document getDocument();
     boolean storeInParentSite();

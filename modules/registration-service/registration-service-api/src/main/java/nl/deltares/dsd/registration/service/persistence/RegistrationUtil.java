@@ -318,69 +318,70 @@ public class RegistrationUtil {
 	}
 
 	/**
-	 * Returns all the registrations where groupId = &#63; and articleId = &#63;.
+	 * Returns all the registrations where groupId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @return the matching registrations
 	 */
 	public static List<Registration> findByArticleRegistrations(
-		long groupId, long articleId) {
+		long groupId, long resourcePrimaryKey) {
 
-		return getPersistence().findByArticleRegistrations(groupId, articleId);
+		return getPersistence().findByArticleRegistrations(
+			groupId, resourcePrimaryKey);
 	}
 
 	/**
-	 * Returns a range of all the registrations where groupId = &#63; and articleId = &#63;.
+	 * Returns a range of all the registrations where groupId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param groupId the group ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @return the range of matching registrations
 	 */
 	public static List<Registration> findByArticleRegistrations(
-		long groupId, long articleId, int start, int end) {
+		long groupId, long resourcePrimaryKey, int start, int end) {
 
 		return getPersistence().findByArticleRegistrations(
-			groupId, articleId, start, end);
+			groupId, resourcePrimaryKey, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the registrations where groupId = &#63; and articleId = &#63;.
+	 * Returns an ordered range of all the registrations where groupId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param groupId the group ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registrations
 	 */
 	public static List<Registration> findByArticleRegistrations(
-		long groupId, long articleId, int start, int end,
+		long groupId, long resourcePrimaryKey, int start, int end,
 		OrderByComparator<Registration> orderByComparator) {
 
 		return getPersistence().findByArticleRegistrations(
-			groupId, articleId, start, end, orderByComparator);
+			groupId, resourcePrimaryKey, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the registrations where groupId = &#63; and articleId = &#63;.
+	 * Returns an ordered range of all the registrations where groupId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param groupId the group ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -388,147 +389,149 @@ public class RegistrationUtil {
 	 * @return the ordered range of matching registrations
 	 */
 	public static List<Registration> findByArticleRegistrations(
-		long groupId, long articleId, int start, int end,
+		long groupId, long resourcePrimaryKey, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
 		boolean retrieveFromCache) {
 
 		return getPersistence().findByArticleRegistrations(
-			groupId, articleId, start, end, orderByComparator,
+			groupId, resourcePrimaryKey, start, end, orderByComparator,
 			retrieveFromCache);
 	}
 
 	/**
-	 * Returns the first registration in the ordered set where groupId = &#63; and articleId = &#63;.
+	 * Returns the first registration in the ordered set where groupId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	public static Registration findByArticleRegistrations_First(
-			long groupId, long articleId,
+			long groupId, long resourcePrimaryKey,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.dsd.registration.exception.
 			NoSuchRegistrationException {
 
 		return getPersistence().findByArticleRegistrations_First(
-			groupId, articleId, orderByComparator);
+			groupId, resourcePrimaryKey, orderByComparator);
 	}
 
 	/**
-	 * Returns the first registration in the ordered set where groupId = &#63; and articleId = &#63;.
+	 * Returns the first registration in the ordered set where groupId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	public static Registration fetchByArticleRegistrations_First(
-		long groupId, long articleId,
+		long groupId, long resourcePrimaryKey,
 		OrderByComparator<Registration> orderByComparator) {
 
 		return getPersistence().fetchByArticleRegistrations_First(
-			groupId, articleId, orderByComparator);
+			groupId, resourcePrimaryKey, orderByComparator);
 	}
 
 	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and articleId = &#63;.
+	 * Returns the last registration in the ordered set where groupId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	public static Registration findByArticleRegistrations_Last(
-			long groupId, long articleId,
+			long groupId, long resourcePrimaryKey,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.dsd.registration.exception.
 			NoSuchRegistrationException {
 
 		return getPersistence().findByArticleRegistrations_Last(
-			groupId, articleId, orderByComparator);
+			groupId, resourcePrimaryKey, orderByComparator);
 	}
 
 	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and articleId = &#63;.
+	 * Returns the last registration in the ordered set where groupId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	public static Registration fetchByArticleRegistrations_Last(
-		long groupId, long articleId,
+		long groupId, long resourcePrimaryKey,
 		OrderByComparator<Registration> orderByComparator) {
 
 		return getPersistence().fetchByArticleRegistrations_Last(
-			groupId, articleId, orderByComparator);
+			groupId, resourcePrimaryKey, orderByComparator);
 	}
 
 	/**
-	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and articleId = &#63;.
+	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * @param registrationId the primary key of the current registration
 	 * @param groupId the group ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next registration
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
 	public static Registration[] findByArticleRegistrations_PrevAndNext(
-			long registrationId, long groupId, long articleId,
+			long registrationId, long groupId, long resourcePrimaryKey,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.dsd.registration.exception.
 			NoSuchRegistrationException {
 
 		return getPersistence().findByArticleRegistrations_PrevAndNext(
-			registrationId, groupId, articleId, orderByComparator);
+			registrationId, groupId, resourcePrimaryKey, orderByComparator);
 	}
 
 	/**
-	 * Removes all the registrations where groupId = &#63; and articleId = &#63; from the database.
+	 * Removes all the registrations where groupId = &#63; and resourcePrimaryKey = &#63; from the database.
 	 *
 	 * @param groupId the group ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 */
 	public static void removeByArticleRegistrations(
-		long groupId, long articleId) {
+		long groupId, long resourcePrimaryKey) {
 
-		getPersistence().removeByArticleRegistrations(groupId, articleId);
+		getPersistence().removeByArticleRegistrations(
+			groupId, resourcePrimaryKey);
 	}
 
 	/**
-	 * Returns the number of registrations where groupId = &#63; and articleId = &#63;.
+	 * Returns the number of registrations where groupId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @return the number of matching registrations
 	 */
 	public static int countByArticleRegistrations(
-		long groupId, long articleId) {
+		long groupId, long resourcePrimaryKey) {
 
-		return getPersistence().countByArticleRegistrations(groupId, articleId);
+		return getPersistence().countByArticleRegistrations(
+			groupId, resourcePrimaryKey);
 	}
 
 	/**
-	 * Returns all the registrations where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 * Returns all the registrations where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @return the matching registrations
 	 */
 	public static List<Registration> findByUserArticleRegistrations(
-		long groupId, long userId, long articleId) {
+		long groupId, long userId, long resourcePrimaryKey) {
 
 		return getPersistence().findByUserArticleRegistrations(
-			groupId, userId, articleId);
+			groupId, userId, resourcePrimaryKey);
 	}
 
 	/**
-	 * Returns a range of all the registrations where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 * Returns a range of all the registrations where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -536,20 +539,21 @@ public class RegistrationUtil {
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @return the range of matching registrations
 	 */
 	public static List<Registration> findByUserArticleRegistrations(
-		long groupId, long userId, long articleId, int start, int end) {
+		long groupId, long userId, long resourcePrimaryKey, int start,
+		int end) {
 
 		return getPersistence().findByUserArticleRegistrations(
-			groupId, userId, articleId, start, end);
+			groupId, userId, resourcePrimaryKey, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -557,22 +561,22 @@ public class RegistrationUtil {
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registrations
 	 */
 	public static List<Registration> findByUserArticleRegistrations(
-		long groupId, long userId, long articleId, int start, int end,
+		long groupId, long userId, long resourcePrimaryKey, int start, int end,
 		OrderByComparator<Registration> orderByComparator) {
 
 		return getPersistence().findByUserArticleRegistrations(
-			groupId, userId, articleId, start, end, orderByComparator);
+			groupId, userId, resourcePrimaryKey, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -580,7 +584,7 @@ public class RegistrationUtil {
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -588,156 +592,158 @@ public class RegistrationUtil {
 	 * @return the ordered range of matching registrations
 	 */
 	public static List<Registration> findByUserArticleRegistrations(
-		long groupId, long userId, long articleId, int start, int end,
+		long groupId, long userId, long resourcePrimaryKey, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
 		boolean retrieveFromCache) {
 
 		return getPersistence().findByUserArticleRegistrations(
-			groupId, userId, articleId, start, end, orderByComparator,
+			groupId, userId, resourcePrimaryKey, start, end, orderByComparator,
 			retrieveFromCache);
 	}
 
 	/**
-	 * Returns the first registration in the ordered set where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 * Returns the first registration in the ordered set where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	public static Registration findByUserArticleRegistrations_First(
-			long groupId, long userId, long articleId,
+			long groupId, long userId, long resourcePrimaryKey,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.dsd.registration.exception.
 			NoSuchRegistrationException {
 
 		return getPersistence().findByUserArticleRegistrations_First(
-			groupId, userId, articleId, orderByComparator);
+			groupId, userId, resourcePrimaryKey, orderByComparator);
 	}
 
 	/**
-	 * Returns the first registration in the ordered set where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 * Returns the first registration in the ordered set where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	public static Registration fetchByUserArticleRegistrations_First(
-		long groupId, long userId, long articleId,
+		long groupId, long userId, long resourcePrimaryKey,
 		OrderByComparator<Registration> orderByComparator) {
 
 		return getPersistence().fetchByUserArticleRegistrations_First(
-			groupId, userId, articleId, orderByComparator);
+			groupId, userId, resourcePrimaryKey, orderByComparator);
 	}
 
 	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	public static Registration findByUserArticleRegistrations_Last(
-			long groupId, long userId, long articleId,
+			long groupId, long userId, long resourcePrimaryKey,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.dsd.registration.exception.
 			NoSuchRegistrationException {
 
 		return getPersistence().findByUserArticleRegistrations_Last(
-			groupId, userId, articleId, orderByComparator);
+			groupId, userId, resourcePrimaryKey, orderByComparator);
 	}
 
 	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	public static Registration fetchByUserArticleRegistrations_Last(
-		long groupId, long userId, long articleId,
+		long groupId, long userId, long resourcePrimaryKey,
 		OrderByComparator<Registration> orderByComparator) {
 
 		return getPersistence().fetchByUserArticleRegistrations_Last(
-			groupId, userId, articleId, orderByComparator);
+			groupId, userId, resourcePrimaryKey, orderByComparator);
 	}
 
 	/**
-	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * @param registrationId the primary key of the current registration
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next registration
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
 	public static Registration[] findByUserArticleRegistrations_PrevAndNext(
-			long registrationId, long groupId, long userId, long articleId,
+			long registrationId, long groupId, long userId,
+			long resourcePrimaryKey,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.dsd.registration.exception.
 			NoSuchRegistrationException {
 
 		return getPersistence().findByUserArticleRegistrations_PrevAndNext(
-			registrationId, groupId, userId, articleId, orderByComparator);
+			registrationId, groupId, userId, resourcePrimaryKey,
+			orderByComparator);
 	}
 
 	/**
-	 * Removes all the registrations where groupId = &#63; and userId = &#63; and articleId = &#63; from the database.
+	 * Removes all the registrations where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63; from the database.
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 */
 	public static void removeByUserArticleRegistrations(
-		long groupId, long userId, long articleId) {
+		long groupId, long userId, long resourcePrimaryKey) {
 
 		getPersistence().removeByUserArticleRegistrations(
-			groupId, userId, articleId);
+			groupId, userId, resourcePrimaryKey);
 	}
 
 	/**
-	 * Returns the number of registrations where groupId = &#63; and userId = &#63; and articleId = &#63;.
+	 * Returns the number of registrations where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param articleId the article ID
+	 * @param resourcePrimaryKey the resource primary key
 	 * @return the number of matching registrations
 	 */
 	public static int countByUserArticleRegistrations(
-		long groupId, long userId, long articleId) {
+		long groupId, long userId, long resourcePrimaryKey) {
 
 		return getPersistence().countByUserArticleRegistrations(
-			groupId, userId, articleId);
+			groupId, userId, resourcePrimaryKey);
 	}
 
 	/**
-	 * Returns all the registrations where groupId = &#63; and userId = &#63; and parentArticleId = &#63;.
+	 * Returns all the registrations where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @return the matching registrations
 	 */
 	public static List<Registration> findByUserChildArticleRegistrations(
-		long groupId, long userId, long parentArticleId) {
+		long groupId, long userId, long parentResourcePrimaryKey) {
 
 		return getPersistence().findByUserChildArticleRegistrations(
-			groupId, userId, parentArticleId);
+			groupId, userId, parentResourcePrimaryKey);
 	}
 
 	/**
-	 * Returns a range of all the registrations where groupId = &#63; and userId = &#63; and parentArticleId = &#63;.
+	 * Returns a range of all the registrations where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -745,20 +751,21 @@ public class RegistrationUtil {
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @return the range of matching registrations
 	 */
 	public static List<Registration> findByUserChildArticleRegistrations(
-		long groupId, long userId, long parentArticleId, int start, int end) {
+		long groupId, long userId, long parentResourcePrimaryKey, int start,
+		int end) {
 
 		return getPersistence().findByUserChildArticleRegistrations(
-			groupId, userId, parentArticleId, start, end);
+			groupId, userId, parentResourcePrimaryKey, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and parentArticleId = &#63;.
+	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -766,22 +773,23 @@ public class RegistrationUtil {
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registrations
 	 */
 	public static List<Registration> findByUserChildArticleRegistrations(
-		long groupId, long userId, long parentArticleId, int start, int end,
-		OrderByComparator<Registration> orderByComparator) {
+		long groupId, long userId, long parentResourcePrimaryKey, int start,
+		int end, OrderByComparator<Registration> orderByComparator) {
 
 		return getPersistence().findByUserChildArticleRegistrations(
-			groupId, userId, parentArticleId, start, end, orderByComparator);
+			groupId, userId, parentResourcePrimaryKey, start, end,
+			orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and parentArticleId = &#63;.
+	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
@@ -789,7 +797,7 @@ public class RegistrationUtil {
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -797,96 +805,96 @@ public class RegistrationUtil {
 	 * @return the ordered range of matching registrations
 	 */
 	public static List<Registration> findByUserChildArticleRegistrations(
-		long groupId, long userId, long parentArticleId, int start, int end,
-		OrderByComparator<Registration> orderByComparator,
+		long groupId, long userId, long parentResourcePrimaryKey, int start,
+		int end, OrderByComparator<Registration> orderByComparator,
 		boolean retrieveFromCache) {
 
 		return getPersistence().findByUserChildArticleRegistrations(
-			groupId, userId, parentArticleId, start, end, orderByComparator,
-			retrieveFromCache);
+			groupId, userId, parentResourcePrimaryKey, start, end,
+			orderByComparator, retrieveFromCache);
 	}
 
 	/**
-	 * Returns the first registration in the ordered set where groupId = &#63; and userId = &#63; and parentArticleId = &#63;.
+	 * Returns the first registration in the ordered set where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	public static Registration findByUserChildArticleRegistrations_First(
-			long groupId, long userId, long parentArticleId,
+			long groupId, long userId, long parentResourcePrimaryKey,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.dsd.registration.exception.
 			NoSuchRegistrationException {
 
 		return getPersistence().findByUserChildArticleRegistrations_First(
-			groupId, userId, parentArticleId, orderByComparator);
+			groupId, userId, parentResourcePrimaryKey, orderByComparator);
 	}
 
 	/**
-	 * Returns the first registration in the ordered set where groupId = &#63; and userId = &#63; and parentArticleId = &#63;.
+	 * Returns the first registration in the ordered set where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	public static Registration fetchByUserChildArticleRegistrations_First(
-		long groupId, long userId, long parentArticleId,
+		long groupId, long userId, long parentResourcePrimaryKey,
 		OrderByComparator<Registration> orderByComparator) {
 
 		return getPersistence().fetchByUserChildArticleRegistrations_First(
-			groupId, userId, parentArticleId, orderByComparator);
+			groupId, userId, parentResourcePrimaryKey, orderByComparator);
 	}
 
 	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and parentArticleId = &#63;.
+	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	public static Registration findByUserChildArticleRegistrations_Last(
-			long groupId, long userId, long parentArticleId,
+			long groupId, long userId, long parentResourcePrimaryKey,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.dsd.registration.exception.
 			NoSuchRegistrationException {
 
 		return getPersistence().findByUserChildArticleRegistrations_Last(
-			groupId, userId, parentArticleId, orderByComparator);
+			groupId, userId, parentResourcePrimaryKey, orderByComparator);
 	}
 
 	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and parentArticleId = &#63;.
+	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	public static Registration fetchByUserChildArticleRegistrations_Last(
-		long groupId, long userId, long parentArticleId,
+		long groupId, long userId, long parentResourcePrimaryKey,
 		OrderByComparator<Registration> orderByComparator) {
 
 		return getPersistence().fetchByUserChildArticleRegistrations_Last(
-			groupId, userId, parentArticleId, orderByComparator);
+			groupId, userId, parentResourcePrimaryKey, orderByComparator);
 	}
 
 	/**
-	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and userId = &#63; and parentArticleId = &#63;.
+	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * @param registrationId the primary key of the current registration
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next registration
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
@@ -894,110 +902,110 @@ public class RegistrationUtil {
 	public static Registration[]
 			findByUserChildArticleRegistrations_PrevAndNext(
 				long registrationId, long groupId, long userId,
-				long parentArticleId,
+				long parentResourcePrimaryKey,
 				OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.dsd.registration.exception.
 			NoSuchRegistrationException {
 
 		return getPersistence().findByUserChildArticleRegistrations_PrevAndNext(
-			registrationId, groupId, userId, parentArticleId,
+			registrationId, groupId, userId, parentResourcePrimaryKey,
 			orderByComparator);
 	}
 
 	/**
-	 * Removes all the registrations where groupId = &#63; and userId = &#63; and parentArticleId = &#63; from the database.
+	 * Removes all the registrations where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63; from the database.
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 */
 	public static void removeByUserChildArticleRegistrations(
-		long groupId, long userId, long parentArticleId) {
+		long groupId, long userId, long parentResourcePrimaryKey) {
 
 		getPersistence().removeByUserChildArticleRegistrations(
-			groupId, userId, parentArticleId);
+			groupId, userId, parentResourcePrimaryKey);
 	}
 
 	/**
-	 * Returns the number of registrations where groupId = &#63; and userId = &#63; and parentArticleId = &#63;.
+	 * Returns the number of registrations where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
 	 * @param userId the user ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @return the number of matching registrations
 	 */
 	public static int countByUserChildArticleRegistrations(
-		long groupId, long userId, long parentArticleId) {
+		long groupId, long userId, long parentResourcePrimaryKey) {
 
 		return getPersistence().countByUserChildArticleRegistrations(
-			groupId, userId, parentArticleId);
+			groupId, userId, parentResourcePrimaryKey);
 	}
 
 	/**
-	 * Returns all the registrations where groupId = &#63; and parentArticleId = &#63;.
+	 * Returns all the registrations where groupId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @return the matching registrations
 	 */
 	public static List<Registration> findByChildArticleRegistrations(
-		long groupId, long parentArticleId) {
+		long groupId, long parentResourcePrimaryKey) {
 
 		return getPersistence().findByChildArticleRegistrations(
-			groupId, parentArticleId);
+			groupId, parentResourcePrimaryKey);
 	}
 
 	/**
-	 * Returns a range of all the registrations where groupId = &#63; and parentArticleId = &#63;.
+	 * Returns a range of all the registrations where groupId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param groupId the group ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @return the range of matching registrations
 	 */
 	public static List<Registration> findByChildArticleRegistrations(
-		long groupId, long parentArticleId, int start, int end) {
+		long groupId, long parentResourcePrimaryKey, int start, int end) {
 
 		return getPersistence().findByChildArticleRegistrations(
-			groupId, parentArticleId, start, end);
+			groupId, parentResourcePrimaryKey, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the registrations where groupId = &#63; and parentArticleId = &#63;.
+	 * Returns an ordered range of all the registrations where groupId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param groupId the group ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registrations
 	 */
 	public static List<Registration> findByChildArticleRegistrations(
-		long groupId, long parentArticleId, int start, int end,
+		long groupId, long parentResourcePrimaryKey, int start, int end,
 		OrderByComparator<Registration> orderByComparator) {
 
 		return getPersistence().findByChildArticleRegistrations(
-			groupId, parentArticleId, start, end, orderByComparator);
+			groupId, parentResourcePrimaryKey, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the registrations where groupId = &#63; and parentArticleId = &#63;.
+	 * Returns an ordered range of all the registrations where groupId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param groupId the group ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -1005,130 +1013,131 @@ public class RegistrationUtil {
 	 * @return the ordered range of matching registrations
 	 */
 	public static List<Registration> findByChildArticleRegistrations(
-		long groupId, long parentArticleId, int start, int end,
+		long groupId, long parentResourcePrimaryKey, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
 		boolean retrieveFromCache) {
 
 		return getPersistence().findByChildArticleRegistrations(
-			groupId, parentArticleId, start, end, orderByComparator,
+			groupId, parentResourcePrimaryKey, start, end, orderByComparator,
 			retrieveFromCache);
 	}
 
 	/**
-	 * Returns the first registration in the ordered set where groupId = &#63; and parentArticleId = &#63;.
+	 * Returns the first registration in the ordered set where groupId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	public static Registration findByChildArticleRegistrations_First(
-			long groupId, long parentArticleId,
+			long groupId, long parentResourcePrimaryKey,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.dsd.registration.exception.
 			NoSuchRegistrationException {
 
 		return getPersistence().findByChildArticleRegistrations_First(
-			groupId, parentArticleId, orderByComparator);
+			groupId, parentResourcePrimaryKey, orderByComparator);
 	}
 
 	/**
-	 * Returns the first registration in the ordered set where groupId = &#63; and parentArticleId = &#63;.
+	 * Returns the first registration in the ordered set where groupId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	public static Registration fetchByChildArticleRegistrations_First(
-		long groupId, long parentArticleId,
+		long groupId, long parentResourcePrimaryKey,
 		OrderByComparator<Registration> orderByComparator) {
 
 		return getPersistence().fetchByChildArticleRegistrations_First(
-			groupId, parentArticleId, orderByComparator);
+			groupId, parentResourcePrimaryKey, orderByComparator);
 	}
 
 	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and parentArticleId = &#63;.
+	 * Returns the last registration in the ordered set where groupId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	public static Registration findByChildArticleRegistrations_Last(
-			long groupId, long parentArticleId,
+			long groupId, long parentResourcePrimaryKey,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.dsd.registration.exception.
 			NoSuchRegistrationException {
 
 		return getPersistence().findByChildArticleRegistrations_Last(
-			groupId, parentArticleId, orderByComparator);
+			groupId, parentResourcePrimaryKey, orderByComparator);
 	}
 
 	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and parentArticleId = &#63;.
+	 * Returns the last registration in the ordered set where groupId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	public static Registration fetchByChildArticleRegistrations_Last(
-		long groupId, long parentArticleId,
+		long groupId, long parentResourcePrimaryKey,
 		OrderByComparator<Registration> orderByComparator) {
 
 		return getPersistence().fetchByChildArticleRegistrations_Last(
-			groupId, parentArticleId, orderByComparator);
+			groupId, parentResourcePrimaryKey, orderByComparator);
 	}
 
 	/**
-	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and parentArticleId = &#63;.
+	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * @param registrationId the primary key of the current registration
 	 * @param groupId the group ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next registration
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
 	public static Registration[] findByChildArticleRegistrations_PrevAndNext(
-			long registrationId, long groupId, long parentArticleId,
+			long registrationId, long groupId, long parentResourcePrimaryKey,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.dsd.registration.exception.
 			NoSuchRegistrationException {
 
 		return getPersistence().findByChildArticleRegistrations_PrevAndNext(
-			registrationId, groupId, parentArticleId, orderByComparator);
+			registrationId, groupId, parentResourcePrimaryKey,
+			orderByComparator);
 	}
 
 	/**
-	 * Removes all the registrations where groupId = &#63; and parentArticleId = &#63; from the database.
+	 * Removes all the registrations where groupId = &#63; and parentResourcePrimaryKey = &#63; from the database.
 	 *
 	 * @param groupId the group ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 */
 	public static void removeByChildArticleRegistrations(
-		long groupId, long parentArticleId) {
+		long groupId, long parentResourcePrimaryKey) {
 
 		getPersistence().removeByChildArticleRegistrations(
-			groupId, parentArticleId);
+			groupId, parentResourcePrimaryKey);
 	}
 
 	/**
-	 * Returns the number of registrations where groupId = &#63; and parentArticleId = &#63;.
+	 * Returns the number of registrations where groupId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param parentArticleId the parent article ID
+	 * @param parentResourcePrimaryKey the parent resource primary key
 	 * @return the number of matching registrations
 	 */
 	public static int countByChildArticleRegistrations(
-		long groupId, long parentArticleId) {
+		long groupId, long parentResourcePrimaryKey) {
 
 		return getPersistence().countByChildArticleRegistrations(
-			groupId, parentArticleId);
+			groupId, parentResourcePrimaryKey);
 	}
 
 	/**

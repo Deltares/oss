@@ -45,7 +45,7 @@ public class RegistrationLocalServiceImpl
 	 *
 	 * Never reference this class directly. Use <code>nl.deltares.dsd.registration.service.RegistrationLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil</code>.
 	 */
-	public void addUserRegistration(long companyId, long groupId, long articleId, long parentArticleId,
+	public void addUserRegistration(long companyId, long groupId, long resouceId, long parentResourceId,
 									long userId, Date startTime, Date endTime, String preferences) {
 
 		//do not validate here. validation has already taken place
@@ -53,8 +53,8 @@ public class RegistrationLocalServiceImpl
 		Registration registration = RegistrationLocalServiceUtil.createRegistration(CounterLocalServiceUtil.increment(Registration.class.getName()));
 		registration.setCompanyId(companyId);
 		registration.setGroupId(groupId);
-		registration.setArticleId(articleId);
-		registration.setParentArticleId(parentArticleId);
+		registration.setResourcePrimaryKey(resouceId);
+		registration.setParentResourcePrimaryKey(parentResourceId);
 		registration.setUserId(userId);
 		registration.setStartTime(startTime);
 		registration.setEndTime(endTime);
@@ -65,35 +65,35 @@ public class RegistrationLocalServiceImpl
 	}
 
 	/**
-	 * Delete all registrations related to 'articleId'. This inlcudes all registration with a parentArticleId
-	 * that matches 'articleId'.
+	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'resourceId'.
 	 * @param groupId Site Identifier
-	 * @param articleId Article Identifier being removed.
+	 * @param resourceId Article Identifier being removed.
 	 */
-	public void deleteAllRegistrationsAndChildRegistrations(long groupId, long articleId){
+	public void deleteAllRegistrationsAndChildRegistrations(long groupId, long resourceId){
 
-		//Remove all registrations with a parentArticleId equal to articleId
-		RegistrationUtil.removeByChildArticleRegistrations(groupId, articleId);
+		//Remove all registrations with a parentArticleId equal to resourceId
+		RegistrationUtil.removeByChildArticleRegistrations(groupId, resourceId);
 
-		//Remove all registrations for articleId
-		RegistrationUtil.removeByArticleRegistrations(groupId, articleId);
+		//Remove all registrations for resourceId
+		RegistrationUtil.removeByArticleRegistrations(groupId, resourceId);
 
 	}
 
 	/**
-	 * Delete user registrations for 'articleId'. This inlcudes all registration with a parentArticleId
-	 * that matches 'articleId'.
+	 * Delete user registrations for 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'resourceId'.
 	 * @param groupId Site Identifier
-	 * @param articleId Article Identifier being removed.
+	 * @param resourceId Article Identifier being removed.
 	 * @param userId User for which to remove registration
 	 */
-	public void deleteUserRegistrationAndChildRegistrations(long groupId, long articleId, long userId){
+	public void deleteUserRegistrationAndChildRegistrations(long groupId, long resourceId, long userId){
 
-		//Remove all registrations with a parentArticleId equal to articleId
-		RegistrationUtil.removeByUserChildArticleRegistrations(groupId, userId, articleId);
+		//Remove all registrations with a parentArticleId equal to resourceId
+		RegistrationUtil.removeByUserChildArticleRegistrations(groupId, userId, resourceId);
 
-		//Remove all registrations for articleId
-		RegistrationUtil.removeByUserArticleRegistrations(groupId, userId, articleId);
+		//Remove all registrations for resourceId
+		RegistrationUtil.removeByUserArticleRegistrations(groupId, userId, resourceId);
 
 	}
 
@@ -109,19 +109,19 @@ public class RegistrationLocalServiceImpl
 		List<Registration> overlappingRegistrations = RegistrationUtil.findWithDynamicQuery(query);
 		if (overlappingRegistrations.size() == 0) return new long[0];
 
-		long[] articleIds = new long[overlappingRegistrations.size()];
+		long[] resourceIds = new long[overlappingRegistrations.size()];
 		int i = 0;
 		for (Registration overlappingRegistration : overlappingRegistrations) {
-			articleIds[i++] = overlappingRegistration.getArticleId();
+			resourceIds[i++] = overlappingRegistration.getResourcePrimaryKey();
 		}
-		return articleIds;
+		return resourceIds;
 	}
 
-	public int getRegistrationsCount(long groupId, long articleId){
-		return RegistrationUtil.countByArticleRegistrations(groupId, articleId);
+	public int getRegistrationsCount(long groupId, long resourceId){
+		return RegistrationUtil.countByArticleRegistrations(groupId, resourceId);
 	}
 
-	public int getRegistrationsCount(long groupId, long userId, long articleId)  {
-		return  RegistrationUtil.countByUserArticleRegistrations(groupId, userId, articleId);
+	public int getRegistrationsCount(long groupId, long userId, long resourceId)  {
+		return  RegistrationUtil.countByUserArticleRegistrations(groupId, userId, resourceId);
 	}
 }

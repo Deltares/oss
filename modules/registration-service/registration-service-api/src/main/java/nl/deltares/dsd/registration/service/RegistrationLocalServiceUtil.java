@@ -55,12 +55,12 @@ public class RegistrationLocalServiceUtil {
 	}
 
 	public static void addUserRegistration(
-		long companyId, long groupId, long articleId, long parentArticleId,
+		long companyId, long groupId, long resouceId, long parentResourceId,
 		long userId, java.util.Date startTime, java.util.Date endTime,
 		String preferences) {
 
 		getService().addUserRegistration(
-			companyId, groupId, articleId, parentArticleId, userId, startTime,
+			companyId, groupId, resouceId, parentResourceId, userId, startTime,
 			endTime, preferences);
 	}
 
@@ -77,17 +77,17 @@ public class RegistrationLocalServiceUtil {
 	}
 
 	/**
-	 * Delete all registrations related to 'articleId'. This inlcudes all registration with a parentArticleId
-	 * that matches 'articleId'.
+	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
-	 * @param articleId Article Identifier being removed.
+	 * @param resourceId Article Identifier being removed.
 	 */
 	public static void deleteAllRegistrationsAndChildRegistrations(
-		long groupId, long articleId) {
+		long groupId, long resourceId) {
 
 		getService().deleteAllRegistrationsAndChildRegistrations(
-			groupId, articleId);
+			groupId, resourceId);
 	}
 
 	/**
@@ -129,18 +129,18 @@ public class RegistrationLocalServiceUtil {
 	}
 
 	/**
-	 * Delete user registrations for 'articleId'. This inlcudes all registration with a parentArticleId
-	 * that matches 'articleId'.
+	 * Delete user registrations for 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
-	 * @param articleId Article Identifier being removed.
+	 * @param resourceId Article Identifier being removed.
 	 * @param userId User for which to remove registration
 	 */
 	public static void deleteUserRegistrationAndChildRegistrations(
-		long groupId, long articleId, long userId) {
+		long groupId, long resourceId, long userId) {
 
 		getService().deleteUserRegistrationAndChildRegistrations(
-			groupId, articleId, userId);
+			groupId, resourceId, userId);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery
@@ -304,14 +304,14 @@ public class RegistrationLocalServiceUtil {
 		return getService().getRegistrationsCount();
 	}
 
-	public static int getRegistrationsCount(long groupId, long articleId) {
-		return getService().getRegistrationsCount(groupId, articleId);
+	public static int getRegistrationsCount(long groupId, long resourceId) {
+		return getService().getRegistrationsCount(groupId, resourceId);
 	}
 
 	public static int getRegistrationsCount(
-		long groupId, long userId, long articleId) {
+		long groupId, long userId, long resourceId) {
 
-		return getService().getRegistrationsCount(groupId, userId, articleId);
+		return getService().getRegistrationsCount(groupId, userId, resourceId);
 	}
 
 	public static long[] getRegistrationsWithOverlappingPeriod(

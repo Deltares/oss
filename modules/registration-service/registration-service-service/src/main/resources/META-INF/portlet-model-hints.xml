@@ -6,12 +6,12 @@
 		<field name="groupId" type="long" />
 		<field name="companyId" type="long" />
 		<field name="userId" type="long" />
-		<field name="articleId" type="long" />
+		<field name="resourcePrimaryKey" type="long" />
 		<field name="userPreferences" type="String">
 			<hint-collection name="TEXTAREA" />
 		</field>
 		<field name="startTime" type="Date" />
 		<field name="endTime" type="Date" />
-		<field name="parentArticleId" type="long" />
+		<field name="parentResourcePrimaryKey" type="long" />
 	</model>
 </model-hints>

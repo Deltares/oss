@@ -21,17 +21,13 @@ public abstract class AbsDsdArticle implements DsdArticle {
     }
 
     @Override
-    public String getTitle() {
-        return article.getTitle();
+    public long getResourceId() {
+        return article.getResourcePrimKey();
     }
 
     @Override
-    public long getArticleId(){
-        String articleId = article.getArticleId();
-        if (articleId.startsWith("/")){
-            return Long.parseLong(articleId.substring(1));
-        }
-        return Long.parseLong(articleId);
+    public String getTitle() {
+        return article.getTitle();
     }
 
     @Override
@@ -58,7 +54,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
         try {
             this.document = XmlContentParserUtils.parseContent(article);
         } catch (Exception e) {
-            throw new PortalException(String.format("Error parsing content for article %s: %s!", article.getArticleId(), e.getMessage()), e);
+            throw new PortalException(String.format("Error parsing content for article %s: %s!", article.getTitle(), e.getMessage()), e);
         }
     }
 

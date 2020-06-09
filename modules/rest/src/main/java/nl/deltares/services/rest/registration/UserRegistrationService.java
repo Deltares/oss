@@ -42,13 +42,13 @@ public class UserRegistrationService {
     }
 
     @POST
-    @Path("/register/{siteId}/{registrationId}")
+    @Path("/register/{siteId}/{articleId}")
     @Consumes("application/json")
     public Response register(@Context HttpServletRequest request,
-                         @PathParam("siteId") long siteId, @PathParam("registrationId") long registrationId, String jsonProperties) throws Exception {
+                         @PathParam("siteId") long siteId, @PathParam("articleId") long articleId, String jsonProperties) throws Exception {
 
         User user = getRemoteUser(request);
-        Registration registration = getRegistrationArticle(siteId, registrationId);
+        Registration registration = getRegistrationArticle(siteId, articleId);
 
         try {
             registrationUtils.registerUser(user, registration, jsonProperties);
@@ -57,23 +57,24 @@ public class UserRegistrationService {
             LOG.warn(msg);
             return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
         }
-        return Response.accepted(String.format("User %s registered for '%s'", user.getEmailAddress(), registration.getTitle())).type(MediaType.APPLICATION_JSON).build();
+
+        return Response.accepted("User registered for " + registration.getTitle()).type(MediaType.APPLICATION_JSON).build();
     }
 
     @DELETE
-    @Path("/register/{siteId}/{registrationId}")
+    @Path("/register/{siteId}/{articleId}")
     @Consumes("application/json")
     public Response unRegister(@Context HttpServletRequest request,
-                             @PathParam("siteId") long siteId, @PathParam("registrationId") long registrationId) throws Exception {
+                             @PathParam("siteId") long siteId, @PathParam("articleId") long articleId) throws Exception {
         User user = getRemoteUser(request);
 
-        Registration registration = getRegistrationArticle(siteId, registrationId);
+        Registration registration = getRegistrationArticle(siteId, articleId);
         registrationUtils.unRegisterUser(user, registration);
-        return Response.accepted(String.format("User %s un-registered for '%s'", user.getEmailAddress(), registration.getTitle())).type(MediaType.APPLICATION_JSON).build();
+        return Response.accepted("User un-registered for " + registration.getTitle()).type(MediaType.APPLICATION_JSON).build();
     }
 
-    private Registration getRegistrationArticle(long siteId, long registrationId) throws PortalException {
-        JournalArticle article = JournalArticleLocalServiceUtil.getLatestArticle(siteId, String.valueOf(registrationId));
+    private Registration getRegistrationArticle(long siteId, long articleId) throws PortalException {
+        JournalArticle article = JournalArticleLocalServiceUtil.getLatestArticle(siteId, String.valueOf(articleId));
         AbsDsdArticle registration = AbsDsdArticle.getInstance(article);
         if (! (registration instanceof Registration)){
             String msg = "Invalid registration type! Expected instance of RegistrationArticle found: " +registration.getClass().getName();
@@ -97,16 +98,9 @@ public class UserRegistrationService {
     @POST
     @Path("/info")
     @Consumes("application/json")
-    public Response setUserAttributes(@Context HttpServletRequest request, UserDetails userDetails) throws Exception {
+    public void setUserAttributes(@Context HttpServletRequest request, UserDetails userDetails) throws Exception {
         User user = getRemoteUser(request);
-        try {
-            updateUserAttributes(userDetails, user);
-        } catch (LiferayRestException e) {
-            String msg = "Error Updating user: " + e.getMessage();
-            LOG.warn(msg);
-            return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
-        }
-        return Response.accepted(String.format("User %s has been updated!", user.getEmailAddress())).type(MediaType.APPLICATION_JSON).build();
+        updateUserAttributes(userDetails, user);
     }
 
     private UserDetails getUserDetails(User user) throws LiferayRestException {
