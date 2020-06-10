@@ -1,5 +1,6 @@
 package nl.deltares.portal.model;
 
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import org.w3c.dom.Document;
 
 public interface DsdArticle {
@@ -14,4 +15,5 @@ public interface DsdArticle {
     String getStructureKey();
     Document getDocument();
     boolean storeInParentSite();
+    public String getSmallImageURL(ThemeDisplay themeDisplay);
 }

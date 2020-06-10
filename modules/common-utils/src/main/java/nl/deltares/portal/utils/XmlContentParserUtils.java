@@ -21,6 +21,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.util.Objects;
+import java.util.stream.IntStream;
 
 public class XmlContentParserUtils {
 
@@ -87,6 +89,10 @@ public class XmlContentParserUtils {
         Node typeNode = parentNode.getAttributes().getNamedItem("type");
         String type = typeNode.getTextContent();
         String textValue = node.getTextContent();
+        if (textValue != null){
+            textValue = textValue.trim();
+            if (textValue.isEmpty()) return null;
+        }
 
         if ("boolean".equals(type)){
             return Boolean.valueOf(textValue);
@@ -97,19 +103,11 @@ public class XmlContentParserUtils {
         if ("ddm-decimal".equals(type)){
             return Double.valueOf(textValue);
         }
-//        if ("ddm-date".equals(type)){
-//            return textValue;
-//        }
-        if (textValue != null){
-            textValue = textValue.trim();
-            if (textValue.isEmpty()) return null;
-        }
         return textValue;
     }
 
     public static Node getNode(Document xmlDocument, String expression) throws SystemException, XPathExpressionException, PortalException {
-        XPath xPath = XPathFactory.newInstance().newXPath();
-        NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODESET);
+        NodeList nodeList = getNodeList(xmlDocument, expression);
         int length;
         if (( length = nodeList.getLength()) < 2) {
             return length == 1 ? nodeList.item(0) : null;
@@ -117,5 +115,44 @@ public class XmlContentParserUtils {
             throw new PortalException(String.format("Expected single node value for '%s' but found '%d'!", expression, length));
         }
 
+    }
+
+    public static NodeList getNodeList(Document xmlDocument, String expression) throws SystemException, XPathExpressionException {
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        return (NodeList) xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODESET);
+    }
+
+    public static String[] getNodeValues(Document xmlDocument, String nodeName) throws PortalException {
+
+        String[] searchLevels = {
+          ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END + ARTICLE_CONTENT_XML_NODE_END,
+          ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END + ARTICLE_CONTENT_XML_NODE_END
+        };
+        NodeList nodeList;
+
+        for (String expression : searchLevels) {
+            try {
+                nodeList = getNodeList(xmlDocument, expression);
+                if (nodeList != null) {
+                    return IntStream.of(0, nodeList.getLength() - 1)
+                      .mapToObj(nodeList::item)
+                      .map(node -> {
+                          String nodeValue = null;
+                          try {
+                              nodeValue = node.getTextContent();
+                          } catch (Exception e) {
+                              LOG.error("Error parsing node value: " + e.getMessage());
+                          }
+                          return nodeValue;
+                      })
+                      .filter(Objects::nonNull)
+                      .map(String::valueOf)
+                      .toArray(String[]::new);
+                }
+            } catch (Exception e) {
+                LOG.error(String.format("Error retrieving node value %s from content: %s", nodeName, e.getMessage()));
+            }
+        }
+        throw new PortalException(String.format("Node name '%s' not found in document! ", nodeName));
     }
 }
