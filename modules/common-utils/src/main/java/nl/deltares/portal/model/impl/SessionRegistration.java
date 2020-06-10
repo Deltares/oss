@@ -5,9 +5,13 @@ import com.liferay.portal.kernel.exception.PortalException;
 import nl.deltares.portal.utils.XmlContentParserUtils;
 import org.w3c.dom.Document;
 
+import java.util.Arrays;
+
 public class SessionRegistration extends Registration {
 
     private Room room;
+    private Expert presenter;
+
     public SessionRegistration(JournalArticle article) throws PortalException {
         super(article);
         init();
@@ -23,6 +27,8 @@ public class SessionRegistration extends Registration {
             Document document = getDocument();
             Object roomJson = XmlContentParserUtils.getNodeValue(document, "room", false);
             room = parseRoomRegistration((String) roomJson);
+            String[] presenters = XmlContentParserUtils.getNodeValues(document, "presenters");
+            presenter = parsePresenterData(presenters[0]);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -34,8 +40,20 @@ public class SessionRegistration extends Registration {
         throw new PortalException("Unsupported registration type! Expected Room but found: " + dsdArticle.getClass().getName());
     }
 
+    private Expert parsePresenterData(String jsonData) throws PortalException {
+        AbsDsdArticle dsdArticle = parseJsonReference(jsonData);
+        if (!(dsdArticle instanceof Expert)) {
+            throw new PortalException("Unsupported registration type! Expected Expert but found: " + dsdArticle.getClass().getName());
+        }
+        return (Expert) dsdArticle;
+    }
+
     public Room getRoom(){
         return room;
+    }
+
+    public Expert getPresenter() {
+        return presenter;
     }
 
     @Override

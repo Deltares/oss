@@ -26,7 +26,7 @@ public class RegistrationFacetPortletSharedSearchContributor implements PortletS
         SearchContext searchContext = portletSharedSearchSettings.getSearchContext();
 
         Optional<DDMStructure> ddmStructureOptional = _ddmStructureUtil
-                .getDDMStructureByName("REGISTRATION", searchContext.getLocale());
+                .getDDMStructureByName("SESSION", searchContext.getLocale());
 
         if (ddmStructureOptional.isPresent()) {
             String structureKey = ddmStructureOptional.get().getStructureKey();
