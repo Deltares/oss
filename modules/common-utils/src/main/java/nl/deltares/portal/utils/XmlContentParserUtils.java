@@ -20,7 +20,6 @@ import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
@@ -68,11 +67,7 @@ public class XmlContentParserUtils {
             try {
                 node = getNode(xmlDocument, expression);
                 if (node != null) {
-                    try {
-                        return getNodeValue(node);
-                    } catch (ParseException e) {
-                        LOG.error("Error parsing node value: " + e.getMessage());
-                    }
+                    return getNodeValue(node);
                 }
             } catch (XPathExpressionException e) {
                 LOG.error(String.format("Error retrieving node value %s from content: %s", nodeName, e.getMessage()));
@@ -83,24 +78,24 @@ public class XmlContentParserUtils {
 
     }
 
-    private static Object getNodeValue(Node node) throws ParseException {
+    private static Object getNodeValue(Node node) {
 
         Node parentNode = node.getParentNode();
         Node typeNode = parentNode.getAttributes().getNamedItem("type");
         String type = typeNode.getTextContent();
         String textValue = node.getTextContent();
-        if (textValue != null){
-            textValue = textValue.trim();
-            if (textValue.isEmpty()) return null;
+        if (textValue != null && textValue.trim().isEmpty()){
+            textValue = null;
         }
-
         if ("boolean".equals(type)){
             return Boolean.valueOf(textValue);
         }
         if ("ddm-integer".equals(type)){
+            if (textValue == null) return 0;
             return Integer.valueOf(textValue);
         }
         if ("ddm-decimal".equals(type)){
+            if (textValue == null) return 0;
             return Double.valueOf(textValue);
         }
         return textValue;
