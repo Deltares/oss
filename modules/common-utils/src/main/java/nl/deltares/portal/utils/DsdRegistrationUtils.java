@@ -3,12 +3,15 @@ package nl.deltares.portal.utils;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import nl.deltares.portal.exception.ValidationException;
+import nl.deltares.portal.model.impl.DsdEvent;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
 
 import java.util.List;
 
 public interface DsdRegistrationUtils {
+
+    DsdEvent getDsdEvent(long siteId, long eventId) throws PortalException;
 
     /**
      * Register user for Registration

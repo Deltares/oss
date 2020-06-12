@@ -6,6 +6,9 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import nl.deltares.portal.model.impl.AbsDsdArticle;
+import nl.deltares.portal.model.impl.Location;
+import nl.deltares.portal.model.impl.Registration;
 
 public class JsonContentParserUtils {
 
@@ -27,4 +30,25 @@ public class JsonContentParserUtils {
 
     }
 
+    public static Location parseLocationJson(String json) throws PortalException {
+
+        JournalArticle journalArticle = jsonReferenceToJournalArticle(json);
+        AbsDsdArticle instance = AbsDsdArticle.getInstance(journalArticle);
+        if ( ! (instance instanceof Location)){
+            throw new PortalException(String.format("Article %s not instance of Location", journalArticle.getTitle()));
+        }
+
+        return (Location) instance;
+    }
+
+    public static Registration parseRegistrationJson(String json) throws PortalException {
+
+        JournalArticle journalArticle = jsonReferenceToJournalArticle(json);
+        AbsDsdArticle instance = AbsDsdArticle.getInstance(journalArticle);
+        if ( ! (instance instanceof Registration)){
+            throw new PortalException(String.format("Article %s not instance of Registration", journalArticle.getTitle()));
+        }
+
+        return (Registration) instance;
+    }
 }

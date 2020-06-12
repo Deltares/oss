@@ -58,8 +58,7 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
                     dsdRegistrationUtils.deleteRegistrationsFor((Registration)instance);
                 }
             } catch (PortalException e) {
-                LOG.error("Error removing journal article: " + e.getMessage());
-                throw new ModelListenerException(e.getMessage());
+                LOG.warn("Error removing journal article: " + e.getMessage());
             }
         }
     }

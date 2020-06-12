@@ -1,19 +1,19 @@
 package nl.deltares.services.rest.fullcalendar;
 
-import com.liferay.journal.service.JournalArticleLocalService;
+import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.service.JournalArticleLocalServiceUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import nl.deltares.portal.model.impl.*;
 import nl.deltares.services.rest.fullcalendar.models.Event;
 import nl.deltares.services.rest.fullcalendar.models.Resource;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static nl.deltares.services.utils.Helper.toResponse;
 
@@ -23,62 +23,124 @@ import static nl.deltares.services.utils.Helper.toResponse;
 @Path("/calendar")
 public class DsdFullcalendarService {
 
-    private final JournalArticleLocalService journalArticleLocalService;
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-
-    public DsdFullcalendarService(JournalArticleLocalService journalArticleLocalService) {
-        this.journalArticleLocalService = journalArticleLocalService;
-    }
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     @GET
-    @Path("/startTime/{siteId}")
+    @Path("/events/{siteId}/{eventId}")
     @Produces("application/json")
-    public Response startTime(@Context HttpServletRequest request, @PathParam("siteId") long siteId) {
-        return  Response.ok().entity(String.valueOf(System.currentTimeMillis())).build();
-    }
+    public Response events(@Context HttpServletRequest request,
+                           @PathParam("siteId") long siteId, @PathParam("eventId") long eventId,
+                           @QueryParam("start") String start, @QueryParam("end") String end, @QueryParam("timeZone") String timeZone) {
 
-    @GET
-    @Path("/events/{siteId}")
-    @Produces("application/json")
-    public Response events( @PathParam("siteId") long siteId) {
+        dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
+        Date startSearch;
+        try {
+            startSearch = dateFormat.parse(start);
+        } catch (ParseException e) {
+            return Response.serverError().entity(String.format("Error parsing start (%s): %s", start, e.getMessage())).build();
+        }
+        Date endSearch;
+        try {
+             endSearch = dateFormat.parse(end);
+        } catch (ParseException e) {
+            return Response.serverError().entity(String.format("Error parsing end (%s): %s", start, e.getMessage())).build();
+        }
+        DsdEvent dsdEvent;
+        try {
+            dsdEvent = getDsdEvent(siteId, eventId);
+        } catch (PortalException e) {
+            return  Response.serverError().entity(e.getMessage()).build();
+        }
 
-        String[] rooms = {"a", "b", "c", "d", "e"};
-        String[] titles = {"Basic Course", "Advanced course", "Work shop", "User Days", "Dinner"};
-
-        long time = System.currentTimeMillis();
-
+        List<AbsDsdArticle> sortedLocations = getSortedLocations(dsdEvent);
+        List<Registration> eventSessions = dsdEvent.getEventSessions();
         List<Event> events = new ArrayList<>();
-        for (int i = 0; i  < rooms.length; i++) {
+        for (Registration eventSession : eventSessions) {
+            if (!isInSearchPeriod(eventSession, startSearch, endSearch)) continue;
             Event event = new Event();
-            event.setTitle(titles[i]);
-            event.setId(String.valueOf(i));
-            event.setResourceId(rooms[i]);
-            event.setStart(time);
-//            event.setStart(simpleDateFormat.format(time));
-//            event.setEnd(simpleDateFormat.format(time + 4 * 3600));
-            event.setUrl("http://google.com");
+            event.setTitle(eventSession.getTitle());
+            event.setId(String.valueOf(eventSession.getResourceId()));
+            event.setResourceId(String.valueOf(sortedLocations.indexOf(getLocation(eventSession))));
+            event.setStart(eventSession.getStartTime().getTime());
+            event.setEnd(eventSession.getEndTime().getTime());
+            event.setUrl(dsdEvent.getTitle());
             events.add(event);
         }
+
         return toResponse(events);
 
     }
 
-    @GET
-    @Path("/resources/{siteId}")
-    @Produces("application/json")
-    public Response resources( @PathParam("siteId") long siteId) {
+    private boolean isInSearchPeriod(Registration eventSession, Date startSearch, Date endSearch) {
+        if (eventSession.getStartTime().after(endSearch)) return false;
+        return !eventSession.getEndTime().before(startSearch);
+    }
 
-        String[] rooms = {"a", "b", "c", "d", "e"};
-        String[] colors = {"red", "green", "blue", "yellow", "orange"};
+    @GET
+    @Path("/resources/{siteId}/{eventId}")
+    @Produces("application/json")
+    public Response resources( @Context HttpServletRequest request,
+                               @PathParam("siteId") long siteId, @PathParam("eventId") long eventId) {
+
+        DsdEvent dsdEvent;
+        try {
+            dsdEvent = getDsdEvent(siteId, eventId);
+        } catch (PortalException e) {
+            return  Response.serverError().entity(e.getMessage()).build();
+        }
+
+        List<AbsDsdArticle> sortedLocations = getSortedLocations(dsdEvent);
         List<Resource> resources = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < sortedLocations.size(); i++) {
+            AbsDsdArticle dsdArticle = sortedLocations.get(i);
             Resource resource = new Resource();
-            resource.setId(rooms[i]);
-            resource.setTitle("Room " + rooms[i]);
-            resource.setEventColor(colors[i]);
+            resource.setId(String.valueOf(i));
+            resource.setTitle(dsdArticle.getTitle());
             resources.add(resource);
         }
         return toResponse(resources);
+    }
+
+    private List<AbsDsdArticle> getSortedLocations(DsdEvent dsdEvent) {
+
+        List<Registration> eventSessions = dsdEvent.getEventSessions();
+        List<Long> mapped = new ArrayList<>();
+        List<AbsDsdArticle> rooms = new ArrayList<>();
+        List<AbsDsdArticle> locations = new ArrayList<>();
+        for (Registration eventSession : eventSessions) {
+            if (mapped.contains(eventSession.getResourceId())) continue;
+            mapped.add(eventSession.getResourceId());
+            AbsDsdArticle absDsdArticle = getLocation(eventSession);
+            if (absDsdArticle instanceof Room) {
+                rooms.add(absDsdArticle);
+            } else if (absDsdArticle instanceof Location) {
+                locations.add(absDsdArticle);
+            }
+        }
+        rooms.sort(Comparator.comparing(AbsDsdArticle::getTitle));
+        locations.sort(Comparator.comparing(AbsDsdArticle::getTitle));
+        rooms.addAll(locations);
+        return rooms;
+    }
+
+    private AbsDsdArticle getLocation(Registration eventSession) {
+
+        if (eventSession instanceof SessionRegistration){
+            return ((SessionRegistration) eventSession).getRoom();
+        }
+        if (eventSession instanceof DinnerRegistration){
+            return  ((DinnerRegistration) eventSession).getRestaurant();
+        }
+        throw new UnsupportedOperationException("Unsupported Registration type for " + eventSession.getTitle());
+    }
+
+    private DsdEvent getDsdEvent( long siteId, long eventId) throws PortalException {
+        JournalArticle eventResource = JournalArticleLocalServiceUtil.getLatestArticle(siteId, String.valueOf(eventId));
+        AbsDsdArticle eventArticle = AbsDsdArticle.getInstance(eventResource);
+        if (! (eventArticle instanceof DsdEvent) ){
+            throw new PortalException(String.format("EventId %d is not the articleId of a valid DSD Event", eventId));
+        }
+        return (DsdEvent) eventArticle;
     }
 
 

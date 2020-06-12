@@ -1,0 +1,334 @@
+{
+  "availableLanguageIds": [
+    "nl_NL",
+    "en_US"
+  ],
+  "defaultLanguageId": "en_US",
+  "fields": [
+    {
+      "label": {
+        "nl_NL": "Begin dag",
+        "en_US": "Start Day"
+      },
+      "predefinedValue": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "style": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "tip": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "dataType": "date",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "startDay",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-date"
+    },
+    {
+      "label": {
+        "nl_NL": "Eind dag",
+        "en_US": "End Day"
+      },
+      "predefinedValue": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "style": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "tip": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "dataType": "date",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "endDay",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-date"
+    },
+    {
+      "label": {
+        "nl_NL": "Sessie",
+        "en_US": "Event Session"
+      },
+      "predefinedValue": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "style": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "tip": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "dataType": "journal-article",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "eventSession",
+      "readOnly": false,
+      "repeatable": true,
+      "required": false,
+      "showLabel": true,
+      "type": "ddm-journal-article"
+    },
+    {
+      "label": {
+        "nl_NL": "Locatie",
+        "en_US": "Event Location"
+      },
+      "predefinedValue": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "style": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "tip": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "dataType": "journal-article",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "eventLocation",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-journal-article"
+    },
+    {
+      "label": {
+        "nl_NL": "Bus Vervoer",
+        "en_US": "Bus Transfer"
+      },
+      "predefinedValue": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "style": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "tip": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "dataType": "journal-article",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "busTransfer",
+      "readOnly": false,
+      "repeatable": true,
+      "required": false,
+      "showLabel": true,
+      "type": "ddm-journal-article",
+      "nestedFields": [
+        {
+          "label": {
+            "nl_NL": "Dag",
+            "en_US": "Day"
+          },
+          "predefinedValue": {
+            "nl_NL": "",
+            "en_US": ""
+          },
+          "style": {
+            "nl_NL": "",
+            "en_US": ""
+          },
+          "tip": {
+            "nl_NL": "",
+            "en_US": ""
+          },
+          "dataType": "date",
+          "fieldNamespace": "ddm",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "day",
+          "readOnly": false,
+          "repeatable": true,
+          "required": true,
+          "showLabel": true,
+          "type": "ddm-date"
+        }
+      ]
+    },
+    {
+      "label": {
+        "nl_NL": "Separator",
+        "en_US": "Session Color"
+      },
+      "predefinedValue": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "style": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "tip": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "dataType": "",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "sessionColorMapping",
+      "readOnly": false,
+      "repeatable": true,
+      "required": false,
+      "showLabel": true,
+      "type": "ddm-separator",
+      "nestedFields": [
+        {
+          "label": {
+            "nl_NL": "Sessie type",
+            "en_US": "Session type"
+          },
+          "options": [
+            {
+              "value": "Parallel",
+              "label": {
+                "nl_NL": "Parallel",
+                "en_US": "Parallel"
+              }
+            },
+            {
+              "value": "Course",
+              "label": {
+                "nl_NL": "Cursus",
+                "en_US": "Course"
+              }
+            },
+            {
+              "value": "Online Course",
+              "label": {
+                "nl_NL": "Online Cursus",
+                "en_US": "Online Course"
+              }
+            },
+            {
+              "value": "Dinner",
+              "label": {
+                "nl_NL": "Diner",
+                "en_US": "Dinner"
+              }
+            },
+            {
+              "value": "Presentation",
+              "label": {
+                "nl_NL": "Presentatie",
+                "en_US": "Presentation"
+              }
+            },
+            {
+              "value": "Symposium",
+              "label": {
+                "nl_NL": "Symposium",
+                "en_US": "Symposium"
+              }
+            },
+            {
+              "value": "UserDays",
+              "label": {
+                "nl_NL": "Gebruikers Dagen",
+                "en_US": "User Days"
+              }
+            },
+            {
+              "value": "Webinar",
+              "label": {
+                "nl_NL": "Webinar",
+                "en_US": "Webinar"
+              }
+            },
+            {
+              "value": "Workshop",
+              "label": {
+                "nl_NL": "Workshop",
+                "en_US": "Workshop"
+              }
+            }
+          ],
+          "predefinedValue": {
+            "nl_NL": [
+              ""
+            ],
+            "en_US": [
+              ""
+            ]
+          },
+          "style": {
+            "nl_NL": "",
+            "en_US": ""
+          },
+          "tip": {
+            "nl_NL": "",
+            "en_US": ""
+          },
+          "dataType": "string",
+          "indexType": "keyword",
+          "localizable": true,
+          "multiple": false,
+          "name": "sessionType",
+          "readOnly": false,
+          "repeatable": false,
+          "required": true,
+          "showLabel": true,
+          "type": "select"
+        },
+        {
+          "label": {
+            "nl_NL": "Color",
+            "en_US": "Color"
+          },
+          "predefinedValue": {
+            "nl_NL": "",
+            "en_US": ""
+          },
+          "style": {
+            "nl_NL": "",
+            "en_US": ""
+          },
+          "tip": {
+            "nl_NL": "",
+            "en_US": ""
+          },
+          "dataType": "color",
+          "fieldNamespace": "ddm",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "sessionColor",
+          "readOnly": false,
+          "repeatable": false,
+          "required": true,
+          "showLabel": true,
+          "type": "ddm-color"
+        }
+      ]
+    }
+  ]
+}

@@ -17,8 +17,4 @@ public class GenericArticle extends AbsDsdArticle {
         return structureKey;
     }
 
-    @Override
-    public boolean storeInParentSite() {
-        return false;
-    }
 }

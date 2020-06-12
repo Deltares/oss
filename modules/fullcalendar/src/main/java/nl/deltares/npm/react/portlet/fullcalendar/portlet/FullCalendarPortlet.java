@@ -8,6 +8,7 @@ import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.npm.react.portlet.fullcalendar.constants.FullCalendarPortletKeys;
+import nl.deltares.portal.utils.DsdRegistrationUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -65,8 +66,8 @@ public class FullCalendarPortlet extends MVCPortlet {
                 "mainRequire",
                 _npmResolver.resolveModuleName("fullcalendar") + " as main");
 
+        renderRequest.setAttribute(DsdRegistrationUtils.class.getName(), dsdRegistrationUtils);
         renderRequest.setAttribute("hasEditPermission", permissionChecker.isGroupAdmin(themeDisplay.getSiteGroupId()));
-
         super.doView(renderRequest, renderResponse);
     }
 
@@ -79,6 +80,9 @@ public class FullCalendarPortlet extends MVCPortlet {
 
     @Reference
     private NPMResolver _npmResolver;
+
+    @Reference
+    private DsdRegistrationUtils dsdRegistrationUtils;
 
     private volatile FullCalendarConfiguration _configuration;
 }

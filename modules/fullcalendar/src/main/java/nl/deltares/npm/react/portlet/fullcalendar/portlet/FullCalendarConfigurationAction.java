@@ -44,10 +44,9 @@ public class FullCalendarConfigurationAction extends DefaultConfigurationAction 
             throws Exception {
 
         String baseUrl = ParamUtil.getString(actionRequest, "baseUrl");
-        long siteId = ParamUtil.getLong(actionRequest, "siteId");
-
+        long eventId = ParamUtil.getLong(actionRequest, "eventId");
         setPreference(actionRequest, "baseUrl", baseUrl);
-        setPreference(actionRequest, "siteId", String.valueOf(siteId));
+        setPreference(actionRequest, "eventId", String.valueOf(eventId));
         super.processAction(portletConfig, actionRequest, actionResponse);
     }
 

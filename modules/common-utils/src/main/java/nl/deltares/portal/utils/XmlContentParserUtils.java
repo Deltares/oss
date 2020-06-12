@@ -78,6 +78,41 @@ public class XmlContentParserUtils {
 
     }
 
+    public static String[] getNodeValues(Document xmlDocument, String nodeName) throws PortalException {
+
+        String[] searchLevels = {
+                ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END + ARTICLE_CONTENT_XML_NODE_END,
+                ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END + ARTICLE_CONTENT_XML_NODE_END
+        };
+        NodeList nodeList;
+
+        for (String expression : searchLevels) {
+            try {
+                nodeList = getNodeList(xmlDocument, expression);
+                if (nodeList != null) {
+
+                    return IntStream.range(0, nodeList.getLength())
+                            .mapToObj(nodeList::item)
+                            .map(node -> {
+                                String nodeValue = null;
+                                try {
+                                    nodeValue = node.getTextContent();
+                                } catch (Exception e) {
+                                    LOG.error("Error parsing node value: " + e.getMessage());
+                                }
+                                return nodeValue;
+                            })
+                            .filter(Objects::nonNull)
+                            .map(String::valueOf)
+                            .toArray(String[]::new);
+                }
+            } catch (Exception e) {
+                LOG.error(String.format("Error retrieving node value %s from content: %s", nodeName, e.getMessage()));
+            }
+        }
+        throw new PortalException(String.format("Node name '%s' not found in document! ", nodeName));
+    }
+
     private static Object getNodeValue(Node node) {
 
         Node parentNode = node.getParentNode();
@@ -101,7 +136,7 @@ public class XmlContentParserUtils {
         return textValue;
     }
 
-    public static Node getNode(Document xmlDocument, String expression) throws SystemException, XPathExpressionException, PortalException {
+    private static Node getNode(Document xmlDocument, String expression) throws SystemException, XPathExpressionException, PortalException {
         NodeList nodeList = getNodeList(xmlDocument, expression);
         int length;
         if (( length = nodeList.getLength()) < 2) {
@@ -112,42 +147,10 @@ public class XmlContentParserUtils {
 
     }
 
-    public static NodeList getNodeList(Document xmlDocument, String expression) throws SystemException, XPathExpressionException {
+    private static NodeList getNodeList(Document xmlDocument, String expression) throws SystemException, XPathExpressionException {
         XPath xPath = XPathFactory.newInstance().newXPath();
         return (NodeList) xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODESET);
     }
 
-    public static String[] getNodeValues(Document xmlDocument, String nodeName) throws PortalException {
 
-        String[] searchLevels = {
-          ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END + ARTICLE_CONTENT_XML_NODE_END,
-          ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END + ARTICLE_CONTENT_XML_NODE_END
-        };
-        NodeList nodeList;
-
-        for (String expression : searchLevels) {
-            try {
-                nodeList = getNodeList(xmlDocument, expression);
-                if (nodeList != null) {
-                    return IntStream.of(0, nodeList.getLength() - 1)
-                      .mapToObj(nodeList::item)
-                      .map(node -> {
-                          String nodeValue = null;
-                          try {
-                              nodeValue = node.getTextContent();
-                          } catch (Exception e) {
-                              LOG.error("Error parsing node value: " + e.getMessage());
-                          }
-                          return nodeValue;
-                      })
-                      .filter(Objects::nonNull)
-                      .map(String::valueOf)
-                      .toArray(String[]::new);
-                }
-            } catch (Exception e) {
-                LOG.error(String.format("Error retrieving node value %s from content: %s", nodeName, e.getMessage()));
-            }
-        }
-        throw new PortalException(String.format("Node name '%s' not found in document! ", nodeName));
-    }
 }

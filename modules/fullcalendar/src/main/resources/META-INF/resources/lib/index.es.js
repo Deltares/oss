@@ -5,44 +5,20 @@ import interaction from '@fullcalendar/interaction'
 import resourceDayGrid from '@fullcalendar/resource-daygrid'
 import resourceTimeGrid from '@fullcalendar/resource-timegrid'
 
-function loadStartDate(props) {
-	$.ajax({
-		url: props.baseUrl + "/startTime/" + props.siteId,
-		type: "GET",
-		success: function(json) {
-			return  json;
-		}
-	});
-}
-function saveEvent(event) {
-	$.ajax({
-		url: 'add_events.php',
-		data: 'title='+ title+'&start='+ start2 +'&end='+ end2,
-		type: "POST",
-		success: function(json) {
-			$( "#getReason" ).modal('hide');
-			$('#mydiv').hide();
-			$('body').removeClass('blockMask');//calendar.fullCalendar( 'refetchEvents');
-			$('#calendar').fullCalendar('refetchEvents');
-		}
-	});
-}
-
 class Calendar extends React.Component {
 
 	constructor(props, context) {
 		super(props, context);
-
-		let start = loadStartDate(this.props);
 		this.state = {
 			type : 'month',
-			defaultDate: Date.now(),
+			defaultDate: this.props.startDate,
 			editable : this.props.editable,
 			selectable : this.props.selectable,
 			eventLimit : false,
-			startDate : start,
+
+			businessHours: true,
 			resources : {
-                url:  this.props.baseUrl + '/resources/' + this.props.siteId ,
+                url:  this.props.baseUrl + '/resources/' + this.props.siteId + '/' + this.props.eventId,
                 method: 'GET',
 				// data: {
 				// 	username: this.props.authUser,
@@ -50,7 +26,7 @@ class Calendar extends React.Component {
 				// }
             },
 			events : {
-                url: this.props.baseUrl + '/events/' + this.props.siteId,
+                url: this.props.baseUrl + '/events/' + this.props.siteId + '/' + this.props.eventId,
                 method: 'GET',
 				// data: {
 				// 	username: this.props.authUser,
@@ -59,7 +35,6 @@ class Calendar extends React.Component {
 
 			}
 		}
-
 	}
 
 	onSelect(args) {
@@ -72,7 +47,7 @@ class Calendar extends React.Component {
 		newEvent.resourceId = args.resource.id;
 
 		//todo
-		saveEvent(newEvent);
+		// saveEvent(newEvent);
 		args.resource._calendar.addEvent(newEvent);
 
 	}
@@ -86,7 +61,7 @@ class Calendar extends React.Component {
 
 	render() {
 		return (
-			<div className='calendar'>
+			<div className='calendar' id='calendar' >
 			<FullCalendar
 		schedulerLicenseKey={'GPL-My-Project-Is-Open-Source'}
 		plugins={[interaction, resourceDayGrid, resourceTimeGrid]}
@@ -120,6 +95,6 @@ class Calendar extends React.Component {
 	}
 }
 
-export default function (elementId, canEdit, baseUrl, siteId) {
-	ReactDOM.render( <Calendar class="fc" editable={canEdit} selectable={canEdit} baseUrl={baseUrl} siteId={siteId} />, document.getElementById(elementId))
+export default function (elementId, canEdit, baseUrl, siteId, eventId, startDate) {
+	ReactDOM.render( <Calendar class="fc" editable={canEdit} selectable={canEdit} baseUrl={baseUrl} siteId={siteId} eventId={eventId} startDate={startDate}/>, document.getElementById(elementId))
 }

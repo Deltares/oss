@@ -8,9 +8,15 @@ import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.utils.XmlContentParserUtils;
 import org.w3c.dom.Document;
 
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
+
 public abstract class AbsDsdArticle implements DsdArticle {
 
+    private static final HashMap<Long, AbsDsdArticle> cache = new HashMap<>();
+    private static final long MAX_CACHE_TIME = TimeUnit.MINUTES.toMillis(5);
     private final JournalArticle article;
+    private final long instantiationTime;
     private Document document;
 
     public static boolean isDsdArticle(JournalArticle article) {
@@ -20,6 +26,16 @@ public abstract class AbsDsdArticle implements DsdArticle {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public String getStructureKey() {
+        return DSD_STRUCTURE_KEYS.Generic.name();
+    }
+
+    @Override
+    public boolean storeInParentSite() {
+        return false;
     }
 
     @Override
@@ -49,6 +65,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
 
     AbsDsdArticle(JournalArticle article) throws PortalException {
         this.article = article;
+        this.instantiationTime = System.currentTimeMillis();
         init();
     }
 
@@ -66,19 +83,52 @@ public abstract class AbsDsdArticle implements DsdArticle {
         String parseStructureKey = parseStructureKey(journalArticle);
         DSD_STRUCTURE_KEYS dsd_structure_key = getDsdStructureKey(parseStructureKey);
 
+        AbsDsdArticle article;
         switch (dsd_structure_key){
-            case Session: return new SessionRegistration(journalArticle);
-            case Bustransfer: return new BusTransferRegistration(journalArticle);
-            case Dinner: return new DinnerRegistration(journalArticle);
-            case Location: return new Location(journalArticle);
-            case Eventlocation: return new EventLocation(journalArticle);
-            case Building: return new Building(journalArticle);
-            case Room: return new Room(journalArticle);
-            case Expert: return new Expert(journalArticle);
+            case Session:
+                article = new SessionRegistration(journalArticle);
+                break;
+            case Bustransfer:
+                article = new BusTransfer(journalArticle);
+                break;
+            case Dinner:
+                article = new DinnerRegistration(journalArticle);
+                break;
+            case Location:
+                article = new Location(journalArticle);
+                break;
+            case Eventlocation:
+                article = new EventLocation(journalArticle);
+                break;
+            case Building:
+                article = new Building(journalArticle);
+                break;
+            case Room:
+                article = new Room(journalArticle);
+                break;
+            case Expert:
+                article = new Expert(journalArticle);
+                break;
+            case Dsdevent:
+                article = getCachedArticle(journalArticle.getResourcePrimKey());
+                if (article != null) return article;
+                article = new DsdEvent(journalArticle);
+                cache.put(article.getResourceId(), article);
+                break;
             default:
-                return new GenericArticle(journalArticle, parseStructureKey);
+                article = new GenericArticle(journalArticle, parseStructureKey);
         }
 
+        return article;
+    }
+
+    private static AbsDsdArticle getCachedArticle(long resourcePrimKey) {
+        AbsDsdArticle dsdArticle = cache.get(resourcePrimKey);
+        if (dsdArticle != null &&
+                (System.currentTimeMillis() - dsdArticle.instantiationTime) <  MAX_CACHE_TIME){
+            return dsdArticle;
+        }
+        return null;
     }
 
     private static DSD_STRUCTURE_KEYS getDsdStructureKey(String structureKey) {
@@ -86,7 +136,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
         try {
             dsd_structure_key = DSD_STRUCTURE_KEYS.valueOf(structureKey);
         } catch (IllegalArgumentException e) {
-            throw new UnsupportedOperationException("Unsupported DSD structure: " + structureKey);
+            return DSD_STRUCTURE_KEYS.Generic;
         }
         return dsd_structure_key;
     }

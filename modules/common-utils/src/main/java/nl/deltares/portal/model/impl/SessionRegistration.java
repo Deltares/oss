@@ -5,8 +5,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import nl.deltares.portal.utils.XmlContentParserUtils;
 import org.w3c.dom.Document;
 
-import java.util.Arrays;
-
 public class SessionRegistration extends Registration {
 
     private Room room;
@@ -56,8 +54,4 @@ public class SessionRegistration extends Registration {
         return presenter;
     }
 
-    @Override
-    public boolean storeInParentSite() {
-        return false;
-    }
 }
