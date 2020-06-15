@@ -126,10 +126,10 @@
       },
       "options": [
         {
-          "value": "Parallel",
+          "value": "Breakout",
           "label": {
-            "nl_NL": "Parallel",
-            "en_US": "Parallel"
+            "nl_NL": "Breakout",
+            "en_US": "Breakout"
           }
         },
         {
@@ -151,13 +151,6 @@
           "label": {
             "nl_NL": "Diner",
             "en_US": "Dinner"
-          }
-        },
-        {
-          "value": "Presentation",
-          "label": {
-            "nl_NL": "Presentatie",
-            "en_US": "Presentation"
           }
         },
         {

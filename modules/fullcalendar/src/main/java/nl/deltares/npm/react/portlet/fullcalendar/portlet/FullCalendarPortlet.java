@@ -68,6 +68,7 @@ public class FullCalendarPortlet extends MVCPortlet {
 
         renderRequest.setAttribute(DsdRegistrationUtils.class.getName(), dsdRegistrationUtils);
         renderRequest.setAttribute("hasEditPermission", permissionChecker.isGroupAdmin(themeDisplay.getSiteGroupId()));
+
         super.doView(renderRequest, renderResponse);
     }
 

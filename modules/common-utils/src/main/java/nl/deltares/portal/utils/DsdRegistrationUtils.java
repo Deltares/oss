@@ -8,6 +8,7 @@ import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
 
 import java.util.List;
+import java.util.Map;
 
 public interface DsdRegistrationUtils {
 
@@ -80,4 +81,8 @@ public interface DsdRegistrationUtils {
      * @throws ValidationException Thrown if room is too small.
      */
     void validateRoomCapacity(SessionRegistration registration) throws PortalException;
+
+    Map<String, String> parseSessionColorConfig(String json);
+
+    String formatSessionColorConfig(Map<String, String> colorMap);
 }

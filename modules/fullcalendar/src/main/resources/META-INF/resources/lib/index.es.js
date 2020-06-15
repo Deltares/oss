@@ -14,6 +14,7 @@ class Calendar extends React.Component {
 			defaultDate: this.props.startDate,
 			editable : this.props.editable,
 			selectable : this.props.selectable,
+			colorsMap : this.props.colorMap,
 			eventLimit : false,
 
 			businessHours: true,

@@ -2,6 +2,7 @@ package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
+import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.XmlContentParserUtils;
 import org.w3c.dom.Document;
@@ -17,10 +18,12 @@ public abstract class Registration extends AbsDsdArticle {
     private int capacity;
     private float price;
     private boolean open;
+    private DsdArticle.DSD_SESSION_KEYS type;
     private Registration parentRegistration;
     private boolean overlapWithParent;
     private Date startTime;
     private Date endTime;
+    private String color = null;
 
 
     public Registration(JournalArticle article) throws PortalException {
@@ -37,6 +40,8 @@ public abstract class Registration extends AbsDsdArticle {
             this.price =  Float.parseFloat(price);
             String open = XmlContentParserUtils.getDynamicContentByName(document, "open", false);
             this.open = Boolean.parseBoolean(open);
+            String type = XmlContentParserUtils.getDynamicContentByName(document, "type", false);
+            this.type = DsdArticle.DSD_SESSION_KEYS.valueOf(type);
             String parentJson = XmlContentParserUtils.getDynamicContentByName(document, "parent", true);
             if (parentJson != null) {
                 parentRegistration = parseParentRegistration(parentJson);
@@ -108,5 +113,17 @@ public abstract class Registration extends AbsDsdArticle {
 
     public Date getEndTime() {
         return endTime;
+    }
+
+    public String getType() {
+        return type.name();
+    }
+
+    public void setCalendarColor(String color){
+        this.color = color;
+    }
+
+    public String getCalendarColor() {
+        return color;
     }
 }
