@@ -16,8 +16,8 @@ public class Location extends AbsDsdArticle {
     private void init() throws PortalException {
         try {
             Document document = getDocument();
-            Object storeInParentSite = XmlContentParserUtils.getNodeValue(document, "storeInParentSite", true);
-            this.storeInParentSite = storeInParentSite != null && (boolean) storeInParentSite;
+            String storeInParentSite = XmlContentParserUtils.getDynamicContentByName(document, "storeInParentSite", true);
+            this.storeInParentSite = Boolean.parseBoolean(storeInParentSite);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }

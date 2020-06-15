@@ -23,16 +23,22 @@ public class SessionRegistration extends Registration {
     private void init() throws PortalException {
         try {
             Document document = getDocument();
-            Object roomJson = XmlContentParserUtils.getNodeValue(document, "room", false);
-            room = parseRoomRegistration((String) roomJson);
-            String[] presenters = XmlContentParserUtils.getNodeValues(document, "presenters");
-            presenter = parsePresenterData(presenters[0]);
+            String roomJson = XmlContentParserUtils.getDynamicContentByName(document, "room", false);
+            room = parseRoomRegistration(roomJson);
+            String[] presenters = XmlContentParserUtils.getDynamicContentsByName(document, "presenters");
+            if (presenters.length > 0) {
+                //todo: what to do with multiple presenters.
+                presenter = parsePresenterData(presenters[0]);
+            }
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
     }
 
     private Room parseRoomRegistration(String roomJson) throws PortalException {
+        if (roomJson == null){
+            throw new NullPointerException("roomJson");
+        }
         AbsDsdArticle dsdArticle = parseJsonReference(roomJson);
         if (dsdArticle instanceof Room) return (Room) dsdArticle;
         throw new PortalException("Unsupported registration type! Expected Room but found: " + dsdArticle.getClass().getName());

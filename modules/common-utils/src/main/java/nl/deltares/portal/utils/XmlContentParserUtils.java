@@ -2,7 +2,6 @@ package nl.deltares.portal.utils;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import org.w3c.dom.Document;
@@ -55,31 +54,39 @@ public class XmlContentParserUtils {
 
     }
 
-    public static Object getNodeValue(Document xmlDocument, String nodeName, boolean optional) throws PortalException {
+    public static Node getDynamicElementByName(Document xmlDocument, String nodeName, boolean optional) throws PortalException{
+        NodeList dynamicElementsByName = getDynamicElementsByName(xmlDocument, nodeName);
+        int length = dynamicElementsByName == null ? 0 : dynamicElementsByName.getLength();
+        if (length == 0 && !optional){
+            throw new PortalException(String.format("Node name '%s' not found in document! ", nodeName));
+        }
+        if (length > 1){
+            throw new PortalException(String.format("Expected single element for '%s' but found '%d'!", nodeName, length));
+        }
+        if (dynamicElementsByName == null) return null;
+        return dynamicElementsByName.item(0);
+    }
 
+    public static NodeList getDynamicElementsByName(Document xmlDocument, String nodeName){
         String[] searchLevels = {
-                ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END + ARTICLE_CONTENT_XML_NODE_END,
-                ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END + ARTICLE_CONTENT_XML_NODE_END
+                ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END,
+                ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END
         };
-        Node node;
 
         for (String expression : searchLevels) {
             try {
-                node = getNode(xmlDocument, expression);
-                if (node != null) {
-                    return getNodeValue(node);
+                NodeList list = getNodeList(xmlDocument, expression);
+                if (list != null && list.getLength() > 0) {
+                    return list;
                 }
             } catch (XPathExpressionException e) {
-                LOG.error(String.format("Error retrieving node value %s from content: %s", nodeName, e.getMessage()));
+                LOG.error(String.format("Error retrieving nodes %s from content: %s", nodeName, e.getMessage()));
             }
         }
-        if (optional) return null;
-        throw new PortalException(String.format("Node name '%s' not found in document! ", nodeName));
-
+        return null;
     }
 
-    public static String[] getNodeValues(Document xmlDocument, String nodeName) throws PortalException {
-
+    public static String[] getDynamicContentsByName(Document xmlDocument, String nodeName){
         String[] searchLevels = {
                 ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END + ARTICLE_CONTENT_XML_NODE_END,
                 ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END + ARTICLE_CONTENT_XML_NODE_END
@@ -110,47 +117,25 @@ public class XmlContentParserUtils {
                 LOG.error(String.format("Error retrieving node value %s from content: %s", nodeName, e.getMessage()));
             }
         }
-        throw new PortalException(String.format("Node name '%s' not found in document! ", nodeName));
+        return new String[0];
     }
 
-    private static Object getNodeValue(Node node) {
-
-        Node parentNode = node.getParentNode();
-        Node typeNode = parentNode.getAttributes().getNamedItem("type");
-        String type = typeNode.getTextContent();
-        String textValue = node.getTextContent();
-        if (textValue != null && textValue.trim().isEmpty()){
-            textValue = null;
+    public static String getDynamicContentByName(Document xmlDocument, String nodeName, boolean optional) throws PortalException {
+        String[] contentValues = getDynamicContentsByName(xmlDocument, nodeName);
+        int length = contentValues.length;
+        if (length == 0 && !optional){
+            throw new PortalException(String.format("Node name '%s' not found in document! ", nodeName));
         }
-        if ("boolean".equals(type)){
-            return Boolean.valueOf(textValue);
+        if (length > 1){
+            throw new PortalException(String.format("Expected single element for '%s' but found '%d'!", nodeName, length));
         }
-        if ("ddm-integer".equals(type)){
-            if (textValue == null) return 0;
-            return Integer.valueOf(textValue);
-        }
-        if ("ddm-decimal".equals(type)){
-            if (textValue == null) return 0;
-            return Double.valueOf(textValue);
-        }
-        return textValue;
+        if (contentValues.length == 0) return null;
+        return contentValues[0];
     }
 
-    private static Node getNode(Document xmlDocument, String expression) throws SystemException, XPathExpressionException, PortalException {
-        NodeList nodeList = getNodeList(xmlDocument, expression);
-        int length;
-        if (( length = nodeList.getLength()) < 2) {
-            return length == 1 ? nodeList.item(0) : null;
-        } else {
-            throw new PortalException(String.format("Expected single node value for '%s' but found '%d'!", expression, length));
-        }
-
-    }
-
-    private static NodeList getNodeList(Document xmlDocument, String expression) throws SystemException, XPathExpressionException {
+    private static NodeList getNodeList(Document xmlDocument, String expression) throws XPathExpressionException {
         XPath xPath = XPathFactory.newInstance().newXPath();
         return (NodeList) xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODESET);
     }
-
 
 }

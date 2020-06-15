@@ -19,7 +19,6 @@ public class DsdEvent extends AbsDsdArticle {
     private EventLocation eventLocation;
     private Date startDay;
     private Date endDay;
-    private final HashMap<String, String> colorMap = new HashMap<>();
 
     public DsdEvent(JournalArticle journalArticle) throws PortalException {
         super(journalArticle);
@@ -29,40 +28,22 @@ public class DsdEvent extends AbsDsdArticle {
     private void init() throws PortalException {
         try {
             Document document = getDocument();
-            String[] eventSessions = XmlContentParserUtils.getNodeValues(document, "eventSession");
+            String[] eventSessions = XmlContentParserUtils.getDynamicContentsByName(document, "eventSession");
             registrations.addAll( parseRegistrationsData(eventSessions));
-            Object eventLocation = XmlContentParserUtils.getNodeValue(document, "eventLocation", false);
-            this.eventLocation = parseEventLocation((String) eventLocation);
+            String eventLocation = XmlContentParserUtils.getDynamicContentByName(document, "eventLocation", false);
+            this.eventLocation = parseEventLocation(eventLocation);
             this.startDay = parseDate("startDay");
             this.endDay = parseDate("endDay");
-            parseColorMap();
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
     }
 
-    private void parseColorMap() throws PortalException {
-        try {
-//            Document document = getDocument();
-//            NodeList mappings = null;
-//            if (mappings == null) return;
-//            for (int i = 0; i < mappings.getLength(); i++) {
-//                Node item = mappings.item(i);
-//                String[] nodeValues = XmlContentParserUtils.getNodeValues(item.getChildNodes());
-//                if (nodeValues.length == 2){
-//                    colorMap.put(nodeValues[0], nodeValues[1]);
-//                }
-//            }
-
-        } catch (Exception e) {
-            throw new PortalException(String.format("Error parsing Color mappings for event %s: %s!", getTitle(), e.getMessage()), e);
-        }
-    }
 
     private Date parseDate(String dateField) throws PortalException {
         try {
             Document document = getDocument();
-            String dateValue = (String) XmlContentParserUtils.getNodeValue(document, dateField, false);
+            String dateValue = XmlContentParserUtils.getDynamicContentByName(document, dateField, false);
             return dateFormatter.parse(dateValue);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing date field %s for article %s: %s!", dateField, getTitle(), e.getMessage()), e);

@@ -17,8 +17,8 @@ public class DinnerRegistration extends Registration {
 
     private void init() throws PortalException {
         Document document = getDocument();
-        Object json = XmlContentParserUtils.getNodeValue(document, "restaurant", false);
-        restaurant = JsonContentParserUtils.parseLocationJson((String) json);
+        String json = XmlContentParserUtils.getDynamicContentByName(document, "restaurant", false);
+        restaurant = JsonContentParserUtils.parseLocationJson(json);
     }
 
 
