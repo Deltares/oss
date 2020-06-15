@@ -25,27 +25,41 @@
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
-<%@ page import="nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration" %>
+<%@ page import="com.liferay.portal.kernel.exception.PortalException" %>
 <%@ page import="com.liferay.portal.kernel.util.Validator" %>
 <%@ page import="nl.deltares.npm.react.portlet.fullcalendar.constants.FullCalendarPortletKeys" %>
+<%@ page import="nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration" %>
+<%@ page import="nl.deltares.portal.utils.DsdRegistrationUtils" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="nl.deltares.portal.model.impl.DsdEvent" %>
 
 <liferay-theme:defineObjects/>
 
 <portlet:defineObjects/>
 
 <%
-
+    SimpleDateFormat format = new SimpleDateFormat("yyy-MM-dd");
+    long siteId = themeDisplay.getSiteGroupId();
     String bootstrapRequire = (String)renderRequest.getAttribute(FullCalendarPortletKeys.BOOTSTRAP_REQUIRE);
     FullCalendarConfiguration configuration =
             (FullCalendarConfiguration)
                     renderRequest.getAttribute(FullCalendarConfiguration.class.getName());
-
-    boolean canEdit = true;
     String baseUrl = "";
-    long siteId = 0;
-
+    long eventId = 0;
+    String startDate = format.format(new Date());
     if (Validator.isNotNull(configuration)) {
         baseUrl = portletPreferences.getValue("baseUrl", configuration.baseUrl());
-        siteId = Long.parseLong(portletPreferences.getValue("siteId", String.valueOf(configuration.siteID())));
+        eventId = Long.parseLong(portletPreferences.getValue("eventId", String.valueOf(configuration.eventID())));
+
+        try {
+            DsdRegistrationUtils dsdUtils = (DsdRegistrationUtils) renderRequest.getAttribute(DsdRegistrationUtils.class.getName());
+            DsdEvent dsdEvent = dsdUtils.getDsdEvent(siteId, eventId);
+            startDate = format.format(dsdEvent.getStartDay());
+        } catch (PortalException e) {
+            System.out.println(e.getMessage());
+        }
     }
+
+
 %>

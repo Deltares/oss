@@ -52,10 +52,10 @@
 
         </aui:input>
         <aui:input
-                label="Calender Site ID"
-                name="siteId"
-                value="<%= siteId %>"
-        >
+                label="Calender Event ID"
+                name="eventId"
+                value="<%= eventId %>"
+                >
 
         </aui:input>
     </aui:fieldset>

@@ -5,10 +5,8 @@ import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.util.ParamUtil;
 import nl.deltares.npm.react.portlet.fullcalendar.constants.FullCalendarPortletKeys;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.ConfigurationPolicy;
-import org.osgi.service.component.annotations.Modified;
+import nl.deltares.portal.utils.DsdRegistrationUtils;
+import org.osgi.service.component.annotations.*;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -35,7 +33,7 @@ public class FullCalendarConfigurationAction extends DefaultConfigurationAction 
         httpServletRequest.setAttribute(
                 FullCalendarConfiguration.class.getName(),
                 _configuration);
-
+        httpServletRequest.setAttribute(DsdRegistrationUtils.class.getName(), dsdRegistrationUtils);
         super.include(portletConfig, httpServletRequest, httpServletResponse);
     }
 
@@ -44,10 +42,9 @@ public class FullCalendarConfigurationAction extends DefaultConfigurationAction 
             throws Exception {
 
         String baseUrl = ParamUtil.getString(actionRequest, "baseUrl");
-        long siteId = ParamUtil.getLong(actionRequest, "siteId");
-
+        long eventId = ParamUtil.getLong(actionRequest, "eventId");
         setPreference(actionRequest, "baseUrl", baseUrl);
-        setPreference(actionRequest, "siteId", String.valueOf(siteId));
+        setPreference(actionRequest, "eventId", String.valueOf(eventId));
         super.processAction(portletConfig, actionRequest, actionResponse);
     }
 
@@ -65,6 +62,9 @@ public class FullCalendarConfigurationAction extends DefaultConfigurationAction 
         _configuration = ConfigurableUtil.createConfigurable(
                 FullCalendarConfiguration.class, properties);
     }
+
+    @Reference
+    private DsdRegistrationUtils dsdRegistrationUtils;
 
     private volatile FullCalendarConfiguration _configuration;
 

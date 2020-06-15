@@ -140,6 +140,13 @@
           }
         },
         {
+          "value": "Online Course",
+          "label": {
+            "nl_NL": "Online Cursus",
+            "en_US": "Online Course"
+          }
+        },
+        {
           "value": "Dinner",
           "label": {
             "nl_NL": "Diner",
@@ -168,17 +175,17 @@
           }
         },
         {
+          "value": "Webinar",
+          "label": {
+            "nl_NL": "Webinar",
+            "en_US": "Webinar"
+          }
+        },
+        {
           "value": "Workshop",
           "label": {
             "nl_NL": "Workshop",
             "en_US": "Workshop"
-          }
-        },
-        {
-          "value": "BusTransfer",
-          "label": {
-            "nl_NL": "Bus Vervoer",
-            "en_US": "Bus Transfer"
           }
         }
       ],

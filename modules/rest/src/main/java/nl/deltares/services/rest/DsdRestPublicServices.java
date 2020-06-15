@@ -17,6 +17,8 @@ import javax.ws.rs.core.Response;
 import java.util.HashSet;
 import java.util.Set;
 
+import static nl.deltares.services.rest.DsdRestServices.getJacksonJsonProvider;
+
 /**
  * @author rooij_e
  */
@@ -52,11 +54,12 @@ public class DsdRestPublicServices extends Application {
     }
 
     @Override
-    public Set getSingletons() {
-        Set singletons = new HashSet();
+    public Set<Object> getSingletons() {
+        Set<Object> singletons = new HashSet<>();
         singletons.add(this);
+        singletons.add(getJacksonJsonProvider());
         //Services for FullCalendar
-        singletons.add(new DsdFullcalendarService(journalArticleLocalService));
+        singletons.add(new DsdFullcalendarService());
         return singletons;
     }
 

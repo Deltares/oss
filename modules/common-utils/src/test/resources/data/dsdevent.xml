@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+
+<root available-locales="en_US" default-locale="en_US">
+    <dynamic-element name="startDay" type="ddm-date" index-type="keyword" instance-id="crwu">
+        <dynamic-content language-id="en_US"><![CDATA[2020-06-15]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="endDay" type="ddm-date" index-type="keyword" instance-id="kgmm">
+        <dynamic-content language-id="en_US"><![CDATA[2020-06-19]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="eventSession" type="ddm-journal-article" index-type="keyword" instance-id="sbln">
+        <dynamic-content language-id="en_US"><![CDATA[{"classPK":"41748","groupId":"41296","className":"com.liferay.journal.model.JournalArticle","title":"Delft FEWS Dinner 2020","titleMap":"{\"en_US\":\"Delft FEWS Dinner 2020\"}","uuid":"0e1a2d52-a15d-c4eb-a7d9-90ee025f1b52"}]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="eventSession" type="ddm-journal-article" index-type="keyword" instance-id="fnya">
+        <dynamic-content language-id="en_US"><![CDATA[{"classPK":"41733","groupId":"41296","className":"com.liferay.journal.model.JournalArticle","title":"FEWS User Days 2020","titleMap":"{\"en_US\":\"FEWS User Days 2020\"}","uuid":"04f627ae-4631-4b89-664c-76e76e963767"}]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="eventSession" type="ddm-journal-article" index-type="keyword" instance-id="ypit">
+        <dynamic-content language-id="en_US"><![CDATA[{"classPK":"41792","groupId":"41296","className":"com.liferay.journal.model.JournalArticle","title":"WANDA Advanced Course","titleMap":"{\"en_US\":\"WANDA Advanced Course\"}","uuid":"55f846dd-0f8a-deb8-8ba9-d5706a1199ae"}]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="eventSession" type="ddm-journal-article" index-type="keyword" instance-id="gnbj">
+        <dynamic-content language-id="en_US"><![CDATA[{"classPK":"41779","groupId":"41296","className":"com.liferay.journal.model.JournalArticle","title":"WANDA Basic Course","titleMap":"{\"en_US\":\"WANDA Basic Course\"}","uuid":"9deb30f0-2721-6e0d-1d38-cb415b67b121"}]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="eventLocation" type="ddm-journal-article" index-type="keyword" instance-id="adsl">
+        <dynamic-content language-id="en_US"><![CDATA[{"classPK":"41690","groupId":"41207","className":"com.liferay.journal.model.JournalArticle","title":"Deltares Delft","titleMap":"{\"en_US\":\"Deltares Delft\"}","uuid":"8797886e-da24-8f5a-f369-ae5aed654edc"}]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="busTransfer" type="ddm-journal-article" index-type="keyword" instance-id="wioy">
+        <dynamic-element name="day" instance-id="jibg" type="ddm-date" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[2020-06-15]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-element name="day" instance-id="drww" type="ddm-date" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[2020-06-16]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-element name="day" type="ddm-date" index-type="keyword" instance-id="zdhr">
+            <dynamic-content language-id="en_US"><![CDATA[2020-06-17]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-element name="day" type="ddm-date" index-type="keyword" instance-id="tpzd">
+            <dynamic-content language-id="en_US"><![CDATA[2020-06-18]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-element name="day" type="ddm-date" index-type="keyword" instance-id="bdli">
+            <dynamic-content language-id="en_US"><![CDATA[2020-06-19]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-content language-id="en_US"><![CDATA[{"classPK":"41656","groupId":"41207","className":"com.liferay.journal.model.JournalArticle","title":"Pickup Delft","titleMap":"{\"en_US\":\"Pickup Delft\"}","uuid":"9f529d8e-034c-c736-5ffd-2d2f53e5c88a"}]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="busTransfer" type="ddm-journal-article" index-type="keyword" instance-id="ysbx">
+        <dynamic-element name="day" instance-id="crlz" type="ddm-date" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[2020-06-15]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-element name="day" type="ddm-date" index-type="keyword" instance-id="xrff">
+            <dynamic-content language-id="en_US"><![CDATA[2020-06-16]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-element name="day" type="ddm-date" index-type="keyword" instance-id="oagh">
+            <dynamic-content language-id="en_US"><![CDATA[2020-06-17]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-element name="day" type="ddm-date" index-type="keyword" instance-id="nopl">
+            <dynamic-content language-id="en_US"><![CDATA[2020-06-18]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-element name="day" type="ddm-date" index-type="keyword" instance-id="aaje">
+            <dynamic-content language-id="en_US"><![CDATA[2020-06-19]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-content language-id="en_US"><![CDATA[{"classPK":"41671","groupId":"41207","className":"com.liferay.journal.model.JournalArticle","title":"Dropoff Delft","titleMap":"{\"en_US\":\"Dropoff Delft\"}","uuid":"fd48cc31-5005-bd64-139e-cbe8f67f342a"}]]></dynamic-content>
+    </dynamic-element>
+</root>

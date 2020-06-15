@@ -84,7 +84,7 @@
       "name": "rooms",
       "readOnly": false,
       "repeatable": true,
-      "required": true,
+      "required": false,
       "showLabel": true,
       "type": "ddm-journal-article"
     }

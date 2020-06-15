@@ -8,6 +8,7 @@ import org.w3c.dom.Document;
 public class Room extends AbsDsdArticle {
     private int capacity;
     private boolean storeInParentSite;
+    private String calendarColor;
 
     public Room(JournalArticle dsdArticle) throws PortalException {
         super(dsdArticle);
@@ -22,10 +23,10 @@ public class Room extends AbsDsdArticle {
     private void init() throws PortalException {
         try {
             Document document = getDocument();
-            Object capacity = XmlContentParserUtils.getNodeValue(document, "capacity", false);
-            this.capacity =  capacity == null ? Integer.MAX_VALUE : (int) capacity;
-            Object storeInParentSite = XmlContentParserUtils.getNodeValue(document, "storeInParentSite", true);
-            this.storeInParentSite = storeInParentSite != null && (boolean) storeInParentSite;
+            String capacity = XmlContentParserUtils.getDynamicContentByName(document, "capacity", false);
+            this.capacity = Integer.parseInt(capacity);
+            String storeInParentSite = XmlContentParserUtils.getDynamicContentByName(document, "storeInParentSite", true);
+            this.storeInParentSite = Boolean.parseBoolean(storeInParentSite);
 
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
@@ -40,4 +41,5 @@ public class Room extends AbsDsdArticle {
     public boolean storeInParentSite() {
         return storeInParentSite;
     }
+
 }

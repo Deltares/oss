@@ -5,6 +5,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.XmlContentParserUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,7 +15,7 @@ public abstract class Registration extends AbsDsdArticle {
 
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
     private int capacity;
-    private double price;
+    private float price;
     private boolean open;
     private Registration parentRegistration;
     private boolean overlapWithParent;
@@ -30,17 +31,17 @@ public abstract class Registration extends AbsDsdArticle {
     private void init() throws PortalException {
         try {
             Document document = getDocument();
-            Object capacity = XmlContentParserUtils.getNodeValue(document, "capacity", false);
-            this.capacity =  capacity == null ? Integer.MAX_VALUE : (int) capacity;
-            Object price = XmlContentParserUtils.getNodeValue(document, "price", false);
-            this.price =  capacity == null ? 0 : (double) price;
-            Object open = XmlContentParserUtils.getNodeValue(document, "open", false);
-            this.open = open == null || (boolean) open;
-            Object parentJson = XmlContentParserUtils.getNodeValue(document, "parent", true);
-            parentRegistration = parentJson == null ? null : parseParentRegistration((String) parentJson);
+            String capacity = XmlContentParserUtils.getDynamicContentByName(document, "capacity", false);
+            this.capacity =  Integer.parseInt(capacity);
+            String price = XmlContentParserUtils.getDynamicContentByName(document, "price", false);
+            this.price =  Float.parseFloat(price);
+            String open = XmlContentParserUtils.getDynamicContentByName(document, "open", false);
+            this.open = Boolean.parseBoolean(open);
+            String parentJson = XmlContentParserUtils.getDynamicContentByName(document, "parent", true);
             if (parentJson != null) {
-                Object overlap = XmlContentParserUtils.getNodeValue(document, "overlaps", true);
-                overlapWithParent = overlap != null && (boolean)overlap;
+                parentRegistration = parseParentRegistration(parentJson);
+                String overlap = XmlContentParserUtils.getDynamicContentByName(document, "overlaps", true);
+                overlapWithParent = Boolean.parseBoolean(overlap);
             }
             dateTimeFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
             startTime = parseDateTime("start", "starttime");
@@ -53,8 +54,9 @@ public abstract class Registration extends AbsDsdArticle {
     private Date parseDateTime(String date, String time) throws PortalException {
         try {
             Document document = getDocument();
-            String dateValue = (String) XmlContentParserUtils.getNodeValue(document, date, false);
-            String timeValue = (String) XmlContentParserUtils.getNodeValue(document, time, false);
+            Node dateNode = XmlContentParserUtils.getDynamicElementByName(document, date, false);
+            String dateValue = XmlContentParserUtils.getDynamicContentForNode(dateNode);
+            String timeValue = XmlContentParserUtils.getDynamicContentByName(dateNode, time, false);
             return dateTimeFormatter.parse(dateValue + 'T' + timeValue);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
@@ -62,6 +64,9 @@ public abstract class Registration extends AbsDsdArticle {
     }
 
     private Registration parseParentRegistration(String parentJson) throws PortalException {
+        if (parentJson == null){
+            throw new NullPointerException("parentJson");
+        }
         AbsDsdArticle dsdArticle = parseJsonReference(parentJson);
         if (dsdArticle instanceof Registration) return (Registration) dsdArticle;
         throw new PortalException("Unsupported parent registration type " + dsdArticle.getClass().getName());

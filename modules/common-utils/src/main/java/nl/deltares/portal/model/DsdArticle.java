@@ -7,7 +7,7 @@ public interface DsdArticle {
 
     enum DSD_REQUIRED_REGISTRATION_ATTRIBUTES {org_name, org_address, org_city, org_postal, org_country}
     enum DSD_REQUIRED_PAID_REGISTRATION_ATTRIBUTES {pay_reference}
-    enum DSD_STRUCTURE_KEYS {Expert, Location, Building, Room, Eventlocation, Registration, Session, Bustransfer, Dinner}
+    enum DSD_STRUCTURE_KEYS {Expert, Location, Building, Room, Eventlocation, Registration, Session, Bustransfer, Dinner, Dsdevent, Generic}
     String getTitle();
     long getCompanyId();
     long getGroupId();
@@ -15,5 +15,5 @@ public interface DsdArticle {
     String getStructureKey();
     Document getDocument();
     boolean storeInParentSite();
-    public String getSmallImageURL(ThemeDisplay themeDisplay);
+    String getSmallImageURL(ThemeDisplay themeDisplay);
 }

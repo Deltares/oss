@@ -71,7 +71,7 @@ public class DsdRestServices extends Application {
         return Response.ok().entity("DSD.Rest service is up and running").build();
     }
 
-    private JacksonJsonProvider getJacksonJsonProvider() {
+    protected static JacksonJsonProvider getJacksonJsonProvider() {
 
         JacksonJsonProvider jacksonJsonProvider = new JacksonJsonProvider();
 

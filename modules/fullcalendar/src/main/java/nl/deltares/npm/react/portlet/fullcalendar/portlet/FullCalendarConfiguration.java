@@ -14,5 +14,5 @@ public interface FullCalendarConfiguration {
     String baseUrl();
 
     @Meta.AD(required = false, deflt = "0")
-    long siteID();
+    long eventID();
 }

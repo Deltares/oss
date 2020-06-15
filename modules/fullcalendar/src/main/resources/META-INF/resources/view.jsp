@@ -2,5 +2,5 @@
 <div id="<portlet:namespace />-root"></div>
 
 <aui:script require="<%= bootstrapRequire %>">
-	bootstrapRequire.default('<portlet:namespace />-root', "<%= canEdit %>", "<%= baseUrl %>", "<%= siteId %>");
+	bootstrapRequire.default('<portlet:namespace />-root', "<%= false %>", "<%= baseUrl %>", "<%= siteId %>", "<%= eventId %>", "<%= startDate %>");
 </aui:script>

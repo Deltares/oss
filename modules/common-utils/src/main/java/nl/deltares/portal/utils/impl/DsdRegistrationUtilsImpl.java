@@ -9,6 +9,7 @@ import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
+import nl.deltares.portal.model.impl.DsdEvent;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
 import nl.deltares.portal.utils.DsdRegistrationUtils;
@@ -172,5 +173,15 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
     public boolean isUserRegisteredFor(User user, Registration registration) {
         int registrationsCount = RegistrationLocalServiceUtil.getRegistrationsCount(registration.getGroupId(), user.getUserId(), registration.getResourceId());
         return registrationsCount > 0;
+    }
+
+    @Override
+    public DsdEvent getDsdEvent(long siteId, long eventId) throws PortalException {
+        JournalArticle eventResource = JournalArticleLocalServiceUtil.getLatestArticle(siteId, String.valueOf(eventId));
+        AbsDsdArticle eventArticle = AbsDsdArticle.getInstance(eventResource);
+        if (! (eventArticle instanceof DsdEvent) ){
+            throw new PortalException(String.format("EventId %d is not the articleId of a valid DSD Event", eventId));
+        }
+        return (DsdEvent) eventArticle;
     }
 }

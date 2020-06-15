@@ -5,10 +5,10 @@ import com.liferay.portal.kernel.exception.PortalException;
 import nl.deltares.portal.utils.XmlContentParserUtils;
 import org.w3c.dom.Document;
 
-public class Location extends AbsDsdArticle {
+public class BusTransfer extends AbsDsdArticle {
     private boolean storeInParentSite;
 
-    public Location(JournalArticle article) throws PortalException {
+    public BusTransfer(JournalArticle article) throws PortalException {
         super(article);
         init();
     }
@@ -23,9 +23,10 @@ public class Location extends AbsDsdArticle {
         }
     }
 
+
     @Override
     public String getStructureKey() {
-        return DSD_STRUCTURE_KEYS.Location.name();
+        return DSD_STRUCTURE_KEYS.Bustransfer.name();
     }
 
     @Override

@@ -1,7 +1,7 @@
 {
   "availableLanguageIds": [
-    "en_US",
-    "nl_NL"
+    "nl_NL",
+    "en_US"
   ],
   "defaultLanguageId": "en_US",
   "fields": [
@@ -34,20 +34,20 @@
     },
     {
       "label": {
-        "en_US": "Capacity",
-        "nl_NL": "Capaciteit"
+        "nl_NL": "Capaciteit",
+        "en_US": "Capacity"
       },
       "predefinedValue": {
-        "en_US": "",
-        "nl_NL": ""
+        "nl_NL": "",
+        "en_US": ""
       },
       "style": {
-        "en_US": "",
-        "nl_NL": ""
+        "nl_NL": "",
+        "en_US": ""
       },
       "tip": {
-        "en_US": "",
-        "nl_NL": ""
+        "nl_NL": "",
+        "en_US": ""
       },
       "dataType": "integer",
       "fieldNamespace": "ddm",
