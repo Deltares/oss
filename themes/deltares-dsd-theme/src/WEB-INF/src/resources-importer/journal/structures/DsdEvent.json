@@ -5,63 +5,7 @@
   ],
   "defaultLanguageId": "en_US",
   "fields": [
-    {
-      "label": {
-        "nl_NL": "Begin dag",
-        "en_US": "Start Day"
-      },
-      "predefinedValue": {
-        "nl_NL": "",
-        "en_US": ""
-      },
-      "style": {
-        "nl_NL": "",
-        "en_US": ""
-      },
-      "tip": {
-        "nl_NL": "",
-        "en_US": ""
-      },
-      "dataType": "date",
-      "fieldNamespace": "ddm",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "startDay",
-      "readOnly": false,
-      "repeatable": false,
-      "required": true,
-      "showLabel": true,
-      "type": "ddm-date"
-    },
-    {
-      "label": {
-        "nl_NL": "Eind dag",
-        "en_US": "End Day"
-      },
-      "predefinedValue": {
-        "nl_NL": "",
-        "en_US": ""
-      },
-      "style": {
-        "nl_NL": "",
-        "en_US": ""
-      },
-      "tip": {
-        "nl_NL": "",
-        "en_US": ""
-      },
-      "dataType": "date",
-      "fieldNamespace": "ddm",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "endDay",
-      "readOnly": false,
-      "repeatable": false,
-      "required": true,
-      "showLabel": true,
-      "type": "ddm-date"
-    },
-    {
+     {
       "label": {
         "nl_NL": "Sessie",
         "en_US": "Event Session"

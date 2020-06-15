@@ -8,17 +8,18 @@ import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.XmlContentParserUtils;
 import org.w3c.dom.Document;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 public class DsdEvent extends AbsDsdArticle {
 
     private static final Log LOG = LogFactoryUtil.getLog(DsdEvent.class);
-    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
     private final List<Registration> registrations = new ArrayList<>();
     private EventLocation eventLocation;
-    private Date startDay;
-    private Date endDay;
+    private Date startDay = null;
+    private Date endDay = null;
 
     public DsdEvent(JournalArticle journalArticle) throws PortalException {
         super(journalArticle);
@@ -32,21 +33,24 @@ public class DsdEvent extends AbsDsdArticle {
             registrations.addAll( parseRegistrationsData(eventSessions));
             String eventLocation = XmlContentParserUtils.getDynamicContentByName(document, "eventLocation", false);
             this.eventLocation = parseEventLocation(eventLocation);
-            this.startDay = parseDate("startDay");
-            this.endDay = parseDate("endDay");
+            loadEventPeriod();
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
     }
 
-
-    private Date parseDate(String dateField) throws PortalException {
-        try {
-            Document document = getDocument();
-            String dateValue = XmlContentParserUtils.getDynamicContentByName(document, dateField, false);
-            return dateFormatter.parse(dateValue);
-        } catch (Exception e) {
-            throw new PortalException(String.format("Error parsing date field %s for article %s: %s!", dateField, getTitle(), e.getMessage()), e);
+    private void loadEventPeriod() {
+        if (registrations.size() == 0){
+            startDay = new Date();
+            endDay = new Date();
+        }
+        for (Registration registration : registrations) {
+            if(startDay == null || registration.getStartTime().before(startDay)){
+                startDay = registration.getStartTime();
+            }
+            if (endDay == null || registration.getEndTime().after(endDay)){
+                endDay = registration.getEndTime();
+            }
         }
     }
 

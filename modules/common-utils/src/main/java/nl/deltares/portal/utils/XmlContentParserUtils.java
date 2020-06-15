@@ -25,11 +25,11 @@ import java.util.stream.IntStream;
 public class XmlContentParserUtils {
 
     private static final Log LOG = LogFactoryUtil.getLog(XmlContentParserUtils.class);
-    static String ARTICLE_ROOT= "/root";
-    static String ARTICLE_DYNAMIC_ELEMENT= "/dynamic-element";
+    static String ARTICLE_ROOT= "root";
+    static String ARTICLE_DYNAMIC_ELEMENT= "dynamic-element";
     static String ARTICLE_NAME_ATTRIBUTE_START= "[@name='";
     static String ARTICLE_NAME_ATTRIBUTE_END= "']";
-    static String ARTICLE_CONTENT_XML_NODE_END= "/dynamic-content";
+    static String ARTICLE_CONTENT_XML_NODE_END= "dynamic-content";
 
     public static Document parseContent(JournalArticle article) throws PortalException{
         return parseContent(article.getTitle(), article.getContent());
@@ -69,8 +69,8 @@ public class XmlContentParserUtils {
 
     public static NodeList getDynamicElementsByName(Document xmlDocument, String nodeName){
         String[] searchLevels = {
-                ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END,
-                ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END
+                '/' + ARTICLE_ROOT + '/' + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END,
+                '/' + ARTICLE_ROOT + '/' + ARTICLE_DYNAMIC_ELEMENT + '/' + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END
         };
 
         for (String expression : searchLevels) {
@@ -86,42 +86,22 @@ public class XmlContentParserUtils {
         return null;
     }
 
-    public static String[] getDynamicContentsByName(Document xmlDocument, String nodeName){
-        String[] searchLevels = {
-                ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END + ARTICLE_CONTENT_XML_NODE_END,
-                ARTICLE_ROOT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END + ARTICLE_CONTENT_XML_NODE_END
-        };
-        NodeList nodeList;
+    public static String getDynamicContentForNode(Node node) throws PortalException {
+        String[] contentValues = getDynamicContentsByName(node, null);
+        return validateSingleContent(node.getNodeName(), false, contentValues);
+    }
 
-        for (String expression : searchLevels) {
-            try {
-                nodeList = getNodeList(xmlDocument, expression);
-                if (nodeList != null) {
-
-                    return IntStream.range(0, nodeList.getLength())
-                            .mapToObj(nodeList::item)
-                            .map(node -> {
-                                String nodeValue = null;
-                                try {
-                                    nodeValue = node.getTextContent();
-                                } catch (Exception e) {
-                                    LOG.error("Error parsing node value: " + e.getMessage());
-                                }
-                                return nodeValue;
-                            })
-                            .filter(Objects::nonNull)
-                            .map(String::valueOf)
-                            .toArray(String[]::new);
-                }
-            } catch (Exception e) {
-                LOG.error(String.format("Error retrieving node value %s from content: %s", nodeName, e.getMessage()));
-            }
-        }
-        return new String[0];
+    public static String getDynamicContentByName(Node node, String nodeName, boolean optional) throws PortalException {
+        String[] contentValues = getDynamicContentsByName(node, nodeName);
+        return validateSingleContent(nodeName, optional, contentValues);
     }
 
     public static String getDynamicContentByName(Document xmlDocument, String nodeName, boolean optional) throws PortalException {
         String[] contentValues = getDynamicContentsByName(xmlDocument, nodeName);
+        return validateSingleContent(nodeName, optional, contentValues);
+    }
+
+    private static String validateSingleContent(String nodeName, boolean optional, String[] contentValues) throws PortalException {
         int length = contentValues.length;
         if (length == 0 && !optional){
             throw new PortalException(String.format("Node name '%s' not found in document! ", nodeName));
@@ -130,12 +110,65 @@ public class XmlContentParserUtils {
             throw new PortalException(String.format("Expected single element for '%s' but found '%d'!", nodeName, length));
         }
         if (contentValues.length == 0) return null;
+        if (contentValues[0].trim().isEmpty()) return null;
         return contentValues[0];
     }
 
-    private static NodeList getNodeList(Document xmlDocument, String expression) throws XPathExpressionException {
+    public static String[] getDynamicContentsByName(Node node, String nodeName){
+
+        String search;
+        if (nodeName == null ){
+            search = ARTICLE_CONTENT_XML_NODE_END;
+        } else {
+            search = ARTICLE_DYNAMIC_ELEMENT  + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END + '/' + ARTICLE_CONTENT_XML_NODE_END;
+        }
+        return privateGetDynamicContentsByName(node, nodeName, new String[]{search});
+    }
+
+    public static String[] getDynamicContentsByName(Document xmlDocument, String nodeName){
+        String[] searchLevels = {
+                '/' + ARTICLE_ROOT + '/' + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END + '/' + ARTICLE_CONTENT_XML_NODE_END,
+                '/' + ARTICLE_ROOT + '/' + ARTICLE_DYNAMIC_ELEMENT + '/' + ARTICLE_DYNAMIC_ELEMENT + ARTICLE_NAME_ATTRIBUTE_START + nodeName + ARTICLE_NAME_ATTRIBUTE_END + '/' + ARTICLE_CONTENT_XML_NODE_END
+        };
+        return privateGetDynamicContentsByName(xmlDocument, nodeName, searchLevels);
+    }
+
+    private static String[] privateGetDynamicContentsByName(Node node, String nodeName, String[] searchLevels) {
+        NodeList nodeList;
+
+        for (String expression : searchLevels) {
+            try {
+                nodeList = getNodeList(node, expression);
+                if (nodeList != null) {
+                    return getDynamicContentValues(nodeList);
+                }
+            } catch (Exception e) {
+                LOG.error(String.format("Error retrieving node value %s from content: %s", nodeName, e.getMessage()));
+            }
+        }
+        return new String[0];
+    }
+
+    private static String[] getDynamicContentValues(NodeList nodeList) {
+        return IntStream.range(0, nodeList.getLength())
+                .mapToObj(nodeList::item)
+                .map(node -> {
+                    String nodeValue = null;
+                    try {
+                        nodeValue = node.getTextContent();
+                    } catch (Exception e) {
+                        LOG.error("Error parsing node value: " + e.getMessage());
+                    }
+                    return nodeValue;
+                })
+                .filter(Objects::nonNull)
+                .map(String::valueOf)
+                .toArray(String[]::new);
+    }
+
+    private static NodeList getNodeList(Node xmlObject, String expression) throws XPathExpressionException {
         XPath xPath = XPathFactory.newInstance().newXPath();
-        return (NodeList) xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODESET);
+        return (NodeList) xPath.compile(expression).evaluate(xmlObject, XPathConstants.NODESET);
     }
 
 }

@@ -3,3 +3,4 @@ Bundle-SymbolicName: nl.deltares.npm.react.portlet.fullcalendar
 Web-ContextPath: /fullcalendar
 Bundle-Version: 1.0.0
 -sources: true
+-metatype: *

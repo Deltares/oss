@@ -105,4 +105,28 @@ public class XmlContentParserUtilsTest {
 
     }
 
+    @Test
+    public void testGetDynamicContentsFromChildrenByName() throws FileNotFoundException, PortalException {
+
+        URL xml = this.getClass().getResource("/data/sessionregistration.xml");
+        Document document = XmlContentParserUtils.parseContent("testGetDynamicContentsFromChildrenByName", new FileInputStream(xml.getFile()));
+        Node parent = XmlContentParserUtils.getDynamicElementByName(document, "start", false);
+        Assert.assertNotNull(parent);
+        String starttime = XmlContentParserUtils.getDynamicContentByName(parent, "starttime", false);
+        Assert.assertEquals("09:00", starttime);
+
+    }
+
+    @Test
+    public void testGetDynamicContentsForNode() throws FileNotFoundException, PortalException {
+
+        URL xml = this.getClass().getResource("/data/sessionregistration.xml");
+        Document document = XmlContentParserUtils.parseContent("testGetDynamicContentsForNode", new FileInputStream(xml.getFile()));
+        Node parent = XmlContentParserUtils.getDynamicElementByName(document, "start", false);
+        Assert.assertNotNull(parent);
+        String date = XmlContentParserUtils.getDynamicContentForNode(parent);
+        Assert.assertEquals("2020-06-18", date);
+
+    }
+
 }

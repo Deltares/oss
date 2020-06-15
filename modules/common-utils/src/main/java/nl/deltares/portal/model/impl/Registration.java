@@ -5,6 +5,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.XmlContentParserUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -53,8 +54,9 @@ public abstract class Registration extends AbsDsdArticle {
     private Date parseDateTime(String date, String time) throws PortalException {
         try {
             Document document = getDocument();
-            String dateValue = XmlContentParserUtils.getDynamicContentByName(document, date, false);
-            String timeValue = XmlContentParserUtils.getDynamicContentByName(document, time, false);
+            Node dateNode = XmlContentParserUtils.getDynamicElementByName(document, date, false);
+            String dateValue = XmlContentParserUtils.getDynamicContentForNode(dateNode);
+            String timeValue = XmlContentParserUtils.getDynamicContentByName(dateNode, time, false);
             return dateTimeFormatter.parse(dateValue + 'T' + timeValue);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
