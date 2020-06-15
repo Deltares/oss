@@ -5,7 +5,9 @@ import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.util.ParamUtil;
 import nl.deltares.npm.react.portlet.fullcalendar.constants.FullCalendarPortletKeys;
+import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.utils.DsdRegistrationUtils;
+import nl.deltares.portal.utils.JsonContentParserUtils;
 import org.osgi.service.component.annotations.*;
 
 import javax.portlet.ActionRequest;
@@ -13,6 +15,7 @@ import javax.portlet.ActionResponse;
 import javax.portlet.PortletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.Map;
 
 @Component(
@@ -45,7 +48,22 @@ public class FullCalendarConfigurationAction extends DefaultConfigurationAction 
         long eventId = ParamUtil.getLong(actionRequest, "eventId");
         setPreference(actionRequest, "baseUrl", baseUrl);
         setPreference(actionRequest, "eventId", String.valueOf(eventId));
+        Map<String, String> colorMap = convertColorsToMap(actionRequest);
+        setPreference(actionRequest, "sessionColorMap", JsonContentParserUtils.formatMapToJson(colorMap));
+
         super.processAction(portletConfig, actionRequest, actionResponse);
+    }
+
+    private Map<String, String> convertColorsToMap(ActionRequest actionRequest) {
+
+        HashMap<String, String> colorMap = new HashMap<>();
+        for (DsdArticle.DSD_SESSION_KEYS session_keys : DsdArticle.DSD_SESSION_KEYS.values()) {
+            String sessionKey = session_keys.name();
+            String value = ParamUtil.getString(actionRequest, sessionKey);
+            if (value.isEmpty()) continue;
+            colorMap.put(sessionKey, value);
+        }
+        return colorMap;
     }
 
     /**

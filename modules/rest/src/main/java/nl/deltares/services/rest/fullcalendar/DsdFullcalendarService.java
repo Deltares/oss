@@ -64,6 +64,7 @@ public class DsdFullcalendarService {
             event.setStart(eventSession.getStartTime().getTime());
             event.setEnd(eventSession.getEndTime().getTime());
             event.setUrl(dsdEvent.getTitle());
+            event.setColor(eventSession.getCalendarColor());
             events.add(event);
         }
 

@@ -8,10 +8,7 @@ import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.XmlContentParserUtils;
 import org.w3c.dom.Document;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class DsdEvent extends AbsDsdArticle {
 
@@ -20,6 +17,7 @@ public class DsdEvent extends AbsDsdArticle {
     private EventLocation eventLocation;
     private Date startDay = null;
     private Date endDay = null;
+    private Map<String, String> colorMap = Collections.emptyMap();
 
     public DsdEvent(JournalArticle journalArticle) throws PortalException {
         super(journalArticle);
@@ -94,5 +92,14 @@ public class DsdEvent extends AbsDsdArticle {
 
     public Date getEndDay() {
         return endDay;
+    }
+
+    public void setColorMap(Map<String, String> colorMap){
+        for (Registration registration : registrations) {
+            String color = colorMap.get(registration.getType());
+            if (color != null){
+                registration.setCalendarColor(color);
+            }
+        }
     }
 }

@@ -10,6 +10,10 @@ import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Location;
 import nl.deltares.portal.model.impl.Registration;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 public class JsonContentParserUtils {
 
     public static JSONObject parseContent(String jsonContent) throws JSONException{
@@ -50,5 +54,21 @@ public class JsonContentParserUtils {
         }
 
         return (Registration) instance;
+    }
+
+    public static Map<String, String> parseJsonToMap(String jsonContent) throws JSONException {
+        JSONObject jsonObject = parseContent(jsonContent);
+        Iterator<String> keys = jsonObject.keys();
+        HashMap<String, String> map = new HashMap<>();
+        keys.forEachRemaining(key -> map.put(key, jsonObject.getString(key)));
+        return map;
+    }
+
+    public static String formatMapToJson(Map<String, String> colorMap) {
+        JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+        for (String key : colorMap.keySet()) {
+            jsonObject.put(key, colorMap.get(key));
+        }
+        return jsonObject.toJSONString();
     }
 }

@@ -17,6 +17,9 @@
 --%>
 
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
+<%@ page import="nl.deltares.portal.model.DsdArticle" %>
+<%@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
+<%@ page import="java.awt.*" %>
 
 <%@ include file="/init.jsp" %>
 
@@ -58,6 +61,16 @@
                 >
 
         </aui:input>
+
+        <%    for (String key : colorMap.keySet()) { %>
+        <aui:input
+                label='<%=( key ) + " Color"%>'
+                name="<%= key %>"
+                type="color"
+                value="<%= colorMap.get(key) %>"
+        >
+        </aui:input>
+        <% } %>
     </aui:fieldset>
 
     <aui:button-row>

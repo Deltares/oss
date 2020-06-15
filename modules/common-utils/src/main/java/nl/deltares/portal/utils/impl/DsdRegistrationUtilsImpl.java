@@ -3,6 +3,9 @@ package nl.deltares.portal.utils.impl;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
@@ -13,21 +16,21 @@ import nl.deltares.portal.model.impl.DsdEvent;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
 import nl.deltares.portal.utils.DsdRegistrationUtils;
+import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component(
         immediate = true,
         service = DsdRegistrationUtils.class
 )
 public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
+
+    private static final Log LOG = LogFactoryUtil.getLog(DsdRegistrationUtilsImpl.class);
 
     @Reference
     KeycloakUtils keycloakUtils;
@@ -183,5 +186,26 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
             throw new PortalException(String.format("EventId %d is not the articleId of a valid DSD Event", eventId));
         }
         return (DsdEvent) eventArticle;
+    }
+
+    @Override
+    public Map<String, String> parseSessionColorConfig(String json) {
+        Map<String, String> colorMap;
+        try {
+            colorMap = JsonContentParserUtils.parseJsonToMap(json);
+        } catch (JSONException e) {
+            LOG.error(String.format("Error parsing session color config '%s' :  %s", json, e.getMessage()));
+            colorMap = new HashMap<>();
+        }
+        for (DsdArticle.DSD_SESSION_KEYS session_keys : DsdArticle.DSD_SESSION_KEYS.values()) {
+            String sessionKey = session_keys.name();
+            colorMap.putIfAbsent(sessionKey, "#FFFFFF");
+        }
+        return colorMap;
+    }
+
+    @Override
+    public String formatSessionColorConfig(Map<String, String> colorMap) {
+        return JsonContentParserUtils.formatMapToJson(colorMap);
     }
 }
