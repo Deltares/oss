@@ -23,8 +23,6 @@ public abstract class Registration extends AbsDsdArticle {
     private boolean overlapWithParent;
     private Date startTime;
     private Date endTime;
-    private String color = null;
-
 
     public Registration(JournalArticle article) throws PortalException {
         super(article);
@@ -119,11 +117,4 @@ public abstract class Registration extends AbsDsdArticle {
         return type.name();
     }
 
-    public void setCalendarColor(String color){
-        this.color = color;
-    }
-
-    public String getCalendarColor() {
-        return color;
-    }
 }

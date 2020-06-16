@@ -27,7 +27,8 @@ class Calendar extends React.Component {
 				// }
             },
 			events : {
-                url: this.props.baseUrl + '/events/' + this.props.siteId + '/' + this.props.eventId,
+                url: this.props.baseUrl + '/events/' + this.props.siteId + '/' + this.props.eventId
+					+ '?portletId=' + this.props.portletId + '&layoutUuid=' + this.props.layoutUuid,
                 method: 'GET',
 				// data: {
 				// 	username: this.props.authUser,
@@ -96,6 +97,8 @@ class Calendar extends React.Component {
 	}
 }
 
-export default function (elementId, canEdit, baseUrl, siteId, eventId, startDate) {
-	ReactDOM.render( <Calendar class="fc" editable={canEdit} selectable={canEdit} baseUrl={baseUrl} siteId={siteId} eventId={eventId} startDate={startDate}/>, document.getElementById(elementId))
+export default function (elementId, canEdit, baseUrl, siteId, eventId, startDate, portletId, layoutUuid) {
+	ReactDOM.render( <Calendar class="fc" editable={canEdit} selectable={canEdit} baseUrl={baseUrl}
+							   siteId={siteId} eventId={eventId} startDate={startDate}
+							   portletId={portletId} layoutUuid={layoutUuid}/>, document.getElementById(elementId))
 }

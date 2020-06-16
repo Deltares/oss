@@ -27,6 +27,7 @@
 
 <%@ page import="com.liferay.portal.kernel.exception.PortalException" %>
 <%@ page import="com.liferay.portal.kernel.util.Validator" %>
+<%@ page import="com.liferay.portal.kernel.util.WebKeys" %>
 <%@ page import="nl.deltares.npm.react.portlet.fullcalendar.constants.FullCalendarPortletKeys" %>
 <%@ page import="nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration" %>
 <%@ page import="nl.deltares.portal.model.impl.DsdEvent" %>
@@ -47,6 +48,8 @@
     FullCalendarConfiguration configuration =
             (FullCalendarConfiguration)
                     renderRequest.getAttribute(FullCalendarConfiguration.class.getName());
+    String portletId = (String)renderRequest.getAttribute(WebKeys.PORTLET_ID);
+    String layoutUuid = themeDisplay.getLayout().getUuid();
     String baseUrl = "";
     long eventId = 0;
     String startDate = format.format(new Date());
@@ -61,7 +64,6 @@
             DsdEvent dsdEvent = dsdUtils.getDsdEvent(siteId, eventId);
             startDate = format.format(dsdEvent.getStartDay());
             colorMap = dsdUtils.parseSessionColorConfig(sessionColorMap);
-            dsdEvent.setColorMap(colorMap);
         } catch (PortalException e) {
             System.out.println(e.getMessage());
         }

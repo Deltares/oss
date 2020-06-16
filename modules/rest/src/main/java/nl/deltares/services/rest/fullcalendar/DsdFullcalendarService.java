@@ -3,7 +3,16 @@ package nl.deltares.services.rest.fullcalendar;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.service.LayoutServiceUtil;
+import nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration;
 import nl.deltares.portal.model.impl.*;
+import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.services.rest.fullcalendar.models.Event;
 import nl.deltares.services.rest.fullcalendar.models.Resource;
 
@@ -22,14 +31,21 @@ import static nl.deltares.services.utils.Helper.toResponse;
  */
 @Path("/calendar")
 public class DsdFullcalendarService {
+    private static final Log LOG = LogFactoryUtil.getLog(DsdFullcalendarService.class);
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private final ConfigurationProvider configurationProvider;
+
+    public DsdFullcalendarService(ConfigurationProvider configurationProvider) {
+        this.configurationProvider = configurationProvider;
+    }
 
     @GET
     @Path("/events/{siteId}/{eventId}")
     @Produces("application/json")
     public Response events(@Context HttpServletRequest request,
                            @PathParam("siteId") long siteId, @PathParam("eventId") long eventId,
+                           @QueryParam("portletId") String portletId, @QueryParam("layoutUuid") String layoutUuid,
                            @QueryParam("start") String start, @QueryParam("end") String end, @QueryParam("timeZone") String timeZone) {
 
         dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
@@ -52,6 +68,8 @@ public class DsdFullcalendarService {
             return  Response.serverError().entity(e.getMessage()).build();
         }
 
+        Map<String, String> colorMap = getColorMap(layoutUuid, siteId, portletId);
+
         List<AbsDsdArticle> sortedLocations = getSortedLocations(dsdEvent);
         List<Registration> eventSessions = dsdEvent.getEventSessions();
         List<Event> events = new ArrayList<>();
@@ -64,11 +82,39 @@ public class DsdFullcalendarService {
             event.setStart(eventSession.getStartTime().getTime());
             event.setEnd(eventSession.getEndTime().getTime());
             event.setUrl(dsdEvent.getTitle());
-            event.setColor(eventSession.getCalendarColor());
+            event.setColor(colorMap.get(eventSession.getType()));
             events.add(event);
         }
 
         return toResponse(events);
+
+    }
+
+    private Map<String, String> getColorMap(String layoutUuid, long siteId, String portletId) {
+
+        Layout layout = null;
+        try {
+            layout = LayoutServiceUtil.getLayoutByUuidAndGroupId(layoutUuid, siteId, false);
+        } catch (PortalException e) {
+            LOG.error(String.format("Error retrieving FullCalendar portlet layout for uuid '%s': %s", layoutUuid, e.getMessage()));
+            return Collections.emptyMap();
+        }
+        FullCalendarConfiguration groupConfiguration = null;
+        try {
+            groupConfiguration = configurationProvider.getPortletInstanceConfiguration(FullCalendarConfiguration.class, layout , portletId);
+        } catch (ConfigurationException e) {
+            LOG.error(String.format("Error retrieving FullCalendarConfiguration for siteId '%s': %s", portletId, e.getMessage()));
+            return Collections.emptyMap();
+        }
+
+        String jsonColorMap = groupConfiguration.sessionColorMap();
+        try {
+            return JsonContentParserUtils.parseJsonToMap(jsonColorMap);
+        } catch (JSONException e) {
+            LOG.error(String.format("Error parsing color map configuration for siteId '%s': %s", portletId, e.getMessage()));
+            return Collections.emptyMap();
+        }
+
 
     }
 

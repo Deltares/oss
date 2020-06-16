@@ -17,7 +17,6 @@ public class DsdEvent extends AbsDsdArticle {
     private EventLocation eventLocation;
     private Date startDay = null;
     private Date endDay = null;
-    private Map<String, String> colorMap = Collections.emptyMap();
 
     public DsdEvent(JournalArticle journalArticle) throws PortalException {
         super(journalArticle);
@@ -94,12 +93,4 @@ public class DsdEvent extends AbsDsdArticle {
         return endDay;
     }
 
-    public void setColorMap(Map<String, String> colorMap){
-        for (Registration registration : registrations) {
-            String color = colorMap.get(registration.getType());
-            if (color != null){
-                registration.setCalendarColor(color);
-            }
-        }
-    }
 }
