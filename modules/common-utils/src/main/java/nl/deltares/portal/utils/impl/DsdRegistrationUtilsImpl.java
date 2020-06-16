@@ -199,7 +199,7 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
         }
         for (DsdArticle.DSD_SESSION_KEYS session_keys : DsdArticle.DSD_SESSION_KEYS.values()) {
             String sessionKey = session_keys.name();
-            colorMap.putIfAbsent(sessionKey, "#FFFFFF");
+            colorMap.putIfAbsent(sessionKey, "#17a2b8");
         }
         return colorMap;
     }
