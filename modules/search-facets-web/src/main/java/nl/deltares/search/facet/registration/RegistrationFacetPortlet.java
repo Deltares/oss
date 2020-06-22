@@ -3,6 +3,7 @@ package nl.deltares.search.facet.registration;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
+import nl.deltares.search.constans.FacetPortletKeys;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -22,9 +23,10 @@ import java.io.IOException;
     "com.liferay.portlet.header-portlet-css=/css/main.css",
     "com.liferay.portlet.instanceable=true",
     "javax.portlet.display-name=RegistrationFacet",
+    "javax.portlet.expiration-cache=0",
     "javax.portlet.init-param.template-path=/",
     "javax.portlet.init-param.view-template=/facet/registration/view.jsp",
-    "javax.portlet.name=" + RegistrationFacetPortletKeys.REGISTRATION_FACET_PORTLET,
+    "javax.portlet.name=" + FacetPortletKeys.REGISTRATION_FACET_PORTLET,
     "javax.portlet.resource-bundle=content.Language",
     "javax.portlet.security-role-ref=power-user,user"
   },
