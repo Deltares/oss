@@ -7,6 +7,34 @@
   "fields": [
     {
       "label": {
+        "nl_NL": "Event ID",
+        "en_US": "Event ID"
+      },
+      "predefinedValue": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "style": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "tip": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "dataType": "integer",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "eventId",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-integer"
+    },
+    {
+      "label": {
         "nl_NL": "Begin datum",
         "en_US": "Start date"
       },
@@ -39,8 +67,8 @@
             "en_US": "time"
           },
           "predefinedValue": {
-            "nl_NL": "00:00",
-            "en_US": "00:00"
+            "nl_NL": "09:00",
+            "en_US": "09:00"
           },
           "style": {
             "nl_NL": "",
@@ -96,8 +124,8 @@
             "en_US": "time"
           },
           "predefinedValue": {
-            "nl_NL": "00:00",
-            "en_US": "00:00"
+            "nl_NL": "17:00",
+            "en_US": "17:00"
           },
           "style": {
             "nl_NL": "",
@@ -140,7 +168,7 @@
           }
         },
         {
-          "value": "Online Course",
+          "value": "OnlineCourse",
           "label": {
             "nl_NL": "Online Cursus",
             "en_US": "Online Course"

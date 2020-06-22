@@ -19,12 +19,17 @@ import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
 public class XmlContentParserUtils {
 
     private static final Log LOG = LogFactoryUtil.getLog(XmlContentParserUtils.class);
+
+    private static final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
     static String ARTICLE_ROOT= "root";
     static String ARTICLE_DYNAMIC_ELEMENT= "dynamic-element";
     static String ARTICLE_NAME_ATTRIBUTE_START= "[@name='";
@@ -101,6 +106,21 @@ public class XmlContentParserUtils {
         return validateSingleContent(nodeName, optional, contentValues);
     }
 
+    public static Date parseDateTimeFields(Document xmlDocument, String dateField, String timeField, boolean optional) throws PortalException {
+        Node dateNode = getDynamicElementByName(xmlDocument, dateField, optional);
+        if (dateNode == null) return null;
+        String dateValue = XmlContentParserUtils.getDynamicContentForNode(dateNode);
+        String timeValue = XmlContentParserUtils.getDynamicContentByName(dateNode, timeField, optional);
+        if (timeValue == null){
+            timeValue = "00:00";
+        }
+        String dateTimeValue = dateValue + 'T' + timeValue;
+        try {
+            return dateTimeFormatter.parse(dateTimeValue);
+        } catch (ParseException e) {
+            throw new PortalException(String.format("Error parsing dateTime %s: %s", dateTimeValue, e.getMessage()));
+        }
+    }
     private static String validateSingleContent(String nodeName, boolean optional, String[] contentValues) throws PortalException {
         int length = contentValues.length;
         if (length == 0 && !optional){

@@ -30,7 +30,7 @@
 <%@ page import="com.liferay.portal.kernel.util.WebKeys" %>
 <%@ page import="nl.deltares.npm.react.portlet.fullcalendar.constants.FullCalendarPortletKeys" %>
 <%@ page import="nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration" %>
-<%@ page import="nl.deltares.portal.model.impl.DsdEvent" %>
+<%@ page import="nl.deltares.portal.model.impl.Event" %>
 <%@ page import="nl.deltares.portal.utils.DsdRegistrationUtils" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.Date" %>
@@ -51,18 +51,18 @@
     String portletId = (String)renderRequest.getAttribute(WebKeys.PORTLET_ID);
     String layoutUuid = themeDisplay.getLayout().getUuid();
     String baseUrl = "";
-    long eventId = 0;
+    String eventId = "0";
     String startDate = format.format(new Date());
     Map<String, String> colorMap = new HashMap<>();
     if (Validator.isNotNull(configuration)) {
         baseUrl = portletPreferences.getValue("baseUrl", configuration.baseUrl());
-        eventId = Long.parseLong(portletPreferences.getValue("eventId", String.valueOf(configuration.eventID())));
+        eventId = portletPreferences.getValue("eventId", String.valueOf(configuration.eventID()));
         String sessionColorMap = portletPreferences.getValue("sessionColorMap", configuration.sessionColorMap());
 
         try {
             DsdRegistrationUtils dsdUtils = (DsdRegistrationUtils) renderRequest.getAttribute(DsdRegistrationUtils.class.getName());
-            DsdEvent dsdEvent = dsdUtils.getDsdEvent(siteId, eventId);
-            startDate = format.format(dsdEvent.getStartDay());
+            Event event = dsdUtils.getEvent(siteId, eventId);
+            startDate = format.format(event.getStartDay());
             colorMap = dsdUtils.parseSessionColorConfig(sessionColorMap);
         } catch (PortalException e) {
             System.out.println(e.getMessage());

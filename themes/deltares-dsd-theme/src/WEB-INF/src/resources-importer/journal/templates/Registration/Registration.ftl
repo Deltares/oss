@@ -1,4 +1,3 @@
-${name.getData()}
 <#assign start_Data = getterUtil.getString(start.getData())>
 <#if validator.isNotNull(start_Data)>
     <#assign start_DateObj = dateUtil.parseDate("yyyy-MM-dd", start_Data, locale)>

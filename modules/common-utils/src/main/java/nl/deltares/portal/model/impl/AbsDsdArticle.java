@@ -13,11 +13,12 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class AbsDsdArticle implements DsdArticle {
 
-    private static final HashMap<Long, AbsDsdArticle> cache = new HashMap<>();
+    private static final HashMap<String, Event> cache = new HashMap<>();
     private static final long MAX_CACHE_TIME = TimeUnit.MINUTES.toMillis(5);
     private final JournalArticle article;
-    private final long instantiationTime;
+    final long instantiationTime;
     private Document document;
+
 
     public static boolean isDsdArticle(JournalArticle article) {
         try {
@@ -41,6 +42,11 @@ public abstract class AbsDsdArticle implements DsdArticle {
     @Override
     public long getResourceId() {
         return article.getResourcePrimKey();
+    }
+
+    @Override
+    public String getArticleId() {
+        return article.getArticleId();
     }
 
     @Override
@@ -109,11 +115,11 @@ public abstract class AbsDsdArticle implements DsdArticle {
             case Expert:
                 article = new Expert(journalArticle);
                 break;
-            case Dsdevent:
-                article = getCachedArticle(journalArticle.getResourcePrimKey());
+            case Event:
+                article = getCachedEventArticle(journalArticle.getArticleId());
                 if (article != null) return article;
-                article = new DsdEvent(journalArticle);
-                cache.put(article.getResourceId(), article);
+                article = new Event(journalArticle);
+                cache.put(article.getArticleId(), (Event) article);
                 break;
             default:
                 article = new GenericArticle(journalArticle, parseStructureKey);
@@ -122,8 +128,8 @@ public abstract class AbsDsdArticle implements DsdArticle {
         return article;
     }
 
-    private static AbsDsdArticle getCachedArticle(long resourcePrimKey) {
-        AbsDsdArticle dsdArticle = cache.get(resourcePrimKey);
+    private static Event getCachedEventArticle(String article) {
+        Event dsdArticle = cache.get(article);
         if (dsdArticle != null &&
                 (System.currentTimeMillis() - dsdArticle.instantiationTime) <  MAX_CACHE_TIME){
             return dsdArticle;
@@ -158,4 +164,9 @@ public abstract class AbsDsdArticle implements DsdArticle {
         }
         return url;
     }
+
+    public JournalArticle getJournalArticle(){
+        return article;
+    }
+
 }

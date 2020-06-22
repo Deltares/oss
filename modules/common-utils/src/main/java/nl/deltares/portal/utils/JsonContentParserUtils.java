@@ -6,9 +6,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import nl.deltares.portal.model.impl.AbsDsdArticle;
-import nl.deltares.portal.model.impl.Location;
-import nl.deltares.portal.model.impl.Registration;
+import nl.deltares.portal.model.impl.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -54,6 +52,28 @@ public class JsonContentParserUtils {
         }
 
         return (Registration) instance;
+    }
+
+    public static Building parseBuildingJson(String json) throws PortalException {
+
+        JournalArticle journalArticle = jsonReferenceToJournalArticle(json);
+        AbsDsdArticle instance = AbsDsdArticle.getInstance(journalArticle);
+        if ( ! (instance instanceof Building)){
+            throw new PortalException(String.format("Article %s not instance of Building", journalArticle.getTitle()));
+        }
+
+        return (Building) instance;
+    }
+
+    public static Room parseRoomJson(String json) throws PortalException {
+
+        JournalArticle journalArticle = jsonReferenceToJournalArticle(json);
+        AbsDsdArticle instance = AbsDsdArticle.getInstance(journalArticle);
+        if ( ! (instance instanceof Room)){
+            throw new PortalException(String.format("Article %s not instance of Room", journalArticle.getTitle()));
+        }
+
+        return (Room) instance;
     }
 
     public static Map<String, String> parseJsonToMap(String jsonContent) throws JSONException {
