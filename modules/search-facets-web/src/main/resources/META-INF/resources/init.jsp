@@ -7,6 +7,9 @@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
+<%@ page import="nl.deltares.search.util.DateFacetUtil" %>
+<%@ page import="java.time.LocalDate" %>
+
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />
