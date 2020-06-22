@@ -1,2 +1,1 @@
-${name.getData()}
 ${capacity.getData()}

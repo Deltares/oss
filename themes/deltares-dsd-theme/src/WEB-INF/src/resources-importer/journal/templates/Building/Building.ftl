@@ -1,4 +1,3 @@
-${name.getData()}
 <#assign latitude = 0>
 <#assign longitude = 0>
 <#if (location.getData() != "")>

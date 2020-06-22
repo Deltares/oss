@@ -1,0 +1,234 @@
+{
+    "availableLanguageIds": [
+        "en_US",
+        "nl_NL"
+    ],
+    "defaultLanguageId": "en_US",
+    "fields": [
+        {
+            "label": {
+                "nl_NL": "Begin datum",
+                "en_US": "Start date"
+            },
+            "predefinedValue": {
+                "nl_NL": "",
+                "en_US": ""
+            },
+            "style": {
+                "nl_NL": "",
+                "en_US": ""
+            },
+            "tip": {
+                "nl_NL": "",
+                "en_US": ""
+            },
+            "dataType": "date",
+            "fieldNamespace": "ddm",
+            "indexType": "keyword",
+            "localizable": true,
+            "name": "start",
+            "readOnly": false,
+            "repeatable": false,
+            "required": true,
+            "showLabel": true,
+            "type": "ddm-date",
+            "nestedFields": [
+                {
+                    "label": {
+                        "nl_NL": "tijd",
+                        "en_US": "time"
+                    },
+                    "predefinedValue": {
+                        "nl_NL": "00:00",
+                        "en_US": "00:00"
+                    },
+                    "style": {
+                        "nl_NL": "",
+                        "en_US": ""
+                    },
+                    "tip": {
+                        "nl_NL": "Start tijd (formaat: HH:mm locale tijdzone) ",
+                        "en_US": "Start time (format: HH:mm time timezone) "
+                    },
+                    "dataType": "string",
+                    "indexType": "keyword",
+                    "localizable": true,
+                    "name": "starttime",
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": true,
+                    "showLabel": true,
+                    "type": "text"
+                }
+            ]
+        },
+        {
+            "label": {
+                "nl_NL": "Eind datum",
+                "en_US": "End date"
+            },
+            "predefinedValue": {
+                "nl_NL": "",
+                "en_US": ""
+            },
+            "style": {
+                "nl_NL": "",
+                "en_US": ""
+            },
+            "tip": {
+                "nl_NL": "",
+                "en_US": ""
+            },
+            "dataType": "date",
+            "fieldNamespace": "ddm",
+            "indexType": "keyword",
+            "localizable": true,
+            "name": "end",
+            "readOnly": false,
+            "repeatable": false,
+            "required": true,
+            "showLabel": true,
+            "type": "ddm-date",
+            "nestedFields": [
+                {
+                    "label": {
+                        "nl_NL": "tijd",
+                        "en_US": "time"
+                    },
+                    "predefinedValue": {
+                        "nl_NL": "00:00",
+                        "en_US": "00:00"
+                    },
+                    "style": {
+                        "nl_NL": "",
+                        "en_US": ""
+                    },
+                    "tip": {
+                        "nl_NL": "Eind tijd (formaat: HH:mm locale tijdzone) ",
+                        "en_US": "End time (format: HH:mm local timezone) "
+                    },
+                    "dataType": "string",
+                    "indexType": "keyword",
+                    "localizable": true,
+                    "name": "endtime",
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": true,
+                    "showLabel": true,
+                    "type": "text"
+                }
+            ]
+        },
+        {
+            "label": {
+                "en_US": "Location",
+                "nl_NL": "Locatie"
+            },
+            "predefinedValue": {
+                "en_US": "",
+                "nl_NL": ""
+            },
+            "style": {
+                "en_US": "",
+                "nl_NL": ""
+            },
+            "tip": {
+                "en_US": "",
+                "nl_NL": ""
+            },
+            "dataType": "journal-article",
+            "fieldNamespace": "ddm",
+            "indexType": "keyword",
+            "localizable": true,
+            "name": "eventLocation",
+            "readOnly": false,
+            "repeatable": false,
+            "required": true,
+            "showLabel": true,
+            "type": "ddm-journal-article"
+        },
+        {
+            "label": {
+                "en_US": "Image",
+                "nl_NL": "Afbeelding"
+            },
+            "predefinedValue": {
+                "en_US": "",
+                "nl_NL": ""
+            },
+            "style": {
+                "en_US": "",
+                "nl_NL": ""
+            },
+            "tip": {
+                "en_US": "",
+                "nl_NL": ""
+            },
+            "dataType": "image",
+            "fieldNamespace": "ddm",
+            "indexType": "text",
+            "localizable": true,
+            "name": "eventImage",
+            "readOnly": false,
+            "repeatable": false,
+            "required": false,
+            "showLabel": true,
+            "type": "ddm-image"
+        },
+        {
+            "label": {
+                "en_US": "Introduction",
+                "nl_NL": "Introductie"
+            },
+            "predefinedValue": {
+                "en_US": "",
+                "nl_NL": ""
+            },
+            "style": {
+                "en_US": "",
+                "nl_NL": ""
+            },
+            "tip": {
+                "en_US": "",
+                "nl_NL": ""
+            },
+            "dataType": "string",
+            "indexType": "keyword",
+            "localizable": true,
+            "name": "eventIntroduction",
+            "readOnly": false,
+            "repeatable": false,
+            "required": true,
+            "showLabel": true,
+            "type": "text"
+        },
+        {
+            "label": {
+                "en_US": "Description",
+                "nl_NL": "Omschrijving"
+            },
+            "predefinedValue": {
+                "en_US": "",
+                "nl_NL": ""
+            },
+            "style": {
+                "en_US": "",
+                "nl_NL": ""
+            },
+            "tip": {
+                "en_US": "",
+                "nl_NL": ""
+            },
+            "dataType": "html",
+            "fieldNamespace": "ddm",
+            "indexType": "text",
+            "localizable": true,
+            "name": "eventFullDescription",
+            "readOnly": false,
+            "repeatable": false,
+            "required": true,
+            "showLabel": true,
+            "type": "ddm-text-html"
+        }
+    ]
+}

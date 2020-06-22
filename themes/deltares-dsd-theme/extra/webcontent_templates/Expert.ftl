@@ -1,26 +1,26 @@
 <div class="expert-data">
 
     Hello this if from the Expert.ftl
-    <#if ExpertName.ExpertImage.getData()?? && ExpertName.ExpertImage.getData() != "">
+    <#if expertName.expertImage.getData()?? && expertName.expertImage.getData() != "">
         <div class="expert-data__image" style="background-image:url(${ExpertName.ExpertImage.getData()})">
-            <img alt="${ExpertName.ExpertImage.getAttribute("alt")}" data-fileentryid="${ExpertName.ExpertImage.getAttribute("fileEntryId")}" src="${ExpertName.ExpertImage.getData()}" />
+            <img alt="${expertName.expertImage.getAttribute("alt")}" data-fileentryid="${expertName.expertImage.getAttribute("fileEntryId")}" src="${expertName.expertImage.getData()}" />
         </div>
     <#else>
         <div class="expert-data__image">
-            ${stringUtil.shorten(ExpertName.getData(), 1)}
+            ${stringUtil.shorten(expertName.getData(), 1)}
         </div>
     </#if>
     
     <div class="expert-data__content">
-        <p class="bold">${ExpertName.getData()}</p>
-        <#if ExpertName.ExpertJobTitle.getData()?has_content>
-            <p>${ExpertName.ExpertJobTitle.getData()}</p>
+        <p class="bold">${expertName.getData()}</p>
+        <#if expertName.expertJobTitle.getData()?has_content>
+            <p>${expertName.expertJobTitle.getData()}</p>
         </#if>
-        <#if ExpertName.ExpertCompany.getData()?has_content>
-        <p>${ExpertName.ExpertCompany.getData()}</p>
+        <#if expertName.expertCompany.getData()?has_content>
+        <p>${expertName.expertCompany.getData()}</p>
         </#if>
         <p>
-            <a href="mailto:${ExpertName.ExpertEmailAddress.getData()}" >${ExpertName.ExpertEmailAddress.getData()}</a>
+            <a href="mailto:${expertName.expertEmailAddress.getData()}" >${expertName.expertEmailAddress.getData()}</a>
         </p>
     </div>
 </div>

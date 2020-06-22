@@ -1,3 +1,0 @@
-${reserved-article-title.getData()}
-<#assign StartDay_Data = getterUtil.getString(StartDay.getData())> <#if validator.isNotNull(StartDay_Data)> <#assign StartDay_DateObj = dateUtil.parseDate("yyyy-MM-dd", StartDay_Data, locale)> ${dateUtil.getDate(StartDay_DateObj, "dd MMM yyyy - HH:mm:ss", locale)} </#if>
-<#assign EndDay_Data = getterUtil.getString(EndDay.getData())> <#if validator.isNotNull(EndDay_Data)> <#assign EndDay_DateObj = dateUtil.parseDate("yyyy-MM-dd", EndDay_Data, locale)> ${dateUtil.getDate(EndDay_DateObj, "dd MMM yyyy - HH:mm:ss", locale)} </#if>
