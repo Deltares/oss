@@ -1,9 +1,17 @@
 package nl.deltares.services.rest.fullcalendar;
 
-import com.liferay.journal.model.JournalArticle;
-import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.service.LayoutServiceUtil;
+import nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration;
 import nl.deltares.portal.model.impl.*;
+import nl.deltares.portal.utils.DsdRegistrationUtils;
+import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.services.rest.fullcalendar.models.Event;
 import nl.deltares.services.rest.fullcalendar.models.Resource;
 
@@ -14,6 +22,7 @@ import javax.ws.rs.core.Response;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static nl.deltares.services.utils.Helper.toResponse;
 
@@ -22,14 +31,23 @@ import static nl.deltares.services.utils.Helper.toResponse;
  */
 @Path("/calendar")
 public class DsdFullcalendarService {
-
+    private static final Log LOG = LogFactoryUtil.getLog(DsdFullcalendarService.class);
+    private final long dayMillis = TimeUnit.DAYS.toMillis(1);
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private final ConfigurationProvider configurationProvider;
+    private final DsdRegistrationUtils dsdRegistrationUtils;
+
+    public DsdFullcalendarService(ConfigurationProvider configurationProvider, DsdRegistrationUtils dsdRegistrationUtils) {
+        this.configurationProvider = configurationProvider;
+        this.dsdRegistrationUtils = dsdRegistrationUtils;
+    }
 
     @GET
     @Path("/events/{siteId}/{eventId}")
     @Produces("application/json")
     public Response events(@Context HttpServletRequest request,
-                           @PathParam("siteId") long siteId, @PathParam("eventId") long eventId,
+                           @PathParam("siteId") String siteId, @PathParam("eventId") String eventId,
+                           @QueryParam("portletId") String portletId, @QueryParam("layoutUuid") String layoutUuid,
                            @QueryParam("start") String start, @QueryParam("end") String end, @QueryParam("timeZone") String timeZone) {
 
         dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
@@ -41,108 +59,170 @@ public class DsdFullcalendarService {
         }
         Date endSearch;
         try {
-             endSearch = dateFormat.parse(end);
+            endSearch = dateFormat.parse(end);
         } catch (ParseException e) {
             return Response.serverError().entity(String.format("Error parsing end (%s): %s", start, e.getMessage())).build();
         }
-        DsdEvent dsdEvent;
+
+        Map<String, String> colorMap = getColorMap(layoutUuid, Long.parseLong(siteId), portletId);
+
+        List<Registration> registrations;
         try {
-            dsdEvent = getDsdEvent(siteId, eventId);
+            nl.deltares.portal.model.impl.Event event = dsdRegistrationUtils.getEvent(Long.parseLong(siteId), eventId);
+            registrations = event.getRegistrations();
         } catch (PortalException e) {
-            return  Response.serverError().entity(e.getMessage()).build();
+            return Response.serverError().entity(e.getMessage()).build();
         }
 
-        List<AbsDsdArticle> sortedLocations = getSortedLocations(dsdEvent);
-        List<Registration> eventSessions = dsdEvent.getEventSessions();
-        List<Event> events = new ArrayList<>();
-        for (Registration eventSession : eventSessions) {
-            if (!isInSearchPeriod(eventSession, startSearch, endSearch)) continue;
-            Event event = new Event();
-            event.setTitle(eventSession.getTitle());
-            event.setId(String.valueOf(eventSession.getResourceId()));
-            event.setResourceId(String.valueOf(sortedLocations.indexOf(getLocation(eventSession))));
-            event.setStart(eventSession.getStartTime().getTime());
-            event.setEnd(eventSession.getEndTime().getTime());
-            event.setUrl(dsdEvent.getTitle());
-            event.setColor(eventSession.getCalendarColor());
-            events.add(event);
-        }
 
-        return toResponse(events);
+        return toResponse(getEvents(registrations, startSearch, endSearch, colorMap));
 
     }
 
-    private boolean isInSearchPeriod(Registration eventSession, Date startSearch, Date endSearch) {
-        if (eventSession.getStartTime().after(endSearch)) return false;
-        return !eventSession.getEndTime().before(startSearch);
-    }
 
     @GET
     @Path("/resources/{siteId}/{eventId}")
     @Produces("application/json")
-    public Response resources( @Context HttpServletRequest request,
-                               @PathParam("siteId") long siteId, @PathParam("eventId") long eventId) {
+    public Response resources(@Context HttpServletRequest request,
+                              @PathParam("siteId") String siteId, @PathParam("eventId") String eventId) {
 
-        DsdEvent dsdEvent;
+        nl.deltares.portal.model.impl.Event dsdEvent;
         try {
-            dsdEvent = getDsdEvent(siteId, eventId);
+            dsdEvent = dsdRegistrationUtils.getEvent(Long.parseLong(siteId), eventId);
         } catch (PortalException e) {
-            return  Response.serverError().entity(e.getMessage()).build();
+            return Response.serverError().entity(e.getMessage()).build();
         }
 
-        List<AbsDsdArticle> sortedLocations = getSortedLocations(dsdEvent);
-        List<Resource> resources = new ArrayList<>();
-        for (int i = 0; i < sortedLocations.size(); i++) {
-            AbsDsdArticle dsdArticle = sortedLocations.get(i);
-            Resource resource = new Resource();
-            resource.setId(String.valueOf(i));
-            resource.setTitle(dsdArticle.getTitle());
-            resources.add(resource);
-        }
-        return toResponse(resources);
+        return toResponse(getResources(dsdEvent));
     }
 
-    private List<AbsDsdArticle> getSortedLocations(DsdEvent dsdEvent) {
 
-        List<Registration> eventSessions = dsdEvent.getEventSessions();
-        List<Long> mapped = new ArrayList<>();
-        List<AbsDsdArticle> rooms = new ArrayList<>();
-        List<AbsDsdArticle> locations = new ArrayList<>();
-        for (Registration eventSession : eventSessions) {
-            if (mapped.contains(eventSession.getResourceId())) continue;
-            mapped.add(eventSession.getResourceId());
-            AbsDsdArticle absDsdArticle = getLocation(eventSession);
-            if (absDsdArticle instanceof Room) {
-                rooms.add(absDsdArticle);
-            } else if (absDsdArticle instanceof Location) {
-                locations.add(absDsdArticle);
+    private List<Event> getEvents(List<Registration> registrations, Date startSearch, Date endSearch, Map<String, String> colorMap) {
+
+        List<Event> events = new ArrayList<>(registrations.size());
+        for (Registration registration : registrations) {
+            Date endTime = registration.getEndTime();
+            if (endTime.before(startSearch)) continue;
+            Date startTime = registration.getStartTime();
+            if (startTime.after(endSearch)) continue;
+
+            //Split multi-day events into serperate Event items.
+            long duration = endTime.getTime() - startTime.getTime();
+            long wholeDays = TimeUnit.MILLISECONDS.toDays(duration);
+            long totalHours = TimeUnit.MILLISECONDS.toHours(duration);
+            long startDayStartTime = startTime.getTime();
+            long startDayEndTime = endTime.getTime() - TimeUnit.DAYS.toMillis(wholeDays);
+            int dayCounter = 0;
+            for (int i = 0; i < totalHours; i += 24) {
+                long startDay = startDayStartTime + dayMillis * dayCounter;
+                long endDay = startDayEndTime + dayMillis * dayCounter;
+                events.add(createCalendarEvent(colorMap, registration, dayCounter++, startDay, endDay));
             }
         }
-        rooms.sort(Comparator.comparing(AbsDsdArticle::getTitle));
-        locations.sort(Comparator.comparing(AbsDsdArticle::getTitle));
-        rooms.addAll(locations);
-        return rooms;
+
+        return events;
     }
 
-    private AbsDsdArticle getLocation(Registration eventSession) {
-
-        if (eventSession instanceof SessionRegistration){
-            return ((SessionRegistration) eventSession).getRoom();
+    private Event createCalendarEvent(Map<String, String> colorMap, Registration registration, int dayCount, long startDay, long endDay) {
+        Event event = new Event();
+        event.setId(registration.getArticleId() + '_' + dayCount);
+        if (registration instanceof SessionRegistration) {
+            event.setResourceId(String.valueOf(((SessionRegistration) registration).getRoom().getResourceId()));
+        } else if (registration instanceof DinnerRegistration) {
+            event.setResourceId(String.valueOf(((DinnerRegistration) registration).getRestaurant().getResourceId()));
         }
-        if (eventSession instanceof DinnerRegistration){
-            return  ((DinnerRegistration) eventSession).getRestaurant();
-        }
-        throw new UnsupportedOperationException("Unsupported Registration type for " + eventSession.getTitle());
+        event.setStart(startDay);
+        event.setEnd(endDay);
+        event.setColor(colorMap.get(registration.getType()));
+        event.setTitle(registration.getTitle());
+        event.setUrl("-/" + registration.getJournalArticle().getUrlTitle()); //todo
+        return event;
     }
 
-    private DsdEvent getDsdEvent( long siteId, long eventId) throws PortalException {
-        JournalArticle eventResource = JournalArticleLocalServiceUtil.getLatestArticle(siteId, String.valueOf(eventId));
-        AbsDsdArticle eventArticle = AbsDsdArticle.getInstance(eventResource);
-        if (! (eventArticle instanceof DsdEvent) ){
-            throw new PortalException(String.format("EventId %d is not the articleId of a valid DSD Event", eventId));
-        }
-        return (DsdEvent) eventArticle;
+    private int getEventDurationDays(Date endTime, Date startTime) {
+        long duration = endTime.getTime() - startTime.getTime();
+        int partialDays = duration % dayMillis > 0 ? 1 : 0;
+        return (int) (TimeUnit.MILLISECONDS.toDays(duration) + partialDays);
     }
 
+
+    private Map<String, String> getColorMap(String layoutUuid, long siteId, String portletId) {
+
+        Layout layout;
+        try {
+            layout = LayoutServiceUtil.getLayoutByUuidAndGroupId(layoutUuid, siteId, false);
+        } catch (PortalException e) {
+            LOG.error(String.format("Error retrieving FullCalendar portlet layout for uuid '%s': %s", layoutUuid, e.getMessage()));
+            return Collections.emptyMap();
+        }
+        FullCalendarConfiguration groupConfiguration ;
+        try {
+            groupConfiguration = configurationProvider.getPortletInstanceConfiguration(FullCalendarConfiguration.class, layout, portletId);
+        } catch (ConfigurationException e) {
+            LOG.error(String.format("Error retrieving FullCalendarConfiguration for siteId '%s': %s", portletId, e.getMessage()));
+            return Collections.emptyMap();
+        }
+
+        String jsonColorMap = groupConfiguration.sessionColorMap();
+        try {
+            return JsonContentParserUtils.parseJsonToMap(jsonColorMap);
+        } catch (JSONException e) {
+            LOG.error(String.format("Error parsing color map configuration for siteId '%s': %s", portletId, e.getMessage()));
+            return Collections.emptyMap();
+        }
+
+    }
+
+    private List<Resource> getResources(nl.deltares.portal.model.impl.Event dsdEvent) {
+
+        EventLocation dsdLocation = dsdEvent.getEventLocation();
+        List<Resource> resources = new ArrayList<>();
+        resources.addAll(getBuildingResources(dsdLocation.getBuildings()));
+        resources.addAll(getRoomResources(dsdLocation.getRooms()));
+        resources.addAll(getExternalResources(dsdEvent.getRegistrations()));
+        return resources;
+    }
+
+    private List<Resource> getExternalResources(List<Registration> registrations) {
+
+        ArrayList<Resource> restaurants = new ArrayList<>();
+        for (Registration registration : registrations) {
+            if (!(registration instanceof DinnerRegistration)) continue;
+
+            Location restaurant = ((DinnerRegistration) registration).getRestaurant();
+            Resource resource = new Resource();
+            resource.setBuilding("Restaurant");
+            resource.setId(String.valueOf(restaurant.getResourceId()));
+            resource.setTitle(restaurant.getTitle());
+            restaurants.add(resource);
+        }
+        return restaurants;
+    }
+
+    private List<Resource> getBuildingResources(List<Building> buildings) {
+        List<Resource> resources = new ArrayList<>();
+        for (Building building : buildings) {
+
+            List<Resource> roomResources = getRoomResources(building.getRooms());
+            for (Resource roomResource : roomResources) {
+                roomResource.setBuilding(building.getTitle());
+            }
+            resources.addAll(roomResources);
+        }
+        return resources;
+    }
+
+    private List<Resource> getRoomResources(List<Room> rooms) {
+        List<Resource> resources = new ArrayList<>(rooms.size());
+        for (Room room : rooms) {
+            Resource resource = new Resource();
+            resource.setId(String.valueOf(room.getResourceId()));
+            resource.setTitle(room.getTitle());
+            resource.setCapacity(room.getCapacity());
+            resource.setBuilding("Other");
+            resources.add(resource);
+        }
+        return resources;
+    }
 
 }

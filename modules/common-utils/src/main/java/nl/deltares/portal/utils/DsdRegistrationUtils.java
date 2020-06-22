@@ -3,7 +3,7 @@ package nl.deltares.portal.utils;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import nl.deltares.portal.exception.ValidationException;
-import nl.deltares.portal.model.impl.DsdEvent;
+import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
 
@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface DsdRegistrationUtils {
-
-    DsdEvent getDsdEvent(long siteId, long eventId) throws PortalException;
 
     /**
      * Register user for Registration
@@ -82,7 +80,13 @@ public interface DsdRegistrationUtils {
      */
     void validateRoomCapacity(SessionRegistration registration) throws PortalException;
 
+    /**
+     * Parse color configuration to map.
+     * @param json Json configuration containing sessionid to color mapping
+     * @return Map with sessionId as key and color hashcode as value
+     */
     Map<String, String> parseSessionColorConfig(String json);
 
-    String formatSessionColorConfig(Map<String, String> colorMap);
+    Event getEvent(long siteId, String eventId) throws PortalException;
+
 }

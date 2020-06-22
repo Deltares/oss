@@ -8,7 +8,6 @@ import org.w3c.dom.Document;
 public class Room extends AbsDsdArticle {
     private int capacity;
     private boolean storeInParentSite;
-    private String calendarColor;
 
     public Room(JournalArticle dsdArticle) throws PortalException {
         super(dsdArticle);

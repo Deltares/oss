@@ -6,15 +6,12 @@ import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.XmlContentParserUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 
 public abstract class Registration extends AbsDsdArticle {
 
-    private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+    private long eventId;
     private int capacity;
     private float price;
     private boolean open;
@@ -23,8 +20,6 @@ public abstract class Registration extends AbsDsdArticle {
     private boolean overlapWithParent;
     private Date startTime;
     private Date endTime;
-    private String color = null;
-
 
     public Registration(JournalArticle article) throws PortalException {
         super(article);
@@ -34,6 +29,8 @@ public abstract class Registration extends AbsDsdArticle {
     private void init() throws PortalException {
         try {
             Document document = getDocument();
+            String eventId = XmlContentParserUtils.getDynamicContentByName(document, "eventId", false);
+            this.eventId =  Long.parseLong(eventId);
             String capacity = XmlContentParserUtils.getDynamicContentByName(document, "capacity", false);
             this.capacity =  Integer.parseInt(capacity);
             String price = XmlContentParserUtils.getDynamicContentByName(document, "price", false);
@@ -48,21 +45,8 @@ public abstract class Registration extends AbsDsdArticle {
                 String overlap = XmlContentParserUtils.getDynamicContentByName(document, "overlaps", true);
                 overlapWithParent = Boolean.parseBoolean(overlap);
             }
-            dateTimeFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
-            startTime = parseDateTime("start", "starttime");
-            endTime = parseDateTime("end", "endtime");
-        } catch (Exception e) {
-            throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
-        }
-    }
-
-    private Date parseDateTime(String date, String time) throws PortalException {
-        try {
-            Document document = getDocument();
-            Node dateNode = XmlContentParserUtils.getDynamicElementByName(document, date, false);
-            String dateValue = XmlContentParserUtils.getDynamicContentForNode(dateNode);
-            String timeValue = XmlContentParserUtils.getDynamicContentByName(dateNode, time, false);
-            return dateTimeFormatter.parse(dateValue + 'T' + timeValue);
+            startTime = XmlContentParserUtils.parseDateTimeFields(document,"start", "starttime", false);
+            endTime = XmlContentParserUtils.parseDateTimeFields(document,"end", "endtime", false);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -103,10 +87,6 @@ public abstract class Registration extends AbsDsdArticle {
         return overlapWithParent;
     }
 
-    public void setOverlapWithParent(boolean overlapWithParent) {
-        this.overlapWithParent = overlapWithParent;
-    }
-
     public Date getStartTime() {
         return startTime;
     }
@@ -119,11 +99,7 @@ public abstract class Registration extends AbsDsdArticle {
         return type.name();
     }
 
-    public void setCalendarColor(String color){
-        this.color = color;
-    }
-
-    public String getCalendarColor() {
-        return color;
+    public long getEventId() {
+        return eventId;
     }
 }

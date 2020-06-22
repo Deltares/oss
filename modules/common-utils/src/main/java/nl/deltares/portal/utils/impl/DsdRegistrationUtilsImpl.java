@@ -12,7 +12,7 @@ import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
-import nl.deltares.portal.model.impl.DsdEvent;
+import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
 import nl.deltares.portal.utils.DsdRegistrationUtils;
@@ -179,13 +179,13 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
     }
 
     @Override
-    public DsdEvent getDsdEvent(long siteId, long eventId) throws PortalException {
+    public Event getEvent(long siteId, String eventId) throws PortalException {
         JournalArticle eventResource = JournalArticleLocalServiceUtil.getLatestArticle(siteId, String.valueOf(eventId));
         AbsDsdArticle eventArticle = AbsDsdArticle.getInstance(eventResource);
-        if (! (eventArticle instanceof DsdEvent) ){
+        if (! (eventArticle instanceof Event) ){
             throw new PortalException(String.format("EventId %d is not the articleId of a valid DSD Event", eventId));
         }
-        return (DsdEvent) eventArticle;
+        return (Event) eventArticle;
     }
 
     @Override
@@ -199,13 +199,9 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
         }
         for (DsdArticle.DSD_SESSION_KEYS session_keys : DsdArticle.DSD_SESSION_KEYS.values()) {
             String sessionKey = session_keys.name();
-            colorMap.putIfAbsent(sessionKey, "#FFFFFF");
+            colorMap.putIfAbsent(sessionKey, "#17a2b8");
         }
         return colorMap;
     }
 
-    @Override
-    public String formatSessionColorConfig(Map<String, String> colorMap) {
-        return JsonContentParserUtils.formatMapToJson(colorMap);
-    }
 }

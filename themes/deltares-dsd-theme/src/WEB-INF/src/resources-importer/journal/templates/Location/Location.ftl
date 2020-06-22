@@ -1,4 +1,3 @@
-${name.getData()}
 ${address.getData()}
 ${postalcode.getData()}
 ${city.getData()}

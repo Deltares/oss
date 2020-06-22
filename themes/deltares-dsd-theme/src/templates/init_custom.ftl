@@ -21,6 +21,10 @@ This file allows you to override and define new FreeMarker variables.
 <#if journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroupId(), footerWCArticleId)?? >
     <#assign footerWCArticle = journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroupId(), footerWCArticleId) >
     <#assign footerWCContent = journalArticleLocalService.getArticleContent(footerWCArticle, footerWCArticle.getDDMTemplateKey(), "VIEW", locale, themeDisplay) />
+<#elseif themeDisplay.getScopeGroup().getParentGroupId()?? &&
+journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroup().getParentGroupId(), footerWCArticleId)?? >
+    <#assign footerWCArticle = journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroup().getParentGroupId(), footerWCArticleId) >
+    <#assign footerWCContent = journalArticleLocalService.getArticleContent(footerWCArticle, footerWCArticle.getDDMTemplateKey(), "VIEW", locale, themeDisplay) />
 </#if>
 
 <#if !is_site_admin >

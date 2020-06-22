@@ -7,7 +7,9 @@ public class Resource implements Serializable {
     private String id;
     private String title;
     private String eventColor;
+    private String building;
     private BusinessHours businessHours = new BusinessHours();
+    private int capacity;
 
     public void setId(String id) {
         this.id = id;
@@ -41,6 +43,23 @@ public class Resource implements Serializable {
         this.businessHours = businessHours;
     }
 
+    public String getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(String building) {
+        this.building = building;
+    }
+
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -53,4 +72,5 @@ public class Resource implements Serializable {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }
