@@ -50,6 +50,18 @@ public class RegistrationFacetPortletSharedSearchContributor implements PortletS
 
             searchContext.setBooleanClauses(new BooleanClause[]{structureBooleanClause});
         }
+
+        BooleanQuery groupQuery = new BooleanQueryImpl();
+        long siteGroupId = portletSharedSearchSettings.getThemeDisplay().getSiteGroupId();
+        try {
+            groupQuery.addTerm("groupId", siteGroupId);
+        } catch (ParseException e) {
+            LOG.debug("Could not parse term for [field: groupId, value: " + siteGroupId + "]");
+        }
+        BooleanClause<Query> groupBooleanClause = BooleanClauseFactoryUtil
+                .create(groupQuery, BooleanClauseOccur.MUST.getName());
+
+        searchContext.setBooleanClauses(new BooleanClause[]{groupBooleanClause});
     }
 
     @Reference
