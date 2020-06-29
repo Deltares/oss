@@ -1,7 +1,7 @@
 <div class="nav-menu">
 	<#assign preferences = freeMarkerPortletPreferences.getPreferences("portletSetupPortletDecoratorId", "barebone") />
 	<div class="header_search navbar-form" role="search">
-		<#include "${full_templates_path}/language.ftl" />
+<#--		<#include "${full_templates_path}/language.ftl" />-->
 		<#include "${full_templates_path}/user_personal.ftl" />
 
 <#--		<@liferay.search default_preferences="${preferences}" />-->
