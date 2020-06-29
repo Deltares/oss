@@ -26,7 +26,12 @@ import java.util.*;
 
 @Component(
         immediate = true,
-        service = DsdRegistrationUtils.class
+        service = DsdRegistrationUtils.class,
+        property = {
+        "javax.portlet.supported-locale=en",
+        "javax.portlet.supported-locale=nl",
+        "javax.portlet.resource-bundle=content.Language"
+        }
 )
 public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
 
@@ -180,12 +185,22 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
 
     @Override
     public Event getEvent(long siteId, String eventId) throws PortalException {
-        JournalArticle eventResource = JournalArticleLocalServiceUtil.getLatestArticle(siteId, String.valueOf(eventId));
+        JournalArticle eventResource = JournalArticleLocalServiceUtil.getLatestArticle(siteId, eventId);
         AbsDsdArticle eventArticle = AbsDsdArticle.getInstance(eventResource);
         if (! (eventArticle instanceof Event) ){
-            throw new PortalException(String.format("EventId %d is not the articleId of a valid DSD Event", eventId));
+            throw new PortalException(String.format("EventId %s is not the articleId of a valid DSD Event", eventId));
         }
         return (Event) eventArticle;
+    }
+
+    @Override
+    public Registration getRegistration(long siteId, String registrationId) throws PortalException {
+        JournalArticle article = JournalArticleLocalServiceUtil.getLatestArticle(siteId, registrationId);
+        AbsDsdArticle dsdArticle = AbsDsdArticle.getInstance(article);
+        if (! (dsdArticle instanceof Registration) ){
+            throw new PortalException(String.format("Id %s is not the articleId of a valid DSD Event", registrationId));
+        }
+        return (Registration) dsdArticle;
     }
 
     @Override

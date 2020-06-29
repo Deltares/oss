@@ -19,8 +19,8 @@ public class Event extends AbsDsdArticle {
 
     private final List<Registration> registrationCache = new ArrayList<>();
     private EventLocation eventLocation;
-    private Date startDay = null;
-    private Date endDay = null;
+    private Date startTime = null;
+    private Date endTime = null;
 
     public Event(JournalArticle journalArticle) throws PortalException {
         super(journalArticle);
@@ -32,8 +32,8 @@ public class Event extends AbsDsdArticle {
             Document document = getDocument();
             String eventLocation = XmlContentParserUtils.getDynamicContentByName(document, "eventLocation", false);
             this.eventLocation = parseEventLocation(eventLocation);
-            startDay = XmlContentParserUtils.parseDateTimeFields(document, "start", "starttime", false);
-            endDay = XmlContentParserUtils.parseDateTimeFields(document, "end", "endtime", false);
+            startTime = XmlContentParserUtils.parseDateTimeFields(document, "start", "starttime", false);
+            endTime = XmlContentParserUtils.parseDateTimeFields(document, "end", "endtime", false);
             loadRegistrations();
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
@@ -57,12 +57,12 @@ public class Event extends AbsDsdArticle {
         return eventLocation;
     }
 
-    public Date getStartDay() {
-        return startDay;
+    public Date getStartTime() {
+        return startTime;
     }
 
-    public Date getEndDay() {
-        return endDay;
+    public Date getEndTime() {
+        return endTime;
     }
 
     public List<Registration> getRegistrations() {
@@ -70,11 +70,11 @@ public class Event extends AbsDsdArticle {
     }
 
     public boolean isEventInPast(){
-        return System.currentTimeMillis() > startDay.getTime();
+        return System.currentTimeMillis() > startTime.getTime();
     }
 
     public boolean isMultiDayEvent(){
-        long duration = endDay.getTime() - startDay.getTime();
+        long duration = endTime.getTime() - startTime.getTime();
         return TimeUnit.MILLISECONDS.toHours(duration) > TimeUnit.DAYS.toMillis(1);
     }
 
@@ -113,7 +113,7 @@ public class Event extends AbsDsdArticle {
         searchQuery.add(structureCriteria);
 
         //filter creation date between ~6months before start up till start
-        Date endCreationSearchPeriod = eventArticle.getStartDay();
+        Date endCreationSearchPeriod = eventArticle.getStartTime();
         //todo make this configurable
         Date startCreationSearchPeriod = new Date(endCreationSearchPeriod.getTime() - TimeUnit.DAYS.toMillis(180));
         Criterion checkCreationPeriod = PropertyFactoryUtil.forName("createDate").between(startCreationSearchPeriod, endCreationSearchPeriod);

@@ -1,0 +1,130 @@
+{
+  "availableLanguageIds": [
+    "en_US"
+  ],
+  "defaultLanguageId": "en_US",
+  "fields": [
+    {
+      "label": {
+        "en_US": "Presenters"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "journal-article",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "presenters",
+      "readOnly": false,
+      "repeatable": true,
+      "required": false,
+      "showLabel": true,
+      "type": "ddm-journal-article"
+    },
+    {
+      "label": {
+        "en_US": "Description"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "html",
+      "fieldNamespace": "ddm",
+      "indexType": "text",
+      "localizable": true,
+      "name": "description",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-text-html"
+    },
+    {
+      "label": {
+        "en_US": "Room"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "journal-article",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "room",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-journal-article"
+    },
+    {
+      "label": {
+        "en_US": "Schedules"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "html",
+      "fieldNamespace": "ddm",
+      "indexType": "text",
+      "localizable": true,
+      "name": "schedules",
+      "readOnly": false,
+      "repeatable": true,
+      "required": false,
+      "showLabel": true,
+      "type": "ddm-text-html",
+      "nestedFields": [
+        {
+          "label": {
+            "en_US": "Date"
+          },
+          "predefinedValue": {
+            "en_US": ""
+          },
+          "style": {
+            "en_US": ""
+          },
+          "tip": {
+            "en_US": ""
+          },
+          "dataType": "date",
+          "fieldNamespace": "ddm",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "date",
+          "readOnly": false,
+          "repeatable": false,
+          "required": false,
+          "showLabel": true,
+          "type": "ddm-date"
+        }
+      ]
+    }
+  ]
+}

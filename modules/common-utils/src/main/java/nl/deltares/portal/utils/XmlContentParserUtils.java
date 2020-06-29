@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Objects;
 import java.util.stream.IntStream;
 
 public class XmlContentParserUtils {
@@ -64,9 +63,6 @@ public class XmlContentParserUtils {
         int length = dynamicElementsByName == null ? 0 : dynamicElementsByName.getLength();
         if (length == 0 && !optional){
             throw new PortalException(String.format("Node name '%s' not found in document! ", nodeName));
-        }
-        if (length > 1){
-            throw new PortalException(String.format("Expected single element for '%s' but found '%d'!", nodeName, length));
         }
         if (dynamicElementsByName == null) return null;
         return dynamicElementsByName.item(0);
@@ -126,9 +122,6 @@ public class XmlContentParserUtils {
         if (length == 0 && !optional){
             throw new PortalException(String.format("Node name '%s' not found in document! ", nodeName));
         }
-        if (length > 1){
-            throw new PortalException(String.format("Expected single element for '%s' but found '%d'!", nodeName, length));
-        }
         if (contentValues.length == 0) return null;
         if (contentValues[0].trim().isEmpty()) return null;
         return contentValues[0];
@@ -181,7 +174,7 @@ public class XmlContentParserUtils {
                     }
                     return nodeValue;
                 })
-                .filter(Objects::nonNull)
+                .filter(s -> s != null && !s.trim().isEmpty())
                 .map(String::valueOf)
                 .toArray(String[]::new);
     }

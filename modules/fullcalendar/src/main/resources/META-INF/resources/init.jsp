@@ -62,7 +62,7 @@
         try {
             DsdRegistrationUtils dsdUtils = (DsdRegistrationUtils) renderRequest.getAttribute(DsdRegistrationUtils.class.getName());
             Event event = dsdUtils.getEvent(siteId, eventId);
-            startDate = format.format(event.getStartDay());
+            startDate = format.format(event.getStartTime());
             colorMap = dsdUtils.parseSessionColorConfig(sessionColorMap);
         } catch (PortalException e) {
             System.out.println(e.getMessage());

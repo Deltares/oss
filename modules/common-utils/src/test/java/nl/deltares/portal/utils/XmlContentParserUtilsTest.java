@@ -50,9 +50,9 @@ public class XmlContentParserUtilsTest {
 
         URL xml = this.getClass().getResource("/data/dsdevent.xml");
         Document document = XmlContentParserUtils.parseContent("testGetDynamicElementByName", new FileInputStream(xml.getFile()));
-        Node startDay = XmlContentParserUtils.getDynamicElementByName(document, "startDay", false);
+        Node startDay = XmlContentParserUtils.getDynamicElementByName(document, "startTime", false);
         Assert.assertEquals("dynamic-element", startDay.getNodeName());
-        Assert.assertEquals("startDay", ((DeferredElementImpl)startDay).getAttribute("name"));
+        Assert.assertEquals("startTime", ((DeferredElementImpl)startDay).getAttribute("name"));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class XmlContentParserUtilsTest {
 
         URL xml = this.getClass().getResource("/data/dsdevent.xml");
         Document document = XmlContentParserUtils.parseContent("testGetDynamicContentByName", new FileInputStream(xml.getFile()));
-        String content = XmlContentParserUtils.getDynamicContentByName(document, "startDay", false);
+        String content = XmlContentParserUtils.getDynamicContentByName(document, "startTime", false);
         Assert.assertEquals("2020-06-15", content);
 
     }

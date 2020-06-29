@@ -1,7 +1,6 @@
 package nl.deltares.search.facet.date;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
 import nl.deltares.search.constans.FacetPortletKeys;
@@ -42,7 +41,6 @@ public class DateRangeFacetPortlet extends MVCPortlet {
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
         PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
-        renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, false);
         Optional<String> startDateOptional = portletSharedSearchResponse.getParameter("startDate", renderRequest);
         Optional<String> endDateOptional = portletSharedSearchResponse.getParameter("endDate", renderRequest);
 

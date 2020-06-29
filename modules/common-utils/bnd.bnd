@@ -15,3 +15,5 @@ Import-Package: \
   !org.apache.avalon.framework.logger.*,\
   !org.apache.log.*,\
   *
+-liferay-aggregate-resource-bundles:
+  oss.language, \

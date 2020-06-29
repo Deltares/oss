@@ -89,4 +89,6 @@ public interface DsdRegistrationUtils {
 
     Event getEvent(long siteId, String eventId) throws PortalException;
 
+    Registration getRegistration(long siteId, String registrationId) throws PortalException;
+
 }

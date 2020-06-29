@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<root available-locales="en_US" default-locale="en_US">
+    <dynamic-element name="content" type="text_area" index-type="text" instance-id="xnvl">
+        <dynamic-content language-id="en_US">
+            <![CDATA[<p id="buttons">&nbsp;</p>
+<script>
+  var imagesUrl = Liferay.ThemeDisplay.getPathThemeImages();
+  var homeUrl = Liferay.ThemeDisplay.getURLHome();
+  document.getElementById('buttons').innerHTML =
+        "<a href='" + homeUrl + "/list-view'>" +
+            "<img src='" + imagesUrl + "/dsd/list-view.png' style='display: inline-block; float: right; margin-left: 1.2rem;' /></a>" +
+        "<a href='" + homeUrl + "/calendar-view'>" +
+            "<img src='" + imagesUrl + "/dsd/calendar-view.png' style='display: inline-block; float: right; margin-left: 1.2rem;' /></a>";
+</script>]]>
+        </dynamic-content>
+    </dynamic-element>
+</root>
