@@ -99,6 +99,11 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
         return RegistrationLocalServiceUtil.getRegistrationsCount(registration.getGroupId(), registration.getResourceId());
     }
 
+    public int getAvailablePlaces(Registration registration){
+        int registrationsCount = RegistrationLocalServiceUtil.getRegistrationsCount(registration.getGroupId(), registration.getResourceId());
+        return registration.getCapacity() - registrationsCount;
+    }
+
     private long[] getOverlappingRegistrationIds(User user, Registration registration){
         long[] registrationsWithOverlappingPeriod = RegistrationLocalServiceUtil.getRegistrationsWithOverlappingPeriod(registration.getGroupId(), user.getUserId(),
                 registration.getStartTime(), registration.getEndTime());
