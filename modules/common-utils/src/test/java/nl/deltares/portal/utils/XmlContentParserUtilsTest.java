@@ -17,7 +17,6 @@ import static nl.deltares.portal.utils.XmlContentParserUtils.parseContent;
 
 public class XmlContentParserUtilsTest {
 
-
     @Test
     public void testParseContent() throws IOException, PortalException {
         URL xml = this.getClass().getResource("/data/dsdevent.xml");
@@ -50,9 +49,9 @@ public class XmlContentParserUtilsTest {
 
         URL xml = this.getClass().getResource("/data/dsdevent.xml");
         Document document = XmlContentParserUtils.parseContent("testGetDynamicElementByName", new FileInputStream(xml.getFile()));
-        Node startDay = XmlContentParserUtils.getDynamicElementByName(document, "startTime", false);
+        Node startDay = XmlContentParserUtils.getDynamicElementByName(document, "starttime", false);
         Assert.assertEquals("dynamic-element", startDay.getNodeName());
-        Assert.assertEquals("startTime", ((DeferredElementImpl)startDay).getAttribute("name"));
+        Assert.assertEquals("starttime", ((DeferredElementImpl)startDay).getAttribute("name"));
     }
 
     @Test
@@ -70,8 +69,8 @@ public class XmlContentParserUtilsTest {
 
         URL xml = this.getClass().getResource("/data/dsdevent.xml");
         Document document = XmlContentParserUtils.parseContent("testGetDynamicElementsByName", new FileInputStream(xml.getFile()));
-        NodeList nodes = XmlContentParserUtils.getDynamicElementsByName(document, "eventSession");
-        Assert.assertEquals(4, nodes.getLength());
+        NodeList nodes = XmlContentParserUtils.getDynamicElementsByName(document, "eventLocation");
+        Assert.assertEquals(1, nodes.getLength());
     }
 
     @Test
@@ -89,8 +88,8 @@ public class XmlContentParserUtilsTest {
 
         URL xml = this.getClass().getResource("/data/dsdevent.xml");
         Document document = XmlContentParserUtils.parseContent("testGetDynamicContentByName", new FileInputStream(xml.getFile()));
-        String content = XmlContentParserUtils.getDynamicContentByName(document, "startTime", false);
-        Assert.assertEquals("2020-06-15", content);
+        String content = XmlContentParserUtils.getDynamicContentByName(document, "start", false);
+        Assert.assertEquals("2020-07-06", content);
 
     }
 
@@ -99,9 +98,9 @@ public class XmlContentParserUtilsTest {
 
         URL xml = this.getClass().getResource("/data/dsdevent.xml");
         Document document = XmlContentParserUtils.parseContent("testGetDynamicContentsByName", new FileInputStream(xml.getFile()));
-        String[] content = XmlContentParserUtils.getDynamicContentsByName(document, "eventSession");
-        Assert.assertEquals(4, content.length);
-        Assert.assertEquals("{\"classPK\":\"41748\",\"groupId\":\"41296\",\"className\":\"com.liferay.journal.model.JournalArticle\",\"title\":\"Delft FEWS Dinner 2020\",\"titleMap\":\"{\\\"en_US\\\":\\\"Delft FEWS Dinner 2020\\\"}\",\"uuid\":\"0e1a2d52-a15d-c4eb-a7d9-90ee025f1b52\"}", content[0]);
+        String[] content = XmlContentParserUtils.getDynamicContentsByName(document, "eventLocation");
+        Assert.assertEquals(1, content.length);
+        Assert.assertEquals("{\"className\":\"com.liferay.journal.model.JournalArticle\",\"classPK\":\"80868\",\"title\":\"Deltares\",\"titleMap\":\"{\\\"en_US\\\":\\\"Deltares\\\"}\"}", content[0]);
 
     }
 
