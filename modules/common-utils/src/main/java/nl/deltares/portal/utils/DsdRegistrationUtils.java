@@ -34,6 +34,12 @@ public interface DsdRegistrationUtils {
      */
     int getRegistrationCount(Registration registration);
 
+    /**
+     * Get number of places currently available for registration
+     * @param registration Registration Article
+     * @return number of available places
+     */
+    int getAvailablePlaces(Registration registration);
 
     /**
      * Get all user registration with a period that overlap that of the argument 'registration'.

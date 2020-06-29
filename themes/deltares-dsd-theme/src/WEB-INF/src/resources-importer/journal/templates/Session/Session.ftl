@@ -8,10 +8,18 @@
     <#assign isEventPast = "upcoming-event"/>
 </#if>
 <#assign price = registration.getPrice() />
-Local = ${locale}
 <div class="c-events page">
     <div class="c-events__item ${isEventPast}">
         <div class="clearfix">
+            <div class="media-section">
+                <#if eventImage.getData()?? && eventImage.getData() != "">
+                    <img
+                            class="c-events__item__image"
+                            alt="${eventImage.getAttribute("alt")}"
+                            data-fileentryid="${eventImage.getAttribute("fileEntryId")}"
+                            src="${eventImage.getData()}" />
+                </#if>
+            </div>
             <div class="data-section">
                 <div class="c-events__item__date">
                     <span>${dateUtil.getDate(registration.getStartTime(), "dd", locale)}</span>
@@ -31,18 +39,18 @@ Local = ${locale}
                     <span class="c-events__item__time-date-place__time">
                         ${dateUtil.getDate(registration.getStartTime(), "HH:mm", locale)} -
                         ${dateUtil.getDate(registration.getEndTime(), "HH:mm", locale)}</span>
-
+                    <br>
                     <span class="c-events__item__time-date-place__place">
                         <img src="${themeDisplay.getPathThemeImages()}/dsd/${registration.getType()}.png"> ${registration.getType()}&nbsp;
+                        <br>
                         ${registration.getCurrency()}
                         <#if price == 0 >
-                            ${languageUtil.get(locale, "price.free")}&nbsp;
+                            ${languageUtil.get(locale, "registration.price.free")}&nbsp;
                         <#else>
                             ${registration.getPrice()}&nbsp;
                         </#if>
-
-
-                        ${room.getTitle()}
+                        <br>
+                        ${room.getTitle()} ( ${languageUtil.get(locale, "registration.available")} : ${dsdUtils.getAvailablePlaces(registration)} )
                     </span>
 
                 </p>
@@ -53,4 +61,16 @@ Local = ${locale}
         ${description.getData()}
     </div>
 
+    <#if schedules?? && schedules.getSiblings()?has_content && validator.isNotNull(schedules.getSiblings()?first.getData())>
+
+        <#list schedules.getSiblings() as cur_Schedule>
+            <h3 class="c-events__item__title h1">
+                ${languageUtil.get(locale, "registration.schedule")} - ${dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale)}
+            </h3>
+            <div class="c-events__item__description">
+                ${cur_Schedule.getData()}
+            </div>
+        </#list>
+
+    </#if>
 </div>

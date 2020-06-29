@@ -2,7 +2,6 @@ package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.language.LanguageUtil;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.XmlContentParserUtils;
@@ -10,7 +9,6 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.w3c.dom.Document;
 
 import java.util.Date;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public abstract class Registration extends AbsDsdArticle {
@@ -86,11 +84,6 @@ public abstract class Registration extends AbsDsdArticle {
         return price;
     }
 
-    public String getPriceText(Locale locale){
-        if (price == 0) return LanguageUtil.get(locale, "price.free");
-        return String.valueOf(price);
-    }
-
     public String getCurrency() {
         return currency;
     }
@@ -125,7 +118,7 @@ public abstract class Registration extends AbsDsdArticle {
 
     public boolean isMultiDayEvent(){
         long duration = endTime.getTime() - startTime.getTime();
-        return TimeUnit.MILLISECONDS.toHours(duration) > TimeUnit.DAYS.toMillis(1);
+        return duration > TimeUnit.DAYS.toMillis(1);
     }
 
 }

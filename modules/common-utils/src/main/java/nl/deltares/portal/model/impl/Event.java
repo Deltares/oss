@@ -75,7 +75,7 @@ public class Event extends AbsDsdArticle {
 
     public boolean isMultiDayEvent(){
         long duration = endTime.getTime() - startTime.getTime();
-        return TimeUnit.MILLISECONDS.toHours(duration) > TimeUnit.DAYS.toMillis(1);
+        return duration > TimeUnit.DAYS.toMillis(1);
     }
 
     private void loadRegistrations() throws PortalException {
