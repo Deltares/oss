@@ -26,48 +26,7 @@
             "repeatable": false,
             "required": true,
             "showLabel": true,
-            "type": "ddm-image",
-            "nestedFields": [
-                {
-                    "label": {
-                        "en_US": "Image/text contrast"
-                    },
-                    "options": [
-                        {
-                            "value": "light-text",
-                            "label": {
-                                "en_US": "Dark image"
-                            }
-                        },
-                        {
-                            "value": "dark-text",
-                            "label": {
-                                "en_US": "Light image"
-                            }
-                        }
-                    ],
-                    "predefinedValue": {
-                        "en_US": [
-                            "light-text"
-                        ]
-                    },
-                    "style": {
-                        "en_US": ""
-                    },
-                    "tip": {
-                        "en_US": ""
-                    },
-                    "dataType": "string",
-                    "indexType": "keyword",
-                    "localizable": true,
-                    "name": "ImageTextContrast",
-                    "readOnly": false,
-                    "repeatable": false,
-                    "required": false,
-                    "showLabel": true,
-                    "type": "radio"
-                }
-            ]
+            "type": "ddm-image"
         }
     ]
 }

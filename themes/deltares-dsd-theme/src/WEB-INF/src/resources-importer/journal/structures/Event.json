@@ -1,25 +1,20 @@
 {
     "availableLanguageIds": [
-        "en_US",
-        "nl_NL"
+        "en_US"
     ],
     "defaultLanguageId": "en_US",
     "fields": [
         {
             "label": {
-                "nl_NL": "Begin datum",
                 "en_US": "Start date"
             },
             "predefinedValue": {
-                "nl_NL": "",
                 "en_US": ""
             },
             "style": {
-                "nl_NL": "",
                 "en_US": ""
             },
             "tip": {
-                "nl_NL": "",
                 "en_US": ""
             },
             "dataType": "date",
@@ -35,19 +30,15 @@
             "nestedFields": [
                 {
                     "label": {
-                        "nl_NL": "tijd",
                         "en_US": "time"
                     },
                     "predefinedValue": {
-                        "nl_NL": "00:00",
-                        "en_US": "00:00"
+                        "en_US": "09:00"
                     },
                     "style": {
-                        "nl_NL": "",
                         "en_US": ""
                     },
                     "tip": {
-                        "nl_NL": "Start tijd (formaat: HH:mm locale tijdzone) ",
                         "en_US": "Start time (format: HH:mm time timezone) "
                     },
                     "dataType": "string",
@@ -64,19 +55,15 @@
         },
         {
             "label": {
-                "nl_NL": "Eind datum",
                 "en_US": "End date"
             },
             "predefinedValue": {
-                "nl_NL": "",
                 "en_US": ""
             },
             "style": {
-                "nl_NL": "",
                 "en_US": ""
             },
             "tip": {
-                "nl_NL": "",
                 "en_US": ""
             },
             "dataType": "date",
@@ -92,19 +79,15 @@
             "nestedFields": [
                 {
                     "label": {
-                        "nl_NL": "tijd",
                         "en_US": "time"
                     },
                     "predefinedValue": {
-                        "nl_NL": "00:00",
-                        "en_US": "00:00"
+                        "en_US": "17:00"
                     },
                     "style": {
-                        "nl_NL": "",
                         "en_US": ""
                     },
                     "tip": {
-                        "nl_NL": "Eind tijd (formaat: HH:mm locale tijdzone) ",
                         "en_US": "End time (format: HH:mm local timezone) "
                     },
                     "dataType": "string",
@@ -121,20 +104,16 @@
         },
         {
             "label": {
-                "en_US": "Location",
-                "nl_NL": "Locatie"
+                "en_US": "Location"
             },
             "predefinedValue": {
-                "en_US": "",
-                "nl_NL": ""
+                "en_US": ""
             },
             "style": {
-                "en_US": "",
-                "nl_NL": ""
+                "en_US": ""
             },
             "tip": {
-                "en_US": "",
-                "nl_NL": ""
+                "en_US": ""
             },
             "dataType": "journal-article",
             "fieldNamespace": "ddm",
@@ -149,20 +128,16 @@
         },
         {
             "label": {
-                "en_US": "Image",
-                "nl_NL": "Afbeelding"
+                "en_US": "Image"
             },
             "predefinedValue": {
-                "en_US": "",
-                "nl_NL": ""
+                "en_US": ""
             },
             "style": {
-                "en_US": "",
-                "nl_NL": ""
+                "en_US": ""
             },
             "tip": {
-                "en_US": "",
-                "nl_NL": ""
+                "en_US": ""
             },
             "dataType": "image",
             "fieldNamespace": "ddm",
@@ -177,20 +152,16 @@
         },
         {
             "label": {
-                "en_US": "Introduction",
-                "nl_NL": "Introductie"
+                "en_US": "Introduction"
             },
             "predefinedValue": {
-                "en_US": "",
-                "nl_NL": ""
+                "en_US": ""
             },
             "style": {
-                "en_US": "",
-                "nl_NL": ""
+                "en_US": ""
             },
             "tip": {
-                "en_US": "",
-                "nl_NL": ""
+                "en_US": ""
             },
             "dataType": "string",
             "indexType": "keyword",
@@ -204,20 +175,16 @@
         },
         {
             "label": {
-                "en_US": "Description",
-                "nl_NL": "Omschrijving"
+                "en_US": "Description"
             },
             "predefinedValue": {
-                "en_US": "",
-                "nl_NL": ""
+                "en_US": ""
             },
             "style": {
-                "en_US": "",
-                "nl_NL": ""
+                "en_US": ""
             },
             "tip": {
-                "en_US": "",
-                "nl_NL": ""
+                "en_US": ""
             },
             "dataType": "html",
             "fieldNamespace": "ddm",

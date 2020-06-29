@@ -1,25 +1,20 @@
 {
     "availableLanguageIds": [
-        "en_US",
-        "nl_NL"
+        "en_US"
     ],
     "defaultLanguageId": "en_US",
     "fields": [
         {
             "label": {
-                "nl_NL": "Opslaan in overkoepelende site",
                 "en_US": "Store in parent site"
             },
             "predefinedValue": {
-                "nl_NL": "true",
                 "en_US": true
             },
             "style": {
-                "nl_NL": "",
                 "en_US": ""
             },
             "tip": {
-                "nl_NL": "Selecteer om op te slaan in overkoepelende site.",
                 "en_US": "Choose to store content under parent site."
             },
             "dataType": "boolean",
@@ -34,20 +29,16 @@
         },
         {
             "label": {
-                "en_US": "Expert name",
-                "nl_NL": "Expert naam"
+                "en_US": "Expert name"
             },
             "predefinedValue": {
-                "en_US": "",
-                "nl_NL": ""
+                "en_US": ""
             },
             "style": {
-                "en_US": "",
-                "nl_NL": ""
+                "en_US": ""
             },
             "tip": {
-                "en_US": "",
-                "nl_NL": ""
+                "en_US": ""
             },
             "dataType": "string",
             "indexType": "keyword",
@@ -61,20 +52,16 @@
             "nestedFields": [
                 {
                     "label": {
-                        "en_US": "Expert image",
-                        "nl_NL": "Expert foto"
+                        "en_US": "Expert image"
                     },
                     "predefinedValue": {
-                        "en_US": "",
-                        "nl_NL": ""
+                        "en_US": ""
                     },
                     "style": {
-                        "en_US": "",
-                        "nl_NL": ""
+                        "en_US": ""
                     },
                     "tip": {
-                        "en_US": "",
-                        "nl_NL": ""
+                        "en_US": ""
                     },
                     "dataType": "image",
                     "fieldNamespace": "ddm",
@@ -89,20 +76,16 @@
                 },
                 {
                     "label": {
-                        "en_US": "Expert job title",
-                        "nl_NL": "Expert functieomschrijving"
+                        "en_US": "Expert job title"
                     },
                     "predefinedValue": {
-                        "en_US": "",
-                        "nl_NL": ""
+                        "en_US": ""
                     },
                     "style": {
-                        "en_US": "",
-                        "nl_NL": ""
+                        "en_US": ""
                     },
                     "tip": {
-                        "en_US": "",
-                        "nl_NL": ""
+                        "en_US": ""
                     },
                     "dataType": "string",
                     "indexType": "keyword",
@@ -116,20 +99,16 @@
                 },
                 {
                     "label": {
-                        "en_US": "Expert company",
-                        "nl_NL": "Expert bedrijf"
+                        "en_US": "Expert company"
                     },
                     "predefinedValue": {
-                        "en_US": "",
-                        "nl_NL": ""
+                        "en_US": ""
                     },
                     "style": {
-                        "en_US": "",
-                        "nl_NL": ""
+                        "en_US": ""
                     },
                     "tip": {
-                        "en_US": "",
-                        "nl_NL": ""
+                        "en_US": ""
                     },
                     "dataType": "string",
                     "indexType": "keyword",
@@ -143,20 +122,16 @@
                 },
                 {
                     "label": {
-                        "en_US": "Expert email address",
-                        "nl_NL": "Expert email adres"
+                        "en_US": "Expert email address"
                     },
                     "predefinedValue": {
-                        "en_US": "",
-                        "nl_NL": ""
+                        "en_US": ""
                     },
                     "style": {
-                        "en_US": "",
-                        "nl_NL": ""
+                        "en_US": ""
                     },
                     "tip": {
-                        "en_US": "",
-                        "nl_NL": ""
+                        "en_US": ""
                     },
                     "dataType": "string",
                     "indexType": "keyword",
@@ -170,20 +145,16 @@
                 },
                 {
                     "label": {
-                        "en_US": "Fill missing fields",
-                        "nl_NL": "Vul ontbrekende velden"
+                        "en_US": "Fill missing fields"
                     },
                     "predefinedValue": {
-                        "en_US": false,
-                        "nl_NL": false
+                        "en_US": false
                     },
                     "style": {
-                        "en_US": "",
-                        "nl_NL": ""
+                        "en_US": ""
                     },
                     "tip": {
-                        "en_US": "Automatically fill missing fields with values from the database.",
-                        "nl_NL": "Vul automatisch ontbrekende velden met waarden uit de database."
+                        "en_US": "Automatically fill missing fields with values from the database."
                     },
                     "dataType": "boolean",
                     "indexType": "keyword",
