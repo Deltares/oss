@@ -50,7 +50,9 @@
                             ${registration.getPrice()}&nbsp;
                         </#if>
                         <br>
-                        ${room.getTitle()} ( ${languageUtil.get(locale, "registration.available")} : ${dsdUtils.getAvailablePlaces(registration)} )
+                        <#assign registrations = dsdUtils.getRegistrationCount(registration) />
+                        <#assign available = registration.getCapacity() - registrations />
+                        ${room.getTitle()} ( ${languageUtil.get(locale, "registration.available")} : ${available} )
                     </span>
 
                 </p>

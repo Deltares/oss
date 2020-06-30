@@ -28,12 +28,12 @@ import java.util.*;
         immediate = true,
         service = DsdRegistrationUtils.class,
         property = {
-        "javax.portlet.supported-locale=en",
-        "javax.portlet.supported-locale=nl",
-        "javax.portlet.resource-bundle=content.Language"
+                "javax.portlet.supported-locale=en",
+                "javax.portlet.supported-locale=nl",
+                "javax.portlet.resource-bundle=content.Language"
         }
 )
-public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
+public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils {
 
     private static final Log LOG = LogFactoryUtil.getLog(DsdRegistrationUtilsImpl.class);
 
@@ -67,31 +67,45 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
     @Override
     public void validateRegistration(User user, Registration registration) throws PortalException {
 
-        if (!registration.isOpen()){
+        if (!registration.isOpen()) {
             throw new ValidationException(String.format("Registration %s is not open!", registration.getTitle()));
         }
 
-        if (isUserRegisteredFor(user, registration)){
+        if (isUserRegisteredFor(user, registration)) {
             throw new ValidationException(String.format("User already registered for %s !", registration.getTitle()));
         }
 
-        if (registration.getCapacity() != Integer.MAX_VALUE && getRegistrationCount(registration) >= registration.getCapacity()){
+        if (registration.getCapacity() != Integer.MAX_VALUE && getRegistrationCount(registration) >= registration.getCapacity()) {
             throw new ValidationException(String.format("Registration %s is full!", registration.getTitle()));
         }
 
-        if (getOverlappingRegistrationIds(user, registration).length > 0){
+        if (getOverlappingRegistrationIds(user, registration).length > 0) {
             throw new ValidationException(String.format("Registration period for %s overlaps with other existing registrations!", registration.getTitle()));
         }
 
         List<String> missingInfo = getMissingUserInformation(user, registration);
-        if (missingInfo.size() > 0){
+        if (missingInfo.size() > 0) {
             throw new ValidationException("Missing user data for following fields: " + Arrays.toString(missingInfo.toArray()));
         }
 
-        if (registration.getParentRegistration() != null && !isUserRegisteredFor(user, registration.getParentRegistration())){
-            throw new ValidationException("User not registered for required parent registration: " + registration.getParentRegistration().getTitle() );
+        if (registration.getParentRegistration() != null && !isUserRegisteredFor(user, registration.getParentRegistration())) {
+            throw new ValidationException("User not registered for required parent registration: " + registration.getParentRegistration().getTitle());
         }
 
+    }
+
+
+    public List<Registration> getChildRegistrations(Registration registration) throws PortalException {
+        Event event = getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()));
+
+        List<Registration> registrations = event.getRegistrations();
+        ArrayList<Registration> children = new ArrayList<>();
+        registrations.forEach(r -> {
+            if (r.getParentRegistration() != null && r.getParentRegistration().getResourceId() == registration.getResourceId()) {
+                children.add(r);
+            }
+        });
+        return children;
     }
 
     @Override
@@ -99,12 +113,7 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
         return RegistrationLocalServiceUtil.getRegistrationsCount(registration.getGroupId(), registration.getResourceId());
     }
 
-    public int getAvailablePlaces(Registration registration){
-        int registrationsCount = RegistrationLocalServiceUtil.getRegistrationsCount(registration.getGroupId(), registration.getResourceId());
-        return registration.getCapacity() - registrationsCount;
-    }
-
-    private long[] getOverlappingRegistrationIds(User user, Registration registration){
+    private long[] getOverlappingRegistrationIds(User user, Registration registration) {
         long[] registrationsWithOverlappingPeriod = RegistrationLocalServiceUtil.getRegistrationsWithOverlappingPeriod(registration.getGroupId(), user.getUserId(),
                 registration.getStartTime(), registration.getEndTime());
 
@@ -118,7 +127,7 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
         boolean overlapWithParent = registration.isOverlapWithParent();
 
         for (int i = 0; i < registrationsWithOverlappingPeriod.length; i++) {
-            if (registrationsWithOverlappingPeriod[i] == parentId && overlapWithParent){
+            if (registrationsWithOverlappingPeriod[i] == parentId && overlapWithParent) {
                 registrationsWithOverlappingPeriod[i] = 0;
             }
         }
@@ -143,7 +152,7 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
 
         int sessionCapacity = session.getCapacity();
         int roomCapacity = session.getRoom().getCapacity();
-        if (roomCapacity < sessionCapacity){
+        if (roomCapacity < sessionCapacity) {
             throw new ValidationException(String.format("Room capacity %d is smaller than session capacity %s !", roomCapacity, sessionCapacity));
         }
     }
@@ -152,10 +161,10 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
     public List<String> getMissingUserInformation(User user, Registration registration) throws PortalException {
 
         ArrayList<String> missingInfo = new ArrayList<>();
-        if (user.getFirstName() == null){
+        if (user.getFirstName() == null) {
             missingInfo.add("First name");
         }
-        if (user.getLastName() == null){
+        if (user.getLastName() == null) {
             missingInfo.add("Last name");
         }
 
@@ -192,7 +201,7 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
     public Event getEvent(long siteId, String eventId) throws PortalException {
         JournalArticle eventResource = JournalArticleLocalServiceUtil.getLatestArticle(siteId, eventId);
         AbsDsdArticle eventArticle = AbsDsdArticle.getInstance(eventResource);
-        if (! (eventArticle instanceof Event) ){
+        if (!(eventArticle instanceof Event)) {
             throw new PortalException(String.format("EventId %s is not the articleId of a valid DSD Event", eventId));
         }
         return (Event) eventArticle;
@@ -202,7 +211,7 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils{
     public Registration getRegistration(long siteId, String registrationId) throws PortalException {
         JournalArticle article = JournalArticleLocalServiceUtil.getLatestArticle(siteId, registrationId);
         AbsDsdArticle dsdArticle = AbsDsdArticle.getInstance(article);
-        if (! (dsdArticle instanceof Registration) ){
+        if (!(dsdArticle instanceof Registration)) {
             throw new PortalException(String.format("Id %s is not the articleId of a valid DSD Event", registrationId));
         }
         return (Registration) dsdArticle;
