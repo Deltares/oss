@@ -34,12 +34,12 @@ public interface DsdRegistrationUtils {
      */
     int getRegistrationCount(Registration registration);
 
-    /**
-     * Get number of places currently available for registration
-     * @param registration Registration Article
-     * @return number of available places
+    /** Return list of registrations that reference this registration a parent.
+     *
+     * @param registration Parten registration
+     * @return List of child registartions
      */
-    int getAvailablePlaces(Registration registration);
+    List<Registration> getChildRegistrations(Registration registration) throws PortalException;
 
     /**
      * Get all user registration with a period that overlap that of the argument 'registration'.
