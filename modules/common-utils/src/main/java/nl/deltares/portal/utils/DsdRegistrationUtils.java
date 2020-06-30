@@ -1,9 +1,11 @@
 package nl.deltares.portal.utils;
 
+import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.impl.Event;
+import nl.deltares.portal.model.impl.Location;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
 
@@ -97,4 +99,5 @@ public interface DsdRegistrationUtils {
 
     Registration getRegistration(long siteId, String registrationId) throws PortalException;
 
+    Location getLocation(JournalArticle article) throws PortalException;
 }
