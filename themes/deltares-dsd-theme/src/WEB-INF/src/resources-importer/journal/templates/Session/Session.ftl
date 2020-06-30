@@ -50,7 +50,9 @@
                             ${registration.getPrice()}&nbsp;
                         </#if>
                         <br>
-                        ${room.getTitle()} ( ${languageUtil.get(locale, "registration.available")} : ${dsdUtils.getAvailablePlaces(registration)} )
+                        <#assign registrations = dsdUtils.getRegistrationCount(registration) />
+                        <#assign available = registration.getCapacity() - registrations />
+                        ${room.getTitle()} ( ${languageUtil.get(locale, "registration.available")} : ${available} )
                     </span>
 
                 </p>
@@ -65,7 +67,11 @@
 
         <#list schedules.getSiblings() as cur_Schedule>
             <h3 class="c-events__item__title h1">
-                ${languageUtil.get(locale, "registration.schedule")} - ${dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale)}
+                <#assign schedules_date_Data = getterUtil.getString(cur_Schedule.date.getData())>
+                <#if validator.isNotNull(schedules_date_Data)>
+                    <#assign schedules_date_DateObj = dateUtil.parseDate("yyyy-MM-dd", schedules_date_Data, locale)>
+                    ${languageUtil.get(locale, "registration.schedule")} - ${dateUtil.getDate(schedules_date_DateObj, "dd MMM yyyy", locale)}
+                </#if>
             </h3>
             <div class="c-events__item__description">
                 ${cur_Schedule.getData()}
