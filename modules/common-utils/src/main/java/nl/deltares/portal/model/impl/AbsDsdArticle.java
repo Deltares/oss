@@ -162,6 +162,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
         if (Validator.isNull(url)) {
             url = article.getArticleImageURL(themeDisplay);
         }
+        if (url == null) return "";
         return url;
     }
 

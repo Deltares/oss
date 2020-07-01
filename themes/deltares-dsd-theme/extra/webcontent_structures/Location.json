@@ -1,25 +1,20 @@
 {
   "availableLanguageIds": [
-    "en_US",
-    "nl_NL"
+    "en_US"
   ],
   "defaultLanguageId": "en_US",
   "fields": [
     {
       "label": {
-        "nl_NL": "Opslaan in overkoepelende site",
         "en_US": "Store in parent site"
       },
       "predefinedValue": {
-        "nl_NL": "true",
         "en_US": true
       },
       "style": {
-        "nl_NL": "",
         "en_US": ""
       },
       "tip": {
-        "nl_NL": "Selecteer om op te slaan in overkoepelende site.",
         "en_US": "Choose to store content under parent site."
       },
       "dataType": "boolean",
@@ -34,20 +29,16 @@
     },
     {
       "label": {
-        "en_US": "Address",
-        "nl_NL": "Adres"
+        "en_US": "Address"
       },
       "predefinedValue": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "style": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "tip": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "dataType": "string",
       "indexType": "keyword",
@@ -61,20 +52,16 @@
     },
     {
       "label": {
-        "en_US": "Postal code",
-        "nl_NL": "Postcode"
+        "en_US": "Postal code"
       },
       "predefinedValue": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "style": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "tip": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "dataType": "string",
       "indexType": "keyword",
@@ -88,20 +75,16 @@
     },
     {
       "label": {
-        "en_US": "City",
-        "nl_NL": "Stad"
+        "en_US": "City"
       },
       "predefinedValue": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "style": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "tip": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "dataType": "string",
       "indexType": "keyword",
@@ -115,20 +98,16 @@
     },
     {
       "label": {
-        "en_US": "Country",
-        "nl_NL": "Land"
+        "en_US": "Country"
       },
       "predefinedValue": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "style": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "tip": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "dataType": "string",
       "indexType": "keyword",
@@ -142,20 +121,16 @@
     },
     {
       "label": {
-        "en_US": "Location",
-        "nl_NL": "Locatie"
+        "en_US": "Location"
       },
       "predefinedValue": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "style": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "tip": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "dataType": "geolocation",
       "fieldNamespace": "ddm",
@@ -170,20 +145,62 @@
     },
     {
       "label": {
-        "en_US": "Website",
-        "nl_NL": "Webpagina"
+        "en_US": "Location Type"
       },
+      "options": [
+        {
+          "value": "restaurant",
+          "label": {
+            "en_US": "Restaurant"
+          }
+        },
+        {
+          "value": "hotel",
+          "label": {
+            "en_US": "Hotel"
+          }
+        },
+        {
+          "value": "event",
+          "label": {
+            "en_US": "Event"
+          }
+        }
+      ],
       "predefinedValue": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": [
+          ""
+        ]
       },
       "style": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "tip": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "multiple": false,
+      "name": "locationType",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "select"
+    },
+    {
+      "label": {
+        "en_US": "Website"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
       },
       "dataType": "string",
       "indexType": "keyword",

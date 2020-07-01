@@ -11,10 +11,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.DsdArticle;
-import nl.deltares.portal.model.impl.AbsDsdArticle;
-import nl.deltares.portal.model.impl.Event;
-import nl.deltares.portal.model.impl.Registration;
-import nl.deltares.portal.model.impl.SessionRegistration;
+import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.DsdRegistrationUtils;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
@@ -198,23 +195,32 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils {
     }
 
     @Override
-    public Event getEvent(long siteId, String eventId) throws PortalException {
-        JournalArticle eventResource = JournalArticleLocalServiceUtil.getLatestArticle(siteId, eventId);
+    public Event getEvent(long siteId, String articleId) throws PortalException {
+        JournalArticle eventResource = JournalArticleLocalServiceUtil.getLatestArticle(siteId, articleId);
         AbsDsdArticle eventArticle = AbsDsdArticle.getInstance(eventResource);
         if (!(eventArticle instanceof Event)) {
-            throw new PortalException(String.format("EventId %s is not the articleId of a valid DSD Event", eventId));
+            throw new PortalException(String.format("EventId %s is not the articleId of a valid DSD Event", articleId));
         }
         return (Event) eventArticle;
     }
 
     @Override
-    public Registration getRegistration(long siteId, String registrationId) throws PortalException {
-        JournalArticle article = JournalArticleLocalServiceUtil.getLatestArticle(siteId, registrationId);
+    public Registration getRegistration(long siteId, String articleId) throws PortalException {
+        JournalArticle article = JournalArticleLocalServiceUtil.getLatestArticle(siteId, articleId);
         AbsDsdArticle dsdArticle = AbsDsdArticle.getInstance(article);
         if (!(dsdArticle instanceof Registration)) {
-            throw new PortalException(String.format("Id %s is not the articleId of a valid DSD Event", registrationId));
+            throw new PortalException(String.format("Id %s is not the articleId of a valid DSD Registration", articleId));
         }
         return (Registration) dsdArticle;
+    }
+
+    @Override
+    public Location getLocation(JournalArticle article) throws PortalException {
+        AbsDsdArticle dsdArticle = AbsDsdArticle.getInstance(article);
+        if (!(dsdArticle instanceof Location)) {
+            throw new PortalException(String.format("Id %s is not the articleId of a valid DSD Location", article.getTitle()));
+        }
+        return (Location) dsdArticle;
     }
 
     @Override
