@@ -10,12 +10,15 @@ import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Building extends AbsDsdArticle {
 
     private static final Log LOG = LogFactoryUtil.getLog(Building.class);
     private boolean storeInParentSite;
     private final List<Room> rooms = new ArrayList<>();
+    private double longitude;
+    private double latitude;
 
     public Building(JournalArticle dsdArticle) throws PortalException {
         super(dsdArticle);
@@ -31,6 +34,10 @@ public class Building extends AbsDsdArticle {
             if (rooms.length > 0){
                 this.rooms.addAll(parseRooms(rooms));
             }
+            String geoLocation = XmlContentParserUtils.getDynamicContentByName(document, "location", false);
+            Map<String, String> coords = JsonContentParserUtils.parseJsonToMap(geoLocation);
+            this.longitude = Double.parseDouble(coords.get("longitude"));
+            this.latitude =  Double.parseDouble(coords.get("latitude"));
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -63,4 +70,11 @@ public class Building extends AbsDsdArticle {
         return new ArrayList<>(rooms);
     }
 
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
 }
