@@ -26,7 +26,7 @@
                                 <#list buildings as building>
                                     <#assign building_img = building.getSmallImageURL(themeDisplay) />
                                     <#if building_img == "" >
-                                        <#assign building_img = themeDisplay.getPathThemeImages() + "dsd/building.png" />
+                                        <#assign building_img = themeDisplay.getPathThemeImages() + "/dsd/building.png" />
                                     </#if>
                                     <tr>
                                         <td>${building.getTitle()}</td>

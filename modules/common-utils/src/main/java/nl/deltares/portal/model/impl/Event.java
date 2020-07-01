@@ -48,6 +48,13 @@ public class Event extends AbsDsdArticle {
         return (EventLocation) location;
     }
 
+    public Building findBuilding(Room room){
+        if (room == null) return null;
+        for (Building building : eventLocation.getBuildings()) {
+            if (building.getRooms().contains(room)) return building;
+        }
+        return null;
+    }
     @Override
     public String getStructureKey() {
         return DSD_STRUCTURE_KEYS.Event.name();
