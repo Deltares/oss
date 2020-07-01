@@ -50,9 +50,16 @@
                             ${registration.getPrice()}&nbsp;
                         </#if>
                         <br>
+                        <#assign event = dsdUtils.getEvent(groupId, registration.getEventId()?string) />
+                        <#assign building = event.findBuilding(room) />
+                        ${languageUtil.get(locale, "dsd.theme.session.room")} : ${room.getTitle()}
+                        <#if building?? >
+                            -  ${languageUtil.get(locale, "dsd.theme.session.building")} : ${building.getTitle()}
+                        </#if>
+                        <br>
                         <#assign registrations = dsdUtils.getRegistrationCount(registration) />
                         <#assign available = registration.getCapacity() - registrations />
-                        ${room.getTitle()} ( ${languageUtil.get(locale, "dsd.theme.session.available")} : ${available} )
+                        ${languageUtil.get(locale, "dsd.theme.session.available")} : ${available}
                     </span>
 
                 </p>
