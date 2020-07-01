@@ -1,26 +1,21 @@
 {
   "availableLanguageIds": [
-    "en_US",
-    "nl_NL"
+    "en_US"
   ],
   "defaultLanguageId": "en_US",
   "fields": [
     {
       "label": {
-        "en_US": "Buildings",
-        "nl_NL": "Gebouwen"
+        "en_US": "Buildings"
       },
       "predefinedValue": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "style": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "tip": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "dataType": "journal-article",
       "fieldNamespace": "ddm",
@@ -35,20 +30,16 @@
     },
     {
       "label": {
-        "en_US": "Rooms",
-        "nl_NL": "Kamers"
+        "en_US": "Rooms"
       },
       "predefinedValue": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "style": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "tip": {
-        "en_US": "",
-        "nl_NL": ""
+        "en_US": ""
       },
       "dataType": "journal-article",
       "fieldNamespace": "ddm",

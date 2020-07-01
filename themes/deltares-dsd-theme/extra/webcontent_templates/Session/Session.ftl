@@ -27,7 +27,7 @@
                 </div>
                 <h3 class="c-events__item__title h1">${registration.getTitle()}</h3>
                 <#if !registration.isOpen() >
-                    <b>${languageUtil.get(locale, "registration.closed")}</b>
+                    <b>${languageUtil.get(locale, "dsd.theme.session.closed")}</b>
                 </#if>
                 <p class="c-events__item__time-date-place">
                     <span class="c-events__item__time-date-place__date">
@@ -45,14 +45,14 @@
                         <br>
                         ${registration.getCurrency()}
                         <#if price == 0 >
-                            ${languageUtil.get(locale, "registration.price.free")}&nbsp;
+                            ${languageUtil.get(locale, "dsd.theme.session.free")}&nbsp;
                         <#else>
                             ${registration.getPrice()}&nbsp;
                         </#if>
                         <br>
                         <#assign registrations = dsdUtils.getRegistrationCount(registration) />
                         <#assign available = registration.getCapacity() - registrations />
-                        ${room.getTitle()} ( ${languageUtil.get(locale, "registration.available")} : ${available} )
+                        ${room.getTitle()} ( ${languageUtil.get(locale, "dsd.theme.session.available")} : ${available} )
                     </span>
 
                 </p>
@@ -70,7 +70,7 @@
                 <#assign schedules_date_Data = getterUtil.getString(cur_Schedule.date.getData())>
                 <#if validator.isNotNull(schedules_date_Data)>
                     <#assign schedules_date_DateObj = dateUtil.parseDate("yyyy-MM-dd", schedules_date_Data, locale)>
-                    ${languageUtil.get(locale, "registration.schedule")} - ${dateUtil.getDate(schedules_date_DateObj, "dd MMM yyyy", locale)}
+                    ${languageUtil.get(locale, "dsd.theme.session.schedule")} - ${dateUtil.getDate(schedules_date_DateObj, "dd MMM yyyy", locale)}
                 </#if>
             </h3>
             <div class="c-events__item__description">
