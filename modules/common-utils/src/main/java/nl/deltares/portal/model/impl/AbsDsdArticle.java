@@ -9,6 +9,7 @@ import nl.deltares.portal.utils.XmlContentParserUtils;
 import org.w3c.dom.Document;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public abstract class AbsDsdArticle implements DsdArticle {
@@ -170,4 +171,16 @@ public abstract class AbsDsdArticle implements DsdArticle {
         return article;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbsDsdArticle that = (AbsDsdArticle) o;
+        return article.getPrimaryKey() == that.article.getPrimaryKey();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(article.getPrimaryKey());
+    }
 }
