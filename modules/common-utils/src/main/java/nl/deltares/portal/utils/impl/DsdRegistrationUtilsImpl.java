@@ -207,9 +207,13 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils {
     @Override
     public Registration getRegistration(long siteId, String articleId) throws PortalException {
         JournalArticle article = JournalArticleLocalServiceUtil.getLatestArticle(siteId, articleId);
+        return getRegistration(article);
+    }
+
+    public Registration getRegistration(JournalArticle article) throws PortalException {
         AbsDsdArticle dsdArticle = AbsDsdArticle.getInstance(article);
         if (!(dsdArticle instanceof Registration)) {
-            throw new PortalException(String.format("Id %s is not the articleId of a valid DSD Registration", articleId));
+            throw new PortalException(String.format("Id %s is not the articleId of a valid DSD Registration", article.getTitle()));
         }
         return (Registration) dsdArticle;
     }

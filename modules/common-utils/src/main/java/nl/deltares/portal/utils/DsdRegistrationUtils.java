@@ -99,5 +99,7 @@ public interface DsdRegistrationUtils {
 
     Registration getRegistration(long siteId, String registrationId) throws PortalException;
 
+    Registration getRegistration(JournalArticle article) throws PortalException;
+
     Location getLocation(JournalArticle article) throws PortalException;
 }

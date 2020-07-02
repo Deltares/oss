@@ -7,17 +7,16 @@
 <#else>
     <#assign isEventPast = "upcoming-event"/>
 </#if>
+<#assign eventImageUrl = registration.getSmallImageURL(themeDisplay) />
 <#assign price = registration.getPrice() />
 <div class="c-events page">
     <div class="c-events__item ${isEventPast}">
         <div class="clearfix">
             <div class="media-section">
-                <#if eventImage.getData()?? && eventImage.getData() != "">
+                <#if eventImageUrl??>
                     <img
                             class="c-events__item__image"
-                            alt="${eventImage.getAttribute("alt")}"
-                            data-fileentryid="${eventImage.getAttribute("fileEntryId")}"
-                            src="${eventImage.getData()}" />
+                            src="${eventImageUrl}" />
                 </#if>
             </div>
             <div class="data-section">
