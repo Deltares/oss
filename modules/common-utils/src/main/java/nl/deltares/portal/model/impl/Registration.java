@@ -18,7 +18,7 @@ public abstract class Registration extends AbsDsdArticle {
     private float price;
     private boolean open;
     private String currency = "&#8364"; //euro sign
-    private DsdArticle.DSD_SESSION_KEYS type;
+    private DsdArticle.DSD_REGISTRATION_KEYS type;
     private Registration parentRegistration;
     private boolean overlapWithParent;
     private Date startTime;
@@ -43,7 +43,7 @@ public abstract class Registration extends AbsDsdArticle {
             String open = XmlContentParserUtils.getDynamicContentByName(document, "open", true);
             this.open = Boolean.parseBoolean(open);
             String type = XmlContentParserUtils.getDynamicContentByName(document, "type", false);
-            this.type = DsdArticle.DSD_SESSION_KEYS.valueOf(type);
+            this.type = DsdArticle.DSD_REGISTRATION_KEYS.valueOf(type);
             String parentJson = XmlContentParserUtils.getDynamicContentByName(document, "parent", true);
             if (parentJson != null) {
                 parentRegistration = parseParentRegistration(parentJson);

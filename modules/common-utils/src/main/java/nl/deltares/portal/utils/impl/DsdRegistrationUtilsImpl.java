@@ -236,7 +236,7 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils {
             LOG.error(String.format("Error parsing session color config '%s' :  %s", json, e.getMessage()));
             colorMap = new HashMap<>();
         }
-        for (DsdArticle.DSD_SESSION_KEYS session_keys : DsdArticle.DSD_SESSION_KEYS.values()) {
+        for (DsdArticle.DSD_REGISTRATION_KEYS session_keys : DsdArticle.DSD_REGISTRATION_KEYS.values()) {
             String sessionKey = session_keys.name();
             colorMap.putIfAbsent(sessionKey, "#17a2b8");
         }

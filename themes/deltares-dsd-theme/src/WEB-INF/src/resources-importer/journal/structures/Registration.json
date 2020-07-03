@@ -208,91 +208,91 @@
       },
       "options": [
         {
-          "value": "Danubius",
+          "value": "danubius",
           "label": {
             "en_US": "Danubius"
           }
         },
         {
-          "value": "Delft Fews",
+          "value": "delftfews",
           "label": {
             "en_US": "Delft Fews"
           }
         },
         {
-          "value": "Delft3D",
+          "value": "delft3d",
           "label": {
             "en_US": "Delft3D"
           }
         },
         {
-          "value": "D-Hydro",
+          "value": "dhydro",
           "label": {
             "en_US": "D-Hydro"
           }
         },
         {
-          "value": "D-Stability",
+          "value": "dstability",
           "label": {
             "en_US": "D-Stability"
           }
         },
         {
-          "value": "D-Waterquality",
+          "value": "dwaterquality",
           "label": {
             "en_US": "D-Waterquality"
           }
         },
         {
-          "value": "Flexiblemesh",
+          "value": "flexiblemesh",
           "label": {
             "en_US": "Flexiblemesh"
           }
         },
         {
-          "value": "i-Mod",
+          "value": "imod",
           "label": {
             "en_US": "i-Mod"
           }
         },
         {
-          "value": "Riverlab",
+          "value": "riverlab",
           "label": {
             "en_US": "Riverlab"
           }
         },
         {
-          "value": "RTC Tools",
+          "value": "rtctools",
           "label": {
             "en_US": "RTC Tools"
           }
         },
         {
-          "value": "Simona",
+          "value": "simona",
           "label": {
             "en_US": "Simona"
           }
         },
         {
-          "value": "Swan",
+          "value": "swan",
           "label": {
             "en_US": "Swan"
           }
         },
         {
-          "value": "WANDA",
+          "value": "wanda",
           "label": {
             "en_US": "WANDA"
           }
         },
         {
-          "value": "WFLOW",
+          "value": "wflow",
           "label": {
             "en_US": "WFLOW"
           }
         },
         {
-          "value": "XBeach",
+          "value": "xbeach",
           "label": {
             "en_US": "XBeach"
           }

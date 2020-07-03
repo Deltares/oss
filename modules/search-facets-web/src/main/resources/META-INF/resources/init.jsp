@@ -9,6 +9,7 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="nl.deltares.search.util.DateFacetUtil" %>
 <%@ page import="java.time.LocalDate" %>
+<%@ page import="nl.deltares.portal.model.DsdArticle" %>
 
 <liferay-theme:defineObjects />
 

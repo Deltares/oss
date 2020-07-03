@@ -57,7 +57,7 @@ public class FullCalendarConfigurationAction extends DefaultConfigurationAction 
     private Map<String, String> convertColorsToMap(ActionRequest actionRequest) {
 
         HashMap<String, String> colorMap = new HashMap<>();
-        for (DsdArticle.DSD_SESSION_KEYS session_keys : DsdArticle.DSD_SESSION_KEYS.values()) {
+        for (DsdArticle.DSD_REGISTRATION_KEYS session_keys : DsdArticle.DSD_REGISTRATION_KEYS.values()) {
             String sessionKey = session_keys.name();
             String value = ParamUtil.getString(actionRequest, sessionKey);
             if (value.isEmpty()) continue;
