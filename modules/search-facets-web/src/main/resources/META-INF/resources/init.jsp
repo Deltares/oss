@@ -7,10 +7,24 @@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
+<%@ page import="com.liferay.portal.kernel.util.Validator" %>
+<%@ page import="nl.deltares.portal.model.DsdArticle" %>
+<%@ page import="nl.deltares.search.facet.event.EventFacetConfiguration" %>
 <%@ page import="nl.deltares.search.util.DateFacetUtil" %>
 <%@ page import="java.time.LocalDate" %>
-<%@ page import="nl.deltares.portal.model.DsdArticle" %>
 
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />
+
+<%
+
+    EventFacetConfiguration configuration =
+            (EventFacetConfiguration)
+                    renderRequest.getAttribute(EventFacetConfiguration.class.getName());
+    String eventId = "0";
+
+    if (Validator.isNotNull(configuration)) {
+        eventId = portletPreferences.getValue("eventId", String.valueOf(configuration.eventId()));
+    }
+%>
