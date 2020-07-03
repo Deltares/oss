@@ -28,8 +28,7 @@
                         <#if website?? >
                             <a target="_blank" href="${website}" >${website}</a><br>
                         </#if>
-                        <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=
-                           + ${location.getLatitude()} + ',' + ${location.getLongitude()} + '">
+                        <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=${location.getLatitude()},${location.getLongitude()}">
                             ${languageUtil.get(locale, "dsd.theme.locations.direction")}</a>
                         </p>
                     </div>

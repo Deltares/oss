@@ -79,9 +79,9 @@
                 contentString += '<a target="_blank" href="'+ jsonMarker.website + '" >' + jsonMarker.website + '</a><br>';
             }
 
-            contentString   += '<a target="_blank" href="https://www.google.com/maps/search/?api=1&query=' + jsonMarker.latitude + ',' + jsonMarker.longitude + '">'+
+            contentString   += ('<a target="_blank" href="https://www.google.com/maps/search/?api=1&query=' + jsonMarker.latitude + ',' + jsonMarker.longitude + '">'+
                 '${languageUtil.get(locale, "dsd.theme.locations.direction")}</a> ' +
-                '</p></div></div></div></div>'
+                '</p></div></div></div></div>')
 
             var infowindow = new google.maps.InfoWindow({
                 content: contentString
