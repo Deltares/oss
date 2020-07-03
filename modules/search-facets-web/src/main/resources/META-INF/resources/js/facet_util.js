@@ -31,7 +31,8 @@ AUI.add(
             },
             selectTerm: function (url, name, value) {
                 return Liferay.Search.FacetUtil.setURLParameter(url, name, value);
-            }
+            },
+
         }
 
         Liferay.namespace('Deltares').FacetUtil = FacetUtil;

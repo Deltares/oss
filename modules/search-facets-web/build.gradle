@@ -4,6 +4,7 @@ dependencies {
 	compileOnly group: "com.liferay", name: "com.liferay.frontend.taglib", version: "3.2.2"
 	compileOnly group: "com.liferay", name: "com.liferay.frontend.taglib.dynamic.section", version: "1.0.5"
 	compileOnly group: "com.liferay", name: "com.liferay.frontend.taglib.form.navigator", version: "2.0.10"
+	compileOnly group: "com.liferay", name: "com.liferay.portal.configuration.metatype", version: "2.0.0"
 	compileOnly group: "com.liferay", name: "com.liferay.frontend.taglib.util", version: "1.0.4"
 	compileOnly group: "com.liferay", name: "com.liferay.journal.taglib", version: "2.0.3"
 	compileOnly group: "com.liferay", name: "com.liferay.layout.taglib", version: "3.1.1"
