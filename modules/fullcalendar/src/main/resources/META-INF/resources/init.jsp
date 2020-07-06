@@ -56,7 +56,7 @@
     Map<String, String> colorMap = new HashMap<>();
     if (Validator.isNotNull(configuration)) {
         baseUrl = portletPreferences.getValue("baseUrl", configuration.baseUrl());
-        eventId = portletPreferences.getValue("eventId", String.valueOf(configuration.eventID()));
+        eventId = portletPreferences.getValue("eventId", String.valueOf(configuration.eventId()));
         String sessionColorMap = portletPreferences.getValue("sessionColorMap", configuration.sessionColorMap());
 
         try {

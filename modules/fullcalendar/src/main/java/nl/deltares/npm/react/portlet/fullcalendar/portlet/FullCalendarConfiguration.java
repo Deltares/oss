@@ -14,7 +14,7 @@ public interface FullCalendarConfiguration {
     String baseUrl();
 
     @Meta.AD(required = false, deflt = "0")
-    long eventID();
+    long eventId();
 
     @Meta.AD(required = false, deflt = "{}")
     String sessionColorMap();
