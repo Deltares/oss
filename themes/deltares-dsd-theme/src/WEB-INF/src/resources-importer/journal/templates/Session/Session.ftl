@@ -1,23 +1,23 @@
-<#assign dsdUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdRegistrationUtils") />
+<#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
+<#assign dsdSessionUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdSessionUtils") />
 <#assign articleId = .vars['reserved-article-id'].getData() />
-<#assign registration = dsdUtils.getRegistration(groupId,articleId) />
+<#assign registration = dsdParserUtils.getRegistration(groupId,articleId) />
 <#assign room = registration.getRoom() />
 <#if registration.isEventInPast() >
     <#assign isEventPast = "past-event"/>
 <#else>
     <#assign isEventPast = "upcoming-event"/>
 </#if>
+<#assign eventImageUrl = registration.getSmallImageURL(themeDisplay) />
 <#assign price = registration.getPrice() />
 <div class="c-events page">
     <div class="c-events__item ${isEventPast}">
         <div class="clearfix">
             <div class="media-section">
-                <#if eventImage.getData()?? && eventImage.getData() != "">
+                <#if eventImageUrl??>
                     <img
                             class="c-events__item__image"
-                            alt="${eventImage.getAttribute("alt")}"
-                            data-fileentryid="${eventImage.getAttribute("fileEntryId")}"
-                            src="${eventImage.getData()}" />
+                            src="${eventImageUrl}" />
                 </#if>
             </div>
             <div class="data-section">
@@ -45,14 +45,21 @@
                         <br>
                         ${registration.getCurrency()}
                         <#if price == 0 >
-                            ${languageUtil.get(locale, "registration.price.free")}&nbsp;
+                            ${languageUtil.get(locale, "dsd.theme.session.free")}&nbsp;
                         <#else>
                             ${registration.getPrice()}&nbsp;
                         </#if>
                         <br>
-                        <#assign registrations = dsdUtils.getRegistrationCount(registration) />
+                        <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />
+                        <#assign building = event.findBuilding(room) />
+                        ${languageUtil.get(locale, "dsd.theme.session.room")} : ${room.getTitle()}
+                        <#if building?? >
+                            -  ${languageUtil.get(locale, "dsd.theme.session.building")} : ${building.getTitle()}
+                        </#if>
+                        <br>
+                        <#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
                         <#assign available = registration.getCapacity() - registrations />
-                        ${room.getTitle()} ( ${languageUtil.get(locale, "dsd.theme.session.available")} : ${available} )
+                        ${languageUtil.get(locale, "dsd.theme.session.available")} : ${available}
                     </span>
 
                 </p>

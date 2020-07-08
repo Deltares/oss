@@ -16,6 +16,7 @@ package nl.deltares.dsd.registration.service.impl;
 
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.*;
+import nl.deltares.dsd.registration.exception.NoSuchRegistrationException;
 import nl.deltares.dsd.registration.model.Registration;
 import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.dsd.registration.service.base.RegistrationLocalServiceBaseImpl;
@@ -97,6 +98,32 @@ public class RegistrationLocalServiceImpl
 
 	}
 
+	/**
+	 * Delete user registrations for 'resourceId' and a start date equal to 'stratDate'
+	 * that matches 'resourceId'.
+	 * @param groupId Site Identifier
+	 * @param resourceId Article Identifier being removed.
+	 * @param userId User for which to remove registration
+	 * @param startDate Start date for which to remove registration
+	 */
+	public void deleteUserRegistration(long groupId, long resourceId, long userId, Date startDate) throws NoSuchRegistrationException {
+		DynamicQuery query = getDynamicQuery(groupId, resourceId, userId, startDate);
+		List<Registration> withDynamicQuery = RegistrationUtil.findWithDynamicQuery(query);
+		for (Registration registration : withDynamicQuery) {
+			//Remove all registrations for resourceId
+			RegistrationUtil.remove(registration.getRegistrationId());
+		}
+
+	}
+
+	private DynamicQuery getDynamicQuery(long groupId, long resourceId, long userId, Date startDate) {
+		Criterion checkUserId = PropertyFactoryUtil.forName("userId").eq(userId);
+		Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
+		Criterion checkResourceId = PropertyFactoryUtil.forName("resourcePrimaryKey").eq(resourceId);
+		Criterion checkStart = PropertyFactoryUtil.forName("startTime").eq(startDate);
+		return DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader()).add(checkGroupId).add(checkUserId).add(checkResourceId).add(checkStart);
+	}
+
 	public long[] getRegistrationsWithOverlappingPeriod(long groupId, long userId, Date startTime, Date endTime){
 
 
@@ -123,5 +150,21 @@ public class RegistrationLocalServiceImpl
 
 	public int getRegistrationsCount(long groupId, long userId, long resourceId)  {
 		return  RegistrationUtil.countByUserArticleRegistrations(groupId, userId, resourceId);
+	}
+
+
+	public int getRegistrationsCount(long groupId, long resourceId, Date startDate)  {
+
+		Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
+		Criterion checkResourceId = PropertyFactoryUtil.forName("resourcePrimaryKey").eq(resourceId);
+		Criterion checkStart = PropertyFactoryUtil.forName("startTime").eq(startDate);
+		DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader()).add(checkResourceId).add(checkStart);
+		return (int) RegistrationUtil.countWithDynamicQuery(query);
+	}
+
+	public int getRegistrationsCount(long groupId, long userId, long resourceId, Date startDate)  {
+
+		DynamicQuery query = getDynamicQuery(groupId, groupId, userId, startDate);
+		return (int) RegistrationUtil.countWithDynamicQuery(query);
 	}
 }

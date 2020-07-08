@@ -8,9 +8,9 @@
   var imagesUrl = Liferay.ThemeDisplay.getPathThemeImages();
   var homeUrl = Liferay.ThemeDisplay.getURLHome();
   document.getElementById('buttons').innerHTML =
-        "<a href='" + homeUrl + "/list-view'>" +
+        "<a href='" + homeUrl + "/program'>" +
             "<img src='" + imagesUrl + "/dsd/list-view.png' style='display: inline-block; float: right; margin-left: 1.2rem;' /></a>" +
-        "<a href='" + homeUrl + "/calendar-view'>" +
+        "<a href='" + homeUrl + "/progarm-calendar'>" +
             "<img src='" + imagesUrl + "/dsd/calendar-view.png' style='display: inline-block; float: right; margin-left: 1.2rem;' /></a>";
 </script>]]>
         </dynamic-content>
