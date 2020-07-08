@@ -75,16 +75,18 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
             try {
                 dsdArticle = AbsDsdArticle.getInstance(model);
             } catch (PortalException e) {
-                LOG.error("Error parsing DSD Article: " + e.getMessage());
-                throw new ModelListenerException(e.getMessage());
+                String msg = String.format("Error parsing DSD Article %s: %s", model.getTitle(), e.getMessage());
+                LOG.error(msg);
+                throw new ModelListenerException(msg);
             }
 
             if (dsdArticle instanceof SessionRegistration){
                 try {
                     dsdSessionUtils.validateRoomCapacity((SessionRegistration) dsdArticle);
                 } catch (PortalException e) {
-                    LOG.error("Error validating session capacity: " + e.getMessage());
-                    throw new ModelListenerException(e.getMessage());
+                    String msg = String.format("Error validating session capacity for %s: %s", model.getTitle(), e.getMessage());
+                    LOG.error(msg);
+                    throw new ModelListenerException(msg);
                 }
             }
             String structureKey = dsdArticle.getStructureKey();
