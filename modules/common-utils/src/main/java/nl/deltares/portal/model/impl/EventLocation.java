@@ -48,10 +48,12 @@ public class EventLocation extends Location {
 
     private List<Building> parseBuildings(String[] buildingReferences) {
 
+        DuplicateCheck check = new DuplicateCheck();
         ArrayList<Building> buildings = new ArrayList<>();
         for (String json : buildingReferences) {
             try {
-                buildings.add(JsonContentParserUtils.parseBuildingJson(json));
+                Building building = JsonContentParserUtils.parseBuildingJson(json);
+                if (check.checkDuplicates(building)) buildings.add(building);
             } catch (PortalException e) {
                 LOG.error(String.format("Error getting article for building: %s: %s", json, e.getMessage()));
             }

@@ -138,6 +138,12 @@
           }
         },
         {
+          "value": "Bustransfer",
+          "label": {
+            "en_US": "Bus Transfer"
+          }
+        },
+        {
           "value": "Course",
           "label": {
             "en_US": "Course"
@@ -207,6 +213,12 @@
         "en_US": "Topic"
       },
       "options": [
+        {
+          "value": "other",
+          "label": {
+            "en_US": "Other"
+          }
+        },
         {
           "value": "danubius",
           "label": {

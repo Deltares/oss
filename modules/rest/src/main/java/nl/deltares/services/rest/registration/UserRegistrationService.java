@@ -9,7 +9,7 @@ import com.liferay.portal.kernel.model.User;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Registration;
-import nl.deltares.portal.utils.DsdRegistrationUtils;
+import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.services.rest.exception.LiferayRestException;
 import nl.deltares.services.rest.registration.modules.UserDetails;
@@ -33,10 +33,10 @@ import static nl.deltares.services.utils.Helper.toResponse;
 public class UserRegistrationService {
 
     private static final Log LOG = LogFactoryUtil.getLog(UserRegistrationService.class);
-    private final DsdRegistrationUtils registrationUtils;
+    private final DsdSessionUtils registrationUtils;
     private final KeycloakUtils keycloakUtils;
 
-    public UserRegistrationService(DsdRegistrationUtils registrationUtils, KeycloakUtils keycloakUtils) {
+    public UserRegistrationService(DsdSessionUtils registrationUtils, KeycloakUtils keycloakUtils) {
         this.registrationUtils = registrationUtils;
         this.keycloakUtils = keycloakUtils;
     }

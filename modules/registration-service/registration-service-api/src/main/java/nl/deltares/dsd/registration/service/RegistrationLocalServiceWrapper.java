@@ -128,6 +128,26 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	/**
+	 * Delete user registrations for 'resourceId' and a start date equal to 'stratDate'
+	 * that matches 'resourceId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param resourceId Article Identifier being removed.
+	 * @param userId User for which to remove registration
+	 * @param startDate Start date for which to remove registration
+	 */
+	@Override
+	public void deleteUserRegistration(
+			long groupId, long resourceId, long userId,
+			java.util.Date startDate)
+		throws nl.deltares.dsd.registration.exception.
+			NoSuchRegistrationException {
+
+		_registrationLocalService.deleteUserRegistration(
+			groupId, resourceId, userId, startDate);
+	}
+
+	/**
 	 * Delete user registrations for 'resourceId'. This inlcudes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
@@ -323,10 +343,26 @@ public class RegistrationLocalServiceWrapper
 
 	@Override
 	public int getRegistrationsCount(
+		long groupId, long resourceId, java.util.Date startDate) {
+
+		return _registrationLocalService.getRegistrationsCount(
+			groupId, resourceId, startDate);
+	}
+
+	@Override
+	public int getRegistrationsCount(
 		long groupId, long userId, long resourceId) {
 
 		return _registrationLocalService.getRegistrationsCount(
 			groupId, userId, resourceId);
+	}
+
+	@Override
+	public int getRegistrationsCount(
+		long groupId, long userId, long resourceId, java.util.Date startDate) {
+
+		return _registrationLocalService.getRegistrationsCount(
+			groupId, userId, resourceId, startDate);
 	}
 
 	@Override

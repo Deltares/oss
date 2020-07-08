@@ -1,6 +1,7 @@
-<#assign dsdUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdRegistrationUtils") />
+<#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
+<#assign dsdSessionUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdSessionUtils") />
 <#assign articleId = .vars['reserved-article-id'].getData() />
-<#assign registration = dsdUtils.getRegistration(groupId,articleId) />
+<#assign registration = dsdParserUtils.getRegistration(groupId,articleId) />
 <#assign room = registration.getRoom() />
 <#if registration.isEventInPast() >
     <#assign isEventPast = "past-event"/>
@@ -49,14 +50,14 @@
                             ${registration.getPrice()}&nbsp;
                         </#if>
                         <br>
-                        <#assign event = dsdUtils.getEvent(groupId, registration.getEventId()?string) />
+                        <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />
                         <#assign building = event.findBuilding(room) />
                         ${languageUtil.get(locale, "dsd.theme.session.room")} : ${room.getTitle()}
                         <#if building?? >
                             -  ${languageUtil.get(locale, "dsd.theme.session.building")} : ${building.getTitle()}
                         </#if>
                         <br>
-                        <#assign registrations = dsdUtils.getRegistrationCount(registration) />
+                        <#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
                         <#assign available = registration.getCapacity() - registrations />
                         ${languageUtil.get(locale, "dsd.theme.session.available")} : ${available}
                     </span>

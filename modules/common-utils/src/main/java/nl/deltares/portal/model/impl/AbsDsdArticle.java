@@ -122,6 +122,9 @@ public abstract class AbsDsdArticle implements DsdArticle {
                 article = new Event(journalArticle);
                 cache.put(article.getArticleId(), (Event) article);
                 break;
+            case Busroute:
+                article = new BusRoute(journalArticle);
+                break;
             default:
                 article = new GenericArticle(journalArticle, parseStructureKey);
         }

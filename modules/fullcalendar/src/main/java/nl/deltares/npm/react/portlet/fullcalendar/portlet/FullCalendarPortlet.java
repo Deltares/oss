@@ -5,7 +5,7 @@ import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import nl.deltares.npm.react.portlet.fullcalendar.constants.FullCalendarPortletKeys;
-import nl.deltares.portal.utils.DsdRegistrationUtils;
+import nl.deltares.portal.utils.DsdParserUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -61,7 +61,7 @@ public class FullCalendarPortlet extends MVCPortlet {
                 "mainRequire",
                 _npmResolver.resolveModuleName("fullcalendar") + " as main");
 
-        renderRequest.setAttribute(DsdRegistrationUtils.class.getName(), dsdRegistrationUtils);
+        renderRequest.setAttribute(DsdParserUtils.class.getName(), dsdParserUtils);
         super.doView(renderRequest, renderResponse);
     }
 
@@ -76,7 +76,7 @@ public class FullCalendarPortlet extends MVCPortlet {
     private NPMResolver _npmResolver;
 
     @Reference
-    private DsdRegistrationUtils dsdRegistrationUtils;
+    private DsdParserUtils dsdParserUtils;
 
     private volatile FullCalendarConfiguration _configuration;
 }
