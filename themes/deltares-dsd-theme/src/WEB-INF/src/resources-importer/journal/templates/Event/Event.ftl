@@ -1,6 +1,6 @@
-<#assign dsdUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdRegistrationUtils") />
+<#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
 <#assign eventId = .vars['reserved-article-id'].getData() />
-<#assign event = dsdUtils.getEvent(groupId,eventId) />
+<#assign event = dsdParserUtils.getEvent(groupId,eventId) />
 <#assign location = event.getEventLocation() />
 <#if event.isEventInPast() >
     <#assign isEventPast = "past-event"/>

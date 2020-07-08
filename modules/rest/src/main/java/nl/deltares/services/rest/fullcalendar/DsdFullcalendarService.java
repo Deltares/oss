@@ -10,7 +10,7 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.LayoutServiceUtil;
 import nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration;
 import nl.deltares.portal.model.impl.*;
-import nl.deltares.portal.utils.DsdRegistrationUtils;
+import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.services.rest.fullcalendar.models.Event;
 import nl.deltares.services.rest.fullcalendar.models.Resource;
@@ -35,11 +35,11 @@ public class DsdFullcalendarService {
     private final long dayMillis = TimeUnit.DAYS.toMillis(1);
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private final ConfigurationProvider configurationProvider;
-    private final DsdRegistrationUtils dsdRegistrationUtils;
+    private final DsdParserUtils parserUtils;
 
-    public DsdFullcalendarService(ConfigurationProvider configurationProvider, DsdRegistrationUtils dsdRegistrationUtils) {
+    public DsdFullcalendarService(ConfigurationProvider configurationProvider, DsdParserUtils parserUtils) {
         this.configurationProvider = configurationProvider;
-        this.dsdRegistrationUtils = dsdRegistrationUtils;
+        this.parserUtils = parserUtils;
     }
 
     @GET
@@ -68,7 +68,7 @@ public class DsdFullcalendarService {
 
         List<Registration> registrations;
         try {
-            nl.deltares.portal.model.impl.Event event = dsdRegistrationUtils.getEvent(Long.parseLong(siteId), eventId);
+            nl.deltares.portal.model.impl.Event event = parserUtils.getEvent(Long.parseLong(siteId), eventId);
             registrations = event.getRegistrations();
         } catch (PortalException e) {
             return Response.serverError().entity(e.getMessage()).build();
@@ -88,7 +88,7 @@ public class DsdFullcalendarService {
 
         nl.deltares.portal.model.impl.Event dsdEvent;
         try {
-            dsdEvent = dsdRegistrationUtils.getEvent(Long.parseLong(siteId), eventId);
+            dsdEvent = parserUtils.getEvent(Long.parseLong(siteId), eventId);
         } catch (PortalException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }

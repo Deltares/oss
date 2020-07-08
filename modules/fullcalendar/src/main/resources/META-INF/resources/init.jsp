@@ -31,11 +31,11 @@
 <%@ page import="nl.deltares.npm.react.portlet.fullcalendar.constants.FullCalendarPortletKeys" %>
 <%@ page import="nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration" %>
 <%@ page import="nl.deltares.portal.model.impl.Event" %>
-<%@ page import="nl.deltares.portal.utils.DsdRegistrationUtils" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.Date" %>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="nl.deltares.portal.utils.DsdParserUtils" %>
 
 <liferay-theme:defineObjects/>
 
@@ -60,7 +60,7 @@
         String sessionColorMap = portletPreferences.getValue("sessionColorMap", configuration.sessionColorMap());
 
         try {
-            DsdRegistrationUtils dsdUtils = (DsdRegistrationUtils) renderRequest.getAttribute(DsdRegistrationUtils.class.getName());
+            DsdParserUtils dsdUtils = (DsdParserUtils) renderRequest.getAttribute(DsdParserUtils.class.getName());
             Event event = dsdUtils.getEvent(siteId, eventId);
             startDate = format.format(event.getStartTime());
             colorMap = dsdUtils.parseSessionColorConfig(sessionColorMap);

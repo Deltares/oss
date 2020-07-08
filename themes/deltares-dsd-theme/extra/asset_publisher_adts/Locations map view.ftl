@@ -1,4 +1,4 @@
-<#assign dsdUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdRegistrationUtils") />
+<#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
 <#assign propsUtils = staticUtil["com.liferay.portal.kernel.util.PropsUtil"] />
 <#assign mapId = themeDisplay.getPortletDisplay().getId() />
 <#assign googleMapsApiKey = propsUtils.get("google.maps.api.key") />
@@ -144,7 +144,7 @@
             <#assign entry = curentry />
             <#assign assetRenderer = entry.getAssetRenderer()/>
             <#assign journalArticle = assetRenderer.getArticle()/>
-            <#assign location = dsdUtils.getLocation(journalArticle) />
+            <#assign location = dsdParserUtils.getLocation(journalArticle) />
             <#if location.hasCoordinates() >
                 addMarkerToArray(${location.getLatitude()},
                 ${location.getLongitude()},

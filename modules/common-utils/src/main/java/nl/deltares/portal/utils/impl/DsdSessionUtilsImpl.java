@@ -3,39 +3,43 @@ package nl.deltares.portal.utils.impl;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.DsdArticle;
-import nl.deltares.portal.model.impl.*;
-import nl.deltares.portal.utils.DsdRegistrationUtils;
-import nl.deltares.portal.utils.JsonContentParserUtils;
+import nl.deltares.portal.model.impl.AbsDsdArticle;
+import nl.deltares.portal.model.impl.Event;
+import nl.deltares.portal.model.impl.Registration;
+import nl.deltares.portal.model.impl.SessionRegistration;
+import nl.deltares.portal.utils.DsdParserUtils;
+import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @Component(
         immediate = true,
-        service = DsdRegistrationUtils.class,
+        service = DsdSessionUtils.class,
         property = {
-                "javax.portlet.supported-locale=en",
-                "javax.portlet.supported-locale=nl",
-                "javax.portlet.resource-bundle=content.Language"
-        }
+        "javax.portlet.supported-locale=en",
+        "javax.portlet.supported-locale=nl",
+        "javax.portlet.resource-bundle=content.Language"
+}
 )
-public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils {
-
-    private static final Log LOG = LogFactoryUtil.getLog(DsdRegistrationUtilsImpl.class);
+public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     @Reference
     KeycloakUtils keycloakUtils;
+
+    @Reference
+    DsdParserUtils parserUtils;
 
     @Override
     public void deleteRegistrationsFor(Registration registration) {
@@ -93,7 +97,7 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils {
 
 
     public List<Registration> getChildRegistrations(Registration registration) throws PortalException {
-        Event event = getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()));
+        Event event = parserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()));
 
         List<Registration> registrations = event.getRegistrations();
         ArrayList<Registration> children = new ArrayList<>();
@@ -192,55 +196,6 @@ public class DsdRegistrationUtilsImpl implements DsdRegistrationUtils {
     public boolean isUserRegisteredFor(User user, Registration registration) {
         int registrationsCount = RegistrationLocalServiceUtil.getRegistrationsCount(registration.getGroupId(), user.getUserId(), registration.getResourceId());
         return registrationsCount > 0;
-    }
-
-    @Override
-    public Event getEvent(long siteId, String articleId) throws PortalException {
-        JournalArticle eventResource = JournalArticleLocalServiceUtil.getLatestArticle(siteId, articleId);
-        AbsDsdArticle eventArticle = AbsDsdArticle.getInstance(eventResource);
-        if (!(eventArticle instanceof Event)) {
-            throw new PortalException(String.format("EventId %s is not the articleId of a valid DSD Event", articleId));
-        }
-        return (Event) eventArticle;
-    }
-
-    @Override
-    public Registration getRegistration(long siteId, String articleId) throws PortalException {
-        JournalArticle article = JournalArticleLocalServiceUtil.getLatestArticle(siteId, articleId);
-        return getRegistration(article);
-    }
-
-    public Registration getRegistration(JournalArticle article) throws PortalException {
-        AbsDsdArticle dsdArticle = AbsDsdArticle.getInstance(article);
-        if (!(dsdArticle instanceof Registration)) {
-            throw new PortalException(String.format("Id %s is not the articleId of a valid DSD Registration", article.getTitle()));
-        }
-        return (Registration) dsdArticle;
-    }
-
-    @Override
-    public Location getLocation(JournalArticle article) throws PortalException {
-        AbsDsdArticle dsdArticle = AbsDsdArticle.getInstance(article);
-        if (!(dsdArticle instanceof Location)) {
-            throw new PortalException(String.format("Id %s is not the articleId of a valid DSD Location", article.getTitle()));
-        }
-        return (Location) dsdArticle;
-    }
-
-    @Override
-    public Map<String, String> parseSessionColorConfig(String json) {
-        Map<String, String> colorMap;
-        try {
-            colorMap = JsonContentParserUtils.parseJsonToMap(json);
-        } catch (JSONException e) {
-            LOG.error(String.format("Error parsing session color config '%s' :  %s", json, e.getMessage()));
-            colorMap = new HashMap<>();
-        }
-        for (DsdArticle.DSD_REGISTRATION_KEYS session_keys : DsdArticle.DSD_REGISTRATION_KEYS.values()) {
-            String sessionKey = session_keys.name();
-            colorMap.putIfAbsent(sessionKey, "#17a2b8");
-        }
-        return colorMap;
     }
 
 }
