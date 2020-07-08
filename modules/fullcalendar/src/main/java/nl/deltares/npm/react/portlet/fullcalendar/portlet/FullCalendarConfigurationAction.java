@@ -6,7 +6,7 @@ import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.util.ParamUtil;
 import nl.deltares.npm.react.portlet.fullcalendar.constants.FullCalendarPortletKeys;
 import nl.deltares.portal.model.DsdArticle;
-import nl.deltares.portal.utils.DsdRegistrationUtils;
+import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import org.osgi.service.component.annotations.*;
 
@@ -36,7 +36,7 @@ public class FullCalendarConfigurationAction extends DefaultConfigurationAction 
         httpServletRequest.setAttribute(
                 FullCalendarConfiguration.class.getName(),
                 _configuration);
-        httpServletRequest.setAttribute(DsdRegistrationUtils.class.getName(), dsdRegistrationUtils);
+        httpServletRequest.setAttribute(DsdParserUtils.class.getName(), dsdParserUtils);
         super.include(portletConfig, httpServletRequest, httpServletResponse);
     }
 
@@ -82,7 +82,7 @@ public class FullCalendarConfigurationAction extends DefaultConfigurationAction 
     }
 
     @Reference
-    private DsdRegistrationUtils dsdRegistrationUtils;
+    private DsdParserUtils dsdParserUtils;
 
     private volatile FullCalendarConfiguration _configuration;
 
