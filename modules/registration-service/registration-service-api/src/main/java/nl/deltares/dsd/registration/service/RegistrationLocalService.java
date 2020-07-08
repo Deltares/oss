@@ -38,6 +38,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import nl.deltares.dsd.registration.exception.NoSuchRegistrationException;
 import nl.deltares.dsd.registration.model.Registration;
 
 /**
@@ -122,6 +123,19 @@ public interface RegistrationLocalService
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	public Registration deleteRegistration(Registration registration);
+
+	/**
+	 * Delete user registrations for 'resourceId' and a start date equal to 'stratDate'
+	 * that matches 'resourceId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param resourceId Article Identifier being removed.
+	 * @param userId User for which to remove registration
+	 * @param startDate Start date for which to remove registration
+	 */
+	public void deleteUserRegistration(
+			long groupId, long resourceId, long userId, Date startDate)
+		throws NoSuchRegistrationException;
 
 	/**
 	 * Delete user registrations for 'resourceId'. This inlcudes all registration with a parentArticleId
@@ -259,7 +273,15 @@ public interface RegistrationLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getRegistrationsCount(
+		long groupId, long resourceId, Date startDate);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getRegistrationsCount(
 		long groupId, long userId, long resourceId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getRegistrationsCount(
+		long groupId, long userId, long resourceId, Date startDate);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public long[] getRegistrationsWithOverlappingPeriod(

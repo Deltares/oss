@@ -2,7 +2,7 @@ package nl.deltares.services.rest;
 
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
-import nl.deltares.portal.utils.DsdRegistrationUtils;
+import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.services.rest.exception.JsonProcessingExceptionMapper;
 import nl.deltares.services.rest.exception.LiferayRestExceptionMapper;
@@ -45,7 +45,7 @@ public class DsdRestPublicServices extends Application {
     KeycloakUtils keycloakUtils;
 
     @Reference
-    DsdRegistrationUtils dsdRegistrationUtils;
+    DsdParserUtils parserUtils;
 
     @Override
     public Set<Class<?>> getClasses() {
@@ -64,7 +64,7 @@ public class DsdRestPublicServices extends Application {
         singletons.add(this);
         singletons.add(getJacksonJsonProvider());
         //Services for FullCalendar
-        singletons.add(new DsdFullcalendarService(_configurationProvider, dsdRegistrationUtils));
+        singletons.add(new DsdFullcalendarService(_configurationProvider, parserUtils));
         return singletons;
     }
 

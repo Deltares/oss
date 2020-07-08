@@ -15,23 +15,23 @@
 
             <#list rootElement.elements()>
                 <#items as dynamicElement>
-                    <#if "ExpertName"==dynamicElement.attributeValue("name")>
+                    <#if "expertName"==dynamicElement.attributeValue("name")>
                         <#assign cur_expertName = dynamicElement.element("dynamic-content").getData() />
                     </#if>
                     
                     <#list dynamicElement.elements() as child>
                         <#if child.getName()=="dynamic-element">
-                            <#if "ExpertImage"==child.attributeValue("name")>
+                            <#if "expertImage"==child.attributeValue("name")>
                                 <#assign overviewPhotoData = child.element("dynamic-content").getData()/>
                                 <#assign cur_expertImage = ddlUtils.getFileEntryImage(overviewPhotoData) />
                             </#if>
-                            <#if "ExpertJobTitle"==child.attributeValue("name")>
+                            <#if "expertJobTitle"==child.attributeValue("name")>
                                 <#assign cur_expertJobTitle = child.element("dynamic-content").getData() />
                             </#if>
-                            <#if "ExpertCompany"==child.attributeValue("name")>
+                            <#if "expertCompany"==child.attributeValue("name")>
                                 <#assign cur_expertCompany = child.element("dynamic-content").getData() />
                             </#if>
-                            <#if "ExpertEmailAddress"==child.attributeValue("name")>
+                            <#if "expertEmailAddress"==child.attributeValue("name")>
                                 <#assign cur_expertEmail = child.element("dynamic-content").getData() />
                             </#if>
                         </#if>
@@ -44,7 +44,7 @@
                             </div>  
                         <#else>
                             <div class="expert-data__image">
-                                ${stringUtil.shorten(cur_expertName.getData(), 1)}
+                                ${stringUtil.shorten(cur_expertName, 1)}
                             </div>
                         </#if>
                         <div class="expert-data__content">

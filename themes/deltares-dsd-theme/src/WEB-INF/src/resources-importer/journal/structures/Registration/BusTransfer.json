@@ -6,30 +6,7 @@
   "fields": [
     {
       "label": {
-        "en_US": "Store in parent site"
-      },
-      "predefinedValue": {
-        "en_US": true
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": "Choose to store content under parent site."
-      },
-      "dataType": "boolean",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "storeInParentSite",
-      "readOnly": false,
-      "repeatable": false,
-      "required": false,
-      "showLabel": true,
-      "type": "checkbox"
-    },
-    {
-      "label": {
-        "en_US": "Stops"
+        "en_US": "Bus Route"
       },
       "predefinedValue": {
         "en_US": ""
@@ -44,37 +21,73 @@
       "fieldNamespace": "ddm",
       "indexType": "keyword",
       "localizable": true,
-      "name": "location",
+      "name": "busRoute",
       "readOnly": false,
-      "repeatable": true,
+      "repeatable": false,
       "required": true,
       "showLabel": true,
-      "type": "ddm-journal-article",
-      "nestedFields": [
+      "type": "ddm-journal-article"
+    },
+    {
+      "label": {
+        "en_US": "pickupDates"
+      },
+      "options": [
         {
+          "value": "daily",
           "label": {
-            "en_US": "Time"
-          },
-          "predefinedValue": {
-            "en_US": "00:00"
-          },
-          "style": {
-            "en_US": ""
-          },
-          "tip": {
-            "en_US": "Expected departure time (format: HH:mm local time timezone)"
-          },
-          "dataType": "string",
-          "indexType": "keyword",
-          "localizable": true,
-          "name": "time",
-          "readOnly": false,
-          "repeatable": false,
-          "required": true,
-          "showLabel": true,
-          "type": "text"
+            "en_US": "Daily"
+          }
+        },
+        {
+          "value": "specify",
+          "label": {
+            "en_US": "Specific days"
+          }
         }
-      ]
+      ],
+      "predefinedValue": {
+        "en_US": "daily"
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "radio",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "pickupDates",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "radio"
+    },
+    {
+      "label": {
+        "en_US": "Date"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "date",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "date",
+      "readOnly": false,
+      "repeatable": true,
+      "required": false,
+      "showLabel": true,
+      "type": "ddm-date"
     }
   ]
 }

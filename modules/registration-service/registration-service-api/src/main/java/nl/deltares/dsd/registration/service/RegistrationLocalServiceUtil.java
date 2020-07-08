@@ -129,6 +129,25 @@ public class RegistrationLocalServiceUtil {
 	}
 
 	/**
+	 * Delete user registrations for 'resourceId' and a start date equal to 'stratDate'
+	 * that matches 'resourceId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param resourceId Article Identifier being removed.
+	 * @param userId User for which to remove registration
+	 * @param startDate Start date for which to remove registration
+	 */
+	public static void deleteUserRegistration(
+			long groupId, long resourceId, long userId,
+			java.util.Date startDate)
+		throws nl.deltares.dsd.registration.exception.
+			NoSuchRegistrationException {
+
+		getService().deleteUserRegistration(
+			groupId, resourceId, userId, startDate);
+	}
+
+	/**
 	 * Delete user registrations for 'resourceId'. This inlcudes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
@@ -309,9 +328,23 @@ public class RegistrationLocalServiceUtil {
 	}
 
 	public static int getRegistrationsCount(
+		long groupId, long resourceId, java.util.Date startDate) {
+
+		return getService().getRegistrationsCount(
+			groupId, resourceId, startDate);
+	}
+
+	public static int getRegistrationsCount(
 		long groupId, long userId, long resourceId) {
 
 		return getService().getRegistrationsCount(groupId, userId, resourceId);
+	}
+
+	public static int getRegistrationsCount(
+		long groupId, long userId, long resourceId, java.util.Date startDate) {
+
+		return getService().getRegistrationsCount(
+			groupId, userId, resourceId, startDate);
 	}
 
 	public static long[] getRegistrationsWithOverlappingPeriod(
