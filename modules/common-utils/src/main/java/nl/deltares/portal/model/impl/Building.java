@@ -55,10 +55,12 @@ public class Building extends AbsDsdArticle {
 
     static List<Room> parseRooms(String[] roomReferences) {
 
+        DuplicateCheck check = new DuplicateCheck();
         ArrayList<Room> rooms = new ArrayList<>();
         for (String json : roomReferences) {
             try {
-                rooms.add(JsonContentParserUtils.parseRoomJson(json));
+                Room room = JsonContentParserUtils.parseRoomJson(json);
+                if (check.checkDuplicates(room)) rooms.add(room);
             } catch (PortalException e) {
                 LOG.error(String.format("Error getting article for room: %s: %s", json, e.getMessage()));
             }

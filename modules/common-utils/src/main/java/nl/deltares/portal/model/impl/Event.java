@@ -89,12 +89,12 @@ public class Event extends AbsDsdArticle {
 
         long siteId = getGroupId();
         long eventId = Long.parseLong(getArticleId());
-
+        DuplicateCheck check = new DuplicateCheck();
         List<JournalArticle> filteredArticle = getFilteredArticle(siteId, this);
         for (JournalArticle journalArticle : filteredArticle) {
             Registration registration = (Registration) AbsDsdArticle.getInstance(journalArticle);
             if (registration.getEventId() != eventId) continue;
-            registrationCache.add(registration);
+            if (check.checkDuplicates(registration)) registrationCache.add(registration);
         }
     }
 

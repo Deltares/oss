@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import nl.deltares.portal.utils.DsdRegistrationUtils;
+import nl.deltares.portal.utils.DsdSessionUtils;
+import nl.deltares.portal.utils.DsdTransferUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.services.rest.exception.JsonProcessingExceptionMapper;
 import nl.deltares.services.rest.exception.LiferayRestExceptionMapper;
 import nl.deltares.services.rest.exception.PortalExceptionMapper;
+import nl.deltares.services.rest.registration.TransferRegistrationService;
 import nl.deltares.services.rest.registration.UserRegistrationService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -39,7 +41,10 @@ import java.util.Set;
 public class DsdRestServices extends Application {
 
     @Reference
-    DsdRegistrationUtils registrationUtil;
+    DsdSessionUtils dsdSessionUtils;
+
+    @Reference
+    DsdTransferUtils dsdTransferUtils;
 
     @Reference
     KeycloakUtils keycloakUtils;
@@ -61,7 +66,8 @@ public class DsdRestServices extends Application {
         singletons.add(this);
         singletons.add(getJacksonJsonProvider());
         // Services for registration
-        singletons.add(new UserRegistrationService(registrationUtil, keycloakUtils));
+        singletons.add(new UserRegistrationService(dsdSessionUtils, keycloakUtils));
+        singletons.add(new TransferRegistrationService(dsdTransferUtils));
         return singletons;
     }
 

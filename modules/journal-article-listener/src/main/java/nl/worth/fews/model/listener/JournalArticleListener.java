@@ -24,7 +24,7 @@ import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
-import nl.deltares.portal.utils.DsdRegistrationUtils;
+import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.worth.fews.configuration.JournalArticleManagementConfiguration;
 import nl.worth.fews.constants.JournalArticleManagementConstants;
 import org.osgi.service.component.annotations.Activate;
@@ -55,7 +55,7 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
             try {
                 AbsDsdArticle instance = AbsDsdArticle.getInstance(model);
                 if (instance instanceof Registration) {
-                    dsdRegistrationUtils.deleteRegistrationsFor((Registration)instance);
+                    dsdSessionUtils.deleteRegistrationsFor((Registration)instance);
                 }
             } catch (PortalException e) {
                 LOG.warn("Error removing journal article: " + e.getMessage());
@@ -81,7 +81,7 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
 
             if (dsdArticle instanceof SessionRegistration){
                 try {
-                    dsdRegistrationUtils.validateRoomCapacity((SessionRegistration) dsdArticle);
+                    dsdSessionUtils.validateRoomCapacity((SessionRegistration) dsdArticle);
                 } catch (PortalException e) {
                     LOG.error("Error validating session capacity: " + e.getMessage());
                     throw new ModelListenerException(e.getMessage());
@@ -179,7 +179,7 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
     private GroupLocalService _groupLocalService;
 
     @Reference
-    private DsdRegistrationUtils dsdRegistrationUtils;
+    private DsdSessionUtils dsdSessionUtils;
 
     private static final Log LOG = LogFactoryUtil.getLog(JournalArticleListener.class);
 }

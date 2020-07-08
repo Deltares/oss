@@ -1,4 +1,4 @@
-<#assign dsdUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdRegistrationUtils") />
+<#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
 
 <#if entries?has_content>
 
@@ -9,7 +9,7 @@
                 <#assign entry = curentry />
                 <#assign assetRenderer = entry.getAssetRenderer()/>
                 <#assign journalArticle = assetRenderer.getArticle()/>
-                <#assign location = dsdUtils.getLocation(journalArticle) />
+                <#assign location = dsdParserUtils.getLocation(journalArticle) />
                 <#if location.getLocationType() == "event" >
                     <#assign buildings = location.getBuildings() />
                 </#if>
