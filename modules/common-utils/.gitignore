@@ -2,3 +2,5 @@
 build/
 target/
 /src/test/resources/prod-keycloak.properties
+/src/test/java/nl/deltares/portal/utils/impl/GotoUtilsImplTest.java
+/src/test/java/nl/deltares/portal/utils/impl/KeycloakUtilsImplTest.java

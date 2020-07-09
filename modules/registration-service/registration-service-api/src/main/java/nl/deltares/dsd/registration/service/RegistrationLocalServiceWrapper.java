@@ -333,6 +333,14 @@ public class RegistrationLocalServiceWrapper
 		return _registrationLocalService.getRegistrations(start, end);
 	}
 
+	@Override
+	public java.util.List<nl.deltares.dsd.registration.model.Registration>
+		getRegistrations(long groupId, long userId, long resourceId) {
+
+		return _registrationLocalService.getRegistrations(
+			groupId, userId, resourceId);
+	}
+
 	/**
 	 * Returns the number of registrations.
 	 *
