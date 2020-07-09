@@ -76,6 +76,13 @@ public class Event extends AbsDsdArticle {
         return Collections.unmodifiableList(registrationCache);
     }
 
+    public Registration getRegistration(long resourceId){
+        for (Registration registration : registrationCache) {
+            if (registration.getResourceId() == resourceId) return registration;
+        }
+        return null;
+    }
+
     public boolean isEventInPast(){
         return System.currentTimeMillis() > startTime.getTime();
     }

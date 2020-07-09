@@ -22,6 +22,7 @@ import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.dsd.registration.service.base.RegistrationLocalServiceBaseImpl;
 import nl.deltares.dsd.registration.service.persistence.RegistrationUtil;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -158,7 +159,7 @@ public class RegistrationLocalServiceImpl
 		Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
 		Criterion checkResourceId = PropertyFactoryUtil.forName("resourcePrimaryKey").eq(resourceId);
 		Criterion checkStart = PropertyFactoryUtil.forName("startTime").eq(startDate);
-		DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader()).add(checkResourceId).add(checkStart);
+		DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader()).add(checkGroupId).add(checkResourceId).add(checkStart);
 		return (int) RegistrationUtil.countWithDynamicQuery(query);
 	}
 
@@ -166,5 +167,23 @@ public class RegistrationLocalServiceImpl
 
 		DynamicQuery query = getDynamicQuery(groupId, groupId, userId, startDate);
 		return (int) RegistrationUtil.countWithDynamicQuery(query);
+	}
+
+	public List<Date> getRegistrationDates(long groupId, long userId, long resourceId){
+		List<Date> registrationDates = new ArrayList<>();
+		List<Registration> byUserArticleRegistrations = RegistrationUtil.findByUserArticleRegistrations(groupId, userId, resourceId);
+		byUserArticleRegistrations.forEach(registration -> registrationDates.add(registration.getStartTime()));
+		return registrationDates;
+	}
+
+	public List<Registration> getUserRegistrations(long groupId, long userId, Date start, Date end){
+		Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
+		Criterion checkUserId = PropertyFactoryUtil.forName("userId").eq(userId);
+		Criterion checkStart = PropertyFactoryUtil.forName("startTime").ge(start);
+		Criterion checkEnd = PropertyFactoryUtil.forName("endTime").le(end);
+		DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class,
+				getClass().getClassLoader()).add(checkGroupId).add(checkGroupId).add(checkUserId).add(checkStart).add(checkEnd);
+		return RegistrationUtil.findWithDynamicQuery(query);
+
 	}
 }
