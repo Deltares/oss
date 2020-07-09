@@ -91,4 +91,8 @@ public class JsonContentParserUtils {
         }
         return jsonObject.toJSONString();
     }
+
+    public static String formatTextToJson(String field, String message) {
+        return String.format("{ \"%s\" : \"%s\" }", field, message);
+    }
 }

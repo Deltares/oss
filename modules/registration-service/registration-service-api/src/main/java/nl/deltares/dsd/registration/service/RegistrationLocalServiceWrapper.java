@@ -307,6 +307,14 @@ public class RegistrationLocalServiceWrapper
 		return _registrationLocalService.getRegistration(registrationId);
 	}
 
+	@Override
+	public java.util.List<java.util.Date> getRegistrationDates(
+		long groupId, long userId, long resourceId) {
+
+		return _registrationLocalService.getRegistrationDates(
+			groupId, userId, resourceId);
+	}
+
 	/**
 	 * Returns a range of all the registrations.
 	 *
@@ -372,6 +380,16 @@ public class RegistrationLocalServiceWrapper
 
 		return _registrationLocalService.getRegistrationsWithOverlappingPeriod(
 			groupId, userId, startTime, endTime);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.dsd.registration.model.Registration>
+		getUserRegistrations(
+			long groupId, long userId, java.util.Date start,
+			java.util.Date end) {
+
+		return _registrationLocalService.getUserRegistrations(
+			groupId, userId, start, end);
 	}
 
 	/**
