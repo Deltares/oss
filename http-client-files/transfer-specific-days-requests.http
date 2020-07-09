@@ -1,0 +1,43 @@
+###
+DELETE http://localhost:8090/o/dsd/transfer/register/{{siteId}}/{{articleId}}
+Authorization: Basic {{username}} {{password}}
+Accept: application/json
+
+> {%
+client.test("Delete Request", function() {
+   client.assert(response.status === 202, "Response status is not 200 but " + response.status);
+   var s = response.body.message;
+   client.assert(s === "User un-registered for Hotel Drop-off", "Expected 'User un-registered for Hotel Drop-off' but found : " + s)
+});
+%}
+
+###
+POST http://localhost:8090/o/dsd/transfer/register/{{siteId}}/{{articleId}}
+Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+["2020-07-13","2020-07-14","2020-07-15"]
+
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 202, "Response status is not 202 but " + response.status);
+var s = response.body.message;
+client.assert(s === "User registered for bus transfer Hotel Drop-off", "Expected 'User registered for bus transfer Hotel Drop-off' but found : " + s)
+});
+%}
+
+###
+GET http://localhost:8090/o/dsd/transfer/register/{{siteId}}/{{articleId}}
+Authorization: Basic {{username}} {{password}}
+Accept: application/json
+
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 200, "Response status is not 200");
+var s = JSON.stringify(response.body);
+client.assert(s === "[\"2020-07-15\",\"2020-07-14\",\"2020-07-13\"]", "Expected '[\"2020-07-15\",\"2020-07-14\",\"2020-07-13\"]' but found : " + s)
+});
+%}
+
+
+

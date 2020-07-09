@@ -39,7 +39,9 @@ public class SessionRegistration extends Registration {
                 presenter = parsePresenterData(presenters[0]);
             }
             String jsonImage = XmlContentParserUtils.getDynamicContentByName(document, "eventImage", true);
-            imageUrl = parseImage(jsonImage);
+            if (jsonImage != null) {
+                imageUrl = parseImage(jsonImage);
+            }
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
