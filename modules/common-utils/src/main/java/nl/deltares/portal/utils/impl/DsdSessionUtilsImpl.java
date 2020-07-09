@@ -19,10 +19,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component(
         immediate = true,
@@ -198,4 +195,11 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         return registrationsCount > 0;
     }
 
+    @Override
+    public List<Map<String, Object>> getUserRegistrations(User user, Event event) {
+        List<nl.deltares.dsd.registration.model.Registration> dbRegistrations = RegistrationLocalServiceUtil.getUserRegistrations(event.getGroupId(), user.getUserId(), event.getStartTime(), event.getEndTime());
+        List<Map<String, Object>> registrations = new ArrayList<>();
+        dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
+        return registrations;
+    }
 }

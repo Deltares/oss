@@ -1,7 +1,0 @@
-###
-POST http://localhost:8090/o/dsd/transfer/register/{{siteId}}/{{articleId}}
-Authorization: Basic {{username}} {{password}}
-Content-Type: application/json
-
-["2020-07-20","2020-07-21","2020-07-22"]
-

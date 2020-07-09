@@ -15,8 +15,6 @@
 package nl.deltares.dsd.registration.service;
 
 import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.portal.kernel.dao.orm.*;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
@@ -32,14 +30,12 @@ import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
-
-import java.io.Serializable;
-
-import java.util.Date;
-import java.util.List;
-
 import nl.deltares.dsd.registration.exception.NoSuchRegistrationException;
 import nl.deltares.dsd.registration.model.Registration;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Provides the local service interface for Registration. Methods of this
@@ -246,6 +242,10 @@ public interface RegistrationLocalService
 	public Registration getRegistration(long registrationId)
 		throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Date> getRegistrationDates(
+		long groupId, long userId, long resourceId);
+
 	/**
 	 * Returns a range of all the registrations.
 	 *
@@ -286,6 +286,10 @@ public interface RegistrationLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public long[] getRegistrationsWithOverlappingPeriod(
 		long groupId, long userId, Date startTime, Date endTime);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getUserRegistrations(
+		long groupId, long userId, Date start, Date end);
 
 	/**
 	 * Updates the registration in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
