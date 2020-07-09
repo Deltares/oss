@@ -7,8 +7,14 @@ import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.impl.Registration;
 
 import java.util.Date;
+import java.util.List;
 
 public interface DsdTransferUtils {
+
+    /**
+     * Return the days for which the user is registered.
+     */
+    List<Date> getRegisteredDays(User user, Registration registration) throws PortalException;
 
     /**
      * Register user for single date of this Registration

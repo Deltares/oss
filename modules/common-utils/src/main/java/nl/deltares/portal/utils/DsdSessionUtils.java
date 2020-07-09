@@ -3,10 +3,12 @@ package nl.deltares.portal.utils;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import nl.deltares.portal.exception.ValidationException;
+import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
 
 import java.util.List;
+import java.util.Map;
 
 public interface DsdSessionUtils {
 
@@ -84,4 +86,11 @@ public interface DsdSessionUtils {
      */
     void validateRoomCapacity(SessionRegistration registration) throws PortalException;
 
+    /**
+     * Get user's registrations records for given event.
+     * @param user User Id
+     * @param event Event for which to retrieve registrations
+     * @return List of user registration records
+     */
+    List<Map<String, Object>> getUserRegistrations(User user, Event event);
 }
