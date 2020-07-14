@@ -102,6 +102,65 @@
     },
     {
       "label": {
+        "en_US": "Webinar Key"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "webinarKey",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "text",
+      "nestedFields": [
+        {
+          "label": {
+            "en_US": "Provider"
+          },
+          "options": [
+            {
+              "value": "goto",
+              "label": {
+                "en_US": "GOTO Webinar"
+              }
+            }
+          ],
+          "predefinedValue": {
+            "en_US": [
+              ""
+            ]
+          },
+          "style": {
+            "en_US": ""
+          },
+          "tip": {
+            "en_US": ""
+          },
+          "dataType": "string",
+          "indexType": "keyword",
+          "localizable": true,
+          "multiple": false,
+          "name": "privider",
+          "readOnly": false,
+          "repeatable": false,
+          "required": false,
+          "showLabel": true,
+          "type": "select"
+        }
+      ]
+    },
+    {
+      "label": {
         "en_US": "Schedules"
       },
       "predefinedValue": {

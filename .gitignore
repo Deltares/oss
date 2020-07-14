@@ -266,3 +266,4 @@ license*.xml
 /docker/liferay/mount
 /docker/liferay/data
 /docker/mariadb/docker-entrypoint-initdb.d
+/http-client-files/http-client.private.env.json
