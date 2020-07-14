@@ -18,7 +18,7 @@ public interface DsdSessionUtils {
      * @param registration Registration for which user must be registered
      * @param userProperties Optional additional properties linked to this registration.
      */
-    void registerUser(User user, Registration registration, String userProperties) throws PortalException;
+    void registerUser(User user, Registration registration, Map<String, String> userProperties) throws PortalException;
 
     /**
      * Unregister user for Registration
