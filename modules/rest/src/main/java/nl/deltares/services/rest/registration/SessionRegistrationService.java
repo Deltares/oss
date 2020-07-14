@@ -134,7 +134,6 @@ public class SessionRegistrationService {
             LOG.warn(msg);
             return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
         }
-
         return Response.accepted(JsonContentParserUtils.formatTextToJson("message","User un-registered for " + registration.getTitle())).type(MediaType.APPLICATION_JSON).build();
     }
 
