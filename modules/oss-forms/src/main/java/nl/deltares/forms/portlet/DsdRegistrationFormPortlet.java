@@ -57,7 +57,7 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
             try {
 				Map<String, String> attributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
 				request.setAttribute("attributes", attributes);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 SessionErrors.add(request, "update-attributes-failed",  e.getMessage());
             }
 

@@ -53,6 +53,7 @@ public class UserInfoService {
             LOG.warn(msg);
             return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
         }
+
         return toResponse(userDetails);
     }
 
