@@ -2,7 +2,7 @@ package nl.deltares.mock;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleWrapper;
-import sun.misc.IOUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 
@@ -18,7 +18,8 @@ public class MockJournalArticle extends JournalArticleWrapper {
     }
 
     public static JournalArticle getInstance(String title, String structureKey, long resourcePk, InputStream resourceAsStream) throws IOException {
-        byte[] content = IOUtils.readFully(resourceAsStream, -1, true);
+
+        byte[] content = IOUtils.toByteArray(resourceAsStream);
         MockJournalArticle article = new MockJournalArticle();
         article.setContent(new String(content));
         article.setTitle(title);
