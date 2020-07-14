@@ -16,6 +16,7 @@ public class SessionRegistration extends Registration {
     private Room room;
     private Expert presenter;
     private String imageUrl;
+    private String webinarKey;
 
     public SessionRegistration(JournalArticle article) throws PortalException {
         super(article);
@@ -42,6 +43,8 @@ public class SessionRegistration extends Registration {
             if (jsonImage != null) {
                 imageUrl = parseImage(jsonImage);
             }
+            webinarKey = XmlContentParserUtils.getDynamicContentByName(document, "webinarKey", true);
+            //todo: Add provider currently only GOTO
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -76,6 +79,8 @@ public class SessionRegistration extends Registration {
         return imageUrl;
     }
 
+    public String getWebinarKey(){ return  webinarKey; }
+    
     private String parseImage(String jsonData) throws PortalException {
         JSONObject jsonObject = JsonContentParserUtils.parseContent(jsonData);
         FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(jsonObject.getLong("fileEntryId"));

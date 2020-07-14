@@ -4,6 +4,7 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.GroupServiceUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.portal.exception.ValidationException;
@@ -12,14 +13,15 @@ import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
-import nl.deltares.portal.utils.DsdParserUtils;
-import nl.deltares.portal.utils.DsdSessionUtils;
-import nl.deltares.portal.utils.KeycloakUtils;
+import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 
 @Component(
         immediate = true,
@@ -36,6 +38,9 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     KeycloakUtils keycloakUtils;
 
     @Reference
+    GotoUtils gotoUtils;
+
+    @Reference
     DsdParserUtils parserUtils;
 
     @Override
@@ -44,22 +49,59 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
-    public void registerUser(User user, Registration registration, String userProperties) throws PortalException {
+    public void registerUser(User user, Registration registration, Map<String, String> userProperties) throws PortalException {
 
         validateRegistration(user, registration);
 
+        if (gotoUtils.isGotoMeeting(registration)){
+            registerGotoUser(user, (SessionRegistration) registration, userProperties);
+        }
         long parentId = registration.getParentRegistration() == null ? 0 : registration.getParentRegistration().getResourceId();
         RegistrationLocalServiceUtil.addUserRegistration(
                 registration.getCompanyId(), registration.getGroupId(), registration.getResourceId(),
                 parentId, user.getUserId(),
-                registration.getStartTime(), registration.getEndTime(), userProperties);
+                registration.getStartTime(), registration.getEndTime(), JsonContentParserUtils.formatMapToJson(userProperties));
+    }
+
+    private void registerGotoUser(User user, SessionRegistration registration, Map<String, String> userProperties) throws PortalException {
+        try {
+            Map<String, String> responseValues = gotoUtils.registerUser(user, registration.getWebinarKey(), GroupServiceUtil.getGroup(registration.getGroupId()).getName());
+            userProperties.put("registrantKey", responseValues.get("registrantKey"));
+            userProperties.put("joinUrl", responseValues.get("joinUrl"));
+        } catch (Exception e) {
+            throw new PortalException(e);
+        }
     }
 
     @Override
-    public void unRegisterUser(User user, Registration registration) {
+    public void unRegisterUser(User user, Registration registration) throws PortalException {
 
+        if (gotoUtils.isGotoMeeting(registration)){
+            unRegisterGotUser(user, registration);
+        }
         RegistrationLocalServiceUtil.deleteUserRegistrationAndChildRegistrations(
                 registration.getGroupId(), registration.getResourceId(), user.getUserId());
+    }
+
+    private void unRegisterGotUser(User user, Registration registration) throws PortalException {
+        List<nl.deltares.dsd.registration.model.Registration> registrations = RegistrationLocalServiceUtil.getRegistrations(registration.getGroupId(), user.getUserId(), registration.getResourceId());
+        if (registrations.size() > 0){
+             String userPreferences = registrations.get(0).getUserPreferences();
+            if (userPreferences == null){
+                throw new PortalException(String.format("No user registrantKey for user %s and registration %s", user.getEmailAddress(), registration.getTitle()));
+            }
+            Map<String, String> preferences = JsonContentParserUtils.parseJsonToMap(userPreferences);
+            String registrantKey = preferences.get("registrantKey");
+            if (registrantKey == null){
+                throw new PortalException(String.format("No user registrantKey for user %s and registration %s", user.getEmailAddress(), registration.getTitle()));
+            }
+
+            try {
+                gotoUtils.unregisterUser(registrantKey, ((SessionRegistration) registration).getWebinarKey());
+            } catch (Exception e) {
+                throw new PortalException(e);
+            }
+        }
     }
 
     @Override
@@ -91,7 +133,6 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         }
 
     }
-
 
     public List<Registration> getChildRegistrations(Registration registration) throws PortalException {
         Event event = parserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()));
@@ -169,7 +210,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         Map<String, String> userAttributes;
         try {
             userAttributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new PortalException(e);
         }
         for (DsdArticle.DSD_REQUIRED_REGISTRATION_ATTRIBUTES value : DsdArticle.DSD_REQUIRED_REGISTRATION_ATTRIBUTES.values()) {

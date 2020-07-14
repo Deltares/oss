@@ -77,13 +77,8 @@ public abstract class AbsDsdArticle implements DsdArticle {
     }
 
     private void init() throws PortalException {
-        try {
-            this.document = XmlContentParserUtils.parseContent(article);
-        } catch (Exception e) {
-            throw new PortalException(String.format("Error parsing content for article %s: %s!", article.getTitle(), e.getMessage()), e);
-        }
+        this.document = XmlContentParserUtils.parseContent(article);
     }
-
 
     public static AbsDsdArticle getInstance(JournalArticle journalArticle) throws PortalException {
 
