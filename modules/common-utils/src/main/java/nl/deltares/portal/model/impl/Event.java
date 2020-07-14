@@ -28,16 +28,12 @@ public class Event extends AbsDsdArticle {
     }
 
     private void init() throws PortalException {
-        try {
-            Document document = getDocument();
-            String eventLocation = XmlContentParserUtils.getDynamicContentByName(document, "eventLocation", false);
-            this.eventLocation = parseEventLocation(eventLocation);
-            startTime = XmlContentParserUtils.parseDateTimeFields(document, "start", "starttime", false);
-            endTime = XmlContentParserUtils.parseDateTimeFields(document, "end", "endtime", false);
-            loadRegistrations();
-        } catch (Exception e) {
-            throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
-        }
+        Document document = getDocument();
+        String eventLocation = XmlContentParserUtils.getDynamicContentByName(document, "eventLocation", false);
+        this.eventLocation = parseEventLocation(eventLocation);
+        startTime = XmlContentParserUtils.parseDateTimeFields(document, "start", "starttime", false);
+        endTime = XmlContentParserUtils.parseDateTimeFields(document, "end", "endtime", false);
+        loadRegistrations();
     }
 
     private EventLocation parseEventLocation(String eventLocation) throws PortalException {

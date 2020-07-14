@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+
+<root available-locales="en_US" default-locale="en_US">
+    <dynamic-element name="eventId" type="ddm-integer" index-type="keyword" instance-id="xxtp">
+        <dynamic-content language-id="en_US"><![CDATA[107614]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="start" type="ddm-date" index-type="keyword" instance-id="hsdd">
+        <dynamic-element name="starttime" instance-id="wqjs" type="text" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[09:00]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-content language-id="en_US"><![CDATA[2020-07-14]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="end" type="ddm-date" index-type="keyword" instance-id="uirn">
+        <dynamic-element name="endtime" instance-id="qhhu" type="text" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[17:00]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-content language-id="en_US"><![CDATA[2020-07-14]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="type" type="list" index-type="keyword" instance-id="bvwe">
+        <dynamic-content language-id="en_US"><![CDATA[Course]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="topic" type="list" index-type="keyword" instance-id="hdnm">
+        <dynamic-content language-id="en_US"><![CDATA[delft3d]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="price" type="ddm-decimal" index-type="keyword" instance-id="fzry">
+        <dynamic-element name="currency" instance-id="jutm" type="text" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[€]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-content language-id="en_US"><![CDATA[1000.0]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="capacity" type="ddm-integer" index-type="keyword" instance-id="omjg">
+        <dynamic-content language-id="en_US"><![CDATA[24]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="parent" type="ddm-journal-article" index-type="keyword" instance-id="vqur">
+        <dynamic-element name="overlaps" instance-id="eacc" type="boolean" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="open" type="boolean" index-type="keyword" instance-id="nlkx">
+        <dynamic-content language-id="en_US"><![CDATA[true]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="visible" type="boolean" index-type="keyword" instance-id="qllo">
+        <dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="highlight" type="boolean" index-type="keyword" instance-id="pnpc">
+        <dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="presenters" type="ddm-journal-article" index-type="keyword" instance-id="mmgs">
+        <dynamic-content language-id="en_US"><![CDATA[{"className":"com.liferay.journal.model.JournalArticle","classPK":"108340","title":"John Doe","titleMap":"{\"en_US\":\"John Doe\"}"}]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="description" type="text_area" index-type="text" instance-id="qqqk">
+        <dynamic-content language-id="en_US"><![CDATA[<p>Course 2020</p>]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="room" type="ddm-journal-article" index-type="keyword" instance-id="thtr">
+        <dynamic-content language-id="en_US"><![CDATA[{"className":"com.liferay.journal.model.JournalArticle","classPK":"108213","title":"Class room","titleMap":"{\"en_US\":\"Class room\"}"}]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="eventImage" type="image" index-type="text" instance-id="hktx">
+        <dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="webinarKey" type="text" index-type="keyword" instance-id="chsa">
+        <dynamic-element name="privider" instance-id="sjmg" type="list" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[goto]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-content language-id="en_US"><![CDATA[2590473991435429392]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="schedules" type="text_area" index-type="text" instance-id="cddl">
+        <dynamic-element name="date" instance-id="hnei" type="ddm-date" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+    </dynamic-element>
+</root>
