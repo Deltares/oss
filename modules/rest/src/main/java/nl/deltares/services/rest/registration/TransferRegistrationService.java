@@ -4,7 +4,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdTransferUtils;
@@ -15,7 +14,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,11 +41,26 @@ public class TransferRegistrationService {
     @Path("/register/{siteId}/{articleId}")
     @Consumes("application/json")
     public Response registrations(@Context HttpServletRequest request,
-                               @PathParam("siteId") long siteId, @PathParam("articleId") long articleId) throws Exception {
+                               @PathParam("siteId") long siteId, @PathParam("articleId") long articleId) {
 
-        User user = getRemoteUser(request);
-        Registration registration = dsdParserUtils.getRegistration(siteId, String.valueOf(articleId));
-        List<Date> registeredDays = registrationUtils.getRegisteredDays(user, registration);
+        User user;
+        try {
+            user = getRemoteUser(request);
+        } catch (Exception e) {
+            String msg = JsonContentParserUtils.formatTextToJson("message", "Error getting user: " + e.getMessage());
+            LOG.warn(msg);
+            return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
+        }
+        List<Date> registeredDays;
+        try {
+            Registration registration = dsdParserUtils.getRegistration(siteId, String.valueOf(articleId));
+            registeredDays = registrationUtils.getRegisteredDays(user, registration);
+        } catch (PortalException e) {
+            String msg = JsonContentParserUtils.formatTextToJson("message",
+                    String.format("Error retrieving registration for site %d and article %d: %s", siteId, articleId, e.getMessage()));
+            LOG.warn(msg);
+            return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
+        }
         ArrayList<String> days = new ArrayList<>();
         registeredDays.forEach(date -> days.add(dayFormat.format(date)));
         return Response.ok(days).type(MediaType.APPLICATION_JSON).build();
@@ -62,9 +75,16 @@ public class TransferRegistrationService {
     @Consumes("application/json")
     public Response register(@Context HttpServletRequest request,
                          @PathParam("siteId") long siteId, @PathParam("articleId") long articleId,
-                             List<String> transferDates) throws Exception {
+                             List<String> transferDates)  {
 
-        User user = getRemoteUser(request);
+        User user;
+        try {
+            user = getRemoteUser(request);
+        } catch (Exception e) {
+            String msg = JsonContentParserUtils.formatTextToJson("message", "Error getting user: " + e.getMessage());
+            LOG.warn(msg);
+            return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
+        }
         Registration registration ;
         try {
             registration = dsdParserUtils.getRegistration(siteId, String.valueOf(articleId));
@@ -82,12 +102,9 @@ public class TransferRegistrationService {
             for (String transferDate : transferDates) {
                 registrationUtils.registerUser(user, registration, dayFormat.parse(transferDate));
             }
-        } catch (ValidationException e) {
-            String msg = JsonContentParserUtils.formatTextToJson("message", "Validation Exception: " + e.getMessage());
+        } catch (Exception e) {
+            String msg = JsonContentParserUtils.formatTextToJson("message", "Error registering user: " + e.getMessage());
             LOG.warn(msg);
-            return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
-        } catch (ParseException e){
-            String msg = JsonContentParserUtils.formatTextToJson("message", "Error parsing transfer date: " + e.getMessage());
             return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
         }
 
@@ -100,9 +117,23 @@ public class TransferRegistrationService {
     @Path("/register/{siteId}/{articleId}")
     @Consumes("application/json")
     public Response unRegister(@Context HttpServletRequest request,
-                             @PathParam("siteId") long siteId, @PathParam("articleId") long articleId) throws Exception {
-        User user = getRemoteUser(request);
-        Registration registration = dsdParserUtils.getRegistration(siteId, String.valueOf(articleId));
+                             @PathParam("siteId") long siteId, @PathParam("articleId") long articleId)  {
+        User user;
+        try {
+            user = getRemoteUser(request);
+        } catch (Exception e) {
+            String msg = JsonContentParserUtils.formatTextToJson("message", "Error getting user: " + e.getMessage());
+            LOG.warn(msg);
+            return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
+        }
+        Registration registration;
+        try {
+            registration = dsdParserUtils.getRegistration(siteId, String.valueOf(articleId));
+        } catch (PortalException e) {
+            String msg = JsonContentParserUtils.formatTextToJson("message","Error getting registration: " + e.getMessage());
+            LOG.warn(msg);
+            return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
+        }
         registrationUtils.unRegisterUser(user, registration);
         return Response.accepted(
                 JsonContentParserUtils.formatTextToJson("message","User un-registered for " + registration.getTitle())).type(MediaType.APPLICATION_JSON).build();

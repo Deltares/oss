@@ -31,7 +31,6 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
 
     private static final Log LOG = LogFactoryUtil.getLog(DsdParserUtilsImpl.class);
 
-
     @Override
     public Event getEvent(long siteId, String articleId) throws PortalException {
         JournalArticle eventResource = JournalArticleLocalServiceUtil.getLatestArticle(siteId, articleId);

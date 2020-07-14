@@ -37,6 +37,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import nl.deltares.dsd.registration.exception.NoSuchRegistrationException;
+import nl.deltares.dsd.registration.model.Registration;
+
 /**
  * Provides the local service interface for Registration. Methods of this
  * service will not have security checks based on the propagated JAAS
@@ -259,6 +262,10 @@ public interface RegistrationLocalService
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Registration> getRegistrations(int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getRegistrations(
+		long groupId, long userId, long resourceId);
 
 	/**
 	 * Returns the number of registrations.
