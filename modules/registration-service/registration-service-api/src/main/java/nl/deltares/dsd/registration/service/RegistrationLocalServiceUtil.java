@@ -320,6 +320,13 @@ public class RegistrationLocalServiceUtil {
 		return getService().getRegistrations(start, end);
 	}
 
+	public static java.util.List
+		<nl.deltares.dsd.registration.model.Registration> getRegistrations(
+			long groupId, long userId, long resourceId) {
+
+		return getService().getRegistrations(groupId, userId, resourceId);
+	}
+
 	/**
 	 * Returns the number of registrations.
 	 *

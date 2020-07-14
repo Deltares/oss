@@ -1,9 +1,9 @@
 package nl.deltares.services.rest.registration;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.DsdParserUtils;
@@ -43,10 +43,24 @@ public class SessionRegistrationService {
     @Consumes("application/json")
     public Response registrations(@Context HttpServletRequest request,
                                   @PathParam("siteId") long siteId,
-                                  @PathParam("eventId") long eventId) throws Exception {
+                                  @PathParam("eventId") long eventId) {
 
-        User user = getRemoteUser(request);
-        Event event = dsdParserUtils.getEvent(siteId, String.valueOf(eventId));
+        User user;
+        try {
+            user = getRemoteUser(request);
+        } catch (Exception e) {
+            String msg = JsonContentParserUtils.formatTextToJson("message", "Error getting user: " + e.getMessage());
+            LOG.warn(msg);
+            return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
+        }
+        Event event;
+        try {
+            event = dsdParserUtils.getEvent(siteId, String.valueOf(eventId));
+        } catch (PortalException e) {
+            String msg = JsonContentParserUtils.formatTextToJson("message", "Error getting event: " + e.getMessage());
+            LOG.warn(msg);
+            return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
+        }
         List<Map<String, Object>> registrationRecords = registrationUtils.getUserRegistrations(user, event);
         List<RegistrationDetails> details = new ArrayList<>();
         registrationRecords.stream().map(stringObjectMap ->
@@ -56,20 +70,33 @@ public class SessionRegistrationService {
 
     }
 
-
     @POST
     @Path("/register/{siteId}/{articleId}")
     @Consumes("application/json")
     public Response register(@Context HttpServletRequest request,
-                         @PathParam("siteId") long siteId, @PathParam("articleId") long articleId, String jsonProperties) throws Exception {
+                         @PathParam("siteId") long siteId, @PathParam("articleId") long articleId, String jsonProperties) {
 
-        User user = getRemoteUser(request);
-        Registration registration = dsdParserUtils.getRegistration(siteId, String.valueOf(articleId));
+        User user;
+        try {
+            user = getRemoteUser(request);
+        } catch (Exception e) {
+            String msg = JsonContentParserUtils.formatTextToJson("message","Error getting user: " + e.getMessage());
+            LOG.warn(msg);
+            return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
+        }
+        Registration registration;
+        try {
+            registration = dsdParserUtils.getRegistration(siteId, String.valueOf(articleId));
+        } catch (PortalException e) {
+            String msg = JsonContentParserUtils.formatTextToJson("message","Error getting registration: " + e.getMessage());
+            LOG.warn(msg);
+            return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
+        }
 
         try {
-            registrationUtils.registerUser(user, registration, jsonProperties);
-        } catch (ValidationException e) {
-            String msg = JsonContentParserUtils.formatTextToJson("message","Validation Exception: " + e.getMessage());
+            registrationUtils.registerUser(user, registration, JsonContentParserUtils.parseJsonToMap(jsonProperties));
+        } catch (PortalException e) {
+            String msg = JsonContentParserUtils.formatTextToJson("message","Error registering user: " + e.getMessage());
             LOG.warn(msg);
             return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
         }
@@ -81,11 +108,32 @@ public class SessionRegistrationService {
     @Path("/register/{siteId}/{articleId}")
     @Consumes("application/json")
     public Response unRegister(@Context HttpServletRequest request,
-                             @PathParam("siteId") long siteId, @PathParam("articleId") long articleId) throws Exception {
-        User user = getRemoteUser(request);
+                             @PathParam("siteId") long siteId, @PathParam("articleId") long articleId) {
+        User user;
+        try {
+            user = getRemoteUser(request);
+        } catch (Exception e) {
+            String msg = JsonContentParserUtils.formatTextToJson("message","Error getting user: " + e.getMessage());
+            LOG.warn(msg);
+            return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
+        }
 
-        Registration registration = dsdParserUtils.getRegistration(siteId, String.valueOf(articleId));
-        registrationUtils.unRegisterUser(user, registration);
+        Registration registration;
+        try {
+            registration = dsdParserUtils.getRegistration(siteId, String.valueOf(articleId));
+        } catch (PortalException e) {
+            String msg = JsonContentParserUtils.formatTextToJson("message","Error getting registration: " + e.getMessage());
+            LOG.warn(msg);
+            return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
+        }
+
+        try {
+            registrationUtils.unRegisterUser(user, registration);
+        } catch (PortalException e) {
+            String msg = JsonContentParserUtils.formatTextToJson("message","Error un-registering user: " + e.getMessage());
+            LOG.warn(msg);
+            return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
+        }
         return Response.accepted(JsonContentParserUtils.formatTextToJson("message","User un-registered for " + registration.getTitle())).type(MediaType.APPLICATION_JSON).build();
     }
 
