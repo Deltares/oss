@@ -17,10 +17,8 @@ import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
 @Component(
         immediate = true,
@@ -78,7 +76,6 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         if (gotoUtils.isGotoMeeting(registration)){
             unRegisterGotUser(user, registration);
         }
-
         RegistrationLocalServiceUtil.deleteUserRegistrationAndChildRegistrations(
                 registration.getGroupId(), registration.getResourceId(), user.getUserId());
     }
@@ -133,6 +130,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         }
 
     }
+
 
     public List<Registration> getChildRegistrations(Registration registration) throws PortalException {
         Event event = parserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()));
@@ -210,7 +208,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         Map<String, String> userAttributes;
         try {
             userAttributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new PortalException(e);
         }
         for (DsdArticle.DSD_REQUIRED_REGISTRATION_ATTRIBUTES value : DsdArticle.DSD_REQUIRED_REGISTRATION_ATTRIBUTES.values()) {
