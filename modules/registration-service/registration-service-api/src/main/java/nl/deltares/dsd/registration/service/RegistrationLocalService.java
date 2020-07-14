@@ -15,8 +15,6 @@
 package nl.deltares.dsd.registration.service;
 
 import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.portal.kernel.dao.orm.*;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
@@ -32,9 +30,10 @@ import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import nl.deltares.dsd.registration.exception.NoSuchRegistrationException;
+import nl.deltares.dsd.registration.model.Registration;
 
 import java.io.Serializable;
-
 import java.util.Date;
 import java.util.List;
 

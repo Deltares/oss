@@ -155,7 +155,6 @@ public class RegistrationLocalServiceImpl
 
 	public List<Registration> getRegistrations(long groupId, long userId, long resourceId)  {
 		return  RegistrationUtil.findByUserArticleRegistrations(groupId, userId, resourceId);
-	}
 
 	public int getRegistrationsCount(long groupId, long resourceId, Date startDate)  {
 
