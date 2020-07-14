@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+
 @Component(
         immediate = true,
         service = DsdSessionUtils.class,
@@ -78,7 +79,6 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         if (gotoUtils.isGotoMeeting(registration)){
             unRegisterGotUser(user, registration);
         }
-
         RegistrationLocalServiceUtil.deleteUserRegistrationAndChildRegistrations(
                 registration.getGroupId(), registration.getResourceId(), user.getUserId());
     }
