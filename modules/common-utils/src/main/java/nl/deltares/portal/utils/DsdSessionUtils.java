@@ -93,4 +93,11 @@ public interface DsdSessionUtils {
      * @return List of user registration records
      */
     List<Map<String, Object>> getUserRegistrations(User user, Event event);
+
+    /**
+     * Get all registrations records for given event.
+     * @param event Event for which to retrieve registrations
+     * @return List of user registration records
+     */
+    List<Map<String, Object>> getRegistrations(Event event);
 }

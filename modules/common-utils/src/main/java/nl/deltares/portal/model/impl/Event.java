@@ -7,7 +7,7 @@ import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import nl.deltares.portal.model.DsdArticle;
+import nl.deltares.portal.utils.DuplicateCheck;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.XmlContentParserUtils;
 import org.w3c.dom.Document;
@@ -17,8 +17,9 @@ import java.util.concurrent.TimeUnit;
 
 public class Event extends AbsDsdArticle {
 
-    private final List<Registration> registrationCache = new ArrayList<>();
-    private EventLocation eventLocation;
+    private List<Registration> registrationCache = null;
+    private EventLocation eventLocation = null;
+    boolean hasEventLocation = true;
     private Date startTime = null;
     private Date endTime = null;
 
@@ -29,11 +30,8 @@ public class Event extends AbsDsdArticle {
 
     private void init() throws PortalException {
         Document document = getDocument();
-        String eventLocation = XmlContentParserUtils.getDynamicContentByName(document, "eventLocation", false);
-        this.eventLocation = parseEventLocation(eventLocation);
         startTime = XmlContentParserUtils.parseDateTimeFields(document, "start", "starttime", false);
         endTime = XmlContentParserUtils.parseDateTimeFields(document, "end", "endtime", false);
-        loadRegistrations();
     }
 
     private EventLocation parseEventLocation(String eventLocation) throws PortalException {
@@ -46,17 +44,30 @@ public class Event extends AbsDsdArticle {
 
     public Building findBuilding(Room room){
         if (room == null) return null;
+        EventLocation eventLocation;
+        try {
+            eventLocation = getEventLocation();
+        } catch (PortalException e) {
+            return null;
+        }
+        if (eventLocation ==  null) return null;
         for (Building building : eventLocation.getBuildings()) {
             if (building.getRooms().contains(room)) return building;
         }
         return null;
     }
+
     @Override
     public String getStructureKey() {
         return DSD_STRUCTURE_KEYS.Event.name();
     }
 
-    public EventLocation getEventLocation() {
+    public EventLocation getEventLocation() throws PortalException {
+        if (hasEventLocation && eventLocation == null){
+            String eventLocation = XmlContentParserUtils.getDynamicContentByName(getDocument(), "eventLocation", false);
+            this.eventLocation = parseEventLocation(eventLocation);
+            hasEventLocation = eventLocation != null;
+        }
         return eventLocation;
     }
 
@@ -68,11 +79,15 @@ public class Event extends AbsDsdArticle {
         return endTime;
     }
 
-    public List<Registration> getRegistrations() {
+    public List<Registration> getRegistrations() throws PortalException {
+        if (registrationCache == null) loadRegistrations();
+
         return Collections.unmodifiableList(registrationCache);
     }
 
-    public Registration getRegistration(long resourceId){
+    public Registration getRegistration(long resourceId) throws PortalException {
+
+        if (registrationCache == null) loadRegistrations();
         for (Registration registration : registrationCache) {
             if (registration.getResourceId() == resourceId) return registration;
         }
@@ -89,7 +104,7 @@ public class Event extends AbsDsdArticle {
     }
 
     private void loadRegistrations() throws PortalException {
-
+        registrationCache = new ArrayList<>();
         long siteId = getGroupId();
         long eventId = Long.parseLong(getArticleId());
         DuplicateCheck check = new DuplicateCheck();
@@ -102,7 +117,7 @@ public class Event extends AbsDsdArticle {
     }
 
     /**
-     * Get all journalArticles for given site and structure type and with a creation time within the search window of
+     * Get all journalArticles for given site and a strucutureKey in list; Session, Dinner, Bustransfer, with a creation time within the search window of
      * event.
      * @param siteId Site identifier
      * @param eventArticle Event for which to find matching session articles
@@ -116,10 +131,14 @@ public class Event extends AbsDsdArticle {
         searchQuery.add(PropertyFactoryUtil.forName("groupId").eq(siteId));
 
         //filer for registration structures
-        String sessionStructureKey = DsdArticle.DSD_STRUCTURE_KEYS.Session.name().toUpperCase();
-        String dinnerStructureKey = DsdArticle.DSD_STRUCTURE_KEYS.Dinner.name().toUpperCase();
+        String sessionStructureKey = DSD_STRUCTURE_KEYS.Session.name().toUpperCase();
+        String dinnerStructureKey = DSD_STRUCTURE_KEYS.Dinner.name().toUpperCase();
+        String transferStructureKey = DSD_STRUCTURE_KEYS.Bustransfer.name().toUpperCase();
         Criterion structureCriteria = PropertyFactoryUtil.forName("DDMStructureKey").like(sessionStructureKey + "%");
-        structureCriteria = RestrictionsFactoryUtil.or(structureCriteria,PropertyFactoryUtil.forName("DDMStructureKey").like(dinnerStructureKey + "%"));
+        structureCriteria = RestrictionsFactoryUtil.or(
+                structureCriteria,PropertyFactoryUtil.forName("DDMStructureKey").like(dinnerStructureKey + "%"));
+        structureCriteria = RestrictionsFactoryUtil.or(
+                structureCriteria,PropertyFactoryUtil.forName("DDMStructureKey").like(transferStructureKey + "%"));
         searchQuery.add(structureCriteria);
 
         //filter creation date between ~6months before start up till start

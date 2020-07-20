@@ -7,7 +7,7 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.PropsUtil;
 import nl.deltares.mock.MockJournalArticle;
-import nl.deltares.mock.MockJournalArticleLocalServiceUtil;
+import nl.deltares.mock.MockDsdJournalArticleUtils;
 import nl.deltares.mock.MockProps;
 import nl.deltares.mock.MockUser;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
@@ -31,7 +31,7 @@ import java.util.Properties;
 public class GotoUtilsImplTest {
 
     private GotoUtilsImpl gotoUtils;
-    private MockJournalArticleLocalServiceUtil serviceUtil;
+    private MockDsdJournalArticleUtils serviceUtil;
 
     @Before
     public void setup() throws IOException {
@@ -50,7 +50,7 @@ public class GotoUtilsImplTest {
 
         gotoUtils = new GotoUtilsImpl();
 
-        serviceUtil = new MockJournalArticleLocalServiceUtil();
+        serviceUtil = new MockDsdJournalArticleUtils();
         JsonContentParserUtils.setServiceUtils(serviceUtil);
 
         URL resourceDir = this.getClass().getResource("/goto/");

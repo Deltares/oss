@@ -4,6 +4,7 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import nl.deltares.portal.utils.DuplicateCheck;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.XmlContentParserUtils;
 import org.w3c.dom.Document;
@@ -15,6 +16,7 @@ public class EventLocation extends Location {
     private static final Log LOG = LogFactoryUtil.getLog(EventLocation.class);
     private final List<Room> rooms = new ArrayList<>();
     private final List<Building> buildings = new ArrayList<>();
+
     public EventLocation(JournalArticle article) throws PortalException {
         super(article);
         init();
