@@ -2,10 +2,12 @@ package search.web.fragment;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
+import nl.deltares.portal.model.impl.Expert;
 import nl.deltares.portal.model.impl.SessionRegistration;
 
 import java.text.SimpleDateFormat;
@@ -38,16 +40,29 @@ public class RegistrationResultDisplayContext {
 
   public String getPresenterSmallImageURL() {
     String url = "";
-    if (getSession() != null && getSession().getPresenter() != null) {
-      url = getSession().getPresenter().getSmallImageURL(_themeDisplay);
+    if (getSession() != null) {
+      Expert presenter = null;
+      try {
+        presenter = getSession().getPresenter();
+      } catch (PortalException e) {
+        //
+      }
+      if (presenter != null) {
+        url = presenter.getSmallImageURL(_themeDisplay);
+      }
     }
     return url;
   }
 
   public String getPresenterName() {
     String name = "";
-    if (getSession().getPresenter() != null) {
-      name = getSession().getPresenter().getTitle();
+    try {
+      Expert presenter = getSession().getPresenter();
+      if (presenter != null) {
+        name = presenter.getTitle();
+      }
+    } catch (PortalException e) {
+      //
     }
     return name;
   }

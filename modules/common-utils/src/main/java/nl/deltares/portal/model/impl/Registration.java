@@ -19,8 +19,10 @@ public abstract class Registration extends AbsDsdArticle {
     private boolean open;
     private String currency = "&#8364"; //euro sign
     private DsdArticle.DSD_REGISTRATION_KEYS type;
-    private Registration parentRegistration;
+    private DsdArticle.DSD_TOPIC_KEYS topic;
+    private Registration parentRegistration = null;
     private boolean overlapWithParent;
+    private boolean hasParent;
     private Date startTime;
     private Date endTime;
 
@@ -44,16 +46,18 @@ public abstract class Registration extends AbsDsdArticle {
             this.open = Boolean.parseBoolean(open);
             String type = XmlContentParserUtils.getDynamicContentByName(document, "type", false);
             this.type = DsdArticle.DSD_REGISTRATION_KEYS.valueOf(type);
+            String topic = XmlContentParserUtils.getDynamicContentByName(document, "topic", false);
+            this.topic = DsdArticle.DSD_TOPIC_KEYS.valueOf(topic);
             String parentJson = XmlContentParserUtils.getDynamicContentByName(document, "parent", true);
             if (parentJson != null) {
-                parentRegistration = parseParentRegistration(parentJson);
                 String overlap = XmlContentParserUtils.getDynamicContentByName(document, "overlaps", true);
                 overlapWithParent = Boolean.parseBoolean(overlap);
+                hasParent = true;
             }
             startTime = XmlContentParserUtils.parseDateTimeFields(document,"start", "starttime", false);
             endTime = XmlContentParserUtils.parseDateTimeFields(document,"end", "endtime", false);
         } catch (Exception e) {
-            throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
+            throw new PortalException(String.format("Error parsing Registration %s: %s!", getTitle(), e.getMessage()), e);
         }
     }
 
@@ -88,7 +92,11 @@ public abstract class Registration extends AbsDsdArticle {
         return currency;
     }
 
-    public Registration getParentRegistration() {
+    public Registration getParentRegistration() throws PortalException {
+        if (hasParent && parentRegistration == null){
+            String parentJson = XmlContentParserUtils.getDynamicContentByName(getDocument(), "parent", true);
+            parentRegistration = parseParentRegistration(parentJson);
+        }
         return parentRegistration;
     }
 
@@ -106,6 +114,10 @@ public abstract class Registration extends AbsDsdArticle {
 
     public String getType() {
         return type.name();
+    }
+
+    public String getTopic() {
+        return topic.name();
     }
 
     public long getEventId() {

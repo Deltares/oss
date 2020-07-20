@@ -4,7 +4,6 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.XmlContentParserUtils;
-import org.w3c.dom.Document;
 
 public class DinnerRegistration extends Registration {
 
@@ -12,13 +11,6 @@ public class DinnerRegistration extends Registration {
 
     public DinnerRegistration(JournalArticle article) throws PortalException {
         super(article);
-        init();
-    }
-
-    private void init() throws PortalException {
-        Document document = getDocument();
-        String json = XmlContentParserUtils.getDynamicContentByName(document, "restaurant", false);
-        restaurant = JsonContentParserUtils.parseLocationJson(json);
     }
 
 
@@ -27,7 +19,11 @@ public class DinnerRegistration extends Registration {
         return DSD_STRUCTURE_KEYS.Dinner.name();
     }
 
-    public Location getRestaurant() {
+    public Location getRestaurant() throws PortalException {
+        if (restaurant == null){
+            String json = XmlContentParserUtils.getDynamicContentByName(getDocument(), "restaurant", false);
+            restaurant = JsonContentParserUtils.parseLocationJson(json);
+        }
         return restaurant;
     }
 }

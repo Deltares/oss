@@ -13,9 +13,9 @@ import org.w3c.dom.Document;
 
 public class SessionRegistration extends Registration {
 
-    private Room room;
-    private Expert presenter;
-    private String imageUrl;
+    private Room room = null;
+    private Expert presenter = null;
+    private String imageUrl = "";
     private String webinarKey;
 
     public SessionRegistration(JournalArticle article) throws PortalException {
@@ -32,13 +32,6 @@ public class SessionRegistration extends Registration {
 
         try {
             Document document = getDocument();
-            String roomJson = XmlContentParserUtils.getDynamicContentByName(document, "room", false);
-            room = parseRoomRegistration(roomJson);
-            String[] presenters = XmlContentParserUtils.getDynamicContentsByName(document, "presenters");
-            if (presenters.length > 0) {
-                //todo: what to do with multiple presenters.
-                presenter = parsePresenterData(presenters[0]);
-            }
             String jsonImage = XmlContentParserUtils.getDynamicContentByName(document, "eventImage", true);
             if (jsonImage != null) {
                 imageUrl = parseImage(jsonImage);
@@ -67,11 +60,22 @@ public class SessionRegistration extends Registration {
         return (Expert) dsdArticle;
     }
 
-    public Room getRoom(){
+    public Room getRoom() throws PortalException {
+        if (room == null){
+            String roomJson = XmlContentParserUtils.getDynamicContentByName(getDocument(), "room", false);
+            room = parseRoomRegistration(roomJson);
+        }
         return room;
     }
 
-    public Expert getPresenter() {
+    public Expert getPresenter() throws PortalException {
+        if (presenter == null){
+            String[] presenters = XmlContentParserUtils.getDynamicContentsByName(getDocument(), "presenters");
+            if (presenters.length > 0) {
+                //todo: what to do with multiple presenters.
+                presenter = parsePresenterData(presenters[0]);
+            }
+        }
         return presenter;
     }
 
@@ -84,7 +88,7 @@ public class SessionRegistration extends Registration {
     private String parseImage(String jsonData) throws PortalException {
         JSONObject jsonObject = JsonContentParserUtils.parseContent(jsonData);
         FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(jsonObject.getLong("fileEntryId"));
-        if (fileEntry == null) return null;
+        if (fileEntry == null) return "";
         return DLUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), null, "", false, true);
     }
 
