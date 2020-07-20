@@ -1,7 +1,7 @@
 Bundle-Name: oss-forms
 Bundle-SymbolicName: nl.deltares.forms
 Bundle-Version: 1.0.0
-Export-Package: nl.deltares.forms.constants
-Import-Package: \
-    nl.deltares.portal.utils.*, \
-    *
+-sources: true
+-metatype: *
+Export-Package: \
+    nl.deltares.forms.portlet

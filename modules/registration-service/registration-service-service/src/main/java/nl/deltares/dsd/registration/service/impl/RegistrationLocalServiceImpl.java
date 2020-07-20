@@ -189,4 +189,14 @@ public class RegistrationLocalServiceImpl
 		return RegistrationUtil.findWithDynamicQuery(query);
 
 	}
+
+	public List<Registration> getRegistrations(long groupId, Date start, Date end){
+		Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
+		Criterion checkStart = PropertyFactoryUtil.forName("startTime").ge(start);
+		Criterion checkEnd = PropertyFactoryUtil.forName("endTime").le(end);
+		DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class,
+				getClass().getClassLoader()).add(checkGroupId).add(checkGroupId).add(checkStart).add(checkEnd);
+		return RegistrationUtil.findWithDynamicQuery(query);
+
+	}
 }

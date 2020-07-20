@@ -1,7 +1,6 @@
 package nl.deltares.portal.utils.impl;
 
 import com.liferay.journal.model.JournalArticle;
-import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.GroupServiceUtil;
@@ -17,21 +16,16 @@ import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Component(
         immediate = true,
-        service = DsdSessionUtils.class,
-        property = {
-        "javax.portlet.supported-locale=en",
-        "javax.portlet.supported-locale=nl",
-        "javax.portlet.resource-bundle=content.Language"
-}
+        service = DsdSessionUtils.class
 )
 public class DsdSessionUtilsImpl implements DsdSessionUtils {
+
+    private final long dayMillis = TimeUnit.DAYS.toMillis(1);
 
     @Reference
     KeycloakUtils keycloakUtils;
@@ -41,6 +35,9 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     @Reference
     DsdParserUtils parserUtils;
+
+    @Reference
+    DsdJournalArticleUtils dsdJournalArticleUtils;
 
     @Override
     public void deleteRegistrationsFor(Registration registration) {
@@ -139,11 +136,11 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
         List<Registration> registrations = event.getRegistrations();
         ArrayList<Registration> children = new ArrayList<>();
-        registrations.forEach(r -> {
-            if (r.getParentRegistration() != null && r.getParentRegistration().getResourceId() == registration.getResourceId()) {
-                children.add(r);
+        for (Registration eventRegistration : registrations) {
+            if (eventRegistration.getParentRegistration() != null && eventRegistration.getParentRegistration().getResourceId() == registration.getResourceId()) {
+                children.add(eventRegistration);
             }
-        });
+        }
         return children;
     }
 
@@ -152,7 +149,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         return RegistrationLocalServiceUtil.getRegistrationsCount(registration.getGroupId(), registration.getResourceId());
     }
 
-    private long[] getOverlappingRegistrationIds(User user, Registration registration) {
+    private long[] getOverlappingRegistrationIds(User user, Registration registration) throws PortalException {
         long[] registrationsWithOverlappingPeriod = RegistrationLocalServiceUtil.getRegistrationsWithOverlappingPeriod(registration.getGroupId(), user.getUserId(),
                 registration.getStartTime(), registration.getEndTime());
 
@@ -180,7 +177,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
         ArrayList<Registration> overlapping = new ArrayList<>();
         for (long resourceId : overlappingResourceIds) {
-            JournalArticle overlappingArticle = JournalArticleLocalServiceUtil.getLatestArticle(resourceId);
+            JournalArticle overlappingArticle =  dsdJournalArticleUtils.getJournalArticle(resourceId);
             overlapping.add((Registration) AbsDsdArticle.getInstance(overlappingArticle));
         }
         return overlapping;
@@ -239,6 +236,16 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     @Override
     public List<Map<String, Object>> getUserRegistrations(User user, Event event) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations = RegistrationLocalServiceUtil.getUserRegistrations(event.getGroupId(), user.getUserId(), event.getStartTime(), event.getEndTime());
+        List<Map<String, Object>> registrations = new ArrayList<>();
+        dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
+        return registrations;
+    }
+
+    @Override
+    public List<Map<String, Object>> getRegistrations(Event event) {
+        //extend search window to include bustransfers
+        List<nl.deltares.dsd.registration.model.Registration> dbRegistrations = RegistrationLocalServiceUtil.getRegistrations(event.getGroupId(),
+                new Date(event.getStartTime().getTime() - dayMillis), new Date(event.getEndTime().getTime()+ dayMillis));
         List<Map<String, Object>> registrations = new ArrayList<>();
         dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
         return registrations;
