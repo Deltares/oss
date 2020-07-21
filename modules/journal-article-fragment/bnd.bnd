@@ -1,4 +1,4 @@
 Bundle-Name: journal-article-fragment
 Bundle-SymbolicName: nl.worth.portal.deltares.fews.journal-article-fragment
 Bundle-Version: 1.0.1
-Fragment-Host: com.liferay.journal.web;bundle-version="[2.0.50,3.0.0)"
+Fragment-Host: com.liferay.journal.web;bundle-version="2.0.79"
