@@ -184,16 +184,6 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
-    public void validateRoomCapacity(SessionRegistration session) throws PortalException {
-
-        int sessionCapacity = session.getCapacity();
-        int roomCapacity = session.getRoom().getCapacity();
-        if (roomCapacity < sessionCapacity) {
-            throw new ValidationException(String.format("Room capacity %d is smaller than session capacity %s !", roomCapacity, sessionCapacity));
-        }
-    }
-
-    @Override
     public List<String> getMissingUserInformation(User user, Registration registration) throws PortalException {
 
         ArrayList<String> missingInfo = new ArrayList<>();

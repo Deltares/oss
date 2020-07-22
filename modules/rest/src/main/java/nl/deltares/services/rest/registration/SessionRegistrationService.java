@@ -141,12 +141,7 @@ public class SessionRegistrationService {
     private RegistrationDetails getRegistrationDetails(Map<String, Object> record, Event event) {
 
         Long registrationId = (Long) record.get("resourcePrimaryKey");
-        Registration registration = null;
-        try {
-            registration = event.getRegistration(registrationId);
-        } catch (PortalException e) {
-            LOG.error(String.format("Error retrieving registration %d from event %s", registrationId, event.getTitle()));
-        }
+        Registration registration = event.getRegistration(registrationId);
         if (registration == null){
             return null;
         }
