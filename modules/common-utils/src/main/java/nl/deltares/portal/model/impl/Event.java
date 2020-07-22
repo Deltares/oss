@@ -7,6 +7,8 @@ import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.DuplicateCheck;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.XmlContentParserUtils;
@@ -17,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Event extends AbsDsdArticle {
 
+    private static final Log LOG = LogFactoryUtil.getLog(Event.class);
     private List<Registration> registrationCache = null;
     private EventLocation eventLocation = null;
     boolean hasEventLocation = true;
@@ -34,24 +37,36 @@ public class Event extends AbsDsdArticle {
         endTime = XmlContentParserUtils.parseDateTimeFields(document, "end", "endtime", false);
     }
 
-    private EventLocation parseEventLocation(String eventLocation) throws PortalException {
-        Location location = JsonContentParserUtils.parseLocationJson(eventLocation);
+    @Override
+    public void validate() throws PortalException {
+        parseEventLocation();
+        super.validate();
+    }
+
+    private void loadEventLocation(){
+        if (!hasEventLocation || eventLocation != null) return;
+        try {
+            parseEventLocation();
+        } catch (PortalException e) {
+            LOG.error(String.format("Error parsing EventLocation for event %s: %s", getTitle(), e.getMessage()));
+        }
+    }
+    private void parseEventLocation() throws PortalException {
+        String eventLocationJson = XmlContentParserUtils.getDynamicContentByName(getDocument(), "eventLocation", false);
+        Location location = JsonContentParserUtils.parseLocationJson(eventLocationJson);
         if (! (location instanceof EventLocation)){
             throw new PortalException("Location not instance of EventLocation: " + location.getTitle());
         }
-        return (EventLocation) location;
+        this.eventLocation = (EventLocation) location;
     }
 
     public Building findBuilding(Room room){
         if (room == null) return null;
-        EventLocation eventLocation;
-        try {
-            eventLocation = getEventLocation();
-        } catch (PortalException e) {
-            return null;
-        }
+        EventLocation eventLocation = getEventLocation();
         if (eventLocation ==  null) return null;
-        for (Building building : eventLocation.getBuildings()) {
+
+        List<Building> buildings = eventLocation.getBuildings();
+        for (Building building : buildings) {
             if (building.getRooms().contains(room)) return building;
         }
         return null;
@@ -62,12 +77,8 @@ public class Event extends AbsDsdArticle {
         return DSD_STRUCTURE_KEYS.Event.name();
     }
 
-    public EventLocation getEventLocation() throws PortalException {
-        if (hasEventLocation && eventLocation == null){
-            String eventLocation = XmlContentParserUtils.getDynamicContentByName(getDocument(), "eventLocation", false);
-            this.eventLocation = parseEventLocation(eventLocation);
-            hasEventLocation = eventLocation != null;
-        }
+    public EventLocation getEventLocation(){
+        loadEventLocation();
         return eventLocation;
     }
 
@@ -79,15 +90,13 @@ public class Event extends AbsDsdArticle {
         return endTime;
     }
 
-    public List<Registration> getRegistrations() throws PortalException {
-        if (registrationCache == null) loadRegistrations();
-
+    public List<Registration> getRegistrations()  {
+        loadRegistrations();
         return Collections.unmodifiableList(registrationCache);
     }
 
-    public Registration getRegistration(long resourceId) throws PortalException {
-
-        if (registrationCache == null) loadRegistrations();
+    public Registration getRegistration(long resourceId) {
+        loadRegistrations();
         for (Registration registration : registrationCache) {
             if (registration.getResourceId() == resourceId) return registration;
         }
@@ -103,7 +112,16 @@ public class Event extends AbsDsdArticle {
         return duration > TimeUnit.DAYS.toMillis(1);
     }
 
-    private void loadRegistrations() throws PortalException {
+    private void loadRegistrations(){
+        if (registrationCache != null) return;
+            try {
+            parseRegistrations();
+        } catch (PortalException e) {
+            LOG.error(String.format("Error parsing registrations for event %s: %s", getTitle(), e.getMessage()));
+        }
+    }
+
+    private void parseRegistrations() throws PortalException {
         registrationCache = new ArrayList<>();
         long siteId = getGroupId();
         long eventId = Long.parseLong(getArticleId());
@@ -124,7 +142,6 @@ public class Event extends AbsDsdArticle {
      * @return List of Session articles <i>possibly</i> belonging to this event
      */
     private List<JournalArticle> getFilteredArticle(long siteId, Event eventArticle) {
-
 
         DynamicQuery searchQuery = JournalArticleLocalServiceUtil.dynamicQuery();
         //filter for site

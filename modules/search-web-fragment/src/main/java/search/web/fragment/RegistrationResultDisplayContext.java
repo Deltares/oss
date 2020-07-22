@@ -2,7 +2,6 @@ package search.web.fragment;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -41,12 +40,7 @@ public class RegistrationResultDisplayContext {
   public String getPresenterSmallImageURL() {
     String url = "";
     if (getSession() != null) {
-      Expert presenter = null;
-      try {
-        presenter = getSession().getPresenter();
-      } catch (PortalException e) {
-        //
-      }
+      Expert presenter = getSession().getPresenter();
       if (presenter != null) {
         url = presenter.getSmallImageURL(_themeDisplay);
       }
@@ -56,14 +50,12 @@ public class RegistrationResultDisplayContext {
 
   public String getPresenterName() {
     String name = "";
-    try {
-      Expert presenter = getSession().getPresenter();
-      if (presenter != null) {
-        name = presenter.getTitle();
-      }
-    } catch (PortalException e) {
-      //
+
+    Expert presenter = getSession().getPresenter();
+    if (presenter != null) {
+      name = presenter.getTitle();
     }
+
     return name;
   }
 
