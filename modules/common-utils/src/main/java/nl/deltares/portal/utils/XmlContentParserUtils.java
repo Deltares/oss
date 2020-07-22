@@ -19,7 +19,6 @@ import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.stream.IntStream;
@@ -113,7 +112,7 @@ public class XmlContentParserUtils {
         String dateTimeValue = dateValue + 'T' + timeValue;
         try {
             return dateTimeFormatter.parse(dateTimeValue);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             throw new PortalException(String.format("Error parsing dateTime %s: %s", dateTimeValue, e.getMessage()));
         }
     }

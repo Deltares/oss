@@ -31,6 +31,11 @@ public abstract class AbsDsdArticle implements DsdArticle {
     }
 
     @Override
+    public void validate() throws PortalException {
+        //
+    }
+
+    @Override
     public String getStructureKey() {
         return DSD_STRUCTURE_KEYS.Generic.name();
     }

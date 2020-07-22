@@ -5,14 +5,17 @@ import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.XmlContentParserUtils;
 import org.w3c.dom.Document;
 
 public class SessionRegistration extends Registration {
-
+    private static final Log LOG = LogFactoryUtil.getLog(SessionRegistration.class);
     private Room room = null;
     private Expert presenter = null;
     private String imageUrl = "";
@@ -43,40 +46,70 @@ public class SessionRegistration extends Registration {
         }
     }
 
-    private Room parseRoomRegistration(String roomJson) throws PortalException {
-        if (roomJson == null){
-            throw new NullPointerException("roomJson");
+    @Override
+    public void validate() throws PortalException {
+        parseRoom();
+        parsePresenter();
+        validateRoomCapacity();
+        super.validate();
+    }
+
+    private void validateRoomCapacity() throws PortalException {
+        int sessionCapacity = getCapacity();
+        int roomCapacity = getRoom().getCapacity();
+        if (roomCapacity < sessionCapacity) {
+            throw new ValidationException(String.format("Room capacity %d is smaller than session capacity %s !", roomCapacity, sessionCapacity));
         }
+    }
+
+    private void parseRoom() throws PortalException {
+        String roomJson = XmlContentParserUtils.getDynamicContentByName(getDocument(), "room", false);
         AbsDsdArticle dsdArticle = parseJsonReference(roomJson);
-        if (dsdArticle instanceof Room) return (Room) dsdArticle;
-        throw new PortalException("Unsupported registration type! Expected Room but found: " + dsdArticle.getClass().getName());
+        if (!(dsdArticle instanceof Room)){
+            throw new PortalException("Unsupported registration type! Expected Room but found: " + dsdArticle.getClass().getName());
+        }
+        room = (Room) dsdArticle;
     }
 
-    private Expert parsePresenterData(String jsonData) throws PortalException {
-        AbsDsdArticle dsdArticle = parseJsonReference(jsonData);
-        if (!(dsdArticle instanceof Expert)) {
-            throw new PortalException("Unsupported registration type! Expected Expert but found: " + dsdArticle.getClass().getName());
+    private void parsePresenter() throws PortalException {
+
+        String[] presenters = XmlContentParserUtils.getDynamicContentsByName(getDocument(), "presenters");
+        if (presenters.length > 0) {
+            //todo: what to do with multiple presenters.
+            AbsDsdArticle dsdArticle = parseJsonReference(presenters[0]);
+            if (!(dsdArticle instanceof Expert)) {
+                throw new PortalException("Unsupported registration type! Expected Expert but found: " + dsdArticle.getClass().getName());
+            }
+            presenter = (Expert) dsdArticle;
         }
-        return (Expert) dsdArticle;
     }
 
-    public Room getRoom() throws PortalException {
-        if (room == null){
-            String roomJson = XmlContentParserUtils.getDynamicContentByName(getDocument(), "room", false);
-            room = parseRoomRegistration(roomJson);
-        }
+    public Room getRoom() {
+        loadRoom();
         return room;
     }
 
-    public Expert getPresenter() throws PortalException {
-        if (presenter == null){
-            String[] presenters = XmlContentParserUtils.getDynamicContentsByName(getDocument(), "presenters");
-            if (presenters.length > 0) {
-                //todo: what to do with multiple presenters.
-                presenter = parsePresenterData(presenters[0]);
-            }
+    private void loadRoom() {
+        if (room != null) return;
+        try {
+            parseRoom();
+        } catch (PortalException e) {
+            LOG.error(String.format("Error parsing room for session %s: %s", getTitle(), e.getMessage()));
         }
+    }
+
+    public Expert getPresenter() {
+        loadPresenter();
         return presenter;
+    }
+
+    private void loadPresenter() {
+        if (presenter != null) return;
+        try {
+            parsePresenter();
+        } catch (PortalException e) {
+            LOG.error(String.format("Error parsing presenter for session %s: %s", getTitle(), e.getMessage()));
+        }
     }
 
     public String getImageUrl(){
