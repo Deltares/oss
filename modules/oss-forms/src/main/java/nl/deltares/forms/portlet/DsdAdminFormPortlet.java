@@ -109,12 +109,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 	private void writeRecord(PrintWriter writer, Map<String, Object> record, Event event, Map<Long, User> userCache, Locale locale) {
 
 		Long registrationId = (Long) record.get("resourcePrimaryKey");
-		Registration registration = null;
-		try {
-			registration = event.getRegistration(registrationId);
-		} catch (PortalException e) {
-			//
-		}
+		Registration registration = event.getRegistration(registrationId);
 		if (registration == null){
 			LOG.error(String.format("Cannot find registration for registrationId %d", registrationId));
 			return;
