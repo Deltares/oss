@@ -38,3 +38,6 @@ journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroup().getParentGr
 <#if !is_site_admin >
     <#assign css_class = stringUtil.replace(css_class, "open", "closed") />
 </#if>
+
+<#assign homeUrl =  (themeDisplay.getPortalURL() + themeDisplay.getPathFriendlyURLPublic()) />
+<#assign siteUrl = (homeUrl + themeDisplay.getSiteGroup().getFriendlyURL()) />
