@@ -122,6 +122,7 @@
 
     <liferay-frontend:edit-form-body>
 
+        <!-- START ADDED DELTARES -->
         <liferay-ui:error exception="<%=ModelListenerException.class%>" >
             <%
                 Exception exc = (Exception) errorException;
@@ -129,6 +130,8 @@
             %>
             <%= exc_msg %>
         </liferay-ui:error>
+
+        <!-- END ADDED DELTARES -->
         <liferay-ui:error exception="<%= ArticleContentSizeException.class %>" message="you-have-exceeded-the-maximum-web-content-size-allowed" />
         <liferay-ui:error exception="<%= ArticleFriendlyURLException.class %>" message="you-must-define-a-friendly-url-for-default-language" />
         <liferay-ui:error exception="<%= DuplicateFileEntryException.class %>" message="a-file-with-that-name-already-exists" />
