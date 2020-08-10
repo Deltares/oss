@@ -52,10 +52,13 @@
                         </#if>
                         <br>
                         <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />
-                        <#assign building = event.findBuilding(room) />
-                        ${languageUtil.get(locale, "dsd.theme.session.room")} : ${room.getTitle()}
-                        <#if building?? >
-                            -  ${languageUtil.get(locale, "dsd.theme.session.building")} : ${building.getTitle()}
+                        ${languageUtil.get(locale, "dsd.theme.session.room")} :
+                        <#if room??>
+                            <#assign building = event.findBuilding(room) />
+                            ${languageUtil.get(locale, "dsd.theme.session.room")} : ${room.getTitle()}
+                            <#if building?? >
+                                -  ${languageUtil.get(locale, "dsd.theme.session.building")} : ${building.getTitle()}
+                            </#if>
                         </#if>
                         <br>
                         <#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />

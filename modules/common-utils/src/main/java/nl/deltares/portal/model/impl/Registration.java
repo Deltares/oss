@@ -2,6 +2,8 @@ package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.XmlContentParserUtils;
@@ -12,15 +14,17 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public abstract class Registration extends AbsDsdArticle {
-
+    private static final Log LOG = LogFactoryUtil.getLog(Registration.class);
     private long eventId;
     private int capacity;
     private float price;
     private boolean open;
     private String currency = "&#8364"; //euro sign
     private DsdArticle.DSD_REGISTRATION_KEYS type;
-    private Registration parentRegistration;
+    private DsdArticle.DSD_TOPIC_KEYS topic;
+    private Registration parentRegistration = null;
     private boolean overlapWithParent;
+    private boolean hasParent = true;
     private Date startTime;
     private Date endTime;
 
@@ -44,28 +48,39 @@ public abstract class Registration extends AbsDsdArticle {
             this.open = Boolean.parseBoolean(open);
             String type = XmlContentParserUtils.getDynamicContentByName(document, "type", false);
             this.type = DsdArticle.DSD_REGISTRATION_KEYS.valueOf(type);
+            String topic = XmlContentParserUtils.getDynamicContentByName(document, "topic", false);
+            this.topic = DsdArticle.DSD_TOPIC_KEYS.valueOf(topic);
             String parentJson = XmlContentParserUtils.getDynamicContentByName(document, "parent", true);
             if (parentJson != null) {
-                parentRegistration = parseParentRegistration(parentJson);
                 String overlap = XmlContentParserUtils.getDynamicContentByName(document, "overlaps", true);
                 overlapWithParent = Boolean.parseBoolean(overlap);
+                hasParent = true;
             }
             startTime = XmlContentParserUtils.parseDateTimeFields(document,"start", "starttime", false);
             endTime = XmlContentParserUtils.parseDateTimeFields(document,"end", "endtime", false);
         } catch (Exception e) {
-            throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
+            throw new PortalException(String.format("Error parsing Registration %s: %s!", getTitle(), e.getMessage()), e);
         }
     }
 
-    private Registration parseParentRegistration(String parentJson) throws PortalException {
+    @Override
+    public void validate() throws PortalException {
+        parseParentRegistration();
+        super.validate();
+    }
+
+    private void parseParentRegistration() throws PortalException {
+        String parentJson = XmlContentParserUtils.getDynamicContentByName(getDocument(), "parent", true);
         if (parentJson == null){
-            throw new NullPointerException("parentJson");
+            return;
         }
         AbsDsdArticle dsdArticle = parseJsonReference(parentJson);
-        if (dsdArticle instanceof Registration) return (Registration) dsdArticle;
-        throw new PortalException("Unsupported parent registration type " + dsdArticle.getClass().getName());
-    }
+        if (! (dsdArticle instanceof Registration)){
+            throw new PortalException("Parent registration not instance of Registration: " + dsdArticle.getTitle());
+        }
+        parentRegistration = (Registration) dsdArticle;
 
+    }
 
     AbsDsdArticle parseJsonReference(String jsonReference) throws PortalException {
         JournalArticle journalArticle = JsonContentParserUtils.jsonReferenceToJournalArticle(jsonReference);
@@ -89,7 +104,19 @@ public abstract class Registration extends AbsDsdArticle {
     }
 
     public Registration getParentRegistration() {
+        loadParentRegistration();
         return parentRegistration;
+    }
+
+    private void loadParentRegistration() {
+        if (!hasParent || parentRegistration != null) return;
+        try {
+            parseParentRegistration();
+            hasParent = parentRegistration != null;
+        } catch (PortalException e) {
+            LOG.error(String.format("Error parsing parent registration for registration %s: %s", getTitle(), e.getMessage()));
+            hasParent = false;
+        }
     }
 
     public boolean isOverlapWithParent() {
@@ -106,6 +133,10 @@ public abstract class Registration extends AbsDsdArticle {
 
     public String getType() {
         return type.name();
+    }
+
+    public String getTopic() {
+        return topic.name();
     }
 
     public long getEventId() {

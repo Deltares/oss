@@ -31,6 +31,11 @@ public abstract class AbsDsdArticle implements DsdArticle {
     }
 
     @Override
+    public void validate() throws PortalException {
+        //
+    }
+
+    @Override
     public String getStructureKey() {
         return DSD_STRUCTURE_KEYS.Generic.name();
     }
@@ -42,26 +47,31 @@ public abstract class AbsDsdArticle implements DsdArticle {
 
     @Override
     public long getResourceId() {
+        if (article == null) return 0;
         return article.getResourcePrimKey();
     }
 
     @Override
     public String getArticleId() {
+        if (article == null) return "0";
         return article.getArticleId();
     }
 
     @Override
     public String getTitle() {
+        if (article == null) return "";
         return article.getTitle();
     }
 
     @Override
     public long getGroupId(){
+        if (article == null) return 0;
         return article.getGroupId();
     }
 
     @Override
     public long getCompanyId(){
+        if (article == null) return 0;
         return article.getCompanyId();
     }
 
@@ -157,6 +167,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
     }
 
     public String getSmallImageURL(ThemeDisplay themeDisplay) {
+        if (article == null) return "";
         String url = article.getSmallImageURL();
         if (Validator.isNull(url)) {
             url = article.getArticleImageURL(themeDisplay);

@@ -2,7 +2,16 @@
 This file allows you to override and define new FreeMarker variables.
 -->
 
-<#assign logo_img = images_folder + '/logo.png' />
+<#assign
+layoutSet = layout.getLayoutSet()
+company_logo = htmlUtil.escape(themeDisplay.getCompanyLogo())
+/>
+
+<#if layoutSet.isLogo() && company_logo??>
+    <#assign logo_img = htmlUtil.escape(company_logo) />
+<#else>
+    <#assign logo_img = images_folder + '/logo.png' />
+</#if>
 
 
 <#assign journalArticleLocalService = serviceLocator.findService("com.liferay.journal.service.JournalArticleLocalService") />
