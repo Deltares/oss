@@ -17,8 +17,9 @@ dependencies {
 	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations", version: "1.3.0"
 	compileOnly group: "javax.mail", name: "mail", version: "1.4"
 	compileOnly group: 'com.liferay', name: 'com.liferay.petra.content', version: '2.0.0'
-//	compile group: "com.sun.mail", name: "javax.mail", version: "1.6.0"
-//	compileInclude group: 'com.sun.xml.security', name: 'xml-security-impl', version: '1.0'
+
+	compileOnly group: 'com.liferay', name: 'com.liferay.journal.api', version: '3.0.0'
+	compileOnly group: 'com.liferay', name: 'com.liferay.dynamic.data.mapping.api', version: '4.11.0'
 
 	compileOnly project(":modules:common-utils")
 
