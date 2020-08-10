@@ -2,8 +2,16 @@
 This file allows you to override and define new FreeMarker variables.
 -->
 
-<#assign logo_img = images_folder + '/logo.png' />
+<#assign
+layoutSet = layout.getLayoutSet()
+company_logo = htmlUtil.escape(themeDisplay.getCompanyLogo())
+/>
 
+<#if layoutSet.isLogo() && company_logo??>
+    <#assign logo_img = htmlUtil.escape(company_logo) />
+<#else>
+    <#assign logo_img = images_folder + '/logo.png' />
+</#if>
 
 <#assign journalArticleLocalService = serviceLocator.findService("com.liferay.journal.service.JournalArticleLocalService") />
 
@@ -30,3 +38,6 @@ journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroup().getParentGr
 <#if !is_site_admin >
     <#assign css_class = stringUtil.replace(css_class, "open", "closed") />
 </#if>
+
+<#assign homeUrl =  (themeDisplay.getPortalURL() + themeDisplay.getPathFriendlyURLPublic()) />
+<#assign siteUrl = (homeUrl + themeDisplay.getSiteGroup().getFriendlyURL()) />

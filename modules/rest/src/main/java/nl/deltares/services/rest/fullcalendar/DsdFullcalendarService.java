@@ -65,17 +65,13 @@ public class DsdFullcalendarService {
         }
 
         Map<String, String> colorMap = getColorMap(layoutUuid, Long.parseLong(siteId), portletId);
-
-        List<Registration> registrations;
         try {
             nl.deltares.portal.model.impl.Event event = parserUtils.getEvent(Long.parseLong(siteId), eventId);
-            registrations = event.getRegistrations();
+            List<Registration> registrations = event.getRegistrations();
+            return toResponse(getEvents(registrations, startSearch, endSearch, colorMap));
         } catch (PortalException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
-
-
-        return toResponse(getEvents(registrations, startSearch, endSearch, colorMap));
 
     }
 
@@ -86,18 +82,18 @@ public class DsdFullcalendarService {
     public Response resources(@Context HttpServletRequest request,
                               @PathParam("siteId") String siteId, @PathParam("eventId") String eventId) {
 
-        nl.deltares.portal.model.impl.Event dsdEvent;
         try {
-            dsdEvent = parserUtils.getEvent(Long.parseLong(siteId), eventId);
+            nl.deltares.portal.model.impl.Event dsdEvent = parserUtils.getEvent(Long.parseLong(siteId), eventId);
+            return toResponse(getResources(dsdEvent));
         } catch (PortalException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
 
-        return toResponse(getResources(dsdEvent));
+
     }
 
 
-    private List<Event> getEvents(List<Registration> registrations, Date startSearch, Date endSearch, Map<String, String> colorMap) {
+    private List<Event> getEvents(List<Registration> registrations, Date startSearch, Date endSearch, Map<String, String> colorMap) throws PortalException {
 
         List<Event> events = new ArrayList<>(registrations.size());
         for (Registration registration : registrations) {
@@ -123,7 +119,7 @@ public class DsdFullcalendarService {
         return events;
     }
 
-    private Event createCalendarEvent(Map<String, String> colorMap, Registration registration, int dayCount, long startDay, long endDay) {
+    private Event createCalendarEvent(Map<String, String> colorMap, Registration registration, int dayCount, long startDay, long endDay) throws PortalException {
         Event event = new Event();
         event.setId(registration.getArticleId() + '_' + dayCount);
         if (registration instanceof SessionRegistration) {
@@ -173,17 +169,19 @@ public class DsdFullcalendarService {
 
     }
 
-    private List<Resource> getResources(nl.deltares.portal.model.impl.Event dsdEvent) {
+    private List<Resource> getResources(nl.deltares.portal.model.impl.Event dsdEvent) throws PortalException {
 
         EventLocation dsdLocation = dsdEvent.getEventLocation();
         List<Resource> resources = new ArrayList<>();
-        resources.addAll(getBuildingResources(dsdLocation.getBuildings()));
-        resources.addAll(getRoomResources(dsdLocation.getRooms()));
+        if (dsdLocation != null) {
+            resources.addAll(getBuildingResources(dsdLocation.getBuildings()));
+            resources.addAll(getRoomResources(dsdLocation.getRooms()));
+        }
         resources.addAll(getExternalResources(dsdEvent.getRegistrations()));
         return resources;
     }
 
-    private List<Resource> getExternalResources(List<Registration> registrations) {
+    private List<Resource> getExternalResources(List<Registration> registrations) throws PortalException {
 
         ArrayList<Resource> restaurants = new ArrayList<>();
         for (Registration registration : registrations) {
