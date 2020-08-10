@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Registration;
-import nl.deltares.portal.model.impl.SessionRegistration;
 import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.worth.fews.configuration.JournalArticleManagementConfiguration;
 import nl.worth.fews.constants.JournalArticleManagementConstants;
@@ -80,15 +79,14 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
                 throw new ModelListenerException(msg);
             }
 
-            if (dsdArticle instanceof SessionRegistration){
-                try {
-                    dsdSessionUtils.validateRoomCapacity((SessionRegistration) dsdArticle);
-                } catch (PortalException e) {
-                    String msg = String.format("Error validating session capacity for %s: %s", model.getTitle(), e.getMessage());
-                    LOG.error(msg);
-                    throw new ModelListenerException(msg);
-                }
+            try {
+                dsdArticle.validate();
+            } catch (PortalException e) {
+                String msg = String.format("Validation error for %s: %s", model.getTitle(), e.getMessage());
+                LOG.error(msg);
+                throw new ModelListenerException(msg);
             }
+
             String structureKey = dsdArticle.getStructureKey();
             if (structure_folderJsonMap.has(structureKey)) {
 

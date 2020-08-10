@@ -17,12 +17,7 @@ import java.util.List;
 
 @Component(
         immediate = true,
-        service = DsdTransferUtils.class,
-        property = {
-                "javax.portlet.supported-locale=en",
-                "javax.portlet.supported-locale=nl",
-                "javax.portlet.resource-bundle=content.Language"
-        }
+        service = DsdTransferUtils.class
 )
 public class DsdTransferUtilsImpl implements DsdTransferUtils {
 

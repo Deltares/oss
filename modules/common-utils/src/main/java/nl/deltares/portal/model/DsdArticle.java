@@ -1,6 +1,7 @@
 package nl.deltares.portal.model;
 
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import org.w3c.dom.Document;
 
@@ -24,4 +25,5 @@ public interface DsdArticle {
     boolean storeInParentSite();
     String getSmallImageURL(ThemeDisplay themeDisplay);
     JournalArticle getJournalArticle();
+    void validate() throws PortalException;
 }

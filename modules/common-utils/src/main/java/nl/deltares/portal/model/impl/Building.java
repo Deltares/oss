@@ -4,11 +4,13 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import nl.deltares.portal.utils.DuplicateCheck;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.XmlContentParserUtils;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +18,7 @@ public class Building extends AbsDsdArticle {
 
     private static final Log LOG = LogFactoryUtil.getLog(Building.class);
     private boolean storeInParentSite;
-    private final List<Room> rooms = new ArrayList<>();
+    private List<Room> rooms = null;
     private double longitude;
     private double latitude;
 
@@ -30,10 +32,7 @@ public class Building extends AbsDsdArticle {
             Document document = getDocument();
             String storeInParentSite = XmlContentParserUtils.getDynamicContentByName(document, "storeInParentSite", true);
             this.storeInParentSite = Boolean.parseBoolean(storeInParentSite);
-            String[] rooms = XmlContentParserUtils.getDynamicContentsByName(document, "rooms");
-            if (rooms.length > 0){
-                this.rooms.addAll(parseRooms(rooms));
-            }
+
             String geoLocation = XmlContentParserUtils.getDynamicContentByName(document, "location", false);
             Map<String, String> coords = JsonContentParserUtils.parseJsonToMap(geoLocation);
             this.longitude = Double.parseDouble(coords.get("longitude"));
@@ -41,6 +40,12 @@ public class Building extends AbsDsdArticle {
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
+    }
+
+    @Override
+    public void validate() throws PortalException {
+        parseRooms();
+        super.validate();
     }
 
     @Override
@@ -53,23 +58,34 @@ public class Building extends AbsDsdArticle {
         return storeInParentSite;
     }
 
-    static List<Room> parseRooms(String[] roomReferences) {
+    static List<Room> parseRooms(String[] roomReferences) throws PortalException {
 
         DuplicateCheck check = new DuplicateCheck();
         ArrayList<Room> rooms = new ArrayList<>();
         for (String json : roomReferences) {
-            try {
-                Room room = JsonContentParserUtils.parseRoomJson(json);
-                if (check.checkDuplicates(room)) rooms.add(room);
-            } catch (PortalException e) {
-                LOG.error(String.format("Error getting article for room: %s: %s", json, e.getMessage()));
-            }
+            Room room = JsonContentParserUtils.parseRoomJson(json);
+            if (check.checkDuplicates(room)) rooms.add(room);
         }
         return rooms;
     }
 
-    public List<Room> getRooms(){
-        return new ArrayList<>(rooms);
+    public List<Room> getRooms() {
+        if (rooms == null) {
+            try {
+                parseRooms();
+            } catch (PortalException e) {
+                LOG.error(String.format("Error parsing rooms for building %s: %s", getTitle(), e.getMessage()));
+            }
+        }
+        return Collections.unmodifiableList(this.rooms);
+    }
+
+    private void parseRooms() throws PortalException {
+        this.rooms = new ArrayList<>();
+        String[] rooms = XmlContentParserUtils.getDynamicContentsByName(getDocument(), "rooms");
+        if (rooms.length > 0){
+            this.rooms = parseRooms(rooms);
+        }
     }
 
     public double getLongitude() {

@@ -7,24 +7,26 @@ import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import nl.deltares.portal.model.impl.*;
-import nl.deltares.portal.utils.impl.JournalArticleServiceUtilsImpl;
+import nl.deltares.portal.utils.impl.DsdJournalArticleUtilsImpl;
 
 import java.util.*;
 
 public class JsonContentParserUtils {
 
     /** Turned into variable to allow replacement in unit tests **/
-    private static JournalArticleServiceUtils serviceUtils = new JournalArticleServiceUtilsImpl();
+    private static DsdJournalArticleUtils serviceUtils = new DsdJournalArticleUtilsImpl();
 
-    public static void setServiceUtils(JournalArticleServiceUtils serviceUtils){
+    public static void setServiceUtils(DsdJournalArticleUtils serviceUtils){
         JsonContentParserUtils.serviceUtils = serviceUtils;
     }
 
     public static JSONObject parseContent(String jsonContent) throws JSONException{
+        if (jsonContent == null) return JSONFactoryUtil.createJSONObject();
         return JSONFactoryUtil.createJSONObject(jsonContent);
     }
 
     public static JSONArray parseContentArray(String jsonContent) throws JSONException{
+        if (jsonContent == null) return JSONFactoryUtil.createJSONArray();
         return JSONFactoryUtil.createJSONArray(jsonContent);
     }
     /**
@@ -34,7 +36,6 @@ public class JsonContentParserUtils {
      * @throws PortalException when JSON object is not valid.
      */
     public static JournalArticle jsonReferenceToJournalArticle(String jsonReference) throws PortalException {
-
         JSONObject roomObject = parseContent(jsonReference);
         long classPK = roomObject.getLong("classPK");
         return serviceUtils.getLatestArticle(classPK);
@@ -44,6 +45,9 @@ public class JsonContentParserUtils {
     public static Location parseLocationJson(String json) throws PortalException {
 
         JournalArticle journalArticle = jsonReferenceToJournalArticle(json);
+        if (journalArticle == null) {
+            throw new PortalException(String.format("Cannot find Location article for '%s'", json));
+        }
         AbsDsdArticle instance = AbsDsdArticle.getInstance(journalArticle);
         if ( ! (instance instanceof Location)){
             throw new PortalException(String.format("Article %s not instance of Location", journalArticle.getTitle()));
@@ -52,20 +56,12 @@ public class JsonContentParserUtils {
         return (Location) instance;
     }
 
-    public static Registration parseRegistrationJson(String json) throws PortalException {
-
-        JournalArticle journalArticle = jsonReferenceToJournalArticle(json);
-        AbsDsdArticle instance = AbsDsdArticle.getInstance(journalArticle);
-        if ( ! (instance instanceof Registration)){
-            throw new PortalException(String.format("Article %s not instance of Registration", journalArticle.getTitle()));
-        }
-
-        return (Registration) instance;
-    }
-
     public static Building parseBuildingJson(String json) throws PortalException {
 
         JournalArticle journalArticle = jsonReferenceToJournalArticle(json);
+        if (journalArticle == null)
+            throw new PortalException(String.format("Cannot find Building article for '%s'", json));
+
         AbsDsdArticle instance = AbsDsdArticle.getInstance(journalArticle);
         if ( ! (instance instanceof Building)){
             throw new PortalException(String.format("Article %s not instance of Building", journalArticle.getTitle()));
@@ -77,6 +73,9 @@ public class JsonContentParserUtils {
     public static Room parseRoomJson(String json) throws PortalException {
 
         JournalArticle journalArticle = jsonReferenceToJournalArticle(json);
+        if (journalArticle == null)
+            throw new PortalException(String.format("Cannot find Room article for '%s'", json));
+
         AbsDsdArticle instance = AbsDsdArticle.getInstance(journalArticle);
         if ( ! (instance instanceof Room)){
             throw new PortalException(String.format("Article %s not instance of Room", journalArticle.getTitle()));

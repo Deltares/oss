@@ -5,7 +5,6 @@ import com.liferay.portal.kernel.model.User;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
-import nl.deltares.portal.model.impl.SessionRegistration;
 
 import java.util.List;
 import java.util.Map;
@@ -79,12 +78,6 @@ public interface DsdSessionUtils {
      */
     void deleteRegistrationsFor(Registration registration);
 
-    /**
-     * Check if the capacity of session does not exceed room capacity.
-     * @param registration Session registration
-     * @throws ValidationException Thrown if room is too small.
-     */
-    void validateRoomCapacity(SessionRegistration registration) throws PortalException;
 
     /**
      * Get user's registrations records for given event.
@@ -93,4 +86,11 @@ public interface DsdSessionUtils {
      * @return List of user registration records
      */
     List<Map<String, Object>> getUserRegistrations(User user, Event event);
+
+    /**
+     * Get all registrations records for given event.
+     * @param event Event for which to retrieve registrations
+     * @return List of user registration records
+     */
+    List<Map<String, Object>> getRegistrations(Event event);
 }

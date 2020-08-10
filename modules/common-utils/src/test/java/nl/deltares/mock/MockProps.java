@@ -42,4 +42,8 @@ public class MockProps implements Props {
     public Properties getProperties(String prefix, boolean removePrefix) {
         return properties;
     }
+
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+    }
 }

@@ -2,6 +2,8 @@ package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.XmlContentParserUtils;
 import org.w3c.dom.Document;
@@ -16,10 +18,12 @@ import java.util.concurrent.TimeUnit;
 
 public class BusTransfer extends Registration {
 
-    private long dayMillis = TimeUnit.DAYS.toMillis(1);
-    private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-    private BusRoute busRoute;
-    private List<Date> transferDates = new ArrayList<>();
+    private static final Log LOG = LogFactoryUtil.getLog(BusTransfer.class);
+
+    private final long dayMillis = TimeUnit.DAYS.toMillis(1);
+    private final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    private BusRoute busRoute = null;
+    private final List<Date> transferDates = new ArrayList<>();
 
     public BusTransfer(JournalArticle article) throws PortalException {
         super(article);
@@ -30,8 +34,6 @@ public class BusTransfer extends Registration {
 
         try {
             Document document = getDocument();
-            String busRoute = XmlContentParserUtils.getDynamicContentByName(document, "busRoute", false);
-            this.busRoute = parseBusRoute(busRoute);
             String pickupOption = XmlContentParserUtils.getDynamicContentByName(document, "pickupDates", false);
             if (pickupOption.equals("daily")){
                 transferDates.addAll(getTransferDates(getStartTime(), getEndTime()));
@@ -42,7 +44,7 @@ public class BusTransfer extends Registration {
                 }
             }
         } catch (Exception e) {
-            throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
+            throw new PortalException(String.format("Error parsing bus route %s: %s!", getTitle(), e.getMessage()), e);
         }
     }
 
@@ -58,15 +60,33 @@ public class BusTransfer extends Registration {
         return days;
     }
 
+    @Override
+    public void validate() throws PortalException {
+        parseBusRoute();
+        super.validate();
+    }
 
     @Override
     public String getStructureKey() {
         return DSD_STRUCTURE_KEYS.Bustransfer.name();
     }
 
+    public BusRoute getBusRoute(){
+        if (busRoute != null) {
+            return busRoute;
+        }
+        try {
+            busRoute = parseBusRoute();
+        } catch (PortalException e) {
+            LOG.error(String.format("Error parsing bus route for transfer %s: %s", getTitle(), e.getMessage()));
+        }
+        return busRoute;
+    }
 
-    private BusRoute parseBusRoute(String busRoute) throws PortalException {
-        JournalArticle article = JsonContentParserUtils.jsonReferenceToJournalArticle(busRoute);
+    private BusRoute parseBusRoute() throws PortalException {
+
+        String busRouteJson = XmlContentParserUtils.getDynamicContentByName(getDocument(), "busRoute", false);
+        JournalArticle article = JsonContentParserUtils.jsonReferenceToJournalArticle(busRouteJson);
         AbsDsdArticle instance = AbsDsdArticle.getInstance(article);
 
         if (! (instance instanceof BusRoute)){
