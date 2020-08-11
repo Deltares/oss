@@ -21,6 +21,10 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <%@ page import="java.util.List" %>
 <%@ page import="nl.deltares.portal.utils.KeycloakUtils" %>
 
+<%@ page import="nl.deltares.portal.model.impl.Registration" %>
+<%@ page import="nl.deltares.portal.model.impl.Event" %>
+<%@ page import="com.liferay.portal.kernel.util.DateUtil" %>
+
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />
