@@ -57,7 +57,8 @@
                     } else {
                         plugin._enableButton('prev');
                     }
-                    active.addClass('completed');
+                    active.removeClass('icon-circle-blank');
+                    active.addClass('icon-circle completed');
                 } else if ('prev' === action && prev.length) {
                     plugin._hideStep(active);
                     plugin._showStep(prev);

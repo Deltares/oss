@@ -81,8 +81,6 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 
 		String articleId = ParamUtil.getString(request, "articleId");
 
-		LOG.info("articleId [" + articleId + "]");
-
 		Optional<DDMTemplate> ddmTemplateOptional = _ddmStructureUtil
 				.getDDMTemplateByName("REGISTRATION", themeDisplay.getLocale());
 

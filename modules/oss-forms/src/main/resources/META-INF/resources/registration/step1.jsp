@@ -1,7 +1,5 @@
 <%
     String ddmTemplateKey = (String) request.getAttribute("ddmTemplateKey");
-    String registrationId = ParamUtil.getString(renderRequest, "articleId");
-    DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
     DsdSessionUtils dsdSessionUtils = (DsdSessionUtils) request.getAttribute("dsdSessionUtils");
     RegistrationFormDisplayContext registrationFormDisplayContext =
             new RegistrationFormDisplayContext(liferayPortletRequest, liferayPortletResponse,
@@ -19,6 +17,7 @@
                         name="registration_${registrationId}"
                         label=""
                         type="checkbox"
+                        data-price="<%= mainRegistration.getPrice() %>"
                         cssClass="parent-registration"/>
             </div>
             <div class="float-left w-100">

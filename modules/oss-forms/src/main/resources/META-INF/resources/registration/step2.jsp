@@ -26,39 +26,49 @@
             </div>
         </div>
 
-        <aui:input
-                name="titles"
-                label="registrationform.academic.titles"
-                cssClass="update-badge"/>
+        <div class="row">
+            <div class="col">
+                <aui:input
+                        name="titles"
+                        label="registrationform.academic.titles"
+                        cssClass="update-badge"/>
+            </div>
+            <div class="col">
+                <aui:input
+                        name="initials"
+                        label="registrationform.initials"
+                        cssClass="update-badge"/>
+            </div>
+        </div>
 
-        <aui:input
-                name="initials"
-                label="registrationform.initials"
-                cssClass="update-badge"/>
-
-        <aui:input
-                name="firstName"
-                label="registrationform.firstname"
-                value="<%= user.getFirstName() %>"
-                disabled="true">
-            <aui:validator name="required">
-                function () {
-                return checkStep(getFormName(), 2);
-                }
-            </aui:validator>
-        </aui:input>
-
-        <aui:input
-                name="lastName"
-                label="registrationform.lastname"
-                value="<%= user.getLastName() %>"
-                disabled="true">
-            <aui:validator name="required">
-                function () {
-                return checkStep(getFormName(), 2);
-                }
-            </aui:validator>
-        </aui:input>
+        <div class="row">
+            <div class="col">
+                <aui:input
+                        name="firstName"
+                        label="registrationform.firstname"
+                        value="<%= user.getFirstName() %>"
+                        disabled="true">
+                    <aui:validator name="required">
+                        function () {
+                        return checkStep(getFormName(), 2);
+                        }
+                    </aui:validator>
+                </aui:input>
+            </div>
+            <div class="col">
+                <aui:input
+                        name="lastName"
+                        label="registrationform.lastname"
+                        value="<%= user.getLastName() %>"
+                        disabled="true">
+                    <aui:validator name="required">
+                        function () {
+                        return checkStep(getFormName(), 2);
+                        }
+                    </aui:validator>
+                </aui:input>
+            </div>
+        </div>
 
         <aui:input
                 name="email"
@@ -72,21 +82,26 @@
             </aui:validator>
         </aui:input>
 
-        <aui:input
-                name="username"
-                label="registrationform.username"
-                value="<%= user.getScreenName() %>"
-                disabled="true">
-            <aui:validator name="required">
-                function () {
-                return checkStep(getFormName(), 2);
-                }
-            </aui:validator>
-        </aui:input>
-
-        <aui:input
-                name="titles"
-                label="registrationform.job.titles" />
+        <div class="row">
+            <div class="col">
+                <aui:input
+                        name="username"
+                        label="registrationform.username"
+                        value="<%= user.getScreenName() %>"
+                        disabled="true">
+                    <aui:validator name="required">
+                        function () {
+                        return checkStep(getFormName(), 2);
+                        }
+                    </aui:validator>
+                </aui:input>
+            </div>
+            <div class="col">
+                <aui:input
+                        name="job_titles"
+                        label="registrationform.job.titles" />
+            </div>
+        </div>
 
 
         <span><liferay-ui:message key="registrationform.organizationInfo"/></span>
@@ -119,31 +134,36 @@
             </aui:validator>
         </aui:input>
 
-        <c:if test="${not empty attributes}">
-            <c:set var="org_postal" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_postal.name()) %>"/>
-        </c:if>
-        <aui:input name="<%=KeycloakUtils.ATTRIBUTES.org_postal.name()%>"
-                   label="registrationform.orgpostcode"
-                   value="${org_postal}">
-            <aui:validator name="required">
-                function () {
-                return checkStep(getFormName(), 2);
-                }
-            </aui:validator>
-        </aui:input>
-
-        <c:if test="${not empty attributes}">
-            <c:set var="org_city" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_city.name()) %>"/>
-        </c:if>
-        <aui:input name="<%=KeycloakUtils.ATTRIBUTES.org_city.name()%>"
-                   label="registrationform.orgcity"
-                   value="${org_city}">
-            <aui:validator name="required">
-                function () {
-                return checkStep(getFormName(), 2);
-                }
-            </aui:validator>
-        </aui:input>
+        <div class="row">
+            <div class="col">
+                <c:if test="${not empty attributes}">
+                    <c:set var="org_postal" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_postal.name()) %>"/>
+                </c:if>
+                <aui:input name="<%=KeycloakUtils.ATTRIBUTES.org_postal.name()%>"
+                           label="registrationform.orgpostcode"
+                           value="${org_postal}">
+                    <aui:validator name="required">
+                        function () {
+                        return checkStep(getFormName(), 2);
+                        }
+                    </aui:validator>
+                </aui:input>
+            </div>
+            <div class="col">
+                <c:if test="${not empty attributes}">
+                    <c:set var="org_city" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_city.name()) %>"/>
+                </c:if>
+                <aui:input name="<%=KeycloakUtils.ATTRIBUTES.org_city.name()%>"
+                           label="registrationform.orgcity"
+                           value="${org_city}">
+                    <aui:validator name="required">
+                        function () {
+                        return checkStep(getFormName(), 2);
+                        }
+                    </aui:validator>
+                </aui:input>
+            </div>
+        </div>
 
     </aui:col>
     <aui:col width="50">
@@ -151,10 +171,12 @@
         <p><liferay-ui:message key="dsd.registration.step2.badge.title"/></p>
 
         <div class="card mb-3">
-            <div class="card-header">$ {title} <span class="d-block">$ {year}</span></div>
-            <div class="card-body">
+            <div class="card-header">
+                <%= event.getTitle() %> <span class="d-block event-edition"><%= DateUtil.getDate(event.getEndTime(), "yyyy", locale)%></span>
+            </div>
+            <div class="card-body px-5 py-6">
                 <h1 class="card-title" id="badge-title"></h1>
-                <span class="card-text"></span>
+                <span class="card-text" id="job-title"></span>
             </div>
         </div>
 
