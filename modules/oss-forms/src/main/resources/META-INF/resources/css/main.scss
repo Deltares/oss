@@ -18,6 +18,7 @@ $active: #272833;
 
   a.active {
     color: $active;
+    text-decoration: underline;
   }
 
   .step {
@@ -34,6 +35,13 @@ $active: #272833;
   li.active {
     color: $active;
   }
+
+  .icon-circle.completed {
+    color: $default-color;
+  }
+  .icon-circle-blank.active {
+    color: $active;
+  }
 }
 
 .registration-container {
@@ -42,4 +50,20 @@ $active: #272833;
     padding: .5rem;
     border: 1px solid #d2d2d2;
   }
+
+  .card-header {
+    .event-edition {
+      font-size: .8rem;
+    }
+  }
+
+  .card-body {
+    .card-title {
+      font-size: 2rem;
+    }
+  }
+}
+
+.registration-controls {
+  
 }
