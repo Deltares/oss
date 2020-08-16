@@ -89,6 +89,8 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 
 		request.setAttribute("dsdParserUtils", dsdParserUtils);
 		request.setAttribute("dsdSessionUtils", dsdSessionUtils);
+		request.setAttribute("registrationDisplayContext", dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay));
+
 		super.render(request, response);
 	}
 
