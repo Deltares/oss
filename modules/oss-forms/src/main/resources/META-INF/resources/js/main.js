@@ -22,6 +22,10 @@
 
             nextButton.on('click', {plugin: this, action: 'next'}, this._navigate);
             prevButton.on('click', {plugin: this, action: 'prev'}, this._navigate);
+
+            this._getSubmitButton().on('click', function () {
+                plugin._getForm().submit();
+            });
         },
 
         _isFormValid: function () {
@@ -129,6 +133,10 @@
 
         _getElement: function () {
             return $(this.element);
+        },
+
+        _getForm: function () {
+            return this._getElement().find('form');
         },
 
         _getSubmitButton: function () {
