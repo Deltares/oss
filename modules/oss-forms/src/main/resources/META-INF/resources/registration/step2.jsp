@@ -44,7 +44,7 @@
         <div class="row">
             <div class="col">
                 <aui:input
-                        name="firstName"
+                        name="<%= KeycloakUtils.ATTRIBUTES.first_name.name() %>"
                         label="registrationform.firstname"
                         value="<%= user.getFirstName() %>"
                         disabled="true">
@@ -57,7 +57,7 @@
             </div>
             <div class="col">
                 <aui:input
-                        name="lastName"
+                        name="<%= KeycloakUtils.ATTRIBUTES.last_name.name() %>"
                         label="registrationform.lastname"
                         value="<%= user.getLastName() %>"
                         disabled="true">
@@ -71,7 +71,7 @@
         </div>
 
         <aui:input
-                name="email"
+                name="<%= KeycloakUtils.ATTRIBUTES.email.name() %>"
                 label="registrationform.email"
                 value="<%= user.getEmailAddress() %>"
                 disabled="true">
@@ -110,7 +110,7 @@
             <c:set var="org_name" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_name.name()) %>"/>
         </c:if>
         <aui:input
-                name="<%=KeycloakUtils.ATTRIBUTES.org_name.name()%>"
+                name="<%= KeycloakUtils.ATTRIBUTES.org_name.name() %>"
                 label="registrationform.orgname"
                 value="${org_name}">
             <aui:validator name="required">
@@ -124,7 +124,7 @@
             <c:set var="org_address" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_address.name()) %>"/>
         </c:if>
         <aui:input
-                name="<%=KeycloakUtils.ATTRIBUTES.org_address.name()%>"
+                name="<%= KeycloakUtils.ATTRIBUTES.org_address.name() %>"
                 label="registrationform.orgaddress"
                 value="${org_address}">
             <aui:validator name="required">
@@ -139,9 +139,10 @@
                 <c:if test="${not empty attributes}">
                     <c:set var="org_postal" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_postal.name()) %>"/>
                 </c:if>
-                <aui:input name="<%=KeycloakUtils.ATTRIBUTES.org_postal.name()%>"
-                           label="registrationform.orgpostcode"
-                           value="${org_postal}">
+                <aui:input
+                        name="<%= KeycloakUtils.ATTRIBUTES.org_postal.name() %>"
+                        label="registrationform.orgpostcode"
+                        value="${org_postal}">
                     <aui:validator name="required">
                         function () {
                         return checkStep(getFormName(), 2);
@@ -153,9 +154,10 @@
                 <c:if test="${not empty attributes}">
                     <c:set var="org_city" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_city.name()) %>"/>
                 </c:if>
-                <aui:input name="<%=KeycloakUtils.ATTRIBUTES.org_city.name()%>"
-                           label="registrationform.orgcity"
-                           value="${org_city}">
+                <aui:input
+                        name="<%= KeycloakUtils.ATTRIBUTES.org_city.name() %>"
+                        label="registrationform.orgcity"
+                        value="${org_city}">
                     <aui:validator name="required">
                         function () {
                         return checkStep(getFormName(), 2);
@@ -205,7 +207,7 @@
         <div class="d-flex justify-content-start">
             <div class="pr-3">
                 <aui:input
-                        name="name_setting"
+                        name="<%= KeycloakUtils.ATTRIBUTES.name_setting.name() %>"
                         label="dsd.registration.step2.badge.name.1"
                         cssClass="update-badge checked"
                         type="radio"
@@ -213,7 +215,7 @@
             </div>
             <div class="pr-3">
                 <aui:input
-                        name="name_setting"
+                        name="<%= KeycloakUtils.ATTRIBUTES.name_setting.name() %>"
                         label="dsd.registration.step2.badge.name.2"
                         cssClass="update-badge"
                         type="radio"
@@ -221,7 +223,7 @@
             </div>
             <div class="pr-3">
                 <aui:input
-                        name="name_setting"
+                        name="<%= KeycloakUtils.ATTRIBUTES.name_setting.name() %>"
                         label="dsd.registration.step2.badge.name.3"
                         cssClass="update-badge"
                         type="radio"

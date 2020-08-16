@@ -14,11 +14,9 @@
     <liferay-ui:message key="registration-success" arguments="<%= new String[]{user.getEmailAddress(), "todo"} %>" />
 </liferay-ui:success>
 
-<!--
 <liferay-ui:error key="update-attributes-failed">
     <liferay-ui:message key="update-attributes-failed" arguments='<%= SessionErrors.get(liferayPortletRequest, "update-attributes-failed") %>' />
 </liferay-ui:error>
--->
 
 <div class="bs-stepper">
     <h2><liferay-ui:message key="dsd.registration.title"/></h2>
@@ -62,6 +60,16 @@
         %>
 
         <aui:form action="<%= submitRegisterForm %>" name="fm">
+
+            <aui:input
+                    name="redirect"
+                    type="hidden"
+                    value="${registrationDisplayContext.getRegisterURL(renderRequest)}" />
+
+            <aui:input name="articleId"
+                       type="hidden"
+                       value="<%= registrationId %>" />
+
             <div class="tab-content">
                 <div class="tab-pane active" role="tabpanel" id="stepper-step-1">
                     <%@ include file="registration/step1.jsp" %>
@@ -113,16 +121,13 @@
 
     updateBadge = function() {
         let showTitle = $('input[name="<portlet:namespace />show_badge_title"]:checked').val();
-        let nameSetting = $('input[name="<portlet:namespace />name_setting"]:checked').val();
+        let nameSetting = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.name_setting.name() %>"]:checked').val();
         let titles = $('input[name="<portlet:namespace />titles"]').val();
-        let firstName = $('input[name="<portlet:namespace />firstName"]').val();
+        let firstName = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.first_name.name() %>"]').val();
         let initials = $('input[name="<portlet:namespace />initials"]').val();
-        let lastName = $('input[name="<portlet:namespace />lastName"]').val();
+        let lastName = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.last_name.name() %>"]').val();
         let jobTitle = $('input[name="<portlet:namespace />job_titles"]').val();
         let title = '';
-
-        console.log('showTitle: ' + showTitle);
-        console.log('nameSetting: ' + nameSetting);
 
         if (showTitle === 'yes') {
             title += titles + ' ';
@@ -144,38 +149,43 @@
 
     updatePaymentAddress = function() {
         let checked = this.checked;
-        console.log(checked);
         let address = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_address.name() %>"]').val();
         let postCode = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_postal.name() %>"]').val();
         let city = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_city.name() %>"]').val();
+        let country = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_country.name() %>"]').val();
         let email = $('input[name="<portlet:namespace />email"]').val();
 
         if (!checked) {
             address = '';
             postCode = '';
             city = '';
+            country = '';
             email = '';
         }
 
-        let paymentAddressInput = $('input[name="<portlet:namespace />payment_address"]');
-        let paymentPostCodeInput = $('input[name="<portlet:namespace />payment_address_postcode"]');
-        let paymentCityInput = $('input[name="<portlet:namespace />payment_address_city"]');
+        let paymentAddressInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.billing_address.name() %>"]');
+        let paymentPostCodeInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.billing_postal.name() %>"]');
+        let paymentCityInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.billing_city.name() %>"]');
+        let paymentCountryInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.billing_country.name() %>"]');
         let paymentEmailInput = $('input[name="<portlet:namespace />payment_email"]');
 
         paymentAddressInput.val(address);
         paymentPostCodeInput.val(postCode);
         paymentCityInput.val(city);
+        paymentCountryInput.val(country);
         paymentEmailInput.val(email);
 
         if (checked) {
             paymentAddressInput.prop('disabled', true);
             paymentPostCodeInput.prop('disabled', true);
             paymentCityInput.prop('disabled', true);
+            paymentCountryInput.prop('disabled', true);
             paymentEmailInput.prop('disabled', true);
         } else {
             paymentAddressInput.prop('disabled', false);
             paymentPostCodeInput.prop('disabled', false);
             paymentCityInput.prop('disabled', false);
+            paymentCountryInput.prop('disabled', false);
             paymentEmailInput.prop('disabled', false);
         }
     }

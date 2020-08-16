@@ -6,39 +6,48 @@
 <div class="row">
     <div class="col">
         <c:if test="${not empty attributes}">
-            <c:set var="org_address" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_address.name()) %>"/>
+            <c:set var="billing_address" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.billing_address.name()) %>"/>
         </c:if>
         <aui:input
-                name="payment_address"
+                name="<%= KeycloakUtils.ATTRIBUTES.billing_address.name() %>"
                 label="dsd.registration.step3.billing.address"
-                value="${org_address}">
+                value="${billing_address}">
         </aui:input>
 
         <div class="row">
             <div class="col">
                 <c:if test="${not empty attributes}">
-                    <c:set var="org_postal" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_postal.name()) %>"/>
+                    <c:set var="billing_postal" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.billing_postal.name()) %>"/>
                 </c:if>
                 <aui:input
-                        name="payment_address_postcode"
+                        name="<%= KeycloakUtils.ATTRIBUTES.billing_postal.name() %>"
                         label="registrationform.orgpostcode"
-                        value="${org_postal}">
+                        value="${billing_postal}">
                 </aui:input>
             </div>
             <div class="col">
                 <c:if test="${not empty attributes}">
-                    <c:set var="org_city" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_city.name()) %>"/>
+                    <c:set var="billing_city" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.billing_city.name()) %>"/>
                 </c:if>
                 <aui:input
-                        name="payment_address_city"
+                        name="<%= KeycloakUtils.ATTRIBUTES.billing_city.name() %>"
                         label="registrationform.orgcity"
-                        value="${org_city}">
+                        value="${billing_city}">
                 </aui:input>
             </div>
         </div>
 
+        <c:if test="${not empty attributes}">
+            <c:set var="billing_country" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.billing_country.name()) %>"/>
+        </c:if>
         <aui:input
-                name="terms_and_agreements"
+                name="<%= KeycloakUtils.ATTRIBUTES.billing_country.name() %>"
+                label="dsd.registration.step3.billing.address"
+                value="${billing_country}">
+        </aui:input>
+
+        <aui:input
+                name="<%= KeycloakUtils.ATTRIBUTES.terms_agreements.name() %>"
                 label="dsd.registration.step3.terms.agreements"
                 type="checkbox">
             <aui:validator name="required">
