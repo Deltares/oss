@@ -2,7 +2,6 @@ package nl.deltares.portal.utils;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
-import nl.deltares.dsd.registration.exception.NoSuchRegistrationException;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.impl.Registration;
 
@@ -30,7 +29,7 @@ public interface DsdTransferUtils {
      * @param registration Registration for which user must be unregistered
      * @param transferDate Day for which user wants to unregister
      */
-    void unRegisterUser(User user, Registration registration, Date transferDate) throws NoSuchRegistrationException;
+    void unRegisterUser(User user, Registration registration, Date transferDate) throws PortalException;
 
 
     /**

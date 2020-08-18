@@ -4,10 +4,10 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.HtmlUtil;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.XmlContentParserUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.w3c.dom.Document;
 
 import java.util.Date;
@@ -43,7 +43,7 @@ public abstract class Registration extends AbsDsdArticle {
             String price = XmlContentParserUtils.getDynamicContentByName(document, "price", false);
             this.price =  Float.parseFloat(price);
             String currency = XmlContentParserUtils.getDynamicContentByName(document, "currency", true);
-            if (currency != null) this.currency = StringEscapeUtils.escapeHtml4(currency);
+            if (currency != null) this.currency = HtmlUtil.escape(currency);
             String open = XmlContentParserUtils.getDynamicContentByName(document, "open", true);
             this.open = Boolean.parseBoolean(open);
             String type = XmlContentParserUtils.getDynamicContentByName(document, "type", false);

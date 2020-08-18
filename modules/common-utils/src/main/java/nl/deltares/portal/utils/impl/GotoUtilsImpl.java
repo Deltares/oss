@@ -8,6 +8,7 @@ import com.liferay.portal.kernel.util.PropsUtil;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
 import nl.deltares.portal.utils.GotoUtils;
+import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import org.osgi.service.component.annotations.Component;
 
@@ -21,13 +22,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static nl.deltares.portal.utils.HttpClientUtils.*;
-
 @Component(
         immediate = true,
         service = GotoUtils.class
 )
-public class GotoUtilsImpl implements GotoUtils {
+public class GotoUtilsImpl extends HttpClientUtils implements GotoUtils {
     private static final Log LOG = LogFactoryUtil.getLog(GotoUtilsImpl.class);
 
     private final String CACHED_REFRESH_EXPIRY_KEY = "goto.refresh.expirytime";
