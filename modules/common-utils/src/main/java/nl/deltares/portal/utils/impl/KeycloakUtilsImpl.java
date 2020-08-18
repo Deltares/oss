@@ -7,6 +7,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
+import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
@@ -20,13 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static nl.deltares.portal.utils.HttpClientUtils.*;
-
 @Component(
         immediate = true,
         service = KeycloakUtils.class
 )
-public class KeycloakUtilsImpl implements KeycloakUtils {
+public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils {
 
     private static final Log LOG = LogFactoryUtil.getLog(KeycloakUtilsImpl.class);
 

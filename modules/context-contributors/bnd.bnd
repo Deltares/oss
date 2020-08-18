@@ -1,0 +1,5 @@
+Bundle-Name: context-contributors
+Bundle-SymbolicName: nl.worth.portal.context.contributor
+Bundle-Version: 1.0.0
+Export-Package: \
+  nl.worth.portal.utils

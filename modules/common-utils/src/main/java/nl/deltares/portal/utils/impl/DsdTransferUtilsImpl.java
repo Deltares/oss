@@ -2,13 +2,13 @@ package nl.deltares.portal.utils.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
-import nl.deltares.dsd.registration.exception.NoSuchRegistrationException;
-import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
+import nl.deltares.dsd.registration.service.RegistrationLocalService;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.impl.BusTransfer;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.DsdTransferUtils;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,14 +23,22 @@ public class DsdTransferUtilsImpl implements DsdTransferUtils {
 
     private final SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+    private RegistrationLocalService registrationLocalService;
+
+    @Reference(unbind = "-")
+    private void setRepositoryLogLocalService(RegistrationLocalService registrationLocalService) {
+
+        this.registrationLocalService = registrationLocalService;
+    }
+
     @Override
     public void deleteRegistrationsFor(Registration registration) {
-        RegistrationLocalServiceUtil.deleteAllRegistrationsAndChildRegistrations(registration.getGroupId(), registration.getResourceId());
+        registrationLocalService.deleteAllRegistrationsAndChildRegistrations(registration.getGroupId(), registration.getResourceId());
     }
 
     @Override
     public List<Date> getRegisteredDays(User user, Registration registration) {
-        return RegistrationLocalServiceUtil.getRegistrationDates(registration.getGroupId(), user.getUserId(), registration.getResourceId());
+        return registrationLocalService.getRegistrationDates(registration.getGroupId(), user.getUserId(), registration.getResourceId());
     }
 
     @Override
@@ -38,7 +46,7 @@ public class DsdTransferUtilsImpl implements DsdTransferUtils {
 
         validateRegistration(user, registration, transferDate);
 
-        RegistrationLocalServiceUtil.addUserRegistration(
+        registrationLocalService.addUserRegistration(
                 registration.getCompanyId(), registration.getGroupId(), registration.getResourceId(),
                 0, user.getUserId(),
                 transferDate, transferDate, null);
@@ -46,13 +54,13 @@ public class DsdTransferUtilsImpl implements DsdTransferUtils {
 
     @Override
     public void unRegisterUser(User user, Registration registration) {
-        RegistrationLocalServiceUtil.deleteUserRegistrationAndChildRegistrations(
+        registrationLocalService.deleteUserRegistrationAndChildRegistrations(
                 registration.getGroupId(), registration.getResourceId(), user.getUserId());
     }
 
     @Override
-    public void unRegisterUser(User user, Registration registration, Date transferDate) throws NoSuchRegistrationException {
-        RegistrationLocalServiceUtil.deleteUserRegistration(
+    public void unRegisterUser(User user, Registration registration, Date transferDate) throws PortalException {
+        registrationLocalService.deleteUserRegistration(
                 registration.getGroupId(), registration.getResourceId(), user.getUserId(), transferDate);
     }
 
@@ -99,12 +107,12 @@ public class DsdTransferUtilsImpl implements DsdTransferUtils {
 
     @Override
     public int getRegistrationCount(Registration registration, Date transferDate) {
-        return RegistrationLocalServiceUtil.getRegistrationsCount(registration.getGroupId(), registration.getResourceId(), transferDate);
+        return registrationLocalService.getRegistrationsCount(registration.getGroupId(), registration.getResourceId(), transferDate);
     }
 
     @Override
     public boolean isUserRegisteredFor(User user, Registration registration, Date transferDate) {
-        int registrationsCount = RegistrationLocalServiceUtil.getRegistrationsCount(registration.getGroupId(), user.getUserId(), registration.getResourceId(), transferDate);
+        int registrationsCount = registrationLocalService.getRegistrationsCount(registration.getGroupId(), user.getUserId(), registration.getResourceId(), transferDate);
         return registrationsCount > 0;
     }
 
