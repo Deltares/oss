@@ -5,6 +5,9 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import nl.deltares.portal.display.context.RegistrationDisplayContext;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Event;
@@ -78,6 +81,18 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
             colorMap.putIfAbsent(sessionKey, "#17a2b8");
         }
         return colorMap;
+    }
+
+    @Override
+    public RegistrationDisplayContext getDisplayContextInstance(String articleId, ThemeDisplay themeDisplay) {
+        return new RegistrationDisplayContext(articleId, themeDisplay, _configurationProvider);
+    }
+
+    private ConfigurationProvider _configurationProvider;
+
+    @Reference
+    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
+        _configurationProvider = configurationProvider;
     }
 
 }

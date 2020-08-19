@@ -1,0 +1,69 @@
+$default-color: #6B6C7E;
+$active: #272833;
+
+.bs-stepper {
+  h2 {
+    text-transform: uppercase;
+  }
+}
+
+.bs-stepper-indicators {
+  a {
+    color: $default-color;
+
+    span {
+      padding-right: 0.5rem;
+    }
+  }
+
+  a.active {
+    color: $active;
+    text-decoration: underline;
+  }
+
+  .step {
+    padding: 0 1rem;
+    a {
+
+    }
+  }
+
+  li {
+    color: $default-color;
+  }
+
+  li.active {
+    color: $active;
+  }
+
+  .icon-circle.completed {
+    color: $default-color;
+  }
+  .icon-circle-blank.active {
+    color: $active;
+  }
+}
+
+.registration-container {
+  .registration-item {
+    margin: 1rem 0;
+    padding: .5rem;
+    border: 1px solid #d2d2d2;
+  }
+
+  .card-header {
+    .event-edition {
+      font-size: .8rem;
+    }
+  }
+
+  .card-body {
+    .card-title {
+      font-size: 2rem;
+    }
+  }
+}
+
+.registration-controls {
+  
+}
