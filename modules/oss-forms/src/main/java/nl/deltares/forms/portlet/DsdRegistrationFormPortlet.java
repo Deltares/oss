@@ -1,5 +1,8 @@
 package nl.deltares.forms.portlet;
 
+import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -10,6 +13,9 @@ import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.dsd.model.*;
 import nl.deltares.emails.DsdEmail;
 import nl.deltares.forms.constants.OssFormPortletKeys;
+import nl.deltares.portal.utils.DDMStructureUtil;
+import nl.deltares.portal.utils.DsdParserUtils;
+import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -20,6 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author rooij_e
@@ -30,7 +37,7 @@ import java.util.Map;
         "com.liferay.fragment.entry.processor.portlet.alias=registration-buttons",
 		"com.liferay.portlet.display-category=OSS",
 		"com.liferay.portlet.header-portlet-css=/css/main.css",
-		"com.liferay.portlet.instanceable=true",
+		"com.liferay.portlet.instanceable=false",
 		"javax.portlet.display-name=DsdRegistrationForm",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/dsd_registration.jsp",
@@ -45,6 +52,15 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 
 	@Reference
 	private KeycloakUtils keycloakUtils;
+
+	@Reference
+	private DsdParserUtils dsdParserUtils;
+
+	@Reference
+	private DsdSessionUtils dsdSessionUtils;
+
+	@Reference
+	private DDMStructureUtil _ddmStructureUtil;
 
 	public void render(RenderRequest request, RenderResponse response) throws IOException, PortletException {
 
@@ -62,6 +78,19 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
             }
 
 		}
+
+		String articleId = ParamUtil.getString(request, "articleId");
+
+		Optional<DDMTemplate> ddmTemplateOptional = _ddmStructureUtil
+				.getDDMTemplateByName("REGISTRATION", themeDisplay.getLocale());
+
+		ddmTemplateOptional.ifPresent(ddmTemplate ->
+				request.setAttribute("ddmTemplateKey", ddmTemplate.getTemplateKey()));
+
+		request.setAttribute("dsdParserUtils", dsdParserUtils);
+		request.setAttribute("dsdSessionUtils", dsdSessionUtils);
+		request.setAttribute("registrationDisplayContext", dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay));
+
 		super.render(request, response);
 	}
 
@@ -170,4 +199,6 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 		}
 		return attributes;
 	}
+
+	private static final Log LOG = LogFactoryUtil.getLog(DsdRegistrationFormPortlet.class);
 }

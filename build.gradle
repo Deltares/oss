@@ -9,6 +9,7 @@ plugins {
 project.ext {
     environment = getEnvProperty('env', 'local')
     bundleDir = getEnvProperty('liferay.workspace.home.dir', project.projectDir.toString() + '/bundles')
+    liferayData = project.projectDir.toString() + '/docker/liferay/data'
     liferayMount = project.projectDir.toString() + '/docker/liferay/mount/files'
     dockerContainerPrefix = getEnvProperty('liferay.docker.container.prefix', 'oss')
     dockerComposeFilePath = getEnvProperty('liferay.docker.compose.path', project.projectDir.toString() + '/docker/docker-compose.yml')
@@ -17,6 +18,13 @@ project.ext {
     dbUser = getEnvProperty('dbUser', 'liferay')
     dbPassword = getEnvProperty('dbPassword', 'liferay')
     defaultLiferayAdminPassword = getEnvProperty('default.admin.password', 'test')
+    bundleDirectories = [
+            file("$bundleDir/deploy"),
+            file("$bundleDir/osgi/deploy"),
+            file("$bundleDir/osgi/modules"),
+            file("$liferayData"),
+            file("$liferayMount")
+    ]
 }
 
 task startContainers(
@@ -37,7 +45,13 @@ task startLiferay(
         'group': 'docker'
 ) {
     doLast {
+        delete "$bundleDir"
         delete "$liferayMount"
+        bundleDirectories.forEach {
+            if (!it.exists()) {
+                it.mkdirs()
+            }
+        }
         copy {
             from("$projectDir/configs/$environment/")
             into("$liferayMount")
