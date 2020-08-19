@@ -2,6 +2,7 @@
 <#assign dsdSessionUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdSessionUtils") />
 <#assign articleId = .vars['reserved-article-id'].getData() />
 <#assign registration = dsdParserUtils.getRegistration(groupId,articleId) />
+<#assign displayContext = dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay) />
 <#assign room = registration.getRoom() />
 <#if registration.isEventInPast() >
     <#assign isEventPast = "past-event"/>
@@ -63,6 +64,12 @@
                         <#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
                         <#assign available = registration.getCapacity() - registrations />
                         ${languageUtil.get(locale, "dsd.theme.session.available")} : ${available}
+                    </span>
+
+                    <span class="d-block">
+                        <a href="${displayContext.getRegisterURL(renderRequest)}" class="btn btn-primary" role="button" aria-pressed="true">
+                            ${languageUtil.get(locale, "registrationform.register")}
+                        </a>
                     </span>
 
                 </p>
