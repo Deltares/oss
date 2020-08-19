@@ -120,6 +120,7 @@ public class RegistrationDisplayContext {
 
     public String getSummary() {
         String summary = "";
+        if (registration == null) return summary;
         try {
             AssetEntry assetEntry = AssetEntryLocalServiceUtil
                     .getEntry(JournalArticle.class.getName(), registration.getJournalArticle().getResourcePrimKey());

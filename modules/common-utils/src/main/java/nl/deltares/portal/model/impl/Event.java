@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class Event extends AbsDsdArticle {
 
     private static final Log LOG = LogFactoryUtil.getLog(Event.class);
-    private List<Registration> registrationCache = null;
+    private List<Registration> registrations = null;
     private EventLocation eventLocation = null;
     boolean hasEventLocation = true;
     private Date startTime = null;
@@ -90,14 +90,30 @@ public class Event extends AbsDsdArticle {
         return endTime;
     }
 
+    /**
+     * Return all registrations for a given site
+     * @param siteId
+     * @param date
+     * @return
+     * @throws PortalException
+     */
+    public static List<Registration> getRegistrations(long siteId, Date date) throws PortalException {
+        List<JournalArticle> filteredArticle = getFilteredArticle(siteId, date);
+        List<Registration> registrations = new ArrayList<>();
+        for (JournalArticle article : filteredArticle) {
+            registrations.add((Registration) AbsDsdArticle.getInstance(article));
+        }
+        return registrations;
+    }
+
     public List<Registration> getRegistrations()  {
         loadRegistrations();
-        return Collections.unmodifiableList(registrationCache);
+        return Collections.unmodifiableList(registrations);
     }
 
     public Registration getRegistration(long resourceId) {
         loadRegistrations();
-        for (Registration registration : registrationCache) {
+        for (Registration registration : registrations) {
             if (registration.getResourceId() == resourceId) return registration;
         }
         return null;
@@ -113,8 +129,11 @@ public class Event extends AbsDsdArticle {
     }
 
     private void loadRegistrations(){
-        if (registrationCache != null) return;
-            try {
+
+        if (registrations != null) {
+            return;
+        }
+        try {
             parseRegistrations();
         } catch (PortalException e) {
             LOG.error(String.format("Error parsing registrations for event %s: %s", getTitle(), e.getMessage()));
@@ -122,15 +141,15 @@ public class Event extends AbsDsdArticle {
     }
 
     private void parseRegistrations() throws PortalException {
-        registrationCache = new ArrayList<>();
+        registrations = new ArrayList<>();
         long siteId = getGroupId();
         long eventId = Long.parseLong(getArticleId());
         DuplicateCheck check = new DuplicateCheck();
-        List<JournalArticle> filteredArticle = getFilteredArticle(siteId, this);
+        List<JournalArticle> filteredArticle = getFilteredArticle(siteId, this.getStartTime());
         for (JournalArticle journalArticle : filteredArticle) {
             Registration registration = (Registration) AbsDsdArticle.getInstance(journalArticle);
             if (registration.getEventId() != eventId) continue;
-            if (check.checkDuplicates(registration)) registrationCache.add(registration);
+            if (check.checkDuplicates(registration)) registrations.add(registration);
         }
     }
 
@@ -138,10 +157,10 @@ public class Event extends AbsDsdArticle {
      * Get all journalArticles for given site and a strucutureKey in list; Session, Dinner, Bustransfer, with a creation time within the search window of
      * event.
      * @param siteId Site identifier
-     * @param eventArticle Event for which to find matching session articles
+     * @param eventStartTime Start time for which to find matching session articles
      * @return List of Session articles <i>possibly</i> belonging to this event
      */
-    private List<JournalArticle> getFilteredArticle(long siteId, Event eventArticle) {
+    private static List<JournalArticle> getFilteredArticle(long siteId, Date  eventStartTime) {
 
         DynamicQuery searchQuery = JournalArticleLocalServiceUtil.dynamicQuery();
         //filter for site
@@ -158,10 +177,10 @@ public class Event extends AbsDsdArticle {
                 structureCriteria,PropertyFactoryUtil.forName("DDMStructureKey").like(transferStructureKey + "%"));
         searchQuery.add(structureCriteria);
 
-        //filter creation date between ~6months before start up till start
-        Date endCreationSearchPeriod = eventArticle.getStartTime();
+        //filter creation date between ~12months before start up till start
+        Date endCreationSearchPeriod = eventStartTime;
         //todo make this configurable
-        Date startCreationSearchPeriod = new Date(endCreationSearchPeriod.getTime() - TimeUnit.DAYS.toMillis(180));
+        Date startCreationSearchPeriod = new Date(endCreationSearchPeriod.getTime() - TimeUnit.DAYS.toMillis(365));
         Criterion checkCreationPeriod = PropertyFactoryUtil.forName("createDate").between(startCreationSearchPeriod, endCreationSearchPeriod);
         searchQuery.add(checkCreationPeriod);
 
