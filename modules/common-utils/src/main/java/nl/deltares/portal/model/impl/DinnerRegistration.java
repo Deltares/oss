@@ -7,6 +7,9 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import nl.deltares.portal.utils.XmlContentParserUtils;
 
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 public class DinnerRegistration extends Registration {
 
     private static final Log LOG = LogFactoryUtil.getLog(DinnerRegistration.class);
@@ -41,5 +44,10 @@ public class DinnerRegistration extends Registration {
     private void parserRestaurant() throws PortalException {
         String json = XmlContentParserUtils.getDynamicContentByName(getDocument(), "restaurant", false);
         restaurant = JsonContentParserUtils.parseLocationJson(json);
+    }
+
+    @Override
+    public Date getEndTime() {
+        return new Date(super.getStartTime().getTime() + TimeUnit.HOURS.toMillis(3));
     }
 }

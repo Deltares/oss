@@ -35,6 +35,9 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
 
     @Override
     public Event getEvent(long siteId, String articleId) throws PortalException {
+        if ("0".equals(articleId)) {
+            return null; //show all events
+        }
         JournalArticle eventResource = dsdJournalArticleUtils.getJournalArticle(siteId, articleId);
         AbsDsdArticle eventArticle = AbsDsdArticle.getInstance(eventResource);
         if (!(eventArticle instanceof Event)) {
