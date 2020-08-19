@@ -98,4 +98,16 @@ public class BusTransfer extends Registration {
     public List<Date> getTransferDates() {
         return new ArrayList<>(transferDates);
     }
+
+    @Override
+    public Date getStartTime() {
+        if (transferDates.size() == 0) return new Date();
+        return transferDates.get(0);
+    }
+
+    @Override
+    public Date getEndTime() {
+        if (transferDates.size() == 0) return new Date();
+        return transferDates.get(transferDates.size() -1);
+    }
 }
