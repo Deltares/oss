@@ -49,9 +49,6 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
 
     @Override
     public void prepare(Map<String, Object> contextObjects, HttpServletRequest request) {
-        if(contextObjects.containsKey("is_loaded")) {
-            return;
-        }
         contextObjects.put("journalArticleLocalService", journalArticleLocalService);
         contextObjects.put("journalContentUtil", journalContent);
         contextObjects.put("layoutUtils", layoutUtils);
@@ -90,8 +87,6 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
 
         //set languages
         setLanguages(contextObjects, themeDisplay);
-
-        contextObjects.put("is_loaded", true);
     }
 
     private void setLanguages(Map<String, Object> contextObjects, ThemeDisplay themeDisplay) {
