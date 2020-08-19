@@ -56,8 +56,8 @@ public abstract class Registration extends AbsDsdArticle {
                 overlapWithParent = Boolean.parseBoolean(overlap);
                 hasParent = true;
             }
-            startTime = XmlContentParserUtils.parseDateTimeFields(document,"start", "starttime", false);
-            endTime = XmlContentParserUtils.parseDateTimeFields(document,"end", "endtime", false);
+            startTime = XmlContentParserUtils.parseDateTimeFields(document,"start", "starttime", true);
+            endTime = XmlContentParserUtils.parseDateTimeFields(document,"end", "endtime", true);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing Registration %s: %s!", getTitle(), e.getMessage()), e);
         }

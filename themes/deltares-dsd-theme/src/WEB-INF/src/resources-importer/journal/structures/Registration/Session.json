@@ -6,6 +6,104 @@
   "fields": [
     {
       "label": {
+        "en_US": "Start date"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "date",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "start",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-date",
+      "nestedFields": [
+        {
+          "label": {
+            "en_US": "time"
+          },
+          "predefinedValue": {
+            "en_US": "09:00"
+          },
+          "style": {
+            "en_US": ""
+          },
+          "tip": {
+            "en_US": "Start time (format: HH:mm time timezone) "
+          },
+          "dataType": "string",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "starttime",
+          "readOnly": false,
+          "repeatable": false,
+          "required": true,
+          "showLabel": true,
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "label": {
+        "en_US": "End date"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "date",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "end",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-date",
+      "nestedFields": [
+        {
+          "label": {
+            "en_US": "time"
+          },
+          "predefinedValue": {
+            "en_US": "17:00"
+          },
+          "style": {
+            "en_US": ""
+          },
+          "tip": {
+            "en_US": "End time (format: HH:mm local timezone) "
+          },
+          "dataType": "string",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "endtime",
+          "readOnly": false,
+          "repeatable": false,
+          "required": true,
+          "showLabel": true,
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "label": {
         "en_US": "Presenters"
       },
       "predefinedValue": {
@@ -132,6 +230,12 @@
               "value": "goto",
               "label": {
                 "en_US": "GOTO Webinar"
+              }
+            },
+            {
+              "value": "anewspring",
+              "label": {
+                "en_US": "aNewSpring Course"
               }
             }
           ],
