@@ -66,8 +66,13 @@ public class DsdFullcalendarService {
 
         Map<String, String> colorMap = getColorMap(layoutUuid, Long.parseLong(siteId), portletId);
         try {
-            nl.deltares.portal.model.impl.Event event = parserUtils.getEvent(Long.parseLong(siteId), eventId);
-            List<Registration> registrations = event.getRegistrations();
+            List<Registration> registrations;
+            if (eventId.equals("0")){
+                registrations = nl.deltares.portal.model.impl.Event.getRegistrations(Long.parseLong(siteId), new Date());
+            } else {
+                nl.deltares.portal.model.impl.Event event = parserUtils.getEvent(Long.parseLong(siteId), eventId);
+                registrations = event.getRegistrations();
+            }
             return toResponse(getEvents(registrations, startSearch, endSearch, colorMap));
         } catch (PortalException e) {
             return Response.serverError().entity(e.getMessage()).build();
