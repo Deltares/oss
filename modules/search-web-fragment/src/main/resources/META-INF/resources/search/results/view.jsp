@@ -28,7 +28,7 @@
         page import="com.liferay.portal.search.web.internal.result.display.context.SearchResultFieldDisplayContext" %><%@
         page import="com.liferay.portal.search.web.internal.result.display.context.SearchResultSummaryDisplayContext" %><%@
         page import="com.liferay.portal.search.web.internal.search.results.portlet.SearchResultsPortletDisplayContext" %><%@
-        page import="search.web.fragment.RegistrationResultDisplayContext" %><%@
+        page import="nl.deltares.portal.display.context.RegistrationDisplayContext" %><%@
         page import="com.liferay.portal.kernel.theme.ThemeDisplay" %>
 <%@ page import="com.liferay.portal.kernel.util.Validator" %>
 
@@ -74,7 +74,7 @@
 
         <%
             SearchResultSummaryDisplayContext searchResultSummaryDisplayContext = java.util.Objects.requireNonNull(searchResultsPortletDisplayContext.getSearchResultSummaryDisplayContext(document));
-            RegistrationResultDisplayContext registrationResultDisplayContext = new RegistrationResultDisplayContext(searchResultSummaryDisplayContext.getClassPK(), themeDisplay);
+            RegistrationDisplayContext registrationDisplayContext = new RegistrationDisplayContext(searchResultSummaryDisplayContext.getClassPK(), themeDisplay);
         %>
 
         <c:choose>
@@ -85,7 +85,7 @@
 
                     <div class="row no-gutters">
                         <div class="col-2">
-                            <img class="img-fluid" src="<%= registrationResultDisplayContext.getSmallImageURL() %>"/>
+                            <img class="img-fluid" src="<%= registrationDisplayContext.getSmallImageURL() %>"/>
                         </div>
                         <div class="col-10 px-3">
                             <h4>
@@ -95,18 +95,18 @@
                             </h4>
 
                             <div>
-                                <c:if test="<%= Validator.isNotNull(registrationResultDisplayContext.getPresenterSmallImageURL()) %>">
-                                    <img width="32" class="expert-thumbnail" src="<%= registrationResultDisplayContext.getPresenterSmallImageURL() %>" />
+                                <c:if test="<%= Validator.isNotNull(registrationDisplayContext.getPresenterSmallImageURL()) %>">
+                                    <img width="32" class="expert-thumbnail" src="<%= registrationDisplayContext.getPresenterSmallImageURL() %>" />
                                 </c:if>
-                                <c:if test="<%= Validator.isNotNull(registrationResultDisplayContext.getPresenterName()) %>">
-                                    <span class="expert-name px-2"><%= registrationResultDisplayContext.getPresenterName() %></span> |
+                                <c:if test="<%= Validator.isNotNull(registrationDisplayContext.getPresenterName()) %>">
+                                    <span class="expert-name px-2"><%= registrationDisplayContext.getPresenterName() %></span> |
                                 </c:if>
-                                 <span class="event-time pl-2"><%= registrationResultDisplayContext.getStartTime() %> - <%= registrationResultDisplayContext.getEndTime() %></span>
+                                 <span class="event-time pl-2"><%= registrationDisplayContext.getStartTime() %> - <%= registrationDisplayContext.getEndTime() %></span>
                             </div>
 
                             <c:if test="<%= searchResultSummaryDisplayContext.isContentVisible() %>">
                                 <p class="search-document-content text-default">
-                                    <%= HtmlUtil.stripHtml(HtmlUtil.unescape(searchResultSummaryDisplayContext.getContent())) %>
+                                    <%= HtmlUtil.stripHtml(HtmlUtil.unescape(registrationDisplayContext.getSummary())) %>
                                 </p>
                             </c:if>
                         </div>
