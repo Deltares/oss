@@ -54,9 +54,9 @@
                         <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />
                         ${languageUtil.get(locale, "dsd.theme.session.room")} :
                         <#if room??>
-                            <#assign building = event.findBuilding(room) />
-                            ${languageUtil.get(locale, "dsd.theme.session.room")} : ${room.getTitle()}
-                            <#if building?? >
+                            ${room.getTitle()}
+                            <#if event.findBuilding(room)?? >
+                                <#assign building = event.findBuilding(room) />
                                 -  ${languageUtil.get(locale, "dsd.theme.session.building")} : ${building.getTitle()}
                             </#if>
                         </#if>
