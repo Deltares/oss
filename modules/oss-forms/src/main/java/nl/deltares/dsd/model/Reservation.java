@@ -1,17 +1,32 @@
 package nl.deltares.dsd.model;
 
-public abstract class Reservation {
+import java.util.ArrayList;
+import java.util.List;
 
+public class Reservation {
+
+    private List<Reservation> childReservations = new ArrayList<>();
     private String eventName;
     private String name;
     private long startTime;
     private long endTime;
-    private Type type;
-    private float price;
+    private String type;
+    private double price;
     private int capacity;
-    private boolean open;
-    private boolean visible;
-    private boolean highlight;
+    private String location;
+    private String bannerUrl;
+
+    public List<Reservation> getChildReservations() {
+        return childReservations;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
     public String getEventName() {
         return eventName;
@@ -45,19 +60,19 @@ public abstract class Reservation {
         this.endTime = endTime;
     }
 
-    public Type getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public float getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -69,27 +84,12 @@ public abstract class Reservation {
         this.capacity = capacity;
     }
 
-    public boolean isOpen() {
-        return open;
+
+    public void setBannerUrl(String bannerURL) {
+        this.bannerUrl = bannerURL;
     }
 
-    public void setOpen(boolean open) {
-        this.open = open;
-    }
-
-    public boolean isVisible() {
-        return visible;
-    }
-
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
-    public boolean isHighlight() {
-        return highlight;
-    }
-
-    public void setHighlight(boolean highlight) {
-        this.highlight = highlight;
+    public String getBannerUrl() {
+        return bannerUrl;
     }
 }
