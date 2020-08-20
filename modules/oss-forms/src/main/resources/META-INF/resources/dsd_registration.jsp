@@ -18,6 +18,10 @@
     <liferay-ui:message key="update-attributes-failed" arguments='<%= SessionErrors.get(liferayPortletRequest, "update-attributes-failed") %>' />
 </liferay-ui:error>
 
+<liferay-ui:error key="send-email-failed">
+    <liferay-ui:message key="send-email-failed" arguments='<%= SessionErrors.get(liferayPortletRequest, "send-email-failed") %>' />
+</liferay-ui:error>
+
 <div class="bs-stepper">
     <h2><liferay-ui:message key="dsd.registration.title"/></h2>
     <div class="flex-row justify-content-between bs-stepper-indicators py-3">

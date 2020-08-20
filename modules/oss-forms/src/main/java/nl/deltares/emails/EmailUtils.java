@@ -87,7 +87,7 @@ public class EmailUtils {
     static String getTemplate(String templateFile) throws IOException {
         String templatePath = "/content/" + templateFile;
 
-        String body = ContentUtil.get(EmailUtils.class.getClassLoader(), templatePath);;
+        String body = ContentUtil.get(EmailUtils.class.getClassLoader(), templatePath);
         if (body == null){
             throw new IOException("Could not find template: " + templatePath);
         }
