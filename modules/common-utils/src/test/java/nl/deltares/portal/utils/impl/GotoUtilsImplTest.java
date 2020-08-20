@@ -16,6 +16,7 @@ import nl.deltares.portal.model.impl.SessionRegistration;
 import nl.deltares.portal.utils.JsonContentParserUtils;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -28,6 +29,7 @@ import java.util.Properties;
 /**
  * Requires a webinar to be configured in future. Not possible to remove users from past webinars.
  */
+@Ignore
 public class GotoUtilsImplTest {
 
     private GotoUtilsImpl gotoUtils;

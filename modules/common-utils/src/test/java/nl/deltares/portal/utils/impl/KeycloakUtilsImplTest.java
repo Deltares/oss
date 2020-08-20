@@ -7,6 +7,7 @@ import nl.deltares.mock.MockProps;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -19,6 +20,7 @@ import java.util.Properties;
 /**
  * Requires local keycloak running
  */
+@Ignore
 public class KeycloakUtilsImplTest {
 
     private KeycloakUtilsImpl keycloakUtils;
