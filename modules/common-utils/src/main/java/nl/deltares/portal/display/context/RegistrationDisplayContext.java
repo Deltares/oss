@@ -131,6 +131,10 @@ public class RegistrationDisplayContext {
         return summary;
     }
 
+    public String getUnregisterURL(PortletRequest portletRequest){
+        return "";
+    }
+
     public String getRegisterURL(PortletRequest portletRequest) {
         String url = "";
 
