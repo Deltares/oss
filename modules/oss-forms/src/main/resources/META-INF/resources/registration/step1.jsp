@@ -18,7 +18,8 @@
                         label=""
                         type="checkbox"
                         data-price="<%= mainRegistration.getPrice() %>"
-                        cssClass="parent-registration"/>
+                        cssClass="parent-registration"
+                        checked="true"/>
             </div>
             <div class="float-left w-100">
                 <%
@@ -49,7 +50,9 @@
                             label=""
                             type="checkbox"
                             data-price="${childRegistration.getPrice()}"
-                            cssClass="child-registration"/>
+                            cssClass="child-registration"
+                            checked="${dsdSessionUtils.isUserRegisteredFor(user, childRegistration)}"
+                    />
                 </div>
                 <div class="float-left w-100">
                     <%
