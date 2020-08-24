@@ -54,6 +54,7 @@
                         <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />
                         ${languageUtil.get(locale, "dsd.theme.session.room")} :
                         <#if room??>
+
                             ${room.getTitle()}
                             <#if event.findBuilding(room)?? >
                                 <#assign building = event.findBuilding(room) />
@@ -67,13 +68,22 @@
                     </span>
 
                     <#if themeDisplay.isSignedIn() >
+                        <#assign isRegistered = dsdSessionUtils.isUserRegisteredFor(user, registration) />
                         <span class="d-block">
+                            <#if isRegistered >
+                                <a href="${displayContext.getUnregisterURL(renderRequest)}" class="btn btn-primary" role="button" aria-pressed="true">
+                                    ${languageUtil.get(locale, "registrationform.unregister")}
+                                </a>
+                            </#if>
                             <a href="${displayContext.getRegisterURL(renderRequest)}" class="btn btn-primary" role="button" aria-pressed="true">
-                                ${languageUtil.get(locale, "registrationform.register")}
+                                 <#if isRegistered >
+                                     ${languageUtil.get(locale, "registrationform.update")}
+                                 <#else>
+                                     ${languageUtil.get(locale, "registrationform.register")}
+                                 </#if>
                             </a>
                         </span>
                     </#if>
-
                 </p>
             </div>
         </div>
