@@ -35,7 +35,12 @@
             List<Registration> children = registrationFormDisplayContext
                     .getChildRegistrations(scopeGroupId, registrationId);
         %>
+        <% if (children.size() > 0) { %>
+        <h3>
+            <liferay-ui:message key="dsd.registration.step1.child.registrations"/>
 
+        </h3>
+        <% } %>
         <c:forEach var="childRegistration" items="<%= children %>">
             <div class="d-flex">
                 <div class="float-left p-3">
