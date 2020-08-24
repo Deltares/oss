@@ -33,12 +33,12 @@
                         label="registrationform.academic.titles"
                         cssClass="update-badge"/>
             </div>
-<%--            <div class="col">--%>
-<%--                <aui:input--%>
-<%--                        name="initials"--%>
-<%--                        label="registrationform.initials"--%>
-<%--                        cssClass="update-badge"/>--%>
-<%--            </div>--%>
+            <div class="col">
+                <aui:input
+                        name="initials"
+                        label="registrationform.initials"
+                        cssClass="update-badge"/>
+            </div>
         </div>
 
         <div class="row">
@@ -199,7 +199,8 @@
                         label="no"
                         cssClass="update-badge"
                         type="radio"
-                        value="no" />
+                        value="no"
+                        checked="true" />
             </div>
         </div>
 
@@ -211,7 +212,8 @@
                         label="dsd.registration.step2.badge.name.1"
                         cssClass="update-badge checked"
                         type="radio"
-                        value="name" />
+                        value="name"
+                        checked="true" />
             </div>
             <div class="pr-3">
                 <aui:input
