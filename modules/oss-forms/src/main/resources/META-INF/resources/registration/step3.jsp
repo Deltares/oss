@@ -46,22 +46,22 @@
                 value="${billing_country}">
         </aui:input>
 
-        <aui:input
-                name="<%= KeycloakUtils.ATTRIBUTES.terms_agreements.name() %>"
-                label="dsd.registration.step3.terms.agreements"
-                type="checkbox">
-            <aui:validator name="required">
-                function () {
-                return checkStep(getFormName(), 3);
-                }
-            </aui:validator>
-        </aui:input>
+<%--        <aui:input--%>
+<%--                name="<%= KeycloakUtils.ATTRIBUTES.terms_agreements.name() %>"--%>
+<%--                label="dsd.registration.step3.terms.agreements"--%>
+<%--                type="checkbox">--%>
+<%--            <aui:validator name="required">--%>
+<%--                function () {--%>
+<%--                return checkStep(getFormName(), 3);--%>
+<%--                }--%>
+<%--            </aui:validator>--%>
+<%--        </aui:input>--%>
 
-        <aui:input
-                name="remarks"
-                label="dsd.registration.step3.remarks"
-                type="textarea">
-        </aui:input>
+<%--        <aui:input--%>
+<%--                name="remarks"--%>
+<%--                label="dsd.registration.step3.remarks"--%>
+<%--                type="textarea">--%>
+<%--        </aui:input>--%>
     </div>
     <div class="col">
         <aui:input
@@ -73,7 +73,7 @@
                 name="<%= KeycloakUtils.ATTRIBUTES.org_preferred_payment.name() %>"
                 type="select"
                 label="dsd.registration.step3.payment.method"
-                showEmptyOption="true">
+                showEmptyOption="false">
             <aui:option value="bankTransfer" label="regostrationform.paymethod.bank"/>
             <aui:option value="payLink" label="regostrationform.paymethod.link"/>
             <aui:validator name="required">
@@ -84,7 +84,7 @@
         </aui:select>
 
         <c:if test="${not empty attributes}">
-            <c:set var="payment_reference" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_city.name()) %>"/>
+            <c:set var="payment_reference" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.pay_reference.name()) %>"/>
         </c:if>
         <aui:input
                 name="<%= KeycloakUtils.ATTRIBUTES.pay_reference.name() %>"
