@@ -23,6 +23,7 @@
 </liferay-ui:error>
 
 <%
+    Map attributes = (Map) renderRequest.getAttribute("attributes");
     String registrationId = ParamUtil.getString(renderRequest, "articleId");
     DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
     Registration mainRegistration = dsdParserUtils.getRegistration(themeDisplay.getScopeGroupId(), registrationId);
