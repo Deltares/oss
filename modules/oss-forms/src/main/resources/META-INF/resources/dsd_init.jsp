@@ -28,9 +28,3 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />
-
-<%
-    boolean isRegistered = (Boolean)renderRequest.getAttribute("registered");
-    boolean requiresPayment = (Boolean)renderRequest.getAttribute("requiresPayment");
-    Map attributes = (Map) renderRequest.getAttribute("attributes");
-%>

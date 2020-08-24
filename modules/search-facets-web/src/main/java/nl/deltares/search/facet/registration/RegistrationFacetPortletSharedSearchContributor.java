@@ -3,7 +3,13 @@ package nl.deltares.search.facet.registration;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.search.*;
+import com.liferay.portal.kernel.search.BooleanClause;
+import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
+import com.liferay.portal.kernel.search.BooleanClauseOccur;
+import com.liferay.portal.kernel.search.BooleanQuery;
+import com.liferay.portal.kernel.search.ParseException;
+import com.liferay.portal.kernel.search.Query;
+import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
@@ -12,7 +18,6 @@ import nl.deltares.search.constans.FacetPortletKeys;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 @Component(
@@ -30,7 +35,6 @@ public class RegistrationFacetPortletSharedSearchContributor implements PortletS
         Optional<DDMStructure> ddmStructureOptional = _ddmStructureUtil
                 .getDDMStructureByName("SESSION", searchContext.getLocale());
 
-        ArrayList<BooleanClause<Query>> booleanClauses = new ArrayList<>();
         if (ddmStructureOptional.isPresent()) {
             String structureKey = ddmStructureOptional.get().getStructureKey();
             BooleanQuery structureQuery = new BooleanQueryImpl();
@@ -44,7 +48,7 @@ public class RegistrationFacetPortletSharedSearchContributor implements PortletS
             BooleanClause<Query> structureBooleanClause = BooleanClauseFactoryUtil
                     .create(structureQuery, BooleanClauseOccur.MUST.getName());
 
-            booleanClauses.add(structureBooleanClause);
+            searchContext.setBooleanClauses(new BooleanClause[]{structureBooleanClause});
         }
 
         BooleanQuery groupQuery = new BooleanQueryImpl();
@@ -57,9 +61,7 @@ public class RegistrationFacetPortletSharedSearchContributor implements PortletS
         BooleanClause<Query> groupBooleanClause = BooleanClauseFactoryUtil
                 .create(groupQuery, BooleanClauseOccur.MUST.getName());
 
-        booleanClauses.add(groupBooleanClause);
-
-        searchContext.setBooleanClauses(booleanClauses.toArray(new BooleanClause[booleanClauses.size()]));
+        //searchContext.setBooleanClauses(new BooleanClause[]{groupBooleanClause});
     }
 
     @Reference

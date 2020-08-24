@@ -16,6 +16,7 @@ import org.w3c.dom.Document;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class Event extends AbsDsdArticle {
 
@@ -182,7 +183,7 @@ public class Event extends AbsDsdArticle {
         //todo make this configurable
         Date startCreationSearchPeriod = new Date(endCreationSearchPeriod.getTime() - TimeUnit.DAYS.toMillis(365));
         Criterion checkCreationPeriod = PropertyFactoryUtil.forName("createDate").between(startCreationSearchPeriod, endCreationSearchPeriod);
-        searchQuery.add(checkCreationPeriod);
+        //searchQuery.add(checkCreationPeriod);
 
         List<JournalArticle> results = JournalArticleLocalServiceUtil.dynamicQuery(searchQuery);
         HashMap<String, JournalArticle> resultsByArticleId = new HashMap<>();
@@ -197,5 +198,11 @@ public class Event extends AbsDsdArticle {
         return new ArrayList<>(resultsByArticleId.values());
     }
 
+    public List<BusTransfer> getBusTransfers() {
+        return getRegistrations().stream()
+                .filter(registration -> registration instanceof BusTransfer)
+                .map(registration -> (BusTransfer) registration)
+                .collect(Collectors.toList());
+    }
 
 }
