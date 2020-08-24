@@ -17,16 +17,13 @@ public class DsdEmail {
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("kk:mm");
-    private String siteUrl;
     private String sendFromEmail = "mydeltares@deltares.nl";
+//    private String replyToEmail = "dsd@deltares.nl";
+    private String replyToEmail = "erik.derooij@deltares.nl"; //TODO: change to dsd
     private URL banner = null;
     private URL footer = null;
     private ResourceBundle bundle;
 
-
-    public void setSiteUrl(String siteUrl){
-        this.siteUrl = siteUrl;
-    }
 
     public void setResourceBundle(ResourceBundle bundel) {
         this.bundle = bundel;
@@ -52,7 +49,7 @@ public class DsdEmail {
 
         String subject = LanguageUtil.format(bundle, "dsd.unregister.subject", "event");
 
-        sendEmail(body, subject, user.getEmailAddress(), sendFromEmail,  loadImageMap());
+        sendEmail(body, subject, user.getEmailAddress(), sendFromEmail, replyToEmail, loadImageMap());
     }
 
     public void sendRegisterEmail(User user, Reservation reservation, String languageId) throws Exception{
@@ -61,10 +58,10 @@ public class DsdEmail {
         body = StringUtil.replace(body,
                 new String[]{ "[$FIRSTNAME$]", "[$LASTNAME$]", "[$EVENT$]", "[$RESERVATION$]", "[$TYPE$]", "[$ROOM$}", "[$DATE$]", "[$TIME$]", "[$SITEURL$]"},
                 new String[]{user.getFirstName(), user.getLastName(), reservation.getEventName(), reservation.getName(),
-                        getType(reservation.getType()), reservation.getLocation(), getDate(reservation), getTime(reservation), siteUrl});
+                        getType(reservation.getType()), reservation.getLocation(), getDate(reservation), getTime(reservation), reservation.getArticleUrl()});
 
         String subject = LanguageUtil.format(bundle, "dsd.register.subject", "event");
-        sendEmail(body, subject, user.getEmailAddress(), sendFromEmail, loadImageMap());
+        sendEmail(body, subject, user.getEmailAddress(), sendFromEmail, replyToEmail, loadImageMap());
     }
 
     private String getTime(Reservation reservation) {
