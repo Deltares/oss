@@ -42,7 +42,9 @@
                     <aui:input
                             name="registration_${childRegistration.articleId}"
                             label=""
-                            type="checkbox"/>
+                            type="checkbox"
+                            data-price="${childRegistration.getPrice()}"
+                            cssClass="child-registration"/>
                 </div>
                 <div class="float-left w-100">
                     <%
