@@ -41,7 +41,13 @@
             let element = $(plugin.element);
             let active = element.find('li.active');
             let next = active.next();
+            if (next.hasClass('disabled')){
+                next = next.next();
+            }
             let prev = active.prev();
+            if (prev.hasClass('disabled')) {
+                prev = prev.prev();
+            }
 
             let isLast = (next.next().length === 0);
             let isFirst = (prev.prev().length === 0);

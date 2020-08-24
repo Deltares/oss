@@ -2,29 +2,29 @@
     <aui:col width="50">
         <span><liferay-ui:message key="registrationform.userInfo"/></span>
 
-        <div class="d-flex justify-content-start">
-            <div class="pr-3">
-                <aui:input
-                        name="salutation"
-                        label="registrationform.salutation.mr"
-                        type="radio"
-                        value="" />
-            </div>
-            <div class="pr-3">
-                <aui:input
-                        name="salutation"
-                        label="registrationform.salutation.mrs"
-                        type="radio"
-                        value="" />
-            </div>
-            <div class="p-0">
-                <aui:input
-                        name="salutation"
-                        label="registrationform.salutation.neutral"
-                        type="radio"
-                        value="" />
-            </div>
-        </div>
+<%--        <div class="d-flex justify-content-start">--%>
+<%--            <div class="pr-3">--%>
+<%--                <aui:input--%>
+<%--                        name="salutation"--%>
+<%--                        label="registrationform.salutation.mr"--%>
+<%--                        type="radio"--%>
+<%--                        value="" />--%>
+<%--            </div>--%>
+<%--            <div class="pr-3">--%>
+<%--                <aui:input--%>
+<%--                        name="salutation"--%>
+<%--                        label="registrationform.salutation.mrs"--%>
+<%--                        type="radio"--%>
+<%--                        value="" />--%>
+<%--            </div>--%>
+<%--            <div class="p-0">--%>
+<%--                <aui:input--%>
+<%--                        name="salutation"--%>
+<%--                        label="registrationform.salutation.neutral"--%>
+<%--                        type="radio"--%>
+<%--                        value="" />--%>
+<%--            </div>--%>
+<%--        </div>--%>
 
         <div class="row">
             <div class="col">
@@ -33,12 +33,12 @@
                         label="registrationform.academic.titles"
                         cssClass="update-badge"/>
             </div>
-            <div class="col">
-                <aui:input
-                        name="initials"
-                        label="registrationform.initials"
-                        cssClass="update-badge"/>
-            </div>
+<%--            <div class="col">--%>
+<%--                <aui:input--%>
+<%--                        name="initials"--%>
+<%--                        label="registrationform.initials"--%>
+<%--                        cssClass="update-badge"/>--%>
+<%--            </div>--%>
         </div>
 
         <div class="row">
