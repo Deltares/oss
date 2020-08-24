@@ -1,6 +1,5 @@
 package nl.deltares.emails;
 
-import com.liferay.mail.kernel.model.MailMessage;
 import com.liferay.mail.kernel.service.MailServiceUtil;
 import com.liferay.petra.content.ContentUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
@@ -19,7 +18,7 @@ import java.util.Map;
 
 public class EmailUtils {
 
-    static void sendEmail(String body, String subject, String sendToEmail, String sendFromEmail, Map<String, URL> data) throws Exception {
+    static void sendEmail(String body, String subject, String sendToEmail, String sendFromEmail, String replyToEmail,  Map<String, URL> data) throws Exception {
 
         MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
         mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
@@ -32,8 +31,11 @@ public class EmailUtils {
         try {
             Message message = new MimeMessage(MailServiceUtil.getSession());
             message.setFrom(new InternetAddress(sendFromEmail));
+            InternetAddress replyTo = new InternetAddress(replyToEmail);
+            message.setReplyTo(new InternetAddress[] {replyTo});
             message.setSubject(subject);
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(sendToEmail));
+            message.setRecipient(Message.RecipientType.BCC, replyTo);
 
             MimeMultipart multipart = new MimeMultipart("related");
             BodyPart messageBodyPart = new MimeBodyPart();
@@ -66,19 +68,19 @@ public class EmailUtils {
 
     }
 
-    static void sendEmail(String body, String subject, String sendToEmail, String sendFromEmail, boolean html) throws Exception {
-
-        InternetAddress fromAddress = new InternetAddress(sendFromEmail);
-        InternetAddress toAddress = new InternetAddress(sendToEmail);
-        MailMessage mailMessage = new MailMessage();
-        mailMessage.setTo(toAddress);
-        mailMessage.setFrom(fromAddress);
-        mailMessage.setSubject(subject);
-        mailMessage.setBody(body);
-        mailMessage.setHTMLFormat(html);
-        MailServiceUtil.sendEmail(mailMessage);
-
-    }
+//    static void sendEmail(String body, String subject, String sendToEmail, String sendFromEmail, boolean html) throws Exception {
+//
+//        InternetAddress fromAddress = new InternetAddress(sendFromEmail);
+//        InternetAddress toAddress = new InternetAddress(sendToEmail);
+//        MailMessage mailMessage = new MailMessage();
+//        mailMessage.setTo(toAddress);
+//        mailMessage.setFrom(fromAddress);
+//        mailMessage.setSubject(subject);
+//        mailMessage.setBody(body);
+//        mailMessage.setHTMLFormat(html);
+//        MailServiceUtil.sendEmail(mailMessage);
+//
+//    }
 
     static URL getImage(String imageFile){
         return EmailUtils.class.getClassLoader().getResource("/content/images/" + imageFile);

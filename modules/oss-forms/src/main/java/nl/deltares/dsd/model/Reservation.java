@@ -15,6 +15,7 @@ public class Reservation {
     private int capacity;
     private String location;
     private String bannerUrl;
+    private String articleUrl;
 
     public List<Reservation> getChildReservations() {
         return childReservations;
@@ -91,5 +92,13 @@ public class Reservation {
 
     public String getBannerUrl() {
         return bannerUrl;
+    }
+
+    public void setArticleUrl(String articleUrl) {
+        this.articleUrl = articleUrl;
+    }
+
+    public String getArticleUrl() {
+        return articleUrl;
     }
 }
