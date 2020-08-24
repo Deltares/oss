@@ -1,5 +1,6 @@
 package nl.deltares.forms.portlet.action;
 
+import com.liferay.journal.model.JournalArticleConstants;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -9,10 +10,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.ResourceBundleUtil;
-import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.util.*;
 import nl.deltares.dsd.model.Reservation;
 import nl.deltares.emails.DsdEmail;
 import nl.deltares.forms.constants.OssFormPortletKeys;
@@ -66,7 +64,9 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
             List<Registration> childRegistrations = dsdSessionUtils.getChildRegistrations(parentRegistration);
             for (Registration childRegistration : childRegistrations) {
-                reservation.getChildReservations().add(toReservation(childRegistration, event.getTitle(), themeDisplay));
+                if (ParamUtil.getString(actionRequest, "registration_" + childRegistration.getArticleId()).equals("true")) {
+                    reservation.getChildReservations().add(toReservation(childRegistration, event.getTitle(), themeDisplay));
+                }
             }
             return reservation;
 
@@ -77,7 +77,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         return null;
     }
 
-    private Reservation toReservation(Registration registration, String eventName, ThemeDisplay themeDisplay) {
+    private Reservation toReservation(Registration registration, String eventName, ThemeDisplay themeDisplay) throws PortalException {
         Reservation reservation = new Reservation();
         reservation.setEventName(eventName);
         reservation.setName(registration.getTitle());
@@ -86,6 +86,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         reservation.setType(registration.getType());
         reservation.setCapacity(registration.getCapacity());
         reservation.setPrice(registration.getPrice());
+        reservation.setArticleUrl(PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay) + JournalArticleConstants.CANONICAL_URL_SEPARATOR + registration.getJournalArticle().getUrlTitle());
         reservation.setBannerUrl(registration.getSmallImageURL(themeDisplay));
         if (registration instanceof SessionRegistration){
             Room room = ((SessionRegistration) registration).getRoom();
@@ -125,7 +126,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         try {
             sendRegistrationEmail(user, reservation, themeDisplay);
         } catch (Exception e) {
-            SessionErrors.add(actionRequest, "send-email-failed", e.getMessage());
+            SessionErrors.add(actionRequest, "send-email-failed", "Could not send registration email for user [" + user.getEmailAddress() + "] : " + e.getMessage());
             LOG.debug("Could not send registration email for user [" + user.getEmailAddress() + "]", e);
         }
     }
@@ -134,7 +135,6 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         DsdEmail email = new DsdEmail();
         ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", themeDisplay.getLocale(), getClass());
         email.setResourceBundle(resourceBundle);
-        email.setSiteUrl(themeDisplay.getCDNBaseURL() + themeDisplay.getURLCurrent());
         email.setBanner(new URL(themeDisplay.getCDNBaseURL() + reservation.getBannerUrl()));
         email.sendRegisterEmail(user, reservation, themeDisplay.getLocale().getLanguage());
     }
