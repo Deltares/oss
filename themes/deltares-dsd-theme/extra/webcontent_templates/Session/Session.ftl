@@ -66,11 +66,13 @@
                         ${languageUtil.get(locale, "dsd.theme.session.available")} : ${available}
                     </span>
 
-                    <span class="d-block">
-                        <a href="${displayContext.getRegisterURL(renderRequest)}" class="btn btn-primary" role="button" aria-pressed="true">
-                            ${languageUtil.get(locale, "registrationform.register")}
-                        </a>
-                    </span>
+                    <#if themeDisplay.isSignedIn() >
+                        <span class="d-block">
+                            <a href="${displayContext.getRegisterURL(renderRequest)}" class="btn btn-primary" role="button" aria-pressed="true">
+                                ${languageUtil.get(locale, "registrationform.register")}
+                            </a>
+                        </span>
+                    </#if>
 
                 </p>
             </div>
