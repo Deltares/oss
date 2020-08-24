@@ -22,6 +22,13 @@
     <liferay-ui:message key="send-email-failed" arguments='<%= SessionErrors.get(liferayPortletRequest, "send-email-failed") %>' />
 </liferay-ui:error>
 
+<%
+    String registrationId = ParamUtil.getString(renderRequest, "articleId");
+    DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
+    Registration mainRegistration = dsdParserUtils.getRegistration(themeDisplay.getScopeGroupId(), registrationId);
+    Event event = dsdParserUtils.getEvent(mainRegistration.getGroupId(), String.valueOf(mainRegistration.getEventId()));
+%>
+
 <div class="bs-stepper">
     <h2><liferay-ui:message key="dsd.registration.title"/></h2>
     <div class="flex-row justify-content-between bs-stepper-indicators py-3">
@@ -31,21 +38,21 @@
                     <span><liferay-ui:message key="dsd.registration.steps.step1"/></span>
                 </a>
             </li>
-            <li class="nav-item icon-circle-blank">
+            <li class="nav-item icon-circle-blank" >
                 <a href="#stepper-step-2" title="Step 2">
                     <span><liferay-ui:message key="dsd.registration.steps.step2"/></span>
                 </a>
             </li>
-            <li class="nav-item icon-circle-blank">
+            <li class="nav-item icon-circle-blank disabled" id="nav-stepper-step-3">
                 <a href="#stepper-step-3" title="Step 3">
                     <span><liferay-ui:message key="dsd.registration.steps.step3"/></span>
                 </a>
             </li>
-            <li class="nav-item icon-circle-blank">
-                <a href="#stepper-step-4" title="Step 4">
-                    <span><liferay-ui:message key="dsd.registration.steps.step4"/></span>
-                </a>
-            </li>
+<%--            <li class="nav-item icon-circle-blank">--%>
+<%--                <a href="#stepper-step-4" title="Step 4">--%>
+<%--                    <span><liferay-ui:message key="dsd.registration.steps.step4"/></span>--%>
+<%--                </a>--%>
+<%--            </li>--%>
             <li class="nav-item icon-circle-blank">
                 <a href="#stepper-step-5" title="Step 5">
                     <span><liferay-ui:message key="dsd.registration.steps.step5"/></span>
@@ -55,13 +62,6 @@
     </div>
 
     <div class="registration-container">
-
-        <%
-            String registrationId = ParamUtil.getString(renderRequest, "articleId");
-            DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
-            Registration mainRegistration = dsdParserUtils.getRegistration(themeDisplay.getScopeGroupId(), registrationId);
-            Event event = dsdParserUtils.getEvent(mainRegistration.getGroupId(), String.valueOf(mainRegistration.getEventId()));
-        %>
 
         <aui:form action="<%= submitRegisterForm %>" name="fm">
 
@@ -84,9 +84,9 @@
                 <div class="tab-pane" role="tabpanel" id="stepper-step-3">
                     <%@ include file="registration/step3.jsp" %>
                 </div>
-                <div class="tab-pane" role="tabpanel" id="stepper-step-4">
-                    <%@ include file="registration/step4.jsp" %>
-                </div>
+<%--                <div class="tab-pane" role="tabpanel" id="stepper-step-4">--%>
+<%--                    <%@ include file="registration/step4.jsp" %>--%>
+<%--                </div>--%>
                 <div class="tab-pane" role="tabpanel" id="stepper-step-5">
                     <%@ include file="registration/step5.jsp" %>
                 </div>
@@ -121,6 +121,25 @@
 
     getFormName = function() {
         return "<portlet:namespace/>fm";
+    };
+
+    checkPrice = function() {
+        let parent = $('.parent-registration');
+
+        if (parseFloat(parent[0].getAttribute('data-price')) > 0){
+            $('#nav-stepper-step-3').removeClass('disabled'); //remove
+            return;
+        }
+
+        let children = $('.child-registration');
+
+        $('#nav-stepper-step-3').addClass('disabled'); //add;
+
+        $.each( children, function( i, child ) {
+            if (child.checked && parseFloat(child.getAttribute('data-price')) > 0){
+                $('#nav-stepper-step-3').removeClass('disabled'); //remove
+            }
+        });
     };
 
     updateBadge = function() {
@@ -199,7 +218,9 @@
         $('.bs-stepper').formStepper(form);
 
         $('.update-badge').change(updateBadge);
+        $('.child-registration').change(checkPrice);
         $('input[name="<portlet:namespace />use_organization_address"]').change(updatePaymentAddress);
         updateBadge();
+        checkPrice();
     });
 </aui:script>
