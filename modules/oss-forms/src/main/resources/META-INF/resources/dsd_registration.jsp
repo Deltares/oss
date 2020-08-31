@@ -14,6 +14,10 @@
     <liferay-ui:message key="registration-success" arguments="<%= new String[]{user.getEmailAddress(), "todo"} %>" />
 </liferay-ui:success>
 
+<liferay-ui:error key="registration-failed">
+    <liferay-ui:message key="registration-failed" arguments='<%= SessionErrors.get(liferayPortletRequest, "registration-failed") %>' />
+</liferay-ui:error>
+
 <liferay-ui:error key="update-attributes-failed">
     <liferay-ui:message key="update-attributes-failed" arguments='<%= SessionErrors.get(liferayPortletRequest, "update-attributes-failed") %>' />
 </liferay-ui:error>
