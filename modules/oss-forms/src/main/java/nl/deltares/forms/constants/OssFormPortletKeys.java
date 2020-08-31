@@ -10,4 +10,10 @@ public class OssFormPortletKeys {
 
 	public static final String REGISTRATION_DOWNLOAD_FORM =
 			"RegistrationDownloadFormPortlet";
+
+	public static final String DSD_BUS_REGISTRATION_FORM =
+			"nl_deltares_forms_portlet_DsdBusRegistrationFormPortlet";
+
+	public static final String BUS_TRANSFER_FORM_CONFIGURATIONS_PID =
+			"nl.deltares.forms.configuration.BusTransferFormConfiguration";
 }
