@@ -18,6 +18,7 @@ import nl.deltares.search.constans.FacetPortletKeys;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Component(
@@ -35,6 +36,7 @@ public class RegistrationFacetPortletSharedSearchContributor implements PortletS
         Optional<DDMStructure> ddmStructureOptional = _ddmStructureUtil
                 .getDDMStructureByName("SESSION", searchContext.getLocale());
 
+        ArrayList<BooleanClause<Query>> booleanClauses = new ArrayList<>();
         if (ddmStructureOptional.isPresent()) {
             String structureKey = ddmStructureOptional.get().getStructureKey();
             BooleanQuery structureQuery = new BooleanQueryImpl();
@@ -48,7 +50,7 @@ public class RegistrationFacetPortletSharedSearchContributor implements PortletS
             BooleanClause<Query> structureBooleanClause = BooleanClauseFactoryUtil
                     .create(structureQuery, BooleanClauseOccur.MUST.getName());
 
-            searchContext.setBooleanClauses(new BooleanClause[]{structureBooleanClause});
+            booleanClauses.add(structureBooleanClause);
         }
 
         BooleanQuery groupQuery = new BooleanQueryImpl();
@@ -61,7 +63,9 @@ public class RegistrationFacetPortletSharedSearchContributor implements PortletS
         BooleanClause<Query> groupBooleanClause = BooleanClauseFactoryUtil
                 .create(groupQuery, BooleanClauseOccur.MUST.getName());
 
-        //searchContext.setBooleanClauses(new BooleanClause[]{groupBooleanClause});
+        booleanClauses.add(groupBooleanClause);
+
+        searchContext.setBooleanClauses(booleanClauses.toArray(new BooleanClause[booleanClauses.size()]));
     }
 
     @Reference
