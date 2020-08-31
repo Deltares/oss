@@ -24,7 +24,9 @@
             prevButton.on('click', {plugin: this, action: 'prev'}, this._navigate);
 
             this._getSubmitButton().on('click', function () {
-                plugin._getForm().submit();
+                if (plugin._isFormValid()) {
+                    plugin._getForm().submit();
+                }
             });
         },
 

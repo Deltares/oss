@@ -131,7 +131,7 @@ public class RegistrationDisplayContext {
         return summary;
     }
 
-    public String getUnregisterURL(PortletRequest portletRequest){
+    public String getUnregisterURL(PortletRequest portletRequest) {
         return "";
     }
 
@@ -148,13 +148,15 @@ public class RegistrationDisplayContext {
                 Layout registrationPage = LayoutLocalServiceUtil
                         .fetchLayoutByFriendlyURL(groupId, false, urlsConfiguration.registrationURL());
 
-                PortletURL portletURL = PortletURLFactoryUtil
-                        .create(portletRequest, "dsd_RegistrationFormPortlet", registrationPage.getPlid(), PortletRequest.RENDER_PHASE);
-                portletURL.setWindowState(LiferayWindowState.NORMAL);
-                portletURL.setPortletMode(LiferayPortletMode.VIEW);
-                portletURL.setParameter("articleId", getRegistration().getArticleId());
+                if (registrationPage != null) {
+                    PortletURL portletURL = PortletURLFactoryUtil
+                            .create(portletRequest, "dsd_RegistrationFormPortlet", registrationPage.getPlid(), PortletRequest.RENDER_PHASE);
+                    portletURL.setWindowState(LiferayWindowState.NORMAL);
+                    portletURL.setPortletMode(LiferayPortletMode.VIEW);
+                    portletURL.setParameter("articleId", getRegistration().getArticleId());
 
-                url = portletURL.toString();
+                    url = portletURL.toString();
+                }
             } catch (Exception e) {
                 LOG.debug("Error creating portlet url", e);
             }
