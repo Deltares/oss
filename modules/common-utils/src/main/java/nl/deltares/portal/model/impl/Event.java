@@ -183,7 +183,7 @@ public class Event extends AbsDsdArticle {
         //todo make this configurable
         Date startCreationSearchPeriod = new Date(endCreationSearchPeriod.getTime() - TimeUnit.DAYS.toMillis(365));
         Criterion checkCreationPeriod = PropertyFactoryUtil.forName("createDate").between(startCreationSearchPeriod, endCreationSearchPeriod);
-        //searchQuery.add(checkCreationPeriod);
+        searchQuery.add(checkCreationPeriod);
 
         List<JournalArticle> results = JournalArticleLocalServiceUtil.dynamicQuery(searchQuery);
         HashMap<String, JournalArticle> resultsByArticleId = new HashMap<>();
