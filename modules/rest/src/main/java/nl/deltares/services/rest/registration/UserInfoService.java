@@ -3,7 +3,7 @@ package nl.deltares.services.rest.registration;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import nl.deltares.portal.utils.JsonContentParserUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.services.rest.exception.LiferayRestException;
 import nl.deltares.services.rest.registration.modules.UserDetails;
@@ -41,7 +41,7 @@ public class UserInfoService {
         try {
             user = getRemoteUser(request);
         } catch (Exception e) {
-            String msg = JsonContentParserUtils.formatTextToJson("message", "Error getting user: " + e.getMessage());
+            String msg = JsonContentUtils.formatTextToJson("message", "Error getting user: " + e.getMessage());
             LOG.warn(msg);
             return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
         }
@@ -49,7 +49,7 @@ public class UserInfoService {
         try {
             userDetails = getUserDetails(user);
         } catch (Exception e) {
-            String msg = JsonContentParserUtils.formatTextToJson("message", "Error getting user details: " + e.getMessage());
+            String msg = JsonContentUtils.formatTextToJson("message", "Error getting user details: " + e.getMessage());
             LOG.warn(msg);
             return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
         }
@@ -65,14 +65,14 @@ public class UserInfoService {
         try {
             user = getRemoteUser(request);
         } catch (Exception e) {
-            String msg = JsonContentParserUtils.formatTextToJson("message", "Error getting user: " + e.getMessage());
+            String msg = JsonContentUtils.formatTextToJson("message", "Error getting user: " + e.getMessage());
             LOG.warn(msg);
             return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
         }
         try {
             updateUserAttributes(userDetails, user);
         } catch (LiferayRestException e) {
-            String msg = JsonContentParserUtils.formatTextToJson("message", "Error updating user attributes: " + e.getMessage());
+            String msg = JsonContentUtils.formatTextToJson("message", "Error updating user attributes: " + e.getMessage());
             LOG.warn(msg);
             return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
         }

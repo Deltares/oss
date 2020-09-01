@@ -10,8 +10,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.DuplicateCheck;
-import nl.deltares.portal.utils.JsonContentParserUtils;
-import nl.deltares.portal.utils.XmlContentParserUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
+import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
 import java.util.*;
@@ -34,8 +34,8 @@ public class Event extends AbsDsdArticle {
 
     private void init() throws PortalException {
         Document document = getDocument();
-        startTime = XmlContentParserUtils.parseDateTimeFields(document, "start", "starttime", false);
-        endTime = XmlContentParserUtils.parseDateTimeFields(document, "end", "endtime", false);
+        startTime = XmlContentUtils.parseDateTimeFields(document, "start", "starttime", false);
+        endTime = XmlContentUtils.parseDateTimeFields(document, "end", "endtime", false);
     }
 
     @Override
@@ -53,8 +53,8 @@ public class Event extends AbsDsdArticle {
         }
     }
     private void parseEventLocation() throws PortalException {
-        String eventLocationJson = XmlContentParserUtils.getDynamicContentByName(getDocument(), "eventLocation", false);
-        Location location = JsonContentParserUtils.parseLocationJson(eventLocationJson);
+        String eventLocationJson = XmlContentUtils.getDynamicContentByName(getDocument(), "eventLocation", false);
+        Location location = JsonContentUtils.parseLocationJson(eventLocationJson);
         if (! (location instanceof EventLocation)){
             throw new PortalException("Location not instance of EventLocation: " + location.getTitle());
         }

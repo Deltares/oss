@@ -8,7 +8,7 @@ import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
-import nl.deltares.portal.utils.JsonContentParserUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.services.rest.registration.modules.RegistrationDetails;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,7 +49,7 @@ public class SessionRegistrationService {
         try {
             user = getRemoteUser(request);
         } catch (Exception e) {
-            String msg = JsonContentParserUtils.formatTextToJson("message", "Error getting user: " + e.getMessage());
+            String msg = JsonContentUtils.formatTextToJson("message", "Error getting user: " + e.getMessage());
             LOG.warn(msg);
             return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
         }
@@ -57,7 +57,7 @@ public class SessionRegistrationService {
         try {
             event = dsdParserUtils.getEvent(siteId, String.valueOf(eventId));
         } catch (PortalException e) {
-            String msg = JsonContentParserUtils.formatTextToJson("message", "Error getting event: " + e.getMessage());
+            String msg = JsonContentUtils.formatTextToJson("message", "Error getting event: " + e.getMessage());
             LOG.warn(msg);
             return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
         }
@@ -80,7 +80,7 @@ public class SessionRegistrationService {
         try {
             user = getRemoteUser(request);
         } catch (Exception e) {
-            String msg = JsonContentParserUtils.formatTextToJson("message","Error getting user: " + e.getMessage());
+            String msg = JsonContentUtils.formatTextToJson("message","Error getting user: " + e.getMessage());
             LOG.warn(msg);
             return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
         }
@@ -88,20 +88,20 @@ public class SessionRegistrationService {
         try {
             registration = dsdParserUtils.getRegistration(siteId, String.valueOf(articleId));
         } catch (PortalException e) {
-            String msg = JsonContentParserUtils.formatTextToJson("message","Error getting registration: " + e.getMessage());
+            String msg = JsonContentUtils.formatTextToJson("message","Error getting registration: " + e.getMessage());
             LOG.warn(msg);
             return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
         }
 
         try {
-            registrationUtils.registerUser(user, registration, JsonContentParserUtils.parseJsonToMap(jsonProperties));
+            registrationUtils.registerUser(user, registration, JsonContentUtils.parseJsonToMap(jsonProperties));
         } catch (PortalException e) {
-            String msg = JsonContentParserUtils.formatTextToJson("message","Error registering user: " + e.getMessage());
+            String msg = JsonContentUtils.formatTextToJson("message","Error registering user: " + e.getMessage());
             LOG.warn(msg);
             return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
         }
 
-        return Response.accepted(JsonContentParserUtils.formatTextToJson("message","User registered for " + registration.getTitle())).type(MediaType.APPLICATION_JSON).build();
+        return Response.accepted(JsonContentUtils.formatTextToJson("message","User registered for " + registration.getTitle())).type(MediaType.APPLICATION_JSON).build();
     }
 
     @DELETE
@@ -113,7 +113,7 @@ public class SessionRegistrationService {
         try {
             user = getRemoteUser(request);
         } catch (Exception e) {
-            String msg = JsonContentParserUtils.formatTextToJson("message","Error getting user: " + e.getMessage());
+            String msg = JsonContentUtils.formatTextToJson("message","Error getting user: " + e.getMessage());
             LOG.warn(msg);
             return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
         }
@@ -122,7 +122,7 @@ public class SessionRegistrationService {
         try {
             registration = dsdParserUtils.getRegistration(siteId, String.valueOf(articleId));
         } catch (PortalException e) {
-            String msg = JsonContentParserUtils.formatTextToJson("message","Error getting registration: " + e.getMessage());
+            String msg = JsonContentUtils.formatTextToJson("message","Error getting registration: " + e.getMessage());
             LOG.warn(msg);
             return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
         }
@@ -130,12 +130,12 @@ public class SessionRegistrationService {
         try {
             registrationUtils.unRegisterUser(user, registration);
         } catch (PortalException e) {
-            String msg = JsonContentParserUtils.formatTextToJson("message","Error un-registering user: " + e.getMessage());
+            String msg = JsonContentUtils.formatTextToJson("message","Error un-registering user: " + e.getMessage());
             LOG.warn(msg);
             return Response.serverError().entity(msg).type(MediaType.APPLICATION_JSON).build();
         }
 
-        return Response.accepted(JsonContentParserUtils.formatTextToJson("message","User un-registered for " + registration.getTitle())).type(MediaType.APPLICATION_JSON).build();
+        return Response.accepted(JsonContentUtils.formatTextToJson("message","User un-registered for " + registration.getTitle())).type(MediaType.APPLICATION_JSON).build();
     }
 
     private RegistrationDetails getRegistrationDetails(Map<String, Object> record, Event event) {

@@ -2,7 +2,6 @@ package nl.deltares.forms.portlet;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -16,10 +15,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.forms.constants.OssFormPortletKeys;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
-import nl.deltares.portal.utils.DsdJournalArticleUtils;
-import nl.deltares.portal.utils.DsdParserUtils;
-import nl.deltares.portal.utils.DsdSessionUtils;
-import nl.deltares.portal.utils.JsonContentParserUtils;
+import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -101,7 +97,12 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 
 		Map<Long, User> userCache = new HashMap<>();
 		PrintWriter writer = resourceResponse.getWriter();
-		writer.println("title,start date,topic,type,email,firstName,lastName,registrantKey");
+		StringBuilder header = new StringBuilder("title,start date,topic,type,email,firstName,lastName,registrantKey");
+		for (KeycloakUtils.BILLING_ATTRIBUTES value : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
+			header.append(',');
+			header.append(value.name());
+		}
+		writer.println(header);
 		registrationRecords.forEach(recordObjects -> writeRecord(writer, recordObjects, event, userCache, resourceResponse.getLocale()));
 
 	}
@@ -141,11 +142,18 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		line.append(',');
 		line.append(user.getLastName());
 		line.append(',');
-		JSONObject userPreferences;
+		Map<String, String> userPreferences;
 		try {
-			userPreferences = JsonContentParserUtils.parseContent((String) record.get("userPreferences"));
-			String registrantKey = userPreferences.getString("registrantKey");
+			userPreferences = JsonContentUtils.parseJsonToMap((String) record.get("userPreferences"));
+			String registrantKey = userPreferences.get("registrantKey");
 			if (registrantKey != null) line.append(registrantKey);
+
+			//Write billing information.
+			for (KeycloakUtils.BILLING_ATTRIBUTES key : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
+				line.append(',');
+				String value = userPreferences.get(key.name());
+				if (value != null) line.append(value);
+			}
 		} catch (JSONException e) {
 			LOG.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
 		}
@@ -155,7 +163,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 	private void writeError(String msg, ResourceResponse resourceResponse) throws IOException {
 		resourceResponse.setContentType("application/json");
 		PrintWriter writer = resourceResponse.getWriter();
-		writer.print(JsonContentParserUtils.formatTextToJson("message", msg));
+		writer.print(JsonContentUtils.formatTextToJson("message", msg));
 	}
 
 

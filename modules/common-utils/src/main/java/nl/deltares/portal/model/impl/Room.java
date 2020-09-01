@@ -2,7 +2,7 @@ package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
-import nl.deltares.portal.utils.XmlContentParserUtils;
+import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
 public class Room extends AbsDsdArticle {
@@ -22,9 +22,9 @@ public class Room extends AbsDsdArticle {
     private void init() throws PortalException {
         try {
             Document document = getDocument();
-            String capacity = XmlContentParserUtils.getDynamicContentByName(document, "capacity", false);
+            String capacity = XmlContentUtils.getDynamicContentByName(document, "capacity", false);
             this.capacity = Integer.parseInt(capacity);
-            String storeInParentSite = XmlContentParserUtils.getDynamicContentByName(document, "storeInParentSite", true);
+            String storeInParentSite = XmlContentUtils.getDynamicContentByName(document, "storeInParentSite", true);
             this.storeInParentSite = Boolean.parseBoolean(storeInParentSite);
 
         } catch (Exception e) {

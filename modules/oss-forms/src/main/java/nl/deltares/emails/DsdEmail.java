@@ -3,11 +3,11 @@ package nl.deltares.emails;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.StringUtil;
-import nl.deltares.dsd.model.Reservation;
+import nl.deltares.dsd.model.BillingInfo;
+import nl.deltares.dsd.model.RegistrationRequest;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -23,6 +23,7 @@ public class DsdEmail {
     private URL banner = null;
     private URL footer = null;
     private ResourceBundle bundle;
+    private String languageId = "en";
 
 
     public void setResourceBundle(ResourceBundle bundel) {
@@ -41,38 +42,61 @@ public class DsdEmail {
         this.sendFromEmail = sendFromEmail;
     }
 
-    public void sendUnregisterEmail(User user, Reservation reservation, String languageId) throws Exception {
+    public void sendUnregisterEmail(User user, RegistrationRequest registrationRequest) throws Exception {
         String body = getTemplate("unregister_" + languageId + ".tmpl");
         body = StringUtil.replace(body,
                 new String[]{"[$FIRSTNAME$]", "[$LASTNAME$]", "[$EVENT$]", "[$RESERVATION$]"},
-                new String[]{user.getFirstName(), user.getLastName(), reservation.getEventName(), reservation.getName()});
+                new String[]{user.getFirstName(), user.getLastName(), registrationRequest.getEventName(), registrationRequest.getRegistration().getTitle()});
 
         String subject = LanguageUtil.format(bundle, "dsd.unregister.subject", "event");
 
-        sendEmail(body, subject, user.getEmailAddress(), sendFromEmail, replyToEmail, loadImageMap());
+        BillingInfo billingInfo = registrationRequest.getBillingInfo();
+        String ccEmail;
+        String toEmail;
+        if (billingInfo != null && billingInfo.getEmail() != null){
+            toEmail = billingInfo.getEmail();
+            ccEmail = user.getEmailAddress();
+        } else {
+            toEmail = user.getEmailAddress();
+            ccEmail = null;
+        }
+
+        sendEmail(body, subject, toEmail, ccEmail, sendFromEmail, replyToEmail, loadImageMap());
     }
 
-    public void sendRegisterEmail(User user, Reservation reservation, String languageId) throws Exception{
+    public void sendRegisterEmail(User user, RegistrationRequest registrationRequest) throws Exception{
         String body = getTemplate("register_" +  languageId + ".tmpl");
 
         body = StringUtil.replace(body,
                 new String[]{ "[$FIRSTNAME$]", "[$LASTNAME$]", "[$EVENT$]", "[$RESERVATION$]", "[$TYPE$]", "[$ROOM$}", "[$DATE$]", "[$TIME$]", "[$SITEURL$]"},
-                new String[]{user.getFirstName(), user.getLastName(), reservation.getEventName(), reservation.getName(),
-                        getType(reservation.getType()), reservation.getLocation(), getDate(reservation), getTime(reservation), reservation.getArticleUrl()});
+                new String[]{user.getFirstName(), user.getLastName(), registrationRequest.getEventName(), registrationRequest.getRegistration().getTitle(),
+                        getType(registrationRequest.getRegistration().getType()), registrationRequest.getLocation(),
+                        getDate(registrationRequest), getTime(registrationRequest), registrationRequest.getArticleUrl()});
 
         String subject = LanguageUtil.format(bundle, "dsd.register.subject", "event");
-        sendEmail(body, subject, user.getEmailAddress(), sendFromEmail, replyToEmail, loadImageMap());
+
+        BillingInfo billingInfo = registrationRequest.getBillingInfo();
+        String ccEmail;
+        String toEmail;
+        if (billingInfo != null && billingInfo.getEmail() != null){
+            toEmail = billingInfo.getEmail();
+            ccEmail = user.getEmailAddress();
+        } else {
+            toEmail = user.getEmailAddress();
+            ccEmail = null;
+        }
+        sendEmail(body, subject, toEmail, ccEmail, sendFromEmail, replyToEmail, loadImageMap());
     }
 
-    private String getTime(Reservation reservation) {
-        String startTime = timeFormat.format(new Date(reservation.getStartTime()));
-        String endTime = timeFormat.format(new Date(reservation.getEndTime()));
+    private String getTime(RegistrationRequest registrationRequest) {
+        String startTime = timeFormat.format(registrationRequest.getRegistration().getStartTime());
+        String endTime = timeFormat.format(registrationRequest.getRegistration().getEndTime());
         return startTime + " - " + endTime;
     }
 
-    private String getDate(Reservation reservation) {
-        String startDay = dateFormat.format(new Date(reservation.getStartTime()));
-        String endDay = dateFormat.format(new Date(reservation.getEndTime()));
+    private String getDate(RegistrationRequest registrationRequest) {
+        String startDay = dateFormat.format(registrationRequest.getRegistration().getStartTime());
+        String endDay = dateFormat.format(registrationRequest.getRegistration().getEndTime());
         return startDay + " - " + endDay;
     }
 
@@ -87,4 +111,7 @@ public class DsdEmail {
         return imageMap;
     }
 
+    public void setLanguage(String languageId) {
+        this.languageId = languageId;
+    }
 }

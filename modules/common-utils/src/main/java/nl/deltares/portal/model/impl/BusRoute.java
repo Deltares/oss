@@ -4,8 +4,8 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import nl.deltares.portal.utils.JsonContentParserUtils;
-import nl.deltares.portal.utils.XmlContentParserUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
+import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -30,7 +30,7 @@ public class BusRoute extends AbsDsdArticle{
     private void init() throws PortalException {
         try {
             Document document = getDocument();
-            String storeInParentSite = XmlContentParserUtils.getDynamicContentByName(document, "storeInParentSite", true);
+            String storeInParentSite = XmlContentUtils.getDynamicContentByName(document, "storeInParentSite", true);
             this.storeInParentSite = Boolean.parseBoolean(storeInParentSite);
 
         } catch (Exception e) {
@@ -54,12 +54,12 @@ public class BusRoute extends AbsDsdArticle{
     private void parseStops() throws PortalException {
         this.stops = new ArrayList<>();
         this.times = new ArrayList<>();
-        NodeList stopNodes = XmlContentParserUtils.getDynamicElementsByName(getDocument(), "location");
+        NodeList stopNodes = XmlContentUtils.getDynamicElementsByName(getDocument(), "location");
         for (int i = 0; i < stopNodes.getLength(); i++) {
             Node stopNode = stopNodes.item(i);
-            String locationJson = XmlContentParserUtils.getDynamicContentForNode(stopNode);
-            this.stops.add(JsonContentParserUtils.parseLocationJson(locationJson));
-            this.times.add(XmlContentParserUtils.getDynamicContentByName(stopNode, "time", false));
+            String locationJson = XmlContentUtils.getDynamicContentForNode(stopNode);
+            this.stops.add(JsonContentUtils.parseLocationJson(locationJson));
+            this.times.add(XmlContentUtils.getDynamicContentByName(stopNode, "time", false));
         }
     }
     public List<Location> getStops() {

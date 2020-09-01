@@ -131,16 +131,23 @@ public class RegistrationDisplayContext {
         return summary;
     }
 
-    public String getUnregisterURL(PortletRequest portletRequest) {
-        return "";
+    public String getUnregisterURL(PortletRequest portletRequest){
+        return getPortletRequest(portletRequest, "unregister");
+    }
+
+    public String getUpdateURL(PortletRequest portletRequest){
+        return getPortletRequest(portletRequest, "update");
     }
 
     public String getRegisterURL(PortletRequest portletRequest) {
-        String url = "";
+        return getPortletRequest(portletRequest, "register");
+    }
 
-        long groupId = themeDisplay.getScopeGroupId();
+    public String getPortletRequest(PortletRequest portletRequest, String action){
 
         if (configurationProvider != null) {
+            long groupId = themeDisplay.getScopeGroupId();
+
             try {
                 LayoutsUrlsConfiguration urlsConfiguration = configurationProvider
                         .getGroupConfiguration(LayoutsUrlsConfiguration.class, groupId);
@@ -150,19 +157,22 @@ public class RegistrationDisplayContext {
 
                 if (registrationPage != null) {
                     PortletURL portletURL = PortletURLFactoryUtil
-                            .create(portletRequest, "dsd_RegistrationFormPortlet", registrationPage.getPlid(), PortletRequest.RENDER_PHASE);
+                            .create(portletRequest,
+                                    "dsd_RegistrationFormPortlet",
+                                    registrationPage.getPlid(),
+                                    action.equals("unregister") ? PortletRequest.ACTION_PHASE : PortletRequest.RENDER_PHASE);
                     portletURL.setWindowState(LiferayWindowState.NORMAL);
                     portletURL.setPortletMode(LiferayPortletMode.VIEW);
+                    portletURL.setParameter("javax.portlet.action", "/submit/register/form");
                     portletURL.setParameter("articleId", getRegistration().getArticleId());
-
-                    url = portletURL.toString();
+                    portletURL.setParameter("action", action);
+                    return portletURL.toString();
                 }
             } catch (Exception e) {
-                LOG.debug("Error creating portlet url", e);
+                LOG.error("Error creating portlet url", e);
             }
         }
-
-        return url;
+        return "";
     }
 
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
