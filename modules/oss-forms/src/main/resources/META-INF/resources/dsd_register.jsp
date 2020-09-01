@@ -1,17 +1,29 @@
+<%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
+<%@ page import="com.liferay.portal.kernel.servlet.SessionMessages" %>
 <%@ include file="/META-INF/resources/dsd_init.jsp" %>
+
+<%
+    Map attributes = (Map) renderRequest.getAttribute("attributes");
+
+    String registrationId = ParamUtil.getString(renderRequest, "articleId");
+    String action = ParamUtil.getString(renderRequest, "action");
+    DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
+    Registration mainRegistration = null;
+    Event event = null;
+    if (registrationId != null) {
+        mainRegistration = dsdParserUtils.getRegistration(themeDisplay.getScopeGroupId(), registrationId);
+        event = dsdParserUtils.getEvent(mainRegistration.getGroupId(), String.valueOf(mainRegistration.getEventId()));
+    }
+%>
 
 <portlet:actionURL name="/submit/register/form" var="submitRegisterForm"/>
 
-<portlet:renderURL var="addRegistrationURL">
-	<portlet:param name="mvcPath" value="/add_dsd_registration.jsp"></portlet:param>
-</portlet:renderURL>
-
-<portlet:renderURL var="delRegistrationURL">
-	<portlet:param name="mvcPath" value="/del_dsd_registration.jsp"></portlet:param>
-</portlet:renderURL>
+<liferay-ui:success key="unregister-success" message="">
+    <liferay-ui:message key="unregister-success" arguments="name of registration" />
+</liferay-ui:success>
 
 <liferay-ui:success key="registration-success" message="">
-    <liferay-ui:message key="registration-success" arguments="<%= new String[]{user.getEmailAddress(), "todo"} %>" />
+    <liferay-ui:message key="registration-success" arguments='<%= SessionMessages.get(liferayPortletRequest, "registration-success") %>' />
 </liferay-ui:success>
 
 <liferay-ui:error key="registration-failed">
@@ -26,13 +38,7 @@
     <liferay-ui:message key="send-email-failed" arguments='<%= SessionErrors.get(liferayPortletRequest, "send-email-failed") %>' />
 </liferay-ui:error>
 
-<%
-    Map attributes = (Map) renderRequest.getAttribute("attributes");
-    String registrationId = ParamUtil.getString(renderRequest, "articleId");
-    DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
-    Registration mainRegistration = dsdParserUtils.getRegistration(themeDisplay.getScopeGroupId(), registrationId);
-    Event event = dsdParserUtils.getEvent(mainRegistration.getGroupId(), String.valueOf(mainRegistration.getEventId()));
-%>
+
 
 <div class="bs-stepper">
     <h2><liferay-ui:message key="dsd.registration.title"/></h2>
@@ -73,11 +79,15 @@
             <aui:input
                     name="redirect"
                     type="hidden"
-                    value="${registrationDisplayContext.getRegisterURL(renderRequest)}" />
+                    value="${registrationDisplayContext.getPortletRequest(renderRequest, action)}" />
 
             <aui:input name="articleId"
                        type="hidden"
                        value="<%= registrationId %>" />
+
+            <aui:input name="action"
+                       type="hidden"
+                       value="<%= action %>" />
 
             <div class="tab-content">
                 <div class="tab-pane active" role="tabpanel" id="stepper-step-1">
@@ -177,11 +187,12 @@
 
     updatePaymentAddress = function() {
         let checked = this.checked;
+        let name = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_name.name() %>"]').val();
         let address = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_address.name() %>"]').val();
         let postCode = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_postal.name() %>"]').val();
         let city = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_city.name() %>"]').val();
-        let country = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_country.name() %>"]').val();
-        let email = $('input[name="<portlet:namespace />email"]').val();
+        let country = $('select[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_country.name() %>"]').val();
+        let email = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.email.name() %>"]').val();
 
         if (!checked) {
             address = '';
@@ -191,12 +202,14 @@
             email = '';
         }
 
-        let paymentAddressInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.billing_address.name() %>"]');
-        let paymentPostCodeInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.billing_postal.name() %>"]');
-        let paymentCityInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.billing_city.name() %>"]');
-        let paymentCountryInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.billing_country.name() %>"]');
-        let paymentEmailInput = $('input[name="<portlet:namespace />payment_email"]');
+        let paymentNameInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_name.name() %>"]');
+        let paymentAddressInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_address.name() %>"]');
+        let paymentPostCodeInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_postal.name() %>"]');
+        let paymentCityInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_city.name() %>"]');
+        let paymentCountryInput = $('select[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_country.name() %>"]');
+        let paymentEmailInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_email.name() %>"]');
 
+        paymentNameInput.val(name);
         paymentAddressInput.val(address);
         paymentPostCodeInput.val(postCode);
         paymentCityInput.val(city);
@@ -204,12 +217,14 @@
         paymentEmailInput.val(email);
 
         if (checked) {
+            paymentNameInput.prop('disabled', true);
             paymentAddressInput.prop('disabled', true);
             paymentPostCodeInput.prop('disabled', true);
             paymentCityInput.prop('disabled', true);
             paymentCountryInput.prop('disabled', true);
             paymentEmailInput.prop('disabled', true);
         } else {
+            paymentNameInput.prop('disabled', false);
             paymentAddressInput.prop('disabled', false);
             paymentPostCodeInput.prop('disabled', false);
             paymentCityInput.prop('disabled', false);

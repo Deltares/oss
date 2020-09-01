@@ -4,8 +4,8 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import nl.deltares.portal.utils.JsonContentParserUtils;
-import nl.deltares.portal.utils.XmlContentParserUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
+import nl.deltares.portal.utils.XmlContentUtils;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -42,8 +42,8 @@ public class DinnerRegistration extends Registration {
     }
 
     private void parserRestaurant() throws PortalException {
-        String json = XmlContentParserUtils.getDynamicContentByName(getDocument(), "restaurant", false);
-        restaurant = JsonContentParserUtils.parseLocationJson(json);
+        String json = XmlContentUtils.getDynamicContentByName(getDocument(), "restaurant", false);
+        restaurant = JsonContentUtils.parseLocationJson(json);
     }
 
     @Override

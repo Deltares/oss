@@ -5,8 +5,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.DuplicateCheck;
-import nl.deltares.portal.utils.JsonContentParserUtils;
-import nl.deltares.portal.utils.XmlContentParserUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
+import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
@@ -30,11 +30,11 @@ public class Building extends AbsDsdArticle {
     private void init() throws PortalException {
         try {
             Document document = getDocument();
-            String storeInParentSite = XmlContentParserUtils.getDynamicContentByName(document, "storeInParentSite", true);
+            String storeInParentSite = XmlContentUtils.getDynamicContentByName(document, "storeInParentSite", true);
             this.storeInParentSite = Boolean.parseBoolean(storeInParentSite);
 
-            String geoLocation = XmlContentParserUtils.getDynamicContentByName(document, "location", false);
-            Map<String, String> coords = JsonContentParserUtils.parseJsonToMap(geoLocation);
+            String geoLocation = XmlContentUtils.getDynamicContentByName(document, "location", false);
+            Map<String, String> coords = JsonContentUtils.parseJsonToMap(geoLocation);
             this.longitude = Double.parseDouble(coords.get("longitude"));
             this.latitude =  Double.parseDouble(coords.get("latitude"));
         } catch (Exception e) {
@@ -63,7 +63,7 @@ public class Building extends AbsDsdArticle {
         DuplicateCheck check = new DuplicateCheck();
         ArrayList<Room> rooms = new ArrayList<>();
         for (String json : roomReferences) {
-            Room room = JsonContentParserUtils.parseRoomJson(json);
+            Room room = JsonContentUtils.parseRoomJson(json);
             if (check.checkDuplicates(room)) rooms.add(room);
         }
         return rooms;
@@ -82,7 +82,7 @@ public class Building extends AbsDsdArticle {
 
     private void parseRooms() throws PortalException {
         this.rooms = new ArrayList<>();
-        String[] rooms = XmlContentParserUtils.getDynamicContentsByName(getDocument(), "rooms");
+        String[] rooms = XmlContentUtils.getDynamicContentsByName(getDocument(), "rooms");
         if (rooms.length > 0){
             this.rooms = parseRooms(rooms);
         }

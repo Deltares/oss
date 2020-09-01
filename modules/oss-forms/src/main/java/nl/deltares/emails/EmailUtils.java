@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class EmailUtils {
 
-    static void sendEmail(String body, String subject, String sendToEmail, String sendFromEmail, String replyToEmail,  Map<String, URL> data) throws Exception {
+    static void sendEmail(String body, String subject, String sendToEmail, String sendCcEmail, String sendFromEmail, String replyToEmail,  Map<String, URL> data) throws Exception {
 
         MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
         mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
@@ -30,12 +30,13 @@ public class EmailUtils {
         Transport transport = MailServiceUtil.getSession().getTransport();
         try {
             Message message = new MimeMessage(MailServiceUtil.getSession());
-            message.setFrom(new InternetAddress(sendFromEmail));
+            message.setFrom(new InternetAddress(sendFromEmail)); // always send from mydeltares@deltares.nl. only email with sufficient privileges.
             InternetAddress replyTo = new InternetAddress(replyToEmail);
             message.setReplyTo(new InternetAddress[] {replyTo});
             message.setSubject(subject);
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(sendToEmail));
-            message.setRecipient(Message.RecipientType.BCC, replyTo);
+            if (sendCcEmail != null) message.setRecipient(Message.RecipientType.CC, new InternetAddress(sendCcEmail));
+            message.setRecipient(Message.RecipientType.BCC, replyTo); // reply to academy email
 
             MimeMultipart multipart = new MimeMultipart("related");
             BodyPart messageBodyPart = new MimeBodyPart();

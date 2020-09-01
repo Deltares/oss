@@ -5,8 +5,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.DuplicateCheck;
-import nl.deltares.portal.utils.JsonContentParserUtils;
-import nl.deltares.portal.utils.XmlContentParserUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
+import nl.deltares.portal.utils.XmlContentUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,7 +50,7 @@ public class EventLocation extends Location {
 
     private void parseRooms() throws PortalException {
         this.rooms = new ArrayList<>();
-        String[] rooms = XmlContentParserUtils.getDynamicContentsByName(getDocument(), "rooms");
+        String[] rooms = XmlContentUtils.getDynamicContentsByName(getDocument(), "rooms");
         if (rooms.length > 0){
             this.rooms.addAll(Building.parseRooms(rooms));
         }
@@ -71,7 +71,7 @@ public class EventLocation extends Location {
     }
     private void parseBuildings() throws PortalException {
         this.buildings = new ArrayList<>();
-        String[] buildings = XmlContentParserUtils.getDynamicContentsByName(getDocument(), "buildings");
+        String[] buildings = XmlContentUtils.getDynamicContentsByName(getDocument(), "buildings");
         if (buildings.length > 0){
             this.buildings.addAll(parseBuildings(buildings));
         }
@@ -82,7 +82,7 @@ public class EventLocation extends Location {
         DuplicateCheck check = new DuplicateCheck();
         ArrayList<Building> buildings = new ArrayList<>();
         for (String json : buildingReferences) {
-            Building building = JsonContentParserUtils.parseBuildingJson(json);
+            Building building = JsonContentUtils.parseBuildingJson(json);
             if (check.checkDuplicates(building)) buildings.add(building);
         }
         return buildings;
