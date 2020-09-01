@@ -6,8 +6,8 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.forms.configuration.BusTransferFormConfiguration;
 import nl.deltares.forms.constants.OssFormPortletKeys;
+import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.utils.DsdParserUtils;
 import org.osgi.service.component.annotations.Component;
@@ -26,7 +26,6 @@ import java.io.IOException;
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.instanceable=false",
                 "javax.portlet.display-name=DsdBusRegistrationForm",
-                "javax.portlet.init-param.config-template=/bus_registration/configuration.jsp",
                 "javax.portlet.init-param.template-path=/",
                 "javax.portlet.init-param.view-template=/bus_registration/view.jsp",
                 "javax.portlet.name=" + OssFormPortletKeys.DSD_BUS_REGISTRATION_FORM,
@@ -43,9 +42,8 @@ public class DsdBusRegistrationFormPortlet extends MVCPortlet {
         long groupId = themeDisplay.getScopeGroupId();
 
         try {
-            BusTransferFormConfiguration configuration = _configurationProvider
-                    .getPortletInstanceConfiguration(BusTransferFormConfiguration.class,
-                            themeDisplay.getLayout(), OssFormPortletKeys.DSD_BUS_REGISTRATION_FORM);
+            DSDSiteConfiguration configuration = _configurationProvider
+                    .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
 
             Event event = parserUtils.getEvent(groupId, String.valueOf(configuration.eventId()));
 

@@ -38,6 +38,7 @@ import java.util.*;
 		"com.liferay.portlet.header-portlet-css=/css/main.css",
 		"com.liferay.portlet.instanceable=true",
 		"javax.portlet.display-name=DSD Admin Form",
+		"javax.portlet.init-param.config-template=/admin/configuration/configuration.jsp",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/dsd_admin.jsp",
 		"javax.portlet.name=" + OssFormPortletKeys.REGISTRATION_DOWNLOAD_FORM,

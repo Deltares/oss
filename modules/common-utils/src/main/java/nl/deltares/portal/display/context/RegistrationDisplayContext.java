@@ -15,7 +15,7 @@ import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.StringUtil;
-import nl.deltares.portal.configuration.LayoutsUrlsConfiguration;
+import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
@@ -142,8 +142,8 @@ public class RegistrationDisplayContext {
 
         if (configurationProvider != null) {
             try {
-                LayoutsUrlsConfiguration urlsConfiguration = configurationProvider
-                        .getGroupConfiguration(LayoutsUrlsConfiguration.class, groupId);
+                DSDSiteConfiguration urlsConfiguration = configurationProvider
+                        .getGroupConfiguration(DSDSiteConfiguration.class, groupId);
 
                 Layout registrationPage = LayoutLocalServiceUtil
                         .fetchLayoutByFriendlyURL(groupId, false, urlsConfiguration.registrationURL());
