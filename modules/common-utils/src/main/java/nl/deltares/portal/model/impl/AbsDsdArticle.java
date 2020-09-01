@@ -5,7 +5,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.portal.model.DsdArticle;
-import nl.deltares.portal.utils.XmlContentParserUtils;
+import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
 import java.util.HashMap;
@@ -87,7 +87,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
     }
 
     private void init() throws PortalException {
-        this.document = XmlContentParserUtils.parseContent(article);
+        this.document = XmlContentUtils.parseContent(article);
     }
 
     public static AbsDsdArticle getInstance(JournalArticle journalArticle) throws PortalException {

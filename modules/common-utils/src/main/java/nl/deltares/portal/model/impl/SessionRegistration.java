@@ -10,8 +10,8 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.exception.ValidationException;
-import nl.deltares.portal.utils.JsonContentParserUtils;
-import nl.deltares.portal.utils.XmlContentParserUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
+import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
 public class SessionRegistration extends Registration {
@@ -35,11 +35,11 @@ public class SessionRegistration extends Registration {
 
         try {
             Document document = getDocument();
-            String jsonImage = XmlContentParserUtils.getDynamicContentByName(document, "eventImage", true);
+            String jsonImage = XmlContentUtils.getDynamicContentByName(document, "eventImage", true);
             if (jsonImage != null) {
                 imageUrl = parseImage(jsonImage);
             }
-            webinarKey = XmlContentParserUtils.getDynamicContentByName(document, "webinarKey", true);
+            webinarKey = XmlContentUtils.getDynamicContentByName(document, "webinarKey", true);
             //todo: Add provider currently only GOTO
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
@@ -63,7 +63,7 @@ public class SessionRegistration extends Registration {
     }
 
     private void parseRoom() throws PortalException {
-        String roomJson = XmlContentParserUtils.getDynamicContentByName(getDocument(), "room", false);
+        String roomJson = XmlContentUtils.getDynamicContentByName(getDocument(), "room", false);
         AbsDsdArticle dsdArticle = parseJsonReference(roomJson);
         if (!(dsdArticle instanceof Room)){
             throw new PortalException("Unsupported registration type! Expected Room but found: " + dsdArticle.getClass().getName());
@@ -73,7 +73,7 @@ public class SessionRegistration extends Registration {
 
     private void parsePresenter() throws PortalException {
 
-        String[] presenters = XmlContentParserUtils.getDynamicContentsByName(getDocument(), "presenters");
+        String[] presenters = XmlContentUtils.getDynamicContentsByName(getDocument(), "presenters");
         if (presenters.length > 0) {
             //todo: what to do with multiple presenters.
             AbsDsdArticle dsdArticle = parseJsonReference(presenters[0]);
@@ -119,7 +119,7 @@ public class SessionRegistration extends Registration {
     public String getWebinarKey(){ return  webinarKey; }
     
     private String parseImage(String jsonData) throws PortalException {
-        JSONObject jsonObject = JsonContentParserUtils.parseContent(jsonData);
+        JSONObject jsonObject = JsonContentUtils.parseContent(jsonData);
         FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(jsonObject.getLong("fileEntryId"));
         if (fileEntry == null) return "";
         return DLUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), null, "", false, true);

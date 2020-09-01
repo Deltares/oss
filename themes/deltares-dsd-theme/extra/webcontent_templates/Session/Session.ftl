@@ -74,14 +74,14 @@
                                 <a href="${displayContext.getUnregisterURL(renderRequest)}" class="btn btn-primary" role="button" aria-pressed="true">
                                     ${languageUtil.get(locale, "registrationform.unregister")}
                                 </a>
-                            </#if>
-                            <a href="${displayContext.getRegisterURL(renderRequest)}" class="btn btn-primary" role="button" aria-pressed="true">
-                                 <#if isRegistered >
+                                <a href="${displayContext.getUpdateURL(renderRequest)}" class="btn btn-primary" role="button" aria-pressed="true">
                                      ${languageUtil.get(locale, "registrationform.update")}
-                                 <#else>
+                                </a>
+                            <#else>
+                                <a href="${displayContext.getRegisterURL(renderRequest)}" class="btn btn-primary" role="button" aria-pressed="true">
                                      ${languageUtil.get(locale, "registrationform.register")}
-                                 </#if>
-                            </a>
+                                </a>
+                            </#if>
                         </span>
                     </#if>
                 </p>

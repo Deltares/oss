@@ -2,8 +2,8 @@ package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
-import nl.deltares.portal.utils.JsonContentParserUtils;
-import nl.deltares.portal.utils.XmlContentParserUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
+import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
 import java.util.Map;
@@ -27,19 +27,19 @@ public class Location extends AbsDsdArticle {
     private void init() throws PortalException {
         try {
             Document document = getDocument();
-            String storeInParentSite = XmlContentParserUtils.getDynamicContentByName(document, "storeInParentSite", true);
+            String storeInParentSite = XmlContentUtils.getDynamicContentByName(document, "storeInParentSite", true);
             this.storeInParentSite = Boolean.parseBoolean(storeInParentSite);
-            this.city = XmlContentParserUtils.getDynamicContentByName(document, "city", false);
-            this.country = XmlContentParserUtils.getDynamicContentByName(document, "country", false);
-            this.address = XmlContentParserUtils.getDynamicContentByName(document, "address", false);
-            this.postalCode = XmlContentParserUtils.getDynamicContentByName(document, "postalcode", false);
-            this.website = XmlContentParserUtils.getDynamicContentByName(document, "website", true);
+            this.city = XmlContentUtils.getDynamicContentByName(document, "city", false);
+            this.country = XmlContentUtils.getDynamicContentByName(document, "country", false);
+            this.address = XmlContentUtils.getDynamicContentByName(document, "address", false);
+            this.postalCode = XmlContentUtils.getDynamicContentByName(document, "postalcode", false);
+            this.website = XmlContentUtils.getDynamicContentByName(document, "website", true);
             if (this.website != null && !this.website.toLowerCase().startsWith("http")){
                 this.website = "http://" + this.website; //we need to do this otherwise Liferay makes href relative.
             }
-            this.locationType = XmlContentParserUtils.getDynamicContentByName(document, "locationType", false);
-            String geoLocation = XmlContentParserUtils.getDynamicContentByName(document, "location", false);
-            Map<String, String> coords = JsonContentParserUtils.parseJsonToMap(geoLocation);
+            this.locationType = XmlContentUtils.getDynamicContentByName(document, "locationType", false);
+            String geoLocation = XmlContentUtils.getDynamicContentByName(document, "location", false);
+            Map<String, String> coords = JsonContentUtils.parseJsonToMap(geoLocation);
             this.longitude = Double.parseDouble(coords.get("longitude"));
             this.latitude =  Double.parseDouble(coords.get("latitude"));
         } catch (Exception e) {

@@ -11,7 +11,7 @@ import com.liferay.portal.kernel.service.LayoutServiceUtil;
 import nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.DsdParserUtils;
-import nl.deltares.portal.utils.JsonContentParserUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.services.rest.fullcalendar.models.Event;
 import nl.deltares.services.rest.fullcalendar.models.Resource;
 
@@ -166,7 +166,7 @@ public class DsdFullcalendarService {
 
         String jsonColorMap = groupConfiguration.sessionColorMap();
         try {
-            return JsonContentParserUtils.parseJsonToMap(jsonColorMap);
+            return JsonContentUtils.parseJsonToMap(jsonColorMap);
         } catch (JSONException e) {
             LOG.error(String.format("Error parsing color map configuration for siteId '%s': %s", portletId, e.getMessage()));
             return Collections.emptyMap();

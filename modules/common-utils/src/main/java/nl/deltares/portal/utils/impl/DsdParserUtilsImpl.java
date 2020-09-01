@@ -15,7 +15,7 @@ import nl.deltares.portal.model.impl.Location;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
-import nl.deltares.portal.utils.JsonContentParserUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -74,7 +74,7 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
     public Map<String, String> parseSessionColorConfig(String json) {
         Map<String, String> colorMap;
         try {
-            colorMap = JsonContentParserUtils.parseJsonToMap(json);
+            colorMap = JsonContentUtils.parseJsonToMap(json);
         } catch (JSONException e) {
             LOG.error(String.format("Error parsing session color config '%s' :  %s", json, e.getMessage()));
             colorMap = new HashMap<>();

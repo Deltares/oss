@@ -8,7 +8,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 import nl.deltares.portal.utils.HttpClientUtils;
-import nl.deltares.portal.utils.JsonContentParserUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 
@@ -117,16 +117,16 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
     private Map<String, String> parseUserAttributes(String jsonResponse) throws JSONException {
 
         //Keycloak wraps all attributes in a json array. we need to remove this
-        List<Map<String, String>> userMapArray = JsonContentParserUtils.parseJsonArrayToMap(jsonResponse);
+        List<Map<String, String>> userMapArray = JsonContentUtils.parseJsonArrayToMap(jsonResponse);
         if (userMapArray.size() == 0) return new HashMap<>();
         Map<String, String> userMap = userMapArray.get(0);
         String attributesJson = userMap.get("attributes");
-        Map<String, String> attributes = JsonContentParserUtils.parseJsonToMap(attributesJson);
+        Map<String, String> attributes = JsonContentUtils.parseJsonToMap(attributesJson);
         HashMap<String, String> filteredAttributes = new HashMap<>();
         for (ATTRIBUTES attributeKey : ATTRIBUTES.values()) {
             String key = attributeKey.name();
             if (!attributes.containsKey(key)) continue;
-            filteredAttributes.put(key, JsonContentParserUtils.parseJsonArrayToValue(attributes.get(key)));
+            filteredAttributes.put(key, JsonContentUtils.parseJsonArrayToValue(attributes.get(key)));
         }
         return filteredAttributes;
     }
@@ -203,7 +203,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
             HttpURLConnection connection = getConnection(getTokenPath(), "POST", headers);
             writeOauthPostParameters(connection, getOAuthParameters());
             String jsonResponse = readAll(connection.getInputStream());
-            Map<String, String> parsedToken = JsonContentParserUtils.parseJsonToMap(jsonResponse);
+            Map<String, String> parsedToken = JsonContentUtils.parseJsonToMap(jsonResponse);
 
             cacheAccessToken(CACHED_TOKEN_KEY, CACHED_EXPIRY_KEY, parsedToken);
             return parsedToken.get("access_token");

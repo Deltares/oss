@@ -336,7 +336,7 @@
             "en_US": "Overlaps"
           },
           "predefinedValue": {
-            "en_US": false
+            "en_US": true
           },
           "style": {
             "en_US": ""

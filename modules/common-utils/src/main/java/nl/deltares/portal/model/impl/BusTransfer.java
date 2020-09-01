@@ -4,8 +4,8 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import nl.deltares.portal.utils.JsonContentParserUtils;
-import nl.deltares.portal.utils.XmlContentParserUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
+import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
 import java.text.ParseException;
@@ -34,11 +34,11 @@ public class BusTransfer extends Registration {
 
         try {
             Document document = getDocument();
-            String pickupOption = XmlContentParserUtils.getDynamicContentByName(document, "pickupDates", false);
+            String pickupOption = XmlContentUtils.getDynamicContentByName(document, "pickupDates", false);
             if (pickupOption.equals("daily")){
                 transferDates.addAll(getTransferDates(getStartTime(), getEndTime()));
             } else {
-                String[] pickupDates = XmlContentParserUtils.getDynamicContentsByName(document, "date");
+                String[] pickupDates = XmlContentUtils.getDynamicContentsByName(document, "date");
                 for (String pickupDate : pickupDates) {
                     transferDates.add(df.parse(pickupDate));
                 }
@@ -85,8 +85,8 @@ public class BusTransfer extends Registration {
 
     private BusRoute parseBusRoute() throws PortalException {
 
-        String busRouteJson = XmlContentParserUtils.getDynamicContentByName(getDocument(), "busRoute", false);
-        JournalArticle article = JsonContentParserUtils.jsonReferenceToJournalArticle(busRouteJson);
+        String busRouteJson = XmlContentUtils.getDynamicContentByName(getDocument(), "busRoute", false);
+        JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(busRouteJson);
         AbsDsdArticle instance = AbsDsdArticle.getInstance(article);
 
         if (! (instance instanceof BusRoute)){
