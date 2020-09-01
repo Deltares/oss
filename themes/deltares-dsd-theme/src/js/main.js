@@ -54,10 +54,6 @@
             let isLast = (next.next().length === 0);
             let isFirst = (prev.prev().length === 0);
 
-            console.log("navigate to");
-            console.log(action);
-            console.log(isFormValid);
-
             if (isFormValid || 'prev' === action) {
                 if ('next' === action && next.length) {
                     plugin._hideStep(active);
