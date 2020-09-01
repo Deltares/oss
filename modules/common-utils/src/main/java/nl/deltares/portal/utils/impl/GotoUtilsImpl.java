@@ -9,7 +9,7 @@ import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
 import nl.deltares.portal.utils.GotoUtils;
 import nl.deltares.portal.utils.HttpClientUtils;
-import nl.deltares.portal.utils.JsonContentParserUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
 import org.osgi.service.component.annotations.Component;
 
 import java.io.IOException;
@@ -63,7 +63,7 @@ public class GotoUtilsImpl extends HttpClientUtils implements GotoUtils {
         //get response
         checkResponse(connection);
         String jsonResponse = readAll(connection.getInputStream());
-        List<Map<String, String>> mapsList = JsonContentParserUtils.parseJsonArrayToMap(jsonResponse);
+        List<Map<String, String>> mapsList = JsonContentUtils.parseJsonArrayToMap(jsonResponse);
         for (Map<String, String> registrant : mapsList) {
             String email = registrant.get("email");
             if (email != null && email.equals(user.getEmailAddress())) return registrant;
@@ -91,7 +91,7 @@ public class GotoUtilsImpl extends HttpClientUtils implements GotoUtils {
         //get response
         checkResponse(connection);
         String jsonResponse = readAll(connection.getInputStream());
-        return JsonContentParserUtils.parseJsonToMap(jsonResponse);
+        return JsonContentUtils.parseJsonToMap(jsonResponse);
 
     }
 
@@ -127,7 +127,7 @@ public class GotoUtilsImpl extends HttpClientUtils implements GotoUtils {
         parameterMap.put("email", user.getEmailAddress());
         parameterMap.put("source", callerId);
 
-        String postData = JsonContentParserUtils.formatMapToJson(parameterMap);
+        String postData = JsonContentUtils.formatMapToJson(parameterMap);
         try (Writer w = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8)) {
             w.append(postData);
         }
@@ -147,7 +147,7 @@ public class GotoUtilsImpl extends HttpClientUtils implements GotoUtils {
             HttpURLConnection connection = getConnection(getTokenPath(), "POST", headers);
             writeOauthPostParameters(connection, getOAuthParameters());
             String jsonResponse = readAll(connection.getInputStream());
-            Map<String, String> parsedToken = JsonContentParserUtils.parseJsonToMap(jsonResponse);
+            Map<String, String> parsedToken = JsonContentUtils.parseJsonToMap(jsonResponse);
 
             String organizer_key = parsedToken.get("organizer_key");
             if (!setCachedToken(CACHED_ORGANIZER_KEY, null, organizer_key, 0)){

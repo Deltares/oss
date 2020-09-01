@@ -13,7 +13,7 @@ import nl.deltares.mock.MockUser;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
-import nl.deltares.portal.utils.JsonContentParserUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -53,7 +53,7 @@ public class GotoUtilsImplTest {
         gotoUtils = new GotoUtilsImpl();
 
         serviceUtil = new MockDsdJournalArticleUtils();
-        JsonContentParserUtils.setServiceUtils(serviceUtil);
+        JsonContentUtils.setServiceUtils(serviceUtil);
 
         URL resourceDir = this.getClass().getResource("/goto/");
         File[] resources = new File(resourceDir.getFile()).listFiles(pathname -> pathname.getName().endsWith(".xml"));

@@ -10,20 +10,13 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.ResourceBundleUtil;
-import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.dsd.model.Reservation;
+import com.liferay.portal.kernel.util.*;
+import nl.deltares.dsd.model.BillingInfo;
+import nl.deltares.dsd.model.RegistrationRequest;
 import nl.deltares.emails.DsdEmail;
 import nl.deltares.forms.constants.OssFormPortletKeys;
-import nl.deltares.portal.model.impl.DinnerRegistration;
 import nl.deltares.portal.model.impl.Event;
-import nl.deltares.portal.model.impl.Location;
 import nl.deltares.portal.model.impl.Registration;
-import nl.deltares.portal.model.impl.Room;
-import nl.deltares.portal.model.impl.SessionRegistration;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
@@ -32,13 +25,8 @@ import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
-import javax.portlet.PortletRequest;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Component(
         immediate = true,
@@ -53,64 +41,124 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
     @Override
     protected void doProcessAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
         String redirect = ParamUtil.getString(actionRequest, "redirect");
+        String action = ParamUtil.getString(actionRequest, "action");
+
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
         User user = themeDisplay.getUser();
-        createReservations(actionRequest, user, themeDisplay.getScopeGroupId(), getUserProperties(actionRequest));
-        updateUserAttributes(actionRequest, user.getEmailAddress());
-        sendRegistrationEmail(actionRequest, user, getReservation(actionRequest, themeDisplay), themeDisplay);
-        SessionMessages.add(actionRequest, "registration-success");
+
+        RegistrationRequest registrationRequest = getRegistrationRequest(actionRequest, themeDisplay);
+        if (registrationRequest == null){
+            if (!redirect.isEmpty()) {
+                sendRedirect(actionRequest, actionResponse, redirect);
+            }
+            return;
+        }
+
+        boolean success = true;
+        switch (action){
+            case "update":
+                success = removeCurrentRegistration(actionRequest, user, registrationRequest);
+//                break; //skip break and continue with registering
+            case "register":
+                if (success) {
+                    success = updateUserAttributes(actionRequest, user.getEmailAddress());
+                }
+                if (success){
+                    success = registerUser(actionRequest, user, registrationRequest);
+                }
+                if (success){
+                    success = sendEmail(actionRequest, user, registrationRequest, themeDisplay, action);
+                }
+                break;
+            case "unregister":
+                success = removeCurrentRegistration(actionRequest, user, registrationRequest);
+                if (success){
+                    success = sendEmail(actionRequest, user, registrationRequest, themeDisplay, action);
+                }
+                break;
+            default:
+                SessionErrors.add(actionRequest, "registration-failed", "Unsupported action " + action);
+        }
+        if (success){
+            SessionMessages.add(actionRequest, "registration-success", new String[]{action, user.getEmailAddress(), registrationRequest.getRegistration().getTitle()});
+            redirect = registrationRequest.getArticleUrl();
+        }
 
         if (!redirect.isEmpty()) {
             sendRedirect(actionRequest, actionResponse, redirect);
         }
     }
 
-    private Map<String, String> getUserProperties(ActionRequest actionRequest) {
-        // TODO get all custom save properties?
-        return new HashMap<>();
-    }
+    private boolean removeCurrentRegistration(ActionRequest actionRequest, User user, RegistrationRequest registrationRequest) {
 
-    private void createReservations(PortletRequest request, User user, long siteId, Map<String, String> userProperties) {
-        String prefix = "registration_";
-        List<String> articleIds = request.getParameterMap()
-                .keySet()
-                .stream()
-                .filter(strings -> strings.startsWith(prefix))
-                .filter(key -> ParamUtil.getBoolean(request, key))
-                .map(key -> key.substring(prefix.length()))
-                .collect(Collectors.toList());
-
-
-        articleIds.forEach(articleId -> createReservation(request, user, siteId, articleId, userProperties));
-    }
-
-    private void createReservation(PortletRequest request, User user, long siteId, String articleId,
-                                   Map<String, String> userProperties) {
         try {
-            Registration registration = dsdParserUtils.getRegistration(siteId, articleId);
-            registrationUtils.registerUser(user, registration, userProperties);
-        } catch (Exception e) {
-            SessionErrors.add(request, "registration-failed", e.getMessage());
-            LOG.debug("Could not create registration", e);
+            dsdSessionUtils.unRegisterUser(user, registrationRequest.getRegistration());
+            return true;
+        } catch (PortalException e) {
+            SessionErrors.add(actionRequest, "unregister-failed",  e.getMessage());
+            return false;
         }
     }
 
-    private Reservation getReservation(ActionRequest actionRequest, ThemeDisplay themeDisplay) {
+    private boolean registerUser(ActionRequest actionRequest, User user, RegistrationRequest registrationRequest) {
+
+        Map<String, String> registrationProperties = getRegistrationProperties(registrationRequest);
+        try {
+            dsdSessionUtils.registerUser(user, registrationRequest.getRegistration(), registrationProperties);
+        } catch (PortalException e) {
+            SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
+            return false;
+        }
+        for (Registration childRegistration : registrationRequest.getChildRegistrations()) {
+
+            try {
+                dsdSessionUtils.registerUser(user, childRegistration, Collections.emptyMap());
+            } catch (PortalException e) {
+                SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private Map<String, String> getRegistrationProperties(RegistrationRequest registrationRequest) {
+        HashMap<String, String> propertyMap = new HashMap<>();
+
+        BillingInfo billingInfo = registrationRequest.getBillingInfo();
+        if (billingInfo.isUseOrganization()){
+            propertyMap.put(KeycloakUtils.BILLING_ATTRIBUTES.billing_address.name(), billingInfo.getAddress());
+            propertyMap.put(KeycloakUtils.BILLING_ATTRIBUTES.billing_city.name(), billingInfo.getCity());
+            propertyMap.put(KeycloakUtils.BILLING_ATTRIBUTES.billing_country.name(), billingInfo.getCountry());
+            propertyMap.put(KeycloakUtils.BILLING_ATTRIBUTES.billing_email.name(), billingInfo.getEmail());
+            propertyMap.put(KeycloakUtils.BILLING_ATTRIBUTES.billing_name.name(), billingInfo.getName());
+            propertyMap.put(KeycloakUtils.BILLING_ATTRIBUTES.billing_postal.name(), billingInfo.getPostal());
+        }
+        return propertyMap;
+    }
+
+    private RegistrationRequest getRegistrationRequest(ActionRequest actionRequest, ThemeDisplay themeDisplay) {
         String articleId = ParamUtil.getString(actionRequest, "articleId");
+
         try {
             long siteId = themeDisplay.getSiteGroupId();
             Registration parentRegistration = dsdParserUtils.getRegistration(siteId, articleId);
             Event event = dsdParserUtils.getEvent(siteId, String.valueOf(parentRegistration.getEventId()));
 
-            Reservation reservation = toReservation(parentRegistration, event.getTitle(), themeDisplay);
+            RegistrationRequest registrationRequest = new RegistrationRequest();
+            registrationRequest.setEventName(event.getTitle());
+            registrationRequest.setRegistration(parentRegistration);
+            registrationRequest.setBaseUrl(PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay) + JournalArticleConstants.CANONICAL_URL_SEPARATOR);
+
+            BillingInfo billingInfo = getBillingInfo(actionRequest);
+            registrationRequest.setBillingInfo(billingInfo);
 
             List<Registration> childRegistrations = dsdSessionUtils.getChildRegistrations(parentRegistration);
             for (Registration childRegistration : childRegistrations) {
                 if (ParamUtil.getString(actionRequest, "registration_" + childRegistration.getArticleId()).equals("true")) {
-                    reservation.getChildReservations().add(toReservation(childRegistration, event.getTitle(), themeDisplay));
+                    registrationRequest.getChildRegistrations().add(childRegistration);
                 }
             }
-            return reservation;
+            return registrationRequest;
 
         } catch (PortalException e) {
             SessionErrors.add(actionRequest, "send-email-failed", "Could not retrieve registration for actionId: " + articleId);
@@ -119,35 +167,26 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         return null;
     }
 
-    private Reservation toReservation(Registration registration, String eventName, ThemeDisplay themeDisplay) throws PortalException {
-        Reservation reservation = new Reservation();
-        reservation.setEventName(eventName);
-        reservation.setName(registration.getTitle());
-        reservation.setStartTime(registration.getStartTime().getTime());
-        reservation.setEndTime(registration.getEndTime().getTime());
-        reservation.setType(registration.getType());
-        reservation.setCapacity(registration.getCapacity());
-        reservation.setPrice(registration.getPrice());
-        reservation.setArticleUrl(PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay) + JournalArticleConstants.CANONICAL_URL_SEPARATOR + registration.getJournalArticle().getUrlTitle());
-        reservation.setBannerUrl(registration.getSmallImageURL(themeDisplay));
-        if (registration instanceof SessionRegistration) {
-            Room room = ((SessionRegistration) registration).getRoom();
-            reservation.setLocation(room.getTitle());
-        } else if (registration instanceof DinnerRegistration) {
-            Location location = ((DinnerRegistration) registration).getRestaurant();
-            reservation.setLocation(location.getTitle());
+    private BillingInfo getBillingInfo(ActionRequest actionRequest) {
+
+        BillingInfo billingInfo = new BillingInfo();
+        for (KeycloakUtils.BILLING_ATTRIBUTES key : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
+            String value = ParamUtil.getString(actionRequest, key.name());
+            if (Validator.isNotNull(value)) {
+                billingInfo.setAttribute(key, value);
+            }
         }
-        return reservation;
+        return billingInfo;
     }
 
-
-    private void updateUserAttributes(ActionRequest actionRequest, String emailAddress) {
+    private boolean updateUserAttributes(ActionRequest actionRequest, String emailAddress) {
         try {
-            keycloakUtils.updateUserAttributes(emailAddress, getKeycloakAttributes(actionRequest));
+            return keycloakUtils.updateUserAttributes(emailAddress, getKeycloakAttributes(actionRequest)) < 300;
         } catch (Exception e) {
             SessionErrors.add(actionRequest, "update-attributes-failed", e.getMessage());
             LOG.debug("Could not update keycloak attributes for user [" + emailAddress + "]", e);
         }
+        return false;
     }
 
     private Map<String, String> getKeycloakAttributes(ActionRequest actionRequest) {
@@ -164,21 +203,36 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         return attributes;
     }
 
-    private void sendRegistrationEmail(ActionRequest actionRequest, User user, Reservation reservation, ThemeDisplay themeDisplay) {
+    private boolean sendEmail(ActionRequest actionRequest, User user, RegistrationRequest registrationRequest,
+                              ThemeDisplay themeDisplay, String action) {
         try {
-            sendRegistrationEmail(user, reservation, themeDisplay);
+
+            DsdEmail email = new DsdEmail();
+            ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", themeDisplay.getLocale(), getClass());
+            email.setResourceBundle(resourceBundle);
+            email.setBanner(new URL(themeDisplay.getCDNBaseURL() + getBannerUrl(themeDisplay, registrationRequest.getRegistration())));
+            email.setLanguage(themeDisplay.getLocale().getLanguage());
+            switch (action){
+                case "register":
+                case "update":
+                    email.sendRegisterEmail(user, registrationRequest);
+                    return true;
+                case "unregister":
+                    email.sendUnregisterEmail(user, registrationRequest);
+                    return true;
+                default:
+                    return false;
+            }
+
         } catch (Exception e) {
-            SessionErrors.add(actionRequest, "send-email-failed", "Could not send registration email for user [" + user.getEmailAddress() + "] : " + e.getMessage());
-            LOG.debug("Could not send registration email for user [" + user.getEmailAddress() + "]", e);
+            SessionErrors.add(actionRequest, "send-email-failed", "Could not send " + action + " email for user [" + user.getEmailAddress() + "] : " + e.getMessage());
+            LOG.debug("Could not send " + action + " email for user [" + user.getEmailAddress() + "]", e);
+            return false;
         }
     }
 
-    private void sendRegistrationEmail(User user, Reservation reservation, ThemeDisplay themeDisplay) throws Exception {
-        DsdEmail email = new DsdEmail();
-        ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", themeDisplay.getLocale(), getClass());
-        email.setResourceBundle(resourceBundle);
-        email.setBanner(new URL(themeDisplay.getCDNBaseURL() + reservation.getBannerUrl()));
-        email.sendRegisterEmail(user, reservation, themeDisplay.getLocale().getLanguage());
+    private static String getBannerUrl(ThemeDisplay themeDisplay, Registration registration){
+        return registration.getSmallImageURL(themeDisplay);
     }
 
     @Reference
@@ -189,9 +243,6 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
     @Reference
     private DsdSessionUtils dsdSessionUtils;
-
-    @Reference
-    private DsdSessionUtils registrationUtils;
 
     private static final Log LOG = LogFactoryUtil.getLog(SubmitRegistrationActionCommand.class);
 }
