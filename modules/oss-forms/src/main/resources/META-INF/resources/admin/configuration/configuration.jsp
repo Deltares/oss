@@ -23,22 +23,22 @@
             value="<%= configurationRenderURL %>"
     />
 
-    <div class="sheet sheet-lg">
-        <aui:fieldset>
+    <aui:fieldset>
 
-            <aui:input
-                    label="Event ID"
-                    name="eventId"
-                    value="<%= busTransferFormConfiguration.eventId() %>"
-            >
+        <aui:input
+                label="event-id"
+                name="eventId"
+                value="<%= configuration.eventId() %>"/>
 
-            </aui:input>
+        <aui:input
+                label="registration-url"
+                name="registrationURL"
+                type="textarea"
+                value="<%= configuration.registrationURL() %>"/>
 
-        </aui:fieldset>
+    </aui:fieldset>
 
-        <aui:button-row>
-            <aui:button type="submit"></aui:button>
-        </aui:button-row>
-    </div>
-
+    <aui:button-row>
+        <aui:button type="submit"></aui:button>
+    </aui:button-row>
 </aui:form>

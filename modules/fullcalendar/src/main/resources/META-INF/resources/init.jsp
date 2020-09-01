@@ -36,12 +36,19 @@
 <%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="nl.deltares.portal.utils.DsdParserUtils" %>
+<%@ page import="nl.deltares.portal.configuration.DSDSiteConfiguration" %>
+<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider" %>
 
 <liferay-theme:defineObjects/>
 
 <portlet:defineObjects/>
 
 <%
+    ConfigurationProvider configurationProvider =
+            (ConfigurationProvider) request.getAttribute(ConfigurationProvider.class.getName());
+
+    DSDSiteConfiguration dsdSiteConfiguration = configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
+
     SimpleDateFormat format = new SimpleDateFormat("yyy-MM-dd");
     long siteId = themeDisplay.getSiteGroupId();
     String bootstrapRequire = (String)renderRequest.getAttribute(FullCalendarPortletKeys.BOOTSTRAP_REQUIRE);
@@ -56,7 +63,7 @@
     Map<String, String> colorMap = new HashMap<>();
     if (Validator.isNotNull(configuration)) {
         baseUrl = portletPreferences.getValue("baseUrl", configuration.baseUrl());
-        eventId = portletPreferences.getValue("eventId", String.valueOf(configuration.eventId()));
+        eventId = portletPreferences.getValue("eventId", String.valueOf(dsdSiteConfiguration.eventId()));
         String sessionColorMap = portletPreferences.getValue("sessionColorMap", configuration.sessionColorMap());
 
         try {
