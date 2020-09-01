@@ -1,3 +1,7 @@
+<%@ page import="com.liferay.portal.kernel.model.Country" %>
+<%@ page import="com.liferay.portal.kernel.service.CountryServiceUtil" %>
+<%@ page import="com.liferay.portal.kernel.util.DateUtil" %>
+
 <aui:row>
     <aui:col width="50">
         <span><liferay-ui:message key="registrationform.userInfo"/></span>
@@ -28,9 +32,13 @@
 
         <div class="row">
             <div class="col">
+                <c:if test="${not empty attributes}">
+                    <c:set var="academicTitle" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.academicTitle.name()) %>"/>
+                </c:if>
                 <aui:input
-                        name="titles"
+                        name="<%= KeycloakUtils.ATTRIBUTES.academicTitle.name() %>"
                         label="registrationform.academic.titles"
+                        value="${academicTitle}"
                         cssClass="update-badge"/>
             </div>
             <div class="col">
@@ -97,11 +105,15 @@
                 </aui:input>
             </div>
             <div class="col">
+                <c:if test="${not empty attributes}">
+                    <c:set var="jobTitle" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.jobTitle.name()) %>"/>
+                </c:if>
                 <aui:input
-                        name="job_titles"
-                        label="registrationform.job.titles" />
+                        name="<%= KeycloakUtils.ATTRIBUTES.jobTitle.name() %>"
+                        label="registrationform.job.titles"
+                        value="${jobTitle}" />
             </div>
-        </div>
+        </div   >
 
 
         <span><liferay-ui:message key="registrationform.organizationInfo"/></span>
@@ -166,6 +178,25 @@
                 </aui:input>
             </div>
         </div>
+
+        <c:if test="${not empty attributes}">
+            <c:set var="country" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_country.name()) %>"/>
+        </c:if>
+        <aui:select
+                name="<%=KeycloakUtils.ATTRIBUTES.org_country.name()%>"
+                type="select"
+                label="registrationform.orgcountry"
+                value="${country}" >
+            <aui:validator name="required">
+                        function () {
+                            return checkStep(getFormName(), 2);
+                        }
+            </aui:validator>
+            <% List<Country> countries = CountryServiceUtil.getCountries(true); %>
+            <%    for (Country country : countries) { %>
+            <aui:option value="<%=country.getName()%>" label ="<%= country.getName(locale) %>" />
+            <% } %>
+        </aui:select>
 
     </aui:col>
     <aui:col width="50">
