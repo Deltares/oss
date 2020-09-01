@@ -4,6 +4,15 @@ import java.util.Map;
 
 public interface KeycloakUtils {
 
+    enum BILLING_ATTRIBUTES {
+        billing_email,
+        billing_name,
+        billing_address,
+        billing_postal,
+        billing_city,
+        billing_country,
+    }
+
     enum ATTRIBUTES {
         org_address,
         org_city,
@@ -16,11 +25,9 @@ public interface KeycloakUtils {
         first_name,
         last_name,
         email,
+        academicTitle,
+        jobTitle,
         name_setting,
-        billing_address,
-        billing_postal,
-        billing_city,
-        billing_country,
         terms_agreements
     }
 

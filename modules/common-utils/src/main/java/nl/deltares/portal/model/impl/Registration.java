@@ -6,8 +6,8 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import nl.deltares.portal.model.DsdArticle;
-import nl.deltares.portal.utils.JsonContentParserUtils;
-import nl.deltares.portal.utils.XmlContentParserUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
+import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
 import java.util.Date;
@@ -23,7 +23,7 @@ public abstract class Registration extends AbsDsdArticle {
     private DsdArticle.DSD_REGISTRATION_KEYS type;
     private DsdArticle.DSD_TOPIC_KEYS topic;
     private Registration parentRegistration = null;
-    private boolean overlapWithParent;
+    private boolean overlapWithParent = true;
     private boolean hasParent = true;
     private Date startTime;
     private Date endTime;
@@ -36,28 +36,28 @@ public abstract class Registration extends AbsDsdArticle {
     private void init() throws PortalException {
         try {
             Document document = getDocument();
-            String eventId = XmlContentParserUtils.getDynamicContentByName(document, "eventId", false);
+            String eventId = XmlContentUtils.getDynamicContentByName(document, "eventId", false);
             this.eventId =  Long.parseLong(eventId);
-            String capacity = XmlContentParserUtils.getDynamicContentByName(document, "capacity", false);
+            String capacity = XmlContentUtils.getDynamicContentByName(document, "capacity", false);
             this.capacity =  Integer.parseInt(capacity);
-            String price = XmlContentParserUtils.getDynamicContentByName(document, "price", false);
+            String price = XmlContentUtils.getDynamicContentByName(document, "price", false);
             this.price =  Float.parseFloat(price);
-            String currency = XmlContentParserUtils.getDynamicContentByName(document, "currency", true);
+            String currency = XmlContentUtils.getDynamicContentByName(document, "currency", true);
             if (currency != null) this.currency = HtmlUtil.escape(currency);
-            String open = XmlContentParserUtils.getDynamicContentByName(document, "open", true);
+            String open = XmlContentUtils.getDynamicContentByName(document, "open", true);
             this.open = Boolean.parseBoolean(open);
-            String type = XmlContentParserUtils.getDynamicContentByName(document, "type", false);
+            String type = XmlContentUtils.getDynamicContentByName(document, "type", false);
             this.type = DsdArticle.DSD_REGISTRATION_KEYS.valueOf(type);
-            String topic = XmlContentParserUtils.getDynamicContentByName(document, "topic", false);
+            String topic = XmlContentUtils.getDynamicContentByName(document, "topic", false);
             this.topic = DsdArticle.DSD_TOPIC_KEYS.valueOf(topic);
-            String parentJson = XmlContentParserUtils.getDynamicContentByName(document, "parent", true);
+            String parentJson = XmlContentUtils.getDynamicContentByName(document, "parent", true);
             if (parentJson != null) {
-                String overlap = XmlContentParserUtils.getDynamicContentByName(document, "overlaps", true);
+                String overlap = XmlContentUtils.getDynamicContentByName(document, "overlaps", true);
                 overlapWithParent = Boolean.parseBoolean(overlap);
                 hasParent = true;
             }
-            startTime = XmlContentParserUtils.parseDateTimeFields(document,"start", "starttime", true);
-            endTime = XmlContentParserUtils.parseDateTimeFields(document,"end", "endtime", true);
+            startTime = XmlContentUtils.parseDateTimeFields(document,"start", "starttime", true);
+            endTime = XmlContentUtils.parseDateTimeFields(document,"end", "endtime", true);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing Registration %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -70,7 +70,7 @@ public abstract class Registration extends AbsDsdArticle {
     }
 
     private void parseParentRegistration() throws PortalException {
-        String parentJson = XmlContentParserUtils.getDynamicContentByName(getDocument(), "parent", true);
+        String parentJson = XmlContentUtils.getDynamicContentByName(getDocument(), "parent", true);
         if (parentJson == null){
             return;
         }
@@ -83,7 +83,7 @@ public abstract class Registration extends AbsDsdArticle {
     }
 
     AbsDsdArticle parseJsonReference(String jsonReference) throws PortalException {
-        JournalArticle journalArticle = JsonContentParserUtils.jsonReferenceToJournalArticle(jsonReference);
+        JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(jsonReference);
         return AbsDsdArticle.getInstance(journalArticle);
     }
 
