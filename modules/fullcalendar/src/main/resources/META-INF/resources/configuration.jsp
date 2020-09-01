@@ -54,13 +54,6 @@
                 >
 
         </aui:input>
-        <aui:input
-                label="Calender Event ID"
-                name="eventId"
-                value="<%= eventId %>"
-                >
-
-        </aui:input>
 
         <%    for (String key : colorMap.keySet()) { %>
         <aui:input

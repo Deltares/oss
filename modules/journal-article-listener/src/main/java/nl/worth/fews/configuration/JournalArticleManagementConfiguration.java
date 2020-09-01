@@ -1,8 +1,12 @@
 package nl.worth.fews.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
+import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 import nl.worth.fews.constants.JournalArticleManagementConstants;
 
+@ExtendedObjectClassDefinition(
+        category = "dsd-general"
+)
 @Meta.OCD(
     id = JournalArticleManagementConstants.JOURNAL_ARTICLE_MANAGEMENT_CONFIGURATION_PID
 )
