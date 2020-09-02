@@ -58,12 +58,11 @@
     String portletId = (String)renderRequest.getAttribute(WebKeys.PORTLET_ID);
     String layoutUuid = themeDisplay.getLayout().getUuid();
     String baseUrl = "";
-    String eventId = "0";
+    String eventId = String.valueOf(dsdSiteConfiguration.eventId());
     String startDate = format.format(new Date());
     Map<String, String> colorMap = new HashMap<>();
     if (Validator.isNotNull(configuration)) {
         baseUrl = portletPreferences.getValue("baseUrl", configuration.baseUrl());
-        eventId = portletPreferences.getValue("eventId", String.valueOf(dsdSiteConfiguration.eventId()));
         String sessionColorMap = portletPreferences.getValue("sessionColorMap", configuration.sessionColorMap());
 
         try {
