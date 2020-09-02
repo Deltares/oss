@@ -5,6 +5,15 @@
 <aui:fieldset label="dsd.admin.adminPageTitle"  >
     <aui:row>
         <aui:col width="50" >
+            <div class="panel-title" id="Title"> <liferay-ui:message key="dsd.admin.siteConfigTitle"/>  </div>
+        </aui:col>
+        <aui:col width="50">
+            <div class="control-label" > <liferay-ui:message key="dsd.admin.siteConfigText"/>  </div>
+        </aui:col>
+    </aui:row>
+    <hr>
+    <aui:row>
+        <aui:col width="50" >
             <div class="panel-title" id="Title"> <liferay-ui:message key="dsd.admin.downloadTitle"/>  </div>
         </aui:col>
         <aui:col width="20">
