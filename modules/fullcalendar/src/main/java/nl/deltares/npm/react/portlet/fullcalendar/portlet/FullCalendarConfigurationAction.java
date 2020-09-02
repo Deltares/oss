@@ -1,6 +1,7 @@
 package nl.deltares.npm.react.portlet.fullcalendar.portlet;
 
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -37,6 +38,7 @@ public class FullCalendarConfigurationAction extends DefaultConfigurationAction 
                 FullCalendarConfiguration.class.getName(),
                 _configuration);
         httpServletRequest.setAttribute(DsdParserUtils.class.getName(), dsdParserUtils);
+        httpServletRequest.setAttribute(ConfigurationProvider.class.getName(), _configurationProvider);
         super.include(portletConfig, httpServletRequest, httpServletResponse);
     }
 
@@ -45,9 +47,7 @@ public class FullCalendarConfigurationAction extends DefaultConfigurationAction 
             throws Exception {
 
         String baseUrl = ParamUtil.getString(actionRequest, "baseUrl");
-        long eventId = ParamUtil.getLong(actionRequest, "eventId");
         setPreference(actionRequest, "baseUrl", baseUrl);
-        setPreference(actionRequest, "eventId", String.valueOf(eventId));
         Map<String, String> colorMap = convertColorsToMap(actionRequest);
         setPreference(actionRequest, "sessionColorMap", JsonContentUtils.formatMapToJson(colorMap));
 
@@ -85,5 +85,12 @@ public class FullCalendarConfigurationAction extends DefaultConfigurationAction 
     private DsdParserUtils dsdParserUtils;
 
     private volatile FullCalendarConfiguration _configuration;
+
+    private ConfigurationProvider _configurationProvider;
+
+    @Reference
+    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
+        _configurationProvider = configurationProvider;
+    }
 
 }

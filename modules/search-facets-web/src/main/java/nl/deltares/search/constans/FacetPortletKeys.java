@@ -20,4 +20,7 @@ public class FacetPortletKeys {
     public static final String EVENT_FACET_PORTLET =
             "nl_deltares_search_facet_event_EventFacetPortlet";
 
+    public static final String USER_PROGRAM_FACET_PORTLET =
+            "nl_deltares_search_facet_event_UserProgramFacetPortlet";
+
 }
