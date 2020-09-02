@@ -11,9 +11,3 @@
 
 <portlet:defineObjects />
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
-<%@ page import="nl.deltares.forms.configuration.BusTransferFormConfiguration" %>
-
-<%
-    BusTransferFormConfiguration busTransferFormConfiguration =
-            portletDisplay.getPortletInstanceConfiguration(BusTransferFormConfiguration.class);
-%>

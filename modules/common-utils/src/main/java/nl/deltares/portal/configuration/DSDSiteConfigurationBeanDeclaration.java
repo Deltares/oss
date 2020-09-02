@@ -1,4 +1,4 @@
-package nl.deltares.forms.configuration;
+package nl.deltares.portal.configuration;
 
 import com.liferay.portal.kernel.settings.definition.ConfigurationBeanDeclaration;
 import org.osgi.service.component.annotations.Component;
@@ -7,9 +7,9 @@ import org.osgi.service.component.annotations.Component;
         immediate = true,
         service = ConfigurationBeanDeclaration.class
 )
-public class BusTransferFormConfigurationBeanDeclaration implements ConfigurationBeanDeclaration {
+public class DSDSiteConfigurationBeanDeclaration implements ConfigurationBeanDeclaration {
     @Override
     public Class<?> getConfigurationBeanClass() {
-        return BusTransferFormConfiguration.class;
+        return DSDSiteConfiguration.class;
     }
 }
