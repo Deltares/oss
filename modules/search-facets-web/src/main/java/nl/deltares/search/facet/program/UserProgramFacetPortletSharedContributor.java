@@ -41,14 +41,19 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
 
             Event event = dsdParserUtils.getEvent(groupId, eventId);
 
-            List<String> ids = dsdSessionUtils.getUserRegistrations(user, event)
+            List<Long> ids = dsdSessionUtils.getUserRegistrations(user, event)
                     .stream()
                     .filter(map -> map.containsKey("resourcePrimaryKey"))
                     .map(map -> map.get("resourcePrimaryKey"))
-                    .map(String::valueOf)
+                    .map(value -> (Long) value)
                     .collect(Collectors.toList());
 
-            portletSharedSearchSettings.addFacet(buildFacet(ids, portletSharedSearchSettings));
+            //convert resourcePrimaryKeys to articleIds
+            List<String> articleIds = ids.stream()
+                    .map(item -> event.getRegistration(item).getArticleId())
+                    .collect(Collectors.toList());
+
+            portletSharedSearchSettings.addFacet(buildFacet(articleIds, portletSharedSearchSettings));
         } catch (Exception e) {
             LOG.debug("Could not get registrations for user [" + user.getUserId() + "]", e);
         }
