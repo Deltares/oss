@@ -1,5 +1,9 @@
 package nl.deltares.services.rest;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import nl.deltares.portal.utils.DsdParserUtils;
@@ -18,8 +22,6 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import java.util.HashSet;
 import java.util.Set;
-
-import static nl.deltares.services.rest.DsdRestServices.getJacksonJsonProvider;
 
 /**
  * @author rooij_e
@@ -79,5 +81,20 @@ public class DsdRestPublicServices extends Application {
     @Reference
     protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
         _configurationProvider = configurationProvider;
+    }
+
+    private static JacksonJsonProvider getJacksonJsonProvider() {
+
+        JacksonJsonProvider jacksonJsonProvider = new JacksonJsonProvider();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // Prevent serialization of null and empty string values
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+
+        jacksonJsonProvider.setMapper(objectMapper);
+        jacksonJsonProvider.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        return jacksonJsonProvider;
     }
 }
