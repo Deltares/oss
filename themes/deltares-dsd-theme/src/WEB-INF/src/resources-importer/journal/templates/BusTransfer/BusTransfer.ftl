@@ -1,13 +1,13 @@
+<#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
 <#assign journalArticleTitle = .vars['reserved-article-title'].data >
 ${journalArticleTitle}
 <#assign pickupOption = pickupDates.getData()>
+<#assign articleId = .vars['reserved-article-id'].getData() />
+<#assign registration = dsdParserUtils.getRegistration(groupId,articleId) />
+<#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />
 <p>
     <#if pickupOption == "daily">
-        <#assign start_Data = getterUtil.getString(start.getData())>
-        <#assign start_DateObj = dateUtil.parseDate("yyyy-MM-dd", start_Data, locale)>
-        <#assign end_Data = getterUtil.getString(end.getData())>
-        <#assign end_DateObj = dateUtil.parseDate("yyyy-MM-dd", end_Data, locale)>
-        Daily from ${dateUtil.getDate(start_DateObj, "dd MMM yyyy", locale)}  to ${dateUtil.getDate(end_DateObj, "dd MMM yyyy", locale)}
+        Daily from ${dateUtil.getDate(event.startTime, "dd MMM yyyy", locale)}  to ${dateUtil.getDate(event.endTime, "dd MMM yyyy", locale)}
     <#else>
         On the following days:<br>
         <#if date.getSiblings()?has_content>
