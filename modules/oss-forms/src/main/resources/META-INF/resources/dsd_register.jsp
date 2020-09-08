@@ -159,12 +159,12 @@
 
     updateBadge = function() {
         let showTitle = $('input[name="<portlet:namespace />show_badge_title"]:checked').val();
-        let nameSetting = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.name_setting.name() %>"]:checked').val();
-        let titles = $('input[name="<portlet:namespace />titles"]').val();
+        let nameSetting = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.badge_name_setting.name() %>"]:checked').val();
+        let titles = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.academicTitle.name() %>"]').val();
         let firstName = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.first_name.name() %>"]').val();
-        let initials = $('input[name="<portlet:namespace />initials"]').val();
+        let initials = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.initials.name() %>"]').val();
         let lastName = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.last_name.name() %>"]').val();
-        let jobTitle = $('input[name="<portlet:namespace />job_titles"]').val();
+        let jobTitle = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.jobTitle.name() %>"]').val();
         let title = '';
 
         if (showTitle === 'yes') {

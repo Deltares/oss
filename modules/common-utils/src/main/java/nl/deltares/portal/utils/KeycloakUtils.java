@@ -24,10 +24,12 @@ public interface KeycloakUtils {
         pay_reference,
         first_name,
         last_name,
+        initials,
         email,
         academicTitle,
         jobTitle,
-        name_setting,
+        badge_name_setting,
+        badge_title_setting,
         terms_agreements
     }
 
