@@ -53,7 +53,7 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
             endDate = getConfiguredDate("endDate", portletSharedSearchSettings);
         }
 
-        if (ddmStructureOptional.isPresent() && (startDate != null || endDate != null)) {
+        if (ddmStructureOptional.isPresent() && (startDate != LocalDate.MIN || endDate != LocalDate.MAX)) {
             long ddmStructureId = ddmStructureOptional.get().getStructureId();
             String startDateField = _ddmIndexer.encodeName(ddmStructureId, "start", locale);
             portletSharedSearchSettings.addFacet(buildFacet(startDateField, startDate, endDate, portletSharedSearchSettings));
