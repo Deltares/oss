@@ -7,10 +7,27 @@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
+<%@ page import="com.liferay.portal.kernel.util.Validator" %>
+<%@ page import="nl.deltares.search.facet.date.DateRangeFacetConfiguration" %>
 <%@ page import="nl.deltares.portal.model.DsdArticle" %>
-<%@ page import="nl.deltares.search.util.DateFacetUtil" %>
-<%@ page import="java.time.LocalDate" %>
 
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />
+
+<%
+
+    DateRangeFacetConfiguration configuration =
+            (DateRangeFacetConfiguration)
+                    renderRequest.getAttribute(DateRangeFacetConfiguration.class.getName());
+    String startDateConfig = null;
+    String endDateConfig = null;
+
+    if (Validator.isNotNull(configuration)) {
+        startDateConfig = portletPreferences.getValue("startDate", configuration.startDate());
+        endDateConfig = portletPreferences.getValue("endDate", configuration.endDate());
+    }
+
+
+
+%>

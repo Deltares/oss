@@ -2,6 +2,10 @@ package nl.deltares.search.facet.date;
 
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.util.DDMIndexer;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
@@ -40,22 +44,45 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
         if (startDateOptional.isPresent()) {
             startDate = DateFacetUtil.parseDate(startDateOptional.get());
         } else {
-            startDate = DateFacetUtil.getDefaultStartDate();
+            startDate = getConfiguredDate("startDate", portletSharedSearchSettings);
         }
 
         if (endDateOptional.isPresent()) {
             endDate = DateFacetUtil.parseDate(endDateOptional.get());
         } else {
-            endDate = DateFacetUtil.getDefaultEndDate();
+            endDate = getConfiguredDate("endDate", portletSharedSearchSettings);
         }
 
-        if (ddmStructureOptional.isPresent()) {
+        if (ddmStructureOptional.isPresent() && (startDate != null || endDate != null)) {
             long ddmStructureId = ddmStructureOptional.get().getStructureId();
             String startDateField = _ddmIndexer.encodeName(ddmStructureId, "start", locale);
             portletSharedSearchSettings.addFacet(buildFacet(startDateField, startDate, endDate, portletSharedSearchSettings));
         }
     }
 
+    private LocalDate getConfiguredDate(String key, PortletSharedSearchSettings portletSharedSearchSettings){
+
+        try {
+            DateRangeFacetConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(DateRangeFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
+            if (key.equals("startDate")) {
+                String dateText = configuration.startDate();
+                if (dateText != null && !dateText.isEmpty()){
+                    return DateFacetUtil.parseDate(dateText);
+                }
+                return DateFacetUtil.getDefaultStartDate();
+            } else if (key.equals("endDate")){
+                String dateText = configuration.endDate();
+                if (dateText != null && !dateText.isEmpty()){
+                    return DateFacetUtil.parseDate(dateText);
+                }
+                return DateFacetUtil.getDefaultEndDate();
+            }
+
+        } catch (ConfigurationException e) {
+            LOG.debug("Could not get event configuration", e);
+        }
+        return null;
+    }
     protected Facet buildFacet(String fieldName, LocalDate startDate, LocalDate endDate,
                                PortletSharedSearchSettings portletSharedSearchSettings) {
 
@@ -63,8 +90,8 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
 
         DateRangeFacetBuilder dateRangeFacetBuilder = new DateRangeFacetBuilder(_dateRangeFacetFactory);
         dateRangeFacetBuilder.setSearchContext(portletSharedSearchSettings.getSearchContext());
-        dateRangeFacetBuilder.setStartDate(formatDate(startDate));
-        dateRangeFacetBuilder.setEndDate(formatDate(endDate));
+        if (startDate != null) dateRangeFacetBuilder.setStartDate(formatDate(startDate));
+        if (endDate != null) dateRangeFacetBuilder.setEndDate(formatDate(endDate));
 
         return dateRangeFacetBuilder.build();
     }
@@ -81,4 +108,13 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
 
     @Reference
     private DateRangeFacetFactory _dateRangeFacetFactory;
+
+    private ConfigurationProvider _configurationProvider;
+
+    @Reference
+    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
+        _configurationProvider = configurationProvider;
+    }
+
+    private static final Log LOG = LogFactoryUtil.getLog(DateRangeFacetPortletSharedSearchContributor.class);
 }

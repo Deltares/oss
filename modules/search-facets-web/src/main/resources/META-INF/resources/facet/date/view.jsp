@@ -1,8 +1,29 @@
+<%@ page import="nl.deltares.search.util.DateFacetUtil" %>
+<%@ page import="java.time.LocalDate" %>
 <%@ include file="/META-INF/resources/init.jsp" %>
 
 <%
 	LocalDate startDate = (LocalDate) renderRequest.getAttribute("startDate");
 	LocalDate endDate = (LocalDate) renderRequest.getAttribute("endDate");
+
+	if (startDate == null){
+		if (startDateConfig != null && !startDateConfig.isEmpty()){
+			startDate = DateFacetUtil.getStartDate(startDateConfig);
+		}
+	}
+	String formattedStartDate = "";
+	if (startDate != null){
+		formattedStartDate = startDate.format(DateFacetUtil.DATE_TIME_FORMATTER);
+	}
+	if (endDate == null){
+		if (endDateConfig != null && !endDateConfig.isEmpty()){
+			endDate = DateFacetUtil.getEndDate(endDateConfig);
+		}
+	}
+	String formattedEndDate = "";
+	if (endDate != null){
+		formattedEndDate = endDate.format(DateFacetUtil.DATE_TIME_FORMATTER);
+	}
 %>
 
 <aui:form method="post" name="dateRangeFacetForm">
@@ -13,7 +34,7 @@
 					label=""
 					cssClass="date-picker input-date"
 					placeholder="dd-mm-yyyy"
-					value="<%= startDate.format(DateFacetUtil.DATE_TIME_FORMATTER) %>">
+					value="<%= formattedStartDate %>">
 				<aui:validator name="required"/>
 			</aui:input>
 		</div>
@@ -23,7 +44,7 @@
 					label=""
 					cssClass="date-picker input-date"
 					placeholder="dd-mm-yyyy"
-					value="<%= endDate.format(DateFacetUtil.DATE_TIME_FORMATTER) %>">
+					value="<%= formattedEndDate %>">
 				<aui:validator name="required"/>
 			</aui:input>
 		</div>

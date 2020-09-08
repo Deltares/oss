@@ -4,9 +4,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
 import java.time.LocalDate;
-import java.time.Month;
-import java.time.Year;
-import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
@@ -40,14 +37,11 @@ public class DateFacetUtil {
     }
 
     public static LocalDate getDefaultStartDate() {
-        int currentYear = Year.now().getValue();
-        return LocalDate.of(currentYear, Month.JANUARY.getValue(), 1);
+        return LocalDate.MIN;
     }
 
     public static LocalDate getDefaultEndDate() {
-        int currentYear = Year.now().getValue();
-        YearMonth month = YearMonth.from(LocalDate.of(currentYear, Month.DECEMBER.getValue(), 1));
-        return month.atEndOfMonth();
+        return LocalDate.MAX;
     }
 
     private static final Log LOG = LogFactoryUtil.getLog(DateFacetUtil.class);
