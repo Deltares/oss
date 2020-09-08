@@ -27,7 +27,8 @@
 %>
 
 <aui:form method="post" name="dateRangeFacetForm">
-	<div class="row">
+	<label for="dates"><liferay-ui:message key="facet.date-range.label"/></label>
+	<div class="row" id="dates">
 		<div class="col pr-2">
 			<aui:input
 					name="startDate"
@@ -35,7 +36,7 @@
 					cssClass="date-picker input-date"
 					placeholder="dd-mm-yyyy"
 					value="<%= formattedStartDate %>">
-				<aui:validator name="required"/>
+<%--				<aui:validator name="required"/>--%>
 			</aui:input>
 		</div>
 		<div class="col pl-2">
@@ -45,7 +46,7 @@
 					cssClass="date-picker input-date"
 					placeholder="dd-mm-yyyy"
 					value="<%= formattedEndDate %>">
-				<aui:validator name="required"/>
+<%--				<aui:validator name="required"/>--%>
 			</aui:input>
 		</div>
 	</div>
