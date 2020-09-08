@@ -102,6 +102,7 @@ public class DsdFullcalendarService {
 
         List<Event> events = new ArrayList<>(registrations.size());
         for (Registration registration : registrations) {
+            if (registration.getJournalArticle().isInTrash()) continue;
             Date endTime = registration.getEndTime();
             if (endTime.before(startSearch)) continue;
             Date startTime = registration.getStartTime();

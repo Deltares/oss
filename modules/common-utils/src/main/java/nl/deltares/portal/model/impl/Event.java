@@ -150,6 +150,7 @@ public class Event extends AbsDsdArticle {
         for (JournalArticle journalArticle : filteredArticle) {
             Registration registration = (Registration) AbsDsdArticle.getInstance(journalArticle);
             if (registration.getEventId() != eventId) continue;
+            if (registration.getJournalArticle().isInTrash()) continue;
             if (check.checkDuplicates(registration)) registrations.add(registration);
         }
     }
