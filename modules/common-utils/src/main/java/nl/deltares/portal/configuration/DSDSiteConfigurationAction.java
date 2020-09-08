@@ -49,6 +49,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
         long eventId = ParamUtil.getLong(actionRequest, "eventId");
+        String registrationURL = ParamUtil.getString(actionRequest, "registrationURL");
 
         Settings settings = SettingsFactoryUtil.getSettings(
                 new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), DSDSiteConfiguration.class.getName()));
@@ -57,7 +58,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
                 settings.getModifiableSettings();
 
         modifiableSettings.setValue("eventId", String.valueOf(eventId));
-
+        modifiableSettings.setValue("registrationURL", registrationURL);
         modifiableSettings.store();
 
         super.processAction(portletConfig, actionRequest, actionResponse);

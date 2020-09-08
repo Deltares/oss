@@ -33,7 +33,6 @@
         <aui:input
                 label="registration-url"
                 name="registrationURL"
-                type="textarea"
                 value="<%= configuration.registrationURL() %>"/>
 
     </aui:fieldset>
