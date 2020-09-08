@@ -10,10 +10,7 @@ import org.w3c.dom.Document;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class BusTransfer extends Registration {
@@ -101,13 +98,25 @@ public class BusTransfer extends Registration {
 
     @Override
     public Date getStartTime() {
-        if (transferDates.size() == 0) return new Date();
+        if (transferDates.size() == 0) {
+            if (getEvent().isPresent()) {
+                return getEvent().get().getStartTime();
+            }
+        }
         return transferDates.get(0);
     }
 
     @Override
     public Date getEndTime() {
-        if (transferDates.size() == 0) return new Date();
+        if (transferDates.size() == 0) {
+            if (getEvent().isPresent()) {
+                return getEvent().get().getEndTime();
+            }
+        }
         return transferDates.get(transferDates.size() -1);
+    }
+
+    private Optional<Event> getEvent() {
+        return Optional.ofNullable(getCachedEventArticle(String.valueOf(this.getEventId())));
     }
 }
