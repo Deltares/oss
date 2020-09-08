@@ -36,6 +36,8 @@
 
 <%
     ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
+
+    String lastDate = "";
 %>
 
 <%
@@ -56,6 +58,24 @@
     .expert-name  {
         font-weight: bold;
     }
+
+    .date-title {
+        text-align: center;
+        color: white; }
+    .date-title span {
+        font-size: 30px;
+        display: block;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .past-event {
+        background: #9B9B9B;
+    }
+    .upcoming-event {
+        background: #FF7200;;
+    }
+
 </style>
 
 <liferay-ui:search-container
@@ -75,6 +95,18 @@
         <%
             SearchResultSummaryDisplayContext searchResultSummaryDisplayContext = java.util.Objects.requireNonNull(searchResultsPortletDisplayContext.getSearchResultSummaryDisplayContext(document));
             RegistrationDisplayContext registrationDisplayContext = new RegistrationDisplayContext(searchResultSummaryDisplayContext.getClassPK(), themeDisplay);
+
+            String date = registrationDisplayContext.getStartDate();
+            boolean writeDateHeader = !date.isEmpty() && !lastDate.equals(date);
+            lastDate = date;
+
+            String colorClass;
+           if (registrationDisplayContext.isPastEvent()){
+               colorClass = "past-event";
+           } else {
+               colorClass = "upcoming-event";
+           }
+
         %>
 
         <c:choose>
@@ -82,7 +114,11 @@
                 <liferay-ui:search-container-column-text
                         colspan="<%= 2 %>"
                 >
-
+                    <c:if test="<%= writeDateHeader %>">
+                        <div class="date-title <%= colorClass %>">
+                            <span><%= date %></span>
+                        </div>
+                    </c:if>
                     <div class="row no-gutters">
                         <div class="col-2">
                             <img class="img-fluid" src="<%= registrationDisplayContext.getSmallImageURL() %>"/>
