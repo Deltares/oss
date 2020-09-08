@@ -13,6 +13,7 @@ import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
@@ -100,6 +101,22 @@ public class RegistrationDisplayContext {
         }
 
         return sessionRegistration;
+    }
+
+    public String getStartDate(){
+        if (getRegistration() != null) {
+            return DateUtil.getDate(getRegistration().getStartTime(), "dd MMMM yyyy", themeDisplay.getLocale());
+        }
+        return "";
+
+    }
+
+    public boolean isPastEvent(){
+        if (getRegistration() != null) {
+            return getRegistration().getStartTime().getTime() < System.currentTimeMillis();
+        }
+        return true;
+
     }
 
     public String getStartTime() {
