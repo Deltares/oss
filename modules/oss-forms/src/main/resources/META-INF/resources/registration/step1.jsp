@@ -9,7 +9,7 @@
     DsdSessionUtils dsdSessionUtils = (DsdSessionUtils) request.getAttribute("dsdSessionUtils");
     RegistrationFormDisplayContext registrationFormDisplayContext =
             new RegistrationFormDisplayContext(liferayPortletRequest, liferayPortletResponse,
-                    dsdParserUtils, dsdSessionUtils, themeDisplay.getScopeGroupId(), registrationId);
+                    dsdParserUtils, dsdSessionUtils);
 %>
 
 <c:set var="registrationId" value="<%= registrationId%>"/>
