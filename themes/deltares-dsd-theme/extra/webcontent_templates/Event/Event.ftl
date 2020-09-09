@@ -22,10 +22,10 @@
                 </#if>
             </div>
             <div class="data-section">
-                <div class="c-events__item__date">
-                    <span>${dateUtil.getDate(event.getStartTime(), "dd", locale)}</span>
-                    ${dateUtil.getDate(event.getStartTime(), "MMM", locale)}
-                </div>
+<#--                <div class="c-events__item__date">-->
+<#--                    <span>${dateUtil.getDate(event.getStartTime(), "dd", locale)}</span>-->
+<#--                    ${dateUtil.getDate(event.getStartTime(), "MMM", locale)}-->
+<#--                </div>-->
                 <h3 class="c-events__item__title h1">${event.getTitle()}</h3>
                 <p class="c-events__item__time-date-place">
                     <span class="c-events__item__time-date-place__date">

@@ -121,8 +121,12 @@ public class RegistrationLocalServiceImpl
 		Criterion checkUserId = PropertyFactoryUtil.forName("userId").eq(userId);
 		Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
 		Criterion checkResourceId = PropertyFactoryUtil.forName("resourcePrimaryKey").eq(resourceId);
-		Criterion checkStart = PropertyFactoryUtil.forName("startTime").eq(startDate);
-		return DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader()).add(checkGroupId).add(checkUserId).add(checkResourceId).add(checkStart);
+		DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader()).add(checkGroupId).add(checkUserId).add(checkResourceId);
+		if (startDate != null){
+			Criterion checkStart = PropertyFactoryUtil.forName("startTime").eq(startDate);
+			return  query.add(checkStart);
+		}
+		return query;
 	}
 
 	public long[] getRegistrationsWithOverlappingPeriod(long groupId, long userId, Date startTime, Date endTime){
@@ -158,18 +162,26 @@ public class RegistrationLocalServiceImpl
 	}
 
 	public int getRegistrationsCount(long groupId, long resourceId, Date startDate)  {
-
 		Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
 		Criterion checkResourceId = PropertyFactoryUtil.forName("resourcePrimaryKey").eq(resourceId);
-		Criterion checkStart = PropertyFactoryUtil.forName("startTime").eq(startDate);
-		DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader()).add(checkGroupId).add(checkResourceId).add(checkStart);
-		return (int) RegistrationUtil.countWithDynamicQuery(query);
+//		Criterion checkStart = PropertyFactoryUtil.forName("startTime").eq(startDate);
+		DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader()).add(checkGroupId).add(checkResourceId);
+		List<Registration> allRegistrations = RegistrationUtil.findWithDynamicQuery(query);
+		int count = 0;
+		for (Registration registration : allRegistrations) {
+			if (registration.getStartTime().getTime() == startDate.getTime()) count++;
+		}
+		return count;
 	}
 
 	public int getRegistrationsCount(long groupId, long userId, long resourceId, Date startDate)  {
-
-		DynamicQuery query = getDynamicQuery(groupId, groupId, userId, startDate);
-		return (int) RegistrationUtil.countWithDynamicQuery(query);
+		DynamicQuery query = getDynamicQuery(groupId, resourceId, userId, null);
+		List<Registration> allRegistrations = RegistrationUtil.findWithDynamicQuery(query);
+		int count = 0;
+		for (Registration registration : allRegistrations) {
+			if (registration.getStartTime().getTime() == startDate.getTime()) count++;
+		}
+		return count;
 	}
 
 	public List<Date> getRegistrationDates(long groupId, long userId, long resourceId){
