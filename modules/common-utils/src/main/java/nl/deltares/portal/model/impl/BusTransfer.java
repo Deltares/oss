@@ -20,7 +20,10 @@ public class BusTransfer extends Registration {
     private final long dayMillis = TimeUnit.DAYS.toMillis(1);
     private final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     private BusRoute busRoute = null;
+    private Date startTime = new Date();
+    private Date endTime = new Date();
     private final List<Date> transferDates = new ArrayList<>();
+    private final Calendar calendar = Calendar.getInstance();
 
     public BusTransfer(JournalArticle article) throws PortalException {
         super(article);
@@ -31,14 +34,23 @@ public class BusTransfer extends Registration {
 
         try {
             Document document = getDocument();
+            Event event = getEvent(String.valueOf(getEventId()));
+
             String pickupOption = XmlContentUtils.getDynamicContentByName(document, "pickupDates", false);
             if (pickupOption.equals("daily")){
-                transferDates.addAll(getTransferDates(getStartTime(), getEndTime()));
+                startTime = event.getStartTime();
+                endTime = event.getEndTime();
+                transferDates.addAll(getTransferDates(event.getStartTime(), event.getEndTime()));
             } else {
                 String[] pickupDates = XmlContentUtils.getDynamicContentsByName(document, "date");
                 for (String pickupDate : pickupDates) {
                     transferDates.add(df.parse(pickupDate));
                 }
+                if (transferDates.size() > 0) {
+                    startTime = transferDates.get(0);
+                    endTime = transferDates.get(transferDates.size() - 1);
+                }
+
             }
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing bus route %s: %s!", getTitle(), e.getMessage()), e);
@@ -51,10 +63,18 @@ public class BusTransfer extends Registration {
         Date day = df.parse(startDayString);
         ArrayList<Date> days = new ArrayList<>();
         while (day.before(endTime)){
-            days.add(day);
+            if (!isWeekend(day)) {
+                days.add(day);
+            }
             day = new Date(day.getTime() + dayMillis);
         }
         return days;
+    }
+
+    private boolean isWeekend(Date day) {
+        calendar.setTime(day);
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        return dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY;
     }
 
     @Override
@@ -98,25 +118,12 @@ public class BusTransfer extends Registration {
 
     @Override
     public Date getStartTime() {
-        if (transferDates.size() == 0) {
-            if (getEvent().isPresent()) {
-                return getEvent().get().getStartTime();
-            }
-        }
-        return transferDates.get(0);
+        return startTime;
     }
 
     @Override
     public Date getEndTime() {
-        if (transferDates.size() == 0) {
-            if (getEvent().isPresent()) {
-                return getEvent().get().getEndTime();
-            }
-        }
-        return transferDates.get(transferDates.size() -1);
+        return endTime;
     }
 
-    private Optional<Event> getEvent() {
-        return Optional.ofNullable(getCachedEventArticle(String.valueOf(this.getEventId())));
-    }
 }
