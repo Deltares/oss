@@ -137,7 +137,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
         return article;
     }
 
-    private static Event getCachedEventArticle(String article) {
+    protected static Event getCachedEventArticle(String article) {
         Event dsdArticle = cache.get(article);
         if (dsdArticle != null &&
                 (System.currentTimeMillis() - dsdArticle.instantiationTime) <  MAX_CACHE_TIME){
