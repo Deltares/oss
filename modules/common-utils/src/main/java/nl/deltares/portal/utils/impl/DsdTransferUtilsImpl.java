@@ -44,6 +44,8 @@ public class DsdTransferUtilsImpl implements DsdTransferUtils {
     @Override
     public void registerUser(User user, Registration registration, Date transferDate) throws PortalException {
 
+        if (isUserRegisteredFor(user, registration, transferDate)) return;
+
         validateRegistration(user, registration, transferDate);
 
         registrationLocalService.addUserRegistration(
@@ -77,10 +79,6 @@ public class DsdTransferUtilsImpl implements DsdTransferUtils {
             }
         } catch (ParseException e){
             throw new PortalException("Error parsing dates: " + e.getMessage());
-        }
-
-        if (isUserRegisteredFor(user, registration, transferDate)) {
-            throw new ValidationException(String.format("User already registered for transfer %s !", registration.getTitle()));
         }
 
         if (registration.getCapacity() != Integer.MAX_VALUE && getRegistrationCount(registration, transferDate) >= registration.getCapacity()) {

@@ -1,6 +1,7 @@
 package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Validator;
@@ -137,13 +138,22 @@ public abstract class AbsDsdArticle implements DsdArticle {
         return article;
     }
 
-    protected static Event getCachedEventArticle(String article) {
+    private static Event getCachedEventArticle(String article) {
         Event dsdArticle = cache.get(article);
         if (dsdArticle != null &&
                 (System.currentTimeMillis() - dsdArticle.instantiationTime) <  MAX_CACHE_TIME){
             return dsdArticle;
         }
         return null;
+    }
+
+    public Event getEvent(String eventArticleId) throws PortalException {
+
+        Event event = getCachedEventArticle(eventArticleId);
+        if (event != null) return event;
+
+        JournalArticle latestEventArticle = JournalArticleLocalServiceUtil.getLatestArticle(article.getGroupId(), eventArticleId);
+        return  (Event) getInstance(latestEventArticle);
     }
 
     private static DSD_STRUCTURE_KEYS getDsdStructureKey(String structureKey) {

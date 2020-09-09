@@ -23,6 +23,9 @@
 </liferay-ui:error>
 
 <aui:form action="<%= submitTransferForm %>" name="fm">
+    <aui:button-row>
+        <aui:button type="submit" value="dsd.transfer.save"></aui:button>
+    </aui:button-row>
 
     <c:forEach var="busTransfer" items="${transfers}">
         <div class="row">
@@ -47,10 +50,12 @@
                     <%
                         Date transferDate = (Date) pageContext.getAttribute("transferDate");
                         Registration registration = event.getRegistration(busTransfer.getResourceId());
+                        int totalRegistrations = dsdTransferUtils.getRegistrationCount(registration,transferDate);
+                        int remainingPlaces = registration.getCapacity() - totalRegistrations;
                     %>
                     <div class="row">
                         <c:set var="formattedDate" value='<%= format.format(transferDate) %>'/>
-                        <div class="d-flex">
+                        <div class="col">
                             <div class="float-left p-3">
                                 <aui:input
                                         name="registration_${busTransfer.resourceId}_${formattedDate}"
@@ -58,10 +63,15 @@
                                         checked="<%= dsdTransferUtils.isUserRegisteredFor(user, registration, transferDate) %>"
                                         type="checkbox"/>
                             </div>
-                            <div class="float-left w-100">
-
-                                <%= DateUtil.getDate(transferDate, "dd MMM yyyy", locale) %>
+                            <div class="float-left w-200">
+                                <%= DateUtil.getDate(transferDate, "EE, dd MMMM yyyy", locale) %>
                             </div>
+                        </div>
+                        <div class="col">
+                            <div class="float-right">
+                                ( <liferay-ui:message key="dsd.transfer.remaining.places"/> : <%= remainingPlaces %> )
+                            </div>
+
                         </div>
                     </div>
 
@@ -72,7 +82,7 @@
     </c:forEach>
 
     <aui:button-row>
-        <aui:button type="submit" value="register"></aui:button>
+        <aui:button type="submit" value="dsd.transfer.save"></aui:button>
     </aui:button-row>
 
 </aui:form>
