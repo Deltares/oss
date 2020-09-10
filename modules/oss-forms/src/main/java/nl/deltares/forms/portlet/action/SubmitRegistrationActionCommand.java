@@ -1,6 +1,5 @@
 package nl.deltares.forms.portlet.action;
 
-import com.liferay.journal.model.JournalArticleConstants;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -10,7 +9,10 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.*;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.dsd.model.BillingInfo;
 import nl.deltares.dsd.model.RegistrationRequest;
 import nl.deltares.emails.DsdEmail;
@@ -25,7 +27,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
-import java.net.URL;
 import java.util.*;
 
 @Component(
@@ -46,12 +47,14 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
         User user = themeDisplay.getUser();
 
-        RegistrationRequest registrationRequest = getRegistrationRequest(actionRequest, themeDisplay);
+        RegistrationRequest registrationRequest = getRegistrationRequest(actionRequest, themeDisplay, action);
         if (registrationRequest == null){
             if (!redirect.isEmpty()) {
                 sendRedirect(actionRequest, actionResponse, redirect);
             }
             return;
+        } else {
+            redirect = registrationRequest.getSiteURL();
         }
 
         boolean success = true;
@@ -80,8 +83,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 SessionErrors.add(actionRequest, "registration-failed", "Unsupported action " + action);
         }
         if (success){
-            SessionMessages.add(actionRequest, "registration-success", new String[]{action, user.getEmailAddress(), registrationRequest.getRegistration().getTitle()});
-            redirect = registrationRequest.getArticleUrl();
+            SessionMessages.add(actionRequest, "registration-success", new String[]{action, user.getEmailAddress(), registrationRequest.getEvent().getTitle()});
         }
 
         if (!redirect.isEmpty()) {
@@ -91,37 +93,47 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
     private boolean removeCurrentRegistration(ActionRequest actionRequest, User user, RegistrationRequest registrationRequest) {
 
-        try {
-            dsdSessionUtils.unRegisterUser(user, registrationRequest.getRegistration());
-            return true;
-        } catch (PortalException e) {
-            SessionErrors.add(actionRequest, "unregister-failed",  e.getMessage());
-            return false;
-        }
+            boolean success = true;
+            List<Registration> registrations = registrationRequest.getRegistrations();
+            for (Registration registration : registrations) {
+                try {
+                    dsdSessionUtils.unRegisterUser(user, registration);
+                } catch (PortalException e) {
+                    SessionErrors.add(actionRequest, "unregister-failed",  e.getMessage());
+                    success = false;
+                }
+            }
+            return success;
     }
 
     private boolean registerUser(ActionRequest actionRequest, User user, RegistrationRequest registrationRequest) {
 
-        Map<String, String> registrationProperties = getRegistrationProperties(registrationRequest);
-        try {
-            dsdSessionUtils.registerUser(user, registrationRequest.getRegistration(), registrationProperties);
-        } catch (PortalException e) {
-            SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
-            return false;
-        }
-        for (Registration childRegistration : registrationRequest.getChildRegistrations()) {
+        Map<String, String> billingInfo = getBillingInfo(registrationRequest);
+        List<Registration> registrations = registrationRequest.getRegistrations();
+        boolean success = true;
+        for (Registration registration : registrations) {
 
             try {
-                dsdSessionUtils.registerUser(user, childRegistration, Collections.emptyMap());
+                dsdSessionUtils.registerUser(user, registration, registration.getPrice() > 0 ? billingInfo : Collections.emptyMap());
             } catch (PortalException e) {
                 SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
-                return false;
+                success = false;
+            }
+
+            for (Registration childRegistration : registrationRequest.getChildRegistrations(registration)) {
+
+                try {
+                    dsdSessionUtils.registerUser(user, childRegistration, childRegistration.getPrice() > 0 ? billingInfo : Collections.emptyMap());
+                } catch (PortalException e) {
+                    SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
+                    success = false;
+                }
             }
         }
-        return true;
+        return success;
     }
 
-    private Map<String, String> getRegistrationProperties(RegistrationRequest registrationRequest) {
+    private Map<String, String> getBillingInfo(RegistrationRequest registrationRequest) {
         HashMap<String, String> propertyMap = new HashMap<>();
 
         BillingInfo billingInfo = registrationRequest.getBillingInfo();
@@ -136,7 +148,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         return propertyMap;
     }
 
-    private RegistrationRequest getRegistrationRequest(ActionRequest actionRequest, ThemeDisplay themeDisplay) {
+    private RegistrationRequest getRegistrationRequest(ActionRequest actionRequest, ThemeDisplay themeDisplay, String action) {
         String articleId = ParamUtil.getString(actionRequest, "articleId");
 
         try {
@@ -144,10 +156,9 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             Registration parentRegistration = dsdParserUtils.getRegistration(siteId, articleId);
             Event event = dsdParserUtils.getEvent(siteId, String.valueOf(parentRegistration.getEventId()));
 
-            RegistrationRequest registrationRequest = new RegistrationRequest();
-            registrationRequest.setEventName(event.getTitle());
-            registrationRequest.setRegistration(parentRegistration);
-            registrationRequest.setBaseUrl(PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay) + JournalArticleConstants.CANONICAL_URL_SEPARATOR);
+            RegistrationRequest registrationRequest = new RegistrationRequest(themeDisplay);
+            registrationRequest.setEvent(event);
+            registrationRequest.addRegistration(parentRegistration);
 
             BillingInfo billingInfo = getBillingInfo(actionRequest);
             registrationRequest.setBillingInfo(billingInfo);
@@ -155,7 +166,9 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             List<Registration> childRegistrations = dsdSessionUtils.getChildRegistrations(parentRegistration);
             for (Registration childRegistration : childRegistrations) {
                 if (ParamUtil.getString(actionRequest, "registration_" + childRegistration.getArticleId()).equals("true")) {
-                    registrationRequest.getChildRegistrations().add(childRegistration);
+                    registrationRequest.addChildRegistration(parentRegistration, childRegistration);
+                } else if ("unregister".equals(action) && dsdSessionUtils.isUserRegisteredFor(themeDisplay.getUser(), childRegistration)){
+                    registrationRequest.addChildRegistration(parentRegistration, childRegistration);
                 }
             }
             return registrationRequest;
@@ -207,18 +220,15 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                               ThemeDisplay themeDisplay, String action) {
         try {
 
-            DsdEmail email = new DsdEmail();
             ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", themeDisplay.getLocale(), getClass());
-            email.setResourceBundle(resourceBundle);
-            email.setBanner(new URL(themeDisplay.getCDNBaseURL() + getBannerUrl(themeDisplay, registrationRequest.getRegistration())));
-            email.setLanguage(themeDisplay.getLocale().getLanguage());
+            DsdEmail email = new DsdEmail(user, resourceBundle, registrationRequest);
             switch (action){
                 case "register":
                 case "update":
-                    email.sendRegisterEmail(user, registrationRequest);
+                    email.sendRegisterEmail();
                     return true;
                 case "unregister":
-                    email.sendUnregisterEmail(user, registrationRequest);
+                    email.sendUnregisterEmail();
                     return true;
                 default:
                     return false;
@@ -229,10 +239,6 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             LOG.debug("Could not send " + action + " email for user [" + user.getEmailAddress() + "]", e);
             return false;
         }
-    }
-
-    private static String getBannerUrl(ThemeDisplay themeDisplay, Registration registration){
-        return registration.getSmallImageURL(themeDisplay);
     }
 
     @Reference
