@@ -22,7 +22,12 @@
             <#if displayContext.getPresenterName()?has_content>
                 <span class="expert-name px-2">${displayContext.getPresenterName()}</span> |
             </#if>
-            <span class="event-time pl-2">${displayContext.getStartTime()} - ${displayContext.getEndTime()}</span>
+            <span class="event-time pl-2">${displayContext.getStartTime()} - ${displayContext.getEndTime()}</span> |
+            <#if displayContext.getPrice() gt 0 >
+                ${displayContext.getCurrency()} ${displayContext.getPrice()}
+            <#else>
+                ${languageUtil.get(locale, "dsd.theme.session.free")}
+            </#if>
         </div>
 
         <p class="search-document-content text-default">

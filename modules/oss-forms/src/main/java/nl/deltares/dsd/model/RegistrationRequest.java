@@ -1,54 +1,62 @@
 package nl.deltares.dsd.model;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.PortalUtil;
 import nl.deltares.portal.model.impl.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 public class RegistrationRequest {
 
-    private final List<Registration> childRegistrations = new ArrayList<>();
-    private Registration registration;
-    private String eventName;
+    private final Map<String, List<Registration>> childRegistrations = new HashMap<>();
+    private final ThemeDisplay themeDisplay;
+    private final List<Registration> registrations = new ArrayList<>();
+    private final String baseUrl;
+    private final String siteUrl;
     private BillingInfo billingInfo;
-    private String baseUrl;
+    private Event event;
 
-    public void setRegistration(Registration registration){
-        this.registration = registration;
+    public RegistrationRequest(ThemeDisplay themeDisplay) throws PortalException {
+        this.themeDisplay = themeDisplay;
+        siteUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay);
+        baseUrl = themeDisplay.getCDNBaseURL();
     }
 
-    public Registration getRegistration() {
-        return registration;
+    public void addRegistration(Registration registration){
+        registrations.add(registration);
     }
 
-    public List<Registration> getChildRegistrations() {
-        return childRegistrations;
+    public void addChildRegistration(Registration parent, Registration child){
+
+        ArrayList<Registration> newList = new ArrayList<>();
+        List<Registration> children = childRegistrations.putIfAbsent(parent.getArticleId(), newList);
+        if (children == null) {
+            newList.add(child);
+        } else {
+            children.add(child);
+        }
     }
 
-    public String getLocation() {
+    public List<Registration> getChildRegistrations(Registration parent){
+        return Collections.unmodifiableList(childRegistrations.getOrDefault(parent.getArticleId(), new ArrayList<>()));
+    }
+
+    public List<Registration> getRegistrations() {
+        return Collections.unmodifiableList(registrations);
+    }
+
+    public String getLocation(Registration registration) {
         if (registration instanceof SessionRegistration){
             Room room = ((SessionRegistration) registration).getRoom();
             return room.getTitle();
         } else if (registration instanceof DinnerRegistration){
             Location location = ((DinnerRegistration) registration).getRestaurant();
-            location.getTitle();
+            return location.getTitle();
         }
         return null;
-    }
-
-    public String getEventName() {
-        return eventName;
-    }
-
-    public void setEventName(String eventName) {
-        this.eventName = eventName;
-    }
-
-    public void setBaseUrl(String baseUrl){
-        this.baseUrl = baseUrl;
-    }
-    public String getArticleUrl() {
-        return baseUrl + registration.getJournalArticle().getUrlTitle();
     }
 
     public void setBillingInfo(BillingInfo billingInfo) {
@@ -57,5 +65,27 @@ public class RegistrationRequest {
 
     public BillingInfo getBillingInfo() {
         return billingInfo;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public String getSiteURL(){
+        return siteUrl;
+    }
+
+    public URL getBannerURL() throws MalformedURLException {
+        if (event.getEmailBannerURL() == null) return  null;
+        return new URL(baseUrl + event.getEmailBannerURL());
+    }
+
+    public URL getFooterURL() throws MalformedURLException {
+        if (event.getEmailFooterURL() == null) return  null;
+        return new URL(baseUrl + event.getEmailFooterURL());
     }
 }

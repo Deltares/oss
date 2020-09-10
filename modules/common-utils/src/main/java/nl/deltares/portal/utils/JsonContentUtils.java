@@ -1,11 +1,14 @@
 package nl.deltares.portal.utils;
 
+import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
+import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.impl.DsdJournalArticleUtilsImpl;
 
@@ -135,6 +138,13 @@ public class JsonContentUtils {
         JSONArray values = JSONFactoryUtil.createJSONArray(jsonArray);
         if (values.length() == 0) return null;
         return values.getString(0);
+    }
+
+    public static String parseImageJson(String jsonData) throws PortalException {
+        JSONObject jsonObject = JsonContentUtils.parseContent(jsonData);
+        FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(jsonObject.getLong("fileEntryId"));
+        if (fileEntry == null) return "";
+        return DLUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), null, "", false, true);
     }
 
 }

@@ -65,6 +65,14 @@ public class RegistrationDisplayContext {
         }
     }
 
+    public double getPrice(){
+        return registration.getPrice();
+    }
+
+    public String getCurrency(){
+        return registration.getCurrency();
+    }
+
     public String getSmallImageURL() {
         String url = "";
         if (getRegistration() != null) {

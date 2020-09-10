@@ -1,13 +1,9 @@
 package nl.deltares.portal.model.impl;
 
-import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
-import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.utils.JsonContentUtils;
@@ -37,7 +33,7 @@ public class SessionRegistration extends Registration {
             Document document = getDocument();
             String jsonImage = XmlContentUtils.getDynamicContentByName(document, "eventImage", true);
             if (jsonImage != null) {
-                imageUrl = parseImage(jsonImage);
+                imageUrl = JsonContentUtils.parseImageJson(jsonImage);
             }
             webinarKey = XmlContentUtils.getDynamicContentByName(document, "webinarKey", true);
             //todo: Add provider currently only GOTO
@@ -112,18 +108,7 @@ public class SessionRegistration extends Registration {
         }
     }
 
-    public String getImageUrl(){
-        return imageUrl;
-    }
-
     public String getWebinarKey(){ return  webinarKey; }
-    
-    private String parseImage(String jsonData) throws PortalException {
-        JSONObject jsonObject = JsonContentUtils.parseContent(jsonData);
-        FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(jsonObject.getLong("fileEntryId"));
-        if (fileEntry == null) return "";
-        return DLUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), null, "", false, true);
-    }
 
     @Override
     public String getSmallImageURL(ThemeDisplay themeDisplay) {

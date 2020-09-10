@@ -2,116 +2,99 @@ package nl.deltares.emails;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.util.StringUtil;
 import nl.deltares.dsd.model.BillingInfo;
 import nl.deltares.dsd.model.RegistrationRequest;
+import nl.deltares.emails.serializer.DsdRegisterEmailSerializer;
+import nl.deltares.emails.serializer.DsdRegistrationEmailSerializer;
+import nl.deltares.emails.serializer.DsdUnRegisterEmailSerializer;
 
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
-import static nl.deltares.emails.EmailUtils.*;
+import static nl.deltares.emails.EmailUtils.sendEmail;
 
 public class DsdEmail {
 
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
-    private final SimpleDateFormat timeFormat = new SimpleDateFormat("kk:mm");
     private String sendFromEmail = "mydeltares@deltares.nl";
 //    private String replyToEmail = "dsd@deltares.nl";
+    private String sendToEmail = null;
+    private String sendCCEmail = null;
     private String replyToEmail = "erik.derooij@deltares.nl"; //TODO: change to dsd
-    private URL banner = null;
-    private URL footer = null;
-    private ResourceBundle bundle;
-    private String languageId = "en";
+    private final User user;
+    private final ResourceBundle bundle;
+    private final RegistrationRequest request;
 
-
-    public void setResourceBundle(ResourceBundle bundel) {
-        this.bundle = bundel;
+    public DsdEmail(User user, ResourceBundle bundle, RegistrationRequest request) {
+        this.user = user;
+        this.bundle = bundle;
+        this.request = request;
     }
 
-    public void setBanner(URL bannerPath){
-        this.banner = bannerPath;
-    }
-
-    public void setFooter(URL footerPath) {
-        this.footer = footerPath;
+    public void setReplyToEmail(String replyToEmail) {
+        this.replyToEmail = replyToEmail;
     }
 
     public void setSendFromEmail(String sendFromEmail) {
         this.sendFromEmail = sendFromEmail;
     }
 
-    public void sendUnregisterEmail(User user, RegistrationRequest registrationRequest) throws Exception {
-        String body = getTemplate("unregister_" + languageId + ".tmpl");
-        body = StringUtil.replace(body,
-                new String[]{"[$FIRSTNAME$]", "[$LASTNAME$]", "[$EVENT$]", "[$RESERVATION$]"},
-                new String[]{user.getFirstName(), user.getLastName(), registrationRequest.getEventName(), registrationRequest.getRegistration().getTitle()});
+    public void sendUnregisterEmail() throws Exception {
 
-        String subject = LanguageUtil.format(bundle, "dsd.unregister.subject", "event");
+        StringBuilder bodyBuilder = new StringBuilder();
+        DsdUnRegisterEmailSerializer serializer = new DsdUnRegisterEmailSerializer();
+        serializer.serialize(this, bodyBuilder);
 
-        BillingInfo billingInfo = registrationRequest.getBillingInfo();
-        String ccEmail;
-        String toEmail;
+        String subject = LanguageUtil.format(bundle, "dsd.unregister.subject", request.getEvent().getTitle());
+
+        loadEmailAddresses();
+
+        sendEmail(bodyBuilder.toString(), subject, sendToEmail, sendCCEmail, sendFromEmail, replyToEmail, loadImageMap());
+    }
+
+    private void loadEmailAddresses() {
+        BillingInfo billingInfo = request.getBillingInfo();
         if (billingInfo != null && billingInfo.getEmail() != null){
-            toEmail = billingInfo.getEmail();
-            ccEmail = user.getEmailAddress();
+            sendToEmail = billingInfo.getEmail();
+            sendCCEmail = user.getEmailAddress();
         } else {
-            toEmail = user.getEmailAddress();
-            ccEmail = null;
+            sendToEmail = user.getEmailAddress();
+            sendCCEmail = null;
         }
-
-        sendEmail(body, subject, toEmail, ccEmail, sendFromEmail, replyToEmail, loadImageMap());
     }
 
-    public void sendRegisterEmail(User user, RegistrationRequest registrationRequest) throws Exception{
-        String body = getTemplate("register_" +  languageId + ".tmpl");
+    public void sendRegisterEmail() throws Exception{
+        StringBuilder bodyBuilder = new StringBuilder();
+        DsdRegistrationEmailSerializer serializer = new DsdRegisterEmailSerializer();
+        serializer.serialize(this, bodyBuilder);
 
-        body = StringUtil.replace(body,
-                new String[]{ "[$FIRSTNAME$]", "[$LASTNAME$]", "[$EVENT$]", "[$RESERVATION$]", "[$TYPE$]", "[$ROOM$}", "[$DATE$]", "[$TIME$]", "[$SITEURL$]"},
-                new String[]{user.getFirstName(), user.getLastName(), registrationRequest.getEventName(), registrationRequest.getRegistration().getTitle(),
-                        getType(registrationRequest.getRegistration().getType()), registrationRequest.getLocation(),
-                        getDate(registrationRequest), getTime(registrationRequest), registrationRequest.getArticleUrl()});
+        String subject = LanguageUtil.format(bundle, "dsd.register.subject", request.getEvent().getTitle());
 
-        String subject = LanguageUtil.format(bundle, "dsd.register.subject", "event");
+        loadEmailAddresses();
 
-        BillingInfo billingInfo = registrationRequest.getBillingInfo();
-        String ccEmail;
-        String toEmail;
-        if (billingInfo != null && billingInfo.getEmail() != null){
-            toEmail = billingInfo.getEmail();
-            ccEmail = user.getEmailAddress();
-        } else {
-            toEmail = user.getEmailAddress();
-            ccEmail = null;
-        }
-        sendEmail(body, subject, toEmail, ccEmail, sendFromEmail, replyToEmail, loadImageMap());
+        sendEmail(bodyBuilder.toString(), subject, sendToEmail, sendCCEmail, sendFromEmail, replyToEmail, loadImageMap());
     }
 
-    private String getTime(RegistrationRequest registrationRequest) {
-        String startTime = timeFormat.format(registrationRequest.getRegistration().getStartTime());
-        String endTime = timeFormat.format(registrationRequest.getRegistration().getEndTime());
-        return startTime + " - " + endTime;
-    }
+    private HashMap<String, URL> loadImageMap() throws MalformedURLException {
 
-    private String getDate(RegistrationRequest registrationRequest) {
-        String startDay = dateFormat.format(registrationRequest.getRegistration().getStartTime());
-        String endDay = dateFormat.format(registrationRequest.getRegistration().getEndTime());
-        return startDay + " - " + endDay;
-    }
-
-    private String getType(String type) {
-        return LanguageUtil.get(bundle, "dsd.type." + type);
-    }
-
-    private HashMap<String, URL> loadImageMap() {
+        URL bannerURL = request.getBannerURL();
+        URL footerURL = request.getFooterURL();
         HashMap<String, URL> imageMap = new HashMap<>();
-        imageMap.put("banner", banner == null ? getImage("dsdint_banner.jpg") : banner);
-        imageMap.put("footer", footer == null ? getImage("dsdint_footer.png") : footer);
+        if (bannerURL != null ) imageMap.put("banner", bannerURL);
+        if (footerURL != null ) imageMap.put("footer", footerURL);
         return imageMap;
     }
 
-    public void setLanguage(String languageId) {
-        this.languageId = languageId;
+    public User getUser() {
+        return user;
+    }
+
+    public RegistrationRequest getRegistrationRequest() {
+        return request;
+    }
+
+    public ResourceBundle getBundle() {
+        return bundle;
     }
 }

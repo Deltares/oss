@@ -196,6 +196,54 @@
             "required": true,
             "showLabel": true,
             "type": "ddm-text-html"
+        },
+        {
+            "label": {
+                "en_US": "Email banner"
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "style": {
+                "en_US": ""
+            },
+            "tip": {
+                "en_US": ""
+            },
+            "dataType": "image",
+            "fieldNamespace": "ddm",
+            "indexType": "text",
+            "localizable": true,
+            "name": "bannerImage",
+            "readOnly": false,
+            "repeatable": false,
+            "required": false,
+            "showLabel": true,
+            "type": "ddm-image"
+        },
+        {
+            "label": {
+                "en_US": "Email footer"
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "style": {
+                "en_US": ""
+            },
+            "tip": {
+                "en_US": ""
+            },
+            "dataType": "image",
+            "fieldNamespace": "ddm",
+            "indexType": "text",
+            "localizable": true,
+            "name": "footerImage",
+            "readOnly": false,
+            "repeatable": false,
+            "required": false,
+            "showLabel": true,
+            "type": "ddm-image"
         }
     ]
 }

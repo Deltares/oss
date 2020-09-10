@@ -26,6 +26,8 @@ public class Event extends AbsDsdArticle {
     boolean hasEventLocation = true;
     private Date startTime = null;
     private Date endTime = null;
+    private String emailBannerURL = null;
+    private String emailFooterURL = null;
 
     public Event(JournalArticle journalArticle) throws PortalException {
         super(journalArticle);
@@ -36,6 +38,14 @@ public class Event extends AbsDsdArticle {
         Document document = getDocument();
         startTime = XmlContentUtils.parseDateTimeFields(document, "start", "starttime", false);
         endTime = XmlContentUtils.parseDateTimeFields(document, "end", "endtime", false);
+        String bannerImageJson = XmlContentUtils.getDynamicContentByName(document, "bannerImage", true);
+        if (bannerImageJson != null) {
+            emailBannerURL = JsonContentUtils.parseImageJson(bannerImageJson);
+        }
+        String footerImageJson = XmlContentUtils.getDynamicContentByName(document, "footerImage", true);
+        if (footerImageJson != null) {
+            emailFooterURL = JsonContentUtils.parseImageJson(footerImageJson);
+        }
     }
 
     @Override
@@ -89,6 +99,15 @@ public class Event extends AbsDsdArticle {
 
     public Date getEndTime() {
         return endTime;
+    }
+
+    public String getEmailBannerURL() {
+
+        return emailBannerURL;
+    }
+
+    public String getEmailFooterURL() {
+        return emailFooterURL;
     }
 
     /**
