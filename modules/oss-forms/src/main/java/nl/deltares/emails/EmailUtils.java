@@ -1,7 +1,6 @@
 package nl.deltares.emails;
 
 import com.liferay.mail.kernel.service.MailServiceUtil;
-import com.liferay.petra.content.ContentUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 
 import javax.activation.*;
@@ -12,7 +11,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 
@@ -22,10 +20,10 @@ public class EmailUtils {
 
         MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
         mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
-        mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
-        mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
+//        mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
+//        mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
         mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
-        mc.addMailcap("message/rfc822;; x-java-content- handler=com.sun.mail.handlers.message_rfc822");
+//        mc.addMailcap("message/rfc822;; x-java-content- handler=com.sun.mail.handlers.message_rfc822");
 
         Transport transport = MailServiceUtil.getSession().getTransport();
         try {
@@ -40,8 +38,8 @@ public class EmailUtils {
 
             MimeMultipart multipart = new MimeMultipart("related");
             BodyPart messageBodyPart = new MimeBodyPart();
-
-            messageBodyPart.setContent(body, "text/html");
+            messageBodyPart.setHeader("Content-Type", "text/html; charset=UTF-8");
+            messageBodyPart.setContent(body, "text/html; charset=UTF-8");
             multipart.addBodyPart(messageBodyPart);
 
             for (String cid : data.keySet()) {
@@ -67,33 +65,5 @@ public class EmailUtils {
         }
 
 
-    }
-
-//    static void sendEmail(String body, String subject, String sendToEmail, String sendFromEmail, boolean html) throws Exception {
-//
-//        InternetAddress fromAddress = new InternetAddress(sendFromEmail);
-//        InternetAddress toAddress = new InternetAddress(sendToEmail);
-//        MailMessage mailMessage = new MailMessage();
-//        mailMessage.setTo(toAddress);
-//        mailMessage.setFrom(fromAddress);
-//        mailMessage.setSubject(subject);
-//        mailMessage.setBody(body);
-//        mailMessage.setHTMLFormat(html);
-//        MailServiceUtil.sendEmail(mailMessage);
-//
-//    }
-
-    static URL getImage(String imageFile){
-        return EmailUtils.class.getClassLoader().getResource("/content/images/" + imageFile);
-    }
-
-    static String getTemplate(String templateFile) throws IOException {
-        String templatePath = "/content/" + templateFile;
-
-        String body = ContentUtil.get(EmailUtils.class.getClassLoader(), templatePath);
-        if (body == null){
-            throw new IOException("Could not find template: " + templatePath);
-        }
-        return body;
     }
 }

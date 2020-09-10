@@ -137,7 +137,16 @@
                                 <c:if test="<%= Validator.isNotNull(registrationDisplayContext.getPresenterName()) %>">
                                     <span class="expert-name px-2"><%= registrationDisplayContext.getPresenterName() %></span> |
                                 </c:if>
-                                 <span class="event-time pl-2"><%= registrationDisplayContext.getStartTime() %> - <%= registrationDisplayContext.getEndTime() %></span>
+                                 <span class="event-time pl-2"><%= registrationDisplayContext.getStartTime() %> - <%= registrationDisplayContext.getEndTime() %></span> |
+                                <c:choose>
+                                    <c:when test="<%= registrationDisplayContext.getPrice() > 0%>">
+                                        <%= registrationDisplayContext.getCurrency() %> <%= registrationDisplayContext.getPrice() %>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <liferay-ui:message key="dsd.theme.session.free" translateArguments="<%= true %>" />
+                                    </c:otherwise>
+                                </c:choose>
+
                             </div>
 
                             <c:if test="<%= searchResultSummaryDisplayContext.isContentVisible() %>">
