@@ -8,7 +8,8 @@ Export-Package: \
   nl.deltares.portal.model.impl, \
   nl.deltares.portal.exception, \
   nl.deltares.portal.display.context, \
-  nl.deltares.portal.configuration
+  nl.deltares.portal.configuration, \
+  nl.deltares.portal.kernel.util.comparator
 Import-Package: \
   nl.deltares.dsd.registration.service.*,\
   *

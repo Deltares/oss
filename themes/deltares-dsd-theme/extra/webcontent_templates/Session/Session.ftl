@@ -51,12 +51,16 @@
                             ${registration.getPrice()}&nbsp;
                         </#if>
                         <br>
-                        <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />
+
+                        <#if registration.getEventId() gt 0 >
+                            <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />
+                        </#if>
+
                         ${languageUtil.get(locale, "dsd.theme.session.room")} :
                         <#if room??>
 
                             ${room.getTitle()}
-                            <#if event.findBuilding(room)?? >
+                            <#if event?? && event.findBuilding(room)?? >
                                 <#assign building = event.findBuilding(room) />
                                 -  ${languageUtil.get(locale, "dsd.theme.session.building")} : ${building.getTitle()}
                             </#if>
@@ -67,7 +71,7 @@
                         ${languageUtil.get(locale, "dsd.theme.session.available")} : ${available}
                     </span>
 
-                    <#if themeDisplay.isSignedIn() >
+                    <#if themeDisplay.isSignedIn() && registration.isOpen() >
                         <#assign isRegistered = dsdSessionUtils.isUserRegisteredFor(user, registration) />
                         <span class="d-block">
                             <#if isRegistered >

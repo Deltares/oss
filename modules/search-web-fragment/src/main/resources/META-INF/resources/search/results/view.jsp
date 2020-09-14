@@ -22,15 +22,20 @@
         taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
         taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
-<%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
+<%@
+        page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
+        page import="com.liferay.portal.kernel.search.Document" %><%@
+        page import="com.liferay.portal.kernel.theme.ThemeDisplay" %><%@
         page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
+        page import="com.liferay.portal.kernel.util.Validator" %><%@
         page import="com.liferay.portal.kernel.util.WebKeys" %><%@
-        page import="com.liferay.portal.search.web.internal.result.display.context.SearchResultFieldDisplayContext" %><%@
-        page import="com.liferay.portal.search.web.internal.result.display.context.SearchResultSummaryDisplayContext" %><%@
-        page import="com.liferay.portal.search.web.internal.search.results.portlet.SearchResultsPortletDisplayContext" %><%@
-        page import="nl.deltares.portal.display.context.RegistrationDisplayContext" %><%@
-        page import="com.liferay.portal.kernel.theme.ThemeDisplay" %>
-<%@ page import="com.liferay.portal.kernel.util.Validator" %>
+        page import="com.liferay.portal.search.web.internal.result.display.context.SearchResultFieldDisplayContext" %>
+<%@ page import="com.liferay.portal.search.web.internal.result.display.context.SearchResultSummaryDisplayContext" %>
+<%@ page import="com.liferay.portal.search.web.internal.search.results.portlet.SearchResultsPortletDisplayContext" %>
+<%@ page import="nl.deltares.portal.display.context.RegistrationDisplayContext" %>
+<%@ page import="java.util.Collections" %>
+<%@ page import="java.util.List" %>
+<%@ page import="nl.deltares.portal.kernel.util.comparator.SearchResultsComparator" %>
 
 <portlet:defineObjects />
 
@@ -48,6 +53,8 @@
     }
 
     com.liferay.portal.kernel.dao.search.SearchContainer<com.liferay.portal.kernel.search.Document> searchContainer1 = searchResultsPortletDisplayContext.getSearchContainer();
+    List<Document> results = searchContainer1.getResults();
+    Collections.sort(results, new SearchResultsComparator());
 %>
 
 <style>
