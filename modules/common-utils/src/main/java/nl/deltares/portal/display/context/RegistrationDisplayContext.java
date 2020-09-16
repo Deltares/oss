@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
+import nl.deltares.portal.model.impl.DinnerRegistration;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
 
@@ -75,8 +76,13 @@ public class RegistrationDisplayContext {
 
     public String getSmallImageURL() {
         String url = "";
-        if (getRegistration() != null) {
-            url = getRegistration().getSmallImageURL(themeDisplay);
+        Registration registration = getRegistration();
+        if (registration != null) {
+            url = registration.getSmallImageURL(themeDisplay);
+
+            if ((url == null || url.isEmpty()) && registration instanceof DinnerRegistration){
+                url = ((DinnerRegistration)registration).getRestaurant().getSmallImageURL(themeDisplay);
+            }
         }
         return url;
     }
