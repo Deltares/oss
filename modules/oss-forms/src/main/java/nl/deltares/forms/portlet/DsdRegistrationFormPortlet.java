@@ -21,6 +21,7 @@ import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -67,6 +68,7 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 				request.setAttribute("attributes", attributes);
             } catch (Exception e) {
                 SessionErrors.add(request, "update-attributes-failed",  e.getMessage());
+                request.setAttribute("attributes", Collections.EMPTY_MAP);
             }
 
 		}
