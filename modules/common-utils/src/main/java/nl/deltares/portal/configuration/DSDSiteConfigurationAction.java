@@ -50,6 +50,9 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
 
         long eventId = ParamUtil.getLong(actionRequest, "eventId");
         String registrationURL = ParamUtil.getString(actionRequest, "registrationURL");
+        String conditionsURL = ParamUtil.getString(actionRequest, "conditionsURL");
+        String privacyURL = ParamUtil.getString(actionRequest, "privacyURL");
+        String contactURL = ParamUtil.getString(actionRequest, "contactURL");
 
         Settings settings = SettingsFactoryUtil.getSettings(
                 new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), DSDSiteConfiguration.class.getName()));
@@ -59,6 +62,9 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
 
         modifiableSettings.setValue("eventId", String.valueOf(eventId));
         modifiableSettings.setValue("registrationURL", registrationURL);
+        modifiableSettings.setValue("conditionsURL", conditionsURL);
+        modifiableSettings.setValue("privacyURL", privacyURL);
+        modifiableSettings.setValue("contactURL", contactURL);
         modifiableSettings.store();
 
         super.processAction(portletConfig, actionRequest, actionResponse);
