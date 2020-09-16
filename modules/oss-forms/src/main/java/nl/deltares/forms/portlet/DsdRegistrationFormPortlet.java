@@ -2,6 +2,7 @@ package nl.deltares.forms.portlet;
 
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -82,7 +83,14 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 		request.setAttribute("dsdSessionUtils", dsdSessionUtils);
 		request.setAttribute("registrationDisplayContext", dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay));
 
+		request.setAttribute(ConfigurationProvider.class.getName(), _configurationProvider);
 		super.render(request, response);
 	}
 
+	private ConfigurationProvider _configurationProvider;
+
+	@Reference
+	protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
+		_configurationProvider = configurationProvider;
+	}
 }

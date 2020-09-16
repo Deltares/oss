@@ -1,4 +1,3 @@
-<%@ include file="/META-INF/resources/dsd_init.jsp" %>
 <%@ page import="com.liferay.journal.model.JournalArticleDisplay" %>
 <%@ page import="nl.deltares.forms.internal.RegistrationFormDisplayContext" %>
 <%@ page import="nl.deltares.portal.utils.DsdSessionUtils" %>

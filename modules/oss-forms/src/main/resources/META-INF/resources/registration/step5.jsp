@@ -1,10 +1,6 @@
-<h3>
-    <liferay-ui:message key="dsd.registration.step5.selected.events"/>
-
-</h3>
-<h3>
+<span>
     <liferay-ui:message key="dsd.registration.step5.conditions.title"/>
-</h3>
+</span>
 <aui:input
         name="course_conditions"
         label="dsd.registration.step5.conditions.description"
@@ -15,7 +11,14 @@
                 }
             </aui:validator>
 </aui:input>
-<h3>
+<p>
+    <aui:a href="<%=conditionsURL%>" target="_blank"><liferay-ui:message key="dsd.registration.step5.conditions.link"/></aui:a>
+</p>
+<span>
     <liferay-ui:message key="dsd.registration.step5.privacy.title"/>
-</h3>
-<p><liferay-ui:message key="dsd.registration.step5.privacy.body"/></p>
+</span>
+<p>
+    <liferay-ui:message key="dsd.registration.step5.privacy.body"/>
+    <br><aui:a href="<%=privacyURL%>" target="_blank"><liferay-ui:message key="dsd.registration.step5.privacy.link"/></aui:a>
+    <br><aui:a href="<%=contactURL%>" target="_blank"><liferay-ui:message key="dsd.registration.step5.contact.link"/></aui:a>
+</p>
