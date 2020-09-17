@@ -19,17 +19,17 @@
                 </#if>
                 <#assign website = location.getWebsite() />
                 <div class="left-column">
-                    <img src="${location_img}" />
+                    <img style="max-height: 200px; max-width: 200px" src="${location_img}" />
                 </div>
                 <div class="right-column">
                     <div class="expert-data__content">
                         <h4 class="h1 clear-margin">${journalArticle.getTitle()}</h4>
                         <p>${location.getAddress()}, ${location.getCity()}<br>
-                        <#if website?? >
-                            <a target="_blank" href="${website}" >${website}</a><br>
-                        </#if>
-                        <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=${location.getLatitude()},${location.getLongitude()}">
-                            ${languageUtil.get(locale, "dsd.theme.locations.direction")}</a>
+                            <#if website?? >
+                                <a target="_blank" href="${website}" >${website}</a><br>
+                            </#if>
+                            <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=${location.getLatitude()},${location.getLongitude()}">
+                                ${languageUtil.get(locale, "dsd.theme.locations.direction")}</a>
                         </p>
                     </div>
                 </div>
