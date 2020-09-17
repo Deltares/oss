@@ -31,24 +31,31 @@
                             <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=${location.getLatitude()},${location.getLongitude()}">
                                 ${languageUtil.get(locale, "dsd.theme.locations.direction")}</a>
                         </p>
+                        <#if buildings?? >
+                            <h6>${languageUtil.get(locale, "dsd.theme.locations.buildingof")}: ${location.getTitle()}</h6>
+                            <div class="row">
+                                <#list buildings as building>
+                                    <div class="col-2">
+                                        <#assign building_img = building.getSmallImageURL(themeDisplay) />
+                                        <#if building_img == "" >
+                                            <#assign building_img = themeDisplay.getPathThemeImages() + "/dsd/building.png" />
+                                        </#if>
+                                        <img style="max-height: 100px; max-width: 100px" src="${building_img}" />
+                                    </div>
+                                </#list>
+                            </div>
+                            <div class="row">
+                                <#list buildings as building>
+                                    <div class="col-2">
+                                        ${building.getTitle()}
+                                    </div>
+                                </#list>
+                            </div>
+                        </#if>
                     </div>
                 </div>
             </div>
         </#list>
     </div>
-    <#if buildings?? >
-        <strong>${languageUtil.get(locale, "dsd.theme.locations.buildingof")}: ${location.getTitle()}</strong>
-        <div class="c-grid news-row">
-            <#list buildings as building>
-                <div class="c-card news-item">
-                    <#assign building_img = building.getSmallImageURL(themeDisplay) />
-                    <#if building_img == "" >
-                        <#assign building_img = themeDisplay.getPathThemeImages() + "/dsd/building.png" />
-                    </#if>
-                    <img style="max-height: 100px; max-width: 100px" src="${building_img}" />
-                    <h4 class="c-card__title h1">${building.getTitle()}</h4>
-                </div>
-            </#list>
-        </div>
-    </#if>
+
 </#if>
