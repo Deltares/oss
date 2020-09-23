@@ -48,4 +48,6 @@ public interface KeycloakUtils {
     int updateUserAttributes(String email, Map<String, String> attributes) throws Exception;
 
     Map<String, String> getUserAttributes(String email) throws Exception;
+
+    int registerUserLogin(String email, String siteId) throws Exception;
 }
