@@ -17,9 +17,12 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.time.LocalDateTime.now;
 
 @Component(
         immediate = true,
@@ -28,6 +31,10 @@ import java.util.Map;
 public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils {
 
     private static final Log LOG = LogFactoryUtil.getLog(KeycloakUtilsImpl.class);
+
+    private static final String LOGIN_LOGIN_COUNT = "login.login-count";
+    private static final String LOGIN_FIRST_LOGIN_DATE = "login.first-login-date";
+    private static final String LOGIN_RECENT_LOGIN_DATE = "login.recent-login-date";
 
     private static final String BASEURL_KEY = "keycloak.baseurl";
 
@@ -156,6 +163,17 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         return checkResponse(connection);
     }
 
+    public int registerUserLogin(String email, String siteId) throws Exception {
+        if ( siteId == null || siteId.isEmpty()) return -1;
+        Map<String, String> userAttributes = getUserAttributes(email);
+
+        recordFirstLogin(siteId, userAttributes);
+        recordLoginCount(siteId, userAttributes);
+        recordRecentLogin(siteId, userAttributes);
+
+        return updateUserAttributes(email, userAttributes);
+    }
+
     private String getKeycloakUsersPath() {
         String basePath = getKeycloakBaseApiPath();
         return basePath + "users";
@@ -223,4 +241,23 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         return pathParameters;
     }
 
+    private void recordLoginCount(String referrer, Map<String, String> attributes) {
+        String key = referrer == null ? LOGIN_LOGIN_COUNT : LOGIN_LOGIN_COUNT + '.' + referrer;
+        String count = attributes.getOrDefault(key, "0");
+        int nr = Integer.parseInt(count);
+        attributes.put(key, String.valueOf(++nr));
+    }
+
+    private void recordRecentLogin(String referrer, Map<String, String> attributes) {
+        String key = referrer == null ? LOGIN_RECENT_LOGIN_DATE : LOGIN_RECENT_LOGIN_DATE + '.' + referrer;
+        attributes.put(key, now(ZoneId.of("GMT")).toString());
+    }
+
+    private void recordFirstLogin(String referrer, Map<String, String> attributes) {
+        String key = referrer == null ? LOGIN_FIRST_LOGIN_DATE : LOGIN_FIRST_LOGIN_DATE + '.' + referrer;
+
+        if (!attributes.containsKey(key)) {
+            attributes.put(key, now(ZoneId.of("GMT")).toString());
+        }
+    }
 }
