@@ -48,20 +48,42 @@ public class PostLoginAction implements LifecycleAction {
 			return;
 		}
 
-		try {
-			if (keycloakUtils.isActive()){
-				LOG.info("Updating avatar for user " + user.getFullName());
+		if (keycloakUtils.isActive()){
+
+			try {
+
 				byte[] bytes = keycloakUtils.getUserAvatar(user.getEmailAddress());
 				if (bytes != null && bytes.length > 0) {
+					LOG.info("Updating avatar for user " + user.getFullName());
 					userLocalService.updatePortrait(user.getUserId(), bytes);
 				} else {
+					LOG.info("Deleting avatar for user " + user.getFullName());
 					userLocalService.deletePortrait(user.getUserId());
 				}
+			} catch (Exception e) {
+				LOG.warn(String.format("Error updating portrait %d for user %s", user.getPortraitId(), user.getScreenName()), e);
 			}
-		} catch (Exception e) {
-			LOG.warn(String.format("Error updating portrait %d for user %s", user.getPortraitId(), user.getScreenName()), e);
+
+			try {
+
+				String siteId = getSiteId(request.getParameter("redirect"));
+				if (siteId != null) {
+					LOG.info(String.format("Register user '%s' login to site '%s'", user.getFullName(), siteId));
+					keycloakUtils.registerUserLogin(user.getEmailAddress(), siteId);
+				}
+			} catch (Exception e) {
+				LOG.warn(String.format("Error updating portrait %d for user %s", user.getPortraitId(), user.getScreenName()), e);
+			}
+
 		}
 
+	}
+
+	private String getSiteId(String redirect) {
+		if (redirect == null) return null;
+		int startSiteId = redirect.lastIndexOf('/');
+		if (startSiteId == -1) return null;
+		return redirect.substring(startSiteId + 1);
 	}
 
 }
