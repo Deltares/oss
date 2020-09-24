@@ -4,7 +4,8 @@ $color-gray:       #A09E8D;
 $color-dark-gray:  #9B9B9B;
 $color-orange:     #FF7200;
 $color-glacier:    #80A9BF;
-$color-link:       #148CC0;
+$color-link:       #080C80;
+$color-dark-blue:   #080C80;
 $color-site-black: #222222;
 $color-light-blue: #E6EEF2;
 $color-alpha-gray: rgba(151, 151, 151, 0.2);
@@ -24,7 +25,7 @@ $font-general: $font-sansa-pro;
         clear: both;
     }
 }
-@mixin selected-arrow($color:$color-glacier, $f-zise:14px) {
+@mixin selected-arrow($color:$color-dark-blue, $f-zise:14px) {
     &::after {
         content: "\25E4";
         height: 1em;
