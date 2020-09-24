@@ -1,9 +1,10 @@
-.c-events.page {
+.c-events.page, .c-sessions.page {
     padding-bottom: 40px;
     margin-bottom: 26px;
     background: white;
 
-    .c-events__item {
+    .c-events__item,
+    .c-sessions__item {
         padding-right: 0;
     }
     .c-events__item__uploads{
@@ -32,7 +33,7 @@
 
 @media (min-width: $screen-md-min) {
 
-    .c-events.page {
+    .c-events.page, .c-sessions.page {
         .media-section {
             float: right;
             width: 50%;

@@ -70,17 +70,17 @@
         text-align: center;
         color: white; }
     .date-title span {
-        font-size: 30px;
+        font-size: 25px;
         display: block;
-        padding-top: 10px;
-        padding-bottom: 10px;
+        padding-top: 5px;
+        padding-bottom: 5px;
     }
 
     .past-event {
         background: #9B9B9B;
     }
     .upcoming-event {
-        background: #FF7200;;
+        background: #0D38E0;
     }
 
 </style>
