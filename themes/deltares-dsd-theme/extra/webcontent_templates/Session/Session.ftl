@@ -82,8 +82,8 @@
                                      ${languageUtil.get(locale, "registrationform.update")}
                                 </a>
                             <#else>
-                                <a href="${displayContext.getRegisterURL(renderRequest)}" class="btn btn-primary" role="button" aria-pressed="true">
-                                     ${languageUtil.get(locale, "registrationform.register")}
+                                <a href="#" data-article-id="${articleId}" class="btn btn-primary add-to-cart" role="button" aria-pressed="true">
+                                    ${languageUtil.get(locale, "shopping.cart.add")}
                                 </a>
                             </#if>
                         </span>
