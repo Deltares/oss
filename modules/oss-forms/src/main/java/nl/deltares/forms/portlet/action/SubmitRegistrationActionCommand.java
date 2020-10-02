@@ -4,6 +4,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -17,6 +18,7 @@ import nl.deltares.dsd.model.BillingInfo;
 import nl.deltares.dsd.model.RegistrationRequest;
 import nl.deltares.emails.DsdEmail;
 import nl.deltares.forms.constants.OssFormPortletKeys;
+import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.DsdParserUtils;
@@ -28,6 +30,7 @@ import org.osgi.service.component.annotations.Reference;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component(
         immediate = true,
@@ -38,6 +41,9 @@ import java.util.*;
         service = MVCActionCommand.class
 )
 public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
+
+    private static final String PARENT_PREFIX = "parent_registration_";
+    private static final String CHILD_PREFIX = "child_registration_";
 
     @Override
     protected void doProcessAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
@@ -56,6 +62,8 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         } else {
             redirect = registrationRequest.getSiteURL();
         }
+
+        LOG.info(redirect);
 
         boolean success = true;
         switch (action){
@@ -149,33 +157,47 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
     }
 
     private RegistrationRequest getRegistrationRequest(ActionRequest actionRequest, ThemeDisplay themeDisplay, String action) {
-        String articleId = ParamUtil.getString(actionRequest, "articleId");
+        List<String> articleIds = actionRequest.getParameterMap()
+                .keySet()
+                .stream()
+                .filter(strings -> strings.startsWith(PARENT_PREFIX))
+                .filter(key -> ParamUtil.getBoolean(actionRequest, key))
+                .map(key -> key.substring(PARENT_PREFIX.length()))
+                .peek(LOG::info)
+                .collect(Collectors.toList());
 
         try {
             long siteId = themeDisplay.getSiteGroupId();
-            Registration parentRegistration = dsdParserUtils.getRegistration(siteId, articleId);
-            Event event = dsdParserUtils.getEvent(siteId, String.valueOf(parentRegistration.getEventId()));
+
+            DSDSiteConfiguration configuration = _configurationProvider
+                    .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
+
+            Event event = dsdParserUtils.getEvent(siteId, String.valueOf(configuration.eventId()));
+            BillingInfo billingInfo = getBillingInfo(actionRequest);
 
             RegistrationRequest registrationRequest = new RegistrationRequest(themeDisplay);
             registrationRequest.setEvent(event);
-            registrationRequest.addRegistration(parentRegistration);
-
-            BillingInfo billingInfo = getBillingInfo(actionRequest);
             registrationRequest.setBillingInfo(billingInfo);
 
-            List<Registration> childRegistrations = dsdSessionUtils.getChildRegistrations(parentRegistration);
-            for (Registration childRegistration : childRegistrations) {
-                if (ParamUtil.getString(actionRequest, "registration_" + childRegistration.getArticleId()).equals("true")) {
-                    registrationRequest.addChildRegistration(parentRegistration, childRegistration);
-                } else if ("unregister".equals(action) && dsdSessionUtils.isUserRegisteredFor(themeDisplay.getUser(), childRegistration)){
-                    registrationRequest.addChildRegistration(parentRegistration, childRegistration);
+            for (String articleId : articleIds) {
+                Registration parentRegistration = dsdParserUtils.getRegistration(siteId, articleId);
+                registrationRequest.addRegistration(parentRegistration);
+
+                List<Registration> childRegistrations = dsdSessionUtils.getChildRegistrations(parentRegistration);
+                for (Registration childRegistration : childRegistrations) {
+                    if (ParamUtil.getString(actionRequest, CHILD_PREFIX + childRegistration.getArticleId()).equals("true")) {
+                        registrationRequest.addChildRegistration(parentRegistration, childRegistration);
+                    } else if ("unregister".equals(action) && dsdSessionUtils.isUserRegisteredFor(themeDisplay.getUser(), childRegistration)){
+                        registrationRequest.addChildRegistration(parentRegistration, childRegistration);
+                    }
                 }
             }
+
             return registrationRequest;
 
         } catch (PortalException e) {
-            SessionErrors.add(actionRequest, "send-email-failed", "Could not retrieve registration for actionId: " + articleId);
-            LOG.debug("Could not retrieve registration for actionId: " + articleId);
+            SessionErrors.add(actionRequest, "send-email-failed", "Could not retrieve registration for actionId: " + Arrays.toString(articleIds.toArray()));
+            LOG.debug("Could not retrieve registration for actionId: " + Arrays.toString(articleIds.toArray()));
         }
         return null;
     }
@@ -209,7 +231,6 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             String value = ParamUtil.getString(actionRequest, key.name());
             if (Validator.isNotNull(value)) {
                 attributes.put(key.name(), value);
-                LOG.info(key.name() + ": " + value);
             }
         }
 
@@ -249,6 +270,13 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
     @Reference
     private DsdSessionUtils dsdSessionUtils;
+
+    private ConfigurationProvider _configurationProvider;
+
+    @Reference
+    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
+        _configurationProvider = configurationProvider;
+    }
 
     private static final Log LOG = LogFactoryUtil.getLog(SubmitRegistrationActionCommand.class);
 }
