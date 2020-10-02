@@ -71,6 +71,10 @@
 
 </body>
 <script>
+	var checkoutCartURL = '${checkout_cart_url}';
+	var shoppingCart = new ShoppingCart();
+	shoppingCart.refreshCart();
+
 	window.cookieconsent.initialise({
 		"palette": {
 			"popup": {

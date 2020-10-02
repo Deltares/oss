@@ -4,16 +4,9 @@
 
 <%
     Map attributes = (Map) renderRequest.getAttribute("attributes");
-
-    String registrationId = ParamUtil.getString(renderRequest, "articleId");
     String action = ParamUtil.getString(renderRequest, "action");
     DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
-    Registration mainRegistration = null;
-    Event event = null;
-    if (registrationId != null) {
-        mainRegistration = dsdParserUtils.getRegistration(themeDisplay.getScopeGroupId(), registrationId);
-        event = dsdParserUtils.getEvent(mainRegistration.getGroupId(), String.valueOf(mainRegistration.getEventId()));
-    }
+    Event event = dsdParserUtils.getEvent(themeDisplay.getScopeGroupId(), String.valueOf(configuration.eventId()));
 %>
 
 <portlet:actionURL name="/submit/register/form" var="submitRegisterForm"/>
@@ -89,14 +82,18 @@
 
         <aui:form action="<%= submitRegisterForm %>" name="fm">
 
-            <aui:input
-                    name="redirect"
-                    type="hidden"
-                    value="${registrationDisplayContext.getPortletRequest(renderRequest, action)}" />
-
-            <aui:input name="articleId"
-                       type="hidden"
-                       value="<%= registrationId %>" />
+            <c:choose>
+                <c:when test='<%= "register".equals(action) %>'>
+                    <aui:input name="ids"
+                               type="hidden"
+                               value='<%= ParamUtil.getString(renderRequest, "ids") %>' />
+                </c:when>
+                <c:otherwise>
+                    <aui:input name="articleId"
+                               type="hidden"
+                               value='<%= ParamUtil.getString(renderRequest, "articleId") %>' />
+                </c:otherwise>
+            </c:choose>
 
             <aui:input name="action"
                        type="hidden"
@@ -154,7 +151,7 @@
     checkPrice = function() {
         let parent = $('.parent-registration');
 
-        if (parseFloat(parent[0].getAttribute('data-price')) > 0){
+        if (parent && parent.length > 0 && parseFloat(parent[0].getAttribute('data-price')) > 0){
             $('#nav-stepper-step-3').removeClass('disabled'); //remove
             return;
         }
@@ -255,5 +252,7 @@
         $('input[name="<portlet:namespace />use_organization_address"]').change(updatePaymentAddress);
         updateBadge();
         checkPrice();
+
+        <c:if test='<%= !SessionErrors.isEmpty(liferayPortletRequest) %>'>shoppingCart.clearCart()</c:if>
     });
 </aui:script>
