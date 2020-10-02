@@ -1,7 +1,3 @@
-<%@ page import="com.liferay.portal.kernel.model.Country" %>
-<%@ page import="com.liferay.portal.kernel.service.CountryServiceUtil" %>
-<%@ page import="com.liferay.portal.kernel.util.DateUtil" %>
-
 <aui:row>
     <aui:col width="50">
         <c:if test="${not empty attributes}">
