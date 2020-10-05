@@ -124,6 +124,14 @@ public class RegistrationDisplayContext {
 
     }
 
+    public String getEndDate(){
+        if (getRegistration() != null) {
+            return DateUtil.getDate(getRegistration().getEndTime(), "dd MMMM yyyy", themeDisplay.getLocale());
+        }
+        return "";
+
+    }
+
     public boolean isPastEvent(){
         if (getRegistration() != null) {
             return getRegistration().getStartTime().getTime() < System.currentTimeMillis();
