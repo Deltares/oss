@@ -41,20 +41,12 @@ public interface DsdSessionUtils {
     List<Registration> getChildRegistrations(Registration registration) throws PortalException;
 
     /**
-     * Get all user registration with a period that overlap that of the argument 'registration'.
-     * @param user User for which to check overlaps
-     * @param registration Registration for which to validate period.
-     * @return List of registrations with overlapping period
-     */
-    List<Registration> getOverlappingRegistrations(User user, Registration registration) throws PortalException;
-
-    /**
      * Get list of missing user information that is required for making the reservation
      * @param user User for which to check field values
-     * @param registration Registration for which to validate fields.
+     * @param price Price of registration for which to validate fields.
      * @return List of missing field names
      */
-    List<String> getMissingUserInformation(User user, Registration registration) throws PortalException;
+    List<String> getMissingUserInformation(User user, double price) throws PortalException;
 
     /**
      * Check if user is already registerd for this registration.
@@ -65,12 +57,13 @@ public interface DsdSessionUtils {
     boolean isUserRegisteredFor(User user, Registration registration);
 
     /**
-     * Validates if user can register for current Registration.
+     * Validates if user can register for all registrations in list.
      * @param user User wanting to register
-     * @param registration Registration user wants to register for
+     * @param registrations List of registrations that need to be registered
      * @throws ValidationException Thrown if registration is not valid.
+
      */
-    void validateRegistration(User user, Registration registration) throws PortalException;
+    void validateRegistrations(User user, List<Registration> registrations) throws PortalException;
 
     /**
      * Delete all registrations linked to this registration article

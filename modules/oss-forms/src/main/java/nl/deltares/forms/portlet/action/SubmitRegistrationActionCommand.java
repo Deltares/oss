@@ -92,11 +92,11 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         }
         if (success){
             SessionMessages.add(actionRequest, "registration-success", new String[]{action, user.getEmailAddress(), registrationRequest.getEvent().getTitle()});
+            if (!redirect.isEmpty()) {
+                sendRedirect(actionRequest, actionResponse, redirect);
+            }
         }
 
-        if (!redirect.isEmpty()) {
-            sendRedirect(actionRequest, actionResponse, redirect);
-        }
     }
 
     private boolean removeCurrentRegistration(ActionRequest actionRequest, User user, RegistrationRequest registrationRequest) {
@@ -119,15 +119,20 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         Map<String, String> billingInfo = getBillingInfo(registrationRequest);
         List<Registration> registrations = registrationRequest.getRegistrations();
         boolean success = true;
-        for (Registration registration : registrations) {
 
+        try {
+            dsdSessionUtils.validateRegistrations(user, registrations);
+        } catch (PortalException e) {
+            SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
+            return false;
+        }
+        for (Registration registration : registrations) {
             try {
                 dsdSessionUtils.registerUser(user, registration, registration.getPrice() > 0 ? billingInfo : Collections.emptyMap());
             } catch (PortalException e) {
                 SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
                 success = false;
             }
-
             for (Registration childRegistration : registrationRequest.getChildRegistrations(registration)) {
 
                 try {
@@ -157,15 +162,19 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
     }
 
     private RegistrationRequest getRegistrationRequest(ActionRequest actionRequest, ThemeDisplay themeDisplay, String action) {
-        List<String> articleIds = actionRequest.getParameterMap()
-                .keySet()
-                .stream()
-                .filter(strings -> strings.startsWith(PARENT_PREFIX))
-                .filter(key -> ParamUtil.getBoolean(actionRequest, key))
-                .map(key -> key.substring(PARENT_PREFIX.length()))
-                .peek(LOG::info)
-                .collect(Collectors.toList());
-
+        List<String> articleIds;
+        if (action.equals("unregister")){
+            articleIds = Arrays.asList(actionRequest.getParameter("articleId"));
+        } else {
+            articleIds = actionRequest.getParameterMap()
+                    .keySet()
+                    .stream()
+                    .filter(strings -> strings.startsWith(PARENT_PREFIX))
+                    .filter(key -> ParamUtil.getBoolean(actionRequest, key))
+                    .map(key -> key.substring(PARENT_PREFIX.length()))
+                    .peek(LOG::info)
+                    .collect(Collectors.toList());
+        }
         try {
             long siteId = themeDisplay.getSiteGroupId();
 
