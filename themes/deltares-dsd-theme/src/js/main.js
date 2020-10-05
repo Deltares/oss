@@ -43,7 +43,7 @@
             let element = $(plugin.element);
             let active = element.find('li.active');
             let next = active.next();
-            if (next.hasClass('disabled')){
+            if (next.hasClass('disabled')) {
                 next = next.next();
             }
             let prev = active.prev();
@@ -171,3 +171,165 @@ function getCurrentStep(form) {
     var currentStep = activePane.charAt(activePane.length - 1);
     return Number(currentStep);
 }
+
+(function ($) {
+
+    var pluginName = "shoppingCart";
+
+    var Plugin = function Plugin(options) {
+        this.element = this;
+        this.options = options;
+        this._name = pluginName;
+
+        this.init();
+    }
+
+    Plugin.prototype = {
+        defaults: {
+            'languageKeys': {
+                'add-to-cart': 'Add to cart',
+                'remove-from-cart': 'Remove from cart'
+            }
+        },
+        init: function () {
+            this.config = $.extend({}, this.defaults, this.options);
+
+            this.initCart();
+            this.registerEvents();
+        },
+
+        initCart: function () {
+            this._loadCart();
+
+            if (this.cart === null) {
+                this.cart = {
+                    'userId': this._getUserId(),
+                    'items': []
+                };
+
+                this._saveCart();
+            }
+
+            this.refreshCart();
+
+            this._registerCheckoutURLBuilder();
+        },
+
+        registerEvents: function () {
+            let plugin = this;
+
+            $('.add-to-cart').on('click', function (e) {
+                e.preventDefault();
+                let id = $(this).data('articleId');
+
+                if (plugin._contains(id)) {
+                    plugin._removeFromCart(id);
+                } else {
+                    plugin._addToCart(id);
+                }
+                plugin._updateLabel($(this));
+                plugin.refreshCart();
+            });
+
+            $('.c-cart__checkout__cart').on('click', function (e) {
+                e.preventDefault();
+                buildCheckoutURL();
+            });
+        },
+
+        refreshCart: function () {
+            let plugin = this;
+            $('.c-cart__item__counter').text(plugin.cart.items.length);
+            $('.add-to-cart').each(function (){
+                plugin._updateLabel($(this));
+            });
+        },
+
+        clearCart: function () {
+            this.cart.items = [];
+        },
+
+        _registerCheckoutURLBuilder: function () {
+            let plugin = this;
+            Liferay.provide(
+                window,
+                'buildCheckoutURL',
+                function () {
+                    let portletURL = Liferay.PortletURL.createURL(checkoutCartURL);
+
+                    portletURL.setLifecycle(Liferay.PortletURL.RENDER_PHASE);
+                    portletURL.setWindowState('normal');
+                    portletURL.setPortletMode('view');
+                    portletURL.setParameter('action', 'register');
+                    portletURL.setParameter('ids', plugin.cart.items.join(','));
+                    portletURL.setPortletId('dsd_RegistrationFormPortlet');
+
+                    if (undefined !== portletURL.toString()) {
+                        window.location = portletURL.toString();
+                    }
+                },
+                ['liferay-portlet-url']
+            );
+        },
+
+        _updateLabel: function (element) {
+            let plugin = this;
+            let id = element.data('articleId');
+            if (plugin._contains(id)) {
+                element.text(plugin._getLanguageKey('remove-from-cart'));
+            } else {
+                element.text(plugin._getLanguageKey('add-to-cart'));
+            }
+        },
+
+        _getLanguageKey: function (key) {
+            return this.config.languageKeys[key];
+        },
+
+        _getUserId: function () {
+            return Liferay.ThemeDisplay.getUserId();
+        },
+
+        _addToCart: function (id) {
+            if (!this._contains(id)) {
+                this.cart.items.push(id);
+            }
+            this._saveCart();
+        },
+
+        _removeFromCart: function (id) {
+            if (this._contains(id)) {
+                this.cart.items = this.cart.items.filter(item => item !== id);
+            }
+            this._saveCart();
+        },
+
+        _contains: function (id) {
+            const contains = (newItem, cart) => cart.some(item => newItem === item);
+            return contains(id, this.cart.items);
+        },
+
+        _loadCart: function () {
+            this.cart = JSON.parse(localStorage.getItem('shoppingCart'));
+        },
+
+        _saveCart: function () {
+            localStorage.setItem('shoppingCart', JSON.stringify(this.cart));
+        }
+    };
+
+    Plugin.defaults = Plugin.prototype.defaults;
+
+    $.fn[pluginName] = function (options) {
+        return this.each(function () {
+            if (!$.data(this, "plugin_" + pluginName)) {
+                $.data(this, "plugin_" + pluginName,
+                    new Plugin(options));
+            }
+        })
+    };
+
+    window.ShoppingCart = Plugin;
+
+}(jQuery));
+

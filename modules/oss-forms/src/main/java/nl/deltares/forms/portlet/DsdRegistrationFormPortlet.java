@@ -1,6 +1,8 @@
 package nl.deltares.forms.portlet;
 
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
@@ -9,6 +11,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.forms.constants.OssFormPortletKeys;
+import nl.deltares.forms.portlet.action.SubmitRegistrationActionCommand;
 import nl.deltares.portal.utils.DDMStructureUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
@@ -16,14 +19,9 @@ import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.Portlet;
-import javax.portlet.PortletException;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
+import javax.portlet.*;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author rooij_e
@@ -73,7 +71,18 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 
 		}
 
-		String articleId = ParamUtil.getString(request, "articleId");
+		String action = ParamUtil.getString(request, "action");
+		List<String> registrations = new ArrayList<>();
+		String ids;
+
+		if ("register".equals(action)) {
+			ids = ParamUtil.getString(request, "ids");
+			LOG.info(Arrays.toString(ids.split(",", -1)));
+			registrations = new ArrayList<>(Arrays.asList(ids.split(",", -1)));
+		} else {
+			ids = ParamUtil.getString(request, "articleId");
+			registrations.add(ids);
+		}
 
 		Optional<DDMTemplate> ddmTemplateOptional = _ddmStructureUtil
 				.getDDMTemplateByName("REGISTRATION", themeDisplay.getLocale());
@@ -83,7 +92,8 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 
 		request.setAttribute("dsdParserUtils", dsdParserUtils);
 		request.setAttribute("dsdSessionUtils", dsdSessionUtils);
-		request.setAttribute("registrationDisplayContext", dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay));
+		request.setAttribute("registrationList", registrations);
+		request.setAttribute("ids", ids);
 
 		request.setAttribute(ConfigurationProvider.class.getName(), _configurationProvider);
 		super.render(request, response);
@@ -95,4 +105,6 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 	protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
 		_configurationProvider = configurationProvider;
 	}
+
+	private static final Log LOG = LogFactoryUtil.getLog(DsdRegistrationFormPortlet.class);
 }
