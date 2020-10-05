@@ -13,6 +13,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.KeycloakUtils;
+import nl.deltares.portal.utils.URLUtils;
 import nl.worth.portal.utils.DDLUtils;
 import nl.worth.portal.utils.LayoutUtils;
 import nl.worth.portal.utils.impl.LanguageImpl;
@@ -46,6 +47,9 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
 
     @Reference
     private KeycloakUtils keycloakUtils;
+
+    @Reference
+    private URLUtils urlUtils;
 
     @Override
     public void prepare(Map<String, Object> contextObjects, HttpServletRequest request) {
@@ -87,6 +91,8 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
 
         //set languages
         setLanguages(contextObjects, themeDisplay);
+
+        contextObjects.put("checkout_cart_url", urlUtils.getShoppingCartURL(themeDisplay));
     }
 
     private void setLanguages(Map<String, Object> contextObjects, ThemeDisplay themeDisplay) {
