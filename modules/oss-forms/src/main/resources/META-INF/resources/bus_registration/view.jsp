@@ -7,7 +7,7 @@
 <%@ page import="com.liferay.portal.kernel.servlet.SessionMessages" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="nl.deltares.portal.utils.DsdTransferUtils" %>
-<%@ include file="/META-INF/resources/dsd_init.jsp" %>
+<%@ include file="init.jsp" %>
 
 <portlet:actionURL name="/submit/transfer/form" var="submitTransferForm"/>
 

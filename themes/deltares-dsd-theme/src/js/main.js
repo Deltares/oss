@@ -247,6 +247,8 @@ function getCurrentStep(form) {
 
         clearCart: function () {
             this.cart.items = [];
+            this._saveCart();
+            this.refreshCart();
         },
 
         _registerCheckoutURLBuilder: function () {

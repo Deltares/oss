@@ -40,6 +40,9 @@
         <a class="prev-step disabled btn btn-primary">
             <liferay-ui:message key="prev.step"/>
         </a>
+        <a class="clear-cart enabled btn btn-primary">
+            <liferay-ui:message key="clear.cart"/>
+        </a>
         <a class="next-step enabled btn btn-primary">
             <liferay-ui:message key="next.step"/>
         </a>
@@ -249,6 +252,12 @@
 
         $('.update-badge').change(updateBadge);
         $('.child-registration').change(checkPrice);
+        $('.clear-cart').on('click', function(){
+            shoppingCart.clearCart()
+        });
+        $('.submit').on('click', function(){
+            shoppingCart.clearCart()
+        });
         $('input[name="<portlet:namespace />use_organization_address"]').change(updatePaymentAddress);
         updateBadge();
         checkPrice();
