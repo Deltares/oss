@@ -62,6 +62,8 @@
 			</#list> 
 		</ul>
 	</nav>
+	<#if is_signed_in>
+
 	<div class="d-flex pt-4 pr-4 justify-content-end position-relative">
 		<span class="c-cart__cart px-3 pt-3 pb-1">
 			<a href="#" class="c-cart__checkout__cart">
@@ -72,4 +74,6 @@
 			<span class="c-cart__item__counter">0</span>
 		</span>
 	</div>
+
+	</#if>
 </div>

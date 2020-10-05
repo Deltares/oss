@@ -131,13 +131,16 @@ public class RegistrationLocalServiceImpl
 
 	public long[] getRegistrationsWithOverlappingPeriod(long groupId, long userId, Date startTime, Date endTime){
 
-
 		Criterion checkUserId = PropertyFactoryUtil.forName("userId").eq(userId);
 		Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
 		Criterion checkStart = RestrictionsFactoryUtil.and(PropertyFactoryUtil.forName("startTime").le(startTime), PropertyFactoryUtil.forName("endTime").ge(startTime));
 		Criterion checkEnd = RestrictionsFactoryUtil.and(PropertyFactoryUtil.forName("startTime").le(endTime), PropertyFactoryUtil.forName("endTime").ge(endTime));
 		Criterion checkPeriod = RestrictionsFactoryUtil.or(checkStart, checkEnd);
-		DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader()).add(checkGroupId).add(checkUserId).add(checkPeriod);
+		Criterion checkStart1 = RestrictionsFactoryUtil.and(PropertyFactoryUtil.forName("startTime").ge(startTime), PropertyFactoryUtil.forName("startTime").le(endTime));
+		Criterion checkEnd1 = RestrictionsFactoryUtil.and(PropertyFactoryUtil.forName("endTime").ge(startTime), PropertyFactoryUtil.forName("endTime").le(endTime));
+		Criterion checkPeriod1 = RestrictionsFactoryUtil.or(checkStart1, checkEnd1);
+		Criterion periodsCheck = RestrictionsFactoryUtil.or(checkPeriod, checkPeriod1);
+		DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader()).add(checkGroupId).add(checkUserId).add(periodsCheck);
 		List<Registration> overlappingRegistrations = RegistrationUtil.findWithDynamicQuery(query);
 		if (overlappingRegistrations.size() == 0) return new long[0];
 

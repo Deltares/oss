@@ -8,7 +8,6 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import nl.deltares.dsd.registration.service.RegistrationLocalService;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.DsdArticle;
-import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
@@ -53,8 +52,6 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     @Override
     public void registerUser(User user, Registration registration, Map<String, String> userProperties) throws PortalException {
-
-        validateRegistration(user, registration);
 
         if (gotoUtils.isGotoMeeting(registration)){
             registerGotoUser(user, (SessionRegistration) registration, userProperties);
@@ -109,12 +106,35 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
-    public void validateRegistration(User user, Registration registration) throws PortalException {
-
-        if (!registration.isOpen()) {
-            throw new ValidationException(String.format("Registration %s is not open!", registration.getTitle()));
+    public void validateRegistrations(User user, List<Registration> registrations) throws PortalException {
+        //quick checks
+        double maxPrice = 0;
+        for (Registration registration : registrations) {
+            if (!registration.isOpen()) {
+                throw new ValidationException(String.format("Registration %s is not open!", registration.getTitle()));
+            }
+            if (registration.getPrice() > maxPrice) {
+                maxPrice = registration.getPrice();
+            }
+        }
+        List<String> missingInfo = getMissingUserInformation(user, maxPrice);
+        if (missingInfo.size() > 0) {
+            throw new ValidationException("Missing user data for following fields: " + Arrays.toString(missingInfo.toArray()));
+        }
+        List<Registration> overlapping = getOverlappingRegistrations(registrations);
+        if (overlapping.size() > 0){
+            StringBuilder titles = new StringBuilder();
+            overlapping.forEach(registration -> {titles.append(registration.getTitle()); titles.append(", ");});
+            throw new ValidationException("Overlapping periods found for registrations: " + titles.toString());
         }
 
+        //check against database
+        for (Registration registration : registrations) {
+            dbValidationChecks(user, registration);
+        }
+    }
+
+    private void dbValidationChecks(User user, Registration registration) throws PortalException {
         if (isUserRegisteredFor(user, registration)) {
             throw new ValidationException(String.format("User already registered for %s !", registration.getTitle()));
         }
@@ -129,15 +149,9 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
                     registration.getTitle(), Arrays.toString(getTitles(registration.getGroupId(), overlappingRegistrationIds))));
         }
 
-        List<String> missingInfo = getMissingUserInformation(user, registration);
-        if (missingInfo.size() > 0) {
-            throw new ValidationException("Missing user data for following fields: " + Arrays.toString(missingInfo.toArray()));
-        }
-
         if (registration.getParentRegistration() != null && !isUserRegisteredFor(user, registration.getParentRegistration())) {
             throw new ValidationException("User not registered for required parent registration: " + registration.getParentRegistration().getTitle());
         }
-
     }
 
     private String[] getTitles(long groupId, long[] articleIds) {
@@ -171,7 +185,39 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         return registrationLocalService.getRegistrationsCount(registration.getGroupId(), registration.getResourceId());
     }
 
-    private long[] getOverlappingRegistrationIds(User user, Registration registration) throws PortalException {
+    private List<Registration> getOverlappingRegistrations(List<Registration> registrations){
+
+        ArrayList<Registration> overlapping = new ArrayList<>();
+        Registration[] list = registrations.toArray(new Registration[0]);
+        for (Registration reg1 : list) {
+            registrations.forEach(registration -> {
+                if (registration == reg1) return;
+                if (registration.getParentRegistration() == reg1 && registration.isOverlapWithParent()) return;
+                if (reg1.getParentRegistration() == registration && reg1.isOverlapWithParent()) return;
+                if (periodsOverlap(reg1, registration)){
+                    if (!overlapping.contains(reg1)) overlapping.add(reg1);
+                }
+            });
+
+        }
+        return overlapping;
+    }
+
+    private boolean periodsOverlap(Registration reg1, Registration reg2) {
+
+        long reg1Start = reg1.getStartTime().getTime();
+        long reg2Start = reg2.getStartTime().getTime();
+        long reg1End = reg1.getEndTime().getTime();
+        long reg2End = reg2.getEndTime().getTime();
+        return
+                (reg1Start <= reg2Start && reg1End >= reg2Start) ||
+                        (reg1Start <= reg2End && reg1End >= reg2End) ||
+                        (reg2Start <= reg1Start && reg2End >= reg1Start) ||
+                        (reg2Start <= reg1End && reg2End >= reg1End);
+
+    }
+
+    private long[] getOverlappingRegistrationIds(User user, Registration registration) {
         long[] registrationsWithOverlappingPeriod = registrationLocalService.getRegistrationsWithOverlappingPeriod(registration.getGroupId(), user.getUserId(),
                 registration.getStartTime(), registration.getEndTime());
 
@@ -193,20 +239,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
-    public List<Registration> getOverlappingRegistrations(User user, Registration registration) throws PortalException {
-        long[] overlappingResourceIds = registrationLocalService.getRegistrationsWithOverlappingPeriod(registration.getGroupId(), user.getUserId(),
-                registration.getStartTime(), registration.getEndTime());
-
-        ArrayList<Registration> overlapping = new ArrayList<>();
-        for (long resourceId : overlappingResourceIds) {
-            JournalArticle overlappingArticle =  dsdJournalArticleUtils.getJournalArticle(resourceId);
-            overlapping.add((Registration) AbsDsdArticle.getInstance(overlappingArticle));
-        }
-        return overlapping;
-    }
-
-    @Override
-    public List<String> getMissingUserInformation(User user, Registration registration) throws PortalException {
+    public List<String> getMissingUserInformation(User user, double price) throws PortalException {
 
         ArrayList<String> missingInfo = new ArrayList<>();
         if (user.getFirstName() == null) {
@@ -227,7 +260,6 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
             missingInfo.add(value.name());
         }
 
-        double price = registration.getPrice();
         if (price > 0) {
             for (DsdArticle.DSD_REQUIRED_PAID_REGISTRATION_ATTRIBUTES value : DsdArticle.DSD_REQUIRED_PAID_REGISTRATION_ATTRIBUTES.values()) {
                 if (userAttributes.containsKey(value.name())) continue;

@@ -24,7 +24,6 @@ import nl.deltares.portal.model.impl.SessionRegistration;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
-import java.text.SimpleDateFormat;
 
 public class RegistrationDisplayContext {
 
@@ -134,19 +133,17 @@ public class RegistrationDisplayContext {
     }
 
     public String getStartTime() {
-        String time = "";
         if (getRegistration() != null) {
-            time = timeFormat.format(getRegistration().getStartTime());
+            return DateUtil.getDate(getRegistration().getStartTime(), "HH:mm", themeDisplay.getLocale());
         }
-        return time;
+        return "";
     }
 
     public String getEndTime() {
-        String time = "";
         if (getRegistration() != null) {
-            time = timeFormat.format(getRegistration().getEndTime());
+            return DateUtil.getDate(getRegistration().getEndTime(), "HH:mm", themeDisplay.getLocale());
         }
-        return time;
+        return "";
     }
 
     public String getSummary() {
@@ -206,7 +203,6 @@ public class RegistrationDisplayContext {
         return "";
     }
 
-    private final SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
     private final ThemeDisplay themeDisplay;
     private ConfigurationProvider configurationProvider;
     private Registration registration;
