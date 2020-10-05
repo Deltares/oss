@@ -38,8 +38,7 @@
                         </#if>
                     </span>
                     <span class="c-sessions__item__time-date-place__time">
-                        ${dateUtil.getDate(registration.getStartTime(), "HH:mm", locale)} -
-                        ${dateUtil.getDate(registration.getEndTime(), "HH:mm", locale)}</span>
+                        ${displayContext.getStartTime()} - ${displayContext.getEndTime()}</span>
                     <br>
                     <span class="c-sessions__item__time-date-place__place">
                         <img src="${themeDisplay.getPathThemeImages()}/dsd/${registration.getType()}.png"> ${registration.getType()}&nbsp;
