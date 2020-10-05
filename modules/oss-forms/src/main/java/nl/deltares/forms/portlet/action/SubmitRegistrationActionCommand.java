@@ -250,8 +250,13 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                               ThemeDisplay themeDisplay, String action) {
         try {
 
+            DSDSiteConfiguration configuration = _configurationProvider
+                    .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
+
             ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", themeDisplay.getLocale(), getClass());
             DsdEmail email = new DsdEmail(user, resourceBundle, registrationRequest);
+            email.setReplyToEmail(configuration.replyToEmail());
+            email.setSendFromEmail(configuration.sendFromEmail());
             switch (action){
                 case "register":
                 case "update":

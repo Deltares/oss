@@ -49,6 +49,17 @@
                 label="contact-url"
                 name="contactURL"
                 value="<%= configuration.contactURL() %>"/>
+
+        <aui:input
+                label="dsd.email.sendFrom"
+                name="sendFromEmail"
+                value="<%= configuration.sendFromEmail() %>"/>
+
+        <aui:input
+                label="dsd.email.replyTo"
+                name="replyToEmail"
+                value="<%= configuration.replyToEmail() %>"/>
+
     </aui:fieldset>
 
     <aui:button-row>
