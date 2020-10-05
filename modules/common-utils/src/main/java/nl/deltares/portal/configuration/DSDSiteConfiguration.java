@@ -28,4 +28,10 @@ public interface DSDSiteConfiguration {
 
     @Meta.AD(required = false, deflt = "/contact", description = "Configure the URL where the Privacy Policy of Deltares can be found")
     String contactURL();
+
+    @Meta.AD(required = false, deflt = "mydeltares@deltares.nl", description = "Configure the Send From email address")
+    String sendFromEmail();
+
+    @Meta.AD(required = false, deflt = "dsd@deltares.nl", description = "Configure the Reply To email address")
+    String replyToEmail();
 }

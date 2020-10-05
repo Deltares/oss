@@ -18,10 +18,9 @@ import static nl.deltares.emails.EmailUtils.sendEmail;
 public class DsdEmail {
 
     private String sendFromEmail = "mydeltares@deltares.nl";
-//    private String replyToEmail = "dsd@deltares.nl";
     private String sendToEmail = null;
     private String sendCCEmail = null;
-    private String replyToEmail = "erik.derooij@deltares.nl"; //TODO: change to dsd
+    private String replyToEmail = null;
     private final User user;
     private final ResourceBundle bundle;
     private final RegistrationRequest request;
@@ -57,7 +56,11 @@ public class DsdEmail {
         BillingInfo billingInfo = request.getBillingInfo();
         if (billingInfo != null && billingInfo.getEmail() != null){
             sendToEmail = billingInfo.getEmail();
-            sendCCEmail = user.getEmailAddress();
+            if (sendToEmail.equals(user.getEmailAddress())){
+                sendCCEmail = null;
+            } else {
+                sendCCEmail = user.getEmailAddress();
+            }
         } else {
             sendToEmail = user.getEmailAddress();
             sendCCEmail = null;

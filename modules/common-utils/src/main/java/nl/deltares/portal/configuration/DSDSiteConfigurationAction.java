@@ -53,6 +53,8 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         String conditionsURL = ParamUtil.getString(actionRequest, "conditionsURL");
         String privacyURL = ParamUtil.getString(actionRequest, "privacyURL");
         String contactURL = ParamUtil.getString(actionRequest, "contactURL");
+        String sendFromEmail = ParamUtil.getString(actionRequest, "sendFromEmail");
+        String replyToEmail = ParamUtil.getString(actionRequest, "replyToEmail");
 
         Settings settings = SettingsFactoryUtil.getSettings(
                 new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), DSDSiteConfiguration.class.getName()));
@@ -65,6 +67,8 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         modifiableSettings.setValue("conditionsURL", conditionsURL);
         modifiableSettings.setValue("privacyURL", privacyURL);
         modifiableSettings.setValue("contactURL", contactURL);
+        modifiableSettings.setValue("sendFromEmail", sendFromEmail);
+        modifiableSettings.setValue("replyToEmail", replyToEmail);
         modifiableSettings.store();
 
         super.processAction(portletConfig, actionRequest, actionResponse);
