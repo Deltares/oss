@@ -1,4 +1,4 @@
-
+<%@ page import="nl.deltares.portal.model.impl.Registration" %>
 
 <%
     String ddmTemplateKey = (String) request.getAttribute("ddmTemplateKey");
@@ -21,6 +21,10 @@
         <%
             Registration mainRegistration = dsdParserUtils.getRegistration(
                     themeDisplay.getScopeGroupId(), registrationId);
+            //load the stored attributes from the database.
+            Map<String, String> userPreferences = dsdSessionUtils.getUserPreferences(user, mainRegistration);
+            attributes.putAll(userPreferences);
+
         %>
 
         <div class="registration-item">

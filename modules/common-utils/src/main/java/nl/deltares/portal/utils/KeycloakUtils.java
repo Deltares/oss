@@ -11,6 +11,8 @@ public interface KeycloakUtils {
         billing_postal,
         billing_city,
         billing_country,
+        billing_reference,
+        billing_vat
     }
 
     enum ATTRIBUTES {

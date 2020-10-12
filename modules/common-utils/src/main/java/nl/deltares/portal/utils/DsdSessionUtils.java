@@ -40,6 +40,11 @@ public interface DsdSessionUtils {
      */
     List<Registration> getChildRegistrations(Registration registration) throws PortalException;
 
+    /** Return map containing registration preferences
+     *
+     */
+    Map<String, String> getUserPreferences(User user, Registration registration) throws PortalException;
+
     /**
      * Get list of missing user information that is required for making the reservation
      * @param user User for which to check field values

@@ -15,13 +15,15 @@
             <c:set var="billingCity" value="<%= attributes.get(KeycloakUtils.BILLING_ATTRIBUTES.billing_city.name()) %>"/>
             <c:set var="billingCountry" value="<%= attributes.get(KeycloakUtils.BILLING_ATTRIBUTES.billing_country.name()) %>"/>
             <c:set var="billingMethod" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_preferred_payment.name()) %>"/>
-            <c:set var="billingReference" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.pay_reference.name()) %>"/>
-            <c:set var="billingVat" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_vat.name()) %>"/>
+            <c:set var="paymentReference" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.pay_reference.name()) %>"/>
+            <c:set var="orgVat" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_vat.name()) %>"/>
+            <c:set var="billingReference" value="<%= attributes.get(KeycloakUtils.BILLING_ATTRIBUTES.billing_reference.name()) %>"/>
+            <c:set var="billingVat" value="<%= attributes.get(KeycloakUtils.BILLING_ATTRIBUTES.billing_vat.name()) %>"/>
         </c:if>
         <aui:input
                 name="<%= KeycloakUtils.BILLING_ATTRIBUTES.billing_email.name()%>"
                 label="dsd.registration.step3.billing.email"
-                value="${billingEmail}" >
+                value="${billingEmail}" billing_value="${billingEmail}">
             <aui:validator name="required">
                 function () {
                     return checkStep(getFormName(), 3);
@@ -31,7 +33,7 @@
         <aui:input
                 name="<%= KeycloakUtils.BILLING_ATTRIBUTES.billing_name.name() %>"
                 label="dsd.registration.step3.billing.name"
-                value="${billingName}">
+                value="${billingName}" billing_value="${billingName}">
             <aui:validator name="required">
                 function () {
                     return checkStep(getFormName(), 3);
@@ -42,7 +44,7 @@
         <aui:input
                 name="<%= KeycloakUtils.BILLING_ATTRIBUTES.billing_address.name() %>"
                 label="dsd.registration.step3.billing.address"
-                value="${billingAddress}">
+                value="${billingAddress}" billing_value="${billingAddress}">
             <aui:validator name="required">
                 function () {
                     return checkStep(getFormName(), 3);
@@ -55,7 +57,7 @@
                 <aui:input
                         name="<%= KeycloakUtils.BILLING_ATTRIBUTES.billing_postal.name() %>"
                         label="dsd.registration.step3.billing.postal"
-                        value="${billingPostal}">
+                        value="${billingPostal}" billing_value="${billingPostal}">
                     <aui:validator name="required">
                         function () {
                             return checkStep(getFormName(), 3);
@@ -67,7 +69,7 @@
                 <aui:input
                         name="<%= KeycloakUtils.BILLING_ATTRIBUTES.billing_city.name() %>"
                         label="dsd.registration.step3.billing.city"
-                        value="${billingCity}">
+                        value="${billingCity}" billing_value="${billingCity}">
                     <aui:validator name="required">
                         function () {
                             return checkStep(getFormName(), 3);
@@ -80,7 +82,7 @@
                 name="<%=KeycloakUtils.BILLING_ATTRIBUTES.billing_country.name()%>"
                 type="select"
                 label="dsd.registration.step3.billing.country"
-                value="${billingCountry}" >
+                value="${billingCountry}" billing_value="${billingCountry}">
             <% List<Country> countries = CountryServiceUtil.getCountries(true); %>
             <%    for (Country country : countries) { %>
             <aui:option value="<%=country.getName()%>" label ="<%= country.getName(locale) %>" />
@@ -110,13 +112,24 @@
             </aui:validator>
         </aui:select>
 
-        <c:if test="${not empty attributes}">
-            <c:set var="payment_reference" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.pay_reference.name()) %>"/>
-        </c:if>
+<%--        <c:if test="${not empty attributes}">--%>
+<%--            <c:set var="payment_reference" value="<%= attributes.get(KeycloakUtils.BILLING_ATTRIBUTES.billing_reference.name()) %>"/>--%>
+<%--        </c:if>--%>
         <aui:input
-                name="<%= KeycloakUtils.ATTRIBUTES.pay_reference.name() %>"
+                name="<%= KeycloakUtils.ATTRIBUTES.pay_reference.name()%>"
+                value="${paymentReference}"
+                type="hidden" >
+        </aui:input>
+        <aui:input
+                name="<%= KeycloakUtils.ATTRIBUTES.org_vat.name()%>"
+                value="${orgVat}"
+                type="hidden" >
+        </aui:input>
+
+        <aui:input
+                name="<%= KeycloakUtils.BILLING_ATTRIBUTES.billing_reference.name() %>"
                 label="dsd.registration.step3.billing.reference"
-                value="${billingReference}">
+                value="${billingReference}" billing_value="${billingReference}">
             <aui:validator name="required">
                 function () {
                 return checkStep(getFormName(), 3);
@@ -124,9 +137,9 @@
             </aui:validator>
         </aui:input>
         <aui:input
-                name="<%= KeycloakUtils.ATTRIBUTES.org_vat.name() %>"
+                name="<%= KeycloakUtils.BILLING_ATTRIBUTES.billing_vat.name() %>"
                 label="dsd.registration.step3.billing.vat"
-                value="${billingVat}">
+                value="${billingVat}" billing_value="${billingVat}">
             <aui:validator name="required">
                 function () {
                 return checkStep(getFormName(), 3);
