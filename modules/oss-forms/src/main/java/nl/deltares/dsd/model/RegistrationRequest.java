@@ -12,7 +12,6 @@ import java.util.*;
 public class RegistrationRequest {
 
     private final Map<String, List<Registration>> childRegistrations = new HashMap<>();
-    private final ThemeDisplay themeDisplay;
     private final List<Registration> registrations = new ArrayList<>();
     private final String baseUrl;
     private final String siteUrl;
@@ -20,7 +19,6 @@ public class RegistrationRequest {
     private Event event;
 
     public RegistrationRequest(ThemeDisplay themeDisplay) throws PortalException {
-        this.themeDisplay = themeDisplay;
         siteUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay);
         baseUrl = themeDisplay.getCDNBaseURL();
     }

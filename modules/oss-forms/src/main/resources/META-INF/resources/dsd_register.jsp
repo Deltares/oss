@@ -200,20 +200,6 @@
 
     updatePaymentAddress = function() {
         let checked = this.checked;
-        let name = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_name.name() %>"]').val();
-        let address = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_address.name() %>"]').val();
-        let postCode = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_postal.name() %>"]').val();
-        let city = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_city.name() %>"]').val();
-        let country = $('select[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_country.name() %>"]').val();
-        let email = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.email.name() %>"]').val();
-
-        if (!checked) {
-            address = '';
-            postCode = '';
-            city = '';
-            country = '';
-            email = '';
-        }
 
         let paymentNameInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_name.name() %>"]');
         let paymentAddressInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_address.name() %>"]');
@@ -221,29 +207,87 @@
         let paymentCityInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_city.name() %>"]');
         let paymentCountryInput = $('select[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_country.name() %>"]');
         let paymentEmailInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_email.name() %>"]');
-
-        paymentNameInput.val(name);
-        paymentAddressInput.val(address);
-        paymentPostCodeInput.val(postCode);
-        paymentCityInput.val(city);
-        paymentCountryInput.val(country);
-        paymentEmailInput.val(email);
+        let paymentVatInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_vat.name() %>"]');
+        let paymentRefInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_reference.name() %>"]');
+        let userVatInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_vat.name() %>"]');
+        let userRefInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.pay_reference.name() %>"]');
 
         if (checked) {
+
+            //cache billing info
+            paymentNameInput.prop('billing_value', paymentNameInput.val());
+            paymentAddressInput.prop('billing_value', paymentAddressInput.val());
+            paymentPostCodeInput.prop('billing_value', paymentPostCodeInput.val());
+            paymentCityInput.prop('billing_value', paymentCityInput.val());
+            paymentCountryInput.prop('billing_value',  paymentCountryInput.val());
+            paymentEmailInput.prop('billing_value',  paymentEmailInput.val());
+            paymentVatInput.prop('billing_value',  paymentVatInput.val());
+            paymentRefInput.prop('billing_value',  paymentRefInput.val());
+
+            //replace billing info with user attributes info
+            let name = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_name.name() %>"]').val();
+            let address = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_address.name() %>"]').val();
+            let postCode = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_postal.name() %>"]').val();
+            let city = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_city.name() %>"]').val();
+            let country = $('select[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_country.name() %>"]').val();
+            let email = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.email.name() %>"]').val();
+            let vat = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_vat.name() %>"]').val();
+            let ref = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.pay_reference.name() %>"]').val();
+
+            paymentNameInput.val(name);
+            paymentAddressInput.val(address);
+            paymentPostCodeInput.val(postCode);
+            paymentCityInput.val(city);
+            paymentCountryInput.val(country);
+            paymentEmailInput.val(email);
+            paymentVatInput.val(vat);
+            paymentRefInput.val(ref);
+
             paymentNameInput.prop('disabled', true);
             paymentAddressInput.prop('disabled', true);
             paymentPostCodeInput.prop('disabled', true);
             paymentCityInput.prop('disabled', true);
             paymentCountryInput.prop('disabled', true);
             paymentEmailInput.prop('disabled', true);
+            paymentVatInput.prop('disabled', false);  //must be editable
+            paymentRefInput.prop('disabled', false);  //must be editable
         } else {
+            //cache payment ref and vat
+            userVatInput.val(paymentVatInput.val());
+            userRefInput.val(paymentRefInput.val());
+
+            //restore billing info
+            let name = paymentNameInput.prop('billing_value');
+            let address = paymentAddressInput.prop('billing_value');
+            let postCode = paymentPostCodeInput.prop('billing_value');
+            let city = paymentCityInput.prop('billing_value');
+            let country = paymentCountryInput.prop('billing_value');
+            let email = paymentEmailInput.prop('billing_value');
+            let vat = paymentVatInput.prop('billing_value');
+            let ref = paymentRefInput.prop('billing_value');
+
+            paymentNameInput.val(name);
+            paymentAddressInput.val(address);
+            paymentPostCodeInput.val(postCode);
+            paymentCityInput.val(city);
+            paymentCountryInput.val(country);
+            paymentEmailInput.val(email);
+            paymentVatInput.val(vat);
+            paymentRefInput.val(ref);
+
             paymentNameInput.prop('disabled', false);
             paymentAddressInput.prop('disabled', false);
             paymentPostCodeInput.prop('disabled', false);
             paymentCityInput.prop('disabled', false);
             paymentCountryInput.prop('disabled', false);
             paymentEmailInput.prop('disabled', false);
+            paymentVatInput.prop('disabled', false);
+            paymentRefInput.prop('disabled', false);
         }
+    }
+
+    preSubmitAction = function() {
+        shoppingCart.clearCart();
     }
 
     $(document).ready(function() {
@@ -253,9 +297,6 @@
         $('.update-badge').change(updateBadge);
         $('.child-registration').change(checkPrice);
         $('.clear-cart').on('click', function(){
-            shoppingCart.clearCart()
-        });
-        $('.submit').on('click', function(){
             shoppingCart.clearCart()
         });
         $('input[name="<portlet:namespace />use_organization_address"]').change(updatePaymentAddress);

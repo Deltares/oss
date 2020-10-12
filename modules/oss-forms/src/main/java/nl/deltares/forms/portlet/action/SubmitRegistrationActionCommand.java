@@ -10,10 +10,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.ResourceBundleUtil;
-import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.util.*;
 import nl.deltares.dsd.model.BillingInfo;
 import nl.deltares.dsd.model.RegistrationRequest;
 import nl.deltares.emails.DsdEmail;
@@ -157,6 +154,9 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             propertyMap.put(KeycloakUtils.BILLING_ATTRIBUTES.billing_email.name(), billingInfo.getEmail());
             propertyMap.put(KeycloakUtils.BILLING_ATTRIBUTES.billing_name.name(), billingInfo.getName());
             propertyMap.put(KeycloakUtils.BILLING_ATTRIBUTES.billing_postal.name(), billingInfo.getPostal());
+            propertyMap.put(KeycloakUtils.BILLING_ATTRIBUTES.billing_vat.name(), billingInfo.getVat());
+            propertyMap.put(KeycloakUtils.BILLING_ATTRIBUTES.billing_reference.name(), billingInfo.getReference());
+
         }
         return propertyMap;
     }
@@ -242,6 +242,10 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 attributes.put(key.name(), value);
             }
         }
+        String billingRef = ParamUtil.getString(actionRequest, KeycloakUtils.BILLING_ATTRIBUTES.billing_reference.name());
+        String billingVat = ParamUtil.getString(actionRequest, KeycloakUtils.BILLING_ATTRIBUTES.billing_vat.name());
+        if (Validator.isNotNull(billingRef)) attributes.put(KeycloakUtils.ATTRIBUTES.pay_reference.name(), billingRef);
+        if (Validator.isNotNull(billingVat)) attributes.put(KeycloakUtils.ATTRIBUTES.org_vat.name(), billingVat);
 
         return attributes;
     }
