@@ -3,7 +3,6 @@ package nl.deltares.portal.utils.impl;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
-import com.liferay.journal.service.JournalArticleServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import nl.deltares.portal.utils.DDMStructureUtil;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
@@ -51,11 +50,6 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
     @Override
     public JournalArticle getJournalArticle(long groupId, String articleId) throws PortalException {
         return JournalArticleLocalServiceUtil.getLatestArticle(groupId, articleId);
-    }
-
-    @Override
-    public JournalArticle getJournalArticle(long resourceId) throws PortalException {
-        return JournalArticleServiceUtil.getLatestArticle(resourceId);
     }
 
 }

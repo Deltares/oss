@@ -25,6 +25,7 @@
 
             this._getSubmitButton().on('click', function () {
                 if (plugin._isFormValid()) {
+                    preSubmitAction();
                     plugin._getForm().submit();
                 }
             });

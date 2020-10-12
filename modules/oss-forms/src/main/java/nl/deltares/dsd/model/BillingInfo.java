@@ -4,13 +4,60 @@ import nl.deltares.portal.utils.KeycloakUtils;
 
 public class BillingInfo {
 
-    boolean useOrganization = true;
-    String name;
-    String email;
-    String address;
-    String postal;
-    String city;
-    String country;
+    String name = null;
+    String email = null;
+    String address = null;
+    String postal = null;
+    String city = null;
+    String country = null;
+    String vat = null;
+    String reference = null;
+
+    public static KeycloakUtils.ATTRIBUTES getCorrespondingUserAttributeKey(KeycloakUtils.BILLING_ATTRIBUTES billingKey){
+        switch (billingKey){
+            case billing_city:
+                return KeycloakUtils.ATTRIBUTES.org_city;
+            case billing_name:
+                return KeycloakUtils.ATTRIBUTES.org_name;
+            case billing_email:
+                return KeycloakUtils.ATTRIBUTES.email;
+            case billing_postal:
+                return KeycloakUtils.ATTRIBUTES.org_postal;
+            case billing_address:
+                return KeycloakUtils.ATTRIBUTES.org_address;
+            case billing_country:
+                return KeycloakUtils.ATTRIBUTES.org_country;
+            case billing_reference:
+                return KeycloakUtils.ATTRIBUTES.pay_reference;
+            case billing_vat:
+                return KeycloakUtils.ATTRIBUTES.org_vat;
+            default:
+                throw new UnsupportedOperationException("Unsupported billing attribute: " + billingKey);
+        }
+    }
+
+    public String getAttribute(KeycloakUtils.BILLING_ATTRIBUTES key){
+        switch (key){
+            case billing_city:
+                return city;
+            case billing_name:
+                return name;
+            case billing_email:
+                return email;
+            case billing_postal:
+                return postal;
+            case billing_address:
+                return address;
+            case billing_country:
+                return country;
+            case billing_reference:
+                return reference;
+            case billing_vat:
+                return vat;
+            default:
+                throw new UnsupportedOperationException("Unsupported billing attribute: " + key);
+        }
+    }
 
     public void setAttribute(KeycloakUtils.BILLING_ATTRIBUTES key, String value){
         switch (key){
@@ -32,20 +79,20 @@ public class BillingInfo {
             case billing_country:
                 country = value;
                 break;
+            case billing_reference:
+                reference = value;
+                break;
+            case billing_vat:
+                vat = value;
+                break;
             default:
                 throw new UnsupportedOperationException("Unsupported billing attribute: " + key);
         }
 
-        useOrganization = false;
-
     }
 
     public boolean isUseOrganization() {
-        return useOrganization;
-    }
-
-    public void setUseOrganization(boolean useOrganization) {
-        this.useOrganization = useOrganization;
+        return email != null;
     }
 
     public String getName() {
@@ -54,7 +101,6 @@ public class BillingInfo {
 
     public void setName(String name) {
         this.name = name;
-        useOrganization = false;
     }
 
     public String getEmail() {
@@ -63,7 +109,6 @@ public class BillingInfo {
 
     public void setEmail(String email) {
         this.email = email;
-        useOrganization = false;
     }
 
     public String getAddress() {
@@ -72,7 +117,6 @@ public class BillingInfo {
 
     public void setAddress(String address) {
         this.address = address;
-        useOrganization = false;
     }
 
     public String getPostal() {
@@ -81,7 +125,6 @@ public class BillingInfo {
 
     public void setPostal(String postal) {
         this.postal = postal;
-        useOrganization = false;
     }
 
     public String getCity() {
@@ -90,7 +133,6 @@ public class BillingInfo {
 
     public void setCity(String city) {
         this.city = city;
-        useOrganization = false;
     }
 
     public String getCountry() {
@@ -99,6 +141,21 @@ public class BillingInfo {
 
     public void setCountry(String country) {
         this.country = country;
-        useOrganization = false;
+    }
+
+    public String getVat() {
+        return vat;
+    }
+
+    public void setVat(String vat) {
+        this.vat = vat;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 }

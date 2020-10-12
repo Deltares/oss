@@ -23,13 +23,13 @@ public class RegistrationFormDisplayContext {
         this.dsdSessionUtils = dsdSessionUtils;
     }
 
-    public List<Registration> getChildRegistrations(long siteId, String registrationId) {
+    public List<Registration> getChildRegistrations(long siteId, String articleId) {
         List<Registration> children = new ArrayList<>();
         try {
             children = dsdSessionUtils.getChildRegistrations(
-                    dsdParserUtils.getRegistration(siteId, registrationId));
+                    dsdParserUtils.getRegistration(siteId, articleId));
         } catch (Exception e) {
-            LOG.debug("Error retrieving children for registration [" + registrationId + "]", e);
+            LOG.debug("Error retrieving children for registration [" + articleId + "]", e);
         }
         return children;
     }

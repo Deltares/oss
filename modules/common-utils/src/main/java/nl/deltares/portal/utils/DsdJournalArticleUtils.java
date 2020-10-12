@@ -13,5 +13,4 @@ public interface DsdJournalArticleUtils {
 
     JournalArticle getJournalArticle(long groupId, String articleId) throws PortalException;
 
-    JournalArticle getJournalArticle(long resourceId) throws PortalException;
 }

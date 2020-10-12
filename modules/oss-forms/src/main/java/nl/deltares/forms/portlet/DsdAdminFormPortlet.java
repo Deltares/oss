@@ -10,8 +10,8 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.WebKeys;
+import nl.deltares.dsd.model.BillingInfo;
 import nl.deltares.forms.constants.OssFormPortletKeys;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
@@ -52,6 +52,9 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 
 	@Reference
 	DsdSessionUtils dsdSessionUtils;
+
+	@Reference
+	KeycloakUtils keycloakUtils;
 
 	@Reference
 	DsdJournalArticleUtils dsdJournalArticleUtils;
@@ -97,6 +100,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		List<Map<String, Object>> registrationRecords = dsdSessionUtils.getRegistrations(event);
 
 		Map<Long, User> userCache = new HashMap<>();
+		Map<Long, Map<String, String>> userAttributeCache = new HashMap<>();
 		PrintWriter writer = resourceResponse.getWriter();
 		StringBuilder header = new StringBuilder("title,start date,topic,type,email,firstName,lastName,registrantKey");
 		for (KeycloakUtils.BILLING_ATTRIBUTES value : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
@@ -104,11 +108,11 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 			header.append(value.name());
 		}
 		writer.println(header);
-		registrationRecords.forEach(recordObjects -> writeRecord(writer, recordObjects, event, userCache, resourceResponse.getLocale()));
+		registrationRecords.forEach(recordObjects -> writeRecord(writer, recordObjects, event, userCache, userAttributeCache, resourceResponse.getLocale()));
 
 	}
 
-	private void writeRecord(PrintWriter writer, Map<String, Object> record, Event event, Map<Long, User> userCache, Locale locale) {
+	private void writeRecord(PrintWriter writer, Map<String, Object> record, Event event, Map<Long, User> userCache, Map<Long, Map<String, String>> userAttributeCache, Locale locale) {
 
 		Long registrationId = (Long) record.get("resourcePrimaryKey");
 		Registration registration = event.getRegistration(registrationId);
@@ -128,7 +132,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 			}
 			userCache.put(userId, user);
 		}
-		StringBundler line = new StringBundler();
+		StringBuilder line = new StringBuilder();
 		line.append(registration.getTitle());
 		line.append(',');
 		line.append(DateUtil.getDate((Date) record.get("startTime"),"yyyy-MM-dd", locale));
@@ -149,12 +153,9 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 			String registrantKey = userPreferences.get("registrantKey");
 			if (registrantKey != null) line.append(registrantKey);
 
-			//Write billing information.
-			for (KeycloakUtils.BILLING_ATTRIBUTES key : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
-				line.append(',');
-				String value = userPreferences.get(key.name());
-				if (value != null) line.append(value);
-			}
+			BillingInfo billingInfo = getBillingInfo(userPreferences);
+			writeBillingInfo(line, billingInfo, user, userAttributeCache);
+
 		} catch (JSONException e) {
 			LOG.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
 		}
@@ -167,5 +168,37 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		writer.print(JsonContentUtils.formatTextToJson("message", msg));
 	}
 
+	private BillingInfo getBillingInfo(Map<String, String> propertyMap) {
 
+		BillingInfo billingInfo = new BillingInfo();
+		//Write billing information.
+		for (KeycloakUtils.BILLING_ATTRIBUTES key : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
+			String value = propertyMap.get(key.name());
+			if (value != null) billingInfo.setAttribute(key, value);
+		}
+		return billingInfo;
+	}
+
+	private void writeBillingInfo(StringBuilder line, BillingInfo billingInfo, User user, Map<Long, Map<String, String>> userAttributeCache){
+
+		Map<String, String> userAttributes = null;
+		if (billingInfo.isUseOrganization()){
+			try {
+				userAttributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
+				userAttributeCache.put(user.getUserId(), userAttributes);
+			} catch (Exception e) {
+				LOG.error(String.format("Cannot find attributes for DSD user %d: %s", user.getUserId(), e.getMessage()));
+				return;
+			}
+		}
+
+		//Write billing information. If no billing info then get values from user attributes
+		for (KeycloakUtils.BILLING_ATTRIBUTES key : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
+			line.append(',');
+
+			String value = userAttributes == null ?
+					billingInfo.getAttribute(key) : userAttributes.get(BillingInfo.getCorrespondingUserAttributeKey(key).name());
+			if (value != null) line.append(value);
+		}
+	}
 }
