@@ -11,7 +11,6 @@ class Calendar extends React.Component {
 
 	constructor(props, context) {
 		super(props, context);
-
 		this.state = {
 			type: 'month',
 			defaultDate: this.props.startDate,
@@ -74,6 +73,7 @@ class Calendar extends React.Component {
 								},
 							}}
 							aspectRatio={1.4}
+							contentHeight={'auto'}
 							resourceGroupField={'building'}
 							resources={this.state.resources}
 							events={this.state.events}
