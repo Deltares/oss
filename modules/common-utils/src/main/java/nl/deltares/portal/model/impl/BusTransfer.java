@@ -18,7 +18,8 @@ public class BusTransfer extends Registration {
     private static final Log LOG = LogFactoryUtil.getLog(BusTransfer.class);
 
     private final long dayMillis = TimeUnit.DAYS.toMillis(1);
-    private final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    private final SimpleDateFormat dayf = new SimpleDateFormat("yyyy-MM-dd");
+    private final SimpleDateFormat timef = new SimpleDateFormat("HH:mm");
     private BusRoute busRoute = null;
     private Date startTime = new Date();
     private Date endTime = new Date();
@@ -38,20 +39,23 @@ public class BusTransfer extends Registration {
 
             String pickupOption = XmlContentUtils.getDynamicContentByName(document, "pickupDates", false);
             if (pickupOption.equals("daily")){
-                startTime = event.getStartTime();
-                endTime = event.getEndTime();
                 transferDates.addAll(getTransferDates(event.getStartTime(), event.getEndTime()));
             } else {
                 String[] pickupDates = XmlContentUtils.getDynamicContentsByName(document, "date");
                 for (String pickupDate : pickupDates) {
-                    transferDates.add(df.parse(pickupDate));
-                }
-                if (transferDates.size() > 0) {
-                    startTime = transferDates.get(0);
-                    endTime = transferDates.get(transferDates.size() - 1);
+                    transferDates.add(dayf.parse(pickupDate));
                 }
 
             }
+            if (transferDates.size() > 0) {
+                BusRoute busRoute = getBusRoute();
+                List<String> times = busRoute.getTimes();
+                Date startTime = timef.parse(times.get(0));
+                Date endTime = timef.parse(times.get(times.size() - 1));
+                this.startTime = new Date(transferDates.get(0).getTime() + startTime.getTime());
+                this.endTime = new Date(transferDates.get(transferDates.size() - 1).getTime() + endTime.getTime());
+            }
+
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing bus route %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -59,8 +63,8 @@ public class BusTransfer extends Registration {
 
     private Collection<? extends Date> getTransferDates(Date startTime, Date endTime) throws ParseException {
 
-        String startDayString = df.format(startTime); // remove time
-        Date day = df.parse(startDayString);
+        String startDayString = dayf.format(startTime); // remove time
+        Date day = dayf.parse(startDayString);
         ArrayList<Date> days = new ArrayList<>();
         while (day.before(endTime)){
             if (!isWeekend(day)) {

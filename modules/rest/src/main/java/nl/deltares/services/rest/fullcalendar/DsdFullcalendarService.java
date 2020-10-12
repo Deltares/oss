@@ -132,6 +132,8 @@ public class DsdFullcalendarService {
             event.setResourceId(String.valueOf(((SessionRegistration) registration).getRoom().getResourceId()));
         } else if (registration instanceof DinnerRegistration) {
             event.setResourceId(String.valueOf(((DinnerRegistration) registration).getRestaurant().getResourceId()));
+        } else if (registration instanceof BusTransfer){
+            event.setResourceId("bustransfer");
         }
         event.setStart(startDay);
         event.setEnd(endDay);
@@ -140,13 +142,6 @@ public class DsdFullcalendarService {
         event.setUrl("-/" + registration.getJournalArticle().getUrlTitle()); //todo
         return event;
     }
-
-    private int getEventDurationDays(Date endTime, Date startTime) {
-        long duration = endTime.getTime() - startTime.getTime();
-        int partialDays = duration % dayMillis > 0 ? 1 : 0;
-        return (int) (TimeUnit.MILLISECONDS.toDays(duration) + partialDays);
-    }
-
 
     private Map<String, String> getColorMap(String layoutUuid, long siteId, String portletId) {
 
@@ -189,18 +184,25 @@ public class DsdFullcalendarService {
 
     private List<Resource> getExternalResources(List<Registration> registrations) throws PortalException {
 
-        ArrayList<Resource> restaurants = new ArrayList<>();
+        ArrayList<Resource> externals = new ArrayList<>();
         for (Registration registration : registrations) {
-            if (!(registration instanceof DinnerRegistration)) continue;
+            if (registration instanceof DinnerRegistration) {
+                Location restaurant = ((DinnerRegistration) registration).getRestaurant();
+                Resource resource = new Resource();
+                resource.setBuilding("Restaurant");
+                resource.setId(String.valueOf(restaurant.getResourceId()));
+                resource.setTitle(restaurant.getTitle());
+                externals.add(resource);
+            } else if (registration instanceof  BusTransfer){
+                Resource resource = new Resource();
+                resource.setBuilding("Bus Transfer");
+                resource.setId("bustransfer");
+                resource.setTitle("Bus Transfer");
+                externals.add(resource);
+            }
 
-            Location restaurant = ((DinnerRegistration) registration).getRestaurant();
-            Resource resource = new Resource();
-            resource.setBuilding("Restaurant");
-            resource.setId(String.valueOf(restaurant.getResourceId()));
-            resource.setTitle(restaurant.getTitle());
-            restaurants.add(resource);
         }
-        return restaurants;
+        return externals;
     }
 
     private List<Resource> getBuildingResources(List<Building> buildings) {

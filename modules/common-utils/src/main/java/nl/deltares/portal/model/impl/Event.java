@@ -148,7 +148,7 @@ public class Event extends AbsDsdArticle {
         return duration > TimeUnit.DAYS.toMillis(1);
     }
 
-    private void loadRegistrations(){
+    private synchronized void loadRegistrations(){
 
         if (registrations != null) {
             return;
