@@ -43,11 +43,4 @@ public class MockDsdJournalArticleUtils implements DsdJournalArticleUtils {
         return null;
     }
 
-    @Override
-    public JournalArticle getJournalArticle(long resourceId) {
-        for (JournalArticle journalArticle : articleList) {
-            if (journalArticle.getResourcePrimKey() == resourceId) return journalArticle;
-        }
-        return null;
-    }
 }
