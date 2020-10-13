@@ -1,0 +1,25 @@
+{
+	"devDependencies": {
+		"gulp": "^4.0.2",
+		"liferay-theme-deps-7.1": "8.1.2",
+		"liferay-theme-tasks": "^10.0.2"
+	},
+	"keywords": [
+		"liferay-theme"
+	],
+	"liferayTheme": {
+		"baseTheme": "styled",
+		"screenshot": "",
+		"templateLanguage": "ftl",
+		"version": "7.1"
+	},
+	"main": "package.json",
+	"name": "deltares-dsd-theme",
+	"version": "1.0.1",
+	"description": "",
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:Deltares/oss.git"
+	},
+	"license": "GPL-3.0-only"
+}

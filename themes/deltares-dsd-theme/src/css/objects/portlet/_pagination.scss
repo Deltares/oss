@@ -1,0 +1,25 @@
+
+.taglib-page-iterator{
+    margin-bottom: 30px;
+    font-weight: 300;
+}
+
+.blog-page+.taglib-page-iterator{
+    margin-left: 408px;
+    
+}
+.bestpractice-page+.taglib-page-iterator{
+    margin: 0 51px 50px;
+}
+
+.lfr-pagination-delta-selector {
+    display: none!important;
+}
+
+
+.pagination-results {
+    margin-top: 3px;
+    border-left: 1px solid #9a9a9a;
+    margin-left: 12px;
+    padding-left: 13px;
+}

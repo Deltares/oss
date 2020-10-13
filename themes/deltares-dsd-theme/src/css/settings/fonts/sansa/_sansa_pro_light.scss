@@ -1,0 +1,19 @@
+// Sansa Pro Bold
+// --------------------------------------------------
+
+$path-fonts: 'settings/fonts/' !default;
+
+// Import the font file as light weight
+// --------------------------------------------------
+
+@font-face {
+  font-family: 'Sansa Pro';
+  font-style: normal;
+  font-weight: 300;
+  src: url('#{$path-fonts}sansa-pro-light.eot');
+  src: url('#{$path-fonts}sansa-pro-light.eot?#iefix') format('embedded-opentype'),
+  url('#{$path-fonts}sansa-pro-light.woff') format('woff'),
+  url('#{$path-fonts}sansa-pro-light.ttf')  format('truetype'),
+  url('#{$path-fonts}sansa-pro-light.svg#sansa-pro-light') format('svg');
+}
+

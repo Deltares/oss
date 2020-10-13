@@ -1,0 +1,5 @@
+Bundle-Name: search-web-fragment
+Bundle-SymbolicName: search.web.fragment
+Bundle-Version: 1.0.0
+Fragment-Host: com.liferay.portal.search.web;bundle-version="3.0.71"
+Import-Package: !com.liferay.portal.search.web.internal.*,*

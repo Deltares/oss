@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.0.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_1_0.dtd">
+
+<service-builder package-path="nl.deltares.dsd.registration">
+	<author>Erik de Rooij @ Deltares</author>
+	<namespace>Registrations</namespace>
+	<entity local-service="true" name="Registration" remote-service="false" uuid="false">
+
+		<!-- PK fields -->
+
+		<column name="registrationId" primary="true" type="long" />
+
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="resourcePrimaryKey" type="long" />
+
+		<!-- Other fields -->
+		<column name="userPreferences" type="String" />
+		<column name="startTime" type="Date" />
+		<column name="endTime" type="Date" />
+		<column name="parentResourcePrimaryKey" type="long" />
+
+		<!-- Order -->
+
+		<order by="desc">
+			<order-column name="startTime" />
+		</order>
+
+		<!-- Finder methods -->
+
+		<finder name="UserRegistrations" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="userId" />
+		</finder>
+
+		<finder name="ArticleRegistrations" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="resourcePrimaryKey" />
+		</finder>
+
+		<finder name="UserArticleRegistrations" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="userId" />
+			<finder-column name="resourcePrimaryKey" />
+		</finder>
+
+		<finder name="UserChildArticleRegistrations" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="userId" />
+			<finder-column name="parentResourcePrimaryKey" />
+		</finder>
+
+		<finder name="ChildArticleRegistrations" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="parentResourcePrimaryKey" />
+		</finder>
+
+	</entity>
+</service-builder>

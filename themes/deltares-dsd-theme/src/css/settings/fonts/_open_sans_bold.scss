@@ -1,0 +1,19 @@
+// Open Sans Bold
+// --------------------------------------------------
+
+$path-fonts: 'settings/fonts/' !default;
+
+// Import the font file as bold weight
+// --------------------------------------------------
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: url('#{$path-fonts}open-sans-v17-latin_greek_cyrillic-700.eot');
+  src: url('#{$path-fonts}open-sans-v17-latin_greek_cyrillic-700.eot?#iefix') format('embedded-opentype'),
+  url('#{$path-fonts}open-sans-v17-latin_greek_cyrillic-700.woff') format('woff'),
+  url('#{$path-fonts}open-sans-v17-latin_greek_cyrillic-700.ttf')  format('truetype'),
+  url('#{$path-fonts}open-sans-v17-latin_greek_cyrillic-700.svg#open-sans-bold') format('svg');
+}
+

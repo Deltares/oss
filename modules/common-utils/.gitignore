@@ -1,3 +1,5 @@
 .gradle/
 build/
 target/
+/src/test/resources/goto/portal-ext.properties
+/src/test/resources/keycloak/portal-ext.properties

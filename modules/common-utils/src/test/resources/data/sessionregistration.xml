@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+
+<root available-locales="en_US" default-locale="en_US">
+    <dynamic-element name="start" type="ddm-date" index-type="keyword" instance-id="hdtc">
+        <dynamic-element name="starttime" instance-id="gtjn" type="text" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[09:00]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-content language-id="en_US"><![CDATA[2020-06-18]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="end" type="ddm-date" index-type="keyword" instance-id="dkcb">
+        <dynamic-element name="endtime" instance-id="hkbt" type="text" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[12:00]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-content language-id="en_US"><![CDATA[2020-06-18]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="type" type="list" index-type="keyword" instance-id="gqtw">
+        <dynamic-content language-id="en_US"><![CDATA[Course]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="topic" type="list" index-type="keyword" instance-id="hifi">
+        <dynamic-content language-id="en_US"><![CDATA[WANDA]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="price" type="ddm-decimal" index-type="keyword" instance-id="nhco">
+        <dynamic-content language-id="en_US"><![CDATA[1000.0]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="capacity" type="ddm-integer" index-type="keyword" instance-id="ztwd">
+        <dynamic-content language-id="en_US"><![CDATA[16]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="parent" type="ddm-journal-article" index-type="keyword" instance-id="bwin">
+        <dynamic-element name="overlaps" instance-id="ucmi" type="boolean" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="open" type="boolean" index-type="keyword" instance-id="vszn">
+        <dynamic-content language-id="en_US"><![CDATA[true]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="visible" type="boolean" index-type="keyword" instance-id="cgpr">
+        <dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="highlight" type="boolean" index-type="keyword" instance-id="cdcl">
+        <dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="presenters" type="ddm-journal-article" index-type="keyword" instance-id="rwux">
+        <dynamic-content language-id="en_US"><![CDATA[{"classPK":"41718","groupId":"41207","className":"com.liferay.journal.model.JournalArticle","title":"Erik de Rooij","titleMap":"{\"en_US\":\"Erik de Rooij\"}","uuid":"f40b0ac4-7b87-1e32-6c86-2ae2e4c30b39"}]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="description" type="text_area" index-type="text" instance-id="qsvf">
+        <dynamic-content language-id="en_US"><![CDATA[<div id="confdescription">
+<p>De WANDA Gevorderden Cursus is bestemd voor gebruikers van het software pakket WANDA met enige ervaring. Bij deze 2-daagse online cursus besteden we aandacht aan diverse modelleringsaspecten, fysisch en numeriek gedrag van de hydraulische componenten, het dimensioneren van waterslagvoorzieningen en het efficiënt werken met grote modellen.</p>
+
+<p>Daarnaast wordt de basis van de Control module behandeld waarmee de gebruiker in staat is om meet &amp; regelsystemen te ontwerpen en te optimaliseren. Tevens wordt ingegaan op gebruikersvragen aan de hand van eigen modellen en ervaringen.<br />
+WANDA is een krachtig en gebruikersvriendelijk software programma voor het uitvoeren van hydraulische en thermodynamische berekeningen van stationaire en dynamische stromingen in leidingsystemen en het ontwerpen van waterslagvoorzieningen en operationele regelingen.</p>
+
+<p>&nbsp;</p>
+
+<div class="text-image"><img src="https://softwaredagen.deltares.nl/2020/files/3b1f28996042d48d735f36741b0aeeece9049295.jpg" /></div>
+
+<p>&nbsp;</p>
+
+<p>De cursus zal de volgende onderwerpen behandelen:</p>
+
+<p><strong>Modelleringsaspecten</strong></p>
+
+<ul>
+	<li>Vertaling werkelijkheid naar model</li>
+	<li>Discretisatie / rekengrid</li>
+	<li>Toestandsfasen hydraulische componenten</li>
+	<li>Hydraulische componenten nader bekeken (à la carte)</li>
+	<li>Numerieke instabiliteit</li>
+	<li>Valkuilen</li>
+</ul>
+
+<p><strong>Waterslagvoorzieningen</strong></p>
+
+<ul>
+	<li>Windketels (isotherm/adiabatisch, belucht/onbelucht, differentieel)</li>
+	<li>Air valves</li>
+	<li>Relief valves</li>
+</ul>
+
+<p><strong>Introductie Control module</strong></p>
+
+<ul>
+	<li>Modelleringsprincipe</li>
+	<li>Overzicht Control componenten</li>
+	<li>Conditionele regelingen</li>
+	<li>Continue regelingen</li>
+	<li>PID control voor pomp en regelklep met start en stop condities</li>
+	<li>Enkele praktijkvoorbeelden (o.a. regeling boosterpomp)</li>
+</ul>
+
+<p><strong>Efficiënt gebruik user interface</strong></p>
+
+<ul>
+	<li>Tips &amp; Tricks</li>
+	<li>Import/Export van data</li>
+	<li>Selecties en tabellen</li>
+	<li>Parameterscipt t.b.v. gevoeligheidsanalyse</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p><strong>REGISTRATIE</strong></p>
+
+<p><br />
+Voor aanmelden kunt u contact opnemen met <a href="mailto:academy@deltares.nl">academy@deltares.nl</a>.</p>
+</div>]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="room" type="ddm-journal-article" index-type="keyword" instance-id="ladd">
+        <dynamic-content language-id="en_US"><![CDATA[{"className":"com.liferay.journal.model.JournalArticle","classPK":"41805","title":"Ambition","titleMap":"{\"en_US\":\"Ambition\"}"}]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="schedules" type="text_area" index-type="text" instance-id="qcou">
+        <dynamic-element name="date" instance-id="dfzk" type="ddm-date" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+    </dynamic-element>
+</root>
