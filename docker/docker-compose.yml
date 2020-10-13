@@ -1,0 +1,60 @@
+version: '3.1'
+
+services:
+
+  database:
+    image: mariadb:10.2.25
+    container_name: oss-mariadb
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./mariadb/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/
+    restart: always
+    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_general_ci']
+    networks:
+      - liferay
+
+  liferay:
+    container_name: oss-liferay
+    build: liferay
+    ports:
+      - 80:8080
+      - 8080:8080
+      - 8000:8000
+    volumes:
+      - ./liferay/data:/opt/liferay/data/document_library
+      - ./liferay/mount:/etc/liferay/mount
+      - ${LIFERAY_BUNDLE_DIR}/deploy:/opt/liferay/deploy
+      - ${LIFERAY_BUNDLE_DIR}/osgi/modules:/opt/liferay/osgi/modules
+    restart: always
+    networks:
+      - liferay
+
+  elasticsearch:
+    container_name: oss-elastic
+    build: elasticsearch
+    environment:
+      - cluster.name=oss-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms2048m -Xmx2048m"
+    ports:
+      - 9200:9200
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - liferay
+
+volumes:
+  esdata:
+    driver: local
+  dbdata:
+
+networks:
+  liferay:

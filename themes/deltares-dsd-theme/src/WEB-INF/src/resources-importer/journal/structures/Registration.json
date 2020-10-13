@@ -1,0 +1,429 @@
+{
+  "availableLanguageIds": [
+    "en_US"
+  ],
+  "defaultLanguageId": "en_US",
+  "fields": [
+    {
+      "label": {
+        "en_US": "Event ID"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "integer",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "eventId",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-integer"
+    },
+    {
+      "label": {
+        "en_US": "Session type"
+      },
+      "options": [
+        {
+          "value": "Breakout",
+          "label": {
+            "en_US": "Breakout"
+          }
+        },
+        {
+          "value": "Bustransfer",
+          "label": {
+            "en_US": "Bus Transfer"
+          }
+        },
+        {
+          "value": "Course",
+          "label": {
+            "en_US": "Course"
+          }
+        },
+        {
+          "value": "OnlineCourse",
+          "label": {
+            "en_US": "Online Course"
+          }
+        },
+        {
+          "value": "Dinner",
+          "label": {
+            "en_US": "Dinner"
+          }
+        },
+        {
+          "value": "Symposium",
+          "label": {
+            "en_US": "Symposium"
+          }
+        },
+        {
+          "value": "UserDays",
+          "label": {
+            "en_US": "User Days"
+          }
+        },
+        {
+          "value": "Webinar",
+          "label": {
+            "en_US": "Webinar"
+          }
+        },
+        {
+          "value": "Workshop",
+          "label": {
+            "en_US": "Workshop"
+          }
+        }
+      ],
+      "predefinedValue": {
+        "en_US": [
+          ""
+        ]
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "multiple": false,
+      "name": "type",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "select"
+    },
+    {
+      "label": {
+        "en_US": "Topic"
+      },
+      "options": [
+        {
+          "value": "other",
+          "label": {
+            "en_US": "Other"
+          }
+        },
+        {
+          "value": "danubius",
+          "label": {
+            "en_US": "Danubius"
+          }
+        },
+        {
+          "value": "delftfews",
+          "label": {
+            "en_US": "Delft Fews"
+          }
+        },
+        {
+          "value": "delft3d",
+          "label": {
+            "en_US": "Delft3D"
+          }
+        },
+        {
+          "value": "dhydro",
+          "label": {
+            "en_US": "D-Hydro"
+          }
+        },
+        {
+          "value": "dstability",
+          "label": {
+            "en_US": "D-Stability"
+          }
+        },
+        {
+          "value": "dwaterquality",
+          "label": {
+            "en_US": "D-Waterquality"
+          }
+        },
+        {
+          "value": "flexiblemesh",
+          "label": {
+            "en_US": "Flexiblemesh"
+          }
+        },
+        {
+          "value": "imod",
+          "label": {
+            "en_US": "i-Mod"
+          }
+        },
+        {
+          "value": "riverlab",
+          "label": {
+            "en_US": "Riverlab"
+          }
+        },
+        {
+          "value": "rtctools",
+          "label": {
+            "en_US": "RTC Tools"
+          }
+        },
+        {
+          "value": "simona",
+          "label": {
+            "en_US": "Simona"
+          }
+        },
+        {
+          "value": "swan",
+          "label": {
+            "en_US": "Swan"
+          }
+        },
+        {
+          "value": "wanda",
+          "label": {
+            "en_US": "WANDA"
+          }
+        },
+        {
+          "value": "wflow",
+          "label": {
+            "en_US": "WFLOW"
+          }
+        },
+        {
+          "value": "xbeach",
+          "label": {
+            "en_US": "XBeach"
+          }
+        }
+      ],
+      "predefinedValue": {
+        "en_US": [
+          ""
+        ]
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "multiple": false,
+      "name": "topic",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "select"
+    },
+    {
+      "label": {
+        "en_US": "Price"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "double",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "price",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-decimal",
+      "nestedFields": [
+        {
+          "label": {
+            "en_US": "Currency"
+          },
+          "predefinedValue": {
+            "en_US": "€ "
+          },
+          "style": {
+            "en_US": ""
+          },
+          "tip": {
+            "en_US": ""
+          },
+          "dataType": "string",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "currency",
+          "readOnly": false,
+          "repeatable": false,
+          "required": false,
+          "showLabel": true,
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "label": {
+        "en_US": "Capacity"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "integer",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "capacity",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-integer"
+    },
+    {
+      "label": {
+        "en_US": "Parent registration"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "journal-article",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "parent",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "ddm-journal-article",
+      "nestedFields": [
+        {
+          "label": {
+            "en_US": "Overlaps"
+          },
+          "predefinedValue": {
+            "en_US": true
+          },
+          "style": {
+            "en_US": ""
+          },
+          "tip": {
+            "en_US": "If registration period is expected to overlap with parent registration period."
+          },
+          "dataType": "boolean",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "overlaps",
+          "readOnly": false,
+          "repeatable": false,
+          "required": false,
+          "showLabel": true,
+          "type": "checkbox"
+        }
+      ]
+    },
+    {
+      "label": {
+        "en_US": "Open"
+      },
+      "predefinedValue": {
+        "en_US": false
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "boolean",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "open",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "checkbox"
+    },
+    {
+      "label": {
+        "en_US": "Visible"
+      },
+      "predefinedValue": {
+        "en_US": false
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "boolean",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "visible",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "checkbox"
+    },
+    {
+      "label": {
+        "en_US": "Highlight"
+      },
+      "predefinedValue": {
+        "en_US": false
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "boolean",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "highlight",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "checkbox"
+    }
+  ]
+}

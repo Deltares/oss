@@ -1,0 +1,24 @@
+Bundle-Name: registration-service-api
+Bundle-SymbolicName: nl.deltares.dsd.registration.api
+Bundle-Version: 1.0.0
+Export-Package:\
+    nl.deltares.dsd.registration.exception, \
+    nl.deltares.dsd.registration.model, \
+    nl.deltares.dsd.registration.service, \
+    nl.deltares.dsd.registration.service.persistence, \
+-check: EXPORTS
+-includeresource: META-INF/service.xml=../registration-service-service/service.xml
+Import-Package: \
+    !com.swabunga.spell.*, \
+    !net.fortuna.ical4j.*, \
+    !org.antlr.stringtemplate, \
+    !org.apache.axis.tools.ant.wsdl, \
+    !org.apache.poi.*, \
+    !com.liferay.petra.lang, \
+    !com.liferay.portal.kernel.portlet, \
+    !org.apache.avalon.framework.logger, \
+    !org.apache.log, \
+    !org.apache.log4j, \
+    com.liferay.counter.kernel.service,\
+    com.liferay.portal.kernel.*,\
+    *

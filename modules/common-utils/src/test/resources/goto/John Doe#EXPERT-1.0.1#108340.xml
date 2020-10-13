@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<root available-locales="en_US" default-locale="en_US">
+    <dynamic-element name="storeInParentSite" type="boolean" index-type="keyword" instance-id="pcjy">
+        <dynamic-content language-id="en_US"><![CDATA[true]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="expertName" type="text" index-type="keyword" instance-id="xhvk">
+        <dynamic-element name="expertImage" instance-id="jmet" type="image" index-type="text">
+            <dynamic-content language-id="en_US"><![CDATA[{"groupId":"102501","alt":"john doe","name":"sam.jpg","title":"sam.jpg","type":"journal","uuid":"4a747cd4-5a95-4186-2516-e4e1e14f5d43","fileEntryId":"103089","resourcePrimKey":"120869"}]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-element name="expertJobTitle" instance-id="rmzr" type="text" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[Expert]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-element name="expertCompany" instance-id="xuor" type="text" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[Deltares]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-element name="expertEmailAddress" instance-id="pgex" type="text" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[john.doe@deltares.nl]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-element name="autoFill" instance-id="gjld" type="boolean" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-content language-id="en_US"><![CDATA[John Doe]]></dynamic-content>
+    </dynamic-element>
+</root>

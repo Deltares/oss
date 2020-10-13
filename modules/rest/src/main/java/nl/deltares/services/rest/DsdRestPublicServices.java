@@ -1,6 +1,12 @@
 package nl.deltares.services.rest;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.liferay.journal.service.JournalArticleLocalService;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.services.rest.exception.JsonProcessingExceptionMapper;
 import nl.deltares.services.rest.exception.LiferayRestExceptionMapper;
@@ -40,6 +46,9 @@ public class DsdRestPublicServices extends Application {
     @Reference
     KeycloakUtils keycloakUtils;
 
+    @Reference
+    DsdParserUtils parserUtils;
+
     @Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> classes = new HashSet<>();
@@ -52,11 +61,12 @@ public class DsdRestPublicServices extends Application {
     }
 
     @Override
-    public Set getSingletons() {
-        Set singletons = new HashSet();
+    public Set<Object> getSingletons() {
+        Set<Object> singletons = new HashSet<>();
         singletons.add(this);
+        singletons.add(getJacksonJsonProvider());
         //Services for FullCalendar
-        singletons.add(new DsdFullcalendarService(journalArticleLocalService));
+        singletons.add(new DsdFullcalendarService(_configurationProvider, parserUtils));
         return singletons;
     }
 
@@ -66,4 +76,25 @@ public class DsdRestPublicServices extends Application {
         return Response.ok().entity("DSD.Rest.Public service is up and running").build();
     }
 
+    private ConfigurationProvider _configurationProvider;
+
+    @Reference
+    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
+        _configurationProvider = configurationProvider;
+    }
+
+    private static JacksonJsonProvider getJacksonJsonProvider() {
+
+        JacksonJsonProvider jacksonJsonProvider = new JacksonJsonProvider();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // Prevent serialization of null and empty string values
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+
+        jacksonJsonProvider.setMapper(objectMapper);
+        jacksonJsonProvider.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        return jacksonJsonProvider;
+    }
 }

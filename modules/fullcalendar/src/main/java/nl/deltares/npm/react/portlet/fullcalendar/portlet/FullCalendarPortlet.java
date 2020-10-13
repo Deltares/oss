@@ -1,12 +1,12 @@
 package nl.deltares.npm.react.portlet.fullcalendar.portlet;
 
+import com.liferay.frontend.js.loader.modules.extender.npm.JSPackage;
 import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.npm.react.portlet.fullcalendar.constants.FullCalendarPortletKeys;
+import nl.deltares.portal.utils.DsdParserUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -26,7 +26,8 @@ import java.util.Map;
         configurationPid = "nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration",
         immediate = true,
         property = {
-                "com.liferay.portlet.header-portlet-css=/css/index.css",
+                "com.liferay.portlet.header-portlet-css=/css/main.css",
+                "com.liferay.portlet.header-portlet-js=/lib/index.es.js",
                 "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.instanceable=true",
                 "javax.portlet.display-name=FullCalendar Portlet",
@@ -47,17 +48,23 @@ public class FullCalendarPortlet extends MVCPortlet {
             RenderRequest renderRequest, RenderResponse renderResponse)
             throws IOException, PortletException {
 
+        JSPackage jsPackage = _npmResolver.getJSPackage();
+
+        renderRequest.setAttribute(
+                FullCalendarPortletKeys.BOOTSTRAP_REQUIRE,
+                jsPackage.getResolvedId() + " as bootstrapRequire");
+
         renderRequest.setAttribute(
                 FullCalendarConfiguration.class.getName(),
                 _configuration);
 
-        ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
-        PermissionChecker permissionChecker = themeDisplay.getPermissionChecker();
         renderRequest.setAttribute(
                 "mainRequire",
                 _npmResolver.resolveModuleName("fullcalendar") + " as main");
 
-        renderRequest.setAttribute("hasEditPermission", permissionChecker.isGroupAdmin(themeDisplay.getSiteGroupId()));
+        renderRequest.setAttribute(DsdParserUtils.class.getName(), dsdParserUtils);
+
+        renderRequest.setAttribute(ConfigurationProvider.class.getName(), _configurationProvider);
 
         super.doView(renderRequest, renderResponse);
     }
@@ -72,5 +79,15 @@ public class FullCalendarPortlet extends MVCPortlet {
     @Reference
     private NPMResolver _npmResolver;
 
+    @Reference
+    private DsdParserUtils dsdParserUtils;
+
     private volatile FullCalendarConfiguration _configuration;
+
+    private ConfigurationProvider _configurationProvider;
+
+    @Reference
+    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
+        _configurationProvider = configurationProvider;
+    }
 }
