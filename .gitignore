@@ -246,6 +246,7 @@ gradle-app.setting
 **/node_modules
 **/test-coverage
 **/tmp
+**/out
 **/.web_bundle_build
 .gradle
 .idea
@@ -259,3 +260,10 @@ gradle-app.setting
 /plugins-sdk/dist
 /plugins-sdk/lib
 test-results
+
+.env
+license*.xml
+/docker/liferay/mount
+/docker/liferay/data
+/docker/mariadb/docker-entrypoint-initdb.d
+/http-client-files/http-client.private.env.json

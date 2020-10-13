@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<root available-locales="en_US" default-locale="en_US">
+    <dynamic-element name="start" type="ddm-date" index-type="keyword" instance-id="ojav">
+        <dynamic-element name="starttime" instance-id="erhq" type="text" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[09:00]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-content language-id="en_US"><![CDATA[2020-07-06]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="end" type="ddm-date" index-type="keyword" instance-id="aarq">
+        <dynamic-element name="endtime" instance-id="hwxx" type="text" index-type="keyword">
+            <dynamic-content language-id="en_US"><![CDATA[17:00]]></dynamic-content>
+        </dynamic-element>
+        <dynamic-content language-id="en_US"><![CDATA[2020-07-10]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="eventLocation" type="ddm-journal-article" index-type="keyword" instance-id="rqnm">
+        <dynamic-content language-id="en_US"><![CDATA[{"className":"com.liferay.journal.model.JournalArticle","classPK":"80868","title":"Deltares","titleMap":"{\"en_US\":\"Deltares\"}"}]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="eventImage" type="image" index-type="text" instance-id="vzts">
+        <dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="eventIntroduction" type="text" index-type="keyword" instance-id="koqo">
+        <dynamic-content language-id="en_US"><![CDATA[Hello]]></dynamic-content>
+    </dynamic-element>
+    <dynamic-element name="eventFullDescription" type="text_area" index-type="text" instance-id="ozqc">
+        <dynamic-content language-id="en_US"><![CDATA[<p>dklfgad;lfkgjad asdlfk jasd;lkfjas;dlk as;ldk jas;kld jg;askldjg as</p>
+
+<p>as</p>
+
+<p>dfgasd;kl gjasd</p>
+
+<p>gasd</p>
+
+<p>fasdg</p>
+
+<p>a sd gasdgsl jdga</p>]]></dynamic-content>
+    </dynamic-element>
+</root>

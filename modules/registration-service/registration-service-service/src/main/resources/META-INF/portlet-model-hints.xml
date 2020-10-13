@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="nl.deltares.dsd.registration.model.Registration">
+		<field name="registrationId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="userId" type="long" />
+		<field name="resourcePrimaryKey" type="long" />
+		<field name="userPreferences" type="String">
+			<hint-collection name="TEXTAREA" />
+		</field>
+		<field name="startTime" type="Date" />
+		<field name="endTime" type="Date" />
+		<field name="parentResourcePrimaryKey" type="long" />
+	</model>
+</model-hints>

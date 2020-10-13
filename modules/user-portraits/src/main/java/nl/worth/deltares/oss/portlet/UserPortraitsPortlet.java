@@ -92,16 +92,23 @@ public class UserPortraitsPortlet extends MVCPortlet {
 
 	private List<String> getRandomPortraits(ThemeDisplay themeDisplay, int number) {
 
-		Set<User> usersWithPortraits = getRandomUsersWithPortrait(themeDisplay, number);
+
 		List<String> portraitUrlList = new ArrayList<>();
 
-		try {
-			for (User user : usersWithPortraits) {
-				String portraitURL = user.getPortraitURL(themeDisplay);
-				portraitUrlList.add(portraitURL);
+		int maxIterations = 10;
+		int currentIteration = 0;
+		while (portraitUrlList.size() < number && currentIteration < maxIterations){
+			currentIteration++;
+			try {
+				Set<User> usersWithPortraits = getRandomUsersWithPortrait(themeDisplay, number);
+
+				for (User user : usersWithPortraits) {
+					String portraitURL = user.getPortraitURL(themeDisplay);
+					portraitUrlList.add(portraitURL);
+				}
+			} catch (PortalException e) {
+				LOG.error("Error retrieving portrait URLs", e);
 			}
-		} catch (PortalException e) {
-			LOG.error("Error retrieving portrait URLs", e);
 		}
 
 		return portraitUrlList;
@@ -111,7 +118,7 @@ public class UserPortraitsPortlet extends MVCPortlet {
 
 		Set<User> usersWithPortrait = new HashSet<>();
 
-		try {
+//		try {
 			//Retrieve only 1000 users to search for portraits. Start position is random.
 			int allUserCount = userLocalService.getUsersCount();
 
@@ -147,15 +154,15 @@ public class UserPortraitsPortlet extends MVCPortlet {
 							countUsersWithPortrait++;
 						}
 					} catch (Exception e){
-						LOG.warn(String.format("Un-setting portrait %d for user %s", user.getPortraitId(),  user.getScreenName()));
-						user.setPortraitId(0);
-						userLocalService.updateUser(user);
+						LOG.warn(String.format("Error getting portrait %d for user %s: %s", user.getPortraitId(),  user.getScreenName(), e.getMessage()));
+//						user.setPortraitId(0);
+//						userLocalService.updateUser(user);
 					}
 				}
 			}
-		} catch (Exception e) {
-			LOG.error("Error retrieving company users", e);
-		}
+//		} catch (Exception e) {
+//			LOG.error("Error retrieving company users", e);
+//		}
 
 		return usersWithPortrait;
 	}

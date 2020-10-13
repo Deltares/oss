@@ -1,0 +1,24 @@
+// FULL PAGE
+
+.news-page__item {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(370px, 1fr));
+}
+
+.projects-page__item {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(370px, 1fr));
+}
+
+//  GRID
+.c-grid.news-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 30px;
+}
+
+.c-grid.news-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(370px, 1fr));
+    grid-gap: 44px;
+}

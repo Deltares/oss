@@ -1,0 +1,16 @@
+.c-see-all {
+    text-align: right;
+    border-bottom: 2px solid $color-alpha-blue;
+    
+    &__link {
+        display: inline-block;
+        background: $color-glacier;
+        color: white;
+        font-weight: 400;
+        padding: 8px 10px;
+    }
+    
+    &__text img {
+        margin-top: -4px;
+    }
+}

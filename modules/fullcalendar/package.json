@@ -1,25 +1,43 @@
 {
-	"dependencies": {
-		"@fullcalendar/core": "^4.1.0",
-		"@fullcalendar/daygrid": "^4.1.0",
-		"@fullcalendar/interaction": "^4.1.0",
-		"@fullcalendar/react": "^4.1.0",
-		"@fullcalendar/resource-daygrid": "^4.3.0",
-		"@fullcalendar/resource-timegrid": "^4.3.0",
-		"@fullcalendar/timegrid": "^4.1.0",
-		"react": "^16.7.0",
-		"react-dom": "^16.7.0"
-	},
-	"devDependencies": {
-		"babel-cli": "^6.26.0",
-		"babel-preset-env": "^1.7.0",
-		"babel-preset-react": "6.24.1",
-		"liferay-npm-bundler": "^2.0.0"
-	},
-	"main": "lib/index.es.js",
 	"name": "fullcalendar",
+	"version": "1.0.0",
+	"description": "FullCalendar",
+	"devDependencies": {
+		"babel-cli": "6.26.0",
+		"babel-loader": "7.1.5",
+		"babel-preset-env": "1.7.0",
+		"babel-preset-react": "6.24.1",
+		"copy-webpack-plugin": "^6.0.2",
+		"liferay-npm-build-support": "^2.17.1",
+		"liferay-npm-bundler": "^2.17.1",
+		"webpack": "4.29.6",
+		"webpack-cli": "^3.3.11",
+		"webpack-dev-server": "^3.11.0"
+	},
+	"dependencies": {
+		"@fullcalendar/core": "^4.4.2",
+		"@fullcalendar/resource-common": "^4.4.2",
+		"@fullcalendar/daygrid": "^4.4.2",
+		"@fullcalendar/interaction": "^4.4.2",
+		"@fullcalendar/react": "^4.4.2",
+		"@fullcalendar/resource-daygrid": "^4.4.2",
+		"@fullcalendar/resource-timegrid": "^4.4.2",
+		"@fullcalendar/resource-timeline": "^4.4.2",
+		"@fullcalendar/timegrid": "^4.4.2",
+		"@fullcalendar/timeline": "^4.4.2",
+		"react": "16.8.6",
+		"react-dom": "16.8.6"
+	},
 	"scripts": {
 		"build": "babel --source-maps -d build/resources/main/META-INF/resources src/main/resources/META-INF/resources && liferay-npm-bundler"
 	},
-	"version": "1.0.0"
+	"portlet": {
+		"com.liferay.portlet.display-category": "OSS",
+		"com.liferay.portlet.header-portlet-css": "/css/main.css",
+		"com.liferay.portlet.instanceable": true,
+		"javax.portlet.name": "fullcalendar",
+		"javax.portlet.security-role-ref": "power-user,user",
+		"javax.portlet.resource-bundle": "content.Language"
+	},
+	"main": "lib/index.es.js"
 }

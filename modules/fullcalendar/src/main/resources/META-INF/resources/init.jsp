@@ -25,24 +25,60 @@
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
-<%@ page import="nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration" %>
+<%@ page import="com.liferay.portal.kernel.exception.PortalException" %>
 <%@ page import="com.liferay.portal.kernel.util.Validator" %>
+<%@ page import="com.liferay.portal.kernel.util.WebKeys" %>
+<%@ page import="nl.deltares.npm.react.portlet.fullcalendar.constants.FullCalendarPortletKeys" %>
+<%@ page import="nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration" %>
+<%@ page import="nl.deltares.portal.model.impl.Event" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="nl.deltares.portal.utils.DsdParserUtils" %>
+<%@ page import="nl.deltares.portal.configuration.DSDSiteConfiguration" %>
+<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider" %>
 
 <liferay-theme:defineObjects/>
 
 <portlet:defineObjects/>
 
 <%
+    ConfigurationProvider configurationProvider =
+            (ConfigurationProvider) request.getAttribute(ConfigurationProvider.class.getName());
 
-    String mainRequire = (String)renderRequest.getAttribute("mainRequire");
+    DSDSiteConfiguration dsdSiteConfiguration = configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
+
+    SimpleDateFormat format = new SimpleDateFormat("yyy-MM-dd");
+    long siteId = themeDisplay.getSiteGroupId();
+    String bootstrapRequire = (String)renderRequest.getAttribute(FullCalendarPortletKeys.BOOTSTRAP_REQUIRE);
     FullCalendarConfiguration configuration =
             (FullCalendarConfiguration)
                     renderRequest.getAttribute(FullCalendarConfiguration.class.getName());
-
-    boolean canEdit = true;
+    String portletId = (String)renderRequest.getAttribute(WebKeys.PORTLET_ID);
+    String layoutUuid = themeDisplay.getLayout().getUuid();
     String baseUrl = "";
-
+    String eventId = String.valueOf(dsdSiteConfiguration.eventId());
+    String startDate = format.format(new Date());
+    Map<String, String> colorMap = new HashMap<>();
     if (Validator.isNotNull(configuration)) {
         baseUrl = portletPreferences.getValue("baseUrl", configuration.baseUrl());
+        String sessionColorMap = portletPreferences.getValue("sessionColorMap", configuration.sessionColorMap());
+
+        try {
+            DsdParserUtils dsdUtils = (DsdParserUtils) renderRequest.getAttribute(DsdParserUtils.class.getName());
+            Event event = dsdUtils.getEvent(siteId, eventId);
+            if (event == null){
+                startDate = format.format(new Date());
+            } else {
+                startDate = format.format(event.getStartTime());
+            }
+            colorMap = dsdUtils.parseSessionColorConfig(sessionColorMap);
+        } catch (PortalException e) {
+            System.out.println(e.getMessage());
+        }
+
     }
+
+
 %>
