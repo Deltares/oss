@@ -62,7 +62,7 @@
 			</#list> 
 		</ul>
 	</nav>
-	<#if is_signed_in>
+	<#if is_signed_in && is_shopping_cart>
 
 	<div class="d-flex pt-4 pr-4 justify-content-end position-relative">
 		<span class="c-cart__cart px-3 pt-3 pb-1">

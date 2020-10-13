@@ -41,3 +41,5 @@ journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroup().getParentGr
 
 <#assign homeUrl =  (themeDisplay.getPortalURL() + themeDisplay.getPathFriendlyURLPublic()) />
 <#assign siteUrl = (homeUrl + themeDisplay.getSiteGroup().getFriendlyURL()) />
+
+<#assign is_shopping_cart = getterUtil.getBoolean(theme_settings["shopping-cart"]) />
