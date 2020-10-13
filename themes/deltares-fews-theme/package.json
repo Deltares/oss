@@ -1,5 +1,10 @@
 {
 	"devDependencies": {
+		"diff": ">=3.5.0",
+		"lodash.template": ">=4.5.0",
+		"lodash": ">=4.17.19",
+		"minimatch": ">=3.0.2",
+		"bl": ">=1.2.3",
 		"gulp": "^3.9.1",
 		"liferay-theme-deps-7.1": "8.1.2",
 		"liferay-theme-tasks": "9.5.0"
