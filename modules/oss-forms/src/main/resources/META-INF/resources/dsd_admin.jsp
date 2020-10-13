@@ -19,14 +19,14 @@
         <aui:col width="20">
             <div class="control-label" > <liferay-ui:message key="dsd.admin.selectDownload"/>  </div>
         </aui:col>
-        <aui:col width="20">
+        <aui:col width="25">
             <select id="eventSelection" name="eventSelection" class="btn btn-lg" style="border-color: lightgray" >
                 <% for (JournalArticle event : events) { %>
                 <option value="<%=event.getArticleId() %>" ><%= event.getTitle() %></option>
                 <% } %>
             </select>
         </aui:col>
-        <aui:col width="10">
+        <aui:col width="5">
             <button id="downloadButton"  class="btn btn-lg" type="button"><liferay-ui:message key="dsd.admin.download"/> </button>
         </aui:col>
     </aui:row>
