@@ -9,10 +9,7 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.display.context.RegistrationDisplayContext;
 import nl.deltares.portal.model.DsdArticle;
-import nl.deltares.portal.model.impl.AbsDsdArticle;
-import nl.deltares.portal.model.impl.Event;
-import nl.deltares.portal.model.impl.Location;
-import nl.deltares.portal.model.impl.Registration;
+import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
@@ -70,6 +67,15 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
         return (Location) dsdArticle;
     }
 
+
+    @Override
+    public Expert getExpert(JournalArticle article) throws PortalException {
+        AbsDsdArticle dsdArticle = AbsDsdArticle.getInstance(article);
+        if (!(dsdArticle instanceof Expert)) {
+            throw new PortalException(String.format("Id %s is not the articleId of a valid DSD Expert", article.getTitle()));
+        }
+        return (Expert) dsdArticle;
+    }
     @Override
     public Map<String, String> parseSessionColorConfig(String json) {
         Map<String, String> colorMap;
