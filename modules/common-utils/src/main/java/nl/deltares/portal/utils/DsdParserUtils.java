@@ -5,6 +5,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.display.context.RegistrationDisplayContext;
 import nl.deltares.portal.model.impl.Event;
+import nl.deltares.portal.model.impl.Expert;
 import nl.deltares.portal.model.impl.Location;
 import nl.deltares.portal.model.impl.Registration;
 
@@ -26,6 +27,8 @@ public interface DsdParserUtils {
     Registration getRegistration(JournalArticle article) throws PortalException;
 
     Location getLocation(JournalArticle article) throws PortalException;
+
+    Expert getExpert(JournalArticle article) throws PortalException;
 
     RegistrationDisplayContext getDisplayContextInstance(String articleId, ThemeDisplay themeDisplay);
 }
