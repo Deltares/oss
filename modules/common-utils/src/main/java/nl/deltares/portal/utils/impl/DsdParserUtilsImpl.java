@@ -44,6 +44,15 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
     }
 
     @Override
+    public Event getEvent(JournalArticle article) throws PortalException {
+        AbsDsdArticle eventArticle = AbsDsdArticle.getInstance(article);
+        if (!(eventArticle instanceof Event)) {
+            throw new PortalException(String.format("Article %s is not a valid DSD Event", article.getTitle()));
+        }
+        return (Event) eventArticle;
+    }
+
+    @Override
     public Registration getRegistration(long siteId, String articleId) throws PortalException {
         JournalArticle article =  dsdJournalArticleUtils.getJournalArticle(siteId, articleId);
         return getRegistration(article);
@@ -53,7 +62,7 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
     public Registration getRegistration(JournalArticle article) throws PortalException {
         AbsDsdArticle dsdArticle = AbsDsdArticle.getInstance(article);
         if (!(dsdArticle instanceof Registration)) {
-            throw new PortalException(String.format("Id %s is not the articleId of a valid DSD Registration", article.getTitle()));
+            throw new PortalException(String.format("Article %s is not a valid DSD Registration", article.getTitle()));
         }
         return (Registration) dsdArticle;
     }
@@ -62,7 +71,7 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
     public Location getLocation(JournalArticle article) throws PortalException {
         AbsDsdArticle dsdArticle = AbsDsdArticle.getInstance(article);
         if (!(dsdArticle instanceof Location)) {
-            throw new PortalException(String.format("Id %s is not the articleId of a valid DSD Location", article.getTitle()));
+            throw new PortalException(String.format("Article %s is not a valid DSD Location", article.getTitle()));
         }
         return (Location) dsdArticle;
     }
@@ -72,7 +81,7 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
     public Expert getExpert(JournalArticle article) throws PortalException {
         AbsDsdArticle dsdArticle = AbsDsdArticle.getInstance(article);
         if (!(dsdArticle instanceof Expert)) {
-            throw new PortalException(String.format("Id %s is not the articleId of a valid DSD Expert", article.getTitle()));
+            throw new PortalException(String.format("Article %s is not a valid DSD Expert", article.getTitle()));
         }
         return (Expert) dsdArticle;
     }

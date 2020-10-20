@@ -1,10 +1,10 @@
 $datebar-width: 60px;
-$colorbar-width: 20px;
+$colorbar-width: 60px;
 
 .c-events__item {
     min-height: 180px;
     position: relative;
-    padding: 0 22px 7px 35px;
+    padding: 0 22px 7px 74px;
     text-align: right;
     background-color: white;
     /*aligns the readmore to the right*/
@@ -19,6 +19,7 @@ $colorbar-width: 20px;
     /*aligns the readmore to the right*/
 }
 
+.c-events__item__date,
 .c-sessions__item__date {
     width: $datebar-width;
     white-space: pre-wrap;
@@ -84,7 +85,7 @@ $colorbar-width: 20px;
     &::before {
         content: '';
         background: $color-orange;
-        width: $colorbar-width;
+        width: $datebar-width;
         height: 100%;
         position: absolute;
         z-index: 0;
