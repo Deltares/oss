@@ -6,30 +6,7 @@
     "fields": [
         {
             "label": {
-                "en_US": "Store in parent site"
-            },
-            "predefinedValue": {
-                "en_US": true
-            },
-            "style": {
-                "en_US": ""
-            },
-            "tip": {
-                "en_US": "Choose to store content under parent site."
-            },
-            "dataType": "boolean",
-            "indexType": "keyword",
-            "localizable": true,
-            "name": "storeInParentSite",
-            "readOnly": false,
-            "repeatable": false,
-            "required": false,
-            "showLabel": true,
-            "type": "checkbox"
-        },
-        {
-            "label": {
-                "en_US": "Expert name"
+                "en_US": "Site Name"
             },
             "predefinedValue": {
                 "en_US": ""
@@ -43,16 +20,39 @@
             "dataType": "string",
             "indexType": "keyword",
             "localizable": true,
-            "name": "expertName",
+            "name": "siteName",
             "readOnly": false,
-            "repeatable": false,
-            "required": false,
+            "repeatable": true,
+            "required": true,
             "showLabel": true,
             "type": "text",
             "nestedFields": [
                 {
                     "label": {
-                        "en_US": "Expert image"
+                        "en_US": "Path"
+                    },
+                    "predefinedValue": {
+                        "en_US": ""
+                    },
+                    "style": {
+                        "en_US": ""
+                    },
+                    "tip": {
+                        "en_US": "Relative Path to DSD site"
+                    },
+                    "dataType": "string",
+                    "indexType": "keyword",
+                    "localizable": true,
+                    "name": "path",
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": true,
+                    "showLabel": true,
+                    "type": "text"
+                },
+                {
+                    "label": {
+                        "en_US": "Icon"
                     },
                     "predefinedValue": {
                         "en_US": ""
@@ -67,16 +67,16 @@
                     "fieldNamespace": "ddm",
                     "indexType": "text",
                     "localizable": true,
-                    "name": "expertImage",
+                    "name": "icon",
                     "readOnly": false,
                     "repeatable": false,
-                    "required": false,
+                    "required": true,
                     "showLabel": true,
                     "type": "ddm-image"
                 },
                 {
                     "label": {
-                        "en_US": "Expert job title"
+                        "en_US": "Sub Title"
                     },
                     "predefinedValue": {
                         "en_US": ""
@@ -90,7 +90,7 @@
                     "dataType": "string",
                     "indexType": "keyword",
                     "localizable": true,
-                    "name": "expertJobTitle",
+                    "name": "subTitle",
                     "readOnly": false,
                     "repeatable": false,
                     "required": false,
@@ -99,7 +99,7 @@
                 },
                 {
                     "label": {
-                        "en_US": "Expert company"
+                        "en_US": "Description"
                     },
                     "predefinedValue": {
                         "en_US": ""
@@ -111,60 +111,14 @@
                         "en_US": ""
                     },
                     "dataType": "string",
-                    "indexType": "keyword",
+                    "indexType": "text",
                     "localizable": true,
-                    "name": "expertCompany",
+                    "name": "description",
                     "readOnly": false,
                     "repeatable": false,
                     "required": false,
                     "showLabel": true,
-                    "type": "text"
-                },
-                {
-                    "label": {
-                        "en_US": "Expert email address"
-                    },
-                    "predefinedValue": {
-                        "en_US": ""
-                    },
-                    "style": {
-                        "en_US": ""
-                    },
-                    "tip": {
-                        "en_US": ""
-                    },
-                    "dataType": "string",
-                    "indexType": "keyword",
-                    "localizable": true,
-                    "name": "expertEmailAddress",
-                    "readOnly": false,
-                    "repeatable": false,
-                    "required": true,
-                    "showLabel": true,
-                    "type": "text"
-                },
-                {
-                    "label": {
-                        "en_US": "Fill missing fields"
-                    },
-                    "predefinedValue": {
-                        "en_US": false
-                    },
-                    "style": {
-                        "en_US": ""
-                    },
-                    "tip": {
-                        "en_US": "Automatically fill missing fields with values from the database."
-                    },
-                    "dataType": "boolean",
-                    "indexType": "keyword",
-                    "localizable": true,
-                    "name": "autoFill",
-                    "readOnly": false,
-                    "repeatable": false,
-                    "required": false,
-                    "showLabel": true,
-                    "type": "checkbox"
+                    "type": "textarea"
                 }
             ]
         }

@@ -22,6 +22,8 @@ public interface DsdParserUtils {
 
     Event getEvent(long siteId, String eventId) throws PortalException;
 
+    Event getEvent(JournalArticle article) throws PortalException;
+
     Registration getRegistration(long siteId, String articleId) throws PortalException;
 
     Registration getRegistration(JournalArticle article) throws PortalException;
