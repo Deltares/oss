@@ -2,12 +2,8 @@
 <#assign eventId = .vars['reserved-article-id'].getData() />
 <#assign event = dsdParserUtils.getEvent(groupId,eventId) />
 <#assign location = event.getEventLocation() />
-<#if event.isEventInPast() >
-    <#assign isEventPast = "past-event"/>
-<#else>
-    <#assign isEventPast = "upcoming-event"/>
-</#if>
-
+<#assign isEventPast><#if event.isEventInPast()>past-event<#else>upcoming-event</#if></#assign>
+<#assign locationString><#if location.isOnline() >${location.getTitle()}<#else>${location.getCity()}, ${location.getCountry()}</#if></#assign>
 
 <div class="c-events page">
     <div class="c-events__item ${isEventPast}">
@@ -22,10 +18,6 @@
                 </#if>
             </div>
             <div class="data-section">
-<#--                <div class="c-events__item__date">-->
-<#--                    <span>${dateUtil.getDate(event.getStartTime(), "dd", locale)}</span>-->
-<#--                    ${dateUtil.getDate(event.getStartTime(), "MMM", locale)}-->
-<#--                </div>-->
                 <h3 class="c-events__item__title h1">${event.getTitle()}</h3>
                 <p class="c-events__item__time-date-place">
                     <span class="c-events__item__time-date-place__date">
@@ -39,7 +31,7 @@
                         ${dateUtil.getDate(event.getEndTime(), "HH:mm", locale)}</span>
 
                     <span class="c-events__item__time-date-place__place">
-                        <br>${location.getCity()}, ${location.getCountry()}
+                        <br>${locationString}
                     </span>
 
                 </p>

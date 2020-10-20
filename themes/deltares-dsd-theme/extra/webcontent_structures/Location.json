@@ -165,6 +165,12 @@
           "label": {
             "en_US": "Event"
           }
+        },
+        {
+          "value": "online",
+          "label": {
+            "en_US": "Online Event"
+          }
         }
       ],
       "predefinedValue": {
