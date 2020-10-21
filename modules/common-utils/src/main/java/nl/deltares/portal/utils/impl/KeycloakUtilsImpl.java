@@ -88,6 +88,17 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
     @Override
     public Map<String, String> getUserAttributes(String email) throws Exception {
 
+        Map<String, String> unfiltered = getRawUserAttributes(email);
+        HashMap<String, String> filteredAttributes = new HashMap<>();
+        for (ATTRIBUTES attributeKey : ATTRIBUTES.values()) {
+            String key = attributeKey.name();
+            if (!unfiltered.containsKey(key)) continue;
+            filteredAttributes.put(key, JsonContentUtils.parseJsonArrayToValue(unfiltered.get(key)));
+        }
+        return filteredAttributes;
+    }
+
+    private Map<String, String> getRawUserAttributes(String email) throws IOException, JSONException {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getAccessToken());
@@ -97,6 +108,17 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         String jsonResponse = readAll(connection.getInputStream());
         return parseUserAttributes(jsonResponse);
     }
+
+    private Map<String, String> getUserAttributes(String email, String[] searchKeys) throws Exception{
+        Map<String, String> unfiltered = getRawUserAttributes(email);
+        HashMap<String, String> filteredAttributes = new HashMap<>();
+        for (String key : searchKeys) {
+            if (!unfiltered.containsKey(key)) continue;
+            filteredAttributes.put(key, JsonContentUtils.parseJsonArrayToValue(unfiltered.get(key)));
+        }
+        return filteredAttributes;
+    }
+
 
     private JSONObject getJsonObject(String jsonUserArray) throws IOException {
         JSONArray jsonUsers;
@@ -128,14 +150,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         if (userMapArray.size() == 0) return new HashMap<>();
         Map<String, String> userMap = userMapArray.get(0);
         String attributesJson = userMap.get("attributes");
-        Map<String, String> attributes = JsonContentUtils.parseJsonToMap(attributesJson);
-        HashMap<String, String> filteredAttributes = new HashMap<>();
-        for (ATTRIBUTES attributeKey : ATTRIBUTES.values()) {
-            String key = attributeKey.name();
-            if (!attributes.containsKey(key)) continue;
-            filteredAttributes.put(key, JsonContentUtils.parseJsonArrayToValue(attributes.get(key)));
-        }
-        return filteredAttributes;
+        return JsonContentUtils.parseJsonToMap(attributesJson);
     }
 
     @Override
@@ -165,11 +180,18 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
 
     public int registerUserLogin(String email, String siteId) throws Exception {
         if ( siteId == null || siteId.isEmpty()) return -1;
-        Map<String, String> userAttributes = getUserAttributes(email);
 
-        recordFirstLogin(siteId, userAttributes);
-        recordLoginCount(siteId, userAttributes);
-        recordRecentLogin(siteId, userAttributes);
+        String[] searchKeys = {
+                LOGIN_LOGIN_COUNT + '.' + siteId,
+                LOGIN_FIRST_LOGIN_DATE + '.' + siteId,
+                LOGIN_RECENT_LOGIN_DATE + '.' + siteId
+        };
+
+        Map<String, String> userAttributes = getUserAttributes(email, searchKeys);
+
+        recordLoginCount(searchKeys[0], userAttributes);
+        recordFirstLogin(searchKeys[1], userAttributes);
+        recordRecentLogin(searchKeys[2], userAttributes);
 
         return updateUserAttributes(email, userAttributes);
     }
@@ -241,22 +263,18 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         return pathParameters;
     }
 
-    private void recordLoginCount(String referrer, Map<String, String> attributes) {
-        String key = referrer == null ? LOGIN_LOGIN_COUNT : LOGIN_LOGIN_COUNT + '.' + referrer;
+    private void recordLoginCount(String key, Map<String, String> attributes) {
         String count = attributes.getOrDefault(key, "0");
         int nr = Integer.parseInt(count);
         nr++;
         attributes.put(key, String.valueOf(nr));
     }
 
-    private void recordRecentLogin(String referrer, Map<String, String> attributes) {
-        String key = referrer == null ? LOGIN_RECENT_LOGIN_DATE : LOGIN_RECENT_LOGIN_DATE + '.' + referrer;
+    private void recordRecentLogin(String key, Map<String, String> attributes) {
         attributes.put(key, now(ZoneId.of("GMT")).toString());
     }
 
-    private void recordFirstLogin(String referrer, Map<String, String> attributes) {
-        String key = referrer == null ? LOGIN_FIRST_LOGIN_DATE : LOGIN_FIRST_LOGIN_DATE + '.' + referrer;
-
+    private void recordFirstLogin(String key, Map<String, String> attributes) {
         if (!attributes.containsKey(key)) {
             attributes.put(key, now(ZoneId.of("GMT")).toString());
         }
