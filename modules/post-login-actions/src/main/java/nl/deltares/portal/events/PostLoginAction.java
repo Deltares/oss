@@ -7,6 +7,8 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.struts.LastPath;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -65,25 +67,26 @@ public class PostLoginAction implements LifecycleAction {
 			}
 
 			try {
-
-				String siteId = getSiteId(request.getParameter("redirect"));
+				LastPath last_path = (LastPath) request.getSession().getAttribute("LAST_PATH");
+				String siteId = getSiteId(last_path.getPath());
 				if (siteId != null) {
 					LOG.info(String.format("Register user '%s' login to site '%s'", user.getFullName(), siteId));
 					keycloakUtils.registerUserLogin(user.getEmailAddress(), siteId);
 				}
 			} catch (Exception e) {
-				LOG.warn(String.format("Error updating portrait %d for user %s", user.getPortraitId(), user.getScreenName()), e);
+				LOG.warn(String.format("Error registering user %s to site: %s", user.getEmailAddress(), e.getMessage()), e);
 			}
 
 		}
 
 	}
 
-	private String getSiteId(String redirect) {
-		if (redirect == null) return null;
-		int startSiteId = redirect.lastIndexOf('/');
-		if (startSiteId == -1) return null;
-		return redirect.substring(startSiteId + 1);
+	private String getSiteId(String path) {
+		if (path == null) return null;
+		String[] pathItems = path.split("/");
+		String[] pathItemsWithValues = ArrayUtil.remove(pathItems, "");
+		if (pathItemsWithValues.length == 0) return null;
+		return pathItemsWithValues[0];
 	}
 
 }
