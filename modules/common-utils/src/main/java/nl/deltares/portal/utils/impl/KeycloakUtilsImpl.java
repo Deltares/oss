@@ -245,7 +245,8 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         String key = referrer == null ? LOGIN_LOGIN_COUNT : LOGIN_LOGIN_COUNT + '.' + referrer;
         String count = attributes.getOrDefault(key, "0");
         int nr = Integer.parseInt(count);
-        attributes.put(key, String.valueOf(++nr));
+        nr++;
+        attributes.put(key, String.valueOf(nr));
     }
 
     private void recordRecentLogin(String referrer, Map<String, String> attributes) {
