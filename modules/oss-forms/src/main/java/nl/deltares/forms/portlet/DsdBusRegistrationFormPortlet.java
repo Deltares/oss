@@ -57,7 +57,7 @@ public class DsdBusRegistrationFormPortlet extends MVCPortlet {
         }
 
         Optional<DDMTemplate> ddmTemplateOptional = _ddmStructureUtil
-                .getDDMTemplateByName("BUSTRANSFER", themeDisplay.getLocale());
+                .getDDMTemplateByName(groupId,"BUSTRANSFER", themeDisplay.getLocale());
 
         ddmTemplateOptional.ifPresent(ddmTemplate ->
                 renderRequest.setAttribute("ddmTemplateKey", ddmTemplate.getTemplateKey()));

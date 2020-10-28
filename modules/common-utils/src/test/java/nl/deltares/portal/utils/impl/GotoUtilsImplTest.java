@@ -10,9 +10,9 @@ import nl.deltares.mock.MockJournalArticle;
 import nl.deltares.mock.MockDsdJournalArticleUtils;
 import nl.deltares.mock.MockProps;
 import nl.deltares.mock.MockUser;
-import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
+import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,6 +34,7 @@ public class GotoUtilsImplTest {
 
     private GotoUtilsImpl gotoUtils;
     private MockDsdJournalArticleUtils serviceUtil;
+    private DsdParserUtils dsdParserUtils;
 
     @Before
     public void setup() throws IOException {
@@ -55,6 +56,7 @@ public class GotoUtilsImplTest {
         serviceUtil = new MockDsdJournalArticleUtils();
         JsonContentUtils.setServiceUtils(serviceUtil);
 
+        dsdParserUtils = new DsdParserUtilsImpl();
         URL resourceDir = this.getClass().getResource("/goto/");
         File[] resources = new File(resourceDir.getFile()).listFiles(pathname -> pathname.getName().endsWith(".xml"));
         Assert.assertNotNull(resources);
@@ -68,7 +70,7 @@ public class GotoUtilsImplTest {
 
         if (!gotoUtils.isActive()) return;
         JournalArticle course = serviceUtil.getLatestArticle(107688);
-        Registration registration = (Registration) AbsDsdArticle.getInstance(course);
+        Registration registration = (Registration) dsdParserUtils.toDsdArticle(course);
         Assert.assertTrue(gotoUtils.isGotoMeeting(registration));
 
     }
@@ -78,7 +80,7 @@ public class GotoUtilsImplTest {
         if (!gotoUtils.isActive()) return;
 
         JournalArticle course = serviceUtil.getLatestArticle(107688);
-        SessionRegistration registration = (SessionRegistration) AbsDsdArticle.getInstance(course);
+        SessionRegistration registration = (SessionRegistration) dsdParserUtils.toDsdArticle(course);
         User user = new MockUser();
         user.setEmailAddress("test@liferay.com");
         user.setFirstName("Test");
@@ -96,7 +98,7 @@ public class GotoUtilsImplTest {
     public void testUnregisterUser() throws Exception {
         if (!gotoUtils.isActive()) return;
         JournalArticle course = serviceUtil.getLatestArticle(107688);
-        SessionRegistration registration = (SessionRegistration) AbsDsdArticle.getInstance(course);
+        SessionRegistration registration = (SessionRegistration) dsdParserUtils.toDsdArticle(course);
         User user = new MockUser();
         user.setEmailAddress("test@liferay.com");
         user.setFirstName("Test");

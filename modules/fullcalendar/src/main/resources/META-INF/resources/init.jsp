@@ -38,6 +38,7 @@
 <%@ page import="nl.deltares.portal.utils.DsdParserUtils" %>
 <%@ page import="nl.deltares.portal.configuration.DSDSiteConfiguration" %>
 <%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider" %>
+<%@ page import="nl.deltares.portal.utils.JsonContentUtils" %>
 
 <liferay-theme:defineObjects/>
 
@@ -73,8 +74,8 @@
             } else {
                 startDate = format.format(event.getStartTime());
             }
-            colorMap = dsdUtils.parseSessionColorConfig(sessionColorMap);
-        } catch (PortalException e) {
+            colorMap = JsonContentUtils.parseSessionColorConfig(sessionColorMap);
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 

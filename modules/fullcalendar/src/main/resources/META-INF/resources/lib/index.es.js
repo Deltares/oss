@@ -57,19 +57,20 @@ class Calendar extends React.Component {
 							views={{
 								horizontalDay : {
 									type : 'resourceTimelineDay',
-									buttonText : 'Horizontal: day',
+									buttonText : 'Horizontal: day'
 								},
 								horizontalWeek : {
-									type: 'resourceTimelineWeek',
-									buttonText : 'week',
+									type:"resourceTimeline",
+									duration : {weeks : 1},
+									buttonText : 'week'
 								},
 								verticalDay : {
 									type: 'resourceTimeGridDay' ,
-									buttonText : 'Vertical: day',
+									buttonText : 'Vertical: day'
 								},
 								verticalWeek : {
 									type: 'timeGridWeek',
-									buttonText : 'week',
+									buttonText : 'week'
 								},
 							}}
 							aspectRatio={1.4}
@@ -77,14 +78,16 @@ class Calendar extends React.Component {
 							resourceGroupField={'building'}
 							resources={this.state.resources}
 							events={this.state.events}
-							slotLabelFormat={{
-								hour: 'numeric',
-								minute: '2-digit',
-								omitZeroMinute: true,
-								meridiem: false,
-								hour12: false
-
-							}}
+							slotLabelFormat={
+								[{ day: '2-digit', month: 'short' },
+								{
+									hour: 'numeric',
+									minute: '2-digit',
+									omitZeroMinute: true,
+									meridiem: false,
+									hour12: false
+								}]
+							}
 							eventTimeFormat={{
 								hour: 'numeric',
 								minute: '2-digit',

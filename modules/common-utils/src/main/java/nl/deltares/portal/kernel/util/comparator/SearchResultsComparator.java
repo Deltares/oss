@@ -7,8 +7,14 @@ import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Registration;
+import nl.deltares.portal.utils.DsdParserUtils;
 
 public class SearchResultsComparator extends OrderByComparator<com.liferay.portal.kernel.search.Document> {
+    private final DsdParserUtils dsdParserUtil;
+    public SearchResultsComparator(DsdParserUtils dsdParserUtils) {
+        this.dsdParserUtil = dsdParserUtils;
+    }
+
     @Override
     public int compare(Document o1, Document o2) {
 
@@ -16,14 +22,14 @@ public class SearchResultsComparator extends OrderByComparator<com.liferay.porta
         AbsDsdArticle dsdo2 = null;
         try {
             JournalArticle o1Article = JournalArticleLocalServiceUtil.getLatestArticle(Long.parseLong(o1.get("entryClassPK")));
-            dsdo1 = AbsDsdArticle.getInstance(o1Article);
+            dsdo1 = dsdParserUtil.toDsdArticle(o1Article);
         } catch (PortalException e) {
             return 0;
         }
 
         try {
             JournalArticle o2Article = JournalArticleLocalServiceUtil.getLatestArticle(Long.parseLong(o2.get("entryClassPK")));
-            dsdo2 = AbsDsdArticle.getInstance(o2Article);
+            dsdo2 = dsdParserUtil.toDsdArticle(o2Article);
         } catch (PortalException e) {
             return 0;
         }

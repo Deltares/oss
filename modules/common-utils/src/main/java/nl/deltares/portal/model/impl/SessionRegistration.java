@@ -6,6 +6,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.exception.ValidationException;
+import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
@@ -17,8 +18,8 @@ public class SessionRegistration extends Registration {
     private String imageUrl = "";
     private String webinarKey;
 
-    public SessionRegistration(JournalArticle article) throws PortalException {
-        super(article);
+    public SessionRegistration(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
+        super(article, dsdParserUtils);
         init();
     }
 

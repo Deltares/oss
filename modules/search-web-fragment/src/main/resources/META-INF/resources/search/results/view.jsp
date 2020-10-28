@@ -36,12 +36,14 @@
 <%@ page import="java.util.Collections" %>
 <%@ page import="java.util.List" %>
 <%@ page import="nl.deltares.portal.kernel.util.comparator.SearchResultsComparator" %>
+<%@ page import="nl.deltares.portal.utils.DsdParserUtils" %>
+<%@ page import="nl.deltares.portal.utils.impl.DsdParserUtilsImpl" %>
 
 <portlet:defineObjects />
 
 <%
     ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
-
+    DsdParserUtils dsdParserUtils = new DsdParserUtilsImpl();
     String lastDate = "";
 %>
 
@@ -54,7 +56,7 @@
 
     com.liferay.portal.kernel.dao.search.SearchContainer<com.liferay.portal.kernel.search.Document> searchContainer1 = searchResultsPortletDisplayContext.getSearchContainer();
     List<Document> results = searchContainer1.getResults();
-    Collections.sort(results, new SearchResultsComparator());
+    Collections.sort(results, new SearchResultsComparator(dsdParserUtils));
 %>
 
 <style>
@@ -101,7 +103,7 @@
 
         <%
             SearchResultSummaryDisplayContext searchResultSummaryDisplayContext = java.util.Objects.requireNonNull(searchResultsPortletDisplayContext.getSearchResultSummaryDisplayContext(document));
-            RegistrationDisplayContext registrationDisplayContext = new RegistrationDisplayContext(searchResultSummaryDisplayContext.getClassPK(), themeDisplay);
+            RegistrationDisplayContext registrationDisplayContext = new RegistrationDisplayContext(searchResultSummaryDisplayContext.getClassPK(), themeDisplay, dsdParserUtils);
 
             String date = registrationDisplayContext.getStartDate();
             boolean writeDateHeader = !date.isEmpty() && !lastDate.equals(date);

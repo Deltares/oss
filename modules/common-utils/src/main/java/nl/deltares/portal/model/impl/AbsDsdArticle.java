@@ -1,35 +1,27 @@
 package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
-import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.portal.model.DsdArticle;
+import nl.deltares.portal.utils.DsdParserUtils;
+import nl.deltares.portal.utils.DuplicateCheck;
+import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 public abstract class AbsDsdArticle implements DsdArticle {
 
-    private static final HashMap<String, Event> cache = new HashMap<>();
-    private static final long MAX_CACHE_TIME = TimeUnit.MINUTES.toMillis(5);
     private final JournalArticle article;
-    final long instantiationTime;
+    public final long instantiationTime;
+    protected final DsdParserUtils dsdParserUtils;
     private Document document;
 
-
-    public static boolean isDsdArticle(JournalArticle article) {
-        try {
-            getDsdStructureKey(parseStructureKey(article));
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
 
     @Override
     public void validate() throws PortalException {
@@ -81,99 +73,15 @@ public abstract class AbsDsdArticle implements DsdArticle {
         return document;
     }
 
-    AbsDsdArticle(JournalArticle article) throws PortalException {
+    AbsDsdArticle(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
         this.article = article;
         this.instantiationTime = System.currentTimeMillis();
+        this.dsdParserUtils = dsdParserUtils;
         init();
     }
 
     private void init() throws PortalException {
         this.document = XmlContentUtils.parseContent(article);
-    }
-
-    public static AbsDsdArticle getInstance(JournalArticle journalArticle) throws PortalException {
-
-        String parseStructureKey = parseStructureKey(journalArticle);
-        DSD_STRUCTURE_KEYS dsd_structure_key = getDsdStructureKey(parseStructureKey);
-
-        AbsDsdArticle article;
-        switch (dsd_structure_key){
-            case Session:
-                article = new SessionRegistration(journalArticle);
-                break;
-            case Bustransfer:
-                article = new BusTransfer(journalArticle);
-                break;
-            case Dinner:
-                article = new DinnerRegistration(journalArticle);
-                break;
-            case Location:
-                article = new Location(journalArticle);
-                break;
-            case Eventlocation:
-                article = new EventLocation(journalArticle);
-                break;
-            case Building:
-                article = new Building(journalArticle);
-                break;
-            case Room:
-                article = new Room(journalArticle);
-                break;
-            case Expert:
-                article = new Expert(journalArticle);
-                break;
-            case Event:
-                article = getCachedEventArticle(journalArticle.getArticleId());
-                if (article != null) return article;
-                article = new Event(journalArticle);
-                cache.put(article.getArticleId(), (Event) article);
-                break;
-            case Busroute:
-                article = new BusRoute(journalArticle);
-                break;
-            default:
-                article = new GenericArticle(journalArticle, parseStructureKey);
-        }
-
-        return article;
-    }
-
-    private static Event getCachedEventArticle(String article) {
-        Event dsdArticle = cache.get(article);
-        if (dsdArticle != null &&
-                (System.currentTimeMillis() - dsdArticle.instantiationTime) <  MAX_CACHE_TIME){
-            return dsdArticle;
-        }
-        return null;
-    }
-
-    public Event getEvent(String eventArticleId) throws PortalException {
-
-        Event event = getCachedEventArticle(eventArticleId);
-        if (event != null) return event;
-
-        JournalArticle latestEventArticle = JournalArticleLocalServiceUtil.getLatestArticle(article.getGroupId(), eventArticleId);
-        return  (Event) getInstance(latestEventArticle);
-    }
-
-    private static DSD_STRUCTURE_KEYS getDsdStructureKey(String structureKey) {
-        DSD_STRUCTURE_KEYS dsd_structure_key;
-        try {
-            dsd_structure_key = DSD_STRUCTURE_KEYS.valueOf(structureKey);
-        } catch (IllegalArgumentException e) {
-            return DSD_STRUCTURE_KEYS.Generic;
-        }
-        return dsd_structure_key;
-    }
-
-    private static String parseStructureKey(JournalArticle dsdArticle) {
-        String structureKey = dsdArticle.getDDMStructureKey();
-
-        if (structureKey.matches("([A-Z])+-(\\d+\\.)(\\d+\\.)(\\d+)")) {
-            structureKey = structureKey.substring(0, 1).toUpperCase()
-                    + structureKey.substring(1, structureKey.lastIndexOf("-")).toLowerCase();
-        }
-        return structureKey;
     }
 
     public String getSmallImageURL(ThemeDisplay themeDisplay) {
@@ -184,6 +92,19 @@ public abstract class AbsDsdArticle implements DsdArticle {
         }
         if (url == null) return "";
         return url;
+    }
+
+    List<Room> parseRooms(String[] roomReferences) throws PortalException {
+
+        DuplicateCheck check = new DuplicateCheck();
+        ArrayList<Room> rooms = new ArrayList<>();
+        for (String json : roomReferences) {
+            JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(json);
+            AbsDsdArticle room = dsdParserUtils.toDsdArticle(article);
+            if (!(room instanceof Room)) throw new PortalException(String.format("Article %s not instance of Room", article.getTitle()));
+            if (check.checkDuplicates(room)) rooms.add((Room) room);
+        }
+        return rooms;
     }
 
     public JournalArticle getJournalArticle(){

@@ -1,0 +1,102 @@
+###
+GET http://localhost:9200/
+#Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+
+###
+GET http://localhost:9200/_search
+#Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+  "query": {
+    "bool": {
+      "must": [
+        { "match": { "ddmStructureKey":   "SESSION"        }}
+      ]
+    }
+  }
+}
+
+###
+GET http://localhost:9200/_search
+#Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+  "query": {
+    "terms": {
+      "ddmStructureKey": [
+        "SESSION-1.0.1", "DINNER-1.0.1", "BUSTRANSFER-1.0.1"
+      ]
+    }
+  }
+}
+
+###
+GET http://localhost:9200/_search
+#Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "className" : {
+            "ddm__keyword__3450900__start_en_US": {
+              "lte": "2020-01-01"
+            }
+          }
+        }
+        ,
+        {
+          "range" : {
+            "ddm__keyword__3450896__start_en_US": {
+              "lte": "2021-01-01"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+###
+GET http://localhost:9200/_search
+#Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "term" : {
+            "ddm__keyword__3450900__eventId_en_US": "142214"
+          }
+        }
+      ,
+        {
+          "term" : {
+            "ddm__keyword__3450896__eventId_en_US": "142214"
+          }
+        },
+
+        {
+          "term" : {
+            "ddm__keyword__3450892__eventId_en_US": "142214"
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+
+
+
+

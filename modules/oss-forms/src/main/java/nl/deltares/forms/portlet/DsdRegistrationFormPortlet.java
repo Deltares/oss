@@ -87,7 +87,7 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 		}
 
 		Optional<DDMTemplate> ddmTemplateOptional = _ddmStructureUtil
-				.getDDMTemplateByName("REGISTRATION", themeDisplay.getLocale());
+				.getDDMTemplateByName(themeDisplay.getScopeGroupId(), "REGISTRATION", themeDisplay.getLocale());
 
 		ddmTemplateOptional.ifPresent(ddmTemplate ->
 				request.setAttribute("ddmTemplateKey", ddmTemplate.getTemplateKey()));

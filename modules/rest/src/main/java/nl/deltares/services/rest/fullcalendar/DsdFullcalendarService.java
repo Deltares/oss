@@ -61,14 +61,14 @@ public class DsdFullcalendarService {
         try {
             endSearch = dateFormat.parse(end);
         } catch (ParseException e) {
-            return Response.serverError().entity(String.format("Error parsing end (%s): %s", start, e.getMessage())).build();
+            return Response.serverError().entity(String.format("Error parsing end (%s): %s", end, e.getMessage())).build();
         }
 
         Map<String, String> colorMap = getColorMap(layoutUuid, Long.parseLong(siteId), portletId);
         try {
             List<Registration> registrations;
             if (eventId.equals("0")){
-                registrations = nl.deltares.portal.model.impl.Event.getRegistrations(Long.parseLong(siteId), new Date());
+                registrations = parserUtils.getRegistrations(Long.parseLong(siteId), startSearch, endSearch, request.getLocale());
             } else {
                 nl.deltares.portal.model.impl.Event event = parserUtils.getEvent(Long.parseLong(siteId), eventId);
                 registrations = event.getRegistrations();
@@ -79,7 +79,6 @@ public class DsdFullcalendarService {
         }
 
     }
-
 
     @GET
     @Path("/resources/{siteId}/{eventId}")
