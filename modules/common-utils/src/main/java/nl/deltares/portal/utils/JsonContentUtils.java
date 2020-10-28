@@ -9,7 +9,7 @@ import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.repository.model.FileEntry;
-import nl.deltares.portal.model.impl.*;
+import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.utils.impl.DsdJournalArticleUtilsImpl;
 
 import java.util.*;
@@ -45,48 +45,6 @@ public class JsonContentUtils {
 
     }
 
-    public static Location parseLocationJson(String json) throws PortalException {
-
-        JournalArticle journalArticle = jsonReferenceToJournalArticle(json);
-        if (journalArticle == null) {
-            throw new PortalException(String.format("Cannot find Location article for '%s'", json));
-        }
-        AbsDsdArticle instance = AbsDsdArticle.getInstance(journalArticle);
-        if ( ! (instance instanceof Location)){
-            throw new PortalException(String.format("Article %s not instance of Location", journalArticle.getTitle()));
-        }
-
-        return (Location) instance;
-    }
-
-    public static Building parseBuildingJson(String json) throws PortalException {
-
-        JournalArticle journalArticle = jsonReferenceToJournalArticle(json);
-        if (journalArticle == null)
-            throw new PortalException(String.format("Cannot find Building article for '%s'", json));
-
-        AbsDsdArticle instance = AbsDsdArticle.getInstance(journalArticle);
-        if ( ! (instance instanceof Building)){
-            throw new PortalException(String.format("Article %s not instance of Building", journalArticle.getTitle()));
-        }
-
-        return (Building) instance;
-    }
-
-    public static Room parseRoomJson(String json) throws PortalException {
-
-        JournalArticle journalArticle = jsonReferenceToJournalArticle(json);
-        if (journalArticle == null)
-            throw new PortalException(String.format("Cannot find Room article for '%s'", json));
-
-        AbsDsdArticle instance = AbsDsdArticle.getInstance(journalArticle);
-        if ( ! (instance instanceof Room)){
-            throw new PortalException(String.format("Article %s not instance of Room", journalArticle.getTitle()));
-        }
-
-        return (Room) instance;
-    }
-
     public static List<Map<String, String>> parseJsonArrayToMap(String jsonContent) throws JSONException {
         ArrayList<Map<String, String>> mapList = new ArrayList<>();
         if (jsonContent == null) {
@@ -105,6 +63,20 @@ public class JsonContentUtils {
         return mapList;
     }
 
+    public static List<String> parseJsonArrayToList(String jsonContent) throws JSONException {
+        ArrayList<String> list = new ArrayList<>();
+        if (jsonContent == null) {
+            return list;
+        }
+        if (jsonContent.startsWith("[")){
+            JSONArray jsonArray = JsonContentUtils.parseContentArray(jsonContent);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                list.add(jsonArray.getString(i));
+            }
+        }
+        return list;
+    }
+
     public static Map<String, String> parseJsonToMap(String jsonContent) throws JSONException {
         if (jsonContent == null) return new HashMap<>();
         JSONObject jsonObject = parseContent(jsonContent);
@@ -120,6 +92,17 @@ public class JsonContentUtils {
         for (String key : properties.keySet()) {
             empty = false;
             jsonObject.put(key, properties.get(key));
+        }
+        if (empty) return null;
+        return jsonObject.toJSONString();
+    }
+
+    public static String formatListToJson(List<String> properties) {
+        boolean empty = true;
+        JSONArray jsonObject = JSONFactoryUtil.createJSONArray();
+        for (String key : properties) {
+            empty = false;
+            jsonObject.put(key);
         }
         if (empty) return null;
         return jsonObject.toJSONString();
@@ -147,4 +130,17 @@ public class JsonContentUtils {
         return DLUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), null, "", false, true);
     }
 
+    public static Map<String, String> parseSessionColorConfig(String json) {
+        Map<String, String> colorMap;
+        try {
+            colorMap = JsonContentUtils.parseJsonToMap(json);
+        } catch (JSONException e) {
+            colorMap = new HashMap<>();
+        }
+        for (DsdArticle.DSD_REGISTRATION_KEYS session_keys : DsdArticle.DSD_REGISTRATION_KEYS.values()) {
+            String sessionKey = session_keys.name();
+            colorMap.putIfAbsent(sessionKey, "#17a2b8");
+        }
+        return colorMap;
+    }
 }

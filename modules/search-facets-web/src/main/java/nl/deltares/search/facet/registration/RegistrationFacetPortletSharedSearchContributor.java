@@ -1,24 +1,21 @@
 package nl.deltares.search.facet.registration;
 
-import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
-import com.liferay.portal.kernel.search.BooleanClauseOccur;
-import com.liferay.portal.kernel.search.BooleanQuery;
-import com.liferay.portal.kernel.search.ParseException;
-import com.liferay.portal.kernel.search.Query;
-import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
-import nl.deltares.portal.utils.DDMStructureUtil;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.search.constans.FacetPortletKeys;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Component(
@@ -31,45 +28,56 @@ public class RegistrationFacetPortletSharedSearchContributor implements PortletS
 
     @Override
     public void contribute(PortletSharedSearchSettings portletSharedSearchSettings) {
-        SearchContext searchContext = portletSharedSearchSettings.getSearchContext();
-
-        Optional<DDMStructure> ddmStructureOptional = _ddmStructureUtil
-                .getDDMStructureByName("SESSION", searchContext.getLocale());
-
-        ArrayList<BooleanClause<Query>> booleanClauses = new ArrayList<>();
-        if (ddmStructureOptional.isPresent()) {
-            String structureKey = ddmStructureOptional.get().getStructureKey();
-            BooleanQuery structureQuery = new BooleanQueryImpl();
-
-            try {
-                structureQuery.addTerm("ddmStructureKey", structureKey);
-            } catch (ParseException e) {
-                LOG.debug("Could not parse term for [field: ddmStructureKey, value: " + structureKey + "]");
-            }
-
-            BooleanClause<Query> structureBooleanClause = BooleanClauseFactoryUtil
-                    .create(structureQuery, BooleanClauseOccur.MUST.getName());
-
-            booleanClauses.add(structureBooleanClause);
-        }
-
-        BooleanQuery groupQuery = new BooleanQueryImpl();
-        long siteGroupId = portletSharedSearchSettings.getThemeDisplay().getSiteGroupId();
-        try {
-            groupQuery.addTerm("groupId", siteGroupId);
-        } catch (ParseException e) {
-            LOG.debug("Could not parse term for [field: groupId, value: " + siteGroupId + "]");
-        }
-        BooleanClause<Query> groupBooleanClause = BooleanClauseFactoryUtil
-                .create(groupQuery, BooleanClauseOccur.MUST.getName());
-
-        booleanClauses.add(groupBooleanClause);
-
-        searchContext.setBooleanClauses(booleanClauses.toArray(new BooleanClause[booleanClauses.size()]));
+        ThemeDisplay themeDisplay = portletSharedSearchSettings.getThemeDisplay();
+        List<String> structureKeys = getStructureKeys(portletSharedSearchSettings);
+        _dsdJournalArticleUtils.contributeDsdRegistrations(
+                themeDisplay.getScopeGroupId(),
+                structureKeys.toArray(new String[0]),
+                portletSharedSearchSettings.getSearchContext(),
+                themeDisplay.getLocale());
     }
 
-    @Reference
-    private DDMStructureUtil _ddmStructureUtil;
+    private List<String> getStructureKeys(PortletSharedSearchSettings portletSharedSearchSettings) {
 
+        Optional<String> optional = portletSharedSearchSettings.getParameter("structureList");
+        if (optional.isPresent()) {
+            try {
+                return JsonContentUtils.parseJsonArrayToList(optional.get());
+            } catch (JSONException e) {
+                LOG.debug(String.format("Could not parse configured structures %s: %s", optional.get(), e.getMessage()), e);
+            }
+        }
+        return getConfiguredStructures(portletSharedSearchSettings);
+    }
+
+    private List<String> getConfiguredStructures(PortletSharedSearchSettings portletSharedSearchSettings){
+
+        try {
+            RegistrationFacetConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(
+                    RegistrationFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
+
+            String structureList = configuration.structureList();
+
+            if (structureList != null && !structureList.isEmpty()){
+                return JsonContentUtils.parseJsonArrayToList(structureList);
+            }
+            return Collections.emptyList();
+
+        } catch (ConfigurationException | JSONException e) {
+            LOG.debug("Could not get structures configuration", e);
+        }
+        return null;
+
+    }
+    @Reference
+    private DsdJournalArticleUtils _dsdJournalArticleUtils;
+
+    private ConfigurationProvider _configurationProvider;
+
+    @Reference
+    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
+        _configurationProvider = configurationProvider;
+    }
     private static final Log LOG = LogFactoryUtil.getLog(RegistrationFacetPortletSharedSearchContributor.class);
+
 }

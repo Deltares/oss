@@ -2,6 +2,7 @@ package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
+import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
@@ -9,8 +10,8 @@ public class Room extends AbsDsdArticle {
     private int capacity;
     private boolean storeInParentSite;
 
-    public Room(JournalArticle dsdArticle) throws PortalException {
-        super(dsdArticle);
+    public Room(JournalArticle dsdArticle, DsdParserUtils dsdParserUtils) throws PortalException {
+        super(dsdArticle, dsdParserUtils);
         init();
     }
 

@@ -10,6 +10,11 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <%@ page import="com.liferay.portal.kernel.util.Validator" %>
 <%@ page import="nl.deltares.search.facet.date.DateRangeFacetConfiguration" %>
 <%@ page import="nl.deltares.portal.model.DsdArticle" %>
+<%@ page import="nl.deltares.search.facet.registration.RegistrationFacetConfiguration" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="nl.deltares.portal.utils.JsonContentUtils" %>
+<%@ page import="com.liferay.portal.kernel.json.JSONException" %>
 
 <liferay-theme:defineObjects />
 
@@ -28,6 +33,18 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
         endDateConfig = portletPreferences.getValue("endDate", configuration.endDate());
     }
 
+    RegistrationFacetConfiguration reg_configuration =
+            (RegistrationFacetConfiguration)
+                    renderRequest.getAttribute(RegistrationFacetConfiguration.class.getName());
 
+    List<String> structureList = new ArrayList<>();
+
+    if (Validator.isNotNull(reg_configuration)){
+        try {
+            structureList = JsonContentUtils.parseJsonArrayToList(portletPreferences.getValue("structureList", reg_configuration.structureList()));
+        } catch (JSONException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
 %>

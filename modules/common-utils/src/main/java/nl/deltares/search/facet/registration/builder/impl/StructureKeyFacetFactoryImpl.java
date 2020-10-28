@@ -1,11 +1,11 @@
-package nl.deltares.search.facet.date.builder.impl;
+package nl.deltares.search.facet.registration.builder.impl;
 
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.search.facet.Facet;
 import com.liferay.portal.search.facet.FacetFactory;
 import com.liferay.portal.search.filter.FilterBuilders;
-import nl.deltares.search.facet.date.DateRangeFacet;
-import nl.deltares.search.facet.date.builder.DateRangeFacetFactory;
+import nl.deltares.search.facet.registration.StructureKeyFacet;
+import nl.deltares.search.facet.registration.StructureKeyFacetFactory;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -13,10 +13,10 @@ import org.osgi.service.component.annotations.Reference;
         immediate = true,
         service = {
                 FacetFactory.class,
-                DateRangeFacetFactory.class
+                StructureKeyFacetFactory.class
         }
 )
-public class DateRangeFacetFactoryImpl implements DateRangeFacetFactory {
+public class StructureKeyFacetFactoryImpl implements StructureKeyFacetFactory {
 
     private String field;
 
@@ -27,7 +27,7 @@ public class DateRangeFacetFactoryImpl implements DateRangeFacetFactory {
 
     @Override
     public Facet newInstance(SearchContext searchContext) {
-        return new DateRangeFacet(this.field, searchContext, this.filterBuilders);
+        return new StructureKeyFacet(this.field, searchContext, this.filterBuilders);
     }
 
     @Override

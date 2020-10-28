@@ -4,27 +4,24 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.display.context.RegistrationDisplayContext;
-import nl.deltares.portal.model.impl.Event;
-import nl.deltares.portal.model.impl.Expert;
-import nl.deltares.portal.model.impl.Location;
-import nl.deltares.portal.model.impl.Registration;
+import nl.deltares.portal.model.DsdArticle;
+import nl.deltares.portal.model.impl.*;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public interface DsdParserUtils {
 
-    /**
-     * Parse color configuration to map.
-     * @param json Json configuration containing sessionid to color mapping
-     * @return Map with sessionId as key and color hashcode as value
-     */
-    Map<String, String> parseSessionColorConfig(String json);
 
     Event getEvent(long siteId, String eventId) throws PortalException;
 
-    Event getEvent(JournalArticle article) throws PortalException;
-
     Registration getRegistration(long siteId, String articleId) throws PortalException;
+
+    List<Registration> getRegistrations(long siteId, Date startTime, Date endTime, Locale locale) throws PortalException;
+
+    List<Registration> getRegistrations(long siteId, String eventId, Locale locale) throws PortalException;
 
     Registration getRegistration(JournalArticle article) throws PortalException;
 
@@ -33,4 +30,35 @@ public interface DsdParserUtils {
     Expert getExpert(JournalArticle article) throws PortalException;
 
     RegistrationDisplayContext getDisplayContextInstance(String articleId, ThemeDisplay themeDisplay);
+
+    AbsDsdArticle toDsdArticle(JournalArticle article) throws PortalException;
+
+    static String parseStructureKey(JournalArticle dsdArticle) {
+        String structureKey = dsdArticle.getDDMStructureKey();
+
+        if (structureKey.matches("([A-Z])+-(\\d+\\.)(\\d+\\.)(\\d+)")) {
+            structureKey = structureKey.substring(0, 1).toUpperCase()
+                    + structureKey.substring(1, structureKey.lastIndexOf("-")).toLowerCase();
+        }
+        return structureKey;
+    }
+
+    static boolean isDsdArticle(JournalArticle article) {
+        try {
+            getDsdStructureKey(parseStructureKey(article));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    static DsdArticle.DSD_STRUCTURE_KEYS getDsdStructureKey(String structureKey) {
+        DsdArticle.DSD_STRUCTURE_KEYS dsd_structure_key;
+        try {
+            dsd_structure_key = DsdArticle.DSD_STRUCTURE_KEYS.valueOf(structureKey);
+        } catch (IllegalArgumentException e) {
+            return DsdArticle.DSD_STRUCTURE_KEYS.Generic;
+        }
+        return dsd_structure_key;
+    }
 }

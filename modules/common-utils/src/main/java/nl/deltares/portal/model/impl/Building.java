@@ -4,7 +4,7 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import nl.deltares.portal.utils.DuplicateCheck;
+import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
@@ -22,8 +22,8 @@ public class Building extends AbsDsdArticle {
     private double longitude;
     private double latitude;
 
-    public Building(JournalArticle dsdArticle) throws PortalException {
-        super(dsdArticle);
+    public Building(JournalArticle dsdArticle, DsdParserUtils dsdParserUtils) throws PortalException {
+        super(dsdArticle, dsdParserUtils);
         init();
     }
 
@@ -56,17 +56,6 @@ public class Building extends AbsDsdArticle {
     @Override
     public boolean storeInParentSite() {
         return storeInParentSite;
-    }
-
-    static List<Room> parseRooms(String[] roomReferences) throws PortalException {
-
-        DuplicateCheck check = new DuplicateCheck();
-        ArrayList<Room> rooms = new ArrayList<>();
-        for (String json : roomReferences) {
-            Room room = JsonContentUtils.parseRoomJson(json);
-            if (check.checkDuplicates(room)) rooms.add(room);
-        }
-        return rooms;
     }
 
     public List<Room> getRooms() {

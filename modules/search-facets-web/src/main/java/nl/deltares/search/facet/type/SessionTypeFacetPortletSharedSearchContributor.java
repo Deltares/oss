@@ -25,6 +25,7 @@ public class SessionTypeFacetPortletSharedSearchContributor implements PortletSh
     @Override
     public void contribute(PortletSharedSearchSettings portletSharedSearchSettings) {
         Locale locale = portletSharedSearchSettings.getThemeDisplay().getLocale();
+        long groupId = portletSharedSearchSettings.getThemeDisplay().getScopeGroupId();
         Optional<String> sessionTypeOptional = portletSharedSearchSettings.getParameter("type");
 
         String type = null;
@@ -36,7 +37,7 @@ public class SessionTypeFacetPortletSharedSearchContributor implements PortletSh
             String[] structures = new String[]{"SESSION"};
             for (String structure : structures) {
                 Optional<DDMStructure> ddmStructureOptional = _ddmStructureUtil
-                        .getDDMStructureByName(structure, locale);
+                        .getDDMStructureByName(groupId, structure, locale);
                 if (ddmStructureOptional.isPresent()) {
                     long ddmStructureId = ddmStructureOptional.get().getStructureId();
                     String typeField = _ddmIndexer.encodeName(ddmStructureId, "type", locale);

@@ -4,6 +4,7 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
@@ -13,6 +14,7 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class BusRoute extends AbsDsdArticle{
 
@@ -22,8 +24,8 @@ public class BusRoute extends AbsDsdArticle{
     private List<Location> stops = null;
     private List<String> times = null;
 
-    BusRoute(JournalArticle article) throws PortalException {
-        super(article);
+    public BusRoute(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
+        super(article, dsdParserUtils);
         init();
     }
 
@@ -55,10 +57,13 @@ public class BusRoute extends AbsDsdArticle{
         this.stops = new ArrayList<>();
         this.times = new ArrayList<>();
         NodeList stopNodes = XmlContentUtils.getDynamicElementsByName(getDocument(), "location");
-        for (int i = 0; i < stopNodes.getLength(); i++) {
+        for (int i = 0; i < Objects.requireNonNull(stopNodes).getLength(); i++) {
             Node stopNode = stopNodes.item(i);
             String locationJson = XmlContentUtils.getDynamicContentForNode(stopNode);
-            this.stops.add(JsonContentUtils.parseLocationJson(locationJson));
+            JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(locationJson);
+            AbsDsdArticle location = dsdParserUtils.toDsdArticle(article);
+            if (!(location instanceof Location)) throw new PortalException(String.format("Article %s not instance of Location", article.getTitle()));
+            this.stops.add((Location) location);
             this.times.add(XmlContentUtils.getDynamicContentByName(stopNode, "time", false));
         }
     }

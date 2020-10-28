@@ -7,6 +7,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
@@ -25,12 +26,11 @@ public class Expert extends AbsDsdArticle {
     private String jobTitle;
     private String company;
     private String email;
-    private User user;
     private final KeycloakUtilsImpl keycloakUtils = new KeycloakUtilsImpl();
 
 
-    public Expert(JournalArticle dsdArticle) throws PortalException {
-        super(dsdArticle);
+    public Expert(JournalArticle dsdArticle, DsdParserUtils dsdParserUtils) throws PortalException {
+        super(dsdArticle, dsdParserUtils);
         init();
     }
 

@@ -4,6 +4,7 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
@@ -26,8 +27,8 @@ public class BusTransfer extends Registration {
     private final List<Date> transferDates = new ArrayList<>();
     private final Calendar calendar = Calendar.getInstance();
 
-    public BusTransfer(JournalArticle article) throws PortalException {
-        super(article);
+    public BusTransfer(JournalArticle article, DsdParserUtils parserUtils) throws PortalException {
+        super(article, parserUtils);
         init();
     }
 
@@ -35,10 +36,10 @@ public class BusTransfer extends Registration {
 
         try {
             Document document = getDocument();
-            Event event = getEvent(String.valueOf(getEventId()));
 
             String pickupOption = XmlContentUtils.getDynamicContentByName(document, "pickupDates", false);
             if (pickupOption.equals("daily")){
+                Event event = dsdParserUtils.getEvent(getGroupId(), String.valueOf(getEventId()));
                 transferDates.addAll(getTransferDates(event.getStartTime(), event.getEndTime()));
             } else {
                 String[] pickupDates = XmlContentUtils.getDynamicContentsByName(document, "date");
@@ -108,12 +109,11 @@ public class BusTransfer extends Registration {
 
         String busRouteJson = XmlContentUtils.getDynamicContentByName(getDocument(), "busRoute", false);
         JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(busRouteJson);
-        AbsDsdArticle instance = AbsDsdArticle.getInstance(article);
-
-        if (! (instance instanceof BusRoute)){
-            throw new PortalException("Article not instance of BusRoute: " + instance.getTitle());
+        AbsDsdArticle busRoute = dsdParserUtils.toDsdArticle(article);
+        if (! (busRoute instanceof BusRoute)){
+            throw new PortalException("Article not instance of BusRoute: " + busRoute.getTitle());
         }
-        return (BusRoute) instance;
+        return (BusRoute) busRoute;
     }
 
     public List<Date> getTransferDates() {

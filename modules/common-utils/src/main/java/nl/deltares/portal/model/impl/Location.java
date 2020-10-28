@@ -2,6 +2,7 @@ package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
+import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
@@ -19,8 +20,8 @@ public class Location extends AbsDsdArticle {
     private double latitude = -1;
     private String locationType;
 
-    public Location(JournalArticle article) throws PortalException {
-        super(article);
+    public Location(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
+        super(article, dsdParserUtils);
         init();
     }
 

@@ -93,8 +93,5 @@ public class SubmitBusRegistrationActionActionCommand extends BaseMVCActionComma
     @Reference
     private DsdTransferUtils dsdTransferUtils;
 
-    @Reference
-    private DsdParserUtils dsdParserUtils;
-
     private static final Log LOG = LogFactoryUtil.getLog(SubmitBusRegistrationActionActionCommand.class);
 }

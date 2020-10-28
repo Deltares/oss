@@ -9,6 +9,9 @@ dependencies {
     compileOnly group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.5.0"
     compileOnly group: 'com.liferay', name: 'com.liferay.configuration.admin.api', version: '1.0.2'
 
+    compileOnly group: 'com.liferay', name: 'com.liferay.portal.search.api', version: "2.3.0"
+    compileOnly group: "com.liferay", name: "com.liferay.petra.string", version: "3.0.0"
+
     compileOnly project(":modules:registration-service:registration-service-api")
 
     testCompile group: 'com.liferay', name: 'com.liferay.journal.api', version: '3.10.1'
@@ -27,4 +30,7 @@ dependencies {
     testCompile group: 'org.jodd', name: 'jodd-bean', version: '3.6.3'
     testCompile group: 'org.jodd', name: 'jodd-json', version: '3.6.6'
     testCompile group: 'commons-io', name: 'commons-io', version: '2.6'
+
+    testCompile group: 'com.liferay', name: 'com.liferay.portal.search.api', version: "2.3.0"
+    testCompile group: "com.liferay", name: "com.liferay.petra.string", version: "3.0.0"
 }
