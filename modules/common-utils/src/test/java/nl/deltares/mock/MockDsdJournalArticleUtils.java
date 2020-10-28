@@ -47,9 +47,10 @@ public class MockDsdJournalArticleUtils implements DsdJournalArticleUtils {
     }
 
     @Override
-    public List<JournalArticle> getRegistrations(long companyId, long groupId, Locale locale) throws PortalException {
+    public List<JournalArticle> getRegistrations(long companyId, long groupId, String[] structureKeys, Locale locale) throws PortalException {
         return null;
     }
+
 
     @Override
     public List<JournalArticle> getRegistrationsForEvent(long companyId, long groupId, String eventArticleId, Locale locale) throws PortalException {
@@ -62,7 +63,7 @@ public class MockDsdJournalArticleUtils implements DsdJournalArticleUtils {
     }
 
     @Override
-    public void contributeDsdRegistrations(long groupId, SearchContext searchContext, Locale locale) {
+    public void contributeDsdRegistrations(long groupId, String[] structureKeys, SearchContext searchContext, Locale locale) {
 
     }
 
