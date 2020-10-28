@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Registration;
+import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.worth.fews.configuration.JournalArticleManagementConfiguration;
 import nl.worth.fews.constants.JournalArticleManagementConstants;
@@ -50,9 +51,9 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
     public void onBeforeRemove(JournalArticle model) throws ModelListenerException {
 
         //When removing an article clean up records in registrations table.
-        if (AbsDsdArticle.isDsdArticle(model)) {
+        if (DsdParserUtils.isDsdArticle(model)) {
             try {
-                AbsDsdArticle instance = AbsDsdArticle.getInstance(model);
+                AbsDsdArticle instance = dsdParserUtils.toDsdArticle(model);
                 if (instance instanceof Registration) {
                     dsdSessionUtils.deleteRegistrationsFor((Registration)instance);
                 }
@@ -72,7 +73,7 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
 
             AbsDsdArticle dsdArticle;
             try {
-                dsdArticle = AbsDsdArticle.getInstance(model);
+                dsdArticle = dsdParserUtils.toDsdArticle(model);
             } catch (PortalException e) {
                 String msg = String.format("Error parsing DSD Article %s: %s", model.getTitle(), e.getMessage());
                 LOG.error(msg);
@@ -180,6 +181,9 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
 
     @Reference
     private DsdSessionUtils dsdSessionUtils;
+
+    @Reference
+    private DsdParserUtils dsdParserUtils;
 
     private static final Log LOG = LogFactoryUtil.getLog(JournalArticleListener.class);
 }

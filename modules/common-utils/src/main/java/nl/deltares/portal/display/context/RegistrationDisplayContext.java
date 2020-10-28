@@ -21,22 +21,26 @@ import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.DinnerRegistration;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
+import nl.deltares.portal.utils.DsdParserUtils;
+import nl.deltares.portal.utils.impl.DsdParserUtilsImpl;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 
 public class RegistrationDisplayContext {
 
-    public RegistrationDisplayContext(long classPk, ThemeDisplay themeDisplay) {
+    public RegistrationDisplayContext(long classPk, ThemeDisplay themeDisplay, DsdParserUtils dsdParserUtils) {
         this.themeDisplay = themeDisplay;
+        this.dsdParserUtils = dsdParserUtils;
         JournalArticle registrationArticle = JournalArticleLocalServiceUtil.fetchLatestArticle(classPk);
         if (registrationArticle != null) {
             setRegistration(registrationArticle);
         }
     }
 
-    public RegistrationDisplayContext(String articleId, ThemeDisplay themeDisplay) {
+    public RegistrationDisplayContext(String articleId, ThemeDisplay themeDisplay, DsdParserUtils dsdParserUtils) {
         this.themeDisplay = themeDisplay;
+        this.dsdParserUtils = dsdParserUtils;
 
         JournalArticle registrationArticle = JournalArticleLocalServiceUtil
                 .fetchArticle(themeDisplay.getScopeGroupId(), articleId);
@@ -44,9 +48,10 @@ public class RegistrationDisplayContext {
         setRegistration(registrationArticle);
     }
 
-    public RegistrationDisplayContext(String articleId, ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider) {
+    public RegistrationDisplayContext(String articleId, ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider, DsdParserUtilsImpl dsdParserUtils) {
         this.themeDisplay = themeDisplay;
         this.configurationProvider = configurationProvider;
+        this.dsdParserUtils = dsdParserUtils;
 
         JournalArticle registrationArticle = JournalArticleLocalServiceUtil
                 .fetchArticle(themeDisplay.getScopeGroupId(), articleId);
@@ -56,7 +61,7 @@ public class RegistrationDisplayContext {
 
     private void setRegistration(JournalArticle registrationArticle) {
         try {
-            AbsDsdArticle parentInstance = AbsDsdArticle.getInstance(registrationArticle);
+            AbsDsdArticle parentInstance = dsdParserUtils.toDsdArticle(registrationArticle);
             if (parentInstance instanceof Registration) {
                 registration = (Registration) parentInstance;
             }
@@ -66,11 +71,11 @@ public class RegistrationDisplayContext {
     }
 
     public double getPrice(){
-        return registration.getPrice();
+        return registration == null ? 0 : registration.getPrice();
     }
 
     public String getCurrency(){
-        return registration.getCurrency();
+        return registration == null ? "€" : registration.getCurrency();
     }
 
     public String getSmallImageURL() {
@@ -214,6 +219,8 @@ public class RegistrationDisplayContext {
     private final ThemeDisplay themeDisplay;
     private ConfigurationProvider configurationProvider;
     private Registration registration;
+    private DsdParserUtils dsdParserUtils;
+
 
     private static final Log LOG = LogFactoryUtil.getLog(RegistrationDisplayContext.class);
 }

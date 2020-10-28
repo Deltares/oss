@@ -6,6 +6,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import nl.deltares.portal.model.DsdArticle;
+import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
@@ -28,8 +29,8 @@ public abstract class Registration extends AbsDsdArticle {
     private Date startTime;
     private Date endTime;
 
-    public Registration(JournalArticle article) throws PortalException {
-        super(article);
+    public Registration(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
+        super(article, dsdParserUtils);
         init();
     }
 
@@ -84,7 +85,7 @@ public abstract class Registration extends AbsDsdArticle {
 
     AbsDsdArticle parseJsonReference(String jsonReference) throws PortalException {
         JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(jsonReference);
-        return AbsDsdArticle.getInstance(journalArticle);
+        return super.dsdParserUtils.toDsdArticle(journalArticle);
     }
 
     public boolean isOpen() {

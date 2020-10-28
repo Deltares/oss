@@ -1,9 +1,12 @@
 package nl.deltares.mock;
 
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.search.SearchContext;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,6 +44,36 @@ public class MockDsdJournalArticleUtils implements DsdJournalArticleUtils {
             if (journalArticle.getArticleId().equals(articleId)) return journalArticle;
         }
         return null;
+    }
+
+    @Override
+    public List<JournalArticle> getRegistrations(long companyId, long groupId, Locale locale) throws PortalException {
+        return null;
+    }
+
+    @Override
+    public List<JournalArticle> getRegistrationsForEvent(long companyId, long groupId, String eventArticleId, Locale locale) throws PortalException {
+        return null;
+    }
+
+    @Override
+    public List<JournalArticle> getRegistrationsForPeriod(long companyId, long groupId, Date startTime, Date endTime, Locale locale) throws PortalException {
+        return null;
+    }
+
+    @Override
+    public void contributeDsdRegistrations(long groupId, SearchContext searchContext, Locale locale) {
+
+    }
+
+    @Override
+    public void contributeDsdEventRegistrations(long groupId, String eventId, SearchContext searchContext, Locale locale) {
+
+    }
+
+    @Override
+    public void contributeDsdDateRangeRegistrations(long groupId, Date startDate, Date endDate, SearchContext searchContext, Locale locale) {
+
     }
 
 }

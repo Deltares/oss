@@ -4,6 +4,7 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
 
@@ -15,8 +16,8 @@ public class DinnerRegistration extends Registration {
     private static final Log LOG = LogFactoryUtil.getLog(DinnerRegistration.class);
     private Location restaurant;
 
-    public DinnerRegistration(JournalArticle article) throws PortalException {
-        super(article);
+    public DinnerRegistration(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
+        super(article, dsdParserUtils);
     }
 
     @Override
@@ -43,7 +44,10 @@ public class DinnerRegistration extends Registration {
 
     private void parserRestaurant() throws PortalException {
         String json = XmlContentUtils.getDynamicContentByName(getDocument(), "restaurant", false);
-        restaurant = JsonContentUtils.parseLocationJson(json);
+        JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(json);
+        AbsDsdArticle location = dsdParserUtils.toDsdArticle(article);
+        if (!(location instanceof Location)) throw new PortalException(String.format("Article %s not instance of Location", article.getTitle()));
+        restaurant = (Location) location;
     }
 
     @Override
