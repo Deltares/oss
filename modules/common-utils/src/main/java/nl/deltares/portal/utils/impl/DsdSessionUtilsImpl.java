@@ -52,6 +52,11 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
+    public void deleteRegistrationsFor(long groupId, long resourceId) {
+        registrationLocalService.deleteAllRegistrationsAndChildRegistrations(groupId, resourceId);
+    }
+
+    @Override
     public void registerUser(User user, Registration registration, Map<String, String> userProperties) throws PortalException {
 
         if (gotoUtils.isGotoMeeting(registration)){
@@ -70,7 +75,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
             userProperties.put("registrantKey", responseValues.get("registrantKey"));
             userProperties.put("joinUrl", responseValues.get("joinUrl"));
         } catch (Exception e) {
-            throw new PortalException(e);
+            throw new PortalException(String.format("Error registering for GOTO webinar %s: %s", registration.getTitle(), e.getMessage()));
         }
     }
 

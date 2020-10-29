@@ -76,6 +76,12 @@ public interface DsdSessionUtils {
      */
     void deleteRegistrationsFor(Registration registration);
 
+    /**
+     * Delete all registrations linked to this registration article
+     * @param groupId Registration groupId
+     * @param resourceId Registration resourcePrimaryKey
+     */
+    void deleteRegistrationsFor(long groupId, long resourceId) throws PortalException;
 
     /**
      * Get user's registrations records for given event.

@@ -22,7 +22,6 @@ import nl.deltares.portal.model.impl.DinnerRegistration;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
 import nl.deltares.portal.utils.DsdParserUtils;
-import nl.deltares.portal.utils.impl.DsdParserUtilsImpl;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
@@ -39,24 +38,20 @@ public class RegistrationDisplayContext {
     }
 
     public RegistrationDisplayContext(String articleId, ThemeDisplay themeDisplay, DsdParserUtils dsdParserUtils) {
-        this.themeDisplay = themeDisplay;
-        this.dsdParserUtils = dsdParserUtils;
-
-        JournalArticle registrationArticle = JournalArticleLocalServiceUtil
-                .fetchArticle(themeDisplay.getScopeGroupId(), articleId);
-
-        setRegistration(registrationArticle);
+        this(articleId, themeDisplay, null, dsdParserUtils);
     }
 
-    public RegistrationDisplayContext(String articleId, ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider, DsdParserUtilsImpl dsdParserUtils) {
+    public RegistrationDisplayContext(String articleId, ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider, DsdParserUtils dsdParserUtils) {
         this.themeDisplay = themeDisplay;
         this.configurationProvider = configurationProvider;
         this.dsdParserUtils = dsdParserUtils;
 
+        long groupId = themeDisplay.getScopeGroupId();
         JournalArticle registrationArticle = JournalArticleLocalServiceUtil
-                .fetchArticle(themeDisplay.getScopeGroupId(), articleId);
-
-        setRegistration(registrationArticle);
+                .fetchArticle(groupId, articleId);
+        if (registrationArticle != null) {
+            setRegistration(registrationArticle);
+        }
     }
 
     private void setRegistration(JournalArticle registrationArticle) {
@@ -66,7 +61,7 @@ public class RegistrationDisplayContext {
                 registration = (Registration) parentInstance;
             }
         } catch (Exception e) {
-            LOG.debug("Error getting Registration instance [" + registrationArticle.getArticleId() + "]", e);
+            LOG.error("Error getting Registration instance [" + registrationArticle.getArticleId() + "]", e);
         }
     }
 

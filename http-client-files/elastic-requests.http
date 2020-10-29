@@ -27,12 +27,28 @@ Content-Type: application/json
 {
   "query": {
     "terms": {
+      "articleId_String_sortable": [
+        "3482425", "3482621"
+      ]
+    }
+  }
+}
+
+###
+GET http://localhost:9200/_search
+#Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+  "query": {
+    "terms": {
       "ddmStructureKey": [
         "SESSION-1.0.1", "DINNER-1.0.1", "BUSTRANSFER-1.0.1"
       ]
     }
   }
 }
+
 
 ###
 GET http://localhost:9200/_search
