@@ -118,6 +118,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		Registration registration = event.getRegistration(registrationId);
 		if (registration == null){
 			LOG.error(String.format("Cannot find registration for registrationId %d", registrationId));
+			clearInvalidRegistration((Long) record.get("groupId"), registrationId);
 			return;
 		}
 
@@ -128,6 +129,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 				user = UserLocalServiceUtil.getUser(userId);
 			} catch (PortalException e) {
 				LOG.error(String.format("Cannot find registered DSD user %d: %s", userId, e.getMessage()));
+				clearInvalidRegistration((Long) record.get("groupId"), registrationId);
 				return;
 			}
 			userCache.put(userId, user);
@@ -160,6 +162,15 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 			LOG.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
 		}
 		writer.println(line);
+	}
+
+	private void clearInvalidRegistration(long groupId, long resourcePrimaryKey)  {
+		try {
+			LOG.error(String.format("Removing registrations for groupId %d and resourcePrimaryKey %d", groupId, resourcePrimaryKey));
+			dsdSessionUtils.deleteRegistrationsFor(groupId, resourcePrimaryKey);
+		} catch (PortalException e) {
+			LOG.error(String.format("Cannot delete registration for groupId %d and resourcePrimaryKey %d", groupId, resourcePrimaryKey));
+		}
 	}
 
 	private void writeError(String msg, ResourceResponse resourceResponse) throws IOException {

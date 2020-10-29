@@ -47,7 +47,7 @@ public class RegistrationLocalServiceImpl
 	 *
 	 * Never reference this class directly. Use <code>nl.deltares.dsd.registration.service.RegistrationLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil</code>.
 	 */
-	public void addUserRegistration(long companyId, long groupId, long resouceId, long parentResourceId,
+	public void addUserRegistration(long companyId, long groupId, long resourceId, long parentResourceId,
 									long userId, Date startTime, Date endTime, String preferences) {
 
 		//do not validate here. validation has already taken place
@@ -55,7 +55,7 @@ public class RegistrationLocalServiceImpl
 		Registration registration = RegistrationLocalServiceUtil.createRegistration(CounterLocalServiceUtil.increment(Registration.class.getName()));
 		registration.setCompanyId(companyId);
 		registration.setGroupId(groupId);
-		registration.setResourcePrimaryKey(resouceId);
+		registration.setResourcePrimaryKey(resourceId);
 		registration.setParentResourcePrimaryKey(parentResourceId);
 		registration.setUserId(userId);
 		registration.setStartTime(startTime);
