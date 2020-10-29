@@ -75,7 +75,7 @@ public interface RegistrationLocalService
 	public Registration addRegistration(Registration registration);
 
 	public void addUserRegistration(
-		long companyId, long groupId, long resouceId, long parentResourceId,
+		long companyId, long groupId, long resourceId, long parentResourceId,
 		long userId, Date startTime, Date endTime, String preferences);
 
 	/**

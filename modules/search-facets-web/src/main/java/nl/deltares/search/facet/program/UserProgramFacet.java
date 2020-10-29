@@ -48,14 +48,11 @@ public class UserProgramFacet extends BaseFacet implements Facet {
     @Override
     protected BooleanClause<Filter> doGetFacetFilterBooleanClause() {
         if (ArrayUtil.isEmpty(_selections)) {
-            _selections = new String[]{"0"};
+            _selections = new String[]{"none"};
         }
-
         SearchContext searchContext = getSearchContext();
-
         TermsFilter articleIdsFilter = new TermsFilter(getFieldName());
         articleIdsFilter.addValues(getSelections());
-
         return BooleanClauseFactoryUtil.createFilter(
                 searchContext, articleIdsFilter, BooleanClauseOccur.MUST);
     }
