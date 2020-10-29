@@ -1,5 +1,6 @@
 package nl.deltares.forms.portlet;
 
+import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
@@ -13,6 +14,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.dsd.model.BillingInfo;
 import nl.deltares.forms.constants.OssFormPortletKeys;
+import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.*;
@@ -115,7 +117,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 	private void writeRecord(PrintWriter writer, Map<String, Object> record, Event event, Map<Long, User> userCache, Map<Long, Map<String, String>> userAttributeCache, Locale locale) {
 
 		Long registrationId = (Long) record.get("resourcePrimaryKey");
-		Registration registration = event.getRegistration(registrationId);
+		Registration registration = getRegistration(registrationId, event);
 		if (registration == null){
 			LOG.error(String.format("Cannot find registration for registrationId %d", registrationId));
 			clearInvalidRegistration((Long) record.get("groupId"), registrationId);
@@ -162,6 +164,21 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 			LOG.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
 		}
 		writer.println(line);
+	}
+
+	private Registration getRegistration(Long registrationId, Event event) {
+
+		Registration registration = event.getRegistration(registrationId);
+		if (registration != null) return registration;
+		//Something wrong. Registration not loaded in Event check DB.
+		try {
+			JournalArticle latestArticle = dsdJournalArticleUtils.getLatestArticle(registrationId);
+			AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(latestArticle);
+			if (!(dsdArticle instanceof Registration)) return null;
+			return (Registration) dsdArticle;
+		} catch (PortalException e) {
+			return null;
+		}
 	}
 
 	private void clearInvalidRegistration(long groupId, long resourcePrimaryKey)  {
