@@ -82,6 +82,1181 @@ public class RegistrationPersistenceImpl
 	private FinderPath _finderPathWithPaginationFindAll;
 	private FinderPath _finderPathWithoutPaginationFindAll;
 	private FinderPath _finderPathCountAll;
+	private FinderPath _finderPathWithPaginationFindByEventRegistrations;
+	private FinderPath _finderPathWithoutPaginationFindByEventRegistrations;
+	private FinderPath _finderPathCountByEventRegistrations;
+
+	/**
+	 * Returns all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @return the matching registrations
+	 */
+	@Override
+	public List<Registration> findByEventRegistrations(
+		long groupId, long eventResourcePrimaryKey) {
+
+		return findByEventRegistrations(
+			groupId, eventResourcePrimaryKey, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @return the range of matching registrations
+	 */
+	@Override
+	public List<Registration> findByEventRegistrations(
+		long groupId, long eventResourcePrimaryKey, int start, int end) {
+
+		return findByEventRegistrations(
+			groupId, eventResourcePrimaryKey, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching registrations
+	 */
+	@Override
+	public List<Registration> findByEventRegistrations(
+		long groupId, long eventResourcePrimaryKey, int start, int end,
+		OrderByComparator<Registration> orderByComparator) {
+
+		return findByEventRegistrations(
+			groupId, eventResourcePrimaryKey, start, end, orderByComparator,
+			true);
+	}
+
+	/**
+	 * Returns an ordered range of all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching registrations
+	 */
+	@Override
+	public List<Registration> findByEventRegistrations(
+		long groupId, long eventResourcePrimaryKey, int start, int end,
+		OrderByComparator<Registration> orderByComparator,
+		boolean retrieveFromCache) {
+
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
+
+			pagination = false;
+			finderPath = _finderPathWithoutPaginationFindByEventRegistrations;
+			finderArgs = new Object[] {groupId, eventResourcePrimaryKey};
+		}
+		else {
+			finderPath = _finderPathWithPaginationFindByEventRegistrations;
+			finderArgs = new Object[] {
+				groupId, eventResourcePrimaryKey, start, end, orderByComparator
+			};
+		}
+
+		List<Registration> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<Registration>)finderCache.getResult(
+				finderPath, finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (Registration registration : list) {
+					if ((groupId != registration.getGroupId()) ||
+						(eventResourcePrimaryKey !=
+							registration.getEventResourcePrimaryKey())) {
+
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(
+					4 + (orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(4);
+			}
+
+			query.append(_SQL_SELECT_REGISTRATION_WHERE);
+
+			query.append(_FINDER_COLUMN_EVENTREGISTRATIONS_GROUPID_2);
+
+			query.append(
+				_FINDER_COLUMN_EVENTREGISTRATIONS_EVENTRESOURCEPRIMARYKEY_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+			}
+			else if (pagination) {
+				query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(eventResourcePrimaryKey);
+
+				if (!pagination) {
+					list = (List<Registration>)QueryUtil.list(
+						q, getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<Registration>)QueryUtil.list(
+						q, getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first registration in the ordered set where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching registration
+	 * @throws NoSuchRegistrationException if a matching registration could not be found
+	 */
+	@Override
+	public Registration findByEventRegistrations_First(
+			long groupId, long eventResourcePrimaryKey,
+			OrderByComparator<Registration> orderByComparator)
+		throws NoSuchRegistrationException {
+
+		Registration registration = fetchByEventRegistrations_First(
+			groupId, eventResourcePrimaryKey, orderByComparator);
+
+		if (registration != null) {
+			return registration;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", eventResourcePrimaryKey=");
+		msg.append(eventResourcePrimaryKey);
+
+		msg.append("}");
+
+		throw new NoSuchRegistrationException(msg.toString());
+	}
+
+	/**
+	 * Returns the first registration in the ordered set where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
+	 */
+	@Override
+	public Registration fetchByEventRegistrations_First(
+		long groupId, long eventResourcePrimaryKey,
+		OrderByComparator<Registration> orderByComparator) {
+
+		List<Registration> list = findByEventRegistrations(
+			groupId, eventResourcePrimaryKey, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last registration in the ordered set where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching registration
+	 * @throws NoSuchRegistrationException if a matching registration could not be found
+	 */
+	@Override
+	public Registration findByEventRegistrations_Last(
+			long groupId, long eventResourcePrimaryKey,
+			OrderByComparator<Registration> orderByComparator)
+		throws NoSuchRegistrationException {
+
+		Registration registration = fetchByEventRegistrations_Last(
+			groupId, eventResourcePrimaryKey, orderByComparator);
+
+		if (registration != null) {
+			return registration;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", eventResourcePrimaryKey=");
+		msg.append(eventResourcePrimaryKey);
+
+		msg.append("}");
+
+		throw new NoSuchRegistrationException(msg.toString());
+	}
+
+	/**
+	 * Returns the last registration in the ordered set where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
+	 */
+	@Override
+	public Registration fetchByEventRegistrations_Last(
+		long groupId, long eventResourcePrimaryKey,
+		OrderByComparator<Registration> orderByComparator) {
+
+		int count = countByEventRegistrations(groupId, eventResourcePrimaryKey);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Registration> list = findByEventRegistrations(
+			groupId, eventResourcePrimaryKey, count - 1, count,
+			orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param registrationId the primary key of the current registration
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next registration
+	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
+	 */
+	@Override
+	public Registration[] findByEventRegistrations_PrevAndNext(
+			long registrationId, long groupId, long eventResourcePrimaryKey,
+			OrderByComparator<Registration> orderByComparator)
+		throws NoSuchRegistrationException {
+
+		Registration registration = findByPrimaryKey(registrationId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Registration[] array = new RegistrationImpl[3];
+
+			array[0] = getByEventRegistrations_PrevAndNext(
+				session, registration, groupId, eventResourcePrimaryKey,
+				orderByComparator, true);
+
+			array[1] = registration;
+
+			array[2] = getByEventRegistrations_PrevAndNext(
+				session, registration, groupId, eventResourcePrimaryKey,
+				orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Registration getByEventRegistrations_PrevAndNext(
+		Session session, Registration registration, long groupId,
+		long eventResourcePrimaryKey,
+		OrderByComparator<Registration> orderByComparator, boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(4);
+		}
+
+		query.append(_SQL_SELECT_REGISTRATION_WHERE);
+
+		query.append(_FINDER_COLUMN_EVENTREGISTRATIONS_GROUPID_2);
+
+		query.append(
+			_FINDER_COLUMN_EVENTREGISTRATIONS_EVENTRESOURCEPRIMARYKEY_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(eventResourcePrimaryKey);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(registration)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<Registration> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 */
+	@Override
+	public void removeByEventRegistrations(
+		long groupId, long eventResourcePrimaryKey) {
+
+		for (Registration registration :
+				findByEventRegistrations(
+					groupId, eventResourcePrimaryKey, QueryUtil.ALL_POS,
+					QueryUtil.ALL_POS, null)) {
+
+			remove(registration);
+		}
+	}
+
+	/**
+	 * Returns the number of registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @return the number of matching registrations
+	 */
+	@Override
+	public int countByEventRegistrations(
+		long groupId, long eventResourcePrimaryKey) {
+
+		FinderPath finderPath = _finderPathCountByEventRegistrations;
+
+		Object[] finderArgs = new Object[] {groupId, eventResourcePrimaryKey};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(3);
+
+			query.append(_SQL_COUNT_REGISTRATION_WHERE);
+
+			query.append(_FINDER_COLUMN_EVENTREGISTRATIONS_GROUPID_2);
+
+			query.append(
+				_FINDER_COLUMN_EVENTREGISTRATIONS_EVENTRESOURCEPRIMARYKEY_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(eventResourcePrimaryKey);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_EVENTREGISTRATIONS_GROUPID_2 =
+		"registration.groupId = ? AND ";
+
+	private static final String
+		_FINDER_COLUMN_EVENTREGISTRATIONS_EVENTRESOURCEPRIMARYKEY_2 =
+			"registration.eventResourcePrimaryKey = ?";
+
+	private FinderPath _finderPathWithPaginationFindByUserEventRegistrations;
+	private FinderPath _finderPathWithoutPaginationFindByUserEventRegistrations;
+	private FinderPath _finderPathCountByUserEventRegistrations;
+
+	/**
+	 * Returns all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @return the matching registrations
+	 */
+	@Override
+	public List<Registration> findByUserEventRegistrations(
+		long groupId, long userId, long eventResourcePrimaryKey) {
+
+		return findByUserEventRegistrations(
+			groupId, userId, eventResourcePrimaryKey, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @return the range of matching registrations
+	 */
+	@Override
+	public List<Registration> findByUserEventRegistrations(
+		long groupId, long userId, long eventResourcePrimaryKey, int start,
+		int end) {
+
+		return findByUserEventRegistrations(
+			groupId, userId, eventResourcePrimaryKey, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching registrations
+	 */
+	@Override
+	public List<Registration> findByUserEventRegistrations(
+		long groupId, long userId, long eventResourcePrimaryKey, int start,
+		int end, OrderByComparator<Registration> orderByComparator) {
+
+		return findByUserEventRegistrations(
+			groupId, userId, eventResourcePrimaryKey, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching registrations
+	 */
+	@Override
+	public List<Registration> findByUserEventRegistrations(
+		long groupId, long userId, long eventResourcePrimaryKey, int start,
+		int end, OrderByComparator<Registration> orderByComparator,
+		boolean retrieveFromCache) {
+
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
+
+			pagination = false;
+			finderPath =
+				_finderPathWithoutPaginationFindByUserEventRegistrations;
+			finderArgs = new Object[] {
+				groupId, userId, eventResourcePrimaryKey
+			};
+		}
+		else {
+			finderPath = _finderPathWithPaginationFindByUserEventRegistrations;
+			finderArgs = new Object[] {
+				groupId, userId, eventResourcePrimaryKey, start, end,
+				orderByComparator
+			};
+		}
+
+		List<Registration> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<Registration>)finderCache.getResult(
+				finderPath, finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (Registration registration : list) {
+					if ((groupId != registration.getGroupId()) ||
+						(userId != registration.getUserId()) ||
+						(eventResourcePrimaryKey !=
+							registration.getEventResourcePrimaryKey())) {
+
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(
+					5 + (orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(5);
+			}
+
+			query.append(_SQL_SELECT_REGISTRATION_WHERE);
+
+			query.append(_FINDER_COLUMN_USEREVENTREGISTRATIONS_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_USEREVENTREGISTRATIONS_USERID_2);
+
+			query.append(
+				_FINDER_COLUMN_USEREVENTREGISTRATIONS_EVENTRESOURCEPRIMARYKEY_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+			}
+			else if (pagination) {
+				query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(userId);
+
+				qPos.add(eventResourcePrimaryKey);
+
+				if (!pagination) {
+					list = (List<Registration>)QueryUtil.list(
+						q, getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<Registration>)QueryUtil.list(
+						q, getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first registration in the ordered set where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching registration
+	 * @throws NoSuchRegistrationException if a matching registration could not be found
+	 */
+	@Override
+	public Registration findByUserEventRegistrations_First(
+			long groupId, long userId, long eventResourcePrimaryKey,
+			OrderByComparator<Registration> orderByComparator)
+		throws NoSuchRegistrationException {
+
+		Registration registration = fetchByUserEventRegistrations_First(
+			groupId, userId, eventResourcePrimaryKey, orderByComparator);
+
+		if (registration != null) {
+			return registration;
+		}
+
+		StringBundler msg = new StringBundler(8);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", userId=");
+		msg.append(userId);
+
+		msg.append(", eventResourcePrimaryKey=");
+		msg.append(eventResourcePrimaryKey);
+
+		msg.append("}");
+
+		throw new NoSuchRegistrationException(msg.toString());
+	}
+
+	/**
+	 * Returns the first registration in the ordered set where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
+	 */
+	@Override
+	public Registration fetchByUserEventRegistrations_First(
+		long groupId, long userId, long eventResourcePrimaryKey,
+		OrderByComparator<Registration> orderByComparator) {
+
+		List<Registration> list = findByUserEventRegistrations(
+			groupId, userId, eventResourcePrimaryKey, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching registration
+	 * @throws NoSuchRegistrationException if a matching registration could not be found
+	 */
+	@Override
+	public Registration findByUserEventRegistrations_Last(
+			long groupId, long userId, long eventResourcePrimaryKey,
+			OrderByComparator<Registration> orderByComparator)
+		throws NoSuchRegistrationException {
+
+		Registration registration = fetchByUserEventRegistrations_Last(
+			groupId, userId, eventResourcePrimaryKey, orderByComparator);
+
+		if (registration != null) {
+			return registration;
+		}
+
+		StringBundler msg = new StringBundler(8);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", userId=");
+		msg.append(userId);
+
+		msg.append(", eventResourcePrimaryKey=");
+		msg.append(eventResourcePrimaryKey);
+
+		msg.append("}");
+
+		throw new NoSuchRegistrationException(msg.toString());
+	}
+
+	/**
+	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
+	 */
+	@Override
+	public Registration fetchByUserEventRegistrations_Last(
+		long groupId, long userId, long eventResourcePrimaryKey,
+		OrderByComparator<Registration> orderByComparator) {
+
+		int count = countByUserEventRegistrations(
+			groupId, userId, eventResourcePrimaryKey);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Registration> list = findByUserEventRegistrations(
+			groupId, userId, eventResourcePrimaryKey, count - 1, count,
+			orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param registrationId the primary key of the current registration
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next registration
+	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
+	 */
+	@Override
+	public Registration[] findByUserEventRegistrations_PrevAndNext(
+			long registrationId, long groupId, long userId,
+			long eventResourcePrimaryKey,
+			OrderByComparator<Registration> orderByComparator)
+		throws NoSuchRegistrationException {
+
+		Registration registration = findByPrimaryKey(registrationId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Registration[] array = new RegistrationImpl[3];
+
+			array[0] = getByUserEventRegistrations_PrevAndNext(
+				session, registration, groupId, userId, eventResourcePrimaryKey,
+				orderByComparator, true);
+
+			array[1] = registration;
+
+			array[2] = getByUserEventRegistrations_PrevAndNext(
+				session, registration, groupId, userId, eventResourcePrimaryKey,
+				orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Registration getByUserEventRegistrations_PrevAndNext(
+		Session session, Registration registration, long groupId, long userId,
+		long eventResourcePrimaryKey,
+		OrderByComparator<Registration> orderByComparator, boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				6 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		query.append(_SQL_SELECT_REGISTRATION_WHERE);
+
+		query.append(_FINDER_COLUMN_USEREVENTREGISTRATIONS_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_USEREVENTREGISTRATIONS_USERID_2);
+
+		query.append(
+			_FINDER_COLUMN_USEREVENTREGISTRATIONS_EVENTRESOURCEPRIMARYKEY_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(userId);
+
+		qPos.add(eventResourcePrimaryKey);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(registration)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<Registration> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 */
+	@Override
+	public void removeByUserEventRegistrations(
+		long groupId, long userId, long eventResourcePrimaryKey) {
+
+		for (Registration registration :
+				findByUserEventRegistrations(
+					groupId, userId, eventResourcePrimaryKey, QueryUtil.ALL_POS,
+					QueryUtil.ALL_POS, null)) {
+
+			remove(registration);
+		}
+	}
+
+	/**
+	 * Returns the number of registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @return the number of matching registrations
+	 */
+	@Override
+	public int countByUserEventRegistrations(
+		long groupId, long userId, long eventResourcePrimaryKey) {
+
+		FinderPath finderPath = _finderPathCountByUserEventRegistrations;
+
+		Object[] finderArgs = new Object[] {
+			groupId, userId, eventResourcePrimaryKey
+		};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(4);
+
+			query.append(_SQL_COUNT_REGISTRATION_WHERE);
+
+			query.append(_FINDER_COLUMN_USEREVENTREGISTRATIONS_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_USEREVENTREGISTRATIONS_USERID_2);
+
+			query.append(
+				_FINDER_COLUMN_USEREVENTREGISTRATIONS_EVENTRESOURCEPRIMARYKEY_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(userId);
+
+				qPos.add(eventResourcePrimaryKey);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String
+		_FINDER_COLUMN_USEREVENTREGISTRATIONS_GROUPID_2 =
+			"registration.groupId = ? AND ";
+
+	private static final String _FINDER_COLUMN_USEREVENTREGISTRATIONS_USERID_2 =
+		"registration.userId = ? AND ";
+
+	private static final String
+		_FINDER_COLUMN_USEREVENTREGISTRATIONS_EVENTRESOURCEPRIMARYKEY_2 =
+			"registration.eventResourcePrimaryKey = ?";
+
 	private FinderPath _finderPathWithPaginationFindByUserRegistrations;
 	private FinderPath _finderPathWithoutPaginationFindByUserRegistrations;
 	private FinderPath _finderPathCountByUserRegistrations;
@@ -3233,6 +4408,27 @@ public class RegistrationPersistenceImpl
 		else if (isNew) {
 			Object[] args = new Object[] {
 				registrationModelImpl.getGroupId(),
+				registrationModelImpl.getEventResourcePrimaryKey()
+			};
+
+			finderCache.removeResult(
+				_finderPathCountByEventRegistrations, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByEventRegistrations, args);
+
+			args = new Object[] {
+				registrationModelImpl.getGroupId(),
+				registrationModelImpl.getUserId(),
+				registrationModelImpl.getEventResourcePrimaryKey()
+			};
+
+			finderCache.removeResult(
+				_finderPathCountByUserEventRegistrations, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByUserEventRegistrations, args);
+
+			args = new Object[] {
+				registrationModelImpl.getGroupId(),
 				registrationModelImpl.getUserId()
 			};
 
@@ -3290,6 +4486,60 @@ public class RegistrationPersistenceImpl
 				_finderPathWithoutPaginationFindAll, FINDER_ARGS_EMPTY);
 		}
 		else {
+			if ((registrationModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByEventRegistrations.
+					 getColumnBitmask()) != 0) {
+
+				Object[] args = new Object[] {
+					registrationModelImpl.getOriginalGroupId(),
+					registrationModelImpl.getOriginalEventResourcePrimaryKey()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByEventRegistrations, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByEventRegistrations, args);
+
+				args = new Object[] {
+					registrationModelImpl.getGroupId(),
+					registrationModelImpl.getEventResourcePrimaryKey()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByEventRegistrations, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByEventRegistrations, args);
+			}
+
+			if ((registrationModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByUserEventRegistrations.
+					 getColumnBitmask()) != 0) {
+
+				Object[] args = new Object[] {
+					registrationModelImpl.getOriginalGroupId(),
+					registrationModelImpl.getOriginalUserId(),
+					registrationModelImpl.getOriginalEventResourcePrimaryKey()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByUserEventRegistrations, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUserEventRegistrations,
+					args);
+
+				args = new Object[] {
+					registrationModelImpl.getGroupId(),
+					registrationModelImpl.getUserId(),
+					registrationModelImpl.getEventResourcePrimaryKey()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByUserEventRegistrations, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUserEventRegistrations,
+					args);
+			}
+
 			if ((registrationModelImpl.getColumnBitmask() &
 				 _finderPathWithoutPaginationFindByUserRegistrations.
 					 getColumnBitmask()) != 0) {
@@ -3855,6 +5105,69 @@ public class RegistrationPersistenceImpl
 			RegistrationModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
 			new String[0]);
+
+		_finderPathWithPaginationFindByEventRegistrations = new FinderPath(
+			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
+			RegistrationModelImpl.FINDER_CACHE_ENABLED, RegistrationImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByEventRegistrations",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByEventRegistrations = new FinderPath(
+			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
+			RegistrationModelImpl.FINDER_CACHE_ENABLED, RegistrationImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByEventRegistrations",
+			new String[] {Long.class.getName(), Long.class.getName()},
+			RegistrationModelImpl.GROUPID_COLUMN_BITMASK |
+			RegistrationModelImpl.EVENTRESOURCEPRIMARYKEY_COLUMN_BITMASK |
+			RegistrationModelImpl.STARTTIME_COLUMN_BITMASK);
+
+		_finderPathCountByEventRegistrations = new FinderPath(
+			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
+			RegistrationModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByEventRegistrations",
+			new String[] {Long.class.getName(), Long.class.getName()});
+
+		_finderPathWithPaginationFindByUserEventRegistrations = new FinderPath(
+			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
+			RegistrationModelImpl.FINDER_CACHE_ENABLED, RegistrationImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByUserEventRegistrations",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Long.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByUserEventRegistrations =
+			new FinderPath(
+				RegistrationModelImpl.ENTITY_CACHE_ENABLED,
+				RegistrationModelImpl.FINDER_CACHE_ENABLED,
+				RegistrationImpl.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+				"findByUserEventRegistrations",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName()
+				},
+				RegistrationModelImpl.GROUPID_COLUMN_BITMASK |
+				RegistrationModelImpl.USERID_COLUMN_BITMASK |
+				RegistrationModelImpl.EVENTRESOURCEPRIMARYKEY_COLUMN_BITMASK |
+				RegistrationModelImpl.STARTTIME_COLUMN_BITMASK);
+
+		_finderPathCountByUserEventRegistrations = new FinderPath(
+			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
+			RegistrationModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByUserEventRegistrations",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Long.class.getName()
+			});
 
 		_finderPathWithPaginationFindByUserRegistrations = new FinderPath(
 			RegistrationModelImpl.ENTITY_CACHE_ENABLED,

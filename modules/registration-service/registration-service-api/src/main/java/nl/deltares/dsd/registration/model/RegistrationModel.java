@@ -91,6 +91,20 @@ public interface RegistrationModel
 	public void setGroupId(long groupId);
 
 	/**
+	 * Returns the event resource primary key of this registration.
+	 *
+	 * @return the event resource primary key of this registration
+	 */
+	public long getEventResourcePrimaryKey();
+
+	/**
+	 * Sets the event resource primary key of this registration.
+	 *
+	 * @param eventResourcePrimaryKey the event resource primary key of this registration
+	 */
+	public void setEventResourcePrimaryKey(long eventResourcePrimaryKey);
+
+	/**
 	 * Returns the company ID of this registration.
 	 *
 	 * @return the company ID of this registration

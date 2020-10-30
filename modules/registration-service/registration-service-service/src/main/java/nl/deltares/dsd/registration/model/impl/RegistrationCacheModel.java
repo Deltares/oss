@@ -66,12 +66,14 @@ public class RegistrationCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(19);
+		StringBundler sb = new StringBundler(21);
 
 		sb.append("{registrationId=");
 		sb.append(registrationId);
 		sb.append(", groupId=");
 		sb.append(groupId);
+		sb.append(", eventResourcePrimaryKey=");
+		sb.append(eventResourcePrimaryKey);
 		sb.append(", companyId=");
 		sb.append(companyId);
 		sb.append(", userId=");
@@ -97,6 +99,7 @@ public class RegistrationCacheModel
 
 		registrationImpl.setRegistrationId(registrationId);
 		registrationImpl.setGroupId(groupId);
+		registrationImpl.setEventResourcePrimaryKey(eventResourcePrimaryKey);
 		registrationImpl.setCompanyId(companyId);
 		registrationImpl.setUserId(userId);
 		registrationImpl.setResourcePrimaryKey(resourcePrimaryKey);
@@ -135,6 +138,8 @@ public class RegistrationCacheModel
 
 		groupId = objectInput.readLong();
 
+		eventResourcePrimaryKey = objectInput.readLong();
+
 		companyId = objectInput.readLong();
 
 		userId = objectInput.readLong();
@@ -152,6 +157,8 @@ public class RegistrationCacheModel
 		objectOutput.writeLong(registrationId);
 
 		objectOutput.writeLong(groupId);
+
+		objectOutput.writeLong(eventResourcePrimaryKey);
 
 		objectOutput.writeLong(companyId);
 
@@ -174,6 +181,7 @@ public class RegistrationCacheModel
 
 	public long registrationId;
 	public long groupId;
+	public long eventResourcePrimaryKey;
 	public long companyId;
 	public long userId;
 	public long resourcePrimaryKey;

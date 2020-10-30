@@ -36,6 +36,8 @@ public class RegistrationSoap implements Serializable {
 
 		soapModel.setRegistrationId(model.getRegistrationId());
 		soapModel.setGroupId(model.getGroupId());
+		soapModel.setEventResourcePrimaryKey(
+			model.getEventResourcePrimaryKey());
 		soapModel.setCompanyId(model.getCompanyId());
 		soapModel.setUserId(model.getUserId());
 		soapModel.setResourcePrimaryKey(model.getResourcePrimaryKey());
@@ -113,6 +115,14 @@ public class RegistrationSoap implements Serializable {
 		_groupId = groupId;
 	}
 
+	public long getEventResourcePrimaryKey() {
+		return _eventResourcePrimaryKey;
+	}
+
+	public void setEventResourcePrimaryKey(long eventResourcePrimaryKey) {
+		_eventResourcePrimaryKey = eventResourcePrimaryKey;
+	}
+
 	public long getCompanyId() {
 		return _companyId;
 	}
@@ -171,6 +181,7 @@ public class RegistrationSoap implements Serializable {
 
 	private long _registrationId;
 	private long _groupId;
+	private long _eventResourcePrimaryKey;
 	private long _companyId;
 	private long _userId;
 	private long _resourcePrimaryKey;
