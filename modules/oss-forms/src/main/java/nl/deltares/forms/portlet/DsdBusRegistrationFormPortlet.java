@@ -1,8 +1,8 @@
 package nl.deltares.forms.portlet;
 
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -45,19 +45,24 @@ public class DsdBusRegistrationFormPortlet extends MVCPortlet {
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
         long groupId = themeDisplay.getScopeGroupId();
 
+        DSDSiteConfiguration configuration;
         try {
-            DSDSiteConfiguration configuration = _configurationProvider
+            configuration = _configurationProvider
                     .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
-
-            Event event = parserUtils.getEvent(groupId, String.valueOf(configuration.eventId()));
-            renderRequest.setAttribute("event", event);
-            renderRequest.setAttribute("transfers", event.getBusTransfers());
-        } catch (Exception e) {
-            LOG.debug("Could not get configuration instance", e);
+        } catch (ConfigurationException e) {
+            throw new PortletException("Could not get configuration instance", e);
         }
+        Event event;
+        try {
+            event = parserUtils.getEvent(groupId, String.valueOf(configuration.eventId()));
+        } catch (PortalException e) {
+            throw new PortletException(String.format("Could not get event for %d: %s" + configuration.eventId(), e.getMessage()));
+        }
+        renderRequest.setAttribute("event", event);
+        renderRequest.setAttribute("transfers", event.getBusTransfers(themeDisplay.getLocale()));
 
         Optional<DDMTemplate> ddmTemplateOptional = _ddmStructureUtil
-                .getDDMTemplateByName(groupId,"BUSTRANSFER", themeDisplay.getLocale());
+                .getDDMTemplateByName(groupId, "BUSTRANSFER", themeDisplay.getLocale());
 
         ddmTemplateOptional.ifPresent(ddmTemplate ->
                 renderRequest.setAttribute("ddmTemplateKey", ddmTemplate.getTemplateKey()));
@@ -82,6 +87,4 @@ public class DsdBusRegistrationFormPortlet extends MVCPortlet {
 
     @Reference
     private DsdTransferUtils dsdTransferUtils;
-
-    private static final Log LOG = LogFactoryUtil.getLog(DsdBusRegistrationFormPortlet.class);
 }

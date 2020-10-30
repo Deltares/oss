@@ -17,15 +17,12 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @Component(
         immediate = true,
         service = DsdSessionUtils.class
 )
 public class DsdSessionUtilsImpl implements DsdSessionUtils {
-
-    private final long dayMillis = TimeUnit.DAYS.toMillis(1);
 
     @Reference
     KeycloakUtils keycloakUtils;
@@ -63,8 +60,12 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
             registerGotoUser(user, (SessionRegistration) registration, userProperties);
         }
         long parentId = registration.getParentRegistration() == null ? 0 : registration.getParentRegistration().getResourceId();
+
+        long eventResourcePrimaryKey = 0;
+        Event event = parserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()));
+        if (event != null) eventResourcePrimaryKey = event.getResourceId();
         registrationLocalService.addUserRegistration(
-                registration.getCompanyId(), registration.getGroupId(), registration.getResourceId(),
+                registration.getCompanyId(), registration.getGroupId(), registration.getResourceId(), eventResourcePrimaryKey,
                 parentId, user.getUserId(),
                 registration.getStartTime(), registration.getEndTime(), JsonContentUtils.formatMapToJson(userProperties));
     }
@@ -177,10 +178,10 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         return titles;
     }
 
-    public List<Registration> getChildRegistrations(Registration registration) throws PortalException {
+    public List<Registration> getChildRegistrations(Registration registration, Locale locale) throws PortalException {
         Event event = parserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()));
-
-        List<Registration> registrations = event.getRegistrations();
+        if (event == null) return Collections.emptyList();
+        List<Registration> registrations = event.getRegistrations(locale);
         ArrayList<Registration> children = new ArrayList<>();
         for (Registration eventRegistration : registrations) {
             if (eventRegistration.getParentRegistration() != null && eventRegistration.getParentRegistration().getResourceId() == registration.getResourceId()) {
@@ -294,9 +295,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
                 missingInfo.add(value.name());
             }
         }
-
         return missingInfo;
-
     }
 
     @Override
@@ -307,7 +306,8 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     @Override
     public List<Map<String, Object>> getUserRegistrations(User user, Event event) {
-        List<nl.deltares.dsd.registration.model.Registration> dbRegistrations = registrationLocalService.getUserRegistrations(event.getGroupId(), user.getUserId(), event.getStartTime(), event.getEndTime());
+        List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
+                registrationLocalService.getUserEventRegistrations(event.getGroupId(), user.getUserId(), event.getResourceId());
         List<Map<String, Object>> registrations = new ArrayList<>();
         dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
         return registrations;
@@ -315,9 +315,8 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     @Override
     public List<Map<String, Object>> getRegistrations(Event event) {
-        //extend search window to include bustransfers
-        List<nl.deltares.dsd.registration.model.Registration> dbRegistrations = registrationLocalService.getRegistrations(event.getGroupId(),
-                new Date(event.getStartTime().getTime() - dayMillis), new Date(event.getEndTime().getTime()+ dayMillis));
+        List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
+                registrationLocalService.getEventRegistrations(event.getGroupId(), event.getResourceId());
         List<Map<String, Object>> registrations = new ArrayList<>();
         dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
         return registrations;

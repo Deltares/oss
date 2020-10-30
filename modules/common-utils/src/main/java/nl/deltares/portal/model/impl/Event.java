@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class Event extends AbsDsdArticle {
 
     private static final Log LOG = LogFactoryUtil.getLog(Event.class);
-    private List<Registration> registrations = null;
+    private List<Registration> registrations = Collections.emptyList();
     private EventLocation eventLocation = null;
     private Date startTime = null;
     private Date endTime = null;
@@ -104,13 +104,13 @@ public class Event extends AbsDsdArticle {
         return emailFooterURL;
     }
 
-    public List<Registration> getRegistrations()  {
-        loadRegistrations();
+    public List<Registration> getRegistrations(Locale locale)  {
+        loadRegistrations(locale);
         return Collections.unmodifiableList(registrations);
     }
 
-    public Registration getRegistration(long resourceId) {
-        loadRegistrations();
+    public Registration getRegistration(long resourceId, Locale locale) {
+        loadRegistrations(locale);
         for (Registration registration : registrations) {
             if (registration.getResourceId() == resourceId) return registration;
         }
@@ -126,27 +126,27 @@ public class Event extends AbsDsdArticle {
         return duration > TimeUnit.DAYS.toMillis(1);
     }
 
-    public List<BusTransfer> getBusTransfers() {
-        return getRegistrations().stream()
+    public List<BusTransfer> getBusTransfers(Locale locale) {
+        return getRegistrations(locale).stream()
                 .filter(registration -> registration instanceof BusTransfer)
                 .map(registration -> (BusTransfer) registration)
                 .collect(Collectors.toList());
     }
 
-    private synchronized void loadRegistrations(){
+    private synchronized void loadRegistrations(Locale locale){
 
-        if (registrations != null) {
+        if (registrations.size() > 0) {
             return;
         }
         try {
-            parseRegistrations();
+            parseRegistrations(locale);
         } catch (PortalException e) {
             LOG.error(String.format("Error parsing registrations for event %s: %s", getTitle(), e.getMessage()));
         }
     }
 
-    private void parseRegistrations() throws PortalException {
-        registrations = dsdParserUtils.getRegistrations(getGroupId(), getArticleId(), Locale.getDefault());
+    private void parseRegistrations(Locale locale) throws PortalException {
+        this.registrations = dsdParserUtils.getRegistrations(getGroupId(), getArticleId(), locale);
     }
 
 }

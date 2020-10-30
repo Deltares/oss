@@ -8,6 +8,7 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.LayoutServiceUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.DsdParserUtils;
@@ -47,7 +48,7 @@ public class DsdFullcalendarService {
     @Produces("application/json")
     public Response events(@Context HttpServletRequest request,
                            @PathParam("siteId") String siteId, @PathParam("eventId") String eventId,
-                           @QueryParam("portletId") String portletId, @QueryParam("layoutUuid") String layoutUuid,
+                           @QueryParam("portletId") String portletId, @QueryParam("layoutUuid") String layoutUuid, @QueryParam("locale") String localeStr,
                            @QueryParam("start") String start, @QueryParam("end") String end, @QueryParam("timeZone") String timeZone) {
 
         dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
@@ -64,14 +65,16 @@ public class DsdFullcalendarService {
             return Response.serverError().entity(String.format("Error parsing end (%s): %s", end, e.getMessage())).build();
         }
 
+        Locale locale = LocaleUtil.fromLanguageId(localeStr);
+
         Map<String, String> colorMap = getColorMap(layoutUuid, Long.parseLong(siteId), portletId);
         try {
             List<Registration> registrations;
             if (eventId.equals("0")){
-                registrations = parserUtils.getRegistrations(Long.parseLong(siteId), startSearch, endSearch, request.getLocale());
+                registrations = parserUtils.getRegistrations(Long.parseLong(siteId), startSearch, endSearch, locale);
             } else {
                 nl.deltares.portal.model.impl.Event event = parserUtils.getEvent(Long.parseLong(siteId), eventId);
-                registrations = event.getRegistrations();
+                registrations = event.getRegistrations(locale);
             }
             return toResponse(getEvents(registrations, startSearch, endSearch, colorMap));
         } catch (PortalException e) {
@@ -84,11 +87,11 @@ public class DsdFullcalendarService {
     @Path("/resources/{siteId}/{eventId}")
     @Produces("application/json")
     public Response resources(@Context HttpServletRequest request,
-                              @PathParam("siteId") String siteId, @PathParam("eventId") String eventId) {
+                              @PathParam("siteId") String siteId, @PathParam("eventId") String eventId, @QueryParam("locale") String localeStr) {
 
         try {
             nl.deltares.portal.model.impl.Event dsdEvent = parserUtils.getEvent(Long.parseLong(siteId), eventId);
-            return toResponse(getResources(dsdEvent));
+            return toResponse(getResources(dsdEvent, LocaleUtil.fromLanguageId(localeStr)));
         } catch (PortalException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
@@ -97,7 +100,7 @@ public class DsdFullcalendarService {
     }
 
 
-    private List<Event> getEvents(List<Registration> registrations, Date startSearch, Date endSearch, Map<String, String> colorMap) throws PortalException {
+    private List<Event> getEvents(List<Registration> registrations, Date startSearch, Date endSearch, Map<String, String> colorMap) {
 
         List<Event> events = new ArrayList<>(registrations.size());
         for (Registration registration : registrations) {
@@ -124,7 +127,7 @@ public class DsdFullcalendarService {
         return events;
     }
 
-    private Event createCalendarEvent(Map<String, String> colorMap, Registration registration, int dayCount, long startDay, long endDay) throws PortalException {
+    private Event createCalendarEvent(Map<String, String> colorMap, Registration registration, int dayCount, long startDay, long endDay) {
         Event event = new Event();
         event.setId(registration.getArticleId() + '_' + dayCount);
         if (registration instanceof SessionRegistration) {
@@ -169,7 +172,7 @@ public class DsdFullcalendarService {
 
     }
 
-    private List<Resource> getResources(nl.deltares.portal.model.impl.Event dsdEvent) throws PortalException {
+    private List<Resource> getResources(nl.deltares.portal.model.impl.Event dsdEvent, Locale locale) {
 
         EventLocation dsdLocation = dsdEvent.getEventLocation();
         List<Resource> resources = new ArrayList<>();
@@ -177,11 +180,11 @@ public class DsdFullcalendarService {
             resources.addAll(getBuildingResources(dsdLocation.getBuildings()));
             resources.addAll(getRoomResources(dsdLocation.getRooms()));
         }
-        resources.addAll(getExternalResources(dsdEvent.getRegistrations()));
+        resources.addAll(getExternalResources(dsdEvent.getRegistrations(locale)));
         return resources;
     }
 
-    private List<Resource> getExternalResources(List<Registration> registrations) throws PortalException {
+    private List<Resource> getExternalResources(List<Registration> registrations) {
 
         ArrayList<Resource> externals = new ArrayList<>();
         for (Registration registration : registrations) {

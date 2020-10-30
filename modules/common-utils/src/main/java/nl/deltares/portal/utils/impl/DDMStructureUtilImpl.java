@@ -36,9 +36,8 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
     @Override
     public List<Optional<DDMStructure>> getDDMStructuresByName(long groupId, String[] names, Locale locale) {
         List<Optional<DDMStructure>> optionalList = new ArrayList<>();
-        long structureOwnerGroup = getStructureOwnerGroup(groupId);
 
-        if (structureOwnerGroup > 0) {
+        if (groupId > 0) {
             List<DDMStructure> allDDMStructures = null;
             for (String name : names) {
                 Optional<DDMStructure> cachedDDMStructure = getCachedDDMStructure(name);
@@ -47,8 +46,8 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
                     continue;
                 }
                 if (allDDMStructures == null) {
-                    allDDMStructures = _ddmStructureLocalService.getStructures(structureOwnerGroup);
-                    if(allDDMStructures == null) return optionalList;
+                    allDDMStructures = getDDStructuresForGroup(groupId);
+                    if (allDDMStructures.isEmpty()) return optionalList;
                 }
                 Optional<DDMStructure> matchingDDMStructure = findMatchingDDMStructure(name, allDDMStructures, locale);
                 if (matchingDDMStructure.isPresent()){
@@ -58,6 +57,16 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
             }
         }
         return optionalList;
+    }
+
+    private List<DDMStructure> getDDStructuresForGroup(long groupId) {
+        List<DDMStructure> structures = new ArrayList<>();
+        long parentGroupId = getParentGroup(groupId);
+        if (parentGroupId > 0){
+            structures.addAll(_ddmStructureLocalService.getStructures(parentGroupId));
+        }
+        structures.addAll(_ddmStructureLocalService.getStructures(groupId));
+        return structures;
     }
 
     private Optional<DDMStructure> findMatchingDDMStructure(String name, List<DDMStructure> allDDMStructures, Locale locale) {
@@ -116,17 +125,17 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
         return match;
     }
 
-    private long getStructureOwnerGroup(long groupId)  {
+    private long getParentGroup(long groupId)  {
         Group group;
         try {
             group = GroupServiceUtil.getGroup(groupId);
         } catch (PortalException e) {
             LOGGER.warn(String.format("Cannot find group for %d : %s", groupId, e.getMessage()));
-            return groupId;
+            return 0;
         }
         Group parentGroup = group.getParentGroup();
         if (parentGroup != null) return parentGroup.getGroupId();
-        return group.getGroupId();
+        return 0;
     }
 
     private static void cacheDDMStructure(String name, DDMStructure structure) {
@@ -134,7 +143,7 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
 
         PortalCache<String, Serializable> cache = MultiVMPoolUtil.getPortalCache("deltares", true);
         cache.put("STRUCTURE_" + name, structure);
-        cache.put("STRUCTURE_EXP_" + name, System.currentTimeMillis() + TimeUnit.HOURS.toMillis(1));
+        cache.put("STRUCTURE_EXP_" + name, System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10));
 
     }
 
@@ -157,4 +166,5 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
 
     @Reference
     private DDMTemplateLocalService _ddmTemplateLocalService;
+
 }

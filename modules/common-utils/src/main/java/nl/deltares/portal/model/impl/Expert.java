@@ -64,8 +64,10 @@ public class Expert extends AbsDsdArticle {
 
     private void fillMissingValues() {
         try {
+        if (name == null) {
             User user = UserLocalServiceUtil.getUserByEmailAddress(getCompanyId(), email);
             name = user.getFullName();
+        }
         } catch (PortalException e) {
             //
         }
