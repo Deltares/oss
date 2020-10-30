@@ -75,8 +75,9 @@ public interface RegistrationLocalService
 	public Registration addRegistration(Registration registration);
 
 	public void addUserRegistration(
-		long companyId, long groupId, long resourceId, long parentResourceId,
-		long userId, Date startTime, Date endTime, String preferences);
+		long companyId, long groupId, long resourceId, long eventResourceId,
+		long parentResourceId, long userId, Date startTime, Date endTime,
+		String preferences);
 
 	/**
 	 * Creates a new registration with the primary key. Does not add the registration to the database.
@@ -92,10 +93,30 @@ public interface RegistrationLocalService
 	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
+	 * @param eventResourceId Article Identifier of Event being removed.
+	 */
+	public void deleteAllEventRegistrations(long groupId, long eventResourceId);
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
+	 * @param groupId Site Identifier
 	 * @param resourceId Article Identifier being removed.
 	 */
 	public void deleteAllRegistrationsAndChildRegistrations(
 		long groupId, long resourceId);
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param userId User id
+	 * @param eventResourceId Article Identifier of Event being removed.
+	 */
+	public void deleteAllUserEventRegistrations(
+		long groupId, long userId, long eventResourceId);
 
 	/**
 	 * @throws PortalException
@@ -221,6 +242,10 @@ public interface RegistrationLocalService
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getEventRegistrations(
+		long groupId, long eventResourceId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
 
 	/**
@@ -298,6 +323,10 @@ public interface RegistrationLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public long[] getRegistrationsWithOverlappingPeriod(
 		long groupId, long userId, Date startTime, Date endTime);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getUserEventRegistrations(
+		long groupId, long userId, long eventResourceId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Registration> getUserRegistrations(

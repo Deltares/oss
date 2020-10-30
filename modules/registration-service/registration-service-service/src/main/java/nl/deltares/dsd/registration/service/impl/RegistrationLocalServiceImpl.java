@@ -47,7 +47,7 @@ public class RegistrationLocalServiceImpl
 	 *
 	 * Never reference this class directly. Use <code>nl.deltares.dsd.registration.service.RegistrationLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil</code>.
 	 */
-	public void addUserRegistration(long companyId, long groupId, long resourceId, long parentResourceId,
+	public void addUserRegistration(long companyId, long groupId, long resourceId, long eventResourceId, long parentResourceId,
 									long userId, Date startTime, Date endTime, String preferences) {
 
 		//do not validate here. validation has already taken place
@@ -55,6 +55,7 @@ public class RegistrationLocalServiceImpl
 		Registration registration = RegistrationLocalServiceUtil.createRegistration(CounterLocalServiceUtil.increment(Registration.class.getName()));
 		registration.setCompanyId(companyId);
 		registration.setGroupId(groupId);
+		registration.setEventResourcePrimaryKey(eventResourceId);
 		registration.setResourcePrimaryKey(resourceId);
 		registration.setParentResourcePrimaryKey(parentResourceId);
 		registration.setUserId(userId);
@@ -81,6 +82,32 @@ public class RegistrationLocalServiceImpl
 		RegistrationUtil.removeByArticleRegistrations(groupId, resourceId);
 
 	}
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 * @param groupId Site Identifier
+	 * @param eventResourceId Article Identifier of Event being removed.
+	 */
+	public void deleteAllEventRegistrations(long groupId, long eventResourceId){
+
+		//Remove all registrations with a parentArticleId equal to resourceId
+		RegistrationUtil.removeByEventRegistrations(groupId, eventResourceId);
+	}
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 * @param groupId Site Identifier
+	 * @param userId User id
+	 * @param eventResourceId Article Identifier of Event being removed.
+	 */
+	public void deleteAllUserEventRegistrations(long groupId, long userId, long eventResourceId){
+
+		//Remove all registrations with a parentArticleId equal to resourceId
+		RegistrationUtil.removeByUserEventRegistrations(groupId, userId, eventResourceId);
+	}
+
 
 	/**
 	 * Delete user registrations for 'resourceId'. This inlcudes all registration with a parentArticleId
@@ -192,6 +219,15 @@ public class RegistrationLocalServiceImpl
 		List<Registration> byUserArticleRegistrations = RegistrationUtil.findByUserArticleRegistrations(groupId, userId, resourceId);
 		byUserArticleRegistrations.forEach(registration -> registrationDates.add(registration.getStartTime()));
 		return registrationDates;
+	}
+
+	public List<Registration> getUserEventRegistrations(long groupId, long userId, long eventResourceId){
+		return RegistrationUtil.findByUserEventRegistrations(groupId, userId, eventResourceId);
+
+	}
+
+	public List<Registration> getEventRegistrations(long groupId, long eventResourceId){
+		return RegistrationUtil.findByEventRegistrations(groupId, eventResourceId);
 	}
 
 	public List<Registration> getUserRegistrations(long groupId, long userId, Date start, Date end){

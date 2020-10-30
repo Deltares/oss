@@ -4,6 +4,7 @@
 	<model name="nl.deltares.dsd.registration.model.Registration">
 		<field name="registrationId" type="long" />
 		<field name="groupId" type="long" />
+		<field name="eventResourcePrimaryKey" type="long" />
 		<field name="companyId" type="long" />
 		<field name="userId" type="long" />
 		<field name="resourcePrimaryKey" type="long" />
