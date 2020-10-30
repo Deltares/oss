@@ -25,7 +25,7 @@ public class UserProgramFacetBuilder {
         this.searchContext = searchContext;
     }
 
-    public void setArticlesIds(List<String> ids) {
+    public void setClassPKs(List<String> ids) {
         this.ids = ids;
     }
 

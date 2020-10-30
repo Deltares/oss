@@ -3,5 +3,5 @@
 
 <aui:script require="<%= bootstrapRequire %>">
 	bootstrapRequire.default('<portlet:namespace />-root', "<%= baseUrl %>", "<%= siteId %>",
-	"<%= eventId %>", "<%= startDate %>" , "<%= portletId %>", "<%= layoutUuid %>");
+	"<%= eventId %>", "<%= startDate %>" , "<%= portletId %>", "<%= layoutUuid %>", "<%=themeDisplay.getLocale()%>");
 </aui:script>

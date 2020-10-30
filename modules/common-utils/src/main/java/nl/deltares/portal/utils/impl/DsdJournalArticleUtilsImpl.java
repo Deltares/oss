@@ -8,6 +8,8 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.*;
 import com.liferay.portal.kernel.search.facet.Facet;
+import com.liferay.portal.kernel.search.generic.MatchQuery;
+import com.liferay.portal.kernel.search.generic.MultiMatchQuery;
 import com.liferay.portal.kernel.search.generic.TermRangeQueryImpl;
 import com.liferay.portal.kernel.util.DateUtil;
 import nl.deltares.portal.utils.DDMStructureUtil;
@@ -56,6 +58,14 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
         return Collections.emptyList();
     }
 
+    protected Query buildEventIdQuery(String[] fieldNames, String eventId) {
+
+        MultiMatchQuery multiMatchQuery = new MultiMatchQuery(eventId);
+        multiMatchQuery.addFields(fieldNames);
+        multiMatchQuery.setOperator(MatchQuery.Operator.OR);
+        return multiMatchQuery;
+    }
+
     protected Query buildDateRangeQuery(String fieldName, Date startDate, Date endDate, Locale locale) {
 
         String startDateString = null;
@@ -66,7 +76,7 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
         return new TermRangeQueryImpl(fieldName, startDateString, endDateString, startDate != null, endDate != null);
     }
 
-    protected Facet buildEStructureKeyFacet(List<String> structureKeys, SearchContext searchContext) {
+    protected Facet buildStructureKeyFacet(List<String> structureKeys, SearchContext searchContext) {
 
         StructureKeyFacetFactory factory = new StructureKeyFacetFactoryImpl();
         factory.setField("ddmStructureKey");
@@ -123,15 +133,13 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
         List<Optional<DDMStructure>> sessionStructure = ddmStructureUtil.getDDMStructuresByName(groupId, new String[]{"SESSION", "DINNER", "BUSTRANSFER"}, locale);
 
         BooleanClauseFactory booleanClauseFactory = BooleanClauseFactoryUtil.getBooleanClauseFactory();
-        ArrayList<BooleanClause<Query>> boolClauseQueries = new ArrayList<>();
-        for (Optional<DDMStructure> optionalStructure : sessionStructure) {
-            if (optionalStructure.isPresent()){
-                long ddmStructureId = optionalStructure.get().getStructureId();
-                String idField = _ddmIndexer.encodeName(ddmStructureId, "eventId", locale);
-                boolClauseQueries.add(booleanClauseFactory.create(idField, eventId, BooleanClauseOccur.SHOULD.getName()));
-            }
-        }
-        searchContext.setBooleanClauses(boolClauseQueries.toArray(new BooleanClause[0]));
+        List<String> eventIdFields = new ArrayList<>();
+        sessionStructure.forEach(optional -> optional.ifPresent(structure -> {
+            long ddmStructureId = structure.getStructureId();
+            String idField = _ddmIndexer.encodeName(ddmStructureId, "eventId", locale);
+            eventIdFields.add(idField);
+        }));
+        searchContext.setBooleanClauses(new BooleanClause[]{booleanClauseFactory.create(buildEventIdQuery(eventIdFields.toArray(new String[0]), eventId), BooleanClauseOccur.MUST.getName())});
     }
 
     @Override
@@ -143,7 +151,7 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
             optional.ifPresent(structure -> structureKeys.add(structure.getStructureKey()));
         });
 
-        searchContext.addFacet(buildEStructureKeyFacet(structureKeys, searchContext));
+        searchContext.addFacet(buildStructureKeyFacet(structureKeys, searchContext));
     }
 
     @Override

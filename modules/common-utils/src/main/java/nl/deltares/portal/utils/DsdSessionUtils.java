@@ -7,6 +7,7 @@ import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public interface DsdSessionUtils {
@@ -35,10 +36,11 @@ public interface DsdSessionUtils {
 
     /** Return list of registrations that reference this registration a parent.
      *
-     * @param registration Parten registration
+     * @param registration Parent registration
+     * @param locale Locale for which to retrieve registrations
      * @return List of child registartions
      */
-    List<Registration> getChildRegistrations(Registration registration) throws PortalException;
+    List<Registration> getChildRegistrations(Registration registration, Locale locale) throws PortalException;
 
     /** Return map containing registration preferences
      *

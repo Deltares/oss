@@ -41,30 +41,26 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
 
             Event event = dsdParserUtils.getEvent(groupId, eventId);
 
-            List<Long> ids = dsdSessionUtils.getUserRegistrations(user, event)
+            List<String> entryClassPKs = dsdSessionUtils.getUserRegistrations(user, event)
                     .stream()
                     .filter(map -> map.containsKey("resourcePrimaryKey"))
                     .map(map -> map.get("resourcePrimaryKey"))
-                    .map(value -> (Long) value)
+                    .map(String::valueOf)
                     .collect(Collectors.toList());
 
-            //convert resourcePrimaryKeys to articleIds
-            List<String> articleIds = ids.stream()
-                    .map(item -> event.getRegistration(item).getArticleId())
-                    .collect(Collectors.toList());
 
-            portletSharedSearchSettings.addFacet(buildFacet(articleIds, portletSharedSearchSettings));
+            portletSharedSearchSettings.addFacet(buildFacet(entryClassPKs, portletSharedSearchSettings));
         } catch (Exception e) {
             LOG.debug("Could not get registrations for user [" + user.getUserId() + "]", e);
         }
     }
 
-    private Facet buildFacet(List<String> ids, PortletSharedSearchSettings portletSharedSearchSettings) {
-        _userProgramFacetFactory.setField("articleId_String_sortable");
+    private Facet buildFacet(List<String> entryClassPKs, PortletSharedSearchSettings portletSharedSearchSettings) {
+        _userProgramFacetFactory.setField("entryClassPK");
 
         UserProgramFacetBuilder userProgramFacetBuilder = new UserProgramFacetBuilder(_userProgramFacetFactory);
         userProgramFacetBuilder.setSearchContext(portletSharedSearchSettings.getSearchContext());
-        userProgramFacetBuilder.setArticlesIds(ids);
+        userProgramFacetBuilder.setClassPKs(entryClassPKs);
 
         return userProgramFacetBuilder.build();
     }
