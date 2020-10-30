@@ -1,6 +1,7 @@
 package nl.deltares.portal.utils;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.impl.Event;
@@ -99,4 +100,6 @@ public interface DsdSessionUtils {
      * @return List of user registration records
      */
     List<Map<String, Object>> getRegistrations(Event event);
+
+    void deleteEventRegistrations(long groupId, long resourceId);
 }
