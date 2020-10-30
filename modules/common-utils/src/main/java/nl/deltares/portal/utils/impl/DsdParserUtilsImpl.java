@@ -2,8 +2,9 @@ package nl.deltares.portal.utils.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
-import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 )
 public class DsdParserUtilsImpl implements DsdParserUtils {
 
+    private static final Log LOG = LogFactoryUtil.getLog(DsdParserUtilsImpl.class);
     private static final long MAX_CACHE_TIME = TimeUnit.MINUTES.toMillis(5);
     private static final HashMap<String, AbsDsdArticle> cache = new HashMap<>();
 
@@ -51,7 +53,7 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
 
     @Override
     public List<Registration> getRegistrations(long siteId, Date startTime, Date endTime, Locale locale) throws PortalException {
-        long companyId = GroupLocalServiceUtil.getCompanyGroup(PortalUtil.getDefaultCompanyId()).getGroupId();
+        long companyId = PortalUtil.getDefaultCompanyId();
         List<JournalArticle> articles = dsdJournalArticleUtils.getRegistrationsForPeriod(companyId, siteId, startTime, endTime, locale);
         return articlesToDsd(articles);
     }
@@ -69,7 +71,7 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
             try {
                 registrations.add(getRegistration(registrationArticle));
             } catch (PortalException e) {
-                //
+                LOG.warn(String.format("Error getting registration for %s: %s", registrationArticle.getTitle(), e.getMessage()));
             }
         });
         return registrations;

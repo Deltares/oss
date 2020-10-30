@@ -27,8 +27,8 @@ Content-Type: application/json
 {
   "query": {
     "terms": {
-      "articleId_String_sortable": [
-        "3482425", "3482621"
+      "entryClassPK": [
+        "3458901"
       ]
     }
   }

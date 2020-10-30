@@ -192,7 +192,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 Registration parentRegistration = dsdParserUtils.getRegistration(siteId, articleId);
                 registrationRequest.addRegistration(parentRegistration);
 
-                List<Registration> childRegistrations = dsdSessionUtils.getChildRegistrations(parentRegistration);
+                List<Registration> childRegistrations = dsdSessionUtils.getChildRegistrations(parentRegistration, themeDisplay.getLocale());
                 for (Registration childRegistration : childRegistrations) {
                     if (ParamUtil.getString(actionRequest, CHILD_PREFIX + childRegistration.getArticleId()).equals("true")) {
                         registrationRequest.addChildRegistration(parentRegistration, childRegistration);

@@ -5,7 +5,9 @@ import com.liferay.portal.kernel.model.User;
 import nl.deltares.dsd.registration.service.RegistrationLocalService;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.impl.BusTransfer;
+import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
+import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdTransferUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -25,10 +27,17 @@ public class DsdTransferUtilsImpl implements DsdTransferUtils {
 
     private RegistrationLocalService registrationLocalService;
 
+    private DsdParserUtils dsdParserUtils;
+
     @Reference(unbind = "-")
     private void setRepositoryLogLocalService(RegistrationLocalService registrationLocalService) {
 
         this.registrationLocalService = registrationLocalService;
+    }
+
+    @Reference(unbind = "-")
+    private void setDsdParserUtils(DsdParserUtils dsdParserUtils) {
+        this.dsdParserUtils = dsdParserUtils;
     }
 
     @Override
@@ -47,10 +56,14 @@ public class DsdTransferUtilsImpl implements DsdTransferUtils {
         if (isUserRegisteredFor(user, registration, transferDate)) return;
 
         validateRegistration(user, registration, transferDate);
+        Event event = dsdParserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()));
+
+        Registration parentRegistration = registration.getParentRegistration();
 
         registrationLocalService.addUserRegistration(
                 registration.getCompanyId(), registration.getGroupId(), registration.getResourceId(),
-                0, user.getUserId(),
+                event == null ? 0 : event.getResourceId(),
+                parentRegistration == null ? 0 : parentRegistration.getResourceId(), user.getUserId(),
                 transferDate, transferDate, null);
     }
 

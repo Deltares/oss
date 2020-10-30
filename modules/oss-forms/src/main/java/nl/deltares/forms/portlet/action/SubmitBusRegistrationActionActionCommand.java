@@ -48,7 +48,7 @@ public class SubmitBusRegistrationActionActionCommand extends BaseMVCActionComma
 
             Event event = parserUtils.getEvent(groupId, String.valueOf(configuration.eventId()));
 
-            event.getBusTransfers().stream()
+            event.getBusTransfers(themeDisplay.getLocale()).stream()
                     .forEach(busTransfer -> registerUser(actionRequest, event, user, busTransfer));
         } catch (Exception e) {
             SessionErrors.add(actionRequest, "registration-failed", e.getMessage());
@@ -64,7 +64,7 @@ public class SubmitBusRegistrationActionActionCommand extends BaseMVCActionComma
                     user.getEmailAddresses(), busTransfer.getResourceId(), date.toString());
 
             try {
-                Registration registration = event.getRegistration(busTransfer.getResourceId());
+                Registration registration = event.getRegistration(busTransfer.getResourceId(), actionRequest.getLocale());
 
                 if (ParamUtil.getString(actionRequest, registrationParam).equals("true")) {
                     dsdTransferUtils.registerUser(user, registration, date);

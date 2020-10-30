@@ -104,7 +104,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		Map<Long, User> userCache = new HashMap<>();
 		Map<Long, Map<String, String>> userAttributeCache = new HashMap<>();
 		PrintWriter writer = resourceResponse.getWriter();
-		StringBuilder header = new StringBuilder("title,start date,topic,type,email,firstName,lastName,registrantKey");
+		StringBuilder header = new StringBuilder("event,registration,start date,topic,type,email,firstName,lastName,registrantKey");
 		for (KeycloakUtils.BILLING_ATTRIBUTES value : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
 			header.append(',');
 			header.append(value.name());
@@ -114,10 +114,11 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 
 	}
 
-	private void writeRecord(PrintWriter writer, Map<String, Object> record, Event event, Map<Long, User> userCache, Map<Long, Map<String, String>> userAttributeCache, Locale locale) {
+	private void writeRecord(PrintWriter writer, Map<String, Object> record, Event event, Map<Long, User> userCache,
+							 Map<Long, Map<String, String>> userAttributeCache, Locale locale) {
 
 		Long registrationId = (Long) record.get("resourcePrimaryKey");
-		Registration registration = getRegistration(registrationId, event);
+		Registration registration = getRegistration(registrationId, event, locale);
 		if (registration == null){
 			LOG.error(String.format("Cannot find registration for registrationId %d", registrationId));
 			clearInvalidRegistration((Long) record.get("groupId"), registrationId);
@@ -137,6 +138,8 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 			userCache.put(userId, user);
 		}
 		StringBuilder line = new StringBuilder();
+		line.append(event.getTitle());
+		line.append(',');
 		line.append(registration.getTitle());
 		line.append(',');
 		line.append(DateUtil.getDate((Date) record.get("startTime"),"yyyy-MM-dd", locale));
@@ -166,10 +169,12 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		writer.println(line);
 	}
 
-	private Registration getRegistration(Long registrationId, Event event) {
+	private Registration getRegistration(Long registrationId, Event event, Locale locale) {
 
-		Registration registration = event.getRegistration(registrationId);
-		if (registration != null) return registration;
+		if (event != null) {
+			Registration registration = event.getRegistration(registrationId, locale);
+			if (registration != null) return registration;
+		}
 		//Something wrong. Registration not loaded in Event check DB.
 		try {
 			JournalArticle latestArticle = dsdJournalArticleUtils.getLatestArticle(registrationId);

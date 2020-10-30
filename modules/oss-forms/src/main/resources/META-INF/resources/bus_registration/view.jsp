@@ -49,7 +49,7 @@
                 <c:forEach var="transferDate" items="${busTransfer.transferDates}">
                     <%
                         Date transferDate = (Date) pageContext.getAttribute("transferDate");
-                        Registration registration = event.getRegistration(busTransfer.getResourceId());
+                        Registration registration = event.getRegistration(busTransfer.getResourceId(), themeDisplay.getLocale());
                         int totalRegistrations = dsdTransferUtils.getRegistrationCount(registration,transferDate);
                         int remainingPlaces = registration.getCapacity() - totalRegistrations;
                     %>
