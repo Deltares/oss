@@ -321,4 +321,9 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
         return registrations;
     }
+
+    @Override
+    public void deleteEventRegistrations(long groupId, long resourceId) {
+        registrationLocalService.deleteAllEventRegistrations(groupId, resourceId);
+    }
 }
