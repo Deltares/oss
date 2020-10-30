@@ -60,6 +60,7 @@ public class RegistrationWrapper
 
 		attributes.put("registrationId", getRegistrationId());
 		attributes.put("groupId", getGroupId());
+		attributes.put("eventResourcePrimaryKey", getEventResourcePrimaryKey());
 		attributes.put("companyId", getCompanyId());
 		attributes.put("userId", getUserId());
 		attributes.put("resourcePrimaryKey", getResourcePrimaryKey());
@@ -84,6 +85,13 @@ public class RegistrationWrapper
 
 		if (groupId != null) {
 			setGroupId(groupId);
+		}
+
+		Long eventResourcePrimaryKey = (Long)attributes.get(
+			"eventResourcePrimaryKey");
+
+		if (eventResourcePrimaryKey != null) {
+			setEventResourcePrimaryKey(eventResourcePrimaryKey);
 		}
 
 		Long companyId = (Long)attributes.get("companyId");
@@ -160,6 +168,16 @@ public class RegistrationWrapper
 	@Override
 	public Date getEndTime() {
 		return _registration.getEndTime();
+	}
+
+	/**
+	 * Returns the event resource primary key of this registration.
+	 *
+	 * @return the event resource primary key of this registration
+	 */
+	@Override
+	public long getEventResourcePrimaryKey() {
+		return _registration.getEventResourcePrimaryKey();
 	}
 
 	@Override
@@ -310,6 +328,16 @@ public class RegistrationWrapper
 	@Override
 	public void setEndTime(Date endTime) {
 		_registration.setEndTime(endTime);
+	}
+
+	/**
+	 * Sets the event resource primary key of this registration.
+	 *
+	 * @param eventResourcePrimaryKey the event resource primary key of this registration
+	 */
+	@Override
+	public void setEventResourcePrimaryKey(long eventResourcePrimaryKey) {
+		_registration.setEventResourcePrimaryKey(eventResourcePrimaryKey);
 	}
 
 	@Override

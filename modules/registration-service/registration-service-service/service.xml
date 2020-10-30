@@ -15,7 +15,7 @@
 		<column name="groupId" type="long" />
 
 		<!-- Audit fields -->
-
+		<column name="eventResourcePrimaryKey" type="long" />
 		<column name="companyId" type="long" />
 		<column name="userId" type="long" />
 		<column name="resourcePrimaryKey" type="long" />
@@ -33,6 +33,17 @@
 		</order>
 
 		<!-- Finder methods -->
+
+		<finder name="EventRegistrations" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="eventResourcePrimaryKey" />
+		</finder>
+
+		<finder name="UserEventRegistrations" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="userId" />
+			<finder-column name="eventResourcePrimaryKey" />
+		</finder>
 
 		<finder name="UserRegistrations" return-type="Collection">
 			<finder-column name="groupId" />

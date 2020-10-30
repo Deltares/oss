@@ -51,13 +51,13 @@ public class RegistrationLocalServiceWrapper
 
 	@Override
 	public void addUserRegistration(
-		long companyId, long groupId, long resouceId, long parentResourceId,
-		long userId, java.util.Date startTime, java.util.Date endTime,
-		String preferences) {
+		long companyId, long groupId, long resourceId, long eventResourceId,
+		long parentResourceId, long userId, java.util.Date startTime,
+		java.util.Date endTime, String preferences) {
 
 		_registrationLocalService.addUserRegistration(
-			companyId, groupId, resouceId, parentResourceId, userId, startTime,
-			endTime, preferences);
+			companyId, groupId, resourceId, eventResourceId, parentResourceId,
+			userId, startTime, endTime, preferences);
 	}
 
 	/**
@@ -78,6 +78,21 @@ public class RegistrationLocalServiceWrapper
 	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
+	 * @param eventResourceId Article Identifier of Event being removed.
+	 */
+	@Override
+	public void deleteAllEventRegistrations(
+		long groupId, long eventResourceId) {
+
+		_registrationLocalService.deleteAllEventRegistrations(
+			groupId, eventResourceId);
+	}
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
+	 * @param groupId Site Identifier
 	 * @param resourceId Article Identifier being removed.
 	 */
 	@Override
@@ -86,6 +101,22 @@ public class RegistrationLocalServiceWrapper
 
 		_registrationLocalService.deleteAllRegistrationsAndChildRegistrations(
 			groupId, resourceId);
+	}
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param userId User id
+	 * @param eventResourceId Article Identifier of Event being removed.
+	 */
+	@Override
+	public void deleteAllUserEventRegistrations(
+		long groupId, long userId, long eventResourceId) {
+
+		_registrationLocalService.deleteAllUserEventRegistrations(
+			groupId, userId, eventResourceId);
 	}
 
 	/**
@@ -268,6 +299,14 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List<nl.deltares.dsd.registration.model.Registration>
+		getEventRegistrations(long groupId, long eventResourceId) {
+
+		return _registrationLocalService.getEventRegistrations(
+			groupId, eventResourceId);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery
 		getIndexableActionableDynamicQuery() {
 
@@ -396,6 +435,15 @@ public class RegistrationLocalServiceWrapper
 
 		return _registrationLocalService.getRegistrationsWithOverlappingPeriod(
 			groupId, userId, startTime, endTime);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.dsd.registration.model.Registration>
+		getUserEventRegistrations(
+			long groupId, long userId, long eventResourceId) {
+
+		return _registrationLocalService.getUserEventRegistrations(
+			groupId, userId, eventResourceId);
 	}
 
 	@Override

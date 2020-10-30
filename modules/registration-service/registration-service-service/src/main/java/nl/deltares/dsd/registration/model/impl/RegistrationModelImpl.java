@@ -73,8 +73,8 @@ public class RegistrationModelImpl
 
 	public static final Object[][] TABLE_COLUMNS = {
 		{"registrationId", Types.BIGINT}, {"groupId", Types.BIGINT},
-		{"companyId", Types.BIGINT}, {"userId", Types.BIGINT},
-		{"resourcePrimaryKey", Types.BIGINT},
+		{"eventResourcePrimaryKey", Types.BIGINT}, {"companyId", Types.BIGINT},
+		{"userId", Types.BIGINT}, {"resourcePrimaryKey", Types.BIGINT},
 		{"userPreferences", Types.VARCHAR}, {"startTime", Types.TIMESTAMP},
 		{"endTime", Types.TIMESTAMP}, {"parentResourcePrimaryKey", Types.BIGINT}
 	};
@@ -85,6 +85,7 @@ public class RegistrationModelImpl
 	static {
 		TABLE_COLUMNS_MAP.put("registrationId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("groupId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("eventResourcePrimaryKey", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("companyId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("userId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("resourcePrimaryKey", Types.BIGINT);
@@ -95,7 +96,7 @@ public class RegistrationModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table Registrations_Registration (registrationId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,resourcePrimaryKey LONG,userPreferences STRING null,startTime DATE null,endTime DATE null,parentResourcePrimaryKey LONG)";
+		"create table Registrations_Registration (registrationId LONG not null primary key,groupId LONG,eventResourcePrimaryKey LONG,companyId LONG,userId LONG,resourcePrimaryKey LONG,userPreferences STRING null,startTime DATE null,endTime DATE null,parentResourcePrimaryKey LONG)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table Registrations_Registration";
@@ -127,15 +128,17 @@ public class RegistrationModelImpl
 			"value.object.column.bitmask.enabled.nl.deltares.dsd.registration.model.Registration"),
 		true);
 
-	public static final long GROUPID_COLUMN_BITMASK = 1L;
+	public static final long EVENTRESOURCEPRIMARYKEY_COLUMN_BITMASK = 1L;
 
-	public static final long PARENTRESOURCEPRIMARYKEY_COLUMN_BITMASK = 2L;
+	public static final long GROUPID_COLUMN_BITMASK = 2L;
 
-	public static final long RESOURCEPRIMARYKEY_COLUMN_BITMASK = 4L;
+	public static final long PARENTRESOURCEPRIMARYKEY_COLUMN_BITMASK = 4L;
 
-	public static final long USERID_COLUMN_BITMASK = 8L;
+	public static final long RESOURCEPRIMARYKEY_COLUMN_BITMASK = 8L;
 
-	public static final long STARTTIME_COLUMN_BITMASK = 16L;
+	public static final long USERID_COLUMN_BITMASK = 16L;
+
+	public static final long STARTTIME_COLUMN_BITMASK = 32L;
 
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(
 		nl.deltares.dsd.registration.service.util.ServiceProps.get(
@@ -305,6 +308,29 @@ public class RegistrationModelImpl
 				@Override
 				public void accept(Registration registration, Object groupId) {
 					registration.setGroupId((Long)groupId);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"eventResourcePrimaryKey",
+			new Function<Registration, Object>() {
+
+				@Override
+				public Object apply(Registration registration) {
+					return registration.getEventResourcePrimaryKey();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"eventResourcePrimaryKey",
+			new BiConsumer<Registration, Object>() {
+
+				@Override
+				public void accept(
+					Registration registration, Object eventResourcePrimaryKey) {
+
+					registration.setEventResourcePrimaryKey(
+						(Long)eventResourcePrimaryKey);
 				}
 
 			});
@@ -501,6 +527,28 @@ public class RegistrationModelImpl
 	}
 
 	@Override
+	public long getEventResourcePrimaryKey() {
+		return _eventResourcePrimaryKey;
+	}
+
+	@Override
+	public void setEventResourcePrimaryKey(long eventResourcePrimaryKey) {
+		_columnBitmask |= EVENTRESOURCEPRIMARYKEY_COLUMN_BITMASK;
+
+		if (!_setOriginalEventResourcePrimaryKey) {
+			_setOriginalEventResourcePrimaryKey = true;
+
+			_originalEventResourcePrimaryKey = _eventResourcePrimaryKey;
+		}
+
+		_eventResourcePrimaryKey = eventResourcePrimaryKey;
+	}
+
+	public long getOriginalEventResourcePrimaryKey() {
+		return _originalEventResourcePrimaryKey;
+	}
+
+	@Override
 	public long getCompanyId() {
 		return _companyId;
 	}
@@ -667,6 +715,8 @@ public class RegistrationModelImpl
 
 		registrationImpl.setRegistrationId(getRegistrationId());
 		registrationImpl.setGroupId(getGroupId());
+		registrationImpl.setEventResourcePrimaryKey(
+			getEventResourcePrimaryKey());
 		registrationImpl.setCompanyId(getCompanyId());
 		registrationImpl.setUserId(getUserId());
 		registrationImpl.setResourcePrimaryKey(getResourcePrimaryKey());
@@ -741,6 +791,11 @@ public class RegistrationModelImpl
 
 		registrationModelImpl._setOriginalGroupId = false;
 
+		registrationModelImpl._originalEventResourcePrimaryKey =
+			registrationModelImpl._eventResourcePrimaryKey;
+
+		registrationModelImpl._setOriginalEventResourcePrimaryKey = false;
+
 		registrationModelImpl._originalUserId = registrationModelImpl._userId;
 
 		registrationModelImpl._setOriginalUserId = false;
@@ -766,6 +821,9 @@ public class RegistrationModelImpl
 		registrationCacheModel.registrationId = getRegistrationId();
 
 		registrationCacheModel.groupId = getGroupId();
+
+		registrationCacheModel.eventResourcePrimaryKey =
+			getEventResourcePrimaryKey();
 
 		registrationCacheModel.companyId = getCompanyId();
 
@@ -879,6 +937,9 @@ public class RegistrationModelImpl
 	private long _groupId;
 	private long _originalGroupId;
 	private boolean _setOriginalGroupId;
+	private long _eventResourcePrimaryKey;
+	private long _originalEventResourcePrimaryKey;
+	private boolean _setOriginalEventResourcePrimaryKey;
 	private long _companyId;
 	private long _userId;
 	private long _originalUserId;

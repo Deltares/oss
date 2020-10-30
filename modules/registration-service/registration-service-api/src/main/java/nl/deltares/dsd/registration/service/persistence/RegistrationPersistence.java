@@ -50,6 +50,335 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 		Set<Serializable> primaryKeys);
 
 	/**
+	 * Returns all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @return the matching registrations
+	 */
+	public java.util.List<Registration> findByEventRegistrations(
+		long groupId, long eventResourcePrimaryKey);
+
+	/**
+	 * Returns a range of all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @return the range of matching registrations
+	 */
+	public java.util.List<Registration> findByEventRegistrations(
+		long groupId, long eventResourcePrimaryKey, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching registrations
+	 */
+	public java.util.List<Registration> findByEventRegistrations(
+		long groupId, long eventResourcePrimaryKey, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Registration>
+			orderByComparator);
+
+	/**
+	 * Returns an ordered range of all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching registrations
+	 */
+	public java.util.List<Registration> findByEventRegistrations(
+		long groupId, long eventResourcePrimaryKey, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Registration>
+			orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	 * Returns the first registration in the ordered set where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching registration
+	 * @throws NoSuchRegistrationException if a matching registration could not be found
+	 */
+	public Registration findByEventRegistrations_First(
+			long groupId, long eventResourcePrimaryKey,
+			com.liferay.portal.kernel.util.OrderByComparator<Registration>
+				orderByComparator)
+		throws NoSuchRegistrationException;
+
+	/**
+	 * Returns the first registration in the ordered set where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
+	 */
+	public Registration fetchByEventRegistrations_First(
+		long groupId, long eventResourcePrimaryKey,
+		com.liferay.portal.kernel.util.OrderByComparator<Registration>
+			orderByComparator);
+
+	/**
+	 * Returns the last registration in the ordered set where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching registration
+	 * @throws NoSuchRegistrationException if a matching registration could not be found
+	 */
+	public Registration findByEventRegistrations_Last(
+			long groupId, long eventResourcePrimaryKey,
+			com.liferay.portal.kernel.util.OrderByComparator<Registration>
+				orderByComparator)
+		throws NoSuchRegistrationException;
+
+	/**
+	 * Returns the last registration in the ordered set where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
+	 */
+	public Registration fetchByEventRegistrations_Last(
+		long groupId, long eventResourcePrimaryKey,
+		com.liferay.portal.kernel.util.OrderByComparator<Registration>
+			orderByComparator);
+
+	/**
+	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param registrationId the primary key of the current registration
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next registration
+	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
+	 */
+	public Registration[] findByEventRegistrations_PrevAndNext(
+			long registrationId, long groupId, long eventResourcePrimaryKey,
+			com.liferay.portal.kernel.util.OrderByComparator<Registration>
+				orderByComparator)
+		throws NoSuchRegistrationException;
+
+	/**
+	 * Removes all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 */
+	public void removeByEventRegistrations(
+		long groupId, long eventResourcePrimaryKey);
+
+	/**
+	 * Returns the number of registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @return the number of matching registrations
+	 */
+	public int countByEventRegistrations(
+		long groupId, long eventResourcePrimaryKey);
+
+	/**
+	 * Returns all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @return the matching registrations
+	 */
+	public java.util.List<Registration> findByUserEventRegistrations(
+		long groupId, long userId, long eventResourcePrimaryKey);
+
+	/**
+	 * Returns a range of all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @return the range of matching registrations
+	 */
+	public java.util.List<Registration> findByUserEventRegistrations(
+		long groupId, long userId, long eventResourcePrimaryKey, int start,
+		int end);
+
+	/**
+	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching registrations
+	 */
+	public java.util.List<Registration> findByUserEventRegistrations(
+		long groupId, long userId, long eventResourcePrimaryKey, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Registration>
+			orderByComparator);
+
+	/**
+	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching registrations
+	 */
+	public java.util.List<Registration> findByUserEventRegistrations(
+		long groupId, long userId, long eventResourcePrimaryKey, int start,
+		int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Registration>
+			orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	 * Returns the first registration in the ordered set where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching registration
+	 * @throws NoSuchRegistrationException if a matching registration could not be found
+	 */
+	public Registration findByUserEventRegistrations_First(
+			long groupId, long userId, long eventResourcePrimaryKey,
+			com.liferay.portal.kernel.util.OrderByComparator<Registration>
+				orderByComparator)
+		throws NoSuchRegistrationException;
+
+	/**
+	 * Returns the first registration in the ordered set where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
+	 */
+	public Registration fetchByUserEventRegistrations_First(
+		long groupId, long userId, long eventResourcePrimaryKey,
+		com.liferay.portal.kernel.util.OrderByComparator<Registration>
+			orderByComparator);
+
+	/**
+	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching registration
+	 * @throws NoSuchRegistrationException if a matching registration could not be found
+	 */
+	public Registration findByUserEventRegistrations_Last(
+			long groupId, long userId, long eventResourcePrimaryKey,
+			com.liferay.portal.kernel.util.OrderByComparator<Registration>
+				orderByComparator)
+		throws NoSuchRegistrationException;
+
+	/**
+	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
+	 */
+	public Registration fetchByUserEventRegistrations_Last(
+		long groupId, long userId, long eventResourcePrimaryKey,
+		com.liferay.portal.kernel.util.OrderByComparator<Registration>
+			orderByComparator);
+
+	/**
+	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param registrationId the primary key of the current registration
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next registration
+	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
+	 */
+	public Registration[] findByUserEventRegistrations_PrevAndNext(
+			long registrationId, long groupId, long userId,
+			long eventResourcePrimaryKey,
+			com.liferay.portal.kernel.util.OrderByComparator<Registration>
+				orderByComparator)
+		throws NoSuchRegistrationException;
+
+	/**
+	 * Removes all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 */
+	public void removeByUserEventRegistrations(
+		long groupId, long userId, long eventResourcePrimaryKey);
+
+	/**
+	 * Returns the number of registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @return the number of matching registrations
+	 */
+	public int countByUserEventRegistrations(
+		long groupId, long userId, long eventResourcePrimaryKey);
+
+	/**
 	 * Returns all the registrations where groupId = &#63; and userId = &#63;.
 	 *
 	 * @param groupId the group ID

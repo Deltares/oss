@@ -128,6 +128,418 @@ public class RegistrationUtil {
 	}
 
 	/**
+	 * Returns all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @return the matching registrations
+	 */
+	public static List<Registration> findByEventRegistrations(
+		long groupId, long eventResourcePrimaryKey) {
+
+		return getPersistence().findByEventRegistrations(
+			groupId, eventResourcePrimaryKey);
+	}
+
+	/**
+	 * Returns a range of all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @return the range of matching registrations
+	 */
+	public static List<Registration> findByEventRegistrations(
+		long groupId, long eventResourcePrimaryKey, int start, int end) {
+
+		return getPersistence().findByEventRegistrations(
+			groupId, eventResourcePrimaryKey, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching registrations
+	 */
+	public static List<Registration> findByEventRegistrations(
+		long groupId, long eventResourcePrimaryKey, int start, int end,
+		OrderByComparator<Registration> orderByComparator) {
+
+		return getPersistence().findByEventRegistrations(
+			groupId, eventResourcePrimaryKey, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns an ordered range of all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching registrations
+	 */
+	public static List<Registration> findByEventRegistrations(
+		long groupId, long eventResourcePrimaryKey, int start, int end,
+		OrderByComparator<Registration> orderByComparator,
+		boolean retrieveFromCache) {
+
+		return getPersistence().findByEventRegistrations(
+			groupId, eventResourcePrimaryKey, start, end, orderByComparator,
+			retrieveFromCache);
+	}
+
+	/**
+	 * Returns the first registration in the ordered set where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching registration
+	 * @throws NoSuchRegistrationException if a matching registration could not be found
+	 */
+	public static Registration findByEventRegistrations_First(
+			long groupId, long eventResourcePrimaryKey,
+			OrderByComparator<Registration> orderByComparator)
+		throws nl.deltares.dsd.registration.exception.
+			NoSuchRegistrationException {
+
+		return getPersistence().findByEventRegistrations_First(
+			groupId, eventResourcePrimaryKey, orderByComparator);
+	}
+
+	/**
+	 * Returns the first registration in the ordered set where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
+	 */
+	public static Registration fetchByEventRegistrations_First(
+		long groupId, long eventResourcePrimaryKey,
+		OrderByComparator<Registration> orderByComparator) {
+
+		return getPersistence().fetchByEventRegistrations_First(
+			groupId, eventResourcePrimaryKey, orderByComparator);
+	}
+
+	/**
+	 * Returns the last registration in the ordered set where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching registration
+	 * @throws NoSuchRegistrationException if a matching registration could not be found
+	 */
+	public static Registration findByEventRegistrations_Last(
+			long groupId, long eventResourcePrimaryKey,
+			OrderByComparator<Registration> orderByComparator)
+		throws nl.deltares.dsd.registration.exception.
+			NoSuchRegistrationException {
+
+		return getPersistence().findByEventRegistrations_Last(
+			groupId, eventResourcePrimaryKey, orderByComparator);
+	}
+
+	/**
+	 * Returns the last registration in the ordered set where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
+	 */
+	public static Registration fetchByEventRegistrations_Last(
+		long groupId, long eventResourcePrimaryKey,
+		OrderByComparator<Registration> orderByComparator) {
+
+		return getPersistence().fetchByEventRegistrations_Last(
+			groupId, eventResourcePrimaryKey, orderByComparator);
+	}
+
+	/**
+	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param registrationId the primary key of the current registration
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next registration
+	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
+	 */
+	public static Registration[] findByEventRegistrations_PrevAndNext(
+			long registrationId, long groupId, long eventResourcePrimaryKey,
+			OrderByComparator<Registration> orderByComparator)
+		throws nl.deltares.dsd.registration.exception.
+			NoSuchRegistrationException {
+
+		return getPersistence().findByEventRegistrations_PrevAndNext(
+			registrationId, groupId, eventResourcePrimaryKey,
+			orderByComparator);
+	}
+
+	/**
+	 * Removes all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 */
+	public static void removeByEventRegistrations(
+		long groupId, long eventResourcePrimaryKey) {
+
+		getPersistence().removeByEventRegistrations(
+			groupId, eventResourcePrimaryKey);
+	}
+
+	/**
+	 * Returns the number of registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @return the number of matching registrations
+	 */
+	public static int countByEventRegistrations(
+		long groupId, long eventResourcePrimaryKey) {
+
+		return getPersistence().countByEventRegistrations(
+			groupId, eventResourcePrimaryKey);
+	}
+
+	/**
+	 * Returns all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @return the matching registrations
+	 */
+	public static List<Registration> findByUserEventRegistrations(
+		long groupId, long userId, long eventResourcePrimaryKey) {
+
+		return getPersistence().findByUserEventRegistrations(
+			groupId, userId, eventResourcePrimaryKey);
+	}
+
+	/**
+	 * Returns a range of all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @return the range of matching registrations
+	 */
+	public static List<Registration> findByUserEventRegistrations(
+		long groupId, long userId, long eventResourcePrimaryKey, int start,
+		int end) {
+
+		return getPersistence().findByUserEventRegistrations(
+			groupId, userId, eventResourcePrimaryKey, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching registrations
+	 */
+	public static List<Registration> findByUserEventRegistrations(
+		long groupId, long userId, long eventResourcePrimaryKey, int start,
+		int end, OrderByComparator<Registration> orderByComparator) {
+
+		return getPersistence().findByUserEventRegistrations(
+			groupId, userId, eventResourcePrimaryKey, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param start the lower bound of the range of registrations
+	 * @param end the upper bound of the range of registrations (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching registrations
+	 */
+	public static List<Registration> findByUserEventRegistrations(
+		long groupId, long userId, long eventResourcePrimaryKey, int start,
+		int end, OrderByComparator<Registration> orderByComparator,
+		boolean retrieveFromCache) {
+
+		return getPersistence().findByUserEventRegistrations(
+			groupId, userId, eventResourcePrimaryKey, start, end,
+			orderByComparator, retrieveFromCache);
+	}
+
+	/**
+	 * Returns the first registration in the ordered set where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching registration
+	 * @throws NoSuchRegistrationException if a matching registration could not be found
+	 */
+	public static Registration findByUserEventRegistrations_First(
+			long groupId, long userId, long eventResourcePrimaryKey,
+			OrderByComparator<Registration> orderByComparator)
+		throws nl.deltares.dsd.registration.exception.
+			NoSuchRegistrationException {
+
+		return getPersistence().findByUserEventRegistrations_First(
+			groupId, userId, eventResourcePrimaryKey, orderByComparator);
+	}
+
+	/**
+	 * Returns the first registration in the ordered set where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
+	 */
+	public static Registration fetchByUserEventRegistrations_First(
+		long groupId, long userId, long eventResourcePrimaryKey,
+		OrderByComparator<Registration> orderByComparator) {
+
+		return getPersistence().fetchByUserEventRegistrations_First(
+			groupId, userId, eventResourcePrimaryKey, orderByComparator);
+	}
+
+	/**
+	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching registration
+	 * @throws NoSuchRegistrationException if a matching registration could not be found
+	 */
+	public static Registration findByUserEventRegistrations_Last(
+			long groupId, long userId, long eventResourcePrimaryKey,
+			OrderByComparator<Registration> orderByComparator)
+		throws nl.deltares.dsd.registration.exception.
+			NoSuchRegistrationException {
+
+		return getPersistence().findByUserEventRegistrations_Last(
+			groupId, userId, eventResourcePrimaryKey, orderByComparator);
+	}
+
+	/**
+	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
+	 */
+	public static Registration fetchByUserEventRegistrations_Last(
+		long groupId, long userId, long eventResourcePrimaryKey,
+		OrderByComparator<Registration> orderByComparator) {
+
+		return getPersistence().fetchByUserEventRegistrations_Last(
+			groupId, userId, eventResourcePrimaryKey, orderByComparator);
+	}
+
+	/**
+	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param registrationId the primary key of the current registration
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next registration
+	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
+	 */
+	public static Registration[] findByUserEventRegistrations_PrevAndNext(
+			long registrationId, long groupId, long userId,
+			long eventResourcePrimaryKey,
+			OrderByComparator<Registration> orderByComparator)
+		throws nl.deltares.dsd.registration.exception.
+			NoSuchRegistrationException {
+
+		return getPersistence().findByUserEventRegistrations_PrevAndNext(
+			registrationId, groupId, userId, eventResourcePrimaryKey,
+			orderByComparator);
+	}
+
+	/**
+	 * Removes all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 */
+	public static void removeByUserEventRegistrations(
+		long groupId, long userId, long eventResourcePrimaryKey) {
+
+		getPersistence().removeByUserEventRegistrations(
+			groupId, userId, eventResourcePrimaryKey);
+	}
+
+	/**
+	 * Returns the number of registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param eventResourcePrimaryKey the event resource primary key
+	 * @return the number of matching registrations
+	 */
+	public static int countByUserEventRegistrations(
+		long groupId, long userId, long eventResourcePrimaryKey) {
+
+		return getPersistence().countByUserEventRegistrations(
+			groupId, userId, eventResourcePrimaryKey);
+	}
+
+	/**
 	 * Returns all the registrations where groupId = &#63; and userId = &#63;.
 	 *
 	 * @param groupId the group ID
