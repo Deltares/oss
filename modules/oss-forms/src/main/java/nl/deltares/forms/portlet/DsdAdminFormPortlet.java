@@ -93,6 +93,10 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		} else {
 			writeError("No event found for eventId: " + eventId, resourceResponse);
 		}
+		String action = ParamUtil.getString(resourceRequest, "action");
+		if ("delete".equals(action)){
+			dsdSessionUtils.deleteEventRegistrations(event.getGroupId(), event.getResourceId());
+		}
 	}
 
 	private void writeEvents(ResourceResponse resourceResponse, Event event) throws IOException {
