@@ -27,7 +27,7 @@
                     ${dateUtil.getDate(registration.getStartTime(), "MMM", locale)}
                 </div>
                 <h3 class="c-sessions__item__title h1">${registration.getTitle()}</h3>
-                <#if !registration.isOpen() >
+                <#if !registration.isOpen() || registration.isEventInPast() >
                     <b>${languageUtil.get(locale, "dsd.theme.session.closed")}</b>
                 </#if>
                 <p class="c-sessions__item__time-date-place">
@@ -70,7 +70,7 @@
                         ${languageUtil.get(locale, "dsd.theme.session.available")} : ${available}
                     </span>
 
-                    <#if themeDisplay.isSignedIn() && registration.isOpen() >
+                    <#if themeDisplay.isSignedIn() && registration.isOpen() && !registration.isEventInPast() >
                         <#assign isRegistered = dsdSessionUtils.isUserRegisteredFor(user, registration) />
                         <span class="d-block">
                             <#if isRegistered >
