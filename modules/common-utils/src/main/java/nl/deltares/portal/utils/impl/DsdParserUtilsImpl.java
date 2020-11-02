@@ -41,6 +41,7 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
         if (cachedDsdArticle != null) return (Event) cachedDsdArticle;
 
         JournalArticle article = dsdJournalArticleUtils.getJournalArticle(siteId, articleId);
+        if (article == null) return null;
         AbsDsdArticle eventArticle = toDsdArticle(article);
         if (!(eventArticle instanceof Event)) {
             throw new PortalException(String.format("Article %s is not a valid DSD Event", article.getTitle()));

@@ -58,11 +58,10 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
         return Collections.emptyList();
     }
 
-    protected Query buildEventIdQuery(String[] fieldNames, String eventId) {
-
-        MultiMatchQuery multiMatchQuery = new MultiMatchQuery(eventId);
+    protected Query buildMultiMatchQuery(String[] fieldNames, String fieldValue, MatchQuery.Operator operator) {
+        MultiMatchQuery multiMatchQuery = new MultiMatchQuery(fieldValue);
         multiMatchQuery.addFields(fieldNames);
-        multiMatchQuery.setOperator(MatchQuery.Operator.OR);
+        multiMatchQuery.setOperator(operator);
         return multiMatchQuery;
     }
 
@@ -139,7 +138,8 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
             String idField = _ddmIndexer.encodeName(ddmStructureId, "eventId", locale);
             eventIdFields.add(idField);
         }));
-        searchContext.setBooleanClauses(new BooleanClause[]{booleanClauseFactory.create(buildEventIdQuery(eventIdFields.toArray(new String[0]), eventId), BooleanClauseOccur.MUST.getName())});
+        searchContext.setBooleanClauses(new BooleanClause[]{booleanClauseFactory.create(buildMultiMatchQuery(
+                eventIdFields.toArray(new String[0]), eventId, MatchQuery.Operator.OR), BooleanClauseOccur.MUST.getName())});
     }
 
     @Override
