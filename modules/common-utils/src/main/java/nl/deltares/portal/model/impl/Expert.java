@@ -53,10 +53,6 @@ public class Expert extends AbsDsdArticle {
             String autoFill = XmlContentUtils.getDynamicContentByName(document, "autoFill", true);
             this.autoFillMissingValues = Boolean.parseBoolean(autoFill);
 
-            if (autoFillMissingValues){
-                fillMissingValues();
-            }
-
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -133,14 +129,28 @@ public class Expert extends AbsDsdArticle {
     }
 
     public String getName() {
+        if (name != null)
+            return name;
+
+        if (autoFillMissingValues){
+            fillMissingValues();
+        }
         return name;
     }
 
     public String getJobTitle() {
+        if (jobTitle != null) return jobTitle;
+        if (autoFillMissingValues){
+            fillMissingValues();
+        }
         return jobTitle;
     }
 
     public String getCompany() {
+        if (company != null) return company;
+        if (autoFillMissingValues){
+            fillMissingValues();
+        }
         return company;
     }
 
