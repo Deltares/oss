@@ -37,28 +37,33 @@ public class BusTransfer extends Registration {
         try {
             Document document = getDocument();
 
-            String pickupOption = XmlContentUtils.getDynamicContentByName(document, "pickupDates", false);
-            if (pickupOption.equals("daily")){
-                Event event = dsdParserUtils.getEvent(getGroupId(), String.valueOf(getEventId()));
-                transferDates.addAll(getTransferDates(event.getStartTime(), event.getEndTime()));
-            } else {
-                String[] pickupDates = XmlContentUtils.getDynamicContentsByName(document, "date");
-                for (String pickupDate : pickupDates) {
-                    transferDates.add(dayf.parse(pickupDate));
-                }
-
-            }
-            if (transferDates.size() > 0) {
-                BusRoute busRoute = getBusRoute();
-                List<String> times = busRoute.getTimes();
-                Date startTime = timef.parse(times.get(0));
-                Date endTime = timef.parse(times.get(times.size() - 1));
-                this.startTime = new Date(transferDates.get(0).getTime() + startTime.getTime());
-                this.endTime = new Date(transferDates.get(transferDates.size() - 1).getTime() + endTime.getTime());
-            }
+            initDates(document);
 
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing bus route %s: %s!", getTitle(), e.getMessage()), e);
+        }
+    }
+
+    private void initDates(Document document) throws PortalException, ParseException {
+        String pickupOption = XmlContentUtils.getDynamicContentByName(document, "pickupDates", false);
+        if (pickupOption.equals("daily")){
+            Event event = dsdParserUtils.getEvent(getGroupId(), String.valueOf(getEventId()));
+            if (event == null) return;
+            transferDates.addAll(getTransferDates(event.getStartTime(), event.getEndTime()));
+        } else {
+            String[] pickupDates = XmlContentUtils.getDynamicContentsByName(document, "date");
+            for (String pickupDate : pickupDates) {
+                transferDates.add(dayf.parse(pickupDate));
+            }
+
+        }
+        if (transferDates.size() > 0) {
+            BusRoute busRoute = getBusRoute();
+            List<String> times = busRoute.getTimes();
+            Date startTime = timef.parse(times.get(0));
+            Date endTime = timef.parse(times.get(times.size() - 1));
+            this.startTime = new Date(transferDates.get(0).getTime() + startTime.getTime());
+            this.endTime = new Date(transferDates.get(transferDates.size() - 1).getTime() + endTime.getTime());
         }
     }
 
@@ -117,7 +122,7 @@ public class BusTransfer extends Registration {
     }
 
     public List<Date> getTransferDates() {
-        return new ArrayList<>(transferDates);
+        return Collections.unmodifiableList(transferDates);
     }
 
     @Override
