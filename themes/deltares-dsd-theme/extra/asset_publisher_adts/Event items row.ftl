@@ -8,7 +8,7 @@
             <#assign assetRenderer=entry.getAssetRenderer() />
             <#assign article=assetRenderer.getArticle() />
             <#assign journalArticle=assetRenderer.getArticle() />
-            <#assign event = dsdParserUtils.getEvent(journalArticle) />
+            <#assign event = dsdParserUtils.getEvent(article.getGroupId(),article.getArticleId()) />
             <#assign location = event.getEventLocation() />
             <#assign viewURL = htmlUtil.escapeHREF(assetPublisherHelper.getAssetViewURL(renderRequest, renderResponse, entry, true)) />
             <#assign eventImageUrl = event.getSmallImageURL(themeDisplay) />
