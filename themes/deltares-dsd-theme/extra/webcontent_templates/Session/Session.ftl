@@ -71,12 +71,14 @@
                     </span>
                     <br>
                     <span>
-                        <#assign expert = registration.getPresenter() />
-                        <#assign expertImageUrl = expert.getSmallImageURL(themeDisplay) />
-                        <#if expertImageUrl??>
-                            <img class="expert-data__image" src="${expertImageUrl}" />
+                        <#if registration.getPresenter()?? >
+                            <#assign expert = registration.getPresenter() />
+                            <#assign expertImageUrl = expert.getSmallImageURL(themeDisplay) />
+                            <#if expertImageUrl??>
+                                <img class="expert-data__image" src="${expertImageUrl}" />
+                            </#if>
+                            <a href="mailto:${expert.getEmail()}" >${expert.getName()}</a>
                         </#if>
-                        <a href="mailto:${expert.getEmail()}" >${expert.getName()}</a>
                     </span>
                     <#if themeDisplay.isSignedIn() && registration.isOpen() && !registration.isEventInPast() >
                         <#assign isRegistered = dsdSessionUtils.isUserRegisteredFor(user, registration) />
