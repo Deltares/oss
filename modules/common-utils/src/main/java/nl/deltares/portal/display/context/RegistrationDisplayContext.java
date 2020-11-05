@@ -17,10 +17,7 @@ import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
-import nl.deltares.portal.model.impl.AbsDsdArticle;
-import nl.deltares.portal.model.impl.DinnerRegistration;
-import nl.deltares.portal.model.impl.Registration;
-import nl.deltares.portal.model.impl.SessionRegistration;
+import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.DsdParserUtils;
 
 import javax.portlet.PortletRequest;
@@ -96,8 +93,15 @@ public class RegistrationDisplayContext {
 
     public String getPresenterName() {
         String name = "";
-        if (getSession() != null && getSession().getPresenter() != null) {
-            name = getSession().getPresenter().getTitle();
+        SessionRegistration session = getSession();
+        if (session != null) {
+            Expert presenter = session.getPresenter();
+            if (presenter != null) {
+                name = presenter.getName();
+                if (name == null){
+                    name = presenter.getTitle();
+                }
+            }
         }
         return name;
     }
