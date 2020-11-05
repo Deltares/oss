@@ -105,10 +105,16 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
 
     @Override
     public Expert getExpert(JournalArticle article) throws PortalException {
+
+        AbsDsdArticle cachedDsdArticle = getCachedDsdArticle(article.getArticleId());
+        if (cachedDsdArticle != null) return (Expert) cachedDsdArticle;
+
         AbsDsdArticle dsdArticle = toDsdArticle(article);
         if (!(dsdArticle instanceof Expert)) {
             throw new PortalException(String.format("Article %s is not a valid DSD Expert", article.getTitle()));
         }
+        cacheDsdArticle(dsdArticle);
+
         return (Expert) dsdArticle;
     }
 
@@ -126,6 +132,7 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
 
     private static void cacheDsdArticle(AbsDsdArticle dsdArticle) {
         if (Boolean.parseBoolean(PropsUtil.get("nocache"))) return;
+        if (cache.size() > 1000) cache.clear();
         cache.put(dsdArticle.getArticleId(), dsdArticle);
     }
 
