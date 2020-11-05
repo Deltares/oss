@@ -14,7 +14,7 @@ public interface DsdArticle {
     enum DSD_STRUCTURE_KEYS {Expert, Location, Building, Room, Eventlocation, Registration, Session, Bustransfer, Busroute, Dinner, Event, Generic}
     enum DSD_REGISTRATION_KEYS {Breakout, Course, Dinner, OnlineCourse, Symposium, UserDays, Webinar, Workshop, Bustransfer}
     enum DSD_SESSION_KEYS {Breakout, Course, OnlineCourse, Symposium, UserDays, Webinar, Workshop}
-    enum DSD_TOPIC_KEYS {other, danubius, delftfews, delft3d, dhydro, dstability, dwaterquality, flexiblemesh, imod, riverlab, rtctools, simona, swan, wanda, wflow, xbeach}
+    enum DSD_TOPIC_KEYS {other, danubius, datascience, delftfews, delft3d, dhydro, dstability, dwaterquality, flexiblemesh, habitat, imod, riverlab, rtctools, simona, swan, wanda, wflow, xbeach}
 
     String getTitle();
     long getCompanyId();
