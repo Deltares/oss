@@ -11,6 +11,7 @@
 </#if>
 <#assign eventImageUrl = displayContext.getSmallImageURL() />
 <#assign price = registration.getPrice() />
+<#assign vat = registration.getVAT() />
 <div class="c-sessions page">
     <div class="c-sessions__item ${isEventPast}">
         <div class="clearfix">
@@ -46,7 +47,7 @@
                         <#if price == 0 >
                             ${languageUtil.get(locale, "dsd.theme.session.free")}&nbsp;
                         <#else>
-                            ${registration.getPrice()}&nbsp;
+                            ${registration.getPrice()}&nbsp;${String.format(languageUtil.get(locale, "dsd.theme.session.vat"),vat)}
                         </#if>
                         <br>
                         <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />

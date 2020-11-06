@@ -22,6 +22,7 @@ public class Event extends AbsDsdArticle {
     private Date endTime = null;
     private String emailBannerURL = null;
     private String emailFooterURL = null;
+    private String timeZoneId = "CET";
 
     public Event(JournalArticle journalArticle, DsdParserUtils dsdParserUtils) throws PortalException {
         super(journalArticle, dsdParserUtils);
@@ -40,6 +41,7 @@ public class Event extends AbsDsdArticle {
         if (footerImageJson != null) {
             emailFooterURL = JsonContentUtils.parseImageJson(footerImageJson);
         }
+        timeZoneId = XmlContentUtils.getDynamicContentByName(document, "timeZone", true);
     }
 
     @Override
@@ -76,6 +78,10 @@ public class Event extends AbsDsdArticle {
             if (building.getRooms().contains(room)) return building;
         }
         return null;
+    }
+
+    public String getTimeZoneId() {
+        return timeZoneId;
     }
 
     @Override

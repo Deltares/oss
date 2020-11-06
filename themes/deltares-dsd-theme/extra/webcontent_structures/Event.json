@@ -104,6 +104,29 @@
         },
         {
             "label": {
+                "en_US": "Time Zone"
+            },
+            "predefinedValue": {
+                "en_US": "CET"
+            },
+            "style": {
+                "en_US": ""
+            },
+            "tip": {
+                "en_US": "TimeZone identifier"
+            },
+            "dataType": "string",
+            "indexType": "keyword",
+            "localizable": true,
+            "name": "timeZone",
+            "readOnly": false,
+            "repeatable": false,
+            "required": false,
+            "showLabel": true,
+            "type": "text"
+        },
+        {
+            "label": {
                 "en_US": "Location"
             },
             "predefinedValue": {
