@@ -6,26 +6,18 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
+import nl.deltares.portal.utils.Period;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class BusTransfer extends Registration {
 
     private static final Log LOG = LogFactoryUtil.getLog(BusTransfer.class);
-
-    private final long dayMillis = TimeUnit.DAYS.toMillis(1);
-    private final SimpleDateFormat dayf = new SimpleDateFormat("yyyy-MM-dd");
-    private final SimpleDateFormat timef = new SimpleDateFormat("HH:mm");
     private BusRoute busRoute = null;
-    private Date startTime = new Date();
-    private Date endTime = new Date();
-    private final List<Date> transferDates = new ArrayList<>();
-    private final Calendar calendar = Calendar.getInstance();
+    private final List<Date> transferDays = new ArrayList<>();
 
     public BusTransfer(JournalArticle article, DsdParserUtils parserUtils) throws PortalException {
         super(article, parserUtils);
@@ -46,45 +38,36 @@ public class BusTransfer extends Registration {
 
     private void initDates(Document document) throws PortalException, ParseException {
         String pickupOption = XmlContentUtils.getDynamicContentByName(document, "pickupDates", false);
-        if (pickupOption.equals("daily")){
+        daily = pickupOption.equals("daily");
+
+        if (daily){
             Event event = dsdParserUtils.getEvent(getGroupId(), String.valueOf(getEventId()));
             if (event == null) return;
-            transferDates.addAll(getTransferDates(event.getStartTime(), event.getEndTime()));
+            transferDays.addAll(toDayValues(event.getStartTime(), event.getEndTime()));
         } else {
             String[] pickupDates = XmlContentUtils.getDynamicContentsByName(document, "date");
             for (String pickupDate : pickupDates) {
-                transferDates.add(dayf.parse(pickupDate));
+                Date day = dayf.parse(pickupDate);
+                transferDays.add(day);
             }
-
         }
-        if (transferDates.size() > 0) {
-            BusRoute busRoute = getBusRoute();
-            List<String> times = busRoute.getTimes();
-            Date startTime = timef.parse(times.get(0));
-            Date endTime = timef.parse(times.get(times.size() - 1));
-            this.startTime = new Date(transferDates.get(0).getTime() + startTime.getTime());
-            this.endTime = new Date(transferDates.get(transferDates.size() - 1).getTime() + endTime.getTime());
+
+        BusRoute busRoute = getBusRoute();
+        List<String> times = busRoute.getTimes();
+        long startTimeMillis = 0;
+        long endTimeMillis = 0;
+        if (times.size() > 0) {
+            startTimeMillis = timef.parse(times.get(0)).getTime();
+            endTimeMillis = timef.parse(times.get(times.size() - 1)).getTime();
         }
-    }
 
-    private Collection<? extends Date> getTransferDates(Date startTime, Date endTime) throws ParseException {
-
-        String startDayString = dayf.format(startTime); // remove time
-        Date day = dayf.parse(startDayString);
-        ArrayList<Date> days = new ArrayList<>();
-        while (day.before(endTime)){
-            if (!isWeekend(day)) {
-                days.add(day);
-            }
-            day = new Date(day.getTime() + dayMillis);
+        for (Date transferDay : transferDays) {
+            dayPeriods.add(new Period(transferDay.getTime() + startTimeMillis, transferDay.getTime() + endTimeMillis));
         }
-        return days;
-    }
-
-    private boolean isWeekend(Date day) {
-        calendar.setTime(day);
-        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-        return dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY;
+        if (dayPeriods.size() > 0){
+            startTime = dayPeriods.get(0).getStartDate();
+            endTime = dayPeriods.get(dayPeriods.size() -1).getEndDate();
+        }
     }
 
     @Override
@@ -122,17 +105,7 @@ public class BusTransfer extends Registration {
     }
 
     public List<Date> getTransferDates() {
-        return Collections.unmodifiableList(transferDates);
-    }
-
-    @Override
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    @Override
-    public Date getEndTime() {
-        return endTime;
+        return Collections.unmodifiableList(transferDays);
     }
 
 }

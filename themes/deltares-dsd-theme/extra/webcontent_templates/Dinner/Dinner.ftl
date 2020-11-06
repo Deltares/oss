@@ -47,7 +47,8 @@
                         <#if price == 0 >
                             ${languageUtil.get(locale, "dsd.theme.session.free")}&nbsp;
                         <#else>
-                            ${registration.getPrice()}&nbsp;${String.format(languageUtil.get(locale, "dsd.theme.session.vat"),vat)}
+                            <#assign vatText = languageUtil.get(locale, "dsd.theme.session.vat")?replace("%d", vat) />
+                            ${registration.getPrice()}&nbsp;(${vatText})
                         </#if>
                         <br>
                         <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />

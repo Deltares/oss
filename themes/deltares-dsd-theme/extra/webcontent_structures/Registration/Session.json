@@ -6,7 +6,44 @@
   "fields": [
     {
       "label": {
-        "en_US": "Start date"
+        "en_US": "Session Dates"
+      },
+      "options": [
+        {
+          "value": "daily",
+          "label": {
+            "en_US": "Daily"
+          }
+        },
+        {
+          "value": "specify",
+          "label": {
+            "en_US": "Specific days"
+          }
+        }
+      ],
+      "predefinedValue": {
+        "en_US": "daily"
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "If 'Daily' then both a 'Daily' start and end date required. If 'Specific' selected then at least on 'Specific' date required."
+      },
+      "dataType": "radio",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "sessionDates",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "radio"
+    },
+    {
+      "label": {
+        "en_US": "Daily start date"
       },
       "predefinedValue": {
         "en_US": ""
@@ -21,16 +58,16 @@
       "fieldNamespace": "ddm",
       "indexType": "keyword",
       "localizable": true,
-      "name": "start",
+      "name": "dailyStartDay",
       "readOnly": false,
       "repeatable": false,
-      "required": true,
+      "required": false,
       "showLabel": true,
       "type": "ddm-date",
       "nestedFields": [
         {
           "label": {
-            "en_US": "time"
+            "en_US": "start time"
           },
           "predefinedValue": {
             "en_US": "09:00"
@@ -44,7 +81,7 @@
           "dataType": "string",
           "indexType": "keyword",
           "localizable": true,
-          "name": "starttime",
+          "name": "dailyStartTime",
           "readOnly": false,
           "repeatable": false,
           "required": true,
@@ -55,7 +92,7 @@
     },
     {
       "label": {
-        "en_US": "End date"
+        "en_US": "Daily end date"
       },
       "predefinedValue": {
         "en_US": ""
@@ -70,16 +107,16 @@
       "fieldNamespace": "ddm",
       "indexType": "keyword",
       "localizable": true,
-      "name": "end",
+      "name": "dailyEndDay",
       "readOnly": false,
       "repeatable": false,
-      "required": true,
+      "required": false,
       "showLabel": true,
       "type": "ddm-date",
       "nestedFields": [
         {
           "label": {
-            "en_US": "time"
+            "en_US": "end time"
           },
           "predefinedValue": {
             "en_US": "17:00"
@@ -93,7 +130,79 @@
           "dataType": "string",
           "indexType": "keyword",
           "localizable": true,
-          "name": "endtime",
+          "name": "dailyEndTime",
+          "readOnly": false,
+          "repeatable": false,
+          "required": true,
+          "showLabel": true,
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "label": {
+        "en_US": "Specific date"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "date",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "specificDate",
+      "readOnly": false,
+      "repeatable": true,
+      "required": false,
+      "showLabel": true,
+      "type": "ddm-date",
+      "nestedFields": [
+        {
+          "label": {
+            "en_US": "start time"
+          },
+          "predefinedValue": {
+            "en_US": "17:00"
+          },
+          "style": {
+            "en_US": ""
+          },
+          "tip": {
+            "en_US": "Start time (format: HH:mm local timezone) "
+          },
+          "dataType": "string",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "specificStartTime",
+          "readOnly": false,
+          "repeatable": false,
+          "required": true,
+          "showLabel": true,
+          "type": "text"
+        },
+        {
+          "label": {
+            "en_US": "end time"
+          },
+          "predefinedValue": {
+            "en_US": "17:00"
+          },
+          "style": {
+            "en_US": ""
+          },
+          "tip": {
+            "en_US": "End time (format: HH:mm local timezone) "
+          },
+          "dataType": "string",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "specificEndTime",
           "readOnly": false,
           "repeatable": false,
           "required": true,
@@ -235,7 +344,13 @@
             {
               "value": "anewspring",
               "label": {
-                "en_US": "aNewSpring Course"
+                "en_US": "aNewSpring"
+              }
+            },
+            {
+              "value": "msteams",
+              "label": {
+                "en_US": "MS Teams"
               }
             }
           ],
@@ -254,7 +369,7 @@
           "indexType": "keyword",
           "localizable": true,
           "multiple": false,
-          "name": "privider",
+          "name": "provider",
           "readOnly": false,
           "repeatable": false,
           "required": false,
