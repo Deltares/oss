@@ -90,16 +90,18 @@
                         ${languageUtil.get(locale, "dsd.theme.session.available")} : ${available}
                     </span>
                     <br>
-                    <span>
-                        <#if registration.getPresenter()?? >
-                            <#assign expert = registration.getPresenter() />
+
+                        <#list registration.getPresenters() as presenter >
+                            <#assign expert = presenter />
                             <#assign expertImageUrl = expert.getSmallImageURL(themeDisplay) />
-                            <#if expertImageUrl?? && expertImageUrl != "">
-                                <img class="expert-data__image" src="${expertImageUrl}" />
-                            </#if>
-                            <a href="mailto:${expert.getEmail()}" >${expert.getName()}</a>
-                        </#if>
-                    </span>
+                            <span>
+                                <#if expertImageUrl?? && expertImageUrl != "">
+                                    <img class="expert-data__image" src="${expertImageUrl}" />
+                                </#if>
+                                <a href="mailto:${expert.getEmail()}" >${expert.getName()}</a>
+                            </span>
+                        </#list>
+
                     <#if themeDisplay.isSignedIn() && registration.isOpen() && !registration.isEventInPast() >
                         <#assign isRegistered = dsdSessionUtils.isUserRegisteredFor(user, registration) />
                         <span class="d-block">

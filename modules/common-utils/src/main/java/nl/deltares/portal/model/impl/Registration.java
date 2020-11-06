@@ -126,17 +126,9 @@ public abstract class Registration extends AbsDsdArticle {
         if (parentJson == null){
             return;
         }
-        AbsDsdArticle dsdArticle = parseJsonReference(parentJson);
-        if (! (dsdArticle instanceof Registration)){
-            throw new PortalException("Parent registration not instance of Registration: " + dsdArticle.getTitle());
-        }
-        parentRegistration = (Registration) dsdArticle;
+        JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(parentJson);
+        parentRegistration = dsdParserUtils.getRegistration(journalArticle);
 
-    }
-
-    AbsDsdArticle parseJsonReference(String jsonReference) throws PortalException {
-        JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(jsonReference);
-        return super.dsdParserUtils.toDsdArticle(journalArticle);
     }
 
     public boolean isOpen() {

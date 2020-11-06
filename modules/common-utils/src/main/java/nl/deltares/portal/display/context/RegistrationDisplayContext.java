@@ -83,19 +83,25 @@ public class RegistrationDisplayContext {
         return url;
     }
 
-    public String getPresenterSmallImageURL() {
+    public int getPresenterCount(){
+        if (getSession() != null) {
+            return getSession().getPresenters().size();
+        }
+        return 0;
+    }
+    public String getPresenterSmallImageURL(int i) {
         String url = "";
-        if (getSession() != null && getSession().getPresenter() != null) {
-            url = getSession().getPresenter().getSmallImageURL(themeDisplay);
+        if (getSession() != null) {
+            url = getSession().getPresenters().get(i).getSmallImageURL(themeDisplay);
         }
         return url;
     }
 
-    public String getPresenterName() {
+    public String getPresenterName(int i) {
         String name = "";
         SessionRegistration session = getSession();
         if (session != null) {
-            Expert presenter = session.getPresenter();
+            Expert presenter = session.getPresenters().get(i);
             if (presenter != null) {
                 name = presenter.getName();
                 if (name == null){
@@ -171,14 +177,17 @@ public class RegistrationDisplayContext {
         return summary;
     }
 
+    @SuppressWarnings("unused")
     public String getUnregisterURL(PortletRequest portletRequest){
         return getPortletRequest(portletRequest, "unregister");
     }
 
+    @SuppressWarnings("unused")
     public String getUpdateURL(PortletRequest portletRequest){
         return getPortletRequest(portletRequest, "update");
     }
 
+    @SuppressWarnings("unused")
     public String getRegisterURL(PortletRequest portletRequest) {
         return getPortletRequest(portletRequest, "register");
     }
