@@ -20,7 +20,7 @@ import java.util.*;
 public class SessionRegistration extends Registration {
     private static final Log LOG = LogFactoryUtil.getLog(SessionRegistration.class);
     private Room room = null;
-    private Expert presenter = null;
+    private final List<Expert> presenters = new ArrayList<>();
     private String imageUrl = "";
     private String webinarKey;
 
@@ -93,7 +93,8 @@ public class SessionRegistration extends Registration {
 
     private void parseRoom() throws PortalException {
         String roomJson = XmlContentUtils.getDynamicContentByName(getDocument(), "room", false);
-        AbsDsdArticle dsdArticle = parseJsonReference(roomJson);
+        JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(roomJson);
+        AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(journalArticle);
         if (!(dsdArticle instanceof Room)){
             throw new PortalException("Unsupported registration type! Expected Room but found: " + dsdArticle.getClass().getName());
         }
@@ -103,13 +104,9 @@ public class SessionRegistration extends Registration {
     private void parsePresenter() throws PortalException {
 
         String[] presenters = XmlContentUtils.getDynamicContentsByName(getDocument(), "presenters");
-        if (presenters.length > 0) {
-            //todo: what to do with multiple presenters.
-            AbsDsdArticle dsdArticle = parseJsonReference(presenters[0]);
-            if (!(dsdArticle instanceof Expert)) {
-                throw new PortalException("Unsupported registration type! Expected Expert but found: " + dsdArticle.getClass().getName());
-            }
-            presenter = (Expert) dsdArticle;
+        for (String presenterJson : presenters) {
+            JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(presenterJson);
+            this.presenters.add( dsdParserUtils.getExpert(journalArticle) );
         }
     }
 
@@ -127,13 +124,13 @@ public class SessionRegistration extends Registration {
         }
     }
 
-    public Expert getPresenter() {
+    public List<Expert> getPresenters() {
         loadPresenter();
-        return presenter;
+        return Collections.unmodifiableList(presenters);
     }
 
     private void loadPresenter() {
-        if (presenter != null) return;
+        if (presenters.size() > 0) return;
         try {
             parsePresenter();
         } catch (PortalException e) {

@@ -140,12 +140,17 @@
                             </h4>
 
                             <div>
-                                <c:if test="<%= Validator.isNotNull(registrationDisplayContext.getPresenterSmallImageURL()) %>">
-                                    <img width="32" class="expert-thumbnail" src="<%= registrationDisplayContext.getPresenterSmallImageURL() %>" />
-                                </c:if>
-                                <c:if test="<%= Validator.isNotNull(registrationDisplayContext.getPresenterName()) %>">
-                                    <span class="expert-name px-2"><%= registrationDisplayContext.getPresenterName() %></span> |
-                                </c:if>
+                                <% for(int i=0; i < registrationDisplayContext.getPresenterCount(); i++) {%>
+                                    <% String presenterSmallImageURL = registrationDisplayContext.getPresenterSmallImageURL(i); %>
+                                    <c:if test="<%= Validator.isNotNull(presenterSmallImageURL) %>">
+                                        <img width="32" class="expert-thumbnail" src="<%= presenterSmallImageURL %>" />
+                                    </c:if>
+                                    <% String presenterName = registrationDisplayContext.getPresenterName(i); %>
+                                    <c:if test="<%= Validator.isNotNull(presenterName) %>">
+                                        <span class="expert-name px-2"><%= presenterName %></span> |
+                                    </c:if>
+                                <% } %>
+
                                  <span class="event-time pl-2"><%= registrationDisplayContext.getStartTime() %> - <%= registrationDisplayContext.getEndTime() %></span> |
                                 <c:choose>
                                     <c:when test="<%= registrationDisplayContext.getPrice() > 0%>">
