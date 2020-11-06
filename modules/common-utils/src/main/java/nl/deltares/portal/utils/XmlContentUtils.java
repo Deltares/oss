@@ -34,6 +34,19 @@ public class XmlContentUtils {
     static String ARTICLE_NAME_ATTRIBUTE_END= "']";
     static String ARTICLE_CONTENT_XML_NODE_END= "dynamic-content";
 
+    static NodeList EMPTYLIST = new NodeList(){
+
+        @Override
+        public Node item(int index) {
+            return null;
+        }
+
+        @Override
+        public int getLength() {
+            return 0;
+        }
+    };
+
     public static Document parseContent(JournalArticle article) throws PortalException{
         return parseContent(article.getTitle(), article.getContent());
     }
@@ -83,7 +96,7 @@ public class XmlContentUtils {
                 LOG.error(String.format("Error retrieving nodes %s from content: %s", nodeName, e.getMessage()));
             }
         }
-        return null;
+        return EMPTYLIST;
     }
 
     public static String getDynamicContentForNode(Node node) throws PortalException {
@@ -101,11 +114,9 @@ public class XmlContentUtils {
         return validateSingleContent(nodeName, optional, contentValues);
     }
 
-    public static Date parseDateTimeFields(Document xmlDocument, String dateField, String timeField, boolean optional) throws PortalException {
-        Node dateNode = getDynamicElementByName(xmlDocument, dateField, optional);
-        if (dateNode == null) return null;
+    public static Date parseDateTimeFields(Node dateNode, String timeField) throws PortalException {
         String dateValue = XmlContentUtils.getDynamicContentForNode(dateNode);
-        String timeValue = XmlContentUtils.getDynamicContentByName(dateNode, timeField, optional);
+        String timeValue = XmlContentUtils.getDynamicContentByName(dateNode, timeField, false);
         if (timeValue == null){
             timeValue = "00:00";
         }
@@ -116,6 +127,12 @@ public class XmlContentUtils {
             throw new PortalException(String.format("Error parsing dateTime %s: %s", dateTimeValue, e.getMessage()));
         }
     }
+
+    public static Date parseDateTimeFields(Document xmlDocument, String dateField, String timeField) throws PortalException {
+        Node dateNode = getDynamicElementByName(xmlDocument, dateField, false);
+        return parseDateTimeFields(dateNode, timeField);
+    }
+
     private static String validateSingleContent(String nodeName, boolean optional, String[] contentValues) throws PortalException {
         int length = contentValues.length;
         if (length == 0 && !optional){

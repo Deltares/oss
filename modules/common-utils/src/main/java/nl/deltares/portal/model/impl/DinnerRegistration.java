@@ -6,7 +6,9 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
+import nl.deltares.portal.utils.Period;
 import nl.deltares.portal.utils.XmlContentUtils;
+import org.w3c.dom.Document;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -18,6 +20,15 @@ public class DinnerRegistration extends Registration {
 
     public DinnerRegistration(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
         super(article, dsdParserUtils);
+
+        try {
+            Document document = getDocument();
+            startTime = XmlContentUtils.parseDateTimeFields(document,"start", "starttime");
+            endTime = new Date(startTime.getTime() + TimeUnit.HOURS.toMillis(3));
+            dayPeriods.add(new Period(startTime, endTime));
+        } catch (Exception e) {
+            throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
+        }
     }
 
     @Override
@@ -50,8 +61,4 @@ public class DinnerRegistration extends Registration {
         restaurant = (Location) location;
     }
 
-    @Override
-    public Date getEndTime() {
-        return new Date(super.getStartTime().getTime() + TimeUnit.HOURS.toMillis(3));
-    }
 }

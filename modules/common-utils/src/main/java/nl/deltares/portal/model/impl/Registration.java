@@ -8,10 +8,13 @@ import com.liferay.portal.kernel.util.HtmlUtil;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
+import nl.deltares.portal.utils.Period;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
-import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public abstract class Registration extends AbsDsdArticle {
@@ -26,10 +29,17 @@ public abstract class Registration extends AbsDsdArticle {
     private Registration parentRegistration = null;
     private boolean overlapWithParent = true;
     private boolean hasParent = true;
-    private Date startTime;
-    private Date endTime;
+    Date startTime = new Date();
+    Date endTime = new Date();
+    final List<Period> dayPeriods = new ArrayList<>();
+    boolean daily = true;
     private String timeZoneId = "CET";
     private float vat = 21;
+
+    private final long dayMillis = TimeUnit.DAYS.toMillis(1);
+    final SimpleDateFormat dayf = new SimpleDateFormat("yyyy-MM-dd");
+    final SimpleDateFormat timef = new SimpleDateFormat("HH:mm");
+    private final Calendar calendar = Calendar.getInstance();
 
     public Registration(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
         super(article, dsdParserUtils);
@@ -59,14 +69,50 @@ public abstract class Registration extends AbsDsdArticle {
                 overlapWithParent = Boolean.parseBoolean(overlap);
                 hasParent = true;
             }
-            startTime = XmlContentUtils.parseDateTimeFields(document,"start", "starttime", true);
-            endTime = XmlContentUtils.parseDateTimeFields(document,"end", "endtime", true);
             timeZoneId = XmlContentUtils.getDynamicContentByName(document, "timeZone", true);
             String vatTxt = XmlContentUtils.getDynamicContentByName(document, "vat", true);
             if (vatTxt != null) this.vat = Long.parseLong(vatTxt);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing Registration %s: %s!", getTitle(), e.getMessage()), e);
         }
+    }
+
+    Collection<? extends Date> toDayValues(Date startTime, Date endTime) throws ParseException {
+
+        String startDayString = dayf.format(startTime); // remove time
+        Date day = dayf.parse(startDayString);
+        ArrayList<Date> days = new ArrayList<>();
+        while (day.before(endTime)){
+            if (!isWeekend(day)) {
+                days.add(day);
+            }
+            day = new Date(day.getTime() + dayMillis);
+        }
+        return days;
+    }
+
+    Collection<? extends Period> toDayPeriods(Date startTime, Date endTime) throws ParseException {
+
+        String startDayString = dayf.format(startTime); // remove time
+        String startTimeString = timef.format(startTime);
+        String endTimeString = timef.format(endTime);
+        long startTimeMillis = timef.parse(startTimeString).getTime();
+        long endTimeMillis = timef.parse(endTimeString).getTime();
+        Date day = dayf.parse(startDayString);
+        ArrayList<Period> dayPeriods = new ArrayList<>();
+        while (day.before(endTime)){
+            if (!isWeekend(day)) {
+                dayPeriods.add(new Period(day.getTime() + startTimeMillis, day.getTime() + endTimeMillis ));
+            }
+            day = new Date(day.getTime() + dayMillis);
+        }
+        return dayPeriods;
+    }
+
+    private boolean isWeekend(Date day) {
+        calendar.setTime(day);
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        return dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY;
     }
 
     @Override
@@ -166,4 +212,11 @@ public abstract class Registration extends AbsDsdArticle {
         return duration > TimeUnit.DAYS.toMillis(1);
     }
 
+    public boolean isDaily(){
+        return daily;
+    }
+
+    public List<Period> getStartAndEndTimesPerDay(){
+        return Collections.unmodifiableList(dayPeriods);
+    }
 }

@@ -31,8 +31,8 @@ public class Event extends AbsDsdArticle {
 
     private void init() throws PortalException {
         Document document = getDocument();
-        startTime = XmlContentUtils.parseDateTimeFields(document, "start", "starttime", false);
-        endTime = XmlContentUtils.parseDateTimeFields(document, "end", "endtime", false);
+        startTime = XmlContentUtils.parseDateTimeFields(document, "start", "starttime");
+        endTime = XmlContentUtils.parseDateTimeFields(document, "end", "endtime");
         String bannerImageJson = XmlContentUtils.getDynamicContentByName(document, "bannerImage", true);
         if (bannerImageJson != null) {
             emailBannerURL = JsonContentUtils.parseImageJson(bannerImageJson);

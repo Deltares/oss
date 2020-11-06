@@ -59,7 +59,7 @@
         <dynamic-content language-id="en_US"><![CDATA[]]></dynamic-content>
     </dynamic-element>
     <dynamic-element name="webinarKey" type="text" index-type="keyword" instance-id="chsa">
-        <dynamic-element name="privider" instance-id="sjmg" type="list" index-type="keyword">
+        <dynamic-element name="provider" instance-id="sjmg" type="list" index-type="keyword">
             <dynamic-content language-id="en_US"><![CDATA[goto]]></dynamic-content>
         </dynamic-element>
         <dynamic-content language-id="en_US"><![CDATA[2590473991435429392]]></dynamic-content>
