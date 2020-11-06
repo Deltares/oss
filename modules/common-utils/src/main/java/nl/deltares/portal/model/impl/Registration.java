@@ -28,6 +28,8 @@ public abstract class Registration extends AbsDsdArticle {
     private boolean hasParent = true;
     private Date startTime;
     private Date endTime;
+    private String timeZoneId = "CET";
+    private float vat = 21;
 
     public Registration(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
         super(article, dsdParserUtils);
@@ -59,6 +61,9 @@ public abstract class Registration extends AbsDsdArticle {
             }
             startTime = XmlContentUtils.parseDateTimeFields(document,"start", "starttime", true);
             endTime = XmlContentUtils.parseDateTimeFields(document,"end", "endtime", true);
+            timeZoneId = XmlContentUtils.getDynamicContentByName(document, "timeZone", true);
+            String vatTxt = XmlContentUtils.getDynamicContentByName(document, "vat", true);
+            if (vatTxt != null) this.vat = Long.parseLong(vatTxt);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing Registration %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -98,6 +103,14 @@ public abstract class Registration extends AbsDsdArticle {
 
     public double getPrice() {
         return price;
+    }
+
+    public String getTimeZoneId() {
+        return timeZoneId;
+    }
+
+    public float getVAT(){
+        return vat;
     }
 
     public String getCurrency() {
