@@ -3,6 +3,7 @@
 <#assign articleId = .vars['reserved-article-id'].getData() />
 <#assign registration = dsdParserUtils.getRegistration(groupId,articleId) />
 <#assign displayContext = dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay) />
+<#assign timeZoneId = registration.getTimeZoneId() />
 <#assign room = registration.getRoom() />
 <#if registration.isEventInPast() >
     <#assign isEventPast = "past-event"/>
@@ -11,6 +12,7 @@
 </#if>
 <#assign eventImageUrl = registration.getSmallImageURL(themeDisplay) />
 <#assign price = registration.getPrice() />
+<#assign vat = registration.getVAT() />
 <div class="c-sessions page">
     <div class="c-sessions__item ${isEventPast}">
         <div class="clearfix">
@@ -38,16 +40,16 @@
                         </#if>
                     </span>
                     <span class="c-sessions__item__time-date-place__time">
-                        ${displayContext.getStartTime()} - ${displayContext.getEndTime()}</span>
+                        ${displayContext.getStartTime()} - ${displayContext.getEndTime()} (${timeZoneId})</span>
                     <br>
                     <span class="c-sessions__item__time-date-place__place">
-                        <img src="${themeDisplay.getPathThemeImages()}/dsd/${registration.getType()}.png"> ${registration.getType()}&nbsp;
+                        <img src="${themeDisplay.getPathThemeImages()}/dsd/${registration.getType()}.png"> ${registration.getType()}
                         <br>
                         ${registration.getCurrency()}
                         <#if price == 0 >
                             ${languageUtil.get(locale, "dsd.theme.session.free")}&nbsp;
                         <#else>
-                            ${registration.getPrice()}&nbsp;
+                            ${registration.getPrice()}&nbsp;${String.format(languageUtil.get(locale, "dsd.theme.session.vat"),vat)}
                         </#if>
                         <br>
 

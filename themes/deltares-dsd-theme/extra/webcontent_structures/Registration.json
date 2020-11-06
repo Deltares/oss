@@ -128,6 +128,12 @@
           }
         },
         {
+          "value": "datascience",
+          "label": {
+            "en_US": "Data Science"
+          }
+        },
+        {
           "value": "delftfews",
           "label": {
             "en_US": "Delft Fews"
@@ -137,6 +143,12 @@
           "value": "delft3d",
           "label": {
             "en_US": "Delft3D"
+          }
+        },
+        {
+          "value": "flexiblemesh",
+          "label": {
+            "en_US": "Delft3D FM"
           }
         },
         {
@@ -158,9 +170,9 @@
           }
         },
         {
-          "value": "flexiblemesh",
+          "value": "habitat",
           "label": {
-            "en_US": "Flexiblemesh"
+            "en_US": "Habitat"
           }
         },
         {
@@ -280,8 +292,55 @@
           "required": false,
           "showLabel": true,
           "type": "text"
+        },
+        {
+          "label": {
+            "en_US": "vat"
+          },
+          "predefinedValue": {
+            "en_US": "21"
+          },
+          "style": {
+            "en_US": ""
+          },
+          "tip": {
+            "en_US": "Value Added Tax (%)"
+          },
+          "dataType": "number",
+          "fieldNamespace": "ddm",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "vat",
+          "readOnly": false,
+          "repeatable": false,
+          "required": false,
+          "showLabel": true,
+          "type": "ddm-number"
         }
       ]
+    },
+    {
+      "label": {
+        "en_US": "Time Zone"
+      },
+      "predefinedValue": {
+        "en_US": "CET"
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "TimeZone identifier"
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "timeZone",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "text"
     },
     {
       "label": {
@@ -336,7 +395,7 @@
             "en_US": "Overlaps"
           },
           "predefinedValue": {
-            "en_US": true
+            "en_US": false
           },
           "style": {
             "en_US": ""

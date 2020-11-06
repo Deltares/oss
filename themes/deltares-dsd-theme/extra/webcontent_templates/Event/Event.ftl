@@ -2,6 +2,7 @@
 <#assign eventId = .vars['reserved-article-id'].getData() />
 <#assign event = dsdParserUtils.getEvent(groupId,eventId) />
 <#assign location = event.getEventLocation() />
+<#assign timeZoneId = event.getTimeZoneId() />
 <#assign isEventPast><#if event.isEventInPast()>past-event<#else>upcoming-event</#if></#assign>
 <#assign locationString><#if location.isOnline() >${location.getTitle()}<#else>${location.getCity()}, ${location.getCountry()}</#if></#assign>
 
@@ -28,8 +29,7 @@
                     </span>
                     <span class="c-events__item__time-date-place__time">
                         ${dateUtil.getDate(event.getStartTime(), "HH:mm", locale)} -
-                        ${dateUtil.getDate(event.getEndTime(), "HH:mm", locale)}</span>
-
+                        ${dateUtil.getDate(event.getEndTime(), "HH:mm", locale)} (${timeZoneId})</span>
                     <span class="c-events__item__time-date-place__place">
                         <br>${locationString}
                     </span>
