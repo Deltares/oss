@@ -13,6 +13,7 @@ import nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfigurat
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
+import nl.deltares.portal.utils.Period;
 import nl.deltares.services.rest.fullcalendar.models.Event;
 import nl.deltares.services.rest.fullcalendar.models.Resource;
 
@@ -23,7 +24,6 @@ import javax.ws.rs.core.Response;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import static nl.deltares.services.utils.Helper.toResponse;
 
@@ -33,7 +33,6 @@ import static nl.deltares.services.utils.Helper.toResponse;
 @Path("/calendar")
 public class DsdFullcalendarService {
     private static final Log LOG = LogFactoryUtil.getLog(DsdFullcalendarService.class);
-    private final long dayMillis = TimeUnit.DAYS.toMillis(1);
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private final ConfigurationProvider configurationProvider;
     private final DsdParserUtils parserUtils;
@@ -110,17 +109,10 @@ public class DsdFullcalendarService {
             Date startTime = registration.getStartTime();
             if (startTime.after(endSearch)) continue;
 
-            //Split multi-day events into serperate Event items.
-            long duration = endTime.getTime() - startTime.getTime();
-            long wholeDays = TimeUnit.MILLISECONDS.toDays(duration);
-            long totalHours = TimeUnit.MILLISECONDS.toHours(duration);
-            long startDayStartTime = startTime.getTime();
-            long startDayEndTime = endTime.getTime() - TimeUnit.DAYS.toMillis(wholeDays);
             int dayCounter = 0;
-            for (int i = 0; i < totalHours; i += 24) {
-                long startDay = startDayStartTime + dayMillis * dayCounter;
-                long endDay = startDayEndTime + dayMillis * dayCounter;
-                events.add(createCalendarEvent(colorMap, registration, dayCounter++, startDay, endDay));
+            List<Period> periodsPerDay = registration.getStartAndEndTimesPerDay();
+            for (Period period : periodsPerDay) {
+                events.add(createCalendarEvent(colorMap, registration, dayCounter++, period.getStartTime(), period.getEndTime()));
             }
         }
 

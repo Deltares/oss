@@ -17,10 +17,8 @@
     <div class="c-sessions__item ${isEventPast}">
         <div class="clearfix">
             <div class="media-section">
-                <#if eventImageUrl??>
-                    <img
-                            class="c-sessions__item__image"
-                            src="${eventImageUrl}" />
+                <#if entImageUrl??>
+                    <img class="c-sessions__item__image" src="${eventImageUrl}" />
                 </#if>
             </div>
             <div class="data-section">
@@ -33,15 +31,34 @@
                     <b>${languageUtil.get(locale, "dsd.theme.session.closed")}</b>
                 </#if>
                 <p class="c-sessions__item__time-date-place">
-                    <span class="c-sessions__item__time-date-place__date">
-                        ${dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale)}
-                        <#if registration.isMultiDayEvent() >
-                            &nbsp;-&nbsp;${dateUtil.getDate(registration.getEndTime(), "dd MMM yyyy", locale)}
+                    <#if registration.isMultiDayEvent() >
+                        <#if registration.isDaily() >
+                            <span class="c-sessions__item__time-date-place__date">
+                                ${dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale)}&nbsp;-&nbsp;${dateUtil.getDate(registration.getEndTime(), "dd MMM yyyy", locale)}
+                            </span>
+                            <span class="c-sessions__item__time-date-place__time">
+                                ${displayContext.getStartTime()} - ${displayContext.getEndTime()} (${timeZoneId})
+                            </span>
+                        <#else>
+                            <#assign periods = registration.getStartAndEndTimesPerDay() />
+                            <#list periods as period >
+                                <span class="c-sessions__item__time-date-place__date">
+                                    ${dateUtil.getDate(period.getStartDate(), "dd MMM yyyy", locale)}
+                                </span>
+                                <span class="c-sessions__item__time-date-place__time">
+                                        ${dateUtil.getDate(registration.getEndTime(), "HH:mm", locale)} - ${dateUtil.getDate(registration.getEndTime(), "HH:mm", locale)} (${timeZoneId})
+                                </span>
+                            </#list>
                         </#if>
-                    </span>
-                    <span class="c-sessions__item__time-date-place__time">
-                        ${displayContext.getStartTime()} - ${displayContext.getEndTime()} (${timeZoneId})</span>
-                    <br>
+                    <#else>
+                        <span class="c-sessions__item__time-date-place__date">
+                            ${dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale)}
+                        </span>
+                        <span class="c-sessions__item__time-date-place__time">
+                            ${displayContext.getStartTime()} - ${displayContext.getEndTime()} (${timeZoneId})
+                        </span>
+                    </#if>
+                    <br />
                     <span class="c-sessions__item__time-date-place__place">
                         <img src="${themeDisplay.getPathThemeImages()}/dsd/${registration.getType()}.png"> ${registration.getType()}
                         <br>
@@ -49,7 +66,8 @@
                         <#if price == 0 >
                             ${languageUtil.get(locale, "dsd.theme.session.free")}&nbsp;
                         <#else>
-                            ${registration.getPrice()}&nbsp;${String.format(languageUtil.get(locale, "dsd.theme.session.vat"),vat)}
+                            <#assign vatText = languageUtil.get(locale, "dsd.theme.session.vat")?replace("%d", vat) />
+                            ${registration.getPrice()}&nbsp;(${vatText})
                         </#if>
                         <br>
 
@@ -76,7 +94,7 @@
                         <#if registration.getPresenter()?? >
                             <#assign expert = registration.getPresenter() />
                             <#assign expertImageUrl = expert.getSmallImageURL(themeDisplay) />
-                            <#if expertImageUrl??>
+                            <#if expertImageUrl?? && expertImageUrl != "">
                                 <img class="expert-data__image" src="${expertImageUrl}" />
                             </#if>
                             <a href="mailto:${expert.getEmail()}" >${expert.getName()}</a>
