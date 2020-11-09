@@ -1,21 +1,21 @@
 package nl.deltares.portal.utils.impl;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.PropsUtil;
-import nl.deltares.portal.model.impl.Registration;
-import nl.deltares.portal.model.impl.SessionRegistration;
-import nl.deltares.portal.utils.WebinarUtils;
 import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
+import nl.deltares.portal.utils.WebinarUtils;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,11 +35,6 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
     @Override
     public boolean isActive() {
         return PropsUtil.contains(BASEURL_KEY);
-    }
-
-    @Override
-    public boolean isMeetingSupported(Registration registration) {
-        return (registration instanceof SessionRegistration) && (((SessionRegistration) registration).getWebinarKey() != null);
     }
 
     @Override
@@ -63,11 +58,11 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
             String email = registrant.get("email");
             if (email != null && email.equals(user.getEmailAddress())) return registrant;
         }
-        return null;
+        return Collections.emptyMap();
     }
 
     @Override
-    public Map<String, String> registerUser(User user, String webinarKey, String callerId) throws Exception {
+    public int registerUser(User user, String webinarKey, String callerId, Map<String, String> properties) throws Exception {
 
         String rawRegistrationPath = getBasePath() + GOTO_REGISTRATION_PATH;
         String accessToken = getAccessToken(); //calling this method loads organization key
@@ -86,8 +81,10 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         //get response
         checkResponse(connection);
         String jsonResponse = readAll(connection.getInputStream());
-        return JsonContentUtils.parseJsonToMap(jsonResponse);
-
+        Map<String, String> parseJsonToMap = JsonContentUtils.parseJsonToMap(jsonResponse);
+        if (parseJsonToMap.containsKey("registrantKey")) properties.put("registrantKey", parseJsonToMap.get("registrantKey"));
+        if (parseJsonToMap.containsKey("joinUrl")) properties.put("joinUrl", parseJsonToMap.get("joinUrl"));
+        return 0;
     }
 
     private String getOrganizerKey() {
@@ -96,7 +93,12 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
     }
 
     @Override
-    public int unregisterUser(String registrantKey, String webinarKey) throws Exception{
+    public int unregisterUser(User user, String webinarKey, Map<String, String> properties) throws Exception{
+
+        String registrantKey = properties.get("registrantKey");
+        if (registrantKey == null){
+            throw new PortalException("No 'registrantKey' found in user preferences");
+        }
 
         String rawRegistrationPath = getBasePath() + GOTO_REGISTRATION_PATH;
         String accessToken = getAccessToken(); //calling this method loads organization key
@@ -140,7 +142,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
 
         try {
             HttpURLConnection connection = getConnection(getTokenPath(), "POST", headers);
-            writeOauthPostParameters(connection, getOAuthParameters());
+            writePostParameters(connection, getOAuthParameters());
             String jsonResponse = readAll(connection.getInputStream());
             Map<String, String> parsedToken = JsonContentUtils.parseJsonToMap(jsonResponse);
 
