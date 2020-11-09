@@ -15,10 +15,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class GotoUtils extends HttpClientUtils implements WebinarUtils {
@@ -38,27 +35,40 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
     }
 
     @Override
-    public Map<String, String> getRegistration(User user, String webinarKey) throws Exception {
-        String rawRegistrationPath = getBasePath() + GOTO_REGISTRATION_PATH;
-        String accessToken = getAccessToken(); //calling this method loads organization key
-        String registrationPath = String.format(rawRegistrationPath, getOrganizerKey(), webinarKey);
+    public boolean isUserRegistered(User user, String webinarKey, Map<String, String> properties) throws Exception {
 
+        String accessToken = getAccessToken(); //calling this method loads organization key
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + accessToken);
+        String rawRegistrationPath = getBasePath() + GOTO_REGISTRATION_PATH;
 
+        String registrantKey = properties.get("registrantKey");
+        if (registrantKey != null) {
+            rawRegistrationPath = getBasePath() + GOTO_REGISTRATION_PATH + "/" + registrantKey;
+        }
+        String registrationPath = String.format(rawRegistrationPath, getOrganizerKey(), webinarKey);
         //open connection
         HttpURLConnection connection = getConnection(registrationPath, "GET", headers);
-
         //get response
-        checkResponse(connection);
+        if (connection.getResponseCode() == 404) return false; //user not found for registrantKey
+
         String jsonResponse = readAll(connection.getInputStream());
-        List<Map<String, String>> mapsList = JsonContentUtils.parseJsonArrayToMap(jsonResponse);
+
+        List<Map<String, String>> mapsList = new ArrayList<>();
+        if (registrantKey != null) {
+            mapsList.add(JsonContentUtils.parseJsonToMap(jsonResponse));
+        } else {
+            mapsList.addAll(JsonContentUtils.parseJsonArrayToMap(jsonResponse));
+        }
         for (Map<String, String> registrant : mapsList) {
             String email = registrant.get("email");
-            if (email != null && email.equals(user.getEmailAddress())) return registrant;
+            if (email != null && email.equals(user.getEmailAddress())) {
+                properties.put("registrantKey", registrant.get("registrantKey"));
+                return true;
+            }
         }
-        return Collections.emptyMap();
+        return false;
     }
 
     @Override
@@ -83,13 +93,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         String jsonResponse = readAll(connection.getInputStream());
         Map<String, String> parseJsonToMap = JsonContentUtils.parseJsonToMap(jsonResponse);
         if (parseJsonToMap.containsKey("registrantKey")) properties.put("registrantKey", parseJsonToMap.get("registrantKey"));
-        if (parseJsonToMap.containsKey("joinUrl")) properties.put("joinUrl", parseJsonToMap.get("joinUrl"));
         return 0;
-    }
-
-    private String getOrganizerKey() {
-        if (organizer_key != null) return organizer_key;
-        return getCachedToken(CACHED_ORGANIZER_KEY, null);
     }
 
     @Override
@@ -115,6 +119,11 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         return checkResponse(connection);
     }
 
+    private String getOrganizerKey() {
+        if (organizer_key != null) return organizer_key;
+        return getCachedToken(CACHED_ORGANIZER_KEY, null);
+    }
+
     private void writePostData(HttpURLConnection connection, User user, String callerId) throws IOException {
         connection.setDoOutput(true);
 
@@ -122,6 +131,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         parameterMap.put("firstName", user.getFirstName());
         parameterMap.put("lastName", user.getLastName());
         parameterMap.put("email", user.getEmailAddress());
+        parameterMap.put("registrantKey", user.getScreenName());
         parameterMap.put("source", callerId);
 
         String postData = JsonContentUtils.formatMapToJson(parameterMap);

@@ -4,7 +4,12 @@ import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
 import nl.deltares.portal.utils.WebinarUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class WebinarUtilsFactory {
+
+    private static Map<String, WebinarUtils> cache = new HashMap<>();
 
     public static WebinarUtils newInstance(Registration registration){
         if (!isWebinarSupported(registration)){
@@ -17,13 +22,25 @@ public class WebinarUtilsFactory {
     public static WebinarUtils newInstance(String provider){
 
         final String providerKey = provider.toLowerCase();
+
+        WebinarUtils webinarUtils = cache.get(providerKey);
+        if ( webinarUtils != null) return webinarUtils;
+
         switch (providerKey){
-            case "goto": return new GotoUtils();
-            case "anewspring" : return new ANewSpringUtils();
-            case "msteams" : return new MSTeamsUtils();
+            case "goto":
+                webinarUtils = new GotoUtils();
+                break;
+            case "anewspring" :
+                webinarUtils = new ANewSpringUtils();
+                break;
+            case "msteams" :
+                webinarUtils = new MSTeamsUtils();
+                break;
             default:
                 throw new UnsupportedOperationException("unsupported provider " + provider);
         }
+        cache.put(providerKey, webinarUtils);
+        return webinarUtils;
     }
 
     public static boolean isWebinarSupported(Registration registration){
