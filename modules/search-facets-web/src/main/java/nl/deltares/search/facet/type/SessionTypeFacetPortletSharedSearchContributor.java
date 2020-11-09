@@ -9,6 +9,7 @@ import nl.deltares.portal.utils.DDMStructureUtil;
 import nl.deltares.search.constans.FacetPortletKeys;
 import nl.deltares.search.facet.topic.SessionTopicFacetBuilder;
 import nl.deltares.search.facet.topic.SessionTopicFacetFactory;
+import nl.deltares.search.facet.type.builder.SessionTypeFacetBuilder;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -54,9 +55,9 @@ public class SessionTypeFacetPortletSharedSearchContributor implements PortletSh
 
         _sessionTypeFacetFactory.setField(fieldName);
 
-        SessionTopicFacetBuilder sessionTypeFacetBuilder = new SessionTopicFacetBuilder(_sessionTypeFacetFactory);
+        SessionTypeFacetBuilder sessionTypeFacetBuilder = new SessionTypeFacetBuilder(_sessionTypeFacetFactory);
         sessionTypeFacetBuilder.setSearchContext(portletSharedSearchSettings.getSearchContext());
-        sessionTypeFacetBuilder.setSessionTopic(type);
+        sessionTypeFacetBuilder.setSessionType(type);
         return sessionTypeFacetBuilder.build();
     }
 

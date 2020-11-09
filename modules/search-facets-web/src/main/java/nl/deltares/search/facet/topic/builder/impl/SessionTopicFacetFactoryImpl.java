@@ -1,4 +1,4 @@
-package nl.deltares.search.facet.type.builder.impl;
+package nl.deltares.search.facet.topic.builder.impl;
 
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.search.facet.Facet;

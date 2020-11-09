@@ -28,9 +28,6 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     KeycloakUtils keycloakUtils;
 
     @Reference
-    GotoUtils gotoUtils;
-
-    @Reference
     DsdParserUtils parserUtils;
 
     @Reference
@@ -56,8 +53,8 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     @Override
     public void registerUser(User user, Registration registration, Map<String, String> userProperties) throws PortalException {
 
-        if (gotoUtils.isGotoMeeting(registration)){
-            registerGotoUser(user, (SessionRegistration) registration, userProperties);
+        if (WebinarUtilsFactory.isWebinarSupported(registration)){
+            registerWebinarUser(user, (SessionRegistration) registration, userProperties);
         }
         long parentId = registration.getParentRegistration() == null ? 0 : registration.getParentRegistration().getResourceId();
 
@@ -70,9 +67,11 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
                 registration.getStartTime(), registration.getEndTime(), JsonContentUtils.formatMapToJson(userProperties));
     }
 
-    private void registerGotoUser(User user, SessionRegistration registration, Map<String, String> userProperties) throws PortalException {
+    private void registerWebinarUser(User user, SessionRegistration registration, Map<String, String> userProperties) throws PortalException {
+
+        WebinarUtils webinarUtils = WebinarUtilsFactory.newInstance(registration);
         try {
-            Map<String, String> responseValues = gotoUtils.registerUser(user, registration.getWebinarKey(), GroupServiceUtil.getGroup(registration.getGroupId()).getName());
+            Map<String, String> responseValues = webinarUtils.registerUser(user, registration.getWebinarKey(), GroupServiceUtil.getGroup(registration.getGroupId()).getName());
             userProperties.put("registrantKey", responseValues.get("registrantKey"));
             userProperties.put("joinUrl", responseValues.get("joinUrl"));
         } catch (Exception e) {
@@ -83,7 +82,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     @Override
     public void unRegisterUser(User user, Registration registration) throws PortalException {
 
-        if (gotoUtils.isGotoMeeting(registration)){
+        if (WebinarUtilsFactory.isWebinarSupported(registration)){
             unRegisterGotUser(user, registration);
         }
 
@@ -101,7 +100,8 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
             }
 
             try {
-                gotoUtils.unregisterUser(registrantKey, ((SessionRegistration) registration).getWebinarKey());
+                WebinarUtils webinarUtils = WebinarUtilsFactory.newInstance(registration);
+                webinarUtils.unregisterUser(registrantKey, ((SessionRegistration) registration).getWebinarKey());
             } catch (Exception e) {
                 throw new PortalException(e);
             }

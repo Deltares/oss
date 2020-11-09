@@ -116,7 +116,7 @@ public class XmlContentUtils {
 
     public static Date parseDateTimeFields(Node dateNode, String timeField) throws PortalException {
         String dateValue = XmlContentUtils.getDynamicContentForNode(dateNode);
-        String timeValue = XmlContentUtils.getDynamicContentByName(dateNode, timeField, false);
+        String timeValue = XmlContentUtils.getDynamicContentByName(dateNode, timeField, true);
         if (timeValue == null){
             timeValue = "00:00";
         }

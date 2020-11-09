@@ -35,7 +35,7 @@ public class SearchResultsComparator extends OrderByComparator<com.liferay.porta
         }
 
         if (dsdo1 instanceof Registration && dsdo2 instanceof Registration){
-            return ((Registration)dsdo2).getStartTime().compareTo(((Registration) dsdo1).getStartTime());
+            return ((Registration)dsdo1).getStartTime().compareTo(((Registration) dsdo2).getStartTime());
         }
 //reverse order
         return dsdo1.getTitle().compareTo(dsdo2.getTitle());

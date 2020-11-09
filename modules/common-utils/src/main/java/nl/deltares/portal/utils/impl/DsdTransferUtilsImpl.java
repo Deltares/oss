@@ -104,8 +104,7 @@ public class DsdTransferUtilsImpl implements DsdTransferUtils {
 
         if (registration instanceof BusTransfer){
             BusTransfer transfer = (BusTransfer) registration;
-            List<Date> transferDates = transfer.getTransferDates();
-            return transferDates.contains(transferDate);
+            return transfer.isValidDate(transferDate);
         } else {
             //strip time from date
             long startDay = dayFormat.parse(dayFormat.format(new Date(registration.getStartTime().getTime()))).getTime();
