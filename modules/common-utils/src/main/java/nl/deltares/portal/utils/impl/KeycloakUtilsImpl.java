@@ -241,7 +241,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
 
         try {
             HttpURLConnection connection = getConnection(getTokenPath(), "POST", headers);
-            writeOauthPostParameters(connection, getOAuthParameters());
+            writePostParameters(connection, getOAuthParameters());
             String jsonResponse = readAll(connection.getInputStream());
             Map<String, String> parsedToken = JsonContentUtils.parseJsonToMap(jsonResponse);
 
