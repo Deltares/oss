@@ -33,6 +33,9 @@
                 restaurant: {
                     icon: iconBase + 'marker-restaurant.png'
                 },
+                online: {
+                    icon: iconBase + 'marker-deltares.png',
+                },
                 event: {
                     icon: iconBase + 'marker-deltares.png',
                 },
@@ -68,12 +71,12 @@
 
             var contentString = '<div class="blog-page"><div class="blog-page__item clearfix">' +
                 '<div class="left-column" style="width:120px">' +
-            '    <img height=100 width=100 src="' + jsonMarker.imgUrl + '" />' +
-            '</div>'+
-            '<div class="right-column" style="margin-left: 120px; width:250px">' +
-            '    <div class="expert-data__content">' +
-            '        <h4 class="h1 clear-margin">' + jsonMarker.title + '</h4>'+
-            '        <p>' + jsonMarker.address + '<br>'
+                '    <img height=100 width=100 src="' + jsonMarker.imgUrl + '" />' +
+                '</div>'+
+                '<div class="right-column" style="margin-left: 120px; width:250px">' +
+                '    <div class="expert-data__content">' +
+                '        <h4 class="h1 clear-margin">' + jsonMarker.title + '</h4>'+
+                '        <p>' + jsonMarker.address + '<br>'
 
             if (jsonMarker.website){
                 contentString += '<a target="_blank" href="'+ jsonMarker.website + '" >' + jsonMarker.website + '</a><br>';
@@ -121,6 +124,7 @@
         };
 
     </script>
+
     <div id="style-selector-control" class="map-control">
         <input
                 type="radio"
@@ -140,13 +144,13 @@
     </div>
     <div id="${mapId}map" >
         <script>
-        <#list entries as curentry>
+            <#list entries as curentry>
             <#assign entry = curentry />
             <#assign assetRenderer = entry.getAssetRenderer()/>
             <#assign journalArticle = assetRenderer.getArticle()/>
             <#assign location = dsdParserUtils.getLocation(journalArticle) />
             <#if location.hasCoordinates() >
-                addMarkerToArray(${location.getLatitude()},
+            addMarkerToArray(${location.getLatitude()},
                 ${location.getLongitude()},
                 '${location.getTitle()}',
                 '${location.getAddress()}, ${location.getCity()}',
@@ -157,27 +161,26 @@
 
             <#if location.getLocationType() == "event" >
 
-                <#assign buildings = location.getBuildings() />
-                <#if buildings?? >
-                    <#list buildings as building>
-                        <#assign building_img = building.getSmallImageURL(themeDisplay) />
-                        <#if building_img == "" >
-                            <#assign building_img = themeDisplay.getPathThemeImages() + "/dsd/building.png" />
-                        </#if>
-
-                        addMarkerToArray(${building.getLatitude()},
-                        ${building.getLongitude()},
-                        '${building.getTitle()}',
-                        '${location.getAddress()}, ${location.getCity()}',
-                        '${location.getWebsite()}',
-                        'building',
-                        '${building_img}')
-                    </#list>
-                </#if>
+            <#assign buildings = location.getBuildings() />
+            <#if buildings?? >
+            <#list buildings as building>
+            <#assign building_img = building.getSmallImageURL(themeDisplay) />
+            <#if building_img == "" >
+            <#assign building_img = themeDisplay.getPathThemeImages() + "/dsd/building.png" />
             </#if>
-        </#list>
+
+            addMarkerToArray(${building.getLatitude()},
+                ${building.getLongitude()},
+                '${building.getTitle()}',
+                '${location.getAddress()}, ${location.getCity()}',
+                '${location.getWebsite()}',
+                'building',
+                '${building_img}')
+            </#list>
+            </#if>
+            </#if>
+            </#list>
         </script>
     </div>
-
 </#if>
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&callback=initMap"></script>

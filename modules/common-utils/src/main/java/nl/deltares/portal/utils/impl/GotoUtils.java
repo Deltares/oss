@@ -7,10 +7,9 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.PropsUtil;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
-import nl.deltares.portal.utils.GotoUtils;
+import nl.deltares.portal.utils.WebinarUtils;
 import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
-import org.osgi.service.component.annotations.Component;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -22,12 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-@Component(
-        immediate = true,
-        service = GotoUtils.class
-)
-public class GotoUtilsImpl extends HttpClientUtils implements GotoUtils {
-    private static final Log LOG = LogFactoryUtil.getLog(GotoUtilsImpl.class);
+public class GotoUtils extends HttpClientUtils implements WebinarUtils {
+    private static final Log LOG = LogFactoryUtil.getLog(GotoUtils.class);
 
     private final String CACHED_REFRESH_EXPIRY_KEY = "goto.refresh.expirytime";
     private final String CACHED_REFRESH_TOKEN_KEY = "goto.refresh.token";
@@ -43,7 +38,7 @@ public class GotoUtilsImpl extends HttpClientUtils implements GotoUtils {
     }
 
     @Override
-    public boolean isGotoMeeting(Registration registration) {
+    public boolean isMeetingSupported(Registration registration) {
         return (registration instanceof SessionRegistration) && (((SessionRegistration) registration).getWebinarKey() != null);
     }
 

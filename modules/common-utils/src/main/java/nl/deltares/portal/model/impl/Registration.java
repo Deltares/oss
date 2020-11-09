@@ -11,6 +11,8 @@ import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.Period;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -72,23 +74,34 @@ public abstract class Registration extends AbsDsdArticle {
             timeZoneId = XmlContentUtils.getDynamicContentByName(document, "timeZone", true);
             String vatTxt = XmlContentUtils.getDynamicContentByName(document, "vat", true);
             if (vatTxt != null) this.vat = Long.parseLong(vatTxt);
+
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing Registration %s: %s!", getTitle(), e.getMessage()), e);
         }
     }
 
-    Collection<? extends Date> toDayValues(Date startTime, Date endTime) throws ParseException {
+    void initDates(Document document) throws PortalException, ParseException {
 
-        String startDayString = dayf.format(startTime); // remove time
-        Date day = dayf.parse(startDayString);
-        ArrayList<Date> days = new ArrayList<>();
-        while (day.before(endTime)){
-            if (!isWeekend(day)) {
-                days.add(day);
-            }
-            day = new Date(day.getTime() + dayMillis);
+        String datesOption = XmlContentUtils.getDynamicContentByName(document, "multipleDatesOption", true);
+        daily = "daily".equals(datesOption);
+        NodeList registrationDates = XmlContentUtils.getDynamicElementsByName(document, "registrationDate");
+        ArrayList<Period> dayPeriods = new ArrayList<>();
+        for (int i = 0; i < registrationDates.getLength(); i++) {
+            Node registrationDate = registrationDates.item(i);
+            Date startOfDay = XmlContentUtils.parseDateTimeFields(registrationDate, "startTime");
+            Date endOfDay = XmlContentUtils.parseDateTimeFields(registrationDate, "endTime");
+            dayPeriods.add(new Period(startOfDay, endOfDay));
         }
-        return days;
+
+        if (daily && dayPeriods.size() == 2){
+            this.dayPeriods.addAll(toDayPeriods(dayPeriods.get(0).getStartDate(), dayPeriods.get(1).getEndDate()));
+        } else {
+            this.dayPeriods.addAll(dayPeriods);
+        }
+
+        startTime = dayPeriods.get(0).getStartDate();
+        endTime = dayPeriods.get(dayPeriods.size() - 1).getEndDate();
+
     }
 
     Collection<? extends Period> toDayPeriods(Date startTime, Date endTime) throws ParseException {
@@ -101,7 +114,7 @@ public abstract class Registration extends AbsDsdArticle {
         Date day = dayf.parse(startDayString);
         ArrayList<Period> dayPeriods = new ArrayList<>();
         while (day.before(endTime)){
-            if (!isWeekend(day)) {
+            if (isWeekDay(day)) {
                 dayPeriods.add(new Period(day.getTime() + startTimeMillis, day.getTime() + endTimeMillis ));
             }
             day = new Date(day.getTime() + dayMillis);
@@ -109,10 +122,10 @@ public abstract class Registration extends AbsDsdArticle {
         return dayPeriods;
     }
 
-    private boolean isWeekend(Date day) {
+    private boolean isWeekDay(Date day) {
         calendar.setTime(day);
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-        return dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY;
+        return dayOfWeek != Calendar.SATURDAY && dayOfWeek != Calendar.SUNDAY;
     }
 
     @Override

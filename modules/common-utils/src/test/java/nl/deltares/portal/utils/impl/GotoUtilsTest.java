@@ -30,9 +30,9 @@ import java.util.Properties;
  * Requires a webinar to be configured in future. Not possible to remove users from past webinars.
  */
 @Ignore
-public class GotoUtilsImplTest {
+public class GotoUtilsTest {
 
-    private GotoUtilsImpl gotoUtils;
+    private GotoUtils gotoUtils;
     private MockDsdJournalArticleUtils serviceUtil;
     private DsdParserUtils dsdParserUtils;
 
@@ -51,7 +51,7 @@ public class GotoUtilsImplTest {
         props.setProperties(properties);
         PropsUtil.setProps(props);
 
-        gotoUtils = new GotoUtilsImpl();
+        gotoUtils = new GotoUtils();
 
         serviceUtil = new MockDsdJournalArticleUtils();
         JsonContentUtils.setServiceUtils(serviceUtil);
@@ -71,7 +71,7 @@ public class GotoUtilsImplTest {
         if (!gotoUtils.isActive()) return;
         JournalArticle course = serviceUtil.getLatestArticle(107688);
         Registration registration = (Registration) dsdParserUtils.toDsdArticle(course);
-        Assert.assertTrue(gotoUtils.isGotoMeeting(registration));
+        Assert.assertTrue(gotoUtils.isMeetingSupported(registration));
 
     }
 

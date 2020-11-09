@@ -18,7 +18,7 @@ public class Location extends AbsDsdArticle {
     private String website = null;
     private double longitude = -1;
     private double latitude = -1;
-    private String locationType;
+    private String locationType = "";
 
     public Location(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
         super(article, dsdParserUtils);

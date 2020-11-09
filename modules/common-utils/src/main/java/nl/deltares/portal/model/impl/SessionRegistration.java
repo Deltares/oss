@@ -8,14 +8,12 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
-import nl.deltares.portal.utils.Period;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class SessionRegistration extends Registration {
     private static final Log LOG = LogFactoryUtil.getLog(SessionRegistration.class);
@@ -23,6 +21,7 @@ public class SessionRegistration extends Registration {
     private final List<Expert> presenters = new ArrayList<>();
     private String imageUrl = "";
     private String webinarKey;
+    private String provider;
 
     public SessionRegistration(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
         super(article, dsdParserUtils);
@@ -43,35 +42,10 @@ public class SessionRegistration extends Registration {
                 imageUrl = JsonContentUtils.parseImageJson(jsonImage);
             }
             webinarKey = XmlContentUtils.getDynamicContentByName(document, "webinarKey", true);
-            //todo: Add provider currently only GOTO
-
+            provider = XmlContentUtils.getDynamicContentByName(document, "provider", true);
             initDates(document);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
-        }
-    }
-
-    private void initDates(Document document) throws PortalException, ParseException {
-
-        String sessionOption = XmlContentUtils.getDynamicContentByName(document, "sessionDates", true);
-        daily = "daily".equals(sessionOption);
-        if (daily){
-            startTime = XmlContentUtils.parseDateTimeFields(document,"dailyStartDay", "dailyStartTime");
-            endTime = XmlContentUtils.parseDateTimeFields(document,"dailyEndDay", "dailyEndTime");
-            if (endTime == null) endTime = startTime;
-            dayPeriods.addAll(toDayPeriods(startTime, endTime));
-        } else {
-            NodeList specificDates = XmlContentUtils.getDynamicElementsByName(document, "specificDate");
-            for (int i = 0; i < specificDates.getLength(); i++) {
-                Node item = specificDates.item(i);
-                Date startOfDay = XmlContentUtils.parseDateTimeFields(item, "specificStartTime");
-                Date endOfDay = XmlContentUtils.parseDateTimeFields(item, "specificEndTime");
-                dayPeriods.add(new Period(startOfDay, endOfDay));
-            }
-            if (dayPeriods.size() > 0) {
-                startTime = dayPeriods.get(0).getStartDate();
-                endTime = dayPeriods.get(dayPeriods.size() - 1).getEndDate();
-            }
         }
     }
 
@@ -139,6 +113,10 @@ public class SessionRegistration extends Registration {
     }
 
     public String getWebinarKey(){ return  webinarKey; }
+
+    public String getWebinarProvider() {
+        return provider;
+    }
 
     @Override
     public String getSmallImageURL(ThemeDisplay themeDisplay) {

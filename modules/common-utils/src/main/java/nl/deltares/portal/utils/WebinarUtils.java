@@ -5,7 +5,7 @@ import nl.deltares.portal.model.impl.Registration;
 
 import java.util.Map;
 
-public interface GotoUtils {
+public interface WebinarUtils {
 
     boolean isActive();
 
@@ -15,5 +15,5 @@ public interface GotoUtils {
 
     int unregisterUser(String registrantsKey, String webinarKey) throws Exception;
 
-    boolean isGotoMeeting(Registration registration);
+    boolean isMeetingSupported(Registration registration);
 }
