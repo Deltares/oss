@@ -21,8 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Requires a webinar to be configured in future. Not possible to remove users from past webinars.
@@ -31,8 +30,6 @@ import java.util.Properties;
 public class GotoUtilsTest {
 
     private GotoUtils gotoUtils;
-    private MockDsdJournalArticleUtils serviceUtil;
-    private DsdParserUtils dsdParserUtils;
 
     @Before
     public void setup() throws IOException {
@@ -61,12 +58,14 @@ public class GotoUtilsTest {
         user.setFirstName("Test");
         user.setLastName("User");
 
-        Map<String, String> info = gotoUtils.getRegistration(user, "4599121209803004171");
-        if (info == null) {
-            gotoUtils.registerUser(user, "4599121209803004171", "testRegisterUser", info);
+        Map<String, String> info = new HashMap<>();
+        String webinarKey = "4599121209803004171";
+        if (gotoUtils.isUserRegistered(user, webinarKey, info)) {
+            gotoUtils.unregisterUser(user, webinarKey, info);
+            Assert.assertFalse(gotoUtils.isUserRegistered(user, webinarKey, info));
         }
-        Assert.assertNotNull(info.get("registrantKey"));
-        Assert.assertEquals("https://global.gotowebinar.com/join/4599121209803004171/102396762",  info.get("joinUrl"));
+        gotoUtils.registerUser(user, webinarKey, "testRegisterUser", info);
+        Assert.assertTrue(gotoUtils.isUserRegistered(user, webinarKey, info));
     }
 
     @Test
@@ -77,16 +76,14 @@ public class GotoUtilsTest {
         user.setFirstName("Test");
         user.setLastName("User");
 
-        Map<String, String> info = gotoUtils.getRegistration(user, "4599121209803004171");
-        if (info.size() == 0) {
-            gotoUtils.registerUser(user, "4599121209803004171", "testRegisterUser", info);
-            info = gotoUtils.getRegistration(user, "4599121209803004171");
+        Map<String, String> info = new HashMap<>();
+        String webinarKey = "4599121209803004171";
+        if (!gotoUtils.isUserRegistered(user, webinarKey, info)) {
+            gotoUtils.registerUser(user, webinarKey, "testRegisterUser", info);
+            Assert.assertTrue(gotoUtils.isUserRegistered(user, webinarKey, info));
         }
-        Assert.assertNotEquals(0, info.size());
-        Assert.assertNotEquals(0, info.size());
-        gotoUtils.unregisterUser(user, "4599121209803004171", info);
-        info = gotoUtils.getRegistration(user, "4599121209803004171");
-        Assert.assertEquals(0, info.size());
+        gotoUtils.unregisterUser(user, webinarKey, info);
+        Assert.assertFalse(gotoUtils.isUserRegistered(user, webinarKey, info));
 
     }
 

@@ -13,6 +13,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -53,12 +55,11 @@ public class ANewsSpringUtilsTest {
         user.setLastName("User");
         user.setScreenName("anewspring");
 
-        Map<String, String> info = newSpringUtils.getRegistration(user, "PlatformIntro");
-        if (info.size() == 0) {
+        Map<String, String> info = Collections.emptyMap();
+        if (!newSpringUtils.isUserRegistered(user, "PlatformIntro", info)) {
             newSpringUtils.registerUser(user, "PlatformIntro", "testRegisterUser", info);
-            info = newSpringUtils.getRegistration(user, "PlatformIntro");
         }
-        Assert.assertEquals("PlatformIntro", info.get("id"));
+        Assert.assertTrue(newSpringUtils.isUserRegistered(user, "PlatformIntro", info));
     }
 
     @Test
@@ -71,16 +72,13 @@ public class ANewsSpringUtilsTest {
         user.setLastName("User");
         user.setScreenName("anewspring");
 
-        Map<String, String> info = newSpringUtils.getRegistration(user, "PlatformIntro");
-        if (info.size() == 0) {
+        Map<String, String> info = Collections.emptyMap();
+        if (!newSpringUtils.isUserRegistered(user, "PlatformIntro", info)) {
             newSpringUtils.registerUser(user, "PlatformIntro", "testRegisterUser", info);
-            info = newSpringUtils.getRegistration(user, "PlatformIntro");
         }
-        Assert.assertNotEquals(0, info.size());
+        Assert.assertTrue(newSpringUtils.isUserRegistered(user, "PlatformIntro", info));
         newSpringUtils.unregisterUser(user, "PlatformIntro", info);
-        info = newSpringUtils.getRegistration(user, "PlatformIntro");
-        Assert.assertEquals(0, info.size());
-
+        Assert.assertTrue(!newSpringUtils.isUserRegistered(user, "PlatformIntro", info));
 
     }
 

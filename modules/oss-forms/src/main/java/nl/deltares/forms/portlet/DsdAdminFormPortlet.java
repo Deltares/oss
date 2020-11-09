@@ -17,7 +17,9 @@ import nl.deltares.forms.constants.OssFormPortletKeys;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
+import nl.deltares.portal.model.impl.SessionRegistration;
 import nl.deltares.portal.utils.*;
+import nl.deltares.portal.utils.impl.WebinarUtilsFactory;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -48,7 +50,6 @@ import java.util.*;
 public class DsdAdminFormPortlet extends MVCPortlet {
 
 	private static final Log LOG = LogFactoryUtil.getLog(DsdAdminFormPortlet.class);
-
 	@Reference
 	DsdParserUtils dsdParserUtils;
 
@@ -108,7 +109,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		Map<Long, User> userCache = new HashMap<>();
 		Map<Long, Map<String, String>> userAttributeCache = new HashMap<>();
 		PrintWriter writer = resourceResponse.getWriter();
-		StringBuilder header = new StringBuilder("event,registration,start date,topic,type,email,firstName,lastName,registrantKey");
+		StringBuilder header = new StringBuilder("event,registration,start date,topic,type,email,firstName,lastName,webinarProvider,webinarKey");
 		for (KeycloakUtils.BILLING_ATTRIBUTES value : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
 			header.append(',');
 			header.append(value.name());
@@ -158,12 +159,17 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		line.append(',');
 		line.append(user.getLastName());
 		line.append(',');
+		if (registration instanceof SessionRegistration){
+			line.append(((SessionRegistration)registration).getWebinarProvider());
+		}
+		line.append(',');
 		Map<String, String> userPreferences;
 		try {
 			userPreferences = JsonContentUtils.parseJsonToMap((String) record.get("userPreferences"));
-			String registrantKey = userPreferences.get("registrantKey");
-			if (registrantKey != null) line.append(registrantKey);
 
+			if (registration instanceof SessionRegistration) {
+				line.append(getRegistrationStatus(user, ((SessionRegistration) registration), userPreferences));
+			}
 			BillingInfo billingInfo = getBillingInfo(userPreferences);
 			writeBillingInfo(line, billingInfo, user, userAttributeCache);
 
@@ -171,6 +177,16 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 			LOG.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
 		}
 		writer.println(line);
+	}
+
+	private String getRegistrationStatus(User user, SessionRegistration registration, Map<String, String> userPreferences) {
+		WebinarUtils webinarUtils = WebinarUtilsFactory.newInstance(registration.getWebinarProvider());
+		try {
+			if (webinarUtils.isUserRegistered(user, registration.getWebinarKey(), userPreferences)) return "registered";
+		} catch (Exception e) {
+			LOG.error(String.format("Error checking if user %s is registered for %s: %s", user.getEmailAddress(), registration.getTitle(), e.getMessage()));
+		}
+		return "";
 	}
 
 	private Registration getRegistration(Long registrationId, Event event, Locale locale) {

@@ -8,6 +8,7 @@ import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.WebinarUtils;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class MSTeamsUtils extends HttpClientUtils implements WebinarUtils {
@@ -24,8 +25,8 @@ public class MSTeamsUtils extends HttpClientUtils implements WebinarUtils {
     }
 
     @Override
-    public Map<String, String> getRegistration(User user, String webinarKey) throws Exception {
-        return Collections.emptyMap();
+    public boolean isUserRegistered(User user, String webinarKey, Map<String, String> registrationProperties) throws Exception {
+        return false;
     }
 
     @Override

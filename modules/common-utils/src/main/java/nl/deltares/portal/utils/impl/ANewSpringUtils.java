@@ -1,8 +1,6 @@
 package nl.deltares.portal.utils.impl;
 
-import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -14,7 +12,8 @@ import nl.deltares.portal.utils.WebinarUtils;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
     private static final Log LOG = LogFactoryUtil.getLog(ANewSpringUtils.class);
@@ -44,25 +43,8 @@ public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
     }
 
     @Override
-    public Map<String, String> getRegistration(User user, String courseId) throws Exception {
-
-        String isSubscribedPath = StringBundler.concat(getBasePath(), "getSubscriptions/", user.getScreenName());
-        HttpURLConnection connection = getConnection(isSubscribedPath, "GET", getHeader("application/json"));
-        //get response
-        checkResponse(connection);
-        String jsonResponse = readAll(connection.getInputStream());
-
-        JSONArray courses = (JSONArray) JsonContentUtils.parseContent(jsonResponse).get("courses");
-        for (int i = 0; i < courses.length(); i++) {
-            JSONObject course = courses.getJSONObject(i);
-            if (course.get("id").equals(courseId)) {
-                Iterator<String> keys = course.keys();
-                HashMap<String, String> map = new HashMap<>();
-                keys.forEachRemaining(key -> map.put(key, course.getString(key)));
-                return map;
-            }
-        }
-        return Collections.emptyMap();
+    public boolean isUserRegistered(User user, String courseId, Map<String, String> properties) throws Exception {
+        return isUserSubscribed(user, courseId);
     }
 
     @Override
@@ -128,6 +110,7 @@ public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
         return headers;
     }
 
+    @SuppressWarnings("unused")
     private int subscribe(User user, String courseId) throws IOException {
 
         String subscribePath = StringBundler.concat(getBasePath(), "subscribe/", user.getScreenName(), "/",  courseId);
