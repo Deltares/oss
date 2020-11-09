@@ -44,7 +44,7 @@ public abstract class HttpClientUtils {
         return urlConnection;
     }
 
-    public static void writeOauthPostParameters(HttpURLConnection connection, Map<String, String> parameters) throws IOException {
+    public static void writePostParameters(HttpURLConnection connection, Map<String, String> parameters) throws IOException {
         connection.setDoOutput(true);
         try (Writer w = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8)) {
             for (Map.Entry<String, String> param : parameters.entrySet()) {
