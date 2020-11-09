@@ -6,7 +6,79 @@
   "fields": [
     {
       "label": {
-        "en_US": "Session Dates"
+        "en_US": "Registration Date"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "date",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "registrationDate",
+      "readOnly": false,
+      "repeatable": true,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-date",
+      "nestedFields": [
+        {
+          "label": {
+            "en_US": "start time"
+          },
+          "predefinedValue": {
+            "en_US": "09:00"
+          },
+          "style": {
+            "en_US": ""
+          },
+          "tip": {
+            "en_US": "Start time (format: HH:mm) "
+          },
+          "dataType": "string",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "startTime",
+          "readOnly": false,
+          "repeatable": false,
+          "required": true,
+          "showLabel": true,
+          "type": "text"
+        },
+        {
+          "label": {
+            "en_US": "end time"
+          },
+          "predefinedValue": {
+            "en_US": "17:00"
+          },
+          "style": {
+            "en_US": ""
+          },
+          "tip": {
+            "en_US": "End time (format: HH:mm) "
+          },
+          "dataType": "string",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "endTime",
+          "readOnly": false,
+          "repeatable": false,
+          "required": true,
+          "showLabel": true,
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "label": {
+        "en_US": "Multiple Dates Option"
       },
       "options": [
         {
@@ -16,9 +88,9 @@
           }
         },
         {
-          "value": "specify",
+          "value": "individual",
           "label": {
-            "en_US": "Specific days"
+            "en_US": "Individual days"
           }
         }
       ],
@@ -29,187 +101,40 @@
         "en_US": ""
       },
       "tip": {
-        "en_US": "If 'Daily' then both a 'Daily' start and end date required. If 'Specific' selected then at least on 'Specific' date required."
+        "en_US": "Daily - Two dates represent a whole period.<br/>Individual - Each date is seperate"
       },
       "dataType": "radio",
       "indexType": "keyword",
       "localizable": true,
-      "name": "sessionDates",
+      "name": "multipleDatesOption",
       "readOnly": false,
       "repeatable": false,
-      "required": false,
+      "required": true,
       "showLabel": true,
       "type": "radio"
     },
     {
       "label": {
-        "en_US": "Daily start date"
+        "en_US": "Time Zone"
       },
       "predefinedValue": {
-        "en_US": ""
+        "en_US": "CET"
       },
       "style": {
         "en_US": ""
       },
       "tip": {
-        "en_US": ""
+        "en_US": "TimeZone identifier"
       },
-      "dataType": "date",
-      "fieldNamespace": "ddm",
+      "dataType": "string",
       "indexType": "keyword",
       "localizable": true,
-      "name": "dailyStartDay",
+      "name": "timeZone",
       "readOnly": false,
       "repeatable": false,
       "required": false,
       "showLabel": true,
-      "type": "ddm-date",
-      "nestedFields": [
-        {
-          "label": {
-            "en_US": "start time"
-          },
-          "predefinedValue": {
-            "en_US": "09:00"
-          },
-          "style": {
-            "en_US": ""
-          },
-          "tip": {
-            "en_US": "Start time (format: HH:mm time timezone) "
-          },
-          "dataType": "string",
-          "indexType": "keyword",
-          "localizable": true,
-          "name": "dailyStartTime",
-          "readOnly": false,
-          "repeatable": false,
-          "required": true,
-          "showLabel": true,
-          "type": "text"
-        }
-      ]
-    },
-    {
-      "label": {
-        "en_US": "Daily end date"
-      },
-      "predefinedValue": {
-        "en_US": ""
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": ""
-      },
-      "dataType": "date",
-      "fieldNamespace": "ddm",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "dailyEndDay",
-      "readOnly": false,
-      "repeatable": false,
-      "required": false,
-      "showLabel": true,
-      "type": "ddm-date",
-      "nestedFields": [
-        {
-          "label": {
-            "en_US": "end time"
-          },
-          "predefinedValue": {
-            "en_US": "17:00"
-          },
-          "style": {
-            "en_US": ""
-          },
-          "tip": {
-            "en_US": "End time (format: HH:mm local timezone) "
-          },
-          "dataType": "string",
-          "indexType": "keyword",
-          "localizable": true,
-          "name": "dailyEndTime",
-          "readOnly": false,
-          "repeatable": false,
-          "required": true,
-          "showLabel": true,
-          "type": "text"
-        }
-      ]
-    },
-    {
-      "label": {
-        "en_US": "Specific date"
-      },
-      "predefinedValue": {
-        "en_US": ""
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": ""
-      },
-      "dataType": "date",
-      "fieldNamespace": "ddm",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "specificDate",
-      "readOnly": false,
-      "repeatable": true,
-      "required": false,
-      "showLabel": true,
-      "type": "ddm-date",
-      "nestedFields": [
-        {
-          "label": {
-            "en_US": "start time"
-          },
-          "predefinedValue": {
-            "en_US": "09:00"
-          },
-          "style": {
-            "en_US": ""
-          },
-          "tip": {
-            "en_US": "Start time (format: HH:mm local timezone) "
-          },
-          "dataType": "string",
-          "indexType": "keyword",
-          "localizable": true,
-          "name": "specificStartTime",
-          "readOnly": false,
-          "repeatable": false,
-          "required": true,
-          "showLabel": true,
-          "type": "text"
-        },
-        {
-          "label": {
-            "en_US": "end time"
-          },
-          "predefinedValue": {
-            "en_US": "17:00"
-          },
-          "style": {
-            "en_US": ""
-          },
-          "tip": {
-            "en_US": "End time (format: HH:mm local timezone) "
-          },
-          "dataType": "string",
-          "indexType": "keyword",
-          "localizable": true,
-          "name": "specificEndTime",
-          "readOnly": false,
-          "repeatable": false,
-          "required": true,
-          "showLabel": true,
-          "type": "text"
-        }
-      ]
+      "type": "text"
     },
     {
       "label": {
@@ -404,7 +329,7 @@
       "nestedFields": [
         {
           "label": {
-            "en_US": "Date"
+            "en_US": "Schedule Date"
           },
           "predefinedValue": {
             "en_US": ""
@@ -419,7 +344,7 @@
           "fieldNamespace": "ddm",
           "indexType": "keyword",
           "localizable": true,
-          "name": "date",
+          "name": "scheduleDate",
           "readOnly": false,
           "repeatable": false,
           "required": false,

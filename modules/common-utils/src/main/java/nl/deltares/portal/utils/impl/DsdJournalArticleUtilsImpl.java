@@ -120,7 +120,7 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
         for (Optional<DDMStructure> structureOptional : optionalList) {
             if (structureOptional.isPresent()) {
                 long ddmStructureId = structureOptional.get().getStructureId();
-                String startDateField = _ddmIndexer.encodeName(ddmStructureId, "start", locale);
+                String startDateField = _ddmIndexer.encodeName(ddmStructureId, "registrationDate", locale);
                 boolClauseQueries.add(booleanClauseFactory.create(buildDateRangeQuery(startDateField, startDate, endDate, locale), BooleanClauseOccur.SHOULD.getName()));
             }
         }

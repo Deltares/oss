@@ -6,6 +6,90 @@
   "fields": [
     {
       "label": {
+        "en_US": "Transfer Date"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "date",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "registrationDate",
+      "readOnly": false,
+      "repeatable": true,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-date"
+    },
+    {
+      "label": {
+        "en_US": "Multiple Dates Option"
+      },
+      "options": [
+        {
+          "value": "daily",
+          "label": {
+            "en_US": "Daily"
+          }
+        },
+        {
+          "value": "individual",
+          "label": {
+            "en_US": "Individual days"
+          }
+        }
+      ],
+      "predefinedValue": {
+        "en_US": "daily"
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "Daily - Two dates represent a whole period.<br/>Individual - Each date is seperate"
+      },
+      "dataType": "radio",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "multipleDatesOption",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "radio"
+    },
+    {
+      "label": {
+        "en_US": "Time Zone"
+      },
+      "predefinedValue": {
+        "en_US": "CET"
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "TimeZone identifier"
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "timeZone",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "text"
+    },
+    {
+      "label": {
         "en_US": "Bus Route"
       },
       "predefinedValue": {
@@ -27,67 +111,6 @@
       "required": true,
       "showLabel": true,
       "type": "ddm-journal-article"
-    },
-    {
-      "label": {
-        "en_US": "pickupDates"
-      },
-      "options": [
-        {
-          "value": "daily",
-          "label": {
-            "en_US": "Daily"
-          }
-        },
-        {
-          "value": "specify",
-          "label": {
-            "en_US": "Specific days"
-          }
-        }
-      ],
-      "predefinedValue": {
-        "en_US": "daily"
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": ""
-      },
-      "dataType": "radio",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "pickupDates",
-      "readOnly": false,
-      "repeatable": false,
-      "required": false,
-      "showLabel": true,
-      "type": "radio"
-    },
-    {
-      "label": {
-        "en_US": "Date"
-      },
-      "predefinedValue": {
-        "en_US": ""
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": ""
-      },
-      "dataType": "date",
-      "fieldNamespace": "ddm",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "date",
-      "readOnly": false,
-      "repeatable": true,
-      "required": false,
-      "showLabel": true,
-      "type": "ddm-date"
     }
   ]
 }

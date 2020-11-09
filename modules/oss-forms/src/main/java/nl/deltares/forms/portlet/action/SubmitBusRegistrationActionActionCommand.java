@@ -57,7 +57,7 @@ public class SubmitBusRegistrationActionActionCommand extends BaseMVCActionComma
     }
 
     private void registerUser(ActionRequest actionRequest, Event event, User user, BusTransfer busTransfer) {
-        busTransfer.getTransferDates().forEach(date -> {
+        busTransfer.getTransferDays().forEach(date -> {
 
             String registrationParam = "registration_" + busTransfer.getResourceId() + "_" + DATE_FORMAT.format(date);
             String errorMessage = String.format("Could not register user [%s] for transfer [%s] on [%s]",

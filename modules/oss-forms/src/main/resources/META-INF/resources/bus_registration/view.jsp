@@ -4,7 +4,6 @@
 <%@ page import="com.liferay.portal.kernel.util.DateUtil" %>
 <%@ page import="java.util.Date" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="com.liferay.portal.kernel.servlet.SessionMessages" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="nl.deltares.portal.utils.DsdTransferUtils" %>
 <%@ include file="init.jsp" %>
@@ -46,7 +45,7 @@
 
                 </div>
 
-                <c:forEach var="transferDate" items="${busTransfer.transferDates}">
+                <c:forEach var="transferDate" items="${busTransfer.transferDays}">
                     <%
                         Date transferDate = (Date) pageContext.getAttribute("transferDate");
                         Registration registration = event.getRegistration(busTransfer.getResourceId(), themeDisplay.getLocale());

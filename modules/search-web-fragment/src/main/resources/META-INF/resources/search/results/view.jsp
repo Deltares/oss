@@ -35,9 +35,9 @@
 <%@ page import="nl.deltares.portal.display.context.RegistrationDisplayContext" %>
 <%@ page import="java.util.Collections" %>
 <%@ page import="java.util.List" %>
-<%@ page import="nl.deltares.portal.kernel.util.comparator.SearchResultsComparator" %>
 <%@ page import="nl.deltares.portal.utils.DsdParserUtils" %>
 <%@ page import="nl.deltares.portal.utils.impl.DsdParserUtilsImpl" %>
+<%@ page import="nl.deltares.portal.kernel.util.comparator.SearchResultsComparator" %>
 
 <portlet:defineObjects />
 

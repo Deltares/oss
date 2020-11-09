@@ -11,13 +11,15 @@ import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class BusTransfer extends Registration {
 
     private static final Log LOG = LogFactoryUtil.getLog(BusTransfer.class);
     private BusRoute busRoute = null;
-    private final List<Date> transferDays = new ArrayList<>();
+    private final List<Date> days = new ArrayList<>();
 
     public BusTransfer(JournalArticle article, DsdParserUtils parserUtils) throws PortalException {
         super(article, parserUtils);
@@ -28,29 +30,14 @@ public class BusTransfer extends Registration {
 
         try {
             Document document = getDocument();
-
             initDates(document);
-
         } catch (Exception e) {
-            throw new PortalException(String.format("Error parsing bus route %s: %s!", getTitle(), e.getMessage()), e);
+            throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
     }
 
-    private void initDates(Document document) throws PortalException, ParseException {
-        String pickupOption = XmlContentUtils.getDynamicContentByName(document, "pickupDates", false);
-        daily = pickupOption.equals("daily");
-
-        if (daily){
-            Event event = dsdParserUtils.getEvent(getGroupId(), String.valueOf(getEventId()));
-            if (event == null) return;
-            transferDays.addAll(toDayValues(event.getStartTime(), event.getEndTime()));
-        } else {
-            String[] pickupDates = XmlContentUtils.getDynamicContentsByName(document, "date");
-            for (String pickupDate : pickupDates) {
-                Date day = dayf.parse(pickupDate);
-                transferDays.add(day);
-            }
-        }
+    @Override
+    void initDates(Document document) throws PortalException, ParseException {
 
         BusRoute busRoute = getBusRoute();
         List<String> times = busRoute.getTimes();
@@ -61,13 +48,27 @@ public class BusTransfer extends Registration {
             endTimeMillis = timef.parse(times.get(times.size() - 1)).getTime();
         }
 
-        for (Date transferDay : transferDays) {
-            dayPeriods.add(new Period(transferDay.getTime() + startTimeMillis, transferDay.getTime() + endTimeMillis));
+        String datesOption = XmlContentUtils.getDynamicContentByName(document, "multipleDatesOption", true);
+        daily = "daily".equals(datesOption);
+        String[] registrationDates = XmlContentUtils.getDynamicContentsByName(document, "registrationDate");
+        ArrayList<Period> dayPeriods = new ArrayList<>();
+        for (String registrationDate : registrationDates) {
+            long dayValueMillis = dayf.parse(registrationDate).getTime();
+            dayPeriods.add(new Period(dayValueMillis + startTimeMillis, dayValueMillis + endTimeMillis));
         }
-        if (dayPeriods.size() > 0){
-            startTime = dayPeriods.get(0).getStartDate();
-            endTime = dayPeriods.get(dayPeriods.size() -1).getEndDate();
+
+        if (daily && dayPeriods.size() == 2){
+            this.dayPeriods.addAll(toDayPeriods(dayPeriods.get(0).getStartDate(), dayPeriods.get(1).getEndDate()));
+        } else {
+            this.dayPeriods.addAll(dayPeriods);
         }
+
+        for (Period dayPeriod : this.dayPeriods) {
+            days.add(new Date(dayPeriod.getStartTime() - startTimeMillis));
+        }
+
+        startTime = dayPeriods.get(0).getStartDate();
+        endTime = dayPeriods.get(dayPeriods.size() - 1).getEndDate();
     }
 
     @Override
@@ -104,8 +105,11 @@ public class BusTransfer extends Registration {
         return (BusRoute) busRoute;
     }
 
-    public List<Date> getTransferDates() {
-        return Collections.unmodifiableList(transferDays);
+    public boolean isValidDate(Date transferDate) {
+        return days.contains(transferDate);
     }
 
+    public List<Date> getTransferDays(){
+        return days;
+    }
 }

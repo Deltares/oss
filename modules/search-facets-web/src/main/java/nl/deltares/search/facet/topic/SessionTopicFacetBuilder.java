@@ -34,7 +34,7 @@ public class SessionTopicFacetBuilder {
     }
 
     public void setSessionTopic(String type) {
-        if (type != null && "undefined".equals(type)){
+        if ("undefined".equals(type)){
             this.topic = null;
         } else {
             this.topic = type;

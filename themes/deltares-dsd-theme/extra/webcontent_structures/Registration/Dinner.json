@@ -6,7 +6,7 @@
   "fields": [
     {
       "label": {
-        "en_US": "Start date"
+        "en_US": "Registration Date"
       },
       "predefinedValue": {
         "en_US": ""
@@ -21,7 +21,7 @@
       "fieldNamespace": "ddm",
       "indexType": "keyword",
       "localizable": true,
-      "name": "start",
+      "name": "registrationDate",
       "readOnly": false,
       "repeatable": false,
       "required": true,
@@ -30,7 +30,7 @@
       "nestedFields": [
         {
           "label": {
-            "en_US": "time"
+            "en_US": "start time"
           },
           "predefinedValue": {
             "en_US": "09:00"
@@ -39,12 +39,35 @@
             "en_US": ""
           },
           "tip": {
-            "en_US": "Start time (format: HH:mm time timezone) "
+            "en_US": "Start time (format: HH:mm) "
           },
           "dataType": "string",
           "indexType": "keyword",
           "localizable": true,
-          "name": "starttime",
+          "name": "startTime",
+          "readOnly": false,
+          "repeatable": false,
+          "required": true,
+          "showLabel": true,
+          "type": "text"
+        },
+        {
+          "label": {
+            "en_US": "end time"
+          },
+          "predefinedValue": {
+            "en_US": "17:00"
+          },
+          "style": {
+            "en_US": ""
+          },
+          "tip": {
+            "en_US": "End time (format: HH:mm) "
+          },
+          "dataType": "string",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "endTime",
           "readOnly": false,
           "repeatable": false,
           "required": true,
@@ -52,6 +75,29 @@
           "type": "text"
         }
       ]
+    },
+    {
+      "label": {
+        "en_US": "Time Zone"
+      },
+      "predefinedValue": {
+        "en_US": "CET"
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "TimeZone identifier"
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "timeZone",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "text"
     },
     {
       "label": {
