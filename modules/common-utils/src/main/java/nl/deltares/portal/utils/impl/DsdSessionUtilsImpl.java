@@ -217,16 +217,15 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     private boolean periodsOverlap(Registration reg1, Registration reg2) {
 
-        long reg1Start = reg1.getStartTime().getTime();
-        long reg2Start = reg2.getStartTime().getTime();
-        long reg1End = reg1.getEndTime().getTime();
-        long reg2End = reg2.getEndTime().getTime();
-        return
-                (reg1Start <= reg2Start && reg1End >= reg2Start) ||
-                        (reg1Start <= reg2End && reg1End >= reg2End) ||
-                        (reg2Start <= reg1Start && reg2End >= reg1Start) ||
-                        (reg2Start <= reg1End && reg2End >= reg1End);
+        List<Period> reg1Periods = reg1.getStartAndEndTimesPerDay();
+        List<Period> reg2Periods = reg2.getStartAndEndTimesPerDay();
 
+        final boolean[] overlap = {false};
+        for (Period reg1Period : reg1Periods) {
+            reg2Periods.forEach(reg2Period -> overlap[0] = reg2Period.isAnyTimeCommon(reg1Period));
+            if (overlap[0]) return true;
+        }
+        return false;
     }
 
     private long[] getOverlappingRegistrationIds(User user, Registration registration) throws PortalException {
