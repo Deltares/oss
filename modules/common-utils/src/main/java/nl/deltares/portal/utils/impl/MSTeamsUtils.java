@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 public class MSTeamsUtils extends HttpClientUtils implements WebinarUtils {
-    private static final Log LOG = LogFactoryUtil.getLog(MSTeamsUtils.class);
 
     @Override
     public boolean isActive() {
@@ -32,5 +31,15 @@ public class MSTeamsUtils extends HttpClientUtils implements WebinarUtils {
     @Override
     public int unregisterUser(User user, String webinarKey, Map<String, String> registrationProperties) throws Exception {
         return 0;
+    }
+
+    @Override
+    public List<String> getAllCourseRegistrations(String webinarKey) throws Exception {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean isUserInCourseRegistrationsList(List<String> courseRegistrations, User user) {
+        return false;
     }
 }

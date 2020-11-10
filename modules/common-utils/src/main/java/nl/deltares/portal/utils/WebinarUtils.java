@@ -16,4 +16,8 @@ public interface WebinarUtils {
 
     int unregisterUser(User user, String webinarKey, Map<String, String> registrationProperties) throws Exception;
 
+    List<String> getAllCourseRegistrations(String webinarKey) throws Exception;
+
+    boolean isUserInCourseRegistrationsList(List<String> courseRegistrations, User user);
+
 }
