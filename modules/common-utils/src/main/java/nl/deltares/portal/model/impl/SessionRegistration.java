@@ -20,8 +20,8 @@ public class SessionRegistration extends Registration {
     private Room room = null;
     private final List<Expert> presenters = new ArrayList<>();
     private String imageUrl = "";
-    private String webinarKey;
-    private String provider;
+    private String webinarKey = "";
+    private String provider = "";
 
     public SessionRegistration(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
         super(article, dsdParserUtils);
@@ -41,8 +41,10 @@ public class SessionRegistration extends Registration {
             if (jsonImage != null) {
                 imageUrl = JsonContentUtils.parseImageJson(jsonImage);
             }
-            webinarKey = XmlContentUtils.getDynamicContentByName(document, "webinarKey", true);
-            provider = XmlContentUtils.getDynamicContentByName(document, "provider", true);
+            String webinarKey = XmlContentUtils.getDynamicContentByName(document, "webinarKey", true);
+            if (webinarKey != null) this.webinarKey = webinarKey;
+            String provider = XmlContentUtils.getDynamicContentByName(document, "provider", true);
+            if (provider != null) this.provider = provider;
             initDates(document);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
