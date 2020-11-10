@@ -59,7 +59,7 @@ public class GotoUtilsTest {
         user.setLastName("User");
 
         Map<String, String> info = new HashMap<>();
-        String webinarKey = "4599121209803004171";
+        String webinarKey = "5555006932186073868";
         if (gotoUtils.isUserRegistered(user, webinarKey, info)) {
             gotoUtils.unregisterUser(user, webinarKey, info);
             Assert.assertFalse(gotoUtils.isUserRegistered(user, webinarKey, info));
@@ -77,7 +77,7 @@ public class GotoUtilsTest {
         user.setLastName("User");
 
         Map<String, String> info = new HashMap<>();
-        String webinarKey = "4599121209803004171";
+        String webinarKey = "5555006932186073868";
         if (!gotoUtils.isUserRegistered(user, webinarKey, info)) {
             gotoUtils.registerUser(user, webinarKey, "testRegisterUser", info);
             Assert.assertTrue(gotoUtils.isUserRegistered(user, webinarKey, info));
@@ -87,4 +87,23 @@ public class GotoUtilsTest {
 
     }
 
+    @Test
+    public void testGetAllRegistrations() throws Exception {
+        if (!gotoUtils.isActive()) return;
+
+        User user = new MockUser();
+        user.setEmailAddress("test@liferay.com");
+        user.setFirstName("Test");
+        user.setLastName("User");
+        user.setScreenName("test-dsd");
+
+        String webinarKey = "5555006932186073868";
+        Map<String, String> info = new HashMap<>();
+        if (!gotoUtils.isUserRegistered(user, webinarKey, info)) {
+            gotoUtils.registerUser(user, webinarKey, "testRegisterUser", info);
+        }
+        List<String> allCourseRegistrations = gotoUtils.getAllCourseRegistrations(webinarKey);
+        Assert.assertTrue(gotoUtils.isUserInCourseRegistrationsList(allCourseRegistrations, user));
+
+    }
 }

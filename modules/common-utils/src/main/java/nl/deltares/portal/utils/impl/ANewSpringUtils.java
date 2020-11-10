@@ -1,8 +1,8 @@
 package nl.deltares.portal.utils.impl;
 
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -12,17 +12,16 @@ import nl.deltares.portal.utils.WebinarUtils;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
-    private static final Log LOG = LogFactoryUtil.getLog(ANewSpringUtils.class);
-
     private static final String API_KEY = "anewspring.apikey";
     private final String BASEURL_KEY =  "anewspring.baseurl";
     private String basePath;
     private String apiKey;
-
 
     @Override
     public boolean isActive() {
@@ -30,14 +29,14 @@ public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
     }
 
     @Override
-    public int registerUser(User user, String webinarKey, String callerId, Map<String, String> properties) throws Exception {
+    public int registerUser(User user, String courseId, String callerId, Map<String, String> properties) throws Exception {
 
         if (!userExists(user)){
             addUser(user, callerId);
         }
 //        DO not subscribe user as this allocates a license.
-//        if (!isUserSubscribed(user, webinarKey)){
-//            return subscribe(user, webinarKey);
+//        if (!isUserSubscribed(user, courseId)){
+//            return subscribe(user, courseId);
 //        }
         return 0;
     }
@@ -48,10 +47,33 @@ public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
     }
 
     @Override
-    public int unregisterUser(User user , String webinarKey, Map<String, String> properties) throws Exception {
+    public List<String> getAllCourseRegistrations(String courseId) throws Exception {
+        String subscriptionsPath = StringBundler.concat(getBasePath(), "getStudentSubscriptions/", courseId);
+        HttpURLConnection connection = getConnection(subscriptionsPath, "GET", getHeader("application/json"));
+        //get response
+        checkResponse(connection);
+        String jsonResponse = readAll(connection.getInputStream());
 
-        if (userExists(user) && isUserSubscribed(user, webinarKey)){
-            return unSubscribe(user, webinarKey);
+        JSONObject jsonObject = JsonContentUtils.parseContent(jsonResponse);
+        JSONArray students = jsonObject.getJSONArray("students");
+        ArrayList<String> studentIds = new ArrayList<>();
+        for (int i = 0; i < students.length(); i++) {
+            JSONObject student = students.getJSONObject(i);
+            String id = student.getString("id");
+            if (!id.isEmpty()) studentIds.add(id);
+        }
+        return studentIds;
+    }
+
+    @Override
+    public boolean isUserInCourseRegistrationsList(List<String> courseRegistrations, User user){
+        return courseRegistrations.contains(user.getScreenName());
+    }
+    @Override
+    public int unregisterUser(User user , String courseId, Map<String, String> properties) throws Exception {
+
+        if (userExists(user) && isUserSubscribed(user, courseId)){
+            return unSubscribe(user, courseId);
         }
         return 0;
     }
@@ -126,7 +148,7 @@ public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
         return checkResponse(connection);
     }
 
-    protected String getBasePath() {
+    private String getBasePath() {
         if (basePath != null) return basePath;
         basePath =  getProperty(BASEURL_KEY);
         if (basePath == null) return null;
@@ -141,13 +163,5 @@ public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
         if ( apiKey != null) return apiKey;
         apiKey = getProperty(API_KEY);
         return apiKey;
-    }
-
-    public static String getProperty(String propertyKey) {
-        if (!PropsUtil.contains(propertyKey)) {
-            LOG.warn(String.format("Missing property %s in portal-ext.properties file", propertyKey));
-            return null;
-        }
-        return PropsUtil.get(propertyKey);
     }
 }

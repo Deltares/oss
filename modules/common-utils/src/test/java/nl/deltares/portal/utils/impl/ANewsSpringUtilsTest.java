@@ -53,13 +53,14 @@ public class ANewsSpringUtilsTest {
         user.setEmailAddress("test@liferay.com");
         user.setFirstName("Test");
         user.setLastName("User");
-        user.setScreenName("anewspring");
+        user.setScreenName("test-dsd");
 
         Map<String, String> info = Collections.emptyMap();
-        if (!newSpringUtils.isUserRegistered(user, "PlatformIntro", info)) {
-            newSpringUtils.registerUser(user, "PlatformIntro", "testRegisterUser", info);
+        String courseId = "delft-fews-basic-config-course-2020";
+        if (!newSpringUtils.isUserRegistered(user, courseId, info)) {
+            newSpringUtils.registerUser(user, courseId, "testRegisterUser", info);
         }
-        Assert.assertTrue(newSpringUtils.isUserRegistered(user, "PlatformIntro", info));
+        Assert.assertTrue(newSpringUtils.isUserRegistered(user, courseId, info));
     }
 
     @Test
@@ -70,16 +71,36 @@ public class ANewsSpringUtilsTest {
         user.setEmailAddress("test@liferay.com");
         user.setFirstName("Test");
         user.setLastName("User");
-        user.setScreenName("anewspring");
+        user.setScreenName("test-dsd");
 
+        String courseId = "delft-fews-basic-config-course-2020";
         Map<String, String> info = Collections.emptyMap();
-        if (!newSpringUtils.isUserRegistered(user, "PlatformIntro", info)) {
-            newSpringUtils.registerUser(user, "PlatformIntro", "testRegisterUser", info);
+        if (!newSpringUtils.isUserRegistered(user, courseId, info)) {
+            newSpringUtils.registerUser(user, courseId, "testRegisterUser", info);
         }
-        Assert.assertTrue(newSpringUtils.isUserRegistered(user, "PlatformIntro", info));
-        newSpringUtils.unregisterUser(user, "PlatformIntro", info);
-        Assert.assertTrue(!newSpringUtils.isUserRegistered(user, "PlatformIntro", info));
+        Assert.assertTrue(newSpringUtils.isUserRegistered(user, courseId, info));
+        newSpringUtils.unregisterUser(user, courseId, info);
+        Assert.assertFalse(newSpringUtils.isUserRegistered(user, courseId, info));
 
     }
 
+    @Test
+    public void testGetAllRegistrations() throws Exception {
+        if (!newSpringUtils.isActive()) return;
+
+        User user = new MockUser();
+        user.setEmailAddress("test@liferay.com");
+        user.setFirstName("Test");
+        user.setLastName("User");
+        user.setScreenName("test-dsd");
+
+        String courseId = "delft-fews-basic-config-course-2020";
+        Map<String, String> info = Collections.emptyMap();
+        if (!newSpringUtils.isUserRegistered(user, courseId, info)) {
+            newSpringUtils.registerUser(user, courseId, "testRegisterUser", info);
+        }
+        List<String> allCourseRegistrations = newSpringUtils.getAllCourseRegistrations(courseId);
+        Assert.assertTrue(newSpringUtils.isUserInCourseRegistrationsList(allCourseRegistrations, user));
+
+    }
 }

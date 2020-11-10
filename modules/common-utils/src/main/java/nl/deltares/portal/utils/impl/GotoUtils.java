@@ -119,6 +119,36 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         return checkResponse(connection);
     }
 
+    @Override
+    public List<String> getAllCourseRegistrations(String webinarKey) throws Exception {
+        String accessToken = getAccessToken(); //calling this method loads organization key
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + accessToken);
+        String rawRegistrationPath = getBasePath() + GOTO_REGISTRATION_PATH;
+
+        String registrationPath = String.format(rawRegistrationPath, getOrganizerKey(), webinarKey);
+        //open connection
+        HttpURLConnection connection = getConnection(registrationPath, "GET", headers);
+        //get response
+        String jsonResponse = readAll(connection.getInputStream());
+
+        List<Map<String, String>> mapsList = new ArrayList<>(JsonContentUtils.parseJsonArrayToMap(jsonResponse));
+        ArrayList<String> emails = new ArrayList<>();
+        for (Map<String, String> registrant : mapsList) {
+            String email = registrant.get("email");
+            if (email != null && !email.isEmpty()) {
+                emails.add(email.toLowerCase());
+            }
+        }
+        return emails;
+    }
+
+    @Override
+    public boolean isUserInCourseRegistrationsList(List<String> courseRegistrations, User user) {
+        return courseRegistrations.contains(user.getEmailAddress().toLowerCase());
+    }
+
     private String getOrganizerKey() {
         if (organizer_key != null) return organizer_key;
         return getCachedToken(CACHED_ORGANIZER_KEY, null);
