@@ -138,11 +138,29 @@
 
 <aui:script use="liferay-form">
     const FIRST_STEP_ERROR_MESSAGE = '<liferay-ui:message key="dsd.registration.step1.error"/>';
-
+    const FIRST_STEP_ERROR_MESSAGE_PARENT_MISSING = '<liferay-ui:message key="dsd.registration.step1.error.missing.parent"/>';
     validateFirstStep = function() {
         let isFirstStepValid = $('.parent-registration').is(':checked');
         if (!isFirstStepValid) {
             alert(FIRST_STEP_ERROR_MESSAGE);
+            return isFirstStepValid;
+        }
+        let registrations = $('.registration-item');
+        $.each(registrations, function(i, registration) {
+             let parentChecked = registration.getElementsByClassName("parent-registration")[0].checked;
+             let childChecked = false;
+             let children = Array.from(registration.getElementsByClassName('child-registration'));
+             children.forEach(function(child) {
+                if (child.checked){
+                    childChecked = true;
+                }
+            })
+            if (!parentChecked && childChecked){
+                isFirstStepValid = false;
+            }
+        });
+        if (!isFirstStepValid){
+            alert(FIRST_STEP_ERROR_MESSAGE_PARENT_MISSING)
         }
         return isFirstStepValid;
     }
@@ -152,22 +170,27 @@
     };
 
     checkPrice = function() {
-        let parent = $('.parent-registration');
+        let parents = $('.parent-registration');
 
-        if (parent && parent.length > 0 && parseFloat(parent[0].getAttribute('data-price')) > 0){
-            $('#nav-stepper-step-3').removeClass('disabled'); //remove
-            return;
-        }
+        let priceEnabled = false;
+        $.each( parents, function( i, parent ) {
+            if (parent.checked && parseFloat(parent.getAttribute('data-price')) > 0){
+                priceEnabled = true;
+            }
+        });
 
         let children = $('.child-registration');
 
-        $('#nav-stepper-step-3').addClass('disabled'); //add;
-
         $.each( children, function( i, child ) {
             if (child.checked && parseFloat(child.getAttribute('data-price')) > 0){
-                $('#nav-stepper-step-3').removeClass('disabled'); //remove
+                priceEnabled = true;
             }
         });
+        if (priceEnabled){
+            $('#nav-stepper-step-3').removeClass('disabled'); //remove
+        } else {
+            $('#nav-stepper-step-3').addClass('disabled'); //add;
+        }
     };
 
     updateBadge = function() {
@@ -296,6 +319,7 @@
 
         $('.update-badge').change(updateBadge);
         $('.child-registration').change(checkPrice);
+        $('.parent-registration').change(checkPrice);
         $('.clear-cart').on('click', function(){
             shoppingCart.clearCart()
         });
