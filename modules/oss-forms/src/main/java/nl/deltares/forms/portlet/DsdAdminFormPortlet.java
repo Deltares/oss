@@ -101,26 +101,27 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 	}
 
 	private void writeEvents(ResourceResponse resourceResponse, Event event) throws IOException {
-
 		resourceResponse.setContentType("text/csv");
 
 		List<Map<String, Object>> registrationRecords = dsdSessionUtils.getRegistrations(event);
 
 		Map<Long, User> userCache = new HashMap<>();
+		Map<String, List<String>> courseRegistrationsCache = new HashMap<>();
 		Map<Long, Map<String, String>> userAttributeCache = new HashMap<>();
 		PrintWriter writer = resourceResponse.getWriter();
-		StringBuilder header = new StringBuilder("event,registration,start date,topic,type,email,firstName,lastName,webinarProvider,webinarKey");
+		StringBuilder header = new StringBuilder("event,registration,start date,topic,type,email,firstName,lastName,webinarProvider,registrationStatus");
 		for (KeycloakUtils.BILLING_ATTRIBUTES value : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
 			header.append(',');
 			header.append(value.name());
 		}
 		writer.println(header);
-		registrationRecords.forEach(recordObjects -> writeRecord(writer, recordObjects, event, userCache, userAttributeCache, resourceResponse.getLocale()));
+		registrationRecords.forEach(recordObjects ->
+				writeRecord(writer, recordObjects, event, userCache, userAttributeCache, courseRegistrationsCache, resourceResponse.getLocale()));
 
 	}
 
 	private void writeRecord(PrintWriter writer, Map<String, Object> record, Event event, Map<Long, User> userCache,
-							 Map<Long, Map<String, String>> userAttributeCache, Locale locale) {
+							 Map<Long, Map<String, String>> userAttributeCache, Map<String, List<String>> courseRegistrationsCache, Locale locale) {
 
 		Long registrationId = (Long) record.get("resourcePrimaryKey");
 		Registration registration = getRegistration(registrationId, event, locale);
@@ -129,7 +130,6 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 			clearInvalidRegistration((Long) record.get("groupId"), registrationId);
 			return;
 		}
-
 		Long userId = (Long) record.get("userId");
 		User user = userCache.get(userId);
 		if (user == null){
@@ -159,34 +159,39 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		line.append(',');
 		line.append(user.getLastName());
 		line.append(',');
-		if (registration instanceof SessionRegistration){
-			line.append(((SessionRegistration)registration).getWebinarProvider());
-		}
-		line.append(',');
-		Map<String, String> userPreferences;
 		try {
-			userPreferences = JsonContentUtils.parseJsonToMap((String) record.get("userPreferences"));
-
-			if (registration instanceof SessionRegistration) {
-				line.append(getRegistrationStatus(user, ((SessionRegistration) registration), userPreferences));
+			if (WebinarUtilsFactory.isWebinarSupported(registration)) {
+				writeWebinarInfo(line, user, (SessionRegistration) registration, WebinarUtilsFactory.newInstance(registration), courseRegistrationsCache);
+			} else {
+				line.append(','); //webinarProvider
+				line.append(','); //registrationStatus
 			}
+		} catch (Exception e) {
+			LOG.error(String.format("Error writing webinar info: %s", e.getMessage()));
+		}
+		try {
+			Map<String, String> userPreferences = JsonContentUtils.parseJsonToMap((String) record.get("userPreferences"));
 			BillingInfo billingInfo = getBillingInfo(userPreferences);
 			writeBillingInfo(line, billingInfo, user, userAttributeCache);
-
 		} catch (JSONException e) {
 			LOG.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
 		}
 		writer.println(line);
 	}
 
-	private String getRegistrationStatus(User user, SessionRegistration registration, Map<String, String> userPreferences) {
-		WebinarUtils webinarUtils = WebinarUtilsFactory.newInstance(registration.getWebinarProvider());
-		try {
-			if (webinarUtils.isUserRegistered(user, registration.getWebinarKey(), userPreferences)) return "registered";
-		} catch (Exception e) {
-			LOG.error(String.format("Error checking if user %s is registered for %s: %s", user.getEmailAddress(), registration.getTitle(), e.getMessage()));
+	private void writeWebinarInfo(StringBuilder line, User user, SessionRegistration registration, WebinarUtils webinarUtils, Map<String, List<String>> courseRegistrationsCache) throws Exception {
+		String webinarKey = registration.getWebinarKey();
+		List<String> courseRegistrations = courseRegistrationsCache.get(webinarKey);
+		if (courseRegistrations == null){
+			courseRegistrations = webinarUtils.getAllCourseRegistrations(webinarKey);
+			courseRegistrationsCache.put(webinarKey, courseRegistrations);
 		}
-		return "";
+		line.append(registration.getWebinarProvider());
+		line.append(',');
+		if (webinarUtils.isUserInCourseRegistrationsList(courseRegistrations, user)){
+			line.append("registered");
+		}
+		line.append(',');
 	}
 
 	private Registration getRegistration(Long registrationId, Event event, Locale locale) {
