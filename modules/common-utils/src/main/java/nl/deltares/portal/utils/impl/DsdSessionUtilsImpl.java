@@ -71,9 +71,9 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
         WebinarUtils webinarUtils = WebinarUtilsFactory.newInstance(registration);
         try {
-            webinarUtils.registerUser(user, registration.getWebinarKey(), GroupServiceUtil.getGroup(registration.getGroupId()).getName(), userProperties);
+            webinarUtils.registerUser(user, registration.getWebinarKey(), GroupServiceUtil.getGroup(registration.getGroupId()).getName(Locale.US), userProperties);
         } catch (Exception e) {
-            throw new PortalException(String.format("Error registering for GOTO webinar %s: %s", registration.getTitle(), e.getMessage()));
+            throw new PortalException(String.format("Error registering for webinar %s: %s", registration.getTitle(), e.getMessage()));
         }
     }
 
