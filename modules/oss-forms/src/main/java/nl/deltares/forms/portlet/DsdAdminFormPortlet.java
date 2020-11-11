@@ -5,6 +5,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
@@ -65,11 +66,20 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 	public void render(RenderRequest request, RenderResponse response) throws IOException, PortletException {
 		ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
 		try {
-			request.setAttribute("events", dsdJournalArticleUtils.getEvents(themeDisplay.getSiteGroupId(), themeDisplay.getLocale()));
+			request.setAttribute("events", getEvents(themeDisplay));
 		} catch (PortalException e) {
 			request.setAttribute("events", Collections.emptyList());
 		}
 		super.render(request, response);
+	}
+
+	private List<JournalArticle> getEvents(ThemeDisplay themeDisplay) throws PortalException {
+		List<JournalArticle> events = dsdJournalArticleUtils.getEvents(themeDisplay.getSiteGroupId(), themeDisplay.getLocale());
+		List<Group> children = themeDisplay.getSiteGroup().getChildren(true);
+		for (Group child : children) {
+			events.addAll(dsdJournalArticleUtils.getEvents(child.getGroupId(), themeDisplay.getLocale()));
+		}
+		return events;
 	}
 
 	@Override
@@ -84,7 +94,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		}
 		Event event;
 		try {
-			event = dsdParserUtils.getEvent(themeDisplay.getSiteGroupId(), eventId);
+			event = getEvent(themeDisplay, eventId);
 		} catch (PortalException e) {
 			writeError("Error getting event:" + e.getMessage(), resourceResponse);
 			return;
@@ -98,6 +108,22 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		if ("delete".equals(action)){
 			dsdSessionUtils.deleteEventRegistrations(event.getGroupId(), event.getResourceId());
 		}
+	}
+
+	private Event getEvent(ThemeDisplay themeDisplay, String eventId) throws PortalException {
+		try {
+			return dsdParserUtils.getEvent(themeDisplay.getSiteGroupId(), eventId);
+		} catch (PortalException e) {
+			List<Group> children = themeDisplay.getSiteGroup().getChildren(true);
+			for (Group child : children) {
+				try {
+					return dsdParserUtils.getEvent(child.getGroupId(), eventId);
+				} catch (PortalException portalException) {
+					//
+				}
+			}
+		}
+		throw new PortalException("Could not find event for " + eventId);
 	}
 
 	private void writeEvents(ResourceResponse resourceResponse, Event event) throws IOException {

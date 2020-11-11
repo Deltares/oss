@@ -52,6 +52,7 @@
 <aui:script use="event, aui-io-request, node">
     let FormsUtil = {
         writeError: function(data){
+            let errorBlock = A.one('#group-error-block');
             let message = JSON.parse(data).message;
             let errorMessageNode = A.Node.create('<div class="portlet-msg-error">' + message + '</div>');
             errorMessageNode.appendTo(errorBlock);

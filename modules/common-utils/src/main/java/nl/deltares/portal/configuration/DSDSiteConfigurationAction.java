@@ -55,6 +55,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         String contactURL = ParamUtil.getString(actionRequest, "contactURL");
         String sendFromEmail = ParamUtil.getString(actionRequest, "sendFromEmail");
         String replyToEmail = ParamUtil.getString(actionRequest, "replyToEmail");
+        boolean isDsdSite = ParamUtil.getBoolean(actionRequest, "dsdSite");
 
         Settings settings = SettingsFactoryUtil.getSettings(
                 new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), DSDSiteConfiguration.class.getName()));
@@ -69,6 +70,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         modifiableSettings.setValue("contactURL", contactURL);
         modifiableSettings.setValue("sendFromEmail", sendFromEmail);
         modifiableSettings.setValue("replyToEmail", replyToEmail);
+        modifiableSettings.setValue("dsdSite", String.valueOf(isDsdSite));
         modifiableSettings.store();
 
         super.processAction(portletConfig, actionRequest, actionResponse);
