@@ -17,10 +17,12 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.ModelListener;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.DsdParserUtils;
@@ -94,8 +96,9 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
                 String folderName = Validator.isNotNull(structure_folderJsonMap.getString(structureKey))
                         ? structure_folderJsonMap.getString(structureKey) : structureKey;
 
-                if (dsdArticle.storeInParentSite()) {
-                    groupId = journalArticleManagementConfiguration.dsdParentSiteID();
+                long parentGroupId = getParentGroupId(groupId);
+                if (dsdArticle.storeInParentSite() && parentGroupId > 0) {
+                    groupId = parentGroupId;
                     model.setGroupId(groupId);
 
                     try {
@@ -116,19 +119,27 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
     }
 
     private boolean isDSDSite(long groupId) {
-        boolean isDSDSite = false;
-
         try {
-            Group site = _groupLocalService.getGroup(groupId);
-            if (Validator.isNotNull(journalArticleManagementConfiguration.dsdParentSiteID())) {
-                isDSDSite = (site.getParentGroupId() == journalArticleManagementConfiguration.dsdParentSiteID() ||
-                        groupId == journalArticleManagementConfiguration.dsdParentSiteID());
+            DSDSiteConfiguration groupConfiguration = _configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, groupId);
+            if (Validator.isNotNull(groupConfiguration)) {
+                return groupConfiguration.dsdSite();
             }
         } catch (PortalException e) {
             LOGGER.error("Could not find site [" + groupId + "]", e);
         }
+        return false;
+    }
 
-        return isDSDSite;
+    private long getParentGroupId(long groupId){
+        try {
+            Group group = _groupLocalService.getGroup(groupId);
+            if (group != null){
+                return group.getParentGroupId();
+            }
+        } catch (PortalException e) {
+            LOGGER.error("Could not find site [" + groupId + "]", e);
+        }
+        return 0;
     }
 
     private JournalFolder fetchOrCreateJournalFolder(long userId, long groupId, String name) {
@@ -167,6 +178,13 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
         } else {
             structure_folderJsonMap = JSONFactoryUtil.createJSONObject();
         }
+    }
+
+    private ConfigurationProvider _configurationProvider;
+
+    @Reference
+    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
+        _configurationProvider = configurationProvider;
     }
 
     private volatile JournalArticleManagementConfiguration journalArticleManagementConfiguration;

@@ -60,6 +60,12 @@
                 name="replyToEmail"
                 value="<%= configuration.replyToEmail() %>"/>
 
+        <aui:input
+                label="dsd.site"
+                name="dsdSite"
+                type="checkbox"
+                value="<%= configuration.dsdSite() %>"/>
+
     </aui:fieldset>
 
     <aui:button-row>
