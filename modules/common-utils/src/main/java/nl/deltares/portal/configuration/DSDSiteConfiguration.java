@@ -34,4 +34,7 @@ public interface DSDSiteConfiguration {
 
     @Meta.AD(required = false, deflt = "dsd@deltares.nl", description = "Configure the Reply To email address")
     String replyToEmail();
+
+    @Meta.AD(required = false, deflt = "false", description = "Configure if current site is a DSD site.")
+    boolean dsdSite();
 }
