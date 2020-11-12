@@ -275,11 +275,14 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 				return;
 			}
 		}
-
+		boolean first = true;
 		//Write billing information. If no billing info then get values from user attributes
 		for (KeycloakUtils.BILLING_ATTRIBUTES key : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
-			line.append(',');
-
+			if (first){
+				first = false;
+			} else {
+				line.append(',');
+			}
 			String value = userAttributes == null ?
 					billingInfo.getAttribute(key) : userAttributes.get(BillingInfo.getCorrespondingUserAttributeKey(key).name());
 			if (value != null) line.append(value);

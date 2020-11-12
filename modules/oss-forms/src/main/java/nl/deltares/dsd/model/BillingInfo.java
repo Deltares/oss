@@ -92,7 +92,7 @@ public class BillingInfo {
     }
 
     public boolean isUseOrganization() {
-        return email != null;
+        return email == null;
     }
 
     public String getName() {
