@@ -9,8 +9,8 @@
             <#assign expert = dsdParserUtils.getExpert(journalArticle) />
             <#assign cur_expertName = expert.getName()/>
             <#assign cur_expertImage = expert.getSmallImageURL(themeDisplay)/>
-            <#assign cur_expertJobTitle = expert.getJobTitle() />
-            <#assign cur_expertCompany = expert.getCompany() />
+            <#assign cur_expertJobTitle><#if expert.getJobTitle()?? >${expert.getJobTitle()}<#else>""</#if></#assign>
+            <#assign cur_expertCompany><#if expert.getCompany()?? >${expert.getCompany()}<#else>""</#if></#assign>
             <#assign cur_expertEmail = expert.getEmail() />
                     
             <div class="expert-data">

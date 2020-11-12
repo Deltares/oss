@@ -46,7 +46,7 @@
                                     ${dateUtil.getDate(period.getStartDate(), "dd MMM yyyy", locale)}
                                 </span>
                                 <span class="c-sessions__item__time-date-place__time">
-                                        ${dateUtil.getDate(registration.getEndTime(), "HH:mm", locale)} - ${dateUtil.getDate(registration.getEndTime(), "HH:mm", locale)} (${timeZoneId})
+                                        ${dateUtil.getDate(registration.getStartTime(), "HH:mm", locale)} - ${dateUtil.getDate(registration.getEndTime(), "HH:mm", locale)} (${timeZoneId})
                                 </span>
                             </#list>
                         </#if>
@@ -91,16 +91,16 @@
                     </span>
                     <br>
 
-                        <#list registration.getPresenters() as presenter >
-                            <#assign expert = presenter />
-                            <#assign expertImageUrl = expert.getSmallImageURL(themeDisplay) />
-                            <span>
+                    <#list registration.getPresenters() as presenter >
+                        <#assign expert = presenter />
+                        <#assign expertImageUrl = expert.getSmallImageURL(themeDisplay) />
+                        <span>
                                 <#if expertImageUrl?? && expertImageUrl != "">
                                     <img class="expert-data__image" src="${expertImageUrl}" />
                                 </#if>
                                 <a href="mailto:${expert.getEmail()}" >${expert.getName()}</a>
                             </span>
-                        </#list>
+                    </#list>
 
                     <#if themeDisplay.isSignedIn() && registration.isOpen() && !registration.isEventInPast() >
                         <#assign isRegistered = dsdSessionUtils.isUserRegisteredFor(user, registration) />
@@ -130,13 +130,15 @@
     <#if schedules?? && schedules.getSiblings()?has_content && validator.isNotNull(schedules.getSiblings()?first.getData())>
 
         <#list schedules.getSiblings() as cur_Schedule>
-            <h3 class="c-sessions__item__title h1">
-                <#assign schedules_date_Data = getterUtil.getString(cur_Schedule.date.getData())>
-                <#if validator.isNotNull(schedules_date_Data)>
-                    <#assign schedules_date_DateObj = dateUtil.parseDate("yyyy-MM-dd", schedules_date_Data, locale)>
-                    ${languageUtil.get(locale, "dsd.theme.session.schedule")} - ${dateUtil.getDate(schedules_date_DateObj, "dd MMM yyyy", locale)}
-                </#if>
-            </h3>
+            <#if cur_Schedule.scheduleDate?has_content >
+                <h3 class="c-sessions__item__title h1">
+                    <#assign schedules_date_Data = getterUtil.getString(cur_Schedule.scheduleDate.getData())>
+                    <#if validator.isNotNull(schedules_date_Data)>
+                        <#assign schedules_date_DateObj = dateUtil.parseDate("yyyy-MM-dd", schedules_date_Data, locale)>
+                        ${languageUtil.get(locale, "dsd.theme.session.schedule")} - ${dateUtil.getDate(schedules_date_DateObj, "dd MMM yyyy", locale)}
+                    </#if>
+                </h3>
+            </#if>
             <div class="c-sessions__item__description">
                 ${cur_Schedule.getData()}
             </div>
