@@ -105,7 +105,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                     dsdSessionUtils.unRegisterUser(user, registration);
                 } catch (PortalException e) {
                     SessionErrors.add(actionRequest, "unregister-failed",  e.getMessage());
-                    success = false;
+                    success = true; // probably error unregistering webinar
                 }
             }
             return success;
@@ -147,7 +147,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         HashMap<String, String> propertyMap = new HashMap<>();
 
         BillingInfo billingInfo = registrationRequest.getBillingInfo();
-        if (billingInfo.isUseOrganization()){
+        if (!billingInfo.isUseOrganization()){
             propertyMap.put(KeycloakUtils.BILLING_ATTRIBUTES.billing_address.name(), billingInfo.getAddress());
             propertyMap.put(KeycloakUtils.BILLING_ATTRIBUTES.billing_city.name(), billingInfo.getCity());
             propertyMap.put(KeycloakUtils.BILLING_ATTRIBUTES.billing_country.name(), billingInfo.getCountry());

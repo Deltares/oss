@@ -80,22 +80,25 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     @Override
     public void unRegisterUser(User user, Registration registration) throws PortalException {
 
-        if (WebinarUtilsFactory.isWebinarSupported(registration)){
+        try {
+            if (WebinarUtilsFactory.isWebinarSupported(registration)) {
 
-            List<nl.deltares.dsd.registration.model.Registration> registrations = registrationLocalService.getRegistrations(registration.getGroupId(), user.getUserId(), registration.getResourceId());
-            if (registrations.size() > 0){
-                Map<String, String> preferences = getUserPreferencesMap(registrations.get(0));
-                try {
-                    WebinarUtils webinarUtils = WebinarUtilsFactory.newInstance(registration);
-                    webinarUtils.unregisterUser(user, ((SessionRegistration) registration).getWebinarKey(), preferences);
-                } catch (Exception e) {
-                    throw new PortalException(String.format("Failed to unregister user %s for registration %s: %s", user.getEmailAddress(), registration.getTitle(), e.getMessage()));
+                List<nl.deltares.dsd.registration.model.Registration> registrations = registrationLocalService.getRegistrations(registration.getGroupId(), user.getUserId(), registration.getResourceId());
+                if (registrations.size() > 0) {
+                    Map<String, String> preferences = getUserPreferencesMap(registrations.get(0));
+                    try {
+                        WebinarUtils webinarUtils = WebinarUtilsFactory.newInstance(registration);
+                        webinarUtils.unregisterUser(user, ((SessionRegistration) registration).getWebinarKey(), preferences);
+                    } catch (Exception e) {
+                        throw new PortalException(String.format("Failed to unregister user %s for registration %s: %s", user.getEmailAddress(), registration.getTitle(), e.getMessage()));
+                    }
                 }
             }
+        } finally {
+            registrationLocalService.deleteUserRegistrationAndChildRegistrations(
+                    registration.getGroupId(), registration.getResourceId(), user.getUserId());
         }
 
-        registrationLocalService.deleteUserRegistrationAndChildRegistrations(
-                registration.getGroupId(), registration.getResourceId(), user.getUserId());
     }
 
     private Map<String, String> getUserPreferencesMap(nl.deltares.dsd.registration.model.Registration dbRegistration) throws PortalException {
