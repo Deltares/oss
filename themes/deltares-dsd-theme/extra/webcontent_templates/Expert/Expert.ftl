@@ -12,10 +12,10 @@
 
     <div class="expert-data__content">
         <p class="bold">${expertName.getData()}</p>
-        <#if expertName.expertJobTitle.getData()?has_content>
+        <#if expertName.expertJobTitle?? && expertName.expertJobTitle.getData()?has_content>
             <p>${expertName.expertJobTitle.getData()}</p>
         </#if>
-        <#if expertName.expertCompany.getData()?has_content>
+        <#if expertName.expertCompany?? && expertName.expertCompany.getData()?has_content>
             <p>${expertName.expertCompany.getData()}</p>
         </#if>
         <p>
