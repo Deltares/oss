@@ -31,11 +31,23 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
 
         Date startDate = getDate(portletSharedSearchSettings, "startDate");
         Date endDate = getDate(portletSharedSearchSettings, "endDate");
+        boolean showPast = getBoolean(portletSharedSearchSettings, "showPast");
+        if (!showPast && startDate == null){
+            startDate = new Date();
+        }
+
         _dsDsdJournalArticleUtils.contributeDsdDateRangeRegistrations(
                 groupId, startDate, endDate, portletSharedSearchSettings.getSearchContext(), locale);
 
     }
-
+    private boolean getBoolean(PortletSharedSearchSettings portletSharedSearchSettings, String fieldName){
+        Optional<String> showPastOptional = portletSharedSearchSettings.getParameter("showPast");
+        if (showPastOptional.isPresent()){
+            return Boolean.parseBoolean(showPastOptional.get());
+        }
+        Object configuredValue = getConfiguredValue(fieldName, portletSharedSearchSettings);
+        return configuredValue != null && (Boolean) configuredValue;
+    }
     private Date getDate(PortletSharedSearchSettings portletSharedSearchSettings, String dateField) {
 
         Optional<String> optional = portletSharedSearchSettings.getParameter(dateField);
@@ -48,6 +60,24 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
             }
         }
         return getConfiguredDate(dateField, portletSharedSearchSettings);
+    }
+
+    private Object getConfiguredValue(String key, PortletSharedSearchSettings portletSharedSearchSettings){
+
+        try {
+            DateRangeFacetConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(DateRangeFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
+            if (key.equals("showPast")) {
+                String showPast = configuration.showPast();
+                if (showPast != null && !showPast.isEmpty()){
+                    return Boolean.parseBoolean(showPast);
+                }
+                return true;
+            }
+
+        } catch (ConfigurationException e) {
+            LOG.warn("Could not get configuration", e);
+        }
+        return null;
     }
 
     private Date getConfiguredDate(String key, PortletSharedSearchSettings portletSharedSearchSettings){

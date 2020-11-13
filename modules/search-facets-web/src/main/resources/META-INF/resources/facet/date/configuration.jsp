@@ -37,6 +37,13 @@
                 label="End search period (dd-mm-yyyy)"
                 value="<%= endDateConfig %>">
         </aui:input>
+        <aui:input
+                name="showPast"
+                label="facet.show-past.label"
+                type="checkbox"
+                value="<%= showPastConfig %>">
+        </aui:input>
+
     </aui:fieldset>
 
     <aui:button-row>
