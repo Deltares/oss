@@ -22,6 +22,12 @@ AUI.add(
                 if (topic) {
                     url = this.selectTerm(url, 'topic', topic);
                 }
+
+                let showPastElement = $('input[name$="' + namespace + 'showPast"]');
+                if (showPastElement.val()){
+                    url = this.selectTerm(url, 'showPast', showPastElement[0].checked);
+                }
+
                 window.location.href = url;
                 //var url = Liferay.Search.FacetUtil.setURLParameter('http://example.com/path', 'q', 'test');
             },
