@@ -71,7 +71,9 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
         WebinarUtils webinarUtils = WebinarUtilsFactory.newInstance(registration);
         try {
-            webinarUtils.registerUser(user, registration.getWebinarKey(), GroupServiceUtil.getGroup(registration.getGroupId()).getName(Locale.US), userProperties);
+            if (webinarUtils.isActive()) {
+                webinarUtils.registerUser(user, registration.getWebinarKey(), GroupServiceUtil.getGroup(registration.getGroupId()).getName(Locale.US), userProperties);
+            }
         } catch (Exception e) {
             throw new PortalException(String.format("Error registering for webinar %s: %s", registration.getTitle(), e.getMessage()));
         }
@@ -88,7 +90,9 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
                     Map<String, String> preferences = getUserPreferencesMap(registrations.get(0));
                     try {
                         WebinarUtils webinarUtils = WebinarUtilsFactory.newInstance(registration);
-                        webinarUtils.unregisterUser(user, ((SessionRegistration) registration).getWebinarKey(), preferences);
+                        if (webinarUtils.isActive()) {
+                            webinarUtils.unregisterUser(user, ((SessionRegistration) registration).getWebinarKey(), preferences);
+                        }
                     } catch (Exception e) {
                         throw new PortalException(String.format("Failed to unregister user %s for registration %s: %s", user.getEmailAddress(), registration.getTitle(), e.getMessage()));
                     }
