@@ -5,6 +5,7 @@
 <%
 	LocalDate startDate = (LocalDate) renderRequest.getAttribute("startDate");
 	LocalDate endDate = (LocalDate) renderRequest.getAttribute("endDate");
+	Boolean showPast = (Boolean) renderRequest.getAttribute("showPast");
 
 	if (startDate == null){
 		if (startDateConfig != null && !startDateConfig.isEmpty()){
@@ -23,6 +24,10 @@
 	String formattedEndDate = "";
 	if (endDate != null){
 		formattedEndDate = endDate.format(DateFacetUtil.DATE_TIME_FORMATTER);
+	}
+
+	if (showPast == null){
+		showPast = Boolean.parseBoolean(showPastConfig);
 	}
 %>
 
@@ -50,6 +55,17 @@
 			</aui:input>
 		</div>
 	</div>
+	<div class="row">
+		<div class="col pr-2">
+			<aui:input
+					name="showPast"
+					type="checkbox"
+					cssClass="check-box"
+					label="facet.show-past.label"
+					value="<%= showPast  %>" >
+			</aui:input>
+		</div>
+	</div>
 </aui:form>
 
 
@@ -62,6 +78,9 @@
 	$(document).ready(function () {
 		$(".portlet-date-range-facet .date-picker").change(function () {
 			Liferay.Deltares.FacetUtil.updateQueryString("<portlet:namespace />");
+		});
+		$(".portlet-date-range-facet .check-box").change(function () {
+		Liferay.Deltares.FacetUtil.updateQueryString("<portlet:namespace />");
 		});
 	});
 </aui:script>

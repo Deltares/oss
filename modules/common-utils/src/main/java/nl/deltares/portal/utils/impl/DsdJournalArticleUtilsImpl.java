@@ -8,9 +8,7 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.*;
 import com.liferay.portal.kernel.search.facet.Facet;
-import com.liferay.portal.kernel.search.generic.MatchQuery;
-import com.liferay.portal.kernel.search.generic.MultiMatchQuery;
-import com.liferay.portal.kernel.search.generic.TermRangeQueryImpl;
+import com.liferay.portal.kernel.search.generic.*;
 import com.liferay.portal.kernel.util.DateUtil;
 import nl.deltares.portal.utils.DDMStructureUtil;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
@@ -71,7 +69,6 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
         if (startDate != null) startDateString = DateUtil.getDate(startDate, "yyyy-MM-dd", locale);
         String endDateString = null;
         if (endDate != null) endDateString =DateUtil.getDate(endDate, "yyyy-MM-dd", locale);
-
         return new TermRangeQueryImpl(fieldName, startDateString, endDateString, startDate != null, endDate != null);
     }
 
@@ -111,20 +108,22 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
     }
 
     @Override
-    public void contributeDsdDateRangeRegistrations(long groupId, Date startDate, Date endDate,  SearchContext searchContext, Locale locale){
+    public void contributeDsdDateRangeRegistrations(long groupId, Date startDate, Date endDate, SearchContext searchContext, Locale locale){
 
         List<Optional<DDMStructure>> optionalList = ddmStructureUtil.getDDMStructuresByName(groupId, new String[]{"SESSION", "DINNER"}, locale);
 
         BooleanClauseFactory booleanClauseFactory = BooleanClauseFactoryUtil.getBooleanClauseFactory();
-        ArrayList<BooleanClause<Query>> boolClauseQueries = new ArrayList<>();
+
+        BooleanQueryImpl booleanQuery = new BooleanQueryImpl();
         for (Optional<DDMStructure> structureOptional : optionalList) {
             if (structureOptional.isPresent()) {
                 long ddmStructureId = structureOptional.get().getStructureId();
                 String startDateField = _ddmIndexer.encodeName(ddmStructureId, "registrationDate", locale);
-                boolClauseQueries.add(booleanClauseFactory.create(buildDateRangeQuery(startDateField, startDate, endDate, locale), BooleanClauseOccur.SHOULD.getName()));
+                booleanQuery.add(buildDateRangeQuery(startDateField, startDate, endDate, locale), BooleanClauseOccur.SHOULD);
             }
         }
-        searchContext.setBooleanClauses(boolClauseQueries.toArray(new BooleanClause[0]));
+        BooleanClause<Query> queryBooleanClause = booleanClauseFactory.create(booleanQuery, BooleanClauseOccur.MUST.getName());
+        searchContext.setBooleanClauses(new BooleanClause[]{queryBooleanClause});
     }
 
     @Override

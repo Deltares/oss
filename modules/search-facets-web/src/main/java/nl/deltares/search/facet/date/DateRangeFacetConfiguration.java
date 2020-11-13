@@ -12,4 +12,9 @@ public interface DateRangeFacetConfiguration {
 
     @Meta.AD(required = false)
     String endDate();
+
+    @Meta.AD(required = false)
+    String showPast();
+
+
 }
