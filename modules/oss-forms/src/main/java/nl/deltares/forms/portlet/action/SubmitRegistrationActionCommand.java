@@ -125,7 +125,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         }
         for (Registration registration : registrations) {
             try {
-                dsdSessionUtils.registerUser(user, registration, registration.getPrice() > 0 ? billingInfo : Collections.emptyMap());
+                dsdSessionUtils.registerUser(user, registration, registration.getPrice() > 0 ? billingInfo : new HashMap<>());
             } catch (PortalException e) {
                 SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
                 success = false;
@@ -133,7 +133,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             for (Registration childRegistration : registrationRequest.getChildRegistrations(registration)) {
 
                 try {
-                    dsdSessionUtils.registerUser(user, childRegistration, childRegistration.getPrice() > 0 ? billingInfo : Collections.emptyMap());
+                    dsdSessionUtils.registerUser(user, childRegistration, childRegistration.getPrice() > 0 ? billingInfo : new HashMap<>());
                 } catch (PortalException e) {
                     SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
                     success = false;

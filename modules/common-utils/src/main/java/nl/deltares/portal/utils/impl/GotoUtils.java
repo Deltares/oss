@@ -1,6 +1,5 @@
 package nl.deltares.portal.utils.impl;
 
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -15,7 +14,10 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class GotoUtils extends HttpClientUtils implements WebinarUtils {
@@ -101,7 +103,10 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
 
         String registrantKey = properties.get("registrantKey");
         if (registrantKey == null){
-            throw new PortalException("No 'registrantKey' found in user preferences");
+            registrantKey = getRegistrantKey(user, webinarKey);
+            if (registrantKey == null) {
+                return 0; //user not found.
+            }
         }
 
         String rawRegistrationPath = getBasePath() + GOTO_REGISTRATION_PATH;
@@ -117,6 +122,33 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
 
         //get response
         return checkResponse(connection);
+    }
+
+    private String getRegistrantKey(User user, String webinarKey) {
+        try {
+            String accessToken = getAccessToken(); //calling this method loads organization key
+            HashMap<String, String> headers = new HashMap<>();
+            headers.put("Content-Type", "application/json");
+            headers.put("Authorization", "Bearer " + accessToken);
+            String rawRegistrationPath = getBasePath() + GOTO_REGISTRATION_PATH;
+
+            String registrationPath = String.format(rawRegistrationPath, getOrganizerKey(), webinarKey);
+            //open connection
+            HttpURLConnection connection = getConnection(registrationPath, "GET", headers);
+            //get response
+            String jsonResponse = readAll(connection.getInputStream());
+
+            List<Map<String, String>> mapsList = new ArrayList<>(JsonContentUtils.parseJsonArrayToMap(jsonResponse));
+            for (Map<String, String> registrant : mapsList) {
+                String email = registrant.get("email");
+                if (user.getEmailAddress().toLowerCase().equals(email.toLowerCase())) {
+                    return registrant.get("registrantKey");
+                }
+            }
+        } catch (Exception e){
+            //
+        }
+        return null;
     }
 
     @Override
