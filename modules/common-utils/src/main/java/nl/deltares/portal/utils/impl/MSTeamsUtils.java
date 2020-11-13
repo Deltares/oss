@@ -15,7 +15,7 @@ public class MSTeamsUtils extends HttpClientUtils implements WebinarUtils {
 
     @Override
     public boolean isActive() {
-        return false;
+        return true;
     }
 
     @Override
