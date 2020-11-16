@@ -58,13 +58,10 @@ public class DateRangeFacetPortlet extends MVCPortlet {
         Optional<String> startDateOptional = portletSharedSearchResponse.getParameter("startDate", renderRequest);
         Optional<String> endDateOptional = portletSharedSearchResponse.getParameter("endDate", renderRequest);
 
-        Optional<String> showPastOptional = portletSharedSearchResponse.getParameter("showPast", renderRequest);
-
         startDateOptional.ifPresent(s -> renderRequest.setAttribute("startDate", DateFacetUtil.parseDate(s)));
 
         endDateOptional.ifPresent(s -> renderRequest.setAttribute("endDate", DateFacetUtil.parseDate(s)));
 
-        showPastOptional.ifPresent(s -> renderRequest.setAttribute("showPast", Boolean.parseBoolean(s)));
         super.render(renderRequest, renderResponse);
     }
 
