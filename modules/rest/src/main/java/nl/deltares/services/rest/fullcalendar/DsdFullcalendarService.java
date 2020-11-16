@@ -7,9 +7,12 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.service.GroupServiceUtil;
 import com.liferay.portal.kernel.service.LayoutServiceUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration;
+import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
@@ -50,6 +53,14 @@ public class DsdFullcalendarService {
                            @QueryParam("portletId") String portletId, @QueryParam("layoutUuid") String layoutUuid, @QueryParam("locale") String localeStr,
                            @QueryParam("start") String start, @QueryParam("end") String end, @QueryParam("timeZone") String timeZone) {
 
+        DSDSiteConfiguration siteConfiguration = null;
+        try {
+            siteConfiguration = configurationProvider
+                    .getGroupConfiguration(DSDSiteConfiguration.class, Long.parseLong(siteId));
+        } catch (ConfigurationException e) {
+            //
+        }
+
         dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
         Date startSearch;
         try {
@@ -75,7 +86,7 @@ public class DsdFullcalendarService {
                 nl.deltares.portal.model.impl.Event event = parserUtils.getEvent(Long.parseLong(siteId), eventId);
                 registrations = event.getRegistrations(locale);
             }
-            return toResponse(getEvents(registrations, startSearch, endSearch, colorMap));
+            return toResponse(getEvents(registrations, startSearch, endSearch, colorMap, siteConfiguration));
         } catch (PortalException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
@@ -99,7 +110,7 @@ public class DsdFullcalendarService {
     }
 
 
-    private List<Event> getEvents(List<Registration> registrations, Date startSearch, Date endSearch, Map<String, String> colorMap) {
+    private List<Event> getEvents(List<Registration> registrations, Date startSearch, Date endSearch, Map<String, String> colorMap, DSDSiteConfiguration siteConfiguration) {
 
         List<Event> events = new ArrayList<>(registrations.size());
         for (Registration registration : registrations) {
@@ -112,29 +123,47 @@ public class DsdFullcalendarService {
             int dayCounter = 0;
             List<Period> periodsPerDay = registration.getStartAndEndTimesPerDay();
             for (Period period : periodsPerDay) {
-                events.add(createCalendarEvent(colorMap, registration, dayCounter++, period.getStartTime(), period.getEndTime()));
+                events.add(createCalendarEvent(colorMap, registration, dayCounter++, period.getStartTime(), period.getEndTime(), siteConfiguration));
             }
         }
 
         return events;
     }
 
-    private Event createCalendarEvent(Map<String, String> colorMap, Registration registration, int dayCount, long startDay, long endDay) {
+    private Event createCalendarEvent(Map<String, String> colorMap, Registration registration, int dayCount, long startDay, long endDay, DSDSiteConfiguration siteConfiguration) {
         Event event = new Event();
         event.setId(registration.getArticleId() + '_' + dayCount);
         if (registration instanceof SessionRegistration) {
             event.setResourceId(String.valueOf(((SessionRegistration) registration).getRoom().getResourceId()));
+            event.setUrl("-/" + registration.getJournalArticle().getUrlTitle());
         } else if (registration instanceof DinnerRegistration) {
             event.setResourceId(String.valueOf(((DinnerRegistration) registration).getRestaurant().getResourceId()));
+            if (siteConfiguration != null && siteConfiguration.travelStayURL() != null && !siteConfiguration.travelStayURL().isEmpty()) {
+                event.setUrl(getPageUrl(registration.getGroupId(), siteConfiguration.travelStayURL()));
+            } else {
+                event.setUrl("-/" + registration.getJournalArticle().getUrlTitle());
+            }
         } else if (registration instanceof BusTransfer){
             event.setResourceId("bustransfer");
+            if (siteConfiguration != null && siteConfiguration.busTransferURL() != null) {
+                event.setUrl(getPageUrl(registration.getGroupId(), siteConfiguration.busTransferURL()));
+            }
         }
         event.setStart(startDay);
         event.setEnd(endDay);
         event.setColor(colorMap.get(registration.getType()));
         event.setTitle(registration.getTitle());
-        event.setUrl("-/" + registration.getJournalArticle().getUrlTitle()); //todo
+
         return event;
+    }
+
+    private String getPageUrl(long groupId, String relativeUrl) {
+        try {
+            String friendlyURL = GroupServiceUtil.getGroup(groupId).getFriendlyURL();
+            return StringBundler.concat("/web", friendlyURL, relativeUrl);
+        } catch (PortalException e) {
+            return "";
+        }
     }
 
     private Map<String, String> getColorMap(String layoutUuid, long siteId, String portletId) {
