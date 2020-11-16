@@ -47,8 +47,8 @@ public class DateRangeFacetConfigurationAction extends DefaultConfigurationActio
         String endDate = ParamUtil.getString(actionRequest, "endDate");
         setPreference(actionRequest, "endDate", endDate);
 
-        String showPast = ParamUtil.getString(actionRequest, "showPast");
-        setPreference(actionRequest, "showPast", showPast);
+        String setStartNow = ParamUtil.getString(actionRequest, "setStartNow");
+        setPreference(actionRequest, "setStartNow", setStartNow);
         super.processAction(portletConfig, actionRequest, actionResponse);
     }
 

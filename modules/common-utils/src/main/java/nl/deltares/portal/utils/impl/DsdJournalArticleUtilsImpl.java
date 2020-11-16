@@ -123,7 +123,16 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
             }
         }
         BooleanClause<Query> queryBooleanClause = booleanClauseFactory.create(booleanQuery, BooleanClauseOccur.MUST.getName());
-        searchContext.setBooleanClauses(new BooleanClause[]{queryBooleanClause});
+        searchContext.setBooleanClauses(join(queryBooleanClause, searchContext.getBooleanClauses()));
+    }
+
+    private BooleanClause[] join(BooleanClause newClause, BooleanClause<Query>[] existingClauses) {
+
+        if (existingClauses == null || existingClauses.length == 0) return new BooleanClause[]{newClause};
+        BooleanClause[] joinedClauses = new BooleanClause[existingClauses.length + 1];
+        System.arraycopy(existingClauses, 0, joinedClauses, 0, existingClauses.length);
+        System.arraycopy(new BooleanClause[] {newClause}, 0, joinedClauses, existingClauses.length, 1);
+        return joinedClauses;
     }
 
     @Override
@@ -137,8 +146,8 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
             String idField = _ddmIndexer.encodeName(ddmStructureId, "eventId", locale);
             eventIdFields.add(idField);
         }));
-        searchContext.setBooleanClauses(new BooleanClause[]{booleanClauseFactory.create(buildMultiMatchQuery(
-                eventIdFields.toArray(new String[0]), eventId, MatchQuery.Operator.OR), BooleanClauseOccur.MUST.getName())});
+        searchContext.setBooleanClauses(join(booleanClauseFactory.create(buildMultiMatchQuery(
+                eventIdFields.toArray(new String[0]), eventId, MatchQuery.Operator.OR), BooleanClauseOccur.MUST.getName()), searchContext.getBooleanClauses()));
     }
 
     @Override
