@@ -27,12 +27,12 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
                     renderRequest.getAttribute(DateRangeFacetConfiguration.class.getName());
     String startDateConfig = null;
     String endDateConfig = null;
-    String showPastConfig = null;
+    String setStartNowConfig = null;
 
     if (Validator.isNotNull(configuration)) {
         startDateConfig = portletPreferences.getValue("startDate", configuration.startDate());
         endDateConfig = portletPreferences.getValue("endDate", configuration.endDate());
-        showPastConfig = portletPreferences.getValue("showPast", configuration.showPast());
+        setStartNowConfig = portletPreferences.getValue("setStartNow", configuration.setStartNow());
     }
 
     RegistrationFacetConfiguration reg_configuration =

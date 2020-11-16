@@ -38,10 +38,10 @@
                 value="<%= endDateConfig %>">
         </aui:input>
         <aui:input
-                name="showPast"
-                label="facet.show-past.label"
+                name="setStartNow"
+                label="facet.start-date-now.label"
                 type="checkbox"
-                value="<%= showPastConfig %>">
+                value="<%= setStartNowConfig %>">
         </aui:input>
 
     </aui:fieldset>

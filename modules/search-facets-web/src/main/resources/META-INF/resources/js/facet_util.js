@@ -32,6 +32,7 @@ AUI.add(
                 //var url = Liferay.Search.FacetUtil.setURLParameter('http://example.com/path', 'q', 'test');
             },
             selectTerm: function (url, name, value) {
+                if (value === 'undefined') value = '';
                 return Liferay.Search.FacetUtil.setURLParameter(url, name, value);
             },
 

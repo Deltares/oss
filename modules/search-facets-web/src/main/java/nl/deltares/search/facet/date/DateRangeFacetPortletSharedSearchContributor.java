@@ -31,8 +31,8 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
 
         Date startDate = getDate(portletSharedSearchSettings, "startDate");
         Date endDate = getDate(portletSharedSearchSettings, "endDate");
-        boolean showPast = getBoolean(portletSharedSearchSettings, "showPast");
-        if (!showPast && startDate == null){
+        boolean setStartNow = getBoolean(portletSharedSearchSettings, "setStartNow");
+        if (setStartNow && startDate == null){
             startDate = new Date();
         }
 
@@ -41,7 +41,7 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
 
     }
     private boolean getBoolean(PortletSharedSearchSettings portletSharedSearchSettings, String fieldName){
-        Optional<String> showPastOptional = portletSharedSearchSettings.getParameter("showPast");
+        Optional<String> showPastOptional = portletSharedSearchSettings.getParameter("setStartNow");
         if (showPastOptional.isPresent()){
             return Boolean.parseBoolean(showPastOptional.get());
         }
@@ -66,10 +66,10 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
 
         try {
             DateRangeFacetConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(DateRangeFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
-            if (key.equals("showPast")) {
-                String showPast = configuration.showPast();
-                if (showPast != null && !showPast.isEmpty()){
-                    return Boolean.parseBoolean(showPast);
+            if (key.equals("setStartNow")) {
+                String setStartNow = configuration.setStartNow();
+                if (setStartNow != null && !setStartNow.isEmpty()){
+                    return Boolean.parseBoolean(setStartNow);
                 }
                 return true;
             }

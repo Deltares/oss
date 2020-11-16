@@ -14,7 +14,7 @@ public interface DateRangeFacetConfiguration {
     String endDate();
 
     @Meta.AD(required = false)
-    String showPast();
+    String setStartNow();
 
 
 }
