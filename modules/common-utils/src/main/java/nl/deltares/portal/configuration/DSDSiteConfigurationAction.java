@@ -50,6 +50,8 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
 
         long eventId = ParamUtil.getLong(actionRequest, "eventId");
         String registrationURL = ParamUtil.getString(actionRequest, "registrationURL");
+        String busTransferURL = ParamUtil.getString(actionRequest, "busTransferURL");
+        String travelStayURL = ParamUtil.getString(actionRequest, "travelStayURL");
         String conditionsURL = ParamUtil.getString(actionRequest, "conditionsURL");
         String privacyURL = ParamUtil.getString(actionRequest, "privacyURL");
         String contactURL = ParamUtil.getString(actionRequest, "contactURL");
@@ -65,6 +67,8 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
 
         modifiableSettings.setValue("eventId", String.valueOf(eventId));
         modifiableSettings.setValue("registrationURL", registrationURL);
+        modifiableSettings.setValue("busTransferURL", busTransferURL);
+        modifiableSettings.setValue("travelStayURL", travelStayURL);
         modifiableSettings.setValue("conditionsURL", conditionsURL);
         modifiableSettings.setValue("privacyURL", privacyURL);
         modifiableSettings.setValue("contactURL", contactURL);

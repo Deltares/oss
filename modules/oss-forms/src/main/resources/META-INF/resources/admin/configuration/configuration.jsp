@@ -36,6 +36,17 @@
                 value="<%= configuration.registrationURL() %>"/>
 
         <aui:input
+                label="bustransfer-url"
+                name="busTransferURL"
+                value="<%= configuration.busTransferURL() %>"/>
+
+
+        <aui:input
+                label="travelstay-url"
+                name="travelStayURL"
+                value="<%= configuration.travelStayURL() %>"/>
+
+        <aui:input
                 label="conditions-url"
                 name="conditionsURL"
                 value="<%= configuration.conditionsURL() %>"/>

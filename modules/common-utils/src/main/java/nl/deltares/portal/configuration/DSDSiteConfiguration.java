@@ -20,6 +20,12 @@ public interface DSDSiteConfiguration {
     @Meta.AD(required = false, deflt = "", description = "Configure the friendly URL of the registration form page")
     String registrationURL();
 
+    @Meta.AD(required = false, deflt = "", description = "Configure the friendly URL of the bus transfer page")
+    String busTransferURL();
+
+    @Meta.AD(required = false, deflt = "", description = "Configure the friendly URL of the travel and stay page")
+    String travelStayURL();
+
     @Meta.AD(required = false, deflt = "", description = "Configure the URL where the General Course Conditions of Deltares can be found")
     String conditionsURL();
 
