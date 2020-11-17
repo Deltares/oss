@@ -123,13 +123,27 @@ public class JsonContentUtils {
         return values.getString(0);
     }
 
-    public static String parseImageJson(String jsonData) throws PortalException {
-        JSONObject jsonObject = JsonContentUtils.parseContent(jsonData);
-        FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(jsonObject.getLong("fileEntryId"));
-        if (fileEntry == null) return "";
-        return DLUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), null, "", false, true);
+    public static String parseImageJson(String jsonData) {
+        try {
+            JSONObject jsonObject = JsonContentUtils.parseContent(jsonData);
+            FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(jsonObject.getLong("fileEntryId"));
+            if (fileEntry == null) return "";
+            return DLUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), null, "", false, true);
+        } catch (Exception e) {
+            return "";
+        }
     }
 
+    public static String parseDocumentJson(String jsonData) {
+        try {
+            JSONObject jsonObject = JsonContentUtils.parseContent(jsonData);
+            FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(jsonObject.getLong("classPK"));
+            if (fileEntry == null) return "";
+            return DLUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), null, "", false, true);
+        } catch (Exception e) {
+            return "";
+        }
+    }
     public static Map<String, String> parseSessionColorConfig(String json) {
         Map<String, String> colorMap;
         try {

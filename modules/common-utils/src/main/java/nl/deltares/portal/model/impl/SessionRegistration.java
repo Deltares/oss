@@ -19,6 +19,7 @@ public class SessionRegistration extends Registration {
     private static final Log LOG = LogFactoryUtil.getLog(SessionRegistration.class);
     private Room room = null;
     private final List<Expert> presenters = new ArrayList<>();
+    private final List<Presentation> presentations = new ArrayList<>();
     private String imageUrl = "";
     private String webinarKey = "";
     private String provider = "";
@@ -118,6 +119,30 @@ public class SessionRegistration extends Registration {
 
     public String getWebinarProvider() {
         return provider;
+    }
+
+    @SuppressWarnings("unused")
+    public List<Presentation> getPresentations(){
+        loadPresentations();
+        return Collections.unmodifiableList(presentations);
+    }
+
+    private void loadPresentations() {
+        if (presentations.size() > 0) return;
+        try {
+            parsePresentations();
+        } catch (PortalException e) {
+            LOG.error(String.format("Error parsing presentations for session %s: %s", getTitle(), e.getMessage()));
+        }
+    }
+
+    private void parsePresentations() throws PortalException {
+        String[] presentations = XmlContentUtils.getDynamicContentsByName(getDocument(), "presentation");
+        for (String presentationJson : presentations) {
+            JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(presentationJson);
+            this.presentations.add((Presentation) dsdParserUtils.toDsdArticle(journalArticle));
+        }
+
     }
 
     @Override
