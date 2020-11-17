@@ -1,5 +1,6 @@
 <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
 <#assign dsdSessionUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdSessionUtils") />
+<#assign dsdJournalArticleUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdJournalArticleUtils") />
 <#assign articleId = .vars['reserved-article-id'].getData() />
 <#assign registration = dsdParserUtils.getRegistration(groupId,articleId) />
 <#assign displayContext = dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay) />
@@ -145,4 +146,24 @@
         </#list>
 
     </#if>
+    <div class="c-events__item__uploads">
+        <p class="bold">Presentations</p>
+        <#list registration.getPresentations() as presentation>
+            <p class="presentation">
+                <#if presentation.isVideoLink() >
+                    <a href="${presentation.getJournalArticle().getUrlTitle()}" >
+                        <i class="icon-film"></i>
+                        <span class="underline">${presentation.getTitle()} </span>&nbsp;&gt;&nbsp;
+                    </a>
+                <#elseif presentation.isDownloadLink() >
+                    <a href="${presentation.getPresentationLink()}" class="">
+                        <i class="icon-download-alt"></i>
+                        <span class="underline">${presentation.getTitle()}</span>&nbsp;&gt;&nbsp;
+                    </a>
+                </#if>
+                <span>${presentation.getPresenter()}</span>
+                <span>(${presentation.getOrganization()})</span>
+            </p>
+        </#list>
+    </div>
 </div>

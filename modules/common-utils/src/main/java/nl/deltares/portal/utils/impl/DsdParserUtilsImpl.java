@@ -182,6 +182,9 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
             case Busroute:
                 article = new BusRoute(journalArticle ,this);
                 break;
+            case Presentation:
+                article = new Presentation(journalArticle, this);
+                return article;
             default:
                 article = new GenericArticle(journalArticle, this);
         }
