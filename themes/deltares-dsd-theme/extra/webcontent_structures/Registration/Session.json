@@ -355,7 +355,30 @@
     },
     {
       "label": {
-        "en_US": "Presentation title"
+        "en_US": "Has presentations"
+      },
+      "predefinedValue": {
+        "en_US": false
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "Use this to allow filtering based on the presence of presentations."
+      },
+      "dataType": "boolean",
+      "indexType": "keyword",
+      "localizable": false,
+      "name": "hasPresentations",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "checkbox"
+    },
+    {
+      "label": {
+        "en_US": "Presentation"
       },
       "predefinedValue": {
         "en_US": ""
@@ -364,114 +387,18 @@
         "en_US": ""
       },
       "tip": {
-        "en_US": "Enter link to online presentation or upload a document."
+        "en_US": ""
       },
-      "dataType": "string",
+      "dataType": "journal-article",
+      "fieldNamespace": "ddm",
       "indexType": "keyword",
       "localizable": true,
-      "name": "presentationTitle",
+      "name": "presentation",
       "readOnly": false,
       "repeatable": true,
       "required": false,
       "showLabel": true,
-      "type": "text",
-      "nestedFields": [
-        {
-          "label": {
-            "en_US": "Presentation Link"
-          },
-          "predefinedValue": {
-            "en_US": ""
-          },
-          "style": {
-            "en_US": ""
-          },
-          "tip": {
-            "en_US": ""
-          },
-          "dataType": "string",
-          "indexType": "keyword",
-          "localizable": true,
-          "name": "presentationLink",
-          "readOnly": false,
-          "repeatable": false,
-          "required": false,
-          "showLabel": true,
-          "type": "text"
-        },
-        {
-          "label": {
-            "en_US": "Presentation Document"
-          },
-          "predefinedValue": {
-            "en_US": ""
-          },
-          "style": {
-            "en_US": ""
-          },
-          "tip": {
-            "en_US": ""
-          },
-          "dataType": "document-library",
-          "fieldNamespace": "ddm",
-          "indexType": "keyword",
-          "localizable": true,
-          "name": "presentationDocument",
-          "readOnly": false,
-          "repeatable": false,
-          "required": false,
-          "showLabel": true,
-          "type": "ddm-documentlibrary"
-        },
-        {
-          "label": {
-            "en_US": "Organization name"
-          },
-          "predefinedValue": {
-            "en_US": ""
-          },
-          "style": {
-            "en_US": ""
-          },
-          "tip": {
-            "en_US": ""
-          },
-          "dataType": "string",
-          "indexType": "keyword",
-          "localizable": true,
-          "name": "organizationName",
-          "readOnly": false,
-          "repeatable": false,
-          "required": true,
-          "showLabel": true,
-          "type": "text",
-          "nestedFields": [
-            {
-              "label": {
-                "en_US": "Presenter Name"
-              },
-              "predefinedValue": {
-                "en_US": ""
-              },
-              "style": {
-                "en_US": ""
-              },
-              "tip": {
-                "en_US": ""
-              },
-              "dataType": "string",
-              "indexType": "keyword",
-              "localizable": true,
-              "name": "presenterName",
-              "readOnly": false,
-              "repeatable": false,
-              "required": true,
-              "showLabel": true,
-              "type": "text"
-            }
-          ]
-        }
-      ]
+      "type": "ddm-journal-article"
     }
   ]
 }
