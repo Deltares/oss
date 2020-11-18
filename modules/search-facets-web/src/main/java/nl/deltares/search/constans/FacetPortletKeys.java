@@ -5,6 +5,9 @@ package nl.deltares.search.constans;
  */
 public class FacetPortletKeys {
 
+    public static final String PRESENTATION_FACET_PORTLET =
+            "nl_deltares_search_facet_presentation_PresentationFacetPortlet";
+
     public static final String REGISTRATION_FACET_PORTLET =
             "nl_deltares_search_facet_registration_RegistrationFacetPortlet";
 
