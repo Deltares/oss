@@ -26,10 +26,8 @@ Content-Type: application/json
 
 {
   "query": {
-    "terms": {
-      "entryClassPK": [
-        "3458901"
-      ]
+    "term": {
+      "articleId": "3482455"
     }
   }
 }
@@ -62,7 +60,7 @@ Content-Type: application/json
         {
           "className" : {
             "ddm__keyword__3450900__start_en_US": {
-              "lte": "2020-01-01"
+              "lte": "2020-11-18"
             }
           }
         }
@@ -70,7 +68,7 @@ Content-Type: application/json
         {
           "range" : {
             "ddm__keyword__3450896__start_en_US": {
-              "lte": "2021-01-01"
+              "lte": "2020-11-18"
             }
           }
         }
