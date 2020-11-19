@@ -29,6 +29,11 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
     private static final long MAX_CACHE_TIME = TimeUnit.MINUTES.toMillis(5);
     private static final HashMap<String, AbsDsdArticle> cache = new HashMap<>();
 
+    @Override
+    public void clearCache(){
+        cache.clear();
+    }
+
     @Reference
     DsdJournalArticleUtils dsdJournalArticleUtils;
 
