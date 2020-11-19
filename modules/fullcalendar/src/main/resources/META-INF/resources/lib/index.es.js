@@ -17,7 +17,7 @@ class Calendar extends React.Component {
 			eventLimit: false,
 			businessHours: true,
 			resources: {
-				url: this.props.baseUrl + '/resources/' + this.props.siteId + '/' + this.props.eventId+ '?locale=' + this.props.locale,
+				url: this.props.baseUrl + '/resources/' + this.props.siteId + '/' + this.props.eventId+ '?locale=' + this.props.locale + '&p_auth=' + this.props.p_auth,
 				method: 'GET',
 				// data: {
 				// 	username: this.props.authUser,
@@ -26,7 +26,7 @@ class Calendar extends React.Component {
 			},
 			events: {
 				url: this.props.baseUrl + '/events/' + this.props.siteId + '/' + this.props.eventId
-					+ '?portletId=' + this.props.portletId + '&layoutUuid=' + this.props.layoutUuid + '&locale=' + this.props.locale,
+					+ '?portletId=' + this.props.portletId + '&layoutUuid=' + this.props.layoutUuid + '&locale=' + this.props.locale+ '&p_auth=' + this.props.p_auth,
 				method: 'GET',
 				// data: {
 				// 	username: this.props.authUser,
@@ -101,10 +101,10 @@ class Calendar extends React.Component {
 	}
 }
 
-export default function (elementId, baseUrl, siteId, eventId, startDate, portletId, layoutUuid, locale) {
+export default function (elementId, baseUrl, siteId, eventId, startDate, portletId, layoutUuid, locale, p_auth) {
 
 	ReactDOM.render( <Calendar class="fc" baseUrl={baseUrl}
 							   siteId={siteId} eventId={eventId} startDate={startDate}
-							   portletId={portletId} layoutUuid={layoutUuid} locale={locale}/>, document.getElementById(elementId))
+							   portletId={portletId} layoutUuid={layoutUuid} locale={locale} p_auth={p_auth}/>, document.getElementById(elementId))
 
 }
