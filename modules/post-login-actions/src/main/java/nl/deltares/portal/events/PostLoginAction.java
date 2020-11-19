@@ -9,6 +9,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.struts.LastPath;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -36,6 +37,9 @@ public class PostLoginAction implements LifecycleAction {
 	@Reference
 	private UserLocalService userLocalService;
 
+	@Reference
+	private DsdParserUtils dsdParserUtils;
+
 	@Override
 	public void processLifecycleEvent(LifecycleEvent lifecycleEvent) throws ActionException {
 
@@ -44,6 +48,10 @@ public class PostLoginAction implements LifecycleAction {
 
 		Principal userPrincipal = request.getUserPrincipal();
 		if (userPrincipal == null) return;
+
+		//Clear loaded registrations after login.
+		dsdParserUtils.clearCache();
+
 		User user = userLocalService.fetchUserById(Long.parseLong(userPrincipal.getName()));
 		if (user == null){
 			LOG.warn("Could not fine user for principal " + userPrincipal.getName());
