@@ -60,7 +60,7 @@
     String layoutUuid = themeDisplay.getLayout().getUuid();
     String baseUrl = "";
     String eventId = String.valueOf(dsdSiteConfiguration.eventId());
-    String startDate = format.format(new Date());
+    Date startDateTime = new Date();
     Map<String, String> colorMap = new HashMap<>();
     if (Validator.isNotNull(configuration)) {
         baseUrl = portletPreferences.getValue("baseUrl", configuration.baseUrl());
@@ -69,10 +69,9 @@
         try {
             DsdParserUtils dsdUtils = (DsdParserUtils) renderRequest.getAttribute(DsdParserUtils.class.getName());
             Event event = dsdUtils.getEvent(siteId, eventId);
-            if (event == null){
-                startDate = format.format(new Date());
-            } else {
-                startDate = format.format(event.getStartTime());
+            if (event != null && (event.getStartTime().after(startDateTime) || event.getEndTime().before(startDateTime))){
+                //if event is in the future or completely in the past.
+                startDateTime = event.getStartTime();
             }
             colorMap = JsonContentUtils.parseSessionColorConfig(sessionColorMap);
         } catch (Exception e) {
@@ -80,6 +79,6 @@
         }
 
     }
-
+    String startDate = format.format(startDateTime);
 
 %>
