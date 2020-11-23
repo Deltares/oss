@@ -7,7 +7,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.PropsUtil;
 import nl.deltares.portal.display.context.RegistrationDisplayContext;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.*;
@@ -16,8 +15,10 @@ import nl.deltares.portal.utils.DsdParserUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 @Component(
         immediate = true,
@@ -26,13 +27,6 @@ import java.util.concurrent.TimeUnit;
 public class DsdParserUtilsImpl implements DsdParserUtils {
 
     private static final Log LOG = LogFactoryUtil.getLog(DsdParserUtilsImpl.class);
-    private static final long MAX_CACHE_TIME = TimeUnit.MINUTES.toMillis(5);
-    private static final HashMap<String, AbsDsdArticle> cache = new HashMap<>();
-
-    @Override
-    public void clearCache(){
-        cache.clear();
-    }
 
     @Reference
     DsdJournalArticleUtils dsdJournalArticleUtils;
@@ -42,19 +36,13 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
         if ("0".equals(articleId)) {
             return null; //show all events
         }
-        AbsDsdArticle cachedDsdArticle = getCachedDsdArticle(articleId);
-        if (cachedDsdArticle != null) return (Event) cachedDsdArticle;
-
         JournalArticle article = dsdJournalArticleUtils.getJournalArticle(siteId, articleId);
         if (article == null) return null;
         AbsDsdArticle eventArticle = toDsdArticle(article);
         if (!(eventArticle instanceof Event)) {
             throw new PortalException(String.format("Article %s is not a valid DSD Event", article.getTitle()));
         }
-        Event event = (Event) eventArticle;
-
-        cacheDsdArticle(event);
-        return event;
+        return (Event) eventArticle;
     }
 
     @Override
@@ -111,15 +99,10 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
     @Override
     public Expert getExpert(JournalArticle article) throws PortalException {
 
-        AbsDsdArticle cachedDsdArticle = getCachedDsdArticle(article.getArticleId());
-        if (cachedDsdArticle != null) return (Expert) cachedDsdArticle;
-
         AbsDsdArticle dsdArticle = toDsdArticle(article);
         if (!(dsdArticle instanceof Expert)) {
             throw new PortalException(String.format("Article %s is not a valid DSD Expert", article.getTitle()));
         }
-        cacheDsdArticle(dsdArticle);
-
         return (Expert) dsdArticle;
     }
 
@@ -133,21 +116,6 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
     @Reference
     protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
         _configurationProvider = configurationProvider;
-    }
-
-    private static void cacheDsdArticle(AbsDsdArticle dsdArticle) {
-        if (Boolean.parseBoolean(PropsUtil.get("nocache"))) return;
-        if (cache.size() > 1000) cache.clear();
-        cache.put(dsdArticle.getArticleId(), dsdArticle);
-    }
-
-    private static AbsDsdArticle getCachedDsdArticle(String articleId) {
-        AbsDsdArticle dsdArticle = cache.get(articleId);
-        if (dsdArticle != null &&
-                (System.currentTimeMillis() - dsdArticle.instantiationTime) <  MAX_CACHE_TIME){
-            return dsdArticle;
-        }
-        return null;
     }
 
     public AbsDsdArticle toDsdArticle(JournalArticle journalArticle) throws PortalException {
