@@ -7,6 +7,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.PropsUtil;
 import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
+import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.portal.utils.WebinarUtils;
 
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
     }
 
     @Override
-    public boolean isUserRegistered(User user, String webinarKey, Map<String, String> properties) throws Exception {
+    public boolean isUserRegistered(User user, String webinarKey, Map<String, String> registrationProperties) throws Exception {
 
         String accessToken = getAccessToken(); //calling this method loads organization key
         HashMap<String, String> headers = new HashMap<>();
@@ -45,7 +46,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         headers.put("Authorization", "Bearer " + accessToken);
         String rawRegistrationPath = getBasePath() + GOTO_REGISTRATION_PATH;
 
-        String registrantKey = properties.get("registrantKey");
+        String registrantKey = registrationProperties.get("registrantKey");
         if (registrantKey != null) {
             rawRegistrationPath = getBasePath() + GOTO_REGISTRATION_PATH + "/" + registrantKey;
         }
@@ -66,7 +67,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         for (Map<String, String> registrant : mapsList) {
             String email = registrant.get("email");
             if (email != null && email.equals(user.getEmailAddress())) {
-                properties.put("registrantKey", registrant.get("registrantKey"));
+                registrationProperties.put("registrantKey", registrant.get("registrantKey"));
                 return true;
             }
         }
@@ -74,7 +75,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
     }
 
     @Override
-    public int registerUser(User user, String webinarKey, String callerId, Map<String, String> properties) throws Exception {
+    public int registerUser(User user, Map<String, String> userAttributes,  String webinarKey, String callerId, Map<String, String> registrationProperties) throws Exception {
 
         String rawRegistrationPath = getBasePath() + GOTO_REGISTRATION_PATH;
         String accessToken = getAccessToken(); //calling this method loads organization key
@@ -88,13 +89,13 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         HttpURLConnection connection = getConnection(registrationPath, "POST", headers);
 
         //write user information
-        writePostData(connection, user, callerId);
+        writePostData(connection, user, userAttributes, callerId);
 
         //get response
         checkResponse(connection);
         String jsonResponse = readAll(connection.getInputStream());
         Map<String, String> parseJsonToMap = JsonContentUtils.parseJsonToMap(jsonResponse);
-        if (parseJsonToMap.containsKey("registrantKey")) properties.put("registrantKey", parseJsonToMap.get("registrantKey"));
+        if (parseJsonToMap.containsKey("registrantKey")) registrationProperties.put("registrantKey", parseJsonToMap.get("registrantKey"));
         return 0;
     }
 
@@ -186,7 +187,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         return getCachedToken(CACHED_ORGANIZER_KEY, null);
     }
 
-    private void writePostData(HttpURLConnection connection, User user, String callerId) throws IOException {
+    private void writePostData(HttpURLConnection connection, User user, Map<String, String> userAttributes, String callerId) throws IOException {
         connection.setDoOutput(true);
 
         Map<String, String> parameterMap = new HashMap<>();
@@ -194,6 +195,11 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         parameterMap.put("lastName", user.getLastName());
         parameterMap.put("email", user.getEmailAddress());
         parameterMap.put("registrantKey", user.getScreenName());
+        parameterMap.put("zipCode", userAttributes.get(KeycloakUtils.ATTRIBUTES.org_postal.name()));
+        parameterMap.put("country", userAttributes.get(KeycloakUtils.ATTRIBUTES.org_country.name()));
+        parameterMap.put("address", userAttributes.get(KeycloakUtils.ATTRIBUTES.org_address.name()));
+        parameterMap.put("city", userAttributes.get(KeycloakUtils.ATTRIBUTES.org_city.name()));
+        parameterMap.put("organization", userAttributes.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
         parameterMap.put("source", callerId);
 
         String postData = JsonContentUtils.formatMapToJson(parameterMap);
