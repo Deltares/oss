@@ -58,7 +58,7 @@ public class ANewsSpringUtilsTest {
         Map<String, String> info = Collections.emptyMap();
         String courseId = "delft-fews-basic-config-course-2020";
         if (!newSpringUtils.isUserRegistered(user, courseId, info)) {
-            newSpringUtils.registerUser(user, courseId, "testRegisterUser", info);
+            newSpringUtils.registerUser(user, Collections.emptyMap(), courseId, "testRegisterUser", info);
         }
         Assert.assertTrue(newSpringUtils.isUserRegistered(user, courseId, info));
     }
@@ -76,7 +76,7 @@ public class ANewsSpringUtilsTest {
         String courseId = "delft-fews-basic-config-course-2020";
         Map<String, String> info = Collections.emptyMap();
         if (!newSpringUtils.isUserRegistered(user, courseId, info)) {
-            newSpringUtils.registerUser(user, courseId, "testRegisterUser", info);
+            newSpringUtils.registerUser(user, Collections.emptyMap(), courseId, "testRegisterUser", info);
         }
         Assert.assertTrue(newSpringUtils.isUserRegistered(user, courseId, info));
         newSpringUtils.unregisterUser(user, courseId, info);
@@ -97,7 +97,7 @@ public class ANewsSpringUtilsTest {
         String courseId = "delft-fews-basic-config-course-2020";
         Map<String, String> info = Collections.emptyMap();
         if (!newSpringUtils.isUserRegistered(user, courseId, info)) {
-            newSpringUtils.registerUser(user, courseId, "testRegisterUser", info);
+            newSpringUtils.registerUser(user, Collections.emptyMap(), courseId, "testRegisterUser", info);
         }
         List<String> allCourseRegistrations = newSpringUtils.getAllCourseRegistrations(courseId);
         Assert.assertTrue(newSpringUtils.isUserInCourseRegistrationsList(allCourseRegistrations, user));
