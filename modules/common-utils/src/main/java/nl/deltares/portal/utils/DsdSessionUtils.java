@@ -1,7 +1,6 @@
 package nl.deltares.portal.utils;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.impl.Event;
@@ -16,10 +15,11 @@ public interface DsdSessionUtils {
     /**
      * Register user for Registration
      * @param user User to register
+     * @param userAttributes Additional user information required by registration process.
      * @param registration Registration for which user must be registered
-     * @param userProperties Optional additional properties linked to this registration.
+     * @param registrationProperties Optional additional properties linked to this registration.
      */
-    void registerUser(User user, Registration registration, Map<String, String> userProperties) throws PortalException;
+    void registerUser(User user, Map<String, String> userAttributes, Registration registration, Map<String, String> registrationProperties) throws PortalException;
 
     /**
      * Unregister user for Registration
