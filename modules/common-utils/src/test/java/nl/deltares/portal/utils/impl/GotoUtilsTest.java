@@ -64,7 +64,7 @@ public class GotoUtilsTest {
             gotoUtils.unregisterUser(user, webinarKey, info);
             Assert.assertFalse(gotoUtils.isUserRegistered(user, webinarKey, info));
         }
-        gotoUtils.registerUser(user, webinarKey, "testRegisterUser", info);
+        gotoUtils.registerUser(user, Collections.emptyMap(), webinarKey, "testRegisterUser", info);
         Assert.assertTrue(gotoUtils.isUserRegistered(user, webinarKey, info));
     }
 
@@ -79,7 +79,7 @@ public class GotoUtilsTest {
         Map<String, String> info = new HashMap<>();
         String webinarKey = "5555006932186073868";
         if (!gotoUtils.isUserRegistered(user, webinarKey, info)) {
-            gotoUtils.registerUser(user, webinarKey, "testRegisterUser", info);
+            gotoUtils.registerUser(user, Collections.emptyMap(), webinarKey, "testRegisterUser", info);
             Assert.assertTrue(gotoUtils.isUserRegistered(user, webinarKey, info));
         }
         gotoUtils.unregisterUser(user, webinarKey, info);
@@ -100,7 +100,7 @@ public class GotoUtilsTest {
         String webinarKey = "5555006932186073868";
         Map<String, String> info = new HashMap<>();
         if (!gotoUtils.isUserRegistered(user, webinarKey, info)) {
-            gotoUtils.registerUser(user, webinarKey, "testRegisterUser", info);
+            gotoUtils.registerUser(user, Collections.emptyMap(), webinarKey, "testRegisterUser", info);
         }
         List<String> allCourseRegistrations = gotoUtils.getAllCourseRegistrations(webinarKey);
         Assert.assertTrue(gotoUtils.isUserInCourseRegistrationsList(allCourseRegistrations, user));
