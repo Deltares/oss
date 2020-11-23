@@ -13,8 +13,6 @@ import java.util.Locale;
 
 public interface DsdParserUtils {
 
-    void clearCache();
-
     Event getEvent(long siteId, String eventId) throws PortalException;
 
     Registration getRegistration(long siteId, String articleId) throws PortalException;
