@@ -49,9 +49,6 @@ public class PostLoginAction implements LifecycleAction {
 		Principal userPrincipal = request.getUserPrincipal();
 		if (userPrincipal == null) return;
 
-		//Clear loaded registrations after login.
-		dsdParserUtils.clearCache();
-
 		User user = userLocalService.fetchUserById(Long.parseLong(userPrincipal.getName()));
 		if (user == null){
 			LOG.warn("Could not fine user for principal " + userPrincipal.getName());
