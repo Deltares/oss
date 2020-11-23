@@ -10,7 +10,10 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.*;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.dsd.model.BillingInfo;
 import nl.deltares.dsd.model.RegistrationRequest;
 import nl.deltares.emails.DsdEmail;
@@ -68,11 +71,12 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 success = removeCurrentRegistration(actionRequest, user, registrationRequest);
 //                break; //skip break and continue with registering
             case "register":
+                Map<String, String> keycloakAttributes = getKeycloakAttributes(actionRequest);
                 if (success) {
-                    success = updateUserAttributes(actionRequest, user.getEmailAddress());
+                    success = updateUserAttributes(actionRequest, user.getEmailAddress(), keycloakAttributes);
                 }
                 if (success){
-                    success = registerUser(actionRequest, user, registrationRequest);
+                    success = registerUser(actionRequest, user, keycloakAttributes, registrationRequest);
                 }
                 if (success){
                     success = sendEmail(actionRequest, user, registrationRequest, themeDisplay, action);
@@ -111,7 +115,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             return success;
     }
 
-    private boolean registerUser(ActionRequest actionRequest, User user, RegistrationRequest registrationRequest) {
+    private boolean registerUser(ActionRequest actionRequest, User user, Map<String, String> userAttributes, RegistrationRequest registrationRequest) {
 
         Map<String, String> billingInfo = getBillingInfo(registrationRequest);
         List<Registration> registrations = registrationRequest.getRegistrations();
@@ -125,7 +129,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         }
         for (Registration registration : registrations) {
             try {
-                dsdSessionUtils.registerUser(user, registration, registration.getPrice() > 0 ? billingInfo : new HashMap<>());
+                dsdSessionUtils.registerUser(user, userAttributes, registration, registration.getPrice() > 0 ? billingInfo : new HashMap<>());
             } catch (PortalException e) {
                 SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
                 success = false;
@@ -133,7 +137,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             for (Registration childRegistration : registrationRequest.getChildRegistrations(registration)) {
 
                 try {
-                    dsdSessionUtils.registerUser(user, childRegistration, childRegistration.getPrice() > 0 ? billingInfo : new HashMap<>());
+                    dsdSessionUtils.registerUser(user, userAttributes, childRegistration, childRegistration.getPrice() > 0 ? billingInfo : new HashMap<>());
                 } catch (PortalException e) {
                     SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
                     success = false;
@@ -223,9 +227,9 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         return billingInfo;
     }
 
-    private boolean updateUserAttributes(ActionRequest actionRequest, String emailAddress) {
+    private boolean updateUserAttributes(ActionRequest actionRequest, String emailAddress, Map<String, String> keycloakAttributes) {
         try {
-            return keycloakUtils.updateUserAttributes(emailAddress, getKeycloakAttributes(actionRequest)) < 300;
+            return keycloakUtils.updateUserAttributes(emailAddress, keycloakAttributes) < 300;
         } catch (Exception e) {
             SessionErrors.add(actionRequest, "update-attributes-failed", e.getMessage());
             LOG.debug("Could not update keycloak attributes for user [" + emailAddress + "]", e);

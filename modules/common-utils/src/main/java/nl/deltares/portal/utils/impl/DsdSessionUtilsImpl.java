@@ -51,11 +51,11 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
-    public void registerUser(User user, Registration registration, Map<String, String> userProperties) throws PortalException {
+    public void registerUser(User user, Map<String, String> userAttributes, Registration registration, Map<String, String> registrationProperties) throws PortalException {
 
         try {
             if (WebinarUtilsFactory.isWebinarSupported(registration)) {
-                registerWebinarUser(user, (SessionRegistration) registration, userProperties);
+                registerWebinarUser(user, userAttributes, (SessionRegistration) registration, registrationProperties);
             }
         } finally {
             long parentId = registration.getParentRegistration() == null ? 0 : registration.getParentRegistration().getResourceId();
@@ -66,16 +66,16 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
             registrationLocalService.addUserRegistration(
                     registration.getCompanyId(), registration.getGroupId(), registration.getResourceId(), eventResourcePrimaryKey,
                     parentId, user.getUserId(),
-                    registration.getStartTime(), registration.getEndTime(), JsonContentUtils.formatMapToJson(userProperties));
+                    registration.getStartTime(), registration.getEndTime(), JsonContentUtils.formatMapToJson(registrationProperties));
         }
     }
 
-    private void registerWebinarUser(User user, SessionRegistration registration, Map<String, String> userProperties) throws PortalException {
+    private void registerWebinarUser(User user, Map<String, String> userAttributes, SessionRegistration registration, Map<String, String> userProperties) throws PortalException {
 
         WebinarUtils webinarUtils = WebinarUtilsFactory.newInstance(registration);
         try {
             if (webinarUtils.isActive()) {
-                webinarUtils.registerUser(user, registration.getWebinarKey(), GroupServiceUtil.getGroup(registration.getGroupId()).getName(Locale.US), userProperties);
+                webinarUtils.registerUser(user, userAttributes, registration.getWebinarKey(), GroupServiceUtil.getGroup(registration.getGroupId()).getName(Locale.US), userProperties);
             }
         } catch (Exception e) {
             throw new PortalException(String.format("Error registering for webinar %s: %s", registration.getTitle(), e.getMessage()));
