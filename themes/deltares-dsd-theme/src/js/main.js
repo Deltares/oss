@@ -205,6 +205,7 @@ function getCurrentStep(form) {
             if (this.cart === null) {
                 this.cart = {
                     'userId': this._getUserId(),
+                    'siteId' : this._getSiteId(),
                     'items': []
                 };
 
@@ -293,6 +294,10 @@ function getCurrentStep(form) {
             return Liferay.ThemeDisplay.getUserId();
         },
 
+        _getSiteId: function () {
+            return Liferay.ThemeDisplay.getSiteGroupId();
+        },
+
         _addToCart: function (id) {
             if (!this._contains(id)) {
                 this.cart.items.push(id);
@@ -313,11 +318,11 @@ function getCurrentStep(form) {
         },
 
         _loadCart: function () {
-            this.cart = JSON.parse(localStorage.getItem('shoppingCart'));
+            this.cart = JSON.parse(localStorage.getItem(this._getSiteId() + '/shoppingCart'));
         },
 
         _saveCart: function () {
-            localStorage.setItem('shoppingCart', JSON.stringify(this.cart));
+            localStorage.setItem(this._getSiteId() + '/shoppingCart', JSON.stringify(this.cart));
         }
     };
 
