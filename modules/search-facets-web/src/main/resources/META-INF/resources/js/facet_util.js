@@ -19,7 +19,7 @@ AUI.add(
                     if (endDate === ''){
                         url = this.removeTerm(url, 'endDate');
                     } else {
-                        url = this.selectTerm(url, 'endDate', startDate);
+                        url = this.selectTerm(url, 'endDate', endDate);
                     }
                 }
                 let type = $('select[name$="' + namespace + 'session-type"]').val();
