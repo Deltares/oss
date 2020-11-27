@@ -6,7 +6,7 @@ services:
     image: mariadb:10.2.25
     container_name: oss-mariadb
     ports:
-      - "3306:3306"
+      - "3307:3306"
     env_file:
       - .env
     volumes:
@@ -21,7 +21,7 @@ services:
     container_name: oss-liferay
     build: liferay
     ports:
-      - 80:8080
+#      - 80:8080
       - 8080:8080
       - 8000:8000
     volumes:

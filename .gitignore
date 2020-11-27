@@ -268,3 +268,4 @@ license*.xml
 /docker/mariadb/docker-entrypoint-initdb.d
 /http-client-files/http-client.private.env.json
 /modules/common-utils/src/test/resources/anewspring/portal-ext.properties
+/configs/docker/osgi/modules/activation-key-digitalenterprisedevelopment-7.1-developeractivationkeys.xml
