@@ -25,6 +25,19 @@ project.ext {
             file("$liferayData"),
             file("$liferayMount")
     ]
+
+    springKey = getEnvProperty('ANEWSPRING_KEY', '')
+    springUrl = getEnvProperty('ANEWSPRING_URL', '')
+    gotoClient = getEnvProperty('GOTO_CLIENTID', '')
+    gotoSecret = getEnvProperty('GOTO_CLIENTSECRET', '')
+    gotoUser = getEnvProperty('GOTO_USER', '')
+    gotoPass = getEnvProperty('GOTO_PASSWORD', '')
+    keyUrl = getEnvProperty('KEYCLOAK_URL', '')
+    keyClient = getEnvProperty('KEYCLOAK_CLIENTID', '')
+    keySecret = getEnvProperty('KEYCLOAK_CLIENTSECRET', '')
+    googleKey = getEnvProperty('GOOGLE_API_KEY', '')
+    emailUser = getEnvProperty('EMAIL_USER', '')
+    emailPass = getEnvProperty('EMAIL_PASSWORD','')
 }
 
 task startContainers(
@@ -60,7 +73,19 @@ task startLiferay(
                     'MYSQL_DATABASE'        : dbName,
                     'MYSQL_USER'            : dbUser,
                     'MYSQL_PASSWORD'        : dbPassword,
-                    'DEFAULT_ADMIN_PASSWORD': defaultLiferayAdminPassword
+                    'DEFAULT_ADMIN_PASSWORD': defaultLiferayAdminPassword,
+                    'ANEWSPRING_KEY'        : springKey,
+                    'ANEWSPRING_URL'        : springUrl,
+                    'GOTO_CLIENTID'         : gotoClient,
+                    'GOTO_CLIENTSECRET'     : gotoSecret,
+                    'GOTO_USER'             : gotoUser,
+                    'GOTO_PASSWORD'         : gotoPass,
+                    'KEYCLOAK_URL'          : keyUrl,
+                    'KEYCLOAK_CLIENTID'     : keyClient,
+                    'KEYCLOAK_CLIENTSECRET' : keySecret,
+                    'GOOGLE_API_KEY'        : googleKey,
+                    'EMAIL_USER'            : emailUser,
+                    'EMAIL_PASSWORD'        : emailPass
             ])
         }
         copy {
@@ -78,6 +103,11 @@ task startLiferay(
             from("$projectDir/configs/$environment/osgi/configs/")
             into("$liferayMount/osgi/configs")
             include "*.config"
+        }
+        copy {
+            from("$projectDir/configs/$environment/osgi/modules/")
+            into("$liferayMount/osgi/modules")
+            include "*.xml"
         }
         copy {
             from projectDir

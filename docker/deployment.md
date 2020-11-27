@@ -7,8 +7,8 @@ This command will create the container for Liferay, MariaDB and ElasticSearch.
 ```
 docker ps -a
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                    PORTS                                                                 NAMES
-e50942ae8581        oss_liferay         "/bin/sh -c '/etc/li…"   26 minutes ago      Up 26 minutes (healthy)   0.0.0.0:8000->8000/tcp, 8009/tcp, 0.0.0.0:8080->8080/tcp, 11311/tcp   oss-liferay
-f0a8faf5b4de        mariadb:10.2.25     "docker-entrypoint.s…"   26 minutes ago      Up 26 minutes             0.0.0.0:3306->3306/tcp                                                oss-mariadb
+doe50942ae8581        oss_liferay         "/bin/sh -c '/etc/li…"   26 minutes ago      Up 26 minutes (healthy)   0.0.0.0:8000->8000/tcp, 8009/tcp, 0.0.0.0:8080->8080/tcp, 11311/tcp   oss-liferay
+f0a8faf5b4de        mariadb:10.2.25     "docker-entrypoint.s…"   26 minutes ago      Up 26 minutes             0.0.0.0:3307->3306/tcp                                                oss-mariadb
 c90070c167fe        oss_elasticsearch   "/usr/local/bin/dock…"   26 minutes ago      Up 26 minutes             0.0.0.0:9200->9200/tcp, 9300/tcp                                      oss-elastic
 
 docker volume ls
