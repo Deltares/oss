@@ -7,6 +7,8 @@ COPY resources/wait-for-it.sh /etc/liferay/wait-for-it.sh
 RUN chown liferay:liferay /etc/liferay/wait-for-it.sh
 RUN chmod a+x /etc/liferay/wait-for-it.sh
 
+RUN chown -R liferay:liferay /opt/liferay/data/document_library
+
 USER liferay
 
 ENV VIRTUAL_PORT 8080
