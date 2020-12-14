@@ -96,7 +96,7 @@ task startLiferay(
         }
         copy {
             from("$projectDir/configs/common/")
-            into("$liferayMount")
+            into("$liferayMount/osgi/configs/")
             include "**/**"
         }
         copy {
