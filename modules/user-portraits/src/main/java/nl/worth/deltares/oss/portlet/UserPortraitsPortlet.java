@@ -52,7 +52,7 @@ public class UserPortraitsPortlet extends MVCPortlet {
 
 	private static final int DEFAULT_PORTRAITS = 12;
 
-	private SecureRandom random = new SecureRandom();
+	private final SecureRandom random = new SecureRandom();
 
 	public void render(RenderRequest request, RenderResponse response) throws IOException, PortletException {
 
@@ -62,11 +62,15 @@ public class UserPortraitsPortlet extends MVCPortlet {
 		Principal userPrincipal = request.getUserPrincipal();
 		if (userPrincipal != null) {
 			randomPortraits.add(0, getPortrait(Long.parseLong(userPrincipal.getName()), themeDisplay));
-		};
+		}
 		request.setAttribute("userPortraitsList",
 				randomPortraits);
 
 		super.render(request, response);
+	}
+
+	private String addUserId(String portraitURL, long userId) {
+		return portraitURL + "&user_id=" + userId;
 	}
 
 	private String getPortrait(long userId, ThemeDisplay themeDisplay) {
@@ -92,7 +96,6 @@ public class UserPortraitsPortlet extends MVCPortlet {
 
 	private List<String> getRandomPortraits(ThemeDisplay themeDisplay, int number) {
 
-
 		List<String> portraitUrlList = new ArrayList<>();
 
 		int maxIterations = 10;
@@ -104,7 +107,7 @@ public class UserPortraitsPortlet extends MVCPortlet {
 
 				for (User user : usersWithPortraits) {
 					String portraitURL = user.getPortraitURL(themeDisplay);
-					portraitUrlList.add(portraitURL);
+					portraitUrlList.add(addUserId(portraitURL, user.getUserId()));
 				}
 			} catch (PortalException e) {
 				LOG.error("Error retrieving portrait URLs", e);
@@ -118,51 +121,45 @@ public class UserPortraitsPortlet extends MVCPortlet {
 
 		Set<User> usersWithPortrait = new HashSet<>();
 
-//		try {
-			//Retrieve only 1000 users to search for portraits. Start position is random.
-			int allUserCount = userLocalService.getUsersCount();
+		//Retrieve only 1000 users to search for portraits. Start position is random.
+		int allUserCount = userLocalService.getUsersCount();
 
-			int countUsersWithPortrait = 0;
+		int countUsersWithPortrait = 0;
 
-			int startIndex;
-			int endIndex;
-			if (allUserCount < 1000){
-			    startIndex = 0;
-			    endIndex = allUserCount;
-            } else {
-                startIndex = random.nextInt(allUserCount - 1000);
-                endIndex = startIndex + 1000;
-            }
+		int startIndex;
+		int endIndex;
+		if (allUserCount < 1000){
+			startIndex = 0;
+			endIndex = allUserCount;
+		} else {
+			startIndex = random.nextInt(allUserCount - 1000);
+			endIndex = startIndex + 1000;
+		}
 
-			List<User> allUsers = userLocalService.getCompanyUsers(themeDisplay.getCompanyId(),
-					startIndex, endIndex);
+		List<User> allUsers = userLocalService.getCompanyUsers(themeDisplay.getCompanyId(),
+				startIndex, endIndex);
 
-			for (User user : allUsers) {
-				if (countUsersWithPortrait > number) break; // we have enough portraits
-				if (user.getPortraitId() != 0L) {
+		for (User user : allUsers) {
+			if (countUsersWithPortrait > number) break; // we have enough portraits
+			if (user.getPortraitId() != 0L) {
 
-					try {
-						Image image = imageLocalService.getImage(user.getPortraitId());
-						if (image == null || image.getTextObj() == null){
-							//This portraitId is not valid so remove it.
-							LOG.warn(String.format("Un-setting portrait %d for user %s", user.getPortraitId(),  user.getScreenName()));
-							user.setPortraitId(0);
-							userLocalService.updateUser(user);
-						} else {
-							//Found a portrait so add it.
-							usersWithPortrait.add(user);
-							countUsersWithPortrait++;
-						}
-					} catch (Exception e){
-						LOG.warn(String.format("Error getting portrait %d for user %s: %s", user.getPortraitId(),  user.getScreenName(), e.getMessage()));
-//						user.setPortraitId(0);
-//						userLocalService.updateUser(user);
+				try {
+					Image image = imageLocalService.getImage(user.getPortraitId());
+					if (image == null || image.getTextObj() == null){
+						//This portraitId is not valid so remove it.
+						LOG.warn(String.format("Un-setting portrait %d for user %s", user.getPortraitId(),  user.getScreenName()));
+						user.setPortraitId(0);
+						userLocalService.updateUser(user);
+					} else {
+						//Found a portrait so add it.
+						usersWithPortrait.add(user);
+						countUsersWithPortrait++;
 					}
+				} catch (Exception e){
+					LOG.warn(String.format("Error getting portrait %d for user %s: %s", user.getPortraitId(),  user.getScreenName(), e.getMessage()));
 				}
 			}
-//		} catch (Exception e) {
-//			LOG.error("Error retrieving company users", e);
-//		}
+		}
 
 		return usersWithPortrait;
 	}
