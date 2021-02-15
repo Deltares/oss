@@ -37,8 +37,10 @@
 <%@ page import="nl.deltares.portal.utils.DsdParserUtils" %>
 <%@ page import="nl.deltares.portal.utils.impl.DsdParserUtilsImpl" %>
 <%@ page import="nl.deltares.portal.kernel.util.comparator.SearchResultsComparator" %>
+<%@ page import="nl.deltares.portal.model.impl.Registration" %>
+<%@ page import="nl.deltares.dsd.registration.service.persistence.RegistrationUtil" %>
 
-<portlet:defineObjects />
+<portlet:defineObjects/>
 
 <%
     ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
@@ -109,12 +111,12 @@
             lastDate = date;
 
             String colorClass;
-            if (registrationDisplayContext.isPastEvent()){
+            if (registrationDisplayContext.isPastEvent()) {
                 colorClass = "past-event";
             } else {
                 colorClass = "upcoming-event";
             }
-
+            boolean showButtons = themeDisplay.isSignedIn() && registrationDisplayContext.isOpen() && !registrationDisplayContext.isPastEvent();
         %>
 
         <c:choose>
@@ -150,15 +152,43 @@
                                 </c:if>
                                 <% } %>
 
-                                <span class="event-time pl-2"><%= registrationDisplayContext.getStartTime() %> - <%= registrationDisplayContext.getEndTime() %></span> |
+                                <span class="event-time pl-2"><%= registrationDisplayContext.getStartTime() %> - <%= registrationDisplayContext.getEndTime() %></span>
+                                |
                                 <c:choose>
                                     <c:when test="<%= registrationDisplayContext.getPrice() > 0%>">
                                         <%= registrationDisplayContext.getCurrency() %> <%= registrationDisplayContext.getPrice() %>
                                     </c:when>
                                     <c:otherwise>
-                                        <liferay-ui:message key="dsd.theme.session.free" translateArguments="<%= true %>" />
+                                        <liferay-ui:message key="dsd.theme.session.free"
+                                                            translateArguments="<%= true %>"/>
                                     </c:otherwise>
                                 </c:choose>
+
+                                <c:if test="<%=showButtons %>">
+                                    <%
+                                        Registration registration = registrationDisplayContext.getRegistration();
+                                        long userId = themeDisplay.getUserId();
+
+                                        boolean isRegistered = RegistrationUtil.countByUserArticleRegistrations(registration.getGroupId(), userId, registration.getResourceId()) > 0;
+                                    %>
+                                    <span class="d-block" style="float:right">
+                                        <c:choose>
+                                            <c:when test="<%= isRegistered %>">
+                                                <a href="<%= registrationDisplayContext.getUnregisterURL(request) %>"
+                                                   class="btn btn-primary" role="button" aria-pressed="true">
+                                                    <liferay-ui:message key="registrationform.unregister"/>
+                                                </a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <a href="#" data-article-id="<%=registration.getArticleId()%>"
+                                                   class="btn btn-primary add-to-cart" role="button"
+                                                   aria-pressed="true">
+                                                    <liferay-ui:message key="shopping.cart.add"/>
+                                                </a>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </span>
+                                </c:if>
 
                             </div>
 

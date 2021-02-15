@@ -73,12 +73,16 @@ public class RegistrationRequest {
         return event;
     }
 
-    public String getSiteURL(){
+    public String getTitle() {
+        return event != null ? event.getTitle() : "";
+    }
+
+    public String getSiteURL() {
         return siteUrl;
     }
 
     public URL getBannerURL() throws MalformedURLException {
-        if (event.getEmailBannerURL() == null) return  null;
+        if (event.getEmailBannerURL() == null) return null;
         return new URL(baseUrl + event.getEmailBannerURL());
     }
 

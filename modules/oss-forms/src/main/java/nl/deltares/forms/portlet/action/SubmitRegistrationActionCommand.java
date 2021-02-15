@@ -54,12 +54,12 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         User user = themeDisplay.getUser();
 
         RegistrationRequest registrationRequest = getRegistrationRequest(actionRequest, themeDisplay, action);
-        if (registrationRequest == null){
+        if (registrationRequest == null) {
             if (!redirect.isEmpty()) {
                 sendRedirect(actionRequest, actionResponse, redirect);
             }
             return;
-        } else {
+        } else if (redirect.isEmpty()) {
             redirect = registrationRequest.getSiteURL();
         }
 
@@ -92,7 +92,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 SessionErrors.add(actionRequest, "registration-failed", "Unsupported action " + action);
         }
         if (success){
-            SessionMessages.add(actionRequest, "registration-success", new String[]{action, user.getEmailAddress(), registrationRequest.getEvent().getTitle()});
+            SessionMessages.add(actionRequest, "registration-success", new String[]{action, user.getEmailAddress(), registrationRequest.getTitle()});
             if (!redirect.isEmpty()) {
                 sendRedirect(actionRequest, actionResponse, redirect);
             }
@@ -261,11 +261,13 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             DSDSiteConfiguration configuration = _configurationProvider
                     .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
 
+            if (!configuration.enableEmails()) return true;
+
             ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", themeDisplay.getLocale(), getClass());
             DsdEmail email = new DsdEmail(user, resourceBundle, registrationRequest);
             email.setReplyToEmail(configuration.replyToEmail());
             email.setSendFromEmail(configuration.sendFromEmail());
-            switch (action){
+            switch (action) {
                 case "register":
                 case "update":
                     email.sendRegisterEmail();
