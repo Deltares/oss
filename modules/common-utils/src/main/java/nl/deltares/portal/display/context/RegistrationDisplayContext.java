@@ -8,6 +8,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletMode;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
@@ -22,12 +23,14 @@ import nl.deltares.portal.utils.DsdParserUtils;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
+import javax.servlet.http.HttpServletRequest;
 
 public class RegistrationDisplayContext {
 
     public RegistrationDisplayContext(long classPk, ThemeDisplay themeDisplay, DsdParserUtils dsdParserUtils) {
         this.themeDisplay = themeDisplay;
         this.dsdParserUtils = dsdParserUtils;
+        this.configurationProvider = ConfigurationProviderUtil.getConfigurationProvider();
         JournalArticle registrationArticle = JournalArticleLocalServiceUtil.fetchLatestArticle(classPk);
         if (registrationArticle != null) {
             setRegistration(registrationArticle);
@@ -35,7 +38,7 @@ public class RegistrationDisplayContext {
     }
 
     public RegistrationDisplayContext(String articleId, ThemeDisplay themeDisplay, DsdParserUtils dsdParserUtils) {
-        this(articleId, themeDisplay, null, dsdParserUtils);
+        this(articleId, themeDisplay, ConfigurationProviderUtil.getConfigurationProvider(), dsdParserUtils);
     }
 
     public RegistrationDisplayContext(String articleId, ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider, DsdParserUtils dsdParserUtils) {
@@ -112,7 +115,7 @@ public class RegistrationDisplayContext {
         return name;
     }
 
-    private Registration getRegistration() {
+    public Registration getRegistration() {
         return registration;
     }
 
@@ -142,12 +145,19 @@ public class RegistrationDisplayContext {
 
     }
 
-    public boolean isPastEvent(){
+    public boolean isPastEvent() {
         if (getRegistration() != null) {
             return getRegistration().getStartTime().getTime() < System.currentTimeMillis();
         }
         return true;
 
+    }
+
+    public boolean isOpen() {
+        if (getRegistration() != null) {
+            return getRegistration().isOpen();
+        }
+        return false;
     }
 
     public String getStartTime() {
@@ -178,12 +188,17 @@ public class RegistrationDisplayContext {
     }
 
     @SuppressWarnings("unused")
-    public String getUnregisterURL(PortletRequest portletRequest){
+    public String getUnregisterURL(HttpServletRequest httpServletRequest) {
+        return getPortletRequest(httpServletRequest, "unregister", themeDisplay.getURLCurrent());
+    }
+
+    @SuppressWarnings("unused")
+    public String getUnregisterURL(PortletRequest portletRequest) {
         return getPortletRequest(portletRequest, "unregister");
     }
 
     @SuppressWarnings("unused")
-    public String getUpdateURL(PortletRequest portletRequest){
+    public String getUpdateURL(PortletRequest portletRequest) {
         return getPortletRequest(portletRequest, "update");
     }
 
@@ -192,7 +207,40 @@ public class RegistrationDisplayContext {
         return getPortletRequest(portletRequest, "register");
     }
 
-    public String getPortletRequest(PortletRequest portletRequest, String action){
+    private String getPortletRequest(HttpServletRequest httpServletRequest, String action, String redirect) {
+
+        if (configurationProvider != null) {
+            long groupId = themeDisplay.getScopeGroupId();
+
+            try {
+                DSDSiteConfiguration urlsConfiguration = configurationProvider
+                        .getGroupConfiguration(DSDSiteConfiguration.class, groupId);
+
+                Layout registrationPage = LayoutLocalServiceUtil
+                        .fetchLayoutByFriendlyURL(groupId, false, urlsConfiguration.registrationURL());
+
+                if (registrationPage != null) {
+                    PortletURL portletURL = PortletURLFactoryUtil
+                            .create(httpServletRequest,
+                                    "dsd_RegistrationFormPortlet",
+                                    registrationPage.getPlid(),
+                                    action.equals("unregister") ? PortletRequest.ACTION_PHASE : PortletRequest.RENDER_PHASE);
+                    portletURL.setWindowState(LiferayWindowState.NORMAL);
+                    portletURL.setPortletMode(LiferayPortletMode.VIEW);
+                    portletURL.setParameter("javax.portlet.action", "/submit/register/form");
+                    portletURL.setParameter("articleId", getRegistration().getArticleId());
+                    portletURL.setParameter("action", action);
+                    portletURL.setParameter("redirect", redirect);
+                    return portletURL.toString();
+                }
+            } catch (Exception e) {
+                LOG.error("Error creating portlet url", e);
+            }
+        }
+        return "";
+    }
+
+    public String getPortletRequest(PortletRequest portletRequest, String action) {
 
         if (configurationProvider != null) {
             long groupId = themeDisplay.getScopeGroupId();

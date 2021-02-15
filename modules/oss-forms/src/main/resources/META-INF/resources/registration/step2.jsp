@@ -1,3 +1,4 @@
+<%@ page import="java.util.Date" %>
 <aui:row>
     <aui:col width="50">
         <c:if test="${not empty attributes}">
@@ -12,7 +13,7 @@
         </c:if>
         <span><liferay-ui:message key="registrationform.userInfo"/></span>
 
-<%--        <div class="d-flex justify-content-start">--%>
+        <%--        <div class="d-flex justify-content-start">--%>
 <%--            <div class="pr-3">--%>
 <%--                <aui:input--%>
 <%--                        name="salutation"--%>
@@ -61,9 +62,9 @@
                         value="<%= user.getFirstName() %>"
                         disabled="true">
                     <aui:validator name="required">
-                        function () {
-                        return checkStep(getFormName(), 2);
-                        }
+                                function () {
+                                    return checkStep(getFormName(), 2);
+                                }
                     </aui:validator>
                 </aui:input>
             </div>
@@ -74,9 +75,9 @@
                         value="<%= user.getLastName() %>"
                         disabled="true">
                     <aui:validator name="required">
-                        function () {
-                        return checkStep(getFormName(), 2);
-                        }
+                                function () {
+                                    return checkStep(getFormName(), 2);
+                                }
                     </aui:validator>
                 </aui:input>
             </div>
@@ -88,9 +89,9 @@
                 value="<%= user.getEmailAddress() %>"
                 disabled="true">
             <aui:validator name="required">
-                function () {
-                return checkStep(getFormName(), 2);
-                }
+                        function () {
+                            return checkStep(getFormName(), 2);
+                        }
             </aui:validator>
         </aui:input>
 
@@ -102,9 +103,9 @@
                         value="<%= user.getScreenName() %>"
                         disabled="true">
                     <aui:validator name="required">
-                        function () {
-                        return checkStep(getFormName(), 2);
-                        }
+                                function () {
+                                    return checkStep(getFormName(), 2);
+                                }
                     </aui:validator>
                 </aui:input>
             </div>
@@ -123,9 +124,9 @@
                 label="registrationform.orgname"
                 value="${org_name}">
             <aui:validator name="required">
-                function () {
-                return checkStep(getFormName(), 2);
-                }
+                        function () {
+                            return checkStep(getFormName(), 2);
+                        }
             </aui:validator>
         </aui:input>
         <aui:input
@@ -133,9 +134,9 @@
                 label="registrationform.orgaddress"
                 value="${org_address}">
             <aui:validator name="required">
-                function () {
-                return checkStep(getFormName(), 2);
-                }
+                        function () {
+                            return checkStep(getFormName(), 2);
+                        }
             </aui:validator>
         </aui:input>
 
@@ -146,9 +147,9 @@
                         label="registrationform.orgpostcode"
                         value="${org_postal}">
                     <aui:validator name="required">
-                        function () {
-                        return checkStep(getFormName(), 2);
-                        }
+                                function () {
+                                    return checkStep(getFormName(), 2);
+                                }
                     </aui:validator>
                 </aui:input>
             </div>
@@ -158,9 +159,9 @@
                         label="registrationform.orgcity"
                         value="${org_city}">
                     <aui:validator name="required">
-                        function () {
-                        return checkStep(getFormName(), 2);
-                        }
+                                function () {
+                                    return checkStep(getFormName(), 2);
+                                }
                     </aui:validator>
                 </aui:input>
             </div>
@@ -186,9 +187,18 @@
 
         <p><liferay-ui:message key="dsd.registration.step2.badge.title"/></p>
 
+        <%
+            String eventTitle = "";
+            Date eventDate = new Date();
+            if (event != null) {
+                eventTitle = event.getTitle();
+                eventDate = event.getEndTime();
+            }
+        %>
         <div class="card mb-3">
             <div class="card-header">
-                <%= event.getTitle() %> <span class="d-block event-edition"><%= DateUtil.getDate(event.getEndTime(), "yyyy", locale)%></span>
+                <%= eventTitle %> <span
+                    class="d-block event-edition"><%= DateUtil.getDate(eventDate, "yyyy", locale)%></span>
             </div>
             <div class="card-body px-5 py-6">
                 <h1 class="card-title" id="badge-title"></h1>

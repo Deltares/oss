@@ -57,6 +57,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         String contactURL = ParamUtil.getString(actionRequest, "contactURL");
         String sendFromEmail = ParamUtil.getString(actionRequest, "sendFromEmail");
         String replyToEmail = ParamUtil.getString(actionRequest, "replyToEmail");
+        boolean isSendEmails = ParamUtil.getBoolean(actionRequest, "enableEmails");
         boolean isDsdSite = ParamUtil.getBoolean(actionRequest, "dsdSite");
 
         Settings settings = SettingsFactoryUtil.getSettings(
@@ -74,6 +75,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         modifiableSettings.setValue("contactURL", contactURL);
         modifiableSettings.setValue("sendFromEmail", sendFromEmail);
         modifiableSettings.setValue("replyToEmail", replyToEmail);
+        modifiableSettings.setValue("enableEmails", String.valueOf(isSendEmails));
         modifiableSettings.setValue("dsdSite", String.valueOf(isDsdSite));
         modifiableSettings.store();
 
