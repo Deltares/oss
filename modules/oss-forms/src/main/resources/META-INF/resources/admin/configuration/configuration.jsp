@@ -72,6 +72,12 @@
                 value="<%= configuration.replyToEmail() %>"/>
 
         <aui:input
+                label="dsd.email.enabled"
+                name="enableEmails"
+                type="checkbox"
+                value="<%= configuration.enableEmails() %>"/>
+
+        <aui:input
                 label="dsd.site"
                 name="dsdSite"
                 type="checkbox"

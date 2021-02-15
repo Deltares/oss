@@ -41,6 +41,9 @@ public interface DSDSiteConfiguration {
     @Meta.AD(required = false, deflt = "dsd@deltares.nl", description = "Configure the Reply To email address")
     String replyToEmail();
 
+    @Meta.AD(required = false, deflt = "true", description = "Configure if to send email notifications.")
+    boolean enableEmails();
+
     @Meta.AD(required = false, deflt = "false", description = "Configure if current site is a DSD site.")
     boolean dsdSite();
 }
