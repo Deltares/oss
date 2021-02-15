@@ -10,10 +10,28 @@ services:
     env_file:
       - .env
     volumes:
-      - dbdata:/var/lib/mysql
+      - dbliferay:/var/lib/mysql
       - ./mariadb/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/
     restart: always
-    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_general_ci']
+    command: [ 'mysqld', '--character-set-server=utf8', '--collation-server=utf8_general_ci' ]
+    networks:
+      - liferay
+
+  mariadb-keycloak:
+    image: mariadb:10.1.19
+    container_name: keycloak-mariadb
+    ports:
+      - "3308:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=keycloak
+      - MYSQL_USER=keycloak
+      - MYSQL_PASSWORD=password
+      - HOSTNAME=mariadb-keycloak
+    volumes:
+      - dbkeycloak:/var/lib/mysql
+    restart: always
+    command: [ 'mysqld', '--character-set-server=utf8', '--collation-server=utf8_general_ci' ]
     networks:
       - liferay
 
@@ -21,8 +39,8 @@ services:
     container_name: oss-liferay
     build: liferay
     ports:
-#      - 80:8080
-      - 8080:8080
+      #      - 80:8080
+      - 8081:8080
       - 8000:8000
     volumes:
       - ./liferay/data:/opt/liferay/data/document_library
@@ -51,10 +69,49 @@ services:
     networks:
       - liferay
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:6.0.1
+    container_name: keycloak
+    #    build: server
+    ports:
+      - 8080:8080
+      - 8443:8443
+      - 8787:8787
+      - 9990:9990
+    volumes:
+      - ./keycloak/deployments:/opt/jboss/keycloak/standalone/deployments
+      - ./resources:/opt/jboss/keycloak/resources
+    restart: always
+    networks:
+      - liferay
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=Pa55w0rd
+      - DB_VENDOR=mariadb
+      - DB_ADDR=mariadb-keycloak
+      - DB_DATABASE=keycloak
+      - DB_USER=keycloak
+      - DB_PASSWORD=password
+      - DEBUG=true
+      - DEBUG_PORT=8787
+      - HOSTNAME=keycloak
+    #    depends_on:
+    #      - mariadb
+    #    These commands are required to allow remote debugging with docker
+    command: [ "-Dcom.sun.management.jmxremote", "-Dcom.sun.management.jmxremote.port=12345",
+               "-Dcom.sun.management.jmxremote.local.only=false", "-Dcom.sun.management.jmxremote.authenticate=false",
+               "-Dcom.sun.management.jmxremote.ssl=false", "-Dcom.sun.management.jmxremote.rmi.port=12345",
+               "-Djava.rmi.server.hostname=$HOSTNAME",
+               "-Dkeycloak.import=/opt/jboss/keycloak/resources/realm-lportal.json",
+               "-Dkeycloak.profile.feature.upload_scripts=enabled" ]
+
 volumes:
   esdata:
     driver: local
-  dbdata:
+  dbliferay:
+    driver: local
+  dbkeycloak:
+    driver: local
 
 networks:
   liferay:
