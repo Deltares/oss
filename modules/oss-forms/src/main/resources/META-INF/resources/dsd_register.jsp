@@ -1,6 +1,6 @@
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionMessages" %>
-<%@ include file="/META-INF/resources/dsd_init.jsp" %>
+<%@ include file="dsd_init.jsp" %>
 
 <%
     Map attributes = (Map) renderRequest.getAttribute("attributes");

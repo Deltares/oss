@@ -14,7 +14,7 @@ import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.dsd.model.BillingInfo;
-import nl.deltares.forms.constants.OssFormPortletKeys;
+import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
@@ -35,16 +35,16 @@ import java.util.*;
 @Component(
 	immediate = true,
 	property = {
-        "com.liferay.portlet.display-category=OSS",
-		"com.liferay.portlet.header-portlet-css=/css/main.css",
-		"com.liferay.portlet.instanceable=true",
-		"javax.portlet.display-name=DSD Admin Form",
-		"javax.portlet.init-param.config-template=/admin/configuration/configuration.jsp",
-		"javax.portlet.init-param.template-path=/",
-		"javax.portlet.init-param.view-template=/dsd_admin.jsp",
-		"javax.portlet.name=" + OssFormPortletKeys.REGISTRATION_DOWNLOAD_FORM,
-		"javax.portlet.resource-bundle=content.Language",
-		"javax.portlet.security-role-ref=power-user,user"
+			"com.liferay.portlet.display-category=OSS",
+			"com.liferay.portlet.header-portlet-css=/css/main.css",
+			"com.liferay.portlet.instanceable=true",
+			"javax.portlet.display-name=DSD Admin Form",
+			"javax.portlet.init-param.config-template=/admin/configuration/dsd_configuration.jsp",
+			"javax.portlet.init-param.template-path=/",
+			"javax.portlet.init-param.view-template=/dsd_admin.jsp",
+			"javax.portlet.name=" + OssConstants.DSD_ADMIN_FORM,
+			"javax.portlet.resource-bundle=content.Language",
+			"javax.portlet.security-role-ref=power-user,user"
 	},
 	service = Portlet.class
 )
@@ -103,6 +103,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 			writeEvents(resourceResponse, event);
 		} else {
 			writeError("No event found for eventId: " + eventId, resourceResponse);
+			return;
 		}
 		String action = ParamUtil.getString(resourceRequest, "action");
 		if ("delete".equals(action)){

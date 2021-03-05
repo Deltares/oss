@@ -22,15 +22,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component(
-        configurationPid = OssConstants.DSD_SITE_CONFIGURATIONS_PID,
+        configurationPid = OssConstants.OSS_SITE_CONFIGURATIONS_PID,
         configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
         property = {
-                "javax.portlet.name=" + OssConstants.DSD_ADMIN_FORM,
+                "javax.portlet.name=" + OssConstants.OSS_ADMIN_FORM,
         },
         service = ConfigurationAction.class
 )
 
-public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
+public class OSSSiteConfigurationAction extends DefaultConfigurationAction {
 
     @Override
     public void include(PortletConfig portletConfig, HttpServletRequest httpServletRequest,
@@ -48,35 +48,15 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
 
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
-        long eventId = ParamUtil.getLong(actionRequest, "eventId");
-        String registrationURL = ParamUtil.getString(actionRequest, "registrationURL");
-        String busTransferURL = ParamUtil.getString(actionRequest, "busTransferURL");
-        String travelStayURL = ParamUtil.getString(actionRequest, "travelStayURL");
-        String conditionsURL = ParamUtil.getString(actionRequest, "conditionsURL");
-        String privacyURL = ParamUtil.getString(actionRequest, "privacyURL");
-        String contactURL = ParamUtil.getString(actionRequest, "contactURL");
-        String sendFromEmail = ParamUtil.getString(actionRequest, "sendFromEmail");
-        String replyToEmail = ParamUtil.getString(actionRequest, "replyToEmail");
-        boolean isSendEmails = ParamUtil.getBoolean(actionRequest, "enableEmails");
-        boolean isDsdSite = ParamUtil.getBoolean(actionRequest, "dsdSite");
+        boolean isEnableSiteId = ParamUtil.getBoolean(actionRequest, "enableSiteId");
 
         Settings settings = SettingsFactoryUtil.getSettings(
-                new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), DSDSiteConfiguration.class.getName()));
+                new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), OSSSiteConfiguration.class.getName()));
 
         ModifiableSettings modifiableSettings =
                 settings.getModifiableSettings();
 
-        modifiableSettings.setValue("eventId", String.valueOf(eventId));
-        modifiableSettings.setValue("registrationURL", registrationURL);
-        modifiableSettings.setValue("busTransferURL", busTransferURL);
-        modifiableSettings.setValue("travelStayURL", travelStayURL);
-        modifiableSettings.setValue("conditionsURL", conditionsURL);
-        modifiableSettings.setValue("privacyURL", privacyURL);
-        modifiableSettings.setValue("contactURL", contactURL);
-        modifiableSettings.setValue("sendFromEmail", sendFromEmail);
-        modifiableSettings.setValue("replyToEmail", replyToEmail);
-        modifiableSettings.setValue("enableEmails", String.valueOf(isSendEmails));
-        modifiableSettings.setValue("dsdSite", String.valueOf(isDsdSite));
+        modifiableSettings.setValue("enableSiteId", String.valueOf(isEnableSiteId));
         modifiableSettings.store();
 
         super.processAction(portletConfig, actionRequest, actionResponse);

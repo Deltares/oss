@@ -7,8 +7,8 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.forms.constants.OssFormPortletKeys;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
+import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.utils.DDMStructureUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
@@ -32,7 +32,7 @@ import java.util.Optional;
                 "javax.portlet.display-name=DsdBusRegistrationForm",
                 "javax.portlet.init-param.template-path=/",
                 "javax.portlet.init-param.view-template=/bus_registration/view.jsp",
-                "javax.portlet.name=" + OssFormPortletKeys.DSD_BUS_REGISTRATION_FORM,
+                "javax.portlet.name=" + OssConstants.DSD_BUS_REGISTRATION_FORM,
                 "javax.portlet.resource-bundle=content.Language",
                 "javax.portlet.security-role-ref=power-user,user"
         },

@@ -22,6 +22,7 @@ dependencies {
 	compileOnly group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.5.0"
 	compileOnly group: 'com.liferay', name: 'com.liferay.portal.configuration.metatype', version: '2.0.18'
 	compileOnly group: "com.liferay", name: "com.liferay.petra.lang", version: "3.0.0"
+	compileOnly group: "com.liferay", name: "com.liferay.message.boards.api", version: "4.5.7"
 
 	compileOnly project(":modules:common-utils")
 

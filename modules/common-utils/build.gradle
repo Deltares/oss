@@ -11,6 +11,7 @@ dependencies {
 
     compileOnly group: 'com.liferay', name: 'com.liferay.portal.search.api', version: "2.3.0"
     compileOnly group: "com.liferay", name: "com.liferay.petra.string", version: "3.0.0"
+    compileOnly group: "com.liferay", name: "com.liferay.message.boards.api", version: "4.5.7"
 
     compileOnly project(":modules:registration-service:registration-service-api")
 
