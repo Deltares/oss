@@ -1,4 +1,4 @@
-<%@ include file="init.jsp" %>
+<%@ include file="dsd_init.jsp" %>
 
 <liferay-portlet:actionURL
         portletConfiguration="<%= true %>"

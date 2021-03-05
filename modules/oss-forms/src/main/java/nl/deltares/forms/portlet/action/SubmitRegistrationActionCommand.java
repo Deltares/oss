@@ -17,8 +17,8 @@ import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.dsd.model.BillingInfo;
 import nl.deltares.dsd.model.RegistrationRequest;
 import nl.deltares.emails.DsdEmail;
-import nl.deltares.forms.constants.OssFormPortletKeys;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
+import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.DsdParserUtils;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Component(
         immediate = true,
         property = {
-                "javax.portlet.name=" + OssFormPortletKeys.DSD_REGISTRATIONFORM,
+                "javax.portlet.name=" + OssConstants.DSD_REGISTRATIONFORM,
                 "mvc.command.name=/submit/register/form"
         },
         service = MVCActionCommand.class

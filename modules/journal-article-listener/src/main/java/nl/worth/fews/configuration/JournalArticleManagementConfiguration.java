@@ -5,7 +5,7 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
 import nl.worth.fews.constants.JournalArticleManagementConstants;
 
 @ExtendedObjectClassDefinition(
-        category = "dsd-general"
+        category = "oss-general"
 )
 @Meta.OCD(
     id = JournalArticleManagementConstants.JOURNAL_ARTICLE_MANAGEMENT_CONFIGURATION_PID
