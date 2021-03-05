@@ -10,7 +10,7 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.forms.constants.OssFormPortletKeys;
+import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.utils.DDMStructureUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
@@ -31,16 +31,16 @@ import java.util.*;
 @Component(
 	immediate = true,
 	property = {
-		"com.liferay.portlet.display-category=OSS",
-		"com.liferay.portlet.header-portlet-css=/css/main.css",
-		"com.liferay.portlet.instanceable=false",
-		"javax.portlet.display-name=DsdRegistrationForm",
-		"javax.portlet.init-param.template-path=/",
-		"javax.portlet.init-param.view-template=/dsd_register.jsp",
-		"javax.portlet.name=" + OssFormPortletKeys.DSD_REGISTRATIONFORM,
-		"javax.portlet.resource-bundle=content.Language",
-		"javax.portlet.supported-locale=en",
-		"javax.portlet.security-role-ref=power-user,user"
+			"com.liferay.portlet.display-category=OSS",
+			"com.liferay.portlet.header-portlet-css=/css/main.css",
+			"com.liferay.portlet.instanceable=false",
+			"javax.portlet.display-name=DsdRegistrationForm",
+			"javax.portlet.init-param.template-path=/",
+			"javax.portlet.init-param.view-template=/dsd_register.jsp",
+			"javax.portlet.name=" + OssConstants.DSD_REGISTRATIONFORM,
+			"javax.portlet.resource-bundle=content.Language",
+			"javax.portlet.supported-locale=en",
+			"javax.portlet.security-role-ref=power-user,user"
 	},
 	service = Portlet.class
 )

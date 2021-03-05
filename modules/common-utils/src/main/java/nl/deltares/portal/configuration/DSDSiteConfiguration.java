@@ -2,14 +2,14 @@ package nl.deltares.portal.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
-import nl.deltares.portal.constants.DsdConstants;
+import nl.deltares.portal.constants.OssConstants;
 
 @ExtendedObjectClassDefinition(
-        category = "dsd-general",
+        category = "oss-general",
         scope = ExtendedObjectClassDefinition.Scope.GROUP
 )
 @Meta.OCD(
-        id = DsdConstants.DSD_SITE_CONFIGURATIONS_PID,
+        id = OssConstants.DSD_SITE_CONFIGURATIONS_PID,
         localization = "content/Language", name = "dsd-site-configuration"
 )
 public interface DSDSiteConfiguration {

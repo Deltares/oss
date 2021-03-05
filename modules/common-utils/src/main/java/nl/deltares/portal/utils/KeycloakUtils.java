@@ -1,5 +1,6 @@
 package nl.deltares.portal.utils;
 
+import java.util.List;
 import java.util.Map;
 
 public interface KeycloakUtils {
@@ -52,4 +53,7 @@ public interface KeycloakUtils {
     Map<String, String> getUserAttributes(String email) throws Exception;
 
     int registerUserLogin(String email, String siteId) throws Exception;
+
+    void deleteUser(String email) throws Exception;
+
 }

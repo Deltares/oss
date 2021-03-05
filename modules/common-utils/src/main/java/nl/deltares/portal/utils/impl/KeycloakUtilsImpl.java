@@ -178,8 +178,28 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         return checkResponse(connection);
     }
 
+    @Override
+    public void deleteUser(String email) throws Exception {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + getAccessToken());
+        HttpURLConnection connection = getConnection(getKeycloakUsersPath() + "?email=" + email, "GET", headers);
+
+        checkResponse(connection);
+        String jsonResponse = readAll(connection.getInputStream());
+        //Keycloak wraps all attributes in a json array. we need to remove this
+        JSONObject userObject = getJsonObject(jsonResponse);
+        if (userObject == null) return;
+
+        //delete user
+        connection = getConnection(getKeycloakUsersPath() + '/' + userObject.get("id"), "DELETE", headers);
+        //get response
+        checkResponse(connection);
+
+    }
+
     public int registerUserLogin(String email, String siteId) throws Exception {
-        if ( siteId == null || siteId.isEmpty()) return -1;
+        if (siteId == null || siteId.isEmpty()) return -1;
 
         String[] searchKeys = {
                 LOGIN_LOGIN_COUNT + '.' + siteId,

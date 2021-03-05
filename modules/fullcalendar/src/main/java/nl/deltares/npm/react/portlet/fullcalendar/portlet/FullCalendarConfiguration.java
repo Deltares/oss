@@ -4,7 +4,7 @@ import aQute.bnd.annotation.metatype.Meta;
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 
 @ExtendedObjectClassDefinition(
-        category = "dsd-general"
+        category = "oss-general"
 )
 @Meta.OCD(
         id = "nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration",

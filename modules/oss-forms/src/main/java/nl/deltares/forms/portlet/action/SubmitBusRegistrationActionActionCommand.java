@@ -10,8 +10,8 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.forms.constants.OssFormPortletKeys;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
+import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.BusTransfer;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
@@ -27,7 +27,7 @@ import java.text.SimpleDateFormat;
 @Component(
         immediate = true,
         property = {
-                "javax.portlet.name=" + OssFormPortletKeys.DSD_BUS_REGISTRATION_FORM,
+                "javax.portlet.name=" + OssConstants.DSD_BUS_REGISTRATION_FORM,
                 "mvc.command.name=/submit/transfer/form"
         },
         service = MVCActionCommand.class
