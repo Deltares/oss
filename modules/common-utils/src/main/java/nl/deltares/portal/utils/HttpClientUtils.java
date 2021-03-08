@@ -59,14 +59,21 @@ public abstract class HttpClientUtils {
     public static int checkResponse(HttpURLConnection urlConnection) throws IOException {
         int responseCode = urlConnection.getResponseCode();
         if (responseCode > 299) {
-            InputStream errorStream = urlConnection.getErrorStream();
-            if (errorStream != null) {
-                throw new IOException("Error " + responseCode + ": " + readAll(errorStream));
-            } else {
-                throw new IOException("Error " + responseCode + ": no message");
-            }
+            throw new IOException("Err" +
+                    "or " + responseCode + ": " + getErrorMessage(urlConnection));
         }
         return responseCode;
+    }
+
+    private static String getErrorMessage(HttpURLConnection urlConnection) throws IOException {
+
+        int responseCode = urlConnection.getResponseCode();
+        InputStream errorStream = urlConnection.getErrorStream();
+        if (responseCode == 500 && errorStream != null) {
+            return readAll(urlConnection.getErrorStream());
+        } else {
+            return urlConnection.getResponseMessage();
+        }
     }
 
     public static String readAll(InputStream inputStream) throws IOException {
