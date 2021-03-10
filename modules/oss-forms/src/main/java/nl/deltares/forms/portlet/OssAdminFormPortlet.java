@@ -3,8 +3,10 @@ package nl.deltares.forms.portlet;
 import com.liferay.message.boards.model.MBBan;
 import com.liferay.message.boards.service.MBBanLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -62,7 +64,7 @@ public class OssAdminFormPortlet extends MVCPortlet {
             return;
         }
         String action = ParamUtil.getString(resourceRequest, "action");
-        long siteId = ParamUtil.getLong(resourceRequest, "actionSite");
+        long siteId = ParamUtil.getLong(resourceRequest, "siteId");
         if (siteId == 0) siteId = themeDisplay.getScopeGroupId();
         if ("deleteBannedUsers".equals(action)) {
 
@@ -73,9 +75,10 @@ public class OssAdminFormPortlet extends MVCPortlet {
 
             if (bannedUsers.size() == 0) {
                 try {
-                    writer.printf("No banned users found for site %s", themeDisplay.getScopeGroupName());
+                    Group group = GroupLocalServiceUtil.getGroup(siteId);
+                    writer.printf("No banned users found for site %s (%d)", group.getName(), siteId);
                 } catch (PortalException e) {
-                    writer.printf("Error getting scope group name: %s", e.getMessage());
+                    writer.printf("Error getting scope group for siteId %d: %s", siteId, e.getMessage());
                     return;
                 }
             }
