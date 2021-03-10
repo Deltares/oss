@@ -1,7 +1,6 @@
 package nl.deltares.portal.utils;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.sun.org.apache.xerces.internal.dom.DeferredElementImpl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -51,7 +50,7 @@ public class XmlContentUtilsTest {
         Document document = XmlContentUtils.parseContent("testGetDynamicElementByName", new FileInputStream(xml.getFile()));
         Node startDay = XmlContentUtils.getDynamicElementByName(document, "starttime", false);
         Assert.assertEquals("dynamic-element", startDay.getNodeName());
-        Assert.assertEquals("starttime", ((DeferredElementImpl)startDay).getAttribute("name"));
+        Assert.assertEquals("starttime", startDay.getAttributes().getNamedItem("name").getNodeValue());
     }
 
     @Test
