@@ -54,17 +54,17 @@
     <div class="flex-row justify-content-between bs-stepper-indicators py-3">
         <ul class="navbar navbar-nav">
             <li class="nav-item active icon-circle-blank">
-                <a class="active" href="#stepper-step-1" title="Step 1">
+                <a class="active" href="#stepper-step-1" title="Step 1" style="font-family:Open Sans,serif">
                     <span><liferay-ui:message key="dsd.registration.steps.step1"/></span>
                 </a>
             </li>
             <li class="nav-item icon-circle-blank" >
-                <a href="#stepper-step-2" title="Step 2">
+                <a href="#stepper-step-2" title="Step 2" style="font-family:Open Sans,serif">
                     <span><liferay-ui:message key="dsd.registration.steps.step2"/></span>
                 </a>
             </li>
             <li class="nav-item icon-circle-blank disabled" id="nav-stepper-step-3">
-                <a href="#stepper-step-3" title="Step 3">
+                <a href="#stepper-step-3" title="Step 3" style="font-family:Open Sans,serif">
                     <span><liferay-ui:message key="dsd.registration.steps.step3"/></span>
                 </a>
             </li>
@@ -74,7 +74,7 @@
 <%--                </a>--%>
 <%--            </li>--%>
             <li class="nav-item icon-circle-blank">
-                <a href="#stepper-step-5" title="Step 5">
+                <a href="#stepper-step-5" title="Step 5" style="font-family:Open Sans,serif">
                     <span><liferay-ui:message key="dsd.registration.steps.step5"/></span>
                 </a>
             </li>
