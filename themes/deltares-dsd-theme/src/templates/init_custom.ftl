@@ -21,9 +21,6 @@ company_logo = htmlUtil.escape(themeDisplay.getCompanyLogo())
 
 <#-- If this page has an open day colour scheme, drop the banner on -->
 
-<#assign defaultCompanyId = staticUtil["com.liferay.portal.kernel.util.PortalUtil"].getDefaultCompanyId()/>
-<#assign groupLocalService = serviceLocator.findService("com.liferay.portal.kernel.service.GroupLocalService") />
-<#assign globalGroupId = groupLocalService.getCompanyGroup(defaultCompanyId).getGroupId()/>
 <#assign footerWCArticleId = footerContentID >
 
 <#if journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroupId(), footerWCArticleId)?? >
