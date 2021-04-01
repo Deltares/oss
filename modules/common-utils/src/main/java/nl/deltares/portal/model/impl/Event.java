@@ -152,7 +152,7 @@ public class Event extends AbsDsdArticle {
     }
 
     private void parseRegistrations(Locale locale) throws PortalException {
-        this.registrations = dsdParserUtils.getRegistrations(getGroupId(), getArticleId(), locale);
+        this.registrations = dsdParserUtils.getRegistrations(getCompanyId(), getGroupId(), getArticleId(), locale);
     }
 
 }

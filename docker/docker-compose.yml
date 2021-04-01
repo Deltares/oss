@@ -76,7 +76,7 @@ services:
     ports:
       - 8080:8080
       - 8443:8443
-#      - 8787:8787
+      - 8787:8787
 #      - 9990:9990
     volumes:
       - ./keycloak/deployments:/opt/jboss/keycloak/standalone/deployments

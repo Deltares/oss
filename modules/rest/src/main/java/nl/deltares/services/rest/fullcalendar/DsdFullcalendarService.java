@@ -4,9 +4,11 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.GroupServiceUtil;
 import com.liferay.portal.kernel.service.LayoutServiceUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -81,7 +83,8 @@ public class DsdFullcalendarService {
         try {
             List<Registration> registrations;
             if (eventId.equals("0")){
-                registrations = parserUtils.getRegistrations(Long.parseLong(siteId), startSearch, endSearch, locale);
+                Group group = GroupLocalServiceUtil.getGroup(Long.parseLong(siteId));
+                registrations = parserUtils.getRegistrations(group.getCompanyId(), Long.parseLong(siteId), startSearch, endSearch, locale);
             } else {
                 nl.deltares.portal.model.impl.Event event = parserUtils.getEvent(Long.parseLong(siteId), eventId);
                 registrations = event.getRegistrations(locale);

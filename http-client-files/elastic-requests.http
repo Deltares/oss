@@ -109,8 +109,19 @@ Content-Type: application/json
   }
 }
 
+###
+GET http://localhost:9200/_search
+#Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
 
+{
+  "query": {
+      "query_string": {
+          "query": "3883381",
+          "default_field": "content"
+      }
+  }
 
-
+}
 
 
