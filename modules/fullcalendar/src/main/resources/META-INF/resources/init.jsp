@@ -86,7 +86,12 @@
                 }
             }
             //noinspection UnusedAssignment
-            colorMap = JsonContentUtils.parseSessionColorConfig(sessionColorMap);
+            Map<String, String> finalColorMap = JsonContentUtils.parseSessionColorConfig(sessionColorMap);
+            Map<String, String> typeMap = (Map<String,String>) renderRequest.getAttribute("typeMap");
+            typeMap.keySet().forEach(typeKey -> {
+                finalColorMap.putIfAbsent(typeKey, "#17a2b8");
+            });
+            colorMap = finalColorMap;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

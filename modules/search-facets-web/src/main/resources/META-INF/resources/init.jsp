@@ -9,7 +9,6 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.portal.kernel.util.Validator" %>
 <%@ page import="nl.deltares.search.facet.date.DateRangeFacetConfiguration" %>
-<%@ page import="nl.deltares.portal.model.DsdArticle" %>
 <%@ page import="nl.deltares.search.facet.registration.RegistrationFacetConfiguration" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
