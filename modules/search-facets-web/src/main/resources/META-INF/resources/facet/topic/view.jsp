@@ -1,8 +1,9 @@
+<%@ page import="java.util.Map" %>
 <%@ include file="/META-INF/resources/init.jsp" %>
 
 <%
 	String type = (String)renderRequest.getAttribute("topic");
-	DsdArticle.DSD_TOPIC_KEYS[] topicValues = DsdArticle.DSD_TOPIC_KEYS.values();
+	Map<String, String> topicsMap = (Map<String,String>) renderRequest.getAttribute("topicMap");
 %>
 
 <aui:form method="post" name="sessionTopicFacetForm">
@@ -13,9 +14,8 @@
 			cssClass="select"
 			label="facet.session-topic.label"  value="<%= type  %>" >
 		<aui:option value="undefined" label ="facet.session-topic.label.select" />
-		<% for (DsdArticle.DSD_TOPIC_KEYS topicValue : topicValues) { %>
-			<% String topicLabel = "facet.session-topic.label." + topicValue.name(); %>
-			<aui:option value="<%=topicValue.name()%>" label ="<%=topicLabel%>" />
+		<% for (String topicValue : topicsMap.keySet()) { %>
+			<aui:option value="<%=topicValue%>" label ="<%=topicsMap.get(topicValue)%>" />
 		<%}%>
 	</aui:select>
 </aui:form>

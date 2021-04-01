@@ -1,8 +1,9 @@
+<%@ page import="java.util.Map" %>
 <%@ include file="/META-INF/resources/init.jsp" %>
 
 <%
 	String type = (String)renderRequest.getAttribute("type");
-	DsdArticle.DSD_SESSION_KEYS[] typeValues = DsdArticle.DSD_SESSION_KEYS.values();
+	Map<String, String> typeMap = (Map<String,String>) renderRequest.getAttribute("typeMap");
 %>
 
 <aui:form method="post" name="sessionTypeFacetForm">
@@ -13,9 +14,8 @@
 			cssClass="select"
 			label="facet.session-type.label"  value="<%= type  %>" >
 		<aui:option value="undefined" label ="facet.session-type.label.select" />
-		<% for (DsdArticle.DSD_SESSION_KEYS typeValue : typeValues) { %>
-			<% String typeLabel = "facet.session-type.label." + typeValue.name(); %>
-			<aui:option value="<%=typeValue.name()%>" label ="<%=typeLabel%>" />
+		<% for (String topicValue : typeMap.keySet()) { %>
+			<aui:option value="<%=topicValue%>" label ="<%=typeMap.get(topicValue)%>" />
 		<%}%>
 	</aui:select>
 </aui:form>
