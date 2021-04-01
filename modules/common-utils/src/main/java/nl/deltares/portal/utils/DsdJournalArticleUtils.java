@@ -7,6 +7,7 @@ import com.liferay.portal.kernel.search.SearchContext;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public interface DsdJournalArticleUtils {
     JournalArticle getLatestArticle(long classPK) throws PortalException;
@@ -26,4 +27,6 @@ public interface DsdJournalArticleUtils {
     void contributeDsdEventRegistrations(long groupId, String eventId, SearchContext searchContext, Locale locale);
 
     void contributeDsdDateRangeRegistrations(long groupId, Date startDate, Date endDate,  SearchContext searchContext, Locale locale);
+
+    Map<String, String> getStructureFieldOptions(long groupId, String structureName, String optionsField, Locale locale) throws PortalException;
 }

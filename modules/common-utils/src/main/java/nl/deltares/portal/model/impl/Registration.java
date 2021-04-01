@@ -5,7 +5,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
-import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.Period;
@@ -26,8 +25,8 @@ public abstract class Registration extends AbsDsdArticle {
     private float price;
     private boolean open;
     private String currency = "&#8364"; //euro sign
-    private DsdArticle.DSD_REGISTRATION_KEYS type;
-    private DsdArticle.DSD_TOPIC_KEYS topic;
+    private String type = "unknown";
+    private String topic = "unknown";
     private Registration parentRegistration = null;
     private boolean overlapWithParent = true;
     private boolean hasParent = true;
@@ -62,9 +61,9 @@ public abstract class Registration extends AbsDsdArticle {
             String open = XmlContentUtils.getDynamicContentByName(document, "open", true);
             this.open = Boolean.parseBoolean(open);
             String type = XmlContentUtils.getDynamicContentByName(document, "type", false);
-            this.type = DsdArticle.DSD_REGISTRATION_KEYS.valueOf(type);
+            if (type != null) this.type = type;
             String topic = XmlContentUtils.getDynamicContentByName(document, "topic", false);
-            this.topic = DsdArticle.DSD_TOPIC_KEYS.valueOf(topic);
+            if (topic != null) this.topic = topic;
             String parentJson = XmlContentUtils.getDynamicContentByName(document, "parent", true);
             if (parentJson != null) {
                 String overlap = XmlContentUtils.getDynamicContentByName(document, "overlaps", true);
@@ -197,11 +196,11 @@ public abstract class Registration extends AbsDsdArticle {
     }
 
     public String getType() {
-        return type.name();
+        return type;
     }
 
     public String getTopic() {
-        return topic.name();
+        return topic;
     }
 
     public long getEventId() {

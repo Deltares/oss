@@ -1,8 +1,13 @@
 package nl.deltares.search.facet.type;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
+import nl.deltares.portal.model.DsdArticle;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.search.constans.FacetPortletKeys;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -12,6 +17,7 @@ import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -46,9 +52,24 @@ public class SessionTypeFacetPortlet extends MVCPortlet {
             type = typeOptional.get();
         }
         renderRequest.setAttribute("type", type);
+
+        ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
+        try {
+            Map<String, String> typeMap = dsdJournalArticleUtils.getStructureFieldOptions(themeDisplay.getSiteGroupId(),
+                    DsdArticle.DSD_STRUCTURE_KEYS.Session.name().toUpperCase(),
+                    "type", themeDisplay.getLocale());
+            renderRequest.setAttribute("typeMap", typeMap);
+        } catch (PortalException e) {
+            throw new PortletException("Could not get options for field 'type' in structure SESSIONS: " + e.getMessage(), e);
+        }
+
         super.render(renderRequest, renderResponse);
     }
 
     @Reference
     protected PortletSharedSearchRequest portletSharedSearchRequest;
+
+    @Reference
+    DsdJournalArticleUtils dsdJournalArticleUtils;
 }

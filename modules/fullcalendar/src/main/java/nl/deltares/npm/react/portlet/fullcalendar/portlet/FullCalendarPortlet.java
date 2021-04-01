@@ -3,11 +3,16 @@ package nl.deltares.npm.react.portlet.fullcalendar.portlet;
 import com.liferay.frontend.js.loader.modules.extender.npm.JSPackage;
 import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
 import nl.deltares.npm.react.portlet.fullcalendar.constants.FullCalendarPortletKeys;
+import nl.deltares.portal.model.DsdArticle;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -60,6 +65,16 @@ public class FullCalendarPortlet extends MVCPortlet {
             }
         });
 
+        ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+        try {
+            Map<String, String> typeMap = dsdJournalArticleUtils.getStructureFieldOptions(themeDisplay.getSiteGroupId(),
+                    DsdArticle.DSD_STRUCTURE_KEYS.Session.name().toUpperCase(),
+                    "type", themeDisplay.getLocale());
+            renderRequest.setAttribute("typeMap", typeMap);
+        } catch (PortalException e) {
+            throw new PortletException("Could not get options for field 'type' in structure SESSIONS: " + e.getMessage(), e);
+        }
+
         super.render(renderRequest, renderResponse);
     }
 
@@ -105,6 +120,9 @@ public class FullCalendarPortlet extends MVCPortlet {
 
     @Reference
     private DsdParserUtils dsdParserUtils;
+
+    @Reference
+    DsdJournalArticleUtils dsdJournalArticleUtils;
 
     private volatile FullCalendarConfiguration _configuration;
 

@@ -1,5 +1,7 @@
 package nl.deltares.portal.utils.impl;
 
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.journal.model.JournalArticle;
@@ -105,6 +107,31 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
             }
         });
         return check.filterLatest(structureArticles);
+    }
+
+    @Override
+    public Map<String, String> getStructureFieldOptions(long groupId, String structureName, String optionsField, Locale locale) throws PortalException {
+
+        Optional<DDMStructure> ddmStructureByName = ddmStructureUtil.getDDMStructureByName(groupId, structureName, locale);
+        if (ddmStructureByName.isPresent()){
+
+            DDMStructure ddmStructure = ddmStructureByName.get();
+            try {
+                DDMFormField ddmFormField = ddmStructure.getDDMFormField(optionsField);
+                DDMFormFieldOptions ddmFormFieldOptions = ddmFormField.getDDMFormFieldOptions();
+                if (ddmFormFieldOptions == null) return Collections.emptyMap();
+
+                Map<String, String> optionValues = new TreeMap<>();
+                ddmFormFieldOptions.getOptions().forEach((s, localizedValue) -> {
+                    optionValues.put(s, localizedValue.getString(locale));
+                });
+                return optionValues;
+            } catch (PortalException e) {
+                throw new PortalException(String.format("Could not find field '%s' in structure '%s' for groupId %d", structureName, optionsField, groupId));
+            }
+        }
+        throw new PortalException(String.format("Could not structure '%s' for groupId %d", structureName, groupId));
+
     }
 
     @Override
