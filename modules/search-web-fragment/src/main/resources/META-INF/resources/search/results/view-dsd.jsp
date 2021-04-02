@@ -39,6 +39,7 @@
 <%@ page import="nl.deltares.portal.kernel.util.comparator.SearchResultsComparator" %>
 <%@ page import="nl.deltares.portal.model.impl.Registration" %>
 <%@ page import="nl.deltares.dsd.registration.service.persistence.RegistrationUtil" %>
+<%@ page import="java.text.NumberFormat" %>
 
 <portlet:defineObjects/>
 
@@ -46,6 +47,11 @@
     ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
     DsdParserUtils dsdParserUtils = new DsdParserUtilsImpl();
     String lastDate = "";
+
+    NumberFormat numberFormat = NumberFormat.getInstance();
+    numberFormat.setGroupingUsed(true);
+    numberFormat.setMinimumFractionDigits(0);
+    numberFormat.setMaximumFractionDigits(2);
 %>
 
 <%
@@ -156,11 +162,10 @@
                                 |
                                 <c:choose>
                                     <c:when test="<%= registrationDisplayContext.getPrice() > 0%>">
-                                        <%= registrationDisplayContext.getCurrency() %> <%= registrationDisplayContext.getPrice() %>
+                                        <%= registrationDisplayContext.getCurrency() %> <%= numberFormat.format(registrationDisplayContext.getPrice()) %>
                                     </c:when>
                                     <c:otherwise>
-                                        <liferay-ui:message key="dsd.theme.session.free"
-                                                            translateArguments="<%= true %>"/>
+                                        <liferay-ui:message key="dsd.theme.session.free" translateArguments="<%= true %>"/>
                                     </c:otherwise>
                                 </c:choose>
 

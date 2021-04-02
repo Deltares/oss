@@ -1,2 +1,9 @@
 .search-facets-web {
 }
+.form-control {
+  height: 3.2rem;
+  font-size: 1.75rem;
+}
+select.form-control:not([size]):not([multiple]) {
+  height: 3.2rem;
+}

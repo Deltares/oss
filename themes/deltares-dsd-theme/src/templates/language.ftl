@@ -2,13 +2,13 @@
     <div class="dropdown">
 
             <div class="dropbtn">
-                <a class="fs-smallest"  >
+                <a class="fs-small"  >
                     <span>${curr_language.getName()}</span>
                 </a>
             </div>
             <div class="dropdown-content">
                 <#list languages as language>
-                    <a class="fs-smallest" href="${language.getUrl()}" >${language.getName()}</a>
+                    <a class="fs-small" href="${language.getUrl()}" >${language.getName()}</a>
                 </#list>
             </div>
     </div>
