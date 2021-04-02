@@ -1,26 +1,18 @@
 package nl.deltares.portal.utils.impl;
 
-import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.PropsUtil;
-import nl.deltares.mock.MockDsdJournalArticleUtils;
-import nl.deltares.mock.MockJournalArticle;
 import nl.deltares.mock.MockProps;
 import nl.deltares.mock.MockUser;
-import nl.deltares.portal.model.impl.SessionRegistration;
-import nl.deltares.portal.utils.DsdParserUtils;
-import nl.deltares.portal.utils.JsonContentUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.*;
 
 /**
