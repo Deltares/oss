@@ -5,10 +5,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.SearchContext;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class MockDsdJournalArticleUtils implements DsdJournalArticleUtils {
 
@@ -75,6 +72,11 @@ public class MockDsdJournalArticleUtils implements DsdJournalArticleUtils {
     @Override
     public void contributeDsdDateRangeRegistrations(long groupId, Date startDate, Date endDate, SearchContext searchContext, Locale locale) {
 
+    }
+
+    @Override
+    public Map<String, String> getStructureFieldOptions(long groupId, String structureName, String optionsField, Locale locale) throws PortalException {
+        return null;
     }
 
 }
