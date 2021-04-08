@@ -92,6 +92,19 @@
         background: #0D38E0;
     }
 
+    .btn-lg.btn-primary {
+        color: #F2F2F2;
+        background-color: #007bff;
+        border-color: #007bff;
+        font-size: 16px;
+    }
+
+    .btn-lg.btn-primary:hover{
+        color: #F2F2F2;
+        background-color: #272833;
+        border-color: #272833;
+    }
+
 </style>
 
 <liferay-ui:search-container
@@ -180,13 +193,13 @@
                                         <c:choose>
                                             <c:when test="<%= isRegistered %>">
                                                 <a href="<%= registrationDisplayContext.getUnregisterURL(request) %>"
-                                                   class="btn btn-primary" role="button" aria-pressed="true">
+                                                   class="btn-lg btn-primary" role="button" aria-pressed="true">
                                                     <liferay-ui:message key="registrationform.unregister"/>
                                                 </a>
                                             </c:when>
                                             <c:otherwise>
                                                 <a href="#" data-article-id="<%=registration.getArticleId()%>"
-                                                   class="btn btn-primary add-to-cart" role="button"
+                                                   class="btn-lg btn-primary add-to-cart" role="button"
                                                    aria-pressed="true">
                                                     <liferay-ui:message key="shopping.cart.add"/>
                                                 </a>
