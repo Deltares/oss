@@ -14,7 +14,8 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="nl.deltares.portal.utils.JsonContentUtils" %>
 <%@ page import="com.liferay.portal.kernel.json.JSONException" %>
-
+<%--Required by implementing JSPs--%>
+<%@ page import="nl.deltares.portal.model.DsdArticle" %>
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />
