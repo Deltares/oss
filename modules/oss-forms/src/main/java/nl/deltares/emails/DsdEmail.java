@@ -20,10 +20,12 @@ public class DsdEmail {
     private String sendFromEmail = "mydeltares@deltares.nl";
     private String sendToEmail = null;
     private String sendCCEmail = null;
+    private String sendBCCEmail = null;
     private String replyToEmail = null;
     private final User user;
     private final ResourceBundle bundle;
     private final RegistrationRequest request;
+    private boolean busInfo;
 
     public DsdEmail(User user, ResourceBundle bundle, RegistrationRequest request) {
         this.user = user;
@@ -49,7 +51,7 @@ public class DsdEmail {
 
         loadEmailAddresses();
 
-        sendEmail(bodyBuilder.toString(), subject, sendToEmail, sendCCEmail, sendFromEmail, replyToEmail, loadImageMap());
+        sendEmail(bodyBuilder.toString(), subject, sendToEmail, sendCCEmail, sendBCCEmail, sendFromEmail, replyToEmail, loadImageMap());
     }
 
     private void loadEmailAddresses() {
@@ -76,7 +78,7 @@ public class DsdEmail {
 
         loadEmailAddresses();
 
-        sendEmail(bodyBuilder.toString(), subject, sendToEmail, sendCCEmail, sendFromEmail, replyToEmail, loadImageMap());
+        sendEmail(bodyBuilder.toString(), subject, sendToEmail, sendCCEmail, sendBCCEmail, sendFromEmail, replyToEmail, loadImageMap());
     }
 
     private HashMap<String, URL> loadImageMap() throws MalformedURLException {
@@ -99,5 +101,9 @@ public class DsdEmail {
 
     public ResourceBundle getBundle() {
         return bundle;
+    }
+
+    public void setBCCToEmail(String bccToEmail) {
+        sendBCCEmail = bccToEmail;
     }
 }
