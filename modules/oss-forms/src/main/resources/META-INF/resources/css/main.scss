@@ -12,14 +12,14 @@ $active: #272833;
     border-color: #6B6C7E;
     font-size: 16px;
   }
-  .btn-lg.btn-primary.enabled{
+  .btn-lg.btn-primary.d-inline, .btn-lg.btn-primary.enabled{
     color: #F2F2F2;
     background-color: #007bff;
     border-color: #007bff;
     font-size: 16px;
   }
 
-  .btn-lg.btn-primary.enabled:hover{
+  .btn-lg.btn-primary.d-inline:hover, .btn-lg.btn-primary.enabled:hover{
     color: #F2F2F2;
     background-color: $active;
     border-color: $active;
