@@ -89,6 +89,8 @@ public class OssAdminFormPortlet extends MVCPortlet {
                 }
 
                 adminUtils.deleteUserAndRelatedContent(siteId, bannedUser.getBanUserId(), writer);
+                //start flushing
+                writer.flush();
             }
         }
 
