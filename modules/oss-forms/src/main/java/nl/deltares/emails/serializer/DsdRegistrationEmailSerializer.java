@@ -53,6 +53,8 @@ public abstract class DsdRegistrationEmailSerializer implements EmailSerializer<
 
         appendNotice(writer, content);
 
+        if (request.isBusInfo()) appendBusInfo(writer, content);
+
         writer.append("</br>");
         writer.append("</br>");
         writer.append("</br>");
@@ -67,6 +69,7 @@ public abstract class DsdRegistrationEmailSerializer implements EmailSerializer<
 
     protected abstract void appendRegistrationAction(StringBuilder writer, DsdEmail content);
 
+    protected abstract void appendBusInfo(StringBuilder writer, DsdEmail content);
 
     private void appendRegistration(StringBuilder writer, DsdEmail content, Registration registration) {
         writer.append("<tr>");

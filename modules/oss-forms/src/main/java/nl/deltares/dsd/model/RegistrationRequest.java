@@ -17,6 +17,7 @@ public class RegistrationRequest {
     private final String siteUrl;
     private BillingInfo billingInfo;
     private Event event;
+    private boolean enableBusInfo;
 
     public RegistrationRequest(ThemeDisplay themeDisplay) throws PortalException {
         siteUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay);
@@ -89,5 +90,13 @@ public class RegistrationRequest {
     public URL getFooterURL() throws MalformedURLException {
         if (event.getEmailFooterURL() == null) return  null;
         return new URL(baseUrl + event.getEmailFooterURL());
+    }
+
+    public void setBusInfo(boolean enableBusInfo) {
+        this.enableBusInfo = enableBusInfo;
+    }
+
+    public boolean isBusInfo() {
+        return enableBusInfo;
     }
 }
