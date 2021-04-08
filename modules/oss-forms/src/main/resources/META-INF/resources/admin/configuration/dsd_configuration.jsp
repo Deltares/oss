@@ -72,6 +72,17 @@
                 value="<%= configuration.replyToEmail() %>"/>
 
         <aui:input
+                label="dsd.email.bccTo"
+                name="bccToEmail"
+                value="<%= configuration.bccToEmail() %>"/>
+
+        <aui:input
+                label="dsd.email.enableBusInfo"
+                name="enableBusInfo"
+                type="checkbox"
+                value="<%= configuration.enableBusInfo() %>"/>
+
+        <aui:input
                 label="dsd.email.enabled"
                 name="enableEmails"
                 type="checkbox"

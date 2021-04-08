@@ -191,6 +191,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             RegistrationRequest registrationRequest = new RegistrationRequest(themeDisplay);
             registrationRequest.setEvent(event);
             registrationRequest.setBillingInfo(billingInfo);
+            registrationRequest.setBusInfo(configuration.enableBusInfo());
 
             for (String articleId : articleIds) {
                 Registration parentRegistration = dsdParserUtils.getRegistration(siteId, articleId);
@@ -266,6 +267,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", themeDisplay.getLocale(), getClass());
             DsdEmail email = new DsdEmail(user, resourceBundle, registrationRequest);
             email.setReplyToEmail(configuration.replyToEmail());
+            email.setBCCToEmail(configuration.bccToEmail());
             email.setSendFromEmail(configuration.sendFromEmail());
             switch (action) {
                 case "register":
