@@ -37,16 +37,16 @@
 <%--    <h2><liferay-ui:message key="dsd.registration.title"/></h2>--%>
 
     <div class="registration-controls d-flex justify-content-between">
-        <a class="prev-step disabled btn btn-primary">
+        <a class="prev-step disabled btn-lg btn-primary">
             <liferay-ui:message key="prev.step"/>
         </a>
-        <a class="clear-cart enabled btn btn-primary">
+        <a class="clear-cart enabled btn-lg btn-primary">
             <liferay-ui:message key="clear.cart"/>
         </a>
-        <a class="next-step enabled btn btn-primary">
+        <a class="next-step enabled btn-lg btn-primary">
             <liferay-ui:message key="next.step"/>
         </a>
-        <a class="submit btn btn-primary d-none">
+        <a class="submit btn-lg btn-primary d-none">
             <liferay-ui:message key="register"/>
         </a>
     </div>
@@ -124,13 +124,13 @@
     </div>
 
     <div class="registration-controls d-flex justify-content-between">
-        <a class="prev-step disabled btn btn-primary">
+        <a class="prev-step disabled btn-lg btn-primary">
             <liferay-ui:message key="prev.step"/>
         </a>
-        <a class="next-step enabled btn btn-primary">
+        <a class="next-step enabled btn-lg btn-primary">
             <liferay-ui:message key="next.step"/>
         </a>
-        <a class="submit btn btn-primary d-none">
+        <a class="submit btn-lg btn-primary d-none">
             <liferay-ui:message key="register"/>
         </a>
     </div>
