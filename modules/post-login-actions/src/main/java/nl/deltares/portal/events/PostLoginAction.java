@@ -5,6 +5,7 @@ import com.liferay.portal.kernel.events.LifecycleAction;
 import com.liferay.portal.kernel.events.LifecycleEvent;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.struts.LastPath;
@@ -36,9 +37,6 @@ public class PostLoginAction implements LifecycleAction {
 
 	@Reference
 	private UserLocalService userLocalService;
-
-	@Reference
-	private DsdParserUtils dsdParserUtils;
 
 	@Override
 	public void processLifecycleEvent(LifecycleEvent lifecycleEvent) throws ActionException {
@@ -72,8 +70,10 @@ public class PostLoginAction implements LifecycleAction {
 			}
 
 			try {
+				LayoutSet layoutSet = (LayoutSet) request.getAttribute("VIRTUAL_HOST_LAYOUT_SET");
+				String hostname = layoutSet.getCompanyFallbackVirtualHostname();
 				LastPath last_path = (LastPath) request.getSession().getAttribute("LAST_PATH");
-				String siteId = getSiteId(last_path.getPath());
+				String siteId = getSiteId(last_path.getPath(), hostname);
 				if (siteId != null) {
 					LOG.info(String.format("Register user '%s' login to site '%s'", user.getFullName(), siteId));
 					keycloakUtils.registerUserLogin(user.getEmailAddress(), siteId);
@@ -86,11 +86,12 @@ public class PostLoginAction implements LifecycleAction {
 
 	}
 
-	private String getSiteId(String path) {
-		if (path == null) return null;
+	private String getSiteId(String path, String hostname) {
+		if (path == null) return hostname;
 		String[] pathItems = path.split("/");
 		String[] pathItemsWithValues = ArrayUtil.remove(pathItems, "");
-		if (pathItemsWithValues.length == 0) return null;
+		if (pathItemsWithValues.length == 0) return hostname;
+		if (hostname != null && hostname.length() > 0) return hostname.concat(".").concat(pathItemsWithValues[0]);
 		return pathItemsWithValues[0];
 	}
 
