@@ -70,7 +70,7 @@
     .two-columns-full-height .portlet-column-first::before{
         content: "";
         position: absolute;
-        background: $color-alpha-blue;
+        background: #F2F2F2;
         right: 0;
         width: 50vw;
         height: calc(100vh - 200px);
