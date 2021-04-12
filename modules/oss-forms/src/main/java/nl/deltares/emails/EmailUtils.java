@@ -55,7 +55,7 @@ public class EmailUtils {
                     Integer.parseInt(PropsUtil.get("mail.session.mail.smtp.port")),
                     PropsUtil.get("mail.session.mail.smtp.user"),
                     PropsUtil.get("mail.session.mail.smtp.password"));
-            transport.send(message);
+            transport.sendMessage(message, message.getAllRecipients());
         } finally {
             transport.close();
         }
