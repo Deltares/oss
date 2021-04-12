@@ -283,7 +283,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
         } catch (Exception e) {
             SessionErrors.add(actionRequest, "send-email-failed", "Could not send " + action + " email for user [" + user.getEmailAddress() + "] : " + e.getMessage());
-            LOG.debug("Could not send " + action + " email for user [" + user.getEmailAddress() + "]", e);
+            LOG.error("Could not send " + action + " email for user [" + user.getEmailAddress() + "]", e);
             return false;
         }
     }
