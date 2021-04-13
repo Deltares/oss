@@ -25,7 +25,6 @@ public class DsdEmail {
     private final User user;
     private final ResourceBundle bundle;
     private final RegistrationRequest request;
-    private boolean busInfo;
 
     public DsdEmail(User user, ResourceBundle bundle, RegistrationRequest request) {
         this.user = user;

@@ -3,6 +3,7 @@ package nl.deltares.dsd.model;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import nl.deltares.portal.model.impl.*;
 
 import java.net.MalformedURLException;
@@ -18,6 +19,7 @@ public class RegistrationRequest {
     private BillingInfo billingInfo;
     private Event event;
     private boolean enableBusInfo;
+    private String busTransferUrl;
 
     public RegistrationRequest(ThemeDisplay themeDisplay) throws PortalException {
         siteUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay);
@@ -98,5 +100,14 @@ public class RegistrationRequest {
 
     public boolean isBusInfo() {
         return enableBusInfo;
+    }
+
+    public void setBusTransferUrl(String pageUrl) {
+        this.busTransferUrl = pageUrl;
+    }
+
+    public String getBusTransferUrl() {
+        if (busTransferUrl == null) return null;
+        return StringBundler.concat(siteUrl, busTransferUrl);
     }
 }
