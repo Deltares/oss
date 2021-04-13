@@ -17,7 +17,7 @@ public class DsdUnRegisterEmailSerializer extends DsdRegistrationEmailSerializer
     @Override
     protected void appendBusInfo(StringBuilder writer, DsdEmail content) {
         writer.append("<p>");
-        writer.append(LanguageUtil.format(content.getBundle(), "dsd.email.unregister.busnotice", new Object[0]));
+        writer.append(LanguageUtil.format(content.getBundle(), "dsd.email.unregister.busnotice", content.getRegistrationRequest().getBusTransferUrl() ));
         writer.append("</p>");
     }
 }
