@@ -19,7 +19,7 @@ public class DsdRegisterEmailSerializer extends DsdRegistrationEmailSerializer{
 
     public void appendBusInfo(StringBuilder writer, DsdEmail content) {
         writer.append("<p>");
-        writer.append(LanguageUtil.format(content.getBundle(), "dsd.email.register.busnotice", new Object[0]));
+        writer.append(LanguageUtil.format(content.getBundle(), "dsd.email.register.busnotice", content.getRegistrationRequest().getBusTransferUrl() ));
         writer.append("</p>");
     }
 }
