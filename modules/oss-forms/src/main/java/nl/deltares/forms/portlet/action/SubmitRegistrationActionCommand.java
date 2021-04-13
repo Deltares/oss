@@ -7,13 +7,11 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.service.GroupServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.ResourceBundleUtil;
-import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.util.*;
 import nl.deltares.dsd.model.BillingInfo;
 import nl.deltares.dsd.model.RegistrationRequest;
 import nl.deltares.emails.DsdEmail;
@@ -192,7 +190,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             registrationRequest.setEvent(event);
             registrationRequest.setBillingInfo(billingInfo);
             registrationRequest.setBusInfo(configuration.enableBusInfo());
-
+            registrationRequest.setBusTransferUrl(getPageUrl(siteId, configuration.busTransferURL()));
             for (String articleId : articleIds) {
                 Registration parentRegistration = dsdParserUtils.getRegistration(siteId, articleId);
                 registrationRequest.addRegistration(parentRegistration);
@@ -214,6 +212,15 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             LOG.debug("Could not retrieve registration for actionId: " + Arrays.toString(articleIds.toArray()));
         }
         return null;
+    }
+
+    private String getPageUrl(long groupId, String relativeUrl) {
+        try {
+            String friendlyURL = GroupServiceUtil.getGroup(groupId).getFriendlyURL();
+            return StringBundler.concat("/web", friendlyURL, relativeUrl);
+        } catch (PortalException e) {
+            return "";
+        }
     }
 
     private BillingInfo getBillingInfo(ActionRequest actionRequest) {
