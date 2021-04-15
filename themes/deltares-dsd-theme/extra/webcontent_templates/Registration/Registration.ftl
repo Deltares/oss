@@ -1,5 +1,6 @@
 <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
 <#assign title=.vars['reserved-article-title'].data />
+<#assign urltitle=.vars['reserved-article-url-title'].data />
 <#assign articleId = .vars['reserved-article-id'].getData() />
 <#assign displayContext = dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay) />
 <#assign registration = dsdParserUtils.getRegistration(groupId,articleId) />
@@ -10,7 +11,7 @@
     </div>
     <div class="col-10 px-3">
         <h4>
-            <a href="#">
+            <a href="-/${urltitle}" target="_blank">
                 <strong>${title}</strong>
             </a>
         </h4>
@@ -31,7 +32,7 @@
                             ${dateUtil.getDate(period.getStartDate(), "dd MMM yyyy", locale)}
                             </span>
                         <span class="c-sessions__item__time-date-place__time">
-                            ${dateUtil.getDate(registration.getEndTime(), "HH:mm", locale)} - ${dateUtil.getDate(registration.getEndTime(), "HH:mm", locale)} (${timeZoneId})
+                            ${dateUtil.getDate(registration.getStartTime(), "HH:mm", locale)} - ${dateUtil.getDate(registration.getEndTime(), "HH:mm", locale)} (${timeZoneId})
                         </span>
                     </#list>
                 </#if>
@@ -57,8 +58,6 @@
                     </#if>
                 </#list>
             </#if>
-
-            <span class="event-time pl-2">${displayContext.getStartTime()} - ${displayContext.getEndTime()}</span> |
             <#if displayContext.getPrice() gt 0 >
                 ${displayContext.getCurrency()} ${displayContext.getPrice()}
             <#else>
