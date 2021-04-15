@@ -36,6 +36,7 @@
                             label=""
                             type="checkbox"
                             data-price="<%= mainRegistration.getPrice() %>"
+                            course="<%=mainRegistration.isCourse() %>"
                             cssClass="parent-registration"
                             checked="true"/>
                 </div>
@@ -68,6 +69,7 @@
                                 label=""
                                 type="checkbox"
                                 data-price="${childRegistration.getPrice()}"
+                                course="${childRegistration.isCourse()}"
                                 cssClass="child-registration"
                                 checked="${dsdSessionUtils.isUserRegisteredFor(user, childRegistration)}"
                         />

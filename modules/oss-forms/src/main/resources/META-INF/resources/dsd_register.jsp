@@ -169,27 +169,49 @@
         return "<portlet:namespace/>fm";
     };
 
-    checkPrice = function() {
+    checkSelection = function() {
         let parents = $('.parent-registration');
 
         let priceEnabled = false;
+        let courseTermsEnabled = false;
         $.each( parents, function( i, parent ) {
-            if (parent.checked && parseFloat(parent.getAttribute('data-price')) > 0){
-                priceEnabled = true;
+            if (parent.checked){
+
+                if ( parseFloat(parent.getAttribute('data-price')) > 0) {
+                    priceEnabled = true;
+                }
+
+                if ( parent.getAttribute('course') === "true" ) {
+                    courseTermsEnabled = true;
+                }
             }
+
         });
 
         let children = $('.child-registration');
 
         $.each( children, function( i, child ) {
-            if (child.checked && parseFloat(child.getAttribute('data-price')) > 0){
-                priceEnabled = true;
+            if (child.checked){
+                if (parseFloat(child.getAttribute('data-price')) > 0){
+                    priceEnabled = true;
+                }
+                if ( child.getAttribute('course') === "true" ) {
+                    courseTermsEnabled = true;
+                }
             }
         });
         if (priceEnabled){
             $('#nav-stepper-step-3').removeClass('disabled'); //remove
         } else {
             $('#nav-stepper-step-3').addClass('disabled'); //add;
+        }
+
+        if (courseTermsEnabled){
+            $('#course-conditions-div')[0].hidden = false;
+            $('input[name="<portlet:namespace />course_conditions"]')[0].disabled = false;
+        } else {
+            $('#course-conditions-div')[0].hidden = true;
+            $('input[name="<portlet:namespace />course_conditions"]')[0].disabled = true;
         }
     };
 
@@ -318,14 +340,14 @@
         $('.bs-stepper').formStepper(form);
 
         $('.update-badge').change(updateBadge);
-        $('.child-registration').change(checkPrice);
-        $('.parent-registration').change(checkPrice);
+        $('.child-registration').change(checkSelection);
+        $('.parent-registration').change(checkSelection);
         $('.clear-cart').on('click', function(){
             shoppingCart.clearCart()
         });
         $('input[name="<portlet:namespace />use_organization_address"]').change(updatePaymentAddress);
         updateBadge();
-        checkPrice();
+        checkSelection();
 
         <c:if test='<%= !SessionErrors.isEmpty(liferayPortletRequest) %>'>shoppingCart.clearCart()</c:if>
     });
