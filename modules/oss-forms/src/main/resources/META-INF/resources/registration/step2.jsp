@@ -188,18 +188,25 @@
         <p><liferay-ui:message key="dsd.registration.step2.badge.title"/></p>
 
         <%
+            String emailBannerURL = null;
             String eventTitle = "";
             Date eventDate = new Date();
             if (event != null) {
                 eventTitle = event.getTitle();
                 eventDate = event.getEndTime();
+                 emailBannerURL = event.getEmailBannerURL();
             }
         %>
         <div class="card mb-3">
-            <div class="card-header">
-                <%= eventTitle %> <span
-                    class="d-block event-edition"><%= DateUtil.getDate(eventDate, "yyyy", locale)%></span>
-            </div>
+            <% if (emailBannerURL != null) { %>
+                <img src="<%=emailBannerURL%>" width="100%">
+            <% } else { %>
+                <div class="card-header">
+                    <%= eventTitle %> <span
+                        class="d-block event-edition"><%= DateUtil.getDate(eventDate, "yyyy", locale)%></span>
+
+                </div>
+            <% } %>
             <div class="card-body px-5 py-6">
                 <h1 class="card-title" id="badge-title"></h1>
                 <span class="card-text" id="job-title"></span>
