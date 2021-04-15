@@ -1,19 +1,21 @@
-<span>
-    <liferay-ui:message key="dsd.registration.step5.conditions.title"/>
-</span>
-<aui:input
-        name="course_conditions"
-        label="dsd.registration.step5.conditions.description"
-        type="checkbox">
-            <aui:validator name="required">
-                function () {
-                return checkStep(getFormName(), 5);
-                }
-            </aui:validator>
-</aui:input>
-<p>
-    <aui:a href="<%=conditionsURL%>" target="_blank"><liferay-ui:message key="dsd.registration.step5.conditions.link"/></aui:a>
-</p>
+<div id="course-conditions-div">
+    <span>
+        <liferay-ui:message key="dsd.registration.step5.conditions.title"/>
+    </span>
+    <aui:input
+            name="course_conditions"
+            label="dsd.registration.step5.conditions.description"
+            type="checkbox">
+                <aui:validator name="required">
+                    function () {
+                    return checkStep(getFormName(), 5);
+                    }
+                </aui:validator>
+    </aui:input>
+    <p>
+        <aui:a href="<%=conditionsURL%>" target="_blank"><liferay-ui:message key="dsd.registration.step5.conditions.link"/></aui:a>
+    </p>
+</div>
 <span>
     <liferay-ui:message key="dsd.registration.step5.privacy.title"/>
 </span>
