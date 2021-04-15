@@ -1,6 +1,11 @@
 $default-color: #6B6C7E;
 $active: #272833;
 
+.card-header {
+  color: #F2F2F2;
+  background-color: #007bff;
+  border-color: #007bff;
+}
 .bs-stepper {
   h2 {
     text-transform: uppercase;
