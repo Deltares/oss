@@ -155,6 +155,10 @@ public abstract class Registration extends AbsDsdArticle {
         return price;
     }
 
+    public boolean isCourse(){
+        return type != null && (type.equals("course") || type.equals("onlinecourse"));
+    }
+
     public String getTimeZoneId() {
         return timeZoneId;
     }
