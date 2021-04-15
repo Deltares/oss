@@ -40,9 +40,9 @@
         <a class="prev-step disabled btn-lg btn-primary">
             <liferay-ui:message key="prev.step"/>
         </a>
-        <a class="clear-cart enabled btn-lg btn-primary">
-            <liferay-ui:message key="clear.cart"/>
-        </a>
+<%--        <a class="clear-cart enabled btn-lg btn-primary">--%>
+<%--            <liferay-ui:message key="clear.cart"/>--%>
+<%--        </a>--%>
         <a class="next-step enabled btn-lg btn-primary">
             <liferay-ui:message key="next.step"/>
         </a>
@@ -342,9 +342,9 @@
         $('.update-badge').change(updateBadge);
         $('.child-registration').change(checkSelection);
         $('.parent-registration').change(checkSelection);
-        $('.clear-cart').on('click', function(){
-            shoppingCart.clearCart()
-        });
+        // $('.clear-cart').on('click', function(){
+        //     shoppingCart.clearCart()
+        // });
         $('input[name="<portlet:namespace />use_organization_address"]').change(updatePaymentAddress);
         updateBadge();
         checkSelection();
