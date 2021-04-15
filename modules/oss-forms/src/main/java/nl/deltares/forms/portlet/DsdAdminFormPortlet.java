@@ -15,6 +15,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.dsd.model.BillingInfo;
 import nl.deltares.portal.constants.OssConstants;
+import nl.deltares.portal.kernel.util.comparator.JournalArticleComparator;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
@@ -79,6 +80,9 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		for (Group child : children) {
 			events.addAll(dsdJournalArticleUtils.getEvents(child.getGroupId(), themeDisplay.getLocale()));
 		}
+
+		JournalArticleComparator comparator = new JournalArticleComparator(dsdParserUtils);
+		events.sort(comparator.reversed());
 		return events;
 	}
 
