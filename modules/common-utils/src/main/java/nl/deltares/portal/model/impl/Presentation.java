@@ -12,7 +12,8 @@ public class Presentation  extends AbsDsdArticle{
     private String presenterName = "";
     private String presenterOrg = "";
     private String presentationLink;
-    private String documentLink;
+    private String documentLink = null;
+    private String thumbnailLink = null;
 
     public Presentation(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
         super(article, dsdParserUtils);
@@ -30,6 +31,9 @@ public class Presentation  extends AbsDsdArticle{
 
             String docJson = XmlContentUtils.getDynamicContentByName(document, "document", true);
             documentLink = JsonContentUtils.parseDocumentJson(docJson);
+
+            String imgJson = XmlContentUtils.getDynamicContentByName(document, "thumbnailImage", true);
+            thumbnailLink = JsonContentUtils.parseImageJson(imgJson);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -53,5 +57,7 @@ public class Presentation  extends AbsDsdArticle{
     public String getPresentationLink() {
         return presentationLink != null ? presentationLink : documentLink;
     }
+
+    public String getThumbnailLink() {return thumbnailLink;}
 
 }

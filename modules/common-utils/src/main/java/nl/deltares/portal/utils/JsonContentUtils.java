@@ -127,10 +127,10 @@ public class JsonContentUtils {
         try {
             JSONObject jsonObject = JsonContentUtils.parseContent(jsonData);
             FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(jsonObject.getLong("fileEntryId"));
-            if (fileEntry == null) return "";
+            if (fileEntry == null) return null;
             return DLUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), null, "", false, true);
         } catch (Exception e) {
-            return "";
+            return null;
         }
     }
 
@@ -138,10 +138,10 @@ public class JsonContentUtils {
         try {
             JSONObject jsonObject = JsonContentUtils.parseContent(jsonData);
             FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(jsonObject.getLong("classPK"));
-            if (fileEntry == null) return "";
+            if (fileEntry == null) return null;
             return DLUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), null, "", false, true);
         } catch (Exception e) {
-            return "";
+            return null;
         }
     }
     public static Map<String, String> parseSessionColorConfig(String json) {
