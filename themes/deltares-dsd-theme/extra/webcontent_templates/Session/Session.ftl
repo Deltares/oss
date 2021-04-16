@@ -70,32 +70,36 @@
                     <span class="c-sessions__item__time-date-place__place">
                         <img src="${themeDisplay.getPathThemeImages()}/dsd/${registration.getType()?lower_case}.png"> ${typeDisplayName}
                         <br>
-                        ${registration.getCurrency()}
-                        <#if price == 0 >
-                            ${languageUtil.get(locale, "dsd.theme.session.free")}
-                        <#else>
-                            <#assign vatText = languageUtil.get(locale, "dsd.theme.session.vat")?replace("%d", vat) />
-                            ${registration.getPrice()}&nbsp;(${vatText})
-                        </#if>
-                        <br>
-
-                        <#if registration.getEventId() gt 0 >
-                            <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />
-                        </#if>
-
-                        ${languageUtil.get(locale, "dsd.theme.session.room")} :
-                        <#if room??>
-
-                            ${room.getTitle()}
-                            <#if event?? && event.findBuilding(room)?? >
-                                <#assign building = event.findBuilding(room) />
-                                -  ${languageUtil.get(locale, "dsd.theme.session.building")} : ${building.getTitle()}
+                        <#if registration.isOpen() && !registration.isEventInPast() >
+                            <br>
+                            ${registration.getCurrency()}
+                            <#if price == 0 >
+                                ${languageUtil.get(locale, "dsd.theme.session.free")}
+                            <#else>
+                                <#assign vatText = languageUtil.get(locale, "dsd.theme.session.vat")?replace("%d", vat) />
+                                ${registration.getPrice()}&nbsp;(${vatText})
                             </#if>
+                            <br>
+
+                            <#if registration.getEventId() gt 0 >
+                                <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />
+                            </#if>
+
+                            ${languageUtil.get(locale, "dsd.theme.session.room")} :
+                            <#if room??>
+
+                                ${room.getTitle()}
+                                <#if event?? && event.findBuilding(room)?? >
+                                    <#assign building = event.findBuilding(room) />
+                                    -  ${languageUtil.get(locale, "dsd.theme.session.building")} : ${building.getTitle()}
+                                </#if>
+                            </#if>
+                            <br>
+                            <#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
+                            <#assign available = registration.getCapacity() - registrations />
+                            ${languageUtil.get(locale, "dsd.theme.session.available")} : ${available}
                         </#if>
-                        <br>
-                        <#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
-                        <#assign available = registration.getCapacity() - registrations />
-                        ${languageUtil.get(locale, "dsd.theme.session.available")} : ${available}
+
                     </span>
                     <br>
 
@@ -157,7 +161,12 @@
     <div class="c-events__item__uploads">
         <p class="bold">Presentations</p>
         <#list registration.getPresentations() as presentation>
-            <#assign thumbnail = presentation.getThumbnailLink() />
+
+            <#if presentation.getThumbnailLink()?? >
+                <#assign thumbnail = presentation.getThumbnailLink() />
+            <#else>
+                <#assign thumbnail = ""/>
+            </#if>
             <p class="presentation">
                 <#if presentation.isVideoLink() >
                     <a href="${presentation.getJournalArticle().getUrlTitle()}" >
