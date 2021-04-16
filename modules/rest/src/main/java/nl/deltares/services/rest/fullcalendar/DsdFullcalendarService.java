@@ -86,7 +86,7 @@ public class DsdFullcalendarService {
                 Group group = GroupLocalServiceUtil.getGroup(Long.parseLong(siteId));
                 registrations = parserUtils.getRegistrations(group.getCompanyId(), Long.parseLong(siteId), startSearch, endSearch, locale);
             } else {
-                nl.deltares.portal.model.impl.Event event = parserUtils.getEvent(Long.parseLong(siteId), eventId);
+                nl.deltares.portal.model.impl.Event event = parserUtils.getEvent(Long.parseLong(siteId), eventId, locale);
                 registrations = event.getRegistrations(locale);
             }
             return toResponse(getEvents(registrations, startSearch, endSearch, colorMap, siteConfiguration));
@@ -103,8 +103,9 @@ public class DsdFullcalendarService {
                               @PathParam("siteId") String siteId, @PathParam("eventId") String eventId, @QueryParam("locale") String localeStr) {
 
         try {
-            nl.deltares.portal.model.impl.Event dsdEvent = parserUtils.getEvent(Long.parseLong(siteId), eventId);
-            return toResponse(getResources(dsdEvent, LocaleUtil.fromLanguageId(localeStr)));
+            Locale locale = LocaleUtil.fromLanguageId(localeStr);
+            nl.deltares.portal.model.impl.Event dsdEvent = parserUtils.getEvent(Long.parseLong(siteId), eventId, locale);
+            return toResponse(getResources(dsdEvent, locale));
         } catch (PortalException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }

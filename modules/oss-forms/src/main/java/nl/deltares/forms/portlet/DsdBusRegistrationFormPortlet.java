@@ -54,7 +54,7 @@ public class DsdBusRegistrationFormPortlet extends MVCPortlet {
         }
         Event event;
         try {
-            event = parserUtils.getEvent(groupId, String.valueOf(configuration.eventId()));
+            event = parserUtils.getEvent(groupId, String.valueOf(configuration.eventId()), themeDisplay.getLocale());
         } catch (PortalException e) {
             throw new PortletException(String.format("Could not get event for %d: %s" + configuration.eventId(), e.getMessage()));
         }

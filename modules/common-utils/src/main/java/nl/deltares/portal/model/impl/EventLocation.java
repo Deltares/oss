@@ -12,6 +12,7 @@ import nl.deltares.portal.utils.XmlContentUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class EventLocation extends Location {
 
@@ -19,8 +20,8 @@ public class EventLocation extends Location {
     private List<Room> rooms = null;
     private List<Building> buildings = null;
 
-    public EventLocation(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
-        super(article, dsdParserUtils);
+    public EventLocation(JournalArticle article, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
+        super(article, dsdParserUtils, locale);
     }
 
     @Override
@@ -84,7 +85,7 @@ public class EventLocation extends Location {
         ArrayList<Building> buildings = new ArrayList<>();
         for (String json : buildingReferences) {
             JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(json);
-            Building building = (Building) dsdParserUtils.toDsdArticle(article);
+            Building building = (Building) dsdParserUtils.toDsdArticle(article, getLocale());
             if (check.checkDuplicates(building)) buildings.add(building);
         }
         return buildings;

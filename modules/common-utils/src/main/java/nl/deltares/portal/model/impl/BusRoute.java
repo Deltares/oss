@@ -11,10 +11,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class BusRoute extends AbsDsdArticle{
 
@@ -24,8 +21,8 @@ public class BusRoute extends AbsDsdArticle{
     private List<Location> stops = null;
     private List<String> times = null;
 
-    public BusRoute(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
-        super(article, dsdParserUtils);
+    public BusRoute(JournalArticle article, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
+        super(article, dsdParserUtils, locale);
         init();
     }
 
@@ -61,7 +58,7 @@ public class BusRoute extends AbsDsdArticle{
             Node stopNode = stopNodes.item(i);
             String locationJson = XmlContentUtils.getDynamicContentForNode(stopNode);
             JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(locationJson);
-            AbsDsdArticle location = dsdParserUtils.toDsdArticle(article);
+            AbsDsdArticle location = dsdParserUtils.toDsdArticle(article, this.getLocale());
             if (!(location instanceof Location)) throw new PortalException(String.format("Article %s not instance of Location", article.getTitle()));
             this.stops.add((Location) location);
             this.times.add(XmlContentUtils.getDynamicContentByName(stopNode, "time", false));

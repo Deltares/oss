@@ -39,7 +39,7 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
 
             String eventId = String.valueOf(configuration.eventId());
 
-            Event event = dsdParserUtils.getEvent(groupId, eventId);
+            Event event = dsdParserUtils.getEvent(groupId, eventId, themeDisplay.getLocale());
 
             List<String> entryClassPKs = dsdSessionUtils.getUserRegistrations(user, event)
                     .stream()

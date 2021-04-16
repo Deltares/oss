@@ -69,36 +69,33 @@
                     <br />
                     <span class="c-sessions__item__time-date-place__place">
                         <img src="${themeDisplay.getPathThemeImages()}/dsd/${registration.getType()?lower_case}.png"> ${typeDisplayName}
-
-                        <#if registration.isOpen() && !registration.isEventInPast() >
-                            <br>
-                            ${registration.getCurrency()}
-                            <#if price == 0 >
-                                ${languageUtil.get(locale, "dsd.theme.session.free")}
-                            <#else>
-                                <#assign vatText = languageUtil.get(locale, "dsd.theme.session.vat")?replace("%d", vat) />
-                                ${registration.getPrice()}&nbsp;(${vatText})
-                            </#if>
-                            <br>
-
-                            <#if registration.getEventId() gt 0 >
-                                <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />
-                            </#if>
-
-                            ${languageUtil.get(locale, "dsd.theme.session.room")} :
-                            <#if room??>
-
-                                ${room.getTitle()}
-                                <#if event?? && event.findBuilding(room)?? >
-                                    <#assign building = event.findBuilding(room) />
-                                    -  ${languageUtil.get(locale, "dsd.theme.session.building")} : ${building.getTitle()}
-                                </#if>
-                            </#if>
-                            <br>
-                            <#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
-                            <#assign available = registration.getCapacity() - registrations />
-                            ${languageUtil.get(locale, "dsd.theme.session.available")} : ${available}
+                        <br>
+                        ${registration.getCurrency()}
+                        <#if price == 0 >
+                            ${languageUtil.get(locale, "dsd.theme.session.free")}
+                        <#else>
+                            <#assign vatText = languageUtil.get(locale, "dsd.theme.session.vat")?replace("%d", vat) />
+                            ${registration.getPrice()}&nbsp;(${vatText})
                         </#if>
+                        <br>
+
+                        <#if registration.getEventId() gt 0 >
+                            <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />
+                        </#if>
+
+                        ${languageUtil.get(locale, "dsd.theme.session.room")} :
+                        <#if room??>
+
+                            ${room.getTitle()}
+                            <#if event?? && event.findBuilding(room)?? >
+                                <#assign building = event.findBuilding(room) />
+                                -  ${languageUtil.get(locale, "dsd.theme.session.building")} : ${building.getTitle()}
+                            </#if>
+                        </#if>
+                        <br>
+                        <#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
+                        <#assign available = registration.getCapacity() - registrations />
+                        ${languageUtil.get(locale, "dsd.theme.session.available")} : ${available}
                     </span>
                     <br>
 
@@ -119,7 +116,8 @@
                             <#if isRegistered >
                                 <a href="${displayContext.getUnregisterURL(renderRequest)}" class="btn-lg btn-primary" role="button" aria-pressed="true">
                                     ${languageUtil.get(locale, "registrationform.unregister")}
-                                </a>&nbsp;
+                                </a>
+                                &nbsp;
                                 <a href="${displayContext.getUpdateURL(renderRequest)}" class="btn-lg btn-primary" role="button" aria-pressed="true">
                                      ${languageUtil.get(locale, "registrationform.update")}
                                 </a>
@@ -159,15 +157,24 @@
     <div class="c-events__item__uploads">
         <p class="bold">Presentations</p>
         <#list registration.getPresentations() as presentation>
+            <#assign thumbnail = presentation.getThumbnailLink() />
             <p class="presentation">
                 <#if presentation.isVideoLink() >
                     <a href="${presentation.getJournalArticle().getUrlTitle()}" >
-                        <i class="icon-film"></i>
+                        <#if thumbnail?? && thumbnail != "">
+                            <img class="videoThumbnail" src="${thumbnail}" />
+                        <#else>
+                            <i class="icon-film"></i>
+                        </#if>
                         <span class="underline">${presentation.getTitle()} </span>&nbsp;&gt;&nbsp;
                     </a>
                 <#elseif presentation.isDownloadLink() >
                     <a href="${presentation.getPresentationLink()}" class="">
-                        <i class="icon-download-alt"></i>
+                        <#if thumbnail?? && thumbnail != "">
+                            <img class="videoThumbnail" src="${thumbnail}" />
+                        <#else>
+                            <i class="icon-download-alt"></i>
+                        </#if>
                         <span class="underline">${presentation.getTitle()}</span>&nbsp;&gt;&nbsp;
                     </a>
                 </#if>

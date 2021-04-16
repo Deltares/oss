@@ -117,12 +117,12 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 
 	private Event getEvent(ThemeDisplay themeDisplay, String eventId) throws PortalException {
 		try {
-			return dsdParserUtils.getEvent(themeDisplay.getSiteGroupId(), eventId);
+			return dsdParserUtils.getEvent(themeDisplay.getSiteGroupId(), eventId, themeDisplay.getLocale());
 		} catch (PortalException e) {
 			List<Group> children = themeDisplay.getSiteGroup().getChildren(true);
 			for (Group child : children) {
 				try {
-					return dsdParserUtils.getEvent(child.getGroupId(), eventId);
+					return dsdParserUtils.getEvent(child.getGroupId(), eventId, themeDisplay.getLocale());
 				} catch (PortalException portalException) {
 					//
 				}
@@ -234,7 +234,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		//Something wrong. Registration not loaded in Event check DB.
 		try {
 			JournalArticle latestArticle = dsdJournalArticleUtils.getLatestArticle(registrationId);
-			AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(latestArticle);
+			AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(latestArticle, locale);
 			if (!(dsdArticle instanceof Registration)) return null;
 			return (Registration) dsdArticle;
 		} catch (PortalException e) {

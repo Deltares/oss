@@ -15,6 +15,7 @@ import nl.deltares.portal.utils.impl.KeycloakUtilsImpl;
 import org.w3c.dom.Document;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 
 public class Expert extends AbsDsdArticle {
@@ -29,8 +30,8 @@ public class Expert extends AbsDsdArticle {
     private final KeycloakUtilsImpl keycloakUtils = new KeycloakUtilsImpl();
 
 
-    public Expert(JournalArticle dsdArticle, DsdParserUtils dsdParserUtils) throws PortalException {
-        super(dsdArticle, dsdParserUtils);
+    public Expert(JournalArticle dsdArticle, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
+        super(dsdArticle, dsdParserUtils, locale);
         init();
     }
 
