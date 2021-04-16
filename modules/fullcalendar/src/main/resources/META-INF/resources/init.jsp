@@ -77,7 +77,7 @@
 
         try {
             DsdParserUtils dsdUtils = (DsdParserUtils) renderRequest.getAttribute(DsdParserUtils.class.getName());
-            Event event = dsdUtils.getEvent(siteId, eventId);
+            Event event = dsdUtils.getEvent(siteId, eventId, themeDisplay.getLocale());
             if (startDateTime == null) {
                 startDateTime = new Date();
                 if (event != null && (event.getStartTime().after(startDateTime) || event.getEndTime().before(startDateTime))) {

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.stream.IntStream;
 
 public class XmlContentUtils {
@@ -47,8 +48,8 @@ public class XmlContentUtils {
         }
     };
 
-    public static Document parseContent(JournalArticle article) throws PortalException{
-        return parseContent(article.getTitle(), article.getContent());
+    public static Document parseContent(JournalArticle article, Locale locale) throws PortalException{
+        return parseContent(article.getTitle(), article.getContentByLocale(locale.getLanguage()));
     }
 
     public static Document parseContent(String siteName, String xmlString) throws PortalException {

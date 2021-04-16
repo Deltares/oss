@@ -6,7 +6,7 @@
     Map attributes = (Map) renderRequest.getAttribute("attributes");
     String action = ParamUtil.getString(renderRequest, "action");
     DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
-    Event event = dsdParserUtils.getEvent(themeDisplay.getScopeGroupId(), String.valueOf(configuration.eventId()));
+    Event event = dsdParserUtils.getEvent(themeDisplay.getScopeGroupId(), String.valueOf(configuration.eventId()), themeDisplay.getLocale());
 %>
 
 <portlet:actionURL name="/submit/register/form" var="submitRegisterForm"/>

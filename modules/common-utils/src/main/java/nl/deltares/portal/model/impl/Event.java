@@ -24,8 +24,8 @@ public class Event extends AbsDsdArticle {
     private String emailFooterURL = null;
     private String timeZoneId = "CET";
 
-    public Event(JournalArticle journalArticle, DsdParserUtils dsdParserUtils) throws PortalException {
-        super(journalArticle, dsdParserUtils);
+    public Event(JournalArticle journalArticle, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
+        super(journalArticle, dsdParserUtils, locale);
         init();
     }
 
@@ -61,7 +61,7 @@ public class Event extends AbsDsdArticle {
     private void parseEventLocation() throws PortalException {
         String eventLocationJson = XmlContentUtils.getDynamicContentByName(getDocument(), "eventLocation", false);
         JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(eventLocationJson);
-        AbsDsdArticle location = dsdParserUtils.toDsdArticle(article);
+        AbsDsdArticle location = dsdParserUtils.toDsdArticle(article, getLocale());
         if (! (location instanceof EventLocation)){
             throw new PortalException("Location not instance of EventLocation: " + location.getTitle());
         }

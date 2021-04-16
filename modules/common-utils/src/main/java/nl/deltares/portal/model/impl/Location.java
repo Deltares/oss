@@ -7,6 +7,7 @@ import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
+import java.util.Locale;
 import java.util.Map;
 
 public class Location extends AbsDsdArticle {
@@ -20,8 +21,8 @@ public class Location extends AbsDsdArticle {
     private double latitude = -1;
     private String locationType = "";
 
-    public Location(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
-        super(article, dsdParserUtils);
+    public Location(JournalArticle article, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
+        super(article, dsdParserUtils, locale);
         init();
     }
 

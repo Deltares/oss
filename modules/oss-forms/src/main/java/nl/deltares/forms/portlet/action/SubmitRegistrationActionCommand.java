@@ -185,7 +185,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             DSDSiteConfiguration configuration = _configurationProvider
                     .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
 
-            Event event = dsdParserUtils.getEvent(siteId, String.valueOf(configuration.eventId()));
+            Event event = dsdParserUtils.getEvent(siteId, String.valueOf(configuration.eventId()), themeDisplay.getLocale());
             BillingInfo billingInfo = getBillingInfo(actionRequest);
 
             RegistrationRequest registrationRequest = new RegistrationRequest(themeDisplay);

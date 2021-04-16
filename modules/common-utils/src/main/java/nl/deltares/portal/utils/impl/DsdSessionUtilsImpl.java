@@ -61,7 +61,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
             long parentId = registration.getParentRegistration() == null ? 0 : registration.getParentRegistration().getResourceId();
 
             long eventResourcePrimaryKey = 0;
-            Event event = parserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()));
+            Event event = parserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()), registration.getLocale());
             if (event != null) eventResourcePrimaryKey = event.getResourceId();
             registrationLocalService.addUserRegistration(
                     registration.getCompanyId(), registration.getGroupId(), registration.getResourceId(), eventResourcePrimaryKey,
@@ -178,7 +178,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     public List<Registration> getChildRegistrations(Registration registration, Locale locale) throws PortalException {
-        Event event = parserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()));
+        Event event = parserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()), registration.getLocale());
         if (event == null) return Collections.emptyList();
         List<Registration> registrations = event.getRegistrations(locale);
         ArrayList<Registration> children = new ArrayList<>();

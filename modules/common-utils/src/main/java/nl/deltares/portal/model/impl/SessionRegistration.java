@@ -14,6 +14,7 @@ import org.w3c.dom.Document;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class SessionRegistration extends Registration {
     private static final Log LOG = LogFactoryUtil.getLog(SessionRegistration.class);
@@ -24,8 +25,8 @@ public class SessionRegistration extends Registration {
     private String webinarKey = "";
     private String provider = "";
 
-    public SessionRegistration(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
-        super(article, dsdParserUtils);
+    public SessionRegistration(JournalArticle article, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
+        super(article, dsdParserUtils, locale);
         init();
     }
 
@@ -71,7 +72,7 @@ public class SessionRegistration extends Registration {
     private void parseRoom() throws PortalException {
         String roomJson = XmlContentUtils.getDynamicContentByName(getDocument(), "room", false);
         JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(roomJson);
-        AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(journalArticle);
+        AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(journalArticle, getLocale());
         if (!(dsdArticle instanceof Room)){
             throw new PortalException("Unsupported registration type! Expected Room but found: " + dsdArticle.getClass().getName());
         }
@@ -140,7 +141,7 @@ public class SessionRegistration extends Registration {
         String[] presentations = XmlContentUtils.getDynamicContentsByName(getDocument(), "presentation");
         for (String presentationJson : presentations) {
             JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(presentationJson);
-            this.presentations.add((Presentation) dsdParserUtils.toDsdArticle(journalArticle));
+            this.presentations.add((Presentation) dsdParserUtils.toDsdArticle(journalArticle, getLocale()));
         }
 
     }
