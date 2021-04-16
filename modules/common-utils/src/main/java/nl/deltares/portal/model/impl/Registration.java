@@ -42,8 +42,8 @@ public abstract class Registration extends AbsDsdArticle {
     final SimpleDateFormat timef = new SimpleDateFormat("HH:mm");
     private final Calendar calendar = Calendar.getInstance();
 
-    public Registration(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
-        super(article, dsdParserUtils);
+    public Registration(JournalArticle article, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
+        super(article, dsdParserUtils, locale);
         init();
     }
 

@@ -6,12 +6,14 @@ import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
+import java.util.Locale;
+
 public class Room extends AbsDsdArticle {
     private int capacity;
     private boolean storeInParentSite;
 
-    public Room(JournalArticle dsdArticle, DsdParserUtils dsdParserUtils) throws PortalException {
-        super(dsdArticle, dsdParserUtils);
+    public Room(JournalArticle dsdArticle, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
+        super(dsdArticle, dsdParserUtils, locale);
         init();
     }
 

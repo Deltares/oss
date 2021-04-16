@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class BusTransfer extends Registration {
 
@@ -21,8 +22,8 @@ public class BusTransfer extends Registration {
     private BusRoute busRoute = null;
     private final List<Date> days = new ArrayList<>();
 
-    public BusTransfer(JournalArticle article, DsdParserUtils parserUtils) throws PortalException {
-        super(article, parserUtils);
+    public BusTransfer(JournalArticle article, DsdParserUtils parserUtils, Locale locale) throws PortalException {
+        super(article, parserUtils, locale);
         init();
     }
 
@@ -98,7 +99,7 @@ public class BusTransfer extends Registration {
 
         String busRouteJson = XmlContentUtils.getDynamicContentByName(getDocument(), "busRoute", false);
         JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(busRouteJson);
-        AbsDsdArticle busRoute = dsdParserUtils.toDsdArticle(article);
+        AbsDsdArticle busRoute = dsdParserUtils.toDsdArticle(article, getLocale());
         if (! (busRoute instanceof BusRoute)){
             throw new PortalException("Article not instance of BusRoute: " + busRoute.getTitle());
         }

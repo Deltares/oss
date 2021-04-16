@@ -56,7 +56,7 @@ public class DsdTransferUtilsImpl implements DsdTransferUtils {
         if (isUserRegisteredFor(user, registration, transferDate)) return;
 
         validateRegistration(user, registration, transferDate);
-        Event event = dsdParserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()));
+        Event event = dsdParserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()), registration.getLocale());
 
         Registration parentRegistration = registration.getParentRegistration();
 

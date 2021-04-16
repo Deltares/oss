@@ -9,10 +9,7 @@ import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Building extends AbsDsdArticle {
 
@@ -22,8 +19,8 @@ public class Building extends AbsDsdArticle {
     private double longitude;
     private double latitude;
 
-    public Building(JournalArticle dsdArticle, DsdParserUtils dsdParserUtils) throws PortalException {
-        super(dsdArticle, dsdParserUtils);
+    public Building(JournalArticle dsdArticle, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
+        super(dsdArticle, dsdParserUtils, locale);
         init();
     }
 

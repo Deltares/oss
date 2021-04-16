@@ -13,6 +13,9 @@ import java.util.Locale;
 
 public interface DsdParserUtils {
 
+    Event getEvent(long siteId, String eventId, Locale locale) throws PortalException;
+
+    @Deprecated
     Event getEvent(long siteId, String eventId) throws PortalException;
 
     Registration getRegistration(long siteId, String articleId) throws PortalException;
@@ -28,6 +31,8 @@ public interface DsdParserUtils {
     Expert getExpert(JournalArticle article) throws PortalException;
 
     RegistrationDisplayContext getDisplayContextInstance(String articleId, ThemeDisplay themeDisplay);
+
+    AbsDsdArticle toDsdArticle(JournalArticle article, Locale locale) throws PortalException;
 
     AbsDsdArticle toDsdArticle(JournalArticle article) throws PortalException;
 

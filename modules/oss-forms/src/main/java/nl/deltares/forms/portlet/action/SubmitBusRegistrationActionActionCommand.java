@@ -46,7 +46,7 @@ public class SubmitBusRegistrationActionActionCommand extends BaseMVCActionComma
             DSDSiteConfiguration configuration = _configurationProvider
                     .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
 
-            Event event = parserUtils.getEvent(groupId, String.valueOf(configuration.eventId()));
+            Event event = parserUtils.getEvent(groupId, String.valueOf(configuration.eventId()), themeDisplay.getLocale());
 
             event.getBusTransfers(themeDisplay.getLocale()).stream()
                     .forEach(busTransfer -> registerUser(actionRequest, event, user, busTransfer));

@@ -13,6 +13,7 @@ import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public abstract class AbsDsdArticle implements DsdArticle {
@@ -20,6 +21,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
     private final JournalArticle article;
     public final long instantiationTime;
     protected final DsdParserUtils dsdParserUtils;
+    private final Locale locale;
     private Document document;
 
 
@@ -73,15 +75,16 @@ public abstract class AbsDsdArticle implements DsdArticle {
         return document;
     }
 
-    AbsDsdArticle(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
+    AbsDsdArticle(JournalArticle article, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
         this.article = article;
         this.instantiationTime = System.currentTimeMillis();
         this.dsdParserUtils = dsdParserUtils;
+        this.locale = locale;
         init();
     }
 
     private void init() throws PortalException {
-        this.document = XmlContentUtils.parseContent(article);
+        this.document = XmlContentUtils.parseContent(article, locale);
     }
 
     public String getSmallImageURL(ThemeDisplay themeDisplay) {
@@ -100,7 +103,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
         ArrayList<Room> rooms = new ArrayList<>();
         for (String json : roomReferences) {
             JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(json);
-            AbsDsdArticle room = dsdParserUtils.toDsdArticle(article);
+            AbsDsdArticle room = dsdParserUtils.toDsdArticle(article, this.locale);
             if (!(room instanceof Room)) throw new PortalException(String.format("Article %s not instance of Room", article.getTitle()));
             if (check.checkDuplicates(room)) rooms.add((Room) room);
         }
@@ -122,5 +125,9 @@ public abstract class AbsDsdArticle implements DsdArticle {
     @Override
     public int hashCode() {
         return Objects.hash(article.getPrimaryKey());
+    }
+
+    public Locale getLocale() {
+        return locale;
     }
 }

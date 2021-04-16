@@ -5,8 +5,9 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import nl.deltares.portal.display.context.RegistrationDisplayContext;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.*;
@@ -32,7 +33,7 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
     DsdJournalArticleUtils dsdJournalArticleUtils;
 
     @Override
-    public Event getEvent(long siteId, String articleId) throws PortalException {
+    public Event getEvent(long siteId, String articleId, Locale locale) throws PortalException {
         if ("0".equals(articleId)) {
             return null; //show all events
         }
@@ -43,6 +44,14 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
             throw new PortalException(String.format("Article %s is not a valid DSD Event", article.getTitle()));
         }
         return (Event) eventArticle;
+    }
+
+    @Override
+    public Event getEvent(long siteId, String articleId) throws PortalException {
+
+        String defaultLanguageId = GroupLocalServiceUtil.getGroup(siteId).getDefaultLanguageId();
+        Locale locale = LocaleUtil.fromLanguageId(defaultLanguageId);
+        return getEvent(siteId, articleId, locale);
     }
 
     @Override
@@ -119,46 +128,56 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
 
     public AbsDsdArticle toDsdArticle(JournalArticle journalArticle) throws PortalException {
 
+        String defaultLanguageId = GroupLocalServiceUtil.getGroup(journalArticle.getGroupId()).getDefaultLanguageId();
+        Locale locale = LocaleUtil.fromLanguageId(defaultLanguageId);
+        return toDsdArticle(journalArticle, locale);
+    }
+    public AbsDsdArticle toDsdArticle(JournalArticle journalArticle, Locale locale) throws  PortalException{
+
+        if (locale == null){
+            locale = LocaleUtil.getDefault();
+        }
+
         String parseStructureKey = DsdParserUtils.parseStructureKey(journalArticle);
         DsdArticle.DSD_STRUCTURE_KEYS dsd_structure_key = DsdParserUtils.getDsdStructureKey(parseStructureKey);
 
         AbsDsdArticle article;
         switch (dsd_structure_key){
             case Session:
-                article = new SessionRegistration(journalArticle, this);
+                article = new SessionRegistration(journalArticle, this, locale);
                 break;
             case Bustransfer:
-                article = new BusTransfer(journalArticle, this);
+                article = new BusTransfer(journalArticle, this, locale);
                 break;
             case Dinner:
-                article = new DinnerRegistration(journalArticle, this);
+                article = new DinnerRegistration(journalArticle, this, locale);
                 break;
             case Location:
-                article = new Location(journalArticle, this);
+                article = new Location(journalArticle, this, locale);
                 break;
             case Eventlocation:
-                article = new EventLocation(journalArticle, this);
+                article = new EventLocation(journalArticle, this, locale);
                 break;
             case Building:
-                article = new Building(journalArticle, this);
+                article = new Building(journalArticle, this, locale);
                 break;
             case Room:
-                article = new Room(journalArticle, this);
+                article = new Room(journalArticle, this, locale);
                 break;
             case Expert:
-                article = new Expert(journalArticle, this);
+                article = new Expert(journalArticle, this, locale);
                 break;
             case Event:
-                article = new Event(journalArticle, this);
+                article = new Event(journalArticle, this, locale);
                 break;
             case Busroute:
-                article = new BusRoute(journalArticle ,this);
+                article = new BusRoute(journalArticle ,this, locale);
                 break;
             case Presentation:
-                article = new Presentation(journalArticle, this);
+                article = new Presentation(journalArticle, this, locale);
                 return article;
             default:
-                article = new GenericArticle(journalArticle, this);
+                article = new GenericArticle(journalArticle, this, locale);
         }
 
         return article;

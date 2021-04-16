@@ -9,13 +9,15 @@ import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
+import java.util.Locale;
+
 public class DinnerRegistration extends Registration {
 
     private static final Log LOG = LogFactoryUtil.getLog(DinnerRegistration.class);
     private Location restaurant;
 
-    public DinnerRegistration(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
-        super(article, dsdParserUtils);
+    public DinnerRegistration(JournalArticle article, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
+        super(article, dsdParserUtils, locale);
         init();
     }
 
@@ -54,7 +56,7 @@ public class DinnerRegistration extends Registration {
     private void parserRestaurant() throws PortalException {
         String json = XmlContentUtils.getDynamicContentByName(getDocument(), "restaurant", false);
         JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(json);
-        AbsDsdArticle location = dsdParserUtils.toDsdArticle(article);
+        AbsDsdArticle location = dsdParserUtils.toDsdArticle(article, getLocale());
         if (!(location instanceof Location)) throw new PortalException(String.format("Article %s not instance of Location", article.getTitle()));
         restaurant = (Location) location;
     }

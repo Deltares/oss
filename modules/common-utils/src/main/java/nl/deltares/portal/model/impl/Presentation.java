@@ -7,6 +7,8 @@ import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
+import java.util.Locale;
+
 public class Presentation  extends AbsDsdArticle{
 
     private String presenterName = "";
@@ -15,8 +17,8 @@ public class Presentation  extends AbsDsdArticle{
     private String documentLink = null;
     private String thumbnailLink = null;
 
-    public Presentation(JournalArticle article, DsdParserUtils dsdParserUtils) throws PortalException {
-        super(article, dsdParserUtils);
+    public Presentation(JournalArticle article, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
+        super(article, dsdParserUtils, locale);
         init();
     }
 
