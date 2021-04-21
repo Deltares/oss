@@ -9,6 +9,8 @@ RUN chmod a+x /etc/liferay/wait-for-it.sh
 
 RUN chown -R liferay:liferay /opt/liferay/data/document_library
 
+COPY ["resources/Liferay Connector to SAML 2.0.lpkg", "/opt/liferay/osgi/marketplace/Liferay Connector to SAML 2.0.lpkg"]
+
 USER liferay
 
 ENV VIRTUAL_PORT 8080
