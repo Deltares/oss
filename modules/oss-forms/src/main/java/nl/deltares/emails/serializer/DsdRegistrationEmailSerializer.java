@@ -73,42 +73,42 @@ public abstract class DsdRegistrationEmailSerializer implements EmailSerializer<
 
     private void appendRegistration(StringBuilder writer, DsdEmail content, Registration registration) {
         writer.append("<tr>");
-        writer.append("<td class=\"type\">Name</td>");
+        writer.append("<td class=\"type\">" + LanguageUtil.format(content.getBundle(), "dsd.email.registration.name", null) + "</td>");
         writer.append("<td>");
         writer.append(registration.getTitle());
         writer.append("</td>");
         writer.append("</tr>");
 
         writer.append("<tr>");
-        writer.append("<td class=\"type\">Type</td>");
+        writer.append("<td class=\"type\">" + LanguageUtil.format(content.getBundle(), "dsd.email.registration.type", null) +"</td>");
         writer.append("<td>");
         writer.append(registration.getType());
         writer.append("</td>");
         writer.append("</tr>");
 
         writer.append("<tr>");
-        writer.append("<td class=\"type\">Room</td>");
+        writer.append("<td class=\"type\">"+ LanguageUtil.format(content.getBundle(), "dsd.email.registration.room", null) +"</td>");
         writer.append("<td>");
         writer.append(content.getRegistrationRequest().getLocation(registration));
         writer.append("</td>");
         writer.append("</tr>");
 
         writer.append("<tr>");
-        writer.append("<td class=\"type\">Date</td>");
+        writer.append("<td class=\"type\">"+LanguageUtil.format(content.getBundle(), "dsd.email.registration.date", null)+"</td>");
         writer.append("<td>");
         writer.append(getDate(registration));
         writer.append("</td>");
         writer.append("</tr>");
 
         writer.append("<tr>");
-        writer.append("<td class=\"type\">Time</td>");
+        writer.append("<td class=\"type\">"+LanguageUtil.format(content.getBundle(), "dsd.email.registration.time", null)+"</td>");
         writer.append("<td>");
         writer.append(getTime(registration));
         writer.append("</td>");
         writer.append("</tr>");
 
         writer.append("<tr>");
-        writer.append("<td class=\"type\">Price</td>");
+        writer.append("<td class=\"type\">"+LanguageUtil.format(content.getBundle(), "dsd.email.registration.price", null)+"</td>");
         writer.append("<td>");
         writer.append(getPrice(content.getBundle(), registration));
         writer.append("</td>");

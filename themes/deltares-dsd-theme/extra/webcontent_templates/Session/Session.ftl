@@ -11,7 +11,7 @@
 <#else>
     <#assign isEventPast = "upcoming-event"/>
 </#if>
-<#assign typeMap = dsdJournalArticleUtils.getStructureFieldOptions(groupId,"SESSION","type", local) />
+<#assign typeMap = dsdJournalArticleUtils.getStructureFieldOptions(groupId,"SESSION","type", registration.getLocale()) />
 <#if typeMap?? >
     <#assign typeDisplayName = typeMap[registration.getType()] />
 <#else>
@@ -74,26 +74,26 @@
                             <br>
                             ${registration.getCurrency()}
                             <#if price == 0 >
-                                ${languageUtil.get(locale, "dsd.theme.session.free")}
-                            <#else>
-                                <#assign vatText = languageUtil.get(locale, "dsd.theme.session.vat")?replace("%d", vat) />
-                                ${registration.getPrice()}&nbsp;(${vatText})
-                            </#if>
+                            ${languageUtil.get(locale, "dsd.theme.session.free")}
+                        <#else>
+                            <#assign vatText = languageUtil.get(locale, "dsd.theme.session.vat")?replace("%d", vat) />
+                            ${registration.getPrice()}&nbsp;(${vatText})
+                        </#if>
                             <br>
 
                             <#if registration.getEventId() gt 0 >
-                                <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />
-                            </#if>
+                            <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />
+                        </#if>
 
                             ${languageUtil.get(locale, "dsd.theme.session.room")} :
                             <#if room??>
 
-                                ${room.getTitle()}
-                                <#if event?? && event.findBuilding(room)?? >
-                                    <#assign building = event.findBuilding(room) />
-                                    -  ${languageUtil.get(locale, "dsd.theme.session.building")} : ${building.getTitle()}
-                                </#if>
+                            ${room.getTitle()}
+                            <#if event?? && event.findBuilding(room)?? >
+                                <#assign building = event.findBuilding(room) />
+                                -  ${languageUtil.get(locale, "dsd.theme.session.building")} : ${building.getTitle()}
                             </#if>
+                        </#if>
                             <br>
                             <#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
                             <#assign available = registration.getCapacity() - registrations />
@@ -158,38 +158,40 @@
         </#list>
 
     </#if>
-    <div class="c-events__item__uploads">
-        <p class="bold">Presentations</p>
-        <#list registration.getPresentations() as presentation>
+    <#if (registration.getPresentations()?size > 0) >
+        <div class="c-events__item__uploads">
+            <p class="bold">Presentations</p>
+            <#list registration.getPresentations() as presentation>
 
-            <#if presentation.getThumbnailLink()?? >
-                <#assign thumbnail = presentation.getThumbnailLink() />
-            <#else>
-                <#assign thumbnail = ""/>
-            </#if>
-            <p class="presentation">
-                <#if presentation.isVideoLink() >
-                    <a href="${presentation.getJournalArticle().getUrlTitle()}" >
-                        <#if thumbnail?? && thumbnail != "">
-                            <img class="videoThumbnail" src="${thumbnail}" />
-                        <#else>
-                            <i class="icon-film"></i>
-                        </#if>
-                        <span class="underline">${presentation.getTitle()} </span>&nbsp;&gt;&nbsp;
-                    </a>
-                <#elseif presentation.isDownloadLink() >
-                    <a href="${presentation.getPresentationLink()}" class="">
-                        <#if thumbnail?? && thumbnail != "">
-                            <img class="videoThumbnail" src="${thumbnail}" />
-                        <#else>
-                            <i class="icon-download-alt"></i>
-                        </#if>
-                        <span class="underline">${presentation.getTitle()}</span>&nbsp;&gt;&nbsp;
-                    </a>
+                <#if presentation.getThumbnailLink()?? >
+                    <#assign thumbnail = presentation.getThumbnailLink() />
+                <#else>
+                    <#assign thumbnail = ""/>
                 </#if>
-                <span>${presentation.getPresenter()}</span>
-                <span>(${presentation.getOrganization()})</span>
-            </p>
-        </#list>
-    </div>
+                <p class="presentation">
+                    <#if presentation.isVideoLink() >
+                        <a href="${presentation.getJournalArticle().getUrlTitle()}" >
+                            <#if thumbnail?? && thumbnail != "">
+                                <img class="videoThumbnail" src="${thumbnail}" />
+                            <#else>
+                                <i class="icon-film"></i>
+                            </#if>
+                            <span class="underline">${presentation.getTitle()} </span>&nbsp;&gt;&nbsp;
+                        </a>
+                    <#elseif presentation.isDownloadLink() >
+                        <a href="${presentation.getPresentationLink()}" class="">
+                            <#if thumbnail?? && thumbnail != "">
+                                <img class="videoThumbnail" src="${thumbnail}" />
+                            <#else>
+                                <i class="icon-download-alt"></i>
+                            </#if>
+                            <span class="underline">${presentation.getTitle()}</span>&nbsp;&gt;&nbsp;
+                        </a>
+                    </#if>
+                    <span>${presentation.getPresenter()}</span>
+                    <span>(${presentation.getOrganization()})</span>
+                </p>
+            </#list>
+        </div>
+    </#if>
 </div>
