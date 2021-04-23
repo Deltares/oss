@@ -49,7 +49,7 @@
     String lastDate = "";
 
     NumberFormat numberFormat = NumberFormat.getInstance();
-    numberFormat.setGroupingUsed(true);
+    numberFormat.setGroupingUsed(false);
     numberFormat.setMinimumFractionDigits(0);
     numberFormat.setMaximumFractionDigits(2);
 %>
