@@ -21,6 +21,7 @@ import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
@@ -207,6 +208,12 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 }
             }
 
+            Map<String, String> typeTranslations = dsdJournalArticleUtils.getStructureFieldOptions(event.getGroupId(), "SESSION", "type", event.getLocale());
+            typeTranslations.putAll(dsdJournalArticleUtils.getStructureFieldOptions(event.getGroupId(), "DINNER", "type", event.getLocale()));
+            typeTranslations.putAll(dsdJournalArticleUtils.getStructureFieldOptions(event.getGroupId(), "BUSTRANSFER", "type", event.getLocale()));
+            registrationRequest.setTypeTranslations(typeTranslations);
+
+
             return registrationRequest;
 
         } catch (PortalException e) {
@@ -296,6 +303,9 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
     @Reference
     private DsdSessionUtils dsdSessionUtils;
+
+    @Reference
+    private DsdJournalArticleUtils dsdJournalArticleUtils;
 
     private ConfigurationProvider _configurationProvider;
 
