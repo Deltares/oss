@@ -16,6 +16,7 @@ public abstract class DsdRegistrationEmailSerializer implements EmailSerializer<
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("kk:mm");
 
+    @SuppressWarnings("RedundantThrows")
     @Override
     public void serialize(DsdEmail content, StringBuilder writer) throws Exception {
 
@@ -82,7 +83,7 @@ public abstract class DsdRegistrationEmailSerializer implements EmailSerializer<
         writer.append("<tr>");
         writer.append("<td class=\"type\">" + LanguageUtil.format(content.getBundle(), "dsd.email.registration.type", null) +"</td>");
         writer.append("<td>");
-        writer.append(registration.getType());
+        writer.append(content.getRegistrationRequest().translateRegistrationType(registration.getType()));
         writer.append("</td>");
         writer.append("</tr>");
 

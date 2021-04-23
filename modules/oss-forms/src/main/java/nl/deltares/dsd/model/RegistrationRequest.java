@@ -20,6 +20,7 @@ public class RegistrationRequest {
     private Event event;
     private boolean enableBusInfo;
     private String busTransferUrl;
+    private Map<String, String> typeTranslations = new HashMap<>();
 
     public RegistrationRequest(ThemeDisplay themeDisplay) throws PortalException {
         siteUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay);
@@ -109,5 +110,13 @@ public class RegistrationRequest {
     public String getBusTransferUrl() {
         if (busTransferUrl == null) return null;
         return StringBundler.concat(siteUrl, busTransferUrl);
+    }
+
+    public String translateRegistrationType(String type){
+        return typeTranslations.getOrDefault(type, type);
+    }
+
+    public void setTypeTranslations(Map<String, String> typeTranslations) {
+        this.typeTranslations = typeTranslations;
     }
 }
