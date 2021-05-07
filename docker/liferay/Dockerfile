@@ -10,6 +10,7 @@ RUN chmod a+x /etc/liferay/wait-for-it.sh
 RUN chown -R liferay:liferay /opt/liferay/data/document_library
 
 COPY ["resources/Liferay Connector to SAML 2.0.lpkg", "/opt/liferay/osgi/marketplace/Liferay Connector to SAML 2.0.lpkg"]
+COPY ["resources/activation-key-digitalenterprisedevelopment-7.1-developeractivationkeys.xml", "/opt/liferay/osgi/modules/activation-key-digitalenterprisedevelopment-7.1-developeractivationkeys.xml"]
 
 USER liferay
 
