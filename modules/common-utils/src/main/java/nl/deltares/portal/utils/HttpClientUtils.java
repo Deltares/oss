@@ -115,7 +115,7 @@ public abstract class HttpClientUtils {
 
     public static String getCachedToken(String tokenKey, String expiryKey) {
         if (tokenKey == null) return null;
-        if (Boolean.parseBoolean(PropsUtil.get("nocache"))) return null;
+        if (!Boolean.parseBoolean(PropsUtil.get("keycloak.cache.token"))) return null;
         PortalCache<String, Serializable> gotoCache = MultiVMPoolUtil.getPortalCache("deltares", true);
         String token = (String) gotoCache.get(tokenKey);
         if (token != null) {
@@ -129,7 +129,7 @@ public abstract class HttpClientUtils {
     }
 
     public static boolean setCachedToken(String tokenKey, String expiryKey, String token, long expiryTimeMillis){
-        if (Boolean.parseBoolean(PropsUtil.get("nocache"))) return false;
+        if (!Boolean.parseBoolean(PropsUtil.get("keycloak.cache.token"))) return false;
 
         PortalCache<String, Serializable> keycloakCache = MultiVMPoolUtil.getPortalCache("deltares", true);
         keycloakCache.put(tokenKey, token);
