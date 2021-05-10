@@ -1,11 +1,10 @@
 <%@ include file="dsd_admin_init.jsp" %>
 
-<span id="group-error-block"></span>
-<a id="downloadLink" style="display: none" href=""></a>
+<span id="group-message-block"></span>
 <aui:fieldset label="dsd.admin.adminPageTitle"  >
     <aui:row>
         <aui:col width="50" >
-            <div class="panel-title" id="Title"> <liferay-ui:message key="dsd.admin.siteConfigTitle"/>  </div>
+            <div class="panel-title" > <liferay-ui:message key="dsd.admin.siteConfigTitle"/>  </div>
         </aui:col>
         <aui:col width="50">
             <div class="control-label" > <liferay-ui:message key="dsd.admin.siteConfigText"/>  </div>
@@ -14,7 +13,7 @@
     <hr>
     <aui:row>
         <aui:col width="50" >
-            <div class="panel-title" id="Title"> <liferay-ui:message key="dsd.admin.downloadTitle"/>  </div>
+            <div class="panel-title" > <liferay-ui:message key="dsd.admin.downloadTitle"/>  </div>
         </aui:col>
         <aui:col width="20">
             <div class="control-label" > <liferay-ui:message key="dsd.admin.selectDownload"/>  </div>
@@ -30,11 +29,10 @@
             <button id="downloadButton"  class="btn btn-lg" type="button"><liferay-ui:message key="dsd.admin.download"/> </button>
         </aui:col>
     </aui:row>
-
     <hr>
     <aui:row>
         <aui:col width="50" >
-            <div class="panel-title" id="Title"> <liferay-ui:message key="dsd.admin.deleteTitle"/>  </div>
+            <div class="panel-title" > <liferay-ui:message key="dsd.admin.deleteTitle"/>  </div>
         </aui:col>
         <aui:col width="20">
             <div class="control-label" > <liferay-ui:message key="dsd.admin.enterEventId"/>  </div>
@@ -46,87 +44,180 @@
             <button id="deleteButton"  class="btn btn-lg" type="button"><liferay-ui:message key="dsd.admin.delete"/> </button>
         </aui:col>
     </aui:row>
+    <hr>
+    <aui:row>
+        <aui:col width="100">
+            <div id="progressBar" style="height:10px;"></div>
+        </aui:col>
+    </aui:row>
 
 </aui:fieldset>
 
-<aui:script use="event, aui-io-request, node">
+<aui:script use="event, aui-io-request, node,aui-base, aui-progressbar">
+    let progressId = '';
     let FormsUtil = {
-        writeError: function(data){
-        let errorBlock = A.one('#group-error-block');
-        let message = JSON.parse(data).message;
-        let errorMessageNode = A.Node.create('<div class="portlet-msg-error">' + message + '</div>');
-        errorMessageNode.appendTo(errorBlock);
+
+        writeError: function(message){
+            let errorBlock = A.one('#group-message-block');
+            let errorMessageNode = A.Node.create('<div class="portlet-msg-error">' + message + '</div>');
+            errorMessageNode.appendTo(errorBlock);
         },
+        writeInfo: function(message){
+            let messageBlock = A.one('#group-message-block');
+            let messageNode = A.Node.create('<div class="portlet-msg-info">' + message + '</div>');
+            messageNode.appendTo(messageBlock);
+        },
+
         delete: function(resourceUrl, namespace){
             this.clearError();
-            var eventArticleId = document.getElementById( "eventId").value;
+            var eventArticleId = document.getElementById("eventId").value;
 
-            if (confirm("You are about to delete all registrations for event: " + eventArticleId + "\nDo you want to continue?") == false) {
+            if (confirm("You are about to delete all registrations for event: " + eventArticleId + "\nDo you want to continue?") === false) {
                 eventArticleId = null;
                 return;
             }
-
-            var deleteUrl = resourceUrl + '&' + namespace + 'eventId=' + eventArticleId + '&' + namespace + 'action=delete';
-
-            if (eventArticleId != null && eventArticleId!=="") {
-                A.io.request(deleteUrl, {
-                    on : {
-                        success : function(response, status, xhr) {
-                            let responseData = this.get('responseData');
-                            let contentType = xhr.getResponseHeader("content-type") || "";
-                            if(contentType.includes('application/json')){
-                                FormsUtil.writeError([responseData]);
-                                return false;
-                            } else {
-                                var fileName = eventArticleId + "-deleted.csv";
-                                FormsUtil.saveAs([responseData], fileName);
-                            }
-                        },
-                        failure : function() {
-                            alert('bad request');
-                        }
-                    }
-                });
+           if (eventArticleId != null && eventArticleId!=="") {
+                resourceUrl = resourceUrl + '&' + namespace + 'eventId=' + eventArticleId;
+                FormsUtil.callDownloadRegistrations(resourceUrl, namespace, eventArticleId, "delete")
             }
         },
+
         download: function(resourceUrl, namespace){
+
             this.clearError();
             let selection = document.getElementById( "eventSelection");
             var eventArticleId = selection.options[ selection.selectedIndex ].value;
-            var eventArticleTitle = selection.options[ selection.selectedIndex ].label;
-            var downloadUrl = resourceUrl + '&' + namespace + 'eventId=' + eventArticleId;
-
             if (eventArticleId != null && eventArticleId!=="") {
-                A.io.request(downloadUrl, {
-                    on : {
-                        success : function(response, status, xhr) {
-                            let responseData = this.get('responseData');
-                            let contentType = xhr.getResponseHeader("content-type") || "";
-                            if(contentType.includes('application/json')){
-                                FormsUtil.writeError([responseData]);
-                                return false;
-                            } else {
-                                var fileName = eventArticleTitle + "-download.csv";
-                                FormsUtil.saveAs([responseData], fileName);
-                            }
-                        },
-                        failure : function() {
-                            alert('bad request');
-                        }
-                    }
-                });
+                resourceUrl = resourceUrl + '&' + namespace + 'eventId=' + eventArticleId;
+                FormsUtil.callDownloadRegistrations(resourceUrl, namespace, eventArticleId, "download");
             }
         },
+
+        callDownloadRegistrations : function (resourceUrl, namespace, eventId, action){
+
+            FormsUtil.updateProgressBar(JSON.parse('{"status": "pending", "progress":0, "total":100}'));
+
+            A.io.request(resourceUrl + '&' + namespace + 'action=' + action, {
+                on : {
+                    success : function(response, status, xhr) {
+                        if (xhr.status > 299){
+                            FormsUtil.stopProgressMonitor()
+                            FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
+                            return false;
+                        } else if(xhr.status === 204){
+                            FormsUtil.stopProgressMonitor()
+                            FormsUtil.writeInfo("204: No event found!");
+                            return true;
+                        } else if (xhr.status === 200){
+                            FormsUtil.startProgressMonitor(resourceUrl, namespace);
+                        }
+                    },
+                    failure : function(response, status, xhr) {
+                        FormsUtil.writeError(xhr.status + ': ' + xhr.responseText);
+                    }
+                }
+            });
+        },
         clearError : function(){
-            let errorBlock = A.one('#group-error-block');
+            let errorBlock = A.one('#group-message-block');
             errorBlock.html('');
         },
+        stopProgressMonitor : function (){
+            clearInterval(progressId);
+            progressId = '';
+            var progressBar = $('#progressBar');
+            progressBar.hide();
+            progressBar.empty();
+            $('#deleteButton').prop('disabled', false);
+            $('#downloadButton').prop('disabled', false);
+        },
+        startProgressMonitor : function(resourceUrl, namespace){
+            if (progressId !== '') {
+                alert("A process is already running!");
+                return
+            }
+            $('#progressBar').show();
+            $('#deleteButton').prop('disabled', true);
+            $('#downloadButton').prop('disabled', true);
+            progressId = setInterval(function(){FormsUtil.callUpdateProgressRequest(resourceUrl, namespace)}, 1000);
+        },
+        callUpdateProgressRequest : function (resourceUrl, namespace){
+
+            A.io.request(resourceUrl + '&' + namespace + 'action=updateStatus', {
+                sync : 'true',
+                cache : 'false',
+                on : {
+                    success : function(response, status, xhr) {
+                        if (xhr.status > 299){
+                            FormsUtil.stopProgressMonitor()
+                            FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
+                            return false;
+                        } else if(xhr.status === 204){
+                            FormsUtil.stopProgressMonitor()
+                            FormsUtil.writeInfo("204: No registrations found!");
+                            return true;
+                        } else if (xhr.status === 200){
+                            let responseData = this.get('responseData');
+                            let statusMsg = JSON.parse(responseData);
+                            if (statusMsg.status === 'terminated'){
+                                FormsUtil.stopProgressMonitor();
+                            } else if (statusMsg.status === 'available'){
+                                FormsUtil.stopProgressMonitor();
+                                FormsUtil.callDownloadLogFileRequest(resourceUrl, namespace);
+                            } else {
+                                FormsUtil.updateProgressBar(statusMsg);
+                            }
+                        }
+                    },
+                    failure : function(response, status, xhr) {
+                        FormsUtil.stopProgressMonitor();
+                        FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
+                    }
+                }
+            });
+        },
+        callDownloadLogFileRequest : function (resourceUrl, namespace){
+            A.io.request(resourceUrl + '&' + namespace + 'action=downloadLog', {
+                sync : 'true',
+                cache : 'false',
+                on : {
+                    success : function(response, status, xhr) {
+                        let responseData = this.get('responseData');
+                        if (xhr.status !== 200){
+                            FormsUtil.writeError(xhr.responseText);
+                            return false;
+                        } else {
+                            FormsUtil.saveAs([responseData], "registered-users.log");
+                        }
+                    },
+                    failure : function(response, status, xhr) {
+                        FormsUtil.writeError(xhr.responseText);
+                    }
+                }
+            });
+        },
+        updateProgressBar : function (statusMsg) {
+            var progressBar = $('#progressBar');
+            if (progressBar.is(':visible')){
+                progressBar.empty();
+                new A.ProgressBar({
+                    boundingBox: '#progressBar',
+                    orientation: 'horizontal',
+                    value : statusMsg.progress,
+                    max : statusMsg.total
+                }).render();
+            }
+        },
         saveAs : function (data, fileName) {
-            var a = document.getElementById("downloadLink");
+            var a = document.createElement('a')
+            a.style.cssText = 'display: none';
+            document.body.appendChild(a);
+            // var a = document.getElementById("downloadLink");
             var blob = new Blob(data, {type: "text/csv;charset=utf-8;"});
             a.href = window.URL.createObjectURL(blob);
             a.download = fileName;
             a.click();
+            document.body.removeChild(a);
         }
     }
     $('#downloadButton').on('click', function(){
