@@ -51,25 +51,25 @@
 
 <aui:script use="event, aui-io-request, node">
     let FormsUtil = {
-    writeError: function(data){
-    let errorBlock = A.one('#group-error-block');
-    let message = JSON.parse(data).message;
-    let errorMessageNode = A.Node.create('<div class="portlet-msg-error">' + message + '</div>');
-    errorMessageNode.appendTo(errorBlock);
-    },
-    delete: function(resourceUrl, namespace){
-    this.clearError();
-    var eventArticleId = document.getElementById( "eventId").value;
+        writeError: function(data){
+        let errorBlock = A.one('#group-error-block');
+        let message = JSON.parse(data).message;
+        let errorMessageNode = A.Node.create('<div class="portlet-msg-error">' + message + '</div>');
+        errorMessageNode.appendTo(errorBlock);
+        },
+        delete: function(resourceUrl, namespace){
+            this.clearError();
+            var eventArticleId = document.getElementById( "eventId").value;
 
-    if (confirm("You are about to delete all registrations for event: " + eventArticleId + "\nDo you want to continue?") == false) {
-    eventArticleId = null;
-    return;
-    }
+            if (confirm("You are about to delete all registrations for event: " + eventArticleId + "\nDo you want to continue?") == false) {
+                eventArticleId = null;
+                return;
+            }
 
-    var deleteUrl = resourceUrl + '&' + namespace + 'eventId=' + eventArticleId + '&' + namespace + 'action=delete';
+            var deleteUrl = resourceUrl + '&' + namespace + 'eventId=' + eventArticleId + '&' + namespace + 'action=delete';
 
-    if (eventArticleId != null && eventArticleId!=="") {
-    A.io.request(deleteUrl, {
+            if (eventArticleId != null && eventArticleId!=="") {
+                A.io.request(deleteUrl, {
                     on : {
                         success : function(response, status, xhr) {
                             let responseData = this.get('responseData');
@@ -127,7 +127,7 @@
             a.href = window.URL.createObjectURL(blob);
             a.download = fileName;
             a.click();
-        },
+        }
     }
     $('#downloadButton').on('click', function(){
         FormsUtil.download("<portlet:resourceURL/>", "<portlet:namespace/>")

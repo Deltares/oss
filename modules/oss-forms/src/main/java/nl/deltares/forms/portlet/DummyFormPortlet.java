@@ -1,12 +1,6 @@
 package nl.deltares.forms.portlet;
 
-import com.liferay.message.boards.model.MBBan;
-import com.liferay.message.boards.service.MBBanLocalServiceUtil;
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -15,18 +9,17 @@ import nl.deltares.portal.tasks.DataRequest;
 import nl.deltares.portal.tasks.DataRequestManager;
 import nl.deltares.portal.tasks.impl.DeleteBannedUsersRequest;
 import nl.deltares.portal.tasks.impl.DummyRequest;
-import nl.deltares.portal.utils.AdminUtils;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.*;
+import javax.portlet.Portlet;
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 /**
  * @author rooij_e
@@ -37,28 +30,17 @@ import java.util.List;
                 "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.instanceable=true",
-                "javax.portlet.display-name=OSS Admin Form",
-                "javax.portlet.init-param.config-template=/admin/configuration/oss_configuration.jsp",
+                "javax.portlet.display-name=OSS Dummy Form",
                 "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.view-template=/oss_admin.jsp",
-                "javax.portlet.name=" + OssConstants.OSS_ADMIN_FORM,
+                "javax.portlet.init-param.view-template=/dummy_admin.jsp",
+                "javax.portlet.name=" + OssConstants.OSS_DUMMY_FORM,
                 "javax.portlet.resource-bundle=content.Language",
                 "javax.portlet.security-role-ref=administrator"
         },
         service = Portlet.class
 )
-public class OssAdminFormPortlet extends MVCPortlet {
+public class DummyFormPortlet extends MVCPortlet {
 
-    @Reference
-    AdminUtils adminUtils;
-
-    @Override
-    public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
-
-        renderRequest.setAttribute(ConfigurationProvider.class.getName(), _configurationProvider);
-
-        super.render(renderRequest, renderResponse);
-    }
 
     @Override
     public void serveResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws IOException {
@@ -71,8 +53,7 @@ public class OssAdminFormPortlet extends MVCPortlet {
             return;
         }
         String action = ParamUtil.getString(resourceRequest, "action");
-        long siteId = ParamUtil.getLong(resourceRequest, "siteId");
-        if (siteId == 0) siteId = themeDisplay.getScopeGroupId();
+        long siteId = themeDisplay.getScopeGroupId();
 
         String id = DeleteBannedUsersRequest.class.getName() + siteId + themeDisplay.getUserId();
         if ("deleteBannedUsers".equals(action)) {
@@ -81,7 +62,11 @@ public class OssAdminFormPortlet extends MVCPortlet {
             updateStatusAction(id, resourceResponse);
         } else if ("downloadLog".equals(action)){
             downloadLogAction(id, resourceResponse);
+        } else if ("deleteDirect".equals(action)) {
+            DummyRequest dummyRequest = new DummyRequest("dummy");
+            dummyRequest.startNoThread(resourceResponse.getWriter());
         }
+
     }
 
     private void downloadLogAction(String dataRequestId, ResourceResponse resourceResponse) throws IOException {
@@ -147,40 +132,19 @@ public class OssAdminFormPortlet extends MVCPortlet {
     }
 
     private void deleteBannedUsersAction(String dataRequestId, ResourceResponse resourceResponse, ThemeDisplay themeDisplay, long siteId) throws IOException {
-        List<MBBan> bannedUsers = MBBanLocalServiceUtil.getBans(siteId, 0, 100);
         resourceResponse.setContentType("application/json");
-        if (bannedUsers.size() == 0) {
-            PrintWriter writer = resourceResponse.getWriter();
-            try {
-                resourceResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
-                Group group = GroupLocalServiceUtil.getGroup(siteId);
-                writer.printf("No banned users found for site %s (%d)", group.getName(), siteId);
-                return;
-            } catch (PortalException e) {
-                resourceResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                writer.printf("Error getting scope group for siteId %d: %s", siteId, e.getMessage());
-                return;
-            }
-        }
         DataRequestManager instance = DataRequestManager.getInstance();
         DataRequest dataRequest = instance.getDataRequest(dataRequestId);
+
         if (dataRequest == null){
-            dataRequest = new DeleteBannedUsersRequest(dataRequestId, siteId, themeDisplay.getUserId(), bannedUsers, adminUtils);
+            dataRequest = new DummyRequest(dataRequestId);
             instance.addToQueue(dataRequest);
         }
         resourceResponse.setStatus(HttpServletResponse.SC_OK);
         String statusMessage = dataRequest.getStatusMessage();
         resourceResponse.setContentLength(statusMessage.length());
         PrintWriter writer = resourceResponse.getWriter();
-        writer.println(statusMessage);
-    }
-
-
-    private ConfigurationProvider _configurationProvider;
-
-    @Reference
-    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
-        _configurationProvider = configurationProvider;
+        writer.print(statusMessage);
     }
 
 }
