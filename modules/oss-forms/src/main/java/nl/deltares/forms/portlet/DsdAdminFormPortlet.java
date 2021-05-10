@@ -2,33 +2,29 @@ package nl.deltares.forms.portlet;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.dsd.model.BillingInfo;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.kernel.util.comparator.JournalArticleComparator;
-import nl.deltares.portal.model.impl.AbsDsdArticle;
-import nl.deltares.portal.model.impl.Event;
-import nl.deltares.portal.model.impl.Registration;
-import nl.deltares.portal.model.impl.SessionRegistration;
-import nl.deltares.portal.utils.*;
-import nl.deltares.portal.utils.impl.WebinarUtilsFactory;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
+import nl.deltares.portal.utils.DsdParserUtils;
+import nl.deltares.portal.utils.DsdSessionUtils;
+import nl.deltares.portal.utils.KeycloakUtils;
+import nl.deltares.tasks.DataRequest;
+import nl.deltares.tasks.DataRequestManager;
+import nl.deltares.tasks.impl.DownloadEventRegistrationsRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.*;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author rooij_e
@@ -51,7 +47,6 @@ import java.util.*;
 )
 public class DsdAdminFormPortlet extends MVCPortlet {
 
-	private static final Log LOG = LogFactoryUtil.getLog(DsdAdminFormPortlet.class);
 	@Reference
 	DsdParserUtils dsdParserUtils;
 
@@ -91,206 +86,49 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		ThemeDisplay themeDisplay = (ThemeDisplay) resourceRequest
 				.getAttribute(WebKeys.THEME_DISPLAY);
 
-		String eventId = ParamUtil.getString(resourceRequest, "eventId");
-		if (eventId == null || eventId.isEmpty()){
-			writeError("No eventId", resourceResponse);
-			return;
-		}
-		Event event;
-		try {
-			event = getEvent(themeDisplay, eventId);
-		} catch (PortalException e) {
-			writeError("Error getting event:" + e.getMessage(), resourceResponse);
-			return;
-		}
-		if (event != null) {
-			writeEvents(resourceResponse, event);
-		} else {
-			writeError("No event found for eventId: " + eventId, resourceResponse);
+		if (!themeDisplay.isSignedIn() || !resourceRequest.isUserInRole("administrator")) {
+			resourceResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			resourceResponse.getWriter().println("Unauthorized request!");
 			return;
 		}
 		String action = ParamUtil.getString(resourceRequest, "action");
-		if ("delete".equals(action)){
-			dsdSessionUtils.deleteEventRegistrations(event.getGroupId(), event.getResourceId());
-		}
-	}
-
-	private Event getEvent(ThemeDisplay themeDisplay, String eventId) throws PortalException {
-		try {
-			return dsdParserUtils.getEvent(themeDisplay.getSiteGroupId(), eventId, themeDisplay.getLocale());
-		} catch (PortalException e) {
-			List<Group> children = themeDisplay.getSiteGroup().getChildren(true);
-			for (Group child : children) {
-				try {
-					return dsdParserUtils.getEvent(child.getGroupId(), eventId, themeDisplay.getLocale());
-				} catch (PortalException portalException) {
-					//
-				}
-			}
-		}
-		throw new PortalException("Could not find event for " + eventId);
-	}
-
-	private void writeEvents(ResourceResponse resourceResponse, Event event) throws IOException {
-		resourceResponse.setContentType("text/csv");
-
-		List<Map<String, Object>> registrationRecords = dsdSessionUtils.getRegistrations(event);
-
-		Map<Long, User> userCache = new HashMap<>();
-		Map<String, List<String>> courseRegistrationsCache = new HashMap<>();
-		Map<Long, Map<String, String>> userAttributeCache = new HashMap<>();
-		PrintWriter writer = resourceResponse.getWriter();
-		StringBuilder header = new StringBuilder("event,registration,start date,topic,type,email,firstName,lastName,webinarProvider,registrationStatus");
-		for (KeycloakUtils.BILLING_ATTRIBUTES value : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
-			header.append(',');
-			header.append(value.name());
-		}
-		writer.println(header);
-		registrationRecords.forEach(recordObjects ->
-				writeRecord(writer, recordObjects, event, userCache, userAttributeCache, courseRegistrationsCache, resourceResponse.getLocale()));
-
-	}
-
-	private void writeRecord(PrintWriter writer, Map<String, Object> record, Event event, Map<Long, User> userCache,
-							 Map<Long, Map<String, String>> userAttributeCache, Map<String, List<String>> courseRegistrationsCache, Locale locale) {
-
-		Long registrationId = (Long) record.get("resourcePrimaryKey");
-		Registration registration = getRegistration(registrationId, event, locale);
-		if (registration == null){
-			LOG.error(String.format("Cannot find registration for registrationId %d", registrationId));
-			clearInvalidRegistration((Long) record.get("groupId"), registrationId);
+		String eventId = ParamUtil.getString(resourceRequest, "eventId");
+		if (eventId == null || eventId.isEmpty()){
+			DataRequestManager.getInstance().writeError("No eventId", resourceResponse);
 			return;
 		}
-		Long userId = (Long) record.get("userId");
-		User user = userCache.get(userId);
-		if (user == null){
-			try {
-				user = UserLocalServiceUtil.getUser(userId);
-			} catch (PortalException e) {
-				LOG.error(String.format("Cannot find registered DSD user %d: %s", userId, e.getMessage()));
-				clearInvalidRegistration((Long) record.get("groupId"), registrationId);
-				return;
-			}
-			userCache.put(userId, user);
-		}
-		StringBuilder line = new StringBuilder();
-		line.append(event.getTitle());
-		line.append(',');
-		line.append(registration.getTitle());
-		line.append(',');
-		line.append(DateUtil.getDate((Date) record.get("startTime"),"yyyy-MM-dd", locale));
-		line.append(',');
-		line.append(registration.getTopic());
-		line.append(',');
-		line.append(registration.getType());
-		line.append(',');
-		line.append(user.getEmailAddress());
-		line.append(',');
-		line.append(user.getFirstName());
-		line.append(',');
-		line.append(user.getLastName());
-		line.append(',');
-		try {
-			if (WebinarUtilsFactory.isWebinarSupported(registration)) {
-				writeWebinarInfo(line, user, (SessionRegistration) registration, WebinarUtilsFactory.newInstance(registration), courseRegistrationsCache);
-			} else {
-				line.append(','); //webinarProvider
-				line.append(','); //registrationStatus
-			}
-		} catch (Exception e) {
-			LOG.error(String.format("Error writing webinar info: %s", e.getMessage()));
-		}
-		try {
-			Map<String, String> userPreferences = JsonContentUtils.parseJsonToMap((String) record.get("userPreferences"));
-			BillingInfo billingInfo = getBillingInfo(userPreferences);
-			writeBillingInfo(line, billingInfo, user, userAttributeCache);
-		} catch (JSONException e) {
-			LOG.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
-		}
-		writer.println(line);
-	}
 
-	private void writeWebinarInfo(StringBuilder line, User user, SessionRegistration registration, WebinarUtils webinarUtils, Map<String, List<String>> courseRegistrationsCache) throws Exception {
-		String webinarKey = registration.getWebinarKey();
-		List<String> courseRegistrations = courseRegistrationsCache.get(webinarKey);
-		if (courseRegistrations == null){
-			courseRegistrations = webinarUtils.getAllCourseRegistrations(webinarKey);
-			courseRegistrationsCache.put(webinarKey, courseRegistrations);
-		}
-		line.append(registration.getWebinarProvider());
-		line.append(',');
-		if (webinarUtils.isUserInCourseRegistrationsList(courseRegistrations, user)){
-			line.append("registered");
-		}
-		line.append(',');
-	}
-
-	private Registration getRegistration(Long registrationId, Event event, Locale locale) {
-
-		if (event != null) {
-			Registration registration = event.getRegistration(registrationId, locale);
-			if (registration != null) return registration;
-		}
-		//Something wrong. Registration not loaded in Event check DB.
-		try {
-			JournalArticle latestArticle = dsdJournalArticleUtils.getLatestArticle(registrationId);
-			AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(latestArticle, locale);
-			if (!(dsdArticle instanceof Registration)) return null;
-			return (Registration) dsdArticle;
-		} catch (PortalException e) {
-			return null;
+		String id = DownloadEventRegistrationsRequest.class.getName() + eventId + themeDisplay.getUserId();
+		boolean delete = "delete".equals(action);
+		if ("download".equals(action) || delete) {
+			downloadEventRegistrations(id, resourceResponse, themeDisplay, eventId, delete);
+		} else if ("updateStatus".equals(action)){
+			DataRequestManager.getInstance().updateStatus(id, resourceResponse);
+		} else if ("downloadLog".equals(action)){
+			DataRequestManager.getInstance().downloadDataFile(id, resourceResponse);
+		} else {
+			DataRequestManager.getInstance().writeError("Unsupported Action error: " + action, resourceResponse);
 		}
 	}
 
-	private void clearInvalidRegistration(long groupId, long resourcePrimaryKey)  {
-		try {
-			LOG.error(String.format("Removing registrations for groupId %d and resourcePrimaryKey %d", groupId, resourcePrimaryKey));
-			dsdSessionUtils.deleteRegistrationsFor(groupId, resourcePrimaryKey);
-		} catch (PortalException e) {
-			LOG.error(String.format("Cannot delete registration for groupId %d and resourcePrimaryKey %d", groupId, resourcePrimaryKey));
+	private void downloadEventRegistrations(String dataRequestId, ResourceResponse resourceResponse,
+											ThemeDisplay themeDisplay, String eventId, boolean delete) throws IOException {
+		resourceResponse.setContentType("text/csv");
+		DataRequestManager instance = DataRequestManager.getInstance();
+		DataRequest dataRequest = instance.getDataRequest(dataRequestId);
+		if (dataRequest == null) {
+			dataRequest = new DownloadEventRegistrationsRequest(dataRequestId, themeDisplay.getUserId(), eventId, themeDisplay.getSiteGroup(),
+					themeDisplay.getLocale(), dsdParserUtils, dsdSessionUtils, keycloakUtils, dsdJournalArticleUtils, delete);
+			instance.addToQueue(dataRequest);
+		} else if (dataRequest.getStatus() == DataRequest.STATUS.terminated){
+			instance.removeDataRequest(dataRequest);
 		}
-	}
-
-	private void writeError(String msg, ResourceResponse resourceResponse) throws IOException {
-		resourceResponse.setContentType("application/json");
+		resourceResponse.setStatus(HttpServletResponse.SC_OK);
+		String statusMessage = dataRequest.getStatusMessage();
+		resourceResponse.setContentLength(statusMessage.length());
 		PrintWriter writer = resourceResponse.getWriter();
-		writer.print(JsonContentUtils.formatTextToJson("message", msg));
+		writer.println(statusMessage);
+
 	}
 
-	private BillingInfo getBillingInfo(Map<String, String> propertyMap) {
-
-		BillingInfo billingInfo = new BillingInfo();
-		//Write billing information.
-		for (KeycloakUtils.BILLING_ATTRIBUTES key : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
-			String value = propertyMap.get(key.name());
-			if (value != null) billingInfo.setAttribute(key, value);
-		}
-		return billingInfo;
-	}
-
-	private void writeBillingInfo(StringBuilder line, BillingInfo billingInfo, User user, Map<Long, Map<String, String>> userAttributeCache){
-
-		Map<String, String> userAttributes = null;
-		if (billingInfo.isUseOrganization()){
-			try {
-				userAttributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
-				userAttributeCache.put(user.getUserId(), userAttributes);
-			} catch (Exception e) {
-				LOG.error(String.format("Cannot find attributes for DSD user %d: %s", user.getUserId(), e.getMessage()));
-				return;
-			}
-		}
-		boolean first = true;
-		//Write billing information. If no billing info then get values from user attributes
-		for (KeycloakUtils.BILLING_ATTRIBUTES key : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
-			if (first){
-				first = false;
-			} else {
-				line.append(',');
-			}
-			String value = userAttributes == null ?
-					billingInfo.getAttribute(key) : userAttributes.get(BillingInfo.getCorrespondingUserAttributeKey(key).name());
-			if (value != null) line.append(value);
-		}
-	}
 }
