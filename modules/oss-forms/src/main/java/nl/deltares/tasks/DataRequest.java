@@ -1,10 +1,10 @@
-package nl.deltares.portal.tasks;
+package nl.deltares.tasks;
 
 import java.io.File;
 
 public interface DataRequest {
 
-    enum STATUS {pending, running, terminated, expired, available}
+    enum STATUS {pending, running, terminated, expired, available, nodata}
 
     String getId();
 

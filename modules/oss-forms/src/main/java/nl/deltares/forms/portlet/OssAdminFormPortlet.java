@@ -11,21 +11,17 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.constants.OssConstants;
-import nl.deltares.portal.tasks.DataRequest;
-import nl.deltares.portal.tasks.DataRequestManager;
-import nl.deltares.portal.tasks.impl.DeleteBannedUsersRequest;
-import nl.deltares.portal.tasks.impl.DummyRequest;
 import nl.deltares.portal.utils.AdminUtils;
+import nl.deltares.tasks.DataRequest;
+import nl.deltares.tasks.DataRequestManager;
+import nl.deltares.tasks.impl.DeleteBannedUsersRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -78,79 +74,20 @@ public class OssAdminFormPortlet extends MVCPortlet {
         if ("deleteBannedUsers".equals(action)) {
             deleteBannedUsersAction(id, resourceResponse, themeDisplay, siteId);
         } else if ("updateStatus".equals(action)){
-            updateStatusAction(id, resourceResponse);
+            DataRequestManager.getInstance().updateStatus(id, resourceResponse);
         } else if ("downloadLog".equals(action)){
-            downloadLogAction(id, resourceResponse);
-        }
-    }
-
-    private void downloadLogAction(String dataRequestId, ResourceResponse resourceResponse) throws IOException {
-        DataRequestManager instance = DataRequestManager.getInstance();
-        DataRequest dataRequest = instance.getDataRequest(dataRequestId);
-        if (dataRequest == null){
-            dataRequestNotExistsError(dataRequestId, resourceResponse);
-            return;
-        }
-        DataRequest.STATUS status = dataRequest.getStatus();
-        if (status == DataRequest.STATUS.available && dataRequest.getDataFile().exists()){
-
-            resourceResponse.setStatus(HttpServletResponse.SC_OK);
-            resourceResponse.setContentType("text/plain");
-
-            try (OutputStream out = resourceResponse.getPortletOutputStream()) {
-                Path path = dataRequest.getDataFile().toPath();
-                resourceResponse.setContentLength(Long.valueOf(Files.copy(path, out)).intValue());
-                out.flush();
-            } catch (IOException e) {
-                // handle exception
-            } finally {
-                instance.removeDataRequest(dataRequest);
-            }
-
+            DataRequestManager.getInstance().downloadDataFile(id, resourceResponse);
         } else {
-            resourceResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            resourceResponse.setContentType("text/plain");
-            PrintWriter writer = resourceResponse.getWriter();
-            if (status != DataRequest.STATUS.available) {
-                writer.printf("Requested log file does not available yet: %s", dataRequestId);
-            } else if (!dataRequest.getDataFile().exists()){
-                writer.printf("Requested log file does not exist: %s", dataRequest.getDataFile().getAbsolutePath());
-                instance.removeDataRequest(dataRequest);
-            } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated){
-                writer.printf("Requested log file task has been terminated");
-                instance.removeDataRequest(dataRequest);
-            }
-        }
-    }
-
-    private void dataRequestNotExistsError(String dataRequestId, ResourceResponse resourceResponse) throws IOException {
-        resourceResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        resourceResponse.setContentType("text/plain");
-        PrintWriter writer = resourceResponse.getWriter();
-        writer.printf("Data request for id does not exist: %s", dataRequestId);
-    }
-
-    private void updateStatusAction(String dataRequestId, ResourceResponse resourceResponse) throws IOException {
-        resourceResponse.setContentType("application/json");
-
-        DataRequestManager instance = DataRequestManager.getInstance();
-        DataRequest dataRequest = instance.getDataRequest(dataRequestId);
-        if (dataRequest == null){
-            dataRequestNotExistsError(dataRequestId, resourceResponse);
-        } else {
-            resourceResponse.setStatus(HttpServletResponse.SC_OK);
-            String statusMessage = dataRequest.getStatusMessage();
-            resourceResponse.setContentLength(statusMessage.length());
-            PrintWriter writer = resourceResponse.getWriter();
-            writer.print(statusMessage);
+            DataRequestManager.getInstance().writeError("Unsupported action error: " + action, resourceResponse);
         }
     }
 
     private void deleteBannedUsersAction(String dataRequestId, ResourceResponse resourceResponse, ThemeDisplay themeDisplay, long siteId) throws IOException {
         List<MBBan> bannedUsers = MBBanLocalServiceUtil.getBans(siteId, 0, 100);
-        resourceResponse.setContentType("application/json");
+
         if (bannedUsers.size() == 0) {
             PrintWriter writer = resourceResponse.getWriter();
+            resourceResponse.setContentType("text/plain");
             try {
                 resourceResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
                 Group group = GroupLocalServiceUtil.getGroup(siteId);
@@ -162,11 +99,14 @@ public class OssAdminFormPortlet extends MVCPortlet {
                 return;
             }
         }
+        resourceResponse.setContentType("application/json");
         DataRequestManager instance = DataRequestManager.getInstance();
         DataRequest dataRequest = instance.getDataRequest(dataRequestId);
         if (dataRequest == null){
             dataRequest = new DeleteBannedUsersRequest(dataRequestId, siteId, themeDisplay.getUserId(), bannedUsers, adminUtils);
             instance.addToQueue(dataRequest);
+        } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated){
+            instance.removeDataRequest(dataRequest);
         }
         resourceResponse.setStatus(HttpServletResponse.SC_OK);
         String statusMessage = dataRequest.getStatusMessage();

@@ -79,7 +79,7 @@
                     success : function(response, status, xhr) {
                         if (xhr.status > 299){
                             FormsUtil.stopProgressMonitor()
-    FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
+                            FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
                             return false;
                         } else if(xhr.status === 204){
                             FormsUtil.stopProgressMonitor()
@@ -90,7 +90,7 @@
                         }
                     },
                     failure : function(response, status, xhr) {
-    FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
+                        FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
                         FormsUtil.stopProgressMonitor()
                     }
                 }
@@ -140,7 +140,7 @@
                     success : function(response, status, xhr) {
                         let responseData = this.get('responseData');
                         if (xhr.status !== 200){
-    FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
+                            FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
                             FormsUtil.stopProgressMonitor();
                         } else {
                             let statusMsg = JSON.parse(responseData);
