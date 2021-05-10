@@ -9,4 +9,5 @@ Export-Package: \
     nl.deltares.forms.constants
 Import-Package: \
     nl.deltares.portal.utils.*, \
+    nl.deltares.portal.tasks.*, \
     *

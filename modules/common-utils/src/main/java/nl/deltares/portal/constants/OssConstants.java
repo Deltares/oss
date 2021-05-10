@@ -15,4 +15,8 @@ public class OssConstants {
 
     public static final String OSS_ADMIN_FORM =
             "OssAdminFormPortlet";
+
+    public static final String OSS_DUMMY_FORM =
+            "OssDummyFormPortlet";
+
 }

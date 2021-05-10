@@ -1,43 +1,41 @@
-<%@ include file="oss_admin_init.jsp" %>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
+
+<%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
+<%@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %>
+<%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
+<%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
+
+<liferay-theme:defineObjects/>
+
+<portlet:defineObjects/>
 
 <span id="group-message-block"></span>
-<aui:fieldset label="oss.admin.adminPageTitle">
+<aui:fieldset label="Dummy Admin Console">
     <aui:row>
         <aui:col width="50">
-            <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.siteConfigTitle"/></div>
+            <div class="panel-title" >Action no background thread</div>
         </aui:col>
         <aui:col width="50">
-            <div class="control-label"><liferay-ui:message key="oss.admin.siteConfigText"/></div>
+            <button id="executeButton1" class="btn btn-lg" type="button">Execute</button>
         </aui:col>
     </aui:row>
     <hr>
     <aui:row>
         <aui:col width="50">
-            <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.deleteBannedTitle"/></div>
+            <div class="panel-title" >Action with background thread</div>
         </aui:col>
-        <aui:col width="20">
-            <div class="control-label"><liferay-ui:message key="oss.admin.siteId"/></div>
-        </aui:col>
-        <aui:col width="25">
-            <c:choose>
-                <c:when test="<%=enableSiteId%>">
-                    <input id="siteId" value="<%=themeDisplay.getSiteGroupId()%>" class="form-control">
-                </c:when>
-                <c:otherwise>
-                    <input id="siteId" value="<%=themeDisplay.getSiteGroupId()%>" class="form-control" disabled>
-                </c:otherwise>
-            </c:choose>
-        </aui:col>
-        <aui:col width="5">
-            <button id="deleteButton" class="btn btn-lg" type="button"><liferay-ui:message
-                    key="oss.admin.delete"/></button>
+        <aui:col width="50">
+            <button id="executeButton2" class="btn btn-lg" type="button">Execute</button>
         </aui:col>
     </aui:row>
     <aui:row>
         <aui:col width="50">
             <div class="panel-title" id="Title"></div>
         </aui:col>
-        <aui:col width="45">
+        <aui:col width="50">
             <div id="deleteProgress" style="height:10px;"></div>
         </aui:col>
     </aui:row>
@@ -57,17 +55,33 @@
             let messageNode = A.Node.create('<div class="portlet-msg-info">' + message + '</div>');
             messageNode.appendTo(messageBlock);
         },
+        deleteDirect: function(resourceUrl, namespace){
+        this.clearMessage();
+
+        A.io.request(resourceUrl + '&' + namespace + 'action=deleteDirect', {
+        sync : 'true',
+        cache : 'false',
+        on : {
+            success : function(response, status, xhr) {
+
+                let responseData = this.get('responseData');
+                if (xhr.status !== 200){
+                FormsUtil.writeError(responseData);
+                return false;
+                } else {
+                FormsUtil.saveAs([responseData], "deleted-users.log");
+                }
+            },
+            failure : function(response, status, xhr) {
+                FormsUtil.writeError(xhr.responseText);
+            }
+        }
+        });
+
+        },
         delete: function(resourceUrl, namespace){
             this.clearMessage();
-            var siteId = document.getElementById("siteId").value;
-            if (confirm("You are about to delete all banned users from site: " + siteId + "\nDo you want to continue?") === false) {
-                siteId = null;
-                return;
-            }
-
-            if (siteId != null && siteId!=="") {
-                FormsUtil.callDeleteBannedUsers(resourceUrl + '&' + namespace + 'siteId=' + siteId + '&' + namespace);
-            }
+            FormsUtil.callDeleteBannedUsers(resourceUrl + '&' + namespace);
         },
         callDeleteBannedUsers : function (resourceUrl){
 
@@ -78,20 +92,20 @@
                 on : {
                     success : function(response, status, xhr) {
                         if (xhr.status > 299){
-                            FormsUtil.stopProgressMonitor()
     FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
+                            FormsUtil.stopProgressMonitor();
                             return false;
                         } else if(xhr.status === 204){
-                            FormsUtil.stopProgressMonitor()
-                            FormsUtil.writeInfo("204: No Banned users found!");
+    FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
+                            FormsUtil.stopProgressMonitor();
                             return true;
                         } else if (xhr.status === 200){
                             FormsUtil.startProgressMonitor(resourceUrl);
                         }
                     },
                     failure : function(response, status, xhr) {
-    FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
-                        FormsUtil.stopProgressMonitor()
+                        FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
+                        FormsUtil.stopProgressMonitor();
                     }
                 }
             });
@@ -140,7 +154,7 @@
                     success : function(response, status, xhr) {
                         let responseData = this.get('responseData');
                         if (xhr.status !== 200){
-    FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
+                            FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
                             FormsUtil.stopProgressMonitor();
                         } else {
                             let statusMsg = JSON.parse(responseData);
@@ -157,7 +171,7 @@
                     },
                     failure : function(response, status, xhr) {
                         FormsUtil.stopProgressMonitor();
-    FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
+                        FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
                     }
                 }
             });
@@ -172,14 +186,14 @@
                     success : function(response, status, xhr) {
                         let responseData = this.get('responseData');
                         if (xhr.status !== 200){
-                            FormsUtil.writeError(xhr.responseText);
+                            FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
                             return false;
                         } else {
                             FormsUtil.saveAs([responseData], "deleted-users.log");
                         }
                     },
                     failure : function(response, status, xhr) {
-                        FormsUtil.writeError(xhr.responseText);
+                        alert(xhr.status + ':' + xhr.responseText);
                     }
                 }
             });
@@ -196,7 +210,10 @@
             document.body.removeChild(a);
         }
     }
-    $('#deleteButton').on('click', function(){
-        FormsUtil.delete("<portlet:resourceURL/>", "<portlet:namespace/>")
+    $('#executeButton1').on('click', function(){
+        FormsUtil.deleteDirect("<portlet:resourceURL/>", "<portlet:namespace/>")
+    });
+    $('#executeButton2').on('click', function(){
+    FormsUtil.delete("<portlet:resourceURL/>", "<portlet:namespace/>")
     });
 </aui:script>
