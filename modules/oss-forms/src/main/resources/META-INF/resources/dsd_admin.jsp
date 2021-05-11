@@ -79,6 +79,8 @@
            if (eventArticleId != null && eventArticleId!=="") {
                 resourceUrl = resourceUrl + '&' + namespace + 'eventId=' + eventArticleId;
                 FormsUtil.callDownloadRegistrations(resourceUrl, namespace, eventArticleId, "delete")
+            } else {
+                FormsUtil.writeInfo('Please enter a valid eventId');
             }
         },
 

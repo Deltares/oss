@@ -17,58 +17,46 @@ public class DummyRequest extends AbstractDataRequest {
     }
 
     @Override
-    public void start() {
+    public STATUS call() {
 
-        if (getStatus() == STATUS.available) return;
+        if (getStatus() == STATUS.available) return status;
 
-        if (thread != null) throw new IllegalStateException("Thread already started!");
         status = STATUS.running;
         totalCount = 20;
-        thread = new Thread(() -> {
+        try {
+            File tempFile = new File(getExportDir(), id + ".tmp");
+            if (tempFile.exists()) Files.deleteIfExists(tempFile.toPath());
 
-            try {
-                File tempFile = new File(getExportDir(), id + ".tmp");
-                if (tempFile.exists()) Files.deleteIfExists(tempFile.toPath());
+            //Create local session because the servlet session will close after call to endpoint is completed
+            try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
 
-                //Create local session because the servlet session will close after call to endpoint is completed
-                try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
+                Random random = new Random();
 
-                    Random random = new Random();
-
-                    for (int i = 0; i < 20; i++) {
-                        for (int j = 0; j < 1024; j++) {
-                            writer.write(48 + random.nextInt(10));
-
-                        }
-                        writer.flush();
-                        processedCount++;
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                for (int i = 0; i < 20; i++) {
+                    for (int j = 0; j < 1024; j++) {
+                        writer.write(48 + random.nextInt(10));
                     }
+                    writer.flush();
+                    processedCount++;
+                    Thread.sleep(1000);
+                }
 
-                    status = STATUS.available;
-                } catch (Exception e) {
-                    errorMessage = e.getMessage();
-                    logger.warn("Error serializing csv content: %s", e);
-                    status = STATUS.terminated;
-                }
-                if (status == STATUS.available) {
-                    if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
-                    Files.move(tempFile.toPath(), dataFile.toPath());
-                }
-            } catch (IOException e) {
+                status = STATUS.available;
+            } catch (Exception e) {
                 errorMessage = e.getMessage();
+                logger.warn("Error serializing csv content: %s", e);
                 status = STATUS.terminated;
             }
-            fireStateChanged();
-
-        }, id);
-
-        thread.start();
-
+            if (status == STATUS.available) {
+                if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
+                Files.move(tempFile.toPath(), dataFile.toPath());
+            }
+        } catch (IOException e) {
+            errorMessage = e.getMessage();
+            status = STATUS.terminated;
+        }
+        fireStateChanged();
+        return status;
     }
 
     public void startNoThread(Writer w) {
