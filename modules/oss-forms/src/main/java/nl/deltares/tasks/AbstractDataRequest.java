@@ -21,7 +21,6 @@ public abstract class AbstractDataRequest implements DataRequest {
     protected final String id;
     protected final long currentUserId;
     protected STATUS status = pending;
-    protected Thread thread;
     protected int processedCount;
     protected int totalCount;
     protected File tempDir;
@@ -43,15 +42,6 @@ public abstract class AbstractDataRequest implements DataRequest {
     public void dispose() {
 
         status = terminated;
-        if (thread != null){
-            thread.interrupt();
-            try {
-                thread.join(2000);
-            } catch (InterruptedException e) {
-                //
-            }
-        }
-
         if (dataFile != null && dataFile.exists()) {
             try {
                 Files.deleteIfExists(dataFile.toPath());
@@ -70,9 +60,6 @@ public abstract class AbstractDataRequest implements DataRequest {
     public int getTotalCount() {
         return totalCount;
     }
-
-    @Override
-    public abstract void start();
 
     @Override
     public STATUS getStatus() {

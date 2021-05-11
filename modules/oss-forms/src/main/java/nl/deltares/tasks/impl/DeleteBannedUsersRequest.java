@@ -32,53 +32,53 @@ public class DeleteBannedUsersRequest extends AbstractDataRequest {
     }
 
     @Override
-    public void start() {
+    public STATUS call() {
 
-        if (status == available || status == nodata) return;
+        if (status == available || status == nodata) return status;
 
-        if (thread != null) throw new IllegalStateException("Thread already started!");
         status = running;
 
-        thread = new Thread(() -> {
+        try {
+            File tempFile = new File(getExportDir(), id + ".tmp");
+            if (tempFile.exists()) Files.deleteIfExists(tempFile.toPath());
 
-            try {
-                File tempFile = new File(getExportDir(), id + ".tmp");
-                if (tempFile.exists()) Files.deleteIfExists(tempFile.toPath());
+            //Create local session because the servlet session will close after call to endpoint is completed
+            try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))){
 
-                //Create local session because the servlet session will close after call to endpoint is completed
-                try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))){
-
-                    for (MBBan bannedUser : bannedUsers) {
-                        if (bannedUser.getBanUserId() == currentUserId) {
-                            writer.printf("Error: Not allowed to delete yourself %s", bannedUser.getUserName());
-                            continue;
-                        }
-                        adminUtils.deleteUserAndRelatedContent(siteId, bannedUser.getBanUserId(), writer);
-                        //start flushing
-                        writer.flush();
-                        processedCount++;
+                for (MBBan bannedUser : bannedUsers) {
+                    if (bannedUser.getBanUserId() == currentUserId) {
+                        writer.printf("Error: Not allowed to delete yourself %s", bannedUser.getUserName());
+                        continue;
                     }
+                    adminUtils.deleteUserAndRelatedContent(siteId, bannedUser.getBanUserId(), writer);
+                    //start flushing
+                    writer.flush();
+                    processedCount++;
+                    if (Thread.interrupted()) {
+                        status = terminated;
+                        errorMessage = "Thread interrupted";
+                        break;
+                    };
+                }
 
-                    status = available;
-                } catch (Exception e) {
-                    errorMessage = e.getMessage();
-                    logger.warn("Error serializing csv content: %s", e);
-                    status = terminated;
-                }
-                if (status == available) {
-                    this.dataFile = new File(getExportDir(), id + ".data");
-                    if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
-                    Files.move(tempFile.toPath(), dataFile.toPath());
-                }
-            } catch (IOException e) {
+                status = available;
+            } catch (Exception e) {
                 errorMessage = e.getMessage();
+                logger.warn("Error serializing csv content: %s", e);
                 status = terminated;
             }
-            fireStateChanged();
+            if (status == available) {
+                this.dataFile = new File(getExportDir(), id + ".data");
+                if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
+                Files.move(tempFile.toPath(), dataFile.toPath());
+            }
+        } catch (IOException e) {
+            errorMessage = e.getMessage();
+            status = terminated;
+        }
+        fireStateChanged();
 
-        }, id);
-
-        thread.start();
+        return status;
 
     }
 
