@@ -8,12 +8,16 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class DataRequestManager {
 
     private final Map<String, DataRequest> dataRequests = Collections.synchronizedMap(new HashMap<>());
     private static DataRequestManager requestManager;
     private static final Queue<String> pendingRequestsIds = new LinkedList<>();
+    private Future<DataRequest.STATUS> runningRequest;
 
     public static DataRequestManager getInstance(){
         if (requestManager == null){
@@ -50,10 +54,7 @@ public class DataRequestManager {
     }
 
     private boolean hasRunningRequests() {
-        for (DataRequest request : dataRequests.values()) {
-            if (request.getStatus() == DataRequest.STATUS.running) return true;
-        }
-        return false;
+        return runningRequest != null && !runningRequest.isDone();
     }
 
     public void fireStateChanged(DataRequest changedRequest) {
@@ -72,7 +73,9 @@ public class DataRequestManager {
             DataRequest request = dataRequests.get(nextId);
             if (request == null) continue;
             request.setDataRequestManager(this);
-            request.start();
+
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            runningRequest = executor.submit(request);
             break;
         }
     }

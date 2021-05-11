@@ -55,72 +55,70 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     }
 
     @Override
-    public void start() {
+    public STATUS call() {
 
-        if (getStatus() == available) return;
-
-        if (thread != null) throw new IllegalStateException("Thread already started!");
+        if (getStatus() == available) return status;
         status = running;
 
-        thread = new Thread(() -> {
+        try {
+            File tempFile = new File(getExportDir(), id + ".tmp");
+            if (tempFile.exists()) Files.deleteIfExists(tempFile.toPath());
 
-            try {
-                File tempFile = new File(getExportDir(), id + ".tmp");
-                if (tempFile.exists()) Files.deleteIfExists(tempFile.toPath());
+            Event event = getEvent();
 
-                Event event = getEvent();
+            List<Map<String, Object>> registrationRecords = dsdSessionUtils.getRegistrations(event);
 
-                List<Map<String, Object>> registrationRecords = dsdSessionUtils.getRegistrations(event);
+            totalCount = registrationRecords.size();
 
-                totalCount = registrationRecords.size();
+            if (registrationRecords.size() == 0) {
+                status = nodata;
+                fireStateChanged();
+                return status;
+            }
+            Map<Long, User> userCache = new HashMap<>();
+            Map<String, List<String>> courseRegistrationsCache = new HashMap<>();
+            Map<Long, Map<String, String>> userAttributeCache = new HashMap<>();
 
-                if (registrationRecords.size() == 0) {
-                    status = nodata;
-                    fireStateChanged();
-                    return;
+            //Create local session because the servlet session will close after call to endpoint is completed
+            try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))){
+
+                StringBuilder header = new StringBuilder("event,registration,start date,topic,type,email,firstName,lastName,webinarProvider,registrationStatus");
+                for (KeycloakUtils.BILLING_ATTRIBUTES value : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
+                    header.append(',');
+                    header.append(value.name());
                 }
-                Map<Long, User> userCache = new HashMap<>();
-                Map<String, List<String>> courseRegistrationsCache = new HashMap<>();
-                Map<Long, Map<String, String>> userAttributeCache = new HashMap<>();
+                writer.println(header);
+                registrationRecords.forEach(recordObjects ->{
+                            writeRecord(writer, recordObjects, event, userCache, userAttributeCache, courseRegistrationsCache, locale);
+                            if (Thread.interrupted()){
+                                throw new RuntimeException("Thread interrupted");
+                            }
+                        }
+                        );
 
-                //Create local session because the servlet session will close after call to endpoint is completed
-                try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))){
+                status = available;
 
-                    StringBuilder header = new StringBuilder("event,registration,start date,topic,type,email,firstName,lastName,webinarProvider,registrationStatus");
-                    for (KeycloakUtils.BILLING_ATTRIBUTES value : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
-                        header.append(',');
-                        header.append(value.name());
-                    }
-                    writer.println(header);
-                    registrationRecords.forEach(recordObjects ->
-                            writeRecord(writer, recordObjects, event, userCache, userAttributeCache, courseRegistrationsCache, locale));
-
-                    status = available;
-
-                } catch (Exception e) {
-                    errorMessage = e.getMessage();
-                    logger.warn("Error serializing csv content: %s", e);
-                    status = terminated;
-                }
-
-                if (status == available) {
-                    if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
-                    Files.move(tempFile.toPath(), dataFile.toPath());
-                }
-
-                if (deleteOnCompletion) {
-                    dsdSessionUtils.deleteEventRegistrations(event.getGroupId(), event.getResourceId());
-                }
-            } catch (IOException | PortalException e) {
+            } catch (Exception e) {
                 errorMessage = e.getMessage();
+                logger.warn("Error serializing csv content: %s", e);
                 status = terminated;
             }
-            fireStateChanged();
 
-        }, id);
+            if (status == available) {
+                if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
+                Files.move(tempFile.toPath(), dataFile.toPath());
+            }
 
-        thread.start();
+            if (deleteOnCompletion) {
+                dsdSessionUtils.deleteEventRegistrations(event.getGroupId(), event.getResourceId());
+            }
+        } catch (IOException | PortalException e) {
+            errorMessage = e.getMessage();
+            status = terminated;
+        }
+        fireStateChanged();
 
+        return status;
     }
 
     private Event getEvent() throws PortalException {
