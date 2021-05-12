@@ -189,7 +189,7 @@
                             FormsUtil.writeError(xhr.responseText);
                             return false;
                         } else {
-                            FormsUtil.saveAs([responseData], "registered-users.log");
+                            FormsUtil.saveAs([responseData], "registered-users.csv");
                         }
                     },
                     failure : function(response, status, xhr) {
