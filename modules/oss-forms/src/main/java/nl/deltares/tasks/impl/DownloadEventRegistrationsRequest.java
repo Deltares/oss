@@ -225,8 +225,8 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
     private void writeBillingInfo(StringBuilder line, BillingInfo billingInfo, User user, Map<Long, Map<String, String>> userAttributeCache){
 
-        Map<String, String> userAttributes = null;
-        if (billingInfo.isUseOrganization()){
+        Map<String, String> userAttributes = userAttributeCache.get(user.getUserId());
+        if (billingInfo.isUseOrganization() && userAttributes == null){
             try {
                 userAttributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
                 userAttributeCache.put(user.getUserId(), userAttributes);
