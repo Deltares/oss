@@ -7,12 +7,10 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.util.Validator;
-import lombok.extern.slf4j.Slf4j;
 import nl.worth.portal.utils.DDLUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-@Slf4j
 @Component(
         immediate = true,
         service = DDLUtils.class
