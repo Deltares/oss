@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.utils.DDMStructureUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
@@ -69,6 +70,14 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
             } catch (Exception e) {
 				SessionErrors.add(request, "update-attributes-failed", "Error reading attributes from keycloak! Check if keycloak is initialized: " + keycloakUtils.getAccountPath());
 				request.setAttribute("attributes", new HashMap<>());
+			}
+			try {
+				DSDSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
+				List<String> mailingIdsList = Arrays.asList(dsdConfig.mailingIds().split(";"));
+				request.setAttribute("subscribed", keycloakUtils.isSubscribed(user.getEmailAddress(), mailingIdsList));
+			} catch (Exception e) {
+				LOG.warn("Error getting user subscriptions: " + e.getMessage());
+				request.setAttribute("subscribed", false);
 			}
 
 		}

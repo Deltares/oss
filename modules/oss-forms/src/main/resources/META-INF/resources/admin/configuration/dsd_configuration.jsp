@@ -31,6 +31,11 @@
                 value="<%= configuration.eventId() %>"/>
 
         <aui:input
+                label="mailing-ids"
+                name="mailingIds"
+                value="<%= configuration.mailingIds() %>"/>
+
+        <aui:input
                 label="registration-url"
                 name="registrationURL"
                 value="<%= configuration.registrationURL() %>"/>

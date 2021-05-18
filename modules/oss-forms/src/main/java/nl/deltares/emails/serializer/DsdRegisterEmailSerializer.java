@@ -22,4 +22,16 @@ public class DsdRegisterEmailSerializer extends DsdRegistrationEmailSerializer{
         writer.append(LanguageUtil.format(content.getBundle(), "dsd.email.register.busnotice", content.getRegistrationRequest().getBusTransferUrl() ));
         writer.append("</p>");
     }
+
+    @Override
+    protected void appendRemarks(StringBuilder writer, DsdEmail content) {
+        String remarks = content.getRegistrationRequest().getRemarks();
+        if (remarks == null) return;
+        writer.append("<p><strong>");
+        writer.append(LanguageUtil.format(content.getBundle(), "dsd.email.register.remarks", null ));
+        writer.append("</strong><br />");
+        writer.append(remarks);
+        writer.append("</p>");
+    }
+
 }

@@ -65,6 +65,12 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
     }
 
     @Override
+    public String getAdminUserMailingsPath() {
+        String basePath = getKeycloakBasePath();
+        return basePath + "user-mailings/admin";
+    }
+
+    @Override
     public String getAccountPath() {
         String basePath = getKeycloakBasePath();
         return basePath + "account";
@@ -119,14 +125,18 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         return filteredAttributes;
     }
 
-
-    private JSONObject getJsonObject(String jsonUserArray) throws IOException {
+    private JSONArray getJsonObjects(String jsonUserArray) throws IOException {
         JSONArray jsonUsers;
         try {
             jsonUsers = JSONFactoryUtil.createJSONArray(jsonUserArray);
         } catch (JSONException e) {
             throw new IOException("Error parsing json response: " + e.getMessage());
         }
+        return jsonUsers;
+    }
+
+    private JSONObject getJsonObject(String jsonUserArray) throws IOException {
+        JSONArray jsonUsers = getJsonObjects(jsonUserArray);
         if (jsonUsers.length() == 0) return null;
         return jsonUsers.getJSONObject(0);
     }
@@ -196,6 +206,45 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         //get response
         checkResponse(connection);
 
+    }
+
+    @Override
+    public void subscribe(String email, String mailingId) throws Exception {
+
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + getAccessToken());
+        HttpURLConnection connection = getConnection(getAdminUserMailingsPath() + "/subscriptions/" + mailingId + "?email=" + email, "PUT", headers);
+        checkResponse(connection);
+    }
+
+    @Override
+    public void unsubscribe(String email, String mailingId) throws Exception {
+
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + getAccessToken());
+        HttpURLConnection connection = getConnection(getAdminUserMailingsPath() + "/subscriptions/" + mailingId + "?email=" + email, "DELETE", headers);
+        checkResponse(connection);
+    }
+
+    public boolean isSubscribed(String email, List<String> mailingIds) throws Exception {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + getAccessToken());
+        HttpURLConnection connection = getConnection(getAdminUserMailingsPath() + "/subscriptions?email=" + email, "GET", headers);
+        checkResponse(connection);
+        String jsonResponse = readAll(connection.getInputStream());
+        //Keycloak wraps all attributes in a json array. we need to remove this
+        JSONArray subscriptions = getJsonObjects(jsonResponse);
+
+        boolean[] isSubscribed = new boolean[]{false};
+        subscriptions.forEach(jsonMailing -> {
+            if (mailingIds.contains(((JSONObject)jsonMailing).getString("mailingId"))){
+                isSubscribed[0] = true;
+            }
+        });
+        return isSubscribed[0];
     }
 
     public int registerUserLogin(String email, String siteId) throws Exception {

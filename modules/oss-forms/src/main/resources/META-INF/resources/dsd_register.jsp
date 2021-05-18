@@ -68,11 +68,11 @@
                     <span><liferay-ui:message key="dsd.registration.steps.step3"/></span>
                 </a>
             </li>
-<%--            <li class="nav-item icon-circle-blank">--%>
-<%--                <a href="#stepper-step-4" title="Step 4">--%>
-<%--                    <span><liferay-ui:message key="dsd.registration.steps.step4"/></span>--%>
-<%--                </a>--%>
-<%--            </li>--%>
+            <li class="nav-item icon-circle-blank">
+                <a href="#stepper-step-4" title="Step 4" style="font-family:Open Sans,serif">
+                    <span><liferay-ui:message key="dsd.registration.steps.step4"/></span>
+                </a>
+            </li>
             <li class="nav-item icon-circle-blank">
                 <a href="#stepper-step-5" title="Step 5" style="font-family:Open Sans,serif">
                     <span><liferay-ui:message key="dsd.registration.steps.step5"/></span>
@@ -112,9 +112,9 @@
                 <div class="tab-pane" role="tabpanel" id="stepper-step-3">
                     <%@ include file="registration/step3.jsp" %>
                 </div>
-<%--                <div class="tab-pane" role="tabpanel" id="stepper-step-4">--%>
-<%--                    <%@ include file="registration/step4.jsp" %>--%>
-<%--                </div>--%>
+                <div class="tab-pane" role="tabpanel" id="stepper-step-4">
+                    <%@ include file="registration/step4.jsp" %>
+                </div>
                 <div class="tab-pane" role="tabpanel" id="stepper-step-5">
                     <%@ include file="registration/step5.jsp" %>
                 </div>
