@@ -21,6 +21,9 @@ public class RegistrationRequest {
     private boolean enableBusInfo;
     private String busTransferUrl;
     private Map<String, String> typeTranslations = new HashMap<>();
+    private String remarks;
+    private List<String> mailingIds = Collections.emptyList();
+    private boolean subscribe;
 
     public RegistrationRequest(ThemeDisplay themeDisplay) throws PortalException {
         siteUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay);
@@ -63,6 +66,14 @@ public class RegistrationRequest {
 
     public void setBillingInfo(BillingInfo billingInfo) {
         this.billingInfo = billingInfo;
+    }
+
+    public void setRemarks(String remarks){
+        this.remarks = remarks;
+    }
+
+    public String getRemarks() {
+        return remarks;
     }
 
     public BillingInfo getBillingInfo() {
@@ -118,5 +129,24 @@ public class RegistrationRequest {
 
     public void setTypeTranslations(Map<String, String> typeTranslations) {
         this.typeTranslations = typeTranslations;
+    }
+
+    public void setSubscribableMailingIds(String mailingIds) {
+        if (mailingIds == null || mailingIds.length() == 0) return;
+        this.mailingIds = new ArrayList<>();
+        String[] split = mailingIds.split(";");
+        Arrays.stream(split).forEach(id -> {if (id.trim().length() > 0) this.mailingIds.add(id); });
+    }
+
+    public List<String> getSubscribableMailingIds() {
+        return mailingIds;
+    }
+
+    public void setSubscribe(boolean subscribe) {
+        this.subscribe = subscribe;
+    }
+
+    public boolean isSubscribe() {
+        return subscribe;
     }
 }

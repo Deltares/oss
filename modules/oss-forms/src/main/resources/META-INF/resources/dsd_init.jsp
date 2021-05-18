@@ -43,4 +43,6 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
     String groupUrl = themeDisplay.getSiteGroup().getFriendlyURL();
     String privacyURL = homeUrl + webUrl + groupUrl + configuration.privacyURL();
     String contactURL = homeUrl + webUrl + groupUrl + configuration.contactURL();
+
+    String remarks = "";
 %>

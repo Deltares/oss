@@ -1,50 +1,33 @@
-<h3>
-    <liferay-ui:message key="dsd.registration.step4.relevant.information"/>
-</h3>
-<aui:input
-        name="course_conditions"
-        label="dsd.registration.step4.newsletter.register"
-        type="checkbox"/>
-<h3>
-    <liferay-ui:message key="dsd.registration.step4.networking"/>
-</h3>
-
-<p><liferay-ui:message key="dsd.registration.step4.networking.description"/></p>
-
-<span><liferay-ui:message key="registrationform.orgname"/></span>
-
-<div class="d-flex justify-content-start">
-    <div class="pr-3">
+<%
+    boolean subscribed = (boolean) request.getAttribute("subscribed");
+%>
+<c:if test="${not empty attributes}">
+    <c:set var="remarks" value="<%= attributes.get("remarks") %>"/>
+</c:if>
+<div class="row">
+    <span>
+        <liferay-ui:message key="dsd.registration.step4.relevant.information"/>
+    </span>
+    <div class="float-left w-100">
         <aui:input
-                name="share_name"
-                label="yes"
-                type="radio"
-                value="yes" />
-    </div>
-    <div class="pr-3">
-        <aui:input
-                name="share_name"
-                label="no"
-                type="radio"
-                value="no" />
+                name="subscribe_newsletter"
+                label="dsd.registration.step4.newsletter.register"
+                type="checkbox"
+                checked="${subscribed}"
+        />
     </div>
 </div>
-
-<span><liferay-ui:message key="registrationform.email"/></span>
-
-<div class="d-flex justify-content-start">
-    <div class="pr-3">
-        <aui:input
-                name="share_email"
-                label="yes"
-                type="radio"
-                value="yes" />
-    </div>
-    <div class="pr-3">
-        <aui:input
-                name="share_email"
-                label="no"
-                type="radio"
-                value="no" />
+<div class="row">
+    <span>
+        <liferay-ui:message key="dsd.registration.step4.remarks"/>
+    </span>
+    <div class="float-left w-100">
+            <aui:input
+                    name="remarks_registration"
+                    label=""
+                    type="textarea"
+                    maxLength="255"
+                    resizable="false"
+                    value="${remarks}" />
     </div>
 </div>

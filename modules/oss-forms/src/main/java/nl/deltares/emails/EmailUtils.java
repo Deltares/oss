@@ -4,10 +4,7 @@ import com.liferay.mail.kernel.service.MailServiceUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 
 import javax.activation.*;
-import javax.mail.Address;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.*;
 import java.net.URL;
 import java.util.Map;

@@ -1,5 +1,6 @@
 package nl.deltares.portal.utils;
 
+
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +39,8 @@ public interface KeycloakUtils {
 
     boolean isActive();
 
+    String getAdminUserMailingsPath();
+
     String getUserMailingPath();
 
     String getAccountPath();
@@ -56,4 +59,9 @@ public interface KeycloakUtils {
 
     void deleteUser(String email) throws Exception;
 
+    void subscribe(String emailAddress, String mailingId) throws Exception;
+
+    void unsubscribe(String emailAddress, String mailingId) throws Exception;
+
+    boolean isSubscribed(String emailAddress, List<String> mailingIds) throws Exception;
 }
