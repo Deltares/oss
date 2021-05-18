@@ -128,17 +128,49 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
             return false;
         }
+
+        List<String> subscribableMailingIds = registrationRequest.getSubscribableMailingIds();
+        if (subscribableMailingIds != null) {
+            subscribableMailingIds.forEach(mailingId -> {
+                if (registrationRequest.isSubscribe()) {
+                    try {
+                        keycloakUtils.subscribe(user.getEmailAddress(), mailingId);
+                    } catch (Exception e) {
+                        LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", user.getEmailAddress(), mailingId, e.getMessage()));
+                    }
+                } else {
+                    try {
+                        keycloakUtils.unsubscribe(user.getEmailAddress(), mailingId);
+                    } catch (Exception e) {
+                        LOG.warn(String.format("Failed to unsubscribe user %s for mailing %s: %s", user.getEmailAddress(), mailingId, e.getMessage()));
+                    }
+                }
+            });
+        }
+
+        HashMap<String, String> userPreferences = new HashMap<>();
+        if (registrationRequest.getRemarks() != null){
+            userPreferences.put("remarks" , registrationRequest.getRemarks());
+        }
+        HashMap<String, String> preferences;
         for (Registration registration : registrations) {
+            preferences = new HashMap<>(userPreferences);
+            if (registration.getPrice() > 0) {
+                preferences.putAll(billingInfo);
+            }
             try {
-                dsdSessionUtils.registerUser(user, userAttributes, registration, registration.getPrice() > 0 ? billingInfo : new HashMap<>());
+                dsdSessionUtils.registerUser(user, userAttributes, registration, preferences);
             } catch (PortalException e) {
                 SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
                 success = false;
             }
             for (Registration childRegistration : registrationRequest.getChildRegistrations(registration)) {
-
+                preferences = new HashMap<>(userPreferences);
+                if (childRegistration.getPrice() > 0) {
+                    preferences.putAll(billingInfo);
+                }
                 try {
-                    dsdSessionUtils.registerUser(user, userAttributes, childRegistration, childRegistration.getPrice() > 0 ? billingInfo : new HashMap<>());
+                    dsdSessionUtils.registerUser(user, userAttributes, childRegistration, new HashMap<>());
                 } catch (PortalException e) {
                     SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
                     success = false;
@@ -192,6 +224,11 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             RegistrationRequest registrationRequest = new RegistrationRequest(themeDisplay);
             registrationRequest.setEvent(event);
             registrationRequest.setBillingInfo(billingInfo);
+            registrationRequest.setRemarks(ParamUtil.getString(actionRequest, "remarks_registration", null));
+            if (configuration.mailingIds().length() > 0) {
+                registrationRequest.setSubscribableMailingIds(configuration.mailingIds());
+            }
+            registrationRequest.setSubscribe(ParamUtil.getBoolean(actionRequest, "subscribe_newsletter", false));
             registrationRequest.setBusInfo(configuration.enableBusInfo());
             registrationRequest.setBusTransferUrl(configuration.busTransferURL());
             for (String articleId : articleIds) {

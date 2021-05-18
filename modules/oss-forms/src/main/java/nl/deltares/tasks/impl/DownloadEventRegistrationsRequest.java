@@ -82,7 +82,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             //Create local session because the servlet session will close after call to endpoint is completed
             try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))){
 
-                StringBuilder header = new StringBuilder("event,registration,start date,topic,type,email,firstName,lastName,webinarProvider,registrationStatus");
+                StringBuilder header = new StringBuilder("event,registration,start date,topic,type,email,firstName,lastName,webinarProvider,registrationStatus,remarks");
                 for (KeycloakUtils.BILLING_ATTRIBUTES value : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
                     header.append(',');
                     header.append(value.name());
@@ -160,22 +160,15 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             userCache.put(userId, user);
         }
         StringBuilder line = new StringBuilder();
-        line.append(event.getTitle());
-        line.append(',');
-        line.append(registration.getTitle());
-        line.append(',');
+        writeField(line, event.getTitle());
+        writeField(line, registration.getTitle());
         line.append(DateUtil.getDate((Date) record.get("startTime"),"yyyy-MM-dd", locale));
         line.append(',');
-        line.append(registration.getTopic());
-        line.append(',');
-        line.append(registration.getType());
-        line.append(',');
-        line.append(user.getEmailAddress());
-        line.append(',');
-        line.append(user.getFirstName());
-        line.append(',');
-        line.append(user.getLastName());
-        line.append(',');
+        writeField(line, registration.getTopic());
+        writeField(line, registration.getType());
+        writeField(line, user.getEmailAddress());
+        writeField(line, user.getFirstName());
+        writeField(line, user.getLastName());
         try {
             if (WebinarUtilsFactory.isWebinarSupported(registration)) {
                 writeWebinarInfo(line, user, (SessionRegistration) registration, WebinarUtilsFactory.newInstance(registration), courseRegistrationsCache);
@@ -188,6 +181,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         }
         try {
             Map<String, String> userPreferences = JsonContentUtils.parseJsonToMap((String) record.get("userPreferences"));
+            writeField(line, userPreferences.get("remarks"));
             BillingInfo billingInfo = getBillingInfo(userPreferences);
             writeBillingInfo(line, billingInfo, user, userAttributeCache);
         } catch (JSONException e) {
@@ -197,6 +191,11 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         processedCount++;
     }
 
+    private void writeField(StringBuilder line, String value) {
+        if (value != null) line.append(value);
+        line.append(',');
+    }
+
     private void writeWebinarInfo(StringBuilder line, User user, SessionRegistration registration, WebinarUtils webinarUtils, Map<String, List<String>> courseRegistrationsCache) throws Exception {
         String webinarKey = registration.getWebinarKey();
         List<String> courseRegistrations = courseRegistrationsCache.get(webinarKey);
@@ -204,8 +203,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             courseRegistrations = webinarUtils.getAllCourseRegistrations(webinarKey);
             courseRegistrationsCache.put(webinarKey, courseRegistrations);
         }
-        line.append(registration.getWebinarProvider());
-        line.append(',');
+        writeField(line, registration.getWebinarProvider());
         if (webinarUtils.isUserInCourseRegistrationsList(courseRegistrations, user)){
             line.append("registered");
         }
