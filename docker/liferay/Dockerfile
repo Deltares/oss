@@ -9,6 +9,7 @@ RUN chmod a+x /etc/liferay/wait-for-it.sh
 
 RUN chown -R liferay:liferay /opt/liferay/data/document_library
 
+COPY ["resources/keystore.jks", "/opt/liferay/data/keystore.jks"]
 COPY ["resources/Liferay Connector to SAML 2.0.lpkg", "/opt/liferay/osgi/marketplace/Liferay Connector to SAML 2.0.lpkg"]
 COPY ["resources/Liferay Plugin for OAuth 2.0.lpkg", "/opt/liferay/osgi/marketplace/Liferay Plugin for OAuth 2.0.lpkg"]
 COPY ["resources/activation-key-digitalenterprisedevelopment-7.1-developeractivationkeys.xml", "/opt/liferay/osgi/modules/activation-key-digitalenterprisedevelopment-7.1-developeractivationkeys.xml"]
@@ -17,6 +18,7 @@ USER liferay
 
 ENV VIRTUAL_PORT 8080
 ENV LOGGING_LEVEL DEBUG
-ENV CATALINA_OPTS -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=12345 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.rmi.port=12345 -Djava.rmi.server.hostname=$HOSTIP
+ENV HOSTNAME liferay
+ENV CATALINA_OPTS -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=12345 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.rmi.port=12345 -Djava.rmi.server.hostname=$HOSTNAME
 
 ENTRYPOINT /bin/bash /etc/liferay/wait-for-it.sh database:3306 --strict -- /usr/local/bin/liferay_entrypoint.sh

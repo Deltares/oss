@@ -347,6 +347,7 @@
         }
       ],
       "security-admin-console": [],
+      "liferay-docker2-saml": [],
       "admin-api-viewer": [
         {
           "id": "992f5685-d4b5-44a8-8745-78ef23eee8b4",
@@ -881,6 +882,112 @@
       ]
     },
     {
+      "id": "b8a62fae-771b-402a-8515-1b13b025da91",
+      "clientId": "liferay-docker2-saml",
+      "adminUrl": "http://your.docker.com:8081/c/portal/saml",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "**********",
+      "redirectUris": [
+        "http://your.docker.com:8081/*"
+      ],
+      "webOrigins": [],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "saml",
+      "attributes": {
+        "saml.assertion.signature": "false",
+        "saml.force.post.binding": "true",
+        "saml.multivalued.roles": "false",
+        "saml_single_logout_service_url_post": "http://your.docker.com:8081/c/portal/saml/slo",
+        "saml.encrypt": "false",
+        "saml.server.signature": "true",
+        "saml.server.signature.keyinfo.ext": "false",
+        "exclude.session.state.from.auth.response": "false",
+        "saml.signing.certificate": "MIIClzCCAX8CBgF5fskFATANBgkqhkiG9w0BAQsFADAPMQ0wCwYDVQQDDARUZXN0MB4XDTIxMDUxODA5MjI1M1oXDTIyMDUwOTA5MjI1M1owDzENMAsGA1UEAwwEVGVzdDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAIGrhrQe3GqB2NAr6FnTlvbRI4E1GI6kFiDmwgF/tty7HJBVz4+CBxdKjf42f7zdMDoStdophoZ/5u3P92V7I6oTfwNAWHNjSRiTx/Ft+xw3kzIKgClauvXjyupsVDZB0ON+C0rOw9StDYjSEJS68K4nQ6J/aQl4rP+copgSPCv89Jy/FZTl243mODzbYe23a577HQU1+BtwzyqTuFMYhrIsRP+1xxtkk4WmYH/t24bfGKnUUxMuRkzqwZxbRinD6tLOwfLNhEWcw1draluFtN2iCf8IpnKBIazPgTwrk1brsE59i/yoiOptRy47RL6XwhM4G7mT3arUiY5U6zacyCkCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAUdFjoAZbwrEJNKqsB4B2o9JYtebkg0eqlTIHzmw82XxIUwp//LVcvxn4NnO/ixrGONpj/vVVnew3x8intsGMko+wNglC1SeQRLjl3CfUcQxQd4yNC3kxqUbNvqevxGgbbFKFTD8QDZRdlGzzq55JDeQxtvgRUrvj9hv2vWvv1fmHYH4IvVdk7Mfeqo9AEZq9s4d7RfRGjk953JFyV2ELTI6x8LjVRoowczs9CjQ5cWzSMz0vyBNJzxtUmfI7lkfyRdHme2Az6bbUWwy78yapzBNqeIjQstFMnVs1cyRhV2D9v/ANvlHCTsGmV/v4jcfuQw94Oj2pAKdyHvkG5g+r8A==",
+        "saml_single_logout_service_url_redirect": "http://your.docker.com:8081/c/portal/saml/slo",
+        "saml.signature.algorithm": "RSA_SHA1",
+        "saml_force_name_id_format": "false",
+        "saml.client.signature": "true",
+        "tls.client.certificate.bound.access.tokens": "false",
+        "saml.authnstatement": "true",
+        "display.on.consent.screen": "false",
+        "saml_name_id_format": "email",
+        "saml.onetimeuse.condition": "false",
+        "saml.server.signature.keyinfo.xmlSigKeyInfoKeyNameTransformer": "NONE",
+        "saml_signature_canonicalization_method": "http://www.w3.org/2001/10/xml-exc-c14n#"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "protocolMappers": [
+        {
+          "id": "2424c783-fd04-43e6-b064-4534f889f8f8",
+          "name": "lastName",
+          "protocol": "saml",
+          "protocolMapper": "saml-user-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "lastName",
+            "attribute.name": "lastName"
+          }
+        },
+        {
+          "id": "dc3e541e-5793-4d6e-b279-f679321c69a0",
+          "name": "firstName",
+          "protocol": "saml",
+          "protocolMapper": "saml-user-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "firstName",
+            "attribute.name": "firstName"
+          }
+        },
+        {
+          "id": "1e4e9953-5d7e-4f07-af67-94b748d5ce01",
+          "name": "email",
+          "protocol": "saml",
+          "protocolMapper": "saml-user-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "email",
+            "attribute.name": "emailAddress"
+          }
+        },
+        {
+          "id": "1965c356-0e3d-40b6-9840-44978f3ba9e0",
+          "name": "username",
+          "protocol": "saml",
+          "protocolMapper": "saml-user-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "username",
+            "attribute.name": "screenName"
+          }
+        }
+      ],
+      "defaultClientScopes": [
+        "web-origins",
+        "role_list",
+        "profile",
+        "roles",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access"
+      ]
+    },
+    {
       "id": "27a25fc2-29bd-4afd-a135-a5b2b8be12b8",
       "clientId": "admin-api-viewer",
       "surrogateAuthRequired": false,
@@ -1130,14 +1237,14 @@
     {
       "id": "dbe87c24-ee61-418a-9058-85660d151e0e",
       "clientId": "liferay-docker-saml",
-      "adminUrl": "http://oss-liferay:8081/c/portal/saml",
+      "adminUrl": "http://my.docker.com:8081/c/portal/saml",
       "surrogateAuthRequired": false,
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
       "redirectUris": [
-        "http://localhost:8081/*",
-        "http://oss-liferay:8081/*"
+        "http://my.docker.com:8081/*",
+        "http://your.docker.com:8081/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -1154,13 +1261,13 @@
         "saml.assertion.signature": "false",
         "saml.force.post.binding": "true",
         "saml.multivalued.roles": "false",
-        "saml_single_logout_service_url_post": "http://localhost:8081/c/portal/saml/slo",
+        "saml_single_logout_service_url_post": "http://my.docker.com:8081/c/portal/saml/slo",
         "saml.encrypt": "false",
         "saml.server.signature": "true",
         "saml.server.signature.keyinfo.ext": "false",
         "exclude.session.state.from.auth.response": "false",
-        "saml.signing.certificate": "MIIDcTCCAlkCBgF4XikovTANBgkqhkiG9w0BAQsFADB8MRwwGgYDVQQDDBNsaWZlcmF5LWRvY2tlci1zYW1sMREwDwYDVQQKDAhEZWx0YXJlczEMMAoGA1UECwwDRFNDMQ4wDAYDVQQHDAVEZWxmdDEVMBMGA1UECAwMWnVpZCBIb2xsYW5kMRQwEgYDVQQGEwtOZXRoZXJsYW5kczAeFw0yMTAzMjMwODE3MzhaFw0yMjAzMTQwODE3MzhaMHwxHDAaBgNVBAMME2xpZmVyYXktZG9ja2VyLXNhbWwxETAPBgNVBAoMCERlbHRhcmVzMQwwCgYDVQQLDANEU0MxDjAMBgNVBAcMBURlbGZ0MRUwEwYDVQQIDAxadWlkIEhvbGxhbmQxFDASBgNVBAYTC05ldGhlcmxhbmRzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg1LeevgFg29EeMWhb9HLSqOfUbsapTKPyC/FiSNWEhSNPdpTL1ZjOQM7VeAexqZphgpZ5/Wz7EP+bvaw71Hi7XxoHSn9lh7Yu/UwG5aslBCFUqxNfgVAfyTTqc8bTUSCux4jAu3NBfXO9BjWkh9Z8wH2/myPAD+1OKPMTMEoOUomYmaj0Ci8gkGjGkQMx5799i/Jgu7mPmw2LIQ7rBdSgH6w1OoKbYBmfQbbPOPlktSXSJsvYXKFObG3GIKxnSE/xe+vYa9nTE8w20nfXjqnDH3byPqFjyLYmRiEDqb0L3phe1BU0OcKxgEIaogZAJY6gu62KvJZMbMZLao0v9Q2LwIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQBe806GeAbFuv1yEnNNp1S1txFGAbXUEKHmhQudrbvRazUWCDDIj6bh9QdaUboW3rmrcyC4uu/xlXSnP8GysY1KtfCymZUCyPE4CQEiRDlBk2r0MLZIqY/0dnkwUiNFkj8ryb0pxHzYJnlwDSenJ/BMjPST569/TTifGdoReLbLSlBxp18FJrpT+xR441E/u1aVl5v6ZObjAoNPTyXlvye7gysrTBVHq+4G9fiudHJJeEHbhh1XHzc63W7MAyXSClu+QWH0Zc9UHiw+y0F1H0PvnYFt9b9iTfF9iwLANwVxzwaBENDVQm5es8tGWM0Sg9/YgPyQRMFQC3zTWq8uUd6S",
-        "saml_single_logout_service_url_redirect": "http://localhost:8081/c/portal/saml/slo",
+        "saml.signing.certificate": "MIIClzCCAX8CBgF5fs82VDANBgkqhkiG9w0BAQsFADAPMQ0wCwYDVQQDDARUZXN0MB4XDTIxMDUxODA5MjkzOVoXDTIyMDUwOTA5MjkzOVowDzENMAsGA1UEAwwEVGVzdDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKCdTn9hNHyERjK7DmNNhpMjM4CVS7Rx/SZDhyid79fMU3XZVf6YNIpjTVoYyf03Ff+dGejMvz7KA3UXR9AOBpX0MJaqK5fIf5svVm2gl1ommkDS7UO3PFnUUS33ZjqM7dYa0eAfm5OgsZKytxsBnSv7UBTk9zU7JKpcD2jidcH76kSzeDMKjqusexps0PvFaAxU5fxD4rarrrO9VzyHj2jlun/EC9ymgvPxN96et5qYTMRttmYdxSTLasN6NtL6tgxysBoTMglcz9qd+QgHahA17e2J8hqugf4hrHmeM/uJEjx6iPX+KqmlPdzFbRk6ExzCW+K1Hi7oGHRFiKDv6GUCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAKQ9J7ojmt1hxvrf67VmRKk7MT7l2OBbLfvkZfy+QZBYYlaj3Gn/moFaUWcas24j1Z1SQ/OILIIs25r3VtDSL9eChvJJyoPsqdph2q9d7+i1B9GQm5cRaR8PL5S/pREpdA9mxoh5vR0PdXQrwsH0I6QLY3Z99Mzexb4XaGhPsFLIouayYmGirAL7wujF03eAqcxZJKnyahC46hcKtOgZZYps1x1lEJEbybKB1mlrn0nV5LgyLBBXY7JhnegnA9yEVUSGJYCrwR0Wk9nbf89yTqdIzM+cMBATiH80uzPBP290nsaYjvSP+1agIVzGQTxWjFAFIY222jCAtQmtqhJWozg==",
+        "saml_single_logout_service_url_redirect": "http://my.docker.com:8081/c/portal/saml/slo",
         "saml.signature.algorithm": "RSA_SHA1",
         "saml_force_name_id_format": "false",
         "saml.client.signature": "true",
@@ -2020,14 +2127,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "saml-role-list-mapper",
-            "saml-user-attribute-mapper",
-            "oidc-address-mapper",
-            "oidc-full-name-mapper",
-            "saml-user-property-mapper",
+            "oidc-usermodel-property-mapper",
             "oidc-usermodel-attribute-mapper",
+            "saml-user-attribute-mapper",
+            "saml-role-list-mapper",
             "oidc-sha256-pairwise-sub-mapper",
-            "oidc-usermodel-property-mapper"
+            "oidc-full-name-mapper",
+            "oidc-address-mapper",
+            "saml-user-property-mapper"
           ]
         }
       },
@@ -2039,14 +2146,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "saml-role-list-mapper",
-            "oidc-address-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "saml-user-property-mapper",
+            "saml-user-attribute-mapper",
             "oidc-sha256-pairwise-sub-mapper",
-            "oidc-usermodel-property-mapper",
+            "saml-user-property-mapper",
             "oidc-full-name-mapper",
-            "saml-user-attribute-mapper"
+            "oidc-usermodel-property-mapper",
+            "oidc-usermodel-attribute-mapper",
+            "saml-role-list-mapper",
+            "oidc-address-mapper"
           ]
         }
       },
@@ -2163,11 +2270,11 @@
                 "is.mandatory.in.ldap": [
                   "true"
                 ],
-                "read.only": [
-                  "false"
-                ],
                 "always.read.value.from.ldap": [
                   "true"
+                ],
+                "read.only": [
+                  "false"
                 ],
                 "user.model.attribute": [
                   "firstName"
@@ -2186,11 +2293,11 @@
                 "is.mandatory.in.ldap": [
                   "true"
                 ],
-                "always.read.value.from.ldap": [
-                  "true"
-                ],
                 "read.only": [
                   "false"
+                ],
+                "always.read.value.from.ldap": [
+                  "true"
                 ],
                 "user.model.attribute": [
                   "lastName"
@@ -2232,10 +2339,10 @@
                 "is.mandatory.in.ldap": [
                   "true"
                 ],
-                "always.read.value.from.ldap": [
+                "read.only": [
                   "false"
                 ],
-                "read.only": [
+                "always.read.value.from.ldap": [
                   "false"
                 ],
                 "user.model.attribute": [
@@ -2246,11 +2353,11 @@
           ]
         },
         "config": {
-          "pagination": [
-            "true"
-          ],
           "fullSyncPeriod": [
             "-1"
+          ],
+          "pagination": [
+            "true"
           ],
           "usersDn": [
             "ou=people,dc=oss,dc=deltares,dc=nl"
@@ -2270,14 +2377,14 @@
           "enabled": [
             "false"
           ],
-          "changedSyncPeriod": [
-            "-1"
-          ],
           "bindDn": [
             "cn=admin,dc=oss,dc=deltares,dc=nl"
           ],
           "bindCredential": [
             "**********"
+          ],
+          "changedSyncPeriod": [
+            "-1"
           ],
           "usernameLDAPAttribute": [
             "cn"
@@ -2288,11 +2395,11 @@
           "uuidLDAPAttribute": [
             "cn"
           ],
-          "connectionUrl": [
-            "ldap://localhost:1636"
-          ],
           "allowKerberosAuthentication": [
             "false"
+          ],
+          "connectionUrl": [
+            "ldap://localhost:1636"
           ],
           "syncRegistrations": [
             "true"
@@ -2377,7 +2484,7 @@
   "defaultLocale": "en",
   "authenticationFlows": [
     {
-      "id": "f82bb1ed-f9a2-434b-ae4c-7f801d4ad19f",
+      "id": "bb998170-2e53-4226-9854-49a8697e2167",
       "alias": "Handle Existing Account",
       "description": "Handle what to do if there is existing account with same email/username like authenticated identity provider",
       "providerId": "basic-flow",
@@ -2408,7 +2515,7 @@
       ]
     },
     {
-      "id": "38abf88c-96cd-4b30-bea4-28cdf4fbedb3",
+      "id": "370a3614-81d4-4907-a87e-31e5fc764294",
       "alias": "Verify Existing Account by Re-authentication",
       "description": "Reauthentication of existing account",
       "providerId": "basic-flow",
@@ -2432,7 +2539,7 @@
       ]
     },
     {
-      "id": "57bc9804-515c-40b4-8dc1-a6820b2348e5",
+      "id": "07b51b53-ee3a-4223-aa83-a6bdb9f8928e",
       "alias": "browser",
       "description": "browser based authentication",
       "providerId": "basic-flow",
@@ -2470,7 +2577,7 @@
       ]
     },
     {
-      "id": "7f1a765b-6242-40dc-bd5d-75576e689de3",
+      "id": "19d7a544-e0b6-41ac-872f-e8b957353cce",
       "alias": "clients",
       "description": "Base authentication for clients",
       "providerId": "client-flow",
@@ -2508,7 +2615,7 @@
       ]
     },
     {
-      "id": "ba930032-84a4-46d0-bf72-b96ec14a2898",
+      "id": "6ee5e6cc-eb53-4947-90e2-af4216ec5de0",
       "alias": "deltares browser",
       "description": "browser based authentication",
       "providerId": "basic-flow",
@@ -2546,7 +2653,7 @@
       ]
     },
     {
-      "id": "6d19125b-456d-45bb-8bef-52b035b07d0b",
+      "id": "dcc6ee87-d0dd-4895-aca2-eeb06e74458e",
       "alias": "deltares browser forms",
       "description": "Username, password, otp and other auth forms.",
       "providerId": "basic-flow",
@@ -2570,7 +2677,7 @@
       ]
     },
     {
-      "id": "12dc0344-931b-4c58-9be8-5b6819bfd70c",
+      "id": "590ca870-9a16-42b4-8874-02a16b754e91",
       "alias": "deltares registration",
       "description": "registration flow",
       "providerId": "basic-flow",
@@ -2588,7 +2695,7 @@
       ]
     },
     {
-      "id": "547af0a8-f4fc-44e5-b030-cd1a4a892199",
+      "id": "c8d9730a-0b82-4254-b128-65327a9820c0",
       "alias": "deltares registration registration form",
       "description": "registration form",
       "providerId": "form-flow",
@@ -2625,14 +2732,14 @@
         },
         {
           "authenticator": "registration-password-action",
-          "requirement": "DISABLED",
+          "requirement": "REQUIRED",
           "priority": 61,
           "userSetupAllowed": false,
           "autheticatorFlow": false
         },
         {
           "authenticator": "registration-recaptcha-action",
-          "requirement": "REQUIRED",
+          "requirement": "DISABLED",
           "priority": 62,
           "userSetupAllowed": false,
           "autheticatorFlow": false
@@ -2640,7 +2747,7 @@
       ]
     },
     {
-      "id": "fe45f1a5-5e54-4850-b057-b479cd7b85c2",
+      "id": "ee89edb5-990d-479c-9204-33c657204877",
       "alias": "direct grant",
       "description": "OpenID Connect Resource Owner Grant",
       "providerId": "basic-flow",
@@ -2671,7 +2778,7 @@
       ]
     },
     {
-      "id": "3aeb30ea-9c44-4d0f-95a4-6dc1fb85391d",
+      "id": "438193d9-170f-4439-b56c-c0d7cb1183a7",
       "alias": "docker auth",
       "description": "Used by Docker clients to authenticate against the IDP",
       "providerId": "basic-flow",
@@ -2688,7 +2795,7 @@
       ]
     },
     {
-      "id": "5f80812c-1b60-4066-a794-4fafff7ebd4a",
+      "id": "ec540d8a-a156-427a-a4b9-b8347b40fc2d",
       "alias": "first broker login",
       "description": "Actions taken after first broker login with identity provider account, which is not yet linked to any Keycloak account",
       "providerId": "basic-flow",
@@ -2721,7 +2828,7 @@
       ]
     },
     {
-      "id": "9f41d040-5e1c-4610-9adf-532f4cb3f67d",
+      "id": "f1bee9b6-8824-4563-8f1d-ed9597add0ba",
       "alias": "forms",
       "description": "Username, password, otp and other auth forms.",
       "providerId": "basic-flow",
@@ -2745,7 +2852,7 @@
       ]
     },
     {
-      "id": "40b9c74f-d00e-4ec0-989e-0571a1f7270d",
+      "id": "219a8707-abde-42a2-9539-d02c01a46b5b",
       "alias": "http challenge",
       "description": "An authentication flow based on challenge-response HTTP Authentication Schemes",
       "providerId": "basic-flow",
@@ -2783,7 +2890,7 @@
       ]
     },
     {
-      "id": "b69b8bac-2bdc-4443-bba9-e67846c009f3",
+      "id": "8a915fdf-8e7f-4a1a-8db4-c78a8850b168",
       "alias": "registration",
       "description": "registration flow",
       "providerId": "basic-flow",
@@ -2801,7 +2908,7 @@
       ]
     },
     {
-      "id": "37e4609f-2653-48c7-88c2-987a90f22516",
+      "id": "b4160b75-0dea-4e50-bcdf-2a20febadb92",
       "alias": "registration form",
       "description": "registration form",
       "providerId": "form-flow",
@@ -2839,7 +2946,7 @@
       ]
     },
     {
-      "id": "5f40b8da-d30d-41ad-ac87-125fc39a6b74",
+      "id": "338d3c95-8e22-463f-af1a-73fa3dedae37",
       "alias": "reset credentials",
       "description": "Reset credentials for a user if they forgot their password or something",
       "providerId": "basic-flow",
@@ -2877,7 +2984,7 @@
       ]
     },
     {
-      "id": "ec4adc09-d5c3-4ec2-b3b3-ea2873e11ae4",
+      "id": "38654633-b0d8-4d3b-86d6-b61ab9c0b451",
       "alias": "saml ecp",
       "description": "SAML ECP Profile Authentication Flow",
       "providerId": "basic-flow",
@@ -2896,14 +3003,14 @@
   ],
   "authenticatorConfig": [
     {
-      "id": "f71e7f30-482f-46aa-8761-9d93633f7fe7",
+      "id": "8cf58761-33cf-4799-adfe-24b738b61bfb",
       "alias": "create unique user config",
       "config": {
         "require.password.update.after.registration": "false"
       }
     },
     {
-      "id": "414b054e-c6b8-4684-8b42-ad2bcffd31d3",
+      "id": "75288a6b-025b-402f-8400-8fa6345b4b7e",
       "alias": "review profile config",
       "config": {
         "update.profile.on.first.login": "missing"
@@ -2933,7 +3040,7 @@
       "alias": "VERIFY_EMAIL",
       "name": "Verify Email",
       "providerId": "VERIFY_EMAIL",
-      "enabled": true,
+      "enabled": false,
       "defaultAction": false,
       "priority": 30,
       "config": {}

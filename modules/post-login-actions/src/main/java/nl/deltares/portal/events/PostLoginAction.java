@@ -10,7 +10,6 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.struts.LastPath;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
