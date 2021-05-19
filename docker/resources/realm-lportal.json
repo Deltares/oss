@@ -2082,7 +2082,6 @@
   "eventsEnabled": true,
   "eventsExpiration": 432000,
   "eventsListeners": [
-    "deltares_user_event_listener",
     "jboss-logging"
   ],
   "enabledEventTypes": [
