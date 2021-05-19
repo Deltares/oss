@@ -2,9 +2,9 @@
 
 The configuration for the environment is:
 ```
-Liferay DXP 7.1.10 GA1
+Liferay DXP 7.1.10-sp5
 MariaDB 10.2.25
-ElasticSearch 6.5.0
+ElasticSearch 6.8.12
 ```
 
 ## Configurations
@@ -26,13 +26,15 @@ configs/docker
 ### Gradle
 Create `gradle-local.properties` file in project root folder. These properties will be replaced in the
 `*.properties` file when executing the deployment tasks.
+
+Check the `example-gradle-local.properties` file to see the available properties.
 ```
 env=local
 dbName=liferay
 dbUser=liferay
 dbPassword=liferay
 # provide a default password if this is a fresh new instance
-default.admin.password=SECURE_PASSWORD
+default.admin.password=Deltares123!
 ```
 Note: if this file does not exist the build tasks will use the default values
 (refer to `build.gradle` for details).
@@ -55,17 +57,23 @@ Note: If the values provided in this file are not the same as those in `gradle-l
 able to connect to the database.
 
 ### Host
-Add `oss.portal` to your hosts file.
+Add the below entries to your hosts file.
 ```
-127.0.0.1    oss.portal
+127.0.0.1	keycloak
+127.0.0.1	liferay
 ```
 
 ### Database and document library backup restore
-Place database backup file with name `liferay.sql` in `docker/mariadb/docker-entrypoint-initdb.d/`. \
+Both the Keycloak container and the Liferay container are initialized using a
+restore of a previous database dump. These dump files can be found and overwritten 
+in the following location:
+
+ `dump-liferay.sql` in `docker/resources/` 
+ `dump-keycloak.sql` in `docker/resources/`
+
 Place document library backup in `docker/liferay/data`
 
-Note: Database and document library backups are not versioned in git due to their weight. The suggested way to get a
-starting backup is from the test environment. 
+!! Please do not update the database dump files to GITHUB !!
 
 ### Deployment
 Refer to [deployment](deployment.md)
