@@ -192,7 +192,16 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     }
 
     private void writeField(StringBuilder line, String value) {
-        if (value != null) line.append(value);
+        if (value != null) {
+            boolean addQuotes = value.contains(",");
+            if (addQuotes){
+                line.append("\"");
+            }
+            line.append(value);
+            if (addQuotes){
+                line.append("\"");
+            }
+        }
         line.append(',');
     }
 
