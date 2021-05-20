@@ -60,7 +60,9 @@ able to connect to the database.
 Add the below entries to your hosts file.
 ```
 127.0.0.1	keycloak
-127.0.0.1	liferay
+127.0.0.1	dsd.local.nl
+127.0.0.1	oss.local.nl
+127.0.0.1	oss-child.local.nl
 ```
 
 ### Database and document library backup restore
