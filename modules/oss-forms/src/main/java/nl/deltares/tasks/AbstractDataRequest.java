@@ -4,6 +4,8 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +26,8 @@ public abstract class AbstractDataRequest implements DataRequest {
     protected int processedCount;
     protected int totalCount;
     protected File tempDir;
+    private final PermissionChecker permissionChecker;
+
 
     private DataRequestManager manager;
 
@@ -31,8 +35,16 @@ public abstract class AbstractDataRequest implements DataRequest {
         this.currentUserId = currentUserId;
         this.id = id;
         this.dataFile = new File(getExportDir(), id + ".data");
+        permissionChecker = PermissionThreadLocal.getPermissionChecker();
     }
 
+    /**
+     * Run this method at the start of the {{@link #call()}} method.
+     */
+    protected void init(){
+        //Set the permissionChecker in the background thread
+        PermissionThreadLocal.setPermissionChecker(permissionChecker);
+    }
     @Override
     public String getId() {
         return id;
