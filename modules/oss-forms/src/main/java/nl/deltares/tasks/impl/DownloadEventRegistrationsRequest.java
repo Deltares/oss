@@ -60,6 +60,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         if (getStatus() == available) return status;
         status = running;
 
+        init();
         try {
             File tempFile = new File(getExportDir(), id + ".tmp");
             if (tempFile.exists()) Files.deleteIfExists(tempFile.toPath());
