@@ -5,16 +5,15 @@ import com.liferay.portal.kernel.events.LifecycleAction;
 import com.liferay.portal.kernel.events.LifecycleEvent;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalService;
-import com.liferay.portal.kernel.struts.LastPath;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.Principal;
 
 /**
@@ -69,10 +68,8 @@ public class PostLoginAction implements LifecycleAction {
 			}
 
 			try {
-				LayoutSet layoutSet = (LayoutSet) request.getAttribute("VIRTUAL_HOST_LAYOUT_SET");
-				String hostname = layoutSet.getCompanyFallbackVirtualHostname();
-				LastPath last_path = (LastPath) request.getSession().getAttribute("LAST_PATH");
-				String siteId = getSiteId(last_path.getPath(), hostname);
+				//this value should contain the origin of the login request
+				String siteId = getSiteId(request.getParameter("redirect"));
 				if (siteId != null) {
 					LOG.info(String.format("Register user '%s' login to site '%s'", user.getFullName(), siteId));
 					keycloakUtils.registerUserLogin(user.getEmailAddress(), siteId);
@@ -85,13 +82,34 @@ public class PostLoginAction implements LifecycleAction {
 
 	}
 
-	private String getSiteId(String path, String hostname) {
-		if (path == null) return hostname;
-		String[] pathItems = path.split("/");
-		String[] pathItemsWithValues = ArrayUtil.remove(pathItems, "");
-		if (pathItemsWithValues.length == 0) return hostname;
-		if (hostname != null && hostname.length() > 0) return hostname.concat(".").concat(pathItemsWithValues[0]);
-		return pathItemsWithValues[0];
+	private String getSiteId(String redirectUrl) {
+		try {
+			URL url = new URL(redirectUrl);
+			String host = url.getHost();
+			String path = url.getPath();
+			if (path != null && path.contains("web/")){
+				String[] pathElements = path.split("/");
+				StringBuilder sitePath = new StringBuilder(host);
+				boolean stopAtNext = false;
+				for (String pathElement : pathElements) {
+					if (pathElement.equals("web")) {
+						sitePath.append('/');
+						sitePath.append(pathElement);
+						stopAtNext = true;
+					} else if (stopAtNext) {
+						sitePath.append('/');
+						sitePath.append(pathElement);
+						break;
+					}
+				}
+				return sitePath.toString();
+			} else {
+				return host;
+			}
+		} catch (MalformedURLException e) {
+			return null;
+		}
+
 	}
 
 }
