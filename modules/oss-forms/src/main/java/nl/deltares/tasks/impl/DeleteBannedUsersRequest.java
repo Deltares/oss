@@ -36,6 +36,7 @@ public class DeleteBannedUsersRequest extends AbstractDataRequest {
 
         if (status == available || status == nodata) return status;
 
+        init();
         status = running;
 
         try {

@@ -71,7 +71,7 @@
         },
         callDeleteBannedUsers : function (resourceUrl){
 
-            FormsUtil.updateProgressBar(JSON.parse('{"status": "pending", "progress":1, "total":100}'));
+            FormsUtil.updateProgressBar(JSON.parse('{"status": "pending", "progress":0, "total":100}'));
             A.io.request(resourceUrl + 'action=deleteBannedUsers', {
                 sync : 'true',
                 cache : 'false',
