@@ -194,6 +194,9 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
     private void writeField(StringBuilder line, String value) {
         if (value != null) {
+            if (value.contains("\n")) {
+                value = value.replaceAll("\n", " ");
+            }
             boolean addQuotes = value.contains(",");
             if (addQuotes){
                 line.append("\"");
