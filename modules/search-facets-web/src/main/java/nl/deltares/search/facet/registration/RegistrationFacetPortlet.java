@@ -4,10 +4,7 @@ import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
-import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
 import nl.deltares.search.constans.FacetPortletKeys;
-import nl.deltares.search.facet.date.DateRangeFacetConfiguration;
-import nl.deltares.search.util.DateFacetUtil;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -19,7 +16,6 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * @author allan
@@ -57,7 +53,6 @@ public class RegistrationFacetPortlet extends MVCPortlet {
 
   @Override
   public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
-    PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
     renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, false);
     super.render(renderRequest, renderResponse);
   }
