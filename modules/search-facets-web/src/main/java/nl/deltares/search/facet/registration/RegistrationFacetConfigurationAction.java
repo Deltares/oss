@@ -4,8 +4,6 @@ import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.util.ParamUtil;
-import nl.deltares.portal.model.DsdArticle;
-import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.search.constans.FacetPortletKeys;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -17,8 +15,6 @@ import javax.portlet.ActionResponse;
 import javax.portlet.PortletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 @Component(
@@ -45,20 +41,11 @@ public class RegistrationFacetConfigurationAction extends DefaultConfigurationAc
     public void processAction(PortletConfig portletConfig, ActionRequest actionRequest, ActionResponse actionResponse)
             throws Exception {
 
-        List<String> structureList = convertStructuresToList(actionRequest);
-        setPreference(actionRequest, "structureList", JsonContentUtils.formatListToJson(structureList));
-        super.processAction(portletConfig, actionRequest, actionResponse);
-    }
-
-    private List<String> convertStructuresToList(ActionRequest actionRequest) {
-        ArrayList<String> structures = new ArrayList<>();
-        for (DsdArticle.DSD_REGISTRATION_STRUCTURE_KEYS structure_keys : DsdArticle.DSD_REGISTRATION_STRUCTURE_KEYS.values()) {
-            String structureKey = structure_keys.name();
-            String value = ParamUtil.getString(actionRequest, structureKey);
-            if (value.isEmpty() || !Boolean.parseBoolean(value)) continue;
-            structures.add(structureKey.toUpperCase());
+        String structureList = ParamUtil.getString(actionRequest, "structureList");
+        if (structureList != null && !structureList.isEmpty()){
+            setPreference(actionRequest, "structureList", structureList);
         }
-        return structures;
+        super.processAction(portletConfig, actionRequest, actionResponse);
     }
 
     /**
