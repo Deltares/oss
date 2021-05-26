@@ -1,6 +1,18 @@
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
+<%@ page import="nl.deltares.search.facet.registration.RegistrationFacetConfiguration" %>
 <%@ include file="/META-INF/resources/init.jsp" %>
 
+<%
+
+    RegistrationFacetConfiguration reg_configuration =
+            (RegistrationFacetConfiguration)
+                    renderRequest.getAttribute(RegistrationFacetConfiguration.class.getName());
+
+    String structureList = "";
+    if (Validator.isNotNull(reg_configuration)){
+        structureList = portletPreferences.getValue("structureList", reg_configuration.structureList());
+    }
+%>
 
 <liferay-portlet:actionURL
         portletConfiguration="<%= true %>"
@@ -27,16 +39,12 @@
 
     <aui:fieldset>
 
-        <%    for (DsdArticle.DSD_REGISTRATION_STRUCTURE_KEYS key : DsdArticle.DSD_REGISTRATION_STRUCTURE_KEYS.values()) { %>
         <aui:input
-                label="<%= key.name() %>"
-                name="<%= key.name() %>"
-                type="checkbox"
-                value="<%= String.valueOf(structureList.contains(key.name().toUpperCase())) %>"
-                checked="<%= structureList.contains(key.name().toUpperCase()) %>"
+                label="Structure names (lower case & space separated)"
+                name="structureList"
+                value='<%= structureList %>'
         >
         </aui:input>
-        <% } %>
 
     </aui:fieldset>
 
