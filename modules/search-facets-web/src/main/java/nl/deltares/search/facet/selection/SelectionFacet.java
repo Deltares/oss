@@ -1,4 +1,4 @@
-package nl.deltares.search.facet.type;
+package nl.deltares.search.facet.selection;
 
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.BooleanClause;
@@ -13,9 +13,9 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.facet.Facet;
 import com.liferay.portal.search.filter.FilterBuilders;
 
-public class SessionTypeFacet extends BaseFacet implements Facet {
+public class SelectionFacet extends BaseFacet implements Facet {
 
-    public SessionTypeFacet(String fieldName, SearchContext searchContext, FilterBuilders filterBuilders) {
+    public SelectionFacet(String fieldName, SearchContext searchContext, FilterBuilders filterBuilders) {
         super(searchContext);
         setFieldName(fieldName);
         _filterBuilders = filterBuilders;
@@ -56,22 +56,23 @@ public class SessionTypeFacet extends BaseFacet implements Facet {
 
         SearchContext searchContext = getSearchContext();
 
-        String typeString = _selections[0];
+        String selectionString = _selections[0];
 
-        String type = StringPool.BLANK;
+        String selection = StringPool.BLANK;
 
-        if (!isStatic() && Validator.isNotNull(typeString)) {
-            type = typeString;
+        if (!isStatic() && Validator.isNotNull(selectionString)) {
+            selection = selectionString;
         }
 
         TermFilter termFilter = new TermFilter(
-                getFieldName(), type);
+                getFieldName(), selection);
 
         return BooleanClauseFactoryUtil.createFilter(
                 searchContext, termFilter, BooleanClauseOccur.MUST);
     }
 
     private String _aggregationName;
+    @SuppressWarnings("FieldCanBeLocal")
     private final FilterBuilders _filterBuilders;
     private String[] _selections = {};
 }

@@ -1,9 +1,9 @@
-package nl.deltares.search.facet.type.builder;
+package nl.deltares.search.facet.selection;
 
 import aQute.bnd.annotation.ProviderType;
 import com.liferay.portal.search.facet.FacetFactory;
 
 @ProviderType
-public interface SessionTypeFacetFactory extends FacetFactory {
+public interface SelectionFacetFactory extends FacetFactory {
     void setField(String field);
 }
