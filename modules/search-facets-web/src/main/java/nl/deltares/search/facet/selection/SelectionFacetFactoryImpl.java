@@ -1,11 +1,9 @@
-package nl.deltares.search.facet.type.builder.impl;
+package nl.deltares.search.facet.selection;
 
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.search.facet.Facet;
 import com.liferay.portal.search.facet.FacetFactory;
 import com.liferay.portal.search.filter.FilterBuilders;
-import nl.deltares.search.facet.topic.SessionTopicFacet;
-import nl.deltares.search.facet.topic.SessionTopicFacetFactory;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -13,10 +11,10 @@ import org.osgi.service.component.annotations.Reference;
         immediate = true,
         service = {
                 FacetFactory.class,
-                SessionTopicFacetFactory.class
+                SelectionFacetFactory.class
         }
 )
-public class SessionTypeFacetFactoryImpl implements SessionTopicFacetFactory {
+public class SelectionFacetFactoryImpl implements SelectionFacetFactory {
 
     private String field;
 
@@ -27,7 +25,7 @@ public class SessionTypeFacetFactoryImpl implements SessionTopicFacetFactory {
 
     @Override
     public Facet newInstance(SearchContext searchContext) {
-        return new SessionTopicFacet(this.field, searchContext, this.filterBuilders);
+        return new SelectionFacet(this.field, searchContext, this.filterBuilders);
     }
 
     @Override

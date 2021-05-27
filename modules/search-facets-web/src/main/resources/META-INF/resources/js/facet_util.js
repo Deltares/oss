@@ -2,7 +2,7 @@ AUI.add(
     'deltares-search-facet-util',
     function (A) {
         var FacetUtil = {
-            updateQueryString: function (namespace) {
+            updateQueryString: function (namespace, name) {
 
                 let startDate = $('input[name$="' + namespace + 'startDate"]').val();
                 let endDate = $('input[name$="' + namespace + 'endDate"]').val();
@@ -22,20 +22,12 @@ AUI.add(
                         url = this.selectTerm(url, 'endDate', endDate);
                     }
                 }
-                let type = $('select[name$="' + namespace + 'session-type"]').val();
-                if (type !== undefined) {
-                    if (type === 'undefined' ){
-                        url = this.removeTerm(url, 'type');
+                let selection = $('select[name$="' + namespace  + "selection-facet-" + name + '"]').val();
+                if (selection !== undefined) {
+                    if (selection === 'undefined' ){
+                        url = this.removeTerm(url, name);
                     } else {
-                        url = this.selectTerm(url, 'type', type);
-                    }
-                }
-                let topic = $('select[name$="' + namespace + 'session-topic"]').val();
-                if (topic !== undefined) {
-                    if (topic === 'undefined'){
-                        url = this.removeTerm(url, 'topic');
-                    } else {
-                        url = this.selectTerm(url, 'topic', topic);
+                        url = this.selectTerm(url, name, selection);
                     }
                 }
                 let showPastElement = $('input[name$="' + namespace + 'showPast"]');
