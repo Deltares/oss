@@ -15,7 +15,6 @@ import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
 import nl.deltares.portal.utils.*;
-import nl.deltares.portal.utils.impl.WebinarUtilsFactory;
 import nl.deltares.tasks.AbstractDataRequest;
 
 import java.io.File;
@@ -38,10 +37,11 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     private final Locale locale;
     private final DsdJournalArticleUtils dsdJournalArticleUtils;
     private final boolean deleteOnCompletion;
+    private final WebinarUtilsFactory webinarUtilsFactory;
 
     public DownloadEventRegistrationsRequest(String id, long currentUser, String eventId, Group siteGroup, Locale locale,
                                              DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils,
-                                             KeycloakUtils keycloakUtils, DsdJournalArticleUtils dsdJournalArticleUtils, boolean delete) throws IOException {
+                                             KeycloakUtils keycloakUtils, DsdJournalArticleUtils dsdJournalArticleUtils, WebinarUtilsFactory webinarUtilsFactory, boolean delete) throws IOException {
         super(id, currentUser);
         this.eventId = eventId;
         this.group = siteGroup;
@@ -50,6 +50,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         this.dsdSessionUtils = dsdSessionUtils;
         this.keycloakUtils = keycloakUtils;
         this.dsdJournalArticleUtils = dsdJournalArticleUtils;
+        this.webinarUtilsFactory = webinarUtilsFactory;
         this.deleteOnCompletion = delete;
 
     }
@@ -171,8 +172,8 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         writeField(line, user.getFirstName());
         writeField(line, user.getLastName());
         try {
-            if (WebinarUtilsFactory.isWebinarSupported(registration)) {
-                writeWebinarInfo(line, user, (SessionRegistration) registration, WebinarUtilsFactory.newInstance(registration), courseRegistrationsCache);
+            if (webinarUtilsFactory.isWebinarSupported(registration)) {
+                writeWebinarInfo(line, user, (SessionRegistration) registration, webinarUtilsFactory.newInstance(registration), courseRegistrationsCache);
             } else {
                 line.append(','); //webinarProvider
                 line.append(','); //registrationStatus

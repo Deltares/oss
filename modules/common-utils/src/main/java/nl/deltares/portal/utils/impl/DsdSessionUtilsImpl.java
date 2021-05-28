@@ -31,6 +31,9 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     DsdParserUtils parserUtils;
 
     @Reference
+    WebinarUtilsFactory webinarUtilsFactory;
+
+    @Reference
     DsdJournalArticleUtils dsdJournalArticleUtils;
 
     private RegistrationLocalService registrationLocalService;
@@ -54,7 +57,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     public void registerUser(User user, Map<String, String> userAttributes, Registration registration, Map<String, String> registrationProperties) throws PortalException {
 
         try {
-            if (WebinarUtilsFactory.isWebinarSupported(registration)) {
+            if (webinarUtilsFactory.isWebinarSupported(registration)) {
                 registerWebinarUser(user, userAttributes, (SessionRegistration) registration, registrationProperties);
             }
         } finally {
@@ -72,7 +75,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     private void registerWebinarUser(User user, Map<String, String> userAttributes, SessionRegistration registration, Map<String, String> userProperties) throws PortalException {
 
-        WebinarUtils webinarUtils = WebinarUtilsFactory.newInstance(registration);
+        WebinarUtils webinarUtils = webinarUtilsFactory.newInstance(registration);
         try {
             if (webinarUtils.isActive()) {
                 webinarUtils.registerUser(user, userAttributes, registration.getWebinarKey(), GroupServiceUtil.getGroup(registration.getGroupId()).getName(Locale.US), userProperties);
@@ -86,13 +89,13 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     public void unRegisterUser(User user, Registration registration) throws PortalException {
 
         try {
-            if (WebinarUtilsFactory.isWebinarSupported(registration)) {
+            if (webinarUtilsFactory.isWebinarSupported(registration)) {
 
                 List<nl.deltares.dsd.registration.model.Registration> registrations = registrationLocalService.getRegistrations(registration.getGroupId(), user.getUserId(), registration.getResourceId());
                 if (registrations.size() > 0) {
                     Map<String, String> preferences = getUserPreferencesMap(registrations.get(0));
                     try {
-                        WebinarUtils webinarUtils = WebinarUtilsFactory.newInstance(registration);
+                        WebinarUtils webinarUtils = webinarUtilsFactory.newInstance(registration);
                         if (webinarUtils.isActive()) {
                             webinarUtils.unregisterUser(user, ((SessionRegistration) registration).getWebinarKey(), preferences);
                         }

@@ -4,7 +4,7 @@ import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.util.PropsUtil;
+import nl.deltares.portal.configuration.WebinarSiteConfiguration;
 import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
@@ -24,17 +24,35 @@ import java.util.concurrent.TimeUnit;
 public class GotoUtils extends HttpClientUtils implements WebinarUtils {
     private static final Log LOG = LogFactoryUtil.getLog(GotoUtils.class);
 
-    private final String CACHED_REFRESH_EXPIRY_KEY = "goto.refresh.expirytime";
-    private final String CACHED_REFRESH_TOKEN_KEY = "goto.refresh.token";
-    private final String BASEURL_KEY =  "goto.baseurl";
+    private final String CACHED_REFRESH_EXPIRY_KEY;
+    private final String CACHED_REFRESH_TOKEN_KEY;
+    private final String CACHED_ORGANIZER_KEY;
+    private final String CACHED_TOKEN_KEY;
+    private final String CACHED_EXPIRY_KEY;
+    private final boolean CACHE_TOKEN;
+
+
+    private final WebinarSiteConfiguration configuration;
     private String basePath;
-    private static final String CACHED_ORGANIZER_KEY = "goto.organizer";
     private static final String GOTO_REGISTRATION_PATH = "G2W/rest/v2/organizers/%s/webinars/%s/registrants";
     private String organizer_key;
 
+    public GotoUtils(WebinarSiteConfiguration siteConfiguration) {
+        if (siteConfiguration == null) throw new NullPointerException("siteConfiguration == null");
+        this.configuration = siteConfiguration;
+
+        String clientId = configuration.gotoClientId();
+        CACHED_REFRESH_TOKEN_KEY = clientId + ".refresh";
+        CACHED_REFRESH_EXPIRY_KEY = clientId + ".refresh.expirytime";
+        CACHED_ORGANIZER_KEY = clientId + ".organizer";
+        CACHED_TOKEN_KEY = clientId;
+        CACHED_EXPIRY_KEY = clientId + ".expirytime";
+        CACHE_TOKEN = configuration.gotoCacheToken();
+    }
+
     @Override
     public boolean isActive() {
-        return PropsUtil.contains(BASEURL_KEY);
+        return !configuration.gotoClientId().isEmpty();
     }
 
     @Override
@@ -142,7 +160,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
             List<Map<String, String>> mapsList = new ArrayList<>(JsonContentUtils.parseJsonArrayToMap(jsonResponse));
             for (Map<String, String> registrant : mapsList) {
                 String email = registrant.get("email");
-                if (user.getEmailAddress().toLowerCase().equals(email.toLowerCase())) {
+                if (user.getEmailAddress().equalsIgnoreCase(email)) {
                     return registrant.get("registrantKey");
                 }
             }
@@ -184,7 +202,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
 
     private String getOrganizerKey() {
         if (organizer_key != null) return organizer_key;
-        return getCachedToken(CACHED_ORGANIZER_KEY, null);
+        return CACHE_TOKEN ? getCachedToken(CACHED_ORGANIZER_KEY, null) : null;
     }
 
     private void writePostData(HttpURLConnection connection, User user, Map<String, String> userAttributes, String callerId) throws IOException {
@@ -209,14 +227,13 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
     }
 
     private String getAccessToken() {
-        String CACHED_TOKEN_KEY = "goto.token";
-        String CACHED_EXPIRY_KEY = "goto.expirytime";
-        String token = getCachedToken(CACHED_TOKEN_KEY, CACHED_EXPIRY_KEY);
+
+        String token = CACHE_TOKEN ? getCachedToken(CACHED_TOKEN_KEY, CACHED_EXPIRY_KEY) : null;
         if (token != null) return token;
 
         Map<String,String> headers = new HashMap<>();
         headers.put("Content-Type", "application/x-www-form-urlencoded");
-        headers.put("Authorization", "Basic " + getBasicAuthorization(getClientId(), getClientSecret()));
+        headers.put("Authorization", "Basic " + getBasicAuthorization(configuration.gotoClientId(), configuration.gotoClientSecret()));
 
         try {
             HttpURLConnection connection = getConnection(getTokenPath(), "POST", headers);
@@ -225,16 +242,16 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
             Map<String, String> parsedToken = JsonContentUtils.parseJsonToMap(jsonResponse);
 
             String organizer_key = parsedToken.get("organizer_key");
-            if (!setCachedToken(CACHED_ORGANIZER_KEY, null, organizer_key, 0)){
-                this.organizer_key = organizer_key; //cache is disabled
-            }
-            cacheAccessToken(CACHED_TOKEN_KEY, CACHED_EXPIRY_KEY, parsedToken);
-
             String refresh_token = parsedToken.get("refresh_token");
-            if (refresh_token != null) {
-                long refreshExpTimeMillis = System.currentTimeMillis() + TimeUnit.DAYS.toMillis(20);
-                setCachedToken(CACHED_REFRESH_TOKEN_KEY, CACHED_REFRESH_EXPIRY_KEY, refresh_token, refreshExpTimeMillis);
+            if (CACHE_TOKEN){
+                setCachedToken(CACHED_ORGANIZER_KEY, null, organizer_key, 0);
+                cacheAccessToken(CACHED_TOKEN_KEY, CACHED_EXPIRY_KEY, parsedToken);
+                if (refresh_token != null) {
+                    long refreshExpTimeMillis = System.currentTimeMillis() + TimeUnit.DAYS.toMillis(20);
+                    setCachedToken(CACHED_REFRESH_TOKEN_KEY, CACHED_REFRESH_EXPIRY_KEY, refresh_token, refreshExpTimeMillis);
+                }
             }
+            this.organizer_key = organizer_key; //for if cache is disabled
 
             return parsedToken.get("access_token");
         } catch (IOException | JSONException e){
@@ -246,20 +263,20 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
 
     private Map<String, String> getOAuthParameters() {
         Map<String,String> pathParameters = new HashMap<>();
-        String cachedToken = getCachedToken(CACHED_REFRESH_TOKEN_KEY, CACHED_REFRESH_EXPIRY_KEY);
+        String cachedToken = CACHE_TOKEN ? getCachedToken(CACHED_REFRESH_TOKEN_KEY, CACHED_REFRESH_EXPIRY_KEY) : null;
         if (cachedToken != null){
             pathParameters.put("grant_type", "refresh_token");
             pathParameters.put("refresh_token", cachedToken);
         } else {
             pathParameters.put("grant_type", "password");
-            pathParameters.put("username", getUserName());
-            pathParameters.put("password", getUserPassword());
+            pathParameters.put("username", configuration.gotoUserName());
+            pathParameters.put("password", configuration.gotoUserPassword());
         } return pathParameters;
     }
 
     protected String getBasePath() {
         if (basePath != null) return basePath;
-        basePath =  getProperty(BASEURL_KEY);
+        basePath =  configuration.gotoURL();
         if (basePath == null) return null;
         if(basePath.endsWith("/")){
             return basePath;
@@ -273,19 +290,4 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         return basePath + "oauth/v2/token";
     }
 
-    protected String getUserName(){
-        return getProperty("goto.username");
-    }
-
-    protected String getUserPassword(){
-        return getProperty("goto.password");
-    }
-
-    protected String getClientId(){
-        return getProperty("goto.clientid");
-    }
-
-    protected String getClientSecret(){
-        return getProperty("goto.clientsecret");
-    }
 }
