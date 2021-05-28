@@ -40,6 +40,11 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
 
     private static String basePath;
     private String baseApiPath;
+    private final boolean CACHE_TOKEN;
+
+    public KeycloakUtilsImpl() {
+        CACHE_TOKEN = Boolean.parseBoolean(PropsUtil.get("keycloak.cache.token"));
+    }
 
     @Override
     public boolean isActive() {
@@ -302,7 +307,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
 
         String CACHED_TOKEN_KEY = "keycloak.token";
         String CACHED_EXPIRY_KEY = "keycloak.expirytime";
-        String token = getCachedToken(CACHED_TOKEN_KEY, CACHED_EXPIRY_KEY);
+        String token = CACHE_TOKEN ? getCachedToken(CACHED_TOKEN_KEY, CACHED_EXPIRY_KEY) : null;
         if (token != null) return token;
 
         Map<String,String> headers = new HashMap<>();
@@ -314,7 +319,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
             String jsonResponse = readAll(connection.getInputStream());
             Map<String, String> parsedToken = JsonContentUtils.parseJsonToMap(jsonResponse);
 
-            cacheAccessToken(CACHED_TOKEN_KEY, CACHED_EXPIRY_KEY, parsedToken);
+            if (CACHE_TOKEN) cacheAccessToken(CACHED_TOKEN_KEY, CACHED_EXPIRY_KEY, parsedToken);
             return parsedToken.get("access_token");
         } catch (IOException | JSONException e){
             LOG.error("Failed to get access token: " + e.getMessage());

@@ -4,8 +4,8 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import nl.deltares.portal.configuration.WebinarSiteConfiguration;
 import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.WebinarUtils;
@@ -18,14 +18,18 @@ import java.util.List;
 import java.util.Map;
 
 public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
-    private static final String API_KEY = "anewspring.apikey";
-    private final String BASEURL_KEY =  "anewspring.baseurl";
+    private final String API_KEY;
     private String basePath;
-    private String apiKey;
+    private final WebinarSiteConfiguration configuration;
+
+    public ANewSpringUtils(WebinarSiteConfiguration configuration) {
+        this.configuration = configuration;
+        this.API_KEY = configuration.aNewSpringApiKey();
+    }
 
     @Override
     public boolean isActive() {
-        return PropsUtil.contains(BASEURL_KEY);
+        return !API_KEY.isEmpty();
     }
 
     @Override
@@ -128,7 +132,7 @@ public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
     private HashMap<String, String> getHeader(String s) {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", s);
-        headers.put("X-API-Key", getApiKey());
+        headers.put("X-API-Key", API_KEY);
         return headers;
     }
 
@@ -150,7 +154,7 @@ public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
 
     private String getBasePath() {
         if (basePath != null) return basePath;
-        basePath =  getProperty(BASEURL_KEY);
+        basePath =  configuration.aNewSpringURL();
         if (basePath == null) return null;
         if(basePath.endsWith("/")){
             return basePath;
@@ -159,9 +163,4 @@ public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
         return basePath;
     }
 
-    private String getApiKey(){
-        if ( apiKey != null) return apiKey;
-        apiKey = getProperty(API_KEY);
-        return apiKey;
-    }
 }
