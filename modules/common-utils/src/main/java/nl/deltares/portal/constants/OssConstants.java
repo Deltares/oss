@@ -1,6 +1,7 @@
 package nl.deltares.portal.constants;
 
 public class OssConstants {
+    public static final String WEBINAR_SITE_CONFIGURATIONS_PID = "nl.deltares.portal.configuration.WebinarSiteConfiguration";
     public static final String DSD_SITE_CONFIGURATIONS_PID = "nl.deltares.portal.configuration.DSDSiteConfiguration";
     public static final String OSS_SITE_CONFIGURATIONS_PID = "nl.deltares.portal.configuration.OSSSiteConfiguration";
 
@@ -18,5 +19,8 @@ public class OssConstants {
 
     public static final String OSS_DUMMY_FORM =
             "OssDummyFormPortlet";
+
+    public static final String WEBINAR_ADMIN_FORM =
+            "WebinarAdminFormPortlet";
 
 }

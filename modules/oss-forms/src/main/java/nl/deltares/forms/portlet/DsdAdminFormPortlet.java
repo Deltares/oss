@@ -9,10 +9,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.kernel.util.comparator.JournalArticleComparator;
-import nl.deltares.portal.utils.DsdJournalArticleUtils;
-import nl.deltares.portal.utils.DsdParserUtils;
-import nl.deltares.portal.utils.DsdSessionUtils;
-import nl.deltares.portal.utils.KeycloakUtils;
+import nl.deltares.portal.utils.*;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
 import nl.deltares.tasks.impl.DownloadEventRegistrationsRequest;
@@ -58,6 +55,9 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 
 	@Reference
 	DsdJournalArticleUtils dsdJournalArticleUtils;
+
+	@Reference
+	WebinarUtilsFactory webinarUtilsFactory;
 
 	public void render(RenderRequest request, RenderResponse response) throws IOException, PortletException {
 		ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
@@ -118,7 +118,8 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		DataRequest dataRequest = instance.getDataRequest(dataRequestId);
 		if (dataRequest == null) {
 			dataRequest = new DownloadEventRegistrationsRequest(dataRequestId, themeDisplay.getUserId(), eventId, themeDisplay.getSiteGroup(),
-					themeDisplay.getLocale(), dsdParserUtils, dsdSessionUtils, keycloakUtils, dsdJournalArticleUtils, delete);
+					themeDisplay.getLocale(), dsdParserUtils, dsdSessionUtils, keycloakUtils, dsdJournalArticleUtils,
+					webinarUtilsFactory, delete);
 			instance.addToQueue(dataRequest);
 		} else if (dataRequest.getStatus() == DataRequest.STATUS.terminated){
 			instance.removeDataRequest(dataRequest);
