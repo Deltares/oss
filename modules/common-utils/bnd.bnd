@@ -2,8 +2,6 @@ Bundle-Name: common-utils
 Bundle-SymbolicName: nl.worth.portal.common-utils
 Bundle-Version: 1.0.0
 Export-Package: \
-  nl.deltares.portal.tasks, \
-  nl.deltares.portal.tasks.impl, \
   nl.deltares.portal.utils, \
   nl.deltares.portal.utils.impl, \
   nl.deltares.portal.model, \
@@ -14,6 +12,9 @@ Export-Package: \
   nl.deltares.portal.kernel.util.comparator
 Import-Package: \
   nl.deltares.dsd.registration.service.*,\
+  !org.apache.avalon.framework.logger, \
+  !org.apache.log, \
+  !org.apache.log4j, \
   *
 -liferay-aggregate-resource-bundles:
   global-resource-bundle
