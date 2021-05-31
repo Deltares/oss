@@ -46,6 +46,7 @@ services:
     volumes:
       - ./liferay/data:/opt/liferay/data/document_library
       - ./liferay/mount/files:/mnt/liferay/files
+      - ./liferay/geoip:/opt/liferay/geoip
       - ${LIFERAY_BUNDLE_DIR}/deploy:/opt/liferay/deploy
       - ${LIFERAY_BUNDLE_DIR}/osgi/modules:/opt/liferay/osgi/modules
     restart: always
