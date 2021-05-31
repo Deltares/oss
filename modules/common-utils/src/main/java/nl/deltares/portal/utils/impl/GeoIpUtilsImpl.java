@@ -35,13 +35,19 @@ public class GeoIpUtilsImpl implements GeoIpUtils {
         String dbName = PropsUtil.get(PROP_GEOIP_DB_NAME);
 
         File database = new File(dbDir + "/" + dbName);
-        reader = new DatabaseReader.Builder(database).build();
+        if (database.exists()) {
+            reader = new DatabaseReader.Builder(database).build();
+        } else {
+            LOG.warn("GeoIP file does not exist: " + database.getAbsolutePath());
+            reader = null;
+        }
 
     }
 
     @Override
     public Map<String, Object> getLocationInfo(String ipAddress){
         HashMap<String, Object> info = new HashMap<>();
+        if (reader == null) return info;
         try {
             InetAddress inetAddress = InetAddress.getByName(ipAddress);
             CityResponse city = reader.city(inetAddress);
