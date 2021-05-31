@@ -22,10 +22,10 @@
         </script>
         <!-- End Google Tag Manager -->
     </#if>
-	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
+	<link rel="stylesheet" type="text/css" href="${css_folder}/cookies/cookieconsent.min.css" />
 </head>
 
-<script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
+<script src="${javascript_folder}/cookies/cookieconsent.min.js" data-cfasync="false"></script>
 <body class="${css_class}">
 
 <#if google_tag_id?? && google_tag_id?has_content >
@@ -79,19 +79,22 @@
 	shoppingCart.refreshCart();
 
 	window.cookieconsent.initialise({
-		"palette": {
-			"popup": {
-				"background": "#252e39"
+		palette: {
+			popup: {
+				background: "#252e39"
 			},
-			"button": {
-				"background": "#0d38e0"
+			button: {
+				background: "#0d38e0"
 			}
 		},
-		"content": {
-			"message": "${languageUtil.get(locale, "oss.cookies.message")}",
-			"dismiss": "${languageUtil.get(locale, "oss.cookies.accept")}",
-			"link": "${languageUtil.get(locale, "oss.cookies.moreinfo")}",
-			"href": "${siteUrl}/cookie-policy"
+		content : {
+			message: "${languageUtil.get(locale, "oss.cookies.message")}",
+			dismiss: "${languageUtil.get(locale, "oss.cookies.accept")}",
+			link: "${languageUtil.get(locale, "oss.cookies.moreinfo")}",
+			href: "${siteUrl}/cookie-policy"
+		},
+		cookie : {
+			secure : true
 		}
 	});
 </script>
