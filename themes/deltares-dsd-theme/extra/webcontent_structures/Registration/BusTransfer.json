@@ -6,6 +6,40 @@
   "fields": [
     {
       "label": {
+        "en_US": "Session type"
+      },
+      "options": [
+        {
+          "value": "Bustransfer",
+          "label": {
+            "en_US": "Bus Transfer"
+          }
+        }
+      ],
+      "predefinedValue": {
+        "en_US": [
+          ""
+        ]
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "multiple": false,
+      "name": "registration_type",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "select"
+    },
+    {
+      "label": {
         "en_US": "Transfer Date"
       },
       "predefinedValue": {

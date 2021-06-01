@@ -17,7 +17,7 @@
       "tip": {
         "en_US": ""
       },
-      "dataType": "integer",
+      "dataType": "number",
       "fieldNamespace": "ddm",
       "indexType": "keyword",
       "localizable": true,
@@ -26,89 +26,7 @@
       "repeatable": false,
       "required": true,
       "showLabel": true,
-      "type": "ddm-integer"
-    },
-    {
-      "label": {
-        "en_US": "Session type"
-      },
-      "options": [
-        {
-          "value": "Breakout",
-          "label": {
-            "en_US": "Breakout"
-          }
-        },
-        {
-          "value": "Bustransfer",
-          "label": {
-            "en_US": "Bus Transfer"
-          }
-        },
-        {
-          "value": "Course",
-          "label": {
-            "en_US": "Course"
-          }
-        },
-        {
-          "value": "OnlineCourse",
-          "label": {
-            "en_US": "Online Course"
-          }
-        },
-        {
-          "value": "Dinner",
-          "label": {
-            "en_US": "Dinner"
-          }
-        },
-        {
-          "value": "Symposium",
-          "label": {
-            "en_US": "Symposium"
-          }
-        },
-        {
-          "value": "UserDays",
-          "label": {
-            "en_US": "User Days"
-          }
-        },
-        {
-          "value": "Webinar",
-          "label": {
-            "en_US": "Webinar"
-          }
-        },
-        {
-          "value": "Workshop",
-          "label": {
-            "en_US": "Workshop"
-          }
-        }
-      ],
-      "predefinedValue": {
-        "en_US": [
-          ""
-        ]
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": ""
-      },
-      "dataType": "string",
-      "indexType": "keyword",
-      "localizable": true,
-      "multiple": false,
-      "name": "type",
-      "readOnly": false,
-      "repeatable": false,
-      "required": true,
-      "showLabel": true,
-      "type": "select"
+      "type": "ddm-number"
     },
     {
       "label": {
@@ -116,111 +34,33 @@
       },
       "options": [
         {
-          "value": "other",
-          "label": {
-            "en_US": "Other"
-          }
-        },
-        {
-          "value": "danubius",
-          "label": {
-            "en_US": "Danubius"
-          }
-        },
-        {
-          "value": "datascience",
-          "label": {
-            "en_US": "Data Science"
-          }
-        },
-        {
           "value": "delftfews",
           "label": {
-            "en_US": "Delft Fews"
-          }
-        },
-        {
-          "value": "delft3d",
-          "label": {
-            "en_US": "Delft3D"
-          }
-        },
-        {
-          "value": "flexiblemesh",
-          "label": {
-            "en_US": "Delft3D FM"
+            "en_US": "Delft-FEWS Platform"
           }
         },
         {
           "value": "dhydro",
           "label": {
-            "en_US": "D-Hydro"
+            "en_US": "D-HYDRO Suite"
           }
         },
         {
           "value": "dstability",
           "label": {
-            "en_US": "D-Stability"
-          }
-        },
-        {
-          "value": "dwaterquality",
-          "label": {
-            "en_US": "D-Waterquality"
-          }
-        },
-        {
-          "value": "habitat",
-          "label": {
-            "en_US": "Habitat"
+            "en_US": "D-GEO Suite (D-Stability, D-Settlement)"
           }
         },
         {
           "value": "imod",
           "label": {
-            "en_US": "i-Mod"
-          }
-        },
-        {
-          "value": "riverlab",
-          "label": {
-            "en_US": "Riverlab"
-          }
-        },
-        {
-          "value": "rtctools",
-          "label": {
-            "en_US": "RTC Tools"
-          }
-        },
-        {
-          "value": "simona",
-          "label": {
-            "en_US": "Simona"
-          }
-        },
-        {
-          "value": "swan",
-          "label": {
-            "en_US": "Swan"
+            "en_US": "iMOD Suite"
           }
         },
         {
           "value": "wanda",
           "label": {
             "en_US": "WANDA"
-          }
-        },
-        {
-          "value": "wflow",
-          "label": {
-            "en_US": "WFLOW"
-          }
-        },
-        {
-          "value": "xbeach",
-          "label": {
-            "en_US": "XBeach"
           }
         }
       ],
