@@ -201,10 +201,10 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
     private RegistrationRequest getRegistrationRequest(ActionRequest actionRequest, ThemeDisplay themeDisplay, String action) {
         List<String> articleIds;
         if (action.equals("unregister")){
-            articleIds = Arrays.asList(actionRequest.getParameter("articleId"));
+            articleIds = Arrays.asList(actionRequest.getRenderParameters().getValues("articleId"));
         } else {
-            articleIds = actionRequest.getParameterMap()
-                    .keySet()
+            articleIds = actionRequest.getRenderParameters()
+                    .getNames()
                     .stream()
                     .filter(strings -> strings.startsWith(PARENT_PREFIX))
                     .filter(key -> ParamUtil.getBoolean(actionRequest, key))

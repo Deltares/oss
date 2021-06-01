@@ -49,11 +49,11 @@ public class FullCalendarConfigurationAction extends DefaultConfigurationAction 
             Map<String, String> typeMap = new TreeMap<>();
             for (DsdArticle.DSD_REGISTRATION_STRUCTURE_KEYS structureKeys : DsdArticle.DSD_REGISTRATION_STRUCTURE_KEYS.values()) {
                 typeMap.putAll(dsdJournalArticleUtils.getStructureFieldOptions(themeDisplay.getSiteGroupId(),
-                        structureKeys.name().toUpperCase(),"type", themeDisplay.getLocale()));
+                        structureKeys.name().toUpperCase(),"registration_type", themeDisplay.getLocale()));
             }
             httpServletRequest.setAttribute("typeMap", typeMap);
         } catch (PortalException e) {
-            throw new PortletException("Could not get options for field 'type' in structure SESSIONS: " + e.getMessage(), e);
+            throw new PortletException("Could not get options for field 'registration_type' in structure SESSIONS: " + e.getMessage(), e);
         }
 
         super.include(portletConfig, httpServletRequest, httpServletResponse);
@@ -77,7 +77,7 @@ public class FullCalendarConfigurationAction extends DefaultConfigurationAction 
         try {
             Map<String, String> typeMap = dsdJournalArticleUtils.getStructureFieldOptions(themeDisplay.getSiteGroupId(),
                     DsdArticle.DSD_STRUCTURE_KEYS.Session.name().toUpperCase(),
-                    "type", themeDisplay.getLocale());
+                    "registration_type", themeDisplay.getLocale());
 
             HashMap<String, String> colorMap = new HashMap<>();
             typeMap.keySet().forEach(sessionKey -> {
@@ -88,7 +88,7 @@ public class FullCalendarConfigurationAction extends DefaultConfigurationAction 
             return colorMap;
 
         } catch (PortalException e) {
-            throw new PortletException("Could not get options for field 'type' in structure SESSIONS: " + e.getMessage(), e);
+            throw new PortletException("Could not get options for field 'registration_type' in structure SESSIONS: " + e.getMessage(), e);
         }
 
     }
