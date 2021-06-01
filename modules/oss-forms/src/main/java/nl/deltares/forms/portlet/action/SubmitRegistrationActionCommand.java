@@ -201,10 +201,10 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
     private RegistrationRequest getRegistrationRequest(ActionRequest actionRequest, ThemeDisplay themeDisplay, String action) {
         List<String> articleIds;
         if (action.equals("unregister")){
-            articleIds = Arrays.asList(actionRequest.getRenderParameters().getValues("articleId"));
+            articleIds = Arrays.asList(actionRequest.getParameter("articleId"));
         } else {
-            articleIds = actionRequest.getRenderParameters()
-                    .getNames()
+            articleIds = actionRequest.getParameterMap()
+                    .keySet()
                     .stream()
                     .filter(strings -> strings.startsWith(PARENT_PREFIX))
                     .filter(key -> ParamUtil.getBoolean(actionRequest, key))
@@ -245,9 +245,9 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 }
             }
 
-            Map<String, String> typeTranslations = dsdJournalArticleUtils.getStructureFieldOptions(event.getGroupId(), "SESSION", "type", event.getLocale());
-            typeTranslations.putAll(dsdJournalArticleUtils.getStructureFieldOptions(event.getGroupId(), "DINNER", "type", event.getLocale()));
-            typeTranslations.putAll(dsdJournalArticleUtils.getStructureFieldOptions(event.getGroupId(), "BUSTRANSFER", "type", event.getLocale()));
+            Map<String, String> typeTranslations = dsdJournalArticleUtils.getStructureFieldOptions(event.getGroupId(), "SESSION", "registration_type", event.getLocale());
+            typeTranslations.putAll(dsdJournalArticleUtils.getStructureFieldOptions(event.getGroupId(), "DINNER", "registration_type", event.getLocale()));
+            typeTranslations.putAll(dsdJournalArticleUtils.getStructureFieldOptions(event.getGroupId(), "BUSTRANSFER", "registration_type", event.getLocale()));
             registrationRequest.setTypeTranslations(typeTranslations);
 
 

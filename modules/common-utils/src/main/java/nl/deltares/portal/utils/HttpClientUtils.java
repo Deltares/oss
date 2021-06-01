@@ -106,7 +106,7 @@ public abstract class HttpClientUtils {
         String accessToken = parsedToken.get("access_token");
         String expires_in = parsedToken.get("expires_in");
         if (expires_in != null) {
-            long expMillis = Long.parseLong(expires_in) * 1000;
+            long expMillis = Long.parseLong(expires_in) * 1000 - 30000;
             long expTimeMillis = expMillis + System.currentTimeMillis();
             return setCachedToken(cachedTokenKey, cachedExpiryKey, accessToken, expTimeMillis);
         }
@@ -120,7 +120,7 @@ public abstract class HttpClientUtils {
         if (token != null) {
             if (expiryKey == null) return token;
             Long expiryTime = (Long) gotoCache.get(expiryKey);
-            if (expiryTime != null && (expiryTime - 30000) > System.currentTimeMillis()){
+            if (expiryTime != null && expiryTime > System.currentTimeMillis()){
                 return token;
             }
         }
