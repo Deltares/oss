@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-public class DateFacetUtil {
+public class FacetUtils {
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     public static LocalDate getStartDate(String date) throws DateTimeParseException {
@@ -44,6 +44,6 @@ public class DateFacetUtil {
         return LocalDate.MAX;
     }
 
-    private static final Log LOG = LogFactoryUtil.getLog(DateFacetUtil.class);
+    private static final Log LOG = LogFactoryUtil.getLog(FacetUtils.class);
 
 }

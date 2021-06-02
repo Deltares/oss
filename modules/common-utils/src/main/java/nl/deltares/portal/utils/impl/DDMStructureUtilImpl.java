@@ -35,18 +35,13 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
         if (groupId > 0) {
             List<DDMStructure> allDDMStructures = null;
             for (String name : names) {
-//                Optional<DDMStructure> cachedDDMStructure = getCachedDDMStructure(name);
-//                if (cachedDDMStructure.isPresent()){
-//                    optionalList.add(cachedDDMStructure);
-//                    continue;
-//                }
+
                 if (allDDMStructures == null) {
                     allDDMStructures = getDDStructuresForGroup(groupId);
                     if (allDDMStructures.isEmpty()) return optionalList;
                 }
                 Optional<DDMStructure> matchingDDMStructure = findMatchingDDMStructure(name, allDDMStructures, locale);
                 if (matchingDDMStructure.isPresent()){
-//                    cacheDDMStructure(name, matchingDDMStructure.get());
                     optionalList.add(matchingDDMStructure);
                 }
             }

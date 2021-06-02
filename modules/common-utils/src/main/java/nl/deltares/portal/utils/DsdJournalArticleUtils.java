@@ -20,13 +20,14 @@ public interface DsdJournalArticleUtils {
 
     List<JournalArticle> getRegistrationsForEvent(long companyId, long groupId, String eventArticleId, Locale locale) throws PortalException;
 
-    List<JournalArticle> getRegistrationsForPeriod(long companyId, long groupId, Date startTime, Date endTime, Locale locale) throws PortalException;
+    List<JournalArticle> getRegistrationsForPeriod(long companyId, long groupId, Date startTime, Date endTime,
+                                                   String[] structureKeys, String dateFieldName, Locale locale) throws PortalException;
 
     void contributeDsdRegistrations(long groupId, String[] structureKeys, SearchContext searchContext, Locale locale);
 
     void contributeDsdEventRegistrations(long groupId, String eventId, SearchContext searchContext, Locale locale);
 
-    void contributeDsdDateRangeRegistrations(long groupId, Date startDate, Date endDate,  SearchContext searchContext, Locale locale);
+    void contributeDsdDateRangeRegistrations(long groupId, Date startDate, Date endDate, String[] structureKeys, String dateFieldName, SearchContext searchContext, Locale locale);
 
     Map<String, String> getStructureFieldOptions(long groupId, String structureName, String optionsField, Locale locale) throws PortalException;
 }

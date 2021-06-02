@@ -11,7 +11,7 @@
 <#else>
     <#assign isEventPast = "upcoming-event"/>
 </#if>
-<#assign typeMap = dsdJournalArticleUtils.getStructureFieldOptions(groupId,"SESSION","registration_type", registration.getLocale()) />
+<#assign typeMap = dsdJournalArticleUtils.getStructureFieldOptions(groupId,"SESSION","registrationType", registration.getLocale()) />
 <#if typeMap?? >
     <#assign typeDisplayName = typeMap[registration.getType()] />
 <#else>

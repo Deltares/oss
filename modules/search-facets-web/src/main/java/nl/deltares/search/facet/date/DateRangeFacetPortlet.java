@@ -5,7 +5,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
 import nl.deltares.search.constans.FacetPortletKeys;
-import nl.deltares.search.util.DateFacetUtil;
+import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -58,9 +58,9 @@ public class DateRangeFacetPortlet extends MVCPortlet {
         Optional<String> startDateOptional = portletSharedSearchResponse.getParameter("startDate", renderRequest);
         Optional<String> endDateOptional = portletSharedSearchResponse.getParameter("endDate", renderRequest);
 
-        startDateOptional.ifPresent(s -> renderRequest.setAttribute("startDate", DateFacetUtil.parseDate(s)));
+        startDateOptional.ifPresent(s -> renderRequest.setAttribute("startDate", FacetUtils.parseDate(s)));
 
-        endDateOptional.ifPresent(s -> renderRequest.setAttribute("endDate", DateFacetUtil.parseDate(s)));
+        endDateOptional.ifPresent(s -> renderRequest.setAttribute("endDate", FacetUtils.parseDate(s)));
 
         super.render(renderRequest, renderResponse);
     }
