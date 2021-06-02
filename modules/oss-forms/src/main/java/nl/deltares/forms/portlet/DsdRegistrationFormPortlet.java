@@ -1,18 +1,14 @@
 package nl.deltares.forms.portlet;
 
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.service.CountryServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
@@ -60,9 +56,6 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 	@Reference
 	private DDMStructureUtil _ddmStructureUtil;
 
-	@Reference
-	private GeoIpUtils geoIpUtils;
-
 	public void render(RenderRequest request, RenderResponse response) throws IOException, PortletException {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
@@ -70,13 +63,6 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 		if (!user.isDefaultUser()) {
             try {
 				Map<String, String> attributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
-
-				if (!attributes.containsKey(KeycloakUtils.ATTRIBUTES.org_city.name()) ||
-						!attributes.containsKey(KeycloakUtils.ATTRIBUTES.org_country.name())){
-
-					String remoteAddr = PortalUtil.getHttpServletRequest(request).getRemoteAddr();
-					loadLocationFromIP(remoteAddr, attributes);
-				}
 				request.setAttribute("attributes", attributes);
             } catch (Exception e) {
 				SessionErrors.add(request, "update-attributes-failed", "Error reading attributes from keycloak! Check if keycloak is initialized: " + keycloakUtils.getAccountPath());
@@ -119,37 +105,6 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 
 		request.setAttribute(ConfigurationProvider.class.getName(), _configurationProvider);
 		super.render(request, response);
-	}
-
-	/**
-	 * Extract location information from remote IP address.
-	 * @param remoteAddr Remote IP of caller
-	 * @param attributes Keycloak attributes map
-	 */
-	private void loadLocationFromIP(String remoteAddr, Map<String, String> attributes) {
-
-		Map<String, Object> locationInfo = geoIpUtils.getLocationInfo(remoteAddr);
-		if (!attributes.containsKey(KeycloakUtils.ATTRIBUTES.org_city.name())){
-			Object city = locationInfo.get("city");
-			if (city != null) attributes.put(KeycloakUtils.ATTRIBUTES.org_city.name(), (String) city);
-		}
-		if (!attributes.containsKey(KeycloakUtils.ATTRIBUTES.org_postal.name())){
-			Object postal = locationInfo.get("postal");
-			if (postal != null) attributes.put(KeycloakUtils.ATTRIBUTES.org_postal.name(), (String) postal);
-		}
-		if (!attributes.containsKey(KeycloakUtils.ATTRIBUTES.org_country.name())){
-
-			Object iso_code = locationInfo.get("iso_code");
-			if (iso_code != null) {
-				try {
-					Country country = CountryServiceUtil.getCountryByA2((String) iso_code);
-					attributes.put(KeycloakUtils.ATTRIBUTES.org_country.name(), country.getName());
-				} catch (PortalException e) {
-					LOG.warn(String.format("Error looking up country for iso_code %s: %s ", iso_code, e.getMessage()));
-				}
-			}
-
-		}
 	}
 
 	private ConfigurationProvider _configurationProvider;

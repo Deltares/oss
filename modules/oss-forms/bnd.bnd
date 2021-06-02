@@ -5,8 +5,7 @@ Bundle-Version: 1.0.0
 -metatype: *
 Web-ContextPath: /dsd-registration
 Export-Package: \
-    nl.deltares.forms.portlet, \
-    nl.deltares.forms.constants
+    nl.deltares.forms.portlet
 Import-Package: \
     nl.deltares.portal.utils.*, \
     *
