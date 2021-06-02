@@ -29,6 +29,7 @@
                     return checkStep(getFormName(), 3);
                 }
             </aui:validator>
+            <aui:validator name="email"/>
         </aui:input>
         <aui:input
                 name="<%= KeycloakUtils.BILLING_ATTRIBUTES.billing_name.name() %>"
@@ -83,14 +84,18 @@
                 type="select"
                 label="dsd.registration.step3.billing.country"
                 value="${billingCountry}" billing_value="${billingCountry}">
+                <aui:option value="" label ="registrationform.select.country" />
             <% List<Country> countries = CountryServiceUtil.getCountries(true); %>
-            <%    for (Country country : countries) { %>
-            <aui:option value="<%=country.getName()%>" label ="<%= country.getName(locale) %>" />
+            <% for (Country country : countries) { %>
+            <aui:option value="<%=country.getName()%>" label="<%= country.getName(locale) %>"/>
             <% } %>
             <aui:validator name="required">
-                function () {
-                    return checkStep(getFormName(), 3);
-                }
+                        function () {
+                            return checkStep(getFormName(), 3);
+                        }
+            </aui:validator>
+            <aui:validator name="minLength">
+                2
             </aui:validator>
         </aui:select>
 
