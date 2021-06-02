@@ -16,9 +16,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component(
-        immediate = true,
         service = GeoIpUtils.class
 )
+/*
+ * The idea of this class was to allow retrieval of user location info from request. However it is not
+ * that easy to get IP address from the request and therefore this class is not being used.
+ */
 public class GeoIpUtilsImpl implements GeoIpUtils {
 
     private static final Log LOG = LogFactoryUtil.getLog(GeoIpUtilsImpl.class);
