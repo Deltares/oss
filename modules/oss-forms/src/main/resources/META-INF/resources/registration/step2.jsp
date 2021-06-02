@@ -69,6 +69,7 @@
                             return checkStep(getFormName(), 2);
                         }
             </aui:validator>
+            <aui:validator name="email"/>
         </aui:input>
 
         <div class="row">
@@ -113,6 +114,7 @@
                         function () {
                             return checkStep(getFormName(), 2);
                         }
+
             </aui:validator>
         </aui:input>
 
@@ -148,10 +150,14 @@
                 label="registrationform.orgcountry"
                 value="${country}" >
             <aui:validator name="required">
-                        function () {
-                            return checkStep(getFormName(), 2);
-                        }
+                function () {
+                    return checkStep(getFormName(), 2);
+                }
             </aui:validator>
+            <aui:validator name="minLength">
+                2
+            </aui:validator>
+            <aui:option value="" label ="registrationform.select.country" />
             <% List<Country> countries = CountryServiceUtil.getCountries(true); %>
             <%    for (Country country : countries) { %>
             <aui:option value="<%=country.getName()%>" label ="<%= country.getName(locale) %>" />
