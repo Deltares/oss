@@ -7,6 +7,6 @@ import aQute.bnd.annotation.metatype.Meta;
 )
 public interface RegistrationFacetConfiguration {
 
-    @Meta.AD(required = false, deflt = "session bustransfer dinner", description = "Configure the structures to filter for. (space separated")
+    @Meta.AD(required = false, deflt = "", description = "Overrule DSD configured structures for filtering. (space separated)")
     String structureList();
 }

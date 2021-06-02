@@ -13,6 +13,7 @@ import com.liferay.portal.kernel.service.GroupServiceUtil;
 import com.liferay.portal.kernel.service.LayoutServiceUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringUtil;
 import nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.impl.*;
@@ -55,13 +56,6 @@ public class DsdFullcalendarService {
                            @QueryParam("portletId") String portletId, @QueryParam("layoutUuid") String layoutUuid, @QueryParam("locale") String localeStr,
                            @QueryParam("start") String start, @QueryParam("end") String end, @QueryParam("timeZone") String timeZone) {
 
-        DSDSiteConfiguration siteConfiguration = null;
-        try {
-            siteConfiguration = configurationProvider
-                    .getGroupConfiguration(DSDSiteConfiguration.class, Long.parseLong(siteId));
-        } catch (ConfigurationException e) {
-            //
-        }
 
         dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
         Date startSearch;
@@ -77,6 +71,13 @@ public class DsdFullcalendarService {
             return Response.serverError().entity(String.format("Error parsing end (%s): %s", end, e.getMessage())).build();
         }
 
+        DSDSiteConfiguration siteConfiguration;
+        try {
+            siteConfiguration = configurationProvider
+                    .getGroupConfiguration(DSDSiteConfiguration.class, Long.parseLong(siteId));
+        } catch (ConfigurationException e) {
+            return Response.serverError().entity(String.format("Error getting DSD siteConfiguration: %s", e.getMessage())).build();
+        }
         Locale locale = LocaleUtil.fromLanguageId(localeStr);
 
         Map<String, String> colorMap = getColorMap(layoutUuid, Long.parseLong(siteId), portletId);
@@ -84,7 +85,8 @@ public class DsdFullcalendarService {
             List<Registration> registrations;
             if (eventId.equals("0")){
                 Group group = GroupLocalServiceUtil.getGroup(Long.parseLong(siteId));
-                registrations = parserUtils.getRegistrations(group.getCompanyId(), Long.parseLong(siteId), startSearch, endSearch, locale);
+                registrations = parserUtils.getRegistrations(group.getCompanyId(), Long.parseLong(siteId), startSearch, endSearch,
+                        getStructureKeys(siteConfiguration), siteConfiguration.dsdRegistrationDateField(), locale);
             } else {
                 nl.deltares.portal.model.impl.Event event = parserUtils.getEvent(Long.parseLong(siteId), eventId, locale);
                 registrations = event.getRegistrations(locale);
@@ -113,6 +115,14 @@ public class DsdFullcalendarService {
 
     }
 
+    private String[] getStructureKeys(DSDSiteConfiguration configuration) {
+        if (configuration == null) return new String[0];
+        String structureList = configuration.dsdRegistrationStructures();
+        if (structureList != null && !structureList.isEmpty()){
+            return StringUtil.split(structureList, ' ');
+        }
+        return new String[0];
+    }
 
     private List<Event> getEvents(List<Registration> registrations, Date startSearch, Date endSearch, Map<String, String> colorMap, DSDSiteConfiguration siteConfiguration) {
 

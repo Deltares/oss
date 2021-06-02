@@ -55,7 +55,7 @@ public class MockDsdJournalArticleUtils implements DsdJournalArticleUtils {
     }
 
     @Override
-    public List<JournalArticle> getRegistrationsForPeriod(long companyId, long groupId, Date startTime, Date endTime, Locale locale) throws PortalException {
+    public List<JournalArticle> getRegistrationsForPeriod(long companyId, long groupId, Date startTime, Date endTime, String[] structureKeys, String dateFieldName, Locale locale) throws PortalException {
         return null;
     }
 
@@ -70,7 +70,7 @@ public class MockDsdJournalArticleUtils implements DsdJournalArticleUtils {
     }
 
     @Override
-    public void contributeDsdDateRangeRegistrations(long groupId, Date startDate, Date endDate, SearchContext searchContext, Locale locale) {
+    public void contributeDsdDateRangeRegistrations(long groupId, Date startDate, Date endDate, String[] structureKeys , String dateField, SearchContext searchContext, Locale locale) {
 
     }
 

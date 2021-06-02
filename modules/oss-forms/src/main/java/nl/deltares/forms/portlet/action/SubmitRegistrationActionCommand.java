@@ -10,10 +10,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.ResourceBundleUtil;
-import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.util.*;
 import nl.deltares.dsd.model.BillingInfo;
 import nl.deltares.dsd.model.RegistrationRequest;
 import nl.deltares.emails.DsdEmail;
@@ -245,11 +242,14 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 }
             }
 
-            Map<String, String> typeTranslations = dsdJournalArticleUtils.getStructureFieldOptions(event.getGroupId(), "SESSION", "registration_type", event.getLocale());
-            typeTranslations.putAll(dsdJournalArticleUtils.getStructureFieldOptions(event.getGroupId(), "DINNER", "registration_type", event.getLocale()));
-            typeTranslations.putAll(dsdJournalArticleUtils.getStructureFieldOptions(event.getGroupId(), "BUSTRANSFER", "registration_type", event.getLocale()));
+            String[] structureKeys = getStructureKeys(configuration);
+            String dsdRegistrationTypeField = configuration.dsdRegistrationTypeField();
+            Map<String, String> typeTranslations = new HashMap<>();
+            for (String structureKey : structureKeys) {
+                typeTranslations.putAll(dsdJournalArticleUtils.getStructureFieldOptions(event.getGroupId(),
+                        structureKey, dsdRegistrationTypeField, event.getLocale()));
+            }
             registrationRequest.setTypeTranslations(typeTranslations);
-
 
             return registrationRequest;
 
@@ -258,6 +258,15 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             LOG.debug("Could not retrieve registration for actionId: " + Arrays.toString(articleIds.toArray()));
         }
         return null;
+    }
+
+    private String[] getStructureKeys(DSDSiteConfiguration configuration) {
+        if (configuration == null) return new String[0];
+        String structureList = configuration.dsdRegistrationStructures();
+        if (structureList != null && !structureList.isEmpty()){
+            return StringUtil.split(structureList, ' ');
+        }
+        return new String[0];
     }
 
     private BillingInfo getBillingInfo(ActionRequest actionRequest) {

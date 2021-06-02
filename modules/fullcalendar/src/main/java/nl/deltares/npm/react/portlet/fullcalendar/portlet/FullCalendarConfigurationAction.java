@@ -15,12 +15,16 @@ import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import org.osgi.service.component.annotations.*;
 
-import javax.portlet.*;
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
+import javax.portlet.PortletConfig;
+import javax.portlet.PortletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
+
+import static nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarUtils.getTypeMap;
 
 @Component(
         configurationPid = "nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration",
@@ -46,11 +50,7 @@ public class FullCalendarConfigurationAction extends DefaultConfigurationAction 
         ThemeDisplay themeDisplay = (ThemeDisplay) httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
         try {
-            Map<String, String> typeMap = new TreeMap<>();
-            for (DsdArticle.DSD_REGISTRATION_STRUCTURE_KEYS structureKeys : DsdArticle.DSD_REGISTRATION_STRUCTURE_KEYS.values()) {
-                typeMap.putAll(dsdJournalArticleUtils.getStructureFieldOptions(themeDisplay.getSiteGroupId(),
-                        structureKeys.name().toUpperCase(),"registration_type", themeDisplay.getLocale()));
-            }
+            Map<String, String> typeMap = getTypeMap(themeDisplay, dsdJournalArticleUtils, _configurationProvider);
             httpServletRequest.setAttribute("typeMap", typeMap);
         } catch (PortalException e) {
             throw new PortletException("Could not get options for field 'registration_type' in structure SESSIONS: " + e.getMessage(), e);
@@ -75,10 +75,7 @@ public class FullCalendarConfigurationAction extends DefaultConfigurationAction 
 
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
         try {
-            Map<String, String> typeMap = dsdJournalArticleUtils.getStructureFieldOptions(themeDisplay.getSiteGroupId(),
-                    DsdArticle.DSD_STRUCTURE_KEYS.Session.name().toUpperCase(),
-                    "registration_type", themeDisplay.getLocale());
-
+            Map<String, String> typeMap = getTypeMap(themeDisplay, dsdJournalArticleUtils, _configurationProvider);
             HashMap<String, String> colorMap = new HashMap<>();
             typeMap.keySet().forEach(sessionKey -> {
                 String value = ParamUtil.getString(actionRequest, sessionKey);

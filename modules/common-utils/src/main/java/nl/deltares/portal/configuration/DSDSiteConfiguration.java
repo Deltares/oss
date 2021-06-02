@@ -55,4 +55,14 @@ public interface DSDSiteConfiguration {
 
     @Meta.AD(required = false, deflt = "false", description = "Configure if current site is a DSD site.")
     boolean dsdSite();
+
+    @Meta.AD(required = false, deflt = "session bustransfer dinner", description = "Configure the structures to filter for. (space separated")
+    String dsdRegistrationStructures();
+
+    @Meta.AD(required = false, deflt = "registrationDate", description = "Configure the field name that contains the registration date.")
+    String dsdRegistrationDateField();
+
+    @Meta.AD(required = false, deflt = "registrationType", description = "Configure the field name that contains the registration type.")
+    String dsdRegistrationTypeField();
+
 }

@@ -8,6 +8,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
+import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.search.constans.FacetPortletKeys;
 import org.osgi.service.component.annotations.Component;
@@ -37,25 +38,32 @@ public class RegistrationFacetPortletSharedSearchContributor implements PortletS
     private String[] getStructureKeys(PortletSharedSearchSettings portletSharedSearchSettings) {
 
         Optional<String> optional = portletSharedSearchSettings.getParameter("structureList");
-        return optional.map(s -> s.split(" ")).orElseGet(() -> getConfiguredStructures(portletSharedSearchSettings));
-    }
-
-    private String[] getConfiguredStructures(PortletSharedSearchSettings portletSharedSearchSettings){
-
-        try {
-            RegistrationFacetConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(
-                    RegistrationFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
-
-            String structureList = configuration.structureList();
-
+        return optional.map(s -> s.split(" ")).orElseGet(() -> {
+            String structureList = getConfiguredValue( portletSharedSearchSettings);
             if (structureList != null && !structureList.isEmpty()){
                 return StringUtil.split(structureList, ' ');
             }
-        } catch (ConfigurationException  e) {
-            LOG.debug("Could not get structures configuration", e);
-        }
-        return new String[0];
+            return new String[0];
+        });
+    }
 
+    @SuppressWarnings("SameParameterValue")
+    private String getConfiguredValue(PortletSharedSearchSettings portletSharedSearchSettings){
+
+        try {
+            RegistrationFacetConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(RegistrationFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
+            String overrulingStructures = configuration.structureList();
+            if (overrulingStructures.isEmpty()){
+
+                DSDSiteConfiguration siteConfiguration = _configurationProvider
+                            .getGroupConfiguration(DSDSiteConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getSiteGroupId());
+                return siteConfiguration.dsdRegistrationStructures();
+            }
+            return overrulingStructures;
+        } catch (ConfigurationException e) {
+            LOG.warn("Could not find configuration for structureList", e);
+        }
+        return null;
     }
     @Reference
     private DsdJournalArticleUtils _dsdJournalArticleUtils;

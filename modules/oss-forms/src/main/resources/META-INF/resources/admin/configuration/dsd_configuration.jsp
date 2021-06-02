@@ -99,6 +99,20 @@
                 type="checkbox"
                 value="<%= configuration.dsdSite() %>"/>
 
+        <aui:input
+                label="dsd.structure.keys"
+                name="dsdRegistrationStructures"
+                value="<%= configuration.dsdRegistrationStructures() %>"/>
+
+        <aui:input
+                label="dsd.date.field"
+                name="dsdRegistrationDateField"
+                value="<%= configuration.dsdRegistrationDateField() %>"/>
+
+        <aui:input
+                label="dsd.type.field"
+                name="dsdRegistrationTypeField"
+                value="<%= configuration.dsdRegistrationTypeField() %>"/>
     </aui:fieldset>
 
     <aui:button-row>

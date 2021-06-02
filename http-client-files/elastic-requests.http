@@ -41,7 +41,7 @@ Content-Type: application/json
   "query": {
     "terms": {
       "ddmStructureKey": [
-        "SESSION-1.0.1", "DINNER-1.0.1", "BUSTRANSFER-1.0.1"
+       "BUSTRANSFER-1.0.1"
       ]
     }
   }
