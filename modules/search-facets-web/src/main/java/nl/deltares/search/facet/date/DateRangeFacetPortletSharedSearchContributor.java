@@ -5,8 +5,10 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.util.DateUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
+import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.search.constans.FacetPortletKeys;
 import org.osgi.service.component.annotations.Component;
@@ -36,18 +38,32 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
             startDate = new Date();
         }
 
+        String[] structureKeys = getStructureKeys(portletSharedSearchSettings);
+        String dateFieldName = getDsdConfiguredValue("dsdRegistrationDateField", portletSharedSearchSettings);
         _dsDsdJournalArticleUtils.contributeDsdDateRangeRegistrations(
-                groupId, startDate, endDate, portletSharedSearchSettings.getSearchContext(), locale);
+                groupId, startDate, endDate, structureKeys, dateFieldName, portletSharedSearchSettings.getSearchContext(), locale);
 
     }
-    private boolean getBoolean(PortletSharedSearchSettings portletSharedSearchSettings, String fieldName){
-        Optional<String> showPastOptional = portletSharedSearchSettings.getParameter("setStartNow");
+
+    private String[] getStructureKeys(PortletSharedSearchSettings portletSharedSearchSettings) {
+
+        String structureList = getDsdConfiguredValue("dsdRegistrationStructures", portletSharedSearchSettings);
+        if (structureList != null && !structureList.isEmpty()){
+            return StringUtil.split(structureList, ' ');
+        }
+        return new String[0];
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private boolean getBoolean(PortletSharedSearchSettings portletSharedSearchSettings, String booleanField){
+        Optional<String> showPastOptional = portletSharedSearchSettings.getParameter(booleanField);
         if (showPastOptional.isPresent()){
             return Boolean.parseBoolean(showPastOptional.get());
         }
-        Object configuredValue = getConfiguredValue(fieldName, portletSharedSearchSettings);
-        return configuredValue != null && (Boolean) configuredValue;
+        String configuredValue = getConfiguredValue(booleanField, portletSharedSearchSettings);
+        return Boolean.parseBoolean(configuredValue);
     }
+
     private Date getDate(PortletSharedSearchSettings portletSharedSearchSettings, String dateField) {
 
         Optional<String> optional = portletSharedSearchSettings.getParameter(dateField);
@@ -59,52 +75,52 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
                 LOG.warn(String.format("Could not parse configured date %s: %s", optional.get(), e.getMessage()), e);
             }
         }
-        return getConfiguredDate(dateField, portletSharedSearchSettings);
+        String dateText = getConfiguredValue(dateField, portletSharedSearchSettings);
+        if (dateText != null && !dateText.isEmpty()){
+            try {
+                return DateUtil.parseDate("dd-MM-yyyy", dateText, portletSharedSearchSettings.getThemeDisplay().getLocale());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
-    private Object getConfiguredValue(String key, PortletSharedSearchSettings portletSharedSearchSettings){
+    private String getConfiguredValue(String key, PortletSharedSearchSettings portletSharedSearchSettings){
 
         try {
             DateRangeFacetConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(DateRangeFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
-            if (key.equals("setStartNow")) {
-                String setStartNow = configuration.setStartNow();
-                if (setStartNow != null && !setStartNow.isEmpty()){
-                    return Boolean.parseBoolean(setStartNow);
-                }
-                return true;
+            switch (key) {
+                case "setStartNow":
+                    return configuration.setStartNow();
+                case "startDate":
+                    return configuration.startDate();
+                case "endDate":
+                    return configuration.endDate();
             }
 
         } catch (ConfigurationException e) {
-            LOG.warn("Could not get configuration", e);
+            LOG.warn("Could not find configuration for key " + key, e);
         }
         return null;
     }
 
-    private Date getConfiguredDate(String key, PortletSharedSearchSettings portletSharedSearchSettings){
+    private String getDsdConfiguredValue(String key, PortletSharedSearchSettings portletSharedSearchSettings){
 
         try {
-            DateRangeFacetConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(DateRangeFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
-            Locale locale = portletSharedSearchSettings.getThemeDisplay().getLocale();
-            if (key.equals("startDate")) {
-                String dateText = configuration.startDate();
-                if (dateText != null && !dateText.isEmpty()){
-                    return DateUtil.parseDate("dd-MM-yyyy", dateText, locale);
-                }
-                return null;
-            } else if (key.equals("endDate")){
-                String dateText = configuration.endDate();
-                if (dateText != null && !dateText.isEmpty()){
-                    return DateUtil.parseDate("dd-MM-yyyy", dateText, locale);
-                }
-                return null;
+            DSDSiteConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(DSDSiteConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
+            switch (key) {
+                case "dsdRegistrationStructures":
+                    return configuration.dsdRegistrationStructures();
+                case "dsdRegistrationDateField":
+                    return configuration.dsdRegistrationDateField();
             }
 
-        } catch (ConfigurationException | ParseException e) {
-            LOG.warn("Could not get date configuration", e);
+        } catch (ConfigurationException e) {
+            LOG.warn("Could not find configuration for key " + key, e);
         }
         return null;
     }
-
 
     @Reference
     private DsdJournalArticleUtils _dsDsdJournalArticleUtils;

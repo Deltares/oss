@@ -31,7 +31,7 @@
       "indexType": "keyword",
       "localizable": true,
       "multiple": false,
-      "name": "registration_type",
+      "name": "registrationType",
       "readOnly": false,
       "repeatable": false,
       "required": true,

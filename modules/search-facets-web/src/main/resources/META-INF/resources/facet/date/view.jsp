@@ -1,4 +1,4 @@
-<%@ page import="nl.deltares.search.util.DateFacetUtil" %>
+<%@ page import="nl.deltares.search.util.FacetUtils" %>
 <%@ page import="java.time.LocalDate" %>
 <%@ include file="/META-INF/resources/init.jsp" %>
 
@@ -8,23 +8,23 @@
 
 	if (startDate == null){
 		if (startDateConfig != null && !startDateConfig.isEmpty()){
-			startDate = DateFacetUtil.getStartDate(startDateConfig);
+			startDate = FacetUtils.getStartDate(startDateConfig);
 		} else if (Boolean.parseBoolean(setStartNowConfig)){
 			startDate = LocalDate.now();
 		}
 	}
 	String formattedStartDate = "";
 	if (startDate != null){
-		formattedStartDate = startDate.format(DateFacetUtil.DATE_TIME_FORMATTER);
+		formattedStartDate = startDate.format(FacetUtils.DATE_TIME_FORMATTER);
 	}
 	if (endDate == null){
 		if (endDateConfig != null && !endDateConfig.isEmpty()){
-			endDate = DateFacetUtil.getEndDate(endDateConfig);
+			endDate = FacetUtils.getEndDate(endDateConfig);
 		}
 	}
 	String formattedEndDate = "";
 	if (endDate != null){
-		formattedEndDate = endDate.format(DateFacetUtil.DATE_TIME_FORMATTER);
+		formattedEndDate = endDate.format(FacetUtils.DATE_TIME_FORMATTER);
 	}
 
 %>

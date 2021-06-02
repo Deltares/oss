@@ -62,6 +62,8 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         boolean isSendEmails = ParamUtil.getBoolean(actionRequest, "enableEmails");
         boolean isBustransfer = ParamUtil.getBoolean(actionRequest, "enableBusInfo");
         boolean isDsdSite = ParamUtil.getBoolean(actionRequest, "dsdSite");
+        String dsdRegistrationStructures = ParamUtil.getString(actionRequest, "dsdRegistrationStructures");
+        String dsdRegistrationDateField = ParamUtil.getString(actionRequest, "dsdRegistrationDateField");
 
         Settings settings = SettingsFactoryUtil.getSettings(
                 new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), DSDSiteConfiguration.class.getName()));
@@ -83,6 +85,8 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         modifiableSettings.setValue("enableBusInfo", String.valueOf(isBustransfer));
         modifiableSettings.setValue("dsdSite", String.valueOf(isDsdSite));
         modifiableSettings.setValue("mailingIds", mailingIds);
+        modifiableSettings.setValue("dsdRegistrationStructures", dsdRegistrationStructures);
+        modifiableSettings.setValue("dsdRegistrationDateField", dsdRegistrationDateField);
         modifiableSettings.store();
 
         super.processAction(portletConfig, actionRequest, actionResponse);

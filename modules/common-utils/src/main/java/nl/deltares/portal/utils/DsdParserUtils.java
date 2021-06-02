@@ -20,7 +20,8 @@ public interface DsdParserUtils {
 
     Registration getRegistration(long siteId, String articleId) throws PortalException;
 
-    List<Registration> getRegistrations(long companyId, long siteId, Date startTime, Date endTime, Locale locale) throws PortalException;
+    List<Registration> getRegistrations(long companyId, long siteId, Date startTime, Date endTime,
+                                        String[] structureKeys, String dateFieldName, Locale locale) throws PortalException;
 
     List<Registration> getRegistrations(long companyId, long siteId, String eventId, Locale locale) throws PortalException;
 

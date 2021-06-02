@@ -11,7 +11,6 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
 import nl.deltares.npm.react.portlet.fullcalendar.constants.FullCalendarPortletKeys;
-import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import org.osgi.service.component.annotations.Activate;
@@ -28,6 +27,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Map;
 import java.util.Optional;
+
+import static nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarUtils.getTypeMap;
 
 /**
  * @author rooij_e
@@ -66,10 +67,9 @@ public class FullCalendarPortlet extends MVCPortlet {
         });
 
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
         try {
-            Map<String, String> typeMap = dsdJournalArticleUtils.getStructureFieldOptions(themeDisplay.getSiteGroupId(),
-                    DsdArticle.DSD_STRUCTURE_KEYS.Session.name().toUpperCase(),
-                    "registration_type", themeDisplay.getLocale());
+            Map<String, String> typeMap = getTypeMap(themeDisplay, dsdJournalArticleUtils, _configurationProvider);
             renderRequest.setAttribute("typeMap", typeMap);
         } catch (PortalException e) {
             throw new PortletException("Could not get options for field 'registration_type' in structure SESSIONS: " + e.getMessage(), e);
@@ -77,6 +77,7 @@ public class FullCalendarPortlet extends MVCPortlet {
 
         super.render(renderRequest, renderResponse);
     }
+
 
     @Override
     public void doView(
