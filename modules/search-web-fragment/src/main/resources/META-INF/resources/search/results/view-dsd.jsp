@@ -135,7 +135,7 @@
             } else {
                 colorClass = "upcoming-event";
             }
-            boolean showButtons = themeDisplay.isSignedIn() && registrationDisplayContext.isOpen() && !registrationDisplayContext.isPastEvent();
+            boolean showButtons = registrationDisplayContext.canUserRegister();
         %>
 
         <c:choose>

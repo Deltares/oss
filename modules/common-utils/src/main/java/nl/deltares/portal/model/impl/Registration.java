@@ -4,6 +4,11 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Team;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.TeamLocalServiceUtil;
+import com.liferay.portal.kernel.service.TeamServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
@@ -24,6 +29,7 @@ public abstract class Registration extends AbsDsdArticle {
     private int capacity;
     private float price;
     private boolean open;
+    private String requiredTeam;
     private String currency = "&#8364"; //euro sign
     private String type = "unknown";
     private String topic = "unknown";
@@ -37,6 +43,8 @@ public abstract class Registration extends AbsDsdArticle {
     private String timeZoneId = "CET";
     private float vat = 21;
 
+    private long defaultUserId;
+
     private final long dayMillis = TimeUnit.DAYS.toMillis(1);
     final SimpleDateFormat dayf = new SimpleDateFormat("yyyy-MM-dd");
     final SimpleDateFormat timef = new SimpleDateFormat("HH:mm");
@@ -48,6 +56,7 @@ public abstract class Registration extends AbsDsdArticle {
     }
 
     private void init() throws PortalException {
+
         try {
             Document document = getDocument();
             String eventId = XmlContentUtils.getDynamicContentByName(document, "eventId", false);
@@ -70,10 +79,15 @@ public abstract class Registration extends AbsDsdArticle {
                 overlapWithParent = Boolean.parseBoolean(overlap);
                 hasParent = true;
             }
+            requiredTeam = XmlContentUtils.getDynamicContentByName(document, "requiredTeam", true);
+
             timeZoneId = XmlContentUtils.getDynamicContentByName(document, "timeZone", true);
             String vatTxt = XmlContentUtils.getDynamicContentByName(document, "vat", true);
             if (vatTxt != null) this.vat = Long.parseLong(vatTxt);
 
+
+            User defaultUser = UserLocalServiceUtil.getDefaultUser(getCompanyId());
+            defaultUserId = defaultUser.getUserId();
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing Registration %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -141,6 +155,22 @@ public abstract class Registration extends AbsDsdArticle {
         JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(parentJson);
         parentRegistration = dsdParserUtils.getRegistration(journalArticle);
 
+    }
+
+    public boolean canUserRegister(long userId){
+
+        if (!open) return false;
+        if (isEventInPast()) return false;
+        if (userId == defaultUserId) return false; //not logged in
+        if (requiredTeam == null) return true;
+
+        try {
+            Team team = TeamLocalServiceUtil.getTeam(getGroupId(), requiredTeam);
+            return TeamServiceUtil.hasUserTeam(userId, team.getTeamId());
+        } catch (PortalException e) {
+            LOG.error(String.format("Error retrieving SiteTeam %s : %s", requiredTeam, e.getMessage()));
+        }
+        return false;
     }
 
     public boolean isOpen() {
