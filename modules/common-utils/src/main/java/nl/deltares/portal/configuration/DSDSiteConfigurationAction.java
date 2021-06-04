@@ -64,6 +64,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         boolean isDsdSite = ParamUtil.getBoolean(actionRequest, "dsdSite");
         String dsdRegistrationStructures = ParamUtil.getString(actionRequest, "dsdRegistrationStructures");
         String dsdRegistrationDateField = ParamUtil.getString(actionRequest, "dsdRegistrationDateField");
+        String dsdRegistrationTypeField = ParamUtil.getString(actionRequest, "dsdRegistrationTypeField");
 
         Settings settings = SettingsFactoryUtil.getSettings(
                 new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), DSDSiteConfiguration.class.getName()));
@@ -87,6 +88,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         modifiableSettings.setValue("mailingIds", mailingIds);
         modifiableSettings.setValue("dsdRegistrationStructures", dsdRegistrationStructures);
         modifiableSettings.setValue("dsdRegistrationDateField", dsdRegistrationDateField);
+        modifiableSettings.setValue("dsdRegistrationTypeField", dsdRegistrationTypeField);
         modifiableSettings.store();
 
         super.processAction(portletConfig, actionRequest, actionResponse);
