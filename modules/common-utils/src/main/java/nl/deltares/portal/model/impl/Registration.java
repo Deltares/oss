@@ -5,7 +5,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Team;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.TeamLocalServiceUtil;
 import com.liferay.portal.kernel.service.TeamServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
@@ -25,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class Registration extends AbsDsdArticle {
     private static final Log LOG = LogFactoryUtil.getLog(Registration.class);
+    private static long defaultUserId = -1;
     private long eventId;
     private int capacity;
     private float price;
@@ -42,8 +42,6 @@ public abstract class Registration extends AbsDsdArticle {
     boolean daily = true;
     private String timeZoneId = "CET";
     private float vat = 21;
-
-    private long defaultUserId;
 
     private final long dayMillis = TimeUnit.DAYS.toMillis(1);
     final SimpleDateFormat dayf = new SimpleDateFormat("yyyy-MM-dd");
@@ -84,11 +82,10 @@ public abstract class Registration extends AbsDsdArticle {
             timeZoneId = XmlContentUtils.getDynamicContentByName(document, "timeZone", true);
             String vatTxt = XmlContentUtils.getDynamicContentByName(document, "vat", true);
             if (vatTxt != null) this.vat = Long.parseLong(vatTxt);
-
-
-            User defaultUser = UserLocalServiceUtil.getDefaultUser(getCompanyId());
-            defaultUserId = defaultUser.getUserId();
-        } catch (Exception e) {
+            if (defaultUserId == -1){
+                defaultUserId = UserLocalServiceUtil.getDefaultUser(getCompanyId()).getUserId();
+            }
+       } catch (Exception e) {
             throw new PortalException(String.format("Error parsing Registration %s: %s!", getTitle(), e.getMessage()), e);
         }
     }
