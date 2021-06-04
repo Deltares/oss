@@ -160,6 +160,10 @@ public class RegistrationDisplayContext {
         return false;
     }
 
+    public boolean canUserRegister(){
+        return getRegistration() != null && getRegistration().canUserRegister(themeDisplay.getUserId());
+    }
+
     public String getStartTime() {
         if (getRegistration() != null) {
             return DateUtil.getDate(getRegistration().getStartTime(), "HH:mm", themeDisplay.getLocale());
