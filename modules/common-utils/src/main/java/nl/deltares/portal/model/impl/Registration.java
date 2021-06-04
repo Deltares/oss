@@ -60,7 +60,7 @@ public abstract class Registration extends AbsDsdArticle {
             if (currency != null) this.currency = HtmlUtil.escape(currency);
             String open = XmlContentUtils.getDynamicContentByName(document, "open", true);
             this.open = Boolean.parseBoolean(open);
-            String type = XmlContentUtils.getDynamicContentByName(document, "registration_type", false);
+            String type = XmlContentUtils.getDynamicContentByName(document, "registrationType", false);
             if (type != null) this.type = type;
             String topic = XmlContentUtils.getDynamicContentByName(document, "topic", false);
             if (topic != null) this.topic = topic;

@@ -72,7 +72,7 @@ public class FullCalendarPortlet extends MVCPortlet {
             Map<String, String> typeMap = getTypeMap(themeDisplay, dsdJournalArticleUtils, _configurationProvider);
             renderRequest.setAttribute("typeMap", typeMap);
         } catch (PortalException e) {
-            throw new PortletException("Could not get options for field 'registration_type' in structure SESSIONS: " + e.getMessage(), e);
+            throw new PortletException("Could not get options for field 'registrationType' in structure SESSIONS: " + e.getMessage(), e);
         }
 
         super.render(renderRequest, renderResponse);
