@@ -114,7 +114,7 @@
                             </span>
                     </#list>
 
-                    <#if themeDisplay.isSignedIn() && registration.isOpen() && !registration.isEventInPast() >
+                    <#if registration.canUserRegister(user.getUserId()) >
                         <#assign isRegistered = dsdSessionUtils.isUserRegisteredFor(user, registration) />
                         <span class="d-block">
                             <#if isRegistered >
