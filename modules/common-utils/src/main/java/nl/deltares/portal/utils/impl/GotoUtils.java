@@ -37,11 +37,14 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
     private static final String GOTO_REGISTRATION_PATH = "G2W/rest/v2/organizers/%s/webinars/%s/registrants";
     private String organizer_key;
 
-    public GotoUtils(WebinarSiteConfiguration siteConfiguration) {
+    public GotoUtils(WebinarSiteConfiguration siteConfiguration) throws IOException {
         if (siteConfiguration == null) throw new NullPointerException("siteConfiguration == null");
         this.configuration = siteConfiguration;
 
         String clientId = configuration.gotoClientId();
+        if (clientId == null || clientId.isEmpty()){
+            throw new IOException("No GOTO clientId configured! Please check the WebinarConfigurations options.");
+        }
         CACHED_REFRESH_TOKEN_KEY = clientId + ".refresh";
         CACHED_REFRESH_EXPIRY_KEY = clientId + ".refresh.expirytime";
         CACHED_ORGANIZER_KEY = clientId + ".organizer";

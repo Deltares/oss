@@ -78,7 +78,7 @@
             }
            if (eventArticleId != null && eventArticleId!=="") {
                 resourceUrl = resourceUrl + '&' + namespace + 'eventId=' + eventArticleId;
-                FormsUtil.callDownloadRegistrations(resourceUrl, namespace, eventArticleId, "delete")
+                FormsUtil.callDownloadRegistrations(resourceUrl, namespace, "delete")
             } else {
                 FormsUtil.writeInfo('Please enter a valid eventId');
             }
@@ -91,11 +91,11 @@
             var eventArticleId = selection.options[ selection.selectedIndex ].value;
             if (eventArticleId != null && eventArticleId!=="") {
                 resourceUrl = resourceUrl + '&' + namespace + 'eventId=' + eventArticleId;
-                FormsUtil.callDownloadRegistrations(resourceUrl, namespace, eventArticleId, "download");
+                FormsUtil.callDownloadRegistrations(resourceUrl, namespace, "download");
             }
         },
 
-        callDownloadRegistrations : function (resourceUrl, namespace, eventId, action){
+        callDownloadRegistrations : function (resourceUrl, namespace, action){
 
             FormsUtil.updateProgressBar(JSON.parse('{"status": "pending", "progress":0, "total":100}'));
 
@@ -111,7 +111,8 @@
                             FormsUtil.writeInfo("204: No event found!");
                             return true;
                         } else if (xhr.status === 200){
-                            FormsUtil.startProgressMonitor(resourceUrl, namespace);
+                            let jsonResponse = JSON.parse(xhr.responseText);
+                            FormsUtil.startProgressMonitor(resourceUrl, namespace, jsonResponse.id);
                         }
                     },
                     failure : function(response, status, xhr) {
@@ -133,7 +134,7 @@
             $('#deleteButton').prop('disabled', false);
             $('#downloadButton').prop('disabled', false);
         },
-        startProgressMonitor : function(resourceUrl, namespace){
+        startProgressMonitor : function(resourceUrl, namespace, id){
             if (progressId !== '') {
                 alert("A process is already running!");
                 return
@@ -141,11 +142,12 @@
             $('#progressBar').show();
             $('#deleteButton').prop('disabled', true);
             $('#downloadButton').prop('disabled', true);
-            progressId = setInterval(function(){FormsUtil.callUpdateProgressRequest(resourceUrl, namespace)}, 1000);
-        },
-        callUpdateProgressRequest : function (resourceUrl, namespace){
 
-            A.io.request(resourceUrl + '&' + namespace + 'action=updateStatus', {
+            progressId = setInterval(function(){FormsUtil.callUpdateProgressRequest(resourceUrl, namespace, id)}, 1000);
+        },
+        callUpdateProgressRequest : function (resourceUrl, namespace, id){
+
+            A.io.request(resourceUrl + '&' + namespace + 'action=updateStatus' + '&' + namespace + 'id=' + id, {
                 sync : 'true',
                 cache : 'false',
                 on : {
@@ -165,7 +167,7 @@
                                 FormsUtil.stopProgressMonitor();
                             } else if (statusMsg.status === 'available'){
                                 FormsUtil.stopProgressMonitor();
-                                FormsUtil.callDownloadLogFileRequest(resourceUrl, namespace);
+                                FormsUtil.callDownloadLogFileRequest(resourceUrl, namespace, id);
                             } else {
                                 FormsUtil.updateProgressBar(statusMsg);
                             }
@@ -178,8 +180,8 @@
                 }
             });
         },
-        callDownloadLogFileRequest : function (resourceUrl, namespace){
-            A.io.request(resourceUrl + '&' + namespace + 'action=downloadLog', {
+        callDownloadLogFileRequest : function (resourceUrl, namespace, id){
+            A.io.request(resourceUrl + '&' + namespace + 'action=downloadLog' + '&' + namespace + 'id=' + id, {
                 sync : 'true',
                 cache : 'false',
                 on : {
