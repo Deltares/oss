@@ -24,9 +24,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
-import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.DsdParserUtils;
-import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.worth.fews.configuration.JournalArticleManagementConfiguration;
 import nl.worth.fews.constants.JournalArticleManagementConstants;
 import org.osgi.service.component.annotations.Activate;
@@ -48,22 +46,6 @@ import java.util.Map;
 public class JournalArticleListener extends BaseModelListener<JournalArticle> {
 
     private static final Log LOGGER = LogFactoryUtil.getLog(JournalArticleListener.class);
-
-    @Override
-    public void onBeforeRemove(JournalArticle model) throws ModelListenerException {
-
-        //When removing an article clean up records in registrations table.
-        if (DsdParserUtils.isDsdArticle(model)) {
-            try {
-                AbsDsdArticle instance = dsdParserUtils.toDsdArticle(model);
-                if (instance instanceof Registration) {
-                    dsdSessionUtils.deleteRegistrationsFor((Registration)instance);
-                }
-            } catch (PortalException e) {
-                LOG.warn("Error removing journal article: " + e.getMessage());
-            }
-        }
-    }
 
     @Override
     public void onBeforeCreate(JournalArticle model) throws ModelListenerException {
@@ -196,9 +178,6 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
 
     @Reference
     private GroupLocalService _groupLocalService;
-
-    @Reference
-    private DsdSessionUtils dsdSessionUtils;
 
     @Reference
     private DsdParserUtils dsdParserUtils;
