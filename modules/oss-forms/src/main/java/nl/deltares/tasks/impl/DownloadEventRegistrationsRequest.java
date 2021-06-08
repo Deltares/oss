@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.DateUtil;
 import nl.deltares.dsd.model.BillingInfo;
+import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
@@ -29,7 +30,8 @@ import static nl.deltares.tasks.DataRequest.STATUS.*;
 public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
     private static final Log logger = LogFactoryUtil.getLog(DownloadEventRegistrationsRequest.class);
-    private final String eventId;
+    private final String articleId;
+    private DsdArticle dsdArticle = null;
     private final DsdParserUtils dsdParserUtils;
     private final DsdSessionUtils dsdSessionUtils;
     private final KeycloakUtils keycloakUtils;
@@ -39,11 +41,12 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     private final boolean deleteOnCompletion;
     private final WebinarUtilsFactory webinarUtilsFactory;
 
-    public DownloadEventRegistrationsRequest(String id, long currentUser, String eventId, Group siteGroup, Locale locale,
+    public DownloadEventRegistrationsRequest(String id, long currentUser, String articleId, Group siteGroup, Locale locale,
                                              DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils,
-                                             KeycloakUtils keycloakUtils, DsdJournalArticleUtils dsdJournalArticleUtils, WebinarUtilsFactory webinarUtilsFactory, boolean delete) throws IOException {
+                                             KeycloakUtils keycloakUtils, DsdJournalArticleUtils dsdJournalArticleUtils,
+                                             WebinarUtilsFactory webinarUtilsFactory, boolean delete) throws IOException {
         super(id, currentUser);
-        this.eventId = eventId;
+        this.articleId = articleId;
         this.group = siteGroup;
         this.locale = locale;
         this.dsdParserUtils = dsdParserUtils;
@@ -67,8 +70,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             if (tempFile.exists()) Files.deleteIfExists(tempFile.toPath());
 
             Event event = getEvent();
-
-            List<Map<String, Object>> registrationRecords = dsdSessionUtils.getRegistrations(event);
+            List<Map<String, Object>> registrationRecords = getFilteredRegistrationRecords(event);
 
             totalCount = registrationRecords.size();
 
@@ -77,7 +79,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 fireStateChanged();
                 return status;
             }
-            Map<Long, User> userCache = new HashMap<>();
+            Map<Long, Registration> registrationCache = new HashMap<>();
             Map<String, List<String>> webinarKeyCache = new HashMap<>();
             Map<Long, Map<String, String>> userAttributeCache = new HashMap<>();
 
@@ -91,12 +93,20 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 }
                 writer.println(header);
                 registrationRecords.forEach(recordObjects ->{
-                        writeRecord(writer, recordObjects, event, userCache, userAttributeCache, webinarKeyCache, locale);
-                        if (Thread.interrupted()){
-                            throw new RuntimeException("Thread interrupted");
-                        }
+
+                    Registration correspondingDsdArticle = getCorrespondingDsdArticle((Long) recordObjects.get("resourcePrimaryKey"), registrationCache);
+                    if (correspondingDsdArticle == null) return;
+
+                    User correspondingUser = getCorrespondingUser((Long) recordObjects.get("userId"));
+                    if (correspondingUser == null) return;
+
+                    writeRecord(writer, recordObjects, event.getTitle(), correspondingDsdArticle, correspondingUser,
+                            userAttributeCache, webinarKeyCache, locale);
+                    if (Thread.interrupted()){
+                        throw new RuntimeException("Thread interrupted");
                     }
-                );
+
+                });
 
                 status = available;
 
@@ -112,7 +122,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             }
 
             if (deleteOnCompletion) {
-                dsdSessionUtils.deleteEventRegistrations(event.getGroupId(), event.getResourceId());
+                deleteSelectedArticle();
             }
         } catch (IOException | PortalException e) {
             errorMessage = e.getMessage();
@@ -123,63 +133,129 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         return status;
     }
 
-    private Event getEvent() throws PortalException {
+    private List<Map<String, Object>> getFilteredRegistrationRecords(Event event) {
+
+        List<Map<String, Object>> registrations = dsdSessionUtils.getRegistrations(event);
+        if (dsdArticle == event) return registrations;
+
+        long resourceId = dsdArticle.getResourceId();
+        List<Map<String, Object>> filtered = new ArrayList<>();
+        for (Map<String, Object> record : registrations) {
+            if ((Long)record.get("resourcePrimaryKey") != resourceId) continue;
+            filtered.add(record);
+        }
+        return filtered;
+    }
+
+    private void deleteSelectedArticle() {
+
+        if (dsdArticle instanceof Event) {
+            logger.info(String.format("Deleting registration records for Event %s (%s)", dsdArticle.getTitle(), dsdArticle.getArticleId()) );
+            dsdSessionUtils.deleteEventRegistrations(dsdArticle.getGroupId(), dsdArticle.getResourceId());
+        } else if (dsdArticle instanceof Registration){
+            logger.info(String.format("Deleting registration records for Registration %s (%s)", dsdArticle.getTitle(), dsdArticle.getArticleId()) );
+            dsdSessionUtils.deleteRegistrationsFor((Registration) dsdArticle);
+        }
+    }
+
+    private User getCorrespondingUser(Long userId) {
+        User user = null;
         try {
-            return dsdParserUtils.getEvent(group.getGroupId(), eventId, locale);
+            user = UserLocalServiceUtil.getUser(userId);
+        } catch (PortalException e) {
+            logger.error(String.format("Cannot find registered DSD user %d: %s", userId, e.getMessage()));
+        }
+        return user;
+    }
+
+    private Registration getCorrespondingDsdArticle(Long resourcePrimaryKey, Map<Long, Registration> registrationCache) {
+
+        if (registrationCache.containsKey(resourcePrimaryKey)){
+            return registrationCache.get(resourcePrimaryKey);
+        }
+        Registration correspondingDsdArticle;
+        if (dsdArticle instanceof Event){
+            correspondingDsdArticle = ((Event) dsdArticle).getRegistration(resourcePrimaryKey, locale);
+            if (correspondingDsdArticle == null) {
+                //Something wrong. Registration not loaded in Event check DB.
+                try {
+                    JournalArticle latestArticle = dsdJournalArticleUtils.getLatestArticle(resourcePrimaryKey);
+                    AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(latestArticle, locale);
+                    if (dsdArticle instanceof Registration) correspondingDsdArticle = (Registration) dsdArticle;
+                } catch (PortalException e) {
+                    //;
+                }
+            }
+        } else {
+            correspondingDsdArticle = Long.valueOf(dsdArticle.getResourceId()).equals(resourcePrimaryKey) ? (Registration) dsdArticle : null;
+        }
+
+        if (correspondingDsdArticle == null) {
+            logger.error(String.format("Cannot find registration for articleId %s", articleId));
+        }
+        registrationCache.put(resourcePrimaryKey, correspondingDsdArticle);
+        return correspondingDsdArticle;
+    }
+
+    private DsdArticle getJournalArticle(String articleId) throws PortalException {
+
+        JournalArticle article = null;
+        try {
+            article =  dsdJournalArticleUtils.getJournalArticle(group.getGroupId(), articleId);
         } catch (PortalException e) {
             List<Group> children = group.getChildren(true);
             for (Group child : children) {
                 try {
-                    return dsdParserUtils.getEvent(child.getGroupId(), eventId, locale);
+                    article = dsdJournalArticleUtils.getJournalArticle(child.getGroupId(), articleId);
+                    break;
                 } catch (PortalException portalException) {
                     //
                 }
             }
         }
-        throw new PortalException("Could not find event for id " + eventId);
+        if (article != null) return dsdParserUtils.toDsdArticle(article);
+        throw new PortalException("Could not find dsd article for id " + articleId);
+
     }
 
-    private void writeRecord(PrintWriter writer, Map<String, Object> record, Event event, Map<Long, User> userCache,
+    private Event getEvent() throws PortalException {
+
+        dsdArticle = getJournalArticle(articleId);
+        if (dsdArticle instanceof Event) return (Event) dsdArticle;
+        if (dsdArticle instanceof Registration){
+            return (Event) getJournalArticle(String.valueOf(((Registration) dsdArticle).getEventId()));
+        }
+        throw new PortalException("Could not find event for id " + articleId);
+    }
+
+    private void writeRecord(PrintWriter writer, Map<String, Object> record, String eventTitle,
+                             Registration dsdRegistration, User user,
                              Map<Long, Map<String, String>> userAttributeCache, Map<String, List<String>> courseRegistrationsCache, Locale locale) {
 
-        Long registrationId = (Long) record.get("resourcePrimaryKey");
-        Registration registration = getRegistration(registrationId, event, locale);
-        if (registration == null){
-            logger.error(String.format("Cannot find registration for registrationId %d", registrationId));
-            return;
-        }
-        Long userId = (Long) record.get("userId");
-        User user = userCache.get(userId);
-        if (user == null){
-            try {
-                user = UserLocalServiceUtil.getUser(userId);
-            } catch (PortalException e) {
-                logger.error(String.format("Cannot find registered DSD user %d: %s", userId, e.getMessage()));
-                return;
-            }
-            userCache.put(userId, user);
-        }
         StringBuilder line = new StringBuilder();
-        writeField(line, event.getTitle());
-        writeField(line, registration.getTitle());
+        writeField(line, eventTitle);
+        writeField(line, dsdRegistration.getTitle());
         writeField(line, DateUtil.getDate((Date) record.get("startTime"),"yyyy-MM-dd", locale));
-        writeField(line, registration.getTopic());
-        writeField(line, registration.getType());
+        writeField(line, dsdRegistration.getTopic());
+        writeField(line, dsdRegistration.getType());
         writeField(line, user.getEmailAddress());
         writeField(line, user.getFirstName());
         writeField(line, user.getLastName());
-        writeWebinarInfo(line, user, registration, courseRegistrationsCache);
+        Map<String, String> userPreferences = Collections.emptyMap();
         try {
-            Map<String, String> userPreferences = JsonContentUtils.parseJsonToMap((String) record.get("userPreferences"));
-            writeField(line, userPreferences.get("remarks"));
-            BillingInfo billingInfo = getBillingInfo(userPreferences);
-            writeBillingInfo(line, billingInfo, user, userAttributeCache);
+            userPreferences = JsonContentUtils.parseJsonToMap((String) record.get("userPreferences"));
         } catch (JSONException e) {
             logger.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
             line.append(','); //empty remarks
             Arrays.stream(KeycloakUtils.BILLING_ATTRIBUTES.values()).iterator().forEachRemaining(billing_attributes -> line.append(',')); //empty billing info
         }
+
+        writeWebinarInfo(line, user, dsdRegistration, courseRegistrationsCache, userPreferences);
+        writeField(line, userPreferences.get("remarks"));
+        BillingInfo billingInfo = getBillingInfo(userPreferences);
+        writeBillingInfo(line, billingInfo, user, userAttributeCache);
         writer.println(line);
+
         processedCount++;
     }
 
@@ -200,7 +276,8 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         line.append(',');
     }
 
-    private void writeWebinarInfo(StringBuilder line, User user, Registration registration, Map<String, List<String>> courseRegistrationsCache) {
+    private void writeWebinarInfo(StringBuilder line, User user, Registration registration, Map<String,
+            List<String>> courseRegistrationsCache, Map<String, String> userPreferences) {
 
         if (!webinarUtilsFactory.isWebinarSupported(registration)) {
             line.append(','); //webinarProvider
@@ -221,17 +298,29 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             return;
         }
         String webinarKey = sessionRegistration.getWebinarKey();
-        List<String> courseRegistrations = courseRegistrationsCache.get(webinarKey);
-        if (courseRegistrations == null){
+
+        String status;
+        if (deleteOnCompletion){
             try {
-                courseRegistrations = webinarUtils.getAllCourseRegistrations(webinarKey);
-            } catch (Exception e){
-                logger.error(String.format("Failed to get course registrations for webinar %s: %s", webinarKey, e.getMessage()));
-                courseRegistrations = Collections.emptyList();
+                webinarUtils.unregisterUser(user, webinarKey, userPreferences);
+                status = "unregistered";
+            } catch (Exception e) {
+                logger.error(String.format("Failed to unregister user for webinar %s: %s", webinarKey, e.getMessage()));
+                status = "failed to unregister";
             }
-            courseRegistrationsCache.put(webinarKey, courseRegistrations);
+        } else {
+            List<String> courseRegistrations = courseRegistrationsCache.get(webinarKey);
+            if (courseRegistrations == null) {
+                try {
+                    courseRegistrations = webinarUtils.getAllCourseRegistrations(webinarKey);
+                } catch (Exception e) {
+                    logger.error(String.format("Failed to get course registrations for webinar %s: %s", webinarKey, e.getMessage()));
+                    courseRegistrations = Collections.emptyList();
+                }
+                courseRegistrationsCache.put(webinarKey, courseRegistrations);
+            }
+            status = webinarUtils.isUserInCourseRegistrationsList(courseRegistrations, user) ? "registered" : "not in registration list";
         }
-        String status = webinarUtils.isUserInCourseRegistrationsList(courseRegistrations, user) ? "registered" : null;
         writeField(line, status);
     }
 
@@ -265,23 +354,6 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 billingAttribute = userAttributes.get(BillingInfo.getCorrespondingUserAttributeKey(key).name());
             }
             writeField(line, billingAttribute);
-        }
-    }
-
-    private Registration getRegistration(Long registrationId, Event event, Locale locale) {
-
-        if (event != null) {
-            Registration registration = event.getRegistration(registrationId, locale);
-            if (registration != null) return registration;
-        }
-        //Something wrong. Registration not loaded in Event check DB.
-        try {
-            JournalArticle latestArticle = dsdJournalArticleUtils.getLatestArticle(registrationId);
-            AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(latestArticle, locale);
-            if (!(dsdArticle instanceof Registration)) return null;
-            return (Registration) dsdArticle;
-        } catch (PortalException e) {
-            return null;
         }
     }
 

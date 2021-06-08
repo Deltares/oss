@@ -96,14 +96,14 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 
 		boolean delete = "delete".equals(action);
 		if ("download".equals(action) || delete) {
-			String eventId = ParamUtil.getString(resourceRequest, "eventId", null);
+			String articleId = ParamUtil.getString(resourceRequest, "articleId", null);
 
-			if (eventId == null){
-				DataRequestManager.getInstance().writeError("No eventId", resourceResponse);
+			if (articleId == null){
+				DataRequestManager.getInstance().writeError("No articleId", resourceResponse);
 				return;
 			}
-			if (id == null) id = DownloadEventRegistrationsRequest.class.getName() + eventId + themeDisplay.getUserId();
-			downloadEventRegistrations(id, resourceResponse, themeDisplay, eventId, delete);
+			if (id == null) id = DownloadEventRegistrationsRequest.class.getName() + articleId + themeDisplay.getUserId();
+			downloadEventRegistrations(id, resourceResponse, themeDisplay, articleId, delete);
 		} else if ("updateStatus".equals(action)){
 			DataRequestManager.getInstance().updateStatus(id, resourceResponse);
 		} else if ("downloadLog".equals(action)){
@@ -114,12 +114,12 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 	}
 
 	private void downloadEventRegistrations(String dataRequestId, ResourceResponse resourceResponse,
-											ThemeDisplay themeDisplay, String eventId, boolean delete) throws IOException {
+											ThemeDisplay themeDisplay, String articleId, boolean delete) throws IOException {
 		resourceResponse.setContentType("text/csv");
 		DataRequestManager instance = DataRequestManager.getInstance();
 		DataRequest dataRequest = instance.getDataRequest(dataRequestId);
 		if (dataRequest == null) {
-			dataRequest = new DownloadEventRegistrationsRequest(dataRequestId, themeDisplay.getUserId(), eventId, themeDisplay.getSiteGroup(),
+			dataRequest = new DownloadEventRegistrationsRequest(dataRequestId, themeDisplay.getUserId(), articleId, themeDisplay.getSiteGroup(),
 					themeDisplay.getLocale(), dsdParserUtils, dsdSessionUtils, keycloakUtils, dsdJournalArticleUtils,
 					webinarUtilsFactory, delete);
 			instance.addToQueue(dataRequest);
