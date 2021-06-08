@@ -38,7 +38,7 @@
             <div class="control-label" > <liferay-ui:message key="dsd.admin.enterEventId"/>  </div>
         </aui:col>
         <aui:col width="25">
-            <input id="eventId" value="" class="form-control">
+            <input id="articleId" value="" class="form-control">
         </aui:col>
         <aui:col width="5">
             <button id="deleteButton"  class="btn btn-lg" type="button"><liferay-ui:message key="dsd.admin.delete"/> </button>
@@ -70,17 +70,17 @@
 
         delete: function(resourceUrl, namespace){
             this.clearError();
-            var eventArticleId = document.getElementById("eventId").value;
+            var eventArticleId = document.getElementById("articleId").value;
 
             if (confirm("You are about to delete all registrations for event: " + eventArticleId + "\nDo you want to continue?") === false) {
                 eventArticleId = null;
                 return;
             }
            if (eventArticleId != null && eventArticleId!=="") {
-                resourceUrl = resourceUrl + '&' + namespace + 'eventId=' + eventArticleId;
+                resourceUrl = resourceUrl + '&' + namespace + 'articleId=' + eventArticleId;
                 FormsUtil.callDownloadRegistrations(resourceUrl, namespace, "delete")
             } else {
-                FormsUtil.writeInfo('Please enter a valid eventId');
+                FormsUtil.writeInfo('Please enter a valid articleId of Event or Registration');
             }
         },
 
@@ -90,7 +90,7 @@
             let selection = document.getElementById( "eventSelection");
             var eventArticleId = selection.options[ selection.selectedIndex ].value;
             if (eventArticleId != null && eventArticleId!=="") {
-                resourceUrl = resourceUrl + '&' + namespace + 'eventId=' + eventArticleId;
+                resourceUrl = resourceUrl + '&' + namespace + 'articleId=' + eventArticleId;
                 FormsUtil.callDownloadRegistrations(resourceUrl, namespace, "download");
             }
         },
