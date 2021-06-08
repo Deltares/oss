@@ -125,7 +125,7 @@
           },
           "dataType": "string",
           "indexType": "keyword",
-          "localizable": true,
+          "localizable": false,
           "name": "currency",
           "readOnly": false,
           "repeatable": false,
@@ -149,7 +149,7 @@
           "dataType": "number",
           "fieldNamespace": "ddm",
           "indexType": "keyword",
-          "localizable": true,
+          "localizable": false,
           "name": "vat",
           "readOnly": false,
           "repeatable": false,
@@ -175,7 +175,7 @@
       "dataType": "integer",
       "fieldNamespace": "ddm",
       "indexType": "keyword",
-      "localizable": true,
+      "localizable": false,
       "name": "capacity",
       "readOnly": false,
       "repeatable": false,
@@ -277,6 +277,29 @@
       "required": false,
       "showLabel": true,
       "type": "checkbox"
+    },
+    {
+      "label": {
+        "en_US": "Required Team"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": false,
+      "name": "requiredTeam",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "text"
     }
   ]
 }
