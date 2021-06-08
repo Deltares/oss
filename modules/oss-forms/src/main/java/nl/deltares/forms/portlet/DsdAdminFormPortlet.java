@@ -92,15 +92,17 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 			return;
 		}
 		String action = ParamUtil.getString(resourceRequest, "action");
-		String eventId = ParamUtil.getString(resourceRequest, "eventId");
-		if (eventId == null || eventId.isEmpty()){
-			DataRequestManager.getInstance().writeError("No eventId", resourceResponse);
-			return;
-		}
+		String id = ParamUtil.getString(resourceRequest, "id", null);
 
-		String id = DownloadEventRegistrationsRequest.class.getName() + eventId + themeDisplay.getUserId();
 		boolean delete = "delete".equals(action);
 		if ("download".equals(action) || delete) {
+			String eventId = ParamUtil.getString(resourceRequest, "eventId", null);
+
+			if (eventId == null){
+				DataRequestManager.getInstance().writeError("No eventId", resourceResponse);
+				return;
+			}
+			if (id == null) id = DownloadEventRegistrationsRequest.class.getName() + eventId + themeDisplay.getUserId();
 			downloadEventRegistrations(id, resourceResponse, themeDisplay, eventId, delete);
 		} else if ("updateStatus".equals(action)){
 			DataRequestManager.getInstance().updateStatus(id, resourceResponse);

@@ -23,7 +23,7 @@ public class WebinarUtilsFactoryImpl implements WebinarUtilsFactory {
 
     private final HashMap<WebinarKey, WebinarUtils> cache = new HashMap<>();
 
-    public WebinarUtils newInstance(Registration registration){
+    public WebinarUtils newInstance(Registration registration) throws Exception{
         if (!isWebinarSupported(registration)){
             throw new UnsupportedOperationException("unsupported registration type " + registration.getClass().getSimpleName());
         }
@@ -31,7 +31,7 @@ public class WebinarUtilsFactoryImpl implements WebinarUtilsFactory {
         return newInstance(registration.getGroupId(), webinarProvider.toLowerCase());
     }
 
-    public WebinarUtils newInstance(long groupId, String  webinarProvider){
+    public WebinarUtils newInstance(long groupId, String  webinarProvider) throws Exception{
 
         Class<? extends HttpClientUtils> webinarClass = getWebinarClass(webinarProvider);
         WebinarKey webinarKey = new WebinarKey(groupId, webinarClass);

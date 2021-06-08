@@ -75,8 +75,8 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     private void registerWebinarUser(User user, Map<String, String> userAttributes, SessionRegistration registration, Map<String, String> userProperties) throws PortalException {
 
-        WebinarUtils webinarUtils = webinarUtilsFactory.newInstance(registration);
         try {
+            WebinarUtils webinarUtils = webinarUtilsFactory.newInstance(registration);
             if (webinarUtils.isActive()) {
                 webinarUtils.registerUser(user, userAttributes, registration.getWebinarKey(), GroupServiceUtil.getGroup(registration.getGroupId()).getName(Locale.US), userProperties);
             }
