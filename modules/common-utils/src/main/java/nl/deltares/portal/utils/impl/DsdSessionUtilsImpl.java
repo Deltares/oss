@@ -3,6 +3,8 @@ package nl.deltares.portal.utils.impl;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.GroupServiceUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -263,7 +265,12 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     private boolean canOverlap(long overlappingResourcePrimaryKey, String validatingArticleId) throws PortalException {
-        Registration overlappingRegistration = parserUtils.getRegistration(JournalArticleLocalServiceUtil.fetchLatestArticle(overlappingResourcePrimaryKey));
+        JournalArticle overlappingDbRegistration = JournalArticleLocalServiceUtil.fetchLatestArticle(overlappingResourcePrimaryKey);
+        if (overlappingDbRegistration == null) {
+            LOG.warn(String.format("Registration with resourcePrimaryKey %d no longer exists.", overlappingResourcePrimaryKey));
+            return true;
+        }
+        Registration overlappingRegistration = parserUtils.getRegistration(overlappingDbRegistration);
         return overlappingRegistration.isOverlapWithParent() &&
                 (overlappingRegistration.getParentRegistration() == null || overlappingRegistration.getParentRegistration().getArticleId().equals(validatingArticleId));
     }
@@ -327,4 +334,6 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     public void deleteEventRegistrations(long groupId, long resourceId) {
         registrationLocalService.deleteAllEventRegistrations(groupId, resourceId);
     }
+
+    private static final Log LOG = LogFactoryUtil.getLog(DsdSessionUtilsImpl.class);
 }
