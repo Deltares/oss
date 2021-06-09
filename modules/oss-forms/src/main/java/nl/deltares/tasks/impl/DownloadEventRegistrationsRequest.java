@@ -63,7 +63,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
         if (getStatus() == available) return status;
         status = running;
-
+        statusMessage = "starting download";
         init();
         try {
             File tempFile = new File(getExportDir(), id + ".tmp");
@@ -76,6 +76,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
             if (registrationRecords.size() == 0) {
                 status = nodata;
+                processedCount = totalCount;
                 fireStateChanged();
                 return status;
             }
@@ -94,7 +95,10 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 writer.println(header);
                 registrationRecords.forEach(recordObjects ->{
 
-                    Registration correspondingDsdArticle = getCorrespondingDsdArticle((Long) recordObjects.get("resourcePrimaryKey"), registrationCache);
+                    ++processedCount;
+                    Long resourcePrimaryKey = (Long) recordObjects.get("resourcePrimaryKey");
+                    statusMessage = "procession resourcePrimaryKey=" + resourcePrimaryKey;
+                    Registration correspondingDsdArticle = getCorrespondingDsdArticle(resourcePrimaryKey, registrationCache);
                     if (correspondingDsdArticle == null) return;
 
                     User correspondingUser = getCorrespondingUser((Long) recordObjects.get("userId"));
@@ -114,6 +118,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 errorMessage = e.getMessage();
                 logger.warn("Error serializing csv content: %s", e);
                 status = terminated;
+                statusMessage = errorMessage;
             }
 
             if (status == available) {
@@ -149,6 +154,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
     private void deleteSelectedArticle() {
 
+        statusMessage = "deleting registrations for " + dsdArticle.getTitle();
         if (dsdArticle instanceof Event) {
             logger.info(String.format("Deleting registration records for Event %s (%s)", dsdArticle.getTitle(), dsdArticle.getArticleId()) );
             dsdSessionUtils.deleteEventRegistrations(dsdArticle.getGroupId(), dsdArticle.getResourceId());
@@ -156,6 +162,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             logger.info(String.format("Deleting registration records for Registration %s (%s)", dsdArticle.getTitle(), dsdArticle.getArticleId()) );
             dsdSessionUtils.deleteRegistrationsFor((Registration) dsdArticle);
         }
+
     }
 
     private User getCorrespondingUser(Long userId) {
@@ -255,8 +262,6 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         BillingInfo billingInfo = getBillingInfo(userPreferences);
         writeBillingInfo(line, billingInfo, user, userAttributeCache);
         writer.println(line);
-
-        processedCount++;
     }
 
     private void writeField(StringBuilder line, String value) {
