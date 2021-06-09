@@ -19,6 +19,7 @@ public abstract class AbstractDataRequest implements DataRequest {
 
     protected File dataFile;
     protected String errorMessage;
+    protected String statusMessage = "";
 
     protected final String id;
     protected final long currentUserId;
@@ -97,7 +98,7 @@ public abstract class AbstractDataRequest implements DataRequest {
         statusJson.put("status", status.toString());
         statusJson.put("progress", processedCount);
         statusJson.put("total", totalCount);
-        statusJson.put("message", status.toString());
+        statusJson.put("message", statusMessage);
         return statusJson.toJSONString();
     }
 
