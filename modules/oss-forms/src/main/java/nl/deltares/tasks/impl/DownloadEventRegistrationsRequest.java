@@ -70,7 +70,9 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             DsdArticle selectedArticle = getJournalArticle(articleId);
 
             Map<Long, Registration> registrationCache = new HashMap<>();
-            List<Map<String, Object>> registrationRecordsToProcess = getRegistrationRecordsLinkedToSelectedArticle(selectedArticle, registrationCache);
+            Event event = getEvent(selectedArticle);
+            List<Map<String, Object>> registrationRecordsToProcess = getRegistrationRecordsLinkedToSelectedArticle(
+                    selectedArticle, event, registrationCache);
 
             totalCount = registrationRecordsToProcess.size();
             if (registrationRecordsToProcess.size() == 0) {
@@ -82,10 +84,6 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             Map<String, List<String>> webinarKeyCache = new HashMap<>();
             Map<Long, Map<String, String>> userAttributeCache = new HashMap<>();
 
-            String eventTitle = null;
-            if (selectedArticle instanceof Event){
-                eventTitle = selectedArticle.getTitle();
-            }
             //Create local session because the servlet session will close after call to endpoint is completed
             try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))){
 
@@ -95,7 +93,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                     header.append(value.name());
                 }
                 writer.println(header);
-                String finalEventTitle = eventTitle;
+                String finalEventTitle = event.getTitle();
                 registrationRecordsToProcess.forEach(recordObjects ->{
 
                     ++processedCount;
@@ -104,17 +102,14 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                     Registration matchingRegistration = registrationCache.get(resourcePrimaryKey);
                     if (matchingRegistration == null) {
                         logger.error(String.format("Cannot find registration for resourcePrimaryKey %s", resourcePrimaryKey));
-                        return;
                     }
 
-                    User matchingUser;
+                    User matchingUser = null;
                     try {
                         matchingUser = UserLocalServiceUtil.getUser((Long) recordObjects.get("userId"));
                     } catch (PortalException e) {
-                        logger.error(String.format("Cannot find registered DSD user %d", recordObjects.get("userId")));
-                        return;
+                        logger.error(String.format("Cannot find registered DSD user %s", recordObjects.get("userId")));
                     }
-
                     writeRecord(writer, recordObjects, finalEventTitle, matchingRegistration, matchingUser,
                             userAttributeCache, webinarKeyCache, locale);
                     if (Thread.interrupted()){
@@ -149,15 +144,13 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         return status;
     }
 
-    private List<Map<String, Object>> getRegistrationRecordsLinkedToSelectedArticle(DsdArticle selectedArticle, Map<Long, Registration> registrationCache) throws PortalException {
+    private List<Map<String, Object>> getRegistrationRecordsLinkedToSelectedArticle(DsdArticle selectedArticle, Event event,
+                                                                                    Map<Long, Registration> registrationCache) throws PortalException {
 
-        Event event;
         if (selectedArticle instanceof Event){
-            event = (Event) selectedArticle;
             List<Registration> eventRegistrations = event.getRegistrations(locale);
             eventRegistrations.forEach(registration -> registrationCache.put(registration.getResourceId(), registration));
         } else if (selectedArticle instanceof Registration) {
-            event = getEvent(selectedArticle);
             registrationCache.put(selectedArticle.getResourceId(), (Registration) selectedArticle);
         } else {
             return Collections.emptyList();
@@ -224,26 +217,45 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
         StringBuilder line = new StringBuilder();
         writeField(line, eventTitle);
-        writeField(line, dsdRegistration.getTitle());
-        writeField(line, DateUtil.getDate((Date) record.get("startTime"),"yyyy-MM-dd", locale));
-        writeField(line, dsdRegistration.getTopic());
-        writeField(line, dsdRegistration.getType());
-        writeField(line, user.getEmailAddress());
-        writeField(line, user.getFirstName());
-        writeField(line, user.getLastName());
-        Map<String, String> userPreferences = Collections.emptyMap();
-        try {
-            userPreferences = JsonContentUtils.parseJsonToMap((String) record.get("userPreferences"));
-        } catch (JSONException e) {
-            logger.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
-            line.append(','); //empty remarks
-            Arrays.stream(KeycloakUtils.BILLING_ATTRIBUTES.values()).iterator().forEachRemaining(billing_attributes -> line.append(',')); //empty billing info
+        if (dsdRegistration == null) {
+            writeField(line, (String) record.get("resourcePrimaryKey"));
+        } else {
+            writeField(line, dsdRegistration.getTitle());
         }
-
-        writeWebinarInfo(line, user, dsdRegistration, courseRegistrationsCache, userPreferences);
-        writeField(line, userPreferences.get("remarks"));
-        BillingInfo billingInfo = getBillingInfo(userPreferences);
-        writeBillingInfo(line, billingInfo, user, userAttributeCache);
+        writeField(line, DateUtil.getDate((Date) record.get("startTime"),"yyyy-MM-dd", locale));
+        if (dsdRegistration == null){
+            writeField(line, null);
+            writeField(line, null);
+        } else {
+            writeField(line, dsdRegistration.getTopic());
+            writeField(line, dsdRegistration.getType());
+        }
+        if (user == null){
+            writeField(line, (String) record.get("userId"));
+            writeField(line,null);
+            writeField(line,null);
+        } else {
+            writeField(line, user.getEmailAddress());
+            writeField(line, user.getFirstName());
+            writeField(line, user.getLastName());
+        }
+        String userPreferencesValue = (String) record.get("userPreferences");
+        if (user == null){
+            writeField(line, userPreferencesValue);
+        } else {
+            Map<String, String> userPreferences = Collections.emptyMap();
+            try {
+                userPreferences = JsonContentUtils.parseJsonToMap(userPreferencesValue);
+            } catch (JSONException e) {
+                logger.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
+                line.append(','); //empty remarks
+                Arrays.stream(KeycloakUtils.BILLING_ATTRIBUTES.values()).iterator().forEachRemaining(billing_attributes -> line.append(',')); //empty billing info
+            }
+            writeWebinarInfo(line, user, dsdRegistration, courseRegistrationsCache, userPreferences);
+            writeField(line, userPreferences.get("remarks"));
+            BillingInfo billingInfo = getBillingInfo(userPreferences);
+            writeBillingInfo(line, billingInfo, user, userAttributeCache);
+        }
         writer.println(line);
     }
 
