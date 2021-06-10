@@ -100,15 +100,12 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                     Long resourcePrimaryKey = (Long) recordObjects.get("resourcePrimaryKey");
                     statusMessage = "procession resourcePrimaryKey=" + resourcePrimaryKey;
                     Registration matchingRegistration = registrationCache.get(resourcePrimaryKey);
-                    if (matchingRegistration == null) {
-                        logger.error(String.format("Cannot find registration for resourcePrimaryKey %s", resourcePrimaryKey));
-                    }
 
                     User matchingUser = null;
                     try {
                         matchingUser = UserLocalServiceUtil.getUser((Long) recordObjects.get("userId"));
                     } catch (PortalException e) {
-                        logger.error(String.format("Cannot find registered DSD user %s", recordObjects.get("userId")));
+                        //
                     }
                     writeRecord(writer, recordObjects, finalEventTitle, matchingRegistration, matchingUser,
                             userAttributeCache, webinarKeyCache, locale);
