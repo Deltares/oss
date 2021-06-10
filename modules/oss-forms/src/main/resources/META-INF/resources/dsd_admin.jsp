@@ -203,6 +203,9 @@
         updateProgressBar : function (statusMsg) {
             var progressBar = $('#progressBar');
             if (progressBar.is(':visible')){
+                //disable each time. It is possible that user goes to different page and comes back
+                $('#deleteButton').prop('disabled', true);
+                $('#downloadButton').prop('disabled', true);
                 progressBar.empty();
                 new A.ProgressBar({
                     boundingBox: '#progressBar',
