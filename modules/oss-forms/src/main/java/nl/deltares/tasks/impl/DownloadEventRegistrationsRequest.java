@@ -215,7 +215,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         StringBuilder line = new StringBuilder();
         writeField(line, eventTitle);
         if (dsdRegistration == null) {
-            writeField(line, (String) record.get("resourcePrimaryKey"));
+            writeField(line, record.get("resourcePrimaryKey").toString());
         } else {
             writeField(line, dsdRegistration.getTitle());
         }
