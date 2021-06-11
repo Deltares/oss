@@ -290,7 +290,6 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             webinarUtils = webinarUtilsFactory.newInstance(registration);
         } catch (Exception e) {
             logger.error(String.format("Failed to get utils for webinar provider %s: %s", ((SessionRegistration) registration).getWebinarProvider(), e.getMessage()));
-            line.append(','); //webinarProvider
             line.append(','); //registrationStatus
             return;
         }
