@@ -56,7 +56,7 @@ public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
         HttpURLConnection connection = getConnection(subscriptionsPath, "GET", getHeader("application/json"));
         //get response
         checkResponse(connection);
-        String jsonResponse = readAll(connection.getInputStream());
+        String jsonResponse = readAll(connection);
 
         JSONObject jsonObject = JsonContentUtils.parseContent(jsonResponse);
         JSONArray students = jsonObject.getJSONArray("students");
@@ -98,6 +98,7 @@ public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
         writePostParameters(connection, params);
 
         checkResponse(connection);
+        connection.disconnect();
 
     }
 
@@ -108,7 +109,7 @@ public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
 
         //get response
         checkResponse(connection);
-        String jsonResponse = readAll(connection.getInputStream());
+        String jsonResponse = readAll(connection);
 
         Map<String, String> response = JsonContentUtils.parseJsonToMap(jsonResponse);
         String result = response.get("result");
@@ -121,7 +122,7 @@ public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
         HttpURLConnection connection = getConnection(isSubscribedPath, "GET", getHeader("application/json"));
         //get response
         checkResponse(connection);
-        String jsonResponse = readAll(connection.getInputStream());
+        String jsonResponse = readAll(connection);
 
         Map<String, String> response = JsonContentUtils.parseJsonToMap(jsonResponse);
         String result = response.get("result");
@@ -142,14 +143,23 @@ public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
         String subscribePath = StringBundler.concat(getBasePath(), "subscribe/", user.getScreenName(), "/",  courseId);
         HttpURLConnection connection = getConnection(subscribePath, "POST", getHeader("application/x-www-form-urlencoded"));
 
-        return checkResponse(connection);
+        try {
+            return checkResponse(connection);
+        } finally {
+            connection.disconnect();
+        }
     }
 
     private int unSubscribe(User user, String courseId) throws IOException {
 
         String subscribePath = StringBundler.concat(getBasePath(), "unsubscribe/", user.getScreenName(), "/", courseId);
         HttpURLConnection connection = getConnection(subscribePath, "POST", getHeader("application/x-www-form-urlencoded"));
-        return checkResponse(connection);
+
+        try {
+            return checkResponse(connection);
+        } finally {
+            connection.disconnect();
+        }
     }
 
     private String getBasePath() {
