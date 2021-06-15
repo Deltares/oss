@@ -60,42 +60,54 @@ public abstract class HttpClientUtils {
         int responseCode = urlConnection.getResponseCode();
         if (responseCode > 299) {
             throw new IOException("Err" +
-                    "or " + responseCode + ": " + getErrorMessage(urlConnection));
+                    "or " + responseCode + ": " + readError(urlConnection));
         }
         return responseCode;
     }
 
-    private static String getErrorMessage(HttpURLConnection urlConnection) throws IOException {
-
-        int responseCode = urlConnection.getResponseCode();
-        InputStream errorStream = urlConnection.getErrorStream();
-        if (responseCode == 500 && errorStream != null) {
-            return readAll(urlConnection.getErrorStream());
-        } else {
-            return urlConnection.getResponseMessage();
+    public static String readAll(HttpURLConnection connection) throws IOException {
+        try (InputStream is = connection.getInputStream()) {
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+            // StandardCharsets.UTF_8.name() > JDK 7
+            return result.toString("UTF-8");
+        } finally {
+            connection.disconnect();
         }
     }
 
-    public static String readAll(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = inputStream.read(buffer)) != -1) {
-            result.write(buffer, 0, length);
+    public static String readError(HttpURLConnection connection) throws IOException {
+        try (InputStream is = connection.getErrorStream()) {
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+            // StandardCharsets.UTF_8.name() > JDK 7
+            return result.toString("UTF-8");
+        } finally {
+            connection.disconnect();
         }
-        // StandardCharsets.UTF_8.name() > JDK 7
-        return result.toString("UTF-8");
     }
+    public static byte[] readAllBytes(HttpURLConnection connection) throws IOException {
+        try (InputStream is = connection.getInputStream()){
 
-    public static byte[] readAllBytes(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = inputStream.read(buffer)) != -1) {
-            result.write(buffer, 0, length);
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+            // StandardCharsets.UTF_8.name() > JDK 7
+            return result.toByteArray();
+        } finally {
+            connection.disconnect();
         }
-        // StandardCharsets.UTF_8.name() > JDK 7
-        return result.toByteArray();
     }
 
     public static String getBasicAuthorization(String username, String password) {

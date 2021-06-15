@@ -93,7 +93,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
 
         //get response
         checkResponse(connection);
-        return readAllBytes(connection.getInputStream());
+        return readAllBytes(connection);
     }
 
     @Override
@@ -116,7 +116,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         HttpURLConnection connection = getConnection(getKeycloakUsersPath() + "?email=" + email, "GET", headers);
 
         checkResponse(connection);
-        String jsonResponse = readAll(connection.getInputStream());
+        String jsonResponse = readAll(connection);
         return parseUserAttributes(jsonResponse);
     }
 
@@ -177,7 +177,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         HttpURLConnection connection = getConnection(getKeycloakUsersPath() + "?email=" + email, "GET", headers);
         checkResponse(connection);
 
-        String jsonResponse = readAll(connection.getInputStream());
+        String jsonResponse = readAll(connection);
         //Keycloak wraps all attributes in a json array. we need to remove this
         JSONObject userObject = getJsonObject(jsonResponse);
         if (userObject == null) return -1;
@@ -201,7 +201,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         HttpURLConnection connection = getConnection(getKeycloakUsersPath() + "?email=" + email, "GET", headers);
 
         checkResponse(connection);
-        String jsonResponse = readAll(connection.getInputStream());
+        String jsonResponse = readAll(connection);
         //Keycloak wraps all attributes in a json array. we need to remove this
         JSONObject userObject = getJsonObject(jsonResponse);
         if (userObject == null) return;
@@ -239,7 +239,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         headers.put("Authorization", "Bearer " + getAccessToken());
         HttpURLConnection connection = getConnection(getAdminUserMailingsPath() + "/subscriptions?email=" + email, "GET", headers);
         checkResponse(connection);
-        String jsonResponse = readAll(connection.getInputStream());
+        String jsonResponse = readAll(connection);
         //Keycloak wraps all attributes in a json array. we need to remove this
         JSONArray subscriptions = getJsonObjects(jsonResponse);
 
@@ -316,7 +316,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         try {
             HttpURLConnection connection = getConnection(getTokenPath(), "POST", headers);
             writePostParameters(connection, getOAuthParameters());
-            String jsonResponse = readAll(connection.getInputStream());
+            String jsonResponse = readAll(connection);
             Map<String, String> parsedToken = JsonContentUtils.parseJsonToMap(jsonResponse);
 
             if (CACHE_TOKEN) cacheAccessToken(CACHED_TOKEN_KEY, CACHED_EXPIRY_KEY, parsedToken);
