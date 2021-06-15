@@ -75,9 +75,12 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         //open connection
         HttpURLConnection connection = getConnection(registrationPath, "GET", headers);
         //get response
-        if (connection.getResponseCode() == 404) return false; //user not found for registrantKey
+        if (connection.getResponseCode() == 404) {
+            connection.disconnect();
+            return false; //user not found for registrantKey
+        }
 
-        String jsonResponse = readAll(connection.getInputStream());
+        String jsonResponse = readAll(connection);
 
         List<Map<String, String>> mapsList = new ArrayList<>();
         if (registrantKey != null) {
@@ -114,7 +117,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
 
         //get response
         checkResponse(connection);
-        String jsonResponse = readAll(connection.getInputStream());
+        String jsonResponse = readAll(connection);
         Map<String, String> parseJsonToMap = JsonContentUtils.parseJsonToMap(jsonResponse);
         if (parseJsonToMap.containsKey("registrantKey")) registrationProperties.put("registrantKey", parseJsonToMap.get("registrantKey"));
         return 0;
@@ -143,7 +146,11 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         HttpURLConnection connection = getConnection(unregisterPath, "DELETE", headers);
 
         //get response
-        return checkResponse(connection);
+        try {
+            return checkResponse(connection);
+        } finally {
+            connection.disconnect();
+        }
     }
 
     private String getRegistrantKey(User user, String webinarKey) {
@@ -158,7 +165,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
             //open connection
             HttpURLConnection connection = getConnection(registrationPath, "GET", headers);
             //get response
-            String jsonResponse = readAll(connection.getInputStream());
+            String jsonResponse = readAll(connection);
 
             List<Map<String, String>> mapsList = new ArrayList<>(JsonContentUtils.parseJsonArrayToMap(jsonResponse));
             for (Map<String, String> registrant : mapsList) {
@@ -185,7 +192,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         //open connection
         HttpURLConnection connection = getConnection(registrationPath, "GET", headers);
         //get response
-        String jsonResponse = readAll(connection.getInputStream());
+        String jsonResponse = readAll(connection);
 
         List<Map<String, String>> mapsList = new ArrayList<>(JsonContentUtils.parseJsonArrayToMap(jsonResponse));
         ArrayList<String> emails = new ArrayList<>();
@@ -241,7 +248,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         try {
             HttpURLConnection connection = getConnection(getTokenPath(), "POST", headers);
             writePostParameters(connection, getOAuthParameters());
-            String jsonResponse = readAll(connection.getInputStream());
+            String jsonResponse = readAll(connection);
             Map<String, String> parsedToken = JsonContentUtils.parseJsonToMap(jsonResponse);
 
             String organizer_key = parsedToken.get("organizer_key");
