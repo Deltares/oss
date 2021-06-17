@@ -76,18 +76,17 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
         if (keycloakUtils.isActive()) {
             contextObjects.put("user_mailing_url", appendWithReferrer(keycloakUtils.getUserMailingPath(), themeDisplay));
             contextObjects.put("user_account_url", appendWithReferrer(keycloakUtils.getAccountPath(), themeDisplay));
-            contextObjects.put("user_avatar_url", keycloakUtils.getAvatarPath());
-        } else {
-            User user = themeDisplay.getUser();
-            long portraitId = user.getPortraitId();
-            if (portraitId > 0) {
-                try {
-                    contextObjects.put("user_avatar_url", user.getPortraitURL(themeDisplay));
-                } catch (PortalException e) {
-                    //
-                }
+        }
+        User user = themeDisplay.getUser();
+        long portraitId = user.getPortraitId();
+        if (portraitId > 0) {
+            try {
+                contextObjects.put("user_avatar_url", user.getPortraitURL(themeDisplay));
+            } catch (PortalException e) {
+                //
             }
         }
+
 
         //set languages
         setLanguages(contextObjects, themeDisplay);
