@@ -62,10 +62,10 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 		User user = themeDisplay.getUser();
 		if (!user.isDefaultUser()) {
             try {
-				Map<String, String> attributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
+				Map<String, String> attributes = keycloakUtils.getUserAttributesFromCacheOrKeycloak(user);
 				request.setAttribute("attributes", attributes);
             } catch (Exception e) {
-				SessionErrors.add(request, "update-attributes-failed", "Error reading attributes from keycloak! Check if keycloak is initialized: " + keycloakUtils.getAccountPath());
+				SessionErrors.add(request, "udate-attributes-failed", "Error reading attributes from keycloak! Check if keycloak is initialized: " + keycloakUtils.getAccountPath());
 				request.setAttribute("attributes", new HashMap<>());
 			}
 			try {

@@ -1,6 +1,8 @@
 package nl.deltares.portal.utils;
 
 
+import com.liferay.portal.kernel.model.User;
+
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +55,11 @@ public interface KeycloakUtils {
 
     int updateUserAttributes(String email, Map<String, String> attributes) throws Exception;
 
+    int updateUserAttributesToCacheAndKeycloak(User user, Map<String, String> attributes) throws Exception;
+
     Map<String, String> getUserAttributes(String email) throws Exception;
+
+    Map<String, String> getUserAttributesFromCacheOrKeycloak(User user) throws Exception;
 
     int registerUserLogin(String email, String siteId) throws Exception;
 

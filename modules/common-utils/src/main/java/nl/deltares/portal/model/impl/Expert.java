@@ -60,21 +60,22 @@ public class Expert extends AbsDsdArticle {
     }
 
     private void fillMissingValues() {
+
         try {
-        if (name == null) {
             User user = UserLocalServiceUtil.getUserByEmailAddress(getCompanyId(), email);
-            name = user.getFullName();
-        }
+            if (name == null) {
+                name = user.getFullName();
+            }
+
+            Map<String, String> userAttributes = getUserAttributes(user);
+            if (jobTitle == null){
+                jobTitle = userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.jobTitle.name(), "");
+            }
+            if (company == null) {
+                company = userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_name.name(), "" );
+            }
         } catch (PortalException e) {
             //
-        }
-
-        Map<String, String> userAttributes = getUserAttributes();
-        if (jobTitle == null){
-            jobTitle = userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.jobTitle.name(), "");
-        }
-        if (company == null) {
-            company = userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_name.name(), "" );
         }
     }
 
@@ -92,9 +93,9 @@ public class Expert extends AbsDsdArticle {
         return user;
     }
 
-    private Map<String, String> getUserAttributes(){
+    private Map<String, String> getUserAttributes(User user){
         try {
-            return keycloakUtils.getUserAttributes(email);
+            return keycloakUtils.getUserAttributesFromCacheOrKeycloak(user);
         } catch (Exception e) {
             return Collections.emptyMap();
         }
