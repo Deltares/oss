@@ -9,6 +9,7 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.DateUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import nl.deltares.dsd.model.BillingInfo;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.Event;
@@ -34,25 +35,26 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     private final DsdSessionUtils dsdSessionUtils;
     private final KeycloakUtils keycloakUtils;
     private final Group group;
-    private final Locale locale;
     private final DsdJournalArticleUtils dsdJournalArticleUtils;
     private final boolean deleteOnCompletion;
     private final WebinarUtilsFactory webinarUtilsFactory;
+    private final Locale locale;
 
-    public DownloadEventRegistrationsRequest(String id, long currentUser, String articleId, Group siteGroup, Locale locale,
+    public DownloadEventRegistrationsRequest(String id, long currentUser, String articleId, Group siteGroup,
                                              DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils,
                                              KeycloakUtils keycloakUtils, DsdJournalArticleUtils dsdJournalArticleUtils,
                                              WebinarUtilsFactory webinarUtilsFactory, boolean delete) throws IOException {
         super(id, currentUser);
         this.articleId = articleId;
         this.group = siteGroup;
-        this.locale = locale;
+
         this.dsdParserUtils = dsdParserUtils;
         this.dsdSessionUtils = dsdSessionUtils;
         this.keycloakUtils = keycloakUtils;
         this.dsdJournalArticleUtils = dsdJournalArticleUtils;
         this.webinarUtilsFactory = webinarUtilsFactory;
         this.deleteOnCompletion = delete;
+        this.locale = LocaleUtil.fromLanguageId(siteGroup.getDefaultLanguageId());
 
     }
 
@@ -335,13 +337,14 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
         Map<String, String> userAttributes = userAttributeCache.get(user.getUserId());
         if (billingInfo.isUseOrganization() && userAttributes == null){
+            //Get attributes from keycloak attributes.
             try {
-                userAttributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
+                userAttributes = keycloakUtils.getUserAttributesFromCacheOrKeycloak(user);
+                userAttributeCache.put(user.getUserId(), userAttributes);
             } catch (Exception e) {
                 logger.error(String.format("Cannot find attributes for DSD user %d: %s", user.getUserId(), e.getMessage()));
-                userAttributes = new HashMap<>();
+                userAttributes = Collections.emptyMap();
             }
-            userAttributeCache.put(user.getUserId(), userAttributes);
         }
         //Write billing information. If no billing info then get values from user attributes
         for (KeycloakUtils.BILLING_ATTRIBUTES key : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
