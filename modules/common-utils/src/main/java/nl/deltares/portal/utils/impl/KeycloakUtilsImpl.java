@@ -316,24 +316,34 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         try {
             HttpURLConnection connection = getConnection(getTokenPath(), "POST", headers);
             writePostParameters(connection, getOAuthParameters());
+            checkResponse(connection);
             String jsonResponse = readAll(connection);
             Map<String, String> parsedToken = JsonContentUtils.parseJsonToMap(jsonResponse);
 
-            if (CACHE_TOKEN) cacheAccessToken(CACHED_TOKEN_KEY, CACHED_EXPIRY_KEY, parsedToken);
+            if (CACHE_TOKEN) {
+                cacheAccessTokens("keycloak", parsedToken);
+            }
             return parsedToken.get("access_token");
         } catch (IOException | JSONException e){
+            clearAccessTokens("keycloak");
             LOG.error("Failed to get access token: " + e.getMessage());
         }
 
         return null;
     }
 
-
     private Map<String, String> getOAuthParameters() {
         Map<String,String> pathParameters = new HashMap<>();
-        pathParameters.put("grant_type", "client_credentials");
         pathParameters.put("client_id", getProperty("keycloak.clientid"));
         pathParameters.put("client_secret", getProperty("keycloak.clientsecret"));
+
+        final String refreshToken = getCachedToken("keycloak.refresh.token", "keycloak.refresh.expirytime");
+        if (refreshToken != null){
+            pathParameters.put("grant_type", "refresh_token"); // use refresh token to close previous session
+            pathParameters.put("refresh_token", refreshToken); // use refresh token to close previous session
+        } else {
+            pathParameters.put("grant_type", "client_credentials");
+        }
         return pathParameters;
     }
 

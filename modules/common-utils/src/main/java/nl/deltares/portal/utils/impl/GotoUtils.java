@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class GotoUtils extends HttpClientUtils implements WebinarUtils {
     private static final Log LOG = LogFactoryUtil.getLog(GotoUtils.class);
@@ -27,8 +26,9 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
     private final String CACHED_REFRESH_EXPIRY_KEY;
     private final String CACHED_REFRESH_TOKEN_KEY;
     private final String CACHED_ORGANIZER_KEY;
-    private final String CACHED_TOKEN_KEY;
+    private final String CACHED_TOKEN_PREFIX;
     private final String CACHED_EXPIRY_KEY;
+    private final String CACHED_TOKEN_KEY;
     private final boolean CACHE_TOKEN;
 
 
@@ -45,11 +45,12 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         if (clientId == null || clientId.isEmpty()){
             throw new IOException("No GOTO clientId configured! Please check the WebinarConfigurations options.");
         }
-        CACHED_REFRESH_TOKEN_KEY = clientId + ".refresh";
-        CACHED_REFRESH_EXPIRY_KEY = clientId + ".refresh.expirytime";
-        CACHED_ORGANIZER_KEY = clientId + ".organizer";
-        CACHED_TOKEN_KEY = clientId;
-        CACHED_EXPIRY_KEY = clientId + ".expirytime";
+        CACHED_TOKEN_PREFIX = clientId;
+        CACHED_REFRESH_TOKEN_KEY = CACHED_TOKEN_PREFIX + ".refresh.token";
+        CACHED_REFRESH_EXPIRY_KEY = CACHED_TOKEN_PREFIX + ".refresh.expirytime";
+        CACHED_ORGANIZER_KEY = CACHED_TOKEN_PREFIX + ".organizer";
+        CACHED_TOKEN_KEY = CACHED_TOKEN_PREFIX + ".token";
+        CACHED_EXPIRY_KEY = CACHED_TOKEN_PREFIX + ".expirytime";
         CACHE_TOKEN = configuration.gotoCacheToken();
     }
 
@@ -252,19 +253,15 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
             Map<String, String> parsedToken = JsonContentUtils.parseJsonToMap(jsonResponse);
 
             String organizer_key = parsedToken.get("organizer_key");
-            String refresh_token = parsedToken.get("refresh_token");
             if (CACHE_TOKEN){
                 setCachedToken(CACHED_ORGANIZER_KEY, null, organizer_key, 0);
-                cacheAccessToken(CACHED_TOKEN_KEY, CACHED_EXPIRY_KEY, parsedToken);
-                if (refresh_token != null) {
-                    long refreshExpTimeMillis = System.currentTimeMillis() + TimeUnit.DAYS.toMillis(20);
-                    setCachedToken(CACHED_REFRESH_TOKEN_KEY, CACHED_REFRESH_EXPIRY_KEY, refresh_token, refreshExpTimeMillis);
-                }
+                cacheAccessTokens(CACHED_TOKEN_PREFIX, parsedToken);
             }
             this.organizer_key = organizer_key; //for if cache is disabled
 
             return parsedToken.get("access_token");
         } catch (IOException | JSONException e){
+            clearAccessTokens(CACHED_TOKEN_PREFIX);
             LOG.error("Failed to get access token: " + e.getMessage());
         }
 

@@ -114,15 +114,29 @@ public abstract class HttpClientUtils {
         return  Base64.getEncoder().encodeToString(String.format("%s:%s", username, password).getBytes());
     }
 
-    public static boolean cacheAccessToken(String cachedTokenKey, String cachedExpiryKey, Map<String, String> parsedToken) {
-        String accessToken = parsedToken.get("access_token");
+    public static void clearAccessTokens(String prefix){
+        removeCachedToken(prefix + ".token");
+        removeCachedToken(prefix + ".expirytime");
+        removeCachedToken(prefix + ".refresh.token");
+        removeCachedToken(prefix + ".refresh.expirytime");
+    }
+
+    public static void cacheAccessTokens(String prefix, Map<String, String> parsedToken) {
         String expires_in = parsedToken.get("expires_in");
-        if (expires_in != null) {
-            long expMillis = Long.parseLong(expires_in) * 1000 - 30000;
-            long expTimeMillis = expMillis + System.currentTimeMillis();
-            return setCachedToken(cachedTokenKey, cachedExpiryKey, accessToken, expTimeMillis);
+        if (expires_in == null) return;
+        long expMillis = Long.parseLong(expires_in) * 1000;
+        long expTimeMillis = expMillis + System.currentTimeMillis();
+        setCachedToken(prefix + ".token",  prefix + ".expirytime", parsedToken.get("access_token"), expTimeMillis);
+
+        String refresh_token = parsedToken.get("refresh_token");
+        String refresh_expires_in = parsedToken.get("refresh_expires_in");
+        if (refresh_expires_in != null) {
+            expMillis = Long.parseLong(refresh_expires_in) * 1000;
+            expTimeMillis = expMillis + System.currentTimeMillis();
         }
-        return false;
+        if (refresh_token != null) {
+            setCachedToken(prefix + ".refresh.token", prefix + ".refresh.expirytime", refresh_token, expTimeMillis);
+        }
     }
 
     public static String getCachedToken(String tokenKey, String expiryKey) {
@@ -137,6 +151,11 @@ public abstract class HttpClientUtils {
             }
         }
         return null;
+    }
+
+    public static void removeCachedToken(String key){
+        PortalCache<String, Serializable> keycloakCache = MultiVMPoolUtil.getPortalCache("deltares", true);
+        keycloakCache.remove(key);
     }
 
     public static boolean setCachedToken(String tokenKey, String expiryKey, String token, long expiryTimeMillis){
