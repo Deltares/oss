@@ -71,7 +71,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             case "register":
                 Map<String, String> keycloakAttributes = getKeycloakAttributes(actionRequest);
                 if (success) {
-                    success = updateUserAttributes(actionRequest, user.getEmailAddress(), keycloakAttributes);
+                    success = updateUserAttributes(actionRequest, user, keycloakAttributes);
                 }
                 if (success){
                     success = registerUser(actionRequest, user, keycloakAttributes, registrationRequest);
@@ -281,12 +281,12 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         return billingInfo;
     }
 
-    private boolean updateUserAttributes(ActionRequest actionRequest, String emailAddress, Map<String, String> keycloakAttributes) {
+    private boolean updateUserAttributes(ActionRequest actionRequest, User user, Map<String, String> keycloakAttributes) {
         try {
-            return keycloakUtils.updateUserAttributes(emailAddress, keycloakAttributes) < 300;
+            return keycloakUtils.updateUserAttributesToCacheAndKeycloak(user, keycloakAttributes) < 300;
         } catch (Exception e) {
             SessionErrors.add(actionRequest, "update-attributes-failed", e.getMessage());
-            LOG.debug("Could not update keycloak attributes for user [" + emailAddress + "]", e);
+            LOG.debug("Could not update keycloak attributes for user [" + user.getEmailAddress() + "]", e);
         }
         return false;
     }

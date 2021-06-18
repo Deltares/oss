@@ -1,5 +1,6 @@
 package nl.deltares.portal.events;
 
+import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.portal.kernel.events.ActionException;
 import com.liferay.portal.kernel.events.LifecycleAction;
 import com.liferay.portal.kernel.events.LifecycleEvent;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Principal;
+import java.util.Map;
 
 /**
  * @author rooij_e
@@ -78,6 +80,22 @@ public class PostLoginAction implements LifecycleAction {
 				LOG.warn(String.format("Error registering user %s to site: %s", user.getEmailAddress(), e.getMessage()), e);
 			}
 
+			try {
+				final Map<String, String> userAttributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
+				final ExpandoBridge expandoBridge = user.getExpandoBridge();
+				for (KeycloakUtils.ATTRIBUTES attribute : KeycloakUtils.ATTRIBUTES.values()) {
+					final String value = userAttributes.get(attribute.name());
+					if (expandoBridge.hasAttribute(attribute.name())) {
+						expandoBridge.setAttribute(attribute.name(), value, false);
+					} else {
+						if (value == null) continue;
+						expandoBridge.addAttribute(attribute.name(), false);
+						expandoBridge.setAttribute(attribute.name(), value, false);
+					}
+				}
+			} catch (Exception e){
+				LOG.warn(String.format("Error updating address for user %s: %s", user.getEmailAddress(), e.getMessage()), e);
+			}
 		}
 
 	}

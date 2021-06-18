@@ -288,7 +288,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
         Map<String, String> userAttributes;
         try {
-            userAttributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
+            userAttributes = keycloakUtils.getUserAttributesFromCacheOrKeycloak(user);
         } catch (Exception e) {
             throw new PortalException(e);
         }
