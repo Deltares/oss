@@ -2,8 +2,10 @@ package nl.deltares.search.facet.presentation;
 
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.util.DDMIndexer;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 import nl.deltares.portal.utils.DDMStructureUtil;
@@ -24,8 +26,9 @@ public class PresentationFacetPortletSharedSearchContributor implements PortletS
 
     @Override
     public void contribute(PortletSharedSearchSettings portletSharedSearchSettings) {
-        Locale locale = portletSharedSearchSettings.getThemeDisplay().getLocale();
-        long groupId = portletSharedSearchSettings.getThemeDisplay().getScopeGroupId();
+        final Group scopeGroup = portletSharedSearchSettings.getThemeDisplay().getScopeGroup();
+        long groupId = scopeGroup.getGroupId();
+        final Locale siteDefaultLocale = LocaleUtil.fromLanguageId(scopeGroup.getDefaultLanguageId());
         Optional<String> hasPresentations = portletSharedSearchSettings.getParameter("hasPresentations");
 
         boolean onlyShowPresentations = false;
@@ -35,7 +38,7 @@ public class PresentationFacetPortletSharedSearchContributor implements PortletS
 
         if (onlyShowPresentations) {
             Optional<DDMStructure> ddmStructureOptional = _ddmStructureUtil
-                    .getDDMStructureByName(groupId, "SESSION", locale);
+                    .getDDMStructureByName(groupId, "SESSION", siteDefaultLocale);
             if (ddmStructureOptional.isPresent()) {
                 long ddmStructureId = ddmStructureOptional.get().getStructureId();
                 String fieldName = _ddmIndexer.encodeName(ddmStructureId, "hasPresentations");

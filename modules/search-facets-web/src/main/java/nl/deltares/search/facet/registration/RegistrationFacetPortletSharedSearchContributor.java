@@ -5,6 +5,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
@@ -14,6 +15,7 @@ import nl.deltares.search.constans.FacetPortletKeys;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import java.util.Locale;
 import java.util.Optional;
 
 @Component(
@@ -28,11 +30,13 @@ public class RegistrationFacetPortletSharedSearchContributor implements PortletS
     public void contribute(PortletSharedSearchSettings portletSharedSearchSettings) {
         ThemeDisplay themeDisplay = portletSharedSearchSettings.getThemeDisplay();
         String[] structureKeys = getStructureKeys(portletSharedSearchSettings);
+
+        final Locale siteDefaultLocale = LocaleUtil.fromLanguageId(themeDisplay.getScopeGroup().getDefaultLanguageId());
         _dsdJournalArticleUtils.contributeDsdRegistrations(
                 themeDisplay.getScopeGroupId(),
                 structureKeys,
                 portletSharedSearchSettings.getSearchContext(),
-                themeDisplay.getLocale());
+                siteDefaultLocale);
     }
 
     private String[] getStructureKeys(PortletSharedSearchSettings portletSharedSearchSettings) {
