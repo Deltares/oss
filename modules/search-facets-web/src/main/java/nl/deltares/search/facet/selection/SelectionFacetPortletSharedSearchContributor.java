@@ -4,9 +4,11 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.search.facet.Facet;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 import nl.deltares.portal.utils.DDMStructureUtil;
@@ -26,9 +28,9 @@ public class SelectionFacetPortletSharedSearchContributor implements PortletShar
 
     @Override
     public void contribute(PortletSharedSearchSettings portletSharedSearchSettings) {
-        Locale locale = portletSharedSearchSettings.getThemeDisplay().getLocale();
-        long groupId = portletSharedSearchSettings.getThemeDisplay().getScopeGroupId();
-
+        final Group scopeGroup = portletSharedSearchSettings.getThemeDisplay().getScopeGroup();
+        long groupId = scopeGroup.getGroupId();
+        final Locale siteDefaultLocale = LocaleUtil.fromLanguageId(scopeGroup.getDefaultLanguageId());
         SelectionFacetConfiguration configuration;
         try {
             configuration = _configurationProvider.getPortletInstanceConfiguration(
@@ -48,10 +50,10 @@ public class SelectionFacetPortletSharedSearchContributor implements PortletShar
             selection = selectionOptional.get();
 
 
-            Optional<DDMStructure> ddmStructureOptional = _ddmStructureUtil.getDDMStructureByName(groupId, structureName, locale);
+            Optional<DDMStructure> ddmStructureOptional = _ddmStructureUtil.getDDMStructureByName(groupId, structureName, siteDefaultLocale);
             if (ddmStructureOptional.isPresent()){
                 long ddmStructureId = ddmStructureOptional.get().getStructureId();
-                String typeField = _ddmIndexer.encodeName(ddmStructureId, fieldName, locale);
+                String typeField = _ddmIndexer.encodeName(ddmStructureId, fieldName, siteDefaultLocale);
                 portletSharedSearchSettings.addFacet(buildFacet(typeField, selection, portletSharedSearchSettings));
             }
         }

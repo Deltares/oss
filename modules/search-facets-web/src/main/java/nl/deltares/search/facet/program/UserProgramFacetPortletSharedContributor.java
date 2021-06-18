@@ -2,10 +2,12 @@ package nl.deltares.search.facet.program;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
@@ -19,6 +21,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Component(
@@ -31,7 +34,9 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
     public void contribute(PortletSharedSearchSettings portletSharedSearchSettings) {
         ThemeDisplay themeDisplay = portletSharedSearchSettings.getThemeDisplay();
         User user = themeDisplay.getUser();
-        long groupId = themeDisplay.getScopeGroupId();
+        final Group scopeGroup = portletSharedSearchSettings.getThemeDisplay().getScopeGroup();
+        long groupId = scopeGroup.getGroupId();
+        final Locale siteDefaultLocale = LocaleUtil.fromLanguageId(scopeGroup.getDefaultLanguageId());
 
         try {
             DSDSiteConfiguration configuration = _configurationProvider.
@@ -39,7 +44,7 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
 
             String eventId = String.valueOf(configuration.eventId());
 
-            Event event = dsdParserUtils.getEvent(groupId, eventId, themeDisplay.getLocale());
+            Event event = dsdParserUtils.getEvent(groupId, eventId, siteDefaultLocale);
 
             List<String> entryClassPKs = dsdSessionUtils.getUserRegistrations(user, event)
                     .stream()

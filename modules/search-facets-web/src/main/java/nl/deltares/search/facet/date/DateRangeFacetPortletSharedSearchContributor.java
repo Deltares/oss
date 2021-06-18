@@ -2,9 +2,11 @@ package nl.deltares.search.facet.date;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.util.DateUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
@@ -28,8 +30,9 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
 
     @Override
     public void contribute(PortletSharedSearchSettings portletSharedSearchSettings) {
-        Locale locale = portletSharedSearchSettings.getThemeDisplay().getLocale();
-        long groupId = portletSharedSearchSettings.getThemeDisplay().getScopeGroupId();
+        final Group scopeGroup = portletSharedSearchSettings.getThemeDisplay().getScopeGroup();
+        long groupId = scopeGroup.getGroupId();
+        final Locale siteDefaultLocale = LocaleUtil.fromLanguageId(scopeGroup.getDefaultLanguageId());
 
         Date startDate = getDate(portletSharedSearchSettings, "startDate");
         Date endDate = getDate(portletSharedSearchSettings, "endDate");
@@ -41,7 +44,7 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
         String[] structureKeys = getStructureKeys(portletSharedSearchSettings);
         String dateFieldName = getDsdConfiguredValue("dsdRegistrationDateField", portletSharedSearchSettings);
         _dsDsdJournalArticleUtils.contributeDsdDateRangeRegistrations(
-                groupId, startDate, endDate, structureKeys, dateFieldName, portletSharedSearchSettings.getSearchContext(), locale);
+                groupId, startDate, endDate, structureKeys, dateFieldName, portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
 
     }
 
