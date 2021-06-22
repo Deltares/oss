@@ -125,11 +125,11 @@
                                 <a href="${displayContext.getUpdateURL(renderRequest)}" class="btn-lg btn-primary" role="button" aria-pressed="true">
                                      ${languageUtil.get(locale, "registrationform.update")}
                                 </a>
-
+                                &nbsp;
                                 <#assign joinLink = registration.getJoinLink() />
                                 <#if joinLink?? && joinLink != "">
                                 <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button" aria-pressed="true">
-                                     ${languageUtil.get(locale, "registrationform.update")}
+                                     ${languageUtil.get(locale, "registrationform.join")}
                                 </a>
                                 </#if>
                             <#else>
