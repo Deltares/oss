@@ -216,8 +216,8 @@
     };
 
     updateBadge = function() {
-        let showTitle = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.badge_title_setting.name()%>"]:checked').val();
-        let nameSetting = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.badge_name_setting.name() %>"]:checked').val();
+        let showTitle = $('input[name="<portlet:namespace /><%= DsdUserUtils.ATTRIBUTES.badge_title_setting.name()%>"]:checked').val();
+        let nameSetting = $('input[name="<portlet:namespace /><%= DsdUserUtils.ATTRIBUTES.badge_name_setting.name() %>"]:checked').val();
         let titles = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.academicTitle.name() %>"]').val();
         let firstName = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.first_name.name() %>"]').val();
         let initials = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.initials.name() %>"]').val();
@@ -246,16 +246,12 @@
     updatePaymentAddress = function() {
         let checked = this.checked;
 
-        let paymentNameInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_name.name() %>"]');
-        let paymentAddressInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_address.name() %>"]');
-        let paymentPostCodeInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_postal.name() %>"]');
-        let paymentCityInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_city.name() %>"]');
-        let paymentCountryInput = $('select[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_country.name() %>"]');
-        let paymentEmailInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_email.name() %>"]');
-        let paymentVatInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_vat.name() %>"]');
-        let paymentRefInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.BILLING_ATTRIBUTES.billing_reference.name() %>"]');
-        let userVatInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_vat.name() %>"]');
-        let userRefInput = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.pay_reference.name() %>"]');
+        let paymentNameInput = $('input[name="<portlet:namespace /><%= BillingInfo.ATTRIBUTES.billing_name.name() %>"]');
+        let paymentAddressInput = $('input[name="<portlet:namespace /><%= BillingInfo.ATTRIBUTES.billing_address.name() %>"]');
+        let paymentPostCodeInput = $('input[name="<portlet:namespace /><%= BillingInfo.ATTRIBUTES.billing_postal.name() %>"]');
+        let paymentCityInput = $('input[name="<portlet:namespace /><%= BillingInfo.ATTRIBUTES.billing_city.name() %>"]');
+        let paymentCountryInput = $('select[name="<portlet:namespace /><%= BillingInfo.ATTRIBUTES.billing_country.name() %>"]');
+        let paymentEmailInput = $('input[name="<portlet:namespace /><%= BillingInfo.ATTRIBUTES.billing_email.name() %>"]');
 
         if (checked) {
 
@@ -266,8 +262,6 @@
             paymentCityInput.prop('billing_value', paymentCityInput.val());
             paymentCountryInput.prop('billing_value',  paymentCountryInput.val());
             paymentEmailInput.prop('billing_value',  paymentEmailInput.val());
-            paymentVatInput.prop('billing_value',  paymentVatInput.val());
-            paymentRefInput.prop('billing_value',  paymentRefInput.val());
 
             //replace billing info with user attributes info
             let name = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_name.name() %>"]').val();
@@ -276,8 +270,6 @@
             let city = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_city.name() %>"]').val();
             let country = $('select[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_country.name() %>"]').val();
             let email = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.email.name() %>"]').val();
-            let vat = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.org_vat.name() %>"]').val();
-            let ref = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.pay_reference.name() %>"]').val();
 
             paymentNameInput.val(name);
             paymentAddressInput.val(address);
@@ -285,8 +277,6 @@
             paymentCityInput.val(city);
             paymentCountryInput.val(country);
             paymentEmailInput.val(email);
-            paymentVatInput.val(vat);
-            paymentRefInput.val(ref);
 
             paymentNameInput.prop('disabled', true);
             paymentAddressInput.prop('disabled', true);
@@ -294,13 +284,8 @@
             paymentCityInput.prop('disabled', true);
             paymentCountryInput.prop('disabled', true);
             paymentEmailInput.prop('disabled', true);
-            paymentVatInput.prop('disabled', false);  //must be editable
-            paymentRefInput.prop('disabled', false);  //must be editable
-        } else {
-            //cache payment ref and vat
-            userVatInput.val(paymentVatInput.val());
-            userRefInput.val(paymentRefInput.val());
 
+        } else {
             //restore billing info
             let name = paymentNameInput.prop('billing_value');
             let address = paymentAddressInput.prop('billing_value');
@@ -308,8 +293,6 @@
             let city = paymentCityInput.prop('billing_value');
             let country = paymentCountryInput.prop('billing_value');
             let email = paymentEmailInput.prop('billing_value');
-            let vat = paymentVatInput.prop('billing_value');
-            let ref = paymentRefInput.prop('billing_value');
 
             paymentNameInput.val(name);
             paymentAddressInput.val(address);
@@ -317,8 +300,6 @@
             paymentCityInput.val(city);
             paymentCountryInput.val(country);
             paymentEmailInput.val(email);
-            paymentVatInput.val(vat);
-            paymentRefInput.val(ref);
 
             paymentNameInput.prop('disabled', false);
             paymentAddressInput.prop('disabled', false);
@@ -326,8 +307,7 @@
             paymentCityInput.prop('disabled', false);
             paymentCountryInput.prop('disabled', false);
             paymentEmailInput.prop('disabled', false);
-            paymentVatInput.prop('disabled', false);
-            paymentRefInput.prop('disabled', false);
+
         }
     }
 

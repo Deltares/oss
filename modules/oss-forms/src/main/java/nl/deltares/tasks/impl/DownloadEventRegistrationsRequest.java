@@ -33,7 +33,6 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     private final String articleId;
     private final DsdParserUtils dsdParserUtils;
     private final DsdSessionUtils dsdSessionUtils;
-    private final KeycloakUtils keycloakUtils;
     private final Group group;
     private final DsdJournalArticleUtils dsdJournalArticleUtils;
     private final boolean deleteOnCompletion;
@@ -42,7 +41,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
     public DownloadEventRegistrationsRequest(String id, long currentUser, String articleId, Group siteGroup,
                                              DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils,
-                                             KeycloakUtils keycloakUtils, DsdJournalArticleUtils dsdJournalArticleUtils,
+                                             DsdJournalArticleUtils dsdJournalArticleUtils,
                                              WebinarUtilsFactory webinarUtilsFactory, boolean delete) throws IOException {
         super(id, currentUser);
         this.articleId = articleId;
@@ -50,7 +49,6 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
         this.dsdParserUtils = dsdParserUtils;
         this.dsdSessionUtils = dsdSessionUtils;
-        this.keycloakUtils = keycloakUtils;
         this.dsdJournalArticleUtils = dsdJournalArticleUtils;
         this.webinarUtilsFactory = webinarUtilsFactory;
         this.deleteOnCompletion = delete;
@@ -84,13 +82,11 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 return status;
             }
             Map<String, List<String>> webinarKeyCache = new HashMap<>();
-            Map<Long, Map<String, String>> userAttributeCache = new HashMap<>();
-
             //Create local session because the servlet session will close after call to endpoint is completed
             try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))){
 
                 StringBuilder header = new StringBuilder("event,registration,start date,topic,type,email,firstName,lastName,webinarProvider,registrationStatus,remarks");
-                for (KeycloakUtils.BILLING_ATTRIBUTES value : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
+                for (BillingInfo.ATTRIBUTES value : BillingInfo.ATTRIBUTES.values()) {
                     header.append(',');
                     header.append(value.name());
                 }
@@ -110,7 +106,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                         //
                     }
                     writeRecord(writer, recordObjects, finalEventTitle, matchingRegistration, matchingUser,
-                            userAttributeCache, webinarKeyCache, locale);
+                            webinarKeyCache, locale);
                     if (Thread.interrupted()){
                         throw new RuntimeException("Thread interrupted");
                     }
@@ -211,8 +207,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     }
 
     private void writeRecord(PrintWriter writer, Map<String, Object> record, String eventTitle,
-                             Registration dsdRegistration, User user,
-                             Map<Long, Map<String, String>> userAttributeCache, Map<String, List<String>> courseRegistrationsCache, Locale locale) {
+                             Registration dsdRegistration, User user, Map<String, List<String>> courseRegistrationsCache, Locale locale) {
 
         StringBuilder line = new StringBuilder();
         writeField(line, eventTitle);
@@ -239,22 +234,15 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             writeField(line, user.getLastName());
         }
         String userPreferencesValue = (String) record.get("userPreferences");
-        if (user == null){
-            writeField(line, userPreferencesValue);
-        } else {
-            Map<String, String> userPreferences = Collections.emptyMap();
-            try {
-                userPreferences = JsonContentUtils.parseJsonToMap(userPreferencesValue);
-            } catch (JSONException e) {
-                logger.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
-                line.append(','); //empty remarks
-                Arrays.stream(KeycloakUtils.BILLING_ATTRIBUTES.values()).iterator().forEachRemaining(billing_attributes -> line.append(',')); //empty billing info
-            }
-            writeWebinarInfo(line, user, dsdRegistration, courseRegistrationsCache, userPreferences);
-            writeField(line, userPreferences.get("remarks"));
-            BillingInfo billingInfo = getBillingInfo(userPreferences);
-            writeBillingInfo(line, billingInfo, user, userAttributeCache);
+        Map<String, String> userPreferences = Collections.emptyMap();
+        try {
+            userPreferences = JsonContentUtils.parseJsonToMap(userPreferencesValue);
+        } catch (JSONException e) {
+            logger.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
         }
+        writeWebinarInfo(line, user, dsdRegistration, courseRegistrationsCache, userPreferences);
+        writeField(line, userPreferences.get("remarks"));
+        writeBillingInfo(line, userPreferences);
         writer.println(line);
     }
 
@@ -322,36 +310,11 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         writeField(line, status);
     }
 
-    private BillingInfo getBillingInfo(Map<String, String> propertyMap) {
+    private void writeBillingInfo(StringBuilder line, Map<String, String> billingInfo){
 
-        BillingInfo billingInfo = new BillingInfo();
-        //Write billing information.
-        for (KeycloakUtils.BILLING_ATTRIBUTES key : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
-            String value = propertyMap.get(key.name());
-            if (value != null) billingInfo.setAttribute(key, value);
-        }
-        return billingInfo;
-    }
-
-    private void writeBillingInfo(StringBuilder line, BillingInfo billingInfo, User user, Map<Long, Map<String, String>> userAttributeCache){
-
-        Map<String, String> userAttributes = userAttributeCache.get(user.getUserId());
-        if (billingInfo.isUseOrganization() && userAttributes == null){
-            //Get attributes from keycloak attributes.
-            try {
-                userAttributes = keycloakUtils.getUserAttributesFromCacheOrKeycloak(user);
-                userAttributeCache.put(user.getUserId(), userAttributes);
-            } catch (Exception e) {
-                logger.error(String.format("Cannot find attributes for DSD user %d: %s", user.getUserId(), e.getMessage()));
-                userAttributes = Collections.emptyMap();
-            }
-        }
         //Write billing information. If no billing info then get values from user attributes
-        for (KeycloakUtils.BILLING_ATTRIBUTES key : KeycloakUtils.BILLING_ATTRIBUTES.values()) {
-            String billingAttribute = billingInfo.getAttribute(key);
-            if (billingAttribute == null) {
-                billingAttribute = userAttributes.get(BillingInfo.getCorrespondingUserAttributeKey(key).name());
-            }
+        for (BillingInfo.ATTRIBUTES key : BillingInfo.ATTRIBUTES.values()) {
+            String billingAttribute = billingInfo.get(key.name());
             writeField(line, billingAttribute);
         }
     }
