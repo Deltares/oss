@@ -10,7 +10,6 @@ import com.liferay.portal.kernel.service.GroupServiceUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import nl.deltares.dsd.registration.service.RegistrationLocalService;
 import nl.deltares.portal.exception.ValidationException;
-import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
@@ -27,7 +26,7 @@ import java.util.*;
 public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     @Reference
-    KeycloakUtils keycloakUtils;
+    DsdUserUtils dsdUserUtils;
 
     @Reference
     DsdParserUtils parserUtils;
@@ -131,10 +130,6 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
             if (registration.getPrice() > maxPrice) {
                 maxPrice = registration.getPrice();
             }
-        }
-        List<String> missingInfo = getMissingUserInformation(user, maxPrice);
-        if (missingInfo.size() > 0) {
-            throw new ValidationException("Missing user data for following fields: " + Arrays.toString(missingInfo.toArray()));
         }
         List<Registration> overlapping = checkIfRegistrationsOverlap(registrations);
         if (overlapping.size() > 0){
@@ -273,37 +268,6 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         Registration overlappingRegistration = parserUtils.getRegistration(overlappingDbRegistration);
         return overlappingRegistration.isOverlapWithParent() &&
                 (overlappingRegistration.getParentRegistration() == null || overlappingRegistration.getParentRegistration().getArticleId().equals(validatingArticleId));
-    }
-
-    @Override
-    public List<String> getMissingUserInformation(User user, double price) throws PortalException {
-
-        ArrayList<String> missingInfo = new ArrayList<>();
-        if (user.getFirstName() == null) {
-            missingInfo.add("First name");
-        }
-        if (user.getLastName() == null) {
-            missingInfo.add("Last name");
-        }
-
-        Map<String, String> userAttributes;
-        try {
-            userAttributes = keycloakUtils.getUserAttributesFromCacheOrKeycloak(user);
-        } catch (Exception e) {
-            throw new PortalException(e);
-        }
-        for (DsdArticle.DSD_REQUIRED_REGISTRATION_ATTRIBUTES value : DsdArticle.DSD_REQUIRED_REGISTRATION_ATTRIBUTES.values()) {
-            if (userAttributes.containsKey(value.name())) continue;
-            missingInfo.add(value.name());
-        }
-
-        if (price > 0) {
-            for (DsdArticle.DSD_REQUIRED_PAID_REGISTRATION_ATTRIBUTES value : DsdArticle.DSD_REQUIRED_PAID_REGISTRATION_ATTRIBUTES.values()) {
-                if (userAttributes.containsKey(value.name())) continue;
-                missingInfo.add(value.name());
-            }
-        }
-        return missingInfo;
     }
 
     @Override

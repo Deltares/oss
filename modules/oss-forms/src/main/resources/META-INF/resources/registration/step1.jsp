@@ -23,7 +23,7 @@
                     themeDisplay.getScopeGroupId(), registrationId);
             //load the stored attributes from the database.
             Map<String, String> userPreferences = dsdSessionUtils.getUserPreferences(user, mainRegistration);
-            attributes.putAll(userPreferences);
+            if (!userPreferences.isEmpty()) attributes.putAll(userPreferences);
 
         %>
 

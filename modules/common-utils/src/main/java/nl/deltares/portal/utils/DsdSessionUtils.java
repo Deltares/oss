@@ -49,14 +49,6 @@ public interface DsdSessionUtils {
     Map<String, String> getUserPreferences(User user, Registration registration) throws PortalException;
 
     /**
-     * Get list of missing user information that is required for making the reservation
-     * @param user User for which to check field values
-     * @param price Price of registration for which to validate fields.
-     * @return List of missing field names
-     */
-    List<String> getMissingUserInformation(User user, double price) throws PortalException;
-
-    /**
      * Check if user is already registerd for this registration.
      * @param user User to check for registration
      * @param registration Registration to check

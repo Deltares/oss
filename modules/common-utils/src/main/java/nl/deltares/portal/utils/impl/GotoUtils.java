@@ -128,11 +128,11 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
     public int unregisterUser(User user, String webinarKey, Map<String, String> properties) throws Exception{
 
         String registrantKey = properties.get("registrantKey");
-        if (registrantKey == null){
-            registrantKey = getRegistrantKey(user, webinarKey);
-            if (registrantKey == null) {
-                return 0; //user not found.
-            }
+        if (registrantKey == null && user != null){
+            registrantKey = getRegistrantKey(user.getEmailAddress(), webinarKey);
+        }
+        if (registrantKey == null) {
+            return 0; //user not found.
         }
 
         String rawRegistrationPath = getBasePath() + GOTO_REGISTRATION_PATH;
@@ -154,7 +154,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         }
     }
 
-    private String getRegistrantKey(User user, String webinarKey) {
+    private String getRegistrantKey(String email, String webinarKey) {
         try {
             String accessToken = getAccessToken(); //calling this method loads organization key
             HashMap<String, String> headers = new HashMap<>();
@@ -170,8 +170,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
 
             List<Map<String, String>> mapsList = new ArrayList<>(JsonContentUtils.parseJsonArrayToMap(jsonResponse));
             for (Map<String, String> registrant : mapsList) {
-                String email = registrant.get("email");
-                if (user.getEmailAddress().equalsIgnoreCase(email)) {
+                if (email.equalsIgnoreCase(registrant.get("email"))) {
                     return registrant.get("registrantKey");
                 }
             }
