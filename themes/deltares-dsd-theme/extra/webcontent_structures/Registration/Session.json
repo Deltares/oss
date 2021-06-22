@@ -108,7 +108,7 @@
       "dataType": "date",
       "fieldNamespace": "ddm",
       "indexType": "keyword",
-      "localizable": true,
+      "localizable": false,
       "name": "registrationDate",
       "readOnly": false,
       "repeatable": true,
@@ -207,7 +207,7 @@
       },
       "dataType": "radio",
       "indexType": "keyword",
-      "localizable": true,
+      "localizable": false,
       "name": "multipleDatesOption",
       "readOnly": false,
       "repeatable": false,
@@ -234,7 +234,7 @@
       },
       "dataType": "string",
       "indexType": "keyword",
-      "localizable": true,
+      "localizable": false,
       "name": "timeZone",
       "readOnly": false,
       "repeatable": false,
@@ -435,6 +435,33 @@
           "required": false,
           "showLabel": true,
           "type": "select"
+        },
+        {
+          "label": {
+            "nl_NL": "Join link",
+            "en_US": "Join link"
+          },
+          "predefinedValue": {
+            "nl_NL": "",
+            "en_US": ""
+          },
+          "style": {
+            "nl_NL": "",
+            "en_US": ""
+          },
+          "tip": {
+            "nl_NL": "",
+            "en_US": ""
+          },
+          "dataType": "string",
+          "indexType": "keyword",
+          "localizable": false,
+          "name": "joinLink",
+          "readOnly": false,
+          "repeatable": false,
+          "required": false,
+          "showLabel": true,
+          "type": "text"
         }
       ]
     },

@@ -24,6 +24,7 @@ public class SessionRegistration extends Registration {
     private String imageUrl = "";
     private String webinarKey = "";
     private String provider = "";
+    private String joinLink = "";
 
     public SessionRegistration(JournalArticle article, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
         super(article, dsdParserUtils, locale);
@@ -47,6 +48,10 @@ public class SessionRegistration extends Registration {
             if (webinarKey != null) this.webinarKey = webinarKey;
             String provider = XmlContentUtils.getDynamicContentByName(document, "provider", true);
             if (provider != null) this.provider = provider;
+
+            String joinLink = XmlContentUtils.getDynamicContentByName(document, "joinLink", true);
+            if (joinLink != null) this.joinLink = joinLink;
+
             initDates(document);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
@@ -144,6 +149,10 @@ public class SessionRegistration extends Registration {
             this.presentations.add((Presentation) dsdParserUtils.toDsdArticle(journalArticle, getLocale()));
         }
 
+    }
+
+    public String getJoinLink(){
+        return joinLink;
     }
 
     @Override
