@@ -19,11 +19,22 @@
             <div class="control-label" > <liferay-ui:message key="dsd.admin.selectDownload"/>  </div>
         </aui:col>
         <aui:col width="25">
-            <select id="eventSelection" name="eventSelection" class="btn btn-lg" style="border-color: lightgray" >
-                <% for (JournalArticle event : events) { %>
-                <option value="<%=event.getArticleId() %>" ><%= event.getTitle() %></option>
-                <% } %>
-            </select>
+            <aui:row>
+                <select id="eventSelection" name="eventSelection" class="btn btn-lg" style="border-color: lightgray" >
+                    <% for (JournalArticle event : events) { %>
+                    <option value="<%=event.getArticleId() %>" ><%= event.getTitle() %></option>
+                    <% } %>
+                </select>
+            </aui:row>
+            <aui:row>
+                <aui:input
+                        label="dsd.admin.removeMissing"
+                        name="removeMissing"
+                        type="checkbox"
+                        helpMessage="dsd.admin.removeMissingHelp"
+                        value="false"/>
+
+            </aui:row>
         </aui:col>
         <aui:col width="5">
             <button id="downloadButton"  class="btn btn-lg" type="button"><liferay-ui:message key="dsd.admin.download"/> </button>
@@ -89,9 +100,17 @@
             this.clearError();
             let selection = document.getElementById( "eventSelection");
             var eventArticleId = selection.options[ selection.selectedIndex ].value;
+            let checkBox = $('input[name="<portlet:namespace />removeMissing"]');
+
             if (eventArticleId != null && eventArticleId!=="") {
                 resourceUrl = resourceUrl + '&' + namespace + 'articleId=' + eventArticleId;
-                FormsUtil.callDownloadRegistrations(resourceUrl, namespace, "download");
+                let action;
+                if (checkBox[0].checked){
+                    action = "removeMissing"
+                } else {
+                    action = "download"
+                }
+                FormsUtil.callDownloadRegistrations(resourceUrl, namespace, action);
             }
         },
 
