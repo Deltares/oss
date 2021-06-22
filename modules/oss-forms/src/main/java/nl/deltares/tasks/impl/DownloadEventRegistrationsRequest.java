@@ -225,7 +225,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             writeField(line, dsdRegistration.getType());
         }
         if (user == null){
-            writeField(line, (String) record.get("userId"));
+            writeField(line, record.get("userId").toString());
             writeField(line,null);
             writeField(line,null);
         } else {
