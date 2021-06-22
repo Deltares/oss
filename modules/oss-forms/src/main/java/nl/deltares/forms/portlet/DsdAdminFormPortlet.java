@@ -95,15 +95,17 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		String id = ParamUtil.getString(resourceRequest, "id", null);
 
 		boolean delete = "delete".equals(action);
-		if ("download".equals(action) || delete) {
+		boolean removeMissing = "removeMissing".equals(action);
+		if ("download".equals(action) || delete || removeMissing) {
 			String articleId = ParamUtil.getString(resourceRequest, "articleId", null);
 
-			if (articleId == null){
+			if (articleId == null) {
 				DataRequestManager.getInstance().writeError("No articleId", resourceResponse);
 				return;
 			}
-			if (id == null) id = DownloadEventRegistrationsRequest.class.getName() + articleId + themeDisplay.getUserId();
-			downloadEventRegistrations(id, resourceResponse, themeDisplay, articleId, delete);
+			if (id == null)
+				id = DownloadEventRegistrationsRequest.class.getName() + articleId + themeDisplay.getUserId();
+			downloadEventRegistrations(id, resourceResponse, themeDisplay, articleId, delete, removeMissing);
 		} else if ("updateStatus".equals(action)){
 			DataRequestManager.getInstance().updateStatus(id, resourceResponse);
 		} else if ("downloadLog".equals(action)){
@@ -114,14 +116,15 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 	}
 
 	private void downloadEventRegistrations(String dataRequestId, ResourceResponse resourceResponse,
-											ThemeDisplay themeDisplay, String articleId, boolean delete) throws IOException {
+											ThemeDisplay themeDisplay, String articleId, boolean delete,
+											boolean deleteMissing) throws IOException {
 		resourceResponse.setContentType("text/csv");
 		DataRequestManager instance = DataRequestManager.getInstance();
 		DataRequest dataRequest = instance.getDataRequest(dataRequestId);
 		if (dataRequest == null) {
 			dataRequest = new DownloadEventRegistrationsRequest(dataRequestId, themeDisplay.getUserId(), articleId, themeDisplay.getSiteGroup(),
 					dsdParserUtils, dsdSessionUtils, dsdJournalArticleUtils,
-					webinarUtilsFactory, delete);
+					webinarUtilsFactory, delete, deleteMissing);
 			instance.addToQueue(dataRequest);
 		} else if (dataRequest.getStatus() == DataRequest.STATUS.terminated){
 			instance.removeDataRequest(dataRequest);

@@ -55,6 +55,11 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
+    public void deleteRegistrationRecord(long registrationId) throws PortalException {
+        registrationLocalService.deleteRegistration(registrationId);
+    }
+
+    @Override
     public void registerUser(User user, Map<String, String> userAttributes, Registration registration, Map<String, String> registrationProperties) throws PortalException {
 
         try {
