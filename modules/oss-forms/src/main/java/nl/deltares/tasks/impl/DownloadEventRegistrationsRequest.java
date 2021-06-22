@@ -38,11 +38,12 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     private final boolean deleteOnCompletion;
     private final WebinarUtilsFactory webinarUtilsFactory;
     private final Locale locale;
+    private final boolean removeMissing;
 
     public DownloadEventRegistrationsRequest(String id, long currentUser, String articleId, Group siteGroup,
                                              DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils,
                                              DsdJournalArticleUtils dsdJournalArticleUtils,
-                                             WebinarUtilsFactory webinarUtilsFactory, boolean delete) throws IOException {
+                                             WebinarUtilsFactory webinarUtilsFactory, boolean delete, boolean removeMissing) throws IOException {
         super(id, currentUser);
         this.articleId = articleId;
         this.group = siteGroup;
@@ -52,6 +53,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         this.dsdJournalArticleUtils = dsdJournalArticleUtils;
         this.webinarUtilsFactory = webinarUtilsFactory;
         this.deleteOnCompletion = delete;
+        this.removeMissing = removeMissing;
         this.locale = LocaleUtil.fromLanguageId(siteGroup.getDefaultLanguageId());
 
     }
@@ -163,6 +165,15 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         return filtered;
     }
 
+    private void deleteBrokenRegistration(long registrationId){
+
+        logger.info(String.format("Deleting registration record %d", registrationId) );
+        try {
+            dsdSessionUtils.deleteRegistrationRecord(registrationId);
+        } catch (PortalException e) {
+            logger.warn(String.format("Could not find registration record for deletion: %d", registrationId));
+        }
+    }
     private void deleteSelectedArticle(DsdArticle dsdArticle) {
 
         statusMessage = "deleting registrations for " + dsdArticle.getTitle();
@@ -243,6 +254,12 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         writeWebinarInfo(line, user, dsdRegistration, courseRegistrationsCache, userPreferences);
         writeField(line, userPreferences.get("remarks"));
         writeBillingInfo(line, userPreferences);
+
+        if (removeMissing && (dsdRegistration == null || user == null) ){
+            deleteBrokenRegistration((Long)record.get("registrationId"));
+            writeField(line, "deleted record");
+        }
+
         writer.println(line);
     }
 

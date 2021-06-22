@@ -12,6 +12,8 @@ import java.util.Map;
 
 public interface DsdSessionUtils {
 
+    void deleteRegistrationRecord(long registrationId) throws PortalException;
+
     /**
      * Register user for Registration
      * @param user User to register
