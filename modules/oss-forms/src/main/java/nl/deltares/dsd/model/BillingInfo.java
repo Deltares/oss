@@ -1,8 +1,24 @@
 package nl.deltares.dsd.model;
 
+import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.portal.utils.KeycloakUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class BillingInfo {
+
+    public enum ATTRIBUTES {
+        billing_email,
+        billing_name,
+        billing_address,
+        billing_postal,
+        billing_city,
+        billing_country,
+        billing_reference,
+        billing_vat,
+        billing_preference
+    }
 
     String name = null;
     String email = null;
@@ -12,8 +28,9 @@ public class BillingInfo {
     String country = null;
     String vat = null;
     String reference = null;
+    String preference = "payLink";
 
-    public static KeycloakUtils.ATTRIBUTES getCorrespondingUserAttributeKey(KeycloakUtils.BILLING_ATTRIBUTES billingKey){
+    public static KeycloakUtils.ATTRIBUTES getCorrespondingUserAttributeKey(BillingInfo.ATTRIBUTES billingKey){
         switch (billingKey){
             case billing_city:
                 return KeycloakUtils.ATTRIBUTES.org_city;
@@ -27,16 +44,14 @@ public class BillingInfo {
                 return KeycloakUtils.ATTRIBUTES.org_address;
             case billing_country:
                 return KeycloakUtils.ATTRIBUTES.org_country;
-            case billing_reference:
-                return KeycloakUtils.ATTRIBUTES.pay_reference;
             case billing_vat:
                 return KeycloakUtils.ATTRIBUTES.org_vat;
             default:
-                throw new UnsupportedOperationException("Unsupported billing attribute: " + billingKey);
+                return null;
         }
     }
 
-    public String getAttribute(KeycloakUtils.BILLING_ATTRIBUTES key){
+    public String getAttribute(ATTRIBUTES key){
         switch (key){
             case billing_city:
                 return city;
@@ -54,12 +69,14 @@ public class BillingInfo {
                 return reference;
             case billing_vat:
                 return vat;
+            case billing_preference:
+                return preference;
             default:
                 throw new UnsupportedOperationException("Unsupported billing attribute: " + key);
         }
     }
 
-    public void setAttribute(KeycloakUtils.BILLING_ATTRIBUTES key, String value){
+    public void setAttribute(ATTRIBUTES key, String value){
         switch (key){
             case billing_city:
                 city = value;
@@ -85,14 +102,23 @@ public class BillingInfo {
             case billing_vat:
                 vat = value;
                 break;
+            case billing_preference:
+                preference = value;
+                break;
             default:
                 throw new UnsupportedOperationException("Unsupported billing attribute: " + key);
         }
 
     }
 
-    public boolean isUseOrganization() {
-        return email == null;
+    public Map<String, String> toMap(){
+        final HashMap<String, String> map = new HashMap<>();
+        for (ATTRIBUTES key : ATTRIBUTES.values()) {
+            final String value = getAttribute(key);
+            if (Validator.isNotNull(value)) map.put(key.name(), value);
+
+        }
+        return map;
     }
 
     public String getName() {
@@ -157,5 +183,13 @@ public class BillingInfo {
 
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    public String getPreference() {
+        return preference;
+    }
+
+    public void setPreference(String preference) {
+        this.preference = preference;
     }
 }

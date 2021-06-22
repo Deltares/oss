@@ -2,33 +2,23 @@ package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
-import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
-import nl.deltares.portal.utils.impl.KeycloakUtilsImpl;
 import org.w3c.dom.Document;
 
-import java.util.Collections;
 import java.util.Locale;
-import java.util.Map;
 
 public class Expert extends AbsDsdArticle {
-    private static final Log LOG = LogFactoryUtil.getLog(Expert.class);
     private boolean storeInParentSite;
-    private boolean autoFillMissingValues;
     private String name;
     private String imageUrl;
     private String jobTitle;
     private String company;
     private String email;
-    private final KeycloakUtilsImpl keycloakUtils = new KeycloakUtilsImpl();
-
 
     public Expert(JournalArticle dsdArticle, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
         super(dsdArticle, dsdParserUtils, locale);
@@ -51,53 +41,8 @@ public class Expert extends AbsDsdArticle {
             String storeInParentSite = XmlContentUtils.getDynamicContentByName(document, "storeInParentSite", true);
             this.storeInParentSite = Boolean.parseBoolean(storeInParentSite);
 
-            String autoFill = XmlContentUtils.getDynamicContentByName(document, "autoFill", true);
-            this.autoFillMissingValues = Boolean.parseBoolean(autoFill);
-
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
-        }
-    }
-
-    private void fillMissingValues() {
-
-        try {
-            User user = UserLocalServiceUtil.getUserByEmailAddress(getCompanyId(), email);
-            if (name == null) {
-                name = user.getFullName();
-            }
-
-            Map<String, String> userAttributes = getUserAttributes(user);
-            if (jobTitle == null){
-                jobTitle = userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.jobTitle.name(), "");
-            }
-            if (company == null) {
-                company = userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_name.name(), "" );
-            }
-        } catch (PortalException e) {
-            //
-        }
-    }
-
-    private User loadImageFromKeycloak(User user){
-        if (user == null) return null;
-        try {
-            byte[] bytes = keycloakUtils.getUserAvatar(email);
-            if (bytes != null && bytes.length > 0) {
-                LOG.info("Updating avatar for user " + user.getFullName());
-                return UserLocalServiceUtil.updatePortrait(user.getUserId(), bytes);
-            }
-        } catch (Exception e) {
-           LOG.warn(String.format("Error updating user avatar for user %s : %s", email, e.getMessage()));
-        }
-        return user;
-    }
-
-    private Map<String, String> getUserAttributes(User user){
-        try {
-            return keycloakUtils.getUserAttributesFromCacheOrKeycloak(user);
-        } catch (Exception e) {
-            return Collections.emptyMap();
         }
     }
 
@@ -114,14 +59,10 @@ public class Expert extends AbsDsdArticle {
     @Override
     public String getSmallImageURL(ThemeDisplay themeDisplay) {
 
-        if (imageUrl == null && autoFillMissingValues){
+        if (imageUrl == null){
             try {
                 User user = UserLocalServiceUtil.getUserByEmailAddress(getCompanyId(), email);
                 imageUrl = user != null ? user.getPortraitURL(themeDisplay) : "";
-                if (imageUrl == null) {
-                    user = loadImageFromKeycloak(user);
-                    imageUrl = user != null ? user.getPortraitURL(themeDisplay) : "";
-                }
             } catch (PortalException e) {
                 //
             }
@@ -131,28 +72,14 @@ public class Expert extends AbsDsdArticle {
     }
 
     public String getName() {
-        if (name != null)
-            return name;
-
-        if (autoFillMissingValues){
-            fillMissingValues();
-        }
         return name;
     }
 
     public String getJobTitle() {
-        if (jobTitle != null) return jobTitle;
-        if (autoFillMissingValues){
-            fillMissingValues();
-        }
         return jobTitle;
     }
 
     public String getCompany() {
-        if (company != null) return company;
-        if (autoFillMissingValues){
-            fillMissingValues();
-        }
         return company;
     }
 

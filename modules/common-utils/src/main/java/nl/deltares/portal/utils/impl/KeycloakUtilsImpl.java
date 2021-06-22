@@ -1,20 +1,13 @@
 package nl.deltares.portal.utils.impl;
 
-import com.liferay.expando.kernel.model.ExpandoBridge;
-import com.liferay.expando.kernel.model.ExpandoColumn;
-import com.liferay.expando.kernel.model.ExpandoTable;
-import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
-import com.liferay.expando.kernel.service.ExpandoTableLocalServiceUtil;
-import com.liferay.expando.kernel.service.ExpandoValueLocalServiceUtil;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
@@ -160,9 +153,11 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
             jsonAttributes = JSONFactoryUtil.createJSONObject();
             jsonUser.put("attributes", jsonAttributes);
         }
-        for (String key : attributes.keySet()) {
-            String value = attributes.get(key);
-            jsonAttributes.put(key, JSONFactoryUtil.createJSONArray().put(value));
+        for (ATTRIBUTES key : ATTRIBUTES.values()) {
+            final String value = attributes.get(key.name());
+            if (Validator.isNotNull(value)){
+                jsonAttributes.put(key.name(), JSONFactoryUtil.createJSONArray().put(value));
+            }
         }
     }
 
@@ -338,53 +333,6 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         }
 
         return null;
-    }
-
-    /**
-     * Get the Keycloak user attributes. If the attributes have been cached in EpandoBridge then take them from there
-     * otherwise make call to Keycloak.
-     *
-     * @param user Liferay user
-     * @return
-     * @throws Exception
-     */
-    public Map<String, String> getUserAttributesFromCacheOrKeycloak(User user) throws Exception {
-        Map<String, String> userAttributes = new HashMap<>();
-        final ExpandoBridge expandoBridge = user.getExpandoBridge();
-        if (expandoBridge.hasAttribute(KeycloakUtils.ATTRIBUTES.org_name.name())){
-            for (KeycloakUtils.ATTRIBUTES attribute : KeycloakUtils.ATTRIBUTES.values()) {
-                userAttributes.put(attribute.name(), (String) expandoBridge.getAttribute(attribute.name(), false));
-            }
-            return userAttributes;
-        } else {
-            return getUserAttributes(user.getEmailAddress());
-        }
-    }
-
-    public int updateUserAttributesToCacheAndKeycloak(User user, Map<String, String> newAttributes) throws Exception {
-
-        final String emailAddress = user.getEmailAddress();
-
-        final ExpandoBridge expandoBridge = user.getExpandoBridge();
-        for (KeycloakUtils.ATTRIBUTES attribute : KeycloakUtils.ATTRIBUTES.values()) {
-            final String value = newAttributes.get(attribute.name());
-            final boolean hasAttribute = expandoBridge.hasAttribute(attribute.name());
-            if(!hasAttribute && value != null){
-                try {
-                    expandoBridge.addAttribute(attribute.name(), false);
-                } catch (PortalException e) {
-                    LOG.warn("Could not add expando bridge attribute for user '" + emailAddress + "': " + e.getMessage());
-                    continue;
-                }
-            } else if (hasAttribute && value == null){
-                ExpandoTable expandoTable = ExpandoTableLocalServiceUtil.getTable(user.getCompanyId(), User.class.getName(), "CUSTOM_FIELDS");
-                ExpandoColumn expandoColumn =  ExpandoColumnLocalServiceUtil.getColumn(user.getCompanyId(), User.class.getName(), expandoTable.getName(), attribute.name());
-                ExpandoValueLocalServiceUtil.deleteValue(user.getCompanyId(), User.class.getName(), expandoTable.getName(), expandoColumn.getName(), user.getUserId());
-            }
-            expandoBridge.setAttribute(attribute.name(), value, false);
-        }
-
-        return updateUserAttributes(emailAddress, newAttributes);
     }
 
     private Map<String, String> getOAuthParameters() {

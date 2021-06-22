@@ -142,29 +142,6 @@
                     "required": true,
                     "showLabel": true,
                     "type": "text"
-                },
-                {
-                    "label": {
-                        "en_US": "Fill missing fields"
-                    },
-                    "predefinedValue": {
-                        "en_US": false
-                    },
-                    "style": {
-                        "en_US": ""
-                    },
-                    "tip": {
-                        "en_US": "Automatically fill missing fields with values from the database."
-                    },
-                    "dataType": "boolean",
-                    "indexType": "keyword",
-                    "localizable": true,
-                    "name": "autoFill",
-                    "readOnly": false,
-                    "repeatable": false,
-                    "required": false,
-                    "showLabel": true,
-                    "type": "checkbox"
                 }
             ]
         }

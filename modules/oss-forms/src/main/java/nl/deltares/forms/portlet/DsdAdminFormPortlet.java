@@ -120,7 +120,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		DataRequest dataRequest = instance.getDataRequest(dataRequestId);
 		if (dataRequest == null) {
 			dataRequest = new DownloadEventRegistrationsRequest(dataRequestId, themeDisplay.getUserId(), articleId, themeDisplay.getSiteGroup(),
-					dsdParserUtils, dsdSessionUtils, keycloakUtils, dsdJournalArticleUtils,
+					dsdParserUtils, dsdSessionUtils, dsdJournalArticleUtils,
 					webinarUtilsFactory, delete);
 			instance.addToQueue(dataRequest);
 		} else if (dataRequest.getStatus() == DataRequest.STATUS.terminated){

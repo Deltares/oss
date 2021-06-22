@@ -45,7 +45,7 @@ import java.util.*;
 public class DsdRegistrationFormPortlet extends MVCPortlet {
 
 	@Reference
-	private KeycloakUtils keycloakUtils;
+	private DsdUserUtils dsdUserUtils;
 
 	@Reference
 	private DsdParserUtils dsdParserUtils;
@@ -62,16 +62,19 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 		User user = themeDisplay.getUser();
 		if (!user.isDefaultUser()) {
             try {
-				Map<String, String> attributes = keycloakUtils.getUserAttributesFromCacheOrKeycloak(user);
-				request.setAttribute("attributes", attributes);
+				final Map<String, String> userAttributes = dsdUserUtils.getUserAttributes(user);
+				request.setAttribute("attributes", userAttributes);
+				//translate org vat code
+				final String org_vat = userAttributes.get(KeycloakUtils.ATTRIBUTES.org_vat.name());
+				if (org_vat != null) userAttributes.put("billing_vat", org_vat);
             } catch (Exception e) {
-				SessionErrors.add(request, "udate-attributes-failed", "Error reading attributes from keycloak! Check if keycloak is initialized: " + keycloakUtils.getAccountPath());
+				SessionErrors.add(request, "update-attributes-failed", "Error reading user attributes: " + e.getMessage());
 				request.setAttribute("attributes", new HashMap<>());
 			}
 			try {
 				DSDSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
 				List<String> mailingIdsList = Arrays.asList(dsdConfig.mailingIds().split(";"));
-				request.setAttribute("subscribed", keycloakUtils.isSubscribed(user.getEmailAddress(), mailingIdsList));
+				request.setAttribute("subscribed", dsdUserUtils.isSubscribed(user.getEmailAddress(), mailingIdsList));
 			} catch (Exception e) {
 				LOG.warn("Error getting user subscriptions: " + e.getMessage());
 				request.setAttribute("subscribed", false);
