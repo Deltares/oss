@@ -125,6 +125,13 @@
                                 <a href="${displayContext.getUpdateURL(renderRequest)}" class="btn-lg btn-primary" role="button" aria-pressed="true">
                                      ${languageUtil.get(locale, "registrationform.update")}
                                 </a>
+
+                                <#assign joinLink = registration.getJoinLink() />
+                                <#if joinLink?? && joinLink != "">
+                                <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button" aria-pressed="true">
+                                     ${languageUtil.get(locale, "registrationform.update")}
+                                </a>
+                                </#if>
                             <#else>
                                 <a href="#" data-article-id="${articleId}" class="btn-lg btn-primary add-to-cart" role="button" aria-pressed="true">
                                     ${languageUtil.get(locale, "shopping.cart.add")}
