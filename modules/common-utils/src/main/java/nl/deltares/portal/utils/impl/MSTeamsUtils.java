@@ -1,9 +1,6 @@
 package nl.deltares.portal.utils.impl;
 
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.WebinarUtils;
 
@@ -24,8 +21,13 @@ public class MSTeamsUtils extends HttpClientUtils implements WebinarUtils {
     }
 
     @Override
-    public boolean isUserRegistered(User user, String webinarKey, Map<String, String> registrationProperties) throws Exception {
+    public boolean isUserRegistered(User user, String webinarKey, Map<String, String> registrationProperties) {
         return false;
+    }
+
+    @Override
+    public String getUserJoinLink(User user, String webinarKey, String joinPath, Map<String, String> registrationProperties) {
+        return joinPath;
     }
 
     @Override
@@ -34,7 +36,7 @@ public class MSTeamsUtils extends HttpClientUtils implements WebinarUtils {
     }
 
     @Override
-    public List<String> getAllCourseRegistrations(String webinarKey) throws Exception {
+    public List<String> getAllCourseRegistrations(String webinarKey) {
         return Collections.emptyList();
     }
 
