@@ -121,7 +121,18 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         String jsonResponse = readAll(connection);
         Map<String, String> parseJsonToMap = JsonContentUtils.parseJsonToMap(jsonResponse);
         if (parseJsonToMap.containsKey("registrantKey")) registrationProperties.put("registrantKey", parseJsonToMap.get("registrantKey"));
+        if (parseJsonToMap.containsKey("joinUrl")) registrationProperties.put("joinUrl", parseJsonToMap.get("joinUrl"));
         return 0;
+    }
+
+    @Override
+    public String getUserJoinLink(User user, String webinarKey, String joinPath, Map<String, String> properties) {
+        final String joinUrl = properties.get("joinUrl");
+        if (joinUrl != null) return joinUrl;
+        if (user != null){
+            return getRegistrantInfo(user.getEmailAddress(), webinarKey, "joinUrl");
+        }
+        return null;
     }
 
     @Override
@@ -129,7 +140,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
 
         String registrantKey = properties.get("registrantKey");
         if (registrantKey == null && user != null){
-            registrantKey = getRegistrantKey(user.getEmailAddress(), webinarKey);
+            registrantKey = getRegistrantInfo(user.getEmailAddress(), webinarKey, "registrantKey");
         }
         if (registrantKey == null) {
             return 0; //user not found.
@@ -154,24 +165,13 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         }
     }
 
-    private String getRegistrantKey(String email, String webinarKey) {
+    private String getRegistrantInfo(String email, String webinarKey, String key) {
         try {
-            String accessToken = getAccessToken(); //calling this method loads organization key
-            HashMap<String, String> headers = new HashMap<>();
-            headers.put("Content-Type", "application/json");
-            headers.put("Authorization", "Bearer " + accessToken);
-            String rawRegistrationPath = getBasePath() + GOTO_REGISTRATION_PATH;
-
-            String registrationPath = String.format(rawRegistrationPath, getOrganizerKey(), webinarKey);
-            //open connection
-            HttpURLConnection connection = getConnection(registrationPath, "GET", headers);
-            //get response
-            String jsonResponse = readAll(connection);
-
+            String jsonResponse = getCourseRegistrations(webinarKey);
             List<Map<String, String>> mapsList = new ArrayList<>(JsonContentUtils.parseJsonArrayToMap(jsonResponse));
             for (Map<String, String> registrant : mapsList) {
                 if (email.equalsIgnoreCase(registrant.get("email"))) {
-                    return registrant.get("registrantKey");
+                    return registrant.get(key);
                 }
             }
         } catch (Exception e){
@@ -180,8 +180,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         return null;
     }
 
-    @Override
-    public List<String> getAllCourseRegistrations(String webinarKey) throws Exception {
+    private String getCourseRegistrations(String webinarKey) throws IOException {
         String accessToken = getAccessToken(); //calling this method loads organization key
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
@@ -192,7 +191,12 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         //open connection
         HttpURLConnection connection = getConnection(registrationPath, "GET", headers);
         //get response
-        String jsonResponse = readAll(connection);
+        return readAll(connection);
+    }
+
+    @Override
+    public List<String> getAllCourseRegistrations(String webinarKey) throws Exception {
+        String jsonResponse = getCourseRegistrations(webinarKey);
 
         List<Map<String, String>> mapsList = new ArrayList<>(JsonContentUtils.parseJsonArrayToMap(jsonResponse));
         ArrayList<String> emails = new ArrayList<>();

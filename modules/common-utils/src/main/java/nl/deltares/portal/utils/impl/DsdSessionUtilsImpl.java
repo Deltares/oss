@@ -60,6 +60,18 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
+    public String getUserJoinLink(User user, Registration registration) throws Exception {
+        if (!webinarUtilsFactory.isWebinarSupported(registration)) {
+            return "";
+        }
+
+        final WebinarUtils webinarUtils = webinarUtilsFactory.newInstance(registration);
+        SessionRegistration sessionRegistration = (SessionRegistration) registration;
+        final String userJoinLink = webinarUtils.getUserJoinLink(user, sessionRegistration.getWebinarKey(), sessionRegistration.getJoinLink(), getUserPreferences(user, registration));
+        return userJoinLink == null ? "" : userJoinLink;
+    }
+
+    @Override
     public void registerUser(User user, Map<String, String> userAttributes, Registration registration, Map<String, String> registrationProperties) throws PortalException {
 
         try {

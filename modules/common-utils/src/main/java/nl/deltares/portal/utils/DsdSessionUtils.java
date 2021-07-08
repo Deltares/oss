@@ -15,6 +15,15 @@ public interface DsdSessionUtils {
     void deleteRegistrationRecord(long registrationId) throws PortalException;
 
     /**
+     * Retrieves the webinar join link for user.
+     *
+     * @param user User to Registration
+     * @param registration Webinar registration
+     * @return Join link for given user if user is registered. If user is not registered 'null' is returned.
+     */
+    String getUserJoinLink(User user, Registration registration) throws Exception;
+
+    /**
      * Register user for Registration
      * @param user User to register
      * @param userAttributes Additional user information required by registration process.
