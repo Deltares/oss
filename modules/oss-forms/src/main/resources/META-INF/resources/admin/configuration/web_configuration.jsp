@@ -80,6 +80,12 @@
                 type="checkbox"
                 value="<%= configuration.gotoCacheToken() %>"/>
 
+        <aui:input
+                label="Cache GOTO responses?"
+                name="gotoCacheResponse"
+                type="checkbox"
+                value="<%= configuration.gotoCacheResponse() %>"/>
+
         <hr>
 
         <aui:input

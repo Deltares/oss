@@ -32,6 +32,9 @@ public interface WebinarSiteConfiguration {
     @Meta.AD(required = false, deflt = "true",type = Meta.Type.Boolean, description = "Cache GOTO tokens for this site?")
     boolean gotoCacheToken();
 
+    @Meta.AD(required = false, deflt = "true",type = Meta.Type.Boolean, description = "Cache GOTO responses for this site?")
+    boolean gotoCacheResponse();
+
     @Meta.AD(required = false, deflt = "https://deltares.anewspring.nl/api/", description = "Base URL of aNewSpring website")
     String aNewSpringURL();
 
