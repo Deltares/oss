@@ -46,16 +46,6 @@ public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
     }
 
     @Override
-    public String getUserJoinLink(User user, String webinarKey, String joinPath, Map<String, String> registrationProperties) {
-        throw new UnsupportedOperationException("ANewSpring does not support join links");
-    }
-
-    @Override
-    public boolean isUserRegistered(User user, String courseId, Map<String, String> properties) throws Exception {
-        return isUserSubscribed(user, courseId);
-    }
-
-    @Override
     public List<String> getAllCourseRegistrations(String courseId) throws Exception {
         String subscriptionsPath = StringBundler.concat(getBasePath(), "getStudentSubscriptions/", courseId);
         HttpURLConnection connection = getConnection(subscriptionsPath, "GET", getHeader("application/json"));

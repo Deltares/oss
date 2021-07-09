@@ -54,6 +54,7 @@ public class WebinarSiteConfigurationAction extends DefaultConfigurationAction {
         String gotoUserName = ParamUtil.getString(actionRequest, "gotoUserName");
         String gotoUserPassword = ParamUtil.getString(actionRequest, "gotoUserPassword");
         boolean gotoCacheToken = ParamUtil.getBoolean(actionRequest, "gotoCacheToken");
+        boolean gotoCacheResponse = ParamUtil.getBoolean(actionRequest, "gotoCacheResponse");
 
         String aNewSpringURL = ParamUtil.getString(actionRequest, "aNewSpringURL");
         String aNewSpringApiKey = ParamUtil.getString(actionRequest, "aNewSpringApiKey");
@@ -71,6 +72,7 @@ public class WebinarSiteConfigurationAction extends DefaultConfigurationAction {
         modifiableSettings.setValue("gotoUserName", gotoUserName);
         modifiableSettings.setValue("gotoUserPassword", gotoUserPassword);
         modifiableSettings.setValue("gotoCacheToken", String.valueOf(gotoCacheToken));
+        modifiableSettings.setValue("gotoCacheResponse", String.valueOf(gotoCacheResponse));
 
         modifiableSettings.setValue("aNewSpringURL", aNewSpringURL);
         modifiableSettings.setValue("aNewSpringApiKey", aNewSpringApiKey);

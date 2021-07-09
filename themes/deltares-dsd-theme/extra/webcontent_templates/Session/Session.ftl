@@ -126,15 +126,16 @@
                                      ${languageUtil.get(locale, "registrationform.update")}
                                 </a>
                                 &nbsp;
-                                <#assign joinLink = dsdSessionUtils.getUserJoinLink(user, registration) />
-                                <#if joinLink?? && joinLink != "">
-                                <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button" aria-pressed="true">
-                                     ${languageUtil.get(locale, "registrationform.join")}
-                                </a>
-                                </#if>
                             <#else>
                                 <a href="#" data-article-id="${articleId}" class="btn-lg btn-primary add-to-cart" role="button" aria-pressed="true">
                                     ${languageUtil.get(locale, "shopping.cart.add")}
+                                </a>
+                            </#if>
+
+                            <#assign joinLink = dsdSessionUtils.getUserJoinLink(user, registration) />
+                            <#if joinLink?? && joinLink != "">
+                                <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button" aria-pressed="true">
+                                     ${languageUtil.get(locale, "registrationform.join")}
                                 </a>
                             </#if>
                         </span>

@@ -59,23 +59,25 @@ public class JsonContentUtils {
                 keys.forEachRemaining(key -> map.put(key, jsonObject.getString(key)));
                 mapList.add(map);
             }
+        } else {
+            mapList.add(parseJsonToMap(jsonContent));
         }
         return mapList;
     }
-
-    public static List<String> parseJsonArrayToList(String jsonContent) throws JSONException {
-        ArrayList<String> list = new ArrayList<>();
-        if (jsonContent == null) {
-            return list;
-        }
-        if (jsonContent.startsWith("[")){
-            JSONArray jsonArray = JsonContentUtils.parseContentArray(jsonContent);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                list.add(jsonArray.getString(i));
-            }
-        }
-        return list;
-    }
+//
+//    public static List<String> parseJsonArrayToList(String jsonContent) throws JSONException {
+//        ArrayList<String> list = new ArrayList<>();
+//        if (jsonContent == null) {
+//            return list;
+//        }
+//        if (jsonContent.startsWith("[")){
+//            JSONArray jsonArray = JsonContentUtils.parseContentArray(jsonContent);
+//            for (int i = 0; i < jsonArray.length(); i++) {
+//                list.add(jsonArray.getString(i));
+//            }
+//        }
+//        return list;
+//    }
 
     public static Map<String, String> parseJsonToMap(String jsonContent) throws JSONException {
         if (jsonContent == null) return new HashMap<>();
@@ -152,5 +154,14 @@ public class JsonContentUtils {
             colorMap = new HashMap<>();
         }
         return colorMap;
+    }
+
+    public static boolean isEmpty(String response) {
+        try {
+            final JSONArray jsonArray = parseContentArray(response);
+            return  jsonArray.length() == 0;
+        } catch (JSONException e) {
+            return true;
+        }
     }
 }

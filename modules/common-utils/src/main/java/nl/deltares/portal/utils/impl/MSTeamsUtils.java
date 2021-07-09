@@ -21,16 +21,6 @@ public class MSTeamsUtils extends HttpClientUtils implements WebinarUtils {
     }
 
     @Override
-    public boolean isUserRegistered(User user, String webinarKey, Map<String, String> registrationProperties) {
-        return false;
-    }
-
-    @Override
-    public String getUserJoinLink(User user, String webinarKey, String joinPath, Map<String, String> registrationProperties) {
-        return joinPath;
-    }
-
-    @Override
     public int unregisterUser(User user, String webinarKey, Map<String, String> registrationProperties) throws Exception {
         return 0;
     }

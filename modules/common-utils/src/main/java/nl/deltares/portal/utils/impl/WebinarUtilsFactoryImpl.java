@@ -13,15 +13,10 @@ import nl.deltares.portal.utils.WebinarUtilsFactory;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import java.util.HashMap;
-import java.util.Objects;
-
 @Component(
         service = WebinarUtilsFactory.class
 )
 public class WebinarUtilsFactoryImpl implements WebinarUtilsFactory {
-
-    private final HashMap<WebinarKey, WebinarUtils> cache = new HashMap<>();
 
     public WebinarUtils newInstance(Registration registration) throws Exception{
         if (!isWebinarSupported(registration)){
@@ -34,10 +29,6 @@ public class WebinarUtilsFactoryImpl implements WebinarUtilsFactory {
     public WebinarUtils newInstance(long groupId, String  webinarProvider) throws Exception{
 
         Class<? extends HttpClientUtils> webinarClass = getWebinarClass(webinarProvider);
-        WebinarKey webinarKey = new WebinarKey(groupId, webinarClass);
-        WebinarUtils cachedUtils = cache.get(webinarKey);
-        if (cachedUtils != null) return cachedUtils;
-
         WebinarUtils webinarUtils;
         switch (webinarProvider){
             case "goto":
@@ -52,7 +43,6 @@ public class WebinarUtilsFactoryImpl implements WebinarUtilsFactory {
             default:
                 throw new UnsupportedOperationException("unsupported provider " + webinarClass.getSimpleName());
         }
-        cache.put(webinarKey, webinarUtils);
         return webinarUtils;
     }
 
@@ -105,27 +95,4 @@ public class WebinarUtilsFactoryImpl implements WebinarUtilsFactory {
     }
 
     private static final Log LOG = LogFactoryUtil.getLog(WebinarUtilsFactoryImpl.class);
-
-    private static class WebinarKey{
-        private final long siteId;
-        private final Class<? extends HttpClientUtils> webinarClass;
-
-        public WebinarKey(long siteId, Class<? extends HttpClientUtils> webinarClass) {
-            this.siteId = siteId;
-            this.webinarClass = webinarClass;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            WebinarKey that = (WebinarKey) o;
-            return siteId == that.siteId && webinarClass == that.webinarClass;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(siteId, webinarClass);
-        }
-    }
 }

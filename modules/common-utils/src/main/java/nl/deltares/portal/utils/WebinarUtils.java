@@ -11,11 +11,7 @@ public interface WebinarUtils {
 
     int registerUser(User user, Map<String, String> userAttributes, String webinarKey, String callerId, Map<String, String> registrationProperties) throws Exception;
 
-    boolean isUserRegistered(User user, String webinarKey, Map<String, String> registrationProperties) throws Exception;
-
     int unregisterUser(User user, String webinarKey, Map<String, String> registrationProperties) throws Exception;
-
-    String getUserJoinLink(User user, String webinarKey, String joinPath, Map<String, String> registrationProperties) throws Exception;
 
     List<String> getAllCourseRegistrations(String webinarKey) throws Exception;
 

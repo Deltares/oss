@@ -5,22 +5,16 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import nl.deltares.portal.configuration.WebinarSiteConfiguration;
-import nl.deltares.portal.utils.HttpClientUtils;
-import nl.deltares.portal.utils.JsonContentUtils;
-import nl.deltares.portal.utils.KeycloakUtils;
-import nl.deltares.portal.utils.WebinarUtils;
+import nl.deltares.portal.utils.*;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class GotoUtils extends HttpClientUtils implements WebinarUtils {
+public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinConsumer {
     private static final Log LOG = LogFactoryUtil.getLog(GotoUtils.class);
 
     private final String CACHED_REFRESH_EXPIRY_KEY;
@@ -30,11 +24,15 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
     private final String CACHED_EXPIRY_KEY;
     private final String CACHED_TOKEN_KEY;
     private final boolean CACHE_TOKEN;
+    private final boolean CACHE_RESPONSES;
 
 
     private final WebinarSiteConfiguration configuration;
     private String basePath;
-    private static final String GOTO_REGISTRATION_PATH = "G2W/rest/v2/organizers/%s/webinars/%s/registrants";
+    private static final String GOTO_REGISTRANTS_PATH = "G2W/rest/v2/organizers/%s/webinars/%s/registrants";
+    private static final String GOTO_COORGANIZERS_PATH = "G2W/rest/v2/organizers/%s/webinars/%s/coorganizers";
+    private static final String GOTO_PANELISTS_PATH = "G2W/rest/v2/organizers/%s/webinars/%s/panelists";
+
     private String organizer_key;
 
     public GotoUtils(WebinarSiteConfiguration siteConfiguration) throws IOException {
@@ -52,6 +50,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         CACHED_TOKEN_KEY = CACHED_TOKEN_PREFIX + ".token";
         CACHED_EXPIRY_KEY = CACHED_TOKEN_PREFIX + ".expirytime";
         CACHE_TOKEN = configuration.gotoCacheToken();
+        CACHE_RESPONSES = configuration.gotoCacheResponse();
     }
 
     @Override
@@ -60,49 +59,9 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
     }
 
     @Override
-    public boolean isUserRegistered(User user, String webinarKey, Map<String, String> registrationProperties) throws Exception {
-
-        String accessToken = getAccessToken(); //calling this method loads organization key
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Authorization", "Bearer " + accessToken);
-        String rawRegistrationPath = getBasePath() + GOTO_REGISTRATION_PATH;
-
-        String registrantKey = registrationProperties.get("registrantKey");
-        if (registrantKey != null) {
-            rawRegistrationPath = getBasePath() + GOTO_REGISTRATION_PATH + "/" + registrantKey;
-        }
-        String registrationPath = String.format(rawRegistrationPath, getOrganizerKey(), webinarKey);
-        //open connection
-        HttpURLConnection connection = getConnection(registrationPath, "GET", headers);
-        //get response
-        if (connection.getResponseCode() == 404) {
-            connection.disconnect();
-            return false; //user not found for registrantKey
-        }
-
-        String jsonResponse = readAll(connection);
-
-        List<Map<String, String>> mapsList = new ArrayList<>();
-        if (registrantKey != null) {
-            mapsList.add(JsonContentUtils.parseJsonToMap(jsonResponse));
-        } else {
-            mapsList.addAll(JsonContentUtils.parseJsonArrayToMap(jsonResponse));
-        }
-        for (Map<String, String> registrant : mapsList) {
-            String email = registrant.get("email");
-            if (email != null && email.equals(user.getEmailAddress())) {
-                registrationProperties.put("registrantKey", registrant.get("registrantKey"));
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
     public int registerUser(User user, Map<String, String> userAttributes,  String webinarKey, String callerId, Map<String, String> registrationProperties) throws Exception {
 
-        String rawRegistrationPath = getBasePath() + GOTO_REGISTRATION_PATH;
+        String rawRegistrationPath = getBasePath() + GOTO_REGISTRANTS_PATH;
         String accessToken = getAccessToken(); //calling this method loads organization key
         String registrationPath = String.format(rawRegistrationPath, getOrganizerKey(), webinarKey);
 
@@ -126,27 +85,18 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
     }
 
     @Override
-    public String getUserJoinLink(User user, String webinarKey, String joinPath, Map<String, String> properties) {
-        final String joinUrl = properties.get("joinUrl");
-        if (joinUrl != null) return joinUrl;
-        if (user != null){
-            return getRegistrantInfo(user.getEmailAddress(), webinarKey, "joinUrl");
-        }
-        return null;
-    }
-
-    @Override
     public int unregisterUser(User user, String webinarKey, Map<String, String> properties) throws Exception{
 
         String registrantKey = properties.get("registrantKey");
         if (registrantKey == null && user != null){
-            registrantKey = getRegistrantInfo(user.getEmailAddress(), webinarKey, "registrantKey");
+            final Map<String, String> userInfo = getUserInfo(user.getEmailAddress(), webinarKey, getBasePath() + GOTO_REGISTRANTS_PATH, false);
+            registrantKey = userInfo.get("registrantKey");
         }
         if (registrantKey == null) {
             return 0; //user not found.
         }
 
-        String rawRegistrationPath = getBasePath() + GOTO_REGISTRATION_PATH;
+        String rawRegistrationPath = getBasePath() + GOTO_REGISTRANTS_PATH;
         String accessToken = getAccessToken(); //calling this method loads organization key
         String registrationPath = String.format(rawRegistrationPath, getOrganizerKey(), webinarKey);
         String unregisterPath = registrationPath + '/' + registrantKey;
@@ -165,40 +115,94 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils {
         }
     }
 
-    private String getRegistrantInfo(String email, String webinarKey, String key) {
+    @Override
+    public String getJoinLink(User user, String webinarKey, Map<String, String> properties) {
+        if (user == null) return null;
+
+        /*
+          It is possible that Co-organizers and panelist members have been added from within GOTO.
+          Check and return those links if present.
+          */
+        final String coOrganizerJoinLink = getCoOrganizerJoinLink(user, webinarKey);
+        if (coOrganizerJoinLink != null) return coOrganizerJoinLink;
+
+        final String panelistJoinLink = getPanelistJoinLink(user, webinarKey);
+        if (panelistJoinLink != null) return panelistJoinLink;
+
+        final String joinUrl = properties.get("joinUrl");
+        if (joinUrl != null) return joinUrl;
+
+        String rawRegistrationPath = getBasePath() + GOTO_REGISTRANTS_PATH;
+        String registrantKey = properties.get("registrantKey");
+        if (registrantKey != null) {
+            rawRegistrationPath +=  "/" + registrantKey;
+        }
+        final Map<String, String> userInfo = getUserInfo(user.getEmailAddress(), webinarKey, rawRegistrationPath, false);
+        return userInfo.get("joinUrl");
+    }
+
+    public String getCoOrganizerJoinLink(User user, String webinarKey) {
+        if (user == null) return null;
+
+        String apiPathTemplate = getBasePath() + GOTO_COORGANIZERS_PATH;
+        final Map<String, String> userInfo = getUserInfo(user.getEmailAddress(), webinarKey, apiPathTemplate, CACHE_RESPONSES);
+        return userInfo.get("joinLink");
+    }
+
+    public String getPanelistJoinLink(User user, String webinarKey) {
+        if (user == null) return null;
+
+        String apiPathTemplate = getBasePath() + GOTO_PANELISTS_PATH;
+        final Map<String, String> userInfo = getUserInfo(user.getEmailAddress(), webinarKey, apiPathTemplate, CACHE_RESPONSES);
+        return userInfo.get("joinLink");
+    }
+
+    private Map<String, String> getUserInfo(String email, String webinarKey, String apiPathTemplate, boolean cacheResponse) {
         try {
-            String jsonResponse = getCourseRegistrations(webinarKey);
-            List<Map<String, String>> mapsList = new ArrayList<>(JsonContentUtils.parseJsonArrayToMap(jsonResponse));
+            String jsonResponse = callGotoApi(webinarKey, apiPathTemplate, cacheResponse);
+            final List<Map<String, String>> mapsList = JsonContentUtils.parseJsonArrayToMap(jsonResponse);
             for (Map<String, String> registrant : mapsList) {
                 if (email.equalsIgnoreCase(registrant.get("email"))) {
-                    return registrant.get(key);
+                    return registrant;
                 }
             }
         } catch (Exception e){
             //
         }
-        return null;
+        return Collections.emptyMap();
     }
 
-    private String getCourseRegistrations(String webinarKey) throws IOException {
+    private String callGotoApi(String webinarKey, String apiPathTemplate, boolean cacheResponse) throws Exception {
+        //open connection
         String accessToken = getAccessToken(); //calling this method loads organization key
+        String apiPath = String.format(apiPathTemplate, getOrganizerKey(), webinarKey);
+        String apiPathExpiry = apiPath + ".expirytime";
+        if (cacheResponse) {
+            final String cachedResponse = getCachedToken(apiPath, apiPathExpiry);
+            if (cachedResponse != null) return cachedResponse;
+        }
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + accessToken);
-        String rawRegistrationPath = getBasePath() + GOTO_REGISTRATION_PATH;
-
-        String registrationPath = String.format(rawRegistrationPath, getOrganizerKey(), webinarKey);
-        //open connection
-        HttpURLConnection connection = getConnection(registrationPath, "GET", headers);
+        HttpURLConnection connection = getConnection(apiPath, "GET", headers);
         //get response
-        return readAll(connection);
+        if (connection.getResponseCode() == 404) {
+            connection.disconnect();
+            return null; //user not found for registrantKey
+        }
+        final String response = readAll(connection);
+        if (cacheResponse && !JsonContentUtils.isEmpty(response)){
+            setCachedToken(apiPath, apiPathExpiry, response, System.currentTimeMillis() + 300000);
+        }
+        return response;
     }
 
     @Override
     public List<String> getAllCourseRegistrations(String webinarKey) throws Exception {
-        String jsonResponse = getCourseRegistrations(webinarKey);
 
-        List<Map<String, String>> mapsList = new ArrayList<>(JsonContentUtils.parseJsonArrayToMap(jsonResponse));
+        String jsonResponse = callGotoApi(webinarKey, getBasePath() + GOTO_REGISTRANTS_PATH, false);
+
+        List<Map<String, String>> mapsList = JsonContentUtils.parseJsonArrayToMap(jsonResponse);
         ArrayList<String> emails = new ArrayList<>();
         for (Map<String, String> registrant : mapsList) {
             String email = registrant.get("email");

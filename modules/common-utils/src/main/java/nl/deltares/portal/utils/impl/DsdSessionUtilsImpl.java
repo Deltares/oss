@@ -67,8 +67,12 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
         final WebinarUtils webinarUtils = webinarUtilsFactory.newInstance(registration);
         SessionRegistration sessionRegistration = (SessionRegistration) registration;
-        final String userJoinLink = webinarUtils.getUserJoinLink(user, sessionRegistration.getWebinarKey(), sessionRegistration.getJoinLink(), getUserPreferences(user, registration));
-        return userJoinLink == null ? "" : userJoinLink;
+        String joinLink = sessionRegistration.getJoinLink();
+        if (joinLink != null && !joinLink.isEmpty()) return joinLink;
+        if (webinarUtils instanceof JoinConsumer) {
+            joinLink = ((JoinConsumer) webinarUtils).getJoinLink(user, sessionRegistration.getWebinarKey(), getUserPreferences(user, registration));
+        }
+        return joinLink == null ? "" : joinLink;
     }
 
     @Override
@@ -152,7 +156,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         if (overlapping.size() > 0){
             StringBuilder titles = new StringBuilder();
             overlapping.forEach(registration -> {titles.append(registration.getTitle()); titles.append(", ");});
-            throw new ValidationException("Overlapping periods found for registrations: " + titles.toString());
+            throw new ValidationException("Overlapping periods found for registrations: " + titles);
         }
 
         //check registrations in database
