@@ -1,6 +1,6 @@
 <style>
     .videoThumbnail{
-        width:64px;
+        width:250px;
         border:1px solid grey;
     }
     .icon-film{
@@ -21,6 +21,8 @@
         <#assign presentation = dsdParserUtils.toDsdArticle(journalArticle) />
         <#if presentation.getThumbnailLink()?? >
             <#assign thumbnail = presentation.getThumbnailLink() />
+        <#else>
+            <#assign thumbnail = "" />
         </#if>
         <#assign viewURL = htmlUtil.escapeHREF(assetPublisherHelper.getAssetViewURL(renderRequest, renderResponse, entry, true)) />
 
