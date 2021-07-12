@@ -19,7 +19,17 @@ public interface DsdSessionUtils {
      *
      * @param user User to Registration
      * @param registration Webinar registration
-     * @return Join link for given user if user is registered. If user is not registered 'null' is returned.
+     * @param isRegistered If user is registered
+     * @return Join link for given user if user. Pass user registration information for evaluation.
+     */
+    String getUserJoinLink(User user, Registration registration, boolean isRegistered) throws Exception;
+
+    /**
+     * Retrieves the webinar join link for user.
+     *
+     * @param user User to Registration
+     * @param registration Webinar registration
+     * @return Join link for given user if user. Checks if User is registered before returning link.
      */
     String getUserJoinLink(User user, Registration registration) throws Exception;
 

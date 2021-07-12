@@ -60,7 +60,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
-    public String getUserJoinLink(User user, Registration registration) throws Exception {
+    public String getUserJoinLink(User user, Registration registration, boolean isRegistered) throws Exception {
         if (!webinarUtilsFactory.isWebinarSupported(registration)) {
             return "";
         }
@@ -68,11 +68,20 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         final WebinarUtils webinarUtils = webinarUtilsFactory.newInstance(registration);
         SessionRegistration sessionRegistration = (SessionRegistration) registration;
         String joinLink = sessionRegistration.getJoinLink();
-        if (joinLink != null && !joinLink.isEmpty()) return joinLink;
+        if (joinLink != null && !joinLink.isEmpty() && isRegistered) {
+            //for static join links a user must have registered
+            return joinLink;
+        }
         if (webinarUtils instanceof JoinConsumer) {
             joinLink = ((JoinConsumer) webinarUtils).getJoinLink(user, sessionRegistration.getWebinarKey(), getUserPreferences(user, registration));
         }
         return joinLink == null ? "" : joinLink;
+    }
+
+    @Override
+    public String getUserJoinLink(User user, Registration registration) throws Exception {
+        final boolean userRegisteredFor = isUserRegisteredFor(user, registration);
+        return getUserJoinLink(user, registration, userRegisteredFor);
     }
 
     @Override
