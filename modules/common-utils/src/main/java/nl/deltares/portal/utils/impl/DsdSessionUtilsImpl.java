@@ -71,11 +71,12 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         if (joinLink != null && !joinLink.isEmpty() && isRegistered) {
             //for static join links a user must have registered
             return joinLink;
+        } else {
+            if (webinarUtils instanceof JoinConsumer) {
+                joinLink = ((JoinConsumer) webinarUtils).getJoinLink(user, sessionRegistration.getWebinarKey(), getUserPreferences(user, registration));
+            }
+            return joinLink == null ? "" : joinLink;
         }
-        if (webinarUtils instanceof JoinConsumer) {
-            joinLink = ((JoinConsumer) webinarUtils).getJoinLink(user, sessionRegistration.getWebinarKey(), getUserPreferences(user, registration));
-        }
-        return joinLink == null ? "" : joinLink;
     }
 
     @Override
