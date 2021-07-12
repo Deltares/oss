@@ -132,7 +132,7 @@
                                 </a>
                             </#if>
 
-                            <#assign joinLink = dsdSessionUtils.getUserJoinLink(user, registration) />
+                            <#assign joinLink = dsdSessionUtils.getUserJoinLink(user, registration, isRegistered) />
                             <#if joinLink?? && joinLink != "">
                                 <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button" aria-pressed="true">
                                      ${languageUtil.get(locale, "registrationform.join")}
