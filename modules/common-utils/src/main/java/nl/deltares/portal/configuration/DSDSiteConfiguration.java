@@ -65,4 +65,7 @@ public interface DSDSiteConfiguration {
     @Meta.AD(required = false, deflt = "registrationType", description = "Configure the field name that contains the registration type.")
     String dsdRegistrationTypeField();
 
+    @Meta.AD(required = false, deflt = "{}", description = "Map output type of search results portlet.")
+    String typeMap();
+
 }

@@ -1,3 +1,5 @@
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.Map" %>
 <%@ include file="dsd_init.jsp" %>
 
 <liferay-portlet:actionURL
@@ -9,7 +11,11 @@
         portletConfiguration="<%= true %>"
         var="configurationRenderURL"
 />
+<%
 
+    Map<String, String> typeMap = (Map<String,String>) renderRequest.getAttribute("typeMap");
+    if (typeMap == null) typeMap = new HashMap<>();
+%>
 <aui:form action="<%= configurationActionURL %>" method="post" name="fm">
     <aui:input
             name="<%= Constants.CMD %>"
@@ -44,7 +50,6 @@
                 label="bustransfer-url"
                 name="busTransferURL"
                 value="<%= configuration.busTransferURL() %>"/>
-
 
         <aui:input
                 label="travelstay-url"
@@ -113,6 +118,52 @@
                 label="dsd.type.field"
                 name="dsdRegistrationTypeField"
                 value="<%= configuration.dsdRegistrationTypeField() %>"/>
+
+        <table id="searchResultsMap" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Search Result Portlet ID</th>
+                    <th>Result Type</th>
+                </tr>
+            </thead>
+            <tbody>
+            <% int row = 0; %>
+            <%    for (String portletId : typeMap.keySet()) { %>
+                <tr>
+                    <td><aui:input type="text" name='<%="portletId-" + (row)%>' value="<%=portletId%>" label=""/></td>
+                    <td>
+                        <aui:select
+                                name='<%="type-" + (row)%>'
+                                type="select"
+                                value="<%= typeMap.get(portletId)  %>"
+                        label="">
+
+                            <aui:option value="registration" label ="Registrations" />
+                            <aui:option value="presentation" label ="Presentations" />
+                        </aui:select>
+                   </td>
+                </tr>
+
+            <%
+                row++;
+            } %>
+            <tr>
+                <td><aui:input type="text" name='<%="portletId-" + (row)%>' value="enter id of search results portlet" label=""/></td>
+                <td>
+                    <aui:select
+                            name='<%="type-" + (row)%>'
+                            type="select"
+                            label="">
+                        <aui:option value="registration" label ="Registrations" />
+                        <aui:option value="presentation" label ="Presentations" />
+                    </aui:select>
+                </td>
+            </tr>
+            <tr>
+                <td><button class="btn btn-lg btn-primary" type="submit" >Add Row</button></td>
+            </tr>
+            </tbody>
+        </table>
     </aui:fieldset>
 
     <aui:button-row>
