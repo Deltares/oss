@@ -1,15 +1,3 @@
-<style>
-    .videoThumbnail{
-        width:250px;
-        border:1px solid grey;
-    }
-    .icon-film{
-        line-height: 72px;
-        padding: 21px;
-        border: 1px solid grey;
-    }
-</style>
-
 <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
 
 <#if entries?has_content>
@@ -28,7 +16,7 @@
 
 
         <div class="presentation">
-            <#if presentation.isVideoLink() >
+            <#if presentation.isVideoLink() || presentation.isSlideLink()>
                 <a href="${viewURL}">
 
                     <#if thumbnail?? && thumbnail != "">
@@ -36,7 +24,8 @@
                     <#else>
                         <i class="icon-film"></i>
                     </#if>
-                    <strong>${presentation.getTitle()}</strong>&nbsp;&gt;&nbsp;
+                    <div class="presentation_title">
+                        <strong>${presentation.getTitle()}</strong>
                 </a>
             <#elseif presentation.isDownloadLink() >
                 <a href="${presentation.getPresentationLink()}" class="">
@@ -45,11 +34,16 @@
                     <#else>
                         <i class="icon-download-alt"></i>
                     </#if>
-                    <strong>${presentation.getTitle()}</strong>&nbsp;&gt;&nbsp;
+                    <div class="presentation_title">
+                        <strong>${presentation.getTitle()}</strong>
                 </a>
             </#if>
-            <span>${presentation.getPresenter()}</span>
-            <span>(${presentation.getOrganization()})</span>
+            <p>
+                &nbsp;&gt;&nbsp;
+                <span>${presentation.getPresenter()}</span>
+                <span>(${presentation.getOrganization()})</span>
+            </p>
+
         </div>
 
     </#list>

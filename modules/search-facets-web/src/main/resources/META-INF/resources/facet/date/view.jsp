@@ -1,8 +1,21 @@
 <%@ page import="nl.deltares.search.util.FacetUtils" %>
 <%@ page import="java.time.LocalDate" %>
+<%@ page import="nl.deltares.search.facet.date.DateRangeFacetConfiguration" %>
 <%@ include file="/META-INF/resources/init.jsp" %>
-
 <%
+	DateRangeFacetConfiguration configuration =
+			(DateRangeFacetConfiguration)
+					renderRequest.getAttribute(DateRangeFacetConfiguration.class.getName());
+	String startDateConfig = null;
+	String endDateConfig = null;
+	String setStartNowConfig = null;
+
+	if (Validator.isNotNull(configuration)) {
+		startDateConfig = portletPreferences.getValue("startDate", configuration.startDate());
+		endDateConfig = portletPreferences.getValue("endDate", configuration.endDate());
+		setStartNowConfig = portletPreferences.getValue("setStartNow", configuration.setStartNow());
+	}
+
 	LocalDate startDate = (LocalDate) renderRequest.getAttribute("startDate");
 	LocalDate endDate = (LocalDate) renderRequest.getAttribute("endDate");
 

@@ -15,47 +15,23 @@
 --%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
-
-<%@ taglib uri="http://liferay.com/tld/asset" prefix="liferay-asset" %>
-<%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
-<%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.portal.kernel.theme.ThemeDisplay" %>
 <%@ page import="nl.deltares.portal.configuration.DSDSiteConfiguration" %>
 <%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil" %>
 <%@ page import="com.liferay.portal.kernel.util.WebKeys" %>
-<%@ page import="nl.deltares.portal.utils.JsonContentUtils" %>
-<%@ page import="java.util.Map" %>
 
 <portlet:defineObjects />
 
 <%
     ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
-
-    DSDSiteConfiguration configuration =
-            ConfigurationProviderUtil.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
-
-    boolean isDsdSite = configuration.dsdSite();
-
-    final String callerPortletId = themeDisplay.getPortletDisplay().getId();
-    final String typeMapJson = configuration.typeMap();
-    Map<String, String> typeMap = JsonContentUtils.parseSessionColorConfig(typeMapJson);
-    String type;
-    if (isDsdSite){
-        type = typeMap.getOrDefault(callerPortletId, "registration");
-    } else {
-        type = "";
-    }
+    DSDSiteConfiguration configuration = ConfigurationProviderUtil.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
 %>
 
 <c:choose>
-    <c:when test='<%= type.equals("registration") %>'>
+    <c:when test='<%= configuration.dsdSite()  %>'>
         <jsp:include page="view-dsd.jsp" />
-    </c:when>
-    <c:when test='<%= type.equals("presentation") %>'>
-        <jsp:include page="view-dsd-presentation.jsp" />
     </c:when>
     <c:otherwise>
         <jsp:include page="view-original.jsp" />

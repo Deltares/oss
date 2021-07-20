@@ -13,8 +13,8 @@
 />
 <%
 
-    Map<String, String> typeMap = (Map<String,String>) renderRequest.getAttribute("typeMap");
-    if (typeMap == null) typeMap = new HashMap<>();
+    Map<String, String> templateMap = (Map<String,String>) renderRequest.getAttribute("templateMap");
+    if (templateMap == null) templateMap = new HashMap<>();
 %>
 <aui:form action="<%= configurationActionURL %>" method="post" name="fm">
     <aui:input
@@ -128,36 +128,17 @@
             </thead>
             <tbody>
             <% int row = 0; %>
-            <%    for (String portletId : typeMap.keySet()) { %>
+            <%    for (String portletId : templateMap.keySet()) { %>
                 <tr>
                     <td><aui:input type="text" name='<%="portletId-" + (row)%>' value="<%=portletId%>" label=""/></td>
-                    <td>
-                        <aui:select
-                                name='<%="type-" + (row)%>'
-                                type="select"
-                                value="<%= typeMap.get(portletId)  %>"
-                        label="">
-
-                            <aui:option value="registration" label ="Registrations" />
-                            <aui:option value="presentation" label ="Presentations" />
-                        </aui:select>
-                   </td>
+                    <td><aui:input type="text" name='<%="templateId-" + (row)%>' value="<%=templateMap.get(portletId)%>" label=""/></td>
                 </tr>
-
             <%
                 row++;
             } %>
             <tr>
                 <td><aui:input type="text" name='<%="portletId-" + (row)%>' value="enter id of search results portlet" label=""/></td>
-                <td>
-                    <aui:select
-                            name='<%="type-" + (row)%>'
-                            type="select"
-                            label="">
-                        <aui:option value="registration" label ="Registrations" />
-                        <aui:option value="presentation" label ="Presentations" />
-                    </aui:select>
-                </td>
+                <td><aui:input type="text" name='<%="templateId-" + (row)%>' value="enter template key" label=""/></td>
             </tr>
             <tr>
                 <td><button class="btn btn-lg btn-primary" type="submit" >Add Row</button></td>

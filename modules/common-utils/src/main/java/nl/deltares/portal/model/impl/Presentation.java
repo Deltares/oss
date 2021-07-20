@@ -13,9 +13,10 @@ public class Presentation  extends AbsDsdArticle{
 
     private String presenterName = "";
     private String presenterOrg = "";
-    private String presentationLink;
-    private String documentLink = null;
-    private String thumbnailLink = null;
+    private String presentationLink = "";
+    private String documentLink = "";
+    private String thumbnailLink = "";
+    private String presentationType = "video";
 
     public Presentation(JournalArticle article, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
         super(article, dsdParserUtils, locale);
@@ -29,25 +30,34 @@ public class Presentation  extends AbsDsdArticle{
             if (presenterName != null) this.presenterName = presenterName;
             String presenterOrg = XmlContentUtils.getDynamicContentByName(document, "presenterOrganization", true);
             if (presenterOrg != null) this.presenterOrg = presenterOrg;
-            presentationLink = XmlContentUtils.getDynamicContentByName(document, "presentationLink", true);
+            final String presentationLink = XmlContentUtils.getDynamicContentByName(document, "presentationLink", true);
+            if (presentationLink != null) this.presentationLink = presentationLink;
+
+            String typeJson = XmlContentUtils.getDynamicContentByName(document, "presentationType", true);
+            if (typeJson != null) presentationType = JsonContentUtils.parseDocumentJson(typeJson);
 
             String docJson = XmlContentUtils.getDynamicContentByName(document, "document", true);
-            documentLink = JsonContentUtils.parseDocumentJson(docJson);
+            if (docJson != null) documentLink = JsonContentUtils.parseDocumentJson(docJson);
 
             String imgJson = XmlContentUtils.getDynamicContentByName(document, "thumbnailImage", true);
-            thumbnailLink = JsonContentUtils.parseImageJson(imgJson);
+            if (imgJson != null) thumbnailLink = JsonContentUtils.parseImageJson(imgJson);
+
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
     }
 
+    public boolean isSlideLink() {
+        return presentationType != null && presentationType.equals("slides"); }
+
     public boolean isVideoLink(){
-        return presentationLink != null;
+        return presentationType != null && presentationType.equals("video");
     }
 
     public boolean isDownloadLink(){
-        return documentLink != null;
+        return documentLink != null && !documentLink.isEmpty();
     }
+
     public String getPresenter() {
         return presenterName;
     }

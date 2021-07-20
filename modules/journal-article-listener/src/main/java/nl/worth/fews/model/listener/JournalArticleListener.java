@@ -59,17 +59,17 @@ public class JournalArticleListener extends BaseModelListener<JournalArticle> {
             try {
                 dsdArticle = dsdParserUtils.toDsdArticle(model);
             } catch (PortalException e) {
-                String msg = String.format("Error parsing DSD Article %s: %s", model.getTitle(), e.getMessage());
+                String msg = String.format("Error parsing DSD Article %s: %s", model.getUrlTitle(), e.getMessage());
                 LOG.error(msg);
-                throw new ModelListenerException(msg);
+                return;
             }
 
             try {
                 dsdArticle.validate();
             } catch (PortalException e) {
-                String msg = String.format("Validation error for %s: %s", model.getTitle(), e.getMessage());
+                String msg = String.format("Validation error for %s: %s", model.getUrlTitle(), e.getMessage());
                 LOG.error(msg);
-                throw new ModelListenerException(msg);
+                return;
             }
 
             String structureKey = dsdArticle.getStructureKey();

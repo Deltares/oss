@@ -25,11 +25,56 @@
       "repeatable": false,
       "required": false,
       "showLabel": true,
-      "type": "text"
+      "type": "text",
+      "nestedFields": [
+        {
+          "label": {
+            "en_US": "Presentation Type"
+          },
+          "options": [
+            {
+              "value": "video",
+              "label": {
+                "en_US": "Video"
+              }
+            },
+            {
+              "value": "slides",
+              "label": {
+                "en_US": "Slides"
+              }
+            },
+            {
+              "value": "document",
+              "label": {
+                "en_US": "Document"
+              }
+            }
+          ],
+          "predefinedValue": {
+            "en_US": "video"
+          },
+          "style": {
+            "en_US": ""
+          },
+          "tip": {
+            "en_US": ""
+          },
+          "dataType": "radio",
+          "indexType": "keyword",
+          "localizable": false,
+          "name": "presentationType",
+          "readOnly": false,
+          "repeatable": false,
+          "required": false,
+          "showLabel": true,
+          "type": "radio"
+        }
+      ]
     },
     {
       "label": {
-        "en_US": "Video thumbnail"
+        "en_US": "Presentation thumbnail"
       },
       "predefinedValue": {
         "en_US": ""
@@ -94,7 +139,7 @@
       "name": "presenterName",
       "readOnly": false,
       "repeatable": false,
-      "required": false,
+      "required": true,
       "showLabel": true,
       "type": "text"
     },
@@ -117,7 +162,7 @@
       "name": "presenterOrganization",
       "readOnly": false,
       "repeatable": false,
-      "required": false,
+      "required": true,
       "showLabel": true,
       "type": "text"
     }

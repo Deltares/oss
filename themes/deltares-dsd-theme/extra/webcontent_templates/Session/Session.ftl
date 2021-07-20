@@ -132,7 +132,7 @@
                                 </a>
                             </#if>
 
-                            <#assign joinLink = dsdSessionUtils.getUserJoinLink(user, registration, isRegistered) />
+                            <#assign joinLink = dsdSessionUtils.getUserJoinLink(user, registration) />
                             <#if joinLink?? && joinLink != "">
                                 <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button" aria-pressed="true">
                                      ${languageUtil.get(locale, "registrationform.join")}
@@ -167,39 +167,45 @@
 
     </#if>
     <#if (registration.getPresentations()?size > 0) >
-        <div class="c-events__item__uploads">
-            <p class="bold">Presentations</p>
-            <#list registration.getPresentations() as presentation>
+    <div class="c-events__item__uploads">
+        <p class="bold">Presentaties</p>
+        <#list registration.getPresentations() as presentation>
 
-                <#if presentation.getThumbnailLink()?? >
-                    <#assign thumbnail = presentation.getThumbnailLink() />
-                <#else>
-                    <#assign thumbnail = ""/>
-                </#if>
-                <p class="presentation">
-                    <#if presentation.isVideoLink() >
-                        <a href="${presentation.getJournalArticle().getUrlTitle()}" >
-                            <#if thumbnail?? && thumbnail != "">
-                                <img class="videoThumbnail" src="${thumbnail}" />
-                            <#else>
-                                <i class="icon-film"></i>
-                            </#if>
-                            <span class="underline">${presentation.getTitle()} </span>&nbsp;&gt;&nbsp;
-                        </a>
-                    <#elseif presentation.isDownloadLink() >
-                        <a href="${presentation.getPresentationLink()}" class="">
-                            <#if thumbnail?? && thumbnail != "">
-                                <img class="videoThumbnail" src="${thumbnail}" />
-                            <#else>
-                                <i class="icon-download-alt"></i>
-                            </#if>
-                            <span class="underline">${presentation.getTitle()}</span>&nbsp;&gt;&nbsp;
-                        </a>
+        <#if presentation.getThumbnailLink()?? >
+            <#assign thumbnail = presentation.getThumbnailLink() />
+        <#else>
+            <#assign thumbnail = ""/>
+        </#if>
+        <div class="presentation">
+            <#if presentation.isVideoLink() >
+                <a href="${presentation.getJournalArticle().getUrlTitle()}" >
+                    <#if thumbnail?? && thumbnail != "">
+                        <img class="videoThumbnail" src="${thumbnail}" />
+                    <#else>
+                        <i class="icon-film"></i>
                     </#if>
-                    <span>${presentation.getPresenter()}</span>
-                    <span>(${presentation.getOrganization()})</span>
-                </p>
-            </#list>
+                    <div class="presentation_title">
+                        <strong>${presentation.getTitle()}</strong>
+                </a>
+            <#elseif presentation.isDownloadLink() >
+                <a href="${presentation.getPresentationLink()}" class="">
+                    <#if thumbnail?? && thumbnail != "">
+                        <img class="videoThumbnail" src="${thumbnail}" />
+                    <#else>
+                        <i class="icon-download-alt"></i>
+                    </#if>
+                    <div class="presentation_title">
+                        <strong>${presentation.getTitle()}</strong>
+                </a>
+            </#if>
+            <p>
+                &nbsp;&gt;&nbsp;
+                <span>${presentation.getPresenter()}</span>
+                <span>(${presentation.getOrganization()})</span>
+            </p>
         </div>
-    </#if>
+    </div>
+    </#list>
+</div>
+</#if>
 </div>
