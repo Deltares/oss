@@ -48,8 +48,8 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
 
         try {
             ThemeDisplay themeDisplay = (ThemeDisplay) httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY);
-            Map<String, String> typeMap = getTypeMap(themeDisplay, _configurationProvider);
-            httpServletRequest.setAttribute("typeMap", typeMap);
+            Map<String, String> templateMap = getTemplateMap(themeDisplay, _configurationProvider);
+            httpServletRequest.setAttribute("templateMap", templateMap);
         } catch (PortalException e) {
             throw new PortletException("Could not get options for field 'registrationType' in structure SESSIONS: " + e.getMessage(), e);
         }
@@ -81,7 +81,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         String dsdRegistrationDateField = ParamUtil.getString(actionRequest, "dsdRegistrationDateField");
         String dsdRegistrationTypeField = ParamUtil.getString(actionRequest, "dsdRegistrationTypeField");
 
-        Map<String, String> typeMap = convertTypesToMap(actionRequest);
+        Map<String, String> templateMap = convertTemplatesToMap(actionRequest);
 
         Settings settings = SettingsFactoryUtil.getSettings(
                 new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), DSDSiteConfiguration.class.getName()));
@@ -106,7 +106,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         modifiableSettings.setValue("dsdRegistrationStructures", dsdRegistrationStructures);
         modifiableSettings.setValue("dsdRegistrationDateField", dsdRegistrationDateField);
         modifiableSettings.setValue("dsdRegistrationTypeField", dsdRegistrationTypeField);
-        modifiableSettings.setValue( "typeMap", JsonContentUtils.formatMapToJson(typeMap));
+        modifiableSettings.setValue("templateMap", JsonContentUtils.formatMapToJson(templateMap));
 
         modifiableSettings.store();
 
@@ -120,14 +120,14 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         _configurationProvider = configurationProvider;
     }
 
-    private Map<String, String> convertTypesToMap(ActionRequest actionRequest) {
+    private Map<String, String> convertTemplatesToMap(ActionRequest actionRequest) {
 
         HashMap<String, String> map = new HashMap<>();
         int row = 0;
         String portletId;
         while(!(portletId = ParamUtil.getString(actionRequest, "portletId-" + row)).isEmpty()){
             if (!portletId.startsWith("enter")) {
-                final String type = ParamUtil.getString(actionRequest, "type-" + row);
+                final String type = ParamUtil.getString(actionRequest, "templateId-" + row);
                 map.put(portletId, type);
             }
             row++;
@@ -135,7 +135,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         return map;
     }
 
-    public static Map<String, String> getTypeMap(ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider) throws PortalException {
+    public static Map<String, String> getTemplateMap(ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider) throws PortalException {
 
         DSDSiteConfiguration siteConfiguration;
         try {
@@ -145,7 +145,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         } catch (ConfigurationException e) {
             throw new PortalException(String.format("Error getting DSD siteConfiguration: %s", e.getMessage()));
         }
-        String typeMapJson = siteConfiguration.typeMap();
+        String typeMapJson = siteConfiguration.templateMap();
         return JsonContentUtils.parseJsonToMap(typeMapJson);
     }
 }

@@ -13,20 +13,21 @@
  *
  */
 --%>
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
-<%@ taglib uri="http://liferay.com/tld/asset" prefix="liferay-asset" %><%@
-        taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
-        taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
+<%@ taglib uri="http://liferay.com/tld/asset" prefix="liferay-asset" %>
+<%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
+<%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
+
+<%@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %>
+<%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
+<%@ taglib uri="http://liferay.com/tld/journal" prefix="liferay-journal" %>
 
 <%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
 <%@ page import="com.liferay.portal.kernel.search.Document" %>
-<%@ page import="com.liferay.portal.kernel.theme.ThemeDisplay" %>
 <%@ page import="com.liferay.portal.kernel.util.HtmlUtil" %>
-<%@ page import="com.liferay.portal.kernel.util.Validator" %>
 <%@ page import="com.liferay.portal.kernel.util.WebKeys" %>
 <%@ page import="com.liferay.portal.search.web.internal.result.display.context.SearchResultFieldDisplayContext" %>
 <%@ page import="com.liferay.portal.search.web.internal.result.display.context.SearchResultSummaryDisplayContext" %>
@@ -35,23 +36,41 @@
 <%@ page import="java.util.Collections" %>
 <%@ page import="java.util.List" %>
 <%@ page import="nl.deltares.portal.utils.DsdParserUtils" %>
-<%@ page import="nl.deltares.portal.utils.impl.DsdParserUtilsImpl" %>
 <%@ page import="nl.deltares.portal.kernel.util.comparator.SearchResultsComparator" %>
-<%@ page import="nl.deltares.portal.model.impl.Registration" %>
-<%@ page import="nl.deltares.dsd.registration.service.persistence.RegistrationUtil" %>
 <%@ page import="java.text.NumberFormat" %>
+<%@ page import="com.liferay.portal.template.ServiceLocator" %>
+<%@ page import="com.liferay.journal.model.JournalArticleDisplay" %>
+<%@ page import="com.liferay.portal.kernel.theme.ThemeDisplay" %>
+<%@ page import="nl.deltares.portal.configuration.DSDSiteConfiguration" %>
+<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="nl.deltares.portal.utils.JsonContentUtils" %>
+<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationException" %>
 
 <portlet:defineObjects/>
-
 <%
-    ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
-    DsdParserUtils dsdParserUtils = new DsdParserUtilsImpl();
+    DsdParserUtils dsdParserUtils = (DsdParserUtils) ServiceLocator.getInstance().findService("nl.deltares.portal.utils.DsdParserUtils");
     String lastDate = "";
 
     NumberFormat numberFormat = NumberFormat.getInstance();
     numberFormat.setGroupingUsed(false);
     numberFormat.setMinimumFractionDigits(0);
     numberFormat.setMaximumFractionDigits(2);
+
+    DSDSiteConfiguration configuration;
+    String templateKey = "";
+
+    ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
+    try {
+        configuration = ConfigurationProviderUtil.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
+        final String templateMapJson = configuration.templateMap();
+        Map<String, String> templateMap = JsonContentUtils.parseSessionColorConfig(templateMapJson);
+        final String callerPortletId = themeDisplay.getPortletDisplay().getId();
+        templateKey = templateMap.getOrDefault(callerPortletId, "PROGRAM-LIST");
+
+    } catch (ConfigurationException e) {
+        //
+    }
 %>
 
 <%
@@ -67,14 +86,6 @@
 %>
 
 <style>
-    .list-group-item-flex .autofit-col {
-        padding: 0;
-    }
-
-    .expert-name  {
-        font-weight: bold;
-    }
-
     .date-title {
         text-align: center;
         color: white; }
@@ -85,24 +96,15 @@
         padding-bottom: 5px;
     }
 
+    .list-group-item-flex .autofit-col {
+        padding: 0;
+    }
+
     .past-event {
         background: #9B9B9B;
     }
     .upcoming-event {
         background: #0D38E0;
-    }
-
-    .btn-lg.btn-primary {
-        color: #F2F2F2;
-        background-color: #007bff;
-        border-color: #007bff;
-        font-size: 16px;
-    }
-
-    .btn-lg.btn-primary:hover{
-        color: #F2F2F2;
-        background-color: #272833;
-        border-color: #272833;
     }
 
 </style>
@@ -135,7 +137,6 @@
             } else {
                 colorClass = "upcoming-event";
             }
-            boolean showButtons = registrationDisplayContext.canUserRegister();
         %>
 
         <c:choose>
@@ -148,75 +149,13 @@
                             <span><%= date %></span>
                         </div>
                     </c:if>
-                    <div class="row no-gutters">
-                        <div class="col-2">
-                            <img class="img-fluid" src="<%= registrationDisplayContext.getSmallImageURL() %>"/>
-                        </div>
-                        <div class="col-10 px-3">
-                            <h4>
-                                <a href="<%= searchResultSummaryDisplayContext.getViewURL() %>">
-                                    <strong><%= searchResultSummaryDisplayContext.getHighlightedTitle() %></strong>
-                                </a>
-                            </h4>
-
-                            <div>
-                                <% for(int i=0; i < registrationDisplayContext.getPresenterCount(); i++) {%>
-                                <% String presenterSmallImageURL = registrationDisplayContext.getPresenterSmallImageURL(i); %>
-                                <c:if test="<%= Validator.isNotNull(presenterSmallImageURL) %>">
-                                    <img width="32" class="expert-thumbnail" src="<%= presenterSmallImageURL %>" />
-                                </c:if>
-                                <% String presenterName = registrationDisplayContext.getPresenterName(i); %>
-                                <c:if test="<%= Validator.isNotNull(presenterName) %>">
-                                    <span class="expert-name px-2"><%= presenterName %></span> |
-                                </c:if>
-                                <% } %>
-
-                                <span class="event-time pl-2"><%= registrationDisplayContext.getStartTime() %> - <%= registrationDisplayContext.getEndTime() %></span>
-                                |
-                                <c:choose>
-                                    <c:when test="<%= registrationDisplayContext.getPrice() > 0%>">
-                                        <%= registrationDisplayContext.getCurrency() %> <%= numberFormat.format(registrationDisplayContext.getPrice()) %>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <liferay-ui:message key="dsd.theme.session.free" translateArguments="<%= true %>"/>
-                                    </c:otherwise>
-                                </c:choose>
-
-                                <c:if test="<%=showButtons %>">
-                                    <%
-                                        Registration registration = registrationDisplayContext.getRegistration();
-                                        long userId = themeDisplay.getUserId();
-
-                                        boolean isRegistered = RegistrationUtil.countByUserArticleRegistrations(registration.getGroupId(), userId, registration.getResourceId()) > 0;
-                                    %>
-                                    <span class="d-block" style="float:right">
-                                        <c:choose>
-                                            <c:when test="<%= isRegistered %>">
-                                                <a href="<%= registrationDisplayContext.getUnregisterURL(request) %>"
-                                                   class="btn-lg btn-primary" role="button" aria-pressed="true">
-                                                    <liferay-ui:message key="registrationform.unregister"/>
-                                                </a>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <a href="#" data-article-id="<%=registration.getArticleId()%>"
-                                                   class="btn-lg btn-primary add-to-cart" role="button"
-                                                   aria-pressed="true">
-                                                    <liferay-ui:message key="shopping.cart.add"/>
-                                                </a>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </span>
-                                </c:if>
-
-                            </div>
-
-                            <c:if test="<%= searchResultSummaryDisplayContext.isContentVisible() %>">
-                                <p class="search-document-content text-default">
-                                    <%= HtmlUtil.stripHtml(HtmlUtil.unescape(registrationDisplayContext.getSummary())) %>
-                                </p>
-                            </c:if>
-                        </div>
-                    </div>
+                    <%
+                        JournalArticleDisplay articleDisplay = registrationDisplayContext
+                                .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, templateKey, registrationDisplayContext.getRegistration().getArticleId(), themeDisplay);
+                    %>
+                    <liferay-journal:journal-article-display
+                            articleDisplay="<%= articleDisplay %>"
+                    />
 
                 </liferay-ui:search-container-column-text>
             </c:when>

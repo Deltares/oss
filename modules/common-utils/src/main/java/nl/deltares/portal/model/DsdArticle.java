@@ -5,6 +5,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import org.w3c.dom.Document;
 
+import java.util.Locale;
+
 public interface DsdArticle {
 
     enum DSD_LOCATION_KEYS {restaurant, hotel, event}
@@ -22,4 +24,5 @@ public interface DsdArticle {
     String getSmallImageURL(ThemeDisplay themeDisplay);
     JournalArticle getJournalArticle();
     void validate() throws PortalException;
+    Locale getLocale();
 }

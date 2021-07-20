@@ -3,6 +3,7 @@ package nl.deltares.portal.display.context;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.model.JournalArticleDisplay;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -11,19 +12,25 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletMode;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
+import com.liferay.portal.kernel.portlet.PortletRequestModel;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import nl.deltares.dsd.registration.service.persistence.RegistrationUtil;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
+import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.DsdParserUtils;
 
 import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.List;
 
 public class RegistrationDisplayContext {
 
@@ -164,6 +171,10 @@ public class RegistrationDisplayContext {
         return getRegistration() != null && getRegistration().canUserRegister(themeDisplay.getUserId());
     }
 
+    public boolean isUserRegistered(){
+        return getRegistration() != null && RegistrationUtil.countByUserArticleRegistrations(registration.getGroupId(),
+                themeDisplay.getUserId(), registration.getResourceId()) > 0;
+    }
     public String getStartTime() {
         if (getRegistration() != null) {
             return DateUtil.getDate(getRegistration().getStartTime(), "HH:mm", themeDisplay.getLocale());
@@ -211,6 +222,10 @@ public class RegistrationDisplayContext {
         return getPortletRequest(portletRequest, "register");
     }
 
+    public String getViewURL(DsdArticle article){
+        return  themeDisplay.getCDNBaseURL() + "/-/" + article.getJournalArticle().getUrlTitle();
+    }
+
     private String getPortletRequest(HttpServletRequest httpServletRequest, String action, String redirect) {
 
         if (configurationProvider != null) {
@@ -244,6 +259,19 @@ public class RegistrationDisplayContext {
         return "";
     }
 
+    public boolean hasPresentations(){
+        final SessionRegistration session = getSession();
+        if (session == null) return false;
+        return session.getPresentations().size() > 0;
+    }
+
+    public List<Presentation> getPresentations(){
+        final SessionRegistration session = getSession();
+        if (session == null) return Collections.emptyList();
+        return session.getPresentations();
+    }
+
+
     public String getPortletRequest(PortletRequest portletRequest, String action) {
 
         if (configurationProvider != null) {
@@ -276,6 +304,21 @@ public class RegistrationDisplayContext {
         return "";
     }
 
+    public static JournalArticleDisplay getArticleDisplay(PortletRequest portletRequest, PortletResponse portletResponse,
+                                                          String ddmTemplateKey, String articleId, ThemeDisplay themeDisplay) {
+        JournalArticleDisplay articleDisplay = null;
+        try {
+            articleDisplay = JournalArticleLocalServiceUtil.getArticleDisplay(
+                    themeDisplay.getScopeGroupId(), articleId, ddmTemplateKey, "VIEW",
+                    themeDisplay.getLanguageId(), 1, new PortletRequestModel(portletRequest, portletResponse),
+                    themeDisplay);
+        } catch (Exception e) {
+            String message = String.format("Error getting article display object for article [%s] with template ID [%s]",
+                    articleId, ddmTemplateKey);
+            LOG.debug(message, e);
+        }
+        return articleDisplay;
+    }
     private final ThemeDisplay themeDisplay;
     private ConfigurationProvider configurationProvider;
     private Registration registration;
