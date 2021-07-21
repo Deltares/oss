@@ -8,11 +8,11 @@
 
 <#list presentations as presentation>
 
-     <#if presentation.isVideoLink() || presentations.isSlideLink()>
-         <#assign iconClass = "icon-film" />
-     <#elseif presentation.isDownloadLink() >
-         <#assign iconClass = "icon-download-alt" />
-     </#if>
+    <#if presentation.isVideoLink() >
+        <#assign iconClass = "icon-film" />
+    <#elseif presentation.isDownloadLink() >
+        <#assign iconClass = "icon-download-alt" />
+    </#if>
 
     <#if presentation.getThumbnailLink()?? >
         <#assign thumbnail = presentation.getThumbnailLink() />
@@ -33,14 +33,16 @@
         <div class="col-8 px-3">
             <h4>
                 <a href="${viewURL}">
-                    <strong>${title}</strong>
+                    <strong>${presentation.getTitle()}</strong>
                 </a>
             </h4>
-            <div>
-                &nbsp;&gt;&nbsp;
-                <span>${presentation.getPresenter()}</span>
-                <span>(${presentation.getOrganization()})</span>
-            </div>
+            <#if presentation.getPresenter() != "" >
+                <div>
+                    &nbsp;&gt;&nbsp;
+                    <span>${presentation.getPresenter()}</span>
+                    <span>(${presentation.getOrganization()})</span>
+                </div>
+            </#if>
         </div>
 
     </div>
