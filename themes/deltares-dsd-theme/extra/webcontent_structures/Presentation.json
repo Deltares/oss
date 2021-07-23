@@ -74,7 +74,30 @@
     },
     {
       "label": {
-        "en_US": "Presentation thumbnail"
+        "en_US": "Thumbnail URL"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "",
+      "localizable": false,
+      "name": "thumbnailURL",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "text"
+    },
+    {
+      "label": {
+        "en_US": "Thumbnail Image"
       },
       "predefinedValue": {
         "en_US": ""
@@ -87,8 +110,8 @@
       },
       "dataType": "image",
       "fieldNamespace": "ddm",
-      "indexType": "text",
-      "localizable": true,
+      "indexType": "",
+      "localizable": false,
       "name": "thumbnailImage",
       "readOnly": false,
       "repeatable": false,

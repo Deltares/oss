@@ -16,7 +16,7 @@ public class Presentation  extends AbsDsdArticle{
     private String presentationLink = "";
     private String documentLink = "";
     private String thumbnailLink = "";
-    private String presentationType = "video";
+    private String presentationType = "";
 
     public Presentation(JournalArticle article, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
         super(article, dsdParserUtils, locale);
@@ -34,13 +34,17 @@ public class Presentation  extends AbsDsdArticle{
             if (presentationLink != null) this.presentationLink = presentationLink;
 
             String typeJson = XmlContentUtils.getDynamicContentByName(document, "presentationType", true);
-            if (typeJson != null) presentationType = JsonContentUtils.parseDocumentJson(typeJson);
+            if (typeJson != null) presentationType = typeJson;
 
             String docJson = XmlContentUtils.getDynamicContentByName(document, "document", true);
             if (docJson != null) documentLink = JsonContentUtils.parseDocumentJson(docJson);
 
-            String imgJson = XmlContentUtils.getDynamicContentByName(document, "thumbnailImage", true);
-            if (imgJson != null) thumbnailLink = JsonContentUtils.parseImageJson(imgJson);
+            String imgUrl = XmlContentUtils.getDynamicContentByName(document, "thumbnailURL", true);
+            if (imgUrl != null) thumbnailLink = imgUrl;
+            if (thumbnailLink.isEmpty()) {
+                String imgJson = XmlContentUtils.getDynamicContentByName(document, "thumbnailImage", true);
+                if (imgJson != null) thumbnailLink = JsonContentUtils.parseImageJson(imgJson);
+            }
 
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
