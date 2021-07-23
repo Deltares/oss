@@ -8,10 +8,10 @@
 
 <#list presentations as presentation>
 
-    <#if presentation.isVideoLink() >
-        <#assign iconClass = "icon-film" />
-    <#elseif presentation.isDownloadLink() >
+    <#if presentation.isDownloadLink() >
         <#assign iconClass = "icon-download-alt" />
+    <#else >
+        <#assign iconClass = "icon-film" />
     </#if>
 
     <#if presentation.getThumbnailLink()?? >
