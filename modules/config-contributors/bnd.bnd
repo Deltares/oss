@@ -1,0 +1,4 @@
+Bundle-Name: config-contributors
+Bundle-SymbolicName: nl.deltares.portal.config.contributor
+Bundle-Version: 1.0.0
+Web-ContextPath: /config-contributors
