@@ -12,7 +12,10 @@
                     <#assign cur_answer = dynamicElement.element("dynamic-content").getData() />
                 </#if>
             </#list>
-            <div class="c-faq__item collapsed">
+            <#assign relatedPath = saxReaderUtil.createXPath("dynamic-element[@name='RelatedQuestion']")
+            />
+            <#assign relatedQuestions = relatedPath.selectNodes(rootElement) />
+            <div id="${assetRenderer.getClassPK()}" class="c-faq__item collapsed">
                 <div class="c-faq__item__content">
                     <h4 class="c-faq__item__content__title">
                         <a href="#" class="toggler regular-text">
@@ -22,17 +25,32 @@
                     </h4>
                     <div class="c-faq__item__content__data">
                         ${cur_answer}
+                        <#if (relatedQuestions?size gt 0) >
+                            <p>
+                                <strong>Related Questions:</strong></br>
+                                <#list relatedQuestions as relatedQuestion>
+                                    <#assign questionContent=relatedQuestion.getStringValue()?eval />
+                                    <a href="#${questionContent.classPK}" onClick="toggleBookMark('${questionContent.classPK}')" >${questionContent.title}</a></br>
+                                </#list>
+                            </p>
+                        </#if>
                     </div>
+
                 </div>
             </div>
         </#list>
     </div>
     <script>
-        AUI().ready('aui-module', function(A){
+        AUI().ready('aui-module', 'node', function(A){
             $(".c-faq__item").on("click", ".toggler", function( event ) {
                 event.preventDefault();
                 $( event.delegateTarget ).toggleClass("collapsed expanded");
             });
+
+            toggleBookMark = function(id){
+                var question = A.one("#" + id);
+                question.addClass("expanded");
+            }
         });
     </script>
 </#if>
