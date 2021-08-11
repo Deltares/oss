@@ -7,6 +7,7 @@
             <#assign journalArticle = assetRenderer.getArticle() />
             <#assign document = saxReaderUtil.read(journalArticle.getContent())/>
             <#assign rootElement = document.getRootElement() />
+            <#assign printRelatedHeader = true />
             <#list rootElement.elements() as dynamicElement>
                 <#if "FAQAnswer"==dynamicElement.attributeValue("name")>
                     <#assign cur_answer = dynamicElement.element("dynamic-content").getData() />
@@ -25,13 +26,20 @@
                     </h4>
                     <div class="c-faq__item__content__data">
                         ${cur_answer}
-                        <#if (relatedQuestions?size gt 0) >
-                            <p>
-                                <strong>Related Questions:</strong></br>
-                                <#list relatedQuestions as relatedQuestion>
-                                    <#assign questionContent=relatedQuestion.getStringValue()?eval />
+                        <#if (relatedQuestions?has_content) >
+                            <#list relatedQuestions as relatedQuestion>
+                                <#assign questionContentString=relatedQuestion.getStringValue()?trim />
+                                <#if questionContentString?? && questionContentString != "" >
+                                    <#assign questionContent=questionContentString?eval />
+
+                                    <#if printRelatedHeader>
+                                        <p>
+                                        <strong>Related Questions</strong></br>
+                                        <#assign printRelatedHeader = false />
+                                    </#if>
                                     <a href="#${questionContent.classPK}" onClick="toggleBookMark('${questionContent.classPK}')" >${questionContent.title}</a></br>
-                                </#list>
+                                </#if>
+                            </#list>
                             </p>
                         </#if>
                     </div>
