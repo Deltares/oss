@@ -17,6 +17,7 @@ public class RegistrationRequest {
     private final String baseUrl;
     private final String siteUrl;
     private BillingInfo billingInfo;
+    private BadgeInfo badgeInfo;
     private Event event;
     private boolean enableBusInfo;
     private String busTransferUrl;
@@ -68,6 +69,10 @@ public class RegistrationRequest {
         this.billingInfo = billingInfo;
     }
 
+    public void setBadgeInfo(BadgeInfo badgeInfo) {
+        this.badgeInfo = badgeInfo;
+    }
+
     public void setRemarks(String remarks){
         this.remarks = remarks;
     }
@@ -78,6 +83,10 @@ public class RegistrationRequest {
 
     public BillingInfo getBillingInfo() {
         return billingInfo;
+    }
+
+    public BadgeInfo getBadgeInfo() {
+        return badgeInfo;
     }
 
     public void setEvent(Event event) {

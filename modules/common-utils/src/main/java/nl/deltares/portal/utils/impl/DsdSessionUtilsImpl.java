@@ -26,9 +26,6 @@ import java.util.*;
 public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     @Reference
-    DsdUserUtils dsdUserUtils;
-
-    @Reference
     DsdParserUtils parserUtils;
 
     @Reference

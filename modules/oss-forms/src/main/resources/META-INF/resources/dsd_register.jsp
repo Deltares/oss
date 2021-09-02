@@ -216,8 +216,8 @@
     };
 
     updateBadge = function() {
-        let showTitle = $('input[name="<portlet:namespace /><%= DsdUserUtils.ATTRIBUTES.badge_title_setting.name()%>"]:checked').val();
-        let nameSetting = $('input[name="<portlet:namespace /><%= DsdUserUtils.ATTRIBUTES.badge_name_setting.name() %>"]:checked').val();
+        let showTitle = $('input[name="<portlet:namespace /><%= BadgeInfo.ATTRIBUTES.badge_title_setting.name()%>"]:checked').val();
+        let nameSetting = $('input[name="<portlet:namespace /><%= BadgeInfo.ATTRIBUTES.badge_name_setting.name() %>"]:checked').val();
         let titles = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.academicTitle.name() %>"]').val();
         let firstName = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.first_name.name() %>"]').val();
         let initials = $('input[name="<portlet:namespace /><%= KeycloakUtils.ATTRIBUTES.initials.name() %>"]').val();
