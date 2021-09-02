@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import nl.deltares.dsd.model.BadgeInfo;
 import nl.deltares.dsd.model.BillingInfo;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.Event;
@@ -92,6 +93,12 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                     header.append(',');
                     header.append(value.name());
                 }
+                for (BadgeInfo.ATTRIBUTES value : BadgeInfo.ATTRIBUTES.values()){
+                    header.append(',');
+                    header.append(value.name());
+                }
+                header.append(",registration time");
+
                 writer.println(header);
                 String finalEventTitle = event.getTitle();
                 registrationRecordsToProcess.forEach(recordObjects ->{
@@ -254,6 +261,8 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         writeWebinarInfo(line, user, dsdRegistration, courseRegistrationsCache, userPreferences);
         writeField(line, userPreferences.get("remarks"));
         writeBillingInfo(line, userPreferences);
+        writeBadgeInfo(line, userPreferences);
+        writeField(line, userPreferences.get("registration_time"));
 
         if (removeMissing && (dsdRegistration == null || user == null) ){
             deleteBrokenRegistration((Long)record.get("registrationId"));
@@ -329,11 +338,19 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
     private void writeBillingInfo(StringBuilder line, Map<String, String> billingInfo){
 
-        //Write billing information. If no billing info then get values from user attributes
+        //Write billing information.
         for (BillingInfo.ATTRIBUTES key : BillingInfo.ATTRIBUTES.values()) {
             String billingAttribute = billingInfo.get(key.name());
             writeField(line, billingAttribute);
         }
     }
 
+    private void writeBadgeInfo(StringBuilder line, Map<String, String> badgeInfo){
+
+        //Write badge information.
+        for (BadgeInfo.ATTRIBUTES key : BadgeInfo.ATTRIBUTES.values()) {
+            String badgeAttribute = badgeInfo.get(key.name());
+            writeField(line, badgeAttribute);
+        }
+    }
 }

@@ -11,6 +11,7 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.*;
+import nl.deltares.dsd.model.BadgeInfo;
 import nl.deltares.dsd.model.BillingInfo;
 import nl.deltares.dsd.model.RegistrationRequest;
 import nl.deltares.emails.DsdEmail;
@@ -24,6 +25,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,6 +41,8 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
     private static final String PARENT_PREFIX = "parent_registration_";
     private static final String CHILD_PREFIX = "child_registration_";
+
+    private static final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
 
     @Override
     protected void doProcessAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
@@ -126,13 +130,13 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             subscribableMailingIds.forEach(mailingId -> {
                 if (registrationRequest.isSubscribe()) {
                     try {
-                        dsdUserUtils.subscribe(user.getEmailAddress(), mailingId);
+                        keycloakUtils.subscribe(user.getEmailAddress(), mailingId);
                     } catch (Exception e) {
                         LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", user.getEmailAddress(), mailingId, e.getMessage()));
                     }
                 } else {
                     try {
-                        dsdUserUtils.unsubscribe(user.getEmailAddress(), mailingId);
+                        keycloakUtils.unsubscribe(user.getEmailAddress(), mailingId);
                     } catch (Exception e) {
                         LOG.warn(String.format("Failed to unsubscribe user %s for mailing %s: %s", user.getEmailAddress(), mailingId, e.getMessage()));
                     }
@@ -147,11 +151,16 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         HashMap<String, String> preferences;
         final BillingInfo billingInfo = registrationRequest.getBillingInfo();
         final Map<String, String> billing = billingInfo.toMap();
+        final BadgeInfo badgeInfo = registrationRequest.getBadgeInfo();
+        final Map<String, String> badge = badgeInfo.toMap();
         for (Registration registration : registrations) {
             preferences = new HashMap<>(userPreferences);
-            if (registration.getPrice() > 0) {
+// Always add billing info
+//            if (registration.getPrice() > 0) {
                 preferences.putAll(billing);
-            }
+                preferences.putAll(badge);
+                preferences.put("registration_time", dateTimeFormatter.format(new Date()));
+//            }
             try {
                 dsdSessionUtils.registerUser(user, userAttributes, registration, preferences);
             } catch (PortalException e) {
@@ -198,10 +207,12 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
             Event event = dsdParserUtils.getEvent(siteId, String.valueOf(configuration.eventId()), themeDisplay.getLocale());
             BillingInfo billingInfo = getBillingInfo(actionRequest, themeDisplay.getUser());
+            BadgeInfo badgeInfo = getBadgeInfo(actionRequest);
 
             RegistrationRequest registrationRequest = new RegistrationRequest(themeDisplay);
             registrationRequest.setEvent(event);
             registrationRequest.setBillingInfo(billingInfo);
+            registrationRequest.setBadgeInfo(badgeInfo);
             registrationRequest.setRemarks(ParamUtil.getString(actionRequest, "remarks_registration", null));
             if (configuration.mailingIds().length() > 0) {
                 registrationRequest.setSubscribableMailingIds(configuration.mailingIds());
@@ -250,6 +261,21 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         return new String[0];
     }
 
+    private BadgeInfo getBadgeInfo(ActionRequest actionRequest){
+
+        final BadgeInfo badgeInfo = new BadgeInfo();
+
+        //Get local attributes
+        for (BadgeInfo.ATTRIBUTES key : BadgeInfo.ATTRIBUTES.values()) {
+            String value = ParamUtil.getString(actionRequest, key.name());
+            if (Validator.isNotNull(value) && ! Validator.isBlank(value)) {
+                badgeInfo.setAttribute(key, value);
+            }
+        }
+
+        return badgeInfo;
+    }
+
     private BillingInfo getBillingInfo(ActionRequest actionRequest, User user) {
 
         BillingInfo billingInfo = new BillingInfo();
@@ -257,14 +283,14 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
         for (BillingInfo.ATTRIBUTES key : BillingInfo.ATTRIBUTES.values()) {
             String value = ParamUtil.getString(actionRequest, key.name());
-            if (Validator.isNotNull(value)) {
+            if (Validator.isNotNull(value) && !Validator.isBlank(value)) {
                 billingInfo.setAttribute(key, value);
             } else {
                 //User selected Use Organization values option
                 final KeycloakUtils.ATTRIBUTES keycloakKey = BillingInfo.getCorrespondingUserAttributeKey(key);
                 if (keycloakKey == null) continue;
                 final String keycloakValue = ParamUtil.getString(actionRequest, keycloakKey.name());
-                if (Validator.isNull(keycloakValue)) continue;
+                if (Validator.isNull(keycloakValue) || Validator.isBlank(keycloakValue)) continue;
                 billingInfo.setAttribute(key, keycloakValue);
             }
         }
@@ -274,7 +300,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
     private boolean updateUserAttributes(ActionRequest actionRequest, User user, Map<String, String> attributes) {
 
         try {
-            return dsdUserUtils.updateUserAttributes(user, attributes) < 300;
+            return keycloakUtils.updateUserAttributes(user.getEmailAddress(), attributes) < 300;
         } catch (Exception e) {
             SessionErrors.add(actionRequest, "update-attributes-failed", e.getMessage());
             LOG.debug("Could not update keycloak attributes for user [" + user.getEmailAddress() + "]", e);
@@ -284,14 +310,6 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
     private Map<String, String> getUserAttributes(ActionRequest actionRequest) {
         Map<String, String> attributes = new HashMap<>();
-
-        //Get local attributes
-        for (DsdUserUtils.ATTRIBUTES key : DsdUserUtils.ATTRIBUTES.values()) {
-            String value = ParamUtil.getString(actionRequest, key.name());
-            if (Validator.isNotNull(value)) {
-                attributes.put(key.name(), value);
-            }
-        }
 
         //Get keycloak attributes
         for (KeycloakUtils.ATTRIBUTES key : KeycloakUtils.ATTRIBUTES.values()) {
@@ -337,7 +355,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
     }
 
     @Reference
-    private DsdUserUtils dsdUserUtils;
+    private KeycloakUtils keycloakUtils;
 
     @Reference
     private DsdParserUtils dsdParserUtils;
