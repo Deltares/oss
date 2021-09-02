@@ -1,5 +1,5 @@
 <%@ page import="java.util.Date" %>
-<%@ page import="nl.deltares.portal.utils.DsdUserUtils" %>
+<%@ page import="nl.deltares.dsd.model.BadgeInfo" %>
 <aui:row>
     <aui:col width="50">
         <c:if test="${not empty attributes}">
@@ -199,7 +199,7 @@
 
         <span><liferay-ui:message key="dsd.registration.step2.show.title"/></span>
         <%
-            String title_setting = (String) attributes.get(DsdUserUtils.ATTRIBUTES.badge_title_setting.name());
+            String title_setting = (String) attributes.get(BadgeInfo.ATTRIBUTES.badge_title_setting.name());
             boolean yes_checked = "yes".equals(title_setting);
             boolean no_checked = "no".equals(title_setting);
 
@@ -207,7 +207,7 @@
         <div class="d-flex justify-content-start">
             <div class="pr-3">
                 <aui:input
-                        name="<%= DsdUserUtils.ATTRIBUTES.badge_title_setting.name() %>"
+                        name="<%= BadgeInfo.ATTRIBUTES.badge_title_setting.name() %>"
                         label="yes"
                         cssClass="update-badge"
                         type="radio"
@@ -216,7 +216,7 @@
             </div>
             <div class="pr-3">
                 <aui:input
-                        name="<%= DsdUserUtils.ATTRIBUTES.badge_title_setting.name() %>"
+                        name="<%= BadgeInfo.ATTRIBUTES.badge_title_setting.name() %>"
                         label="no"
                         cssClass="update-badge"
                         type="radio"
@@ -227,7 +227,7 @@
 
         <span><liferay-ui:message key="dsd.registration.step2.badge.name"/></span>
         <%
-            String name_setting = (String) attributes.get(DsdUserUtils.ATTRIBUTES.badge_name_setting.name());
+            String name_setting = (String) attributes.get(BadgeInfo.ATTRIBUTES.badge_name_setting.name());
             boolean name_checked = "name".equals(name_setting);
             boolean initials_checked = "initials".equals(name_setting);
             boolean both_checked = "both".equals(name_setting);
@@ -235,7 +235,7 @@
         <div class="d-flex justify-content-start">
             <div class="pr-3">
                 <aui:input
-                        name="<%= DsdUserUtils.ATTRIBUTES.badge_name_setting.name() %>"
+                        name="<%= BadgeInfo.ATTRIBUTES.badge_name_setting.name() %>"
                         label="dsd.registration.step2.badge.name.1"
                         cssClass="update-badge"
                         type="radio"
@@ -244,7 +244,7 @@
             </div>
             <div class="pr-3">
                 <aui:input
-                        name="<%= DsdUserUtils.ATTRIBUTES.badge_name_setting.name() %>"
+                        name="<%= BadgeInfo.ATTRIBUTES.badge_name_setting.name() %>"
                         label="dsd.registration.step2.badge.name.2"
                         cssClass="update-badge"
                         type="radio"
@@ -253,7 +253,7 @@
             </div>
             <div class="pr-3">
                 <aui:input
-                        name="<%= DsdUserUtils.ATTRIBUTES.badge_name_setting.name() %>"
+                        name="<%= BadgeInfo.ATTRIBUTES.badge_name_setting.name() %>"
                         label="dsd.registration.step2.badge.name.3"
                         cssClass="update-badge"
                         type="radio"
