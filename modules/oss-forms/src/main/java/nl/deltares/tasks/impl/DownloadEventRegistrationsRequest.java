@@ -277,6 +277,10 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             if (value.contains("\n")) {
                 value = value.replaceAll("\n", " ");
             }
+            //Change ; -> , to avoid problems with regional settings.
+            if (value.contains(";")) {
+                value = value.replaceAll(";", ",");
+            }
             boolean addQuotes = value.contains(",");
             if (addQuotes){
                 line.append("\"");
