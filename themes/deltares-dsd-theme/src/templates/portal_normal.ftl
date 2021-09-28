@@ -26,6 +26,7 @@
 </head>
 
 <script src="${javascript_folder}/cookies/cookieconsent.min.js" data-cfasync="false"></script>
+<script src="${javascript_folder}/calendar/calendar.js" ></script>
 <body class="${css_class}">
 
 <#if google_tag_id?? && google_tag_id?has_content >

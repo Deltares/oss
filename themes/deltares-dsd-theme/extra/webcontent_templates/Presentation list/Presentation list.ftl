@@ -6,17 +6,12 @@
 <#assign registration = dsdParserUtils.getRegistration(groupId,articleId) />
 <#assign presentations = displayContext.getPresentations() />
 <#assign prefix = languageUtil.get(locale, "dsd.theme.session.presentations", "Presentaties van programma: ")/>
-<style>
-    table, th, td {
-        border: 1px solid black;
-    }
-</style>
 <div class="row no-gutters">
 
     <div class="col-12 px-3">
         <p>
         <h4>
-            <a href="-/${urltitle}" target="_blank">
+            <a href="${urltitle}" target="_blank">
                 ${prefix}<strong>${title}</strong>
             </a>
         </h4>
