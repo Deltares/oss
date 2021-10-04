@@ -96,10 +96,16 @@ public abstract class Registration extends AbsDsdArticle {
         daily = "daily".equals(datesOption);
         NodeList registrationDates = XmlContentUtils.getDynamicElementsByName(document, "registrationDate");
         ArrayList<Period> dayPeriods = new ArrayList<>();
+        final TimeZone timeZone;
+        if (timeZoneId != null){
+             timeZone = TimeZone.getTimeZone(timeZoneId);
+        } else {
+            timeZone = TimeZone.getTimeZone("CET");
+        }
         for (int i = 0; i < registrationDates.getLength(); i++) {
             Node registrationDate = registrationDates.item(i);
-            Date startOfDay = XmlContentUtils.parseDateTimeFields(registrationDate, "startTime");
-            Date endOfDay = XmlContentUtils.parseDateTimeFields(registrationDate, "endTime");
+            Date startOfDay = XmlContentUtils.parseDateTimeFields(registrationDate, "startTime", timeZone);
+            Date endOfDay = XmlContentUtils.parseDateTimeFields(registrationDate, "endTime", timeZone);
             dayPeriods.add(new Period(startOfDay, endOfDay));
         }
 
