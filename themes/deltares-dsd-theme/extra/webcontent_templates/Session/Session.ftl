@@ -31,6 +31,7 @@
 <#assign registration = dsdParserUtils.getRegistration(groupId,articleId) />
 <#assign displayContext = dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay) />
 <#assign timeZoneId = registration.getTimeZoneId() />
+<#assign timeZone = timeZoneUtil.getTimeZone(timeZoneId) />
 <#assign room = registration.getRoom() />
 <#if registration.isEventInPast() >
     <#assign isEventPast = "past-event"/>
@@ -58,8 +59,8 @@
             </div>
             <div class="data-section">
                 <div class="c-sessions__item__date">
-                    <span>${dateUtil.getDate(registration.getStartTime(), "dd", locale)}</span>
-                    ${dateUtil.getDate(registration.getStartTime(), "MMM", locale)}
+                    <span>${dateUtil.getDate(registration.getStartTime(), "dd", locale, timeZone)}</span>
+                    ${dateUtil.getDate(registration.getStartTime(), "MMM", locale, timeZone)}
                 </div>
                 <h3 class="c-sessions__item__title h1">${registration.getTitle()}</h3>
                 <#assign calDescription += (registration.getTitle() + "<br/>") />
@@ -69,7 +70,8 @@
                 <p class="c-sessions__item__time-date-place">
                     <#if registration.isMultiDayEvent() >
                         <#if registration.isDaily() >
-                            <#assign dateString = dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale) + "&nbsp;-&nbsp;" + dateUtil.getDate(registration.getEndTime(), "dd MMM yyyy", locale) />
+                            <#assign dateString = dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale, timeZone)
+                            + "&nbsp;-&nbsp;" + dateUtil.getDate(registration.getEndTime(), "dd MMM yyyy", locale, timeZone) />
                             <#assign timeString = displayContext.getStartTime() + "&nbsp;-&nbsp;" +  displayContext.getEndTime() + " (" + timeZoneId + ")" />
                             <span class="c-sessions__item__time-date-place__date">
                                 ${dateString}
@@ -80,8 +82,10 @@
                         <#else>
                             <#assign periods = registration.getStartAndEndTimesPerDay() />
                             <#list periods as period >
-                                <#assign dateString = dateUtil.getDate(period.getStartDate(), "dd MMM yyyy", locale) />
-                                <#assign timeString = dateUtil.getDate(registration.getStartTime(), "HH:mm", locale) + "&nbsp;-&nbsp;" + dateUtil.getDate(registration.getEndTime(), "HH:mm", locale) + " (" + timeZoneId + ")" />
+                                <#assign dateString = dateUtil.getDate(period.getStartDate(), "dd MMM yyyy", locale, timeZone) />
+                                <#assign timeString = dateUtil.getDate(registration.getStartTime(), "HH:mm", locale, timeZone)
+                                + "&nbsp;-&nbsp;" + dateUtil.getDate(registration.getEndTime(), "HH:mm", locale, timeZone)
+                                + " (" + timeZoneId + ")" />
                                 <span class="c-sessions__item__time-date-place__date">
                                     ${dateString}
                                 </span>
@@ -91,8 +95,8 @@
                             </#list>
                         </#if>
                     <#else>
-                        <#assign dateString = dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale) />
-                        <#assign timeString = displayContext.getStartTime() + "&nbsp;-&nbsp;" + displayContext.getEndTime() + " (" + timeZoneId + ")" />
+                        <#assign dateString = dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale, timeZone) />
+                        <#assign timeString = displayContext.getStartTime() + "&nbsp;-&nbsp;" + displayContext.getEndTime() + " (" + timeZone.getID() + ")" />
                         <span class="c-sessions__item__time-date-place__date">
                             ${dateString}
                         </span>
@@ -202,7 +206,8 @@
                     <#assign schedules_date_Data = getterUtil.getString(cur_Schedule.scheduleDate.getData())>
                     <#if validator.isNotNull(schedules_date_Data)>
                         <#assign schedules_date_DateObj = dateUtil.parseDate("yyyy-MM-dd", schedules_date_Data, locale)>
-                        ${languageUtil.get(locale, "dsd.theme.session.schedule")} - ${dateUtil.getDate(schedules_date_DateObj, "dd MMM yyyy", locale)}
+                        ${languageUtil.get(locale, "dsd.theme.session.schedule")} -
+                        ${dateUtil.getDate(schedules_date_DateObj, "dd MMM yyyy", locale, timeZone)}
                     </#if>
                 </h3>
             </#if>
