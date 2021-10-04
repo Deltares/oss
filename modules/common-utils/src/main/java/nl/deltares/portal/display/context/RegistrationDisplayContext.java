@@ -31,6 +31,7 @@ import javax.portlet.PortletURL;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
+import java.util.TimeZone;
 
 public class RegistrationDisplayContext {
 
@@ -138,7 +139,8 @@ public class RegistrationDisplayContext {
 
     public String getStartDate(){
         if (getRegistration() != null) {
-            return DateUtil.getDate(getRegistration().getStartTime(), "dd MMMM yyyy", themeDisplay.getLocale());
+            return DateUtil.getDate(getRegistration().getStartTime(), "dd MMMM yyyy", themeDisplay.getLocale(),
+                    TimeZone.getTimeZone(getRegistration().getTimeZoneId()));
         }
         return "";
 
@@ -146,7 +148,8 @@ public class RegistrationDisplayContext {
 
     public String getEndDate(){
         if (getRegistration() != null) {
-            return DateUtil.getDate(getRegistration().getEndTime(), "dd MMMM yyyy", themeDisplay.getLocale());
+            return DateUtil.getDate(getRegistration().getEndTime(), "dd MMMM yyyy", themeDisplay.getLocale(),
+                    TimeZone.getTimeZone(getRegistration().getTimeZoneId()));
         }
         return "";
 
@@ -177,14 +180,16 @@ public class RegistrationDisplayContext {
     }
     public String getStartTime() {
         if (getRegistration() != null) {
-            return DateUtil.getDate(getRegistration().getStartTime(), "HH:mm", themeDisplay.getLocale());
+            return DateUtil.getDate(getRegistration().getStartTime(), "HH:mm", themeDisplay.getLocale(),
+                    TimeZone.getTimeZone(getRegistration().getTimeZoneId()));
         }
         return "";
     }
 
     public String getEndTime() {
         if (getRegistration() != null) {
-            return DateUtil.getDate(getRegistration().getEndTime(), "HH:mm", themeDisplay.getLocale());
+            return DateUtil.getDate(getRegistration().getEndTime(), "HH:mm", themeDisplay.getLocale(),
+                    TimeZone.getTimeZone(getRegistration().getTimeZoneId()));
         }
         return "";
     }
