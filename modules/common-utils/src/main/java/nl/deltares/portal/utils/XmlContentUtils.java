@@ -22,13 +22,12 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.stream.IntStream;
 
 public class XmlContentUtils {
 
     private static final Log LOG = LogFactoryUtil.getLog(XmlContentUtils.class);
-
-    private static final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
     static String ARTICLE_ROOT= "root";
     static String ARTICLE_DYNAMIC_ELEMENT= "dynamic-element";
     static String ARTICLE_NAME_ATTRIBUTE_START= "[@name='";
@@ -116,12 +115,18 @@ public class XmlContentUtils {
     }
 
     public static Date parseDateTimeFields(Node dateNode, String timeField) throws PortalException {
+        return parseDateTimeFields(dateNode, timeField, TimeZone.getTimeZone("GMT"));
+    }
+
+    public static Date parseDateTimeFields(Node dateNode, String timeField, TimeZone timeZone) throws PortalException {
         String dateValue = XmlContentUtils.getDynamicContentForNode(dateNode);
         String timeValue = XmlContentUtils.getDynamicContentByName(dateNode, timeField, true);
         if (timeValue == null){
             timeValue = "00:00";
         }
         String dateTimeValue = dateValue + 'T' + timeValue;
+        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+        dateTimeFormatter.setTimeZone(timeZone);
         try {
             return dateTimeFormatter.parse(dateTimeValue);
         } catch (Exception e) {
