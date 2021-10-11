@@ -9,7 +9,6 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.npm.react.portlet.fullcalendar.constants.FullCalendarPortletKeys;
-import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
@@ -67,6 +66,7 @@ public class FullCalendarConfigurationAction extends DefaultConfigurationAction 
         setPreference(actionRequest, "baseUrl", baseUrl);
         Map<String, String> colorMap = convertColorsToMap(actionRequest);
         setPreference(actionRequest, "sessionColorMap", JsonContentUtils.formatMapToJson(colorMap));
+        setPreference(actionRequest, "defaultView", ParamUtil.getString(actionRequest, "defaultView"));
 
         super.processAction(portletConfig, actionRequest, actionResponse);
     }

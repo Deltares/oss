@@ -17,4 +17,7 @@ public interface FullCalendarConfiguration {
 
     @Meta.AD(required = false, deflt = "{}")
     String sessionColorMap();
+
+    @Meta.AD(required = false, deflt = "verticalWeek", description = "Available values: horizontalDay,horizontalWeek,verticalDay,verticalWeek")
+    String defaultView();
 }
