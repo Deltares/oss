@@ -17,9 +17,7 @@
 --%>
 
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
-<%@ page import="nl.deltares.portal.model.DsdArticle" %>
-<%@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
-<%@ page import="java.awt.*" %>
+
 
 <%@ include file="/init.jsp" %>
 
@@ -64,6 +62,15 @@
         >
         </aui:input>
         <% } %>
+
+        <aui:input
+                label="Defaul calendar view"
+                name="defaultView"
+                helpMessage="full-calendar.defaultValue"
+                value="<%= defaultView %>"
+        >
+
+        </aui:input>
     </aui:fieldset>
 
     <aui:button-row>

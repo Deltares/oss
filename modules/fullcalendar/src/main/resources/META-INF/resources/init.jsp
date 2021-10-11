@@ -65,6 +65,7 @@
                     renderRequest.getAttribute(FullCalendarConfiguration.class.getName());
     String portletId = (String) renderRequest.getAttribute(WebKeys.PORTLET_ID);
     String layoutUuid = themeDisplay.getLayout().getUuid();
+    String defaultView = "verticalWeek";
     String baseUrl = "";
 
     Date startDateTime = (Date) renderRequest.getAttribute("startDate");
@@ -92,6 +93,8 @@
                 finalColorMap.putIfAbsent(typeKey, "#17a2b8");
             });
             colorMap = finalColorMap;
+            defaultView = portletPreferences.getValue("defaultView", configuration.defaultView());
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

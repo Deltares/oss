@@ -16,6 +16,7 @@ class Calendar extends React.Component {
 			defaultDate: this.props.startDate,
 			eventLimit: false,
 			businessHours: true,
+			defaultView: this.props.defaultView,
 			resources: {
 				url: this.props.baseUrl + '/resources/' + this.props.siteId + '/' + this.props.eventId+ '?locale=' + this.props.locale + '&p_auth=' + this.props.p_auth,
 				method: 'GET',
@@ -42,7 +43,7 @@ class Calendar extends React.Component {
 						<FullCalendar
 							schedulerLicenseKey={'GPL-My-Project-Is-Open-Source'}
 							plugins={[interaction, resourceTimeline, resourceDayGrid, resourceTimeGrid]}
-							defaultView={'horizontalWeek'}
+							defaultView={this.state.defaultView}
 							timeZone={'UTC'}
 							eventLimit={this.state.eventLimit}
 							defaultDate={this.state.defaultDate}
@@ -101,10 +102,10 @@ class Calendar extends React.Component {
 	}
 }
 
-export default function (elementId, baseUrl, siteId, eventId, startDate, portletId, layoutUuid, locale, p_auth) {
+export default function (elementId, baseUrl, siteId, eventId, startDate, defaultView, portletId, layoutUuid, locale, p_auth) {
 
 	ReactDOM.render( <Calendar class="fc" baseUrl={baseUrl}
-							   siteId={siteId} eventId={eventId} startDate={startDate}
+							   siteId={siteId} eventId={eventId} startDate={startDate} defaultView={defaultView}
 							   portletId={portletId} layoutUuid={layoutUuid} locale={locale} p_auth={p_auth}/>, document.getElementById(elementId))
 
 }
