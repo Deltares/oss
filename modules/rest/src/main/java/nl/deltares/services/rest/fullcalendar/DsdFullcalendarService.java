@@ -53,7 +53,7 @@ public class DsdFullcalendarService {
     @Produces("application/json")
     public Response events(@Context HttpServletRequest request,
                            @PathParam("siteId") String siteId, @PathParam("eventId") String eventId,
-                           @QueryParam("portletId") String portletId, @QueryParam("layoutUuid") String layoutUuid, @QueryParam("locale") String localeStr,
+                           @QueryParam("portletId") String portletId, @QueryParam("layoutUuid") String layoutUuid,
                            @QueryParam("start") String start, @QueryParam("end") String end, @QueryParam("timeZone") String timeZone) {
 
 
@@ -78,13 +78,14 @@ public class DsdFullcalendarService {
         } catch (ConfigurationException e) {
             return Response.serverError().entity(String.format("Error getting DSD siteConfiguration: %s", e.getMessage())).build();
         }
-        Locale locale = LocaleUtil.fromLanguageId(localeStr);
 
         Map<String, String> colorMap = getColorMap(layoutUuid, Long.parseLong(siteId), portletId);
         try {
+            Group group = GroupLocalServiceUtil.getGroup(Long.parseLong(siteId));
+            Locale locale = LocaleUtil.fromLanguageId(group.getDefaultLanguageId());
+
             List<Registration> registrations;
             if (eventId.equals("0")){
-                Group group = GroupLocalServiceUtil.getGroup(Long.parseLong(siteId));
                 registrations = parserUtils.getRegistrations(group.getCompanyId(), Long.parseLong(siteId), startSearch, endSearch,
                         getStructureKeys(siteConfiguration), siteConfiguration.dsdRegistrationDateField(), locale);
             } else {
