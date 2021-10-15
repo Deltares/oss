@@ -89,7 +89,7 @@ public interface RegistrationLocalService
 	public Registration createRegistration(long registrationId);
 
 	/**
-	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
@@ -98,7 +98,7 @@ public interface RegistrationLocalService
 	public void deleteAllEventRegistrations(long groupId, long eventResourceId);
 
 	/**
-	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
@@ -108,7 +108,7 @@ public interface RegistrationLocalService
 		long groupId, long resourceId);
 
 	/**
-	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
@@ -146,7 +146,7 @@ public interface RegistrationLocalService
 	public Registration deleteRegistration(Registration registration);
 
 	/**
-	 * Delete user registrations for 'resourceId' and a start date equal to 'stratDate'
+	 * Delete user registrations for 'resourceId' and a start date equal to 'startDate'
 	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
@@ -159,7 +159,7 @@ public interface RegistrationLocalService
 		throws NoSuchRegistrationException;
 
 	/**
-	 * Delete user registrations for 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * Delete user registrations for 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
@@ -240,6 +240,10 @@ public interface RegistrationLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getArticleRegistrations(
+		long groupId, long articleResourceId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Registration> getEventRegistrations(

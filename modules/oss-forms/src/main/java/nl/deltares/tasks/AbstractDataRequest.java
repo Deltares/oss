@@ -24,8 +24,8 @@ public abstract class AbstractDataRequest implements DataRequest {
     protected final String id;
     protected final long currentUserId;
     protected STATUS status = pending;
-    protected int processedCount;
-    protected int totalCount;
+    protected int processedCount = 0;
+    protected int totalCount = 0;
     protected File tempDir;
     private final PermissionChecker permissionChecker;
 

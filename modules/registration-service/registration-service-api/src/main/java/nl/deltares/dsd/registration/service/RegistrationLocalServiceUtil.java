@@ -77,7 +77,7 @@ public class RegistrationLocalServiceUtil {
 	}
 
 	/**
-	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
@@ -90,7 +90,7 @@ public class RegistrationLocalServiceUtil {
 	}
 
 	/**
-	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
@@ -104,7 +104,7 @@ public class RegistrationLocalServiceUtil {
 	}
 
 	/**
-	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
@@ -157,7 +157,7 @@ public class RegistrationLocalServiceUtil {
 	}
 
 	/**
-	 * Delete user registrations for 'resourceId' and a start date equal to 'stratDate'
+	 * Delete user registrations for 'resourceId' and a start date equal to 'startDate'
 	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
@@ -176,7 +176,7 @@ public class RegistrationLocalServiceUtil {
 	}
 
 	/**
-	 * Delete user registrations for 'resourceId'. This inlcudes all registration with a parentArticleId
+	 * Delete user registrations for 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
@@ -285,6 +285,13 @@ public class RegistrationLocalServiceUtil {
 		getActionableDynamicQuery() {
 
 		return getService().getActionableDynamicQuery();
+	}
+
+	public static java.util.List
+		<nl.deltares.dsd.registration.model.Registration>
+			getArticleRegistrations(long groupId, long articleResourceId) {
+
+		return getService().getArticleRegistrations(groupId, articleResourceId);
 	}
 
 	public static java.util.List
