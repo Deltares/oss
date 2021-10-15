@@ -3,9 +3,13 @@
 <#assign urltitle=.vars['reserved-article-url-title'].data />
 <#assign articleId = .vars['reserved-article-id'].getData() />
 <#assign displayContext = dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay) />
-<#assign registration = dsdParserUtils.getRegistration(groupId,articleId) />
+<#assign registration = displayContext.getRegistration() />
 <#assign timeZoneId = registration.getTimeZoneId() />
 <#assign showButtons = displayContext.canUserRegister() />
+
+<#if registration.isMultiDayEvent() >
+    <#assign title = displayContext.getTitle() />
+</#if>
 <div class="row no-gutters">
 
     <div class="col-2">
