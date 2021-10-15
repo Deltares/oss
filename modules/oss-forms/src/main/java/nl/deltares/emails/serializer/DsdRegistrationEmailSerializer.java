@@ -10,7 +10,6 @@ import nl.deltares.portal.model.impl.Registration;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.TimeZone;
 
 public abstract class DsdRegistrationEmailSerializer implements EmailSerializer<DsdEmail>{
 
@@ -39,7 +38,7 @@ public abstract class DsdRegistrationEmailSerializer implements EmailSerializer<
         for (Registration registration : registrations) {
 
             writer.append("<tr><td><hr></td><td><hr></td></tr>");
-            setTimeZone(registration.getTimeZoneId());
+
             appendRegistration(writer, content, registration);
 
             writer.append("<tr><td><hr></td><td><hr></td></tr>");
@@ -67,12 +66,6 @@ public abstract class DsdRegistrationEmailSerializer implements EmailSerializer<
             writer.append("<img src=\"cid:footer\" />");
         }
         writer.append("<br>");
-    }
-
-    private void setTimeZone(String timeZoneId) {
-        final TimeZone timeZone = TimeZone.getTimeZone(timeZoneId);
-        timeFormat.setTimeZone(timeZone);
-        dateFormat.setTimeZone(timeZone);
     }
 
     protected abstract void appendRemarks(StringBuilder writer, DsdEmail content);
