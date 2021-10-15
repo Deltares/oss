@@ -74,7 +74,7 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	/**
-	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
@@ -89,7 +89,7 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	/**
-	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
@@ -104,7 +104,7 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	/**
-	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
@@ -159,7 +159,7 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	/**
-	 * Delete user registrations for 'resourceId' and a start date equal to 'startDate'
+	 * Delete user registrations for 'resourceId' and a start date equal to 'stratDate'
 	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
@@ -179,7 +179,7 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	/**
-	 * Delete user registrations for 'resourceId'. This includes all registration with a parentArticleId
+	 * Delete user registrations for 'resourceId'. This inlcudes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
 	 * @param groupId Site Identifier
@@ -296,14 +296,6 @@ public class RegistrationLocalServiceWrapper
 		getActionableDynamicQuery() {
 
 		return _registrationLocalService.getActionableDynamicQuery();
-	}
-
-	@Override
-	public java.util.List<nl.deltares.dsd.registration.model.Registration>
-		getArticleRegistrations(long groupId, long articleResourceId) {
-
-		return _registrationLocalService.getArticleRegistrations(
-			groupId, articleResourceId);
 	}
 
 	@Override

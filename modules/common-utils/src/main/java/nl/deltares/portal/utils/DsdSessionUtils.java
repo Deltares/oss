@@ -15,20 +15,6 @@ public interface DsdSessionUtils {
     void deleteRegistrationRecord(long registrationId) throws PortalException;
 
     /**
-     * Get count for all records in registrations table
-     * @return count
-     */
-    int getRegistrationCount();
-
-    /**
-     * Return registrations for indices
-     * @param start start index
-     * @param end end index
-     * @return list of record values
-     */
-    List<Map<String, Object>> getRegistrations(int start, int end);
-
-    /**
      * Retrieves the webinar join link for user.
      *
      * @param user User to Registration
@@ -127,22 +113,6 @@ public interface DsdSessionUtils {
      * @return List of user registration records
      */
     List<Map<String, Object>> getRegistrations(Event event);
-
-    /**
-     * Get all registrations by registration resourceId.
-     * @param groupId Registration groupid
-     * @param resourceId Registration resourceid
-     * @return List of user registration records
-     */
-    List<Map<String, Object>> getRegistrations(long groupId, long resourceId);
-
-    /**
-     * Get all registrations by event resourceId.
-     * @param groupId Registration groupid
-     * @param eventResourceId Event resourceid
-     * @return List of user registration records
-     */
-    List<Map<String, Object>> getEventRegistrations(long groupId, long eventResourceId);
 
     void deleteEventRegistrations(long groupId, long resourceId);
 }
