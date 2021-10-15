@@ -25,27 +25,24 @@
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 <%@ taglib uri="http://liferay.com/tld/journal" prefix="liferay-journal" %>
 
+<%@ page import="com.liferay.journal.model.JournalArticleDisplay" %>
 <%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
-<%@ page import="com.liferay.portal.kernel.search.Document" %>
+<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationException" %>
+<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil" %>
+<%@ page import="com.liferay.portal.kernel.theme.ThemeDisplay" %>
 <%@ page import="com.liferay.portal.kernel.util.HtmlUtil" %>
 <%@ page import="com.liferay.portal.kernel.util.WebKeys" %>
 <%@ page import="com.liferay.portal.search.web.internal.result.display.context.SearchResultFieldDisplayContext" %>
 <%@ page import="com.liferay.portal.search.web.internal.result.display.context.SearchResultSummaryDisplayContext" %>
 <%@ page import="com.liferay.portal.search.web.internal.search.results.portlet.SearchResultsPortletDisplayContext" %>
-<%@ page import="nl.deltares.portal.display.context.RegistrationDisplayContext" %>
-<%@ page import="java.util.Collections" %>
-<%@ page import="java.util.List" %>
-<%@ page import="nl.deltares.portal.utils.DsdParserUtils" %>
-<%@ page import="nl.deltares.portal.kernel.util.comparator.SearchResultsComparator" %>
-<%@ page import="java.text.NumberFormat" %>
 <%@ page import="com.liferay.portal.template.ServiceLocator" %>
-<%@ page import="com.liferay.journal.model.JournalArticleDisplay" %>
-<%@ page import="com.liferay.portal.kernel.theme.ThemeDisplay" %>
 <%@ page import="nl.deltares.portal.configuration.DSDSiteConfiguration" %>
-<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil" %>
-<%@ page import="java.util.Map" %>
+<%@ page import="nl.deltares.portal.display.context.RegistrationDisplayContext" %>
+<%@ page import="nl.deltares.portal.utils.DsdParserUtils" %>
 <%@ page import="nl.deltares.portal.utils.JsonContentUtils" %>
-<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationException" %>
+<%@ page import="java.text.NumberFormat" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="nl.deltares.search.results.DsdResultsSearchContainer" %>
 
 <portlet:defineObjects/>
 <%
@@ -74,21 +71,22 @@
 %>
 
 <%
-    SearchResultsPortletDisplayContext searchResultsPortletDisplayContext = (SearchResultsPortletDisplayContext)java.util.Objects.requireNonNull(request.getAttribute(WebKeys.PORTLET_DISPLAY_CONTEXT));
+    SearchResultsPortletDisplayContext searchResultsPortletDisplayContext = (SearchResultsPortletDisplayContext) java.util.Objects.requireNonNull(request.getAttribute(WebKeys.PORTLET_DISPLAY_CONTEXT));
 
     if (searchResultsPortletDisplayContext.isRenderNothing()) {
         return;
     }
 
-    com.liferay.portal.kernel.dao.search.SearchContainer<com.liferay.portal.kernel.search.Document> searchContainer1 = searchResultsPortletDisplayContext.getSearchContainer();
-    List<Document> results = searchContainer1.getResults();
-    Collections.sort(results, new SearchResultsComparator(dsdParserUtils));
+    final DsdResultsSearchContainer dsdResultsSearchContainer = new DsdResultsSearchContainer(
+            searchResultsPortletDisplayContext.getSearchContainer(), themeDisplay, dsdParserUtils);
 %>
 
 <style>
     .date-title {
         text-align: center;
-        color: white; }
+        color: white;
+    }
+
     .date-title span {
         font-size: 25px;
         display: block;
@@ -103,6 +101,7 @@
     .past-event {
         background: #9B9B9B;
     }
+
     .upcoming-event {
         background: #0D38E0;
     }
@@ -112,21 +111,18 @@
 <liferay-ui:search-container
         emptyResultsMessage='<%= LanguageUtil.format(request, "no-results-were-found-that-matched-the-keywords-x", "<strong>" + HtmlUtil.escape(searchResultsPortletDisplayContext.getKeywords()) + "</strong>", false) %>'
         id='<%= renderResponse.getNamespace() + "searchContainerTag" %>'
-        searchContainer="<%= searchContainer1 %>"
+        searchContainer="<%= dsdResultsSearchContainer %>"
 >
     <liferay-ui:search-container-row
             cssClass="reservation-result-row"
-            className="com.liferay.portal.kernel.search.Document"
+            className="nl.deltares.portal.display.context.RegistrationDisplayContext"
             escapedModel="<%= false %>"
             keyProperty="UID"
-            modelVar="document"
+            modelVar="registrationDisplayContext"
             stringKey="<%= true %>"
     >
 
         <%
-            SearchResultSummaryDisplayContext searchResultSummaryDisplayContext = java.util.Objects.requireNonNull(searchResultsPortletDisplayContext.getSearchResultSummaryDisplayContext(document));
-            RegistrationDisplayContext registrationDisplayContext = new RegistrationDisplayContext(searchResultSummaryDisplayContext.getClassPK(), themeDisplay, dsdParserUtils);
-
             String date = registrationDisplayContext.getStartDate();
             boolean writeDateHeader = !date.isEmpty() && !lastDate.equals(date);
             lastDate = date;
@@ -137,40 +133,32 @@
             } else {
                 colorClass = "upcoming-event";
             }
+            liferayPortletRequest.getPortletSession().setAttribute("display-context", registrationDisplayContext);
         %>
 
-        <c:choose>
-            <c:when test="<%= !searchResultSummaryDisplayContext.isTemporarilyUnavailable() %>">
-                <liferay-ui:search-container-column-text
-                        colspan="<%= 2 %>"
-                >
-                    <c:if test="<%= writeDateHeader %>">
-                        <div class="date-title <%= colorClass %>">
-                            <span><%= date %></span>
-                        </div>
-                    </c:if>
-                    <%
-                        JournalArticleDisplay articleDisplay = registrationDisplayContext
-                                .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, templateKey, registrationDisplayContext.getRegistration().getArticleId(), themeDisplay);
-                    %>
-                    <liferay-journal:journal-article-display
-                            articleDisplay="<%= articleDisplay %>"
-                    />
+        <liferay-ui:search-container-column-text
+                colspan="<%= 2 %>"
+        >
+            <c:if test="<%= writeDateHeader %>">
+                <div class="date-title <%= colorClass %>">
+                    <span><%= date %></span>
+                </div>
+            </c:if>
+            <%
+                JournalArticleDisplay articleDisplay = RegistrationDisplayContext
+                        .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, templateKey, registrationDisplayContext.getRegistration().getArticleId(), themeDisplay);
+            %>
+            <liferay-journal:journal-article-display
+                    articleDisplay="<%= articleDisplay %>"
+            />
+        </liferay-ui:search-container-column-text>
 
-                </liferay-ui:search-container-column-text>
-            </c:when>
-            <c:otherwise>
-                <liferay-ui:search-container-column-text
-                        colspan="<%= 3 %>"
-                >
-                    <div class="alert alert-danger">
-                        <liferay-ui:message arguments="result" key="is-temporarily-unavailable" translateArguments="<%= true %>" />
-                    </div>
-                </liferay-ui:search-container-column-text>
-            </c:otherwise>
-        </c:choose>
     </liferay-ui:search-container-row>
 
+    <%
+        //clean up after use (still to be tested)
+        liferayPortletRequest.getPortletSession().setAttribute("display-context", null);
+    %>
     <aui:form useNamespace="<%= false %>">
         <liferay-ui:search-iterator
                 displayStyle="descriptive"
@@ -181,7 +169,7 @@
 </liferay-ui:search-container>
 
 <aui:script use="aui-base">
-    A.one('#<portlet:namespace />searchContainerTag').delegate(
+    A.one('#<portlet:namespace/>searchContainerTag').delegate(
     'click',
     function(event) {
     var currentTarget = event.currentTarget;
