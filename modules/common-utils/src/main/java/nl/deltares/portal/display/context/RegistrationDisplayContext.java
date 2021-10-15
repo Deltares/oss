@@ -5,6 +5,7 @@ import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleDisplay;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
@@ -24,29 +25,25 @@ import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.DsdParserUtils;
+import nl.deltares.portal.utils.Period;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
 public class RegistrationDisplayContext {
 
-    public RegistrationDisplayContext(long classPk, ThemeDisplay themeDisplay, DsdParserUtils dsdParserUtils) {
-        this.themeDisplay = themeDisplay;
-        this.dsdParserUtils = dsdParserUtils;
-        this.configurationProvider = ConfigurationProviderUtil.getConfigurationProvider();
-        JournalArticle registrationArticle = JournalArticleLocalServiceUtil.fetchLatestArticle(classPk);
-        if (registrationArticle != null) {
-            setRegistration(registrationArticle);
-        }
-    }
 
-    public RegistrationDisplayContext(String articleId, ThemeDisplay themeDisplay, DsdParserUtils dsdParserUtils) {
-        this(articleId, themeDisplay, ConfigurationProviderUtil.getConfigurationProvider(), dsdParserUtils);
+    public RegistrationDisplayContext(Registration registration, int dayIndex, ThemeDisplay themeDisplay){
+        this.themeDisplay = themeDisplay;
+        this.configurationProvider = ConfigurationProviderUtil.getConfigurationProvider();
+        this.registration = registration;
+        this.dayIndex = dayIndex;
     }
 
     public RegistrationDisplayContext(String articleId, ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider, DsdParserUtils dsdParserUtils) {
@@ -138,29 +135,65 @@ public class RegistrationDisplayContext {
     }
 
     public String getStartDate(){
-        if (getRegistration() != null) {
-            return DateUtil.getDate(getRegistration().getStartTime(), "dd MMMM yyyy", themeDisplay.getLocale(),
-                    TimeZone.getTimeZone(getRegistration().getTimeZoneId()));
+        final Registration registration = getRegistration();
+        if (registration != null) {
+            return DateUtil.getDate(getStartDate(registration), "dd MMMM yyyy", themeDisplay.getLocale(),
+                    TimeZone.getTimeZone(registration.getTimeZoneId()));
         }
         return "";
 
+    }
+
+    private Date getStartDate(Registration registration) {
+        if (dayIndex > 0 && registration.isMultiDayEvent()){
+            final List<Period> startAndEndTimesPerDay = registration.getStartAndEndTimesPerDay();
+            final Period period = startAndEndTimesPerDay.get(dayIndex);
+            return period.getStartDate();
+        } else {
+            return registration.getStartTime();
+        }
+    }
+
+    private Date getEndDate(Registration registration) {
+        if (registration.isMultiDayEvent()){
+            final List<Period> startAndEndTimesPerDay = registration.getStartAndEndTimesPerDay();
+            final Period period = startAndEndTimesPerDay.get(dayIndex);
+            return period.getEndDate();
+        } else {
+            return registration.getEndTime();
+        }
     }
 
     public String getEndDate(){
-        if (getRegistration() != null) {
-            return DateUtil.getDate(getRegistration().getEndTime(), "dd MMMM yyyy", themeDisplay.getLocale(),
-                    TimeZone.getTimeZone(getRegistration().getTimeZoneId()));
+        final Registration registration = getRegistration();
+        if (registration != null) {
+            return DateUtil.getDate(getEndDate(registration), "dd MMMM yyyy", themeDisplay.getLocale(),
+                    TimeZone.getTimeZone(registration.getTimeZoneId()));
         }
         return "";
 
     }
 
+    public String getTitle(){
+        final String title = registration.getTitle();
+        final String postFix = LanguageUtil.format(themeDisplay.getLocale(),
+                "program-list.day.count", new String[]{String.valueOf(getDayCount()), String.valueOf(getNumberOfDays())});
+        return (title + " ("  + postFix + ")");
+    }
+    public int getDayCount(){
+        return dayIndex + 1;
+    }
+
+    public int getNumberOfDays(){
+        if (!registration.isMultiDayEvent()) return 0;
+        return registration.getStartAndEndTimesPerDay().size();
+    }
     public boolean isPastEvent() {
-        if (getRegistration() != null) {
-            return getRegistration().getStartTime().getTime() < System.currentTimeMillis();
+        final Registration registration = getRegistration();
+        if (registration != null) {
+            return getEndDate(this.registration).getTime() < System.currentTimeMillis();
         }
         return true;
-
     }
 
     public boolean isOpen() {
@@ -179,17 +212,19 @@ public class RegistrationDisplayContext {
                 themeDisplay.getUserId(), registration.getResourceId()) > 0;
     }
     public String getStartTime() {
-        if (getRegistration() != null) {
-            return DateUtil.getDate(getRegistration().getStartTime(), "HH:mm", themeDisplay.getLocale(),
-                    TimeZone.getTimeZone(getRegistration().getTimeZoneId()));
+        final Registration registration = getRegistration();
+        if (registration != null) {
+            return DateUtil.getDate(getStartDate(registration), "HH:mm", themeDisplay.getLocale(),
+                    TimeZone.getTimeZone(registration.getTimeZoneId()));
         }
         return "";
     }
 
     public String getEndTime() {
-        if (getRegistration() != null) {
-            return DateUtil.getDate(getRegistration().getEndTime(), "HH:mm", themeDisplay.getLocale(),
-                    TimeZone.getTimeZone(getRegistration().getTimeZoneId()));
+        final Registration registration = getRegistration();
+        if (registration != null) {
+            return DateUtil.getDate(getEndDate(registration), "HH:mm", themeDisplay.getLocale(),
+                    TimeZone.getTimeZone(registration.getTimeZoneId()));
         }
         return "";
     }
@@ -325,9 +360,10 @@ public class RegistrationDisplayContext {
         return articleDisplay;
     }
     private final ThemeDisplay themeDisplay;
-    private ConfigurationProvider configurationProvider;
+    private final ConfigurationProvider configurationProvider;
     private Registration registration;
     private DsdParserUtils dsdParserUtils;
+    private int dayIndex = 0;
 
 
     private static final Log LOG = LogFactoryUtil.getLog(RegistrationDisplayContext.class);

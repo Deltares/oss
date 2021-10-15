@@ -118,6 +118,9 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
 
     @Override
     public RegistrationDisplayContext getDisplayContextInstance(String articleId, ThemeDisplay themeDisplay) {
+        String attributeName = "javax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?display-context";
+        final Object attribute = themeDisplay.getRequest().getSession().getAttribute(attributeName);
+        if (attribute instanceof RegistrationDisplayContext) return (RegistrationDisplayContext) attribute;
         return new RegistrationDisplayContext(articleId, themeDisplay, _configurationProvider, this);
     }
 
