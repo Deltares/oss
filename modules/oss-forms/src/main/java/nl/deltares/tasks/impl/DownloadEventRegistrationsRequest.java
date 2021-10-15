@@ -13,7 +13,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import nl.deltares.dsd.model.BadgeInfo;
 import nl.deltares.dsd.model.BillingInfo;
 import nl.deltares.portal.model.DsdArticle;
-import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
@@ -41,14 +40,11 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     private final WebinarUtilsFactory webinarUtilsFactory;
     private final Locale locale;
     private final boolean removeMissing;
-    private final boolean useResourcePrimKey;
-    private boolean disableCallWebinar;
 
     public DownloadEventRegistrationsRequest(String id, long currentUser, String articleId, Group siteGroup,
                                              DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils,
                                              DsdJournalArticleUtils dsdJournalArticleUtils,
-                                             WebinarUtilsFactory webinarUtilsFactory, boolean primKey,
-                                             boolean delete, boolean removeMissing) throws IOException {
+                                             WebinarUtilsFactory webinarUtilsFactory, boolean delete, boolean removeMissing) throws IOException {
         super(id, currentUser);
         this.articleId = articleId;
         this.group = siteGroup;
@@ -59,7 +55,6 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         this.webinarUtilsFactory = webinarUtilsFactory;
         this.deleteOnCompletion = delete;
         this.removeMissing = removeMissing;
-        this.useResourcePrimKey = primKey;
         this.locale = LocaleUtil.fromLanguageId(siteGroup.getDefaultLanguageId());
 
     }
@@ -71,28 +66,63 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         status = running;
         statusMessage = "starting download";
         init();
-
         try {
             File tempFile = new File(getExportDir(), id + ".tmp");
             if (tempFile.exists()) Files.deleteIfExists(tempFile.toPath());
+            //Get article for requested articleId.
+            DsdArticle selectedArticle = getJournalArticle(articleId);
 
-            try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
-                writeHeader(writer);
+            Map<Long, Registration> registrationCache = new HashMap<>();
+            Event event = getEvent(selectedArticle);
+            List<Map<String, Object>> registrationRecordsToProcess = getRegistrationRecordsLinkedToSelectedArticle(
+                    selectedArticle, event, registrationCache);
 
-                if (articleId.equals("all")) {
-                    //we are potentially downloading a lot so no webinar requests
-                    disableCallWebinar = true;
-                    downloadAllRegistrations(writer);
-                } else if (useResourcePrimKey) {
-                    //we are deleting so no webinar info requests
-                    disableCallWebinar = true;
-                    final long resourceId = Long.parseLong(articleId);
-                    downloadRequestedResourceIdRegistrations(resourceId, writer);
-                } else {
-                    //If we are deleting then do not request webinar info
-                    disableCallWebinar = deleteOnCompletion;
-                    downloadRequestedArticleRegistrations(articleId, writer);
+            totalCount = registrationRecordsToProcess.size();
+            if (registrationRecordsToProcess.size() == 0) {
+                status = nodata;
+                processedCount = totalCount;
+                fireStateChanged();
+                return status;
+            }
+            Map<String, List<String>> webinarKeyCache = new HashMap<>();
+            //Create local session because the servlet session will close after call to endpoint is completed
+            try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))){
+
+                StringBuilder header = new StringBuilder("event,registration,start date,topic,type,email,firstName,lastName,webinarProvider,registrationStatus,remarks");
+                for (BillingInfo.ATTRIBUTES value : BillingInfo.ATTRIBUTES.values()) {
+                    header.append(',');
+                    header.append(value.name());
                 }
+                for (BadgeInfo.ATTRIBUTES value : BadgeInfo.ATTRIBUTES.values()){
+                    header.append(',');
+                    header.append(value.name());
+                }
+                header.append(",registration time");
+
+                writer.println(header);
+                String finalEventTitle = event.getTitle();
+                registrationRecordsToProcess.forEach(recordObjects ->{
+
+                    ++processedCount;
+                    Long resourcePrimaryKey = (Long) recordObjects.get("resourcePrimaryKey");
+                    statusMessage = "procession resourcePrimaryKey=" + resourcePrimaryKey;
+                    Registration matchingRegistration = registrationCache.get(resourcePrimaryKey);
+
+                    User matchingUser = null;
+                    try {
+                        matchingUser = UserLocalServiceUtil.getUser((Long) recordObjects.get("userId"));
+                    } catch (PortalException e) {
+                        //
+                    }
+                    writeRecord(writer, recordObjects, finalEventTitle, matchingRegistration, matchingUser,
+                            webinarKeyCache, locale);
+                    if (Thread.interrupted()){
+                        throw new RuntimeException("Thread interrupted");
+                    }
+
+                });
+
+                status = available;
 
             } catch (Exception e) {
                 errorMessage = e.getMessage();
@@ -101,18 +131,15 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 statusMessage = errorMessage;
             }
 
-            if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
-            Files.move(tempFile.toPath(), dataFile.toPath());
-
-            if (deleteOnCompletion){
-                if (useResourcePrimKey) {
-                    deleteRegistrationsForRecourseId( Long.parseLong(articleId));
-                } else {
-                    deleteRegistrationsForArticle(articleId);
-                }
+            if (status == available) {
+                if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
+                Files.move(tempFile.toPath(), dataFile.toPath());
             }
 
-        } catch (Exception e) {
+            if (deleteOnCompletion) {
+                deleteSelectedArticle(selectedArticle);
+            }
+        } catch (IOException | PortalException e) {
             errorMessage = e.getMessage();
             status = terminated;
         }
@@ -121,214 +148,28 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         return status;
     }
 
-    private void deleteRegistrationsForRecourseId(long  resourceId) {
-
-        statusMessage = "deleting registrations for resourcePrimKey" + resourceId;
-
-        try {
-            logger.info(String.format("Deleting registration records for  groupId %d and eventResourcePrimKey %d", group.getGroupId(), resourceId) );
-            dsdSessionUtils.deleteEventRegistrations(group.getGroupId(), resourceId);
-        } catch (Exception e) {
-            logger.warn(String.format("Error deleting event registrations for groupId %d and eventResourcePrimKey %d: %s", group.getGroupId(), resourceId, e.getMessage()));
-        }
-
-        try {
-            logger.info(String.format("Deleting registration records for groupId %d and resourcePrimKey %d", group.getGroupId(), resourceId) );
-            dsdSessionUtils.deleteRegistrationsFor(group.getGroupId(), resourceId);
-        } catch (PortalException e) {
-            logger.warn(String.format("Error deleting registrations for groupId %d and resourcePrimKey %d: %s", group.getGroupId(), resourceId, e.getMessage()));
-        }
-    }
-
-    private void deleteRegistrationsForArticle(String articleId) throws PortalException {
-
-        DsdArticle dsdArticle = getJournalArticle(articleId);
-        statusMessage = "deleting registrations for " + dsdArticle.getTitle();
-        if (dsdArticle instanceof Event) {
-            logger.info(String.format("Deleting registration records for Event %s (%s)", dsdArticle.getTitle(), dsdArticle.getArticleId()) );
-            dsdSessionUtils.deleteEventRegistrations(dsdArticle.getGroupId(), dsdArticle.getResourceId());
-        } else if (dsdArticle instanceof Registration){
-            logger.info(String.format("Deleting registration records for Registration %s (%s)", dsdArticle.getTitle(), dsdArticle.getArticleId()) );
-            dsdSessionUtils.deleteRegistrationsFor((Registration) dsdArticle);
-        }
-    }
-
-    private DsdArticle getDsdArticle(Long resourcePrimaryKey, Map<Long, DsdArticle> cache) {
-
-        if (cache.containsKey(resourcePrimaryKey)) return cache.get(resourcePrimaryKey);
-
-        try {
-            final JournalArticle latestArticle = dsdJournalArticleUtils.getLatestArticle(resourcePrimaryKey);
-            final AbsDsdArticle article = dsdParserUtils.toDsdArticle(latestArticle);
-            cache.put(resourcePrimaryKey, article);
-            return article;
-
-        } catch (PortalException e) {
-            //do not keep trying to retrieve article if we know it does not exist
-            cache.put(resourcePrimaryKey, null);
-        }
-        return null;
-    }
-
-    private void downloadAllRegistrations(PrintWriter writer) {
-
-        totalCount = dsdSessionUtils.getRegistrationCount();
-        if (totalCount == 0){
-            status = nodata;
-            processedCount = 0;
-            return;
-        }
-
-        //Load the dsdArticles into a cache for retrieval later, so we can access title and other stuff.
-        Map<Long, DsdArticle> cache = new HashMap<>();
-        for (int i = 0; i < totalCount; ) {
-            int start = i;
-            int end = i + 500;
-            final List<Map<String, Object>> registrationRecordsToProcess = dsdSessionUtils.getRegistrations(start, end);
-            registrationRecordsToProcess.forEach(recordObjects -> {
-
-                ++processedCount;
-                Long eventResourcePrimaryKey = (Long) recordObjects.get("eventResourcePrimaryKey");
-                Event event = (Event) getDsdArticle(eventResourcePrimaryKey, cache);
-                Long resourcePrimaryKey = (Long) recordObjects.get("resourcePrimaryKey");
-                Registration registration = (Registration) getDsdArticle(resourcePrimaryKey, cache);
-
-                statusMessage = String.format("procession eventResourcePrimaryKey=%d and resourcePrimaryKey=%d",
-                        eventResourcePrimaryKey, resourcePrimaryKey);
-
-                User matchingUser = null;
-                try {
-                    matchingUser = UserLocalServiceUtil.getUser((Long) recordObjects.get("userId"));
-                } catch (PortalException e) {
-                    //
-                }
-                writeRecord(writer, recordObjects, event, registration, matchingUser, null, locale);
-                if (Thread.interrupted()) {
-                    throw new RuntimeException("Thread interrupted");
-                }
-
-            });
-
-            i = end;
-        }
-        status = available;
-
-
-    }
-
-    private void downloadRequestedResourceIdRegistrations(long resourceId, PrintWriter writer) {
-
-        List<Map<String, Object>> registrationRecordsToProcess = dsdSessionUtils.getRegistrations(group.getGroupId(), resourceId);
-        registrationRecordsToProcess.addAll(dsdSessionUtils.getEventRegistrations(group.getGroupId(), resourceId));
-
-        if (registrationRecordsToProcess.size() == 0) {
-            status = nodata;
-            processedCount = 0;
-            return;
-        }
-        totalCount = registrationRecordsToProcess.size();
-
-        registrationRecordsToProcess.forEach(recordObjects -> {
-
-            ++processedCount;
-            Long resourcePrimaryKey = (Long) recordObjects.get("resourcePrimaryKey");
-            statusMessage = "procession resourcePrimaryKey=" + resourcePrimaryKey;
-
-            User matchingUser = null;
-            try {
-                matchingUser = UserLocalServiceUtil.getUser((Long) recordObjects.get("userId"));
-            } catch (PortalException e) {
-                //
-            }
-            writeRecord(writer, recordObjects, null, null, matchingUser,
-                    null, locale);
-            if (Thread.interrupted()) {
-                throw new RuntimeException("Thread interrupted");
-            }
-
-        });
-        status = available;
-
-
-    }
-
-    private void downloadRequestedArticleRegistrations(String articleId, PrintWriter writer) {
-        try {
-
-            //Get article for requested articleId.
-            DsdArticle article = getJournalArticle(articleId);
-            //Load the registrations into a cache for retrieval later, so we can access title and other stuff.
-            Map<Long, Registration> registrationCache = new HashMap<>();
-            Map<String, List<String>> webinarKeyCache = new HashMap<>();
-
-            List<Map<String, Object>> registrationRecordsToProcess = getRegistrationRecordsLinkedToSelectedArticle(
-                    article, registrationCache);
-
-            if (registrationRecordsToProcess.size() == 0) {
-                status = nodata;
-                processedCount = 0;
-                return;
-            }
-            totalCount = registrationRecordsToProcess.size();
-
-            Event event = getEvent(article);
-            registrationRecordsToProcess.forEach(recordObjects -> {
-
-                ++processedCount;
-                Long resourcePrimaryKey = (Long) recordObjects.get("resourcePrimaryKey");
-                statusMessage = "procession resourcePrimaryKey=" + resourcePrimaryKey;
-                Registration matchingRegistration = registrationCache.get(resourcePrimaryKey);
-
-                User matchingUser = null;
-                try {
-                    matchingUser = UserLocalServiceUtil.getUser((Long) recordObjects.get("userId"));
-                } catch (PortalException e) {
-                    //
-                }
-                writeRecord(writer, recordObjects, event, matchingRegistration, matchingUser,
-                        webinarKeyCache, locale);
-                if (Thread.interrupted()) {
-                    throw new RuntimeException("Thread interrupted");
-                }
-
-            });
-            status = available;
-
-        } catch (PortalException e) {
-            errorMessage = e.getMessage();
-            status = terminated;
-        }
-    }
-
-    private void writeHeader(PrintWriter writer) {
-        StringBuilder header = new StringBuilder("eventId, eventTitle,registrationId, registrationTitle,start date,topic,type,email,firstName,lastName,webinarProvider,registrationStatus,remarks");
-        for (BillingInfo.ATTRIBUTES value : BillingInfo.ATTRIBUTES.values()) {
-            header.append(',');
-            header.append(value.name());
-        }
-        for (BadgeInfo.ATTRIBUTES value : BadgeInfo.ATTRIBUTES.values()){
-            header.append(',');
-            header.append(value.name());
-        }
-        header.append(",registration time");
-
-        writer.println(header);
-    }
-
-    private List<Map<String, Object>> getRegistrationRecordsLinkedToSelectedArticle(DsdArticle selectedArticle,
+    private List<Map<String, Object>> getRegistrationRecordsLinkedToSelectedArticle(DsdArticle selectedArticle, Event event,
                                                                                     Map<Long, Registration> registrationCache) throws PortalException {
 
         if (selectedArticle instanceof Event){
-            List<Registration> eventRegistrations = ((Event)selectedArticle).getRegistrations(locale);
+            List<Registration> eventRegistrations = event.getRegistrations(locale);
             eventRegistrations.forEach(registration -> registrationCache.put(registration.getResourceId(), registration));
-            return dsdSessionUtils.getRegistrations((Event) selectedArticle);
         } else if (selectedArticle instanceof Registration) {
-            final Registration registration = (Registration) selectedArticle;
-            registrationCache.put(selectedArticle.getResourceId(), registration);
-            return dsdSessionUtils.getRegistrations(registration.getGroupId(), registration.getResourceId());
+            registrationCache.put(selectedArticle.getResourceId(), (Registration) selectedArticle);
         } else {
             return Collections.emptyList();
         }
+        List<Map<String, Object>> registrations = dsdSessionUtils.getRegistrations(event);
+        if (selectedArticle == event) return registrations; //no need to filter
+
+        //For single registration filter our unwanted records
+        long resourceId = selectedArticle.getResourceId();
+        List<Map<String, Object>> filtered = new ArrayList<>();
+        for (Map<String, Object> record : registrations) {
+            if ((Long)record.get("resourcePrimaryKey") != resourceId) continue;
+            filtered.add(record);
+        }
+        return filtered;
     }
 
     private void deleteBrokenRegistration(long registrationId){
@@ -339,6 +180,18 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         } catch (PortalException e) {
             logger.warn(String.format("Could not find registration record for deletion: %d", registrationId));
         }
+    }
+    private void deleteSelectedArticle(DsdArticle dsdArticle) {
+
+        statusMessage = "deleting registrations for " + dsdArticle.getTitle();
+        if (dsdArticle instanceof Event) {
+            logger.info(String.format("Deleting registration records for Event %s (%s)", dsdArticle.getTitle(), dsdArticle.getArticleId()) );
+            dsdSessionUtils.deleteEventRegistrations(dsdArticle.getGroupId(), dsdArticle.getResourceId());
+        } else if (dsdArticle instanceof Registration){
+            logger.info(String.format("Deleting registration records for Registration %s (%s)", dsdArticle.getTitle(), dsdArticle.getArticleId()) );
+            dsdSessionUtils.deleteRegistrationsFor((Registration) dsdArticle);
+        }
+
     }
 
     private DsdArticle getJournalArticle(String articleId) throws PortalException {
@@ -368,26 +221,17 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         if (dsdArticle instanceof Registration){
             return (Event) getJournalArticle(String.valueOf(((Registration) dsdArticle).getEventId()));
         }
-        logger.warn("Could not find event for id " + articleId);
-        return null;
+        throw new PortalException("Could not find event for id " + articleId);
     }
 
-    private void writeRecord(PrintWriter writer, Map<String, Object> record, Event event,
+    private void writeRecord(PrintWriter writer, Map<String, Object> record, String eventTitle,
                              Registration dsdRegistration, User user, Map<String, List<String>> courseRegistrationsCache, Locale locale) {
 
         StringBuilder line = new StringBuilder();
-        if (event == null) {
-            writeField(line, record.get("eventResourcePrimaryKey").toString());
-            writeField(line, null);
-        } else {
-            writeField(line, String.valueOf(event.getArticleId()));
-            writeField(line, event.getTitle());
-        }
+        writeField(line, eventTitle);
         if (dsdRegistration == null) {
             writeField(line, record.get("resourcePrimaryKey").toString());
-            writeField(line, null);
         } else {
-            writeField(line, dsdRegistration.getArticleId());
             writeField(line, dsdRegistration.getTitle());
         }
         writeField(line, DateUtil.getDate((Date) record.get("startTime"),"yyyy-MM-dd", locale));
@@ -452,7 +296,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     private void writeWebinarInfo(StringBuilder line, User user, Registration registration, Map<String,
             List<String>> courseRegistrationsCache, Map<String, String> userPreferences) {
 
-        if (disableCallWebinar || !webinarUtilsFactory.isWebinarSupported(registration)) {
+        if (!webinarUtilsFactory.isWebinarSupported(registration)) {
             line.append(','); //webinarProvider
             line.append(','); //registrationStatus
             return;

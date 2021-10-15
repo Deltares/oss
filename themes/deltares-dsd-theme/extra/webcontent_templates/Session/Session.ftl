@@ -90,7 +90,7 @@
                                     ${dateString}
                                 </span>
                                 <span class="c-sessions__item__time-date-place__time">
-                                    ${timeString}
+                                    ${timeString})
                                 </span>
                             </#list>
                         </#if>
