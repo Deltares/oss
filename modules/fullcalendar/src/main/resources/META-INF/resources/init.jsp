@@ -39,6 +39,7 @@
 <%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider" %>
 <%@ page import="nl.deltares.portal.utils.JsonContentUtils" %>
 <%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationException" %>
+<%@ page import="java.util.TimeZone" %>
 
 <liferay-theme:defineObjects/>
 
@@ -58,6 +59,7 @@
     }
 
     SimpleDateFormat format = new SimpleDateFormat("yyy-MM-dd");
+    format.setTimeZone(TimeZone.getTimeZone("GMT"));
     long siteId = themeDisplay.getSiteGroupId();
     String bootstrapRequire = (String) renderRequest.getAttribute(FullCalendarPortletKeys.BOOTSTRAP_REQUIRE);
     FullCalendarConfiguration configuration =
