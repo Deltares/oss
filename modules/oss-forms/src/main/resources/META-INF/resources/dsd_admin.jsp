@@ -21,7 +21,6 @@
         <aui:col width="25">
             <aui:row>
                 <select id="eventSelection" name="eventSelection" class="btn btn-lg" style="border-color: lightgray" >
-                    <option value="all" >All Events</option>
                     <% for (JournalArticle event : events) { %>
                     <option value="<%=event.getArticleId() %>" ><%= event.getTitle() %></option>
                     <% } %>
@@ -50,18 +49,7 @@
             <div class="control-label" > <liferay-ui:message key="dsd.admin.enterEventId"/>  </div>
         </aui:col>
         <aui:col width="25">
-            <aui:row>
-                <input id="articleId" value="" class="form-control">
-            </aui:row>
-            <aui:row>
-                <aui:input
-                        label="dsd.admin.resourcePrimKey"
-                        name="isResourcePrimKey"
-                        type="checkbox"
-                        helpMessage="dsd.admin.resourcePrimKeyHelp"
-                        value="false"/>
-
-            </aui:row>
+            <input id="articleId" value="" class="form-control">
         </aui:col>
         <aui:col width="5">
             <button id="deleteButton"  class="btn btn-lg" type="button"><liferay-ui:message key="dsd.admin.delete"/> </button>
@@ -94,22 +82,14 @@
         delete: function(resourceUrl, namespace){
             this.clearError();
             var eventArticleId = document.getElementById("articleId").value;
-            let checkBox = $('input[name="<portlet:namespace />isResourcePrimKey"]');
 
             if (confirm("You are about to delete all registrations for event: " + eventArticleId + "\nDo you want to continue?") === false) {
                 eventArticleId = null;
                 return;
             }
-
-            let action;
-            if (checkBox[0].checked){
-               action = "deletePrimKey"
-            } else {
-                action = "delete"
-            }
            if (eventArticleId != null && eventArticleId!=="") {
                 resourceUrl = resourceUrl + '&' + namespace + 'articleId=' + eventArticleId;
-                FormsUtil.callDownloadRegistrations(resourceUrl, namespace, action)
+                FormsUtil.callDownloadRegistrations(resourceUrl, namespace, "delete")
             } else {
                 FormsUtil.writeInfo('Please enter a valid articleId of Event or Registration');
             }

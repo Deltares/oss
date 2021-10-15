@@ -51,13 +51,8 @@ public class RegistrationLocalServiceImpl
 									long userId, Date startTime, Date endTime, String preferences) {
 
 		//do not validate here. validation has already taken place
-		final List<Registration> registrations = RegistrationLocalServiceUtil.getRegistrations(groupId, userId, resourceId);
-		Registration registration;
-		if (registrations.isEmpty()) {
-			registration = RegistrationLocalServiceUtil.createRegistration(CounterLocalServiceUtil.increment(Registration.class.getName()));
-		} else {
-			registration = registrations.get(0);
-		}
+
+		Registration registration = RegistrationLocalServiceUtil.createRegistration(CounterLocalServiceUtil.increment(Registration.class.getName()));
 		registration.setCompanyId(companyId);
 		registration.setGroupId(groupId);
 		registration.setEventResourcePrimaryKey(eventResourceId);
@@ -68,16 +63,12 @@ public class RegistrationLocalServiceImpl
 		registration.setEndTime(endTime);
 		registration.setUserPreferences(preferences);
 
-		if (registrations.isEmpty()) {
-			addRegistration(registration);
-		} else {
-			updateRegistration(registration);
-		}
+		addRegistration(registration);
 
 	}
 
 	/**
-	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 * @param groupId Site Identifier
 	 * @param resourceId Article Identifier being removed.
@@ -93,7 +84,7 @@ public class RegistrationLocalServiceImpl
 	}
 
 	/**
-	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 * @param groupId Site Identifier
 	 * @param eventResourceId Article Identifier of Event being removed.
@@ -105,7 +96,7 @@ public class RegistrationLocalServiceImpl
 	}
 
 	/**
-	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * Delete all registrations related to 'resourceId'. This inlcudes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 * @param groupId Site Identifier
 	 * @param userId User id
@@ -119,7 +110,7 @@ public class RegistrationLocalServiceImpl
 
 
 	/**
-	 * Delete user registrations for 'resourceId'. This includes all registration with a parentArticleId
+	 * Delete user registrations for 'resourceId'. This inlcudes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 * @param groupId Site Identifier
 	 * @param resourceId Article Identifier being removed.
@@ -136,7 +127,7 @@ public class RegistrationLocalServiceImpl
 	}
 
 	/**
-	 * Delete user registrations for 'resourceId' and a start date equal to 'startDate'
+	 * Delete user registrations for 'resourceId' and a start date equal to 'stratDate'
 	 * that matches 'resourceId'.
 	 * @param groupId Site Identifier
 	 * @param resourceId Article Identifier being removed.
@@ -237,10 +228,6 @@ public class RegistrationLocalServiceImpl
 
 	public List<Registration> getEventRegistrations(long groupId, long eventResourceId){
 		return RegistrationUtil.findByEventRegistrations(groupId, eventResourceId);
-	}
-
-	public List<Registration> getArticleRegistrations(long groupId, long articleResourceId){
-		return RegistrationUtil.findByArticleRegistrations(groupId, articleResourceId);
 	}
 
 	public List<Registration> getUserRegistrations(long groupId, long userId, Date start, Date end){

@@ -80,7 +80,6 @@ public abstract class Registration extends AbsDsdArticle {
             requiredTeam = XmlContentUtils.getDynamicContentByName(document, "requiredTeam", true);
 
             timeZoneId = XmlContentUtils.getDynamicContentByName(document, "timeZone", true);
-            timeZoneId = correctTimeZone(timeZoneId);
             String vatTxt = XmlContentUtils.getDynamicContentByName(document, "vat", true);
             if (vatTxt != null) this.vat = Long.parseLong(vatTxt);
             if (defaultUserId == -1){
@@ -89,13 +88,6 @@ public abstract class Registration extends AbsDsdArticle {
        } catch (Exception e) {
             throw new PortalException(String.format("Error parsing Registration %s: %s!", getTitle(), e.getMessage()), e);
         }
-    }
-
-    //correct for entering unsupported timezones.
-    private String correctTimeZone(String timeZoneId) {
-        if (timeZoneId == null) return "GMT";
-        if (timeZoneId.equalsIgnoreCase("CEST")) return "CET";
-        return timeZoneId;
     }
 
     void initDates(Document document) throws PortalException, ParseException {
