@@ -57,7 +57,9 @@ public class DsdFullcalendarService {
                            @QueryParam("start") String start, @QueryParam("end") String end, @QueryParam("timeZone") String timeZone) {
 
 
-        dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
+        if (timeZone != null && !timeZone.isEmpty()) {
+            dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
+        }
         Date startSearch;
         try {
             startSearch = dateFormat.parse(start);
