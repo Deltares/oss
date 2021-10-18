@@ -123,6 +123,7 @@
     >
 
         <%
+            RegistrationDisplayContext.setCurrentValueCache(registrationDisplayContext);
             String date = registrationDisplayContext.getStartDate();
             boolean writeDateHeader = !date.isEmpty() && !lastDate.equals(date);
             lastDate = date;
@@ -133,7 +134,6 @@
             } else {
                 colorClass = "upcoming-event";
             }
-            liferayPortletRequest.getPortletSession().setAttribute("display-context", registrationDisplayContext);
         %>
 
         <liferay-ui:search-container-column-text
@@ -153,12 +153,12 @@
             />
         </liferay-ui:search-container-column-text>
 
+        <%
+            //clean up after use (still to be tested)
+            RegistrationDisplayContext.setCurrentValueCache(null);
+        %>
     </liferay-ui:search-container-row>
 
-    <%
-        //clean up after use (still to be tested)
-        liferayPortletRequest.getPortletSession().setAttribute("display-context", null);
-    %>
     <aui:form useNamespace="<%= false %>">
         <liferay-ui:search-iterator
                 displayStyle="descriptive"

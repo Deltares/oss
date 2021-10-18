@@ -44,6 +44,7 @@ public class RegistrationDisplayContext {
         this.configurationProvider = ConfigurationProviderUtil.getConfigurationProvider();
         this.registration = registration;
         this.dayIndex = dayIndex;
+
     }
 
     public RegistrationDisplayContext(String articleId, ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider, DsdParserUtils dsdParserUtils) {
@@ -144,6 +145,14 @@ public class RegistrationDisplayContext {
 
     }
 
+    public long getStartDateMillis(){
+        final Registration registration = getRegistration();
+        if (registration != null) {
+            return getStartDate(registration).getTime();
+        }
+        return 0;
+    }
+
     private Date getStartDate(Registration registration) {
         if (dayIndex > 0 && registration.isMultiDayEvent()){
             final List<Period> startAndEndTimesPerDay = registration.getStartAndEndTimesPerDay();
@@ -172,6 +181,14 @@ public class RegistrationDisplayContext {
         }
         return "";
 
+    }
+
+    public long getEndDateMillis(){
+        final Registration registration = getRegistration();
+        if (registration != null) {
+            return getEndDate(registration).getTime();
+        }
+        return 0;
     }
 
     public String getTitle(){
@@ -359,12 +376,26 @@ public class RegistrationDisplayContext {
         }
         return articleDisplay;
     }
+
+    /**
+     * User this cache to share the current context in the JSP with de program-list.flt
+     * @param cacheValue
+     */
+    public static void setCurrentValueCache(RegistrationDisplayContext cacheValue){
+        currentInstance = cacheValue;
+    }
+
+    public static RegistrationDisplayContext getCurrentInstance() {
+        return currentInstance;
+    }
+
     private final ThemeDisplay themeDisplay;
     private final ConfigurationProvider configurationProvider;
     private Registration registration;
     private DsdParserUtils dsdParserUtils;
     private int dayIndex = 0;
 
+    private static RegistrationDisplayContext currentInstance= null;
 
     private static final Log LOG = LogFactoryUtil.getLog(RegistrationDisplayContext.class);
 }
