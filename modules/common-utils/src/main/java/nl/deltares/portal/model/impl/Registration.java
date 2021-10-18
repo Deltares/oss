@@ -253,7 +253,7 @@ public abstract class Registration extends AbsDsdArticle {
     }
 
     public boolean isEventInPast(){
-        return System.currentTimeMillis() > startTime.getTime();
+        return System.currentTimeMillis() > endTime.getTime();
     }
 
     public boolean isMultiDayEvent(){
