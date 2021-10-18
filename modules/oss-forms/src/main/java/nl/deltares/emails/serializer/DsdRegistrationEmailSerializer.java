@@ -139,7 +139,7 @@ public abstract class DsdRegistrationEmailSerializer implements EmailSerializer<
     private String getTime(Registration registration) {
         String startTime = timeFormat.format(registration.getStartTime());
         String endTime = timeFormat.format(registration.getEndTime());
-        return startTime + " - " + endTime;
+        return startTime + " - " + endTime + "(" + registration.getTimeZoneId() + ")";
     }
 
     private String getDate(Registration registration) {
