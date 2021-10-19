@@ -119,9 +119,15 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
     @Override
     public RegistrationDisplayContext getDisplayContextInstance(String articleId, ThemeDisplay themeDisplay) {
 
-        final RegistrationDisplayContext currentInstance = RegistrationDisplayContext.getCurrentInstance();
-        if (currentInstance != null && currentInstance.getRegistration().getArticleId().equals(articleId)) return currentInstance;
-        return new RegistrationDisplayContext(articleId, themeDisplay, _configurationProvider, this);
+        String articleAttrName = "javax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?program-list-registration-articleId";
+        String dayAttrName = "javax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?program-list-registration-day";
+        final Object sessionArticleId = themeDisplay.getRequest().getSession().getAttribute(articleAttrName);
+        final Object day = themeDisplay.getRequest().getSession().getAttribute(dayAttrName);
+        int dayIndex = 0;
+        if (articleId.equals(sessionArticleId) && day instanceof Integer){
+            dayIndex = (Integer) day;
+        }
+        return new RegistrationDisplayContext(articleId, dayIndex, themeDisplay, _configurationProvider, this);
     }
 
     private ConfigurationProvider _configurationProvider;
