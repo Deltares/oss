@@ -123,7 +123,6 @@
     >
 
         <%
-            RegistrationDisplayContext.setCurrentValueCache(registrationDisplayContext);
             String date = registrationDisplayContext.getStartDate();
             boolean writeDateHeader = !date.isEmpty() && !lastDate.equals(date);
             lastDate = date;
@@ -134,6 +133,8 @@
             } else {
                 colorClass = "upcoming-event";
             }
+            liferayPortletRequest.getPortletSession().setAttribute("program-list-registration-articleId", registrationDisplayContext.getRegistration().getArticleId());
+            liferayPortletRequest.getPortletSession().setAttribute("program-list-registration-day", registrationDisplayContext.getDayCount());
         %>
 
         <liferay-ui:search-container-column-text
@@ -155,7 +156,8 @@
 
         <%
             //clean up after use (still to be tested)
-            RegistrationDisplayContext.setCurrentValueCache(null);
+            liferayPortletRequest.getPortletSession().setAttribute("program-list-registration-articleId", null);
+            liferayPortletRequest.getPortletSession().setAttribute("program-list-registration-day", null);
         %>
     </liferay-ui:search-container-row>
 
