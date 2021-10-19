@@ -6,8 +6,10 @@ import nl.deltares.dsd.model.RegistrationRequest;
 import nl.deltares.emails.DsdEmail;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
+import nl.deltares.portal.utils.Period;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
@@ -85,42 +87,63 @@ public abstract class DsdRegistrationEmailSerializer implements EmailSerializer<
 
     private void appendRegistration(StringBuilder writer, DsdEmail content, Registration registration) {
         writer.append("<tr>");
-        writer.append("<td class=\"type\">" + LanguageUtil.format(content.getBundle(), "dsd.email.registration.name", null) + "</td>");
+        writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "dsd.email.registration.name", null)).append("</td>");
         writer.append("<td>");
         writer.append(registration.getTitle());
         writer.append("</td>");
         writer.append("</tr>");
 
         writer.append("<tr>");
-        writer.append("<td class=\"type\">" + LanguageUtil.format(content.getBundle(), "dsd.email.registration.type", null) +"</td>");
+        writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "dsd.email.registration.type", null)).append("</td>");
         writer.append("<td>");
         writer.append(content.getRegistrationRequest().translateRegistrationType(registration.getType()));
         writer.append("</td>");
         writer.append("</tr>");
 
         writer.append("<tr>");
-        writer.append("<td class=\"type\">"+ LanguageUtil.format(content.getBundle(), "dsd.email.registration.room", null) +"</td>");
+        writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "dsd.email.registration.room", null)).append("</td>");
         writer.append("<td>");
         writer.append(content.getRegistrationRequest().getLocation(registration));
         writer.append("</td>");
         writer.append("</tr>");
 
-        writer.append("<tr>");
-        writer.append("<td class=\"type\">"+LanguageUtil.format(content.getBundle(), "dsd.email.registration.date", null)+"</td>");
-        writer.append("<td>");
-        writer.append(getDate(registration));
-        writer.append("</td>");
-        writer.append("</tr>");
+        if (registration.isMultiDayEvent() && !registration.isDaily()){
+            final List<Period> startAndEndTimesPerDay = registration.getStartAndEndTimesPerDay();
+            for (Period period : startAndEndTimesPerDay) {
+                writer.append("<tr>");
+                writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "dsd.email.registration.date", null)).append("</td>");
+                writer.append("<td>");
+                writer.append(getDateString(period.getStartDate(), period.getEndDate()));
+                writer.append("</td>");
+                writer.append("</tr>");
+
+                writer.append("<tr>");
+                writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "dsd.email.registration.time", null)).append("</td>");
+                writer.append("<td>");
+                writer.append(getTimeString(period.getStartDate(), period.getEndDate(), registration.getTimeZoneId()));
+                writer.append("</td>");
+                writer.append("</tr>");
+            }
+
+        } else {
+            writer.append("<tr>");
+            writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "dsd.email.registration.date", null)).append("</td>");
+            writer.append("<td>");
+            writer.append(getDateString(registration.getStartTime(), registration.getEndTime()));
+            writer.append("</td>");
+            writer.append("</tr>");
+
+            writer.append("<tr>");
+            writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "dsd.email.registration.time", null)).append("</td>");
+            writer.append("<td>");
+            writer.append(getTimeString(registration.getStartTime(), registration.getEndTime(), registration.getTimeZoneId()));
+            writer.append("</td>");
+            writer.append("</tr>");
+        }
+
 
         writer.append("<tr>");
-        writer.append("<td class=\"type\">"+LanguageUtil.format(content.getBundle(), "dsd.email.registration.time", null)+"</td>");
-        writer.append("<td>");
-        writer.append(getTime(registration));
-        writer.append("</td>");
-        writer.append("</tr>");
-
-        writer.append("<tr>");
-        writer.append("<td class=\"type\">"+LanguageUtil.format(content.getBundle(), "dsd.email.registration.price", null)+"</td>");
+        writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "dsd.email.registration.price", null)).append("</td>");
         writer.append("<td>");
         writer.append(getPrice(content.getBundle(), registration));
         writer.append("</td>");
@@ -136,16 +159,16 @@ public abstract class DsdRegistrationEmailSerializer implements EmailSerializer<
         return LanguageUtil.format(bundle, "dsd.theme.session.free", null);
     }
 
-    private String getTime(Registration registration) {
-        String startTime = timeFormat.format(registration.getStartTime());
-        String endTime = timeFormat.format(registration.getEndTime());
-        return startTime + " - " + endTime + "(" + registration.getTimeZoneId() + ")";
+    private String getTimeString(Date startDate, Date endDate, String timeZoneId) {
+        String startTime = timeFormat.format(startDate);
+        String endTime = timeFormat.format(endDate);
+        return startTime + " - " + endTime + "(" + timeZoneId + ")";
     }
 
-    private String getDate(Registration registration) {
-        String startDay = dateFormat.format(registration.getStartTime());
-        if (registration.getEndTime().after(registration.getStartTime())){
-            String endDay = dateFormat.format(registration.getEndTime());
+    private String getDateString(Date startDate, Date endDate) {
+        String startDay = dateFormat.format(startDate);
+        if (endDate.after(startDate)){
+            String endDay = dateFormat.format(endDate);
             return startDay + " - " + endDay;
         }
         return startDay;
