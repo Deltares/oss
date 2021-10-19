@@ -48,9 +48,13 @@ public class RegistrationDisplayContext {
     }
 
     public RegistrationDisplayContext(String articleId, ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider, DsdParserUtils dsdParserUtils) {
+        this(articleId, 0, themeDisplay, configurationProvider, dsdParserUtils);
+    }
+    public RegistrationDisplayContext(String articleId, int dayIndex, ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider, DsdParserUtils dsdParserUtils) {
         this.themeDisplay = themeDisplay;
         this.configurationProvider = configurationProvider;
         this.dsdParserUtils = dsdParserUtils;
+        this.dayIndex = dayIndex;
 
         long groupId = themeDisplay.getScopeGroupId();
         JournalArticle registrationArticle = JournalArticleLocalServiceUtil
@@ -194,11 +198,11 @@ public class RegistrationDisplayContext {
     public String getTitle(){
         final String title = registration.getTitle();
         final String postFix = LanguageUtil.format(themeDisplay.getLocale(),
-                "program-list.day.count", new String[]{String.valueOf(getDayCount()), String.valueOf(getNumberOfDays())});
+                "program-list.day.count", new String[]{String.valueOf((getDayCount()+1)), String.valueOf(getNumberOfDays())});
         return (title + " ("  + postFix + ")");
     }
     public int getDayCount(){
-        return dayIndex + 1;
+        return dayIndex;
     }
 
     public int getNumberOfDays(){
@@ -377,25 +381,11 @@ public class RegistrationDisplayContext {
         return articleDisplay;
     }
 
-    /**
-     * User this cache to share the current context in the JSP with de program-list.flt
-     * @param cacheValue
-     */
-    public static void setCurrentValueCache(RegistrationDisplayContext cacheValue){
-        currentInstance = cacheValue;
-    }
-
-    public static RegistrationDisplayContext getCurrentInstance() {
-        return currentInstance;
-    }
-
     private final ThemeDisplay themeDisplay;
     private final ConfigurationProvider configurationProvider;
     private Registration registration;
     private DsdParserUtils dsdParserUtils;
-    private int dayIndex = 0;
-
-    private static RegistrationDisplayContext currentInstance= null;
+    private int dayIndex;
 
     private static final Log LOG = LogFactoryUtil.getLog(RegistrationDisplayContext.class);
 }
