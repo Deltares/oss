@@ -219,7 +219,7 @@
     </#if>
     <#if (registration.getPresentations()?size > 0) >
     <div class="c-events__item__uploads">
-        <p class="bold">Presentaties</p>
+        <p class="bold">Presentations</p>
         <#list registration.getPresentations() as presentation>
 
         <#if presentation.isDownloadLink() >
