@@ -1,11 +1,11 @@
 <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
 <#assign title=.vars['reserved-article-title'].data />
-<#assign urltitle=.vars['reserved-article-url-title'].data />
 <#assign articleId = .vars['reserved-article-id'].getData() />
 <#assign displayContext = dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay) />
 <#assign registration = dsdParserUtils.getRegistration(groupId,articleId) />
+<#assign urltitle= displayContext.getViewURL(registration) />
 <#assign presentations = displayContext.getPresentations() />
-<#assign prefix = languageUtil.get(locale, "dsd.theme.session.presentations", "Presentaties van programma: ")/>
+<#assign prefix = languageUtil.get(locale, "dsd.theme.session.presentations", "Presentaties van programma:")/>
 <div class="row no-gutters">
 
     <div class="col-12 px-3">
