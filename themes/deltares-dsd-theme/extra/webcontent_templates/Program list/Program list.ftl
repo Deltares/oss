@@ -14,10 +14,6 @@
 <#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
 <#assign available = registration.getCapacity() - registrations />
 
-
-<#if registration.isMultiDayEvent() >
-    <#assign title = displayContext.getTitle() />
-</#if>
 <div class="row no-gutters">
 
     <div class="col-2">
@@ -55,20 +51,22 @@
                 <#assign userId = themeDisplay.getUserId() />
                 <span class="d-block" style="float:right">
                     <#if displayContext.isUserRegistered()>
+
                         <#assign joinLink = dsdSessionUtils.getUserJoinLink(themeDisplay.getUser(), registration) />
                         <#if joinLink?? && joinLink != "">
                             <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button"
-                               aria-pressed="true" style="margin-right:5px">
+                               aria-pressed="true" style="margin-right:5px; color:#fff">
                                          ${languageUtil.get(locale, "registrationform.join")}
                                     </a>
                         </#if>
 
-                        <a href="${displayContext.getUnregisterURL(renderRequest) }" class="btn-lg btn-primary" role="button" aria-pressed="true">
+                        <a href="${displayContext.getUnregisterURL(renderRequest) }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
                             ${languageUtil.get(locale, "registrationform.unregister")}
                         </a>
+
                     <#elseif available gt 0>
                         <a href="#" data-article-id="${registration.getArticleId()}" class="btn-lg btn-primary add-to-cart" role="button"
-                           aria-pressed="true">
+                           aria-pressed="true"  style="color:#fff">
                           ${languageUtil.get(locale, "shopping.cart.add")}
                         </a>
                     </#if>
