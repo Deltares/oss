@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class Registration extends AbsDsdArticle {
     private static final Log LOG = LogFactoryUtil.getLog(Registration.class);
-    private static long defaultUserId = -1;
+    private long defaultUserId = -1;
     private long eventId;
     private int capacity;
     private float price;
@@ -83,9 +83,7 @@ public abstract class Registration extends AbsDsdArticle {
             timeZoneId = correctTimeZone(timeZoneId);
             String vatTxt = XmlContentUtils.getDynamicContentByName(document, "vat", true);
             if (vatTxt != null) this.vat = Long.parseLong(vatTxt);
-            if (defaultUserId == -1){
-                defaultUserId = UserLocalServiceUtil.getDefaultUser(getCompanyId()).getUserId();
-            }
+            defaultUserId = UserLocalServiceUtil.getDefaultUser(getCompanyId()).getUserId();
        } catch (Exception e) {
             throw new PortalException(String.format("Error parsing Registration %s: %s!", getTitle(), e.getMessage()), e);
         }
