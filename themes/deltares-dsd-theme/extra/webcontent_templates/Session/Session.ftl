@@ -49,6 +49,9 @@
 <#assign eventImageUrl = registration.getSmallImageURL(themeDisplay) />
 <#assign price = registration.getPrice() />
 <#assign vat = registration.getVAT() />
+<#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
+<#assign available = registration.getCapacity() - registrations />
+
 <div class="c-sessions page">
     <div class="c-sessions__item ${isEventPast}">
         <div class="clearfix">
@@ -114,13 +117,13 @@
                             ${registration.getCurrency()}
                             <#assign calDescription += registration.getCurrency()/>
                             <#if price == 0 >
-                                ${languageUtil.get(locale, "dsd.theme.session.free")}
-                                <#assign calDescription += (languageUtil.get(locale, "dsd.theme.session.free") + "<br/>") />
-                            <#else>
-                                <#assign vatText = languageUtil.get(locale, "dsd.theme.session.vat")?replace("%d", vat) />
-                                ${registration.getPrice()}&nbsp;(${vatText})
-                                <#assign calDescription += (registration.getPrice() + "&nbsp;" +  vatText + "<br/>") />
-                            </#if>
+                            ${languageUtil.get(locale, "dsd.theme.session.free")}
+                            <#assign calDescription += (languageUtil.get(locale, "dsd.theme.session.free") + "<br/>") />
+                        <#else>
+                            <#assign vatText = languageUtil.get(locale, "dsd.theme.session.vat")?replace("%d", vat) />
+                            ${registration.getPrice()}&nbsp;(${vatText})
+                            <#assign calDescription += (registration.getPrice() + "&nbsp;" +  vatText + "<br/>") />
+                        </#if>
                             <br/>
 
                             <#if registration.getEventId() gt 0 >
@@ -137,8 +140,6 @@
                             </#if>
                         </#if>
                             <br/>
-                            <#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
-                            <#assign available = registration.getCapacity() - registrations />
                             ${languageUtil.get(locale, "dsd.theme.session.available")} : ${available}
                         </#if>
 
@@ -156,7 +157,7 @@
                             </span>
                     </#list>
 
-                    <#if registration.canUserRegister(user.getUserId()) >
+                    <#if registration.canUserRegister(user.getUserId()) && themeDisplay.isSignedIn()>
                     <#assign isRegistered = dsdSessionUtils.isUserRegisteredFor(user, registration) />
                     <span class="d-block">
                             <#if isRegistered >
@@ -170,7 +171,7 @@
                                      ${languageUtil.get(locale, "registrationform.update")}
                                 </a>
                                 &nbsp;
-                            <#else>
+                            <#elseif available gt 0 >
                                 <a href="#" data-article-id="${articleId}" class="btn-lg btn-primary add-to-cart"
                                    role="button" aria-pressed="true">
                                     ${languageUtil.get(locale, "shopping.cart.add")}

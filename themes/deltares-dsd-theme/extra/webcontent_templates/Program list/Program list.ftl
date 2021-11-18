@@ -1,11 +1,19 @@
 <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
+<#assign dsdSessionUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdSessionUtils") />
 <#assign title=.vars['reserved-article-title'].data />
 <#assign urltitle=.vars['reserved-article-url-title'].data />
 <#assign articleId = .vars['reserved-article-id'].getData() />
 <#assign displayContext = dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay) />
 <#assign registration = displayContext.getRegistration() />
 <#assign timeZoneId = registration.getTimeZoneId() />
-<#assign showButtons = displayContext.canUserRegister() />
+<#assign showButtons = displayContext.canUserRegister() && themeDisplay.isSignedIn() />
+
+<#if registration.isMultiDayEvent() >
+    <#assign title = displayContext.getTitle() />
+</#if>
+<#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
+<#assign available = registration.getCapacity() - registrations />
+
 
 <#if registration.isMultiDayEvent() >
     <#assign title = displayContext.getTitle() />
@@ -47,10 +55,18 @@
                 <#assign userId = themeDisplay.getUserId() />
                 <span class="d-block" style="float:right">
                     <#if displayContext.isUserRegistered()>
+                        <#assign joinLink = dsdSessionUtils.getUserJoinLink(themeDisplay.getUser(), registration) />
+                        <#if joinLink?? && joinLink != "">
+                            <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button"
+                               aria-pressed="true" style="margin-right:5px">
+                                         ${languageUtil.get(locale, "registrationform.join")}
+                                    </a>
+                        </#if>
+
                         <a href="${displayContext.getUnregisterURL(renderRequest) }" class="btn-lg btn-primary" role="button" aria-pressed="true">
                             ${languageUtil.get(locale, "registrationform.unregister")}
                         </a>
-                    <#else>
+                    <#elseif available gt 0>
                         <a href="#" data-article-id="${registration.getArticleId()}" class="btn-lg btn-primary add-to-cart" role="button"
                            aria-pressed="true">
                           ${languageUtil.get(locale, "shopping.cart.add")}
