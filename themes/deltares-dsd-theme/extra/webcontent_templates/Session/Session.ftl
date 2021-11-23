@@ -220,7 +220,7 @@
     </#if>
     <#if (registration.getPresentations()?size > 0) >
     <div class="c-events__item__uploads">
-        <p class="bold">Presentations</p>
+        <p class="bold">${languageUtil.get(locale, "dsd.theme.session.presentations")}</p>
         <#list registration.getPresentations() as presentation>
 
         <#if presentation.isDownloadLink() >
