@@ -15,6 +15,7 @@ import nl.deltares.portal.utils.AdminUtils;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
 import nl.deltares.tasks.impl.DeleteBannedUsersRequest;
+import nl.deltares.tasks.impl.DeleteDisabledUsersRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author rooij_e
@@ -68,18 +70,39 @@ public class OssAdminFormPortlet extends MVCPortlet {
         }
         String action = ParamUtil.getString(resourceRequest, "action");
         long siteId = ParamUtil.getLong(resourceRequest, "siteId");
+        long disabledTimeAfter = ParamUtil.getLong(resourceRequest, "disabledTime", System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365));
         if (siteId == 0) siteId = themeDisplay.getScopeGroupId();
 
-        String id = DeleteBannedUsersRequest.class.getName() + siteId + themeDisplay.getUserId();
+        String id = DataRequest.class.getName() + siteId + themeDisplay.getUserId();
         if ("deleteBannedUsers".equals(action)) {
             deleteBannedUsersAction(id, resourceResponse, themeDisplay, siteId);
         } else if ("updateStatus".equals(action)){
             DataRequestManager.getInstance().updateStatus(id, resourceResponse);
-        } else if ("downloadLog".equals(action)){
+        } else if ("downloadLog".equals(action)) {
             DataRequestManager.getInstance().downloadDataFile(id, resourceResponse);
+        } else if ("deleteDisabledUsers".equals(action)) {
+            deleteDisabledUsersAction(id, disabledTimeAfter, resourceResponse, themeDisplay);
         } else {
             DataRequestManager.getInstance().writeError("Unsupported action error: " + action, resourceResponse);
         }
+    }
+
+    private void deleteDisabledUsersAction(String dataRequestId, long disabledTimeAfter, ResourceResponse resourceResponse, ThemeDisplay themeDisplay) throws IOException {
+
+        resourceResponse.setContentType("application/json");
+        DataRequestManager instance = DataRequestManager.getInstance();
+        DataRequest dataRequest = instance.getDataRequest(dataRequestId);
+        if (dataRequest == null){
+            dataRequest = new DeleteDisabledUsersRequest(dataRequestId, themeDisplay.getCompanyId(), disabledTimeAfter, themeDisplay.getUserId(), adminUtils);
+            instance.addToQueue(dataRequest);
+        } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated){
+            instance.removeDataRequest(dataRequest);
+        }
+        resourceResponse.setStatus(HttpServletResponse.SC_OK);
+        String statusMessage = dataRequest.getStatusMessage();
+        resourceResponse.setContentLength(statusMessage.length());
+        PrintWriter writer = resourceResponse.getWriter();
+        writer.println(statusMessage);
     }
 
     private void deleteBannedUsersAction(String dataRequestId, ResourceResponse resourceResponse, ThemeDisplay themeDisplay, long siteId) throws IOException {
