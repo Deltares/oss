@@ -33,6 +33,23 @@
                     key="oss.admin.delete"/></button>
         </aui:col>
     </aui:row>
+    <hr>
+    <aui:row>
+        <aui:col width="50">
+            <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.deleteDisabledTitle"/></div>
+        </aui:col>
+        <aui:col width="20">
+            <div class="control-label"><liferay-ui:message key="oss.admin.disabledTime"/></div>
+        </aui:col>
+        <aui:col width="25">
+            <input id="disabledTime" value="" type="date" class="form-control">
+        </aui:col>
+        <aui:col width="5">
+            <button id="deleteDisabledButton" class="btn btn-lg" type="button"><liferay-ui:message
+                    key="oss.admin.delete"/></button>
+        </aui:col>
+    </aui:row>
+
     <aui:row>
         <aui:col width="50">
             <div class="panel-title" id="Title"></div>
@@ -44,6 +61,7 @@
 </aui:fieldset>
 
 <aui:script use="event, aui-io-request, node, aui-base, aui-progressbar">
+    let year_millis = 86400000 * 365;
     let progressId = '';
     let FormsUtil = {
 
@@ -68,6 +86,16 @@
             if (siteId != null && siteId!=="") {
                 FormsUtil.callDeleteBannedUsers(resourceUrl + '&' + namespace + 'siteId=' + siteId + '&' + namespace);
             }
+        },
+        deleteDisabled: function(resourceUrl, namespace){
+            this.clearMessage();
+            var disabledTime = document.getElementById("disabledTime").value;
+            if (confirm("You are about to delete all disabled users that have been disabled after: " + disabledTime + "\nDo you want to continue?") === false) {
+                disabledTime = null;
+                return;
+            }
+            FormsUtil.callDeleteDisabledUsers(resourceUrl + '&' + namespace + 'disabledTime=' + new Date(disabledTime).getTime() + '&' + namespace);
+
         },
         callDeleteBannedUsers : function (resourceUrl){
 
@@ -96,6 +124,33 @@
                 }
             });
         },
+        callDeleteDisabledUsers : function (resourceUrl){
+
+            FormsUtil.updateProgressBar(JSON.parse('{"status": "pending", "progress":0, "total":100}'));
+            A.io.request(resourceUrl + 'action=deleteDisabledUsers', {
+                sync : 'true',
+                cache : 'false',
+                on : {
+                    success : function(response, status, xhr) {
+                        if (xhr.status > 299){
+                            FormsUtil.stopProgressMonitor()
+                            FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
+                            return false;
+                        } else if(xhr.status === 204){
+                            FormsUtil.stopProgressMonitor()
+                            FormsUtil.writeInfo("204: No disabled users found!");
+                            return true;
+                        } else if (xhr.status === 200){
+                            FormsUtil.startProgressMonitor(resourceUrl);
+                        }
+                    },
+                    failure : function(response, status, xhr) {
+                        FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
+                        FormsUtil.stopProgressMonitor()
+                    }
+                }
+            });
+        },
         clearMessage : function(){
             let errorBlock = A.one('#group-message-block');
             errorBlock.html('');
@@ -107,14 +162,16 @@
             progressBar.hide();
             progressBar.empty();
             $('#deleteButton').prop('disabled', false);
+            $('#deleteDisabledButton').prop('disabled', false);
         },
         startProgressMonitor : function(resourceUrl){
             if (progressId !== '') {
-                alert("DeleteBannedUsers process already running!");
+                alert("Process already running!");
                 return
             }
             $('#deleteProgress').show();
             $('#deleteButton').prop('disabled', true);
+            $('#deleteDisabledButton').prop('disabled', true);
             progressId = setInterval(function(){FormsUtil.callUpdateProgressRequest(resourceUrl)}, 1000);
         },
         updateProgressBar : function (statusMsg) {
@@ -139,7 +196,10 @@
                 on : {
                     success : function(response, status, xhr) {
                         let responseData = this.get('responseData');
-                        if (xhr.status !== 200){
+                        if (xhr.status === 204){
+                            FormsUtil.writeInfo("204: No data found!");
+                            FormsUtil.stopProgressMonitor();
+                        } else if (xhr.status !== 200){
                             FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
                             FormsUtil.stopProgressMonitor();
                         } else {
@@ -157,7 +217,7 @@
                     },
                     failure : function(response, status, xhr) {
                         FormsUtil.stopProgressMonitor();
-    FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
+                        FormsUtil.writeError(xhr.status + ':' + xhr.responseText);
                     }
                 }
             });
@@ -199,4 +259,8 @@
     $('#deleteButton').on('click', function(){
         FormsUtil.delete("<portlet:resourceURL/>", "<portlet:namespace/>")
     });
+    $('#deleteDisabledButton').on('click', function(){
+        FormsUtil.deleteDisabled("<portlet:resourceURL/>", "<portlet:namespace/>")
+    });
+    $('#disabledTime').value = new Date(Date.now() - year_millis).toDateString();
 </aui:script>

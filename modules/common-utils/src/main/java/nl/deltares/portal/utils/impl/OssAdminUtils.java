@@ -23,6 +23,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Component(
@@ -35,19 +36,36 @@ public class OssAdminUtils implements AdminUtils {
     KeycloakUtils keycloakUtils;
 
     @Override
-    public void deleteUserAndRelatedContent(long siteId, long userId, PrintWriter writer) {
+    public List<User> getDisabledUsers(long companyId, int start, int max, long disabledAfterTime, PrintWriter writer){
 
-        User user;
+        final ArrayList<User> users = new ArrayList<>();
         try {
-            user = UserLocalServiceUtil.getUser(userId);
-        } catch (PortalException e) {
-            writer.printf("Could not find user for userId %d\n", userId);
-            return;
+
+            final List<String> disabledUserEmails = keycloakUtils.getDisabledUsers(start, max, disabledAfterTime, null);
+
+            for (String disabledUserEmail : disabledUserEmails) {
+                final User user = UserLocalServiceUtil.fetchUserByEmailAddress(companyId, disabledUserEmail);
+                if (user == null){
+                    writer.printf("Info: user not found: %s\n", disabledUserEmail);
+                } else {
+                    users.add(user);
+                }
+            }
+
+        } catch (Exception e) {
+            writer.printf("Error retrieving disabled users from keycloak: %s\n", e.getMessage());
+            return Collections.emptyList();
         }
+        return users;
+    }
+
+    @Override
+    public void deleteUserAndRelatedContent(long siteId, User user, PrintWriter writer, boolean deleteFromKeycloak) {
 
         String screenName = user.getScreenName();
         String email = user.getEmailAddress();
-        writer.printf("********** Start deleting user %s (%s, %d)  ***********\n", screenName, email, userId);
+        long userId = user.getUserId();
+        writer.printf("********** Start deleting content for user %s (%s, %d) in site %d  ***********\n", screenName, email, userId, siteId);
 
         //Remove user message for group
         deleteMBMessages(writer, userId, siteId);
@@ -75,12 +93,11 @@ public class OssAdminUtils implements AdminUtils {
         deleteRemainingMBFolders(writer, userId, siteId);
 
         //Delete Liferay User
-        deleteUser(writer, user);
+        deleteUser(writer, user, deleteFromKeycloak);
 
-        writer.printf("********** Finished deleting user %s (%s)  ***********\n", screenName, email);
+        writer.printf("********** Finished deleting content for user %s (%s, %d) in site %d   ***********\n", screenName, email, userId, siteId);
     }
-
-    private void deleteUser(PrintWriter writer, User user) {
+    private void deleteUser(PrintWriter writer, User user, boolean deleteFromKeycloak) {
 
         deleteUserPortrait(writer, user);
 
@@ -94,6 +111,8 @@ public class OssAdminUtils implements AdminUtils {
         } catch (Exception e) {
             writer.printf("Failed to delete user from Liferay: %s\n", e.getMessage());
         }
+
+        if (!deleteFromKeycloak) return;
 
         //Delete Keycloak user
         try {
@@ -392,20 +411,20 @@ public class OssAdminUtils implements AdminUtils {
         }
     }
 
-    private void deleteFolder(long userId, PrintWriter writer, long folderId) {
-        try {
-            DLFolder dlFolder = DLFolderLocalServiceUtil.deleteDLFolder(folderId);
-            writer.printf("Deleted folder %s (%d)\n", dlFolder.getName(), dlFolder.getFolderId());
-            while (dlFolder.getParentFolder().getUserId() == userId) {
-                try {
-                    dlFolder = DLFolderLocalServiceUtil.deleteDLFolder(dlFolder.getParentFolderId());
-                    writer.printf("Deleted parent folder %s (%d)\n", dlFolder.getName(), dlFolder.getFolderId());
-                } catch (PortalException e) {
-                    writer.printf("Failed to delete parent folder %s (%d): %s\n", dlFolder.getName(), dlFolder.getFolderId(), e.getMessage());
-                }
-            }
-        } catch (PortalException e) {
-            writer.printf("Failed to delete folder %s: %s\n", folderId, e.getMessage());
-        }
-    }
+//    private void deleteFolder(long userId, PrintWriter writer, long folderId) {
+//        try {
+//            DLFolder dlFolder = DLFolderLocalServiceUtil.deleteDLFolder(folderId);
+//            writer.printf("Deleted folder %s (%d)\n", dlFolder.getName(), dlFolder.getFolderId());
+//            while (dlFolder.getParentFolder().getUserId() == userId) {
+//                try {
+//                    dlFolder = DLFolderLocalServiceUtil.deleteDLFolder(dlFolder.getParentFolderId());
+//                    writer.printf("Deleted parent folder %s (%d)\n", dlFolder.getName(), dlFolder.getFolderId());
+//                } catch (PortalException e) {
+//                    writer.printf("Failed to delete parent folder %s (%d): %s\n", dlFolder.getName(), dlFolder.getFolderId(), e.getMessage());
+//                }
+//            }
+//        } catch (PortalException e) {
+//            writer.printf("Failed to delete folder %s: %s\n", folderId, e.getMessage());
+//        }
+//    }
 }

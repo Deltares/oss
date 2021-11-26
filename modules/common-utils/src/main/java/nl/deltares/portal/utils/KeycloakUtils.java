@@ -32,6 +32,10 @@ public interface KeycloakUtils {
 
     String getAdminAvatarPath();
 
+    String getAdminUsersPath();
+
+    List<String> getDisabledUsers(int start, int maxResults, Long after, Long before) throws Exception;
+
     byte[] getUserAvatar(String email) throws Exception;
 
     int updateUserAttributes(String email, Map<String, String> attributes) throws Exception;

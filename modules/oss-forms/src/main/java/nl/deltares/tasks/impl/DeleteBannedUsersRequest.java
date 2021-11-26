@@ -1,8 +1,11 @@
 package nl.deltares.tasks.impl;
 
 import com.liferay.message.boards.model.MBBan;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import nl.deltares.portal.utils.AdminUtils;
 import nl.deltares.tasks.AbstractDataRequest;
 
@@ -51,7 +54,14 @@ public class DeleteBannedUsersRequest extends AbstractDataRequest {
                         writer.printf("Error: Not allowed to delete yourself %s", bannedUser.getUserName());
                         continue;
                     }
-                    adminUtils.deleteUserAndRelatedContent(siteId, bannedUser.getBanUserId(), writer);
+                    User user;
+                    try {
+                        user = UserLocalServiceUtil.getUser(bannedUser.getBanUserId());
+                    } catch (PortalException e) {
+                        writer.printf("Could not find user for userId %d\n", bannedUser.getBanUserId());
+                        continue;
+                    }
+                    adminUtils.deleteUserAndRelatedContent(siteId, user, writer, true);
                     //start flushing
                     writer.flush();
                     processedCount++;
@@ -59,10 +69,11 @@ public class DeleteBannedUsersRequest extends AbstractDataRequest {
                         status = terminated;
                         errorMessage = "Thread interrupted";
                         break;
-                    };
+                    }
                 }
-
-                status = available;
+                if (status != terminated) {
+                    status = available;
+                }
             } catch (Exception e) {
                 errorMessage = e.getMessage();
                 logger.warn("Error serializing csv content: %s", e);
