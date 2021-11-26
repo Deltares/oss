@@ -19,6 +19,7 @@ import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,11 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
     public String getAdminUserMailingsPath() {
         String basePath = getKeycloakBasePath();
         return basePath + "user-mailings/admin";
+    }
+
+    public String getAdminUsersPath() {
+        String basePath = getKeycloakBasePath();
+        return basePath + "users-deltares";
     }
 
     @Override
@@ -236,6 +242,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         checkResponse(connection);
     }
 
+    @Override
     public boolean isSubscribed(String email, List<String> mailingIds) throws Exception {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
@@ -255,6 +262,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         return isSubscribed[0];
     }
 
+    @Override
     public int registerUserLogin(String email, String siteId) throws Exception {
         if (siteId == null || siteId.isEmpty()) return -1;
 
@@ -271,6 +279,31 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         recordRecentLogin(searchKeys[2], userAttributes);
 
         return updateUserAttributes(email, userAttributes);
+    }
+
+    @Override
+    public List<String> getDisabledUsers(int start, int maxResults, Long after, Long before) throws IOException {
+
+        String queryParams = String.format("?first=%d&max=%d&briefRepresentation=true", start, maxResults);
+        if (after != null){
+            queryParams += "&disabledTimeAfter=" + after;
+        }
+        if (before != null){
+            queryParams += "&disabledTimeBefore=" + before;
+        }
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + getAccessToken());
+        HttpURLConnection urlConnection = getConnection(getAdminUsersPath() + "/disabled" + queryParams, "GET", headers);
+        checkResponse(urlConnection);
+        String jsonResponse = readAll(urlConnection);
+        //Keycloak wraps all attributes in a json array. we need to remove this
+        JSONArray jsonUsers = getJsonObjects(jsonResponse);
+        final ArrayList<String> emails = new ArrayList<>(jsonUsers.length());
+        jsonUsers.forEach(jsonUser -> {
+            emails.add(((JSONObject)jsonUser).getString("email"));
+        });
+        return emails;
     }
 
     private String getKeycloakUsersPath() {
