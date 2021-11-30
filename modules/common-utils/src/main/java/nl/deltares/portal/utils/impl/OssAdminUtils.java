@@ -35,14 +35,8 @@ public class OssAdminUtils implements AdminUtils {
     KeycloakUtils keycloakUtils;
 
     @Override
-    public int downloadDisabledUsers(long disabledAfterTime, PrintWriter writer) {
-        try {
-            return keycloakUtils.downloadDisabledUsers(disabledAfterTime, null, writer);
-        } catch (Exception e) {
-            writer.println("Error downloading disabled users from Keycloak: ");
-            writer.println(e.getMessage());
-            return 500;
-        }
+    public int downloadDisabledUsers(long disabledAfterTime, PrintWriter writer) throws Exception {
+        return keycloakUtils.downloadDisabledUsers(disabledAfterTime, null, writer);
     }
 
     @Override
