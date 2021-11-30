@@ -67,13 +67,15 @@ public class DeleteDisabledUsersRequest extends AbstractDataRequest {
         }
 
         try {
-            File tempFile = new File(getExportDir(), "delete" + id + ".tmp");
+            File tempFile = new File(getExportDir(), id + ".tmp");
             if (tempFile.exists()) Files.deleteIfExists(tempFile.toPath());
 
             //Download results to file
             try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
 
+                writer.println("Start deleting downloaded disabled users from file: " + disabledUsersPath);
                 String line;
+                int processedUsers = 0;
                 try (BufferedReader reader = new BufferedReader(new FileReader(disabledUsersFile))) {
                     line = reader.readLine(); //skip header
                     processedCount = line.length();
@@ -82,28 +84,33 @@ public class DeleteDisabledUsersRequest extends AbstractDataRequest {
                         final String[] split = line.split(";");
                         if (split.length == 0) continue;
                         String email = split[0];
-
+                        processedUsers++;
+                        writer.println("Processing disabled user " + email);
                         User user;
                         try {
                             user = UserLocalServiceUtil.getUserByEmailAddress(companyId, email);
                         } catch (PortalException e) {
-                            writer.printf("Could not find user for user %s\n in company %d", email, companyId);
+                            writer.printf("Could not find user for %s in company %d", email, companyId);
                             continue;
                         }
                         for (Group siteGroup : siteGroups) {
                             adminUtils.deleteUserAndRelatedContent(siteGroup.getGroupId(), user, writer, false);
                         }
-
                     }
                 }
-                status = available;
+                if (processedUsers == 0){
+                    writer.println("no disabled users found.");
+                    status = nodata;
+                } else {
+                    status = available;
+                }
             } catch (Exception e) {
                 errorMessage = e.getMessage();
                 logger.warn("Error serializing csv content: %s", e);
                 status = terminated;
             }
             if (status == available) {
-                this.dataFile = new File(getExportDir(), id + ".log");
+                this.dataFile = new File(getExportDir(), id + ".data");
                 if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
                 Files.move(tempFile.toPath(), dataFile.toPath());
             }
