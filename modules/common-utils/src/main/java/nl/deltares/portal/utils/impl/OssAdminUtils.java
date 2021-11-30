@@ -23,7 +23,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Component(
@@ -36,27 +35,14 @@ public class OssAdminUtils implements AdminUtils {
     KeycloakUtils keycloakUtils;
 
     @Override
-    public List<User> getDisabledUsers(long companyId, int start, int max, long disabledAfterTime, PrintWriter writer){
-
-        final ArrayList<User> users = new ArrayList<>();
+    public int downloadDisabledUsers(long disabledAfterTime, PrintWriter writer) {
         try {
-
-            final List<String> disabledUserEmails = keycloakUtils.getDisabledUsers(start, max, disabledAfterTime, null);
-
-            for (String disabledUserEmail : disabledUserEmails) {
-                final User user = UserLocalServiceUtil.fetchUserByEmailAddress(companyId, disabledUserEmail);
-                if (user == null){
-                    writer.printf("Info: user not found: %s\n", disabledUserEmail);
-                } else {
-                    users.add(user);
-                }
-            }
-
+            return keycloakUtils.downloadDisabledUsers(disabledAfterTime, null, writer);
         } catch (Exception e) {
-            writer.printf("Error retrieving disabled users from keycloak: %s\n", e.getMessage());
-            return Collections.emptyList();
+            writer.println("Error downloading disabled users from Keycloak: ");
+            writer.println(e.getMessage());
+            return 500;
         }
-        return users;
     }
 
     @Override
@@ -97,6 +83,7 @@ public class OssAdminUtils implements AdminUtils {
 
         writer.printf("********** Finished deleting content for user %s (%s, %d) in site %d   ***********\n", screenName, email, userId, siteId);
     }
+
     private void deleteUser(PrintWriter writer, User user, boolean deleteFromKeycloak) {
 
         deleteUserPortrait(writer, user);
