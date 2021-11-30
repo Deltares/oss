@@ -30,7 +30,7 @@ public abstract class AbstractDataRequest implements DataRequest {
     private final PermissionChecker permissionChecker;
 
 
-    private DataRequestManager manager;
+    protected DataRequestManager manager;
 
     public AbstractDataRequest(String id, long currentUserId) throws IOException {
         this.currentUserId = currentUserId;

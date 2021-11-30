@@ -13,9 +13,8 @@ import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.awt.*;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
@@ -282,28 +281,29 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
     }
 
     @Override
-    public List<String> getDisabledUsers(int start, int maxResults, Long after, Long before) throws IOException {
+    public int downloadDisabledUsers(Long after, Long before, PrintWriter writer) throws IOException {
 
-        String queryParams = String.format("?first=%d&max=%d&briefRepresentation=true", start, maxResults);
+        String queryParams = "";
         if (after != null){
-            queryParams += "&disabledTimeAfter=" + after;
+            queryParams += "?disabledTimeAfter=" + after;
         }
         if (before != null){
-            queryParams += "&disabledTimeBefore=" + before;
+            queryParams += after == null ? "?disabledTimeBefore=" + before : "&disabledTimeBefore=" + before;
         }
         HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
+        headers.put("Content-Type", "text/html");
         headers.put("Authorization", "Bearer " + getAccessToken());
         HttpURLConnection urlConnection = getConnection(getAdminUsersPath() + "/disabled" + queryParams, "GET", headers);
-        checkResponse(urlConnection);
-        String jsonResponse = readAll(urlConnection);
-        //Keycloak wraps all attributes in a json array. we need to remove this
-        JSONArray jsonUsers = getJsonObjects(jsonResponse);
-        final ArrayList<String> emails = new ArrayList<>(jsonUsers.length());
-        jsonUsers.forEach(jsonUser -> {
-            emails.add(((JSONObject)jsonUser).getString("email"));
-        });
-        return emails;
+        int status = checkResponse(urlConnection);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                writer.write(line);
+                writer.write('\n');
+            }
+            writer.flush();
+        }
+        return status;
     }
 
     private String getKeycloakUsersPath() {

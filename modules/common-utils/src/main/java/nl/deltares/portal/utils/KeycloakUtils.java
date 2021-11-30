@@ -1,5 +1,6 @@
 package nl.deltares.portal.utils;
 
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public interface KeycloakUtils {
 
     String getAdminUsersPath();
 
-    List<String> getDisabledUsers(int start, int maxResults, Long after, Long before) throws Exception;
+    int downloadDisabledUsers(Long after, Long before, PrintWriter writer) throws Exception;
 
     byte[] getUserAvatar(String email) throws Exception;
 
