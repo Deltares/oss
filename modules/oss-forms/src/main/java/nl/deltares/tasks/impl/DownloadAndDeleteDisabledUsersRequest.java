@@ -7,8 +7,7 @@ import nl.deltares.tasks.DataRequestManager;
 import java.io.File;
 import java.io.IOException;
 
-import static nl.deltares.tasks.DataRequest.STATUS.available;
-import static nl.deltares.tasks.DataRequest.STATUS.terminated;
+import static nl.deltares.tasks.DataRequest.STATUS.*;
 
 public class DownloadAndDeleteDisabledUsersRequest extends AbstractDataRequest {
 
@@ -28,20 +27,18 @@ public class DownloadAndDeleteDisabledUsersRequest extends AbstractDataRequest {
 
     @Override
     public STATUS call() {
-
+        status = running;
         try {
             currentRequest = new DownloadDisabledUsersRequest(id, disableTimeAfter, currentUserId, adminUtils);
-            currentRequest.setDataRequestManager(super.manager);
             final STATUS call = currentRequest.call();
             fireStateChanged();
             if (call == available) {
                 currentRequest = new DeleteDisabledUsersRequest(id, currentUserId, companyId,
                         currentRequest.getDataFile().getAbsolutePath(), adminUtils);
-                currentRequest.setDataRequestManager(super.manager);
                 currentRequest.call();
                 fireStateChanged();
             }
-
+            status = available;
         } catch (Exception e) {
             errorMessage = e.getMessage();
             status = terminated;
@@ -53,32 +50,32 @@ public class DownloadAndDeleteDisabledUsersRequest extends AbstractDataRequest {
 
     @Override
     public int getProcessedCount() {
-        return currentRequest.getProcessedCount();
+        return currentRequest == null ? 0 : currentRequest.getProcessedCount();
     }
 
     @Override
     public int getTotalCount() {
-        return currentRequest.getTotalCount();
+        return currentRequest == null ? 0: currentRequest.getTotalCount();
     }
 
     @Override
     public STATUS getStatus() {
-        return currentRequest.getStatus();
+        return currentRequest == null ? status : currentRequest.getStatus();
     }
 
     @Override
     public File getDataFile() {
-        return currentRequest.getDataFile();
+        return currentRequest == null ? super.dataFile : currentRequest.getDataFile();
     }
 
     @Override
     public String getErrorMessage() {
-        return currentRequest.getErrorMessage();
+        return currentRequest == null ? super.errorMessage : currentRequest.getErrorMessage();
     }
 
     @Override
     public String getStatusMessage() {
-        return currentRequest.getStatusMessage();
+        return currentRequest == null ? super.statusMessage : currentRequest.getStatusMessage();
     }
 
     @Override

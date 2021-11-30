@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 
 public interface AdminUtils {
 
-    int downloadDisabledUsers(long disabledAfterTime, PrintWriter writer);
+    int downloadDisabledUsers(long disabledAfterTime, PrintWriter writer) throws Exception;
 
     void deleteUserAndRelatedContent(long site, User user, PrintWriter writer, boolean deleteFromKeycloak);
 
