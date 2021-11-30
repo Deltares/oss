@@ -15,7 +15,7 @@ import nl.deltares.portal.utils.AdminUtils;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
 import nl.deltares.tasks.impl.DeleteBannedUsersRequest;
-import nl.deltares.tasks.impl.DeleteDisabledUsersRequest;
+import nl.deltares.tasks.impl.DownloadAndDeleteDisabledUsersRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -76,7 +76,7 @@ public class OssAdminFormPortlet extends MVCPortlet {
         String id = DataRequest.class.getName() + siteId + themeDisplay.getUserId();
         if ("deleteBannedUsers".equals(action)) {
             deleteBannedUsersAction(id, resourceResponse, themeDisplay, siteId);
-        } else if ("updateStatus".equals(action)){
+        } else if ("updateStatus".equals(action)) {
             DataRequestManager.getInstance().updateStatus(id, resourceResponse);
         } else if ("downloadLog".equals(action)) {
             DataRequestManager.getInstance().downloadDataFile(id, resourceResponse);
@@ -92,10 +92,11 @@ public class OssAdminFormPortlet extends MVCPortlet {
         resourceResponse.setContentType("application/json");
         DataRequestManager instance = DataRequestManager.getInstance();
         DataRequest dataRequest = instance.getDataRequest(dataRequestId);
-        if (dataRequest == null){
-            dataRequest = new DeleteDisabledUsersRequest(dataRequestId, themeDisplay.getCompanyId(), disabledTimeAfter, themeDisplay.getUserId(), adminUtils);
+        if (dataRequest == null) {
+            dataRequest = new DownloadAndDeleteDisabledUsersRequest(dataRequestId, themeDisplay.getCompanyId(),
+                    disabledTimeAfter, themeDisplay.getUserId(), adminUtils);
             instance.addToQueue(dataRequest);
-        } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated){
+        } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated) {
             instance.removeDataRequest(dataRequest);
         }
         resourceResponse.setStatus(HttpServletResponse.SC_OK);
@@ -125,10 +126,10 @@ public class OssAdminFormPortlet extends MVCPortlet {
         resourceResponse.setContentType("application/json");
         DataRequestManager instance = DataRequestManager.getInstance();
         DataRequest dataRequest = instance.getDataRequest(dataRequestId);
-        if (dataRequest == null){
+        if (dataRequest == null) {
             dataRequest = new DeleteBannedUsersRequest(dataRequestId, siteId, themeDisplay.getUserId(), bannedUsers, adminUtils);
             instance.addToQueue(dataRequest);
-        } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated){
+        } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated) {
             instance.removeDataRequest(dataRequest);
         }
         resourceResponse.setStatus(HttpServletResponse.SC_OK);
