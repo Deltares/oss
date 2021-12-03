@@ -8,21 +8,27 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.upload.UploadRequest;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.utils.AdminUtils;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
 import nl.deltares.tasks.impl.DeleteBannedUsersRequest;
-import nl.deltares.tasks.impl.DownloadAndDeleteDisabledUsersRequest;
+import nl.deltares.tasks.impl.DeleteDisabledUsersRequest;
+import nl.deltares.tasks.impl.DownloadDisabledUsersRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.*;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -80,21 +86,71 @@ public class OssAdminFormPortlet extends MVCPortlet {
             DataRequestManager.getInstance().updateStatus(id, resourceResponse);
         } else if ("downloadLog".equals(action)) {
             DataRequestManager.getInstance().downloadDataFile(id, resourceResponse);
-        } else if ("deleteDisabledUsers".equals(action)) {
-            deleteDisabledUsersAction(id, disabledTimeAfter, resourceResponse, themeDisplay);
+        } else if ("downloadDisabledUsers".equals(action)) {
+            downloadDisabledUsersAction(id, disabledTimeAfter, resourceResponse, themeDisplay);
+        } else if ("deleteUsers".equals(action)) {
+            deleteUsersAction(id, resourceRequest, resourceResponse, themeDisplay);
         } else {
             DataRequestManager.getInstance().writeError("Unsupported action error: " + action, resourceResponse);
         }
     }
 
-    private void deleteDisabledUsersAction(String dataRequestId, long disabledTimeAfter, ResourceResponse resourceResponse, ThemeDisplay themeDisplay) throws IOException {
+    private void deleteUsersAction(String dataRequestId, ResourceRequest resourceRequest, ResourceResponse resourceResponse, ThemeDisplay themeDisplay) throws IOException {
+        UploadRequest uploadRequest = PortalUtil.getUploadPortletRequest(resourceRequest);
+        File tempFile = uploadRequest.getFile("userFile");
+        if (tempFile != null && tempFile.exists()) {
+            String usersFilePath;
+            try {
+                usersFilePath = copyTempFile(dataRequestId, tempFile, tempFile.getName());
+            } catch (IOException e) {
+                PrintWriter writer = resourceResponse.getWriter();
+                resourceResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                resourceResponse.setContentType("application/json");
+                writer.print(String.format("{\"tatus\"' : \"error\", \"message\" : \"Failed to copy tempFile %s: %s\"}",tempFile.getName(), e.getMessage()) );
+                return;
+            }
+
+            resourceResponse.setContentType("application/json");
+            DataRequestManager instance = DataRequestManager.getInstance();
+            DataRequest dataRequest = instance.getDataRequest(dataRequestId);
+            if (dataRequest == null) {
+                dataRequest = new DeleteDisabledUsersRequest(dataRequestId, themeDisplay.getUserId(), themeDisplay.getCompanyId(), usersFilePath, adminUtils);
+                instance.addToQueue(dataRequest);
+            } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated) {
+                instance.removeDataRequest(dataRequest);
+            }
+            resourceResponse.setStatus(HttpServletResponse.SC_OK);
+            String statusMessage = dataRequest.getStatusMessage();
+            resourceResponse.setContentLength(statusMessage.length());
+            PrintWriter writer = resourceResponse.getWriter();
+            writer.println(statusMessage);
+        } else {
+            PrintWriter writer = resourceResponse.getWriter();
+            resourceResponse.setContentType("application/json");
+            resourceResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            writer.print("{\"status\" : \"error\", \"message\": \"Could not find uploaded file!\"}");
+        }
+
+    }
+
+    private String copyTempFile(String dataRequestId, File tempFile, String fileName) throws IOException {
+
+
+        final File dest = new File(tempFile.getParentFile(), dataRequestId + fileName);
+        if (dest.exists()){
+            Files.delete(dest.toPath());
+        }
+        final Path usersFile = Files.copy(tempFile.toPath(), dest.toPath());
+        return usersFile.toFile().getAbsolutePath();
+    }
+
+    private void downloadDisabledUsersAction(String dataRequestId, long disabledTimeAfter, ResourceResponse resourceResponse, ThemeDisplay themeDisplay) throws IOException {
 
         resourceResponse.setContentType("application/json");
         DataRequestManager instance = DataRequestManager.getInstance();
         DataRequest dataRequest = instance.getDataRequest(dataRequestId);
         if (dataRequest == null) {
-            dataRequest = new DownloadAndDeleteDisabledUsersRequest(dataRequestId, themeDisplay.getCompanyId(),
-                    disabledTimeAfter, themeDisplay.getUserId(), adminUtils);
+            dataRequest = new DownloadDisabledUsersRequest(dataRequestId, disabledTimeAfter, themeDisplay.getUserId(), adminUtils);
             instance.addToQueue(dataRequest);
         } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated) {
             instance.removeDataRequest(dataRequest);

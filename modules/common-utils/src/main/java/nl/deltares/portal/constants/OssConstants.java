@@ -5,6 +5,9 @@ public class OssConstants {
     public static final String DSD_SITE_CONFIGURATIONS_PID = "nl.deltares.portal.configuration.DSDSiteConfiguration";
     public static final String OSS_SITE_CONFIGURATIONS_PID = "nl.deltares.portal.configuration.OSSSiteConfiguration";
 
+    public static final String UPLOAD_OSS_ADMIN_FORM =
+            "upload_OssAdminFormPortlet";
+
     public static final String DSD_REGISTRATIONFORM =
             "dsd_RegistrationFormPortlet";
 

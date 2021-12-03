@@ -29,14 +29,13 @@
             </c:choose>
         </aui:col>
         <aui:col width="5">
-            <button id="deleteButton" class="btn btn-lg" type="button"><liferay-ui:message
-                    key="oss.admin.delete"/></button>
+            <aui:button  name="deleteButton" type="submit" value="oss.admin.delete"/>
         </aui:col>
     </aui:row>
     <hr>
     <aui:row>
         <aui:col width="50">
-            <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.deleteDisabledTitle"/></div>
+            <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.downloadDisabledTitle"/></div>
         </aui:col>
         <aui:col width="20">
             <div class="control-label"><liferay-ui:message key="oss.admin.disabledTime"/></div>
@@ -45,11 +44,28 @@
             <input id="disabledTime" value="" type="date" class="form-control">
         </aui:col>
         <aui:col width="5">
-            <button id="deleteDisabledButton" class="btn btn-lg" type="button"><liferay-ui:message
-                    key="oss.admin.delete"/></button>
+            <aui:button  name="downloadDisabledButton"  type="submit" value="oss.admin.download" />
         </aui:col>
     </aui:row>
-
+    <hr>
+    <aui:form name="deleteUsers" enctype="multipart/form-data" >
+        <aui:fieldset >
+            <aui:row>
+                <aui:col width="50">
+                    <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.deleteUsersTitle"/></div>
+                </aui:col>
+                <aui:col width="20">
+                    <div class="control-label"><liferay-ui:message key="oss.admin.usersFile"/></div>
+                </aui:col>
+                <aui:col width="25">
+                    <aui:input label="" name="userFile" type="file"  />
+                </aui:col>
+                <aui:col width="5">
+                    <aui:button type="submit" name="deleteUsersButton" value="oss.admin.delete" />
+                </aui:col>
+            </aui:row>
+        </aui:fieldset>
+    </aui:form>
     <aui:row>
         <aui:col width="50">
             <div class="panel-title" id="Title"></div>
@@ -87,14 +103,28 @@
                 FormsUtil.callDeleteBannedUsers(resourceUrl + '&' + namespace + 'siteId=' + siteId + '&' + namespace);
             }
         },
-        deleteDisabled: function(resourceUrl, namespace){
+        downloadDisabled: function(resourceUrl, namespace){
             this.clearMessage();
             var disabledTime = document.getElementById("disabledTime").value;
-            if (confirm("You are about to delete all disabled users that have been disabled after: " + disabledTime + "\nDo you want to continue?") === false) {
+            if (confirm("You are about to download all disabled users that have been disabled after: " + disabledTime + "\nDo you want to continue?") === false) {
                 disabledTime = null;
                 return;
             }
-            FormsUtil.callDeleteDisabledUsers(resourceUrl + '&' + namespace + 'disabledTime=' + new Date(disabledTime).getTime() + '&' + namespace);
+            FormsUtil.callDownloadDisabledUsers(resourceUrl + '&' + namespace + 'disabledTime=' + new Date(disabledTime).getTime() + '&' + namespace);
+
+        },
+        deleteUsers: function(resourceUrl, namespace){
+            this.clearMessage();
+            var usersFile = document.getElementById(namespace + "userFile").files[0];
+            if (!usersFile){
+                alert("Please select file to upload!");
+                return;
+            }
+            if (confirm("You are about to delete users from file: " + usersFile.name + "\nDo you want to continue?") === false) {
+            usersFile = null;
+            return;
+            }
+            FormsUtil.callDeleteUsers(resourceUrl + '&' + namespace, namespace);
 
         },
         callDeleteBannedUsers : function (resourceUrl){
@@ -124,10 +154,10 @@
                 }
             });
         },
-        callDeleteDisabledUsers : function (resourceUrl){
+        callDownloadDisabledUsers : function (resourceUrl){
 
             FormsUtil.updateProgressBar(JSON.parse('{"status": "pending", "progress":0, "total":100}'));
-            A.io.request(resourceUrl + 'action=deleteDisabledUsers', {
+            A.io.request(resourceUrl + 'action=downloadDisabledUsers', {
                 sync : 'true',
                 cache : 'false',
                 on : {
@@ -151,6 +181,35 @@
                 }
             });
         },
+        callDeleteUsers : function (resourceUrl, namespace){
+
+            FormsUtil.updateProgressBar(JSON.parse('{"status": "pending", "progress":0, "total":100}'));
+
+            A.io.request(resourceUrl + 'action=deleteUsers',{
+                method: 'POST',
+                form: {
+                    id: document.getElementById(namespace +"deleteUsers"),
+                    upload: true
+                },
+                sync: true,
+                on: {
+                    //We do it different here because we are posting from a FORM
+                    complete : function(response, status, xhr) {
+
+                        let statusMsg = JSON.parse(xhr.responseText);
+                        if (statusMsg.status === 'terminated' || statusMsg.status === 'error'){
+                            FormsUtil.stopProgressMonitor();
+                            FormsUtil.writeError(statusMsg.status + ':' + statusMsg.message);
+                        } else if (statusMsg.status === 'nodata'){
+                            FormsUtil.stopProgressMonitor();
+                            FormsUtil.writeInfo("204: No disabled users found!");
+                        } else {
+                            FormsUtil.startProgressMonitor(resourceUrl);
+                        }
+                    }
+                }
+            });
+        },
         clearMessage : function(){
             let errorBlock = A.one('#group-message-block');
             errorBlock.html('');
@@ -161,8 +220,9 @@
             var progressBar = $('#deleteProgress');
             progressBar.hide();
             progressBar.empty();
-            $('#deleteButton').prop('disabled', false);
-            $('#deleteDisabledButton').prop('disabled', false);
+            $('#<portlet:namespace/>deleteButton').prop('disabled', false);
+            $('#<portlet:namespace/>downloadDisabledButton').prop('disabled', false);
+            $('#<portlet:namespace/>deleteUsersButton').prop('disabled', false);
         },
         startProgressMonitor : function(resourceUrl){
             if (progressId !== '') {
@@ -170,8 +230,9 @@
                 return
             }
             $('#deleteProgress').show();
-            $('#deleteButton').prop('disabled', true);
-            $('#deleteDisabledButton').prop('disabled', true);
+            $('#<portlet:namespace/>deleteButton').prop('disabled', true);
+            $('#<portlet:namespace/>downloadDisabledButton').prop('disabled', true);
+            $('#<portlet:namespace/>deleteUsersButton').prop('disabled', true);
             progressId = setInterval(function(){FormsUtil.callUpdateProgressRequest(resourceUrl)}, 1000);
         },
         updateProgressBar : function (statusMsg) {
@@ -256,11 +317,16 @@
             document.body.removeChild(a);
         }
     }
-    $('#deleteButton').on('click', function(){
+
+    $('#<portlet:namespace/>deleteButton').on('click', function(){
         FormsUtil.delete("<portlet:resourceURL/>", "<portlet:namespace/>")
     });
-    $('#deleteDisabledButton').on('click', function(){
-        FormsUtil.deleteDisabled("<portlet:resourceURL/>", "<portlet:namespace/>")
+    $('#<portlet:namespace/>downloadDisabledButton').on('click', function(){
+        FormsUtil.downloadDisabled("<portlet:resourceURL/>", "<portlet:namespace/>")
+    });
+    $('#<portlet:namespace/>deleteUsersButton').on('click', function (event) {
+        event.preventDefault();
+        FormsUtil.deleteUsers("<portlet:resourceURL/>", "<portlet:namespace/>")
     });
     $('#disabledTime').value = new Date(Date.now() - year_millis).toDateString();
 </aui:script>
