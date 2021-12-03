@@ -42,7 +42,9 @@ public class DeleteDisabledUsersRequest extends AbstractDataRequest {
             return status;
         }
 
-        if (status == available || status == nodata) return status;
+        if (status == available || status == nodata) {
+            return status;
+        }
 
         init();
         status = running;
