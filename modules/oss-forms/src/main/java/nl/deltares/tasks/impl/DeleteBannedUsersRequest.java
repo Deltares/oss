@@ -61,6 +61,10 @@ public class DeleteBannedUsersRequest extends AbstractDataRequest {
                         writer.printf("Could not find user for userId %d\n", bannedUser.getBanUserId());
                         continue;
                     }
+                    if (user.getEmailAddress().endsWith("@deltares.nl") || user.getEmailAddress().endsWith("@liferay.com") ){
+                        writer.println("Skipping Deltares or admin user : " + user.getEmailAddress());
+                        continue;
+                    }
                     adminUtils.deleteUserAndRelatedContent(siteId, user, writer, true);
                     //start flushing
                     writer.flush();
