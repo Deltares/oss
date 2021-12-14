@@ -106,7 +106,7 @@ public class OssAdminFormPortlet extends MVCPortlet {
                 PrintWriter writer = resourceResponse.getWriter();
                 resourceResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 resourceResponse.setContentType("application/json");
-                writer.print(String.format("{\"tatus\"' : \"error\", \"message\" : \"Failed to copy tempFile %s: %s\"}",tempFile.getName(), e.getMessage()) );
+                writer.print(String.format("{\"status\"' : \"error\", \"message\" : \"Failed to copy tempFile %s: %s\"}",tempFile.getName(), e.getMessage()) );
                 return;
             }
 
