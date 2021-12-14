@@ -13,12 +13,10 @@ import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 
-import java.awt.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -202,22 +200,31 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
     }
 
     @Override
-    public void deleteUser(String email) throws Exception {
+    public int disableUser(String email) throws Exception {
+        //get user representation
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getAccessToken());
-        HttpURLConnection connection = getConnection(getKeycloakUsersPath() + "?email=" + email, "GET", headers);
 
+        //Keycloak wraps all attributes in a json array. we need to remove this
+        HttpURLConnection connection = getConnection(getKeycloakUsersPath() + "?email=" + email, "GET", headers);
         checkResponse(connection);
+
         String jsonResponse = readAll(connection);
         //Keycloak wraps all attributes in a json array. we need to remove this
         JSONObject userObject = getJsonObject(jsonResponse);
-        if (userObject == null) return;
+        if (userObject == null) return -1;
 
-        //delete user
-        connection = getConnection(getKeycloakUsersPath() + '/' + userObject.get("id"), "DELETE", headers);
+        userObject.put("enabled", false);
+
+        //write updated user representation
+        connection = getConnection(getKeycloakUsersPath() + '/' + userObject.get("id"), "PUT", headers);
+        connection.setDoOutput(true);
+        try (Writer w = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8)) {
+            userObject.write(w);
+        }
         //get response
-        checkResponse(connection);
+        return checkResponse(connection);
 
     }
 
