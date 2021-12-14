@@ -97,10 +97,11 @@ public class OssAdminUtils implements AdminUtils {
 
         //Delete Keycloak user
         try {
-            keycloakUtils.deleteUser(user.getEmailAddress());
-            writer.printf("Deleted user from keycloak\n");
+            keycloakUtils.disableUser(user.getEmailAddress());
+            keycloakUtils.disableUser(user.getEmailAddress());
+            writer.printf("Disabled user in keycloak\n");
         } catch (Exception e) {
-            writer.printf("Failed to delete user from Keycloak: %s\n", e.getMessage());
+            writer.printf("Failed to disable user in Keycloak: %s\n", e.getMessage());
         }
     }
 

@@ -45,7 +45,7 @@ public interface KeycloakUtils {
 
     int registerUserLogin(String email, String siteId) throws Exception;
 
-    void deleteUser(String email) throws Exception;
+    int disableUser(String email) throws Exception;
 
     void subscribe(String emailAddress, String mailingId) throws Exception;
 
