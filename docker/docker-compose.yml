@@ -72,7 +72,7 @@ services:
       - liferay
 
   keycloak:
-    image: quay.io/keycloak/keycloak:6.0.1
+    image: quay.io/keycloak/keycloak:16.1.1
     container_name: keycloak
     #    build: server
     ports:
