@@ -39,4 +39,6 @@ dependencies {
 
     testCompile group: "com.maxmind.geoip2", name: "geoip2", version: "2.15.0"
 
+    testCompile(project(":modules:registration-service:registration-service-api"))
+
 }
