@@ -8,6 +8,7 @@ import org.osgi.service.component.annotations.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
@@ -59,10 +60,16 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         HashMap<String, String> headers = getDefaultHeaders();
 
         String directDownloadPath = API_PATH + "dav/api/v1/direct";
-        HttpURLConnection connection = getConnection(directDownloadPath, "POST", headers);
+        HttpURLConnection connection;
+        try {
+            connection = getConnection(directDownloadPath, "POST", headers);
+        } catch (IOException e) {
+            throw new Exception("Failed to connect to download server: " + e.getMessage());
+        }
         connection.setDoOutput(true);
         try (Writer w = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8)) {
-            w.write(String.format("{ \"fileId\" : %d } ", fileId));
+            w.write(String.format("{\"fileId\":%d}", fileId));
+//            w.write("fileId=" + fileId);
         }
         checkResponse(connection);
 
@@ -139,6 +146,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
             shareIndex = i;
             break;
         }
+        if (shareIndex == -1) return shareIndex;
         final NodeList shareIdNodes = document.getElementsByTagName("id");
         return Integer.parseInt(shareIdNodes.item(shareIndex).getTextContent());
     }
@@ -177,6 +185,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         HashMap<String, String> headers = new HashMap<>();
         headers.put("OCS-APIRequest", "true");
         headers.put("Content-Type", "application/json");
+//        headers.put("Content-Type", " application/x-www-form-urlencoded");
         headers.put("Authorization", "Basic " + AUTH_TOKEN);
         return headers;
     }

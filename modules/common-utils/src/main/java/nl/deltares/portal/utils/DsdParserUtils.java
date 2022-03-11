@@ -33,6 +33,8 @@ public interface DsdParserUtils {
 
     RegistrationDisplayContext getDisplayContextInstance(String articleId, ThemeDisplay themeDisplay);
 
+    AbsDsdArticle toDsdArticle(long siteId, String articleId) throws PortalException;
+
     AbsDsdArticle toDsdArticle(JournalArticle article, Locale locale) throws PortalException;
 
     AbsDsdArticle toDsdArticle(JournalArticle article) throws PortalException;
