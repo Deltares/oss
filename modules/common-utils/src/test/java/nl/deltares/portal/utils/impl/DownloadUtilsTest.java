@@ -26,9 +26,10 @@ public class DownloadUtilsTest {
 
         MockProps props = new MockProps();
         Properties properties = new Properties();
+
         properties.put("download.baseurl", "http://localhost:8180/ocs/v2.php/apps/");
         properties.put("download.app.name", "admin");
-        properties.put("download.app.password", "pass");
+        properties.put("download.app.password", "pTccE-5b4Mo-Xcj8R-BppK2-sydqc");
         props.setProperties(properties);
         PropsUtil.setProps(props);
 
@@ -37,7 +38,7 @@ public class DownloadUtilsTest {
     @Test
     public void testDirectDownload() throws Exception {
 
-        long fileId = 1395;
+        long fileId = 8841375;
 
         final DownloadUtilsImpl downloadUtils = new DownloadUtilsImpl();
 
@@ -69,8 +70,7 @@ public class DownloadUtilsTest {
     public void testSendShareLink() throws Exception {
 
         final DownloadUtilsImpl downloadUtils = new DownloadUtilsImpl();
-
-        int shareId = downloadUtils.sendShareLink("/unittests/test-direct.txt", "erik.derooij@deltares.nl");
+        int shareId = downloadUtils.sendShareLink("/OSS/Nextcloud Manual.pdf", "teset@lifer.com");
         System.out.println(String.format("created share %d for user %s", shareId, "erik.derooij@deltares.nl"));
         Assert.assertTrue(shareId > 0);
     }

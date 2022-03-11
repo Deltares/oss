@@ -137,6 +137,12 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
         _configurationProvider = configurationProvider;
     }
 
+    @Override
+    public AbsDsdArticle toDsdArticle(long siteId, String articleId) throws PortalException {
+        JournalArticle article =  dsdJournalArticleUtils.getJournalArticle(siteId, articleId);
+        return  toDsdArticle(article);
+    }
+
     public AbsDsdArticle toDsdArticle(JournalArticle journalArticle) throws PortalException {
 
         String defaultLanguageId = GroupLocalServiceUtil.getGroup(journalArticle.getGroupId()).getDefaultLanguageId();
@@ -186,6 +192,9 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
                 break;
             case Presentation:
                 article = new Presentation(journalArticle, this, locale);
+                return article;
+            case Download:
+                article = new Download(journalArticle, this, locale);
                 return article;
             default:
                 article = new GenericArticle(journalArticle, this, locale);

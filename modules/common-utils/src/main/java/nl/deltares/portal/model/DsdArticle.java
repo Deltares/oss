@@ -11,7 +11,8 @@ public interface DsdArticle {
 
     enum DSD_LOCATION_KEYS {restaurant, hotel, event}
     enum DSD_REGISTRATION_STRUCTURE_KEYS {Session, Bustransfer, Dinner}
-    enum DSD_STRUCTURE_KEYS {Expert, Location, Building, Room, Eventlocation, Registration, Session, Bustransfer, Busroute, Dinner, Event, Presentation, Generic}
+    enum DSD_STRUCTURE_KEYS {Expert, Location, Building, Room, Eventlocation, Registration, Session, Bustransfer,
+        Busroute, Dinner, Event, Presentation, Generic, Download}
 
     String getTitle();
     long getCompanyId();
