@@ -1,0 +1,310 @@
+{
+  "availableLanguageIds": [
+    "en_US"
+  ],
+  "defaultLanguageId": "en_US",
+  "fields": [
+    {
+      "label": {
+        "en_US": "File ID"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "Unique file identifier. Can be obtained from download portal. Required for direct downloads. If omitted for 'Direct-Download' a share link is created."
+      },
+      "dataType": "integer",
+      "fieldNamespace": "ddm",
+      "indexType": "",
+      "localizable": false,
+      "name": "FileId",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "ddm-integer"
+    },
+    {
+      "label": {
+        "en_US": "File path"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "Relative path for file. Can be obtained from download portal."
+      },
+      "dataType": "string",
+      "indexType": "",
+      "localizable": false,
+      "name": "FilePath",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "text"
+    },
+    {
+      "label": {
+        "en_US": "File name"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "Descriptive Name"
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": false,
+      "name": "FileName",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "text"
+    },
+    {
+      "label": {
+        "en_US": "Required Actions"
+      },
+      "options": [
+        {
+          "value": "direct",
+          "label": {
+            "en_US": "Direct-Download"
+          }
+        },
+        {
+          "value": "terms",
+          "label": {
+            "en_US": "Accept-Terms"
+          }
+        },
+        {
+          "value": "billingInfo",
+          "label": {
+            "en_US": "Billing-Info"
+          }
+        },
+        {
+          "value": "subscription",
+          "label": {
+            "en_US": "Subscriptions"
+          }
+        },
+        {
+          "value": "userinfo",
+          "label": {
+            "en_US": "User-Info"
+          }
+        }
+      ],
+      "predefinedValue": {
+        "en_US": [
+          ""
+        ]
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "Define what checks user must go through for download.<br/>'Direct Download' invalidates all other selections."
+      },
+      "dataType": "string",
+      "indexType": "",
+      "localizable": false,
+      "multiple": true,
+      "name": "RequiredActions",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "select"
+    },
+    {
+      "label": {
+        "en_US": "Topic"
+      },
+      "options": [
+        {
+          "value": "delftfews",
+          "label": {
+            "en_US": "Delft-FEWS Platform"
+          }
+        },
+        {
+          "value": "dyhdro",
+          "label": {
+            "en_US": "Delft3D FM"
+          }
+        },
+        {
+          "value": "embankment",
+          "label": {
+            "en_US": "D-GEO Suite"
+          }
+        },
+        {
+          "value": "imod",
+          "label": {
+            "en_US": "iMOD Suite"
+          }
+        },
+        {
+          "value": "swash",
+          "label": {
+            "en_US": "SWASH"
+          }
+        },
+        {
+          "value": "wanda",
+          "label": {
+            "en_US": "WANDA"
+          }
+        },
+        {
+          "value": "wflow",
+          "label": {
+            "en_US": "wflow"
+          }
+        },
+        {
+          "value": "xbeach",
+          "label": {
+            "en_US": "XBeach"
+          }
+        }
+      ],
+      "predefinedValue": {
+        "en_US": [
+          ""
+        ]
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "multiple": false,
+      "name": "Topic",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "select"
+    },
+    {
+      "label": {
+        "en_US": "File Type"
+      },
+      "options": [
+        {
+          "value": "installation",
+          "label": {
+            "en_US": "Installation"
+          }
+        },
+        {
+          "value": "demo",
+          "label": {
+            "en_US": "Demonstration package"
+          }
+        },
+        {
+          "value": "document",
+          "label": {
+            "en_US": "Document"
+          }
+        },
+        {
+          "value": "directory",
+          "label": {
+            "en_US": "Directory"
+          }
+        }
+      ],
+      "predefinedValue": {
+        "en_US": [
+          ""
+        ]
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": false,
+      "multiple": false,
+      "name": "FileType",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "select"
+    },
+    {
+      "label": {
+        "en_US": "File Size"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "Discription of file size (eg. 10MB)"
+      },
+      "dataType": "string",
+      "indexType": "",
+      "localizable": false,
+      "name": "FileSize",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "text"
+    },
+    {
+      "label": {
+        "en_US": "Text"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "Textup8b",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "text"
+    }
+  ]
+}

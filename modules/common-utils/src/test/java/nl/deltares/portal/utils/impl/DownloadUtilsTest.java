@@ -28,8 +28,8 @@ public class DownloadUtilsTest {
         Properties properties = new Properties();
 
         properties.put("download.baseurl", "http://localhost:8180/ocs/v2.php/apps/");
-        properties.put("download.app.name", "admin");
-        properties.put("download.app.password", "pTccE-5b4Mo-Xcj8R-BppK2-sydqc");
+        properties.put("download.app.name", "ossadmin");
+        properties.put("download.app.password", "doF4S-nrLMg-FBzs4-NjAxB-2dSMH");
         props.setProperties(properties);
         PropsUtil.setProps(props);
 
@@ -38,7 +38,7 @@ public class DownloadUtilsTest {
     @Test
     public void testDirectDownload() throws Exception {
 
-        long fileId = 8841375;
+        long fileId = 211;
 
         final DownloadUtilsImpl downloadUtils = new DownloadUtilsImpl();
 
