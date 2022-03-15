@@ -4,6 +4,7 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.display.context.DownloadDisplayContext;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
@@ -11,6 +12,7 @@ import org.w3c.dom.Document;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class Download extends AbsDsdArticle {
 
@@ -20,18 +22,18 @@ public class Download extends AbsDsdArticle {
     private String fileName;
     private String fileType;
     private String fileTopic;
+    private String fileTypeName;
 
-
-    enum ACTION  {direct, terms, userInfo, billingInfo, subscriptions}
+    enum ACTION {direct, terms, userInfo, billingInfo, subscriptions}
 
     private final List<ACTION> requiredActions = new ArrayList<>();
 
-    public Download(JournalArticle journalArticle, DsdParserUtils articleParserUtils, Locale locale) throws PortalException {
+    public Download(JournalArticle journalArticle, DsdParserUtils articleParserUtils, DsdJournalArticleUtils dsdJournalArticleUtils, Locale locale) throws PortalException {
         super(journalArticle, articleParserUtils, locale);
-        init();
+        init(dsdJournalArticleUtils);
     }
 
-    private void init() throws PortalException {
+    private void init(DsdJournalArticleUtils articleUtils) throws PortalException {
         try {
             Document document = getDocument();
             String fileId = XmlContentUtils.getDynamicContentByName(document, "FileId", true);
@@ -43,10 +45,15 @@ public class Download extends AbsDsdArticle {
             parseRequiredActions(options);
 
             fileType = XmlContentUtils.getDynamicContentByName(document, "FileType", false);
+
+            final Map<String, String> fileTypesMap = articleUtils.getStructureFieldOptions(getGroupId(), getStructureKey(), "FileType", getLocale());
+            fileTypeName = fileTypesMap.get(fileType);
+
             String fileSize = XmlContentUtils.getDynamicContentByName(document, "FileSize", true);
             if (fileSize != null) this.fileSize = fileSize;
 
             fileTopic = XmlContentUtils.getDynamicContentByName(document, "Topic", false);
+
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -70,11 +77,11 @@ public class Download extends AbsDsdArticle {
         return "download";
     }
 
-    public boolean isDirectDownload(){
+    public boolean isDirectDownload() {
         return requiredActions.contains(ACTION.direct) && fileId > 0;
     }
 
-    public boolean isSendLink(){
+    public boolean isSendLink() {
         return requiredActions.contains(ACTION.direct);
     }
 
@@ -94,7 +101,7 @@ public class Download extends AbsDsdArticle {
         return fileType;
     }
 
-    public String getFileSize(){
+    public String getFileSize() {
         return fileSize;
     }
 
@@ -102,7 +109,11 @@ public class Download extends AbsDsdArticle {
         return fileTopic;
     }
 
-    public DownloadDisplayContext toDisplayContext(ThemeDisplay themeDisplay){
+    public String getFileTypeName() {
+        return fileTypeName;
+    }
+
+    public DownloadDisplayContext toDisplayContext(ThemeDisplay themeDisplay) {
         return new DownloadDisplayContext(this, dsdParserUtils, themeDisplay);
     }
 }

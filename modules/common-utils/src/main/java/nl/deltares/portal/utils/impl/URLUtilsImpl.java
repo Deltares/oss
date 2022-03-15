@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.StringPool;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
+import nl.deltares.portal.configuration.DownloadSiteConfiguration;
 import nl.deltares.portal.utils.URLUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -44,6 +45,32 @@ public class URLUtilsImpl implements URLUtils {
         }
         return url;
     }
+
+    @Override
+    public String getDownloadCartURL(ThemeDisplay themeDisplay) {
+        String url = "";
+        long groupId = themeDisplay.getScopeGroupId();
+        if (_configurationProvider != null) {
+            try {
+                DownloadSiteConfiguration urlsConfiguration = _configurationProvider
+                        .getGroupConfiguration(DownloadSiteConfiguration.class, groupId);
+
+                Group group = GroupLocalServiceUtil.getGroup(groupId);
+
+                if (group != null) {
+                    Layout downloadPage = LayoutLocalServiceUtil
+                            .fetchLayoutByFriendlyURL(groupId, false, urlsConfiguration.downloadURL());
+                    if (downloadPage != null) {
+                        url = group.getDisplayURL(themeDisplay, false) + downloadPage.getFriendlyURL(themeDisplay.getLocale());
+                    }
+                }
+            } catch (Exception e) {
+                LOG.debug("Error creating portlet url", e);
+            }
+        }
+        return url;
+    }
+
 
     private ConfigurationProvider _configurationProvider;
 

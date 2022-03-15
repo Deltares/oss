@@ -206,7 +206,8 @@ function getCurrentStep(form) {
                 this.cart = {
                     'userId': this._getUserId(),
                     'siteId' : this._getSiteId(),
-                    'items': []
+                    'items': [],
+                    'downloads': []
                 };
 
                 this._saveCart();
@@ -220,35 +221,46 @@ function getCurrentStep(form) {
         registerEvents: function () {
             let plugin = this;
 
-            $('.add-to-cart').on('click', function (e) {
-                e.preventDefault();
-                let id = $(this).data('articleId');
-
-                if (plugin._contains(id)) {
-                    plugin._removeFromCart(id);
-                } else {
-                    plugin._addToCart(id);
-                }
-                plugin._updateLabel($(this));
-                plugin.refreshCart();
-            });
+            registerClick('.add-to-cart', 'registration');
+            registerClick('.add-download-to-cart', 'download');
 
             $('.c-cart__checkout__cart').on('click', function (e) {
                 e.preventDefault();
                 buildCheckoutURL();
             });
+
+            function registerClick(clazz, type) {
+                $(clazz).on('click', function (e) {
+                    e.preventDefault();
+                    let id = $(this).data('articleId');
+
+                    if (plugin._contains(id, type)) {
+                        plugin._removeFromCart(id, type);
+                    } else {
+                        plugin._addToCart(id, type);
+                    }
+                    plugin._updateLabel($(this), type);
+                    plugin.refreshCart();
+                });
+            }
         },
+
 
         refreshCart: function () {
             let plugin = this;
-            $('.c-cart__item__counter').text(plugin.cart.items.length);
+            if (plugin.cart.downloads === null) {plugin.cart['downloads'] = [];}
+            $('.c-cart__item__counter').text(plugin.cart.items.length + plugin.cart.downloads.length);
             $('.add-to-cart').each(function (){
-                plugin._updateLabel($(this));
+                plugin._updateLabel($(this), 'registration');
+            });
+            $('.add-download-to-cart').each(function (){
+                plugin._updateLabel($(this), 'download');
             });
         },
 
         clearCart: function () {
             this.cart.items = [];
+            this.cart.downloads = [];
             this._saveCart();
             this.refreshCart();
         },
@@ -259,14 +271,30 @@ function getCurrentStep(form) {
                 window,
                 'buildCheckoutURL',
                 function () {
-                    let portletURL = Liferay.PortletURL.createURL(checkoutCartURL);
+
+                    let cartUrl;
+                    let action;
+                    let ids;
+                    let portletId;
+                    if (plugin.cart.downloads.length > 0){
+                        cartUrl = downloadCartURL;
+                        action = 'download';
+                        ids = plugin.cart.downloads.join(',');
+                        portletId = 'donwloadFormPortlet';
+                    } else {
+                        cartUrl = checkoutCartURL;
+                        action = 'register';
+                        ids = plugin.cart.items.join(',');
+                        portletId  = 'dsd_RegistrationFormPortlet';
+                    }
+                    let portletURL = Liferay.PortletURL.createURL(cartUrl);
 
                     portletURL.setLifecycle(Liferay.PortletURL.RENDER_PHASE);
                     portletURL.setWindowState('normal');
                     portletURL.setPortletMode('view');
-                    portletURL.setParameter('action', 'register');
-                    portletURL.setParameter('ids', plugin.cart.items.join(','));
-                    portletURL.setPortletId('dsd_RegistrationFormPortlet');
+                    portletURL.setParameter('action', action);
+                    portletURL.setParameter('ids', ids);
+                    portletURL.setPortletId(portletId);
 
                     if (undefined !== portletURL.toString()) {
                         window.location = portletURL.toString();
@@ -276,10 +304,10 @@ function getCurrentStep(form) {
             );
         },
 
-        _updateLabel: function (element) {
+        _updateLabel: function (element, type) {
             let plugin = this;
             let id = element.data('articleId');
-            if (plugin._contains(id)) {
+            if (plugin._contains(id, type)) {
                 element.text(plugin._getLanguageKey('remove-from-cart'));
             } else {
                 element.text(plugin._getLanguageKey('add-to-cart'));
@@ -298,23 +326,39 @@ function getCurrentStep(form) {
             return Liferay.ThemeDisplay.getSiteGroupId();
         },
 
-        _addToCart: function (id) {
-            if (!this._contains(id)) {
-                this.cart.items.push(id);
+        _addToCart: function (id, type) {
+
+            if (!this._contains(id, type)) {
+                if (type === 'registration'){
+                    this.cart.items.push(id);
+                } else if (type === 'download'){
+                    this.cart.downloads.push(id)
+                }
+                this._saveCart();
             }
-            this._saveCart();
         },
 
-        _removeFromCart: function (id) {
-            if (this._contains(id)) {
-                this.cart.items = this.cart.items.filter(item => item !== id);
+        _removeFromCart: function (id, type) {
+            if (this._contains(id, type)) {
+                if (type === 'registration'){
+                    this.cart.items = this.cart.items.filter(item => item !== id);
+                } else if (type === 'download' ) {
+                    this.cart.downloads = this.cart.downloads.filter(item => item !== id);
+                }
+                this._saveCart();
             }
-            this._saveCart();
         },
 
-        _contains: function (id) {
-            const contains = (newItem, cart) => cart.some(item => newItem === item);
-            return contains(id, this.cart.items);
+        _contains: function (id, type) {
+
+            const contains = (newItem, list) => list.some(item => newItem === item);
+            if ( type === 'registration'){
+                return contains(id, this.cart.items);
+            } else if(type === 'download'){
+                return contains(id, this.cart.downloads);
+            } else {
+                return false;
+            }
         },
 
         _loadCart: function () {
