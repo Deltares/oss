@@ -14,7 +14,7 @@
                 <#assign sendLink = download.isSendLink() />
                 <!--repeatable element-->
                 <li class="c-downloads-list__item">
-                    <label for="${download.getFilePath()}">${download.getFileName()} ( ${download.getFileType()}
+                    <label for="${download.getFilePath()}">${download.getFileName()} ( ${download.getFileTypeName()}
                         - ${download.getFileSize()} )</label>
                     <#if themeDisplay.isSignedIn() >
                         <#if directDownload >

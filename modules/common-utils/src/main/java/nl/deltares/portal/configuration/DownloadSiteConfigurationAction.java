@@ -63,6 +63,7 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
 
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
+        String downloadURL = ParamUtil.getString(actionRequest, "downloadURL");
         Map<String, String> templateMap = convertTemplatesToMap(actionRequest);
 
         Settings settings = SettingsFactoryUtil.getSettings(
@@ -71,6 +72,7 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
         ModifiableSettings modifiableSettings =
                 settings.getModifiableSettings();
 
+        modifiableSettings.setValue("downloadURL", downloadURL);
         modifiableSettings.setValue("templateMap", JsonContentUtils.formatMapToJson(templateMap));
         modifiableSettings.store();
 

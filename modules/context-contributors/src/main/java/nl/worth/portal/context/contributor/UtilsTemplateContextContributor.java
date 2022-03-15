@@ -92,6 +92,7 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
         setLanguages(contextObjects, themeDisplay);
 
         contextObjects.put("checkout_cart_url", urlUtils.getShoppingCartURL(themeDisplay));
+        contextObjects.put("download_cart_url", urlUtils.getDownloadCartURL(themeDisplay));
     }
 
     private void setLanguages(Map<String, Object> contextObjects, ThemeDisplay themeDisplay) {

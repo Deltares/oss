@@ -16,10 +16,7 @@ import nl.deltares.portal.utils.DsdParserUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Component(
         immediate = true,
@@ -194,7 +191,7 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
                 article = new Presentation(journalArticle, this, locale);
                 return article;
             case Download:
-                article = new Download(journalArticle, this, locale);
+                article = new Download(journalArticle, this, dsdJournalArticleUtils, locale);
                 return article;
             default:
                 article = new GenericArticle(journalArticle, this, locale);
