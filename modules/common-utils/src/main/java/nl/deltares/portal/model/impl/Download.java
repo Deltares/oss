@@ -24,7 +24,7 @@ public class Download extends AbsDsdArticle {
     private String fileTopic;
     private String fileTypeName;
 
-    enum ACTION {direct, terms, userInfo, billingInfo, subscriptions}
+    enum ACTION {direct, terms, userinfo, billinginfo, subscription}
 
     private final List<ACTION> requiredActions = new ArrayList<>();
 
@@ -62,6 +62,7 @@ public class Download extends AbsDsdArticle {
     private void parseRequiredActions(String options) {
         options = options.trim();
         options = options.replace('\n', ' ');
+        options = options.replace('\t', '\0');
         final String[] actionList = options.split(" ");
         for (String action : actionList) {
             try {
@@ -111,6 +112,22 @@ public class Download extends AbsDsdArticle {
 
     public String getFileTypeName() {
         return fileTypeName;
+    }
+
+    public boolean isBillingRequired(){
+        return  requiredActions.contains(ACTION.billinginfo);
+    }
+
+    public boolean isShowSubscription(){
+        return  requiredActions.contains(ACTION.subscription);
+    }
+
+    public boolean isUserInfoRequired(){
+        return  requiredActions.contains(ACTION.userinfo);
+    }
+
+    public boolean isTermsOfUseRequired(){
+        return requiredActions.contains(ACTION.terms);
     }
 
     public DownloadDisplayContext toDisplayContext(ThemeDisplay themeDisplay) {

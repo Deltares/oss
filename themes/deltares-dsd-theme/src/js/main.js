@@ -260,6 +260,11 @@ function getCurrentStep(form) {
 
         clearCart: function () {
             this.cart.items = [];
+            this._saveCart();
+            this.refreshCart();
+        },
+
+        clearDownloadsCart: function (){
             this.cart.downloads = [];
             this._saveCart();
             this.refreshCart();
@@ -280,7 +285,7 @@ function getCurrentStep(form) {
                         cartUrl = downloadCartURL;
                         action = 'download';
                         ids = plugin.cart.downloads.join(',');
-                        portletId = 'donwloadFormPortlet';
+                        portletId = 'DownloadFormPortlet';
                     } else {
                         cartUrl = checkoutCartURL;
                         action = 'register';
