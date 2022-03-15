@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -126,7 +127,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
 
     @Override
     public int shareLinkExists(String filePath, String email) throws Exception {
-        String path = API_PATH + "files_sharing/api/v1/shares?path=" + filePath;
+        String path = API_PATH + "files_sharing/api/v1/shares?path=" + URLEncoder.encode(filePath, StandardCharsets.UTF_8.name());
         HttpURLConnection connection = getConnection(path, "GET",  getDefaultHeaders());
 
         if (connection.getResponseCode() == 400) return -1;
