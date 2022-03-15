@@ -73,6 +73,7 @@
 </body>
 <script>
 	var checkoutCartURL = '${checkout_cart_url}';
+	var downloadCartURL = '${download_cart_url}';
 	var shoppingCart = new ShoppingCart({'languageKeys': {
 			'add-to-cart': '${languageUtil.get(locale, "shopping.cart.add")}',
 			'remove-from-cart': '${languageUtil.get(locale, "shopping.cart.remove")}'

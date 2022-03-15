@@ -17,4 +17,6 @@ public interface DownloadSiteConfiguration {
     @Meta.AD(required = false, deflt = "{}", description = "Map search results portlet to display template.")
     String templateMap();
 
+    @Meta.AD(required = false, deflt = "", description = "Configure the friendly URL of the download form page")
+    String downloadURL();
 }

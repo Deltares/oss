@@ -8,15 +8,17 @@
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.HashMap" %>
+<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider" %>
+<%@ page import="nl.deltares.portal.configuration.DownloadSiteConfiguration" %>
 
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />
 
 <%
-//    ConfigurationProvider configurationProvider =
-//            (ConfigurationProvider) request.getAttribute(ConfigurationProvider.class.getName());
-//    DownloadSiteConfiguration configuration = configurationProvider.getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
+    ConfigurationProvider configurationProvider =
+            (ConfigurationProvider) request.getAttribute(ConfigurationProvider.class.getName());
+    DownloadSiteConfiguration configuration = configurationProvider.getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
 
     Map<String, String> templateMap = (Map<String,String>) renderRequest.getAttribute("templateMap");
     if (templateMap == null) templateMap = new HashMap<>();
@@ -45,6 +47,11 @@
     />
 
     <aui:fieldset>
+
+        <aui:input
+                label="download-url-url"
+                name="downloadURL"
+                value="<%= configuration.downloadURL() %>"/>
 
         <table id="searchResultsMap" class="display" style="width:100%">
             <thead>
