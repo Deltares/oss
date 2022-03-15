@@ -18,11 +18,13 @@ public class EmailUtils {
         mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
         mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
 
-        Transport transport = MailServiceUtil.getSession().getTransport();
+        final Session session = MailServiceUtil.getSession();
+        session.getProperties().setProperty("mail.smtp.starttls.enable", "true");
+        Transport transport = session.getTransport();
         try {
-            Message message = new MimeMessage(MailServiceUtil.getSession());
+            Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(sendFromEmail)); // always send from mydeltares@deltares.nl. only email with sufficient privileges.
-            InternetAddress replyTo = new InternetAddress(replyToEmail);
+            InternetAddress replyTo = new InternetAddress(replyToEmail == null ? sendFromEmail : replyToEmail);
             message.setReplyTo(new InternetAddress[] {replyTo});
             message.setSubject(subject);
             message.setRecipients(Message.RecipientType.TO, toInternetAddresses(sendToEmail));
