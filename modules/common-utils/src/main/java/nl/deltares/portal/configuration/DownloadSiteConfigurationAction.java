@@ -64,6 +64,14 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
         String downloadURL = ParamUtil.getString(actionRequest, "downloadURL");
+        String conditionsURL = ParamUtil.getString(actionRequest, "conditionsURL");
+        String privacyURL = ParamUtil.getString(actionRequest, "privacyURL");
+        String contactURL = ParamUtil.getString(actionRequest, "contactURL");
+        String mailingIds = ParamUtil.getString(actionRequest, "mailingIds");
+        String sendFromEmail = ParamUtil.getString(actionRequest, "sendFromEmail");
+        String replyToEmail = ParamUtil.getString(actionRequest, "replyToEmail");
+        String bccToEmail = ParamUtil.getString(actionRequest, "bccToEmail");
+        String bannerURL = ParamUtil.getString(actionRequest, "bannerURL");
         Map<String, String> templateMap = convertTemplatesToMap(actionRequest);
 
         Settings settings = SettingsFactoryUtil.getSettings(
@@ -73,6 +81,14 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
                 settings.getModifiableSettings();
 
         modifiableSettings.setValue("downloadURL", downloadURL);
+        modifiableSettings.setValue("conditionsURL", conditionsURL);
+        modifiableSettings.setValue("privacyURL", privacyURL);
+        modifiableSettings.setValue("contactURL", contactURL);
+        modifiableSettings.setValue("mailingIds", mailingIds);
+        modifiableSettings.setValue("bannerURL", bannerURL);
+        modifiableSettings.setValue("sendFromEmail", sendFromEmail);
+        modifiableSettings.setValue("replyToEmail", replyToEmail);
+        modifiableSettings.setValue("bccToEmail", bccToEmail);
         modifiableSettings.setValue("templateMap", JsonContentUtils.formatMapToJson(templateMap));
         modifiableSettings.store();
 

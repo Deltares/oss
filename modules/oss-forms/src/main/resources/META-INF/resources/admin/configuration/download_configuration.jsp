@@ -49,9 +49,49 @@
     <aui:fieldset>
 
         <aui:input
-                label="download-url-url"
+                label="download-url"
                 name="downloadURL"
                 value="<%= configuration.downloadURL() %>"/>
+
+        <aui:input
+                label="mailing-ids"
+                name="mailingIds"
+                value="<%= configuration.mailingIds() %>"/>
+
+        <aui:input
+                label="conditions-url"
+                name="conditionsURL"
+                value="<%= configuration.conditionsURL() %>"/>
+
+        <aui:input
+                label="privacy-url"
+                name="privacyURL"
+                value="<%= configuration.privacyURL() %>"/>
+
+        <aui:input
+                label="contact-url"
+                name="contactURL"
+                value="<%= configuration.contactURL() %>"/>
+
+        <aui:input
+                label="download.configuration.sendFrom"
+                name="sendFromEmail"
+                value="<%= configuration.sendFromEmail() %>"/>
+
+        <aui:input
+                label="download.configuration.replyTo"
+                name="replyToEmail"
+                value="<%= configuration.replyToEmail() %>"/>
+
+        <aui:input
+                label="download.configuration.bccTo"
+                name="bccToEmail"
+                value="<%= configuration.bccToEmail() %>"/>
+
+        <aui:input
+                label="download.configuration.bannerURL"
+                name="bannerURL"
+                value="<%= configuration.bannerURL() %>"/>
 
         <table id="searchResultsMap" class="display" style="width:100%">
             <thead>

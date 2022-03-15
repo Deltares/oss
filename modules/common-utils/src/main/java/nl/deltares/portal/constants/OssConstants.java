@@ -18,6 +18,9 @@ public class OssConstants {
     public static final String DOWNLOAD_ADMIN_FORM =
             "DownloadAdminFormPortlet";
 
+    public static final String DOWNLOADFORM =
+            "DownloadFormPortlet";
+
     public static final String DSD_BUS_REGISTRATION_FORM =
             "nl_deltares_forms_portlet_DsdBusRegistrationFormPortlet";
 
