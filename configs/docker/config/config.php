@@ -23,7 +23,7 @@ $CONFIG = array (
   'trusted_domains' =>
   array (
     0 => 'localhost:8180',
-    1 => '192.168.2.8:8180'
+    1 => '127.0.0.1:8180'
   ),
   'datadirectory' => '/var/www/html/data',
   'dbtype' => 'mysql',
