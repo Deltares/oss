@@ -11,6 +11,7 @@ project.ext {
     bundleDir = getEnvProperty('liferay.workspace.home.dir', project.projectDir.toString() + '/bundles')
     liferayData = project.projectDir.toString() + '/docker/liferay/data'
     liferayMount = project.projectDir.toString() + '/docker/liferay/mount/files'
+    nextcloudMount = project.projectDir.toString() + '/docker/nextcloud/config'
     dockerContainerPrefix = getEnvProperty('liferay.docker.container.prefix', 'oss')
     dockerComposeFilePath = getEnvProperty('liferay.docker.compose.path', project.projectDir.toString() + '/docker/docker-compose.yml')
     deployFolder = "${bundleDir}/deploy" as GStringImpl
@@ -78,7 +79,7 @@ task startLiferay(
         }
         copy {
             from("$projectDir/configs/$environment/") {
-                exclude "osgi", "**.properties"
+                exclude "osgi", "**.properties", "config"
             }
             into("$liferayMount")
         }
@@ -96,6 +97,15 @@ task startLiferay(
             from("$projectDir/configs/$environment/osgi/modules/")
             into("$liferayMount/osgi/modules")
             include "*.xml"
+        }
+        copy {
+            from("$projectDir/configs/$environment/config/")
+            into("$nextcloudMount")
+            include("*.php")
+            filter(ReplaceTokens, tokens: [
+                    'EMAIL_USER'            : emailUser,
+                    'EMAIL_PASSWORD'        : emailPass
+            ])
         }
         copy {
             from projectDir
