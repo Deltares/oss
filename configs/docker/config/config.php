@@ -46,6 +46,6 @@ $CONFIG = array (
   'mail_smtpauth' => 1,
   'mail_smtphost' => 'smtp.office365.com',
   'mail_smtpport' => '587',
-  'mail_smtpname' => 'mydeltares@deltares.nl',
-  'mail_smtppassword' => 'qywplkxggxrtlhhz',
+  'mail_smtpname' => '@EMAIL_USER@',
+  'mail_smtppassword' => '@EMAIL_PASSWORD@',
 );
