@@ -2,8 +2,6 @@ package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
-import nl.deltares.portal.display.context.DownloadDisplayContext;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
@@ -23,6 +21,8 @@ public class Download extends AbsDsdArticle {
     private String fileType;
     private String fileTopic;
     private String fileTypeName;
+    private String fileTopicName;
+    private String descriptionArticleId;
 
     enum ACTION {direct, terms, userinfo, billinginfo, subscription}
 
@@ -53,6 +53,10 @@ public class Download extends AbsDsdArticle {
             if (fileSize != null) this.fileSize = fileSize;
 
             fileTopic = XmlContentUtils.getDynamicContentByName(document, "Topic", false);
+            final Map<String, String> fileTopicMap = articleUtils.getStructureFieldOptions(getGroupId(), getStructureKey(), "Topic", getLocale());
+            fileTopicName = fileTopicMap.get(fileTopic);
+
+            descriptionArticleId = XmlContentUtils.getDynamicContentByName(getDocument(), "DescriptionArticleId", true);
 
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
@@ -114,23 +118,27 @@ public class Download extends AbsDsdArticle {
         return fileTypeName;
     }
 
-    public boolean isBillingRequired(){
-        return  requiredActions.contains(ACTION.billinginfo);
+    public String getFileTopicName() {
+        return fileTopicName;
     }
 
-    public boolean isShowSubscription(){
-        return  requiredActions.contains(ACTION.subscription);
+    public boolean isBillingRequired() {
+        return requiredActions.contains(ACTION.billinginfo);
     }
 
-    public boolean isUserInfoRequired(){
-        return  requiredActions.contains(ACTION.userinfo);
+    public boolean isShowSubscription() {
+        return requiredActions.contains(ACTION.subscription);
     }
 
-    public boolean isTermsOfUseRequired(){
+    public boolean isUserInfoRequired() {
+        return requiredActions.contains(ACTION.userinfo);
+    }
+
+    public boolean isTermsOfUseRequired() {
         return requiredActions.contains(ACTION.terms);
     }
 
-    public DownloadDisplayContext toDisplayContext(ThemeDisplay themeDisplay) {
-        return new DownloadDisplayContext(this, dsdParserUtils, themeDisplay);
+    public String getDescriptionArticleId() {
+        return descriptionArticleId;
     }
 }

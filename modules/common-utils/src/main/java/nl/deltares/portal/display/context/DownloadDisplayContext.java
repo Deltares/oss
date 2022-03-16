@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.model.impl.Download;
-import nl.deltares.portal.model.impl.Registration;
-import nl.deltares.portal.utils.DsdParserUtils;
 
 import javax.portlet.PortletMode;
 import javax.portlet.PortletRequest;
@@ -23,12 +21,10 @@ public class DownloadDisplayContext {
 
     private static final Log LOG = LogFactoryUtil.getLog(DownloadDisplayContext.class);
 
-    private final DsdParserUtils parserUtils;
     private final ThemeDisplay themeDisplay;
     private final Download download;
 
-    public DownloadDisplayContext(Download download, DsdParserUtils parserUtils, ThemeDisplay themeDisplay) {
-        this.parserUtils = parserUtils;
+    public DownloadDisplayContext(Download download, ThemeDisplay themeDisplay) {
         this.themeDisplay = themeDisplay;
         this.download = download;
     }

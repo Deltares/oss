@@ -14,7 +14,7 @@
             </a>
         </h4>
         <div>
-            ${download.getFileTypeName()} | ${download.getFileSize()} | <i>todo</i> downloads
+            ${download.getFileTopicName()} | ${download.getFileTypeName()} | ${download.getFileSize()}
             <#if showButtons >
                 <span class="d-block" style="float:right">
                     <a href="#" data-article-id="${download.getArticleId()}"
