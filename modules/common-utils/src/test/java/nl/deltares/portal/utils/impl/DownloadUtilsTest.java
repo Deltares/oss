@@ -7,6 +7,7 @@ import nl.deltares.mock.MockProps;
 import nl.deltares.portal.utils.HttpClientUtils;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.HttpURLConnection;
@@ -16,6 +17,7 @@ import java.util.Properties;
 /**
  * In order to run these tests, it is necessary to start the Donwload portal docker container.
  */
+@Ignore
 public class DownloadUtilsTest {
 
     @Before
