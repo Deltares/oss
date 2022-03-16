@@ -92,7 +92,7 @@
           }
         },
         {
-          "value": "billingInfo",
+          "value": "billinginfo",
           "label": {
             "en_US": "Billing-Info"
           }
@@ -122,7 +122,7 @@
         "en_US": "Define what checks user must go through for download.<br/>'Direct Download' invalidates all other selections."
       },
       "dataType": "string",
-      "indexType": "",
+      "indexType": "keyword",
       "localizable": false,
       "multiple": true,
       "name": "RequiredActions",
@@ -187,9 +187,7 @@
         }
       ],
       "predefinedValue": {
-        "en_US": [
-          ""
-        ]
+        "en_US": []
       },
       "style": {
         "en_US": ""
@@ -214,9 +212,15 @@
       },
       "options": [
         {
-          "value": "installation",
+          "value": "archive",
           "label": {
-            "en_US": "Installation"
+            "en_US": "Archive File"
+          }
+        },
+        {
+          "value": "course",
+          "label": {
+            "en_US": "Course Materials"
           }
         },
         {
@@ -232,16 +236,26 @@
           }
         },
         {
+          "value": "manual",
+          "label": {
+            "en_US": "Manual"
+          }
+        },
+        {
           "value": "directory",
           "label": {
-            "en_US": "Directory"
+            "en_US": "Shared Directory"
+          }
+        },
+        {
+          "value": "installation",
+          "label": {
+            "en_US": "Software Installation"
           }
         }
       ],
       "predefinedValue": {
-        "en_US": [
-          ""
-        ]
+        "en_US": []
       },
       "style": {
         "en_US": ""
@@ -285,7 +299,7 @@
     },
     {
       "label": {
-        "en_US": "Text"
+        "en_US": "Describing article"
       },
       "predefinedValue": {
         "en_US": ""
@@ -294,12 +308,12 @@
         "en_US": ""
       },
       "tip": {
-        "en_US": ""
+        "en_US": "ArticleId of an article containing descriptive information about this download."
       },
       "dataType": "string",
       "indexType": "keyword",
-      "localizable": true,
-      "name": "Textup8b",
+      "localizable": false,
+      "name": "DescriptionArticleId",
       "readOnly": false,
       "repeatable": false,
       "required": false,
