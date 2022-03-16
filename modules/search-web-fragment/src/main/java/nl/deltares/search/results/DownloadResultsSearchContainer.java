@@ -10,7 +10,6 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.display.context.DownloadDisplayContext;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Download;
-import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.DsdParserUtils;
 
 import java.util.ArrayList;
@@ -48,7 +47,7 @@ public class DownloadResultsSearchContainer extends SearchContainer<DownloadDisp
         final List<Document> results = searchContainer.getResults();
         List<DownloadDisplayContext> displayContexts = new ArrayList<>(results.size() + 20);
         final List<Download> downloads = loadRegistrations(results);
-        downloads.forEach(download -> displayContexts.add(new DownloadDisplayContext(download, dsdParserUtils, themeDisplay)));
+        downloads.forEach(download -> displayContexts.add(new DownloadDisplayContext(download, themeDisplay)));
         super.setResults(displayContexts);
     }
 
