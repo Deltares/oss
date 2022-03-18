@@ -59,8 +59,7 @@ public abstract class HttpClientUtils {
     public static int checkResponse(HttpURLConnection urlConnection) throws IOException {
         int responseCode = urlConnection.getResponseCode();
         if (responseCode > 299) {
-            throw new IOException("Err" +
-                    "or " + responseCode + ": " + urlConnection.getResponseMessage());
+            throw new IOException("Error " + responseCode + ": " + urlConnection.getResponseMessage());
         }
         return responseCode;
     }
