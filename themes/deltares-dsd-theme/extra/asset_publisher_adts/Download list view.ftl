@@ -18,8 +18,9 @@
                         - ${download.getFileSize()} )</label>
                     <#if themeDisplay.isSignedIn() >
                         <#if directDownload >
-                            <#assign downloadUrl = baseUrl + "/direct/" + download.getFileId() />
-                            <a href="#" id="${journalArticle.getArticleId()}_download" onclick="directDownload(this.id, '${downloadUrl}', '${download.getFilePath()}')"
+                            <#assign downloadUrl = baseUrl + "/direct/" />
+                            <a href="#" id="${journalArticle.getArticleId()}_download" onclick="directDownload(this.id,
+                                    '${downloadUrl}', '${download.getFileId()}', '${download.getFilePath()}')"
                                class="btn btn-primary" role="button" aria-pressed="true">Download
                             </a>
                         <#elseif sendLink >
@@ -47,6 +48,7 @@
     //Send link to user
     function sendLink(button_id, sendLinkUrl, filePath) {
 
+        updateButton(button_id, "Sending link...");
         let pAuth = Liferay.authToken;
         $.ajax({
             type: "POST",
@@ -58,6 +60,7 @@
             contentType: "application/json",
             success : function(response, status, xhr) {
                 alert(xhr.responseText);
+                updateButton(button_id, "Link sent")
             },
             failure : function(response, status, xhr) {
                 alert(xhr.responseText);
@@ -67,18 +70,23 @@
     }
 
     //Get the direct download link for the file
-    function directDownload(button_id, directDownloadUrl, fileName) {
+    function directDownload(button_id, directDownloadUrl, fileId, fileName) {
 
+        updateButton(button_id, "Downloading...")
         let pAuth = Liferay.authToken;
         $.ajax({
-            type: "GET",
-            async: "true",
+            type: "POST",
             url: directDownloadUrl + '?p_auth=' + pAuth,
+            data: "{" +
+                "\"fileId\": \"" + fileId + "\"" +
+                "}",
+            contentType: "application/json",
             success : function(response, status, xhr) {
                 if (xhr.status !== 200){
                     alert(xhr.responseText);
                 } else {
                     saveAs(response, fileName);
+                    updateButton(button_id, "Download completed")
                 }
             },
             failure : function(response, status, xhr) {
@@ -97,5 +105,11 @@
         $("body").append(a);
         a[0].click();
         $("body").remove(a);
+    }
+
+    function updateButton(id, buttonText){
+        let button = document.getElementsById(id);
+        button.classList.add('disabled');
+        button.textContent = buttonText;
     }
 </script>
