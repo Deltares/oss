@@ -296,7 +296,7 @@
     }
 
     preSubmitAction = function() {
-        shoppingCart.clearCart();
+        shoppingCart.clearDownloadsCart();
     }
 
     $(document).ready(function() {
@@ -305,7 +305,7 @@
 
         $('.download').change(checkSelection);
         // $('.clear-cart').on('click', function(){
-        //     shoppingCart.clearCart()
+        //     shoppingCart.clearDownloadsCart()
         // });
         $('input[name="<portlet:namespace />use_organization_address"]').change(updatePaymentAddress);
         checkSelection();

@@ -104,7 +104,7 @@ public class DownloadFormPortlet extends MVCPortlet {
         }
 
         Optional<DDMTemplate> ddmTemplateOptional = _ddmStructureUtil
-                .getDDMTemplateByName(themeDisplay.getScopeGroupId(), "DOWNLOAD", themeDisplay.getLocale());
+                .getDDMTemplateByName(themeDisplay.getScopeGroupId(), "DOWNLOAD-FORM", themeDisplay.getLocale());
 
         ddmTemplateOptional.ifPresent(ddmTemplate ->
                 request.setAttribute("ddmTemplateKey", ddmTemplate.getTemplateKey()));

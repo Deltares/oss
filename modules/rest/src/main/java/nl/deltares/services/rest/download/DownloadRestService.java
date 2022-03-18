@@ -2,15 +2,16 @@ package nl.deltares.services.rest.download;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -18,17 +19,17 @@ import java.util.Map;
 
 public class DownloadRestService {
 
-    private static final Log LOG = LogFactoryUtil.getLog(DownloadRestService.class);
     private final DownloadUtils downloadUtils;
 
     public DownloadRestService(DownloadUtils downloadUtils) {
         this.downloadUtils = downloadUtils;
     }
 
-    @GET
-    @Path("direct/{fileId}")
-    @Produces("text/plain")
-    public Response directDownload(@Context HttpServletRequest request, @PathParam("fileId") String fileId) {
+    @POST
+    @Path("direct")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response directDownload(@Context HttpServletRequest request, String json) {
         final String remoteUser = request.getRemoteUser();
 
         try {
@@ -40,6 +41,11 @@ public class DownloadRestService {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
         try {
+            final Map<String, String> jsonToMap = JsonContentUtils.parseJsonToMap(json);
+            String fileId = jsonToMap.get("fileId");
+            if (fileId == null || fileId.isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST).entity("Missing parameter 'fileId'").build();
+            }
             return Response.ok().entity(downloadUtils.getDirectDownloadLink(Long.parseLong(fileId))).build();
         } catch (Exception e) {
             return Response.serverError().entity(e.getMessage()).build();
@@ -79,9 +85,9 @@ public class DownloadRestService {
                 } else {
                     return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Share link has already been sent to user " + user.getEmailAddress()).build();
                 }
+            } else {
+                downloadUtils.sendShareLink(filePath, user.getEmailAddress());
             }
-
-            downloadUtils.sendShareLink(filePath, user.getEmailAddress());
         } catch (JSONException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         } catch (Exception e) {
