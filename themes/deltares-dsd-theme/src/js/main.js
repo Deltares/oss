@@ -248,7 +248,6 @@ function getCurrentStep(form) {
 
         refreshCart: function () {
             let plugin = this;
-            if (plugin.cart.downloads === null) {plugin.cart['downloads'] = [];}
             $('.c-cart__item__counter').text(plugin.cart.items.length + plugin.cart.downloads.length);
             $('.add-to-cart').each(function (){
                 plugin._updateLabel($(this), 'registration');
@@ -368,6 +367,9 @@ function getCurrentStep(form) {
 
         _loadCart: function () {
             this.cart = JSON.parse(localStorage.getItem(this._getSiteId() + '/shoppingCart'));
+            if (!('downloads' in this.cart)){
+                this.cart['downloads'] = [];
+            }
         },
 
         _saveCart: function () {
