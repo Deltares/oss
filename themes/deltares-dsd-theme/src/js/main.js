@@ -211,6 +211,9 @@ function getCurrentStep(form) {
                 };
 
                 this._saveCart();
+            } else if (! this.cart.hasOwnProperty('downloads') ){
+                this.cart['downloads'] = []
+                this._saveCart();
             }
 
             this.refreshCart();
@@ -367,9 +370,6 @@ function getCurrentStep(form) {
 
         _loadCart: function () {
             this.cart = JSON.parse(localStorage.getItem(this._getSiteId() + '/shoppingCart'));
-            if (!('downloads' in this.cart)){
-                this.cart['downloads'] = [];
-            }
         },
 
         _saveCart: function () {
