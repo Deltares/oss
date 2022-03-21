@@ -5,6 +5,7 @@ import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import nl.deltares.portal.utils.DownloadUtils;
+import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,10 +13,13 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.util.Collections;
 import java.util.Map;
+
+import static nl.deltares.portal.utils.HttpClientUtils.getConnection;
 
 public class DownloadRestService {
 
@@ -28,28 +32,58 @@ public class DownloadRestService {
     @POST
     @Path("direct")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
     public Response directDownload(@Context HttpServletRequest request, String json) {
-        final String remoteUser = request.getRemoteUser();
 
+        final String remoteUser = request.getRemoteUser();
         try {
             final User user = UserLocalServiceUtil.getUser(Long.parseLong(remoteUser));
             if (!user.isActive() || user.isDefaultUser()) {
-                return Response.status(Response.Status.UNAUTHORIZED).entity("User must be logged in, in order to use this service!").build();
+                return Response.status(Response.Status.UNAUTHORIZED).type(MediaType.TEXT_PLAIN).entity("User must be logged in, in order to use this service!").build();
             }
         } catch (PortalException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+            return Response.status(Response.Status.UNAUTHORIZED).type(MediaType.TEXT_PLAIN).entity(e.getMessage()).build();
         }
+        final String fileId;
+        String fileName;
         try {
             final Map<String, String> jsonToMap = JsonContentUtils.parseJsonToMap(json);
-            String fileId = jsonToMap.get("fileId");
+            fileId = jsonToMap.get("fileId");
+            fileName = jsonToMap.get("fileName");
             if (fileId == null || fileId.isEmpty()) {
-                return Response.status(Response.Status.BAD_REQUEST).entity("Missing parameter 'fileId'").build();
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN).entity("Missing parameter 'fileId'").build();
             }
-            return Response.ok().entity(downloadUtils.getDirectDownloadLink(Long.parseLong(fileId))).build();
+            if (fileName == null) {
+                fileName = fileId;
+            }
         } catch (Exception e) {
-            return Response.serverError().entity(e.getMessage()).build();
+            return Response.serverError().type(MediaType.TEXT_PLAIN).entity("Failed to parse request parameter: " + e.getMessage()).build();
         }
+
+        final String directDownloadLink;
+        try {
+            directDownloadLink = downloadUtils.getDirectDownloadLink(Long.parseLong(fileId));
+            if (directDownloadLink == null || directDownloadLink.isEmpty()) {
+                return Response.serverError().type(MediaType.TEXT_PLAIN).entity("Empty download link returned for file: " + fileId).build();
+            }
+        } catch (Exception e) {
+            return Response.serverError().type(MediaType.TEXT_PLAIN).entity("Failed to get downloadLink url: " + e.getMessage()).build();
+        }
+
+        final HttpURLConnection connection;
+        try {
+            connection = getConnection(directDownloadLink, "GET", Collections.emptyMap());
+
+            StreamingOutput stream = os -> HttpClientUtils.stream(connection.getInputStream(), os);
+            return Response.ok(stream, MediaType.APPLICATION_OCTET_STREAM)
+                    .header("Content-Disposition", "attachment; filename=\"" + fileName + "\"")
+                    .header(HttpHeaders.CONTENT_LENGTH, connection.getContentLength())
+                    .build();
+
+        } catch (IOException e) {
+            return Response.serverError().type(MediaType.TEXT_PLAIN).entity(String.format("Failed to download file for download link %s : %s",
+                    directDownloadLink, e.getMessage())).build();
+        }
+
     }
 
     @POST
