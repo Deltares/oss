@@ -29,7 +29,7 @@ public class DownloadUtilsTest {
         MockProps props = new MockProps();
         Properties properties = new Properties();
 
-        properties.put("download.baseurl", "http://localhost:8180/ocs/v2.php/apps/");
+        properties.put("download.baseurl", "http://172.23.64.1:8180/ocs/v2.php/apps/");
         properties.put("download.app.name", "ossadmin");
         properties.put("download.app.password", "doF4S-nrLMg-FBzs4-NjAxB-2dSMH");
         props.setProperties(properties);

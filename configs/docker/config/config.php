@@ -23,7 +23,8 @@ $CONFIG = array (
   'trusted_domains' =>
   array (
     0 => 'localhost:8180',
-    1 => '127.0.0.1:8180'
+    1 => '127.0.0.1:8180',
+    2 => 'nextcloud'
   ),
   'datadirectory' => '/var/www/html/data',
   'dbtype' => 'mysql',

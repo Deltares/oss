@@ -11,6 +11,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
@@ -19,6 +23,32 @@ import java.util.Set;
 public abstract class HttpClientUtils {
 
     private static final Log LOG = LogFactoryUtil.getLog(HttpClientUtils.class);
+
+    /**
+     * Copy an input stream to an outputstream
+     *
+     * @param input
+     * @param output
+     * @return
+     * @throws IOException
+     */
+    public static long stream(InputStream input, OutputStream output) throws IOException {
+        try (
+                ReadableByteChannel inputChannel = Channels.newChannel(input);
+                WritableByteChannel outputChannel = Channels.newChannel(output)
+        ) {
+            ByteBuffer buffer = ByteBuffer.allocateDirect(1024);
+            long size = 0;
+
+            while (inputChannel.read(buffer) != -1) {
+                buffer.flip();
+                size += outputChannel.write(buffer);
+                buffer.clear();
+            }
+
+            return size;
+        }
+    }
 
     public static HttpURLConnection getConnection(String path, String method, Map<String, String> headers) throws IOException {
 
@@ -93,8 +123,9 @@ public abstract class HttpClientUtils {
             connection.disconnect();
         }
     }
+
     public static byte[] readAllBytes(HttpURLConnection connection) throws IOException {
-        try (InputStream is = connection.getInputStream()){
+        try (InputStream is = connection.getInputStream()) {
 
             ByteArrayOutputStream result = new ByteArrayOutputStream();
             byte[] buffer = new byte[1024];
@@ -110,10 +141,10 @@ public abstract class HttpClientUtils {
     }
 
     public static String getBasicAuthorization(String username, String password) {
-        return  Base64.getEncoder().encodeToString(String.format("%s:%s", username, password).getBytes());
+        return Base64.getEncoder().encodeToString(String.format("%s:%s", username, password).getBytes());
     }
 
-    public static void clearAccessTokens(String prefix){
+    public static void clearAccessTokens(String prefix) {
         removeCachedToken(prefix + ".token");
         removeCachedToken(prefix + ".expirytime");
         removeCachedToken(prefix + ".refresh.token");
@@ -125,7 +156,7 @@ public abstract class HttpClientUtils {
         if (expires_in == null) return;
         long expMillis = Long.parseLong(expires_in) * 1000;
         long expTimeMillis = expMillis + System.currentTimeMillis();
-        setCachedToken(prefix + ".token",  prefix + ".expirytime", parsedToken.get("access_token"), expTimeMillis);
+        setCachedToken(prefix + ".token", prefix + ".expirytime", parsedToken.get("access_token"), expTimeMillis);
 
         String refresh_token = parsedToken.get("refresh_token");
         String refresh_expires_in = parsedToken.get("refresh_expires_in");
@@ -145,19 +176,19 @@ public abstract class HttpClientUtils {
         if (token != null) {
             if (expiryKey == null) return token;
             Long expiryTime = (Long) gotoCache.get(expiryKey);
-            if (expiryTime != null && expiryTime > System.currentTimeMillis()){
+            if (expiryTime != null && expiryTime > System.currentTimeMillis()) {
                 return token;
             }
         }
         return null;
     }
 
-    public static void removeCachedToken(String key){
+    public static void removeCachedToken(String key) {
         PortalCache<String, Serializable> keycloakCache = MultiVMPoolUtil.getPortalCache("deltares", true);
         keycloakCache.remove(key);
     }
 
-    public static boolean setCachedToken(String tokenKey, String expiryKey, String token, long expiryTimeMillis){
+    public static boolean setCachedToken(String tokenKey, String expiryKey, String token, long expiryTimeMillis) {
         PortalCache<String, Serializable> keycloakCache = MultiVMPoolUtil.getPortalCache("deltares", true);
         keycloakCache.put(tokenKey, token);
         if (expiryKey != null) {
