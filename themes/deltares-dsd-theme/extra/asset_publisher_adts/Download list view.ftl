@@ -20,7 +20,7 @@
                         <#if directDownload >
                             <#assign downloadUrl = baseUrl + "/direct/" />
                             <a href="#" id="${journalArticle.getArticleId()}_download" onclick="directDownload(this.id,
-                                    '${downloadUrl}', '${download.getFileId()}', '${download.getFilePath()}')"
+                                    '${downloadUrl}', '${download.getFileId()}', '${download.getFileName()}')"
                                class="btn btn-primary" role="button" aria-pressed="true">Download
                             </a>
                         <#elseif sendLink >
@@ -78,37 +78,47 @@
             type: "POST",
             url: directDownloadUrl + '?p_auth=' + pAuth,
             data: "{" +
-                "\"fileId\": \"" + fileId + "\"" +
+                "\"fileId\": \"" + fileId + "\"," +
+                "\"fileName\": \"" + fileName + "\"" +
                 "}",
             contentType: "application/json",
-            success : function(response, status, xhr) {
+            xhrFields: {
+                responseType: 'blob' // to avoid binary data being mangled on charset conversion
+            },
+            success : function(blob, status, xhr) {
                 if (xhr.status !== 200){
                     alert(xhr.responseText);
                 } else {
-                    saveAs(response, fileName);
+                    saveAs(blob, fileName);
                     updateButton(button_id, "Download completed")
                 }
             },
-            failure : function(response, status, xhr) {
-                alert(xhr.responseText);
+            error : function(request, status, error) {
+                alert(request.responseText);
             }
         });
 
     }
 
     //Open the download link in a new tab.
-    function saveAs (url, fileName) {
-        var a = $("<a />");
-        a.attr("download", fileName);
-        a.attr("href", url);
-        a.attr("target", "_blank");
-        $("body").append(a);
-        a[0].click();
-        $("body").remove(a);
+    function saveAs (blob, fileName) {
+
+        var downloadUrl = window.URL.createObjectURL(blob);
+        var a = document.createElement('a')
+        a.href = downloadUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+
+        setTimeout(function () {
+            window.URL.revokeObjectURL(downloadUrl);
+            document.body.removeChild(a);
+        }, 100); // cleanup
+
     }
 
     function updateButton(id, buttonText){
-        let button = document.getElementsById(id);
+        let button = document.getElementById(id);
         button.classList.add('disabled');
         button.textContent = buttonText;
     }
