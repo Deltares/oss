@@ -3,44 +3,50 @@
 <#assign baseUrl = "/o/download" />
 <#if entries?has_content>
 
-    <div class="">
-        <ul class="c-downloads-list clear-list">
-
-            <#list entries as entry>
-                <#assign assetRenderer = entry.getAssetRenderer() />
-                <#assign journalArticle = assetRenderer.getArticle() />
-                <#assign download = parserUtils.toDsdArticle(journalArticle, locale) />
-                <#assign directDownload = download.isDirectDownload() />
-                <#assign sendLink = download.isSendLink() />
-                <!--repeatable element-->
-                <li class="c-downloads-list__item">
-                    <label for="${download.getFilePath()}">${download.getFileName()} ( ${download.getFileTypeName()}
-                        - ${download.getFileSize()} )</label>
-                    <#if themeDisplay.isSignedIn() >
-                        <#if directDownload >
-                            <#assign downloadUrl = baseUrl + "/direct/" />
-                            <a href="#" id="${journalArticle.getArticleId()}_download" onclick="directDownload(this.id,
-                                    '${downloadUrl}', '${download.getFileId()}', '${download.getFileName()}')"
-                               class="btn btn-primary" role="button" aria-pressed="true">Download
-                            </a>
-                        <#elseif sendLink >
-                            <#assign downloadUrl = baseUrl + "/sendlink/" />
-                            <a href="#" id="${journalArticle.getArticleId()}_sendlink" onclick="sendLink(this.id, '${downloadUrl}', '${download.getFilePath()}')"
-                               class="btn btn-primary" role="button" aria-pressed="true">Send Link
-                            </a>
-                        <#else>
-                            <a href="#" data-article-id="${download.getArticleId()}" class="btn-lg btn-primary add-to-cart"
-                               role="button"
-                               aria-pressed="true" style="color:#fff">
-                                ${languageUtil.get(locale, "shopping.cart.add")}
-                            </a>
+    <ul class="c-downloads-list clear-list">
+        <#list entries as entry>
+            <#assign assetRenderer = entry.getAssetRenderer() />
+            <#assign journalArticle = assetRenderer.getArticle() />
+            <#assign download = parserUtils.toDsdArticle(journalArticle, locale) />
+            <#assign directDownload = download.isDirectDownload() />
+            <#assign sendLink = download.isSendLink() />
+            <li class="list-group-item list-group-item-flex">
+                <div class="col-12 px-3">
+                    <h4>
+                        <strong>${download.getFileName()}</strong> ( ${download.getFilePath()} )
+                    </h4>
+                    <div>
+                        ${download.getFileTopicName()} | ${download.getFileTypeName()} | ${download.getFileSize()} | ${download.getDownloadCount()} downloads
+                        <#if themeDisplay.isSignedIn() >
+                            <span class="d-block" style="float:right">
+                            <#if directDownload >
+                                <#assign downloadUrl = baseUrl + "/direct/" />
+                                <a href="#" id="${journalArticle.getArticleId()}_download" onclick="directDownload(this.id,
+                                        '${downloadUrl}', '${download.getFileId()}', '${download.getFileName()}')"
+                                   class="btn btn-primary" role="button" aria-pressed="true">
+                                    ${languageUtil.get(locale, "download.download")}
+                                </a>
+                            <#elseif sendLink >
+                                <#assign downloadUrl = baseUrl + "/sendlink/" />
+                                <a href="#" id="${journalArticle.getArticleId()}_sendlink"
+                                   onclick="sendLink(this.id, '${downloadUrl}', '${download.getFilePath()}')"
+                                   class="btn btn-primary" role="button" aria-pressed="true">
+                                    ${languageUtil.get(locale, "download.sendlink")}
+                                </a>
+                            <#else>
+                                <a href="#" data-article-id="${download.getArticleId()}"
+                                   class="btn-lg btn-primary add-download-to-cart"
+                                   role="button" aria-pressed="true" style="color:#fff">
+                                    ${languageUtil.get(locale, "shopping.cart.add")}
+                                </a>
+                            </#if>
+                            </span>
                         </#if>
-                    </#if>
-                </li>
-            </#list>
-        </ul>
-
-    </div>
+                    </div>
+                </div>
+            </li>
+        </#list>
+    </ul>
 </#if>
 
 <script>

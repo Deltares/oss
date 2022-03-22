@@ -1,4 +1,4 @@
-package nl.worth.portal.utils.impl;
+package nl.deltares.portal.utils.impl;
 
 
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
@@ -8,8 +8,8 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.util.Validator;
 import java.util.Objects;
-import nl.worth.portal.utils.LayoutUtils;
-import nl.worth.portal.utils.PermissionUtils;
+import nl.deltares.portal.utils.LayoutUtils;
+import nl.deltares.portal.utils.PermissionUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 

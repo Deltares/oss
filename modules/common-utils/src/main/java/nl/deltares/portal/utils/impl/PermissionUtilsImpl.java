@@ -1,4 +1,4 @@
-package nl.worth.portal.utils.impl;
+package nl.deltares.portal.utils.impl;
 
 
 import com.liferay.portal.kernel.exception.PortalException;
@@ -14,7 +14,7 @@ import com.liferay.portal.kernel.service.ResourceActionLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
-import nl.worth.portal.utils.PermissionUtils;
+import nl.deltares.portal.utils.PermissionUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 

@@ -1,4 +1,4 @@
-package nl.worth.portal.utils.impl;
+package nl.deltares.portal.utils.impl;
 
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 
