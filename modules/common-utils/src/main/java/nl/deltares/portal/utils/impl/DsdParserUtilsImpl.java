@@ -13,6 +13,7 @@ import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
+import nl.deltares.portal.utils.LayoutUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -28,6 +29,9 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
 
     @Reference
     DsdJournalArticleUtils dsdJournalArticleUtils;
+
+    @Reference
+    LayoutUtils layoutUtils;
 
     @Override
     public Event getEvent(long siteId, String articleId, Locale locale) throws PortalException {
@@ -192,6 +196,9 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
                 return article;
             case Download:
                 article = new Download(journalArticle, this, dsdJournalArticleUtils, locale);
+                return article;
+            case Downloadgroup:
+                article = new DownloadGroup(journalArticle, this, layoutUtils, locale);
                 return article;
             default:
                 article = new GenericArticle(journalArticle, this, locale);
