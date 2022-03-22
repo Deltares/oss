@@ -1,4 +1,4 @@
-package nl.worth.portal.utils.impl;
+package nl.deltares.portal.utils.impl;
 
 
 import com.liferay.document.library.kernel.service.DLAppLocalService;
@@ -7,7 +7,7 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.util.Validator;
-import nl.worth.portal.utils.DDLUtils;
+import nl.deltares.portal.utils.DDLUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 

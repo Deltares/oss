@@ -141,4 +141,9 @@ public class Download extends AbsDsdArticle {
     public String getDescriptionArticleId() {
         return descriptionArticleId;
     }
+
+    //todo: Retrieve from downloads table
+    public int getDownloadCount(){
+        return (int) (Math.random() * 10000);
+    }
 }

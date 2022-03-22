@@ -1,4 +1,4 @@
-package nl.worth.portal.utils;
+package nl.deltares.portal.utils;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;

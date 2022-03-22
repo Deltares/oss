@@ -14,9 +14,9 @@ import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.portal.utils.URLUtils;
-import nl.worth.portal.utils.DDLUtils;
-import nl.worth.portal.utils.LayoutUtils;
-import nl.worth.portal.utils.impl.LanguageImpl;
+import nl.deltares.portal.utils.DDLUtils;
+import nl.deltares.portal.utils.LayoutUtils;
+import nl.deltares.portal.utils.impl.LanguageImpl;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
