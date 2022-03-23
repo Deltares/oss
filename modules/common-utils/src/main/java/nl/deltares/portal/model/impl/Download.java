@@ -2,8 +2,10 @@ package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Layout;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
+import nl.deltares.portal.utils.LayoutUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
@@ -22,18 +24,18 @@ public class Download extends AbsDsdArticle {
     private String fileTopic;
     private String fileTypeName;
     private String fileTopicName;
-    private String descriptionArticleId;
+    private String groupPage = "";
 
     enum ACTION {direct, terms, userinfo, billinginfo, subscription}
 
     private final List<ACTION> requiredActions = new ArrayList<>();
 
-    public Download(JournalArticle journalArticle, DsdParserUtils articleParserUtils, DsdJournalArticleUtils dsdJournalArticleUtils, Locale locale) throws PortalException {
+    public Download(JournalArticle journalArticle, DsdParserUtils articleParserUtils, DsdJournalArticleUtils dsdJournalArticleUtils, LayoutUtils layoutUtils, Locale locale) throws PortalException {
         super(journalArticle, articleParserUtils, locale);
-        init(dsdJournalArticleUtils);
+        init(dsdJournalArticleUtils, layoutUtils);
     }
 
-    private void init(DsdJournalArticleUtils articleUtils) throws PortalException {
+    private void init(DsdJournalArticleUtils articleUtils, LayoutUtils layoutUtils) throws PortalException {
         try {
             Document document = getDocument();
             String fileId = XmlContentUtils.getDynamicContentByName(document, "FileId", true);
@@ -56,7 +58,9 @@ public class Download extends AbsDsdArticle {
             final Map<String, String> fileTopicMap = articleUtils.getStructureFieldOptions(getGroupId(), getStructureKey(), "Topic", getLocale());
             fileTopicName = fileTopicMap.get(fileTopic);
 
-            descriptionArticleId = XmlContentUtils.getDynamicContentByName(getDocument(), "DescriptionArticleId", true);
+            String linkToPage = XmlContentUtils.getDynamicContentByName(document, "GroupPage", false);
+            final Layout linkToPageLayout = layoutUtils.getLinkToPageLayout(linkToPage);
+            groupPage = linkToPageLayout.getFriendlyURL();
 
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
@@ -122,6 +126,10 @@ public class Download extends AbsDsdArticle {
         return fileTopicName;
     }
 
+    public String getGroupPage() {
+        return groupPage;
+    }
+
     public boolean isBillingRequired() {
         return requiredActions.contains(ACTION.billinginfo);
     }
@@ -138,9 +146,6 @@ public class Download extends AbsDsdArticle {
         return requiredActions.contains(ACTION.terms);
     }
 
-    public String getDescriptionArticleId() {
-        return descriptionArticleId;
-    }
 
     //todo: Retrieve from downloads table
     public int getDownloadCount(){
