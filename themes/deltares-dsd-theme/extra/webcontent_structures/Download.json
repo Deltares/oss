@@ -138,51 +138,51 @@
       },
       "options": [
         {
-          "value": "delftfews",
+          "value": "dam",
           "label": {
-            "en_US": "Delft-FEWS Platform"
+            "en_US": "DAM"
           }
         },
         {
           "value": "dyhdro",
           "label": {
-            "en_US": "Delft3D FM"
+            "en_US": "Delft3D FM Suite"
+          }
+        },
+        {
+          "value": "delft3d",
+          "label": {
+            "en_US": "Delft 3D 4 Suite"
           }
         },
         {
           "value": "embankment",
           "label": {
-            "en_US": "D-GEO Suite"
+            "en_US": "Geotechnical software"
           }
         },
         {
           "value": "imod",
           "label": {
-            "en_US": "iMOD Suite"
+            "en_US": "iMOD"
           }
         },
         {
-          "value": "swash",
+          "value": "mampec",
           "label": {
-            "en_US": "SWASH"
+            "en_US": "MAMPEC"
           }
         },
         {
-          "value": "wanda",
+          "value": "pharos",
           "label": {
-            "en_US": "WANDA"
+            "en_US": "PHAROS"
           }
         },
         {
-          "value": "wflow",
+          "value": "sobek",
           "label": {
-            "en_US": "wflow"
-          }
-        },
-        {
-          "value": "xbeach",
-          "label": {
-            "en_US": "XBeach"
+            "en_US": "SOBEK"
           }
         }
       ],
@@ -299,7 +299,7 @@
     },
     {
       "label": {
-        "en_US": "Describing article"
+        "en_US": "GroupPage"
       },
       "predefinedValue": {
         "en_US": ""
@@ -308,17 +308,18 @@
         "en_US": ""
       },
       "tip": {
-        "en_US": "ArticleId of an article containing descriptive information about this download."
+        "en_US": ""
       },
-      "dataType": "string",
+      "dataType": "link-to-page",
+      "fieldNamespace": "ddm",
       "indexType": "keyword",
       "localizable": false,
-      "name": "DescriptionArticleId",
+      "name": "GroupPage",
       "readOnly": false,
       "repeatable": false,
-      "required": false,
+      "required": true,
       "showLabel": true,
-      "type": "text"
+      "type": "ddm-link-to-page"
     }
   ]
 }
