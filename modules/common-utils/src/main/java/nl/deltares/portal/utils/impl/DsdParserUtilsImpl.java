@@ -195,7 +195,7 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
                 article = new Presentation(journalArticle, this, locale);
                 return article;
             case Download:
-                article = new Download(journalArticle, this, dsdJournalArticleUtils, locale);
+                article = new Download(journalArticle, this, dsdJournalArticleUtils, layoutUtils, locale);
                 return article;
             case Downloadgroup:
                 article = new DownloadGroup(journalArticle, this, layoutUtils, locale);

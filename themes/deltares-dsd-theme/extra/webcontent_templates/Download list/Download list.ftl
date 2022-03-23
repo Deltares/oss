@@ -1,6 +1,4 @@
 <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
-<#assign title=.vars['reserved-article-title'].data />
-<#assign urltitle=.vars['reserved-article-url-title'].data />
 <#assign articleId = .vars['reserved-article-id'].getData() />
 <#assign download = dsdParserUtils.toDsdArticle(themeDisplay.getScopeGroupId(), articleId) />
 <#assign showButtons = themeDisplay.isSignedIn() />
@@ -9,7 +7,7 @@
 
     <div class="col-12 px-3">
         <h4>
-            <a href="-/${urltitle}" target="_blank">
+            <a href="${download.getGroupPage()}" target="_blank">
                 <strong>${download.getFileName()}</strong>
             </a>
         </h4>
