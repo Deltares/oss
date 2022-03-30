@@ -31,10 +31,12 @@ import java.util.*;
 	property = {
 			"com.liferay.portlet.display-category=OSS",
 			"com.liferay.portlet.header-portlet-css=/css/main.css",
+			"com.liferay.portlet.header-portlet-javascript=/lib/dsd-registration.js",
+			"com.liferay.portlet.header-portlet-javascript=/lib/common.js",
 			"com.liferay.portlet.instanceable=false",
 			"javax.portlet.display-name=DsdRegistrationForm",
 			"javax.portlet.init-param.template-path=/",
-			"javax.portlet.init-param.view-template=/dsd_register.jsp",
+			"javax.portlet.init-param.view-template=/registration/dsd_register.jsp",
 			"javax.portlet.name=" + OssConstants.DSD_REGISTRATIONFORM,
 			"javax.portlet.resource-bundle=content.Language",
 			"javax.portlet.supported-locale=en",

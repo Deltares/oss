@@ -40,11 +40,13 @@ import java.util.concurrent.TimeUnit;
         property = {
                 "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
+                "com.liferay.portlet.header-portlet-javascript=/lib/oss-admin.js",
+                "com.liferay.portlet.header-portlet-javascript=/lib/common.js",
                 "com.liferay.portlet.instanceable=true",
                 "javax.portlet.display-name=OSS Admin Form",
                 "javax.portlet.init-param.config-template=/admin/configuration/oss_configuration.jsp",
                 "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.view-template=/oss_admin.jsp",
+                "javax.portlet.init-param.view-template=/admin/oss_admin.jsp",
                 "javax.portlet.name=" + OssConstants.OSS_ADMIN_FORM,
                 "javax.portlet.resource-bundle=content.Language",
                 "javax.portlet.security-role-ref=administrator"
@@ -116,7 +118,7 @@ public class OssAdminFormPortlet extends MVCPortlet {
             if (dataRequest == null) {
                 dataRequest = new DeleteDisabledUsersRequest(dataRequestId, themeDisplay.getUserId(), themeDisplay.getCompanyId(), usersFilePath, adminUtils);
                 instance.addToQueue(dataRequest);
-            } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated) {
+            } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
                 instance.removeDataRequest(dataRequest);
             }
             resourceResponse.setStatus(HttpServletResponse.SC_OK);
@@ -152,7 +154,7 @@ public class OssAdminFormPortlet extends MVCPortlet {
         if (dataRequest == null) {
             dataRequest = new DownloadDisabledUsersRequest(dataRequestId, disabledTimeAfter, themeDisplay.getUserId(), adminUtils);
             instance.addToQueue(dataRequest);
-        } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated) {
+        } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
             instance.removeDataRequest(dataRequest);
         }
         resourceResponse.setStatus(HttpServletResponse.SC_OK);
@@ -185,7 +187,7 @@ public class OssAdminFormPortlet extends MVCPortlet {
         if (dataRequest == null) {
             dataRequest = new DeleteBannedUsersRequest(dataRequestId, siteId, themeDisplay.getUserId(), bannedUsers, adminUtils);
             instance.addToQueue(dataRequest);
-        } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated) {
+        } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata ) {
             instance.removeDataRequest(dataRequest);
         }
         resourceResponse.setStatus(HttpServletResponse.SC_OK);

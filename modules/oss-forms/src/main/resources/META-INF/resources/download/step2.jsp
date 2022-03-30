@@ -38,7 +38,7 @@
                         disabled="true">
                     <aui:validator name="required">
                                 function () {
-                                    return checkStep(getFormName(), 2);
+                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
                 </aui:input>
@@ -51,7 +51,7 @@
                         disabled="true">
                     <aui:validator name="required">
                                 function () {
-                                    return checkStep(getFormName(), 2);
+                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
                 </aui:input>
@@ -65,7 +65,7 @@
                 disabled="true">
             <aui:validator name="required">
                         function () {
-                            return checkStep(getFormName(), 2);
+                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
             </aui:validator>
             <aui:validator name="email"/>
@@ -80,7 +80,7 @@
                         disabled="true">
                     <aui:validator name="required">
                                 function () {
-                                    return checkStep(getFormName(), 2);
+                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
                 </aui:input>
@@ -101,7 +101,7 @@
                 value="${org_name}">
             <aui:validator name="required">
                         function () {
-                            return checkStep(getFormName(), 2);
+                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
             </aui:validator>
         </aui:input>
@@ -111,7 +111,7 @@
                 value="${org_address}">
             <aui:validator name="required">
                         function () {
-                            return checkStep(getFormName(), 2);
+                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
 
             </aui:validator>
@@ -125,7 +125,7 @@
                         value="${org_postal}">
                     <aui:validator name="required">
                                 function () {
-                                    return checkStep(getFormName(), 2);
+                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
                 </aui:input>
@@ -137,7 +137,7 @@
                         value="${org_city}">
                     <aui:validator name="required">
                                 function () {
-                                    return checkStep(getFormName(), 2);
+                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
                 </aui:input>
@@ -150,7 +150,7 @@
                 value="${country}">
             <aui:validator name="required">
                         function () {
-                            return checkStep(getFormName(), 2);
+                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
             </aui:validator>
             <aui:validator name="minLength">
