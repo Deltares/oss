@@ -31,11 +31,13 @@ import java.util.List;
 	property = {
 			"com.liferay.portlet.display-category=OSS",
 			"com.liferay.portlet.header-portlet-css=/css/main.css",
+			"com.liferay.portlet.header-portlet-javascript=/lib/dsd-admin.js",
+			"com.liferay.portlet.header-portlet-javascript=/lib/common.js",
 			"com.liferay.portlet.instanceable=true",
 			"javax.portlet.display-name=DSD Admin Form",
 			"javax.portlet.init-param.config-template=/admin/configuration/dsd_configuration.jsp",
 			"javax.portlet.init-param.template-path=/",
-			"javax.portlet.init-param.view-template=/dsd_admin.jsp",
+			"javax.portlet.init-param.view-template=/admin/dsd_admin.jsp",
 			"javax.portlet.name=" + OssConstants.DSD_ADMIN_FORM,
 			"javax.portlet.resource-bundle=content.Language",
 			"javax.portlet.security-role-ref=power-user,user"
