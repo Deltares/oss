@@ -248,7 +248,6 @@ function getCurrentStep(form) {
             }
         },
 
-
         refreshCart: function () {
             let plugin = this;
             $('.c-cart__item__counter').text(plugin.cart.items.length + plugin.cart.downloads.length);

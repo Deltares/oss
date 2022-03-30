@@ -33,10 +33,12 @@ import java.util.*;
         property = {
                 "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
+                "com.liferay.portlet.header-portlet-javascript=/lib/download.js",
+                "com.liferay.portlet.header-portlet-javascript=/lib/common.js",
                 "com.liferay.portlet.instanceable=false",
                 "javax.portlet.display-name=Download Form",
                 "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.view-template=/download.jsp",
+                "javax.portlet.init-param.view-template=/download/download.jsp",
                 "javax.portlet.name=" + OssConstants.DOWNLOADFORM,
                 "javax.portlet.resource-bundle=content.Language",
                 "javax.portlet.security-role-ref=user"

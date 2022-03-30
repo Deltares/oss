@@ -4,6 +4,8 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -18,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DsdResultsSearchContainer extends SearchContainer<RegistrationDisplayContext> {
+
+    private static final Log LOG = LogFactoryUtil.getLog(DsdResultsSearchContainer.class);
 
     private final DsdParserUtils dsdParserUtils;
     private final ThemeDisplay themeDisplay;
@@ -76,7 +80,10 @@ public class DsdResultsSearchContainer extends SearchContainer<RegistrationDispl
             if (!result.getFields().containsKey("entryClassPK")) continue;
             final Field classPK = result.getField("entryClassPK");
             JournalArticle registrationArticle = JournalArticleLocalServiceUtil.fetchLatestArticle(Long.parseLong(classPK.getValue()));
-
+            if (registrationArticle == null) {
+                LOG.warn(String.format("Failed to fetch registration for classPK %s", classPK.getValue()));
+                continue;
+            }
             try {
                 final AbsDsdArticle absDsdArticle = dsdParserUtils.toDsdArticle(registrationArticle);
                 if (!(absDsdArticle instanceof Registration)) continue;

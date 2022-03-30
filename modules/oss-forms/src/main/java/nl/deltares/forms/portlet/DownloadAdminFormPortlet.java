@@ -18,7 +18,7 @@ import javax.portlet.Portlet;
                 "javax.portlet.display-name=Download Admin Form",
                 "javax.portlet.init-param.config-template=/admin/configuration/download_configuration.jsp",
                 "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.view-template=/download_admin.jsp",
+                "javax.portlet.init-param.view-template=/admin/download_admin.jsp",
                 "javax.portlet.name=" + OssConstants.DOWNLOAD_ADMIN_FORM,
                 "javax.portlet.resource-bundle=content.Language",
                 "javax.portlet.security-role-ref=power-user,user"

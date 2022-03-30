@@ -18,7 +18,7 @@ import javax.portlet.Portlet;
 			"javax.portlet.display-name=Webinar Admin Form",
 			"javax.portlet.init-param.config-template=/admin/configuration/web_configuration.jsp",
 			"javax.portlet.init-param.template-path=/",
-			"javax.portlet.init-param.view-template=/web_admin.jsp",
+			"javax.portlet.init-param.view-template=/admin/web_admin.jsp",
 			"javax.portlet.name=" + OssConstants.WEBINAR_ADMIN_FORM,
 			"javax.portlet.resource-bundle=content.Language",
 			"javax.portlet.security-role-ref=power-user,user"

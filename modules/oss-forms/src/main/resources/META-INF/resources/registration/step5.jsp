@@ -1,4 +1,4 @@
-<div id="course-conditions-div">
+<div id="<portlet:namespace/>course-conditions-div">
     <span>
         <liferay-ui:message key="dsd.registration.step5.conditions.title"/>
     </span>
@@ -8,7 +8,7 @@
             type="checkbox">
                 <aui:validator name="required">
                     function () {
-                    return checkStep(getFormName(), 5);
+                    return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 5);
                     }
                 </aui:validator>
     </aui:input>
