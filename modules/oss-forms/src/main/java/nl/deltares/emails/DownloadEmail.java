@@ -2,8 +2,8 @@ package nl.deltares.emails;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.User;
-import nl.deltares.dsd.model.BillingInfo;
-import nl.deltares.dsd.model.DownloadRequest;
+import nl.deltares.model.BillingInfo;
+import nl.deltares.model.DownloadRequest;
 import nl.deltares.emails.serializer.DownloadsEmailSerializer;
 
 import java.net.MalformedURLException;

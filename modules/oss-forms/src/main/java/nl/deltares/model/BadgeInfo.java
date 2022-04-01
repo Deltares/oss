@@ -1,4 +1,4 @@
-package nl.deltares.dsd.model;
+package nl.deltares.model;
 
 import com.liferay.portal.kernel.util.Validator;
 

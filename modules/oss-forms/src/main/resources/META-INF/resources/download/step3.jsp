@@ -1,4 +1,4 @@
-<%@ page import="nl.deltares.dsd.model.BillingInfo" %>
+<%@ page import="nl.deltares.model.BillingInfo" %>
 <aui:input
         name="use_organization_address"
         label="dsd.registration.step3.use.organization.address"

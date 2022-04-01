@@ -1,5 +1,5 @@
 <%@ page import="java.util.Date" %>
-<%@ page import="nl.deltares.dsd.model.BadgeInfo" %>
+<%@ page import="nl.deltares.model.BadgeInfo" %>
 <aui:row>
     <aui:col width="50">
         <c:if test="${not empty attributes}">
