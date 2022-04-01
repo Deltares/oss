@@ -2,7 +2,7 @@ package nl.deltares.emails.serializer;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.User;
-import nl.deltares.dsd.model.RegistrationRequest;
+import nl.deltares.model.RegistrationRequest;
 import nl.deltares.emails.DsdEmail;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
