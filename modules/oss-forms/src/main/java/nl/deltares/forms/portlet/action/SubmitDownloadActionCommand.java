@@ -96,7 +96,10 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         final String emailAddress = user.getEmailAddress();
         final List<Download> downloads = downloadRequest.getDownloads();
         for (Download download : downloads) {
-            if (download.isBillingRequired()) continue; //process differently
+            if (download.isBillingRequired()) {
+                LOG.info(String.format("Creation of share link for user '%s' on file '%s' is pending payment.", emailAddress, download.getFileName()));
+                continue; //process differently
+            }
 
             try {
                 final int existingLink = downloadUtils.shareLinkExists(download.getFilePath(), emailAddress);
