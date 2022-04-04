@@ -8,8 +8,6 @@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.portal.kernel.util.Validator" %>
-<%--Required by implementing JSPs--%>
-<%@ page import="nl.deltares.portal.model.DsdArticle" %>
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />
