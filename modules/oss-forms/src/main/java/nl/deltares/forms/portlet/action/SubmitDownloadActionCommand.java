@@ -62,6 +62,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         if ("download".equals(action)) {
             if (downloadRequest.isUserInfoRequired()) {
                 Map<String, String> userAttributes = getUserAttributes(actionRequest);
+                downloadRequest.setUserAttributes(userAttributes);
                 success = updateUserAttributes(actionRequest, user, userAttributes);
 
             }
@@ -96,23 +97,36 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         final String emailAddress = user.getEmailAddress();
         final List<Download> downloads = downloadRequest.getDownloads();
         for (Download download : downloads) {
+
+            Map<String, Object> shareInfo = null;
             if (download.isBillingRequired()) {
                 LOG.info(String.format("Creation of share link for user '%s' on file '%s' is pending payment.", emailAddress, download.getFileName()));
-                continue; //process differently
+                shareInfo = Collections.emptyMap();
+            } else {
+
+                try {
+                     shareInfo = downloadUtils.shareLinkExists(download.getFilePath(), emailAddress);
+                    if (shareInfo.isEmpty()) {
+                        shareInfo = downloadUtils.sendShareLink(download.getFilePath(), emailAddress);
+                    } else {
+                        shareInfo = downloadUtils.resendShareLink((Integer) shareInfo.get("id"));
+                    }
+
+                } catch (Exception e) {
+                    SessionErrors.add(actionRequest, "sendlink-failed",
+                            String.format("Failed to send link for file %s : %s ", download.getFileName(), e.getMessage()));
+                    success = false;
+                    continue;
+                }
             }
 
             try {
-                final int existingLink = downloadUtils.shareLinkExists(download.getFilePath(), emailAddress);
-                if (existingLink > 0){
-                    downloadUtils.resendShareLink(existingLink);
-                } else {
-                    downloadUtils.sendShareLink(download.getFilePath(), emailAddress);
-                }
-            } catch (Exception e) {
-                SessionErrors.add(actionRequest, "sendlink-failed",
-                        String.format("Failed to send link for file %s : %s ", download.getFileName(), e.getMessage()));
-                success = false;
+                downloadUtils.registerDownload(user, Long.parseLong(download.getArticleId()), shareInfo, downloadRequest.getUserAttributes());
+            } catch (PortalException e) {
+                SessionErrors.add(actionRequest, "registerlink-failed",
+                        String.format("Failed to register link for file %s : %s ", download.getFileName(), e.getMessage()));
             }
+
 
         }
         return success;

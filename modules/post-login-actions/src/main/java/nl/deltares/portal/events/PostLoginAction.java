@@ -7,6 +7,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalService;
+import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -35,6 +36,9 @@ public class PostLoginAction implements LifecycleAction {
 
 	@Reference
 	private UserLocalService userLocalService;
+
+	@Reference
+	private DownloadUtils downloadUtils;
 
 	@Override
 	public void processLifecycleEvent(LifecycleEvent lifecycleEvent) throws ActionException {
@@ -80,6 +84,10 @@ public class PostLoginAction implements LifecycleAction {
 
 		}
 
+		if (downloadUtils.isActive()){
+			//Check if users has any pending shares that need to be updated
+			downloadUtils.updatePendingShares(user);
+		}
 	}
 
 	private String getSiteId(String redirectUrl) {

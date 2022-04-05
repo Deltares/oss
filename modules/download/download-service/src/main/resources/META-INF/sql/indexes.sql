@@ -1,0 +1,1 @@
+create index IX_4E718C9C on Downloads_Download (userId);

@@ -1,5 +1,6 @@
 <!--container-->
 <#assign parserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
+<#assign downloadUtils = serviceLocator.findService("nl.deltares.portal.utils.DownloadUtils") />
 <#assign baseUrl = "/o/download" />
 <#if entries?has_content>
 
@@ -10,35 +11,47 @@
             <#assign download = parserUtils.toDsdArticle(journalArticle, locale) />
             <#assign directDownload = download.isDirectDownload() />
             <#assign sendLink = download.isSendLink() />
+            <#assign count = downloadUtils.getDownloadCount(download) />
+
             <li class="list-group-item list-group-item-flex">
                 <div class="col-12 px-3">
                     <h4>
                         <strong>${download.getFileName()}</strong> ( ${download.getFilePath()} )
                     </h4>
                     <div>
-                        ${download.getFileTopicName()} | ${download.getFileTypeName()} | ${download.getFileSize()} | ${download.getDownloadCount()} downloads
+                        ${download.getFileTopicName()} | ${download.getFileTypeName()} | ${download.getFileSize()} | ${count} downloads
                         <#if themeDisplay.isSignedIn() >
                             <span class="d-block" style="float:right">
                             <#if directDownload >
                                 <#assign downloadUrl = baseUrl + "/direct/" />
                                 <a href="#" id="${journalArticle.getArticleId()}_download" onclick="directDownload(this.id,
-                                        '${downloadUrl}', '${download.getFileId()}', '${download.getFileName()}')"
+                                        '${downloadUrl}', '${download.getFileId()}', '${download.getFileName()}', '${download.getArticleId()}')"
                                    class="btn btn-primary" role="button" aria-pressed="true">
                                     ${languageUtil.get(locale, "download.download")}
                                 </a>
                             <#elseif sendLink >
                                 <#assign downloadUrl = baseUrl + "/sendlink/" />
                                 <a href="#" id="${journalArticle.getArticleId()}_sendlink"
-                                   onclick="sendLink(this.id, '${downloadUrl}', '${download.getFilePath()}')"
+                                   onclick="sendLink(this.id, '${downloadUrl}', '${download.getFilePath()}', '${download.getArticleId()}')"
                                    class="btn btn-primary" role="button" aria-pressed="true">
                                     ${languageUtil.get(locale, "download.sendlink")}
                                 </a>
                             <#else>
-                                <a href="#" data-article-id="${download.getArticleId()}"
-                                   class="btn-lg btn-primary add-download-to-cart"
-                                   role="button" aria-pressed="true" style="color:#fff">
-                                    ${languageUtil.get(locale, "shopping.cart.add")}
-                                </a>
+                                <#assign paymentPending = downloadUtils.isPaymentPending(download, themeDisplay) />
+                                <#if paymentPending >
+                                    <a href="#" data-article-id="${download.getArticleId()}"
+                                       class="btn-lg btn-primary disabled"
+                                       role="button" aria-pressed="true" style="color:#fff">
+                                        ${languageUtil.get(locale, "shopping.cart.paymentPending")}
+                                    </a>
+                                <#else >
+                                    <a href="#" data-article-id="${download.getArticleId()}"
+                                       class="btn-lg btn-primary add-download-to-cart"
+                                       role="button" aria-pressed="true" style="color:#fff">
+                                        ${languageUtil.get(locale, "shopping.cart.add")}
+                                    </a>
+                                </#if>
+
                             </#if>
                             </span>
                         </#if>
@@ -52,7 +65,7 @@
 <script>
 
     //Send link to user
-    function sendLink(button_id, sendLinkUrl, filePath) {
+    function sendLink(button_id, sendLinkUrl, filePath, articleId) {
 
         updateButton(button_id, "Sending link...");
         let pAuth = Liferay.authToken;
@@ -61,7 +74,8 @@
             url: sendLinkUrl + '?p_auth=' + pAuth,
             data: "{" +
                 "\"filePath\": \"" + filePath + "\"," +
-                "\"resendLink\": \"true\"" +
+                "\"resendLink\": \"true\"," +
+                "\"downloadId\": \"" + articleId + "\"" +
                 "}",
             contentType: "application/json",
             success : function(response, status, xhr) {
@@ -76,7 +90,7 @@
     }
 
     //Get the direct download link for the file
-    function directDownload(button_id, directDownloadUrl, fileId, fileName) {
+    function directDownload(button_id, directDownloadUrl, fileId, fileName, articleId) {
 
         updateButton(button_id, "Downloading...")
         let pAuth = Liferay.authToken;
@@ -85,7 +99,8 @@
             url: directDownloadUrl + '?p_auth=' + pAuth,
             data: "{" +
                 "\"fileId\": \"" + fileId + "\"," +
-                "\"fileName\": \"" + fileName + "\"" +
+                "\"fileName\": \"" + fileName + "\"," +
+                "\"downloadId\": \"" + articleId + "\"" +
                 "}",
             contentType: "application/json",
             xhrFields: {

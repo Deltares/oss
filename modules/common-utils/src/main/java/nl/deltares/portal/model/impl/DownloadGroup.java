@@ -58,11 +58,6 @@ public class DownloadGroup extends AbsDsdArticle {
         return description;
     }
 
-    //todo: Retrieve from downloads table
-    public int getDownloadCount(){
-        return (int) (Math.random() * 10000);
-    }
-
     @Override
     public String getSmallImageURL(ThemeDisplay themeDisplay) {
         String smallImageURL = super.getSmallImageURL(themeDisplay);

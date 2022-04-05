@@ -16,6 +16,8 @@ dependencies {
     compileInclude group: "com.maxmind.geoip2", name: "geoip2", version: "2.15.0"
 
     compileOnly project(":modules:registration-service:registration-service-api")
+    compileOnly project(":modules:download:download-api")
+
 
     testCompile group: 'com.liferay', name: 'com.liferay.journal.api', version: '3.10.1'
     testCompile group: 'com.liferay', name: 'com.liferay.petra.memory', version: '2.0.0'
