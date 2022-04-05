@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="nl.deltares.oss.download.model.Download">
+		<field name="downloadId" type="long" />
+		<field name="userId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="path" type="String" />
+		<field name="expiryDate" type="Date" />
+		<field name="organization" type="String" />
+		<field name="countryCode" type="String" />
+		<field name="city" type="String" />
+		<field name="shareId" type="long" />
+		<field name="directDownloadUrl" type="String" />
+	</model>
+	<model name="nl.deltares.oss.download.model.DownloadCount">
+		<field name="downloadId" type="long" />
+		<field name="count" type="int" />
+	</model>
+</model-hints>

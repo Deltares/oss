@@ -17,7 +17,6 @@
 
                         <ul>
                             <li><h2>${downloadGroup.getName()}</h2></li>
-                            <li><h3>${downloadGroup.getDownloadCount()} downloads</h3></li>
                         </ul>
                         <div class="description"><p>${downloadGroup.getDescription()}</p></div>
 

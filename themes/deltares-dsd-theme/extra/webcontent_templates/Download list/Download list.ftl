@@ -1,6 +1,8 @@
 <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
+<#assign downloadUtils = serviceLocator.findService("nl.deltares.portal.utils.DownloadUtils") />
 <#assign articleId = .vars['reserved-article-id'].getData() />
 <#assign download = dsdParserUtils.toDsdArticle(themeDisplay.getScopeGroupId(), articleId) />
+<#assign count = downloadUtils.getDownloadCount(download) />
 <#assign showButtons = themeDisplay.isSignedIn() />
 
 <div class="row no-gutters">
@@ -12,16 +14,24 @@
             </a>
         </h4>
         <div>
-            ${download.getFileTopicName()} | ${download.getFileTypeName()} | ${download.getFileSize()}
+            ${download.getFileTopicName()} | ${download.getFileTypeName()} | ${download.getFileSize()} | ${count} downloads
             <#if showButtons >
-                <span class="d-block" style="float:right">
+            <span class="d-block" style="float:right">
+                <#assign paymentPending = downloadUtils.isPaymentPending(download, themeDisplay) />
+                <#if paymentPending >
                     <a href="#" data-article-id="${download.getArticleId()}"
-                       class="btn-lg btn-primary add-download-to-cart"  role="button"
-                       aria-pressed="true" style="color:#fff">
-                            ${languageUtil.get(locale, "shopping.cart.add")}
+                       class="btn-lg btn-primary add-download-to-cart disabled"
+                       role="button" aria-pressed="true" style="color:#fff">
+                        ${languageUtil.get(locale, "shopping.cart.paymentPending")}
                     </a>
-                </span>
-
+                <#else >
+                    <a href="#" data-article-id="${download.getArticleId()}"
+                       class="btn-lg btn-primary add-download-to-cart"
+                       role="button" aria-pressed="true" style="color:#fff">
+                        ${languageUtil.get(locale, "shopping.cart.add")}
+                    </a>
+                </#if>
+            </span>
             </#if>
         </div>
 

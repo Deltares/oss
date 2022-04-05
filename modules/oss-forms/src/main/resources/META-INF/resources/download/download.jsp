@@ -48,6 +48,10 @@
     <liferay-ui:message key="sendlink-failed" arguments='<%= SessionErrors.get(liferayPortletRequest, "sendlink-failed") %>' />
 </liferay-ui:error>
 
+<liferay-ui:error key="registerlink-failed">
+    <liferay-ui:message key="registerlink-failed" arguments='<%= SessionErrors.get(liferayPortletRequest, "registerlink-failed") %>' />
+</liferay-ui:error>
+
 <liferay-ui:error key="update-attributes-failed">
     <liferay-ui:message key="update-attributes-failed" arguments='<%= SessionErrors.get(liferayPortletRequest, "update-attributes-failed") %>' />
 </liferay-ui:error>

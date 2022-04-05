@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.1.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_1_0.dtd">
+
+<service-builder  package-path="nl.deltares.oss.download">
+	<author>Erik de Rooij @ Deltares</author>
+	<namespace>Downloads</namespace>
+	<entity local-service="true" name="Download" remote-service="false" uuid="false">
+
+		<!-- PK fields -->
+		<column name="downloadId" primary="true" type="long" />
+		<column name="userId" primary="true" type="long" />
+
+		<!-- Group instance -->
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+		<column name="companyId" type="long" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+		<column name="path" type="String" />
+		<column name="expiryDate" type="Date" />
+		<column name="organization" type="String" />
+		<column name="countryCode" type="String" />
+		<column name="city" type="String" />
+		<column name="shareId" type="long" />
+		<column name="directDownloadUrl" type="String" />
+
+		<!-- Order -->
+
+		<order by="desc">
+			<order-column name="createDate" />
+		</order>
+
+		<!-- Finder methods -->
+
+		<finder name="Downloads" return-type="Collection">
+			<finder-column name="downloadId" />
+		</finder>
+
+		<finder name="UserDownloads" return-type="Collection">
+			<finder-column name="userId" />
+		</finder>
+
+		<finder name="PendingUserDownloads" return-type="Collection" where="shareId IS NULL">
+			<finder-column name="userId" />
+		</finder>
+
+	</entity>
+
+	<entity local-service="true" name="DownloadCount" remote-service="false" uuid="false">
+
+		<!-- PK fields -->
+
+		<column name="downloadId" primary="true" type="long" />
+
+		<!-- Other fields -->
+		<column name="count" type="int" />
+
+		<!-- Order -->
+
+		<order by="desc">
+			<order-column name="count" />
+		</order>
+
+	</entity>
+</service-builder>
