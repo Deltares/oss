@@ -146,9 +146,4 @@ public class Download extends AbsDsdArticle {
         return requiredActions.contains(ACTION.terms);
     }
 
-
-    //todo: Retrieve from downloads table
-    public int getDownloadCount(){
-        return (int) (Math.random() * 10000);
-    }
 }

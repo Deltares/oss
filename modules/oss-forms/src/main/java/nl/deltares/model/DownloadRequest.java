@@ -7,19 +7,18 @@ import nl.deltares.portal.model.impl.Download;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class DownloadRequest {
 
     private final List<Download> downloads = new ArrayList<>();
     private final String baseUrl;
     private final String siteUrl;
+    private final HashMap<String, String> userAttributes = new HashMap<>();
     private String bannerUrl = null;
     private BillingInfo billingInfo;
     private List<String> mailingIds = Collections.emptyList();
+
     private boolean subscribe;
 
     public DownloadRequest(ThemeDisplay themeDisplay) throws PortalException {
@@ -97,5 +96,13 @@ public class DownloadRequest {
             if (download.isBillingRequired()) return true;
         }
         return false;
+    }
+
+    public void setUserAttributes(Map<String, String> userAttributes) {
+        this.userAttributes.putAll(userAttributes);
+    }
+
+    public HashMap<String, String> getUserAttributes() {
+        return userAttributes;
     }
 }

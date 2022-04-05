@@ -1,0 +1,10 @@
+Bundle-Name: download-api
+Bundle-SymbolicName: nl.deltares.oss.download.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	nl.deltares.oss.download.exception,\
+	nl.deltares.oss.download.model,\
+	nl.deltares.oss.download.service,\
+	nl.deltares.oss.download.service.persistence
+-check: EXPORTS
+-includeresource: META-INF/service.xml=../download-service/service.xml

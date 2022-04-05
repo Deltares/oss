@@ -1,7 +1,8 @@
 <#assign parserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
+<#assign downloadUtils = serviceLocator.findService("nl.deltares.portal.utils.DownloadUtils") />
 <#assign articleId = .vars['reserved-article-id'].getData() />
 <#assign download = parserUtils.toDsdArticle(groupId, articleId) />
-<#assign showButtons = themeDisplay.isSignedIn() />
+<#assign count = downloadUtils.getDownloadCount(download) />
 
 <div class="row no-gutters">
     <div class="col-12 px-3">
@@ -11,7 +12,7 @@
             </a>
         </h4>
         <div>
-            ${download.getFileTopicName()} | ${download.getFileTypeName()} | ${download.getFileSize()}
+            ${download.getFileTopicName()} | ${download.getFileTypeName()} | ${download.getFileSize()} | ${count} downloads
         </div>
     </div>
 </div>

@@ -12,6 +12,7 @@ Export-Package: \
   nl.deltares.portal.kernel.util.comparator
 Import-Package: \
   nl.deltares.dsd.registration.service.*,\
+  nl.deltares.oss.download.service.*,\
   !org.apache.avalon.framework.logger, \
   !org.apache.log, \
   !org.apache.log4j, \
