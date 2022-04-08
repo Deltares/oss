@@ -72,6 +72,7 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
         String replyToEmail = ParamUtil.getString(actionRequest, "replyToEmail");
         String bccToEmail = ParamUtil.getString(actionRequest, "bccToEmail");
         String bannerURL = ParamUtil.getString(actionRequest, "bannerURL");
+        boolean isSendEmails = ParamUtil.getBoolean(actionRequest, "enableEmails");
         Map<String, String> templateMap = convertTemplatesToMap(actionRequest);
 
         Settings settings = SettingsFactoryUtil.getSettings(
@@ -89,6 +90,7 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
         modifiableSettings.setValue("sendFromEmail", sendFromEmail);
         modifiableSettings.setValue("replyToEmail", replyToEmail);
         modifiableSettings.setValue("bccToEmail", bccToEmail);
+        modifiableSettings.setValue("enableEmails", String.valueOf(isSendEmails));
         modifiableSettings.setValue("templateMap", JsonContentUtils.formatMapToJson(templateMap));
         modifiableSettings.store();
 

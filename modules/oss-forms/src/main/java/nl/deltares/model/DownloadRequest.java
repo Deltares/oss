@@ -15,6 +15,7 @@ public class DownloadRequest {
     private final String baseUrl;
     private final String siteUrl;
     private final HashMap<String, String> userAttributes = new HashMap<>();
+    private final long groupId;
     private String bannerUrl = null;
     private BillingInfo billingInfo;
     private List<String> mailingIds = Collections.emptyList();
@@ -24,11 +25,16 @@ public class DownloadRequest {
     public DownloadRequest(ThemeDisplay themeDisplay) throws PortalException {
         siteUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay);
         baseUrl = themeDisplay.getCDNBaseURL();
+        groupId = themeDisplay.getScopeGroupId();
     }
 
     public void setBannerUrl(String bannerUrl) {
         if (bannerUrl == null || bannerUrl.isEmpty()) return;
         this.bannerUrl = bannerUrl;
+    }
+
+    public long getGroupId() {
+        return groupId;
     }
 
     public void addDownload(Download download) {

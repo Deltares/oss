@@ -44,11 +44,11 @@
             let element = $(plugin.element);
             let active = element.find('li.active');
             let next = active.next();
-            if (next.hasClass('disabled')) {
+            while (next.hasClass('disabled') && next.next().length > 0) {
                 next = next.next();
             }
             let prev = active.prev();
-            if (prev.hasClass('disabled')) {
+            while (prev.hasClass('disabled') && prev.prev().length > 0) {
                 prev = prev.prev();
             }
 

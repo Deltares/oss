@@ -93,6 +93,12 @@
                 name="bannerURL"
                 value="<%= configuration.bannerURL() %>"/>
 
+        <aui:input
+                label="download.email.enabled"
+                name="enableEmails"
+                type="checkbox"
+                value="<%= configuration.enableEmails() %>"/>
+
         <table id="searchResultsMap" class="display" style="width:100%">
             <thead>
             <tr>

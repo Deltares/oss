@@ -28,7 +28,6 @@ import java.io.ObjectOutput;
 import java.util.Date;
 
 import nl.deltares.oss.download.model.Download;
-import nl.deltares.oss.download.service.persistence.DownloadPK;
 
 /**
  * The cache model class for representing Download in entity cache.
@@ -52,7 +51,7 @@ public class DownloadCacheModel
 
 		DownloadCacheModel downloadCacheModel = (DownloadCacheModel)obj;
 
-		if (downloadPK.equals(downloadCacheModel.downloadPK)) {
+		if (id == downloadCacheModel.id) {
 			return true;
 		}
 
@@ -61,27 +60,29 @@ public class DownloadCacheModel
 
 	@Override
 	public int hashCode() {
-		return HashUtil.hash(0, downloadPK);
+		return HashUtil.hash(0, id);
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(27);
+		StringBundler sb = new StringBundler(29);
 
-		sb.append("{downloadId=");
+		sb.append("{id=");
+		sb.append(id);
+		sb.append(", companyId=");
+		sb.append(companyId);
+		sb.append(", groupId=");
+		sb.append(groupId);
+		sb.append(", downloadId=");
 		sb.append(downloadId);
 		sb.append(", userId=");
 		sb.append(userId);
-		sb.append(", groupId=");
-		sb.append(groupId);
-		sb.append(", companyId=");
-		sb.append(companyId);
 		sb.append(", createDate=");
 		sb.append(createDate);
 		sb.append(", modifiedDate=");
 		sb.append(modifiedDate);
-		sb.append(", path=");
-		sb.append(path);
+		sb.append(", filePath=");
+		sb.append(filePath);
 		sb.append(", expiryDate=");
 		sb.append(expiryDate);
 		sb.append(", organization=");
@@ -103,10 +104,11 @@ public class DownloadCacheModel
 	public Download toEntityModel() {
 		DownloadImpl downloadImpl = new DownloadImpl();
 
+		downloadImpl.setId(id);
+		downloadImpl.setCompanyId(companyId);
+		downloadImpl.setGroupId(groupId);
 		downloadImpl.setDownloadId(downloadId);
 		downloadImpl.setUserId(userId);
-		downloadImpl.setGroupId(groupId);
-		downloadImpl.setCompanyId(companyId);
 
 		if (createDate == Long.MIN_VALUE) {
 			downloadImpl.setCreateDate(null);
@@ -122,11 +124,11 @@ public class DownloadCacheModel
 			downloadImpl.setModifiedDate(new Date(modifiedDate));
 		}
 
-		if (path == null) {
-			downloadImpl.setPath("");
+		if (filePath == null) {
+			downloadImpl.setFilePath("");
 		}
 		else {
-			downloadImpl.setPath(path);
+			downloadImpl.setFilePath(filePath);
 		}
 
 		if (expiryDate == Long.MIN_VALUE) {
@@ -173,16 +175,18 @@ public class DownloadCacheModel
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		downloadId = objectInput.readLong();
+		id = objectInput.readLong();
 
-		userId = objectInput.readLong();
+		companyId = objectInput.readLong();
 
 		groupId = objectInput.readLong();
 
-		companyId = objectInput.readLong();
+		downloadId = objectInput.readLong();
+
+		userId = objectInput.readLong();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
-		path = objectInput.readUTF();
+		filePath = objectInput.readUTF();
 		expiryDate = objectInput.readLong();
 		organization = objectInput.readUTF();
 		countryCode = objectInput.readUTF();
@@ -190,27 +194,27 @@ public class DownloadCacheModel
 
 		shareId = objectInput.readLong();
 		directDownloadUrl = objectInput.readUTF();
-
-		downloadPK = new DownloadPK(downloadId, userId);
 	}
 
 	@Override
 	public void writeExternal(ObjectOutput objectOutput) throws IOException {
-		objectOutput.writeLong(downloadId);
+		objectOutput.writeLong(id);
 
-		objectOutput.writeLong(userId);
+		objectOutput.writeLong(companyId);
 
 		objectOutput.writeLong(groupId);
 
-		objectOutput.writeLong(companyId);
+		objectOutput.writeLong(downloadId);
+
+		objectOutput.writeLong(userId);
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
 
-		if (path == null) {
+		if (filePath == null) {
 			objectOutput.writeUTF("");
 		}
 		else {
-			objectOutput.writeUTF(path);
+			objectOutput.writeUTF(filePath);
 		}
 
 		objectOutput.writeLong(expiryDate);
@@ -246,19 +250,19 @@ public class DownloadCacheModel
 		}
 	}
 
+	public long id;
+	public long companyId;
+	public long groupId;
 	public long downloadId;
 	public long userId;
-	public long groupId;
-	public long companyId;
 	public long createDate;
 	public long modifiedDate;
-	public String path;
+	public String filePath;
 	public long expiryDate;
 	public String organization;
 	public String countryCode;
 	public String city;
 	public long shareId;
 	public String directDownloadUrl;
-	public transient DownloadPK downloadPK;
 
 }

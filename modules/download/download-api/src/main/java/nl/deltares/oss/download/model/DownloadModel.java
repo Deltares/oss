@@ -27,8 +27,6 @@ import java.io.Serializable;
 
 import java.util.Date;
 
-import nl.deltares.oss.download.service.persistence.DownloadPK;
-
 /**
  * The base model interface for the Download service. Represents a row in the &quot;Downloads_Download&quot; database table, with each column mapped to a property of this class.
  *
@@ -54,14 +52,58 @@ public interface DownloadModel extends BaseModel<Download>, ShardedModel {
 	 *
 	 * @return the primary key of this download
 	 */
-	public DownloadPK getPrimaryKey();
+	public long getPrimaryKey();
 
 	/**
 	 * Sets the primary key of this download.
 	 *
 	 * @param primaryKey the primary key of this download
 	 */
-	public void setPrimaryKey(DownloadPK primaryKey);
+	public void setPrimaryKey(long primaryKey);
+
+	/**
+	 * Returns the ID of this download.
+	 *
+	 * @return the ID of this download
+	 */
+	public long getId();
+
+	/**
+	 * Sets the ID of this download.
+	 *
+	 * @param id the ID of this download
+	 */
+	public void setId(long id);
+
+	/**
+	 * Returns the company ID of this download.
+	 *
+	 * @return the company ID of this download
+	 */
+	@Override
+	public long getCompanyId();
+
+	/**
+	 * Sets the company ID of this download.
+	 *
+	 * @param companyId the company ID of this download
+	 */
+	@Override
+	public void setCompanyId(long companyId);
+
+	/**
+	 * Returns the group ID of this download.
+	 *
+	 * @return the group ID of this download
+	 */
+	public long getGroupId();
+
+	/**
+	 * Sets the group ID of this download.
+	 *
+	 * @param groupId the group ID of this download
+	 */
+	public void setGroupId(long groupId);
 
 	/**
 	 * Returns the download ID of this download.
@@ -106,36 +148,6 @@ public interface DownloadModel extends BaseModel<Download>, ShardedModel {
 	public void setUserUuid(String userUuid);
 
 	/**
-	 * Returns the group ID of this download.
-	 *
-	 * @return the group ID of this download
-	 */
-	public long getGroupId();
-
-	/**
-	 * Sets the group ID of this download.
-	 *
-	 * @param groupId the group ID of this download
-	 */
-	public void setGroupId(long groupId);
-
-	/**
-	 * Returns the company ID of this download.
-	 *
-	 * @return the company ID of this download
-	 */
-	@Override
-	public long getCompanyId();
-
-	/**
-	 * Sets the company ID of this download.
-	 *
-	 * @param companyId the company ID of this download
-	 */
-	@Override
-	public void setCompanyId(long companyId);
-
-	/**
 	 * Returns the create date of this download.
 	 *
 	 * @return the create date of this download
@@ -164,19 +176,19 @@ public interface DownloadModel extends BaseModel<Download>, ShardedModel {
 	public void setModifiedDate(Date modifiedDate);
 
 	/**
-	 * Returns the path of this download.
+	 * Returns the file path of this download.
 	 *
-	 * @return the path of this download
+	 * @return the file path of this download
 	 */
 	@AutoEscape
-	public String getPath();
+	public String getFilePath();
 
 	/**
-	 * Sets the path of this download.
+	 * Sets the file path of this download.
 	 *
-	 * @param path the path of this download
+	 * @param filePath the file path of this download
 	 */
-	public void setPath(String path);
+	public void setFilePath(String filePath);
 
 	/**
 	 * Returns the expiry date of this download.

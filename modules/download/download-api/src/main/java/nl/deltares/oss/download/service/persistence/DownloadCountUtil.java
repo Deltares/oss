@@ -128,6 +128,74 @@ public class DownloadCountUtil {
 	}
 
 	/**
+	 * Returns the download count where groupId = &#63; and downloadId = &#63; or throws a <code>NoSuchDownloadCountException</code> if it could not be found.
+	 *
+	 * @param groupId the group ID
+	 * @param downloadId the download ID
+	 * @return the matching download count
+	 * @throws NoSuchDownloadCountException if a matching download count could not be found
+	 */
+	public static DownloadCount findByDownloadCount(
+			long groupId, long downloadId)
+		throws nl.deltares.oss.download.exception.NoSuchDownloadCountException {
+
+		return getPersistence().findByDownloadCount(groupId, downloadId);
+	}
+
+	/**
+	 * Returns the download count where groupId = &#63; and downloadId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param groupId the group ID
+	 * @param downloadId the download ID
+	 * @return the matching download count, or <code>null</code> if a matching download count could not be found
+	 */
+	public static DownloadCount fetchByDownloadCount(
+		long groupId, long downloadId) {
+
+		return getPersistence().fetchByDownloadCount(groupId, downloadId);
+	}
+
+	/**
+	 * Returns the download count where groupId = &#63; and downloadId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param groupId the group ID
+	 * @param downloadId the download ID
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the matching download count, or <code>null</code> if a matching download count could not be found
+	 */
+	public static DownloadCount fetchByDownloadCount(
+		long groupId, long downloadId, boolean retrieveFromCache) {
+
+		return getPersistence().fetchByDownloadCount(
+			groupId, downloadId, retrieveFromCache);
+	}
+
+	/**
+	 * Removes the download count where groupId = &#63; and downloadId = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param downloadId the download ID
+	 * @return the download count that was removed
+	 */
+	public static DownloadCount removeByDownloadCount(
+			long groupId, long downloadId)
+		throws nl.deltares.oss.download.exception.NoSuchDownloadCountException {
+
+		return getPersistence().removeByDownloadCount(groupId, downloadId);
+	}
+
+	/**
+	 * Returns the number of download counts where groupId = &#63; and downloadId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param downloadId the download ID
+	 * @return the number of matching download counts
+	 */
+	public static int countByDownloadCount(long groupId, long downloadId) {
+		return getPersistence().countByDownloadCount(groupId, downloadId);
+	}
+
+	/**
 	 * Caches the download count in the entity cache if it is enabled.
 	 *
 	 * @param downloadCount the download count
@@ -148,24 +216,24 @@ public class DownloadCountUtil {
 	/**
 	 * Creates a new download count with the primary key. Does not add the download count to the database.
 	 *
-	 * @param downloadId the primary key for the new download count
+	 * @param id the primary key for the new download count
 	 * @return the new download count
 	 */
-	public static DownloadCount create(long downloadId) {
-		return getPersistence().create(downloadId);
+	public static DownloadCount create(long id) {
+		return getPersistence().create(id);
 	}
 
 	/**
 	 * Removes the download count with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param downloadId the primary key of the download count
+	 * @param id the primary key of the download count
 	 * @return the download count that was removed
 	 * @throws NoSuchDownloadCountException if a download count with the primary key could not be found
 	 */
-	public static DownloadCount remove(long downloadId)
+	public static DownloadCount remove(long id)
 		throws nl.deltares.oss.download.exception.NoSuchDownloadCountException {
 
-		return getPersistence().remove(downloadId);
+		return getPersistence().remove(id);
 	}
 
 	public static DownloadCount updateImpl(DownloadCount downloadCount) {
@@ -175,24 +243,24 @@ public class DownloadCountUtil {
 	/**
 	 * Returns the download count with the primary key or throws a <code>NoSuchDownloadCountException</code> if it could not be found.
 	 *
-	 * @param downloadId the primary key of the download count
+	 * @param id the primary key of the download count
 	 * @return the download count
 	 * @throws NoSuchDownloadCountException if a download count with the primary key could not be found
 	 */
-	public static DownloadCount findByPrimaryKey(long downloadId)
+	public static DownloadCount findByPrimaryKey(long id)
 		throws nl.deltares.oss.download.exception.NoSuchDownloadCountException {
 
-		return getPersistence().findByPrimaryKey(downloadId);
+		return getPersistence().findByPrimaryKey(id);
 	}
 
 	/**
 	 * Returns the download count with the primary key or returns <code>null</code> if it could not be found.
 	 *
-	 * @param downloadId the primary key of the download count
+	 * @param id the primary key of the download count
 	 * @return the download count, or <code>null</code> if a download count with the primary key could not be found
 	 */
-	public static DownloadCount fetchByPrimaryKey(long downloadId) {
-		return getPersistence().fetchByPrimaryKey(downloadId);
+	public static DownloadCount fetchByPrimaryKey(long id) {
+		return getPersistence().fetchByPrimaryKey(id);
 	}
 
 	/**
@@ -273,6 +341,10 @@ public class DownloadCountUtil {
 	 */
 	public static int countAll() {
 		return getPersistence().countAll();
+	}
+
+	public static Set<String> getBadColumnNames() {
+		return getPersistence().getBadColumnNames();
 	}
 
 	public static DownloadCountPersistence getPersistence() {

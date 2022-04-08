@@ -51,6 +51,56 @@ public interface DownloadCountPersistence
 		Set<Serializable> primaryKeys);
 
 	/**
+	 * Returns the download count where groupId = &#63; and downloadId = &#63; or throws a <code>NoSuchDownloadCountException</code> if it could not be found.
+	 *
+	 * @param groupId the group ID
+	 * @param downloadId the download ID
+	 * @return the matching download count
+	 * @throws NoSuchDownloadCountException if a matching download count could not be found
+	 */
+	public DownloadCount findByDownloadCount(long groupId, long downloadId)
+		throws NoSuchDownloadCountException;
+
+	/**
+	 * Returns the download count where groupId = &#63; and downloadId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param groupId the group ID
+	 * @param downloadId the download ID
+	 * @return the matching download count, or <code>null</code> if a matching download count could not be found
+	 */
+	public DownloadCount fetchByDownloadCount(long groupId, long downloadId);
+
+	/**
+	 * Returns the download count where groupId = &#63; and downloadId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param groupId the group ID
+	 * @param downloadId the download ID
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the matching download count, or <code>null</code> if a matching download count could not be found
+	 */
+	public DownloadCount fetchByDownloadCount(
+		long groupId, long downloadId, boolean retrieveFromCache);
+
+	/**
+	 * Removes the download count where groupId = &#63; and downloadId = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param downloadId the download ID
+	 * @return the download count that was removed
+	 */
+	public DownloadCount removeByDownloadCount(long groupId, long downloadId)
+		throws NoSuchDownloadCountException;
+
+	/**
+	 * Returns the number of download counts where groupId = &#63; and downloadId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param downloadId the download ID
+	 * @return the number of matching download counts
+	 */
+	public int countByDownloadCount(long groupId, long downloadId);
+
+	/**
 	 * Caches the download count in the entity cache if it is enabled.
 	 *
 	 * @param downloadCount the download count
@@ -67,40 +117,39 @@ public interface DownloadCountPersistence
 	/**
 	 * Creates a new download count with the primary key. Does not add the download count to the database.
 	 *
-	 * @param downloadId the primary key for the new download count
+	 * @param id the primary key for the new download count
 	 * @return the new download count
 	 */
-	public DownloadCount create(long downloadId);
+	public DownloadCount create(long id);
 
 	/**
 	 * Removes the download count with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param downloadId the primary key of the download count
+	 * @param id the primary key of the download count
 	 * @return the download count that was removed
 	 * @throws NoSuchDownloadCountException if a download count with the primary key could not be found
 	 */
-	public DownloadCount remove(long downloadId)
-		throws NoSuchDownloadCountException;
+	public DownloadCount remove(long id) throws NoSuchDownloadCountException;
 
 	public DownloadCount updateImpl(DownloadCount downloadCount);
 
 	/**
 	 * Returns the download count with the primary key or throws a <code>NoSuchDownloadCountException</code> if it could not be found.
 	 *
-	 * @param downloadId the primary key of the download count
+	 * @param id the primary key of the download count
 	 * @return the download count
 	 * @throws NoSuchDownloadCountException if a download count with the primary key could not be found
 	 */
-	public DownloadCount findByPrimaryKey(long downloadId)
+	public DownloadCount findByPrimaryKey(long id)
 		throws NoSuchDownloadCountException;
 
 	/**
 	 * Returns the download count with the primary key or returns <code>null</code> if it could not be found.
 	 *
-	 * @param downloadId the primary key of the download count
+	 * @param id the primary key of the download count
 	 * @return the download count, or <code>null</code> if a download count with the primary key could not be found
 	 */
-	public DownloadCount fetchByPrimaryKey(long downloadId);
+	public DownloadCount fetchByPrimaryKey(long id);
 
 	/**
 	 * Returns all the download counts.
@@ -169,5 +218,8 @@ public interface DownloadCountPersistence
 	 * @return the number of download counts
 	 */
 	public int countAll();
+
+	@Override
+	public Set<String> getBadColumnNames();
 
 }

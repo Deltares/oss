@@ -43,4 +43,7 @@ public interface DownloadSiteConfiguration {
 
     @Meta.AD(required = false, deflt = "", description = "Configure the URL where email banner image can be found.")
     String bannerURL();
+
+    @Meta.AD(required = false, deflt = "true", description = "Configure if to send email notifications.")
+    boolean enableEmails();
 }

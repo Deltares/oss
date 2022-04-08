@@ -51,14 +51,12 @@ public class DownloadLocalServiceWrapper
 	/**
 	 * Creates a new download with the primary key. Does not add the download to the database.
 	 *
-	 * @param downloadPK the primary key for the new download
+	 * @param id the primary key for the new download
 	 * @return the new download
 	 */
 	@Override
-	public nl.deltares.oss.download.model.Download createDownload(
-		nl.deltares.oss.download.service.persistence.DownloadPK downloadPK) {
-
-		return _downloadLocalService.createDownload(downloadPK);
+	public nl.deltares.oss.download.model.Download createDownload(long id) {
+		return _downloadLocalService.createDownload(id);
 	}
 
 	/**
@@ -77,16 +75,15 @@ public class DownloadLocalServiceWrapper
 	/**
 	 * Deletes the download with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param downloadPK the primary key of the download
+	 * @param id the primary key of the download
 	 * @return the download that was removed
 	 * @throws PortalException if a download with the primary key could not be found
 	 */
 	@Override
-	public nl.deltares.oss.download.model.Download deleteDownload(
-			nl.deltares.oss.download.service.persistence.DownloadPK downloadPK)
+	public nl.deltares.oss.download.model.Download deleteDownload(long id)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
-		return _downloadLocalService.deleteDownload(downloadPK);
+		return _downloadLocalService.deleteDownload(id);
 	}
 
 	/**
@@ -191,10 +188,8 @@ public class DownloadLocalServiceWrapper
 	}
 
 	@Override
-	public nl.deltares.oss.download.model.Download fetchDownload(
-		nl.deltares.oss.download.service.persistence.DownloadPK downloadPK) {
-
-		return _downloadLocalService.fetchDownload(downloadPK);
+	public nl.deltares.oss.download.model.Download fetchDownload(long id) {
+		return _downloadLocalService.fetchDownload(id);
 	}
 
 	@Override
@@ -207,16 +202,15 @@ public class DownloadLocalServiceWrapper
 	/**
 	 * Returns the download with the primary key.
 	 *
-	 * @param downloadPK the primary key of the download
+	 * @param id the primary key of the download
 	 * @return the download
 	 * @throws PortalException if a download with the primary key could not be found
 	 */
 	@Override
-	public nl.deltares.oss.download.model.Download getDownload(
-			nl.deltares.oss.download.service.persistence.DownloadPK downloadPK)
+	public nl.deltares.oss.download.model.Download getDownload(long id)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
-		return _downloadLocalService.getDownload(downloadPK);
+		return _downloadLocalService.getDownload(id);
 	}
 
 	/**
@@ -266,9 +260,9 @@ public class DownloadLocalServiceWrapper
 
 	@Override
 	public java.util.List<nl.deltares.oss.download.model.Download>
-		getPendingUserDownloads(long userId) {
+		getPendingUserDownloads(long groupId, long userId) {
 
-		return _downloadLocalService.getPendingUserDownloads(userId);
+		return _downloadLocalService.getPendingUserDownloads(groupId, userId);
 	}
 
 	@Override
@@ -277,6 +271,14 @@ public class DownloadLocalServiceWrapper
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _downloadLocalService.getPersistedModel(primaryKeyObj);
+	}
+
+	@Override
+	public nl.deltares.oss.download.model.Download getUserDownload(
+		long groupId, long userId, long downloadId) {
+
+		return _downloadLocalService.getUserDownload(
+			groupId, userId, downloadId);
 	}
 
 	/**

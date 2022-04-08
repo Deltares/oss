@@ -57,6 +57,9 @@ public class DownloadCountWrapper
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
+		attributes.put("id", getId());
+		attributes.put("companyId", getCompanyId());
+		attributes.put("groupId", getGroupId());
 		attributes.put("downloadId", getDownloadId());
 		attributes.put("count", getCount());
 
@@ -65,6 +68,24 @@ public class DownloadCountWrapper
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
+		Long id = (Long)attributes.get("id");
+
+		if (id != null) {
+			setId(id);
+		}
+
+		Long companyId = (Long)attributes.get("companyId");
+
+		if (companyId != null) {
+			setCompanyId(companyId);
+		}
+
+		Long groupId = (Long)attributes.get("groupId");
+
+		if (groupId != null) {
+			setGroupId(groupId);
+		}
+
 		Long downloadId = (Long)attributes.get("downloadId");
 
 		if (downloadId != null) {
@@ -91,6 +112,16 @@ public class DownloadCountWrapper
 	}
 
 	/**
+	 * Returns the company ID of this download count.
+	 *
+	 * @return the company ID of this download count
+	 */
+	@Override
+	public long getCompanyId() {
+		return _downloadCount.getCompanyId();
+	}
+
+	/**
 	 * Returns the count of this download count.
 	 *
 	 * @return the count of this download count
@@ -113,6 +144,26 @@ public class DownloadCountWrapper
 	@Override
 	public ExpandoBridge getExpandoBridge() {
 		return _downloadCount.getExpandoBridge();
+	}
+
+	/**
+	 * Returns the group ID of this download count.
+	 *
+	 * @return the group ID of this download count
+	 */
+	@Override
+	public long getGroupId() {
+		return _downloadCount.getGroupId();
+	}
+
+	/**
+	 * Returns the ID of this download count.
+	 *
+	 * @return the ID of this download count
+	 */
+	@Override
+	public long getId() {
+		return _downloadCount.getId();
 	}
 
 	/**
@@ -161,6 +212,16 @@ public class DownloadCountWrapper
 	}
 
 	/**
+	 * Sets the company ID of this download count.
+	 *
+	 * @param companyId the company ID of this download count
+	 */
+	@Override
+	public void setCompanyId(long companyId) {
+		_downloadCount.setCompanyId(companyId);
+	}
+
+	/**
 	 * Sets the count of this download count.
 	 *
 	 * @param count the count of this download count
@@ -195,6 +256,26 @@ public class DownloadCountWrapper
 	@Override
 	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
 		_downloadCount.setExpandoBridgeAttributes(serviceContext);
+	}
+
+	/**
+	 * Sets the group ID of this download count.
+	 *
+	 * @param groupId the group ID of this download count
+	 */
+	@Override
+	public void setGroupId(long groupId) {
+		_downloadCount.setGroupId(groupId);
+	}
+
+	/**
+	 * Sets the ID of this download count.
+	 *
+	 * @param id the ID of this download count
+	 */
+	@Override
+	public void setId(long id) {
+		_downloadCount.setId(id);
 	}
 
 	@Override

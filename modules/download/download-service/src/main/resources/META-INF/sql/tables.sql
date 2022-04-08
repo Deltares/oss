@@ -1,21 +1,24 @@
 create table Downloads_Download (
-	downloadId LONG not null,
-	userId LONG not null,
-	groupId LONG,
+	id_ LONG not null primary key,
 	companyId LONG,
+	groupId LONG,
+	downloadId LONG,
+	userId LONG,
 	createDate DATE null,
 	modifiedDate DATE null,
-	path_ VARCHAR(75) null,
+	filePath STRING null,
 	expiryDate DATE null,
 	organization VARCHAR(75) null,
 	countryCode VARCHAR(75) null,
 	city VARCHAR(75) null,
 	shareId LONG,
-	directDownloadUrl VARCHAR(75) null,
-	primary key (downloadId, userId)
+	directDownloadUrl STRING null
 );
 
 create table Downloads_DownloadCount (
-	downloadId LONG not null primary key,
+	id_ LONG not null primary key,
+	companyId LONG,
+	groupId LONG,
+	downloadId LONG,
 	count INTEGER
 );

@@ -57,13 +57,14 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
+		attributes.put("id", getId());
+		attributes.put("companyId", getCompanyId());
+		attributes.put("groupId", getGroupId());
 		attributes.put("downloadId", getDownloadId());
 		attributes.put("userId", getUserId());
-		attributes.put("groupId", getGroupId());
-		attributes.put("companyId", getCompanyId());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
-		attributes.put("path", getPath());
+		attributes.put("filePath", getFilePath());
 		attributes.put("expiryDate", getExpiryDate());
 		attributes.put("organization", getOrganization());
 		attributes.put("countryCode", getCountryCode());
@@ -76,6 +77,24 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
+		Long id = (Long)attributes.get("id");
+
+		if (id != null) {
+			setId(id);
+		}
+
+		Long companyId = (Long)attributes.get("companyId");
+
+		if (companyId != null) {
+			setCompanyId(companyId);
+		}
+
+		Long groupId = (Long)attributes.get("groupId");
+
+		if (groupId != null) {
+			setGroupId(groupId);
+		}
+
 		Long downloadId = (Long)attributes.get("downloadId");
 
 		if (downloadId != null) {
@@ -86,18 +105,6 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 
 		if (userId != null) {
 			setUserId(userId);
-		}
-
-		Long groupId = (Long)attributes.get("groupId");
-
-		if (groupId != null) {
-			setGroupId(groupId);
-		}
-
-		Long companyId = (Long)attributes.get("companyId");
-
-		if (companyId != null) {
-			setCompanyId(companyId);
 		}
 
 		Date createDate = (Date)attributes.get("createDate");
@@ -112,10 +119,10 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 			setModifiedDate(modifiedDate);
 		}
 
-		String path = (String)attributes.get("path");
+		String filePath = (String)attributes.get("filePath");
 
-		if (path != null) {
-			setPath(path);
+		if (filePath != null) {
+			setFilePath(filePath);
 		}
 
 		Date expiryDate = (Date)attributes.get("expiryDate");
@@ -241,6 +248,16 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	}
 
 	/**
+	 * Returns the file path of this download.
+	 *
+	 * @return the file path of this download
+	 */
+	@Override
+	public String getFilePath() {
+		return _download.getFilePath();
+	}
+
+	/**
 	 * Returns the group ID of this download.
 	 *
 	 * @return the group ID of this download
@@ -248,6 +265,16 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	@Override
 	public long getGroupId() {
 		return _download.getGroupId();
+	}
+
+	/**
+	 * Returns the ID of this download.
+	 *
+	 * @return the ID of this download
+	 */
+	@Override
+	public long getId() {
+		return _download.getId();
 	}
 
 	/**
@@ -271,24 +298,12 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	}
 
 	/**
-	 * Returns the path of this download.
-	 *
-	 * @return the path of this download
-	 */
-	@Override
-	public String getPath() {
-		return _download.getPath();
-	}
-
-	/**
 	 * Returns the primary key of this download.
 	 *
 	 * @return the primary key of this download
 	 */
 	@Override
-	public nl.deltares.oss.download.service.persistence.DownloadPK
-		getPrimaryKey() {
-
+	public long getPrimaryKey() {
 		return _download.getPrimaryKey();
 	}
 
@@ -445,6 +460,16 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	}
 
 	/**
+	 * Sets the file path of this download.
+	 *
+	 * @param filePath the file path of this download
+	 */
+	@Override
+	public void setFilePath(String filePath) {
+		_download.setFilePath(filePath);
+	}
+
+	/**
 	 * Sets the group ID of this download.
 	 *
 	 * @param groupId the group ID of this download
@@ -452,6 +477,16 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	@Override
 	public void setGroupId(long groupId) {
 		_download.setGroupId(groupId);
+	}
+
+	/**
+	 * Sets the ID of this download.
+	 *
+	 * @param id the ID of this download
+	 */
+	@Override
+	public void setId(long id) {
+		_download.setId(id);
 	}
 
 	/**
@@ -480,24 +515,12 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	}
 
 	/**
-	 * Sets the path of this download.
-	 *
-	 * @param path the path of this download
-	 */
-	@Override
-	public void setPath(String path) {
-		_download.setPath(path);
-	}
-
-	/**
 	 * Sets the primary key of this download.
 	 *
 	 * @param primaryKey the primary key of this download
 	 */
 	@Override
-	public void setPrimaryKey(
-		nl.deltares.oss.download.service.persistence.DownloadPK primaryKey) {
-
+	public void setPrimaryKey(long primaryKey) {
 		_download.setPrimaryKey(primaryKey);
 	}
 

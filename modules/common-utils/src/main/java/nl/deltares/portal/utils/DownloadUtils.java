@@ -2,9 +2,7 @@ package nl.deltares.portal.utils;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.model.impl.Download;
-import nl.deltares.portal.model.impl.DownloadGroup;
 
 import java.util.Map;
 
@@ -54,9 +52,10 @@ public interface DownloadUtils {
      *
      * @param downloadId ArticleId of download
      * @param userId User requesting download
+     * @param groupId Site id in which to look
      * @return Existing download url if available
      */
-    String directDownloadExists(long downloadId, long userId);
+    String directDownloadExists(long downloadId, long userId, long groupId);
 
     /**
      * Resend an email to recipient of share link.
@@ -76,23 +75,27 @@ public interface DownloadUtils {
     /**
      * Register the download request in the downloads table.
      * @param user User
+     * @param groupId Group from which download takes place
      * @param downloadId ArticleId of download
+     * @param filePath Path to file
      * @param shareInfo Information regarding the share. If payment is pending then this info is not yet available
      * @param userAttributes Information about the user
      */
-    void registerDownload(User user, long downloadId, Map<String, Object> shareInfo, Map<String, String> userAttributes) throws PortalException;
+    void registerDownload(User user, long groupId, long downloadId, String filePath, Map<String, Object> shareInfo, Map<String, String> userAttributes) throws PortalException;
 
     /**
      * Register the direct download request in the downloads table.
      * @param user User
+     * @param groupId Group from which download takes place
      * @param downloadId ArticleId of download
+     * @param filePath Path to file
      * @param directDownloadUrl Url for direct download
      * @param userAttributes Information about the user
      */
-    void registerDownload(User user, long downloadId, String directDownloadUrl, Map<String, String> userAttributes) throws PortalException;
+    void registerDownload(User user, long groupId, long downloadId, String filePath, String directDownloadUrl, Map<String, String> userAttributes) throws PortalException;
 
 
-    void incrementDownloadCount(long downloadId);
+    void incrementDownloadCount(long companyId, long groupId, long downloadId);
 
     /**
      * Update any pending downloads that have not yet been assigned a shareLink
@@ -108,9 +111,17 @@ public interface DownloadUtils {
     int getDownloadCount(Download download);
 
     /**
+     * Get status of this download
+     * @param download Download to check
+     * @param user Logged in user
+     * @return Status value: available, expired, invalid,  payment_pending, unknown
+     */
+    String getDownloadStatus(Download download, User user);
+
+    /**
      * Check if payment is pending for download
      * @param download
      * @return
      */
-    boolean isPaymentPending(Download download, ThemeDisplay themeDisplay);
+    boolean isPaymentPending(Download download, User user);
 }

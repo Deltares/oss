@@ -38,12 +38,12 @@ public interface DownloadCount extends DownloadCountModel, PersistedModel {
 	 *
 	 * Never modify this interface directly. Add methods to <code>nl.deltares.oss.download.model.impl.DownloadCountImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public static final Accessor<DownloadCount, Long> DOWNLOAD_ID_ACCESSOR =
+	public static final Accessor<DownloadCount, Long> ID_ACCESSOR =
 		new Accessor<DownloadCount, Long>() {
 
 			@Override
 			public Long get(DownloadCount downloadCount) {
-				return downloadCount.getDownloadId();
+				return downloadCount.getId();
 			}
 
 			@Override

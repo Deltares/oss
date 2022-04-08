@@ -74,11 +74,11 @@ public interface DownloadCountLocalService
 	/**
 	 * Creates a new download count with the primary key. Does not add the download count to the database.
 	 *
-	 * @param downloadId the primary key for the new download count
+	 * @param id the primary key for the new download count
 	 * @return the new download count
 	 */
 	@Transactional(enabled = false)
-	public DownloadCount createDownloadCount(long downloadId);
+	public DownloadCount createDownloadCount(long id);
 
 	/**
 	 * Deletes the download count from the database. Also notifies the appropriate model listeners.
@@ -92,13 +92,12 @@ public interface DownloadCountLocalService
 	/**
 	 * Deletes the download count with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param downloadId the primary key of the download count
+	 * @param id the primary key of the download count
 	 * @return the download count that was removed
 	 * @throws PortalException if a download count with the primary key could not be found
 	 */
 	@Indexable(type = IndexableType.DELETE)
-	public DownloadCount deleteDownloadCount(long downloadId)
-		throws PortalException;
+	public DownloadCount deleteDownloadCount(long id) throws PortalException;
 
 	/**
 	 * @throws PortalException
@@ -174,7 +173,7 @@ public interface DownloadCountLocalService
 		DynamicQuery dynamicQuery, Projection projection);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public DownloadCount fetchDownloadCount(long downloadId);
+	public DownloadCount fetchDownloadCount(long id);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
@@ -182,13 +181,15 @@ public interface DownloadCountLocalService
 	/**
 	 * Returns the download count with the primary key.
 	 *
-	 * @param downloadId the primary key of the download count
+	 * @param id the primary key of the download count
 	 * @return the download count
 	 * @throws PortalException if a download count with the primary key could not be found
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public DownloadCount getDownloadCount(long downloadId)
-		throws PortalException;
+	public DownloadCount getDownloadCount(long id) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public DownloadCount getDownloadCount(long groupId, long downloadId);
 
 	/**
 	 * Returns a range of all the download counts.
