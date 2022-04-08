@@ -28,7 +28,7 @@
         </aui:col>
     </aui:row>
     <hr>
-    <aui:form name="downloadRegistrationsButton" enctype="multipart/form-data" >
+    <aui:form name="downloadRegistrations" enctype="multipart/form-data" >
         <aui:fieldset >
             <aui:row>
                 <aui:col width="50" >
@@ -39,7 +39,7 @@
                 </aui:col>
                 <aui:col width="25">
                     <aui:row>
-                        <aui:select name="eventSelection" >
+                        <aui:select name="eventSelection" label="">
                             <aui:option value="all" >All Events</aui:option>
                             <% for (JournalArticle event : events) { %>
                             <aui:option value="<%=event.getArticleId() %>" ><%= event.getTitle() %></aui:option>
@@ -57,13 +57,13 @@
                     </aui:row>
                 </aui:col>
                 <aui:col width="5">
-                    <aui:button name="downloadButton"  type="button" value="dsd.admin.download" />
+                    <aui:button name="downloadRegistrationsButton"  type="submit" value="dsd.admin.download" />
                 </aui:col>
             </aui:row>
         </aui:fieldset>
     </aui:form>
     <hr>
-    <aui:form name="deleteRegistrationsButton" enctype="multipart/form-data" >
+    <aui:form name="deleteRegistrations" enctype="multipart/form-data" >
         <aui:fieldset >
             <aui:row>
                 <aui:col width="50" >
@@ -104,20 +104,21 @@
 <aui:script use="event, io, aui-io-request, node, aui-base, aui-progressbar">
 
     let downloadRegistrationsButton = document.getElementById('<portlet:namespace/>downloadRegistrationsButton');
-    downloadRegistrationsButton.onclick = function(event){
-        event.preventDefault();
+    downloadRegistrationsButton.addEventListener('click', function (ev) {
+        ev.preventDefault();
         DsdAdminFormsUtil.downloadRegistrations("<portlet:resourceURL/>", "<portlet:namespace/>")
-    };
+    });
 
     let deleteRegistrationsButton = document.getElementById('<portlet:namespace/>deleteRegistrationsButton');
-    deleteRegistrationsButton.onclick = function(event){
-        event.preventDefault();
+    deleteRegistrationsButton.addEventListener('click', function (ev) {
+        ev.preventDefault();
         DsdAdminFormsUtil.deleteRegistrations("<portlet:resourceURL/>", "<portlet:namespace/>")
-    };
+    });
 
     let eventSelection = document.getElementById('<portlet:namespace/>eventSelection');
-    eventSelection.onfocus =  function(){
+    eventSelection.addEventListener('change', function (ev) {
+        ev.preventDefault();
         CommonFormsUtil.clearError('<portlet:namespace/>')
-    }
+    });
 
 </aui:script>

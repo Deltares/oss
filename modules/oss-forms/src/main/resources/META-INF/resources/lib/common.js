@@ -71,10 +71,10 @@ CommonFormsUtil = {
             }).render();
         }
     },
-    callUpdateProgressRequest : function (resourceUrl, namespace){
+    callUpdateProgressRequest : function (resourceUrl, namespace, id){
 
         let A = new AUI();
-        A.io.request(resourceUrl + '&' + namespace + 'action=updateStatus', {
+        A.io.request(resourceUrl + '&' + namespace + 'action=updateStatus' + '&' + namespace + 'id=' + id, {
             sync : 'true',
             cache : 'false',
             on : {
@@ -92,7 +92,7 @@ CommonFormsUtil = {
                             CommonFormsUtil.stopProgressMonitor(namespace);
                         } else if (statusMsg.status === 'available'){
                             CommonFormsUtil.stopProgressMonitor(namespace);
-                            CommonFormsUtil.callDownloadLogFileRequest(resourceUrl, namespace);
+                            CommonFormsUtil.callDownloadLogFileRequest(resourceUrl, namespace, id);
                         } else {
                             CommonFormsUtil.updateProgressBar(namespace, statusMsg);
                         }
@@ -119,9 +119,9 @@ CommonFormsUtil = {
         });
 
     },
-    callDownloadLogFileRequest : function (resourceUrl, namespace){
+    callDownloadLogFileRequest : function (resourceUrl, namespace, id){
         let A = new AUI();
-        A.io.request(resourceUrl + '&' + namespace + 'action=downloadLog', {
+        A.io.request(resourceUrl + '&' + namespace + 'action=downloadLog' + '&' + namespace + 'id=' + id, {
             on : {
                 success : function(response, status, xhr) {
                     let responseData = this.get('responseData');

@@ -66,7 +66,7 @@ OssFormsUtil = {
                         // POST does not return response.
                         CommonFormsUtil.startProgressMonitor(namespace);
                         CommonFormsUtil.setRunningProcess(namespace, setInterval(function(){
-                            CommonFormsUtil.callUpdateProgressRequest(resourceUrl, namespace)
+                            CommonFormsUtil.callUpdateProgressRequest(resourceUrl, namespace, 'none')
                         }, 1000));
                     } else {
                         let statusMsg = JSON.parse(xhr.responseText);
@@ -97,10 +97,14 @@ OssFormsUtil = {
                         return true;
                     } else if (xhr.status === 200){
                         let jsonResponse = JSON.parse(xhr.responseText);
-                        CommonFormsUtil.startProgressMonitor(namespace);
-                        CommonFormsUtil.setRunningProcess(namespace, setInterval(function(){
-                            CommonFormsUtil.callUpdateProgressRequest(resourceUrl, namespace, jsonResponse.id)
-                        }, 1000));
+                        if (jsonResponse.status === 'nodata'){
+                          CommonFormsUtil.writeInfo("No data found for request")  ;
+                        } else {
+                            CommonFormsUtil.startProgressMonitor(namespace);
+                            CommonFormsUtil.setRunningProcess(namespace, setInterval(function () {
+                                CommonFormsUtil.callUpdateProgressRequest(resourceUrl, namespace, jsonResponse.id)
+                            }, 1000));
+                        }
                     } else {
                         CommonFormsUtil.stopProgressMonitor(namespace)
                     }

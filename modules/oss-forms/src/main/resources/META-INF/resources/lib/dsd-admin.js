@@ -61,10 +61,14 @@ DsdAdminFormsUtil = {
                         return true;
                     } else if (xhr.status === 200){
                         let jsonResponse = JSON.parse(xhr.responseText);
-                        CommonFormsUtil.startProgressMonitor(namespace);
-                        CommonFormsUtil.setRunningProcess(namespace, setInterval(function(){
-                            CommonFormsUtil.callUpdateProgressRequest(resourceUrl, namespace, jsonResponse.id)
-                        }, 1000));
+                        if (jsonResponse.status === 'nodata'){
+                            CommonFormsUtil.writeInfo("No data found for request");
+                        } else {
+                            CommonFormsUtil.startProgressMonitor(namespace);
+                            CommonFormsUtil.setRunningProcess(namespace, setInterval(function () {
+                                CommonFormsUtil.callUpdateProgressRequest(resourceUrl, namespace, jsonResponse.id)
+                            }, 1000));
+                        }
                     } else {
                         CommonFormsUtil.stopProgressMonitor(namespace)
                     }
@@ -72,6 +76,9 @@ DsdAdminFormsUtil = {
                 failure : function(response, status, xhr) {
                     CommonFormsUtil.stopProgressMonitor(namespace)
                     CommonFormsUtil.writeError(namespace, xhr.status + ': ' + xhr.responseText);
+                },
+                error : function (){
+                    alert("Error")
                 }
             }
         });
