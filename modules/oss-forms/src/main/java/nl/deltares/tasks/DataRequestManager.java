@@ -145,8 +145,10 @@ public class DataRequestManager {
     }
 
     public void writeError(String msg, ResourceResponse resourceResponse) throws IOException {
+
         resourceResponse.setContentType("text/plain");
         resourceResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        resourceResponse.setContentLength(msg.length());
         PrintWriter writer = resourceResponse.getWriter();
         writer.print(msg);
     }
