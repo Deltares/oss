@@ -9,10 +9,7 @@
             <#assign assetRenderer = entry.getAssetRenderer() />
             <#assign journalArticle = assetRenderer.getArticle() />
             <#assign download = parserUtils.toDsdArticle(journalArticle, locale) />
-            <#assign directDownload = download.isDirectDownload() />
-            <#assign sendLink = download.isSendLink() />
             <#assign count = downloadUtils.getDownloadCount(download) />
-
             <li class="list-group-item list-group-item-flex">
                 <div class="col-12 px-3">
                     <h4>
@@ -22,37 +19,80 @@
                         ${download.getFileTopicName()} | ${download.getFileTypeName()} | ${download.getFileSize()} | ${count} downloads
                         <#if themeDisplay.isSignedIn() >
                             <span class="d-block" style="float:right">
-                            <#if directDownload >
-                                <#assign downloadUrl = baseUrl + "/direct/" />
-                                <a href="#" id="${journalArticle.getArticleId()}_download" onclick="directDownload(this.id,
-                                        '${downloadUrl}', '${download.getFileId()}', '${download.getFileName()}', '${download.getArticleId()}')"
-                                   class="btn btn-primary" role="button" aria-pressed="true">
-                                    ${languageUtil.get(locale, "download.download")}
-                                </a>
-                            <#elseif sendLink >
-                                <#assign downloadUrl = baseUrl + "/sendlink/" />
-                                <a href="#" id="${journalArticle.getArticleId()}_sendlink"
-                                   onclick="sendLink(this.id, '${downloadUrl}', '${download.getFilePath()}', '${download.getArticleId()}')"
-                                   class="btn btn-primary" role="button" aria-pressed="true">
-                                    ${languageUtil.get(locale, "download.sendlink")}
-                                </a>
-                            <#else>
-                                <#assign paymentPending = downloadUtils.isPaymentPending(download, themeDisplay) />
-                                <#if paymentPending >
+                            <#assign downloadStatus = downloadUtils.getDownloadStatus(download, themeDisplay.getUser()) />
+                            <#assign directDownload = download.isDirectDownload() />
+                            <#assign sendLink = download.isSendLink() />
+                            <#switch downloadStatus >
+
+                                <#case "payment_pending" >
+                                    <#assign buttonText = languageUtil.get(locale, "shopping.cart.paymentPending")/>
+                                    <#assign action = "none"/>
+                                    <#break >
+                                <#case "available">
+                                    <#if directDownload >
+                                        <#assign action = "directdownload"/>
+                                        <#assign buttonText = languageUtil.get(locale, "download.download.again")/>
+                                    <#elseif sendLink >
+                                        <#assign action = "sendlink"/>
+                                        <#assign buttonText = languageUtil.get(locale, "download.sendlink.again")/>
+                                    <#else>
+                                        <#assign action = "none"/>
+                                        <#assign buttonText = languageUtil.get(locale, "shopping.cart.available")/>
+                                    </#if>
+                                    <#break >
+                                <#case "processing">
+                                    <#assign buttonText = languageUtil.get(locale, "shopping.cart.processing")/>
+                                    <#assign action = "none"/>
+                                    <#break >
+                                <#default >
+                                    <#if directDownload >
+                                        <#assign action = "directdownload"/>
+                                        <#assign buttonText = languageUtil.get(locale, "download.download")/>
+                                    <#elseif sendLink >
+                                        <#assign action = "sendlink"/>
+                                        <#assign buttonText = languageUtil.get(locale, "download.sendlink")/>
+                                    <#else>
+                                        <#assign action = "addtocart"/>
+                                        <#assign buttonText = languageUtil.get(locale, "shopping.cart.add")/>
+                                    </#if>
+                            </#switch>
+
+                            <#switch action >
+                                <#case "none">
                                     <a href="#" data-article-id="${download.getArticleId()}"
                                        class="btn-lg btn-primary disabled"
                                        role="button" aria-pressed="true" style="color:#fff">
-                                        ${languageUtil.get(locale, "shopping.cart.paymentPending")}
+                                        ${buttonText}
                                     </a>
-                                <#else >
+                                    <#break />
+                                <#case "directdownload">
+                                    <#assign downloadUrl = baseUrl + "/direct/" />
+                                    <a href="#" id="${journalArticle.getArticleId()}_download"
+                                       onclick="directDownload(this.id,'${downloadUrl}', '${download.getFileId()}',
+                                               '${download.getFilePath()}', '${download.getFileName()}', '${download.getArticleId()}',
+                                               '${themeDisplay.getScopeGroupId()}')"
+                                       class="btn-lg btn-primary" role="button" aria-pressed="true">
+                                                ${buttonText}
+                                    </a>
+                                    <#break />
+                                <#case "sendlink">
+                                    <#assign downloadUrl = baseUrl + "/sendlink/" />
+                                    <a href="#" id="${journalArticle.getArticleId()}_sendlink"
+                                       onclick="sendLink(this.id, '${downloadUrl}', '${download.getFilePath()}', '${download.getArticleId()}',
+                                               '${themeDisplay.getScopeGroupId()}')"
+                                       class="btn-lg btn-primary" role="button" aria-pressed="true">
+                                                ${buttonText}
+                                    </a>
+                                    <#break />
+                                <#case "addtocart">
                                     <a href="#" data-article-id="${download.getArticleId()}"
                                        class="btn-lg btn-primary add-download-to-cart"
                                        role="button" aria-pressed="true" style="color:#fff">
-                                        ${languageUtil.get(locale, "shopping.cart.add")}
-                                    </a>
-                                </#if>
+                                            ${buttonText}
+                                        </a>
+                                <#break />
+                            </#switch>
 
-                            </#if>
                             </span>
                         </#if>
                     </div>
@@ -65,9 +105,8 @@
 <script>
 
     //Send link to user
-    function sendLink(button_id, sendLinkUrl, filePath, articleId) {
+    function sendLink(button_id, sendLinkUrl, filePath, articleId, groupId) {
 
-        updateButton(button_id, "Sending link...");
         let pAuth = Liferay.authToken;
         $.ajax({
             type: "POST",
@@ -75,12 +114,13 @@
             data: "{" +
                 "\"filePath\": \"" + filePath + "\"," +
                 "\"resendLink\": \"true\"," +
-                "\"downloadId\": \"" + articleId + "\"" +
+                "\"downloadId\": \"" + articleId + "\"," +
+                "\"groupId\": \"" + groupId + "\"" +
                 "}",
             contentType: "application/json",
             success : function(response, status, xhr) {
                 alert(xhr.responseText);
-                updateButton(button_id, "Link sent")
+                location.reload();
             },
             failure : function(response, status, xhr) {
                 alert(xhr.responseText);
@@ -90,17 +130,17 @@
     }
 
     //Get the direct download link for the file
-    function directDownload(button_id, directDownloadUrl, fileId, fileName, articleId) {
+    function directDownload(button_id, directDownloadUrl, fileId, filePath, fileName, articleId, groupId) {
 
-        updateButton(button_id, "Downloading...")
         let pAuth = Liferay.authToken;
         $.ajax({
             type: "POST",
             url: directDownloadUrl + '?p_auth=' + pAuth,
             data: "{" +
                 "\"fileId\": \"" + fileId + "\"," +
-                "\"fileName\": \"" + fileName + "\"," +
-                "\"downloadId\": \"" + articleId + "\"" +
+                "\"filePath\": \"" + filePath + "\"," +
+                "\"downloadId\": \"" + articleId + "\"," +
+                "\"groupId\": \"" + groupId + "\"" +
                 "}",
             contentType: "application/json",
             xhrFields: {
@@ -111,7 +151,7 @@
                     alert(xhr.responseText);
                 } else {
                     saveAs(blob, fileName);
-                    updateButton(button_id, "Download completed")
+                    location.reload();
                 }
             },
             error : function(request, status, error) {
@@ -138,9 +178,4 @@
 
     }
 
-    function updateButton(id, buttonText){
-        let button = document.getElementById(id);
-        button.classList.add('disabled');
-        button.textContent = buttonText;
-    }
 </script>

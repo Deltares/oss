@@ -50,7 +50,7 @@ public class DownloadCountCacheModel
 		DownloadCountCacheModel downloadCountCacheModel =
 			(DownloadCountCacheModel)obj;
 
-		if (downloadId == downloadCountCacheModel.downloadId) {
+		if (id == downloadCountCacheModel.id) {
 			return true;
 		}
 
@@ -59,14 +59,20 @@ public class DownloadCountCacheModel
 
 	@Override
 	public int hashCode() {
-		return HashUtil.hash(0, downloadId);
+		return HashUtil.hash(0, id);
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(5);
+		StringBundler sb = new StringBundler(11);
 
-		sb.append("{downloadId=");
+		sb.append("{id=");
+		sb.append(id);
+		sb.append(", companyId=");
+		sb.append(companyId);
+		sb.append(", groupId=");
+		sb.append(groupId);
+		sb.append(", downloadId=");
 		sb.append(downloadId);
 		sb.append(", count=");
 		sb.append(count);
@@ -79,6 +85,9 @@ public class DownloadCountCacheModel
 	public DownloadCount toEntityModel() {
 		DownloadCountImpl downloadCountImpl = new DownloadCountImpl();
 
+		downloadCountImpl.setId(id);
+		downloadCountImpl.setCompanyId(companyId);
+		downloadCountImpl.setGroupId(groupId);
 		downloadCountImpl.setDownloadId(downloadId);
 		downloadCountImpl.setCount(count);
 
@@ -89,6 +98,12 @@ public class DownloadCountCacheModel
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		id = objectInput.readLong();
+
+		companyId = objectInput.readLong();
+
+		groupId = objectInput.readLong();
+
 		downloadId = objectInput.readLong();
 
 		count = objectInput.readInt();
@@ -96,11 +111,20 @@ public class DownloadCountCacheModel
 
 	@Override
 	public void writeExternal(ObjectOutput objectOutput) throws IOException {
+		objectOutput.writeLong(id);
+
+		objectOutput.writeLong(companyId);
+
+		objectOutput.writeLong(groupId);
+
 		objectOutput.writeLong(downloadId);
 
 		objectOutput.writeInt(count);
 	}
 
+	public long id;
+	public long companyId;
+	public long groupId;
 	public long downloadId;
 	public int count;
 

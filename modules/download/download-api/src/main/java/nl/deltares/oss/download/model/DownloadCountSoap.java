@@ -33,6 +33,9 @@ public class DownloadCountSoap implements Serializable {
 	public static DownloadCountSoap toSoapModel(DownloadCount model) {
 		DownloadCountSoap soapModel = new DownloadCountSoap();
 
+		soapModel.setId(model.getId());
+		soapModel.setCompanyId(model.getCompanyId());
+		soapModel.setGroupId(model.getGroupId());
 		soapModel.setDownloadId(model.getDownloadId());
 		soapModel.setCount(model.getCount());
 
@@ -81,11 +84,35 @@ public class DownloadCountSoap implements Serializable {
 	}
 
 	public long getPrimaryKey() {
-		return _downloadId;
+		return _id;
 	}
 
 	public void setPrimaryKey(long pk) {
-		setDownloadId(pk);
+		setId(pk);
+	}
+
+	public long getId() {
+		return _id;
+	}
+
+	public void setId(long id) {
+		_id = id;
+	}
+
+	public long getCompanyId() {
+		return _companyId;
+	}
+
+	public void setCompanyId(long companyId) {
+		_companyId = companyId;
+	}
+
+	public long getGroupId() {
+		return _groupId;
+	}
+
+	public void setGroupId(long groupId) {
+		_groupId = groupId;
 	}
 
 	public long getDownloadId() {
@@ -104,6 +131,9 @@ public class DownloadCountSoap implements Serializable {
 		_count = count;
 	}
 
+	private long _id;
+	private long _companyId;
+	private long _groupId;
 	private long _downloadId;
 	private int _count;
 

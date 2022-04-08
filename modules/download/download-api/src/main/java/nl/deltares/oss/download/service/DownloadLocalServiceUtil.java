@@ -56,13 +56,13 @@ public class DownloadLocalServiceUtil {
 	/**
 	 * Creates a new download with the primary key. Does not add the download to the database.
 	 *
-	 * @param downloadPK the primary key for the new download
+	 * @param id the primary key for the new download
 	 * @return the new download
 	 */
 	public static nl.deltares.oss.download.model.Download createDownload(
-		nl.deltares.oss.download.service.persistence.DownloadPK downloadPK) {
+		long id) {
 
-		return getService().createDownload(downloadPK);
+		return getService().createDownload(id);
 	}
 
 	/**
@@ -80,15 +80,15 @@ public class DownloadLocalServiceUtil {
 	/**
 	 * Deletes the download with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param downloadPK the primary key of the download
+	 * @param id the primary key of the download
 	 * @return the download that was removed
 	 * @throws PortalException if a download with the primary key could not be found
 	 */
 	public static nl.deltares.oss.download.model.Download deleteDownload(
-			nl.deltares.oss.download.service.persistence.DownloadPK downloadPK)
+			long id)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
-		return getService().deleteDownload(downloadPK);
+		return getService().deleteDownload(id);
 	}
 
 	/**
@@ -188,9 +188,9 @@ public class DownloadLocalServiceUtil {
 	}
 
 	public static nl.deltares.oss.download.model.Download fetchDownload(
-		nl.deltares.oss.download.service.persistence.DownloadPK downloadPK) {
+		long id) {
 
-		return getService().fetchDownload(downloadPK);
+		return getService().fetchDownload(id);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
@@ -202,15 +202,14 @@ public class DownloadLocalServiceUtil {
 	/**
 	 * Returns the download with the primary key.
 	 *
-	 * @param downloadPK the primary key of the download
+	 * @param id the primary key of the download
 	 * @return the download
 	 * @throws PortalException if a download with the primary key could not be found
 	 */
-	public static nl.deltares.oss.download.model.Download getDownload(
-			nl.deltares.oss.download.service.persistence.DownloadPK downloadPK)
+	public static nl.deltares.oss.download.model.Download getDownload(long id)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
-		return getService().getDownload(downloadPK);
+		return getService().getDownload(id);
 	}
 
 	/**
@@ -256,9 +255,9 @@ public class DownloadLocalServiceUtil {
 	}
 
 	public static java.util.List<nl.deltares.oss.download.model.Download>
-		getPendingUserDownloads(long userId) {
+		getPendingUserDownloads(long groupId, long userId) {
 
-		return getService().getPendingUserDownloads(userId);
+		return getService().getPendingUserDownloads(groupId, userId);
 	}
 
 	public static com.liferay.portal.kernel.model.PersistedModel
@@ -266,6 +265,12 @@ public class DownloadLocalServiceUtil {
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().getPersistedModel(primaryKeyObj);
+	}
+
+	public static nl.deltares.oss.download.model.Download getUserDownload(
+		long groupId, long userId, long downloadId) {
+
+		return getService().getUserDownload(groupId, userId, downloadId);
 	}
 
 	/**

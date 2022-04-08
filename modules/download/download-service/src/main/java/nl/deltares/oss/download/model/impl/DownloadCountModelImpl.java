@@ -67,28 +67,32 @@ public class DownloadCountModelImpl
 	public static final String TABLE_NAME = "Downloads_DownloadCount";
 
 	public static final Object[][] TABLE_COLUMNS = {
-		{"downloadId", Types.BIGINT}, {"count", Types.INTEGER}
+		{"id_", Types.BIGINT}, {"companyId", Types.BIGINT},
+		{"groupId", Types.BIGINT}, {"downloadId", Types.BIGINT},
+		{"count", Types.INTEGER}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
 		new HashMap<String, Integer>();
 
 	static {
+		TABLE_COLUMNS_MAP.put("id_", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("companyId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("groupId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("downloadId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("count", Types.INTEGER);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table Downloads_DownloadCount (downloadId LONG not null primary key,count INTEGER)";
+		"create table Downloads_DownloadCount (id_ LONG not null primary key,companyId LONG,groupId LONG,downloadId LONG,count INTEGER)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table Downloads_DownloadCount";
 
-	public static final String ORDER_BY_JPQL =
-		" ORDER BY downloadCount.count DESC";
+	public static final String ORDER_BY_JPQL = " ORDER BY downloadCount.id ASC";
 
 	public static final String ORDER_BY_SQL =
-		" ORDER BY Downloads_DownloadCount.count DESC";
+		" ORDER BY Downloads_DownloadCount.id_ ASC";
 
 	public static final String DATA_SOURCE = "liferayDataSource";
 
@@ -106,7 +110,16 @@ public class DownloadCountModelImpl
 			"value.object.finder.cache.enabled.nl.deltares.oss.download.model.DownloadCount"),
 		true);
 
-	public static final boolean COLUMN_BITMASK_ENABLED = false;
+	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(
+		nl.deltares.oss.download.service.util.ServiceProps.get(
+			"value.object.column.bitmask.enabled.nl.deltares.oss.download.model.DownloadCount"),
+		true);
+
+	public static final long DOWNLOADID_COLUMN_BITMASK = 1L;
+
+	public static final long GROUPID_COLUMN_BITMASK = 2L;
+
+	public static final long ID_COLUMN_BITMASK = 4L;
 
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(
 		nl.deltares.oss.download.service.util.ServiceProps.get(
@@ -117,17 +130,17 @@ public class DownloadCountModelImpl
 
 	@Override
 	public long getPrimaryKey() {
-		return _downloadId;
+		return _id;
 	}
 
 	@Override
 	public void setPrimaryKey(long primaryKey) {
-		setDownloadId(primaryKey);
+		setId(primaryKey);
 	}
 
 	@Override
 	public Serializable getPrimaryKeyObj() {
-		return _downloadId;
+		return _id;
 	}
 
 	@Override
@@ -238,6 +251,70 @@ public class DownloadCountModelImpl
 			new LinkedHashMap<String, BiConsumer<DownloadCount, ?>>();
 
 		attributeGetterFunctions.put(
+			"id",
+			new Function<DownloadCount, Object>() {
+
+				@Override
+				public Object apply(DownloadCount downloadCount) {
+					return downloadCount.getId();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"id",
+			new BiConsumer<DownloadCount, Object>() {
+
+				@Override
+				public void accept(DownloadCount downloadCount, Object id) {
+					downloadCount.setId((Long)id);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"companyId",
+			new Function<DownloadCount, Object>() {
+
+				@Override
+				public Object apply(DownloadCount downloadCount) {
+					return downloadCount.getCompanyId();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"companyId",
+			new BiConsumer<DownloadCount, Object>() {
+
+				@Override
+				public void accept(
+					DownloadCount downloadCount, Object companyId) {
+
+					downloadCount.setCompanyId((Long)companyId);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"groupId",
+			new Function<DownloadCount, Object>() {
+
+				@Override
+				public Object apply(DownloadCount downloadCount) {
+					return downloadCount.getGroupId();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"groupId",
+			new BiConsumer<DownloadCount, Object>() {
+
+				@Override
+				public void accept(
+					DownloadCount downloadCount, Object groupId) {
+
+					downloadCount.setGroupId((Long)groupId);
+				}
+
+			});
+		attributeGetterFunctions.put(
 			"downloadId",
 			new Function<DownloadCount, Object>() {
 
@@ -287,13 +364,67 @@ public class DownloadCountModelImpl
 	}
 
 	@Override
+	public long getId() {
+		return _id;
+	}
+
+	@Override
+	public void setId(long id) {
+		_id = id;
+	}
+
+	@Override
+	public long getCompanyId() {
+		return _companyId;
+	}
+
+	@Override
+	public void setCompanyId(long companyId) {
+		_companyId = companyId;
+	}
+
+	@Override
+	public long getGroupId() {
+		return _groupId;
+	}
+
+	@Override
+	public void setGroupId(long groupId) {
+		_columnBitmask |= GROUPID_COLUMN_BITMASK;
+
+		if (!_setOriginalGroupId) {
+			_setOriginalGroupId = true;
+
+			_originalGroupId = _groupId;
+		}
+
+		_groupId = groupId;
+	}
+
+	public long getOriginalGroupId() {
+		return _originalGroupId;
+	}
+
+	@Override
 	public long getDownloadId() {
 		return _downloadId;
 	}
 
 	@Override
 	public void setDownloadId(long downloadId) {
+		_columnBitmask |= DOWNLOADID_COLUMN_BITMASK;
+
+		if (!_setOriginalDownloadId) {
+			_setOriginalDownloadId = true;
+
+			_originalDownloadId = _downloadId;
+		}
+
 		_downloadId = downloadId;
+	}
+
+	public long getOriginalDownloadId() {
+		return _originalDownloadId;
 	}
 
 	@Override
@@ -306,10 +437,14 @@ public class DownloadCountModelImpl
 		_count = count;
 	}
 
+	public long getColumnBitmask() {
+		return _columnBitmask;
+	}
+
 	@Override
 	public ExpandoBridge getExpandoBridge() {
 		return ExpandoBridgeFactoryUtil.getExpandoBridge(
-			0, DownloadCount.class.getName(), getPrimaryKey());
+			getCompanyId(), DownloadCount.class.getName(), getPrimaryKey());
 	}
 
 	@Override
@@ -338,6 +473,9 @@ public class DownloadCountModelImpl
 	public Object clone() {
 		DownloadCountImpl downloadCountImpl = new DownloadCountImpl();
 
+		downloadCountImpl.setId(getId());
+		downloadCountImpl.setCompanyId(getCompanyId());
+		downloadCountImpl.setGroupId(getGroupId());
 		downloadCountImpl.setDownloadId(getDownloadId());
 		downloadCountImpl.setCount(getCount());
 
@@ -348,25 +486,17 @@ public class DownloadCountModelImpl
 
 	@Override
 	public int compareTo(DownloadCount downloadCount) {
-		int value = 0;
+		long primaryKey = downloadCount.getPrimaryKey();
 
-		if (getCount() < downloadCount.getCount()) {
-			value = -1;
+		if (getPrimaryKey() < primaryKey) {
+			return -1;
 		}
-		else if (getCount() > downloadCount.getCount()) {
-			value = 1;
+		else if (getPrimaryKey() > primaryKey) {
+			return 1;
 		}
 		else {
-			value = 0;
+			return 0;
 		}
-
-		value = value * -1;
-
-		if (value != 0) {
-			return value;
-		}
-
-		return 0;
 	}
 
 	@Override
@@ -408,12 +538,31 @@ public class DownloadCountModelImpl
 
 	@Override
 	public void resetOriginalValues() {
+		DownloadCountModelImpl downloadCountModelImpl = this;
+
+		downloadCountModelImpl._originalGroupId =
+			downloadCountModelImpl._groupId;
+
+		downloadCountModelImpl._setOriginalGroupId = false;
+
+		downloadCountModelImpl._originalDownloadId =
+			downloadCountModelImpl._downloadId;
+
+		downloadCountModelImpl._setOriginalDownloadId = false;
+
+		downloadCountModelImpl._columnBitmask = 0;
 	}
 
 	@Override
 	public CacheModel<DownloadCount> toCacheModel() {
 		DownloadCountCacheModel downloadCountCacheModel =
 			new DownloadCountCacheModel();
+
+		downloadCountCacheModel.id = getId();
+
+		downloadCountCacheModel.companyId = getCompanyId();
+
+		downloadCountCacheModel.groupId = getGroupId();
 
 		downloadCountCacheModel.downloadId = getDownloadId();
 
@@ -492,8 +641,16 @@ public class DownloadCountModelImpl
 
 	}
 
+	private long _id;
+	private long _companyId;
+	private long _groupId;
+	private long _originalGroupId;
+	private boolean _setOriginalGroupId;
 	private long _downloadId;
+	private long _originalDownloadId;
+	private boolean _setOriginalDownloadId;
 	private int _count;
+	private long _columnBitmask;
 	private DownloadCount _escapedModel;
 
 }

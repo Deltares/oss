@@ -16,14 +16,16 @@ package nl.deltares.oss.download.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.expando.kernel.model.ExpandoBridge;
+import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
-import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -45,7 +47,6 @@ import java.util.function.Function;
 
 import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.model.DownloadModel;
-import nl.deltares.oss.download.service.persistence.DownloadPK;
 
 /**
  * The base model implementation for the Download service. Represents a row in the &quot;Downloads_Download&quot; database table, with each column mapped to a property of this class.
@@ -70,26 +71,27 @@ public class DownloadModelImpl
 	public static final String TABLE_NAME = "Downloads_Download";
 
 	public static final Object[][] TABLE_COLUMNS = {
-		{"downloadId", Types.BIGINT}, {"userId", Types.BIGINT},
-		{"groupId", Types.BIGINT}, {"companyId", Types.BIGINT},
-		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
-		{"path_", Types.VARCHAR}, {"expiryDate", Types.TIMESTAMP},
-		{"organization", Types.VARCHAR}, {"countryCode", Types.VARCHAR},
-		{"city", Types.VARCHAR}, {"shareId", Types.BIGINT},
-		{"directDownloadUrl", Types.VARCHAR}
+		{"id_", Types.BIGINT}, {"companyId", Types.BIGINT},
+		{"groupId", Types.BIGINT}, {"downloadId", Types.BIGINT},
+		{"userId", Types.BIGINT}, {"createDate", Types.TIMESTAMP},
+		{"modifiedDate", Types.TIMESTAMP}, {"filePath", Types.VARCHAR},
+		{"expiryDate", Types.TIMESTAMP}, {"organization", Types.VARCHAR},
+		{"countryCode", Types.VARCHAR}, {"city", Types.VARCHAR},
+		{"shareId", Types.BIGINT}, {"directDownloadUrl", Types.VARCHAR}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
 		new HashMap<String, Integer>();
 
 	static {
+		TABLE_COLUMNS_MAP.put("id_", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("companyId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("groupId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("downloadId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("userId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("groupId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("companyId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
-		TABLE_COLUMNS_MAP.put("path_", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("filePath", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("expiryDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("organization", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("countryCode", Types.VARCHAR);
@@ -99,15 +101,14 @@ public class DownloadModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table Downloads_Download (downloadId LONG not null,userId LONG not null,groupId LONG,companyId LONG,createDate DATE null,modifiedDate DATE null,path_ VARCHAR(75) null,expiryDate DATE null,organization VARCHAR(75) null,countryCode VARCHAR(75) null,city VARCHAR(75) null,shareId LONG,directDownloadUrl VARCHAR(75) null,primary key (downloadId, userId))";
+		"create table Downloads_Download (id_ LONG not null primary key,companyId LONG,groupId LONG,downloadId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,filePath STRING null,expiryDate DATE null,organization VARCHAR(75) null,countryCode VARCHAR(75) null,city VARCHAR(75) null,shareId LONG,directDownloadUrl STRING null)";
 
 	public static final String TABLE_SQL_DROP = "drop table Downloads_Download";
 
-	public static final String ORDER_BY_JPQL =
-		" ORDER BY download.createDate DESC";
+	public static final String ORDER_BY_JPQL = " ORDER BY download.id ASC";
 
 	public static final String ORDER_BY_SQL =
-		" ORDER BY Downloads_Download.createDate DESC";
+		" ORDER BY Downloads_Download.id_ ASC";
 
 	public static final String DATA_SOURCE = "liferayDataSource";
 
@@ -132,9 +133,11 @@ public class DownloadModelImpl
 
 	public static final long DOWNLOADID_COLUMN_BITMASK = 1L;
 
-	public static final long USERID_COLUMN_BITMASK = 2L;
+	public static final long GROUPID_COLUMN_BITMASK = 2L;
 
-	public static final long CREATEDATE_COLUMN_BITMASK = 4L;
+	public static final long USERID_COLUMN_BITMASK = 4L;
+
+	public static final long ID_COLUMN_BITMASK = 8L;
 
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(
 		nl.deltares.oss.download.service.util.ServiceProps.get(
@@ -144,24 +147,23 @@ public class DownloadModelImpl
 	}
 
 	@Override
-	public DownloadPK getPrimaryKey() {
-		return new DownloadPK(_downloadId, _userId);
+	public long getPrimaryKey() {
+		return _id;
 	}
 
 	@Override
-	public void setPrimaryKey(DownloadPK primaryKey) {
-		setDownloadId(primaryKey.downloadId);
-		setUserId(primaryKey.userId);
+	public void setPrimaryKey(long primaryKey) {
+		setId(primaryKey);
 	}
 
 	@Override
 	public Serializable getPrimaryKeyObj() {
-		return new DownloadPK(_downloadId, _userId);
+		return _id;
 	}
 
 	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
-		setPrimaryKey((DownloadPK)primaryKeyObj);
+		setPrimaryKey(((Long)primaryKeyObj).longValue());
 	}
 
 	@Override
@@ -266,6 +268,66 @@ public class DownloadModelImpl
 			new LinkedHashMap<String, BiConsumer<Download, ?>>();
 
 		attributeGetterFunctions.put(
+			"id",
+			new Function<Download, Object>() {
+
+				@Override
+				public Object apply(Download download) {
+					return download.getId();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"id",
+			new BiConsumer<Download, Object>() {
+
+				@Override
+				public void accept(Download download, Object id) {
+					download.setId((Long)id);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"companyId",
+			new Function<Download, Object>() {
+
+				@Override
+				public Object apply(Download download) {
+					return download.getCompanyId();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"companyId",
+			new BiConsumer<Download, Object>() {
+
+				@Override
+				public void accept(Download download, Object companyId) {
+					download.setCompanyId((Long)companyId);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"groupId",
+			new Function<Download, Object>() {
+
+				@Override
+				public Object apply(Download download) {
+					return download.getGroupId();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"groupId",
+			new BiConsumer<Download, Object>() {
+
+				@Override
+				public void accept(Download download, Object groupId) {
+					download.setGroupId((Long)groupId);
+				}
+
+			});
+		attributeGetterFunctions.put(
 			"downloadId",
 			new Function<Download, Object>() {
 
@@ -302,46 +364,6 @@ public class DownloadModelImpl
 				@Override
 				public void accept(Download download, Object userId) {
 					download.setUserId((Long)userId);
-				}
-
-			});
-		attributeGetterFunctions.put(
-			"groupId",
-			new Function<Download, Object>() {
-
-				@Override
-				public Object apply(Download download) {
-					return download.getGroupId();
-				}
-
-			});
-		attributeSetterBiConsumers.put(
-			"groupId",
-			new BiConsumer<Download, Object>() {
-
-				@Override
-				public void accept(Download download, Object groupId) {
-					download.setGroupId((Long)groupId);
-				}
-
-			});
-		attributeGetterFunctions.put(
-			"companyId",
-			new Function<Download, Object>() {
-
-				@Override
-				public Object apply(Download download) {
-					return download.getCompanyId();
-				}
-
-			});
-		attributeSetterBiConsumers.put(
-			"companyId",
-			new BiConsumer<Download, Object>() {
-
-				@Override
-				public void accept(Download download, Object companyId) {
-					download.setCompanyId((Long)companyId);
 				}
 
 			});
@@ -386,22 +408,22 @@ public class DownloadModelImpl
 
 			});
 		attributeGetterFunctions.put(
-			"path",
+			"filePath",
 			new Function<Download, Object>() {
 
 				@Override
 				public Object apply(Download download) {
-					return download.getPath();
+					return download.getFilePath();
 				}
 
 			});
 		attributeSetterBiConsumers.put(
-			"path",
+			"filePath",
 			new BiConsumer<Download, Object>() {
 
 				@Override
-				public void accept(Download download, Object path) {
-					download.setPath((String)path);
+				public void accept(Download download, Object filePath) {
+					download.setFilePath((String)filePath);
 				}
 
 			});
@@ -535,6 +557,48 @@ public class DownloadModelImpl
 	}
 
 	@Override
+	public long getId() {
+		return _id;
+	}
+
+	@Override
+	public void setId(long id) {
+		_id = id;
+	}
+
+	@Override
+	public long getCompanyId() {
+		return _companyId;
+	}
+
+	@Override
+	public void setCompanyId(long companyId) {
+		_companyId = companyId;
+	}
+
+	@Override
+	public long getGroupId() {
+		return _groupId;
+	}
+
+	@Override
+	public void setGroupId(long groupId) {
+		_columnBitmask |= GROUPID_COLUMN_BITMASK;
+
+		if (!_setOriginalGroupId) {
+			_setOriginalGroupId = true;
+
+			_originalGroupId = _groupId;
+		}
+
+		_groupId = groupId;
+	}
+
+	public long getOriginalGroupId() {
+		return _originalGroupId;
+	}
+
+	@Override
 	public long getDownloadId() {
 		return _downloadId;
 	}
@@ -595,34 +659,12 @@ public class DownloadModelImpl
 	}
 
 	@Override
-	public long getGroupId() {
-		return _groupId;
-	}
-
-	@Override
-	public void setGroupId(long groupId) {
-		_groupId = groupId;
-	}
-
-	@Override
-	public long getCompanyId() {
-		return _companyId;
-	}
-
-	@Override
-	public void setCompanyId(long companyId) {
-		_companyId = companyId;
-	}
-
-	@Override
 	public Date getCreateDate() {
 		return _createDate;
 	}
 
 	@Override
 	public void setCreateDate(Date createDate) {
-		_columnBitmask = -1L;
-
 		_createDate = createDate;
 	}
 
@@ -643,18 +685,18 @@ public class DownloadModelImpl
 	}
 
 	@Override
-	public String getPath() {
-		if (_path == null) {
+	public String getFilePath() {
+		if (_filePath == null) {
 			return "";
 		}
 		else {
-			return _path;
+			return _filePath;
 		}
 	}
 
 	@Override
-	public void setPath(String path) {
-		_path = path;
+	public void setFilePath(String filePath) {
+		_filePath = filePath;
 	}
 
 	@Override
@@ -742,6 +784,19 @@ public class DownloadModelImpl
 	}
 
 	@Override
+	public ExpandoBridge getExpandoBridge() {
+		return ExpandoBridgeFactoryUtil.getExpandoBridge(
+			getCompanyId(), Download.class.getName(), getPrimaryKey());
+	}
+
+	@Override
+	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
+		ExpandoBridge expandoBridge = getExpandoBridge();
+
+		expandoBridge.setAttributes(serviceContext);
+	}
+
+	@Override
 	public Download toEscapedModel() {
 		if (_escapedModel == null) {
 			Function<InvocationHandler, Download>
@@ -760,13 +815,14 @@ public class DownloadModelImpl
 	public Object clone() {
 		DownloadImpl downloadImpl = new DownloadImpl();
 
+		downloadImpl.setId(getId());
+		downloadImpl.setCompanyId(getCompanyId());
+		downloadImpl.setGroupId(getGroupId());
 		downloadImpl.setDownloadId(getDownloadId());
 		downloadImpl.setUserId(getUserId());
-		downloadImpl.setGroupId(getGroupId());
-		downloadImpl.setCompanyId(getCompanyId());
 		downloadImpl.setCreateDate(getCreateDate());
 		downloadImpl.setModifiedDate(getModifiedDate());
-		downloadImpl.setPath(getPath());
+		downloadImpl.setFilePath(getFilePath());
 		downloadImpl.setExpiryDate(getExpiryDate());
 		downloadImpl.setOrganization(getOrganization());
 		downloadImpl.setCountryCode(getCountryCode());
@@ -781,17 +837,17 @@ public class DownloadModelImpl
 
 	@Override
 	public int compareTo(Download download) {
-		int value = 0;
+		long primaryKey = download.getPrimaryKey();
 
-		value = DateUtil.compareTo(getCreateDate(), download.getCreateDate());
-
-		value = value * -1;
-
-		if (value != 0) {
-			return value;
+		if (getPrimaryKey() < primaryKey) {
+			return -1;
 		}
-
-		return 0;
+		else if (getPrimaryKey() > primaryKey) {
+			return 1;
+		}
+		else {
+			return 0;
+		}
 	}
 
 	@Override
@@ -806,9 +862,9 @@ public class DownloadModelImpl
 
 		Download download = (Download)obj;
 
-		DownloadPK primaryKey = download.getPrimaryKey();
+		long primaryKey = download.getPrimaryKey();
 
-		if (getPrimaryKey().equals(primaryKey)) {
+		if (getPrimaryKey() == primaryKey) {
 			return true;
 		}
 		else {
@@ -818,7 +874,7 @@ public class DownloadModelImpl
 
 	@Override
 	public int hashCode() {
-		return getPrimaryKey().hashCode();
+		return (int)getPrimaryKey();
 	}
 
 	@Override
@@ -834,6 +890,10 @@ public class DownloadModelImpl
 	@Override
 	public void resetOriginalValues() {
 		DownloadModelImpl downloadModelImpl = this;
+
+		downloadModelImpl._originalGroupId = downloadModelImpl._groupId;
+
+		downloadModelImpl._setOriginalGroupId = false;
 
 		downloadModelImpl._originalDownloadId = downloadModelImpl._downloadId;
 
@@ -852,15 +912,15 @@ public class DownloadModelImpl
 	public CacheModel<Download> toCacheModel() {
 		DownloadCacheModel downloadCacheModel = new DownloadCacheModel();
 
-		downloadCacheModel.downloadPK = getPrimaryKey();
+		downloadCacheModel.id = getId();
+
+		downloadCacheModel.companyId = getCompanyId();
+
+		downloadCacheModel.groupId = getGroupId();
 
 		downloadCacheModel.downloadId = getDownloadId();
 
 		downloadCacheModel.userId = getUserId();
-
-		downloadCacheModel.groupId = getGroupId();
-
-		downloadCacheModel.companyId = getCompanyId();
 
 		Date createDate = getCreateDate();
 
@@ -880,12 +940,12 @@ public class DownloadModelImpl
 			downloadCacheModel.modifiedDate = Long.MIN_VALUE;
 		}
 
-		downloadCacheModel.path = getPath();
+		downloadCacheModel.filePath = getFilePath();
 
-		String path = downloadCacheModel.path;
+		String filePath = downloadCacheModel.filePath;
 
-		if ((path != null) && (path.length() == 0)) {
-			downloadCacheModel.path = null;
+		if ((filePath != null) && (filePath.length() == 0)) {
+			downloadCacheModel.filePath = null;
 		}
 
 		Date expiryDate = getExpiryDate();
@@ -1004,18 +1064,21 @@ public class DownloadModelImpl
 
 	}
 
+	private long _id;
+	private long _companyId;
+	private long _groupId;
+	private long _originalGroupId;
+	private boolean _setOriginalGroupId;
 	private long _downloadId;
 	private long _originalDownloadId;
 	private boolean _setOriginalDownloadId;
 	private long _userId;
 	private long _originalUserId;
 	private boolean _setOriginalUserId;
-	private long _groupId;
-	private long _companyId;
 	private Date _createDate;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
-	private String _path;
+	private String _filePath;
 	private Date _expiryDate;
 	private String _organization;
 	private String _countryCode;

@@ -51,7 +51,6 @@ import javax.sql.DataSource;
 import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.service.DownloadLocalService;
 import nl.deltares.oss.download.service.persistence.DownloadCountPersistence;
-import nl.deltares.oss.download.service.persistence.DownloadPK;
 import nl.deltares.oss.download.service.persistence.DownloadPersistence;
 
 /**
@@ -93,28 +92,26 @@ public abstract class DownloadLocalServiceBaseImpl
 	/**
 	 * Creates a new download with the primary key. Does not add the download to the database.
 	 *
-	 * @param downloadPK the primary key for the new download
+	 * @param id the primary key for the new download
 	 * @return the new download
 	 */
 	@Override
 	@Transactional(enabled = false)
-	public Download createDownload(DownloadPK downloadPK) {
-		return downloadPersistence.create(downloadPK);
+	public Download createDownload(long id) {
+		return downloadPersistence.create(id);
 	}
 
 	/**
 	 * Deletes the download with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param downloadPK the primary key of the download
+	 * @param id the primary key of the download
 	 * @return the download that was removed
 	 * @throws PortalException if a download with the primary key could not be found
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public Download deleteDownload(DownloadPK downloadPK)
-		throws PortalException {
-
-		return downloadPersistence.remove(downloadPK);
+	public Download deleteDownload(long id) throws PortalException {
+		return downloadPersistence.remove(id);
 	}
 
 	/**
@@ -217,20 +214,20 @@ public abstract class DownloadLocalServiceBaseImpl
 	}
 
 	@Override
-	public Download fetchDownload(DownloadPK downloadPK) {
-		return downloadPersistence.fetchByPrimaryKey(downloadPK);
+	public Download fetchDownload(long id) {
+		return downloadPersistence.fetchByPrimaryKey(id);
 	}
 
 	/**
 	 * Returns the download with the primary key.
 	 *
-	 * @param downloadPK the primary key of the download
+	 * @param id the primary key of the download
 	 * @return the download
 	 * @throws PortalException if a download with the primary key could not be found
 	 */
 	@Override
-	public Download getDownload(DownloadPK downloadPK) throws PortalException {
-		return downloadPersistence.findByPrimaryKey(downloadPK);
+	public Download getDownload(long id) throws PortalException {
+		return downloadPersistence.findByPrimaryKey(id);
 	}
 
 	@Override
@@ -242,8 +239,7 @@ public abstract class DownloadLocalServiceBaseImpl
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(Download.class);
 
-		actionableDynamicQuery.setPrimaryKeyPropertyName(
-			"primaryKey.downloadId");
+		actionableDynamicQuery.setPrimaryKeyPropertyName("id");
 
 		return actionableDynamicQuery;
 	}
@@ -260,8 +256,7 @@ public abstract class DownloadLocalServiceBaseImpl
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(Download.class);
 
-		indexableActionableDynamicQuery.setPrimaryKeyPropertyName(
-			"primaryKey.downloadId");
+		indexableActionableDynamicQuery.setPrimaryKeyPropertyName("id");
 
 		return indexableActionableDynamicQuery;
 	}
@@ -273,8 +268,7 @@ public abstract class DownloadLocalServiceBaseImpl
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(Download.class);
 
-		actionableDynamicQuery.setPrimaryKeyPropertyName(
-			"primaryKey.downloadId");
+		actionableDynamicQuery.setPrimaryKeyPropertyName("id");
 	}
 
 	/**

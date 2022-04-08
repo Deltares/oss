@@ -37,7 +37,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import nl.deltares.oss.download.model.Download;
-import nl.deltares.oss.download.service.persistence.DownloadPK;
 
 /**
  * Provides the local service interface for Download. Methods of this
@@ -75,11 +74,11 @@ public interface DownloadLocalService
 	/**
 	 * Creates a new download with the primary key. Does not add the download to the database.
 	 *
-	 * @param downloadPK the primary key for the new download
+	 * @param id the primary key for the new download
 	 * @return the new download
 	 */
 	@Transactional(enabled = false)
-	public Download createDownload(DownloadPK downloadPK);
+	public Download createDownload(long id);
 
 	/**
 	 * Deletes the download from the database. Also notifies the appropriate model listeners.
@@ -93,13 +92,12 @@ public interface DownloadLocalService
 	/**
 	 * Deletes the download with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param downloadPK the primary key of the download
+	 * @param id the primary key of the download
 	 * @return the download that was removed
 	 * @throws PortalException if a download with the primary key could not be found
 	 */
 	@Indexable(type = IndexableType.DELETE)
-	public Download deleteDownload(DownloadPK downloadPK)
-		throws PortalException;
+	public Download deleteDownload(long id) throws PortalException;
 
 	/**
 	 * @throws PortalException
@@ -175,7 +173,7 @@ public interface DownloadLocalService
 		DynamicQuery dynamicQuery, Projection projection);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Download fetchDownload(DownloadPK downloadPK);
+	public Download fetchDownload(long id);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
@@ -183,12 +181,12 @@ public interface DownloadLocalService
 	/**
 	 * Returns the download with the primary key.
 	 *
-	 * @param downloadPK the primary key of the download
+	 * @param id the primary key of the download
 	 * @return the download
 	 * @throws PortalException if a download with the primary key could not be found
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Download getDownload(DownloadPK downloadPK) throws PortalException;
+	public Download getDownload(long id) throws PortalException;
 
 	/**
 	 * Returns a range of all the downloads.
@@ -223,12 +221,15 @@ public interface DownloadLocalService
 	public String getOSGiServiceIdentifier();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<Download> getPendingUserDownloads(long userId);
+	public List<Download> getPendingUserDownloads(long groupId, long userId);
 
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Download getUserDownload(long groupId, long userId, long downloadId);
 
 	/**
 	 * Updates the download in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

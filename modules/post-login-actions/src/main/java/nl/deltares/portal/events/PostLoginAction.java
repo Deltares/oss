@@ -6,6 +6,7 @@ import com.liferay.portal.kernel.events.LifecycleEvent;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalService;
 import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.portal.utils.KeycloakUtils;

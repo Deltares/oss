@@ -92,28 +92,26 @@ public abstract class DownloadCountLocalServiceBaseImpl
 	/**
 	 * Creates a new download count with the primary key. Does not add the download count to the database.
 	 *
-	 * @param downloadId the primary key for the new download count
+	 * @param id the primary key for the new download count
 	 * @return the new download count
 	 */
 	@Override
 	@Transactional(enabled = false)
-	public DownloadCount createDownloadCount(long downloadId) {
-		return downloadCountPersistence.create(downloadId);
+	public DownloadCount createDownloadCount(long id) {
+		return downloadCountPersistence.create(id);
 	}
 
 	/**
 	 * Deletes the download count with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param downloadId the primary key of the download count
+	 * @param id the primary key of the download count
 	 * @return the download count that was removed
 	 * @throws PortalException if a download count with the primary key could not be found
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public DownloadCount deleteDownloadCount(long downloadId)
-		throws PortalException {
-
-		return downloadCountPersistence.remove(downloadId);
+	public DownloadCount deleteDownloadCount(long id) throws PortalException {
+		return downloadCountPersistence.remove(id);
 	}
 
 	/**
@@ -216,22 +214,20 @@ public abstract class DownloadCountLocalServiceBaseImpl
 	}
 
 	@Override
-	public DownloadCount fetchDownloadCount(long downloadId) {
-		return downloadCountPersistence.fetchByPrimaryKey(downloadId);
+	public DownloadCount fetchDownloadCount(long id) {
+		return downloadCountPersistence.fetchByPrimaryKey(id);
 	}
 
 	/**
 	 * Returns the download count with the primary key.
 	 *
-	 * @param downloadId the primary key of the download count
+	 * @param id the primary key of the download count
 	 * @return the download count
 	 * @throws PortalException if a download count with the primary key could not be found
 	 */
 	@Override
-	public DownloadCount getDownloadCount(long downloadId)
-		throws PortalException {
-
-		return downloadCountPersistence.findByPrimaryKey(downloadId);
+	public DownloadCount getDownloadCount(long id) throws PortalException {
+		return downloadCountPersistence.findByPrimaryKey(id);
 	}
 
 	@Override
@@ -243,7 +239,7 @@ public abstract class DownloadCountLocalServiceBaseImpl
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(DownloadCount.class);
 
-		actionableDynamicQuery.setPrimaryKeyPropertyName("downloadId");
+		actionableDynamicQuery.setPrimaryKeyPropertyName("id");
 
 		return actionableDynamicQuery;
 	}
@@ -260,7 +256,7 @@ public abstract class DownloadCountLocalServiceBaseImpl
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(DownloadCount.class);
 
-		indexableActionableDynamicQuery.setPrimaryKeyPropertyName("downloadId");
+		indexableActionableDynamicQuery.setPrimaryKeyPropertyName("id");
 
 		return indexableActionableDynamicQuery;
 	}
@@ -272,7 +268,7 @@ public abstract class DownloadCountLocalServiceBaseImpl
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(DownloadCount.class);
 
-		actionableDynamicQuery.setPrimaryKeyPropertyName("downloadId");
+		actionableDynamicQuery.setPrimaryKeyPropertyName("id");
 	}
 
 	/**

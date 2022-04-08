@@ -56,13 +56,13 @@ public class DownloadCountLocalServiceUtil {
 	/**
 	 * Creates a new download count with the primary key. Does not add the download count to the database.
 	 *
-	 * @param downloadId the primary key for the new download count
+	 * @param id the primary key for the new download count
 	 * @return the new download count
 	 */
 	public static nl.deltares.oss.download.model.DownloadCount
-		createDownloadCount(long downloadId) {
+		createDownloadCount(long id) {
 
-		return getService().createDownloadCount(downloadId);
+		return getService().createDownloadCount(id);
 	}
 
 	/**
@@ -81,15 +81,15 @@ public class DownloadCountLocalServiceUtil {
 	/**
 	 * Deletes the download count with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param downloadId the primary key of the download count
+	 * @param id the primary key of the download count
 	 * @return the download count that was removed
 	 * @throws PortalException if a download count with the primary key could not be found
 	 */
 	public static nl.deltares.oss.download.model.DownloadCount
-			deleteDownloadCount(long downloadId)
+			deleteDownloadCount(long id)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
-		return getService().deleteDownloadCount(downloadId);
+		return getService().deleteDownloadCount(id);
 	}
 
 	/**
@@ -189,9 +189,9 @@ public class DownloadCountLocalServiceUtil {
 	}
 
 	public static nl.deltares.oss.download.model.DownloadCount
-		fetchDownloadCount(long downloadId) {
+		fetchDownloadCount(long id) {
 
-		return getService().fetchDownloadCount(downloadId);
+		return getService().fetchDownloadCount(id);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
@@ -203,15 +203,21 @@ public class DownloadCountLocalServiceUtil {
 	/**
 	 * Returns the download count with the primary key.
 	 *
-	 * @param downloadId the primary key of the download count
+	 * @param id the primary key of the download count
 	 * @return the download count
 	 * @throws PortalException if a download count with the primary key could not be found
 	 */
 	public static nl.deltares.oss.download.model.DownloadCount getDownloadCount(
-			long downloadId)
+			long id)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
-		return getService().getDownloadCount(downloadId);
+		return getService().getDownloadCount(id);
+	}
+
+	public static nl.deltares.oss.download.model.DownloadCount getDownloadCount(
+		long groupId, long downloadId) {
+
+		return getService().getDownloadCount(groupId, downloadId);
 	}
 
 	/**

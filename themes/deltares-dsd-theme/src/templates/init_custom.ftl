@@ -40,3 +40,4 @@ journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroup().getParentGr
 <#assign siteUrl = (homeUrl + themeDisplay.getSiteGroup().getFriendlyURL()) />
 
 <#assign is_shopping_cart = getterUtil.getBoolean(theme_settings["shopping-cart"]) />
+<#assign is_show_cookies = getterUtil.getBoolean(theme_settings["show-cookies"]) />
