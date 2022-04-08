@@ -18,11 +18,15 @@ import nl.deltares.portal.configuration.DownloadSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Download;
 import nl.deltares.portal.utils.*;
+import nl.deltares.tasks.DataRequest;
+import nl.deltares.tasks.DataRequestManager;
+import nl.deltares.tasks.impl.CreateDownloadLinksRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -79,6 +83,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             if (success){
                 success = sendConfirmationEmail(actionRequest, user, downloadRequest, themeDisplay, "download");
             }
+
         } else {
             SessionErrors.add(actionRequest, "sendlink-failed", "Unsupported action " + action);
         }
@@ -92,44 +97,27 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
     }
 
     private boolean createShareLinks(ActionRequest actionRequest, DownloadRequest downloadRequest, User user) {
+        String id = SubmitDownloadActionCommand.class.getName() + user.getUserId();
 
-        boolean success = true;
-        final String emailAddress = user.getEmailAddress();
-        final List<Download> downloads = downloadRequest.getDownloads();
-        for (Download download : downloads) {
-
-            Map<String, Object> shareInfo = null;
-            if (download.isBillingRequired()) {
-                LOG.info(String.format("Creation of share link for user '%s' on file '%s' is pending payment.", emailAddress, download.getFileName()));
-                shareInfo = Collections.emptyMap();
-            } else {
-
-                try {
-                     shareInfo = downloadUtils.shareLinkExists(download.getFilePath(), emailAddress);
-                    if (shareInfo.isEmpty()) {
-                        shareInfo = downloadUtils.sendShareLink(download.getFilePath(), emailAddress);
-                    } else {
-                        shareInfo = downloadUtils.resendShareLink((Integer) shareInfo.get("id"));
-                    }
-
-                } catch (Exception e) {
-                    SessionErrors.add(actionRequest, "sendlink-failed",
-                            String.format("Failed to send link for file %s : %s ", download.getFileName(), e.getMessage()));
-                    success = false;
-                    continue;
-                }
+        final DataRequestManager instance = DataRequestManager.getInstance();
+        DataRequest dataRequest = instance.getDataRequest(id);
+        if (dataRequest != null) {
+            if (dataRequest.getStatus() == DataRequest.STATUS.running || dataRequest.getStatus() == DataRequest.STATUS.pending){
+                SessionMessages.add(actionRequest, String.format("Download process is still running. %s", dataRequest.getStatusMessage()));
+                return false;
             }
-
-            try {
-                downloadUtils.registerDownload(user, Long.parseLong(download.getArticleId()), shareInfo, downloadRequest.getUserAttributes());
-            } catch (PortalException e) {
-                SessionErrors.add(actionRequest, "registerlink-failed",
-                        String.format("Failed to register link for file %s : %s ", download.getFileName(), e.getMessage()));
-            }
-
-
+            //currently we do not do anything with progress
+            instance.removeDataRequest(dataRequest);
         }
-        return success;
+        try {
+            dataRequest = new CreateDownloadLinksRequest(id, user, downloadRequest, downloadUtils);
+        } catch (IOException e) {
+            SessionErrors.add(actionRequest, String.format("Failed to create downloadLinks request for user %s : %s",
+                    user.getEmailAddress(),  e.getMessage()));
+            return false;
+        }
+        instance.addToQueue(dataRequest);
+        return true;
     }
 
     private boolean updateSubscriptions(DownloadRequest downloadRequest, User user) {
@@ -246,6 +234,8 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
 
             DownloadSiteConfiguration configuration = _configurationProvider
                     .getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
+
+            if (!configuration.enableEmails()) return true;
 
             ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", themeDisplay.getLocale(), getClass());
             DownloadEmail email = new DownloadEmail(user, resourceBundle, registrationRequest);

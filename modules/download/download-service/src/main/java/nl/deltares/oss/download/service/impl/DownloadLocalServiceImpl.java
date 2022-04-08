@@ -41,7 +41,11 @@ public class DownloadLocalServiceImpl extends DownloadLocalServiceBaseImpl {
 	 * Never reference this class directly. Use <code>nl.deltares.oss.download.service.DownloadLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>nl.deltares.oss.download.service.DownloadLocalServiceUtil</code>.
 	 */
 
-	public List<Download> getPendingUserDownloads(long userId){
-		return DownloadUtil.findByPendingUserDownloads(userId);
+	public List<Download> getPendingUserDownloads(long groupId, long userId){
+		return DownloadUtil.findByPendingUserDownloads(groupId, userId);
+	}
+
+	public Download getUserDownload(long groupId, long userId, long downloadId){
+		return DownloadUtil.fetchByUserDownload(groupId, userId, downloadId);
 	}
 }

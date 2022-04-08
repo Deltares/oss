@@ -13,7 +13,7 @@ project.ext {
     liferayMount = project.projectDir.toString() + '/docker/liferay/mount/files'
     nextcloudMount = project.projectDir.toString() + '/docker/nextcloud/config'
     dockerContainerPrefix = getEnvProperty('liferay.docker.container.prefix', 'oss')
-    dockerComposeFilePath = getEnvProperty('liferay.docker.compose.path', project.projectDir.toString() + '/docker/docker-compose.yml')
+    dockerComposeFilePath = getEnvProperty('liferay.docker.compose.path', project.projectDir.toString() + '/docker/docker-compose.yml') as Object
     deployFolder = "${bundleDir}/deploy" as GStringImpl
     dbName = getEnvProperty('dbName', 'liferay')
     dbUser = getEnvProperty('dbUser', 'liferay')
@@ -33,6 +33,9 @@ project.ext {
     googleKey = getEnvProperty('GOOGLE_API_KEY', '')
     emailUser = getEnvProperty('EMAIL_USER', '')
     emailPass = getEnvProperty('EMAIL_PASSWORD','')
+    downloadUrl = getEnvProperty('DOWNLOAD_URL','')
+    downloadUser = getEnvProperty('DOWNLOAD_APPNAME','')
+    downloadPass = getEnvProperty('DOWNLOAD_APPPW','')
 }
 
 task startContainers(
@@ -74,7 +77,10 @@ task startLiferay(
                     'KEYCLOAK_CLIENTSECRET' : keySecret,
                     'GOOGLE_API_KEY'        : googleKey,
                     'EMAIL_USER'            : emailUser,
-                    'EMAIL_PASSWORD'        : emailPass
+                    'EMAIL_PASSWORD'        : emailPass,
+                    'DOWNLOAD_URL'          : downloadUrl,
+                    'DOWNLOAD_APPNAME'      : downloadUser,
+                    'DOWNLOAD_APPPW'        : downloadPass
             ])
         }
         copy {

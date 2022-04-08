@@ -36,31 +36,12 @@ public interface Download extends DownloadModel, PersistedModel {
 	 *
 	 * Never modify this interface directly. Add methods to <code>nl.deltares.oss.download.model.impl.DownloadImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public static final Accessor<Download, Long> DOWNLOAD_ID_ACCESSOR =
+	public static final Accessor<Download, Long> ID_ACCESSOR =
 		new Accessor<Download, Long>() {
 
 			@Override
 			public Long get(Download download) {
-				return download.getDownloadId();
-			}
-
-			@Override
-			public Class<Long> getAttributeClass() {
-				return Long.class;
-			}
-
-			@Override
-			public Class<Download> getTypeClass() {
-				return Download.class;
-			}
-
-		};
-	public static final Accessor<Download, Long> USER_ID_ACCESSOR =
-		new Accessor<Download, Long>() {
-
-			@Override
-			public Long get(Download download) {
-				return download.getUserId();
+				return download.getId();
 			}
 
 			@Override

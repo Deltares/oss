@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import nl.deltares.oss.download.service.persistence.DownloadPK;
-
 /**
  * This class is used by SOAP remote services.
  *
@@ -36,13 +34,14 @@ public class DownloadSoap implements Serializable {
 	public static DownloadSoap toSoapModel(Download model) {
 		DownloadSoap soapModel = new DownloadSoap();
 
+		soapModel.setId(model.getId());
+		soapModel.setCompanyId(model.getCompanyId());
+		soapModel.setGroupId(model.getGroupId());
 		soapModel.setDownloadId(model.getDownloadId());
 		soapModel.setUserId(model.getUserId());
-		soapModel.setGroupId(model.getGroupId());
-		soapModel.setCompanyId(model.getCompanyId());
 		soapModel.setCreateDate(model.getCreateDate());
 		soapModel.setModifiedDate(model.getModifiedDate());
-		soapModel.setPath(model.getPath());
+		soapModel.setFilePath(model.getFilePath());
 		soapModel.setExpiryDate(model.getExpiryDate());
 		soapModel.setOrganization(model.getOrganization());
 		soapModel.setCountryCode(model.getCountryCode());
@@ -94,13 +93,36 @@ public class DownloadSoap implements Serializable {
 	public DownloadSoap() {
 	}
 
-	public DownloadPK getPrimaryKey() {
-		return new DownloadPK(_downloadId, _userId);
+	public long getPrimaryKey() {
+		return _id;
 	}
 
-	public void setPrimaryKey(DownloadPK pk) {
-		setDownloadId(pk.downloadId);
-		setUserId(pk.userId);
+	public void setPrimaryKey(long pk) {
+		setId(pk);
+	}
+
+	public long getId() {
+		return _id;
+	}
+
+	public void setId(long id) {
+		_id = id;
+	}
+
+	public long getCompanyId() {
+		return _companyId;
+	}
+
+	public void setCompanyId(long companyId) {
+		_companyId = companyId;
+	}
+
+	public long getGroupId() {
+		return _groupId;
+	}
+
+	public void setGroupId(long groupId) {
+		_groupId = groupId;
 	}
 
 	public long getDownloadId() {
@@ -119,22 +141,6 @@ public class DownloadSoap implements Serializable {
 		_userId = userId;
 	}
 
-	public long getGroupId() {
-		return _groupId;
-	}
-
-	public void setGroupId(long groupId) {
-		_groupId = groupId;
-	}
-
-	public long getCompanyId() {
-		return _companyId;
-	}
-
-	public void setCompanyId(long companyId) {
-		_companyId = companyId;
-	}
-
 	public Date getCreateDate() {
 		return _createDate;
 	}
@@ -151,12 +157,12 @@ public class DownloadSoap implements Serializable {
 		_modifiedDate = modifiedDate;
 	}
 
-	public String getPath() {
-		return _path;
+	public String getFilePath() {
+		return _filePath;
 	}
 
-	public void setPath(String path) {
-		_path = path;
+	public void setFilePath(String filePath) {
+		_filePath = filePath;
 	}
 
 	public Date getExpiryDate() {
@@ -207,13 +213,14 @@ public class DownloadSoap implements Serializable {
 		_directDownloadUrl = directDownloadUrl;
 	}
 
+	private long _id;
+	private long _companyId;
+	private long _groupId;
 	private long _downloadId;
 	private long _userId;
-	private long _groupId;
-	private long _companyId;
 	private Date _createDate;
 	private Date _modifiedDate;
-	private String _path;
+	private String _filePath;
 	private Date _expiryDate;
 	private String _organization;
 	private String _countryCode;

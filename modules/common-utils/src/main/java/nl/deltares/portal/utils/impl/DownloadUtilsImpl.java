@@ -1,16 +1,15 @@
 package nl.deltares.portal.utils.impl;
 
+import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.persistence.CountryUtil;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.service.CountryServiceUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 import nl.deltares.oss.download.model.DownloadCount;
 import nl.deltares.oss.download.service.DownloadCountLocalServiceUtil;
 import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
-import nl.deltares.oss.download.service.persistence.DownloadPK;
 import nl.deltares.portal.model.impl.Download;
 import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
@@ -33,11 +32,14 @@ import java.util.concurrent.TimeUnit;
 )
 public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils {
 
+    public enum DOWNLOAD_STATUS {payment_pending, available, expired, unknown, invalid, processing}
+
     @SuppressWarnings("FieldCanBeLocal")
     private final int passwordLength = 10;
 
     private static final Log LOG = LogFactoryUtil.getLog(DownloadUtilsImpl.class);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
     static {
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
@@ -132,7 +134,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
             LOG.info(String.format("Created share for user '%s' on file '%s'.", email, filePath));
         }
         final NodeList expNode = document.getElementsByTagName("expiration");
-        if (expNode.getLength() > 0){
+        if (expNode.getLength() > 0) {
             final String expDate = expNode.item(0).getTextContent();
             shareInfo.put("expiration", dateFormat.parse(expDate));
         }
@@ -147,20 +149,22 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         checkResponse(connection);
     }
 
-    public String directDownloadExists(long downloadId, long userId) {
-        final nl.deltares.oss.download.model.Download download = DownloadLocalServiceUtil.fetchDownload(new DownloadPK(downloadId, userId));
+    public String directDownloadExists(long downloadId, long userId, long groupId) {
+        final nl.deltares.oss.download.model.Download download = DownloadLocalServiceUtil.getUserDownload(groupId, userId, downloadId);
         if (download == null) return null;
 
         //check if expired
-        if (download.getExpiryDate().before(new Date(System.currentTimeMillis()))) return null;
-        return download.getDirectDownloadUrl();
+        final Date expiryDate = download.getExpiryDate();
+        if (expiryDate != null && expiryDate.getTime() < System.currentTimeMillis()) return null;
+        final String directDownloadUrl = download.getDirectDownloadUrl();
+        return directDownloadUrl != null && directDownloadUrl.isEmpty() ? null : directDownloadUrl;
 
     }
 
     @Override
     public Map<String, Object> shareLinkExists(String filePath, String email) throws Exception {
         String path = API_PATH + "files_sharing/api/v1/shares?path=" + URLEncoder.encode(filePath, StandardCharsets.UTF_8.name());
-        HttpURLConnection connection = getConnection(path, "GET",  getDefaultHeaders());
+        HttpURLConnection connection = getConnection(path, "GET", getDefaultHeaders());
 
         if (connection.getResponseCode() == 400) return Collections.emptyMap();
         checkResponse(connection);
@@ -192,7 +196,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
     }
 
     @Override
-    public Map<String, Object> resendShareLink(int shareId) throws Exception{
+    public Map<String, Object> resendShareLink(int shareId) throws Exception {
 
         //Get info from existing share
         final Map<String, Object> existingShare = getShareLinkInfo(shareId);
@@ -222,62 +226,78 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
     }
 
     @Override
-    public void registerDownload(User user, long downloadId, String directDownloadUrl, Map<String, String> userAttributes) {
+    public void registerDownload(User user, long groupId, long downloadId, String filePath, String directDownloadUrl, Map<String, String> userAttributes) {
 
         final HashMap<String, Object> shareInfo = new HashMap<>();
         shareInfo.put("url", directDownloadUrl);
         shareInfo.put("expiration", new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(8)));
-
-        registerDownload(user, downloadId, shareInfo, userAttributes);
+        shareInfo.put("id", 0);
+        registerDownload(user, groupId, downloadId, filePath, shareInfo, userAttributes);
 
     }
 
     @Override
-    public void registerDownload(User user, long downloadId, Map<String, Object> shareInfo, Map<String, String> userAttributes) {
-        nl.deltares.oss.download.model.Download userDownload = DownloadLocalServiceUtil.fetchDownload(new DownloadPK(downloadId, user.getUserId()));
-        if (userDownload == null){
-            userDownload = DownloadLocalServiceUtil.createDownload(new DownloadPK(downloadId, user.getUserId()));
-            userDownload.setCreateDate(new Date(System.currentTimeMillis()));
-        }
-        userDownload.setCompanyId(user.getCompanyId());
-        userDownload.setGroupId(user.getGroupId());
-        userDownload.setOrganization(userAttributes.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
-        userDownload.setCity(userAttributes.get(KeycloakUtils.ATTRIBUTES.org_city.name()));
-        final String country = userAttributes.get(KeycloakUtils.ATTRIBUTES.org_country.name());
-        userDownload.setCountryCode(CountryUtil.fetchByName(country).getA2());
-        userDownload.setModifiedDate(new Date(System.currentTimeMillis()));
+    public void registerDownload(User user,long groupId, long downloadId, String filePath, Map<String, Object> shareInfo, Map<String, String> userAttributes) {
+        nl.deltares.oss.download.model.Download userDownload = DownloadLocalServiceUtil.getUserDownload(groupId, user.getUserId(), downloadId);
+        if (userDownload == null) {
+            userDownload = DownloadLocalServiceUtil.createDownload(CounterLocalServiceUtil.increment(
+                    nl.deltares.oss.download.model.Download.class.getName()));
 
-        //Share info can be missing when user has not yet paid.
-        final Object expiration = shareInfo.get("expiration");
-        if (expiration != null) {
-            userDownload.setExpiryDate(((Date) expiration));
+            userDownload.setCompanyId(user.getCompanyId());
+            userDownload.setGroupId(groupId);
+            userDownload.setUserId(user.getUserId());
+            userDownload.setDownloadId(downloadId);
+
+            userDownload.setCreateDate(new Date(System.currentTimeMillis()));
+            userDownload.setFilePath(filePath);
+
         }
-        final Object shareId = shareInfo.get("id");
-        if(shareId != null) {
-            userDownload.setShareId( (long) shareId);
+        userDownload.setModifiedDate(new Date(System.currentTimeMillis()));
+        if (!userAttributes.isEmpty()) {
+            userDownload.setOrganization(userAttributes.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
+            userDownload.setCity(userAttributes.get(KeycloakUtils.ATTRIBUTES.org_city.name()));
+            final String country = userAttributes.get(KeycloakUtils.ATTRIBUTES.org_country.name());
+            try {
+                if (country != null) userDownload.setCountryCode(CountryServiceUtil.getCountryByName(country).getA2());
+            } catch (PortalException e) {
+                LOG.warn("Invalid country name " + country);
+            }
         }
-        final Object url = shareInfo.get("url");
-        if(url != null) {
-            userDownload.setDirectDownloadUrl((String) url);
+        if (!shareInfo.isEmpty()) {
+            //Share info can be missing when user has not yet paid.
+            final Object expiration = shareInfo.get("expiration");
+            if (expiration != null) {
+                userDownload.setExpiryDate(((Date) expiration));
+            }
+            final Object shareId = shareInfo.get("id");
+            if (shareId != null) {
+                userDownload.setShareId((int) shareId);
+            } else {
+                userDownload.setShareId(0);
+            }
+            final Object url = shareInfo.get("url");
+            if (url != null) {
+                userDownload.setDirectDownloadUrl((String) url);
+            }
         }
         DownloadLocalServiceUtil.updateDownload(userDownload);
 
-        incrementDownloadCount(downloadId);
+        if (userDownload.getShareId() == -9) return; //processing request
+        incrementDownloadCount(user.getCompanyId(), groupId, downloadId);
 
     }
 
     @Override
-    public void incrementDownloadCount(long downloadId) {
+    public void incrementDownloadCount(long companyId, long groupId, long downloadId) {
         //Update statistics
-        DownloadCount downloadCount;
-        try {
-            downloadCount = DownloadCountLocalServiceUtil.getDownloadCount(downloadId);
-        } catch (PortalException e) {
-            LOG.error("Error getting download count: " + e.getMessage());
-            return;
-        }
-        if (downloadCount == null){
-            downloadCount = DownloadCountLocalServiceUtil.createDownloadCount(downloadId);
+
+        DownloadCount downloadCount = DownloadCountLocalServiceUtil.getDownloadCount(groupId, downloadId);
+        if (downloadCount == null) {
+            downloadCount = DownloadCountLocalServiceUtil.createDownloadCount(CounterLocalServiceUtil.increment(
+                    nl.deltares.oss.download.model.DownloadCount.class.getName()));
+            downloadCount.setDownloadId(downloadId);
+            downloadCount.setGroupId(groupId);
+            downloadCount.setCompanyId(companyId);
         }
         int count = downloadCount.getCount();
         downloadCount.setCount(++count);
@@ -286,17 +306,18 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
 
     @Override
     public void updatePendingShares(User user) {
-        final List<nl.deltares.oss.download.model.Download> byPendingUserDownloads = DownloadLocalServiceUtil.getPendingUserDownloads(user.getUserId());
+        final List<nl.deltares.oss.download.model.Download> byPendingUserDownloads =
+                DownloadLocalServiceUtil.getPendingUserDownloads(user.getGroupId(), user.getUserId());
 
         byPendingUserDownloads.forEach(download -> {
             try {
-                final Map<String, Object> existingShare = shareLinkExists(download.getPath(), user.getEmailAddress());
+                final Map<String, Object> existingShare = shareLinkExists(download.getFilePath(), user.getEmailAddress());
                 if (existingShare.isEmpty()) return;
 
-                download.setShareId((Long) existingShare.get("id"));
+                download.setShareId((Integer) existingShare.get("id"));
                 download.setExpiryDate((Date) existingShare.get("expiration"));
                 DownloadLocalServiceUtil.updateDownload(download);
-                LOG.info(String.format("Updated pending download %s for user %s.", download.getPath(), user.getEmailAddress()));
+                LOG.info(String.format("Updated pending download %s for user %s.", download.getFilePath(), user.getEmailAddress()));
             } catch (Exception e) {
                 LOG.warn("Error checking share: " + e.getMessage());
             }
@@ -305,20 +326,47 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
 
     @Override
     public int getDownloadCount(Download download) {
-        final DownloadCount downloadCount = DownloadCountLocalServiceUtil.fetchDownloadCount(Long.parseLong(download.getArticleId()));
+        final DownloadCount downloadCount = DownloadCountLocalServiceUtil.getDownloadCount(download.getGroupId(), Long.parseLong(download.getArticleId()));
         if (downloadCount == null) return 0;
 
         return downloadCount.getCount();
     }
 
     @Override
-    public boolean isPaymentPending(Download download, ThemeDisplay themeDisplay) {
-        if (!download.isBillingRequired()) return false;
-        final User user = themeDisplay.getUser();
-        if (user.isDefaultUser() || !themeDisplay.isSignedIn()) return false;
+    public String getDownloadStatus(Download download, User user) {
+        if (user == null || user.isDefaultUser()) return DOWNLOAD_STATUS.unknown.name();
 
-        final nl.deltares.oss.download.model.Download dbDownload = DownloadLocalServiceUtil.fetchDownload(new DownloadPK(Long.parseLong(download.getArticleId()), user.getUserId()));
-        return dbDownload != null && dbDownload.getShareId() < 1;
+        nl.deltares.oss.download.model.Download dbDownload = DownloadLocalServiceUtil.getUserDownload(
+                download.getGroupId(), user.getUserId(), Long.parseLong(download.getArticleId()));
+        if (dbDownload == null) return DOWNLOAD_STATUS.unknown.name();
+
+        if (dbDownload.getShareId() == -9) return DOWNLOAD_STATUS.processing.name();
+        if (dbDownload.getShareId() == 0 && download.isBillingRequired()) return DOWNLOAD_STATUS.payment_pending.name();
+        if (dbDownload.getShareId() > 0) {
+            if (isExpired(dbDownload)) return DOWNLOAD_STATUS.expired.name();
+            return DOWNLOAD_STATUS.available.name();
+        }
+        if (dbDownload.getDirectDownloadUrl() != null && !dbDownload.getDirectDownloadUrl().isEmpty()) {
+            if (isExpired(dbDownload)) return DOWNLOAD_STATUS.expired.name();
+            return DOWNLOAD_STATUS.available.name();
+        }
+        return DOWNLOAD_STATUS.invalid.name();
+    }
+
+    private boolean isExpired(nl.deltares.oss.download.model.Download dbDownload) {
+        final long timeNow = System.currentTimeMillis();
+        final Date expiryDate = dbDownload.getExpiryDate();
+        return expiryDate != null && expiryDate.getTime() < timeNow;
+    }
+
+    @Override
+    public boolean isPaymentPending(Download download, User user) {
+        if (!download.isBillingRequired()) return false;
+        if (user == null || user.isDefaultUser()) return false;
+
+        final nl.deltares.oss.download.model.Download dbDownload = DownloadLocalServiceUtil.getUserDownload(
+                download.getGroupId(), user.getUserId(), Long.parseLong(download.getArticleId()));
+        return dbDownload != null && dbDownload.getShareId() == 0;
     }
 
     private HashMap<String, String> getDefaultHeaders() {

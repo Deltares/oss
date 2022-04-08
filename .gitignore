@@ -272,3 +272,4 @@ license*.xml
 /docker/liferay/mount/files/
 /docker/liferay/resources/activation-key-digitalenterprisedevelopment-7.1-developeractivationkeys.xml
 /docker/nextcloud/config/config.php
+/docker/resources/data/

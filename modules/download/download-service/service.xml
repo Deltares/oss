@@ -7,19 +7,18 @@
 	<entity local-service="true" name="Download" remote-service="false" uuid="false">
 
 		<!-- PK fields -->
-		<column name="downloadId" primary="true" type="long" />
-		<column name="userId" primary="true" type="long" />
-
-		<!-- Group instance -->
-		<column name="groupId" type="long" />
+		<column name="id" type="long"  primary="true" id-type="increment"/>
 
 		<!-- Audit fields -->
 		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
+		<column name="downloadId" type="long" />
+		<column name="userId"  type="long" />
 		<column name="createDate" type="Date" />
 		<column name="modifiedDate" type="Date" />
 
 		<!-- Other fields -->
-		<column name="path" type="String" />
+		<column name="filePath" type="String" />
 		<column name="expiryDate" type="Date" />
 		<column name="organization" type="String" />
 		<column name="countryCode" type="String" />
@@ -27,23 +26,25 @@
 		<column name="shareId" type="long" />
 		<column name="directDownloadUrl" type="String" />
 
-		<!-- Order -->
-
-		<order by="desc">
-			<order-column name="createDate" />
-		</order>
-
 		<!-- Finder methods -->
-
 		<finder name="Downloads" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="downloadId" />
+		</finder>
+
+		<finder name="UserDownload" return-type="Download" unique="true">
+			<finder-column name="groupId" />
+			<finder-column name="userId" />
 			<finder-column name="downloadId" />
 		</finder>
 
 		<finder name="UserDownloads" return-type="Collection">
+			<finder-column name="groupId" />
 			<finder-column name="userId" />
 		</finder>
 
-		<finder name="PendingUserDownloads" return-type="Collection" where="shareId IS NULL">
+		<finder name="PendingUserDownloads" return-type="Collection" where="shareId=0">
+			<finder-column name="groupId" />
 			<finder-column name="userId" />
 		</finder>
 
@@ -52,17 +53,20 @@
 	<entity local-service="true" name="DownloadCount" remote-service="false" uuid="false">
 
 		<!-- PK fields -->
+		<column name="id" primary="true" type="long" />
 
-		<column name="downloadId" primary="true" type="long" />
+		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
+		<column name="downloadId" type="long" />
 
 		<!-- Other fields -->
 		<column name="count" type="int" />
 
-		<!-- Order -->
-
-		<order by="desc">
-			<order-column name="count" />
-		</order>
+		<!-- Finder methods -->
+		<finder name="DownloadCount" return-type="DownloadCount" unique="true">
+			<finder-column name="groupId" />
+			<finder-column name="downloadId" />
+		</finder>
 
 	</entity>
 </service-builder>

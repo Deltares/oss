@@ -80,6 +80,7 @@
 		}});
 	shoppingCart.refreshCart();
 
+	<#if is_show_cookies >
 	window.cookieconsent.initialise({
 		palette: {
 			popup: {
@@ -99,6 +100,7 @@
 			secure : true
 		}
 	});
+	</#if>
 </script>
 
 </html>

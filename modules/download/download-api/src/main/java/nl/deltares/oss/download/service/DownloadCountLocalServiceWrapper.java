@@ -52,14 +52,14 @@ public class DownloadCountLocalServiceWrapper
 	/**
 	 * Creates a new download count with the primary key. Does not add the download count to the database.
 	 *
-	 * @param downloadId the primary key for the new download count
+	 * @param id the primary key for the new download count
 	 * @return the new download count
 	 */
 	@Override
 	public nl.deltares.oss.download.model.DownloadCount createDownloadCount(
-		long downloadId) {
+		long id) {
 
-		return _downloadCountLocalService.createDownloadCount(downloadId);
+		return _downloadCountLocalService.createDownloadCount(id);
 	}
 
 	/**
@@ -78,16 +78,16 @@ public class DownloadCountLocalServiceWrapper
 	/**
 	 * Deletes the download count with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
-	 * @param downloadId the primary key of the download count
+	 * @param id the primary key of the download count
 	 * @return the download count that was removed
 	 * @throws PortalException if a download count with the primary key could not be found
 	 */
 	@Override
 	public nl.deltares.oss.download.model.DownloadCount deleteDownloadCount(
-			long downloadId)
+			long id)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
-		return _downloadCountLocalService.deleteDownloadCount(downloadId);
+		return _downloadCountLocalService.deleteDownloadCount(id);
 	}
 
 	/**
@@ -194,9 +194,9 @@ public class DownloadCountLocalServiceWrapper
 
 	@Override
 	public nl.deltares.oss.download.model.DownloadCount fetchDownloadCount(
-		long downloadId) {
+		long id) {
 
-		return _downloadCountLocalService.fetchDownloadCount(downloadId);
+		return _downloadCountLocalService.fetchDownloadCount(id);
 	}
 
 	@Override
@@ -209,16 +209,23 @@ public class DownloadCountLocalServiceWrapper
 	/**
 	 * Returns the download count with the primary key.
 	 *
-	 * @param downloadId the primary key of the download count
+	 * @param id the primary key of the download count
 	 * @return the download count
 	 * @throws PortalException if a download count with the primary key could not be found
 	 */
 	@Override
 	public nl.deltares.oss.download.model.DownloadCount getDownloadCount(
-			long downloadId)
+			long id)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
-		return _downloadCountLocalService.getDownloadCount(downloadId);
+		return _downloadCountLocalService.getDownloadCount(id);
+	}
+
+	@Override
+	public nl.deltares.oss.download.model.DownloadCount getDownloadCount(
+		long groupId, long downloadId) {
+
+		return _downloadCountLocalService.getDownloadCount(groupId, downloadId);
 	}
 
 	/**

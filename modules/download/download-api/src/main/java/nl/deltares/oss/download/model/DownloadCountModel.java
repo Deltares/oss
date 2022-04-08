@@ -19,6 +19,7 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ShardedModel;
 import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
@@ -35,7 +36,8 @@ import java.io.Serializable;
  * @generated
  */
 @ProviderType
-public interface DownloadCountModel extends BaseModel<DownloadCount> {
+public interface DownloadCountModel
+	extends BaseModel<DownloadCount>, ShardedModel {
 
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -56,6 +58,50 @@ public interface DownloadCountModel extends BaseModel<DownloadCount> {
 	 * @param primaryKey the primary key of this download count
 	 */
 	public void setPrimaryKey(long primaryKey);
+
+	/**
+	 * Returns the ID of this download count.
+	 *
+	 * @return the ID of this download count
+	 */
+	public long getId();
+
+	/**
+	 * Sets the ID of this download count.
+	 *
+	 * @param id the ID of this download count
+	 */
+	public void setId(long id);
+
+	/**
+	 * Returns the company ID of this download count.
+	 *
+	 * @return the company ID of this download count
+	 */
+	@Override
+	public long getCompanyId();
+
+	/**
+	 * Sets the company ID of this download count.
+	 *
+	 * @param companyId the company ID of this download count
+	 */
+	@Override
+	public void setCompanyId(long companyId);
+
+	/**
+	 * Returns the group ID of this download count.
+	 *
+	 * @return the group ID of this download count
+	 */
+	public long getGroupId();
+
+	/**
+	 * Sets the group ID of this download count.
+	 *
+	 * @param groupId the group ID of this download count
+	 */
+	public void setGroupId(long groupId);
 
 	/**
 	 * Returns the download ID of this download count.

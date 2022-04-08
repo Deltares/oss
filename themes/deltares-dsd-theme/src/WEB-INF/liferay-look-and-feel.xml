@@ -11,7 +11,21 @@
 			<setting configurable="true" key="google-tag-id" type="text" value="" />
 			<setting configurable="true" key="page-footer-webcontent-id" type="text" value="" />
 			<setting configurable="true" key="shopping-cart" type="checkbox" value="false" />
+			<setting configurable="true" key="show-cookies" type="checkbox" value="true" />
 		</settings>
+		<color-scheme id="01" name="White background">
+			<default-cs>true</default-cs>
+			<css-class>regular-color-scheme</css-class>
+			<color-scheme-images-path>
+				${images-path}/color_schemes/${css-class}
+			</color-scheme-images-path>
+		</color-scheme>
+		<color-scheme id="02" name="Blue background">
+			<css-class>blue-color-scheme</css-class>
+			<color-scheme-images-path>
+				${images-path}/color_schemes/${css-class}
+			</color-scheme-images-path>
+		</color-scheme>
 		<portlet-decorator id="barebone" name="Barebone">
 			<default-portlet-decorator>true</default-portlet-decorator>
 			<portlet-decorator-css-class>portlet-barebone</portlet-decorator-css-class>
@@ -31,18 +45,5 @@
 		<portlet-decorator id="blueContainer" name="With blue background">
 			<portlet-decorator-css-class>blue-background</portlet-decorator-css-class>
 		</portlet-decorator>
-		<color-scheme id="01" name="White background">
-			<default-cs>true</default-cs>
-			<css-class>regular-color-scheme</css-class>
-			<color-scheme-images-path>
-				${images-path}/color_schemes/${css-class}
-			</color-scheme-images-path>
-		</color-scheme>
-		<color-scheme id="02" name="Blue background">
-			<css-class>blue-color-scheme</css-class>
-			<color-scheme-images-path>
-				${images-path}/color_schemes/${css-class}
-			</color-scheme-images-path>
-		</color-scheme>
 	</theme>
 </look-and-feel>

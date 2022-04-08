@@ -17,18 +17,37 @@
             ${download.getFileTopicName()} | ${download.getFileTypeName()} | ${download.getFileSize()} | ${count} downloads
             <#if showButtons >
             <span class="d-block" style="float:right">
-                <#assign paymentPending = downloadUtils.isPaymentPending(download, themeDisplay) />
-                <#if paymentPending >
+                <#assign downloadStatus = downloadUtils.getDownloadStatus(download, themeDisplay.getUser()) />
+                <#switch downloadStatus >
+
+                    <#case "payment_pending" >
+                        <#assign buttonText = languageUtil.get(locale, "shopping.cart.paymentPending")/>
+                        <#assign buttonDisable = true/>
+                        <#break >
+                    <#case "available">
+                        <#assign buttonText = languageUtil.get(locale, "shopping.cart.available")/>
+                        <#assign buttonDisable = true/>
+                        <#break >
+                    <#case "processing">
+                        <#assign buttonText = languageUtil.get(locale, "shopping.cart.processing")/>
+                    <#assign buttonDisable = true/>
+                    <#break >
+                    <#default >
+                        <#assign buttonText = languageUtil.get(locale, "shopping.cart.add")/>
+                    <#assign buttonDisable = false />
+                </#switch>
+
+                <#if buttonDisable >
                     <a href="#" data-article-id="${download.getArticleId()}"
-                       class="btn-lg btn-primary add-download-to-cart disabled"
+                       class="btn-lg btn-primary disabled"
                        role="button" aria-pressed="true" style="color:#fff">
-                        ${languageUtil.get(locale, "shopping.cart.paymentPending")}
+                        ${buttonText}
                     </a>
                 <#else >
                     <a href="#" data-article-id="${download.getArticleId()}"
                        class="btn-lg btn-primary add-download-to-cart"
                        role="button" aria-pressed="true" style="color:#fff">
-                        ${languageUtil.get(locale, "shopping.cart.add")}
+                        ${buttonText}
                     </a>
                 </#if>
             </span>
