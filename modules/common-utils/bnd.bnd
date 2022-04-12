@@ -9,7 +9,8 @@ Export-Package: \
   nl.deltares.portal.exception, \
   nl.deltares.portal.display.context, \
   nl.deltares.portal.configuration, \
-  nl.deltares.portal.kernel.util.comparator
+  nl.deltares.portal.kernel.util.comparator, \
+  nl.deltares.tasks
 Import-Package: \
   nl.deltares.dsd.registration.service.*,\
   nl.deltares.oss.download.service.*,\
