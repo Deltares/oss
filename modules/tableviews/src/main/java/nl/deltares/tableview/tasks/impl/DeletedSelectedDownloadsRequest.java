@@ -89,7 +89,7 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
             } catch (PortalException e) {
                 writer.println(String.format("Failed to delete record %s: %s", id, e.getMessage()));
             } finally {
-                processedCount++;
+                incrementProcessCount(1);
             }
         });
     }

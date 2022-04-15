@@ -28,6 +28,7 @@ public class DownloadAndDeleteDisabledUsersRequest extends AbstractDataRequest {
     @Override
     public STATUS call() {
         status = running;
+        lastProgressCheck = System.currentTimeMillis();
         try {
             currentRequest = new DownloadDisabledUsersRequest(id, disableTimeAfter, currentUserId, adminUtils);
             final STATUS call = currentRequest.call();

@@ -30,17 +30,20 @@ public class ExportTableRequest extends AbstractDataRequest {
     }
 
     private final Group group;
-    public ExportTableRequest(String id, long currentUserId, Group siteGroup) throws IOException {
+    private final String filterId;
+
+    public ExportTableRequest(String id, String filterId, long currentUserId, Group siteGroup) throws IOException {
         super(id, currentUserId);
         this.group = siteGroup;
+        this.filterId = filterId;
     }
 
     @Override
-    public STATUS call() throws Exception {
+    public STATUS call()  {
         if (getStatus() == available) return status;
-        status = running;
-        statusMessage = "starting exporting...";
+        statusMessage = "starting exporting for filter " + filterId;
         init();
+        status = running;
         try {
             File tempFile = new File(getExportDir(), id + ".tmp");
             if (tempFile.exists()) Files.deleteIfExists(tempFile.toPath());
@@ -62,6 +65,10 @@ public class ExportTableRequest extends AbstractDataRequest {
         } catch (Exception e) {
             errorMessage = e.getMessage();
             status = terminated;
+        } finally {
+            if (status == running || status == pending){
+                status = terminated;
+            }
         }
         fireStateChanged();
 
@@ -73,16 +80,16 @@ public class ExportTableRequest extends AbstractDataRequest {
 
         int start = 0;
         int end = 100;
-        totalCount = DownloadLocalServiceUtil.getDownloadsCount();
+        totalCount = getCountForSelectedFilter();
 
         for (int i = start; i < totalCount; i++) {
-            final List<Download> downloads = DownloadLocalServiceUtil.getDownloads(start, end);
+            final List<Download> downloads = getDownloadsForSelectedFilter(start, end);
             if (downloads.size() == 0) {
-                processedCount = totalCount;
+                setProcessCount(totalCount);
                 return;
             }
             downloads.forEach(download -> {
-                processedCount++;
+                incrementProcessCount(1);
                 if (group != null && group.getGroupId() != download.getGroupId()) return;
                 final User user = UserLocalServiceUtil.fetchUser(download.getUserId());
                 String email = "";
@@ -99,6 +106,32 @@ public class ExportTableRequest extends AbstractDataRequest {
             end += 100;
         }
 
+    }
+
+    private List<Download> getDownloadsForSelectedFilter(int start, int end) {
+        switch (filterId) {
+            case "pendingpayment":
+                return  DownloadLocalServiceUtil.findDownloadsByShareId(group.getGroupId(), -1, start, end);
+            case "processing":
+                return  DownloadLocalServiceUtil.findDownloadsByShareId(group.getGroupId(), -9, start, end);
+            case "direct":
+                return  DownloadLocalServiceUtil.findDirectDownloads(group.getGroupId(), start, end);
+            default:
+                return DownloadLocalServiceUtil.findDownloads(group.getGroupId(), start, end);
+        }
+    }
+
+    private int getCountForSelectedFilter() {
+        switch (filterId) {
+            case "pendingpayment":
+                return  DownloadLocalServiceUtil.countDownloadsByShareId(group.getGroupId(), -1);
+            case "processing":
+                return DownloadLocalServiceUtil.countDownloadsByShareId(group.getGroupId(), -9);
+            case "direct":
+                return DownloadLocalServiceUtil.countDirectDownloads(group.getGroupId());
+            default:
+                return DownloadLocalServiceUtil.countDownloads(group.getGroupId());
+        }
     }
 
 }

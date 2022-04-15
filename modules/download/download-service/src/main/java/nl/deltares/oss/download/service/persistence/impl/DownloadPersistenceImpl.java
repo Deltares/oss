@@ -636,6 +636,1149 @@ public class DownloadPersistenceImpl
 	private static final String _FINDER_COLUMN_DOWNLOADS_DOWNLOADID_2 =
 		"download.downloadId = ?";
 
+	private FinderPath _finderPathWithPaginationFindByDownloadsByShareId;
+	private FinderPath _finderPathWithoutPaginationFindByDownloadsByShareId;
+	private FinderPath _finderPathCountByDownloadsByShareId;
+
+	/**
+	 * Returns all the downloads where groupId = &#63; and shareId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @return the matching downloads
+	 */
+	@Override
+	public List<Download> findByDownloadsByShareId(long groupId, int shareId) {
+		return findByDownloadsByShareId(
+			groupId, shareId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the downloads where groupId = &#63; and shareId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @param start the lower bound of the range of downloads
+	 * @param end the upper bound of the range of downloads (not inclusive)
+	 * @return the range of matching downloads
+	 */
+	@Override
+	public List<Download> findByDownloadsByShareId(
+		long groupId, int shareId, int start, int end) {
+
+		return findByDownloadsByShareId(groupId, shareId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the downloads where groupId = &#63; and shareId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @param start the lower bound of the range of downloads
+	 * @param end the upper bound of the range of downloads (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching downloads
+	 */
+	@Override
+	public List<Download> findByDownloadsByShareId(
+		long groupId, int shareId, int start, int end,
+		OrderByComparator<Download> orderByComparator) {
+
+		return findByDownloadsByShareId(
+			groupId, shareId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the downloads where groupId = &#63; and shareId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @param start the lower bound of the range of downloads
+	 * @param end the upper bound of the range of downloads (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching downloads
+	 */
+	@Override
+	public List<Download> findByDownloadsByShareId(
+		long groupId, int shareId, int start, int end,
+		OrderByComparator<Download> orderByComparator,
+		boolean retrieveFromCache) {
+
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
+
+			pagination = false;
+			finderPath = _finderPathWithoutPaginationFindByDownloadsByShareId;
+			finderArgs = new Object[] {groupId, shareId};
+		}
+		else {
+			finderPath = _finderPathWithPaginationFindByDownloadsByShareId;
+			finderArgs = new Object[] {
+				groupId, shareId, start, end, orderByComparator
+			};
+		}
+
+		List<Download> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<Download>)finderCache.getResult(
+				finderPath, finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (Download download : list) {
+					if ((groupId != download.getGroupId()) ||
+						(shareId != download.getShareId())) {
+
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(
+					4 + (orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(4);
+			}
+
+			query.append(_SQL_SELECT_DOWNLOAD_WHERE);
+
+			query.append(_FINDER_COLUMN_DOWNLOADSBYSHAREID_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_DOWNLOADSBYSHAREID_SHAREID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+			}
+			else if (pagination) {
+				query.append(DownloadModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(shareId);
+
+				if (!pagination) {
+					list = (List<Download>)QueryUtil.list(
+						q, getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<Download>)QueryUtil.list(
+						q, getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first download in the ordered set where groupId = &#63; and shareId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching download
+	 * @throws NoSuchDownloadException if a matching download could not be found
+	 */
+	@Override
+	public Download findByDownloadsByShareId_First(
+			long groupId, int shareId,
+			OrderByComparator<Download> orderByComparator)
+		throws NoSuchDownloadException {
+
+		Download download = fetchByDownloadsByShareId_First(
+			groupId, shareId, orderByComparator);
+
+		if (download != null) {
+			return download;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", shareId=");
+		msg.append(shareId);
+
+		msg.append("}");
+
+		throw new NoSuchDownloadException(msg.toString());
+	}
+
+	/**
+	 * Returns the first download in the ordered set where groupId = &#63; and shareId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching download, or <code>null</code> if a matching download could not be found
+	 */
+	@Override
+	public Download fetchByDownloadsByShareId_First(
+		long groupId, int shareId,
+		OrderByComparator<Download> orderByComparator) {
+
+		List<Download> list = findByDownloadsByShareId(
+			groupId, shareId, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last download in the ordered set where groupId = &#63; and shareId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching download
+	 * @throws NoSuchDownloadException if a matching download could not be found
+	 */
+	@Override
+	public Download findByDownloadsByShareId_Last(
+			long groupId, int shareId,
+			OrderByComparator<Download> orderByComparator)
+		throws NoSuchDownloadException {
+
+		Download download = fetchByDownloadsByShareId_Last(
+			groupId, shareId, orderByComparator);
+
+		if (download != null) {
+			return download;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", shareId=");
+		msg.append(shareId);
+
+		msg.append("}");
+
+		throw new NoSuchDownloadException(msg.toString());
+	}
+
+	/**
+	 * Returns the last download in the ordered set where groupId = &#63; and shareId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching download, or <code>null</code> if a matching download could not be found
+	 */
+	@Override
+	public Download fetchByDownloadsByShareId_Last(
+		long groupId, int shareId,
+		OrderByComparator<Download> orderByComparator) {
+
+		int count = countByDownloadsByShareId(groupId, shareId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Download> list = findByDownloadsByShareId(
+			groupId, shareId, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the downloads before and after the current download in the ordered set where groupId = &#63; and shareId = &#63;.
+	 *
+	 * @param id the primary key of the current download
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next download
+	 * @throws NoSuchDownloadException if a download with the primary key could not be found
+	 */
+	@Override
+	public Download[] findByDownloadsByShareId_PrevAndNext(
+			long id, long groupId, int shareId,
+			OrderByComparator<Download> orderByComparator)
+		throws NoSuchDownloadException {
+
+		Download download = findByPrimaryKey(id);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Download[] array = new DownloadImpl[3];
+
+			array[0] = getByDownloadsByShareId_PrevAndNext(
+				session, download, groupId, shareId, orderByComparator, true);
+
+			array[1] = download;
+
+			array[2] = getByDownloadsByShareId_PrevAndNext(
+				session, download, groupId, shareId, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Download getByDownloadsByShareId_PrevAndNext(
+		Session session, Download download, long groupId, int shareId,
+		OrderByComparator<Download> orderByComparator, boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(4);
+		}
+
+		query.append(_SQL_SELECT_DOWNLOAD_WHERE);
+
+		query.append(_FINDER_COLUMN_DOWNLOADSBYSHAREID_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_DOWNLOADSBYSHAREID_SHAREID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(DownloadModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(shareId);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(download)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<Download> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the downloads where groupId = &#63; and shareId = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 */
+	@Override
+	public void removeByDownloadsByShareId(long groupId, int shareId) {
+		for (Download download :
+				findByDownloadsByShareId(
+					groupId, shareId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					null)) {
+
+			remove(download);
+		}
+	}
+
+	/**
+	 * Returns the number of downloads where groupId = &#63; and shareId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param shareId the share ID
+	 * @return the number of matching downloads
+	 */
+	@Override
+	public int countByDownloadsByShareId(long groupId, int shareId) {
+		FinderPath finderPath = _finderPathCountByDownloadsByShareId;
+
+		Object[] finderArgs = new Object[] {groupId, shareId};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(3);
+
+			query.append(_SQL_COUNT_DOWNLOAD_WHERE);
+
+			query.append(_FINDER_COLUMN_DOWNLOADSBYSHAREID_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_DOWNLOADSBYSHAREID_SHAREID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(shareId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_DOWNLOADSBYSHAREID_GROUPID_2 =
+		"download.groupId = ? AND ";
+
+	private static final String _FINDER_COLUMN_DOWNLOADSBYSHAREID_SHAREID_2 =
+		"download.shareId = ?";
+
+	private FinderPath _finderPathWithPaginationFindByUserDownloadsByShareId;
+	private FinderPath _finderPathWithoutPaginationFindByUserDownloadsByShareId;
+	private FinderPath _finderPathCountByUserDownloadsByShareId;
+
+	/**
+	 * Returns all the downloads where groupId = &#63; and userId = &#63; and shareId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param shareId the share ID
+	 * @return the matching downloads
+	 */
+	@Override
+	public List<Download> findByUserDownloadsByShareId(
+		long groupId, long userId, int shareId) {
+
+		return findByUserDownloadsByShareId(
+			groupId, userId, shareId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+			null);
+	}
+
+	/**
+	 * Returns a range of all the downloads where groupId = &#63; and userId = &#63; and shareId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param shareId the share ID
+	 * @param start the lower bound of the range of downloads
+	 * @param end the upper bound of the range of downloads (not inclusive)
+	 * @return the range of matching downloads
+	 */
+	@Override
+	public List<Download> findByUserDownloadsByShareId(
+		long groupId, long userId, int shareId, int start, int end) {
+
+		return findByUserDownloadsByShareId(
+			groupId, userId, shareId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the downloads where groupId = &#63; and userId = &#63; and shareId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param shareId the share ID
+	 * @param start the lower bound of the range of downloads
+	 * @param end the upper bound of the range of downloads (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching downloads
+	 */
+	@Override
+	public List<Download> findByUserDownloadsByShareId(
+		long groupId, long userId, int shareId, int start, int end,
+		OrderByComparator<Download> orderByComparator) {
+
+		return findByUserDownloadsByShareId(
+			groupId, userId, shareId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the downloads where groupId = &#63; and userId = &#63; and shareId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param shareId the share ID
+	 * @param start the lower bound of the range of downloads
+	 * @param end the upper bound of the range of downloads (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching downloads
+	 */
+	@Override
+	public List<Download> findByUserDownloadsByShareId(
+		long groupId, long userId, int shareId, int start, int end,
+		OrderByComparator<Download> orderByComparator,
+		boolean retrieveFromCache) {
+
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
+
+			pagination = false;
+			finderPath =
+				_finderPathWithoutPaginationFindByUserDownloadsByShareId;
+			finderArgs = new Object[] {groupId, userId, shareId};
+		}
+		else {
+			finderPath = _finderPathWithPaginationFindByUserDownloadsByShareId;
+			finderArgs = new Object[] {
+				groupId, userId, shareId, start, end, orderByComparator
+			};
+		}
+
+		List<Download> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<Download>)finderCache.getResult(
+				finderPath, finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (Download download : list) {
+					if ((groupId != download.getGroupId()) ||
+						(userId != download.getUserId()) ||
+						(shareId != download.getShareId())) {
+
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(
+					5 + (orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(5);
+			}
+
+			query.append(_SQL_SELECT_DOWNLOAD_WHERE);
+
+			query.append(_FINDER_COLUMN_USERDOWNLOADSBYSHAREID_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_USERDOWNLOADSBYSHAREID_USERID_2);
+
+			query.append(_FINDER_COLUMN_USERDOWNLOADSBYSHAREID_SHAREID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+			}
+			else if (pagination) {
+				query.append(DownloadModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(userId);
+
+				qPos.add(shareId);
+
+				if (!pagination) {
+					list = (List<Download>)QueryUtil.list(
+						q, getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<Download>)QueryUtil.list(
+						q, getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first download in the ordered set where groupId = &#63; and userId = &#63; and shareId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param shareId the share ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching download
+	 * @throws NoSuchDownloadException if a matching download could not be found
+	 */
+	@Override
+	public Download findByUserDownloadsByShareId_First(
+			long groupId, long userId, int shareId,
+			OrderByComparator<Download> orderByComparator)
+		throws NoSuchDownloadException {
+
+		Download download = fetchByUserDownloadsByShareId_First(
+			groupId, userId, shareId, orderByComparator);
+
+		if (download != null) {
+			return download;
+		}
+
+		StringBundler msg = new StringBundler(8);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", userId=");
+		msg.append(userId);
+
+		msg.append(", shareId=");
+		msg.append(shareId);
+
+		msg.append("}");
+
+		throw new NoSuchDownloadException(msg.toString());
+	}
+
+	/**
+	 * Returns the first download in the ordered set where groupId = &#63; and userId = &#63; and shareId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param shareId the share ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching download, or <code>null</code> if a matching download could not be found
+	 */
+	@Override
+	public Download fetchByUserDownloadsByShareId_First(
+		long groupId, long userId, int shareId,
+		OrderByComparator<Download> orderByComparator) {
+
+		List<Download> list = findByUserDownloadsByShareId(
+			groupId, userId, shareId, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last download in the ordered set where groupId = &#63; and userId = &#63; and shareId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param shareId the share ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching download
+	 * @throws NoSuchDownloadException if a matching download could not be found
+	 */
+	@Override
+	public Download findByUserDownloadsByShareId_Last(
+			long groupId, long userId, int shareId,
+			OrderByComparator<Download> orderByComparator)
+		throws NoSuchDownloadException {
+
+		Download download = fetchByUserDownloadsByShareId_Last(
+			groupId, userId, shareId, orderByComparator);
+
+		if (download != null) {
+			return download;
+		}
+
+		StringBundler msg = new StringBundler(8);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", userId=");
+		msg.append(userId);
+
+		msg.append(", shareId=");
+		msg.append(shareId);
+
+		msg.append("}");
+
+		throw new NoSuchDownloadException(msg.toString());
+	}
+
+	/**
+	 * Returns the last download in the ordered set where groupId = &#63; and userId = &#63; and shareId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param shareId the share ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching download, or <code>null</code> if a matching download could not be found
+	 */
+	@Override
+	public Download fetchByUserDownloadsByShareId_Last(
+		long groupId, long userId, int shareId,
+		OrderByComparator<Download> orderByComparator) {
+
+		int count = countByUserDownloadsByShareId(groupId, userId, shareId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Download> list = findByUserDownloadsByShareId(
+			groupId, userId, shareId, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the downloads before and after the current download in the ordered set where groupId = &#63; and userId = &#63; and shareId = &#63;.
+	 *
+	 * @param id the primary key of the current download
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param shareId the share ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next download
+	 * @throws NoSuchDownloadException if a download with the primary key could not be found
+	 */
+	@Override
+	public Download[] findByUserDownloadsByShareId_PrevAndNext(
+			long id, long groupId, long userId, int shareId,
+			OrderByComparator<Download> orderByComparator)
+		throws NoSuchDownloadException {
+
+		Download download = findByPrimaryKey(id);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Download[] array = new DownloadImpl[3];
+
+			array[0] = getByUserDownloadsByShareId_PrevAndNext(
+				session, download, groupId, userId, shareId, orderByComparator,
+				true);
+
+			array[1] = download;
+
+			array[2] = getByUserDownloadsByShareId_PrevAndNext(
+				session, download, groupId, userId, shareId, orderByComparator,
+				false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Download getByUserDownloadsByShareId_PrevAndNext(
+		Session session, Download download, long groupId, long userId,
+		int shareId, OrderByComparator<Download> orderByComparator,
+		boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				6 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		query.append(_SQL_SELECT_DOWNLOAD_WHERE);
+
+		query.append(_FINDER_COLUMN_USERDOWNLOADSBYSHAREID_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_USERDOWNLOADSBYSHAREID_USERID_2);
+
+		query.append(_FINDER_COLUMN_USERDOWNLOADSBYSHAREID_SHAREID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(DownloadModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(userId);
+
+		qPos.add(shareId);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(download)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<Download> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the downloads where groupId = &#63; and userId = &#63; and shareId = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param shareId the share ID
+	 */
+	@Override
+	public void removeByUserDownloadsByShareId(
+		long groupId, long userId, int shareId) {
+
+		for (Download download :
+				findByUserDownloadsByShareId(
+					groupId, userId, shareId, QueryUtil.ALL_POS,
+					QueryUtil.ALL_POS, null)) {
+
+			remove(download);
+		}
+	}
+
+	/**
+	 * Returns the number of downloads where groupId = &#63; and userId = &#63; and shareId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param shareId the share ID
+	 * @return the number of matching downloads
+	 */
+	@Override
+	public int countByUserDownloadsByShareId(
+		long groupId, long userId, int shareId) {
+
+		FinderPath finderPath = _finderPathCountByUserDownloadsByShareId;
+
+		Object[] finderArgs = new Object[] {groupId, userId, shareId};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(4);
+
+			query.append(_SQL_COUNT_DOWNLOAD_WHERE);
+
+			query.append(_FINDER_COLUMN_USERDOWNLOADSBYSHAREID_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_USERDOWNLOADSBYSHAREID_USERID_2);
+
+			query.append(_FINDER_COLUMN_USERDOWNLOADSBYSHAREID_SHAREID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(userId);
+
+				qPos.add(shareId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String
+		_FINDER_COLUMN_USERDOWNLOADSBYSHAREID_GROUPID_2 =
+			"download.groupId = ? AND ";
+
+	private static final String _FINDER_COLUMN_USERDOWNLOADSBYSHAREID_USERID_2 =
+		"download.userId = ? AND ";
+
+	private static final String
+		_FINDER_COLUMN_USERDOWNLOADSBYSHAREID_SHAREID_2 =
+			"download.shareId = ?";
+
 	private FinderPath _finderPathFetchByUserDownload;
 	private FinderPath _finderPathCountByUserDownload;
 
@@ -1426,77 +2569,71 @@ public class DownloadPersistenceImpl
 	private static final String _FINDER_COLUMN_USERDOWNLOADS_USERID_2 =
 		"download.userId = ?";
 
-	private FinderPath _finderPathWithPaginationFindByPendingUserDownloads;
-	private FinderPath _finderPathWithoutPaginationFindByPendingUserDownloads;
-	private FinderPath _finderPathCountByPendingUserDownloads;
+	private FinderPath _finderPathWithPaginationFindByDirectDownloads;
+	private FinderPath _finderPathWithoutPaginationFindByDirectDownloads;
+	private FinderPath _finderPathCountByDirectDownloads;
 
 	/**
-	 * Returns all the downloads where groupId = &#63; and userId = &#63;.
+	 * Returns all the downloads where groupId = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param userId the user ID
 	 * @return the matching downloads
 	 */
 	@Override
-	public List<Download> findByPendingUserDownloads(
-		long groupId, long userId) {
-
-		return findByPendingUserDownloads(
-			groupId, userId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	public List<Download> findByDirectDownloads(long groupId) {
+		return findByDirectDownloads(
+			groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
 	/**
-	 * Returns a range of all the downloads where groupId = &#63; and userId = &#63;.
+	 * Returns a range of all the downloads where groupId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param groupId the group ID
-	 * @param userId the user ID
 	 * @param start the lower bound of the range of downloads
 	 * @param end the upper bound of the range of downloads (not inclusive)
 	 * @return the range of matching downloads
 	 */
 	@Override
-	public List<Download> findByPendingUserDownloads(
-		long groupId, long userId, int start, int end) {
+	public List<Download> findByDirectDownloads(
+		long groupId, int start, int end) {
 
-		return findByPendingUserDownloads(groupId, userId, start, end, null);
+		return findByDirectDownloads(groupId, start, end, null);
 	}
 
 	/**
-	 * Returns an ordered range of all the downloads where groupId = &#63; and userId = &#63;.
+	 * Returns an ordered range of all the downloads where groupId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param groupId the group ID
-	 * @param userId the user ID
 	 * @param start the lower bound of the range of downloads
 	 * @param end the upper bound of the range of downloads (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching downloads
 	 */
 	@Override
-	public List<Download> findByPendingUserDownloads(
-		long groupId, long userId, int start, int end,
+	public List<Download> findByDirectDownloads(
+		long groupId, int start, int end,
 		OrderByComparator<Download> orderByComparator) {
 
-		return findByPendingUserDownloads(
-			groupId, userId, start, end, orderByComparator, true);
+		return findByDirectDownloads(
+			groupId, start, end, orderByComparator, true);
 	}
 
 	/**
-	 * Returns an ordered range of all the downloads where groupId = &#63; and userId = &#63;.
+	 * Returns an ordered range of all the downloads where groupId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param groupId the group ID
-	 * @param userId the user ID
 	 * @param start the lower bound of the range of downloads
 	 * @param end the upper bound of the range of downloads (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -1504,8 +2641,8 @@ public class DownloadPersistenceImpl
 	 * @return the ordered range of matching downloads
 	 */
 	@Override
-	public List<Download> findByPendingUserDownloads(
-		long groupId, long userId, int start, int end,
+	public List<Download> findByDirectDownloads(
+		long groupId, int start, int end,
 		OrderByComparator<Download> orderByComparator,
 		boolean retrieveFromCache) {
 
@@ -1517,14 +2654,12 @@ public class DownloadPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByPendingUserDownloads;
-			finderArgs = new Object[] {groupId, userId};
+			finderPath = _finderPathWithoutPaginationFindByDirectDownloads;
+			finderArgs = new Object[] {groupId};
 		}
 		else {
-			finderPath = _finderPathWithPaginationFindByPendingUserDownloads;
-			finderArgs = new Object[] {
-				groupId, userId, start, end, orderByComparator
-			};
+			finderPath = _finderPathWithPaginationFindByDirectDownloads;
+			finderArgs = new Object[] {groupId, start, end, orderByComparator};
 		}
 
 		List<Download> list = null;
@@ -1535,9 +2670,7 @@ public class DownloadPersistenceImpl
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Download download : list) {
-					if ((groupId != download.getGroupId()) ||
-						(userId != download.getUserId())) {
-
+					if ((groupId != download.getGroupId())) {
 						list = null;
 
 						break;
@@ -1551,17 +2684,15 @@ public class DownloadPersistenceImpl
 
 			if (orderByComparator != null) {
 				query = new StringBundler(
-					4 + (orderByComparator.getOrderByFields().length * 2));
+					3 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
-				query = new StringBundler(4);
+				query = new StringBundler(3);
 			}
 
 			query.append(_SQL_SELECT_DOWNLOAD_WHERE);
 
-			query.append(_FINDER_COLUMN_PENDINGUSERDOWNLOADS_GROUPID_2);
-
-			query.append(_FINDER_COLUMN_PENDINGUSERDOWNLOADS_USERID_2);
+			query.append(_FINDER_COLUMN_DIRECTDOWNLOADS_GROUPID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
@@ -1583,8 +2714,6 @@ public class DownloadPersistenceImpl
 				QueryPos qPos = QueryPos.getInstance(q);
 
 				qPos.add(groupId);
-
-				qPos.add(userId);
 
 				if (!pagination) {
 					list = (List<Download>)QueryUtil.list(
@@ -1617,36 +2746,31 @@ public class DownloadPersistenceImpl
 	}
 
 	/**
-	 * Returns the first download in the ordered set where groupId = &#63; and userId = &#63;.
+	 * Returns the first download in the ordered set where groupId = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param userId the user ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching download
 	 * @throws NoSuchDownloadException if a matching download could not be found
 	 */
 	@Override
-	public Download findByPendingUserDownloads_First(
-			long groupId, long userId,
-			OrderByComparator<Download> orderByComparator)
+	public Download findByDirectDownloads_First(
+			long groupId, OrderByComparator<Download> orderByComparator)
 		throws NoSuchDownloadException {
 
-		Download download = fetchByPendingUserDownloads_First(
-			groupId, userId, orderByComparator);
+		Download download = fetchByDirectDownloads_First(
+			groupId, orderByComparator);
 
 		if (download != null) {
 			return download;
 		}
 
-		StringBundler msg = new StringBundler(6);
+		StringBundler msg = new StringBundler(4);
 
 		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
 
 		msg.append("groupId=");
 		msg.append(groupId);
-
-		msg.append(", userId=");
-		msg.append(userId);
 
 		msg.append("}");
 
@@ -1654,20 +2778,18 @@ public class DownloadPersistenceImpl
 	}
 
 	/**
-	 * Returns the first download in the ordered set where groupId = &#63; and userId = &#63;.
+	 * Returns the first download in the ordered set where groupId = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param userId the user ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching download, or <code>null</code> if a matching download could not be found
 	 */
 	@Override
-	public Download fetchByPendingUserDownloads_First(
-		long groupId, long userId,
-		OrderByComparator<Download> orderByComparator) {
+	public Download fetchByDirectDownloads_First(
+		long groupId, OrderByComparator<Download> orderByComparator) {
 
-		List<Download> list = findByPendingUserDownloads(
-			groupId, userId, 0, 1, orderByComparator);
+		List<Download> list = findByDirectDownloads(
+			groupId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1677,36 +2799,31 @@ public class DownloadPersistenceImpl
 	}
 
 	/**
-	 * Returns the last download in the ordered set where groupId = &#63; and userId = &#63;.
+	 * Returns the last download in the ordered set where groupId = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param userId the user ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching download
 	 * @throws NoSuchDownloadException if a matching download could not be found
 	 */
 	@Override
-	public Download findByPendingUserDownloads_Last(
-			long groupId, long userId,
-			OrderByComparator<Download> orderByComparator)
+	public Download findByDirectDownloads_Last(
+			long groupId, OrderByComparator<Download> orderByComparator)
 		throws NoSuchDownloadException {
 
-		Download download = fetchByPendingUserDownloads_Last(
-			groupId, userId, orderByComparator);
+		Download download = fetchByDirectDownloads_Last(
+			groupId, orderByComparator);
 
 		if (download != null) {
 			return download;
 		}
 
-		StringBundler msg = new StringBundler(6);
+		StringBundler msg = new StringBundler(4);
 
 		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
 
 		msg.append("groupId=");
 		msg.append(groupId);
-
-		msg.append(", userId=");
-		msg.append(userId);
 
 		msg.append("}");
 
@@ -1714,26 +2831,24 @@ public class DownloadPersistenceImpl
 	}
 
 	/**
-	 * Returns the last download in the ordered set where groupId = &#63; and userId = &#63;.
+	 * Returns the last download in the ordered set where groupId = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param userId the user ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching download, or <code>null</code> if a matching download could not be found
 	 */
 	@Override
-	public Download fetchByPendingUserDownloads_Last(
-		long groupId, long userId,
-		OrderByComparator<Download> orderByComparator) {
+	public Download fetchByDirectDownloads_Last(
+		long groupId, OrderByComparator<Download> orderByComparator) {
 
-		int count = countByPendingUserDownloads(groupId, userId);
+		int count = countByDirectDownloads(groupId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<Download> list = findByPendingUserDownloads(
-			groupId, userId, count - 1, count, orderByComparator);
+		List<Download> list = findByDirectDownloads(
+			groupId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1743,18 +2858,17 @@ public class DownloadPersistenceImpl
 	}
 
 	/**
-	 * Returns the downloads before and after the current download in the ordered set where groupId = &#63; and userId = &#63;.
+	 * Returns the downloads before and after the current download in the ordered set where groupId = &#63;.
 	 *
 	 * @param id the primary key of the current download
 	 * @param groupId the group ID
-	 * @param userId the user ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next download
 	 * @throws NoSuchDownloadException if a download with the primary key could not be found
 	 */
 	@Override
-	public Download[] findByPendingUserDownloads_PrevAndNext(
-			long id, long groupId, long userId,
+	public Download[] findByDirectDownloads_PrevAndNext(
+			long id, long groupId,
 			OrderByComparator<Download> orderByComparator)
 		throws NoSuchDownloadException {
 
@@ -1767,13 +2881,13 @@ public class DownloadPersistenceImpl
 
 			Download[] array = new DownloadImpl[3];
 
-			array[0] = getByPendingUserDownloads_PrevAndNext(
-				session, download, groupId, userId, orderByComparator, true);
+			array[0] = getByDirectDownloads_PrevAndNext(
+				session, download, groupId, orderByComparator, true);
 
 			array[1] = download;
 
-			array[2] = getByPendingUserDownloads_PrevAndNext(
-				session, download, groupId, userId, orderByComparator, false);
+			array[2] = getByDirectDownloads_PrevAndNext(
+				session, download, groupId, orderByComparator, false);
 
 			return array;
 		}
@@ -1785,26 +2899,24 @@ public class DownloadPersistenceImpl
 		}
 	}
 
-	protected Download getByPendingUserDownloads_PrevAndNext(
-		Session session, Download download, long groupId, long userId,
+	protected Download getByDirectDownloads_PrevAndNext(
+		Session session, Download download, long groupId,
 		OrderByComparator<Download> orderByComparator, boolean previous) {
 
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
 			query = new StringBundler(
-				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(4);
+			query = new StringBundler(3);
 		}
 
 		query.append(_SQL_SELECT_DOWNLOAD_WHERE);
 
-		query.append(_FINDER_COLUMN_PENDINGUSERDOWNLOADS_GROUPID_2);
-
-		query.append(_FINDER_COLUMN_PENDINGUSERDOWNLOADS_USERID_2);
+		query.append(_FINDER_COLUMN_DIRECTDOWNLOADS_GROUPID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
@@ -1877,7 +2989,512 @@ public class DownloadPersistenceImpl
 
 		qPos.add(groupId);
 
-		qPos.add(userId);
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(download)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<Download> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the downloads where groupId = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 */
+	@Override
+	public void removeByDirectDownloads(long groupId) {
+		for (Download download :
+				findByDirectDownloads(
+					groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
+			remove(download);
+		}
+	}
+
+	/**
+	 * Returns the number of downloads where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the number of matching downloads
+	 */
+	@Override
+	public int countByDirectDownloads(long groupId) {
+		FinderPath finderPath = _finderPathCountByDirectDownloads;
+
+		Object[] finderArgs = new Object[] {groupId};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(2);
+
+			query.append(_SQL_COUNT_DOWNLOAD_WHERE);
+
+			query.append(_FINDER_COLUMN_DIRECTDOWNLOADS_GROUPID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_DIRECTDOWNLOADS_GROUPID_2 =
+		"download.groupId = ? AND download.directDownloadUrl IS NOT NULL";
+
+	private FinderPath _finderPathWithPaginationFindByGroupDownloads;
+	private FinderPath _finderPathWithoutPaginationFindByGroupDownloads;
+	private FinderPath _finderPathCountByGroupDownloads;
+
+	/**
+	 * Returns all the downloads where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching downloads
+	 */
+	@Override
+	public List<Download> findByGroupDownloads(long groupId) {
+		return findByGroupDownloads(
+			groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the downloads where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of downloads
+	 * @param end the upper bound of the range of downloads (not inclusive)
+	 * @return the range of matching downloads
+	 */
+	@Override
+	public List<Download> findByGroupDownloads(
+		long groupId, int start, int end) {
+
+		return findByGroupDownloads(groupId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the downloads where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of downloads
+	 * @param end the upper bound of the range of downloads (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching downloads
+	 */
+	@Override
+	public List<Download> findByGroupDownloads(
+		long groupId, int start, int end,
+		OrderByComparator<Download> orderByComparator) {
+
+		return findByGroupDownloads(
+			groupId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the downloads where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of downloads
+	 * @param end the upper bound of the range of downloads (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching downloads
+	 */
+	@Override
+	public List<Download> findByGroupDownloads(
+		long groupId, int start, int end,
+		OrderByComparator<Download> orderByComparator,
+		boolean retrieveFromCache) {
+
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
+
+			pagination = false;
+			finderPath = _finderPathWithoutPaginationFindByGroupDownloads;
+			finderArgs = new Object[] {groupId};
+		}
+		else {
+			finderPath = _finderPathWithPaginationFindByGroupDownloads;
+			finderArgs = new Object[] {groupId, start, end, orderByComparator};
+		}
+
+		List<Download> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<Download>)finderCache.getResult(
+				finderPath, finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (Download download : list) {
+					if ((groupId != download.getGroupId())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(3);
+			}
+
+			query.append(_SQL_SELECT_DOWNLOAD_WHERE);
+
+			query.append(_FINDER_COLUMN_GROUPDOWNLOADS_GROUPID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+			}
+			else if (pagination) {
+				query.append(DownloadModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				if (!pagination) {
+					list = (List<Download>)QueryUtil.list(
+						q, getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<Download>)QueryUtil.list(
+						q, getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first download in the ordered set where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching download
+	 * @throws NoSuchDownloadException if a matching download could not be found
+	 */
+	@Override
+	public Download findByGroupDownloads_First(
+			long groupId, OrderByComparator<Download> orderByComparator)
+		throws NoSuchDownloadException {
+
+		Download download = fetchByGroupDownloads_First(
+			groupId, orderByComparator);
+
+		if (download != null) {
+			return download;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append("}");
+
+		throw new NoSuchDownloadException(msg.toString());
+	}
+
+	/**
+	 * Returns the first download in the ordered set where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching download, or <code>null</code> if a matching download could not be found
+	 */
+	@Override
+	public Download fetchByGroupDownloads_First(
+		long groupId, OrderByComparator<Download> orderByComparator) {
+
+		List<Download> list = findByGroupDownloads(
+			groupId, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last download in the ordered set where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching download
+	 * @throws NoSuchDownloadException if a matching download could not be found
+	 */
+	@Override
+	public Download findByGroupDownloads_Last(
+			long groupId, OrderByComparator<Download> orderByComparator)
+		throws NoSuchDownloadException {
+
+		Download download = fetchByGroupDownloads_Last(
+			groupId, orderByComparator);
+
+		if (download != null) {
+			return download;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append("}");
+
+		throw new NoSuchDownloadException(msg.toString());
+	}
+
+	/**
+	 * Returns the last download in the ordered set where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching download, or <code>null</code> if a matching download could not be found
+	 */
+	@Override
+	public Download fetchByGroupDownloads_Last(
+		long groupId, OrderByComparator<Download> orderByComparator) {
+
+		int count = countByGroupDownloads(groupId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Download> list = findByGroupDownloads(
+			groupId, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the downloads before and after the current download in the ordered set where groupId = &#63;.
+	 *
+	 * @param id the primary key of the current download
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next download
+	 * @throws NoSuchDownloadException if a download with the primary key could not be found
+	 */
+	@Override
+	public Download[] findByGroupDownloads_PrevAndNext(
+			long id, long groupId,
+			OrderByComparator<Download> orderByComparator)
+		throws NoSuchDownloadException {
+
+		Download download = findByPrimaryKey(id);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Download[] array = new DownloadImpl[3];
+
+			array[0] = getByGroupDownloads_PrevAndNext(
+				session, download, groupId, orderByComparator, true);
+
+			array[1] = download;
+
+			array[2] = getByGroupDownloads_PrevAndNext(
+				session, download, groupId, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Download getByGroupDownloads_PrevAndNext(
+		Session session, Download download, long groupId,
+		OrderByComparator<Download> orderByComparator, boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(3);
+		}
+
+		query.append(_SQL_SELECT_DOWNLOAD_WHERE);
+
+		query.append(_FINDER_COLUMN_GROUPDOWNLOADS_GROUPID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(DownloadModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
 
 		if (orderByComparator != null) {
 			for (Object orderByConditionValue :
@@ -1898,45 +3515,40 @@ public class DownloadPersistenceImpl
 	}
 
 	/**
-	 * Removes all the downloads where groupId = &#63; and userId = &#63; from the database.
+	 * Removes all the downloads where groupId = &#63; from the database.
 	 *
 	 * @param groupId the group ID
-	 * @param userId the user ID
 	 */
 	@Override
-	public void removeByPendingUserDownloads(long groupId, long userId) {
+	public void removeByGroupDownloads(long groupId) {
 		for (Download download :
-				findByPendingUserDownloads(
-					groupId, userId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-					null)) {
+				findByGroupDownloads(
+					groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
 
 			remove(download);
 		}
 	}
 
 	/**
-	 * Returns the number of downloads where groupId = &#63; and userId = &#63;.
+	 * Returns the number of downloads where groupId = &#63;.
 	 *
 	 * @param groupId the group ID
-	 * @param userId the user ID
 	 * @return the number of matching downloads
 	 */
 	@Override
-	public int countByPendingUserDownloads(long groupId, long userId) {
-		FinderPath finderPath = _finderPathCountByPendingUserDownloads;
+	public int countByGroupDownloads(long groupId) {
+		FinderPath finderPath = _finderPathCountByGroupDownloads;
 
-		Object[] finderArgs = new Object[] {groupId, userId};
+		Object[] finderArgs = new Object[] {groupId};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(3);
+			StringBundler query = new StringBundler(2);
 
 			query.append(_SQL_COUNT_DOWNLOAD_WHERE);
 
-			query.append(_FINDER_COLUMN_PENDINGUSERDOWNLOADS_GROUPID_2);
-
-			query.append(_FINDER_COLUMN_PENDINGUSERDOWNLOADS_USERID_2);
+			query.append(_FINDER_COLUMN_GROUPDOWNLOADS_GROUPID_2);
 
 			String sql = query.toString();
 
@@ -1950,8 +3562,6 @@ public class DownloadPersistenceImpl
 				QueryPos qPos = QueryPos.getInstance(q);
 
 				qPos.add(groupId);
-
-				qPos.add(userId);
 
 				count = (Long)q.uniqueResult();
 
@@ -1970,11 +3580,8 @@ public class DownloadPersistenceImpl
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_PENDINGUSERDOWNLOADS_GROUPID_2 =
-		"download.groupId = ? AND ";
-
-	private static final String _FINDER_COLUMN_PENDINGUSERDOWNLOADS_USERID_2 =
-		"download.userId = ? AND download.shareId=0";
+	private static final String _FINDER_COLUMN_GROUPDOWNLOADS_GROUPID_2 =
+		"download.groupId = ?";
 
 	public DownloadPersistenceImpl() {
 		setModelClass(Download.class);
@@ -2313,6 +3920,25 @@ public class DownloadPersistenceImpl
 				_finderPathWithoutPaginationFindByDownloads, args);
 
 			args = new Object[] {
+				downloadModelImpl.getGroupId(), downloadModelImpl.getShareId()
+			};
+
+			finderCache.removeResult(
+				_finderPathCountByDownloadsByShareId, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByDownloadsByShareId, args);
+
+			args = new Object[] {
+				downloadModelImpl.getGroupId(), downloadModelImpl.getUserId(),
+				downloadModelImpl.getShareId()
+			};
+
+			finderCache.removeResult(
+				_finderPathCountByUserDownloadsByShareId, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByUserDownloadsByShareId, args);
+
+			args = new Object[] {
 				downloadModelImpl.getGroupId(), downloadModelImpl.getUserId()
 			};
 
@@ -2320,14 +3946,17 @@ public class DownloadPersistenceImpl
 			finderCache.removeResult(
 				_finderPathWithoutPaginationFindByUserDownloads, args);
 
-			args = new Object[] {
-				downloadModelImpl.getGroupId(), downloadModelImpl.getUserId()
-			};
+			args = new Object[] {downloadModelImpl.getGroupId()};
 
+			finderCache.removeResult(_finderPathCountByDirectDownloads, args);
 			finderCache.removeResult(
-				_finderPathCountByPendingUserDownloads, args);
+				_finderPathWithoutPaginationFindByDirectDownloads, args);
+
+			args = new Object[] {downloadModelImpl.getGroupId()};
+
+			finderCache.removeResult(_finderPathCountByGroupDownloads, args);
 			finderCache.removeResult(
-				_finderPathWithoutPaginationFindByPendingUserDownloads, args);
+				_finderPathWithoutPaginationFindByGroupDownloads, args);
 
 			finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
 			finderCache.removeResult(
@@ -2358,6 +3987,60 @@ public class DownloadPersistenceImpl
 			}
 
 			if ((downloadModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByDownloadsByShareId.
+					 getColumnBitmask()) != 0) {
+
+				Object[] args = new Object[] {
+					downloadModelImpl.getOriginalGroupId(),
+					downloadModelImpl.getOriginalShareId()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByDownloadsByShareId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByDownloadsByShareId, args);
+
+				args = new Object[] {
+					downloadModelImpl.getGroupId(),
+					downloadModelImpl.getShareId()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByDownloadsByShareId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByDownloadsByShareId, args);
+			}
+
+			if ((downloadModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByUserDownloadsByShareId.
+					 getColumnBitmask()) != 0) {
+
+				Object[] args = new Object[] {
+					downloadModelImpl.getOriginalGroupId(),
+					downloadModelImpl.getOriginalUserId(),
+					downloadModelImpl.getOriginalShareId()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByUserDownloadsByShareId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUserDownloadsByShareId,
+					args);
+
+				args = new Object[] {
+					downloadModelImpl.getGroupId(),
+					downloadModelImpl.getUserId(),
+					downloadModelImpl.getShareId()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByUserDownloadsByShareId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUserDownloadsByShareId,
+					args);
+			}
+
+			if ((downloadModelImpl.getColumnBitmask() &
 				 _finderPathWithoutPaginationFindByUserDownloads.
 					 getColumnBitmask()) != 0) {
 
@@ -2381,30 +4064,45 @@ public class DownloadPersistenceImpl
 			}
 
 			if ((downloadModelImpl.getColumnBitmask() &
-				 _finderPathWithoutPaginationFindByPendingUserDownloads.
+				 _finderPathWithoutPaginationFindByDirectDownloads.
 					 getColumnBitmask()) != 0) {
 
 				Object[] args = new Object[] {
-					downloadModelImpl.getOriginalGroupId(),
-					downloadModelImpl.getOriginalUserId()
+					downloadModelImpl.getOriginalGroupId()
 				};
 
 				finderCache.removeResult(
-					_finderPathCountByPendingUserDownloads, args);
+					_finderPathCountByDirectDownloads, args);
 				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByPendingUserDownloads,
-					args);
+					_finderPathWithoutPaginationFindByDirectDownloads, args);
 
-				args = new Object[] {
-					downloadModelImpl.getGroupId(),
-					downloadModelImpl.getUserId()
+				args = new Object[] {downloadModelImpl.getGroupId()};
+
+				finderCache.removeResult(
+					_finderPathCountByDirectDownloads, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByDirectDownloads, args);
+			}
+
+			if ((downloadModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByGroupDownloads.
+					 getColumnBitmask()) != 0) {
+
+				Object[] args = new Object[] {
+					downloadModelImpl.getOriginalGroupId()
 				};
 
 				finderCache.removeResult(
-					_finderPathCountByPendingUserDownloads, args);
+					_finderPathCountByGroupDownloads, args);
 				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByPendingUserDownloads,
-					args);
+					_finderPathWithoutPaginationFindByGroupDownloads, args);
+
+				args = new Object[] {downloadModelImpl.getGroupId()};
+
+				finderCache.removeResult(
+					_finderPathCountByGroupDownloads, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByGroupDownloads, args);
 			}
 		}
 
@@ -2857,13 +4555,77 @@ public class DownloadPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByDownloads",
 			new String[] {Long.class.getName(), Long.class.getName()},
 			DownloadModelImpl.GROUPID_COLUMN_BITMASK |
-			DownloadModelImpl.DOWNLOADID_COLUMN_BITMASK);
+			DownloadModelImpl.DOWNLOADID_COLUMN_BITMASK |
+			DownloadModelImpl.MODIFIEDDATE_COLUMN_BITMASK);
 
 		_finderPathCountByDownloads = new FinderPath(
 			DownloadModelImpl.ENTITY_CACHE_ENABLED,
 			DownloadModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByDownloads",
 			new String[] {Long.class.getName(), Long.class.getName()});
+
+		_finderPathWithPaginationFindByDownloadsByShareId = new FinderPath(
+			DownloadModelImpl.ENTITY_CACHE_ENABLED,
+			DownloadModelImpl.FINDER_CACHE_ENABLED, DownloadImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByDownloadsByShareId",
+			new String[] {
+				Long.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByDownloadsByShareId = new FinderPath(
+			DownloadModelImpl.ENTITY_CACHE_ENABLED,
+			DownloadModelImpl.FINDER_CACHE_ENABLED, DownloadImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByDownloadsByShareId",
+			new String[] {Long.class.getName(), Integer.class.getName()},
+			DownloadModelImpl.GROUPID_COLUMN_BITMASK |
+			DownloadModelImpl.SHAREID_COLUMN_BITMASK |
+			DownloadModelImpl.MODIFIEDDATE_COLUMN_BITMASK);
+
+		_finderPathCountByDownloadsByShareId = new FinderPath(
+			DownloadModelImpl.ENTITY_CACHE_ENABLED,
+			DownloadModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByDownloadsByShareId",
+			new String[] {Long.class.getName(), Integer.class.getName()});
+
+		_finderPathWithPaginationFindByUserDownloadsByShareId = new FinderPath(
+			DownloadModelImpl.ENTITY_CACHE_ENABLED,
+			DownloadModelImpl.FINDER_CACHE_ENABLED, DownloadImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByUserDownloadsByShareId",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByUserDownloadsByShareId =
+			new FinderPath(
+				DownloadModelImpl.ENTITY_CACHE_ENABLED,
+				DownloadModelImpl.FINDER_CACHE_ENABLED, DownloadImpl.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+				"findByUserDownloadsByShareId",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Integer.class.getName()
+				},
+				DownloadModelImpl.GROUPID_COLUMN_BITMASK |
+				DownloadModelImpl.USERID_COLUMN_BITMASK |
+				DownloadModelImpl.SHAREID_COLUMN_BITMASK |
+				DownloadModelImpl.MODIFIEDDATE_COLUMN_BITMASK);
+
+		_finderPathCountByUserDownloadsByShareId = new FinderPath(
+			DownloadModelImpl.ENTITY_CACHE_ENABLED,
+			DownloadModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByUserDownloadsByShareId",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName()
+			});
 
 		_finderPathFetchByUserDownload = new FinderPath(
 			DownloadModelImpl.ENTITY_CACHE_ENABLED,
@@ -2900,7 +4662,8 @@ public class DownloadPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUserDownloads",
 			new String[] {Long.class.getName(), Long.class.getName()},
 			DownloadModelImpl.GROUPID_COLUMN_BITMASK |
-			DownloadModelImpl.USERID_COLUMN_BITMASK);
+			DownloadModelImpl.USERID_COLUMN_BITMASK |
+			DownloadModelImpl.MODIFIEDDATE_COLUMN_BITMASK);
 
 		_finderPathCountByUserDownloads = new FinderPath(
 			DownloadModelImpl.ENTITY_CACHE_ENABLED,
@@ -2908,32 +4671,51 @@ public class DownloadPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUserDownloads",
 			new String[] {Long.class.getName(), Long.class.getName()});
 
-		_finderPathWithPaginationFindByPendingUserDownloads = new FinderPath(
+		_finderPathWithPaginationFindByDirectDownloads = new FinderPath(
 			DownloadModelImpl.ENTITY_CACHE_ENABLED,
 			DownloadModelImpl.FINDER_CACHE_ENABLED, DownloadImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"findByPendingUserDownloads",
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByDirectDownloads",
 			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
+				Long.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
 			});
 
-		_finderPathWithoutPaginationFindByPendingUserDownloads = new FinderPath(
+		_finderPathWithoutPaginationFindByDirectDownloads = new FinderPath(
 			DownloadModelImpl.ENTITY_CACHE_ENABLED,
 			DownloadModelImpl.FINDER_CACHE_ENABLED, DownloadImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findByPendingUserDownloads",
-			new String[] {Long.class.getName(), Long.class.getName()},
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByDirectDownloads",
+			new String[] {Long.class.getName()},
 			DownloadModelImpl.GROUPID_COLUMN_BITMASK |
-			DownloadModelImpl.USERID_COLUMN_BITMASK);
+			DownloadModelImpl.MODIFIEDDATE_COLUMN_BITMASK);
 
-		_finderPathCountByPendingUserDownloads = new FinderPath(
+		_finderPathCountByDirectDownloads = new FinderPath(
 			DownloadModelImpl.ENTITY_CACHE_ENABLED,
 			DownloadModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByPendingUserDownloads",
-			new String[] {Long.class.getName(), Long.class.getName()});
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByDirectDownloads",
+			new String[] {Long.class.getName()});
+
+		_finderPathWithPaginationFindByGroupDownloads = new FinderPath(
+			DownloadModelImpl.ENTITY_CACHE_ENABLED,
+			DownloadModelImpl.FINDER_CACHE_ENABLED, DownloadImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByGroupDownloads",
+			new String[] {
+				Long.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByGroupDownloads = new FinderPath(
+			DownloadModelImpl.ENTITY_CACHE_ENABLED,
+			DownloadModelImpl.FINDER_CACHE_ENABLED, DownloadImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByGroupDownloads",
+			new String[] {Long.class.getName()},
+			DownloadModelImpl.GROUPID_COLUMN_BITMASK |
+			DownloadModelImpl.MODIFIEDDATE_COLUMN_BITMASK);
+
+		_finderPathCountByGroupDownloads = new FinderPath(
+			DownloadModelImpl.ENTITY_CACHE_ENABLED,
+			DownloadModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByGroupDownloads",
+			new String[] {Long.class.getName()});
 	}
 
 	public void destroy() {

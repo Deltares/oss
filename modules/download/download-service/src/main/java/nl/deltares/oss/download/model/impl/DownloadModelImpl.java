@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -77,7 +78,7 @@ public class DownloadModelImpl
 		{"modifiedDate", Types.TIMESTAMP}, {"filePath", Types.VARCHAR},
 		{"expiryDate", Types.TIMESTAMP}, {"organization", Types.VARCHAR},
 		{"countryCode", Types.VARCHAR}, {"city", Types.VARCHAR},
-		{"shareId", Types.BIGINT}, {"directDownloadUrl", Types.VARCHAR}
+		{"shareId", Types.INTEGER}, {"directDownloadUrl", Types.VARCHAR}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -96,19 +97,20 @@ public class DownloadModelImpl
 		TABLE_COLUMNS_MAP.put("organization", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("countryCode", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("city", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("shareId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("shareId", Types.INTEGER);
 		TABLE_COLUMNS_MAP.put("directDownloadUrl", Types.VARCHAR);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table Downloads_Download (id_ LONG not null primary key,companyId LONG,groupId LONG,downloadId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,filePath STRING null,expiryDate DATE null,organization VARCHAR(75) null,countryCode VARCHAR(75) null,city VARCHAR(75) null,shareId LONG,directDownloadUrl STRING null)";
+		"create table Downloads_Download (id_ LONG not null primary key,companyId LONG,groupId LONG,downloadId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,filePath STRING null,expiryDate DATE null,organization VARCHAR(75) null,countryCode VARCHAR(75) null,city VARCHAR(75) null,shareId INTEGER,directDownloadUrl STRING null)";
 
 	public static final String TABLE_SQL_DROP = "drop table Downloads_Download";
 
-	public static final String ORDER_BY_JPQL = " ORDER BY download.id ASC";
+	public static final String ORDER_BY_JPQL =
+		" ORDER BY download.modifiedDate DESC";
 
 	public static final String ORDER_BY_SQL =
-		" ORDER BY Downloads_Download.id_ ASC";
+		" ORDER BY Downloads_Download.modifiedDate DESC";
 
 	public static final String DATA_SOURCE = "liferayDataSource";
 
@@ -135,9 +137,11 @@ public class DownloadModelImpl
 
 	public static final long GROUPID_COLUMN_BITMASK = 2L;
 
-	public static final long USERID_COLUMN_BITMASK = 4L;
+	public static final long SHAREID_COLUMN_BITMASK = 4L;
 
-	public static final long ID_COLUMN_BITMASK = 8L;
+	public static final long USERID_COLUMN_BITMASK = 8L;
+
+	public static final long MODIFIEDDATE_COLUMN_BITMASK = 16L;
 
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(
 		nl.deltares.oss.download.service.util.ServiceProps.get(
@@ -523,7 +527,7 @@ public class DownloadModelImpl
 
 				@Override
 				public void accept(Download download, Object shareId) {
-					download.setShareId((Long)shareId);
+					download.setShareId((Integer)shareId);
 				}
 
 			});
@@ -681,6 +685,8 @@ public class DownloadModelImpl
 	public void setModifiedDate(Date modifiedDate) {
 		_setModifiedDate = true;
 
+		_columnBitmask = -1L;
+
 		_modifiedDate = modifiedDate;
 	}
 
@@ -755,13 +761,25 @@ public class DownloadModelImpl
 	}
 
 	@Override
-	public long getShareId() {
+	public int getShareId() {
 		return _shareId;
 	}
 
 	@Override
-	public void setShareId(long shareId) {
+	public void setShareId(int shareId) {
+		_columnBitmask |= SHAREID_COLUMN_BITMASK;
+
+		if (!_setOriginalShareId) {
+			_setOriginalShareId = true;
+
+			_originalShareId = _shareId;
+		}
+
 		_shareId = shareId;
+	}
+
+	public int getOriginalShareId() {
+		return _originalShareId;
 	}
 
 	@Override
@@ -837,17 +855,18 @@ public class DownloadModelImpl
 
 	@Override
 	public int compareTo(Download download) {
-		long primaryKey = download.getPrimaryKey();
+		int value = 0;
 
-		if (getPrimaryKey() < primaryKey) {
-			return -1;
+		value = DateUtil.compareTo(
+			getModifiedDate(), download.getModifiedDate());
+
+		value = value * -1;
+
+		if (value != 0) {
+			return value;
 		}
-		else if (getPrimaryKey() > primaryKey) {
-			return 1;
-		}
-		else {
-			return 0;
-		}
+
+		return 0;
 	}
 
 	@Override
@@ -904,6 +923,10 @@ public class DownloadModelImpl
 		downloadModelImpl._setOriginalUserId = false;
 
 		downloadModelImpl._setModifiedDate = false;
+
+		downloadModelImpl._originalShareId = downloadModelImpl._shareId;
+
+		downloadModelImpl._setOriginalShareId = false;
 
 		downloadModelImpl._columnBitmask = 0;
 	}
@@ -1083,7 +1106,9 @@ public class DownloadModelImpl
 	private String _organization;
 	private String _countryCode;
 	private String _city;
-	private long _shareId;
+	private int _shareId;
+	private int _originalShareId;
+	private boolean _setOriginalShareId;
 	private String _directDownloadUrl;
 	private long _columnBitmask;
 	private Download _escapedModel;

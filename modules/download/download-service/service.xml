@@ -23,13 +23,29 @@
 		<column name="organization" type="String" />
 		<column name="countryCode" type="String" />
 		<column name="city" type="String" />
-		<column name="shareId" type="long" />
+		<column name="shareId" type="int" />
 		<column name="directDownloadUrl" type="String" />
+
+		<!-- Order -->
+		<order by="desc">
+			<order-column name="modifiedDate" />
+		</order>
 
 		<!-- Finder methods -->
 		<finder name="Downloads" return-type="Collection">
 			<finder-column name="groupId" />
 			<finder-column name="downloadId" />
+		</finder>
+
+		<finder name="DownloadsByShareId" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="shareId" />
+		</finder>
+
+		<finder name="UserDownloadsByShareId" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="userId" />
+			<finder-column name="shareId" />
 		</finder>
 
 		<finder name="UserDownload" return-type="Download" unique="true">
@@ -43,9 +59,12 @@
 			<finder-column name="userId" />
 		</finder>
 
-		<finder name="PendingUserDownloads" return-type="Collection" where="shareId=0">
+		<finder name="DirectDownloads" return-type="Collection" where="directDownloadUrl IS NOT NULL">
 			<finder-column name="groupId" />
-			<finder-column name="userId" />
+		</finder>
+
+		<finder name="GroupDownloads" return-type="Collection">
+			<finder-column name="groupId" />
 		</finder>
 
 	</entity>
@@ -63,10 +82,13 @@
 		<column name="count" type="int" />
 
 		<!-- Finder methods -->
-		<finder name="DownloadCount" return-type="DownloadCount" unique="true">
+		<finder name="DownloadCountByGroup" return-type="DownloadCount" unique="true">
 			<finder-column name="groupId" />
 			<finder-column name="downloadId" />
 		</finder>
 
+		<finder name="DownloadCount" return-type="DownloadCount" unique="true">
+			<finder-column name="downloadId" />
+		</finder>
 	</entity>
 </service-builder>
