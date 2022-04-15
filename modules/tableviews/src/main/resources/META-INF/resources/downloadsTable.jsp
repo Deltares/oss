@@ -5,6 +5,7 @@
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
+<%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <liferay-theme:defineObjects/>
 
 <portlet:defineObjects/>
@@ -23,6 +24,11 @@
     </portlet:renderURL>
 
     <portlet:actionURL name="filter" var="filterTableURL" />
+
+    <liferay-ui:error key="filter-failed">
+        <liferay-ui:message key="filter-failed"
+                            arguments='<%= SessionErrors.get(liferayPortletRequest, "filter-failed") %>'/>
+    </liferay-ui:error>
 
     <aui:form action="<%=filterTableURL%>" name="<portlet:namespace />filterForm" >
         <aui:fieldset>
