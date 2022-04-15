@@ -254,14 +254,14 @@ public interface DownloadModel extends BaseModel<Download>, ShardedModel {
 	 *
 	 * @return the share ID of this download
 	 */
-	public long getShareId();
+	public int getShareId();
 
 	/**
 	 * Sets the share ID of this download.
 	 *
 	 * @param shareId the share ID of this download
 	 */
-	public void setShareId(long shareId);
+	public void setShareId(int shareId);
 
 	/**
 	 * Returns the direct download url of this download.

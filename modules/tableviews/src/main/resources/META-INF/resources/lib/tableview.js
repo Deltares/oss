@@ -2,6 +2,20 @@
 
 TableFormsUtil = {
 
+    tableFilterButton: function (renderUrl, namespace, searchContainerId){
+
+        let element = document.getElementById( namespace + "filterSelection");
+        let selectedFilter = element.options[ element.selectedIndex ].value;
+        let A = new AUI();
+        A.io.request(renderUrl + '&' + namespace + 'filter=' + selectedFilter, {
+            on: {
+                success(response, status, xhr){
+                    document.location.reload();
+                }
+            }
+        })
+    },
+
     loadSelection: function(selected) {
         let rowElements = document.getElementsByClassName("downloadTableRecord");
         [...rowElements].forEach(function(rowElement) {

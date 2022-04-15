@@ -80,9 +80,9 @@ public class DeleteDisabledUsersRequest extends AbstractDataRequest {
                 int processedUsers = 0;
                 try (BufferedReader reader = new BufferedReader(new FileReader(disabledUsersFile))) {
                     line = reader.readLine(); //skip header
-                    processedCount = line.length();
+                    incrementProcessCount(line.length());
                     while ((line = reader.readLine()) != null) {
-                        processedCount += line.length();
+                        incrementProcessCount(line.length());
                         final String[] split = line.split(";");
                         if (split.length == 0) continue;
                         String email = split[0];

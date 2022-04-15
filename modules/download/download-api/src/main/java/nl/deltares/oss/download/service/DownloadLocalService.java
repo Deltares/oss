@@ -71,6 +71,12 @@ public interface DownloadLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public Download addDownload(Download download);
 
+	public int countDirectDownloads(long groupId);
+
+	public int countDownloads(long groupId);
+
+	public int countDownloadsByShareId(long groupId, int shareId);
+
 	/**
 	 * Creates a new download with the primary key. Does not add the download to the database.
 	 *
@@ -176,6 +182,26 @@ public interface DownloadLocalService
 	public Download fetchDownload(long id);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Download fetchUserDownload(
+		long groupId, long userId, long downloadId);
+
+	public List<Download> findDirectDownloads(long groupId);
+
+	public List<Download> findDirectDownloads(long groupId, int start, int end);
+
+	public List<Download> findDownloads(long groupId);
+
+	public List<Download> findDownloads(long groupId, int start, int end);
+
+	public List<Download> findDownloadsByShareId(long groupId, int shareId);
+
+	public List<Download> findDownloadsByShareId(
+		long groupId, int shareId, int start, int end);
+
+	public List<Download> findUserDownloadsByShareId(
+		long groupId, long userId, int shareId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
 	/**
@@ -220,16 +246,10 @@ public interface DownloadLocalService
 	 */
 	public String getOSGiServiceIdentifier();
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<Download> getPendingUserDownloads(long groupId, long userId);
-
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Download getUserDownload(long groupId, long userId, long downloadId);
 
 	/**
 	 * Updates the download in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

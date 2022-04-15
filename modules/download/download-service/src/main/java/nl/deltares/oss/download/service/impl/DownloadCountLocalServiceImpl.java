@@ -40,6 +40,6 @@ public class DownloadCountLocalServiceImpl
      * Never reference this class directly. Use <code>nl.deltares.oss.download.service.DownloadCountLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>nl.deltares.oss.download.service.DownloadCountLocalServiceUtil</code>.
      */
     public DownloadCount getDownloadCount(long groupId, long downloadId) {
-        return DownloadCountUtil.fetchByDownloadCount(groupId, downloadId);
+        return DownloadCountUtil.fetchByDownloadCountByGroup(groupId, downloadId);
     }
 }

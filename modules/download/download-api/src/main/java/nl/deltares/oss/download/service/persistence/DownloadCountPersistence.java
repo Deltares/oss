@@ -58,7 +58,8 @@ public interface DownloadCountPersistence
 	 * @return the matching download count
 	 * @throws NoSuchDownloadCountException if a matching download count could not be found
 	 */
-	public DownloadCount findByDownloadCount(long groupId, long downloadId)
+	public DownloadCount findByDownloadCountByGroup(
+			long groupId, long downloadId)
 		throws NoSuchDownloadCountException;
 
 	/**
@@ -68,7 +69,8 @@ public interface DownloadCountPersistence
 	 * @param downloadId the download ID
 	 * @return the matching download count, or <code>null</code> if a matching download count could not be found
 	 */
-	public DownloadCount fetchByDownloadCount(long groupId, long downloadId);
+	public DownloadCount fetchByDownloadCountByGroup(
+		long groupId, long downloadId);
 
 	/**
 	 * Returns the download count where groupId = &#63; and downloadId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -78,7 +80,7 @@ public interface DownloadCountPersistence
 	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the matching download count, or <code>null</code> if a matching download count could not be found
 	 */
-	public DownloadCount fetchByDownloadCount(
+	public DownloadCount fetchByDownloadCountByGroup(
 		long groupId, long downloadId, boolean retrieveFromCache);
 
 	/**
@@ -88,7 +90,8 @@ public interface DownloadCountPersistence
 	 * @param downloadId the download ID
 	 * @return the download count that was removed
 	 */
-	public DownloadCount removeByDownloadCount(long groupId, long downloadId)
+	public DownloadCount removeByDownloadCountByGroup(
+			long groupId, long downloadId)
 		throws NoSuchDownloadCountException;
 
 	/**
@@ -98,7 +101,52 @@ public interface DownloadCountPersistence
 	 * @param downloadId the download ID
 	 * @return the number of matching download counts
 	 */
-	public int countByDownloadCount(long groupId, long downloadId);
+	public int countByDownloadCountByGroup(long groupId, long downloadId);
+
+	/**
+	 * Returns the download count where downloadId = &#63; or throws a <code>NoSuchDownloadCountException</code> if it could not be found.
+	 *
+	 * @param downloadId the download ID
+	 * @return the matching download count
+	 * @throws NoSuchDownloadCountException if a matching download count could not be found
+	 */
+	public DownloadCount findByDownloadCount(long downloadId)
+		throws NoSuchDownloadCountException;
+
+	/**
+	 * Returns the download count where downloadId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param downloadId the download ID
+	 * @return the matching download count, or <code>null</code> if a matching download count could not be found
+	 */
+	public DownloadCount fetchByDownloadCount(long downloadId);
+
+	/**
+	 * Returns the download count where downloadId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param downloadId the download ID
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the matching download count, or <code>null</code> if a matching download count could not be found
+	 */
+	public DownloadCount fetchByDownloadCount(
+		long downloadId, boolean retrieveFromCache);
+
+	/**
+	 * Removes the download count where downloadId = &#63; from the database.
+	 *
+	 * @param downloadId the download ID
+	 * @return the download count that was removed
+	 */
+	public DownloadCount removeByDownloadCount(long downloadId)
+		throws NoSuchDownloadCountException;
+
+	/**
+	 * Returns the number of download counts where downloadId = &#63;.
+	 *
+	 * @param downloadId the download ID
+	 * @return the number of matching download counts
+	 */
+	public int countByDownloadCount(long downloadId);
 
 	/**
 	 * Caches the download count in the entity cache if it is enabled.

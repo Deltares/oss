@@ -175,7 +175,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         totalCount = dsdSessionUtils.getRegistrationCount();
         if (totalCount == 0){
             status = nodata;
-            processedCount = 0;
+            setProcessCount(0);
             return;
         }
 
@@ -187,7 +187,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             final List<Map<String, Object>> registrationRecordsToProcess = dsdSessionUtils.getRegistrations(start, end);
             registrationRecordsToProcess.forEach(recordObjects -> {
 
-                ++processedCount;
+                incrementProcessCount(1);
                 Long eventResourcePrimaryKey = (Long) recordObjects.get("eventResourcePrimaryKey");
                 Event event = (Event) getDsdArticle(eventResourcePrimaryKey, cache);
                 Long resourcePrimaryKey = (Long) recordObjects.get("resourcePrimaryKey");
@@ -223,14 +223,14 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
         if (registrationRecordsToProcess.size() == 0) {
             status = nodata;
-            processedCount = 0;
+            setProcessCount(0);
             return;
         }
         totalCount = registrationRecordsToProcess.size();
 
         registrationRecordsToProcess.forEach(recordObjects -> {
 
-            ++processedCount;
+            incrementProcessCount(1);
             Long resourcePrimaryKey = (Long) recordObjects.get("resourcePrimaryKey");
             statusMessage = "procession resourcePrimaryKey=" + resourcePrimaryKey;
 
@@ -266,7 +266,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
             if (registrationRecordsToProcess.size() == 0) {
                 status = nodata;
-                processedCount = 0;
+                setProcessCount(0);
                 return;
             }
             totalCount = registrationRecordsToProcess.size();
@@ -274,7 +274,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             Event event = getEvent(article);
             registrationRecordsToProcess.forEach(recordObjects -> {
 
-                ++processedCount;
+                incrementProcessCount(1);
                 Long resourcePrimaryKey = (Long) recordObjects.get("resourcePrimaryKey");
                 statusMessage = "procession resourcePrimaryKey=" + resourcePrimaryKey;
                 Registration matchingRegistration = registrationCache.get(resourcePrimaryKey);

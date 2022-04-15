@@ -192,7 +192,7 @@ public class DownloadCacheModel
 		countryCode = objectInput.readUTF();
 		city = objectInput.readUTF();
 
-		shareId = objectInput.readLong();
+		shareId = objectInput.readInt();
 		directDownloadUrl = objectInput.readUTF();
 	}
 
@@ -240,7 +240,7 @@ public class DownloadCacheModel
 			objectOutput.writeUTF(city);
 		}
 
-		objectOutput.writeLong(shareId);
+		objectOutput.writeInt(shareId);
 
 		if (directDownloadUrl == null) {
 			objectOutput.writeUTF("");
@@ -262,7 +262,7 @@ public class DownloadCacheModel
 	public String organization;
 	public String countryCode;
 	public String city;
-	public long shareId;
+	public int shareId;
 	public String directDownloadUrl;
 
 }

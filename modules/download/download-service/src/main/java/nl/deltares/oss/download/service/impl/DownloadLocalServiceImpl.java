@@ -1,15 +1,15 @@
-/**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
- *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+/*
+  Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+  <p>
+  This library is free software; you can redistribute it and/or modify it under
+  the terms of the GNU Lesser General Public License as published by the Free
+  Software Foundation; either version 2.1 of the License, or (at your option)
+  any later version.
+  <p>
+  This library is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+  FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+  details.
  */
 
 package nl.deltares.oss.download.service.impl;
@@ -35,17 +35,56 @@ import java.util.List;
  */
 public class DownloadLocalServiceImpl extends DownloadLocalServiceBaseImpl {
 
-	/*
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this class directly. Use <code>nl.deltares.oss.download.service.DownloadLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>nl.deltares.oss.download.service.DownloadLocalServiceUtil</code>.
-	 */
+    /*
+     * NOTE FOR DEVELOPERS:
+     *
+     * Never reference this class directly. Use <code>nl.deltares.oss.download.service.DownloadLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>nl.deltares.oss.download.service.DownloadLocalServiceUtil</code>.
+     */
+    public Download fetchUserDownload(long groupId, long userId, long downloadId) {
+        return DownloadUtil.fetchByUserDownload(groupId, userId, downloadId);
+    }
 
-	public List<Download> getPendingUserDownloads(long groupId, long userId){
-		return DownloadUtil.findByPendingUserDownloads(groupId, userId);
-	}
+    public List<Download> findDirectDownloads(long groupId){
+        return DownloadUtil.findByDirectDownloads(groupId);
+    }
 
-	public Download getUserDownload(long groupId, long userId, long downloadId){
-		return DownloadUtil.fetchByUserDownload(groupId, userId, downloadId);
-	}
+    public List<Download> findDirectDownloads(long groupId, int start, int end){
+        return DownloadUtil.findByDirectDownloads(groupId, start, end);
+    }
+
+    public int countDirectDownloads(long groupId){
+        return DownloadUtil.countByDirectDownloads(groupId);
+    }
+
+    public List<Download> findDownloads(long groupId){
+        return DownloadUtil.findByGroupDownloads(groupId);
+    }
+
+    public List<Download> findDownloads(long groupId, int start, int end){
+        return DownloadUtil.findByGroupDownloads(groupId, start, end);
+    }
+
+    public int countDownloads(long groupId){
+        return DownloadUtil.countByGroupDownloads(groupId);
+    }
+
+    public List<Download> findUserDownloadsByShareId(long groupId, long userId, int shareId){
+        return DownloadUtil.findByUserDownloadsByShareId(groupId, userId, shareId);
+    }
+
+    public List<Download> findDownloadsByShareId(long groupId, int shareId, int start, int end){
+        return DownloadUtil.findByDownloadsByShareId(groupId, shareId, start, end);
+    }
+
+    public List<Download> findDownloadsByShareId(long groupId, int shareId){
+        return DownloadUtil.findByDownloadsByShareId(groupId, shareId);
+    }
+
+    public int countDownloadsByShareId(long groupId, int shareId){
+        return DownloadUtil.countByDownloadsByShareId(groupId, shareId);
+    }
+
+
+
+
 }

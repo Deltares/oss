@@ -149,7 +149,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 			setCity(city);
 		}
 
-		Long shareId = (Long)attributes.get("shareId");
+		Integer shareId = (Integer)attributes.get("shareId");
 
 		if (shareId != null) {
 			setShareId(shareId);
@@ -318,7 +318,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 * @return the share ID of this download
 	 */
 	@Override
-	public long getShareId() {
+	public int getShareId() {
 		return _download.getShareId();
 	}
 
@@ -535,7 +535,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 * @param shareId the share ID of this download
 	 */
 	@Override
-	public void setShareId(long shareId) {
+	public void setShareId(int shareId) {
 		_download.setShareId(shareId);
 	}
 
