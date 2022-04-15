@@ -95,7 +95,7 @@ public class DownloadTablePortlet extends MVCPortlet {
             renderRequest.setAttribute("records", downloads);
             renderRequest.setAttribute("total", downloadsCount);
         } catch (Exception e) {
-            SessionErrors.add(renderRequest, e.getClass().getName());
+            SessionErrors.add(renderRequest, "filter-failed", e.getMessage());
         }
     }
 
