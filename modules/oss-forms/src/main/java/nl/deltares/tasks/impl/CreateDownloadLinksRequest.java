@@ -49,7 +49,7 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
                 if (download.isBillingRequired()) {
                     LOG.info(String.format("Creation of share link for user '%s' on file '%s' is pending payment.", emailAddress, download.getFileName()));
                     shareInfo = new HashMap<>();
-                    shareInfo.put("id", 0);
+                    shareInfo.put("id", -1);
                 } else {
 
                     try {
@@ -75,10 +75,10 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
                     errorMessage = String.format("Failed to register link for file %s : %s ", download.getFileName(), e.getMessage());
                     LOG.warn(errorMessage);
                 }
-                processedCount++;
+                incrementProcessCount(1);
             }
             status = available;
-            statusMessage = String.format("%d share links have been created for user %s", processedCount, user.getEmailAddress());
+            statusMessage = String.format("%d share links have been created for user %s", getProcessedCount(), user.getEmailAddress());
             LOG.info(statusMessage);
         } catch (Exception e) {
             errorMessage = e.getMessage();

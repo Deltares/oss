@@ -197,11 +197,11 @@ public class DownloadSoap implements Serializable {
 		_city = city;
 	}
 
-	public long getShareId() {
+	public int getShareId() {
 		return _shareId;
 	}
 
-	public void setShareId(long shareId) {
+	public void setShareId(int shareId) {
 		_shareId = shareId;
 	}
 
@@ -225,7 +225,7 @@ public class DownloadSoap implements Serializable {
 	private String _organization;
 	private String _countryCode;
 	private String _city;
-	private long _shareId;
+	private int _shareId;
 	private String _directDownloadUrl;
 
 }

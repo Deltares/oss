@@ -150,7 +150,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
     }
 
     public String directDownloadExists(long downloadId, long userId, long groupId) {
-        final nl.deltares.oss.download.model.Download download = DownloadLocalServiceUtil.getUserDownload(groupId, userId, downloadId);
+        final nl.deltares.oss.download.model.Download download = DownloadLocalServiceUtil.fetchUserDownload(groupId, userId, downloadId);
         if (download == null) return null;
 
         //check if expired
@@ -238,7 +238,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
 
     @Override
     public void registerDownload(User user,long groupId, long downloadId, String filePath, Map<String, Object> shareInfo, Map<String, String> userAttributes) {
-        nl.deltares.oss.download.model.Download userDownload = DownloadLocalServiceUtil.getUserDownload(groupId, user.getUserId(), downloadId);
+        nl.deltares.oss.download.model.Download userDownload = DownloadLocalServiceUtil.fetchUserDownload(groupId, user.getUserId(), downloadId);
         if (userDownload == null) {
             userDownload = DownloadLocalServiceUtil.createDownload(CounterLocalServiceUtil.increment(
                     nl.deltares.oss.download.model.Download.class.getName()));
@@ -307,7 +307,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
     @Override
     public void updatePendingShares(User user) {
         final List<nl.deltares.oss.download.model.Download> byPendingUserDownloads =
-                DownloadLocalServiceUtil.getPendingUserDownloads(user.getGroupId(), user.getUserId());
+                DownloadLocalServiceUtil.findUserDownloadsByShareId(user.getGroupId(), user.getUserId(), -1);
 
         byPendingUserDownloads.forEach(download -> {
             try {
@@ -336,12 +336,12 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
     public String getDownloadStatus(Download download, User user) {
         if (user == null || user.isDefaultUser()) return DOWNLOAD_STATUS.unknown.name();
 
-        nl.deltares.oss.download.model.Download dbDownload = DownloadLocalServiceUtil.getUserDownload(
+        nl.deltares.oss.download.model.Download dbDownload = DownloadLocalServiceUtil.fetchUserDownload(
                 download.getGroupId(), user.getUserId(), Long.parseLong(download.getArticleId()));
         if (dbDownload == null) return DOWNLOAD_STATUS.unknown.name();
 
         if (dbDownload.getShareId() == -9) return DOWNLOAD_STATUS.processing.name();
-        if (dbDownload.getShareId() == 0 && download.isBillingRequired()) return DOWNLOAD_STATUS.payment_pending.name();
+        if (dbDownload.getShareId() == -1 && download.isBillingRequired()) return DOWNLOAD_STATUS.payment_pending.name();
         if (dbDownload.getShareId() > 0) {
             if (isExpired(dbDownload)) return DOWNLOAD_STATUS.expired.name();
             return DOWNLOAD_STATUS.available.name();
@@ -364,9 +364,9 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         if (!download.isBillingRequired()) return false;
         if (user == null || user.isDefaultUser()) return false;
 
-        final nl.deltares.oss.download.model.Download dbDownload = DownloadLocalServiceUtil.getUserDownload(
+        final nl.deltares.oss.download.model.Download dbDownload = DownloadLocalServiceUtil.fetchUserDownload(
                 download.getGroupId(), user.getUserId(), Long.parseLong(download.getArticleId()));
-        return dbDownload != null && dbDownload.getShareId() == 0;
+        return dbDownload != null && dbDownload.getShareId() == -1;
     }
 
     private HashMap<String, String> getDefaultHeaders() {

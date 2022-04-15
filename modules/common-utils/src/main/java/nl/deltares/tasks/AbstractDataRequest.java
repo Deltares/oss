@@ -24,11 +24,13 @@ public abstract class AbstractDataRequest implements DataRequest {
     protected final String id;
     protected final long currentUserId;
     protected STATUS status = pending;
-    protected int processedCount = 0;
+    private int processedCount = 0;
     protected int totalCount = 0;
     protected File tempDir;
     private final PermissionChecker permissionChecker;
 
+    protected long progressTimeOut = 30000; //listen to progress
+    protected long lastProgressCheck = 0;
 
     protected DataRequestManager manager;
 
@@ -66,6 +68,16 @@ public abstract class AbstractDataRequest implements DataRequest {
 
     }
 
+    public void incrementProcessCount(int increment){
+        processedCount += increment;
+        lastProgressCheck = System.currentTimeMillis();
+    }
+
+    public void setProcessCount(int processedCount){
+        this.processedCount = processedCount;
+        lastProgressCheck = System.currentTimeMillis();
+    }
+
     public int getProcessedCount() {
         return processedCount;
     }
@@ -76,7 +88,15 @@ public abstract class AbstractDataRequest implements DataRequest {
 
     @Override
     public STATUS getStatus() {
+
+        if (status == running) checkProgress();
         return status;
+    }
+
+    private void checkProgress() {
+        if (System.currentTimeMillis() - lastProgressCheck > progressTimeOut){{
+            status = terminated;
+        }}
     }
 
     @Override

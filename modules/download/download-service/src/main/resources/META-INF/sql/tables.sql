@@ -11,7 +11,7 @@ create table Downloads_Download (
 	organization VARCHAR(75) null,
 	countryCode VARCHAR(75) null,
 	city VARCHAR(75) null,
-	shareId LONG,
+	shareId INTEGER,
 	directDownloadUrl STRING null
 );
 

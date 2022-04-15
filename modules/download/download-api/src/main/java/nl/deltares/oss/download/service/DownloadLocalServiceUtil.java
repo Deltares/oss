@@ -53,6 +53,18 @@ public class DownloadLocalServiceUtil {
 		return getService().addDownload(download);
 	}
 
+	public static int countDirectDownloads(long groupId) {
+		return getService().countDirectDownloads(groupId);
+	}
+
+	public static int countDownloads(long groupId) {
+		return getService().countDownloads(groupId);
+	}
+
+	public static int countDownloadsByShareId(long groupId, int shareId) {
+		return getService().countDownloadsByShareId(groupId, shareId);
+	}
+
 	/**
 	 * Creates a new download with the primary key. Does not add the download to the database.
 	 *
@@ -193,6 +205,56 @@ public class DownloadLocalServiceUtil {
 		return getService().fetchDownload(id);
 	}
 
+	public static nl.deltares.oss.download.model.Download fetchUserDownload(
+		long groupId, long userId, long downloadId) {
+
+		return getService().fetchUserDownload(groupId, userId, downloadId);
+	}
+
+	public static java.util.List<nl.deltares.oss.download.model.Download>
+		findDirectDownloads(long groupId) {
+
+		return getService().findDirectDownloads(groupId);
+	}
+
+	public static java.util.List<nl.deltares.oss.download.model.Download>
+		findDirectDownloads(long groupId, int start, int end) {
+
+		return getService().findDirectDownloads(groupId, start, end);
+	}
+
+	public static java.util.List<nl.deltares.oss.download.model.Download>
+		findDownloads(long groupId) {
+
+		return getService().findDownloads(groupId);
+	}
+
+	public static java.util.List<nl.deltares.oss.download.model.Download>
+		findDownloads(long groupId, int start, int end) {
+
+		return getService().findDownloads(groupId, start, end);
+	}
+
+	public static java.util.List<nl.deltares.oss.download.model.Download>
+		findDownloadsByShareId(long groupId, int shareId) {
+
+		return getService().findDownloadsByShareId(groupId, shareId);
+	}
+
+	public static java.util.List<nl.deltares.oss.download.model.Download>
+		findDownloadsByShareId(long groupId, int shareId, int start, int end) {
+
+		return getService().findDownloadsByShareId(
+			groupId, shareId, start, end);
+	}
+
+	public static java.util.List<nl.deltares.oss.download.model.Download>
+		findUserDownloadsByShareId(long groupId, long userId, int shareId) {
+
+		return getService().findUserDownloadsByShareId(
+			groupId, userId, shareId);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 
@@ -254,23 +316,11 @@ public class DownloadLocalServiceUtil {
 		return getService().getOSGiServiceIdentifier();
 	}
 
-	public static java.util.List<nl.deltares.oss.download.model.Download>
-		getPendingUserDownloads(long groupId, long userId) {
-
-		return getService().getPendingUserDownloads(groupId, userId);
-	}
-
 	public static com.liferay.portal.kernel.model.PersistedModel
 			getPersistedModel(java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().getPersistedModel(primaryKeyObj);
-	}
-
-	public static nl.deltares.oss.download.model.Download getUserDownload(
-		long groupId, long userId, long downloadId) {
-
-		return getService().getUserDownload(groupId, userId, downloadId);
 	}
 
 	/**

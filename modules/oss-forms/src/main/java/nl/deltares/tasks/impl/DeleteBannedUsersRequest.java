@@ -72,7 +72,7 @@ public class DeleteBannedUsersRequest extends AbstractDataRequest {
                     adminUtils.deleteUserAndRelatedContent(siteId, user, writer, true);
                     //start flushing
                     writer.flush();
-                    processedCount++;
+                    incrementProcessCount(1);
                     if (Thread.interrupted()) {
                         status = terminated;
                         errorMessage = "Thread interrupted";

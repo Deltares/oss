@@ -43,7 +43,7 @@ public class DownloadDisabledUsersRequest extends AbstractDataRequest {
             //Download results to file
             try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
                 adminUtils.downloadDisabledUsers(disableTimeAfter, writer);
-                processedCount = 100;
+                incrementProcessCount(100);
                 status = available;
             } catch (Exception e) {
                 errorMessage = e.getMessage();
@@ -69,10 +69,10 @@ public class DownloadDisabledUsersRequest extends AbstractDataRequest {
     public int getProcessedCount() {
         //dummy something to show in progress bar.
         if (status == running){
-            processedCount++;
-            if (processedCount == totalCount) processedCount = 0;
+            incrementProcessCount(1);
+            if (getProcessedCount() == totalCount) setProcessCount(0);
         }
-        return processedCount;
+        return getProcessedCount();
     }
 
 }
