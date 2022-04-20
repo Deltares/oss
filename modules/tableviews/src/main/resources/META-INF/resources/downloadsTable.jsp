@@ -25,6 +25,12 @@
 
     <portlet:actionURL name="filter" var="filterTableURL" />
 
+    <portlet:actionURL name="updateShares" var="updateSharesURL" />
+
+    <liferay-ui:error key="action-failed">
+        <liferay-ui:message key="action-failed"
+                            arguments='<%= SessionErrors.get(liferayPortletRequest, "action-failed") %>'/>
+    </liferay-ui:error>
     <liferay-ui:error key="filter-failed">
         <liferay-ui:message key="filter-failed"
                             arguments='<%= SessionErrors.get(liferayPortletRequest, "filter-failed") %>'/>
@@ -36,29 +42,38 @@
                 <aui:col width="20">
                     <div class="control-label"><liferay-ui:message key="table.filter.label"/></div>
                 </aui:col>
-                <aui:col width="25">
-                    <aui:row>
-                        <aui:select name="filterSelection" label="" value="<%=filterId%>">
-                            <aui:option value="none" label="table.filter.option.none" />
-                            <aui:option value="pendingpayment" label="table.filter.option.payment"/>
-                            <aui:option value="processing" label="table.filter.option.processing"/>
-                            <aui:option value="direct" label="table.filter.option.direct"/>
-                        </aui:select>
-                    </aui:row>
+                <aui:col width="20">
+                    <aui:select name="filterSelection" label="" value="<%=filterId%>">
+                        <aui:option value="none" label="table.filter.option.none" />
+                        <aui:option value="pendingpayment" label="table.filter.option.payment"/>
+                        <aui:option value="processing" label="table.filter.option.processing"/>
+                        <aui:option value="direct" label="table.filter.option.direct"/>
+                    </aui:select>
+                </aui:col>
+                <aui:col width="50"/>
+                <aui:col width="20">
+                    <aui:button type="submit" value="table.filter.button" />
+                    <aui:button type="cancel" onClick="<%= viewURL.toString() %>" value="table.filter.clear"/>
                 </aui:col>
             </aui:row>
         </aui:fieldset>
-        <aui:button-row>
-
-            <aui:button type="submit" value="table.filter.button" />
-            <aui:button type="cancel" onClick="<%= viewURL.toString() %>" value="table.filter.clear"/>
-
-        </aui:button-row>
     </aui:form>
-
+    <aui:form action="<%=updateSharesURL%>" name="<portlet:namespace />updateForm" >
+        <aui:fieldset>
+            <aui:row>
+                <aui:col width="20">
+                    <div class="control-label" title="<liferay-ui:message key="table.update.help"/>"><liferay-ui:message key="table.update.label"/></div>
+                </aui:col>
+                <aui:col width="70"/>
+                <aui:col width="20">
+                    <aui:button type="submit" value="table.update.button" />
+                </aui:col>
+            </aui:row>
+        </aui:fieldset>
+    </aui:form>
     <hr>
     <aui:form >
-        <jsp:useBean id="records" class="java.util.List<nl.deltares.oss.download.model.Download>" scope="request"/>
+        <jsp:useBean id="records" class="java.util.List" scope="request"/>
 
         <liferay-ui:search-container id="tableResults" delta="50" emptyResultsMessage='<%=LanguageUtil.get(locale, "no-download-records")%>'
                                      total="<%=count%>">
