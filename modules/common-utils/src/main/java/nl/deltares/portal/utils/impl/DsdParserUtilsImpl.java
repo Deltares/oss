@@ -141,6 +141,7 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
     @Override
     public AbsDsdArticle toDsdArticle(long siteId, String articleId) throws PortalException {
         JournalArticle article =  dsdJournalArticleUtils.getJournalArticle(siteId, articleId);
+        if (article == null) return null;
         return  toDsdArticle(article);
     }
 
