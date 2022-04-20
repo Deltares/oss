@@ -3,6 +3,7 @@ package nl.deltares.portal.utils;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import nl.deltares.portal.model.impl.Download;
+import org.w3c.dom.Document;
 
 import java.util.Map;
 
@@ -33,11 +34,18 @@ public interface DownloadUtils {
     Map<String, Object> sendShareLink(String filePath, String email) throws Exception;
 
     /**
-     * Revoke an earlier creaded share.
+     * Revoke an earlier created share.
      * @param shareId Share identifier
      * @throws Exception If share does not exist.
      */
     void deleteShareLink(int shareId) throws Exception;
+
+    /**
+     * Return document containing the existing share information for 'filePath' element.
+     * @param filePath Path to shared file.
+     * @return response Document
+     */
+    Document getFileShares(String filePath) throws Exception;
 
     /**
      * Check if a share link already exists for a certain user and file combination.
@@ -68,7 +76,6 @@ public interface DownloadUtils {
      * Retrieve information about an existing share link
      * @param shareId Share link identifier
      * @return Map containing relevant share link properties
-     * @throws Exception
      */
     Map<String, Object> getShareLinkInfo(int shareId) throws Exception;
 
@@ -100,14 +107,16 @@ public interface DownloadUtils {
     /**
      * Update any pending downloads that have not yet been assigned a shareLink
      * @param user User the check
+     * @param groupId Site id
      */
-    void updatePendingShares(User user);
+    void updatePendingShares(User user, long groupId);
 
     /**
      * Count downloads
      * @param download Download
      * @return Download count
      */
+    @SuppressWarnings("unused")
     int getDownloadCount(Download download);
 
     /**
@@ -116,12 +125,15 @@ public interface DownloadUtils {
      * @param user Logged in user
      * @return Status value: available, expired, invalid,  payment_pending, unknown
      */
+    @SuppressWarnings("unused")
     String getDownloadStatus(Download download, User user);
 
     /**
      * Check if payment is pending for download
-     * @param download
-     * @return
+     * @param download download to check for
+     * @param user User to check for
+     * @return Returns true if payment is pending else false
      */
+    @SuppressWarnings("unused")
     boolean isPaymentPending(Download download, User user);
 }

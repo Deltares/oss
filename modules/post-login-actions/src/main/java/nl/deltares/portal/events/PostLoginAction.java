@@ -1,13 +1,13 @@
 package nl.deltares.portal.events;
 
-import com.liferay.portal.kernel.events.ActionException;
 import com.liferay.portal.kernel.events.LifecycleAction;
 import com.liferay.portal.kernel.events.LifecycleEvent;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
@@ -42,7 +42,7 @@ public class PostLoginAction implements LifecycleAction {
 	private DownloadUtils downloadUtils;
 
 	@Override
-	public void processLifecycleEvent(LifecycleEvent lifecycleEvent) throws ActionException {
+	public void processLifecycleEvent(LifecycleEvent lifecycleEvent)  {
 
 		HttpServletRequest request = lifecycleEvent.getRequest();
 		if (request == null) return;
@@ -86,8 +86,9 @@ public class PostLoginAction implements LifecycleAction {
 		}
 
 		if (downloadUtils.isActive()){
+			final LayoutSet layoutSet = (LayoutSet) request.getAttribute(WebKeys.VIRTUAL_HOST_LAYOUT_SET);
 			//Check if users has any pending shares that need to be updated
-			downloadUtils.updatePendingShares(user);
+			downloadUtils.updatePendingShares(user, layoutSet.getGroupId());
 		}
 	}
 
