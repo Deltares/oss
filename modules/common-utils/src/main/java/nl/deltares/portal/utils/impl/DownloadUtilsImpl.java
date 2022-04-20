@@ -6,6 +6,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.CountryServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 import nl.deltares.oss.download.model.DownloadCount;
 import nl.deltares.oss.download.service.DownloadCountLocalServiceUtil;
@@ -16,12 +17,15 @@ import org.osgi.service.component.annotations.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +38,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
 
     public enum DOWNLOAD_STATUS {payment_pending, available, expired, unknown, invalid, processing}
 
+    private final Document DUMMY;
     @SuppressWarnings("FieldCanBeLocal")
     private final int passwordLength = 10;
 
@@ -63,6 +68,15 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
             AUTH_TOKEN = null;
             LOG.info("DownloadUtils has not been initialized.");
         }
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        Document dummy = null;
+        try {
+            dummy = factory.newDocumentBuilder().newDocument();
+        } catch (ParserConfigurationException e) {
+            LOG.warn("Error creating dummy document: " + e.getMessage());
+        }
+        this.DUMMY = dummy;
 
     }
 
@@ -162,16 +176,23 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
     }
 
     @Override
-    public Map<String, Object> shareLinkExists(String filePath, String email) throws Exception {
-        String path = API_PATH + "files_sharing/api/v1/shares?path=" + URLEncoder.encode(filePath, StandardCharsets.UTF_8.name());
+    public Document getFileShares(String filePath) throws Exception {
+        String path = API_PATH + "files_sharing/api/v1/shares?reshares=true&path=" + URLEncoder.encode(filePath, StandardCharsets.UTF_8.name());
         HttpURLConnection connection = getConnection(path, "GET", getDefaultHeaders());
 
-        if (connection.getResponseCode() == 400) return Collections.emptyMap();
+        if (connection.getResponseCode() == 400) {
+            return null;
+        }
         checkResponse(connection);
 
         final String xmlResponse = readAll(connection);
-        final Document document = XmlContentUtils.parseContent(DownloadUtilsImpl.class.getName(), xmlResponse);
+        return XmlContentUtils.parseContent(DownloadUtilsImpl.class.getName(), xmlResponse);
+    }
 
+    @Override
+    public Map<String, Object> shareLinkExists(String filePath, String email) throws Exception {
+
+        final Document document = getFileShares(filePath);
         final NodeList emailNodes = document.getElementsByTagName("share_with");
         if (emailNodes.getLength() == 0) {
             return Collections.emptyMap();
@@ -305,23 +326,74 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
     }
 
     @Override
-    public void updatePendingShares(User user) {
-        final List<nl.deltares.oss.download.model.Download> byPendingUserDownloads =
-                DownloadLocalServiceUtil.findUserDownloadsByShareId(user.getGroupId(), user.getUserId(), -1);
+    public void updatePendingShares(User user, long groupId) {
+        final List<nl.deltares.oss.download.model.Download> byPendingUserDownloads = getPendingDownloads(user, groupId);
 
+        HashMap<String, Document> cache = new HashMap<>();
         byPendingUserDownloads.forEach(download -> {
             try {
-                final Map<String, Object> existingShare = shareLinkExists(download.getFilePath(), user.getEmailAddress());
-                if (existingShare.isEmpty()) return;
 
-                download.setShareId((Integer) existingShare.get("id"));
-                download.setExpiryDate((Date) existingShare.get("expiration"));
-                DownloadLocalServiceUtil.updateDownload(download);
-                LOG.info(String.format("Updated pending download %s for user %s.", download.getFilePath(), user.getEmailAddress()));
+                Document document = cache.get(download.getFilePath());
+                if (document == null) {
+                    document = getFileShares(download.getFilePath());
+                    cache.put(download.getFilePath(), document == null ? DUMMY : document);
+
+                }
+                String email = getEmailForDownload(user, download);
+                if (email == null) return;
+
+                if (document == null) return;
+                if (extractShareInformation(download, document, email)) {
+                    DownloadLocalServiceUtil.updateDownload(download);
+                    LOG.info(String.format("Updated pending download %s for user %s.", download.getFilePath(), email));
+                }
+
             } catch (Exception e) {
-                LOG.warn("Error checking share: " + e.getMessage());
+                LOG.warn(String.format("Error checking for shares of %s: %s", download.getFilePath(),  e.getMessage()));
             }
         });
+    }
+
+    private boolean extractShareInformation(nl.deltares.oss.download.model.Download download, Document document, String email) throws ParseException {
+        final NodeList emailNodes = document.getElementsByTagName("share_with");
+        if (emailNodes.getLength() == 0) return false;
+
+        int shareIndex = -1;
+        for (int i = 0; i < emailNodes.getLength(); i++) {
+            if (!emailNodes.item(i).getTextContent().equals(email)) continue;
+            shareIndex = i;
+            break;
+        }
+        if (shareIndex == -1) return false;
+        final NodeList shareIdNodes = document.getElementsByTagName("id");
+        final int shareId = Integer.parseInt(shareIdNodes.item(shareIndex).getTextContent());
+        final NodeList expNodes = document.getElementsByTagName("expiration");
+        final Date expiration = dateFormat.parse(expNodes.item(shareIndex).getTextContent());
+
+        download.setShareId(shareId);
+        download.setExpiryDate(expiration);
+        return true;
+    }
+
+    private String getEmailForDownload(User user, nl.deltares.oss.download.model.Download download) {
+        String email = null;
+        if (user != null){
+            email = user.getEmailAddress();
+        } else {
+            final User userOfDownload = UserLocalServiceUtil.fetchUser(download.getUserId());
+            if (userOfDownload != null) email = userOfDownload.getEmailAddress();
+        }
+        return email;
+    }
+
+    private List<nl.deltares.oss.download.model.Download> getPendingDownloads(User user, long groupId) {
+        final List<nl.deltares.oss.download.model.Download> byPendingUserDownloads;
+        if (user == null){
+            byPendingUserDownloads = DownloadLocalServiceUtil.findDownloadsByShareId(groupId, -1);
+        } else {
+            byPendingUserDownloads = DownloadLocalServiceUtil.findUserDownloadsByShareId(groupId, user.getUserId(), -1);
+        }
+        return byPendingUserDownloads;
     }
 
     @Override

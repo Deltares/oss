@@ -8,12 +8,14 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
+import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.tableview.portlet.constants.DownloadTablePortletKeys;
 import nl.deltares.tableview.tasks.impl.DeletedSelectedDownloadsRequest;
 import nl.deltares.tableview.tasks.impl.ExportTableRequest;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +48,9 @@ import java.util.TimeZone;
         service = Portlet.class
 )
 public class DownloadTablePortlet extends MVCPortlet {
+
+    @Reference
+    private DownloadUtils downloadUtils;
 
     final static String datePattern = "yyy-MM-dd";
     final static SimpleDateFormat dateFormat = new SimpleDateFormat(datePattern);
@@ -105,10 +110,29 @@ public class DownloadTablePortlet extends MVCPortlet {
      * @param actionRequest  Filter action
      * @param actionResponse Filter response
      */
+    @SuppressWarnings("unused")
     public void filter(ActionRequest actionRequest, ActionResponse actionResponse) {
 
         final String filter = ParamUtil.getString(actionRequest, "filterSelection", "none");
         actionResponse.getRenderParameters().setValue("filterId", filter);
+    }
+
+    /**
+     * Get latest share information from cloud and update local database
+     * @param actionRequest Update action
+     * @param actionResponse Update response
+     */
+    @SuppressWarnings("unused")
+    public void updateShares(ActionRequest actionRequest, ActionResponse actionResponse){
+
+        ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest
+                .getAttribute(WebKeys.THEME_DISPLAY);
+        if (!themeDisplay.isSignedIn() || !actionRequest.isUserInRole("administrator")) {
+            SessionErrors.add(actionRequest, "action-failed", "You are not authorized to perform this action.");
+            return;
+        }
+        downloadUtils.updatePendingShares(null, themeDisplay.getSiteGroupId());
+
     }
 
     @Override
