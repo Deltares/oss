@@ -6,6 +6,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
+import com.liferay.portal.kernel.util.CallbackMatcher;
 
 import java.io.File;
 import java.io.IOException;
@@ -94,9 +95,9 @@ public abstract class AbstractDataRequest implements DataRequest {
     }
 
     private void checkProgress() {
-        if (System.currentTimeMillis() - lastProgressCheck > progressTimeOut){{
+        if (System.currentTimeMillis() - lastProgressCheck > progressTimeOut){
             status = terminated;
-        }}
+        }
     }
 
     @Override
@@ -130,7 +131,7 @@ public abstract class AbstractDataRequest implements DataRequest {
     @Override
     public boolean isCached(){
         return false;
-    };
+    }
 
     protected File getExportDir() throws IOException {
         if (tempDir != null) return tempDir;

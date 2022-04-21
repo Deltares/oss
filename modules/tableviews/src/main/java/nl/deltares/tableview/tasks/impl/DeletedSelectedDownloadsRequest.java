@@ -48,7 +48,9 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
 
             try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
                 deleteSelectedRecords(writer);
-                status = available;
+                if (status != terminated) {
+                    status = available;
+                }
             } catch (Exception e) {
                 errorMessage = e.getMessage();
                 logger.warn("Error serializing csv content: %s", e);
@@ -75,6 +77,7 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
         totalCount = selectedRecords.size();
 
         selectedRecords.forEach(id -> {
+            if (status == terminated) return;
             try {
                 final Download download = DownloadLocalServiceUtil.deleteDownload(Long.parseLong(id));
                 final User user = UserLocalServiceUtil.fetchUser(download.getUserId());
@@ -90,6 +93,10 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
                 writer.println(String.format("Failed to delete record %s: %s", id, e.getMessage()));
             } finally {
                 incrementProcessCount(1);
+            }
+            if (Thread.interrupted()) {
+                status = terminated;
+                errorMessage = String.format("Thread 'DeletedSelectedDownloadsRequest' with id %s is interrupted!", id);
             }
         });
     }

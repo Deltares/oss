@@ -75,7 +75,7 @@ public class DeleteBannedUsersRequest extends AbstractDataRequest {
                     incrementProcessCount(1);
                     if (Thread.interrupted()) {
                         status = terminated;
-                        errorMessage = "Thread interrupted";
+                        errorMessage = String.format("Thread 'DeleteBannedUsersRequest' with id %s is interrupted!", id);
                         break;
                     }
                 }

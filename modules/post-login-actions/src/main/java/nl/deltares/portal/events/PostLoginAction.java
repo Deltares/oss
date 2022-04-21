@@ -89,6 +89,7 @@ public class PostLoginAction implements LifecycleAction {
 			final LayoutSet layoutSet = (LayoutSet) request.getAttribute(WebKeys.VIRTUAL_HOST_LAYOUT_SET);
 			//Check if users has any pending shares that need to be updated
 			downloadUtils.updatePendingShares(user, layoutSet.getGroupId());
+			downloadUtils.updateProcessingShares(user, layoutSet.getGroupId());
 		}
 	}
 
