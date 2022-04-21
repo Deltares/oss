@@ -36,6 +36,8 @@ import java.util.concurrent.TimeUnit;
 )
 public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils {
 
+    private final long maxProcessingTime = TimeUnit.MINUTES.toMillis(10);;
+
     public enum DOWNLOAD_STATUS {payment_pending, available, expired, unknown, invalid, processing}
 
     private final Document DUMMY;
@@ -327,7 +329,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
 
     @Override
     public void updatePendingShares(User user, long groupId) {
-        final List<nl.deltares.oss.download.model.Download> byPendingUserDownloads = getPendingDownloads(user, groupId);
+        final List<nl.deltares.oss.download.model.Download> byPendingUserDownloads = getDownloadRecords(user, groupId, -1);
 
         HashMap<String, Document> cache = new HashMap<>();
         byPendingUserDownloads.forEach(download -> {
@@ -348,6 +350,35 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
                     LOG.info(String.format("Updated pending download %s for user %s.", download.getFilePath(), email));
                 }
 
+            } catch (Exception e) {
+                LOG.warn(String.format("Error checking for shares of %s: %s", download.getFilePath(),  e.getMessage()));
+            }
+        });
+    }
+
+    @Override
+    public void updateProcessingShares(User user, long groupId) {
+        final List<nl.deltares.oss.download.model.Download> processing = getDownloadRecords(user, groupId, -9);
+
+        HashMap<String, Document> cache = new HashMap<>();
+        processing.forEach(download -> {
+            try {
+                if (!isTimedOut(download)) return; //still have time to complete
+
+                Document document = cache.get(download.getFilePath());
+                if (document == null) {
+                    document = getFileShares(download.getFilePath());
+                    cache.put(download.getFilePath(), document == null ? DUMMY : document);
+                }
+                String email = getEmailForDownload(user, download);
+                if (document == null || email == null) {
+                    download.setShareId(0); //start by setting to 0
+                } else if (extractShareInformation(download, document, email)) { //try to get info from the server
+                    LOG.info(String.format("Updated pending download %s for user %s.", download.getFilePath(), email));
+                } else {
+                    download.setShareId(0); //start by setting to 0
+                }
+                DownloadLocalServiceUtil.updateDownload(download);
             } catch (Exception e) {
                 LOG.warn(String.format("Error checking for shares of %s: %s", download.getFilePath(),  e.getMessage()));
             }
@@ -386,12 +417,12 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         return email;
     }
 
-    private List<nl.deltares.oss.download.model.Download> getPendingDownloads(User user, long groupId) {
+    private List<nl.deltares.oss.download.model.Download> getDownloadRecords(User user, long groupId, int shareId) {
         final List<nl.deltares.oss.download.model.Download> byPendingUserDownloads;
         if (user == null){
-            byPendingUserDownloads = DownloadLocalServiceUtil.findDownloadsByShareId(groupId, -1);
+            byPendingUserDownloads = DownloadLocalServiceUtil.findDownloadsByShareId(groupId, shareId);
         } else {
-            byPendingUserDownloads = DownloadLocalServiceUtil.findUserDownloadsByShareId(groupId, user.getUserId(), -1);
+            byPendingUserDownloads = DownloadLocalServiceUtil.findUserDownloadsByShareId(groupId, user.getUserId(), shareId);
         }
         return byPendingUserDownloads;
     }
@@ -423,6 +454,12 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
             return DOWNLOAD_STATUS.available.name();
         }
         return DOWNLOAD_STATUS.invalid.name();
+    }
+
+    private boolean isTimedOut(nl.deltares.oss.download.model.Download dbDownload){
+        final long timeNow = System.currentTimeMillis();
+        final Date startProcessing = dbDownload.getModifiedDate();
+        return startProcessing != null && (startProcessing.getTime() + maxProcessingTime) < timeNow;
     }
 
     private boolean isExpired(nl.deltares.oss.download.model.Download dbDownload) {

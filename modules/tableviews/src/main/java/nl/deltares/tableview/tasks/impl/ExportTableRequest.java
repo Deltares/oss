@@ -50,7 +50,9 @@ public class ExportTableRequest extends AbstractDataRequest {
 
             try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
                 exportAllRecords(writer);
-                status = available;
+                if (status != terminated) {
+                    status = available;
+                }
             } catch (Exception e) {
                 errorMessage = e.getMessage();
                 logger.warn("Error serializing csv content: %s", e);
@@ -83,12 +85,14 @@ public class ExportTableRequest extends AbstractDataRequest {
         totalCount = getCountForSelectedFilter();
 
         for (int i = start; i < totalCount; i++) {
+            if (status == terminated) return;
             final List<Download> downloads = getDownloadsForSelectedFilter(start, end);
             if (downloads.size() == 0) {
                 setProcessCount(totalCount);
                 return;
             }
             downloads.forEach(download -> {
+                if (status == terminated) return;
                 incrementProcessCount(1);
                 if (group != null && group.getGroupId() != download.getGroupId()) return;
                 final User user = UserLocalServiceUtil.fetchUser(download.getUserId());
@@ -101,6 +105,10 @@ public class ExportTableRequest extends AbstractDataRequest {
                         download.getFilePath(), download.getDirectDownloadUrl(), email, download.getOrganization(),
                         download.getCity(), download.getCountryCode()));
 
+                if (Thread.interrupted()) {
+                    status = terminated;
+                    errorMessage = String.format("Thread 'DeletedSelectedDownloadsRequest' with id %s is interrupted!", id);
+                }
             });
             start = end;
             end += 100;

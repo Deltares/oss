@@ -8,9 +8,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public class DataRequestManager {
 
@@ -70,12 +68,20 @@ public class DataRequestManager {
 
         while (pendingRequestsIds.size() > 0) {
             String nextId = pendingRequestsIds.remove();
-            DataRequest request = dataRequests.get(nextId);
+            final DataRequest request = dataRequests.get(nextId);
             if (request == null) continue;
             request.setDataRequestManager(this);
 
             ExecutorService executor = Executors.newSingleThreadExecutor();
             runningRequest = executor.submit(request);
+
+            ScheduledExecutorService canceller = Executors.newSingleThreadScheduledExecutor();
+            canceller.schedule((Callable<Void>) () -> {
+                removeDataRequest(request);
+                runningRequest.cancel(true);
+                return null;
+            }, TimeUnit.HOURS.toMillis(1), TimeUnit.MILLISECONDS);
+
             break;
         }
     }

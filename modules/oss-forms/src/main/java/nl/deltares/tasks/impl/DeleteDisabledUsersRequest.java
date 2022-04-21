@@ -98,12 +98,17 @@ public class DeleteDisabledUsersRequest extends AbstractDataRequest {
                         for (Group siteGroup : siteGroups) {
                             adminUtils.deleteUserAndRelatedContent(siteGroup.getGroupId(), user, writer, false);
                         }
+                        if (Thread.interrupted()) {
+                            status = terminated;
+                            errorMessage = String.format("Thread 'DeleteDisabledUsersRequest' with id %s is interrupted!", id);
+                            break;
+                        }
                     }
                 }
-                if (processedUsers == 0){
+                if (processedUsers == 0) {
                     writer.println("no disabled users found.");
                     status = nodata;
-                } else {
+                } else if (status != terminated) {
                     status = available;
                 }
             } catch (Exception e) {
