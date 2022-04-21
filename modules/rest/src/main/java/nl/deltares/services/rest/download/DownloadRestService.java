@@ -171,12 +171,12 @@ public class DownloadRestService {
              shareInfo = downloadUtils.shareLinkExists(filePath, user.getEmailAddress());
             if (!shareInfo.isEmpty()) {
                 if (resendLink) {
-                    downloadUtils.resendShareLink((Integer) shareInfo.get("id"));
+                    shareInfo = downloadUtils.resendShareLink((Integer) shareInfo.get("id"));
                 } else {
                     return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Share link has already been sent to user " + user.getEmailAddress()).build();
                 }
             } else {
-                downloadUtils.sendShareLink(filePath, user.getEmailAddress());
+                shareInfo = downloadUtils.sendShareLink(filePath, user.getEmailAddress());
             }
             return Response.ok().entity(String.format("Share link for '%s' created and sent to '%s'", filePath, user.getEmailAddress())).build();
         } catch (Exception e) {

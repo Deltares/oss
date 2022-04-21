@@ -131,7 +131,9 @@ public class DownloadTablePortlet extends MVCPortlet {
             SessionErrors.add(actionRequest, "action-failed", "You are not authorized to perform this action.");
             return;
         }
-        downloadUtils.updatePendingShares(null, themeDisplay.getSiteGroupId());
+        final long siteGroupId = themeDisplay.getSiteGroupId();
+        downloadUtils.updatePendingShares(null, siteGroupId);
+        downloadUtils.updateProcessingShares(null, siteGroupId);
 
     }
 

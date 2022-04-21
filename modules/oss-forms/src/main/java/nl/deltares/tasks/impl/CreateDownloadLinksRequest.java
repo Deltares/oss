@@ -76,6 +76,12 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
                     LOG.warn(errorMessage);
                 }
                 incrementProcessCount(1);
+
+                if (Thread.interrupted()) {
+                    status = terminated;
+                    errorMessage = String.format("Thread 'CreateDownloadLinksRequest' with id %s is interrupted!", id);
+                    break;
+                }
             }
             status = available;
             statusMessage = String.format("%d share links have been created for user %s", getProcessedCount(), user.getEmailAddress());
@@ -83,8 +89,9 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
         } catch (Exception e) {
             errorMessage = e.getMessage();
             status = terminated;
+        } finally {
+            fireStateChanged();
         }
-        fireStateChanged();
 
         return status;
     }

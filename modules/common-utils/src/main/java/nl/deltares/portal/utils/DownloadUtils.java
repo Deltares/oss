@@ -112,6 +112,13 @@ public interface DownloadUtils {
     void updatePendingShares(User user, long groupId);
 
     /**
+     * Update any processing activities that have not yet been assigned a shareLink and are out of date
+     * @param user User the check
+     * @param groupId Site id
+     */
+    void updateProcessingShares(User user, long groupId);
+
+    /**
      * Count downloads
      * @param download Download
      * @return Download count

@@ -186,7 +186,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             int end = i + 500;
             final List<Map<String, Object>> registrationRecordsToProcess = dsdSessionUtils.getRegistrations(start, end);
             registrationRecordsToProcess.forEach(recordObjects -> {
-
+                if (status == terminated) return;
                 incrementProcessCount(1);
                 Long eventResourcePrimaryKey = (Long) recordObjects.get("eventResourcePrimaryKey");
                 Event event = (Event) getDsdArticle(eventResourcePrimaryKey, cache);
@@ -207,11 +207,17 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                     throw new RuntimeException("Thread interrupted");
                 }
 
+                if (Thread.interrupted()) {
+                    status = terminated;
+                    errorMessage = String.format("Thread 'DownloadEventRegistrationsRequest' with id %s is interrupted!", id);
+                }
             });
 
             i = end;
         }
-        status = available;
+        if (status != terminated) {
+            status = available;
+        }
 
 
     }
@@ -229,7 +235,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         totalCount = registrationRecordsToProcess.size();
 
         registrationRecordsToProcess.forEach(recordObjects -> {
-
+            if (status == terminated) return;
             incrementProcessCount(1);
             Long resourcePrimaryKey = (Long) recordObjects.get("resourcePrimaryKey");
             statusMessage = "procession resourcePrimaryKey=" + resourcePrimaryKey;
@@ -243,11 +249,14 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             writeRecord(writer, recordObjects, null, null, matchingUser,
                     null, locale);
             if (Thread.interrupted()) {
-                throw new RuntimeException("Thread interrupted");
+                status = terminated;
+                errorMessage = String.format("Thread 'DownloadEventRegistrationsRequest' with id %s is interrupted!", id);
             }
 
         });
-        status = available;
+        if (status != terminated) {
+            status = available;
+        }
 
 
     }
@@ -273,7 +282,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
             Event event = getEvent(article);
             registrationRecordsToProcess.forEach(recordObjects -> {
-
+                if (status == terminated) return;
                 incrementProcessCount(1);
                 Long resourcePrimaryKey = (Long) recordObjects.get("resourcePrimaryKey");
                 statusMessage = "procession resourcePrimaryKey=" + resourcePrimaryKey;
@@ -288,11 +297,15 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 writeRecord(writer, recordObjects, event, matchingRegistration, matchingUser,
                         webinarKeyCache, locale);
                 if (Thread.interrupted()) {
-                    throw new RuntimeException("Thread interrupted");
+                    status = terminated;
+                    errorMessage = String.format("Thread 'DownloadEventRegistrationsRequest' with id %s is interrupted!", id);
                 }
 
+
             });
-            status = available;
+            if (status != terminated) {
+                status = available;
+            }
 
         } catch (PortalException e) {
             errorMessage = e.getMessage();
