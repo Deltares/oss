@@ -2,12 +2,13 @@
 <#assign parserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
 <#assign downloadUtils = serviceLocator.findService("nl.deltares.portal.utils.DownloadUtils") />
 <#assign sanctionsUtils = serviceLocator.findService("nl.deltares.portal.utils.SanctionCheckUtils") />
-<#assign isSanctioned = sanctionsUtils.isSanctionCountry(request.getRemoteAddr()) />
+
+
 <#assign baseUrl = "/o/download" />
 <#if entries?has_content>
 
-    <#if isSanctioned>
-        <div class="lfr-status-alert-label" >${languageUtil.get(locale, "download.restriction.country")}
+    <#if is_sanctioned?? && is_sanctioned>
+        <div class="lfr-status-alert-label" >${languageUtil.get(locale, "download.restriction.country")} ${sanctionCountry}
         </div>
     </#if>
     <ul class="c-downloads-list clear-list">

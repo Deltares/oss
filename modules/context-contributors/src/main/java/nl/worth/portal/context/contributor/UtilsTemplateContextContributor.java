@@ -87,6 +87,11 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
             }
         }
 
+        final Object isSanctioned = request.getSession().getAttribute("LIFERAY_SHARED_isSanctioned");
+        if (isSanctioned != null) {
+            contextObjects.put("is_sanctioned", isSanctioned);
+            contextObjects.put("sanctionCountry", request.getSession().getAttribute("LIFERAY_SHARED_sanctionCountry"));
+        }
 
         //set languages
         setLanguages(contextObjects, themeDisplay);
