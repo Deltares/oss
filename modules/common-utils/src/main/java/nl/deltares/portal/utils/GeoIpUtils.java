@@ -4,4 +4,6 @@ import java.util.Map;
 
 public interface GeoIpUtils {
     Map<String, Object> getLocationInfo(String ipAddress);
+
+    String getCountryIso2Code(String ipAddress);
 }

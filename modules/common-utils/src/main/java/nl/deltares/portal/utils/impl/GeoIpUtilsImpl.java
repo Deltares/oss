@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component(
+        immediate = true,
         service = GeoIpUtils.class
 )
 /*
@@ -66,4 +67,16 @@ public class GeoIpUtilsImpl implements GeoIpUtils {
         return info;
     }
 
+    @Override
+    public String getCountryIso2Code(String ipAddress) {
+        if (reader == null) return null;
+        try {
+            InetAddress inetAddress = InetAddress.getByName(ipAddress);
+            CityResponse city = reader.city(inetAddress);
+            return city.getCountry().getIsoCode();
+        } catch (GeoIp2Exception | IOException e) {
+            LOG.warn("Error creating location info response: " + e.getMessage());
+        }
+        return null;
+    }
 }
