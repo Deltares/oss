@@ -32,12 +32,13 @@ project.ext {
     keySecret = getEnvProperty('KEYCLOAK_CLIENTSECRET', '')
     googleKey = getEnvProperty('GOOGLE_API_KEY', '')
     emailUser = getEnvProperty('EMAIL_USER', '')
-    emailPass = getEnvProperty('EMAIL_PASSWORD','')
-    downloadUrl = getEnvProperty('DOWNLOAD_URL','')
-    downloadUser = getEnvProperty('DOWNLOAD_APPNAME','')
-    downloadPass = getEnvProperty('DOWNLOAD_APPPW','')
+    emailPass = getEnvProperty('EMAIL_PASSWORD', '')
+    downloadUrl = getEnvProperty('DOWNLOAD_URL', '')
+    downloadUser = getEnvProperty('DOWNLOAD_APPNAME', '')
+    downloadPass = getEnvProperty('DOWNLOAD_APPPW', '')
+    downloadApiUrl = getEnvProperty('DOWNLOAD_APIURL', '')
+    downloadApiKey = getEnvProperty('DOWNLOAD_APIKEY', '')
 }
-
 task startContainers(
         description: 'Start all docker containers',
         group: 'docker'
@@ -80,7 +81,9 @@ task startLiferay(
                     'EMAIL_PASSWORD'        : emailPass,
                     'DOWNLOAD_URL'          : downloadUrl,
                     'DOWNLOAD_APPNAME'      : downloadUser,
-                    'DOWNLOAD_APPPW'        : downloadPass
+                    'DOWNLOAD_APPPW'        : downloadPass,
+                    'DOWNLOAD_APIURL'       : downloadApiUrl,
+                    'DOWNLOAD_APIKEY'       : downloadApiKey
             ])
         }
         copy {

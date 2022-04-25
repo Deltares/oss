@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
+import nl.deltares.portal.utils.SanctionCheckUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Principal;
+import java.util.Map;
 
 /**
  * @author rooij_e
@@ -40,6 +42,9 @@ public class PostLoginAction implements LifecycleAction {
 
 	@Reference
 	private DownloadUtils downloadUtils;
+
+	@Reference
+	protected SanctionCheckUtils sanctionCheckUtils;
 
 	@Override
 	public void processLifecycleEvent(LifecycleEvent lifecycleEvent)  {
@@ -90,6 +95,14 @@ public class PostLoginAction implements LifecycleAction {
 			//Check if users has any pending shares that need to be updated
 			downloadUtils.updatePendingShares(user, layoutSet.getGroupId());
 			downloadUtils.updateProcessingShares(user, layoutSet.getGroupId());
+		}
+
+		if (sanctionCheckUtils.isActive()){
+			final Map<String, String> clientIpInfo = sanctionCheckUtils.getClientIpInfo();
+			if (sanctionCheckUtils.isSanctioned(clientIpInfo.get("country_code2"))){
+				request.getSession().setAttribute("LIFERAY_SHARED_isSanctioned", true);
+				request.getSession().setAttribute("LIFERAY_SHARED_sanctionCountry", clientIpInfo.get("country_name"));
+			}
 		}
 	}
 
