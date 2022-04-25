@@ -1,9 +1,10 @@
 <!--container-->
 <#assign parserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
 <#assign downloadUtils = serviceLocator.findService("nl.deltares.portal.utils.DownloadUtils") />
-<#assign sanctionsUtils = serviceLocator.findService("nl.deltares.portal.utils.SanctionCheckUtils") />
+<#assign sanctionUtils = serviceLocator.findService("nl.deltares.portal.utils.SanctionCheckUtils") />
+<#assign info = sanctionUtils.getClientIpInfo() />
 
-
+${info}
 <#assign baseUrl = "/o/download" />
 <#if entries?has_content>
 
@@ -24,7 +25,7 @@
                     </h4>
                     <div>
                         ${download.getFileTopicName()} | ${download.getFileTypeName()} | ${download.getFileSize()} | ${count} downloads
-                        <#if themeDisplay.isSignedIn() && !isSanctioned >
+                        <#if themeDisplay.isSignedIn() && !(is_sanctioned?? && is_sanctioned) >
                             <span class="d-block" style="float:right">
                             <#assign downloadStatus = downloadUtils.getDownloadStatus(download, themeDisplay.getUser()) />
                             <#assign directDownload = download.isDirectDownload() />

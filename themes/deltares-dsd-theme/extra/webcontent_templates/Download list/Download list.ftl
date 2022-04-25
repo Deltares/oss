@@ -1,12 +1,9 @@
 <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
 <#assign downloadUtils = serviceLocator.findService("nl.deltares.portal.utils.DownloadUtils") />
-<#assign sanctionsUtils = serviceLocator.findService("nl.deltares.portal.utils.SanctionCheckUtils") />
-<#assign isSanctioned = sanctionsUtils.isSanctionCountry(request.getRemoteAddr()) />
 <#assign articleId = .vars['reserved-article-id'].getData() />
 <#assign download = dsdParserUtils.toDsdArticle(themeDisplay.getScopeGroupId(), articleId) />
 <#assign count = downloadUtils.getDownloadCount(download) />
 <#assign showButtons = themeDisplay.isSignedIn() />
-
 <div class="row no-gutters">
 
     <div class="col-12 px-3">
@@ -20,7 +17,7 @@
             ${download.getFileTopicName()} | ${download.getFileTypeName()} | ${download.getFileSize()} | ${count} downloads
             <#if showButtons>
             <span class="d-block" style="float:right">
-                <#if isSanctioned >
+                <#if is_sanctioned?? && is_sanctioned >
                     <#assign buttonText = languageUtil.get(locale, "shopping.cart.sanctioned")/>
                     <#assign buttonDisable = true />
                 <#else >
