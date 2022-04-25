@@ -40,6 +40,7 @@ public class SanctionCheckUtilsImpl implements SanctionCheckUtils {
         API_KEY = PropsUtil.get("download.api.key");
 
         active = API_URL != null && API_KEY != null;
+        LOG.info("Initialised SanctionCheckUtils with properties: " + API_URL + API_KEY);
     }
 
     @Reference
