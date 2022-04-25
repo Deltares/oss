@@ -1,9 +1,15 @@
 <!--container-->
 <#assign parserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
 <#assign downloadUtils = serviceLocator.findService("nl.deltares.portal.utils.DownloadUtils") />
+<#assign sanctionsUtils = serviceLocator.findService("nl.deltares.portal.utils.SanctionCheckUtils") />
+<#assign isSanctioned = sanctionsUtils.isSanctionCountry(request.getRemoteAddr()) />
 <#assign baseUrl = "/o/download" />
 <#if entries?has_content>
 
+    <#if isSanctioned>
+        <div class="lfr-status-alert-label" >${languageUtil.get(locale, "download.restriction.country")}
+        </div>
+    </#if>
     <ul class="c-downloads-list clear-list">
         <#list entries as entry>
             <#assign assetRenderer = entry.getAssetRenderer() />
@@ -13,11 +19,11 @@
             <li class="list-group-item list-group-item-flex">
                 <div class="col-12 px-3">
                     <h4>
-                        <strong>${download.getFileName()}</strong> ( ${download.getFilePath()} )
+                        <strong>${download.getFileName()}</strong>
                     </h4>
                     <div>
                         ${download.getFileTopicName()} | ${download.getFileTypeName()} | ${download.getFileSize()} | ${count} downloads
-                        <#if themeDisplay.isSignedIn() >
+                        <#if themeDisplay.isSignedIn() && !isSanctioned >
                             <span class="d-block" style="float:right">
                             <#assign downloadStatus = downloadUtils.getDownloadStatus(download, themeDisplay.getUser()) />
                             <#assign directDownload = download.isDirectDownload() />
