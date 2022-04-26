@@ -2,9 +2,19 @@
 <#assign parserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
 <#assign downloadUtils = serviceLocator.findService("nl.deltares.portal.utils.DownloadUtils") />
 <#assign sanctionUtils = serviceLocator.findService("nl.deltares.portal.utils.SanctionCheckUtils") />
-<#assign info = sanctionUtils.getClientIpInfo() />
 
-${info}
+
+<a href="#"
+   onclick="showCountryCode('${request.getRemoteAddr()}')"
+   class="btn-lg btn-primary" role="button" aria-pressed="true">
+    Show with IP
+</a>
+
+<a href="#"
+   onclick="showCountryCodeNoIP()"
+   class="btn-lg btn-primary" role="button" aria-pressed="true">
+    Show without IP
+</a>
 <#assign baseUrl = "/o/download" />
 <#if entries?has_content>
 
@@ -111,6 +121,38 @@ ${info}
 </#if>
 
 <script>
+
+    function showCountryCodeNoIP(){
+        $.ajax({
+            type: "GET",
+            url: "https://api.ipgeolocation.io/ipgeo?apiKey=2ca0fc5d24fd45ccab288bc461b880c4&fields=country_code2,country_name",
+            contentType: "application/json",
+            success : function(data, status, xhr) {
+                if (xhr.status === 200){
+                    json = JSON.stringify(data);
+                    alert(json["country_code2"] + ' ' + json["country_name"])
+                } else {
+                    return "";
+                }
+            }
+        });
+    }
+
+    function showCountryCode(ip){
+        $.ajax({
+            type: "GET",
+            url: "https://api.ipgeolocation.io/ipgeo?apiKey=2ca0fc5d24fd45ccab288bc461b880c4&fields=country_code2,country_name&ip=" + ip,
+            contentType: "application/json",
+            success : function(data, status, xhr) {
+                if (xhr.status === 200){
+                    json = JSON.stringify(data);
+                    alert(json["country_code2"] + ' ' + json["country_name"])
+                } else {
+                    return "";
+                }
+            }
+        });
+    }
 
     //Send link to user
     function sendLink(button_id, sendLinkUrl, filePath, articleId, groupId) {

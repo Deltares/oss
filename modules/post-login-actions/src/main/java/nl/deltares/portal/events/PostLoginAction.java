@@ -98,10 +98,14 @@ public class PostLoginAction implements LifecycleAction {
 		}
 
 		if (sanctionCheckUtils.isActive()){
-			final Map<String, String> clientIpInfo = sanctionCheckUtils.getClientIpInfo();
+			final Map<String, String> clientIpInfo = sanctionCheckUtils.getClientIpInfo(request.getRemoteAddr());
+			final String country_name = clientIpInfo.get("country_name");
 			if (sanctionCheckUtils.isSanctioned(clientIpInfo.get("country_code2"))){
 				request.getSession().setAttribute("LIFERAY_SHARED_isSanctioned", true);
-				request.getSession().setAttribute("LIFERAY_SHARED_sanctionCountry", clientIpInfo.get("country_name"));
+				request.getSession().setAttribute("LIFERAY_SHARED_sanctionCountry", country_name);
+				LOG.info(String.format("User '%s' login from sanctioned country '%s'", user.getFullName(), country_name));
+			} else {
+				LOG.info(String.format("User '%s' login from not-sanctioned country '%s'", user.getFullName(), country_name));
 			}
 		}
 	}

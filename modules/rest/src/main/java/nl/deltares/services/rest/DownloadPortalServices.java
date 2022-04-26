@@ -4,13 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.services.rest.download.DownloadRestService;
 import nl.deltares.services.rest.exception.JsonProcessingExceptionMapper;
 import nl.deltares.services.rest.exception.LiferayRestExceptionMapper;
 import nl.deltares.services.rest.exception.PortalExceptionMapper;
-import nl.deltares.services.rest.fullcalendar.DsdFullcalendarService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
@@ -28,11 +26,11 @@ import java.util.Set;
 @Component(
         property = {
 
-			JaxrsWhiteboardConstants.JAX_RS_APPLICATION_BASE + "=/download/",
-			JaxrsWhiteboardConstants.JAX_RS_NAME + "=Deltares.Rest.Download",
-				"oauth2.scopechecker.type=none",
-				"auth.verifier.guest.allowed=true",
-				"auth.verifier.auth.verifier.PortalSessionAuthVerifier.urls.includes=/*"
+                JaxrsWhiteboardConstants.JAX_RS_APPLICATION_BASE + "=/download/",
+                JaxrsWhiteboardConstants.JAX_RS_NAME + "=Deltares.Rest.Download",
+                "oauth2.scopechecker.type=none",
+                "auth.verifier.guest.allowed=true",
+                "auth.verifier.auth.verifier.PortalSessionAuthVerifier.urls.includes=/*"
         },
         service = Application.class
 )
@@ -65,7 +63,7 @@ public class DownloadPortalServices extends Application {
 
     @GET
     @Path("/")
-    public Response test(){
+    public Response test() {
         return Response.ok().entity("Deltares.Rest.Download service is up and running").build();
     }
 
