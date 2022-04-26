@@ -48,6 +48,13 @@ public class DownloadRestService {
         } catch (PortalException e) {
             return Response.status(Response.Status.UNAUTHORIZED).type(MediaType.TEXT_PLAIN).entity(e.getMessage()).build();
         }
+
+        try {
+            doSanctionCheck(request);
+        } catch (IOException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).type(MediaType.TEXT_PLAIN).entity(e.getMessage()).build();
+        }
+
         final String fileId;
         String filePath;
         long downloadId;
@@ -98,6 +105,16 @@ public class DownloadRestService {
 
     }
 
+    private void doSanctionCheck(HttpServletRequest request) throws IOException {
+        final Object isSanctioned = request.getSession().getAttribute("LIFERAY_SHARED_isSanctioned");
+        if (isSanctioned != null && !(boolean) isSanctioned){
+            final Object country = request.getSession().getAttribute("LIFERAY_SHARED_sanctionCountry");
+            throw new IOException(String.format(
+                    "Users from %s are not sanctioned to download Deltares software.", country
+            ));
+        }
+    }
+
     private void setStatusToProcessing(User user, long groupId, long downloadId, String filePath) {
         try {
             final Map<String, Object> shareInfo = new HashMap<>();
@@ -144,6 +161,12 @@ public class DownloadRestService {
             }
         } catch (PortalException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        }
+
+        try {
+            doSanctionCheck(request);
+        } catch (IOException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).type(MediaType.TEXT_PLAIN).entity(e.getMessage()).build();
         }
 
         final String filePath;

@@ -13,5 +13,5 @@ public interface SanctionCheckUtils {
 
     boolean isSanctioned(String isoCountryCode);
 
-    Map<String, String> getClientIpInfo();
+    Map<String, String> getClientIpInfo(String ip);
 }
