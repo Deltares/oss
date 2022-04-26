@@ -9,6 +9,7 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
+import nl.deltares.portal.utils.SanctionCheckUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -28,9 +29,11 @@ public class DownloadRestService {
 
     private static final Log LOG = LogFactoryUtil.getLog(DownloadRestService.class);
     private final DownloadUtils downloadUtils;
+    private final SanctionCheckUtils sanctionCheckUtils;
 
-    public DownloadRestService(DownloadUtils downloadUtils) {
+    public DownloadRestService(DownloadUtils downloadUtils, SanctionCheckUtils sanctionCheckUtils) {
         this.downloadUtils = downloadUtils;
+        this.sanctionCheckUtils = sanctionCheckUtils;
     }
 
     @POST
@@ -50,7 +53,7 @@ public class DownloadRestService {
         }
 
         try {
-            doSanctionCheck(request);
+            doSanctionCheck(request, user.getEmailAddress());
         } catch (IOException e) {
             return Response.status(Response.Status.UNAUTHORIZED).type(MediaType.TEXT_PLAIN).entity(e.getMessage()).build();
         }
@@ -105,14 +108,18 @@ public class DownloadRestService {
 
     }
 
-    private void doSanctionCheck(HttpServletRequest request) throws IOException {
-        final Object isSanctioned = request.getSession().getAttribute("LIFERAY_SHARED_isSanctioned");
-        if (isSanctioned != null && !(boolean) isSanctioned){
-            final Object country = request.getSession().getAttribute("LIFERAY_SHARED_sanctionCountry");
+    private void doSanctionCheck(HttpServletRequest request, String emailAddress) throws IOException {
+        final Map<String, String> clientIpInfo = sanctionCheckUtils.getClientIpInfo(request.getRemoteAddr());
+        final boolean isSanctioned = sanctionCheckUtils.isSanctioned(clientIpInfo.get("country_code2"));
+        if (isSanctioned){
+            LOG.warn(String.format("%s: Invalid sanction check for user %s and country %s ",
+                    DownloadRestService.class.getSimpleName(), emailAddress, clientIpInfo.get("country_name")));
             throw new IOException(String.format(
-                    "Users from %s are not sanctioned to download Deltares software.", country
+                    "Users from %s are not sanctioned to download Deltares software.", clientIpInfo.get("country_name")
             ));
         }
+        LOG.info(String.format("%s: Valid sanction check for user %s and country %s ",
+                DownloadRestService.class.getSimpleName(), emailAddress, clientIpInfo.get("country_name")));
     }
 
     private void setStatusToProcessing(User user, long groupId, long downloadId, String filePath) {
@@ -164,7 +171,7 @@ public class DownloadRestService {
         }
 
         try {
-            doSanctionCheck(request);
+            doSanctionCheck(request, user.getEmailAddress());
         } catch (IOException e) {
             return Response.status(Response.Status.UNAUTHORIZED).type(MediaType.TEXT_PLAIN).entity(e.getMessage()).build();
         }
