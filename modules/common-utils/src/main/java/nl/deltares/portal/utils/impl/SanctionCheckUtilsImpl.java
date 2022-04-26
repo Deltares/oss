@@ -76,12 +76,19 @@ public class SanctionCheckUtilsImpl implements SanctionCheckUtils {
     }
 
     @Override
-    public Map<String, String> getClientIpInfo() {
+    public Map<String, String> getClientIpInfo(String ip) {
         if (!active) return Collections.emptyMap();
 
         try {
             HashMap<String, String> headers = new HashMap<>();
-            final HttpURLConnection get = HttpClientUtils.getConnection(API_URL + API_KEY, "GET", headers);
+            final String requestPath;
+            if (ip == null){
+                requestPath = API_URL + API_KEY + "&fields=country_code2,country_name";
+            } else {
+                requestPath = API_URL + API_KEY + "&ip=" + ip + "&fields=country_code2,country_name";
+            }
+
+            final HttpURLConnection get = HttpClientUtils.getConnection(requestPath, "GET", headers);
             final String ipResponse = HttpClientUtils.readAll(get);
             return JsonContentUtils.parseJsonToMap(ipResponse);
 
