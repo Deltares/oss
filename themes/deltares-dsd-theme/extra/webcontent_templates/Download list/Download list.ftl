@@ -4,6 +4,7 @@
 <#assign download = dsdParserUtils.toDsdArticle(themeDisplay.getScopeGroupId(), articleId) />
 <#assign count = downloadUtils.getDownloadCount(download) />
 <#assign showButtons = themeDisplay.isSignedIn() />
+
 <div class="row no-gutters">
 
     <div class="col-12 px-3">
@@ -16,7 +17,7 @@
         <div>
             ${download.getFileTopicName()} | ${download.getFileTypeName()} | ${download.getFileSize()} | ${count} downloads
             <#if showButtons>
-            <span class="d-block" style="float:right">
+                <span class="d-block" style="float:right">
                 <#if is_sanctioned?? && is_sanctioned >
                     <#assign buttonText = languageUtil.get(locale, "shopping.cart.sanctioned")/>
                     <#assign buttonDisable = true />
@@ -42,19 +43,19 @@
                     </#switch>
                 </#if>
 
-                <#if buttonDisable >
-                    <a href="#" data-article-id="${download.getArticleId()}"
-                       class="btn-lg btn-primary disabled"
-                       role="button" aria-pressed="true" style="color:#fff">
+                    <#if buttonDisable >
+                        <a href="#" data-article-id="${download.getArticleId()}"
+                           class="btn-lg btn-primary disabled"
+                           role="button" aria-pressed="true" style="color:#fff">
                         ${buttonText}
                     </a>
                 <#else >
-                    <a href="#" data-article-id="${download.getArticleId()}"
-                       class="btn-lg btn-primary add-download-to-cart"
-                       role="button" aria-pressed="true" style="color:#fff">
+                        <a href="#" data-article-id="${download.getArticleId()}"
+                           class="btn-lg btn-primary add-download-to-cart"
+                           role="button" aria-pressed="true" style="color:#fff">
                         ${buttonText}
                     </a>
-                </#if>
+                    </#if>
             </span>
             </#if>
         </div>
