@@ -109,36 +109,6 @@
 
 <script>
 
-    function showCountryCodeNoIP(){
-        $.ajax({
-            type: "GET",
-            url: "https://api.ipgeolocation.io/ipgeo?apiKey=2ca0fc5d24fd45ccab288bc461b880c4&fields=country_code2,country_name",
-            contentType: "application/json",
-            success : function(data, status, xhr) {
-                if (xhr.status === 200){
-                    alert(data["country_code2"] + ' ' + data["country_name"])
-                } else {
-                    return "";
-                }
-            }
-        });
-    }
-
-    function showCountryCode(ip){
-        $.ajax({
-            type: "GET",
-            url: "https://api.ipgeolocation.io/ipgeo?apiKey=2ca0fc5d24fd45ccab288bc461b880c4&fields=country_code2,country_name&ip=" + ip,
-            contentType: "application/json",
-            success : function(data, status, xhr) {
-                if (xhr.status === 200){
-                    alert(data["country_code2"] + ' ' + data["country_name"])
-                } else {
-                    return "";
-                }
-            }
-        });
-    }
-
     //Send link to user
     function sendLink(button_id, sendLinkUrl, filePath, articleId, groupId) {
 
@@ -157,8 +127,8 @@
                 alert(xhr.responseText);
                 location.reload();
             },
-            failure : function(response, status, xhr) {
-                alert(xhr.responseText);
+            error : function(request, status, error) {
+                alert(request.responseText);
             }
         });
 
