@@ -1,20 +1,7 @@
 <!--container-->
 <#assign parserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
 <#assign downloadUtils = serviceLocator.findService("nl.deltares.portal.utils.DownloadUtils") />
-<#assign sanctionUtils = serviceLocator.findService("nl.deltares.portal.utils.SanctionCheckUtils") />
 
-
-<a href="#"
-   onclick="showCountryCode('${request.getRemoteAddr()}')"
-   class="btn-lg btn-primary" role="button" aria-pressed="true">
-    Show with IP
-</a>
-
-<a href="#"
-   onclick="showCountryCodeNoIP()"
-   class="btn-lg btn-primary" role="button" aria-pressed="true">
-    Show without IP
-</a>
 <#assign baseUrl = "/o/download" />
 <#if entries?has_content>
 
@@ -38,78 +25,78 @@
                         <#if themeDisplay.isSignedIn() && !(is_sanctioned?? && is_sanctioned) >
                             <span class="d-block" style="float:right">
                             <#assign downloadStatus = downloadUtils.getDownloadStatus(download, themeDisplay.getUser()) />
-                            <#assign directDownload = download.isDirectDownload() />
-                            <#assign sendLink = download.isSendLink() />
-                            <#switch downloadStatus >
+                                <#assign directDownload = download.isDirectDownload() />
+                                <#assign sendLink = download.isSendLink() />
+                                <#switch downloadStatus >
 
-                                <#case "payment_pending" >
-                                    <#assign buttonText = languageUtil.get(locale, "shopping.cart.paymentPending")/>
-                                    <#assign action = "none"/>
-                                    <#break >
-                                <#case "available">
-                                    <#if directDownload >
-                                        <#assign action = "directdownload"/>
-                                        <#assign buttonText = languageUtil.get(locale, "download.download.again")/>
-                                    <#elseif sendLink >
-                                        <#assign action = "sendlink"/>
-                                        <#assign buttonText = languageUtil.get(locale, "download.sendlink.again")/>
-                                    <#else>
+                                    <#case "payment_pending" >
+                                        <#assign buttonText = languageUtil.get(locale, "shopping.cart.paymentPending")/>
                                         <#assign action = "none"/>
-                                        <#assign buttonText = languageUtil.get(locale, "shopping.cart.available")/>
-                                    </#if>
-                                    <#break >
-                                <#case "processing">
-                                    <#assign buttonText = languageUtil.get(locale, "shopping.cart.processing")/>
-                                    <#assign action = "none"/>
-                                    <#break >
-                                <#default >
-                                    <#if directDownload >
-                                        <#assign action = "directdownload"/>
-                                        <#assign buttonText = languageUtil.get(locale, "download.download")/>
-                                    <#elseif sendLink >
-                                        <#assign action = "sendlink"/>
-                                        <#assign buttonText = languageUtil.get(locale, "download.sendlink")/>
-                                    <#else>
-                                        <#assign action = "addtocart"/>
-                                        <#assign buttonText = languageUtil.get(locale, "shopping.cart.add")/>
-                                    </#if>
-                            </#switch>
+                                        <#break >
+                                    <#case "available">
+                                        <#if directDownload >
+                                            <#assign action = "directdownload"/>
+                                            <#assign buttonText = languageUtil.get(locale, "download.download.again")/>
+                                        <#elseif sendLink >
+                                            <#assign action = "sendlink"/>
+                                            <#assign buttonText = languageUtil.get(locale, "download.sendlink.again")/>
+                                        <#else>
+                                            <#assign action = "none"/>
+                                            <#assign buttonText = languageUtil.get(locale, "shopping.cart.available")/>
+                                        </#if>
+                                        <#break >
+                                    <#case "processing">
+                                        <#assign buttonText = languageUtil.get(locale, "shopping.cart.processing")/>
+                                        <#assign action = "none"/>
+                                        <#break >
+                                    <#default >
+                                        <#if directDownload >
+                                            <#assign action = "directdownload"/>
+                                            <#assign buttonText = languageUtil.get(locale, "download.download")/>
+                                        <#elseif sendLink >
+                                            <#assign action = "sendlink"/>
+                                            <#assign buttonText = languageUtil.get(locale, "download.sendlink")/>
+                                        <#else>
+                                            <#assign action = "addtocart"/>
+                                            <#assign buttonText = languageUtil.get(locale, "shopping.cart.add")/>
+                                        </#if>
+                                </#switch>
 
-                            <#switch action >
-                                <#case "none">
-                                    <a href="#" data-article-id="${download.getArticleId()}"
-                                       class="btn-lg btn-primary disabled"
-                                       role="button" aria-pressed="true" style="color:#fff">
+                                <#switch action >
+                                    <#case "none">
+                                        <a href="#" data-article-id="${download.getArticleId()}"
+                                           class="btn-lg btn-primary disabled"
+                                           role="button" aria-pressed="true" style="color:#fff">
                                         ${buttonText}
                                     </a>
-                                    <#break />
-                                <#case "directdownload">
-                                    <#assign downloadUrl = baseUrl + "/direct/" />
-                                    <a href="#" id="${journalArticle.getArticleId()}_download"
-                                       onclick="directDownload(this.id,'${downloadUrl}', '${download.getFileId()}',
-                                               '${download.getFilePath()}', '${download.getFileName()}', '${download.getArticleId()}',
-                                               '${themeDisplay.getScopeGroupId()}')"
-                                       class="btn-lg btn-primary" role="button" aria-pressed="true">
+                                        <#break />
+                                    <#case "directdownload">
+                                        <#assign downloadUrl = baseUrl + "/direct/" />
+                                        <a href="#" id="${journalArticle.getArticleId()}_download"
+                                           onclick="directDownload(this.id,'${downloadUrl}', '${download.getFileId()}',
+                                                   '${download.getFilePath()}', '${download.getFileName()}', '${download.getArticleId()}',
+                                                   '${themeDisplay.getScopeGroupId()}')"
+                                           class="btn-lg btn-primary" role="button" aria-pressed="true">
                                                 ${buttonText}
                                     </a>
-                                    <#break />
-                                <#case "sendlink">
-                                    <#assign downloadUrl = baseUrl + "/sendlink/" />
-                                    <a href="#" id="${journalArticle.getArticleId()}_sendlink"
-                                       onclick="sendLink(this.id, '${downloadUrl}', '${download.getFilePath()}', '${download.getArticleId()}',
-                                               '${themeDisplay.getScopeGroupId()}')"
-                                       class="btn-lg btn-primary" role="button" aria-pressed="true">
+                                        <#break />
+                                    <#case "sendlink">
+                                        <#assign downloadUrl = baseUrl + "/sendlink/" />
+                                        <a href="#" id="${journalArticle.getArticleId()}_sendlink"
+                                           onclick="sendLink(this.id, '${downloadUrl}', '${download.getFilePath()}', '${download.getArticleId()}',
+                                                   '${themeDisplay.getScopeGroupId()}')"
+                                           class="btn-lg btn-primary" role="button" aria-pressed="true">
                                                 ${buttonText}
                                     </a>
-                                    <#break />
-                                <#case "addtocart">
-                                    <a href="#" data-article-id="${download.getArticleId()}"
-                                       class="btn-lg btn-primary add-download-to-cart"
-                                       role="button" aria-pressed="true" style="color:#fff">
+                                        <#break />
+                                    <#case "addtocart">
+                                        <a href="#" data-article-id="${download.getArticleId()}"
+                                           class="btn-lg btn-primary add-download-to-cart"
+                                           role="button" aria-pressed="true" style="color:#fff">
                                             ${buttonText}
                                         </a>
-                                <#break />
-                            </#switch>
+                                        <#break />
+                                </#switch>
 
                             </span>
                         </#if>
@@ -129,8 +116,7 @@
             contentType: "application/json",
             success : function(data, status, xhr) {
                 if (xhr.status === 200){
-                    json = JSON.stringify(data);
-                    alert(json["country_code2"] + ' ' + json["country_name"])
+                    alert(data["country_code2"] + ' ' + data["country_name"])
                 } else {
                     return "";
                 }
@@ -145,8 +131,7 @@
             contentType: "application/json",
             success : function(data, status, xhr) {
                 if (xhr.status === 200){
-                    json = JSON.stringify(data);
-                    alert(json["country_code2"] + ' ' + json["country_name"])
+                    alert(data["country_code2"] + ' ' + data["country_name"])
                 } else {
                     return "";
                 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import nl.deltares.portal.utils.DownloadUtils;
+import nl.deltares.portal.utils.SanctionCheckUtils;
 import nl.deltares.services.rest.download.DownloadRestService;
 import nl.deltares.services.rest.exception.JsonProcessingExceptionMapper;
 import nl.deltares.services.rest.exception.LiferayRestExceptionMapper;
@@ -40,6 +41,9 @@ public class DownloadPortalServices extends Application {
     @Reference
     DownloadUtils downloadUtils;
 
+    @Reference
+    SanctionCheckUtils sanctionCheckUtils;
+
     @Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> classes = new HashSet<>();
@@ -57,7 +61,7 @@ public class DownloadPortalServices extends Application {
         singletons.add(this);
         singletons.add(getJacksonJsonProvider());
         //Services for FullCalendar
-        singletons.add(new DownloadRestService(downloadUtils));
+        singletons.add(new DownloadRestService(downloadUtils, sanctionCheckUtils));
         return singletons;
     }
 
