@@ -9,10 +9,12 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.DownloadUtils;
+import nl.deltares.portal.utils.GeoIpUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.portal.utils.SanctionCheckUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
@@ -45,6 +47,19 @@ public class PostLoginAction implements LifecycleAction {
 
 	@Reference
 	protected SanctionCheckUtils sanctionCheckUtils;
+
+	private GeoIpUtils geoIpUtils;
+	@Reference(
+			unbind = "-",
+			cardinality = ReferenceCardinality.AT_LEAST_ONE
+	)
+	protected void setGeoIpUtils(GeoIpUtils geoIpUtils) {
+
+		//todo: add check for preferred instance
+		if (geoIpUtils.isActive()){
+			this.geoIpUtils = geoIpUtils;
+		}
+	}
 
 	@Override
 	public void processLifecycleEvent(LifecycleEvent lifecycleEvent)  {
@@ -97,15 +112,15 @@ public class PostLoginAction implements LifecycleAction {
 			downloadUtils.updateProcessingShares(user, layoutSet.getGroupId());
 		}
 
-		if (sanctionCheckUtils.isActive()){
-			final Map<String, String> clientIpInfo = sanctionCheckUtils.getClientIpInfo(request.getRemoteAddr());
-			final String country_name = clientIpInfo.get("country_name");
-			if (sanctionCheckUtils.isSanctioned(clientIpInfo.get("country_code2"))){
+		if (geoIpUtils != null){
+			final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(request.getRemoteAddr());
+			final String countryName = geoIpUtils.getCountryName(clientIpInfo);
+			if (sanctionCheckUtils.isSanctioned(geoIpUtils.getCountryIso2Code(clientIpInfo))){
 				request.getSession().setAttribute("LIFERAY_SHARED_isSanctioned", true);
-				request.getSession().setAttribute("LIFERAY_SHARED_sanctionCountry", country_name);
-				LOG.info(String.format("User '%s' logged in from sanctioned country '%s'", user.getFullName(), country_name));
+				request.getSession().setAttribute("LIFERAY_SHARED_sanctionCountry", countryName);
+				LOG.info(String.format("User '%s' logged in from sanctioned country '%s'", user.getFullName(), countryName));
 			} else {
-				LOG.info(String.format("User '%s' logged in from not-sanctioned country '%s'", user.getFullName(), country_name));
+				LOG.info(String.format("User '%s' logged in from not-sanctioned country '%s'", user.getFullName(), countryName));
 			}
 		}
 	}

@@ -6,10 +6,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
-import nl.deltares.portal.utils.DownloadUtils;
-import nl.deltares.portal.utils.HttpClientUtils;
-import nl.deltares.portal.utils.JsonContentUtils;
-import nl.deltares.portal.utils.SanctionCheckUtils;
+import nl.deltares.portal.utils.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -30,10 +27,12 @@ public class DownloadRestService {
     private static final Log LOG = LogFactoryUtil.getLog(DownloadRestService.class);
     private final DownloadUtils downloadUtils;
     private final SanctionCheckUtils sanctionCheckUtils;
+    private final GeoIpUtils geoIpUtils;
 
-    public DownloadRestService(DownloadUtils downloadUtils, SanctionCheckUtils sanctionCheckUtils) {
+    public DownloadRestService(DownloadUtils downloadUtils, SanctionCheckUtils sanctionCheckUtils, GeoIpUtils geoIpUtils) {
         this.downloadUtils = downloadUtils;
         this.sanctionCheckUtils = sanctionCheckUtils;
+        this.geoIpUtils = geoIpUtils;
     }
 
     @POST
@@ -109,9 +108,14 @@ public class DownloadRestService {
     }
 
     private void doSanctionCheck(HttpServletRequest request, String emailAddress) throws IOException {
-        final Map<String, String> clientIpInfo = sanctionCheckUtils.getClientIpInfo(request.getRemoteAddr());
-        final boolean isSanctioned = sanctionCheckUtils.isSanctioned(clientIpInfo.get("country_code2"));
-        if (isSanctioned){
+        if (geoIpUtils == null){
+            LOG.warn("Could not perform sanction check as GeoIpUtils has not be initialized!");
+            return;
+        }
+        final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(request.getRemoteAddr());
+        final boolean sanctioned = sanctionCheckUtils.isSanctioned(geoIpUtils.getCountryIso2Code(clientIpInfo));
+
+        if (sanctioned){
             LOG.warn(String.format("%s: Invalid sanction check for user %s and country %s ",
                     DownloadRestService.class.getSimpleName(), emailAddress, clientIpInfo.get("country_name")));
             throw new IOException(String.format(
