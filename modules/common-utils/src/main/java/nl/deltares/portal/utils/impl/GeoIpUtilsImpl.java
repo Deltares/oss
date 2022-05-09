@@ -49,8 +49,13 @@ public class GeoIpUtilsImpl implements GeoIpUtils {
     }
 
     @Override
-    public Map<String, Object> getLocationInfo(String ipAddress){
-        HashMap<String, Object> info = new HashMap<>();
+    public boolean isActive() {
+        return reader != null;
+    }
+
+    @Override
+    public Map<String, String> getClientIpInfo(String ipAddress){
+        HashMap<String, String> info = new HashMap<>();
         if (reader == null) return info;
         try {
             InetAddress inetAddress = InetAddress.getByName(ipAddress);
@@ -59,8 +64,8 @@ public class GeoIpUtilsImpl implements GeoIpUtils {
             info.put("postal", city.getPostal().getCode());
             info.put("country", city.getCountry().getName());
             info.put("iso_code", city.getCountry().getIsoCode());
-            info.put("latitude", city.getLocation().getLatitude());
-            info.put("longitude", city.getLocation().getLongitude());
+            info.put("latitude", String.valueOf(city.getLocation().getLatitude()));
+            info.put("longitude", String.valueOf(city.getLocation().getLongitude()));
         } catch (GeoIp2Exception | IOException e) {
             LOG.warn("Error creating location info response: " + e.getMessage());
         }
@@ -68,15 +73,25 @@ public class GeoIpUtilsImpl implements GeoIpUtils {
     }
 
     @Override
-    public String getCountryIso2Code(String ipAddress) {
-        if (reader == null) return null;
-        try {
-            InetAddress inetAddress = InetAddress.getByName(ipAddress);
-            CityResponse city = reader.city(inetAddress);
-            return city.getCountry().getIsoCode();
-        } catch (GeoIp2Exception | IOException e) {
-            LOG.warn("Error creating location info response: " + e.getMessage());
-        }
-        return null;
+    public String getCountryIso2Code(Map<String, String> clientIpInfo) {
+        return clientIpInfo.get("iso_code");
+    }
+
+    @Override
+    public String getCountryName(Map<String, String> clientIpInfo) {
+        return clientIpInfo.get("country");
+    }
+
+    @Override
+    public double[] getLatitudeLongitude(Map<String, String> clientIpInfo) {
+        final double[] latlon = new double[]{Double.NaN, Double.NaN};
+
+        final String latitude = clientIpInfo.get("latitude");
+        if (latitude != null) latlon[0] = Double.parseDouble(latitude);
+
+        final String longitude = clientIpInfo.get("longitude");
+        if (longitude != null) latlon[1] = Double.parseDouble(longitude);
+
+        return latlon;
     }
 }
