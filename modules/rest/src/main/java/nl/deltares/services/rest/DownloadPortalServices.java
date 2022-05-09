@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import nl.deltares.portal.utils.DownloadUtils;
+import nl.deltares.portal.utils.GeoIpUtils;
 import nl.deltares.portal.utils.SanctionCheckUtils;
 import nl.deltares.services.rest.download.DownloadRestService;
 import nl.deltares.services.rest.exception.JsonProcessingExceptionMapper;
@@ -12,6 +13,7 @@ import nl.deltares.services.rest.exception.LiferayRestExceptionMapper;
 import nl.deltares.services.rest.exception.PortalExceptionMapper;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
 
 import javax.ws.rs.GET;
@@ -44,6 +46,16 @@ public class DownloadPortalServices extends Application {
     @Reference
     SanctionCheckUtils sanctionCheckUtils;
 
+    private GeoIpUtils geoIpUtils;
+    @Reference(
+            unbind = "-",
+            cardinality = ReferenceCardinality.AT_LEAST_ONE
+    )
+    protected void setGeoIpUtils(GeoIpUtils geoIpUtils) {
+        if (geoIpUtils.isActive()){
+            this.geoIpUtils = geoIpUtils;
+        }
+    }
     @Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> classes = new HashSet<>();
@@ -61,7 +73,7 @@ public class DownloadPortalServices extends Application {
         singletons.add(this);
         singletons.add(getJacksonJsonProvider());
         //Services for FullCalendar
-        singletons.add(new DownloadRestService(downloadUtils, sanctionCheckUtils));
+        singletons.add(new DownloadRestService(downloadUtils, sanctionCheckUtils, geoIpUtils));
         return singletons;
     }
 

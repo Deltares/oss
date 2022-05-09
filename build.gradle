@@ -36,8 +36,8 @@ project.ext {
     downloadUrl = getEnvProperty('DOWNLOAD_URL', '')
     downloadUser = getEnvProperty('DOWNLOAD_APPNAME', '')
     downloadPass = getEnvProperty('DOWNLOAD_APPPW', '')
-    downloadApiUrl = getEnvProperty('DOWNLOAD_APIURL', '')
-    downloadApiKey = getEnvProperty('DOWNLOAD_APIKEY', '')
+    ipgeolocationApiUrl = getEnvProperty('IPGEOLOCATION_APIURL', '')
+    ipgeolocationApiKey = getEnvProperty('IPGEOLOCATION_APIKEY', '')
 }
 task startContainers(
         description: 'Start all docker containers',
@@ -82,8 +82,8 @@ task startLiferay(
                     'DOWNLOAD_URL'          : downloadUrl,
                     'DOWNLOAD_APPNAME'      : downloadUser,
                     'DOWNLOAD_APPPW'        : downloadPass,
-                    'DOWNLOAD_APIURL'       : downloadApiUrl,
-                    'DOWNLOAD_APIKEY'       : downloadApiKey
+                    'IPGEOLOCATION_APIURL'       : ipgeolocationApiUrl,
+                    'IPGEOLOCATION_APIKEY'       : ipgeolocationApiKey
             ])
         }
         copy {
@@ -107,15 +107,15 @@ task startLiferay(
             into("$liferayMount/osgi/modules")
             include "*.xml"
         }
-        copy {
-            from("$projectDir/configs/$environment/config/")
-            into("$nextcloudMount")
-            include("*.php")
-            filter(ReplaceTokens, tokens: [
-                    'EMAIL_USER'            : emailUser,
-                    'EMAIL_PASSWORD'        : emailPass
-            ])
-        }
+//        copy {
+//            from("$projectDir/configs/$environment/config/")
+//            into("$nextcloudMount")
+//            include("*.php")
+//            filter(ReplaceTokens, tokens: [
+//                    'EMAIL_USER'            : emailUser,
+//                    'EMAIL_PASSWORD'        : emailPass
+//            ])
+//        }
         copy {
             from projectDir
             into deployFolder

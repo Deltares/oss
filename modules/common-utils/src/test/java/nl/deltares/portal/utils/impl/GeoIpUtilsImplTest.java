@@ -32,7 +32,7 @@ public class GeoIpUtilsImplTest {
 
         String ipAddress = "77.166.13.240";
 
-        Map<String, Object> locationInfo = geoIpUtils.getLocationInfo(ipAddress);
+        Map<String, String> locationInfo = geoIpUtils.getClientIpInfo(ipAddress);
         Assert.assertEquals("Delft", locationInfo.get("city"));
         Assert.assertEquals("Netherlands", locationInfo.get("country"));
         Assert.assertEquals( "NL", locationInfo.get("iso_code"));
