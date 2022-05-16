@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.display.context.DownloadDisplayContext;
+import nl.deltares.portal.kernel.util.comparator.DownloadDisplayContextComparator;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Download;
 import nl.deltares.portal.utils.DsdParserUtils;
@@ -40,6 +41,7 @@ public class DownloadResultsSearchContainer extends SearchContainer<DownloadDisp
     @Override
     public List<DownloadDisplayContext> getResults() {
 
+        loadResultsFromSearchContainer();
         final List<DownloadDisplayContext> results = super.getResults();
         super.setDelta(searchContainer.getDelta());
         super.setTotal(searchContainer.getTotal());
@@ -51,6 +53,7 @@ public class DownloadResultsSearchContainer extends SearchContainer<DownloadDisp
         List<DownloadDisplayContext> displayContexts = new ArrayList<>(results.size() + 20);
         final List<Download> downloads = loadRegistrations(results);
         downloads.forEach(download -> displayContexts.add(new DownloadDisplayContext(download, themeDisplay)));
+        displayContexts.sort(new DownloadDisplayContextComparator(true, true));
         super.setResults(displayContexts);
     }
 
