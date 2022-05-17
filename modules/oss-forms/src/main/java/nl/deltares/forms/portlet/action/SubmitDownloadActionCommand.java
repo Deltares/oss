@@ -17,12 +17,14 @@ import nl.deltares.emails.DownloadEmail;
 import nl.deltares.portal.configuration.DownloadSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Download;
+import nl.deltares.portal.model.impl.Subscription;
 import nl.deltares.portal.utils.*;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
 import nl.deltares.tasks.impl.CreateDownloadLinksRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -50,7 +52,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
         User user = themeDisplay.getUser();
 
-        DownloadRequest downloadRequest = getDownloadRequest(actionRequest, themeDisplay, action);
+        DownloadRequest downloadRequest = getDownloadRequest(actionRequest, themeDisplay);
         if (downloadRequest == null) {
             if (!redirect.isEmpty()) {
                 sendRedirect(actionRequest, actionResponse, redirect);
@@ -121,20 +123,20 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
     }
 
     private boolean updateSubscriptions(DownloadRequest downloadRequest, User user) {
-        List<String> subscribableMailingIds = downloadRequest.getSubscribableMailingIds();
-        if (subscribableMailingIds != null) {
-            subscribableMailingIds.forEach(mailingId -> {
+        List<Subscription> subscriptions = downloadRequest.getSubscriptions();
+        if (subscriptions != null) {
+            subscriptions.forEach(subscription -> {
                 if (downloadRequest.isSubscribe()) {
                     try {
-                        keycloakUtils.subscribe(user.getEmailAddress(), mailingId);
+                        subscriptionUtils.subscribe(user, subscription);
                     } catch (Exception e) {
-                        LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", user.getEmailAddress(), mailingId, e.getMessage()));
+                        LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", user.getEmailAddress(), subscription.getName(), e.getMessage()));
                     }
                 } else {
                     try {
-                        keycloakUtils.unsubscribe(user.getEmailAddress(), mailingId);
+                        subscriptionUtils.unsubscribe(user, subscription);
                     } catch (Exception e) {
-                        LOG.warn(String.format("Failed to unsubscribe user %s for mailing %s: %s", user.getEmailAddress(), mailingId, e.getMessage()));
+                        LOG.warn(String.format("Failed to unsubscribe user %s for mailing %s: %s", user.getEmailAddress(), subscription.getName(), e.getMessage()));
                     }
                 }
             });
@@ -142,7 +144,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         return true;
     }
 
-    private DownloadRequest getDownloadRequest(ActionRequest actionRequest, ThemeDisplay themeDisplay, String action) {
+    private DownloadRequest getDownloadRequest(ActionRequest actionRequest, ThemeDisplay themeDisplay) {
         List<String> articleIds;
 
         //noinspection deprecation
@@ -165,9 +167,6 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
 
             DownloadRequest downloadRequest = new DownloadRequest(themeDisplay);
             downloadRequest.setBillingInfo(billingInfo);
-            if (configuration.mailingIds().length() > 0) {
-                downloadRequest.setSubscribableMailingIds(configuration.mailingIds());
-            }
             downloadRequest.setSubscribe(ParamUtil.getBoolean(actionRequest, "subscribe_newsletter", false));
             for (String articleId : articleIds) {
                 Download downloadArticle = (Download) dsdParserUtils.toDsdArticle(siteId, articleId);
@@ -254,9 +253,20 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             return false;
         }
     }
-
-    @Reference
+    //TODO: prepare for migration to sendinblue
+    private EmailSubscriptionUtils subscriptionUtils;
     private KeycloakUtils keycloakUtils;
+    @Reference(
+            unbind = "-",
+            cardinality = ReferenceCardinality.MANDATORY
+    )
+    protected void setKeycloakUtils(KeycloakUtils keycloakUtils) {
+
+        if (keycloakUtils.isActive()){
+            this.keycloakUtils = keycloakUtils;
+            this.subscriptionUtils = (EmailSubscriptionUtils) keycloakUtils;
+        }
+    }
 
     @Reference
     private DsdParserUtils dsdParserUtils;

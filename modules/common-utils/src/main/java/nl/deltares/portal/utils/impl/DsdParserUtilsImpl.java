@@ -201,6 +201,9 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
             case Downloadgroup:
                 article = new DownloadGroup(journalArticle, this, layoutUtils, locale);
                 return article;
+            case Subscription:
+                article = new Subscription(journalArticle, this, locale);
+                return article;
             default:
                 article = new GenericArticle(journalArticle, this, locale);
         }

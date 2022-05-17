@@ -2,19 +2,17 @@ package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
-import nl.deltares.portal.utils.DsdJournalArticleUtils;
-import nl.deltares.portal.utils.DsdParserUtils;
-import nl.deltares.portal.utils.LayoutUtils;
-import nl.deltares.portal.utils.XmlContentUtils;
+import nl.deltares.portal.utils.*;
 import org.w3c.dom.Document;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class Download extends AbsDsdArticle {
+
+    private static final Log LOG = LogFactoryUtil.getLog(Download.class);
 
     private int fileId = Integer.MIN_VALUE;
     private String fileSize = "";
@@ -25,6 +23,7 @@ public class Download extends AbsDsdArticle {
     private String fileTypeName;
     private String fileTopicName;
     private String groupPage = "";
+    private List<Subscription> subscriptions = null;
 
     enum ACTION {direct, terms, userinfo, billinginfo, subscription}
 
@@ -77,6 +76,36 @@ public class Download extends AbsDsdArticle {
                 requiredActions.add(ACTION.valueOf(action.trim()));
             } catch (IllegalArgumentException e) {
                 //skip
+            }
+        }
+    }
+
+    public List<Subscription> getSubscriptions() {
+        if (!isShowSubscription()) return Collections.emptyList();
+        loadSubscriptions();
+        return Collections.unmodifiableList(subscriptions);
+    }
+
+    private void loadSubscriptions(){
+        if (subscriptions != null) return;
+        try {
+            parseSubscriptions();
+        } catch (PortalException e) {
+            LOG.error(String.format("Error parsing rooms for EventLocation %s: %s", getTitle(), e.getMessage()));
+        }
+    }
+
+    private void parseSubscriptions() throws PortalException {
+
+        subscriptions = new ArrayList<>();
+        String[] dynamicContentsByName = XmlContentUtils.getDynamicContentsByName(getDocument(), "Subscription");
+        DuplicateCheck check = new DuplicateCheck();
+        if (dynamicContentsByName.length > 0){
+            for (String content : dynamicContentsByName) {
+                JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(content);
+                AbsDsdArticle subscription = dsdParserUtils.toDsdArticle(article, super.getLocale());
+                if (!(subscription instanceof Subscription)) throw new PortalException(String.format("Article %s not instance of Subscription", article.getTitle()));
+                if (check.checkDuplicates(subscription)) subscriptions.add((Subscription) subscription);
             }
         }
     }
