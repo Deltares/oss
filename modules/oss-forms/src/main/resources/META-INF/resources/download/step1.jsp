@@ -4,6 +4,7 @@
 <%@ page import="com.liferay.portal.kernel.portlet.PortletRequestModel" %>
 <%@ page import="nl.deltares.portal.model.impl.Download" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.liferay.portal.kernel.model.User" %>
 
 <%
     String ddmTemplateKey = (String) request.getAttribute("ddmTemplateKey");
@@ -19,6 +20,18 @@
             Download download;
             try {
                 download = (Download) dsdParserUtils.toDsdArticle(themeDisplay.getScopeGroupId(), downloadId);
+
+                final List<Subscription> subscriptions = download.getSubscriptions();
+                final User finalUser = user;
+                subscriptions.forEach(subscription -> {
+                    if (subscriptionSelection.containsKey(subscription)) return; //do not check multiple times
+                    try {
+                        final boolean subscribed = subscriptionUtils.isSubscribed(finalUser, subscription);
+                        subscriptionSelection.put(subscription, subscribed);
+                    } catch (Exception e) {
+                        subscriptionSelection.put(subscription, false);
+                    }
+                });
             } catch (PortalException e) {
                 String message = String.format("Error getting download %s", downloadId);
                 SessionErrors.add(liferayPortletRequest, "sendlink-failed", message);
