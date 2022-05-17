@@ -10,7 +10,6 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.portal.configuration.DownloadSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.utils.DDMStructureUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
@@ -81,15 +80,6 @@ public class DownloadFormPortlet extends MVCPortlet {
                 SessionErrors.add(request, "retrieve-attributes-failed", "Error reading user attributes: " + e.getMessage());
                 request.setAttribute("attributes", new HashMap<>());
             }
-            try {
-                DownloadSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
-                List<String> mailingIdsList = Arrays.asList(dsdConfig.mailingIds().split(";"));
-                request.setAttribute("subscribed", keycloakUtils.isSubscribed(user.getEmailAddress(), mailingIdsList));
-            } catch (Exception e) {
-                LOG.warn("Error getting user subscriptions: " + e.getMessage());
-                request.setAttribute("subscribed", false);
-            }
-
         }
 
         String action = ParamUtil.getString(request, "action");
