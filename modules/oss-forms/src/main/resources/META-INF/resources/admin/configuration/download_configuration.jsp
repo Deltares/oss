@@ -54,11 +54,6 @@
                 value="<%= configuration.downloadURL() %>"/>
 
         <aui:input
-                label="mailing-ids"
-                name="mailingIds"
-                value="<%= configuration.mailingIds() %>"/>
-
-        <aui:input
                 label="conditions-url"
                 name="conditionsURL"
                 value="<%= configuration.conditionsURL() %>"/>
