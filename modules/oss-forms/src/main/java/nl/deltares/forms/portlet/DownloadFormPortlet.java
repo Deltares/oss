@@ -13,9 +13,11 @@ import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.utils.DDMStructureUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
+import nl.deltares.portal.utils.EmailSubscriptionUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
@@ -47,8 +49,20 @@ import java.util.*;
 public class DownloadFormPortlet extends MVCPortlet {
 
 
-    @Reference
+    //TODO: prepare for migration to sendinblue
+    private EmailSubscriptionUtils subscriptionUtils;
     private KeycloakUtils keycloakUtils;
+    @Reference(
+            unbind = "-",
+            cardinality = ReferenceCardinality.MANDATORY
+    )
+    protected void setKeycloakUtils(KeycloakUtils keycloakUtils) {
+
+        if (keycloakUtils.isActive()){
+            this.keycloakUtils = keycloakUtils;
+            this.subscriptionUtils = (EmailSubscriptionUtils) keycloakUtils;
+        }
+    }
 
     @Reference
     private DsdParserUtils dsdParserUtils;
@@ -102,6 +116,7 @@ public class DownloadFormPortlet extends MVCPortlet {
                 request.setAttribute("ddmTemplateKey", ddmTemplate.getTemplateKey()));
 
         request.setAttribute("dsdParserUtils", dsdParserUtils);
+        request.setAttribute("subscriptionUtils", subscriptionUtils);
         request.setAttribute("downloadList", downloads);
         request.setAttribute("ids", ids);
 
