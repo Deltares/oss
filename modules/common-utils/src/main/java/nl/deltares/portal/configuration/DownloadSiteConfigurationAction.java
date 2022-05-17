@@ -67,7 +67,6 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
         String conditionsURL = ParamUtil.getString(actionRequest, "conditionsURL");
         String privacyURL = ParamUtil.getString(actionRequest, "privacyURL");
         String contactURL = ParamUtil.getString(actionRequest, "contactURL");
-        String mailingIds = ParamUtil.getString(actionRequest, "mailingIds");
         String sendFromEmail = ParamUtil.getString(actionRequest, "sendFromEmail");
         String replyToEmail = ParamUtil.getString(actionRequest, "replyToEmail");
         String bccToEmail = ParamUtil.getString(actionRequest, "bccToEmail");
@@ -85,7 +84,6 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
         modifiableSettings.setValue("conditionsURL", conditionsURL);
         modifiableSettings.setValue("privacyURL", privacyURL);
         modifiableSettings.setValue("contactURL", contactURL);
-        modifiableSettings.setValue("mailingIds", mailingIds);
         modifiableSettings.setValue("bannerURL", bannerURL);
         modifiableSettings.setValue("sendFromEmail", sendFromEmail);
         modifiableSettings.setValue("replyToEmail", replyToEmail);
