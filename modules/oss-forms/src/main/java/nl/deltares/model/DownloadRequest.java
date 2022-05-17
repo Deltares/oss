@@ -19,9 +19,7 @@ public class DownloadRequest {
     private final long groupId;
     private String bannerUrl = null;
     private BillingInfo billingInfo;
-    final private List<Subscription> subscriptions = new ArrayList<>();
-
-    private boolean subscribe;
+    final private Map<Subscription, Boolean> subscriptions = new HashMap<>();
 
     public DownloadRequest(ThemeDisplay themeDisplay) throws PortalException {
         siteUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay);
@@ -42,9 +40,7 @@ public class DownloadRequest {
         downloads.add(download);
         final List<Subscription> subs = download.getSubscriptions();
         subs.forEach(sub -> {
-            if (!subscriptions.contains(sub)){
-                subscriptions.add(sub);
-            }
+            subscriptions.putIfAbsent(sub, false);
         });
     }
 
@@ -60,16 +56,17 @@ public class DownloadRequest {
         return billingInfo;
     }
 
-    public List<Subscription> getSubscriptions() {
-        return subscriptions;
+    public Set<Subscription> getSubscriptions() {
+        return subscriptions.keySet();
     }
 
-    public void setSubscribe(boolean subscribe) {
-        this.subscribe = subscribe;
+    public void setSubscribe(Subscription subscription, boolean subscribe) {
+        this.subscriptions.put(subscription, subscribe);
     }
 
-    public boolean isSubscribe() {
-        return subscribe;
+    public boolean isSubscribe(Subscription subscription) {
+        final Boolean subscribe = subscriptions.get(subscription);
+        return Boolean.TRUE.equals(subscribe);
     }
 
     public URL getBannerURL() throws MalformedURLException {

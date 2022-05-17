@@ -12,6 +12,9 @@
 <%@ page import="nl.deltares.portal.utils.DsdParserUtils" %>
 <%@ page import="nl.deltares.portal.utils.KeycloakUtils" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="nl.deltares.portal.model.impl.Subscription" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="nl.deltares.portal.utils.EmailSubscriptionUtils" %>
 
 <liferay-theme:defineObjects />
 
@@ -35,6 +38,8 @@
     Map attributes = (Map) renderRequest.getAttribute("attributes");
     String action = ParamUtil.getString(renderRequest, "action");
     DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
+    EmailSubscriptionUtils subscriptionUtils = (EmailSubscriptionUtils) request.getAttribute("subscriptionUtils");
+    final Map<Subscription, Boolean> subscriptionSelection = new HashMap<>();
 
 %>
 

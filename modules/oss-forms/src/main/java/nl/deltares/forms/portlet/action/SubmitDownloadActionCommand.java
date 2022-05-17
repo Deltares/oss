@@ -123,10 +123,10 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
     }
 
     private boolean updateSubscriptions(DownloadRequest downloadRequest, User user) {
-        List<Subscription> subscriptions = downloadRequest.getSubscriptions();
+        Set<Subscription> subscriptions = downloadRequest.getSubscriptions();
         if (subscriptions != null) {
             subscriptions.forEach(subscription -> {
-                if (downloadRequest.isSubscribe()) {
+                if (downloadRequest.isSubscribe(subscription)) {
                     try {
                         subscriptionUtils.subscribe(user, subscription);
                     } catch (Exception e) {
@@ -167,11 +167,12 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
 
             DownloadRequest downloadRequest = new DownloadRequest(themeDisplay);
             downloadRequest.setBillingInfo(billingInfo);
-            downloadRequest.setSubscribe(ParamUtil.getBoolean(actionRequest, "subscribe_newsletter", false));
+
             for (String articleId : articleIds) {
                 Download downloadArticle = (Download) dsdParserUtils.toDsdArticle(siteId, articleId);
                 downloadRequest.addDownload(downloadArticle);
             }
+            setSubscriptionSelection(actionRequest, downloadRequest);
             downloadRequest.setBannerUrl(configuration.bannerURL());
             return downloadRequest;
 
@@ -180,6 +181,18 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             LOG.debug("Could not retrieve download for actionId: " + Arrays.toString(articleIds.toArray()));
         }
         return null;
+    }
+
+    /**
+     * Get selection for subscriptions from request
+     */
+    private void setSubscriptionSelection(ActionRequest actionRequest, DownloadRequest downloadRequest) {
+
+        final Set<Subscription> subscriptions = downloadRequest.getSubscriptions();
+        for (Subscription subscription : subscriptions) {
+            final String selected = ParamUtil.getString(actionRequest, "subscription-" + subscription.getId());
+            downloadRequest.setSubscribe(subscription, Boolean.parseBoolean(selected));
+        }
     }
 
     private BillingInfo getBillingInfo(ActionRequest actionRequest, User user) {
