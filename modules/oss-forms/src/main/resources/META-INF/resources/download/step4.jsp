@@ -1,6 +1,3 @@
-<%
-    boolean subscribed = (boolean) request.getAttribute("subscribed");
-%>
 <div class="row">
     <span>
         <liferay-ui:message key="dsd.registration.step4.relevant.information"/>
@@ -10,7 +7,7 @@
                 name="subscribe_newsletter"
                 label="dsd.registration.step4.newsletter.register"
                 type="checkbox"
-                checked="${subscribed}"
+                checked="true"
         />
     </div>
 </div>

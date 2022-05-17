@@ -17,16 +17,16 @@
       "tip": {
         "en_US": "Unique file identifier. Can be obtained from download portal. Required for direct downloads. If omitted for 'Direct-Download' a share link is created."
       },
-      "dataType": "integer",
+      "dataType": "number",
       "fieldNamespace": "ddm",
-      "indexType": "",
+      "indexType": "keyword",
       "localizable": false,
       "name": "FileId",
       "readOnly": false,
       "repeatable": false,
       "required": false,
       "showLabel": true,
-      "type": "ddm-integer"
+      "type": "ddm-number"
     },
     {
       "label": {
@@ -111,9 +111,7 @@
         }
       ],
       "predefinedValue": {
-        "en_US": [
-          ""
-        ]
+        "en_US": []
       },
       "style": {
         "en_US": ""
@@ -156,15 +154,21 @@
           }
         },
         {
-          "value": "embankment",
+          "value": "delftfews",
           "label": {
-            "en_US": "Geotechnical software"
+            "en_US": "Delft FEWS"
           }
         },
         {
           "value": "imod",
           "label": {
             "en_US": "iMOD"
+          }
+        },
+        {
+          "value": "lm",
+          "label": {
+            "en_US": "License Manager"
           }
         },
         {
@@ -320,6 +324,30 @@
       "required": true,
       "showLabel": true,
       "type": "ddm-link-to-page"
+    },
+    {
+      "label": {
+        "en_US": "Subscription"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "If user can subscribe for news letters (subscriptions), then select them here."
+      },
+      "dataType": "journal-article",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": false,
+      "name": "Subscription",
+      "readOnly": false,
+      "repeatable": true,
+      "required": false,
+      "showLabel": true,
+      "type": "ddm-journal-article"
     }
   ]
 }

@@ -6,8 +6,11 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
+import nl.deltares.portal.model.impl.Subscription;
+import nl.deltares.portal.utils.EmailSubscriptionUtils;
 import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
@@ -17,9 +20,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.time.LocalDateTime.now;
 
@@ -27,7 +28,7 @@ import static java.time.LocalDateTime.now;
         immediate = true,
         service = KeycloakUtils.class
 )
-public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils {
+public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils, EmailSubscriptionUtils {
 
     private static final Log LOG = LogFactoryUtil.getLog(KeycloakUtilsImpl.class);
 
@@ -226,6 +227,28 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         //get response
         return checkResponse(connection);
 
+    }
+
+    @Override
+    public boolean isSubscribed(User user, List<Subscription> subscriptions) throws Exception {
+        List<String> mailingIds = new ArrayList<>(subscriptions.size());
+        subscriptions.forEach(subscription -> mailingIds.add(subscription.getId()));
+        return  isSubscribed(user.getEmailAddress(), mailingIds);
+    }
+
+    @Override
+    public boolean isSubscribed(User user, Subscription subscription) throws Exception {
+        return isSubscribed(user.getEmailAddress(), Collections.singletonList(subscription.getId()));
+    }
+
+    @Override
+    public void subscribe(User user, Subscription subscription) throws Exception{
+        subscribe(user.getEmailAddress(), subscription.getId());
+    }
+
+    @Override
+    public void unsubscribe(User user, Subscription subscription) throws Exception {
+        unsubscribe(user.getEmailAddress(), subscription.getId());
     }
 
     @Override

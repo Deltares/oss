@@ -16,7 +16,7 @@
 
         <%
             String downloadId = (String) pageContext.getAttribute("downloadId");
-            Download download = null;
+            Download download;
             try {
                 download = (Download) dsdParserUtils.toDsdArticle(themeDisplay.getScopeGroupId(), downloadId);
             } catch (PortalException e) {

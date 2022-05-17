@@ -4,6 +4,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
 import nl.deltares.portal.model.impl.Download;
+import nl.deltares.portal.model.impl.Subscription;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,7 +19,7 @@ public class DownloadRequest {
     private final long groupId;
     private String bannerUrl = null;
     private BillingInfo billingInfo;
-    private List<String> mailingIds = Collections.emptyList();
+    final private List<Subscription> subscriptions = new ArrayList<>();
 
     private boolean subscribe;
 
@@ -39,6 +40,12 @@ public class DownloadRequest {
 
     public void addDownload(Download download) {
         downloads.add(download);
+        final List<Subscription> subs = download.getSubscriptions();
+        subs.forEach(sub -> {
+            if (!subscriptions.contains(sub)){
+                subscriptions.add(sub);
+            }
+        });
     }
 
     public List<Download> getDownloads() {
@@ -53,17 +60,8 @@ public class DownloadRequest {
         return billingInfo;
     }
 
-    public void setSubscribableMailingIds(String mailingIds) {
-        if (mailingIds == null || mailingIds.length() == 0) return;
-        this.mailingIds = new ArrayList<>();
-        String[] split = mailingIds.split(";");
-        Arrays.stream(split).forEach(id -> {
-            if (id.trim().length() > 0) this.mailingIds.add(id);
-        });
-    }
-
-    public List<String> getSubscribableMailingIds() {
-        return mailingIds;
+    public List<Subscription> getSubscriptions() {
+        return subscriptions;
     }
 
     public void setSubscribe(boolean subscribe) {
