@@ -1,15 +1,16 @@
 package nl.deltares.tableview.portlet.portlet;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.oss.download.model.DownloadCount;
 import nl.deltares.oss.download.service.DownloadCountLocalServiceUtil;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Download;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.tableview.model.DisplayDownloadCount;
 import nl.deltares.tableview.portlet.constants.DownloadTablePortletKeys;
@@ -22,9 +23,7 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * @author rooij_e
@@ -47,6 +46,9 @@ import java.util.TimeZone;
 public class DownloadCountsTablePortlet extends MVCPortlet {
 
     @Reference
+    DsdJournalArticleUtils dsdJournalArticleUtils;
+
+    @Reference
     private DsdParserUtils dsdParserUtils;
 
     final static String datePattern = "yyy-MM-dd";
@@ -62,12 +64,20 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
         final int cur = ParamUtil.getInteger(renderRequest, "cur", 0);
         final int deltas = ParamUtil.getInteger(renderRequest, "delta", 50);
 
-        doFilterValues(cur, deltas, renderRequest);
+        ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+        Map<String, String> topicMap;
+        try {
+            topicMap = dsdJournalArticleUtils.getStructureFieldOptions(themeDisplay.getSiteGroupId(),
+                    "download", "Topic", themeDisplay.getLocale());
+        } catch (PortalException e) {
+            topicMap = Collections.emptyMap();
+        }
+        doFilterValues(cur, deltas, renderRequest, topicMap);
 
         super.render(renderRequest, renderResponse);
     }
 
-    private void doFilterValues(int cur, int deltas, RenderRequest renderRequest) {
+    private void doFilterValues(int cur, int deltas, RenderRequest renderRequest, Map<String, String> topicMap) {
 
         final List<DisplayDownloadCount> displayCounts = new ArrayList<>();
         final int end = cur + deltas;
@@ -79,16 +89,25 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
                 final long groupId = downloadCount.getGroupId();
                 try {
                     final String downloadIdString = String.valueOf(downloadId);
-                    final AbsDsdArticle download = dsdParserUtils.toDsdArticle(groupId, downloadIdString);
-                    String fileName = download != null ? ((Download) download).getFileName() : downloadIdString;
-                    final Group group = GroupLocalServiceUtil.getGroup(groupId);
-                    String groupName = group != null ? group.getName() : String.valueOf(groupId);
-                    displayCounts.add(new DisplayDownloadCount(downloadId, downloadCount.getCount(), fileName, groupName));
+                    final AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(groupId, downloadIdString);
+                    String fileName;
+                    String topic;
+                    if (dsdArticle != null) {
+                        final Download download = (Download) dsdArticle;
+                        fileName = download.getFileName();
+                        String topicKey = download.getFileTopic();
+                        topic = topicMap.getOrDefault(topicKey, topicKey);
+                    } else {
+                        fileName = downloadIdString;
+                        topic = "";
+                    }
+
+                    displayCounts.add(new DisplayDownloadCount(fileName, topic, downloadCount.getCount()));
                 } catch (PortalException e) {
                     SessionErrors.add(renderRequest, "action-failed", "Error getting download for id " + downloadId);
                 }
             });
-
+            displayCounts.sort(DisplayDownloadCount::compareTo);
             renderRequest.setAttribute("records", displayCounts);
             renderRequest.setAttribute("total", displayCounts.size());
         } catch (Exception e) {

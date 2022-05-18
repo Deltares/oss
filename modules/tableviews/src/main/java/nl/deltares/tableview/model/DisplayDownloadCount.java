@@ -1,21 +1,19 @@
 package nl.deltares.tableview.model;
 
-public class DisplayDownloadCount {
+import com.liferay.portal.kernel.util.StringComparator;
 
-    final private long downloadId;
+
+public class DisplayDownloadCount implements Comparable<DisplayDownloadCount> {
+
+    final static StringComparator comparator = new StringComparator(true, true);
     final private int count;
     final private String fileName;
-    final private String siteName;
+    final private String fileTopic;
 
-    public DisplayDownloadCount(long downloadId, int count, String fileName, String siteName) {
-        this.downloadId = downloadId;
+    public DisplayDownloadCount(String fileName, String fileTopic, int count) {
         this.count = count;
         this.fileName = fileName;
-        this.siteName = siteName;
-    }
-
-    public long getDownloadId() {
-        return downloadId;
+        this.fileTopic = fileTopic;
     }
 
     public int getCount() {
@@ -26,7 +24,17 @@ public class DisplayDownloadCount {
         return fileName;
     }
 
-    public String getSiteName() {
-        return siteName;
+    public String getFileTopic() {
+        return fileTopic;
+    }
+
+    @Override
+    public int compareTo(DisplayDownloadCount o) {
+        final int compare = comparator.compare(fileTopic, o.fileTopic);
+        if (compare == 0){
+            return comparator.compare(fileName, o.fileName);
+        } else {
+            return compare;
+        }
     }
 }

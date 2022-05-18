@@ -9,9 +9,11 @@ import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
 import nl.deltares.portal.utils.DownloadUtils;
+import nl.deltares.tableview.model.DisplayDownload;
 import nl.deltares.tableview.portlet.constants.DownloadTablePortletKeys;
 import nl.deltares.tableview.tasks.impl.DeletedSelectedDownloadsRequest;
 import nl.deltares.tableview.tasks.impl.ExportTableRequest;
+import nl.deltares.tableview.tasks.impl.PaidSelectedDownloadsRequest;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
 import org.osgi.service.component.annotations.Component;
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
@@ -97,11 +100,20 @@ public class DownloadTablePortlet extends MVCPortlet {
                     downloads = DownloadLocalServiceUtil.getDownloads(cur, end);
                     downloadsCount = DownloadLocalServiceUtil.getDownloadsCount();
             }
-            renderRequest.setAttribute("records", downloads);
+
+            renderRequest.setAttribute("records", convertToDisplayDownloads(downloads));
             renderRequest.setAttribute("total", downloadsCount);
         } catch (Exception e) {
             SessionErrors.add(renderRequest, "filter-failed", e.getMessage());
         }
+    }
+
+    private List<DisplayDownload> convertToDisplayDownloads(List<Download> downloads) {
+        final ArrayList<DisplayDownload> displays = new ArrayList<>(downloads.size());
+        downloads.forEach(download -> displays.add(new DisplayDownload(download)));
+
+        displays.sort(DisplayDownload::compareTo);
+        return displays;
     }
 
     /**
@@ -161,6 +173,11 @@ public class DownloadTablePortlet extends MVCPortlet {
                 id = DownloadTablePortlet.class.getName() + themeDisplay.getUserId();
             }
             deletedSelected(id, request, response, themeDisplay);
+        } else if ("paid-selected".equals(action)) {
+            if (id == null) {
+                id = DownloadTablePortlet.class.getName() + themeDisplay.getUserId();
+            }
+            paidSelected(id, request, response, themeDisplay);
         } else if ("updateStatus".equals(action)) {
             DataRequestManager.getInstance().updateStatus(id, response);
         } else if ("downloadLog".equals(action)) {
@@ -185,6 +202,33 @@ public class DownloadTablePortlet extends MVCPortlet {
             DataRequest dataRequest = instance.getDataRequest(dataRequestId);
             if (dataRequest == null) {
                 dataRequest = new DeletedSelectedDownloadsRequest(dataRequestId, themeDisplay.getUserId(), Arrays.asList(selectedIds));
+                instance.addToQueue(dataRequest);
+            } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
+                instance.removeDataRequest(dataRequest);
+            }
+            response.setStatus(HttpServletResponse.SC_OK);
+            String statusMessage = dataRequest.getStatusMessage();
+            response.setContentLength(statusMessage.length());
+            PrintWriter writer = response.getWriter();
+            writer.println(statusMessage);
+
+        }
+    }
+
+    private void paidSelected(String dataRequestId, ResourceRequest request, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
+
+        final HttpServletRequest httpReq = PortalUtil.getOriginalServletRequest(PortalUtil.getHttpServletRequest(request));
+        final String[] selectedIds = httpReq.getParameterValues("selection");
+
+        if (selectedIds.length == 0) {
+            response.setContentType("text/plain");
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        } else {
+            response.setContentType("text/csv");
+            DataRequestManager instance = DataRequestManager.getInstance();
+            DataRequest dataRequest = instance.getDataRequest(dataRequestId);
+            if (dataRequest == null) {
+                dataRequest = new PaidSelectedDownloadsRequest(dataRequestId, themeDisplay.getUserId(), Arrays.asList(selectedIds));
                 instance.addToQueue(dataRequest);
             } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
                 instance.removeDataRequest(dataRequest);
