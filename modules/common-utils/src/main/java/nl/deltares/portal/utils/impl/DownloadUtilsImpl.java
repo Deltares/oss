@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 )
 public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils {
 
-    private final long maxProcessingTime = TimeUnit.MINUTES.toMillis(10);;
+    private final long maxProcessingTime = TimeUnit.MINUTES.toMillis(10);
 
     public enum DOWNLOAD_STATUS {payment_pending, available, expired, unknown, invalid, processing}
 

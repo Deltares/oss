@@ -15,6 +15,8 @@
 <%@ page import="nl.deltares.portal.model.impl.Subscription" %>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="nl.deltares.portal.utils.EmailSubscriptionUtils" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="nl.deltares.portal.model.impl.Terms" %>
 
 <liferay-theme:defineObjects />
 
@@ -40,6 +42,7 @@
     DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
     EmailSubscriptionUtils subscriptionUtils = (EmailSubscriptionUtils) request.getAttribute("subscriptionUtils");
     final Map<Subscription, Boolean> subscriptionSelection = new HashMap<>();
+    final List<Terms> terms = new ArrayList<>();
 
 %>
 
@@ -104,9 +107,14 @@
                     <span><liferay-ui:message key="dsd.registration.steps.step4"/></span>
                 </a>
             </li>
-            <li class="nav-item icon-circle-blank" id="<portlet:namespace/>nav-stepper-step-5">
+            <li class="nav-item icon-circle-blank disabled" id="<portlet:namespace/>nav-stepper-step-5">
                 <a href="#stepper-step-5" title="Step 5" style="font-family:Open Sans,serif">
                     <span><liferay-ui:message key="dsd.registration.steps.step5"/></span>
+                </a>
+            </li>
+            <li class="nav-item icon-circle-blank" id="<portlet:namespace/>nav-stepper-step-6">
+                <a href="#stepper-step-6" title="Step 6" style="font-family:Open Sans,serif">
+                    <span><liferay-ui:message key="dsd.registration.steps.step6"/></span>
                 </a>
             </li>
         </ul>
@@ -149,6 +157,9 @@
                 <div class="tab-pane" role="tabpanel" id="stepper-step-5">
                     <%@ include file="step5.jsp" %>
                 </div>
+                <div class="tab-pane" role="tabpanel" id="stepper-step-6">
+                    <%@ include file="step6.jsp" %>
+                </div>
             </div>
         </aui:form>
 
@@ -162,7 +173,7 @@
             <liferay-ui:message key="next.step"/>
         </a>
         <a class="submit btn-lg btn-primary d-none">
-            <liferay-ui:message key="register"/>
+            <liferay-ui:message key="last.step"/>
         </a>
     </div>
 </div>
@@ -178,6 +189,9 @@
         return isValid;
     }
 
+    checkSelection = function (){
+        DownloadFormsUtil.checkSelection("<portlet:namespace />");
+    }
     preSubmitAction = function (){
         shoppingCart.clearDownloadsCart();
     }
@@ -185,7 +199,7 @@
     $(document).ready(function() {
         let form = Liferay.Form.get("<portlet:namespace />fm").formValidator;
         $('.bs-stepper').formStepper(form);
-        $(document.getElementsByClassName('download')).change(DownloadFormsUtil.checkSelection('<portlet:namespace />'));
+        checkSelection();
         $(document.getElementById("<portlet:namespace />use_organization_address")).change(function() {
             CommonFormsUtil.updatePaymentAddress('<portlet:namespace />', this.checked);
         });
