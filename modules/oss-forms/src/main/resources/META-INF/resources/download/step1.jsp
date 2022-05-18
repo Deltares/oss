@@ -32,6 +32,11 @@
                         subscriptionSelection.put(subscription, false);
                     }
                 });
+
+                final Terms downloadTerms = download.getTerms();
+                if (downloadTerms != null && !terms.contains(downloadTerms)) {
+                    terms.add(download.getTerms());
+                }
             } catch (PortalException e) {
                 String message = String.format("Error getting download %s", downloadId);
                 SessionErrors.add(liferayPortletRequest, "sendlink-failed", message);
@@ -52,7 +57,7 @@
                             billinginfo="<%= download.isBillingRequired() %>"
                             terms="<%= download.isTermsOfUseRequired() %>"
                             cssClass="download"
-                            checked="true"/>
+                            checked="true" onChange="checkSelection()"/>
                 </div>
                 <div class="float-left w-100">
                     <%
