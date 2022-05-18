@@ -53,7 +53,7 @@
                 <aui:col width="50"/>
                 <aui:col width="20">
                     <aui:button type="submit" value="table.filter.button" />
-                    <aui:button type="cancel" onClick="<%= viewURL.toString() %>" value="table.filter.clear"/>
+                    <aui:button type="cancel" onClick="<%= viewURL %>" value="table.filter.clear"/>
                 </aui:col>
             </aui:row>
         </aui:fieldset>
@@ -80,7 +80,7 @@
             <liferay-ui:search-container-results results="<%= records %>" />
 
             <liferay-ui:search-container-row
-                    className="nl.deltares.oss.download.model.Download"
+                    className="nl.deltares.tableview.model.DisplayDownload"
                     modelVar="entry"
             >
                 <liferay-ui:search-container-column-text>
@@ -94,7 +94,7 @@
                 </liferay-ui:search-container-column-text>
                 <liferay-ui:search-container-column-text property="downloadId" name="Download ID"/>
                 <liferay-ui:search-container-column-date property="modifiedDate" name="Last download date"/>
-                <liferay-ui:search-container-column-user property="userId" name="User"/>
+                <liferay-ui:search-container-column-text property="email" name="User"/>
                 <liferay-ui:search-container-column-text property="organization" name="Organization"/>
                 <liferay-ui:search-container-column-text property="city" name="City"/>
                 <liferay-ui:search-container-column-text property="countryCode" name="Country"/>
@@ -109,6 +109,7 @@
         <aui:button-row>
             <aui:button name="exportResultsButton" type="submit" value="Export"/>
             <aui:button name="deleteSelectedButton" type="submit" value="Delete selected"/>
+            <aui:button name="paidSelectedButton" type="submit" value="Set to paid"/>
         </aui:button-row>
     </aui:form>
     <hr>
@@ -130,6 +131,12 @@
     deleteSelectedButton.onclick = function(event){
     event.preventDefault();
     TableFormsUtil.deleteSelected("<portlet:resourceURL/>", "<liferay-portlet:renderURL/>", "<portlet:namespace/>", "delete-selected-downloads.csv")
+    };
+
+    let paidSelectedButton = document.getElementById('<portlet:namespace/>paidSelectedButton');
+    paidSelectedButton.onclick = function(event){
+    event.preventDefault();
+    TableFormsUtil.paidSelected("<portlet:resourceURL/>", "<liferay-portlet:renderURL/>", "<portlet:namespace/>", "paid-selected-downloads.csv")
     };
 
 <%--	let tableFilterButton = document.getElementById('<portlet:namespace/>tableFilterButton');--%>

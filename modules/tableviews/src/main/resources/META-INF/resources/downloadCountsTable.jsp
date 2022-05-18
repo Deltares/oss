@@ -26,9 +26,8 @@
                     className="nl.deltares.tableview.model.DisplayDownloadCount"
                     modelVar="entry"
             >
-                <liferay-ui:search-container-column-text property="downloadId" name="Download ID"/>
+                <liferay-ui:search-container-column-text property="fileTopic" name="Software package"/>
                 <liferay-ui:search-container-column-text property="fileName" name="File"/>
-                <liferay-ui:search-container-column-text property="siteName" name="Site"/>
                 <liferay-ui:search-container-column-text property="count" name="Count"/>
 
             </liferay-ui:search-container-row>

@@ -37,6 +37,18 @@ TableFormsUtil = {
 
     },
 
+    paidSelected: function(resourceUrl, renderUrl, namespace, filename){
+
+        let selected = [];
+        this.loadSelection(selected);
+        if (selected.length === 0){
+            alert("Please select one or more downloads before continuing.");
+        } else {
+            this.callResourceUrl(resourceUrl, namespace, filename, "paid-selected", selected, renderUrl);
+        }
+
+    },
+
     exportResults: function(resourceUrl, namespace, filename){
         this.callResourceUrl(resourceUrl, namespace, filename, "export", null, null);
     },
@@ -44,7 +56,7 @@ TableFormsUtil = {
     callResourceUrl: function(resourceUrl, namespace, filename, action, data, redirectUrl){
 
         CommonFormsUtil.clearError(namespace);
-        CommonFormsUtil.setActionButtons(['exportResultsButton', 'deleteSelectedButton']);
+        CommonFormsUtil.setActionButtons(['exportResultsButton', 'deleteSelectedButton', 'paidSelectedButton']);
         CommonFormsUtil.initProgressBar(namespace);
 
         let A = new AUI();
