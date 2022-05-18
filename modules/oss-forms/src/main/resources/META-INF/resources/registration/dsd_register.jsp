@@ -124,9 +124,9 @@
                     <span><liferay-ui:message key="dsd.registration.steps.step4"/></span>
                 </a>
             </li>
-            <li class="nav-item icon-circle-blank" id="<portlet:namespace/>nav-stepper-step-5">
-                <a href="#stepper-step-5" title="Step 5" style="font-family:Open Sans,serif">
-                    <span><liferay-ui:message key="dsd.registration.steps.step5"/></span>
+            <li class="nav-item icon-circle-blank" id="<portlet:namespace/>nav-stepper-step-6">
+                <a href="#stepper-step-6" title="Step 6" style="font-family:Open Sans,serif">
+                    <span><liferay-ui:message key="dsd.registration.steps.step6"/></span>
                 </a>
             </li>
         </ul>
@@ -166,8 +166,8 @@
                 <div class="tab-pane" role="tabpanel" id="stepper-step-4">
                     <%@ include file="step4.jsp" %>
                 </div>
-                <div class="tab-pane" role="tabpanel" id="stepper-step-5">
-                    <%@ include file="step5.jsp" %>
+                <div class="tab-pane" role="tabpanel" id="stepper-step-6">
+                    <%@ include file="step6.jsp" %>
                 </div>
             </div>
         </aui:form>

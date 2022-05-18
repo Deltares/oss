@@ -1,10 +1,13 @@
 DownloadFormsUtil = {
 
     validateFirstStep: function () {
-        let isFirstStepValid = document.getElementsByClassName('download')[0].checked;
-        if (!isFirstStepValid) {
-            return isFirstStepValid;
-        }
+        let downloads = document.getElementsByClassName('download');
+        let isFirstStepValid = false;
+        [...downloads].forEach(function(download) {
+            if (download.checked) {
+                isFirstStepValid = true;
+            }
+        });
         return isFirstStepValid;
     },
 
@@ -58,13 +61,12 @@ DownloadFormsUtil = {
             step4.addClass('disabled'); //add;
         }
 
-        let courseCond = $(document.getElementById(namespace + 'course-conditions-div'));
+        // let courseCond = $(document.getElementById(namespace + 'course-conditions-div'));
+        let step5 = $(document.getElementById(namespace + 'nav-stepper-step-5'));
         if (termsEnabled){
-            courseCond[0].hidden = false;
-            $('input[name="' + namespace + 'course_conditions"]')[0].disabled = false;
+            step5.removeClass('disabled'); //remove
         } else {
-            courseCond[0].hidden = true;
-            $('input[name="' + namespace + 'course_conditions"]')[0].disabled = true;
+            step5.addClass('disabled'); //add
         }
     },
 

@@ -24,6 +24,7 @@ public class Download extends AbsDsdArticle {
     private String fileTopicName;
     private String groupPage = "";
     private List<Subscription> subscriptions = null;
+    private Terms terms = null;
 
     enum ACTION {direct, terms, userinfo, billinginfo, subscription}
 
@@ -80,6 +81,32 @@ public class Download extends AbsDsdArticle {
         }
     }
 
+    public Terms getTerms(){
+        if (!isTermsOfUseRequired()) return null;
+        loadTerms();
+        return terms;
+    }
+
+    private void loadTerms() {
+        if(terms != null) return;
+        try {
+            parseTerms();
+        } catch (PortalException e) {
+            LOG.error(String.format("Error parsing terms for Download %s: %s", getTitle(), e.getMessage()));
+        }
+    }
+
+    private void parseTerms() throws PortalException {
+
+        String content = XmlContentUtils.getDynamicContentByName(getDocument(), "Terms", true);
+        if (content != null){
+            JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(content);
+            AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(article, super.getLocale());
+            if (!(dsdArticle instanceof Terms)) throw new PortalException(String.format("Article %s not instance of Terms", article.getTitle()));
+            terms = (Terms) dsdArticle;
+        }
+    }
+
     public List<Subscription> getSubscriptions() {
         if (!isShowSubscription()) return Collections.emptyList();
         loadSubscriptions();
@@ -91,7 +118,7 @@ public class Download extends AbsDsdArticle {
         try {
             parseSubscriptions();
         } catch (PortalException e) {
-            LOG.error(String.format("Error parsing rooms for EventLocation %s: %s", getTitle(), e.getMessage()));
+            LOG.error(String.format("Error parsing subscriptions for Download %s: %s", getTitle(), e.getMessage()));
         }
     }
 
