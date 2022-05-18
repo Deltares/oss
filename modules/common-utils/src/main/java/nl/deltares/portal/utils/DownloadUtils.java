@@ -105,14 +105,14 @@ public interface DownloadUtils {
     void incrementDownloadCount(long companyId, long groupId, long downloadId);
 
     /**
-     * Update any pending downloads that have not yet been assigned a shareLink
+     * Update any pending downloads that have not yet been assigned a shareLink (Pending shares have a shareLink == -1)
      * @param user User the check
      * @param groupId Site id
      */
     void updatePendingShares(User user, long groupId);
 
     /**
-     * Update any processing activities that have not yet been assigned a shareLink and are out of date
+     * Update any processing activities that have not yet been assigned a shareLink and are out of date (Processing shares have a shareLink == -9)
      * @param user User the check
      * @param groupId Site id
      */
