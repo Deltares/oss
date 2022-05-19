@@ -20,9 +20,6 @@ public interface DownloadSiteConfiguration {
     @Meta.AD(required = false, deflt = "", description = "Configure the friendly URL of the download form page")
     String downloadURL();
 
-    @Meta.AD(required = false, deflt = "", description = "Configure the URL where the General Course Conditions of Deltares can be found")
-    String conditionsURL();
-
     @Meta.AD(required = false, deflt = "/privacy-declaration", description = "Configure the URL where the Privacy Policy of Deltares can be found")
     String privacyURL();
 
