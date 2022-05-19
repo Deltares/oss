@@ -28,8 +28,6 @@
 
     DownloadSiteConfiguration configuration = configurationProvider.getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
 
-    String conditionsURL = configuration.conditionsURL();
-
     String homeUrl = themeDisplay.getCDNBaseURL();
     String webUrl = themeDisplay.getPathFriendlyURLPublic();
     String groupUrl = themeDisplay.getSiteGroup().getFriendlyURL();
