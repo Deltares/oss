@@ -54,11 +54,6 @@
                 value="<%= configuration.downloadURL() %>"/>
 
         <aui:input
-                label="conditions-url"
-                name="conditionsURL"
-                value="<%= configuration.conditionsURL() %>"/>
-
-        <aui:input
                 label="privacy-url"
                 name="privacyURL"
                 value="<%= configuration.privacyURL() %>"/>
