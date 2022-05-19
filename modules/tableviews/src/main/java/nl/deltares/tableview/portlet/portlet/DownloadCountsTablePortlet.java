@@ -17,10 +17,7 @@ import nl.deltares.tableview.portlet.constants.DownloadTablePortletKeys;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.Portlet;
-import javax.portlet.PortletException;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
+import javax.portlet.*;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -63,7 +60,15 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
 
         final int cur = ParamUtil.getInteger(renderRequest, "cur", 0);
         final int deltas = ParamUtil.getInteger(renderRequest, "delta", 50);
+        String filterId = ParamUtil.getString(renderRequest, "filterId", "none");
+        if ("none".equals(filterId)) filterId = null;
+        Map<String, String> topicMap = getTopicsFromStructure(renderRequest);
+        doFilterValues(filterId, cur, deltas, renderRequest, topicMap);
 
+        super.render(renderRequest, renderResponse);
+    }
+
+    private Map<String, String> getTopicsFromStructure(RenderRequest renderRequest) {
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
         Map<String, String> topicMap;
         try {
@@ -72,12 +77,10 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
         } catch (PortalException e) {
             topicMap = Collections.emptyMap();
         }
-        doFilterValues(cur, deltas, renderRequest, topicMap);
-
-        super.render(renderRequest, renderResponse);
+        return topicMap;
     }
 
-    private void doFilterValues(int cur, int deltas, RenderRequest renderRequest, Map<String, String> topicMap) {
+    private void doFilterValues(String filterId, int cur, int deltas, RenderRequest renderRequest, Map<String, String> topicMap) {
 
         final List<DisplayDownloadCount> displayCounts = new ArrayList<>();
         final int end = cur + deltas;
@@ -92,16 +95,17 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
                     final AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(groupId, downloadIdString);
                     String fileName;
                     String topic;
+                    String topicKey = null;
                     if (dsdArticle != null) {
                         final Download download = (Download) dsdArticle;
                         fileName = download.getFileName();
-                        String topicKey = download.getFileTopic();
+                        topicKey = download.getFileTopic();
                         topic = topicMap.getOrDefault(topicKey, topicKey);
                     } else {
                         fileName = downloadIdString;
                         topic = "";
                     }
-
+                    if (filterId != null && !filterId.equals(topicKey)) return;
                     displayCounts.add(new DisplayDownloadCount(fileName, topic, downloadCount.getCount()));
                 } catch (PortalException e) {
                     SessionErrors.add(renderRequest, "action-failed", "Error getting download for id " + downloadId);
@@ -110,8 +114,22 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
             displayCounts.sort(DisplayDownloadCount::compareTo);
             renderRequest.setAttribute("records", displayCounts);
             renderRequest.setAttribute("total", displayCounts.size());
+            renderRequest.setAttribute("topics", topicMap);
         } catch (Exception e) {
             SessionErrors.add(renderRequest, "filter-failed", e.getMessage());
         }
+    }
+
+    /**
+     * Pass the selected filter options to the render request
+     *
+     * @param actionRequest  Filter action
+     * @param actionResponse Filter response
+     */
+    @SuppressWarnings("unused")
+    public void filter(ActionRequest actionRequest, ActionResponse actionResponse) {
+
+        final String filter = ParamUtil.getString(actionRequest, "filterSelection", "none");
+        actionResponse.getRenderParameters().setValue("filterId", filter);
     }
 }
