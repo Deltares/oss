@@ -64,7 +64,6 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
         String downloadURL = ParamUtil.getString(actionRequest, "downloadURL");
-        String conditionsURL = ParamUtil.getString(actionRequest, "conditionsURL");
         String privacyURL = ParamUtil.getString(actionRequest, "privacyURL");
         String contactURL = ParamUtil.getString(actionRequest, "contactURL");
         String sendFromEmail = ParamUtil.getString(actionRequest, "sendFromEmail");
@@ -81,7 +80,6 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
                 settings.getModifiableSettings();
 
         modifiableSettings.setValue("downloadURL", downloadURL);
-        modifiableSettings.setValue("conditionsURL", conditionsURL);
         modifiableSettings.setValue("privacyURL", privacyURL);
         modifiableSettings.setValue("contactURL", contactURL);
         modifiableSettings.setValue("bannerURL", bannerURL);
