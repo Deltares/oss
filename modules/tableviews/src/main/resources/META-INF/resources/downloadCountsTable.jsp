@@ -15,8 +15,10 @@
     final Integer count = (Integer) request.getAttribute("total");
     final String filterId = (String) request.getAttribute("filterId");
     final Map<String, String> topics = (Map<String, String>)  request.getAttribute("topics");
+    final boolean isAdmin = permissionChecker.isGroupAdmin(themeDisplay.getScopeGroupId());
 %>
 <span id="<portlet:namespace/>group-message-block"></span>
+<aui:input name="runningProcess" type="hidden"/>
 <aui:fieldset label="table.downloads.count.title">
 
     <portlet:renderURL var="viewURL">
@@ -24,6 +26,7 @@
     </portlet:renderURL>
 
     <portlet:actionURL name="filter" var="filterTableURL" />
+    <portlet:actionURL name="deleteSelection" var="deleteSelectionURL" />
 
     <liferay-ui:error key="filter-failed">
         <liferay-ui:message key="filter-failed"
@@ -67,6 +70,17 @@
                     className="nl.deltares.tableview.model.DisplayDownloadCount"
                     modelVar="entry"
             >
+                <% if (isAdmin) { %>
+                <liferay-ui:search-container-column-text >
+                    <aui:input
+                            name="download_${entry.getId()}"
+                            label=""
+                            recordId="${entry.getId()}"
+                            type="checkbox"
+                            cssClass="downloadCountsTableRecord"
+                            checked="false" />
+                </liferay-ui:search-container-column-text>
+                <% } %>
                 <liferay-ui:search-container-column-text property="fileTopic" name="Software package"/>
                 <liferay-ui:search-container-column-text property="fileName" name="File"/>
                 <liferay-ui:search-container-column-text property="count" name="Count"/>
@@ -75,5 +89,28 @@
             <liferay-ui:search-iterator/>
         </liferay-ui:search-container>
         <aui:input name="selectedFilterId" type="hidden" value="<%=filterId%>"/>
+
+        <aui:button-row>
+            <% if(isAdmin) { %>
+            <aui:button name="deleteSelectedButton" type="submit" value="Delete filter selection"/>
+            <% } %>
+        </aui:button-row>
     </aui:form>
+    <hr>
+    <aui:row>
+        <aui:col width="100">
+            <div id="<portlet:namespace/>progressBar" style="height:10px;display:none; "></div>
+        </aui:col>
+    </aui:row>
 </aui:fieldset>
+<aui:script use="event, io, aui-io-request, node, aui-base, aui-progressbar">
+
+    let deleteSelectedButton = document.getElementById('<portlet:namespace/>deleteSelectedButton');
+    if (deleteSelectedButton) {
+        deleteSelectedButton.onclick = function(event){
+        event.preventDefault();
+        CountsTableFormsUtil.deleteSelected("<portlet:resourceURL/>", "<liferay-portlet:renderURL/>", "<portlet:namespace/>", "delete-selected-download-counts.csv")
+        };
+    }
+
+</aui:script>

@@ -139,11 +139,6 @@
     TableFormsUtil.paidSelected("<portlet:resourceURL/>", "<liferay-portlet:renderURL/>", "<portlet:namespace/>", "paid-selected-downloads.csv")
     };
 
-<%--	let tableFilterButton = document.getElementById('<portlet:namespace/>tableFilterButton');--%>
-<%--	tableFilterButton.onclick = function(event){--%>
-<%--	event.preventDefault();--%>
-<%--	TableFormsUtil.tableFilterButton("<liferay-portlet:actionURL/>", "<portlet:namespace/>", "<portlet:namespace/>tableResults")--%>
-<%--	};--%>
 </aui:script>
 
 

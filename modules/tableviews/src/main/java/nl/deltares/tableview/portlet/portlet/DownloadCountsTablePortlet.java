@@ -5,6 +5,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.oss.download.model.DownloadCount;
 import nl.deltares.oss.download.service.DownloadCountLocalServiceUtil;
@@ -14,11 +15,17 @@ import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.tableview.model.DisplayDownloadCount;
 import nl.deltares.tableview.portlet.constants.DownloadTablePortletKeys;
+import nl.deltares.tableview.tasks.impl.DeletedSelectedDownloadCountsRequest;
+import nl.deltares.tasks.DataRequest;
+import nl.deltares.tasks.DataRequestManager;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -30,6 +37,8 @@ import java.util.*;
         property = {
                 "com.liferay.portlet.display-category=OSS-table",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
+                "com.liferay.portlet.header-portlet-javascript=/lib/countstableview.js",
+                "com.liferay.portlet.header-portlet-javascript=/lib/common.js",
                 "com.liferay.portlet.instanceable=true",
                 "javax.portlet.display-name=DownloadCountsTable",
                 "javax.portlet.init-param.template-path=/",
@@ -66,6 +75,62 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
         doFilterValues(filterId, cur, deltas, renderRequest, topicMap);
 
         super.render(renderRequest, renderResponse);
+    }
+
+    @Override
+    public void serveResource(ResourceRequest request, ResourceResponse response) throws IOException {
+
+        ThemeDisplay themeDisplay = (ThemeDisplay) request
+                .getAttribute(WebKeys.THEME_DISPLAY);
+        if (!themeDisplay.isSignedIn() || !request.isUserInRole("administrator")) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().println("Unauthorized request!");
+            return;
+        }
+        String action = ParamUtil.getString(request, "action");
+        String id = ParamUtil.getString(request, "id", null);
+
+        if ("delete-selected".equals(action)) {
+            if (id == null) {
+                id = DownloadCountsTablePortlet.class.getName() + themeDisplay.getUserId();
+            }
+            deletedSelected(id, request, response, themeDisplay);
+        } else if ("updateStatus".equals(action)) {
+            DataRequestManager.getInstance().updateStatus(id, response);
+        } else if ("downloadLog".equals(action)) {
+            DataRequestManager.getInstance().downloadDataFile(id, response);
+        } else {
+            DataRequestManager.getInstance().writeError("Unsupported Action error: " + action, response);
+        }
+
+    }
+
+    private void deletedSelected(String dataRequestId, ResourceRequest request, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
+
+        final HttpServletRequest httpReq = PortalUtil.getOriginalServletRequest(PortalUtil.getHttpServletRequest(request));
+        final String[] selectedIds = httpReq.getParameterValues("selection");
+
+        if (selectedIds.length == 0) {
+            response.setContentType("text/plain");
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        } else {
+            response.setContentType("text/csv");
+            DataRequestManager instance = DataRequestManager.getInstance();
+            DataRequest dataRequest = instance.getDataRequest(dataRequestId);
+            if (dataRequest == null) {
+                dataRequest = new DeletedSelectedDownloadCountsRequest(dataRequestId, themeDisplay.getUserId(),
+                        Arrays.asList(selectedIds), dsdParserUtils);
+                instance.addToQueue(dataRequest);
+            } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
+                instance.removeDataRequest(dataRequest);
+            }
+            response.setStatus(HttpServletResponse.SC_OK);
+            String statusMessage = dataRequest.getStatusMessage();
+            response.setContentLength(statusMessage.length());
+            PrintWriter writer = response.getWriter();
+            writer.println(statusMessage);
+
+        }
     }
 
     private Map<String, String> getTopicsFromStructure(RenderRequest renderRequest) {
@@ -106,7 +171,7 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
                         topic = "";
                     }
                     if (filterId != null && !filterId.equals(topicKey)) return;
-                    displayCounts.add(new DisplayDownloadCount(fileName, topic, downloadCount.getCount()));
+                    displayCounts.add(new DisplayDownloadCount(downloadCount.getId(), fileName, topic, downloadCount.getCount()));
                 } catch (PortalException e) {
                     SessionErrors.add(renderRequest, "action-failed", "Error getting download for id " + downloadId);
                 }
@@ -115,6 +180,7 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
             renderRequest.setAttribute("records", displayCounts);
             renderRequest.setAttribute("total", displayCounts.size());
             renderRequest.setAttribute("topics", topicMap);
+            renderRequest.setAttribute("filterId", filterId);
         } catch (Exception e) {
             SessionErrors.add(renderRequest, "filter-failed", e.getMessage());
         }
