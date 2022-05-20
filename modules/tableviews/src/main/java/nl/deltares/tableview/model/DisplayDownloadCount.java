@@ -9,13 +9,18 @@ public class DisplayDownloadCount implements Comparable<DisplayDownloadCount> {
     final private int count;
     final private String fileName;
     final private String fileTopic;
+    private final long id;
 
-    public DisplayDownloadCount(String fileName, String fileTopic, int count) {
+    public DisplayDownloadCount(long id, String fileName, String fileTopic, int count) {
+        this.id = id;
         this.count = count;
         this.fileName = fileName;
         this.fileTopic = fileTopic;
     }
 
+    public long getId() {
+        return id;
+    }
     public int getCount() {
         return count;
     }
