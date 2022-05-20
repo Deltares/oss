@@ -1,9 +1,9 @@
 
 
-TableFormsUtil = {
+CountsTableFormsUtil = {
 
     loadSelection: function(selected) {
-        let rowElements = document.getElementsByClassName("downloadTableRecord");
+        let rowElements = document.getElementsByClassName("downloadCountsTableRecord");
         [...rowElements].forEach(function(rowElement) {
             if (rowElement.checked){
                 selected.push(rowElement.getAttribute('recordid'));
@@ -23,26 +23,10 @@ TableFormsUtil = {
 
     },
 
-    paidSelected: function(resourceUrl, renderUrl, namespace, filename){
-
-        let selected = [];
-        this.loadSelection(selected);
-        if (selected.length === 0){
-            alert("Please select one or more downloads before continuing.");
-        } else {
-            this.callResourceUrl(resourceUrl, namespace, filename, "paid-selected", selected, renderUrl);
-        }
-
-    },
-
-    exportResults: function(resourceUrl, namespace, filename){
-        this.callResourceUrl(resourceUrl, namespace, filename, "export", null, null);
-    },
-
     callResourceUrl: function(resourceUrl, namespace, filename, action, data, redirectUrl){
 
         CommonFormsUtil.clearError(namespace);
-        CommonFormsUtil.setActionButtons(['exportResultsButton', 'deleteSelectedButton', 'paidSelectedButton']);
+        CommonFormsUtil.setActionButtons(['deleteSelectedButton']);
         CommonFormsUtil.initProgressBar(namespace);
 
         let A = new AUI();
