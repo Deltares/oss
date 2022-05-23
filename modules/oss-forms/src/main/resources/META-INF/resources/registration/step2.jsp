@@ -212,7 +212,7 @@
                         cssClass="update-badge"
                         type="radio"
                         value="yes"
-                        checked="<%=yes_checked%>"/>
+                        checked="<%=yes_checked%>" onChange="updateBadge()"/>
             </div>
             <div class="pr-3">
                 <aui:input
@@ -221,7 +221,7 @@
                         cssClass="update-badge"
                         type="radio"
                         value="no"
-                        checked="<%=no_checked%>" />
+                        checked="<%=no_checked%>" onChange="updateBadge()" />
             </div>
         </div>
 
@@ -240,7 +240,7 @@
                         cssClass="update-badge"
                         type="radio"
                         value="name"
-                        checked="<%=name_checked%>" />
+                        checked="<%=name_checked%>" onChange="updateBadge()"/>
             </div>
             <div class="pr-3">
                 <aui:input
@@ -249,7 +249,7 @@
                         cssClass="update-badge"
                         type="radio"
                         value="initials"
-                        checked="<%=initials_checked%>"/>
+                        checked="<%=initials_checked%>" onChange="updateBadge()"/>
             </div>
             <div class="pr-3">
                 <aui:input
@@ -258,7 +258,7 @@
                         cssClass="update-badge"
                         type="radio"
                         value="both"
-                        checked="<%=both_checked%>"/>
+                        checked="<%=both_checked%>" onChange="updateBadge()"/>
             </div>
         </div>
 

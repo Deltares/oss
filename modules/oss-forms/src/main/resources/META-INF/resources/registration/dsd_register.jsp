@@ -114,7 +114,7 @@
                     <span><liferay-ui:message key="dsd.registration.steps.step2"/></span>
                 </a>
             </li>
-            <li class="nav-item icon-circle-blank disabled" id="nav-stepper-step-3" id="<portlet:namespace/>nav-stepper-step-3">
+            <li class="nav-item icon-circle-blank disabled" id="<portlet:namespace/>nav-stepper-step-3">
                 <a href="#stepper-step-3" title="Step 3" style="font-family:Open Sans,serif">
                     <span><liferay-ui:message key="dsd.registration.steps.step3"/></span>
                 </a>
@@ -204,15 +204,22 @@
         shoppingCart.clearCart();
     }
 
+    checkSelection = function (){
+        DsdRegistrationFormsUtil.checkSelection("<portlet:namespace />");
+    }
+
+    updateBadge = function (){
+        DsdRegistrationFormsUtil.updateBadge('<portlet:namespace />');
+    }
+
     $(document).ready(function() {
         let form = Liferay.Form.get("<portlet:namespace/>fm").formValidator;
         $('.bs-stepper').formStepper(form);
-        $(document.getElementsByClassName('update-badge')).change(DsdRegistrationFormsUtil.updateBadge('<portlet:namespace />'));
-        $(document.getElementsByClassName('child-registration')).change(DsdRegistrationFormsUtil.checkSelection('<portlet:namespace />'));
-        $(document.getElementsByClassName('parent-registration')).change(DsdRegistrationFormsUtil.checkSelection('<portlet:namespace />'));
-        $('input[name="<portlet:namespace/>use_organization_address"]').change(CommonFormsUtil.updatePaymentAddress('<portlet:namespace />', this.checked));
-<%--        DsdRegistrationFormsUtil.updateBadge('<portlet:namespace />');--%>
-<%--        DsdRegistrationFormsUtil.checkSelection('<portlet:namespace />');--%>
+        updateBadge();
+        checkSelection();
+        $(document.getElementById("<portlet:namespace />use_organization_address")).change(function() {
+            CommonFormsUtil.updatePaymentAddress('<portlet:namespace />', this.checked);
+        });
 
         <c:if test='<%= !SessionErrors.isEmpty(liferayPortletRequest) %>'>shoppingCart.clearCart()</c:if>
     });
