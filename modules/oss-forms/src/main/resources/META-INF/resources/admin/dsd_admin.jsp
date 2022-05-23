@@ -58,6 +58,7 @@
                 </aui:col>
                 <aui:col width="5">
                     <aui:button name="downloadRegistrationsButton"  type="submit" value="dsd.admin.download" />
+                    <aui:button name="downloadReproButton"  type="submit" value="dsd.admin.download.repro" />
                 </aui:col>
             </aui:row>
         </aui:fieldset>
@@ -107,6 +108,12 @@
     downloadRegistrationsButton.addEventListener('click', function (ev) {
         ev.preventDefault();
         DsdAdminFormsUtil.downloadRegistrations("<portlet:resourceURL/>", "<portlet:namespace/>")
+    });
+
+    let downloadReproButton = document.getElementById('<portlet:namespace/>downloadReproButton');
+    downloadReproButton.addEventListener('click', function (ev) {
+    ev.preventDefault();
+    DsdAdminFormsUtil.downloadRepro("<portlet:resourceURL/>", "<portlet:namespace/>")
     });
 
     let deleteRegistrationsButton = document.getElementById('<portlet:namespace/>deleteRegistrationsButton');

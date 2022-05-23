@@ -152,6 +152,8 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         final BillingInfo billingInfo = registrationRequest.getBillingInfo();
         final Map<String, String> billing = billingInfo.toMap();
         final BadgeInfo badgeInfo = registrationRequest.getBadgeInfo();
+        if (badgeInfo.isShowTitle()) badgeInfo.setTitle(userAttributes.get(KeycloakUtils.ATTRIBUTES.academicTitle.name()));
+        if (badgeInfo.isShowInitials()) badgeInfo.setInitials(userAttributes.get(KeycloakUtils.ATTRIBUTES.initials.name()));
         final Map<String, String> badge = badgeInfo.toMap();
         for (Registration registration : registrations) {
             preferences = new HashMap<>(userPreferences);

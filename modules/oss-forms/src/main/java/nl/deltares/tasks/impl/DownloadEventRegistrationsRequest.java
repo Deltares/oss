@@ -42,13 +42,14 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     private final Locale locale;
     private final boolean removeMissing;
     private final boolean useResourcePrimKey;
+    private final boolean reproVersion;
     private boolean disableCallWebinar;
 
     public DownloadEventRegistrationsRequest(String id, long currentUser, String articleId, Group siteGroup,
                                              DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils,
                                              DsdJournalArticleUtils dsdJournalArticleUtils,
                                              WebinarUtilsFactory webinarUtilsFactory, boolean primKey,
-                                             boolean delete, boolean removeMissing) throws IOException {
+                                             boolean delete, boolean removeMissing, boolean reproVersion) throws IOException {
         super(id, currentUser);
         this.articleId = articleId;
         this.group = siteGroup;
@@ -60,6 +61,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         this.deleteOnCompletion = delete;
         this.removeMissing = removeMissing;
         this.useResourcePrimKey = primKey;
+        this.reproVersion = reproVersion;
         this.locale = LocaleUtil.fromLanguageId(siteGroup.getDefaultLanguageId());
 
     }
@@ -294,8 +296,13 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 } catch (PortalException e) {
                     //
                 }
-                writeRecord(writer, recordObjects, event, matchingRegistration, matchingUser,
-                        webinarKeyCache, locale);
+                if (reproVersion) {
+                    //write short output for printing badges
+                    writeReproRecord(writer, recordObjects, event, matchingRegistration, matchingUser);
+                } else {
+                    writeRecord(writer, recordObjects, event, matchingRegistration, matchingUser,
+                            webinarKeyCache, locale);
+                }
                 if (Thread.interrupted()) {
                     status = terminated;
                     errorMessage = String.format("Thread 'DownloadEventRegistrationsRequest' with id %s is interrupted!", id);
@@ -314,17 +321,19 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     }
 
     private void writeHeader(PrintWriter writer) {
-        StringBuilder header = new StringBuilder("eventId, eventTitle,registrationId, registrationTitle,start date,topic,type,email,firstName,lastName,webinarProvider,registrationStatus,remarks");
-        for (BillingInfo.ATTRIBUTES value : BillingInfo.ATTRIBUTES.values()) {
-            header.append(',');
-            header.append(value.name());
-        }
-        for (BadgeInfo.ATTRIBUTES value : BadgeInfo.ATTRIBUTES.values()){
-            header.append(',');
-            header.append(value.name());
-        }
-        header.append(",registration time");
 
+        StringBuilder header;
+        if (reproVersion){
+            header = new StringBuilder("eventTitle,registrationTitle,email,badgeName");
+        } else {
+            header = new StringBuilder("eventId, eventTitle,registrationId, registrationTitle,start date,topic,type,email,firstName,lastName,webinarProvider,registrationStatus,remarks");
+
+            for (BillingInfo.ATTRIBUTES value : BillingInfo.ATTRIBUTES.values()) {
+                header.append(',');
+                header.append(value.name());
+            }
+            header.append(",registration time");
+        }
         writer.println(header);
     }
 
@@ -385,6 +394,36 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         return null;
     }
 
+    private void writeReproRecord(PrintWriter writer, Map<String, Object> record, Event event,
+                             Registration dsdRegistration, User user) {
+
+        StringBuilder line = new StringBuilder();
+        if (event == null) {
+            return;
+        } else {
+            writeField(line, event.getTitle());
+        }
+        if (dsdRegistration == null) {
+            return;
+        } else {
+            writeField(line, dsdRegistration.getTitle());
+        }
+        if (user == null){
+            return;
+        } else {
+            writeField(line, user.getEmailAddress());
+        }
+        String userPreferencesValue = (String) record.get("userPreferences");
+        Map<String, String> userPreferences = Collections.emptyMap();
+        try {
+            userPreferences = JsonContentUtils.parseJsonToMap(userPreferencesValue);
+        } catch (JSONException e) {
+            logger.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
+        }
+        writeBadgeInfo(line, userPreferences, user);
+        writer.println(line);
+    }
+
     private void writeRecord(PrintWriter writer, Map<String, Object> record, Event event,
                              Registration dsdRegistration, User user, Map<String, List<String>> courseRegistrationsCache, Locale locale) {
 
@@ -430,10 +469,9 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         writeWebinarInfo(line, user, dsdRegistration, courseRegistrationsCache, userPreferences);
         writeField(line, userPreferences.get("remarks"));
         writeBillingInfo(line, userPreferences);
-        writeBadgeInfo(line, userPreferences);
         writeField(line, userPreferences.get("registration_time"));
 
-        if (removeMissing && (dsdRegistration == null || user == null) ){
+        if (removeMissing && dsdRegistration == null){
             deleteBrokenRegistration((Long)record.get("registrationId"));
             writeField(line, "deleted record");
         }
@@ -518,12 +556,11 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         }
     }
 
-    private void writeBadgeInfo(StringBuilder line, Map<String, String> badgeInfo){
+    private void writeBadgeInfo(StringBuilder line, Map<String, String> badgeInfo, User user){
 
-        //Write badge information.
-        for (BadgeInfo.ATTRIBUTES key : BadgeInfo.ATTRIBUTES.values()) {
-            String badgeAttribute = badgeInfo.get(key.name());
-            writeField(line, badgeAttribute);
-        }
+        final BadgeInfo instance = BadgeInfo.getInstance(badgeInfo);
+        final String badgeName = instance.formatBadgeName(user.getFirstName(), user.getLastName());
+        writeField(line, badgeName);
+
     }
 }

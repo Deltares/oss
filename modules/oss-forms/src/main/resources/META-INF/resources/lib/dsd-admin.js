@@ -18,6 +18,18 @@ DsdAdminFormsUtil = {
             this.callDownloadRegistrations(resourceUrl, namespace, action);
         }
     },
+    downloadRepro: function(resourceUrl, namespace){
+
+        CommonFormsUtil.clearError(namespace);
+        let element = document.getElementById( namespace + "eventSelection");
+        var eventArticleId = element.options[ element.selectedIndex ].value;
+        if (eventArticleId != null && eventArticleId!=="") {
+            resourceUrl = resourceUrl + '&' + namespace + 'articleId=' + eventArticleId;
+            let action = "downloadRepro";
+            this.callDownloadRegistrations(resourceUrl, namespace, action);
+        }
+    },
+
     deleteRegistrations: function(resourceUrl, namespace){
         CommonFormsUtil.clearError(namespace);
         let eventArticleId = document.getElementById( namespace + "articleId").value;
@@ -44,7 +56,7 @@ DsdAdminFormsUtil = {
 
     callDownloadRegistrations : function (resourceUrl, namespace, action){
 
-        CommonFormsUtil.setActionButtons(['downloadRegistrationsButton', 'deleteRegistrationsButton']);
+        CommonFormsUtil.setActionButtons(['downloadRegistrationsButton', 'deleteRegistrationsButton', 'downloadReproButton']);
         CommonFormsUtil.initProgressBar(namespace);
 
         let A = new AUI();
