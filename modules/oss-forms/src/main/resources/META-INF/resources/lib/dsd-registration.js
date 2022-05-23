@@ -2,25 +2,25 @@
 DsdRegistrationFormsUtil = {
 
     validateFirstStep: function (FIRST_STEP_ERROR_MESSAGE, FIRST_STEP_ERROR_MESSAGE_PARENT_MISSING) {
-        let isFirstStepValid = document.getElementsByClassName('parent-registration')[0].checked;
-        if (!isFirstStepValid) {
-            return FIRST_STEP_ERROR_MESSAGE;
-        }
+        let isParentSelectionValid = false;
+        let isChildSelectionValid = true;
         let registrations = document.getElementsByClassName('registration-item');
         [...registrations].forEach(function(registration) {
             let parentChecked = registration.getElementsByClassName("parent-registration")[0].checked;
-            let childChecked = false;
+            if (parentChecked){
+                isParentSelectionValid = true;
+            }
             let children = registration.getElementsByClassName('child-registration');
             [...children].forEach(function(child) {
-                if (child.checked){
-                    childChecked = true;
+                if (child.checked && !parentChecked){
+                    isChildSelectionValid = false;
                 }
             })
-            if (!parentChecked && childChecked){
-                isFirstStepValid = false;
-            }
         });
-        if (!isFirstStepValid){
+        if (!isParentSelectionValid){
+            return FIRST_STEP_ERROR_MESSAGE;
+        }
+        if(!isChildSelectionValid){
             return FIRST_STEP_ERROR_MESSAGE_PARENT_MISSING;
         }
         return null;
@@ -75,8 +75,8 @@ DsdRegistrationFormsUtil = {
     },
 
     updateBadge : function(namespace) {
-        let showTitle = $(document.getElementById( namespace + "badge_title_setting")).checked;
-        let nameSetting = $(document.getElementById(namespace + "badge_name_setting")).checked;
+        let showTitle = CommonFormsUtil.getRadioButtonsSelection(namespace, "badge_title_setting");
+        let nameSetting =CommonFormsUtil.getRadioButtonsSelection(namespace, "badge_name_setting");
         let titles = $(document.getElementById( namespace + "academicTitle")).val();
         let firstName = $(document.getElementById(namespace + "first_name")).val();
         let initials = $(document.getElementById( namespace + "initials")).val();

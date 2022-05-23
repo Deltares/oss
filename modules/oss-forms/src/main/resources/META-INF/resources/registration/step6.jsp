@@ -8,7 +8,7 @@
             type="checkbox">
                 <aui:validator name="required">
                     function () {
-                    return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 5);
+                    return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 6);
                     }
                 </aui:validator>
     </aui:input>

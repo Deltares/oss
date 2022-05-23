@@ -225,5 +225,17 @@ CommonFormsUtil = {
             paymentEmailInput.prop('disabled', false);
 
         }
+    },
+
+    getRadioButtonsSelection : function (namespace, name){
+        let radioButtons = document.getElementsByName(namespace + name );
+
+        let selectedValue;
+        [...radioButtons].forEach(function( radioButton ){
+            if  (radioButton.checked){
+                selectedValue = radioButton.value;
+            }
+        });
+        return selectedValue;
     }
 }

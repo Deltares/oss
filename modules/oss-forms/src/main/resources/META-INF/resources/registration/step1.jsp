@@ -38,7 +38,7 @@
                             data-price="<%= mainRegistration.getPrice() %>"
                             course="<%=mainRegistration.isCourse() %>"
                             cssClass="parent-registration"
-                            checked="true"/>
+                            checked="true" onChange="checkSelection()"/>
                 </div>
                 <div class="float-left w-100">
                     <%
@@ -72,6 +72,7 @@
                                 course="${childRegistration.isCourse()}"
                                 cssClass="child-registration"
                                 checked="${dsdSessionUtils.isUserRegisteredFor(user, childRegistration)}"
+                                onChange="checkSelection()"
                         />
                     </div>
                     <div class="float-left w-100">

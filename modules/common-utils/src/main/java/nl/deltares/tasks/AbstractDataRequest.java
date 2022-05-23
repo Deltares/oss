@@ -6,7 +6,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
-import com.liferay.portal.kernel.util.CallbackMatcher;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +30,7 @@ public abstract class AbstractDataRequest implements DataRequest {
     private final PermissionChecker permissionChecker;
 
     protected long progressTimeOut = 30000; //listen to progress
-    protected long lastProgressCheck = 0;
+    protected long lastProgressCheck = System.currentTimeMillis();
 
     protected DataRequestManager manager;
 
