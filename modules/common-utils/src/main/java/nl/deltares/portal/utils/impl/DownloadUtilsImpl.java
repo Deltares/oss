@@ -305,8 +305,9 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         }
         DownloadLocalServiceUtil.updateDownload(userDownload);
 
-        if (userDownload.getShareId() == -9) return; //processing request
-        incrementDownloadCount(user.getCompanyId(), groupId, downloadId);
+        if (userDownload.getShareId() > 0) { //request completed
+            incrementDownloadCount(user.getCompanyId(), groupId, downloadId);
+        }
 
     }
 
