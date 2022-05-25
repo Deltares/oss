@@ -79,7 +79,7 @@
             <liferay-ui:message key="next.step"/>
         </a>
         <a class="submit btn-lg btn-primary d-none">
-            <liferay-ui:message key="register"/>
+            <liferay-ui:message key="last.step"/>
         </a>
     </div>
 
