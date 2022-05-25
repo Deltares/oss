@@ -254,7 +254,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         final HashMap<String, Object> shareInfo = new HashMap<>();
         shareInfo.put("url", directDownloadUrl);
         shareInfo.put("expiration", new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(8)));
-        shareInfo.put("id", 0);
+        shareInfo.put("id", -8);
         registerDownload(user, groupId, downloadId, filePath, shareInfo, userAttributes);
 
     }
@@ -296,7 +296,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
             if (shareId != null) {
                 userDownload.setShareId((int) shareId);
             } else {
-                userDownload.setShareId(0);
+                userDownload.setShareId(-8);
             }
             final Object url = shareInfo.get("url");
             if (url != null) {
@@ -305,7 +305,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         }
         DownloadLocalServiceUtil.updateDownload(userDownload);
 
-        if (userDownload.getShareId() > 0) { //request completed
+        if (userDownload.getShareId() >= -1) { //request completed
             incrementDownloadCount(user.getCompanyId(), groupId, downloadId);
         }
 
