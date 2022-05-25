@@ -104,7 +104,9 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
     @Override
     public Map<String, String> getUserAttributes(String email) throws Exception {
 
-        Map<String, String> unfiltered = getRawUserAttributes(email);
+        final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null);
+        String attributesJson = userRepresentation.get("attributes");
+        Map<String, String> unfiltered = JsonContentUtils.parseJsonToMap(attributesJson);
         HashMap<String, String> filteredAttributes = new HashMap<>();
         for (ATTRIBUTES attributeKey : ATTRIBUTES.values()) {
             String key = attributeKey.name();
@@ -114,19 +116,54 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         return filteredAttributes;
     }
 
-    private Map<String, String> getRawUserAttributes(String email) throws IOException, JSONException {
+    @Override
+    public Map<String, String> getUserInfo(String email) throws Exception {
+
+        Map<String, String> unfiltered = getKeycloakUserRepresentation(email, null);
+        if (unfiltered.isEmpty()) return unfiltered;
+        HashMap<String, String> filteredInfo = new HashMap<>();
+        filteredInfo.put(ATTRIBUTES.first_name.name(), unfiltered.get("firstName"));
+        filteredInfo.put(ATTRIBUTES.last_name.name(), unfiltered.get("lastName"));
+        filteredInfo.put(ATTRIBUTES.email.name(), unfiltered.get("email"));
+        filteredInfo.put("username", unfiltered.get("username"));
+        filteredInfo.put("id", unfiltered.get("id"));
+        return filteredInfo;
+    }
+
+
+    @Override
+    public boolean isExistingUsername(String username) throws Exception {
+
+        Map<String, String> unfiltered = getKeycloakUserRepresentation(null, username);
+        return !unfiltered.isEmpty();
+    }
+
+    private Map<String, String> getKeycloakUserRepresentation(String email, String username) throws IOException, JSONException {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getAccessToken());
-        HttpURLConnection connection = getConnection(getKeycloakUsersPath() + "?email=" + email, "GET", headers);
+        String query;
+        if (email != null){
+            query = "?email=" + email;
+        } else if (username != null){
+            query = "?username=" + username;
+        } else {
+            throw new IOException("Both email and username missing!");
+        }
+        HttpURLConnection connection = getConnection(getKeycloakUsersPath() + query, "GET", headers);
 
         checkResponse(connection);
         String jsonResponse = readAll(connection);
-        return parseUserAttributes(jsonResponse);
+        List<Map<String, String>> userMapArray = JsonContentUtils.parseJsonArrayToMap(jsonResponse);
+        if (userMapArray.size() == 0) return new HashMap<>();
+        return userMapArray.get(0);
     }
 
     private Map<String, String> getUserAttributesFromCacheOrKeycloak(String email, String[] searchKeys) throws Exception{
-        Map<String, String> unfiltered = getRawUserAttributes(email);
+
+        final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null);
+        String attributesJson = userRepresentation.get("attributes");
+        Map<String, String> unfiltered = JsonContentUtils.parseJsonToMap(attributesJson);
         HashMap<String, String> filteredAttributes = new HashMap<>();
         for (String key : searchKeys) {
             if (!unfiltered.containsKey(key)) continue;
@@ -163,16 +200,6 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
                 jsonAttributes.put(key.name(), JSONFactoryUtil.createJSONArray().put(value));
             }
         }
-    }
-
-    private Map<String, String> parseUserAttributes(String jsonResponse) throws JSONException {
-
-        //Keycloak wraps all attributes in a json array. we need to remove this
-        List<Map<String, String>> userMapArray = JsonContentUtils.parseJsonArrayToMap(jsonResponse);
-        if (userMapArray.size() == 0) return new HashMap<>();
-        Map<String, String> userMap = userMapArray.get(0);
-        String attributesJson = userMap.get("attributes");
-        return JsonContentUtils.parseJsonToMap(attributesJson);
     }
 
     @Override

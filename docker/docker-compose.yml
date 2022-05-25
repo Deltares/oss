@@ -107,42 +107,33 @@ services:
                "-Dkeycloak.import=/opt/jboss/keycloak/resources/realm-lportal.json",
                "-Dkeycloak.profile.feature.upload_scripts=enabled" ]
 
-#  mariadb-nextcloud:
-#    image: mariadb
-#    container_name: nc-mariadb
-#    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --skip-innodb-read-only-compressed
-#    ports:
-#      - "3407:3306"
-#    environment:
-#      - MYSQL_ROOT_PASSWORD=rootpassword
-#      - MYSQL_DATABASE=nextcloud
-#      - MYSQL_USER=nextcloud
-#      - MYSQL_PASSWORD=nextcloud
-#      - HOSTNAME=mariadb-nextcloud
-#    volumes:
-#      - ncdata:/var/lib/mysql
-#    networks:
-#      - liferay
-#
-#  nextcloud:
-#      image: nextcloud
-#      container_name: nextcloud
-#      ports:
-#        - 8180:80
-#      links:
-#        - mariadb-nextcloud
-#      volumes:
-#        - nextcloud:/var/www/html
-#        - ./nextcloud/config/config.php:/var/www/html/config/config.php
-#      restart: always
-#      networks:
-#        - liferay
-#      environment:
-#        - MYSQL_DATABASE=nextcloud
-#        - MYSQL_USER=nextcloud
-#        - MYSQL_PASSWORD=nextcloud
-#        - MYSQL_HOST=mariadb-nextcloud
-#        - HOSTNAME=nextcloud
+  openldap:
+    image: bitnami/openldap:2
+    container_name: openldap
+    #      build: openldap
+    ports:
+      - '1389:1389'
+      - '1636:1636'
+    environment:
+      - BITNAMI_DEBUG=true
+      - LDAP_ADMIN_USERNAME=admin
+      - LDAP_ADMIN_PASSWORD=admin
+      #        - LDAP_USERS=rooij_e
+      #        - LDAP_PASSWORDS=password
+      - LDAP_ROOT=dc=oss,dc=deltares,dc=nl
+      - LDAP_BindDN=cn=admin,dc=oss,dc=deltares,dc=nl
+      - LDAP_BindPW=admin
+      - LDAP_USER_DC=people
+      - LDAP_GROUP=groups
+#      - LDAP_ADD_SCHEMAS=yes
+#      - LDAP_EXTRA_SCHEMAS=cosine, inetorgperson, nis,ppolicy
+    #        - LDAP_CUSTOM_LDIF_DIR=/opt/bitnami/openldap/etc/ldifs/
+    volumes:
+      - openldap:/bitnami/openldap
+    networks:
+      - liferay
+
+
 volumes:
   esdata:
     driver: local
@@ -150,10 +141,8 @@ volumes:
     driver: local
   dbkeycloak:
     driver: local
-#  nextcloud:
-#    driver: local
-#  ncdata:
-#    driver: local
+  openldap:
+    driver: local
 
 networks:
   liferay:

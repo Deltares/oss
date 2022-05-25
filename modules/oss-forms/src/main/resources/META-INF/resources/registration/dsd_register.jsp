@@ -212,6 +212,13 @@
         DsdRegistrationFormsUtil.updateBadge('<portlet:namespace />');
     }
 
+    registerOther = function (){
+        let registerOther = $(document.getElementById("<portlet:namespace />registration_other"))[0].checked;
+        $(document.getElementById("<portlet:namespace />first_name"))[0].disabled = !registerOther;
+        $(document.getElementById("<portlet:namespace />last_name"))[0].disabled = !registerOther;
+        $(document.getElementById("<portlet:namespace />email"))[0].disabled = !registerOther;
+    }
+
     $(document).ready(function() {
         let form = Liferay.Form.get("<portlet:namespace/>fm").formValidator;
         $('.bs-stepper').formStepper(form);
