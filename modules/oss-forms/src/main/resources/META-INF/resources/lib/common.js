@@ -199,7 +199,7 @@ CommonFormsUtil = {
             paymentPostCodeInput.prop('disabled', true);
             paymentCityInput.prop('disabled', true);
             paymentCountryInput.prop('disabled', true);
-            paymentEmailInput.prop('disabled', true);
+            // paymentEmailInput.prop('disabled', true);
 
         } else {
             //restore billing info
@@ -222,7 +222,7 @@ CommonFormsUtil = {
             paymentPostCodeInput.prop('disabled', false);
             paymentCityInput.prop('disabled', false);
             paymentCountryInput.prop('disabled', false);
-            paymentEmailInput.prop('disabled', false);
+            // paymentEmailInput.prop('disabled', false);
 
         }
     },
