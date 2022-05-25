@@ -145,12 +145,13 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         final ServiceContext serviceContext = new ServiceContext();
         serviceContext.setScopeGroupId(loggedinUser.getGroupId());
         final Role defaultGroupRole = RoleLocalServiceUtil.getDefaultGroupRole(loggedinUser.getGroupId());
-        final User user = UserLocalServiceUtil.addUser(themeDisplay.getUserId(), themeDisplay.getCompanyId(), false,
-                "P@s550rd1", "P@s550rd1", false, userName, email, 0, null,
+        final User user = UserLocalServiceUtil.addUser(themeDisplay.getUserId(), themeDisplay.getCompanyId(), true,
+                null, null, false, userName, email, 0, null,
                 themeDisplay.getLocale(), firstName, null, lastName, 0, 0, true,
                 1, 1, 1970, null, loggedinUser.getGroupIds(),
                 loggedinUser.getOrganizationIds(), new long[]{defaultGroupRole.getRoleId()}, loggedinUser.getUserGroupIds(), false, serviceContext);
-
+        user.setPasswordReset(false);
+        UserLocalServiceUtil.updateUser(user);
         return user;
 
     }
