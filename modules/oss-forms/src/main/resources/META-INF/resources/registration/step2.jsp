@@ -5,7 +5,7 @@
         <c:if test="${not empty attributes}">
             <c:set var="academicTitle" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.academicTitle.name()) %>"/>
             <c:set var="initials" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.initials.name()) %>"/>
-            <c:set var="jobTitle" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.jobTitle.name()) %>"/>
+<%--            <c:set var="jobTitle" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.jobTitle.name()) %>"/>--%>
             <c:set var="org_name" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_name.name()) %>"/>
             <c:set var="org_address" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_address.name()) %>"/>
             <c:set var="org_postal" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_postal.name()) %>"/>
@@ -13,7 +13,15 @@
             <c:set var="country" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_country.name()) %>"/>
         </c:if>
         <span><liferay-ui:message key="registrationform.userInfo"/></span>
-
+        <div class="row">
+            <div class="col">
+                <aui:input
+                        name="registration_other"
+                        label="registrationform.register.other"
+                        type="checkbox"
+                        checked="false" onChange="registerOther()"/>
+            </div>
+        </div>
         <div class="row">
             <div class="col">
                 <aui:input
@@ -73,27 +81,27 @@
             <aui:validator name="email"/>
         </aui:input>
 
-        <div class="row">
-            <div class="col">
-                <aui:input
-                        name="username"
-                        label="registrationform.username"
-                        value="<%= user.getScreenName() %>"
-                        disabled="true">
-                    <aui:validator name="required">
-                                function () {
-                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                                }
-                    </aui:validator>
-                </aui:input>
-            </div>
-            <div class="col">
-                <aui:input
-                        name="<%= KeycloakUtils.ATTRIBUTES.jobTitle.name() %>"
-                        label="registrationform.job.titles"
-                        value="${jobTitle}" />
-            </div>
-        </div   >
+<%--        <div class="row">--%>
+<%--            <div class="col">--%>
+<%--                <aui:input--%>
+<%--                        name="username"--%>
+<%--                        label="registrationform.username"--%>
+<%--                        value="<%= user.getScreenName() %>"--%>
+<%--                        disabled="true">--%>
+<%--                    <aui:validator name="required">--%>
+<%--                                function () {--%>
+<%--                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);--%>
+<%--                                }--%>
+<%--                    </aui:validator>--%>
+<%--                </aui:input>--%>
+<%--            </div>--%>
+<%--            <div class="col">--%>
+<%--                <aui:input--%>
+<%--                        name="<%= KeycloakUtils.ATTRIBUTES.jobTitle.name() %>"--%>
+<%--                        label="registrationform.job.titles"--%>
+<%--                        value="${jobTitle}" />--%>
+<%--            </div>--%>
+<%--        </div   >--%>
 
         <span><liferay-ui:message key="registrationform.organizationInfo"/></span>
 

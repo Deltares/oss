@@ -1,12 +1,17 @@
 package nl.deltares.forms.portlet.action;
 
+import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -70,6 +75,14 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 success = removeCurrentRegistration(actionRequest, user, registrationRequest);
 //                break; //skip break and continue with registering
             case "register":
+                if (isRegisterSomeoneElse(actionRequest)){
+                    try {
+                        user = getOrCreateRegistrationUser(actionRequest, themeDisplay);
+                    } catch (Exception e) {
+                        success = false;
+                        SessionErrors.add(actionRequest, "registration-failed", e.getMessage() );
+                    }
+                }
                 Map<String, String> userAttributes = getUserAttributes(actionRequest);
                 if (success) {
                     success = updateUserAttributes(actionRequest, user, userAttributes);
@@ -97,6 +110,53 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             }
         }
 
+    }
+
+    private User getOrCreateRegistrationUser(ActionRequest actionRequest, ThemeDisplay themeDisplay) throws Exception {
+        final String email = ParamUtil.getString(actionRequest, KeycloakUtils.ATTRIBUTES.email.name());
+        final User registrationUser = UserLocalServiceUtil.fetchUserByEmailAddress(themeDisplay.getCompanyId(), email);
+        if (registrationUser != null) return registrationUser; //user already exists.
+
+        final Map<String, String> keycloakUser = keycloakUtils.getUserInfo(email);
+        String userName = null;
+        if (keycloakUser.isEmpty()){
+            for (int i = 0; i < 3; i++) {
+                String testUserName = KeycloakUtils.extractUsernameFromEmail(email, i);
+                try {
+                    if (!keycloakUtils.isExistingUsername(testUserName)){
+                        //do not create user, instead check if username is taken.
+                        userName = testUserName;
+                        break;
+                    }
+                } catch (Exception e) {
+                    LOG.warn(String.format("Error creating user for username %s on attempt %d: %s", userName, i, e.getMessage()) );
+                }
+            }
+        } else {
+            userName = keycloakUser.get("username");
+        }
+        String firstName = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.first_name.name());
+        String lastName = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.last_name.name());
+        long id = CounterLocalServiceUtil.increment(User.class.getName());
+        if (userName == null) {
+            userName = String.valueOf(id); //let's assume that id is unieque
+        }
+        final User loggedinUser = themeDisplay.getUser();
+        final ServiceContext serviceContext = new ServiceContext();
+        serviceContext.setScopeGroupId(loggedinUser.getGroupId());
+        final Role defaultGroupRole = RoleLocalServiceUtil.getDefaultGroupRole(loggedinUser.getGroupId());
+        final User user = UserLocalServiceUtil.addUser(themeDisplay.getUserId(), themeDisplay.getCompanyId(), false,
+                "P@s550rd1", "P@s550rd1", false, userName, email, 0, null,
+                themeDisplay.getLocale(), firstName, null, lastName, 0, 0, true,
+                1, 1, 1970, null, loggedinUser.getGroupIds(),
+                loggedinUser.getOrganizationIds(), new long[]{defaultGroupRole.getRoleId()}, loggedinUser.getUserGroupIds(), false, serviceContext);
+
+        return user;
+
+    }
+
+    private boolean isRegisterSomeoneElse(ActionRequest actionRequest) {
+        return Boolean.parseBoolean(ParamUtil.getString(actionRequest, "registration_other"));
     }
 
     private boolean removeCurrentRegistration(ActionRequest actionRequest, User user, RegistrationRequest registrationRequest) {
@@ -208,7 +268,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                     .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
 
             Event event = dsdParserUtils.getEvent(siteId, String.valueOf(configuration.eventId()), themeDisplay.getLocale());
-            BillingInfo billingInfo = getBillingInfo(actionRequest, themeDisplay.getUser());
+            BillingInfo billingInfo = getBillingInfo(actionRequest);
             BadgeInfo badgeInfo = getBadgeInfo(actionRequest);
 
             RegistrationRequest registrationRequest = new RegistrationRequest(themeDisplay);
@@ -278,11 +338,9 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         return badgeInfo;
     }
 
-    private BillingInfo getBillingInfo(ActionRequest actionRequest, User user) {
+    private BillingInfo getBillingInfo(ActionRequest actionRequest) {
 
         BillingInfo billingInfo = new BillingInfo();
-        billingInfo.setEmail(user.getEmailAddress()); //Email does not get sent when billing info is empty
-
         for (BillingInfo.ATTRIBUTES key : BillingInfo.ATTRIBUTES.values()) {
             String value = ParamUtil.getString(actionRequest, key.name());
             if (Validator.isNotNull(value) && !Validator.isBlank(value)) {
@@ -335,7 +393,12 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", themeDisplay.getLocale(), getClass());
             DsdEmail email = new DsdEmail(user, resourceBundle, registrationRequest);
             email.setReplyToEmail(configuration.replyToEmail());
-            email.setBCCToEmail(configuration.bccToEmail());
+            String bccToEmail = configuration.bccToEmail();
+            if (user.getUserId() != themeDisplay.getUserId()){
+                //someone else is registering for this user
+                bccToEmail = bccToEmail + ';' + themeDisplay.getUser().getEmailAddress();
+            }
+            email.setBCCToEmail(bccToEmail);
             email.setSendFromEmail(configuration.sendFromEmail());
             switch (action) {
                 case "register":

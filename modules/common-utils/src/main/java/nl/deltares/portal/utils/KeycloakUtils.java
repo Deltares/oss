@@ -6,6 +6,15 @@ import java.util.Map;
 
 public interface KeycloakUtils {
 
+    static String extractUsernameFromEmail(String email, int iteration) {
+        final String[] split = email.split("@");
+        final String username = split[0];
+        if (iteration == 0) {
+            return username;
+        }
+        return username + "_" + (iteration - 1);
+    }
+
     enum ATTRIBUTES {
         org_address,
         org_city,
@@ -42,6 +51,10 @@ public interface KeycloakUtils {
     int updateUserAttributes(String email, Map<String, String> attributes) throws Exception;
 
     Map<String, String> getUserAttributes(String email) throws Exception;
+
+    Map<String, String> getUserInfo(String email) throws Exception;
+
+    boolean isExistingUsername(String username) throws Exception;
 
     int registerUserLogin(String email, String siteId) throws Exception;
 
