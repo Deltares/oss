@@ -70,6 +70,17 @@ public class DisplayDownload implements Comparable<DisplayDownload> {
         return download.getShareId();
     }
 
+    public String getShareIdStatus() {
+        final int shareId = download.getShareId();
+
+        if (!directDownloadUrl.isEmpty()) return "direct download";
+        switch (shareId){
+            case -9 : return "processing";
+            case -1 : return "pending payment";
+            default: return String.valueOf(shareId);
+        }
+    }
+
     public String getFilePath() {
         return filePath;
     }

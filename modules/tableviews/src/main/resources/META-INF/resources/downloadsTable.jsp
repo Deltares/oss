@@ -98,7 +98,7 @@
                 <liferay-ui:search-container-column-text property="organization" name="Organization"/>
                 <liferay-ui:search-container-column-text property="city" name="City"/>
                 <liferay-ui:search-container-column-text property="countryCode" name="Country"/>
-                <liferay-ui:search-container-column-text property="shareId" name="Share ID"/>
+                <liferay-ui:search-container-column-text property="shareIdStatus" name="Share status"/>
                 <liferay-ui:search-container-column-text property="filePath" name="File path"/>
                 <liferay-ui:search-container-column-text property="directDownloadUrl" name="Direct download"/>
 
