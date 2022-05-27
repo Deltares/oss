@@ -69,6 +69,7 @@ public class RegistrationWrapper
 		attributes.put("endTime", getEndTime());
 		attributes.put(
 			"parentResourcePrimaryKey", getParentResourcePrimaryKey());
+		attributes.put("registeredByUserId", getRegisteredByUserId());
 
 		return attributes;
 	}
@@ -135,6 +136,12 @@ public class RegistrationWrapper
 
 		if (parentResourcePrimaryKey != null) {
 			setParentResourcePrimaryKey(parentResourcePrimaryKey);
+		}
+
+		Long registeredByUserId = (Long)attributes.get("registeredByUserId");
+
+		if (registeredByUserId != null) {
+			setRegisteredByUserId(registeredByUserId);
 		}
 	}
 
@@ -218,6 +225,26 @@ public class RegistrationWrapper
 	@Override
 	public Serializable getPrimaryKeyObj() {
 		return _registration.getPrimaryKeyObj();
+	}
+
+	/**
+	 * Returns the registered by user ID of this registration.
+	 *
+	 * @return the registered by user ID of this registration
+	 */
+	@Override
+	public long getRegisteredByUserId() {
+		return _registration.getRegisteredByUserId();
+	}
+
+	/**
+	 * Returns the registered by user uuid of this registration.
+	 *
+	 * @return the registered by user uuid of this registration
+	 */
+	@Override
+	public String getRegisteredByUserUuid() {
+		return _registration.getRegisteredByUserUuid();
 	}
 
 	/**
@@ -395,6 +422,26 @@ public class RegistrationWrapper
 	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_registration.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	/**
+	 * Sets the registered by user ID of this registration.
+	 *
+	 * @param registeredByUserId the registered by user ID of this registration
+	 */
+	@Override
+	public void setRegisteredByUserId(long registeredByUserId) {
+		_registration.setRegisteredByUserId(registeredByUserId);
+	}
+
+	/**
+	 * Sets the registered by user uuid of this registration.
+	 *
+	 * @param registeredByUserUuid the registered by user uuid of this registration
+	 */
+	@Override
+	public void setRegisteredByUserUuid(String registeredByUserUuid) {
+		_registration.setRegisteredByUserUuid(registeredByUserUuid);
 	}
 
 	/**

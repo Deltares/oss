@@ -97,7 +97,8 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
-    public void registerUser(User user, Map<String, String> userAttributes, Registration registration, Map<String, String> registrationProperties) throws PortalException {
+    public void registerUser(User user, Map<String, String> userAttributes, Registration registration, Map<String,
+            String> registrationProperties, User registrationUser) throws PortalException {
 
         try {
             if (webinarUtilsFactory.isWebinarSupported(registration)) {
@@ -109,10 +110,14 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
             long eventResourcePrimaryKey = 0;
             Event event = parserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()), registration.getLocale());
             if (event != null) eventResourcePrimaryKey = event.getResourceId();
+            long registeredByUserId = 0;
+            if (registrationUser != null && registrationUser != user) {
+                registeredByUserId = registrationUser.getUserId();
+            }
             registrationLocalService.addUserRegistration(
                     registration.getCompanyId(), registration.getGroupId(), registration.getResourceId(), eventResourcePrimaryKey,
                     parentId, user.getUserId(),
-                    registration.getStartTime(), registration.getEndTime(), JsonContentUtils.formatMapToJson(registrationProperties));
+                    registration.getStartTime(), registration.getEndTime(), JsonContentUtils.formatMapToJson(registrationProperties),registeredByUserId);
         }
     }
 
@@ -322,6 +327,15 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     public List<Map<String, Object>> getUserRegistrations(User user, Event event) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
                 registrationLocalService.getUserEventRegistrations(event.getGroupId(), user.getUserId(), event.getResourceId());
+        List<Map<String, Object>> registrations = new ArrayList<>();
+        dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
+        return registrations;
+    }
+
+    @Override
+    public List<Map<String, Object>> getUserRegistrationsMadeForOthers(User user, Event event) {
+        List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
+                registrationLocalService.getUserEventRegistrationsMadeForOthers(event.getGroupId(), user.getUserId(), event.getResourceId());
         List<Map<String, Object>> registrations = new ArrayList<>();
         dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
         return registrations;

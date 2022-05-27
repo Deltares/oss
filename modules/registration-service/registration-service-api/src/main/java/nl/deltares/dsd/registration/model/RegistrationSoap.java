@@ -46,6 +46,7 @@ public class RegistrationSoap implements Serializable {
 		soapModel.setEndTime(model.getEndTime());
 		soapModel.setParentResourcePrimaryKey(
 			model.getParentResourcePrimaryKey());
+		soapModel.setRegisteredByUserId(model.getRegisteredByUserId());
 
 		return soapModel;
 	}
@@ -179,6 +180,14 @@ public class RegistrationSoap implements Serializable {
 		_parentResourcePrimaryKey = parentResourcePrimaryKey;
 	}
 
+	public long getRegisteredByUserId() {
+		return _registeredByUserId;
+	}
+
+	public void setRegisteredByUserId(long registeredByUserId) {
+		_registeredByUserId = registeredByUserId;
+	}
+
 	private long _registrationId;
 	private long _groupId;
 	private long _eventResourcePrimaryKey;
@@ -189,5 +198,6 @@ public class RegistrationSoap implements Serializable {
 	private Date _startTime;
 	private Date _endTime;
 	private long _parentResourcePrimaryKey;
+	private long _registeredByUserId;
 
 }

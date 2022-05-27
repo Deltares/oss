@@ -20,8 +20,9 @@ public interface DsdTransferUtils {
      * @param user User to register
      * @param registration Registration for which user must be registered
      * @param transferDate Date of transfer for which user is registering.
+     * @param registeredBy If registering for someone else add user making the registration
      */
-    void registerUser(User user, Registration registration, Date transferDate) throws PortalException;
+    void registerUser(User user, Registration registration, Date transferDate, User registeredBy) throws PortalException;
 
     /**
      * Unregister user for single date of this Registration

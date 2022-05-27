@@ -75,9 +75,15 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 success = removeCurrentRegistration(actionRequest, user, registrationRequest);
 //                break; //skip break and continue with registering
             case "register":
+                User registrationUser = null;
                 if (isRegisterSomeoneElse(actionRequest)){
                     try {
-                        user = getOrCreateRegistrationUser(actionRequest, themeDisplay);
+                        registrationUser = themeDisplay.getUser();
+                        final String email = ParamUtil.getString(actionRequest, KeycloakUtils.ATTRIBUTES.email.name());
+                        final String firstName = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.first_name.name());
+                        final String lastName = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.last_name.name());
+                        user = adminUtils.getOrCreateRegistrationUser(themeDisplay.getCompanyId(), registrationUser,
+                                email, firstName, lastName, themeDisplay.getLocale());
                     } catch (Exception e) {
                         success = false;
                         SessionErrors.add(actionRequest, "registration-failed", e.getMessage() );
@@ -88,13 +94,17 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                     success = updateUserAttributes(actionRequest, user, userAttributes);
                 }
                 if (success){
-                    success = registerUser(actionRequest, user, userAttributes, registrationRequest);
+                    success = registerUser(actionRequest, user, userAttributes, registrationRequest, registrationUser);
                 }
                 if (success){
                     success = sendEmail(actionRequest, user, registrationRequest, themeDisplay, action);
                 }
                 break;
             case "unregister":
+                String userId = ParamUtil.getString(actionRequest, "userId");
+                if (userId != null && !userId.isEmpty()) {
+                    user = UserLocalServiceUtil.fetchUser(Long.parseLong(userId));
+                }
                 success = removeCurrentRegistration(actionRequest, user, registrationRequest);
                 if (success){
                     success = sendEmail(actionRequest, user, registrationRequest, themeDisplay, action);
@@ -109,50 +119,6 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 sendRedirect(actionRequest, actionResponse, redirect);
             }
         }
-
-    }
-
-    private User getOrCreateRegistrationUser(ActionRequest actionRequest, ThemeDisplay themeDisplay) throws Exception {
-        final String email = ParamUtil.getString(actionRequest, KeycloakUtils.ATTRIBUTES.email.name());
-        final User registrationUser = UserLocalServiceUtil.fetchUserByEmailAddress(themeDisplay.getCompanyId(), email);
-        if (registrationUser != null) return registrationUser; //user already exists.
-
-        final Map<String, String> keycloakUser = keycloakUtils.getUserInfo(email);
-        String userName = null;
-        if (keycloakUser.isEmpty()){
-            for (int i = 0; i < 3; i++) {
-                String testUserName = KeycloakUtils.extractUsernameFromEmail(email, i);
-                try {
-                    if (!keycloakUtils.isExistingUsername(testUserName)){
-                        //do not create user, instead check if username is taken.
-                        userName = testUserName;
-                        break;
-                    }
-                } catch (Exception e) {
-                    LOG.warn(String.format("Error creating user for username %s on attempt %d: %s", userName, i, e.getMessage()) );
-                }
-            }
-        } else {
-            userName = keycloakUser.get("username");
-        }
-        String firstName = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.first_name.name());
-        String lastName = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.last_name.name());
-        long id = CounterLocalServiceUtil.increment(User.class.getName());
-        if (userName == null) {
-            userName = String.valueOf(id); //let's assume that id is unieque
-        }
-        final User loggedinUser = themeDisplay.getUser();
-        final ServiceContext serviceContext = new ServiceContext();
-        serviceContext.setScopeGroupId(loggedinUser.getGroupId());
-        final Role defaultGroupRole = RoleLocalServiceUtil.getDefaultGroupRole(loggedinUser.getGroupId());
-        final User user = UserLocalServiceUtil.addUser(themeDisplay.getUserId(), themeDisplay.getCompanyId(), true,
-                null, null, false, userName, email, 0, null,
-                themeDisplay.getLocale(), firstName, null, lastName, 0, 0, true,
-                1, 1, 1970, null, loggedinUser.getGroupIds(),
-                loggedinUser.getOrganizationIds(), new long[]{defaultGroupRole.getRoleId()}, loggedinUser.getUserGroupIds(), false, serviceContext);
-        user.setPasswordReset(false);
-        UserLocalServiceUtil.updateUser(user);
-        return user;
 
     }
 
@@ -174,7 +140,8 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             return true;
     }
 
-    private boolean registerUser(ActionRequest actionRequest, User user, Map<String, String> userAttributes, RegistrationRequest registrationRequest) {
+    private boolean registerUser(ActionRequest actionRequest, User user, Map<String, String> userAttributes,
+                                 RegistrationRequest registrationRequest, User registrationUser) {
 
         List<Registration> registrations = registrationRequest.getRegistrations();
         boolean success = true;
@@ -225,7 +192,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 preferences.put("registration_time", dateTimeFormatter.format(new Date()));
 //            }
             try {
-                dsdSessionUtils.registerUser(user, userAttributes, registration, preferences);
+                dsdSessionUtils.registerUser(user, userAttributes, registration, preferences, registrationUser);
             } catch (PortalException e) {
                 SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
                 success = false;
@@ -236,7 +203,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                     preferences.putAll(billing);
                 }
                 try {
-                    dsdSessionUtils.registerUser(user, userAttributes, childRegistration, new HashMap<>());
+                    dsdSessionUtils.registerUser(user, userAttributes, childRegistration, new HashMap<>(), registrationUser);
                 } catch (PortalException e) {
                     SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
                     success = false;
@@ -419,6 +386,9 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             return false;
         }
     }
+
+    @Reference
+    private AdminUtils adminUtils;
 
     @Reference
     private KeycloakUtils keycloakUtils;

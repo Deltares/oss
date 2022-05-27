@@ -53,11 +53,11 @@ public class RegistrationLocalServiceWrapper
 	public void addUserRegistration(
 		long companyId, long groupId, long resourceId, long eventResourceId,
 		long parentResourceId, long userId, java.util.Date startTime,
-		java.util.Date endTime, String preferences) {
+		java.util.Date endTime, String preferences, long registeredByUserId) {
 
 		_registrationLocalService.addUserRegistration(
 			companyId, groupId, resourceId, eventResourceId, parentResourceId,
-			userId, startTime, endTime, preferences);
+			userId, startTime, endTime, preferences, registeredByUserId);
 	}
 
 	/**
@@ -456,12 +456,30 @@ public class RegistrationLocalServiceWrapper
 
 	@Override
 	public java.util.List<nl.deltares.dsd.registration.model.Registration>
+		getUserEventRegistrationsMadeForOthers(
+			long groupId, long registeredByUserId, long eventResourceId) {
+
+		return _registrationLocalService.getUserEventRegistrationsMadeForOthers(
+			groupId, registeredByUserId, eventResourceId);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.dsd.registration.model.Registration>
 		getUserRegistrations(
 			long groupId, long userId, java.util.Date start,
 			java.util.Date end) {
 
 		return _registrationLocalService.getUserRegistrations(
 			groupId, userId, start, end);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.dsd.registration.model.Registration>
+		getUsersRegisteredByOtherUser(
+			long groupId, long otherUserId, long registrationResourceId) {
+
+		return _registrationLocalService.getUsersRegisteredByOtherUser(
+			groupId, otherUserId, registrationResourceId);
 	}
 
 	/**

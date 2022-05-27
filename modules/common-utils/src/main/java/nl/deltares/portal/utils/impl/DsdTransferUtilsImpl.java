@@ -51,7 +51,7 @@ public class DsdTransferUtilsImpl implements DsdTransferUtils {
     }
 
     @Override
-    public void registerUser(User user, Registration registration, Date transferDate) throws PortalException {
+    public void registerUser(User user, Registration registration, Date transferDate, User registrationUser) throws PortalException {
 
         if (isUserRegisteredFor(user, registration, transferDate)) return;
 
@@ -60,11 +60,15 @@ public class DsdTransferUtilsImpl implements DsdTransferUtils {
 
         Registration parentRegistration = registration.getParentRegistration();
 
+        long registeredByUserId = 0;
+        if (registrationUser != null && registrationUser != user) {
+            registeredByUserId = registrationUser.getUserId();
+        }
         registrationLocalService.addUserRegistration(
                 registration.getCompanyId(), registration.getGroupId(), registration.getResourceId(),
                 event == null ? 0 : event.getResourceId(),
                 parentRegistration == null ? 0 : parentRegistration.getResourceId(), user.getUserId(),
-                transferDate, transferDate, null);
+                transferDate, transferDate, null, registeredByUserId);
     }
 
     @Override
