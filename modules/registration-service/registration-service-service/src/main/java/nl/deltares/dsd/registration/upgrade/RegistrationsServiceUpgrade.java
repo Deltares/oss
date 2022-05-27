@@ -19,7 +19,7 @@ public class RegistrationsServiceUpgrade implements UpgradeStepRegistrator {
                 new UpgradeRegistrationsTable());
 
         registry.register(
-                "1.1.0", "1.1.0",
+                "1.1.0", "1.2.0",
                 new AddRegisteredByUserIdTable());
     }
 }
