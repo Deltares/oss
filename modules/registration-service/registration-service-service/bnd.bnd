@@ -2,7 +2,7 @@ Bundle-Activator: nl.deltares.dsd.registration.activator.RegistrationServiceBund
 Bundle-Name: registration-service-service
 Bundle-SymbolicName: nl.deltares.dsd.registration.service
 Bundle-Version: 1.0.0
-Liferay-Require-SchemaVersion: 1.1.0
+Liferay-Require-SchemaVersion: 1.2.0
 Liferay-Service: true
 -dsannotations-options: inherit
 Import-Package: \
