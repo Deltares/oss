@@ -48,7 +48,7 @@ public class RegistrationLocalServiceImpl
 	 * Never reference this class directly. Use <code>nl.deltares.dsd.registration.service.RegistrationLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil</code>.
 	 */
 	public void addUserRegistration(long companyId, long groupId, long resourceId, long eventResourceId, long parentResourceId,
-									long userId, Date startTime, Date endTime, String preferences) {
+									long userId, Date startTime, Date endTime, String preferences, long registeredByUserId) {
 
 		//do not validate here. validation has already taken place
 		final List<Registration> registrations = RegistrationLocalServiceUtil.getRegistrations(groupId, userId, resourceId);
@@ -67,6 +67,7 @@ public class RegistrationLocalServiceImpl
 		registration.setStartTime(startTime);
 		registration.setEndTime(endTime);
 		registration.setUserPreferences(preferences);
+		registration.setRegisteredByUserId(registeredByUserId);
 
 		if (registrations.isEmpty()) {
 			addRegistration(registration);
@@ -249,11 +250,26 @@ public class RegistrationLocalServiceImpl
 		Criterion checkStart = PropertyFactoryUtil.forName("startTime").ge(start);
 		Criterion checkEnd = PropertyFactoryUtil.forName("endTime").le(end);
 		DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class,
-				getClass().getClassLoader()).add(checkGroupId).add(checkGroupId).add(checkUserId).add(checkStart).add(checkEnd);
+				getClass().getClassLoader()).add(checkGroupId).add(checkUserId).add(checkStart).add(checkEnd);
 		return RegistrationUtil.findWithDynamicQuery(query);
 
 	}
 
+	public List<Registration> getUserEventRegistrationsMadeForOthers(
+			long groupId, long registeredByUserId, long eventResourceId){
+		return RegistrationUtil.findByUserEventRegistrationsRegisteredByMe(groupId, registeredByUserId, eventResourceId);
+	}
+
+	public List<Registration> getUsersRegisteredByOtherUser(long groupId, long otherUserId, long registrationResourceId){
+
+		Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
+		Criterion checkRegisteredByUserId = PropertyFactoryUtil.forName("registeredByUserId").eq(otherUserId);
+		Criterion checkRegistrationId = PropertyFactoryUtil.forName("resourcePrimaryKey").eq(registrationResourceId);
+		DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class,
+				getClass().getClassLoader()).add(checkGroupId).add(checkGroupId).add(checkRegisteredByUserId).add(checkRegistrationId);
+		return RegistrationUtil.findWithDynamicQuery(query);
+
+	}
 	public List<Registration> getRegistrations(long groupId, Date start, Date end){
 		Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
 		Criterion checkStart = PropertyFactoryUtil.forName("startTime").ge(start);

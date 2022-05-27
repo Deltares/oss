@@ -8,5 +8,6 @@ create table Registrations_Registration (
 	userPreferences STRING null,
 	startTime DATE null,
 	endTime DATE null,
-	parentResourcePrimaryKey LONG
+	parentResourcePrimaryKey LONG,
+	registeredByUserId LONG
 );

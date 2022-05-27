@@ -219,6 +219,34 @@ public interface RegistrationModel
 	 */
 	public void setParentResourcePrimaryKey(long parentResourcePrimaryKey);
 
+	/**
+	 * Returns the registered by user ID of this registration.
+	 *
+	 * @return the registered by user ID of this registration
+	 */
+	public long getRegisteredByUserId();
+
+	/**
+	 * Sets the registered by user ID of this registration.
+	 *
+	 * @param registeredByUserId the registered by user ID of this registration
+	 */
+	public void setRegisteredByUserId(long registeredByUserId);
+
+	/**
+	 * Returns the registered by user uuid of this registration.
+	 *
+	 * @return the registered by user uuid of this registration
+	 */
+	public String getRegisteredByUserUuid();
+
+	/**
+	 * Sets the registered by user uuid of this registration.
+	 *
+	 * @param registeredByUserUuid the registered by user uuid of this registration
+	 */
+	public void setRegisteredByUserUuid(String registeredByUserUuid);
+
 	@Override
 	public boolean isNew();
 

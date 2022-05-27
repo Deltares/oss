@@ -25,6 +25,7 @@
 		<column name="startTime" type="Date" />
 		<column name="endTime" type="Date" />
 		<column name="parentResourcePrimaryKey" type="long" />
+		<column name="registeredByUserId" type="long" />
 
 		<!-- Order -->
 
@@ -48,6 +49,17 @@
 		<finder name="UserRegistrations" return-type="Collection">
 			<finder-column name="groupId" />
 			<finder-column name="userId" />
+		</finder>
+
+		<finder name="UserRegistrationsRegisteredByMe" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="registeredByUserId" />
+		</finder>
+
+		<finder name="UserEventRegistrationsRegisteredByMe" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="registeredByUserId" />
+			<finder-column name="eventResourcePrimaryKey" />
 		</finder>
 
 		<finder name="ArticleRegistrations" return-type="Collection">

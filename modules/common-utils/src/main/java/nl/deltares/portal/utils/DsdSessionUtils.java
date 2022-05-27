@@ -53,8 +53,9 @@ public interface DsdSessionUtils {
      * @param userAttributes Additional user information required by registration process.
      * @param registration Registration for which user must be registered
      * @param registrationProperties Optional additional properties linked to this registration.
+     * @param registeredBy If registering for someone else add user making the registration
      */
-    void registerUser(User user, Map<String, String> userAttributes, Registration registration, Map<String, String> registrationProperties) throws PortalException;
+    void registerUser(User user, Map<String, String> userAttributes, Registration registration, Map<String, String> registrationProperties, User registeredBy) throws PortalException;
 
     /**
      * Unregister user for Registration
@@ -120,6 +121,14 @@ public interface DsdSessionUtils {
      * @return List of user registration records
      */
     List<Map<String, Object>> getUserRegistrations(User user, Event event);
+
+    /**
+     * Find all user registrations that this user made for other user for given event .
+     * @param user User Id of user that made registration
+     * @param event Event for which to retrieve registrations
+     * @return List of user registration records
+     */
+    List<Map<String, Object>> getUserRegistrationsMadeForOthers(User user, Event event);
 
     /**
      * Get all registrations records for given event.

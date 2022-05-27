@@ -4,6 +4,7 @@ import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.asset.kernel.service.AssetTagServiceUtil;
+import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
 import com.liferay.document.library.kernel.service.DLFolderLocalServiceUtil;
@@ -15,15 +16,20 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.*;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.*;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import nl.deltares.portal.utils.AdminUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import javax.portlet.ActionRequest;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Component(
         immediate = true,
@@ -76,6 +82,46 @@ public class OssAdminUtils implements AdminUtils {
         deleteUser(writer, user, deleteFromKeycloak);
 
         writer.printf("********** Finished deleting content for user %s (%s, %d) in site %d   ***********\n", screenName, email, userId, siteId);
+    }
+
+    @Override
+    public User getOrCreateRegistrationUser(long companyId, User loggedInUser, String registrationEmail,
+                                             String firstName, String lastName, Locale locale) throws Exception {
+
+        final User registrationUser = UserLocalServiceUtil.fetchUserByEmailAddress(companyId, registrationEmail);
+        if (registrationUser != null) return registrationUser; //user already exists.
+
+        final Map<String, String> keycloakUser = keycloakUtils.getUserInfo(registrationEmail);
+        String userName = null;
+        if (keycloakUser.isEmpty()){
+            for (int i = 0; i < 3; i++) {
+                String testUserName = KeycloakUtils.extractUsernameFromEmail(registrationEmail, i);
+                if (!keycloakUtils.isExistingUsername(testUserName)){
+                    //do not create user, instead check if username is taken.
+                    userName = testUserName;
+                    break;
+                }
+            }
+        } else {
+            userName = keycloakUser.get("username");
+        }
+        long id = CounterLocalServiceUtil.increment(User.class.getName());
+        if (userName == null) {
+            userName = String.valueOf(id); //let's assume that id is unieque
+        }
+
+        final ServiceContext serviceContext = new ServiceContext();
+        serviceContext.setScopeGroupId(loggedInUser.getGroupId());
+        final Role defaultGroupRole = RoleLocalServiceUtil.getDefaultGroupRole(loggedInUser.getGroupId());
+        final User user = UserLocalServiceUtil.addUser(loggedInUser.getUserId(), companyId, true,
+                null, null, false, userName, registrationEmail, 0, null,
+                locale, firstName, null, lastName, 0, 0, true,
+                1, 1, 1970, null, loggedInUser.getGroupIds(),
+                loggedInUser.getOrganizationIds(), new long[]{defaultGroupRole.getRoleId()}, loggedInUser.getUserGroupIds(), false, serviceContext);
+        user.setPasswordReset(false);
+        UserLocalServiceUtil.updateUser(user);
+        return user;
+
     }
 
     private void deleteUser(PrintWriter writer, User user, boolean deleteFromKeycloak) {

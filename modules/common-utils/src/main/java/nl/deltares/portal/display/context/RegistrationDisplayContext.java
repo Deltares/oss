@@ -9,6 +9,7 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletMode;
@@ -16,10 +17,12 @@ import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletRequestModel;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.dsd.registration.service.persistence.RegistrationUtil;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.DsdArticle;
@@ -31,11 +34,9 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
+@SuppressWarnings("unused")
 public class RegistrationDisplayContext {
 
 
@@ -232,6 +233,25 @@ public class RegistrationDisplayContext {
         return getRegistration() != null && RegistrationUtil.countByUserArticleRegistrations(registration.getGroupId(),
                 themeDisplay.getUserId(), registration.getResourceId()) > 0;
     }
+
+    public List<User> getUsersRegisteredByLoggedInUser(){
+        final Registration registration = getRegistration();
+        final ArrayList<User> users = new ArrayList<>();
+        if (registration != null) {
+            final List<nl.deltares.dsd.registration.model.Registration> registrations = RegistrationLocalServiceUtil
+                    .getUsersRegisteredByOtherUser(themeDisplay.getSiteGroupId(), themeDisplay.getUserId(), registration.getResourceId());
+            for (nl.deltares.dsd.registration.model.Registration dbRegistration : registrations) {
+                final User user = UserLocalServiceUtil.fetchUser(dbRegistration.getUserId());
+                if (user != null) {
+                    users.add(user);
+                } else {
+                    LOG.warn("Could not find registered user for id " + dbRegistration.getUserId());
+                }
+            }
+        }
+        return users;
+    }
+
     public String getStartTime() {
         final Registration registration = getRegistration();
         if (registration != null) {
@@ -265,29 +285,34 @@ public class RegistrationDisplayContext {
 
     @SuppressWarnings("unused")
     public String getUnregisterURL(HttpServletRequest httpServletRequest) {
-        return getPortletRequest(httpServletRequest, "unregister", themeDisplay.getURLCurrent());
+        return getPortletRequest(httpServletRequest, "unregister", null, themeDisplay.getURLCurrent());
+    }
+
+    @SuppressWarnings("unused")
+    public String getUnregisterURL(PortletRequest portletRequest, long userId) {
+        return getPortletRequest(portletRequest, "unregister", userId);
     }
 
     @SuppressWarnings("unused")
     public String getUnregisterURL(PortletRequest portletRequest) {
-        return getPortletRequest(portletRequest, "unregister");
+        return getPortletRequest(portletRequest, "unregister", null);
     }
 
     @SuppressWarnings("unused")
     public String getUpdateURL(PortletRequest portletRequest) {
-        return getPortletRequest(portletRequest, "update");
+        return getPortletRequest(portletRequest, "update", null);
     }
 
     @SuppressWarnings("unused")
     public String getRegisterURL(PortletRequest portletRequest) {
-        return getPortletRequest(portletRequest, "register");
+        return getPortletRequest(portletRequest, "register", null);
     }
 
     public String getViewURL(DsdArticle article){
         return  themeDisplay.getCDNBaseURL() + "/-/" + article.getJournalArticle().getUrlTitle();
     }
 
-    private String getPortletRequest(HttpServletRequest httpServletRequest, String action, String redirect) {
+    private String getPortletRequest(HttpServletRequest httpServletRequest, String action, Long userId, String redirect) {
 
         if (configurationProvider != null) {
             long groupId = themeDisplay.getScopeGroupId();
@@ -310,6 +335,7 @@ public class RegistrationDisplayContext {
                     portletURL.setParameter("javax.portlet.action", "/submit/register/form");
                     portletURL.setParameter("articleId", getRegistration().getArticleId());
                     portletURL.setParameter("action", action);
+                    if (userId != null) portletURL.setParameter("userId", userId.toString());
                     portletURL.setParameter("redirect", redirect);
                     return portletURL.toString();
                 }
@@ -333,7 +359,7 @@ public class RegistrationDisplayContext {
     }
 
 
-    public String getPortletRequest(PortletRequest portletRequest, String action) {
+    public String getPortletRequest(PortletRequest portletRequest, String action, Long userId) {
 
         if (configurationProvider != null) {
             long groupId = themeDisplay.getScopeGroupId();
@@ -356,6 +382,7 @@ public class RegistrationDisplayContext {
                     portletURL.setParameter("javax.portlet.action", "/submit/register/form");
                     portletURL.setParameter("articleId", getRegistration().getArticleId());
                     portletURL.setParameter("action", action);
+                    if (userId != null) portletURL.setParameter("userId", userId.toString());
                     return portletURL.toString();
                 }
             } catch (Exception e) {
