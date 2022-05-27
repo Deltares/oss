@@ -77,7 +77,7 @@ public interface RegistrationLocalService
 	public void addUserRegistration(
 		long companyId, long groupId, long resourceId, long eventResourceId,
 		long parentResourceId, long userId, Date startTime, Date endTime,
-		String preferences);
+		String preferences, long registeredByUserId);
 
 	/**
 	 * Creates a new registration with the primary key. Does not add the registration to the database.
@@ -333,8 +333,16 @@ public interface RegistrationLocalService
 		long groupId, long userId, long eventResourceId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getUserEventRegistrationsMadeForOthers(
+		long groupId, long registeredByUserId, long eventResourceId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Registration> getUserRegistrations(
 		long groupId, long userId, Date start, Date end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getUsersRegisteredByOtherUser(
+		long groupId, long otherUserId, long registrationResourceId);
 
 	/**
 	 * Updates the registration in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

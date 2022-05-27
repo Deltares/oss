@@ -15,8 +15,10 @@ import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.BusTransfer;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
+import nl.deltares.portal.utils.AdminUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdTransferUtils;
+import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -37,26 +39,42 @@ public class SubmitBusRegistrationActionActionCommand extends BaseMVCActionComma
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 
     @Override
-    protected void doProcessAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
+    protected void doProcessAction(ActionRequest actionRequest, ActionResponse actionResponse) {
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
-        User user = themeDisplay.getUser();
         long groupId = themeDisplay.getSiteGroupId();
 
         try {
+            final User registrationUser;
+            final User user;
+            if (isRegisterSomeoneElse(actionRequest)){
+                registrationUser = themeDisplay.getUser();
+                final String email = ParamUtil.getString(actionRequest, KeycloakUtils.ATTRIBUTES.email.name());
+                final String firstName = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.first_name.name());
+                final String lastName = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.last_name.name());
+                user = adminUtils.getOrCreateRegistrationUser(themeDisplay.getCompanyId(), registrationUser,
+                        email, firstName, lastName, themeDisplay.getLocale());
+            } else {
+                registrationUser = null;
+                user = themeDisplay.getUser();
+            }
             DSDSiteConfiguration configuration = _configurationProvider
                     .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
 
             Event event = parserUtils.getEvent(groupId, String.valueOf(configuration.eventId()), themeDisplay.getLocale());
 
             event.getBusTransfers(themeDisplay.getLocale()).stream()
-                    .forEach(busTransfer -> registerUser(actionRequest, event, user, busTransfer));
+                    .forEach(busTransfer -> registerUser(actionRequest, event, user, busTransfer, registrationUser));
         } catch (Exception e) {
             SessionErrors.add(actionRequest, "registration-failed", e.getMessage());
             LOG.debug("Could not get configuration instance", e);
         }
     }
 
-    private void registerUser(ActionRequest actionRequest, Event event, User user, BusTransfer busTransfer) {
+    private boolean isRegisterSomeoneElse(ActionRequest actionRequest) {
+        return Boolean.parseBoolean(ParamUtil.getString(actionRequest, "registration_other"));
+    }
+
+    private void registerUser(ActionRequest actionRequest, Event event, User user, BusTransfer busTransfer, User registrationUser) {
         busTransfer.getTransferDays().forEach(date -> {
 
             String registrationParam = "registration_" + busTransfer.getResourceId() + "_" + DATE_FORMAT.format(date);
@@ -67,7 +85,7 @@ public class SubmitBusRegistrationActionActionCommand extends BaseMVCActionComma
                 Registration registration = event.getRegistration(busTransfer.getResourceId(), actionRequest.getLocale());
 
                 if (ParamUtil.getString(actionRequest, registrationParam).equals("true")) {
-                    dsdTransferUtils.registerUser(user, registration, date);
+                    dsdTransferUtils.registerUser(user, registration, date, registrationUser);
                 } else {
                     if (dsdTransferUtils.isUserRegisteredFor(user, registration, date)) {
                         dsdTransferUtils.unRegisterUser(user, registration, date);
@@ -79,6 +97,9 @@ public class SubmitBusRegistrationActionActionCommand extends BaseMVCActionComma
             }
         });
     }
+
+    @Reference
+    AdminUtils adminUtils;
 
     @Reference
     DsdParserUtils parserUtils;

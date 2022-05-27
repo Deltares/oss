@@ -14,5 +14,6 @@
 		<field name="startTime" type="Date" />
 		<field name="endTime" type="Date" />
 		<field name="parentResourcePrimaryKey" type="long" />
+		<field name="registeredByUserId" type="long" />
 	</model>
 </model-hints>

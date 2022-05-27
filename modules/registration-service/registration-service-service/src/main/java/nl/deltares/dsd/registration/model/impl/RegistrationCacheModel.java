@@ -66,7 +66,7 @@ public class RegistrationCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(23);
 
 		sb.append("{registrationId=");
 		sb.append(registrationId);
@@ -88,6 +88,8 @@ public class RegistrationCacheModel
 		sb.append(endTime);
 		sb.append(", parentResourcePrimaryKey=");
 		sb.append(parentResourcePrimaryKey);
+		sb.append(", registeredByUserId=");
+		sb.append(registeredByUserId);
 		sb.append("}");
 
 		return sb.toString();
@@ -126,6 +128,7 @@ public class RegistrationCacheModel
 		}
 
 		registrationImpl.setParentResourcePrimaryKey(parentResourcePrimaryKey);
+		registrationImpl.setRegisteredByUserId(registeredByUserId);
 
 		registrationImpl.resetOriginalValues();
 
@@ -150,6 +153,8 @@ public class RegistrationCacheModel
 		endTime = objectInput.readLong();
 
 		parentResourcePrimaryKey = objectInput.readLong();
+
+		registeredByUserId = objectInput.readLong();
 	}
 
 	@Override
@@ -177,6 +182,8 @@ public class RegistrationCacheModel
 		objectOutput.writeLong(endTime);
 
 		objectOutput.writeLong(parentResourcePrimaryKey);
+
+		objectOutput.writeLong(registeredByUserId);
 	}
 
 	public long registrationId;
@@ -189,5 +196,6 @@ public class RegistrationCacheModel
 	public long startTime;
 	public long endTime;
 	public long parentResourcePrimaryKey;
+	public long registeredByUserId;
 
 }

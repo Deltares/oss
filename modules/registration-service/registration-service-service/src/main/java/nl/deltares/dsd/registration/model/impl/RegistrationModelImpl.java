@@ -76,7 +76,9 @@ public class RegistrationModelImpl
 		{"eventResourcePrimaryKey", Types.BIGINT}, {"companyId", Types.BIGINT},
 		{"userId", Types.BIGINT}, {"resourcePrimaryKey", Types.BIGINT},
 		{"userPreferences", Types.VARCHAR}, {"startTime", Types.TIMESTAMP},
-		{"endTime", Types.TIMESTAMP}, {"parentResourcePrimaryKey", Types.BIGINT}
+		{"endTime", Types.TIMESTAMP},
+		{"parentResourcePrimaryKey", Types.BIGINT},
+		{"registeredByUserId", Types.BIGINT}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -93,10 +95,11 @@ public class RegistrationModelImpl
 		TABLE_COLUMNS_MAP.put("startTime", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("endTime", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("parentResourcePrimaryKey", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("registeredByUserId", Types.BIGINT);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table Registrations_Registration (registrationId LONG not null primary key,groupId LONG,eventResourcePrimaryKey LONG,companyId LONG,userId LONG,resourcePrimaryKey LONG,userPreferences STRING null,startTime DATE null,endTime DATE null,parentResourcePrimaryKey LONG)";
+		"create table Registrations_Registration (registrationId LONG not null primary key,groupId LONG,eventResourcePrimaryKey LONG,companyId LONG,userId LONG,resourcePrimaryKey LONG,userPreferences STRING null,startTime DATE null,endTime DATE null,parentResourcePrimaryKey LONG,registeredByUserId LONG)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table Registrations_Registration";
@@ -134,11 +137,13 @@ public class RegistrationModelImpl
 
 	public static final long PARENTRESOURCEPRIMARYKEY_COLUMN_BITMASK = 4L;
 
-	public static final long RESOURCEPRIMARYKEY_COLUMN_BITMASK = 8L;
+	public static final long REGISTEREDBYUSERID_COLUMN_BITMASK = 8L;
 
-	public static final long USERID_COLUMN_BITMASK = 16L;
+	public static final long RESOURCEPRIMARYKEY_COLUMN_BITMASK = 16L;
 
-	public static final long STARTTIME_COLUMN_BITMASK = 32L;
+	public static final long USERID_COLUMN_BITMASK = 32L;
+
+	public static final long STARTTIME_COLUMN_BITMASK = 64L;
 
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(
 		nl.deltares.dsd.registration.service.util.ServiceProps.get(
@@ -487,6 +492,29 @@ public class RegistrationModelImpl
 				}
 
 			});
+		attributeGetterFunctions.put(
+			"registeredByUserId",
+			new Function<Registration, Object>() {
+
+				@Override
+				public Object apply(Registration registration) {
+					return registration.getRegisteredByUserId();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"registeredByUserId",
+			new BiConsumer<Registration, Object>() {
+
+				@Override
+				public void accept(
+					Registration registration, Object registeredByUserId) {
+
+					registration.setRegisteredByUserId(
+						(Long)registeredByUserId);
+				}
+
+			});
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -677,6 +705,45 @@ public class RegistrationModelImpl
 		return _originalParentResourcePrimaryKey;
 	}
 
+	@Override
+	public long getRegisteredByUserId() {
+		return _registeredByUserId;
+	}
+
+	@Override
+	public void setRegisteredByUserId(long registeredByUserId) {
+		_columnBitmask |= REGISTEREDBYUSERID_COLUMN_BITMASK;
+
+		if (!_setOriginalRegisteredByUserId) {
+			_setOriginalRegisteredByUserId = true;
+
+			_originalRegisteredByUserId = _registeredByUserId;
+		}
+
+		_registeredByUserId = registeredByUserId;
+	}
+
+	@Override
+	public String getRegisteredByUserUuid() {
+		try {
+			User user = UserLocalServiceUtil.getUserById(
+				getRegisteredByUserId());
+
+			return user.getUuid();
+		}
+		catch (PortalException pe) {
+			return "";
+		}
+	}
+
+	@Override
+	public void setRegisteredByUserUuid(String registeredByUserUuid) {
+	}
+
+	public long getOriginalRegisteredByUserId() {
+		return _originalRegisteredByUserId;
+	}
+
 	public long getColumnBitmask() {
 		return _columnBitmask;
 	}
@@ -725,6 +792,7 @@ public class RegistrationModelImpl
 		registrationImpl.setEndTime(getEndTime());
 		registrationImpl.setParentResourcePrimaryKey(
 			getParentResourcePrimaryKey());
+		registrationImpl.setRegisteredByUserId(getRegisteredByUserId());
 
 		registrationImpl.resetOriginalValues();
 
@@ -810,6 +878,11 @@ public class RegistrationModelImpl
 
 		registrationModelImpl._setOriginalParentResourcePrimaryKey = false;
 
+		registrationModelImpl._originalRegisteredByUserId =
+			registrationModelImpl._registeredByUserId;
+
+		registrationModelImpl._setOriginalRegisteredByUserId = false;
+
 		registrationModelImpl._columnBitmask = 0;
 	}
 
@@ -859,6 +932,8 @@ public class RegistrationModelImpl
 
 		registrationCacheModel.parentResourcePrimaryKey =
 			getParentResourcePrimaryKey();
+
+		registrationCacheModel.registeredByUserId = getRegisteredByUserId();
 
 		return registrationCacheModel;
 	}
@@ -953,6 +1028,9 @@ public class RegistrationModelImpl
 	private long _parentResourcePrimaryKey;
 	private long _originalParentResourcePrimaryKey;
 	private boolean _setOriginalParentResourcePrimaryKey;
+	private long _registeredByUserId;
+	private long _originalRegisteredByUserId;
+	private boolean _setOriginalRegisteredByUserId;
 	private long _columnBitmask;
 	private Registration _escapedModel;
 

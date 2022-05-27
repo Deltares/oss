@@ -4,6 +4,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -46,18 +47,38 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
 
             Event event = dsdParserUtils.getEvent(groupId, eventId, siteDefaultLocale);
 
-            List<String> entryClassPKs = dsdSessionUtils.getUserRegistrations(user, event)
-                    .stream()
-                    .filter(map -> map.containsKey("resourcePrimaryKey"))
-                    .map(map -> map.get("resourcePrimaryKey"))
-                    .map(String::valueOf)
-                    .collect(Collectors.toList());
-
-
+            List<String> entryClassPKs;
+            if (showRegistrationForOthers(portletSharedSearchSettings)){
+                entryClassPKs = dsdSessionUtils.getUserRegistrationsMadeForOthers(user, event)
+                        .stream()
+                        .filter(map -> map.containsKey("resourcePrimaryKey"))
+                        .map(map -> map.get("resourcePrimaryKey"))
+                        .map(String::valueOf)
+                        .collect(Collectors.toList());
+            } else {
+                entryClassPKs = dsdSessionUtils.getUserRegistrations(user, event)
+                        .stream()
+                        .filter(map -> map.containsKey("resourcePrimaryKey"))
+                        .map(map -> map.get("resourcePrimaryKey"))
+                        .map(String::valueOf)
+                        .collect(Collectors.toList());
+            }
             portletSharedSearchSettings.addFacet(buildFacet(entryClassPKs, portletSharedSearchSettings));
         } catch (Exception e) {
             LOG.debug("Could not get registrations for user [" + user.getUserId() + "]", e);
         }
+    }
+
+    private boolean showRegistrationForOthers(PortletSharedSearchSettings portletSharedSearchSettings){
+
+        try {
+            UserProgramFacetConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(UserProgramFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
+            String showRegistrationsForOthers = configuration.showRegistrationsForOthers();
+            return Boolean.parseBoolean(showRegistrationsForOthers);
+        } catch (ConfigurationException e) {
+            LOG.warn("Could not find configuration for UserProgramFacetConfiguration", e);
+        }
+        return false;
     }
 
     private Facet buildFacet(List<String> entryClassPKs, PortletSharedSearchSettings portletSharedSearchSettings) {
