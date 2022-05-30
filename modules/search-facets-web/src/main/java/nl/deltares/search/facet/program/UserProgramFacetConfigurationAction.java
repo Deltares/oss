@@ -41,7 +41,8 @@ public class UserProgramFacetConfigurationAction extends DefaultConfigurationAct
     public void processAction(PortletConfig portletConfig, ActionRequest actionRequest, ActionResponse actionResponse)
             throws Exception {
 
-        setPreference(actionRequest, "showRegistrationsForOthers", ParamUtil.getString(actionRequest, "showRegistrationsForOthers"));
+        setPreference(actionRequest, "showRegistrationsMadeForOthers", ParamUtil.getString(actionRequest, "showRegistrationsMadeForOthers"));
+        setPreference(actionRequest, "linkToRegistrationsPageForOthers", ParamUtil.getString(actionRequest, "linkToRegistrationsPageForOthers"));
 
         super.processAction(portletConfig, actionRequest, actionResponse);
     }

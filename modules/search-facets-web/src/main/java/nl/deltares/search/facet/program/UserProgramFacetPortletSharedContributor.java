@@ -73,7 +73,7 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
 
         try {
             UserProgramFacetConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(UserProgramFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
-            String showRegistrationsForOthers = configuration.showRegistrationsForOthers();
+            String showRegistrationsForOthers = configuration.showRegistrationsMadeForOthers();
             return Boolean.parseBoolean(showRegistrationsForOthers);
         } catch (ConfigurationException e) {
             LOG.warn("Could not find configuration for UserProgramFacetConfiguration", e);

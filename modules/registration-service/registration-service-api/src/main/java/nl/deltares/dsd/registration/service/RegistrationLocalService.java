@@ -79,6 +79,9 @@ public interface RegistrationLocalService
 		long parentResourceId, long userId, Date startTime, Date endTime,
 		String preferences, long registeredByUserId);
 
+	public int countUserEventRegistrationsRegisteredByMe(
+		long groupId, long registeredByUserId, long eventResourceId);
+
 	/**
 	 * Creates a new registration with the primary key. Does not add the registration to the database.
 	 *

@@ -64,6 +64,13 @@ public class RegistrationLocalServiceUtil {
 			userId, startTime, endTime, preferences, registeredByUserId);
 	}
 
+	public static int countUserEventRegistrationsRegisteredByMe(
+		long groupId, long registeredByUserId, long eventResourceId) {
+
+		return getService().countUserEventRegistrationsRegisteredByMe(
+			groupId, registeredByUserId, eventResourceId);
+	}
+
 	/**
 	 * Creates a new registration with the primary key. Does not add the registration to the database.
 	 *
