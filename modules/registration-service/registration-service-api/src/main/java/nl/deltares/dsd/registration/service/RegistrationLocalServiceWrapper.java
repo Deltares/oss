@@ -60,6 +60,15 @@ public class RegistrationLocalServiceWrapper
 			userId, startTime, endTime, preferences, registeredByUserId);
 	}
 
+	@Override
+	public int countUserEventRegistrationsRegisteredByMe(
+		long groupId, long registeredByUserId, long eventResourceId) {
+
+		return _registrationLocalService.
+			countUserEventRegistrationsRegisteredByMe(
+				groupId, registeredByUserId, eventResourceId);
+	}
+
 	/**
 	 * Creates a new registration with the primary key. Does not add the registration to the database.
 	 *

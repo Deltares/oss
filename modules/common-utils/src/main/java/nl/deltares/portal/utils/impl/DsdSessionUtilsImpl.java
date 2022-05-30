@@ -342,6 +342,18 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
+    public boolean hasUserRegistrationsMadeForOthers(User user, long groupId, long eventArticleId) {
+
+        try {
+            final JournalArticle eventArticle = dsdJournalArticleUtils.getJournalArticle(groupId, Long.toString(eventArticleId));
+            return registrationLocalService.countUserEventRegistrationsRegisteredByMe(groupId, user.getUserId(), eventArticle.getResourcePrimKey()) > 0;
+        } catch (PortalException e) {
+            return false;
+        }
+
+    }
+
+    @Override
     public List<Map<String, Object>> getRegistrations(Event event) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
                 registrationLocalService.getEventRegistrations(event.getGroupId(), event.getResourceId());

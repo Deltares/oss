@@ -1,9 +1,16 @@
 package nl.deltares.search.facet.program;
 
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
+import nl.deltares.portal.configuration.DSDSiteConfiguration;
+import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.deltares.search.constans.FacetPortletKeys;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -49,9 +56,41 @@ public class UserProgramFacetPortlet extends MVCPortlet {
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
         portletSharedSearchRequest.search(renderRequest);
-        renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, false);
+
+        ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
+        try {
+            DSDSiteConfiguration configuration = _configurationProvider.
+                    getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getSiteGroupId());
+            if (configuration.eventId() > 0) {
+
+                UserProgramFacetConfiguration portletConfiguration;
+                try {
+                    portletConfiguration = _configurationProvider.getPortletInstanceConfiguration(
+                            UserProgramFacetConfiguration.class, themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
+                } catch (ConfigurationException e) {
+                    throw new PortletException(String.format("Could not get configuration for portlet '%s': %s", themeDisplay.getPortletDisplay().getId(), e.getMessage()), e);
+                }
+
+                final boolean hasMadeRegistrationsForOthers = dsdSessionUtils.hasUserRegistrationsMadeForOthers(themeDisplay.getUser(),
+                        themeDisplay.getSiteGroupId(), configuration.eventId());
+                final boolean hasLink = ! portletConfiguration.linkToRegistrationsPageForOthers().isEmpty();
+                if (!hasMadeRegistrationsForOthers || !hasLink) {
+                    //only add when false otherwise it is always invisible
+                    renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, hasMadeRegistrationsForOthers);
+                }
+                renderRequest.setAttribute("hasMadeRegistrationsForOthers", hasMadeRegistrationsForOthers);
+            }
+
+        } catch (ConfigurationException e) {
+            renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, false);
+            LOG.debug("Could not get event configuration", e);
+        }
         super.render(renderRequest, renderResponse);
     }
+
+    @Reference
+    private DsdSessionUtils dsdSessionUtils;
 
     @Reference
     protected PortletSharedSearchRequest portletSharedSearchRequest;
@@ -64,4 +103,13 @@ public class UserProgramFacetPortlet extends MVCPortlet {
     }
 
     private volatile UserProgramFacetConfiguration _configuration;
+
+    private ConfigurationProvider _configurationProvider;
+
+    @Reference
+    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
+        _configurationProvider = configurationProvider;
+    }
+
+    private static final Log LOG = LogFactoryUtil.getLog(UserProgramFacetPortlet.class);
 }
