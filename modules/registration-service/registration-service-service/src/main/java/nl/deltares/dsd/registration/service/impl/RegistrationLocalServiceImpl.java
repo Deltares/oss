@@ -255,6 +255,10 @@ public class RegistrationLocalServiceImpl
 
 	}
 
+	public int countUserEventRegistrationsRegisteredByMe(long groupId, long registeredByUserId, long eventResourceId){
+		return RegistrationUtil.countByUserEventRegistrationsRegisteredByMe(groupId, registeredByUserId, eventResourceId);
+	}
+
 	public List<Registration> getUserEventRegistrationsMadeForOthers(
 			long groupId, long registeredByUserId, long eventResourceId){
 		return RegistrationUtil.findByUserEventRegistrationsRegisteredByMe(groupId, registeredByUserId, eventResourceId);
@@ -268,8 +272,8 @@ public class RegistrationLocalServiceImpl
 		DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class,
 				getClass().getClassLoader()).add(checkGroupId).add(checkGroupId).add(checkRegisteredByUserId).add(checkRegistrationId);
 		return RegistrationUtil.findWithDynamicQuery(query);
-
 	}
+
 	public List<Registration> getRegistrations(long groupId, Date start, Date end){
 		Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
 		Criterion checkStart = PropertyFactoryUtil.forName("startTime").ge(start);

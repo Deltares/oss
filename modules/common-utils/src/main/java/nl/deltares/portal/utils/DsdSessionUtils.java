@@ -131,6 +131,15 @@ public interface DsdSessionUtils {
     List<Map<String, Object>> getUserRegistrationsMadeForOthers(User user, Event event);
 
     /**
+     * Has this user made registrations for others for this event .
+     * @param user User Id of user that made registration
+     * @param groupId Site Id,
+     * @param eventArticleId Configured active Event article ID
+     * @return true or false
+     */
+    boolean hasUserRegistrationsMadeForOthers(User user, long groupId, long eventArticleId);
+
+    /**
      * Get all registrations records for given event.
      * @param event Event for which to retrieve registrations
      * @return List of user registration records
