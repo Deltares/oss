@@ -46,6 +46,14 @@ AUI.add(
                         url = this.removeTerm(url, 'hasPresentations');
                     }
                 }
+                selection = $('select[name$="' + namespace  + "checkbox-facet-" + name + '"]').val();
+                if (selection !== undefined) {
+                    if (selection === 'undefined' ){
+                        url = this.removeTerm(url, name);
+                    } else {
+                        url = this.selectTerm(url, name, selection);
+                    }
+                }
                 window.location.href = url;
                 //var url = Liferay.Search.FacetUtil.setURLParameter('http://example.com/path', 'q', 'test');
             },
