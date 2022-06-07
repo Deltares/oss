@@ -11,6 +11,9 @@ public class FacetPortletKeys {
     public static final String SELECTION_FACET_PORTLET =
             "nl_deltares_search_facet_selection_SelectionFacetPortlet";
 
+    public static final String CHECKBOX_FACET_PORTLET =
+            "nl_deltares_search_facet_checkbox_CheckboxFacetPortlet";
+
     public static final String REGISTRATION_FACET_PORTLET =
             "nl_deltares_search_facet_registration_RegistrationFacetPortlet";
 
