@@ -154,5 +154,11 @@ public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> 
         writer.append("</td>");
         writer.append("</tr>");
 
+        writer.append("<tr>");
+        writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.linkSentSeparately", null)).append("</td>");
+        writer.append("<td>");
+        writer.append(download.isAutomaticLinkCreation() ? "No" : "Yes");
+        writer.append("</td>");
+        writer.append("</tr>");
     }
 }

@@ -75,9 +75,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             if (success && downloadRequest.isShowSubscription()) {
                 success = updateSubscriptions(downloadRequest, user);
             }
-            if (success && downloadRequest.isBillingRequired()) {
-                //todo: process billing request.
-            }
+
             if (success){
                 success = createShareLinks(actionRequest, downloadRequest, user);
             }

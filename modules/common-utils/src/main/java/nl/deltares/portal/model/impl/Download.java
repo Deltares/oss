@@ -24,6 +24,7 @@ public class Download extends AbsDsdArticle {
     private String fileTopicName;
     private String groupPage = "";
     private List<Subscription> subscriptions = null;
+    private boolean automaticLinkCreation = true;
     private Terms terms = null;
 
     enum ACTION {direct, terms, userinfo, billinginfo, subscription}
@@ -62,6 +63,10 @@ public class Download extends AbsDsdArticle {
             final Layout linkToPageLayout = layoutUtils.getLinkToPageLayout(linkToPage);
             groupPage = linkToPageLayout.getFriendlyURL();
 
+            final String automaticLinkCreation = XmlContentUtils.getDynamicContentByName(document, "AutomaticLinkCreation", true);
+            if (automaticLinkCreation != null) {
+                this.automaticLinkCreation = Boolean.parseBoolean(automaticLinkCreation);
+            }
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -188,6 +193,10 @@ public class Download extends AbsDsdArticle {
 
     public boolean isBillingRequired() {
         return requiredActions.contains(ACTION.billinginfo);
+    }
+
+    public boolean isAutomaticLinkCreation(){
+        return automaticLinkCreation && !isBillingRequired();
     }
 
     public boolean isShowSubscription() {
