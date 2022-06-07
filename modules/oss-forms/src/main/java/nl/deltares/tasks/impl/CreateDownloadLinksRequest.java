@@ -46,8 +46,8 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
             for (Download download : downloads) {
 
                 Map<String, Object> shareInfo;
-                if (download.isBillingRequired()) {
-                    LOG.info(String.format("Creation of share link for user '%s' on file '%s' is pending payment.", emailAddress, download.getFileName()));
+                if (!download.isAutomaticLinkCreation()) {
+                    LOG.info(String.format("Creation of share link for user '%s' on file '%s' will be sent once request has been processed.", emailAddress, download.getFileName()));
                     shareInfo = new HashMap<>();
                     shareInfo.put("id", -1);
                 } else {
