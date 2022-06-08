@@ -32,16 +32,15 @@
         "en_US": "Location"
       },
       "predefinedValue": {
-        "en_US": ""
+        "en_US": "{\"latitude\": 0.0000, \"longitude\": 0.0000}"
       },
       "style": {
         "en_US": ""
       },
       "tip": {
-        "en_US": ""
+        "en_US": "Geolocation requires JSON format {\"latitude\": <value>, \"longitude\": <value>}"
       },
-      "dataType": "geolocation",
-      "fieldNamespace": "ddm",
+      "dataType": "string",
       "indexType": "keyword",
       "localizable": false,
       "name": "location",
@@ -49,7 +48,7 @@
       "repeatable": false,
       "required": true,
       "showLabel": true,
-      "type": "ddm-geolocation"
+      "type": "text"
     },
     {
       "label": {
