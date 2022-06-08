@@ -136,6 +136,12 @@
       },
       "options": [
         {
+          "value": "breakwat",
+          "label": {
+            "en_US": "BREAKWAT"
+          }
+        },
+        {
           "value": "dam",
           "label": {
             "en_US": "DAM"
@@ -150,13 +156,19 @@
         {
           "value": "delft3d",
           "label": {
-            "en_US": "Delft 3D 4 Suite"
+            "en_US": "Delft3D 4 Suite"
           }
         },
         {
           "value": "delftfews",
           "label": {
             "en_US": "Delft FEWS"
+          }
+        },
+        {
+          "value": "geosoftware",
+          "label": {
+            "en_US": "Geotechnical Software"
           }
         },
         {
@@ -178,15 +190,45 @@
           }
         },
         {
+          "value": "orca",
+          "label": {
+            "en_US": "ORCA"
+          }
+        },
+        {
           "value": "pharos",
           "label": {
             "en_US": "PHAROS"
           }
         },
         {
+          "value": "ptk",
+          "label": {
+            "en_US": "Probabilistic Toolkit"
+          }
+        },
+        {
+          "value": "ribasim",
+          "label": {
+            "en_US": "RIBASIM"
+          }
+        },
+        {
           "value": "sobek",
           "label": {
             "en_US": "SOBEK"
+          }
+        },
+        {
+          "value": "unibest",
+          "label": {
+            "en_US": "UNIBEST-CL+"
+          }
+        },
+        {
+          "value": "wanda",
+          "label": {
+            "en_US": "WANDA"
           }
         }
       ],
@@ -216,12 +258,6 @@
       },
       "options": [
         {
-          "value": "archive",
-          "label": {
-            "en_US": "Archive File"
-          }
-        },
-        {
           "value": "course",
           "label": {
             "en_US": "Course Materials"
@@ -246,15 +282,15 @@
           }
         },
         {
-          "value": "directory",
-          "label": {
-            "en_US": "Shared Directory"
-          }
-        },
-        {
           "value": "installation",
           "label": {
             "en_US": "Software Installation"
+          }
+        },
+        {
+          "value": "releasenotes",
+          "label": {
+            "en_US": "Release notes"
           }
         }
       ],
@@ -277,6 +313,29 @@
       "required": true,
       "showLabel": true,
       "type": "select"
+    },
+    {
+      "label": {
+        "en_US": "Automatic link creation"
+      },
+      "predefinedValue": {
+        "en_US": true
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "Automatically create and send download link (if applicable)."
+      },
+      "dataType": "boolean",
+      "indexType": "keyword",
+      "localizable": false,
+      "name": "AutomaticLinkCreation",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "checkbox"
     },
     {
       "label": {
@@ -345,6 +404,30 @@
       "name": "Subscription",
       "readOnly": false,
       "repeatable": true,
+      "required": false,
+      "showLabel": true,
+      "type": "ddm-journal-article"
+    },
+    {
+      "label": {
+        "en_US": "Terms"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "If user must accept terms, then select terms here."
+      },
+      "dataType": "journal-article",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": false,
+      "name": "Terms",
+      "readOnly": false,
+      "repeatable": false,
       "required": false,
       "showLabel": true,
       "type": "ddm-journal-article"
