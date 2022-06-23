@@ -80,12 +80,6 @@
       },
       "options": [
         {
-          "value": "direct",
-          "label": {
-            "en_US": "Direct-Download"
-          }
-        },
-        {
           "value": "terms",
           "label": {
             "en_US": "Accept-Terms"
@@ -95,6 +89,24 @@
           "value": "billinginfo",
           "label": {
             "en_US": "Billing-Info"
+          }
+        },
+        {
+          "value": "direct",
+          "label": {
+            "en_US": "Direct-Download"
+          }
+        },
+        {
+          "value": "licenses",
+          "label": {
+            "en_US": "License-Info"
+          }
+        },
+        {
+          "value": "locks",
+          "label": {
+            "en_US": "Lock-Info"
           }
         },
         {
@@ -319,7 +331,7 @@
         "en_US": "Automatic link creation"
       },
       "predefinedValue": {
-        "en_US": true
+        "en_US": false
       },
       "style": {
         "en_US": ""
