@@ -234,6 +234,8 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
                 children.add(eventRegistration);
             }
         }
+
+        children.sort(Comparator.comparing(Registration::getStartTime).thenComparing(Registration::getTitle));
         return children;
     }
 
