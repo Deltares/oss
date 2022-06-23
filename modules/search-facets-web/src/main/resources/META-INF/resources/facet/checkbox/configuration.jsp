@@ -11,12 +11,14 @@
 
     String visible = null;
     String defaultValue = null;
+    String explicitSearch = null;
     String title = "";
     String structureName = "";
     String fieldName = "";
     if (Validator.isNotNull(configuration)){
         visible = portletPreferences.getValue("visible", configuration.visible());
         defaultValue = portletPreferences.getValue("defaultValue", configuration.defaultValue());
+        explicitSearch = portletPreferences.getValue("explicitSearch", configuration.explicitSearch());
         title = portletPreferences.getValue("title", configuration.title());
         structureName = portletPreferences.getValue("structureName", configuration.structureName());
         fieldName = portletPreferences.getValue("fieldName", configuration.fieldName());
@@ -61,6 +63,14 @@
                 label="Default value"
                 type="checkbox"
                 value='<%= defaultValue %>'
+        >
+        </aui:input>
+
+        <aui:input
+                name="explicitSearch"
+                label="Explicit Search (If selected only returns results containing search field, else also returns results that do not contain field)"
+                type="checkbox"
+                value='<%= explicitSearch %>'
         >
         </aui:input>
 

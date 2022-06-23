@@ -64,4 +64,8 @@ public class FacetUtils {
             default: return null;
         }
     }
+
+    public static String serializeYesNo(boolean value){
+        return value ? "yes" : "no";
+    }
 }
