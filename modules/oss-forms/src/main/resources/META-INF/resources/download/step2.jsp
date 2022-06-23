@@ -3,32 +3,25 @@
 <aui:row>
     <aui:col width="100">
         <c:if test="${not empty attributes}">
-            <c:set var="academicTitle" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.academicTitle.name()) %>"/>
-            <c:set var="initials" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.initials.name()) %>"/>
-            <c:set var="jobTitle" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.jobTitle.name()) %>"/>
             <c:set var="org_name" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_name.name()) %>"/>
             <c:set var="org_address" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_address.name()) %>"/>
             <c:set var="org_postal" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_postal.name()) %>"/>
             <c:set var="org_city" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_city.name()) %>"/>
-            <c:set var="country" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_country.name()) %>"/>
+            <c:set var="org_country" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_country.name()) %>"/>
+            <c:set var="org_phone" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_phone.name()) %>"/>
+            <c:set var="org_website" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_website.name()) %>"/>
+            <c:set var="phone" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.phone.name()) %>"/>
         </c:if>
         <span><liferay-ui:message key="registrationform.userInfo"/></span>
-
         <div class="row">
             <div class="col">
                 <aui:input
-                        name="<%= KeycloakUtils.ATTRIBUTES.academicTitle.name() %>"
-                        label="registrationform.academic.titles"
-                        value="${academicTitle}"/>
-            </div>
-            <div class="col">
-                <aui:input
-                        name="<%= KeycloakUtils.ATTRIBUTES.initials.name() %>"
-                        label="registrationform.initials"
-                        value="${initials}"/>
+                        name="registration_other"
+                        label="registrationform.register.other"
+                        type="checkbox"
+                        checked="false" onChange="registerOther()"/>
             </div>
         </div>
-
         <div class="row">
             <div class="col">
                 <aui:input
@@ -58,53 +51,52 @@
             </div>
         </div>
 
-        <aui:input
-                name="<%= KeycloakUtils.ATTRIBUTES.email.name() %>"
-                label="registrationform.email"
-                value="<%= user.getEmailAddress() %>"
-                disabled="true">
-            <aui:validator name="required">
-                        function () {
-                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                        }
-            </aui:validator>
-            <aui:validator name="email"/>
-        </aui:input>
-
         <div class="row">
             <div class="col">
                 <aui:input
-                        name="username"
-                        label="registrationform.username"
-                        value="<%= user.getScreenName() %>"
+                        name="<%= KeycloakUtils.ATTRIBUTES.email.name() %>"
+                        label="registrationform.email"
+                        value="<%= user.getEmailAddress() %>"
                         disabled="true">
                     <aui:validator name="required">
-                                function () {
-                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                                }
+                        function () {
+                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                        }
                     </aui:validator>
+                    <aui:validator name="email"/>
                 </aui:input>
             </div>
             <div class="col">
                 <aui:input
-                        name="<%= KeycloakUtils.ATTRIBUTES.jobTitle.name() %>"
-                        label="registrationform.job.titles"
-                        value="${jobTitle}"/>
+                        name="<%= KeycloakUtils.ATTRIBUTES.phone.name() %>"
+                        label="registrationform.phone"
+                        value="${phone}"/>
             </div>
         </div>
 
         <span><liferay-ui:message key="registrationform.organizationInfo"/></span>
 
-        <aui:input
-                name="<%= KeycloakUtils.ATTRIBUTES.org_name.name() %>"
-                label="registrationform.orgname"
-                value="${org_name}">
-            <aui:validator name="required">
+        <div class="row">
+            <div class="col">
+                <aui:input
+                        name="<%= KeycloakUtils.ATTRIBUTES.org_name.name() %>"
+                        label="registrationform.orgname"
+                        value="${org_name}">
+                    <aui:validator name="required">
                         function () {
-                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
-            </aui:validator>
-        </aui:input>
+                    </aui:validator>
+                </aui:input>
+            </div>
+            <div class="col">
+                <aui:input
+                        name="<%= KeycloakUtils.ATTRIBUTES.org_website.name() %>"
+                        label="registrationform.orgwebsite"
+                        value="${org_website}"/>
+            </div>
+        </div>
+
         <aui:input
                 name="<%= KeycloakUtils.ATTRIBUTES.org_address.name() %>"
                 label="registrationform.orgaddress"
@@ -143,25 +135,42 @@
                 </aui:input>
             </div>
         </div>
-        <aui:select
-                name="<%=KeycloakUtils.ATTRIBUTES.org_country.name()%>"
-                type="select"
-                label="registrationform.orgcountry"
-                value="${country}">
-            <aui:validator name="required">
+        <div class="row">
+            <div class="col">
+                <aui:select
+                        name="<%=KeycloakUtils.ATTRIBUTES.org_country.name()%>"
+                        type="select"
+                        label="registrationform.orgcountry"
+                        value="${org_country}">
+                    <aui:validator name="required">
                         function () {
-                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
-            </aui:validator>
-            <aui:validator name="minLength">
-                2
-            </aui:validator>
-            <aui:option value="" label="registrationform.select.country"/>
-            <% List<Country> countries = CountryServiceUtil.getCountries(true); %>
-            <% for (Country country : countries) { %>
-            <aui:option value="<%=country.getName()%>" label="<%= country.getName(locale) %>"/>
-            <% } %>
-        </aui:select>
+                    </aui:validator>
+                    <aui:validator name="minLength">
+                        2
+                    </aui:validator>
+                    <aui:option value="" label="registrationform.select.country"/>
+                    <% List<Country> countries = CountryServiceUtil.getCountries(true); %>
+                    <% for (Country country : countries) { %>
+                    <aui:option value="<%=country.getName()%>" label="<%= country.getName(locale) %>"/>
+                    <% } %>
+                </aui:select>
+            </div>
+            <div class="col">
+                <aui:input
+                        name="<%= KeycloakUtils.ATTRIBUTES.org_phone.name() %>"
+                        label="registrationform.phone"
+                        value="${org_phone}">
+                    <aui:validator name="required">
+                        function () {
+                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                        }
+                    </aui:validator>
+                </aui:input>
+            </div>
+        </div>
+
 
     </aui:col>
 </aui:row>

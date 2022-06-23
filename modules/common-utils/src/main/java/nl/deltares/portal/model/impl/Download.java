@@ -24,10 +24,10 @@ public class Download extends AbsDsdArticle {
     private String fileTopicName;
     private String groupPage = "";
     private List<Subscription> subscriptions = null;
-    private boolean automaticLinkCreation = true;
+    private boolean automaticLinkCreation = false;
     private Terms terms = null;
 
-    enum ACTION {direct, terms, userinfo, billinginfo, subscription}
+    enum ACTION {direct, terms, userinfo, billinginfo, subscription, locks, licenses}
 
     private final List<ACTION> requiredActions = new ArrayList<>();
 
@@ -196,7 +196,7 @@ public class Download extends AbsDsdArticle {
     }
 
     public boolean isAutomaticLinkCreation(){
-        return automaticLinkCreation && !isBillingRequired();
+        return automaticLinkCreation;
     }
 
     public boolean isShowSubscription() {
@@ -209,6 +209,14 @@ public class Download extends AbsDsdArticle {
 
     public boolean isTermsOfUseRequired() {
         return requiredActions.contains(ACTION.terms);
+    }
+
+    public boolean isLockTypeRequired() {
+        return requiredActions.contains(ACTION.locks);
+    }
+
+    public boolean isLicenseTypeRequired() {
+        return requiredActions.contains(ACTION.licenses);
     }
 
 }

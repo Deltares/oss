@@ -4,6 +4,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
+import nl.deltares.emails.DownloadEmail;
 import nl.deltares.model.DownloadRequest;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.*;
@@ -20,13 +21,15 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
     private final DownloadRequest downloadRequest;
     private final User user;
     private final DownloadUtils downloadUtils;
+    private final DownloadEmail confirmationEmail;
 
 
-    public CreateDownloadLinksRequest(String id, User user, DownloadRequest downloadRequest, DownloadUtils downloadUtils) throws IOException {
+    public CreateDownloadLinksRequest(String id, User user, DownloadRequest downloadRequest, DownloadUtils downloadUtils, DownloadEmail confirmationEmail) throws IOException {
         super(id, user.getUserId());
         this.downloadRequest = downloadRequest;
         this.downloadUtils = downloadUtils;
         this.user = user;
+        this.confirmationEmail = confirmationEmail;
     }
 
     @Override
@@ -68,6 +71,7 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
                     }
                 }
 
+                downloadRequest.registerShareInfo(download, shareInfo);
                 try {
                     downloadUtils.registerDownload(user, downloadRequest.getGroupId() , Long.parseLong(download.getArticleId()),
                             download.getFilePath(), shareInfo, downloadRequest.getUserAttributes());
@@ -84,6 +88,10 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
                 }
             }
             status = available;
+
+            if (confirmationEmail != null){
+                confirmationEmail.sendDownloadsEmail();
+            }
             statusMessage = String.format("%d share links have been created for user %s", getProcessedCount(), user.getEmailAddress());
             LOG.info(statusMessage);
         } catch (Exception e) {

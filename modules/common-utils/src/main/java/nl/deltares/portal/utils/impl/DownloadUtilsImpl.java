@@ -56,12 +56,14 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
     private static final String APP_PW_KEY = "download.app.password";
     private final String AUTH_TOKEN;
     private final String API_PATH;
+    private final String SHARE_PATH;
     private final boolean active;
 
     public DownloadUtilsImpl() {
         String APP_NAME = PropsUtil.get(APP_NAME_KEY);
         String APP_PW = PropsUtil.get(APP_PW_KEY);
         API_PATH = getDownloadBasePath();
+        SHARE_PATH = getSharePath();
         active = APP_NAME != null && APP_PW != null && API_PATH != null;
         if (active) {
             AUTH_TOKEN = getBasicAuthorization(APP_NAME, APP_PW);
@@ -125,9 +127,10 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
 
         final HashMap<String, String> params = new HashMap<>();
         params.put("path", filePath);
-        params.put("shareType", String.valueOf(4));
-        params.put("password", PasswordUtils.getPassword(passwordLength));
-        params.put("shareWith", email);
+        params.put("shareType", String.valueOf(3)); //3 - public, 4 - share by email
+        final String password = PasswordUtils.getPassword(passwordLength);
+        params.put("password", password);
+//        params.put("shareWith", email); not required for type 3
         params.put("permissions", String.valueOf(1));
 
         try (Writer w = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8)) {
@@ -154,6 +157,13 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
             final String expDate = expNode.item(0).getTextContent();
             shareInfo.put("expiration", dateFormat.parse(expDate));
         }
+        final NodeList tokenNode = document.getElementsByTagName(("token"));
+        if (tokenNode.getLength() > 0){
+            final String token = tokenNode.item(0).getTextContent();
+            shareInfo.put("url", tokenToShareLinkUrl(token));
+            shareInfo.put("password", password);
+        }
+
         return shareInfo;
     }
 
@@ -244,6 +254,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         shareInfo.put("email", document.getElementsByTagName("share_with").item(0).getTextContent());
         shareInfo.put("id", Integer.parseInt(document.getElementsByTagName("id").item(0).getTextContent()));
         shareInfo.put("path", document.getElementsByTagName("path").item(0).getTextContent());
+        shareInfo.put("url", tokenToShareLinkUrl(document.getElementsByTagName("token").item(0).getTextContent()));
         return shareInfo;
 
     }
@@ -499,5 +510,25 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         }
         baseApiPath += '/';
         return baseApiPath;
+    }
+
+    private String getSharePath() {
+        if (!PropsUtil.contains(BASEURL_KEY)) {
+            return null;
+        }
+        String baseApiPath = PropsUtil.get(BASEURL_KEY);
+
+        final int startTrim = baseApiPath.indexOf("ocs");
+        if (startTrim > 0) {
+            final String rootUrl = baseApiPath.substring(0, startTrim);
+            return rootUrl.concat("s/");
+
+        }
+        return null;
+    }
+
+    private String tokenToShareLinkUrl(String token){
+        if (SHARE_PATH == null) return token;
+        return SHARE_PATH.concat(token);
     }
 }

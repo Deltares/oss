@@ -9,6 +9,7 @@
 
     <aui:col width="50">
         <c:if test="${not empty attributes}">
+            <c:set var="billingCompany" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_company.name()) %>"/>
             <c:set var="billingEmail" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_email.name()) %>"/>
             <c:set var="billingName" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_name.name()) %>"/>
             <c:set var="billingAddress" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_address.name()) %>"/>
@@ -32,7 +33,7 @@
         </aui:input>
         <aui:input
                 name="<%= BillingInfo.ATTRIBUTES.billing_name.name() %>"
-                label="dsd.registration.step3.billing.name"
+                label="dsd.registration.step3.billing.company"
                 value="${billingName}" billing_value="${billingName}">
             <aui:validator name="required">
                 function () {
@@ -105,10 +106,10 @@
         <aui:select
                 name="<%= BillingInfo.ATTRIBUTES.billing_preference.name() %>"
                 type="select"
-                label="dsd.registration.step3.billing.method"
+                label="download.email.billing.method"
                 value="${billingMethod}">
-            <aui:option value="payLink" label="regostrationform.paymethod.link"/>
-            <aui:option value="bankTransfer" label="regostrationform.paymethod.bank"/>
+            <aui:option value="payLink" label="downloadform.paymethod.link"/>
+            <aui:option value="bankTransfer" label="downloadform.paymethod.bank"/>
             <aui:validator name="required">
                 function () {
                 return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
@@ -120,21 +121,11 @@
                 name="<%= BillingInfo.ATTRIBUTES.billing_reference.name() %>"
                 label="dsd.registration.step3.billing.reference"
                 value="${billingReference}" billing_value="${billingReference}">
-            <aui:validator name="required">
-                function () {
-                return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
-                }
-            </aui:validator>
         </aui:input>
         <aui:input
                 name="<%= BillingInfo.ATTRIBUTES.billing_vat.name() %>"
                 label="dsd.registration.step3.billing.vat"
-                value="${billingVat}" billing_value="${billingVat}">
-            <aui:validator name="required">
-                function () {
-                return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
-                }
-            </aui:validator>
+                value="${billingVat}" billing_value="${billingVat}" helpMessage="dsd.registration.step3.billing.vat.info">
         </aui:input>
     </div>
 </div>

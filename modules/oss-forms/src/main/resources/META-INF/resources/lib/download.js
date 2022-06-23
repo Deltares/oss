@@ -19,6 +19,7 @@ DownloadFormsUtil = {
         let subscriptionEnabled = false;
         let billingInfoEnabled = false;
         let termsEnabled = false;
+        let licensesEnabled = false;
         [...downloads].forEach(function(download) {
 
             if (download.checked){
@@ -37,6 +38,10 @@ DownloadFormsUtil = {
                 if ( download.getAttribute('terms') === "true" ) {
                     termsEnabled = true;
                 }
+
+                if ( download.getAttribute('licenseinfo') === "true" ) {
+                    licensesEnabled = true;
+                }
             }
 
         });
@@ -52,6 +57,13 @@ DownloadFormsUtil = {
             step3.removeClass('disabled'); //remove
         } else {
             step3.addClass('disabled'); //add;
+        }
+
+        let step3b = $(document.getElementById(namespace + 'nav-stepper-step-3b'));
+        if (licensesEnabled){
+            step3b.removeClass('disabled'); //remove
+        } else {
+            step3b.addClass('disabled'); //add;
         }
 
         let step4 = $(document.getElementById(namespace + 'nav-stepper-step-4'));

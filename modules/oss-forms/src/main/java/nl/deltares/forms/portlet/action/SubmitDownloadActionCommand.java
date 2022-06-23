@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.util.*;
 import nl.deltares.model.BillingInfo;
 import nl.deltares.model.DownloadRequest;
 import nl.deltares.emails.DownloadEmail;
+import nl.deltares.model.LicenseInfo;
 import nl.deltares.portal.configuration.DownloadSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Download;
@@ -77,11 +78,8 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             }
 
             if (success){
-                success = createShareLinks(actionRequest, downloadRequest, user);
-            }
-
-            if (success){
-                success = sendConfirmationEmail(actionRequest, user, downloadRequest, themeDisplay, "download");
+                DownloadEmail loadedEmail = prepareDownloadEmail(actionRequest, user, downloadRequest, themeDisplay, "download");
+                success = createShareLinks(actionRequest, downloadRequest, user, loadedEmail);
             }
 
         } else {
@@ -96,7 +94,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
 
     }
 
-    private boolean createShareLinks(ActionRequest actionRequest, DownloadRequest downloadRequest, User user) {
+    private boolean createShareLinks(ActionRequest actionRequest, DownloadRequest downloadRequest, User user, DownloadEmail loadedEmail) {
         String id = SubmitDownloadActionCommand.class.getName() + user.getUserId();
 
         final DataRequestManager instance = DataRequestManager.getInstance();
@@ -110,7 +108,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             instance.removeDataRequest(dataRequest);
         }
         try {
-            dataRequest = new CreateDownloadLinksRequest(id, user, downloadRequest, downloadUtils);
+            dataRequest = new CreateDownloadLinksRequest(id, user, downloadRequest, downloadUtils, loadedEmail);
         } catch (IOException e) {
             SessionErrors.add(actionRequest, String.format("Failed to create downloadLinks request for user %s : %s",
                     user.getEmailAddress(),  e.getMessage()));
@@ -165,7 +163,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
 
             DownloadRequest downloadRequest = new DownloadRequest(themeDisplay);
             downloadRequest.setBillingInfo(billingInfo);
-
+            downloadRequest.setLicenseInfo(getLicenseInfo(actionRequest));
             for (String articleId : articleIds) {
                 Download downloadArticle = (Download) dsdParserUtils.toDsdArticle(siteId, articleId);
                 downloadRequest.addDownload(downloadArticle);
@@ -179,6 +177,26 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             LOG.debug("Could not retrieve download for actionId: " + Arrays.toString(articleIds.toArray()));
         }
         return null;
+    }
+
+    private LicenseInfo getLicenseInfo(ActionRequest actionRequest) {
+        LicenseInfo licenseInfo = new LicenseInfo();
+
+        if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LICENSETYPES.network.name()))) {
+            licenseInfo.setLicenseType(LicenseInfo.LICENSETYPES.network);
+        } else if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LICENSETYPES.standalone.name()))){
+            licenseInfo.setLicenseType(LicenseInfo.LICENSETYPES.standalone);
+        }
+
+        if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LOCKTYPES.new_usb_dongle.name()))) {
+            licenseInfo.setLockType(LicenseInfo.LOCKTYPES.new_usb_dongle);
+        } else if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LOCKTYPES.existing_usb_dongle.name()))){
+            licenseInfo.setLockType(LicenseInfo.LOCKTYPES.existing_usb_dongle);
+            licenseInfo.setDongleNumber(ParamUtil.getString(actionRequest, LicenseInfo.ATTRIBUTES.lock_address.name()));
+        } else if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LOCKTYPES.mac_address.name()))){
+            licenseInfo.setLockType(LicenseInfo.LOCKTYPES.mac_address);
+        }
+        return licenseInfo;
     }
 
     /**
@@ -238,6 +256,30 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         return attributes;
     }
 
+    private DownloadEmail prepareDownloadEmail(ActionRequest actionRequest, User user, DownloadRequest registrationRequest,
+                                               ThemeDisplay themeDisplay, @SuppressWarnings("SameParameterValue") String action){
+        try {
+            DownloadSiteConfiguration configuration = _configurationProvider
+                    .getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
+
+            if (!configuration.enableEmails()) return null;
+
+            ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", themeDisplay.getLocale(), getClass());
+            DownloadEmail email = new DownloadEmail(user, resourceBundle, registrationRequest);
+            email.setReplyToEmail(configuration.replyToEmail());
+            email.setBCCToEmail(configuration.bccToEmail());
+            email.setSendFromEmail(configuration.sendFromEmail());
+            if ("download".equals(action)) {
+                return email;
+            }
+            return null;
+
+        } catch (Exception e) {
+            SessionErrors.add(actionRequest, "send-email-failed", "Could not send " + action + " email for user [" + user.getEmailAddress() + "] : " + e.getMessage());
+            LOG.error("Could not send " + action + " email for user [" + user.getEmailAddress() + "]", e);
+            return null;
+        }
+    }
     private boolean sendConfirmationEmail(ActionRequest actionRequest, User user, DownloadRequest registrationRequest,
                                           ThemeDisplay themeDisplay, @SuppressWarnings("SameParameterValue") String action) {
         try {
