@@ -43,20 +43,34 @@ public class CheckboxFacetPortletSharedSearchContributor implements PortletShare
             LOG.debug(String.format("Could not get configuration for portlet '%s': %s", themeDisplay.getPortletDisplay().getId(), e.getMessage()), e);
             return;
         }
-
+        final boolean visible = Boolean.parseBoolean(_configuration.visible());
+        final boolean explicit = Boolean.parseBoolean(_configuration.explicitSearch());
         String structureName = _configuration.structureName().toLowerCase();
         String fieldName = _configuration.fieldName();
         String name = structureName + '-' + fieldName; //important to use '-' because this translates to JSP id
 
+        String selection = null;
         Optional<String> facetSelection = portletSharedSearchSettings.getParameter(name);
         if (facetSelection.isPresent()) {
-            String selection = facetSelection.get();
+            selection = facetSelection.get();
+        } else if (!visible){
+            selection = FacetUtils.serializeYesNo(Boolean.parseBoolean(_configuration.defaultValue()));
+        }
+
+        if (selection != null) {
             final Boolean option = FacetUtils.parseYesNo(selection);
             Optional<DDMStructure> ddmStructureOptional = _ddmStructureUtil.getDDMStructureByName(groupId, structureName, siteDefaultLocale);
             if (option != null && ddmStructureOptional.isPresent()) {
                 long ddmStructureId = ddmStructureOptional.get().getStructureId();
                 String encodeName = _ddmIndexer.encodeName(ddmStructureId, fieldName, siteDefaultLocale);
-                portletSharedSearchSettings.addCondition(BooleanClauseFactoryUtil.create(encodeName, option.toString(), BooleanClauseOccur.MUST.getName()));
+
+                if (explicit){
+                    //look only for article containing the search field
+                    portletSharedSearchSettings.addCondition(BooleanClauseFactoryUtil.create(encodeName, option.toString(), BooleanClauseOccur.MUST.getName()));
+                } else {
+                    //look for any article containing the search field or articles that do not contain the field
+                    portletSharedSearchSettings.addCondition(BooleanClauseFactoryUtil.create(encodeName, Boolean.toString(!option), BooleanClauseOccur.MUST_NOT.getName()));
+                }
             }
         }
 

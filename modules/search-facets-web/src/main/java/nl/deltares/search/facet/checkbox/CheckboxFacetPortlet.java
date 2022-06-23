@@ -54,6 +54,8 @@ public class CheckboxFacetPortlet extends MVCPortlet {
         } catch (ConfigurationException e) {
             throw new PortletException(String.format("Could not get configuration for portlet '%s': %s", themeDisplay.getPortletDisplay().getId(), e.getMessage()), e);
         }
+        final boolean visible = Boolean.parseBoolean(_configuration.visible());
+        if (!visible) renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, false);
 
         String structureName = _configuration.structureName().toLowerCase();
         String fieldName = _configuration.fieldName();

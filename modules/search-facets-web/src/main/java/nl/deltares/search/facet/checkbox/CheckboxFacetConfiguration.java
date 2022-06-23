@@ -23,5 +23,7 @@ public interface CheckboxFacetConfiguration {
     @Meta.AD(required = false, deflt = "", description = "Set the default value for the facet portlet.")
     String defaultValue();
 
+    @Meta.AD(required = false, deflt = "", description = "If selected only return items with matching field. If not selected also include that do not contain field.")
+    String explicitSearch();
 
 }

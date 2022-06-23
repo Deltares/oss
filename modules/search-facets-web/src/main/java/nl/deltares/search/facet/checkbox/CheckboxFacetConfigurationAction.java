@@ -46,6 +46,7 @@ public class CheckboxFacetConfigurationAction extends DefaultConfigurationAction
         setPreference(actionRequest, "title", ParamUtil.getString(actionRequest, "title"));
         setPreference(actionRequest, "visible", ParamUtil.getString(actionRequest, "visible"));
         setPreference(actionRequest, "defaultValue", ParamUtil.getString(actionRequest, "defaultValue"));
+        setPreference(actionRequest, "explicitSearch", ParamUtil.getString(actionRequest, "explicitSearch"));
         super.processAction(portletConfig, actionRequest, actionResponse);
     }
 
