@@ -44,7 +44,9 @@ public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> 
                 licenseRequired = true;
             }
         }
+
         writer.append("</table>");
+        appendNotice(writer, content);
 
         appendUserInfo(writer, content);
 
@@ -55,8 +57,6 @@ public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> 
         if (licenseRequired){
             appendLicenseInfo(writer, content);
         }
-        appendNotice(writer, content);
-
         writer.append("</br>");
         writer.append("</br>");
         writer.append("</br>");
