@@ -22,12 +22,15 @@ public interface KeycloakUtils {
         org_name,
         org_postal,
         org_vat,
+        org_website,
+        org_phone,
         first_name,
         last_name,
         initials,
         email,
         academicTitle,
-        jobTitle
+        jobTitle,
+        phone
     }
 
     boolean isActive();

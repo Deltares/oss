@@ -20,6 +20,8 @@ public class DownloadRequest {
     private String bannerUrl = null;
     private BillingInfo billingInfo;
     final private Map<Subscription, Boolean> subscriptions = new HashMap<>();
+    final private Map<Download, Map<String, Object>> shareInfo = new HashMap<>();
+    private LicenseInfo licenseInfo;
 
     public DownloadRequest(ThemeDisplay themeDisplay) throws PortalException {
         siteUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay);
@@ -105,5 +107,29 @@ public class DownloadRequest {
 
     public HashMap<String, String> getUserAttributes() {
         return userAttributes;
+    }
+
+    public void registerShareInfo(Download download, Map<String, Object> shareInfo) {
+        this.shareInfo.put(download, shareInfo);
+     }
+
+    public String getShareLink(Download download) {
+        final Map<String, Object> info = shareInfo.get(download);
+        if (info != null) return (String) info.get("url");
+        return null;
+    }
+
+    public String getSharePassword(Download download){
+        final Map<String, Object> info = shareInfo.get(download);
+        if (info != null) return (String) info.get("password");
+        return null;
+    }
+
+    public void setLicenseInfo(LicenseInfo licenseInfo) {
+        this.licenseInfo = licenseInfo;
+    }
+
+    public LicenseInfo getLicenseInfo() {
+        return licenseInfo;
     }
 }

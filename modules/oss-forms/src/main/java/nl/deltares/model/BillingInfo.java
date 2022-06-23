@@ -9,6 +9,7 @@ import java.util.Map;
 public class BillingInfo {
 
     public enum ATTRIBUTES {
+        billing_company,
         billing_email,
         billing_name,
         billing_address,
@@ -17,7 +18,9 @@ public class BillingInfo {
         billing_country,
         billing_reference,
         billing_vat,
-        billing_preference
+        billing_preference,
+        billing_phone,
+        billing_website
     }
 
     String name = null;
@@ -26,9 +29,11 @@ public class BillingInfo {
     String postal = null;
     String city = null;
     String country = null;
-    String vat = null;
-    String reference = null;
+    String vat = "";
+    String reference = "";
     String preference = "payLink";
+    String phone = "";
+    String website = "";
 
     public static KeycloakUtils.ATTRIBUTES getCorrespondingUserAttributeKey(BillingInfo.ATTRIBUTES billingKey){
         switch (billingKey){
@@ -46,6 +51,10 @@ public class BillingInfo {
                 return KeycloakUtils.ATTRIBUTES.org_country;
             case billing_vat:
                 return KeycloakUtils.ATTRIBUTES.org_vat;
+            case billing_phone:
+                return KeycloakUtils.ATTRIBUTES.org_phone;
+            case billing_website:
+                return KeycloakUtils.ATTRIBUTES.org_website;
             default:
                 return null;
         }
@@ -71,6 +80,10 @@ public class BillingInfo {
                 return vat;
             case billing_preference:
                 return preference;
+            case billing_phone:
+                return phone;
+            case billing_website:
+                return website;
             default:
                 throw new UnsupportedOperationException("Unsupported billing attribute: " + key);
         }
@@ -104,6 +117,12 @@ public class BillingInfo {
                 break;
             case billing_preference:
                 preference = value;
+                break;
+            case billing_phone:
+                phone = value;
+                break;
+            case billing_website:
+                website = value;
                 break;
             default:
                 throw new UnsupportedOperationException("Unsupported billing attribute: " + key);
@@ -191,5 +210,21 @@ public class BillingInfo {
 
     public void setPreference(String preference) {
         this.preference = preference;
+    }
+
+    public String getPhoneNumber() {
+        return phone;
+    }
+
+    public void setPhoneNumber(String phone) {
+        this.phone = phone;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
     }
 }
