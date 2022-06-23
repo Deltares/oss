@@ -17,6 +17,7 @@
 <%@ page import="nl.deltares.portal.utils.EmailSubscriptionUtils" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="nl.deltares.portal.model.impl.Terms" %>
+<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationException" %>
 
 <liferay-theme:defineObjects />
 
@@ -26,7 +27,12 @@
     ConfigurationProvider configurationProvider =
             (ConfigurationProvider) request.getAttribute(ConfigurationProvider.class.getName());
 
-    DownloadSiteConfiguration configuration = configurationProvider.getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
+    DownloadSiteConfiguration configuration = null;
+    try {
+        configuration = configurationProvider.getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
+    } catch (ConfigurationException e) {
+        System.err.println(e.getMessage());
+    }
 
     String homeUrl = themeDisplay.getCDNBaseURL();
     String webUrl = themeDisplay.getPathFriendlyURLPublic();
@@ -41,6 +47,9 @@
     EmailSubscriptionUtils subscriptionUtils = (EmailSubscriptionUtils) request.getAttribute("subscriptionUtils");
     final Map<Subscription, Boolean> subscriptionSelection = new HashMap<>();
     final List<Terms> terms = new ArrayList<>();
+
+    boolean showLockTypes = false;
+    boolean showLicenseTypes = false;
 
 %>
 
@@ -100,6 +109,11 @@
                     <span><liferay-ui:message key="dsd.registration.steps.step3"/></span>
                 </a>
             </li>
+            <li class="nav-item icon-circle-blank disabled" id="<portlet:namespace/>nav-stepper-step-3b">
+                <a href="#stepper-step-3b" title="Step 3b" style="font-family:Open Sans,serif">
+                    <span><liferay-ui:message key="dsd.registration.steps.step3b"/></span>
+                </a>
+            </li>
             <li class="nav-item icon-circle-blank disabled" id="<portlet:namespace/>nav-stepper-step-4">
                 <a href="#stepper-step-4" title="Step 4" style="font-family:Open Sans,serif">
                     <span><liferay-ui:message key="dsd.registration.steps.step4"/></span>
@@ -149,6 +163,9 @@
                 <div class="tab-pane" role="tabpanel" id="stepper-step-3">
                     <%@ include file="step3.jsp" %>
                 </div>
+                <div class="tab-pane" role="tabpanel" id="stepper-step-3b">
+                    <%@ include file="step3b.jsp" %>
+                </div>
                 <div class="tab-pane" role="tabpanel" id="stepper-step-4">
                     <%@ include file="step4.jsp" %>
                 </div>
@@ -192,6 +209,24 @@
     }
     preSubmitAction = function (){
         shoppingCart.clearDownloadsCart();
+    }
+
+    updateLockSelection = function (active) {
+        $(document.getElementById("<portlet:namespace />lock-new"))[0].checked = (active === "lock-new");
+        $(document.getElementById("<portlet:namespace />lock-existing"))[0].checked = (active === "lock-existing");
+        $(document.getElementById("<portlet:namespace />lock-mac"))[0].checked = (active === "lock-mac");
+    }
+
+    updateLicenseSelection = function (active) {
+        $(document.getElementById("<portlet:namespace />license-network"))[0].checked = (active === "license-network");
+        $(document.getElementById("<portlet:namespace />license-standalone"))[0].checked = (active === "license-standalone");
+    }
+
+    registerOther = function (){
+        let registerOther = $(document.getElementById("<portlet:namespace />registration_other"))[0].checked;
+        $(document.getElementById("<portlet:namespace />first_name"))[0].disabled = !registerOther;
+        $(document.getElementById("<portlet:namespace />last_name"))[0].disabled = !registerOther;
+        $(document.getElementById("<portlet:namespace />email"))[0].disabled = !registerOther;
     }
 
     $(document).ready(function() {

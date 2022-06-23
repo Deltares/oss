@@ -37,6 +37,13 @@
                 if (downloadTerms != null && !terms.contains(downloadTerms)) {
                     terms.add(download.getTerms());
                 }
+
+                if (download.isLockTypeRequired()) {
+                    showLockTypes = true;
+                }
+                if (download.isLicenseTypeRequired()){
+                    showLicenseTypes = true;
+                }
             } catch (PortalException e) {
                 String message = String.format("Error getting download %s", downloadId);
                 SessionErrors.add(liferayPortletRequest, "sendlink-failed", message);
@@ -56,6 +63,7 @@
                             subscription="<%= download.isShowSubscription() %>"
                             billinginfo="<%= download.isBillingRequired() %>"
                             terms="<%= download.isTermsOfUseRequired() %>"
+                            licenseinfo="<%= download.isLicenseTypeRequired() || download.isLockTypeRequired() %>"
                             cssClass="download"
                             checked="true" onChange="checkSelection()"/>
                 </div>
