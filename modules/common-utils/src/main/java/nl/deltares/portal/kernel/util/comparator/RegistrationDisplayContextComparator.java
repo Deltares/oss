@@ -9,7 +9,7 @@ public class RegistrationDisplayContextComparator extends OrderByComparator<Regi
 
     @Override
     public int compare(RegistrationDisplayContext context1, RegistrationDisplayContext context2) {
-        final int i = Long.compare(context2.getStartDateMillis(), context1.getStartDateMillis());
+        final int i = Long.compare(context1.getStartDateMillis(), context2.getStartDateMillis());
         if (i != 0) return i;
         return context1.getRegistration().getTitle().compareTo(context2.getRegistration().getTitle());
     }

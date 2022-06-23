@@ -53,7 +53,7 @@ public class DsdResultsSearchContainer extends SearchContainer<RegistrationDispl
         final List<Document> results = searchContainer.getResults();
         List<RegistrationDisplayContext> registrationDisplayContexts = new ArrayList<>(results.size() + 20);
         splitMultiDayRegistrations(loadRegistrations(results), registrationDisplayContexts);
-        registrationDisplayContexts.sort(new RegistrationDisplayContextComparator().reversed());
+        registrationDisplayContexts.sort(new RegistrationDisplayContextComparator());
         super.setResults(registrationDisplayContexts);
     }
 
