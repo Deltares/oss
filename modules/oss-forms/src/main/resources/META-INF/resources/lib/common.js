@@ -162,7 +162,9 @@ CommonFormsUtil = {
     },
 
     updatePaymentAddress : function(namespace, checked) {
-        let paymentNameInput = $(document.getElementById(namespace + "billing_name"));
+        let paymentFirstNameInput = $(document.getElementById(namespace + "billing_firstname"));
+        let paymentLastNameInput = $(document.getElementById(namespace + "billing_lastname"));
+        let paymentCompanyInput = $(document.getElementById(namespace + "billing_company"));
         let paymentAddressInput = $(document.getElementById(namespace + "billing_address"));
         let paymentPostCodeInput = $(document.getElementById( namespace + "billing_postal"));
         let paymentCityInput = $(document.getElementById( namespace + "billing_city"));
@@ -172,7 +174,9 @@ CommonFormsUtil = {
         if (checked) {
 
             //cache billing info
-            paymentNameInput.prop('billing_value', paymentNameInput.val());
+            paymentFirstNameInput.prop('billing_value', paymentFirstNameInput.val());
+            paymentLastNameInput.prop('billing_value', paymentLastNameInput.val());
+            paymentCompanyInput.prop('billing_value', paymentCompanyInput.val());
             paymentAddressInput.prop('billing_value', paymentAddressInput.val());
             paymentPostCodeInput.prop('billing_value', paymentPostCodeInput.val());
             paymentCityInput.prop('billing_value', paymentCityInput.val());
@@ -180,21 +184,27 @@ CommonFormsUtil = {
             paymentEmailInput.prop('billing_value', paymentEmailInput.val());
 
             //replace billing info with user attributes info
-            let name = $(document.getElementById(namespace + "org_name")).val();
+            let company = $(document.getElementById(namespace + "org_name")).val();
             let address = $(document.getElementById(namespace + "org_address")).val();
             let postCode = $(document.getElementById(namespace + "org_postal")).val();
             let city = $(document.getElementById(namespace + "org_city")).val();
             let country = $(document.getElementById(namespace + "org_country")).val();
             let email = $(document.getElementById(namespace + "email")).val();
+            let firstName = $(document.getElementById(namespace + "first_name")).val();
+            let lastName = $(document.getElementById(namespace + "last_name")).val();
 
-            paymentNameInput.val(name);
+            paymentFirstNameInput.val(firstName);
+            paymentLastNameInput.val(lastName);
             paymentAddressInput.val(address);
             paymentPostCodeInput.val(postCode);
             paymentCityInput.val(city);
             paymentCountryInput.val(country);
             paymentEmailInput.val(email);
+            paymentCompanyInput.val(company)
 
-            paymentNameInput.prop('disabled', true);
+            paymentCompanyInput.prop('disabled', true);
+            paymentFirstNameInput.prop('disabled', true);
+            paymentLastNameInput.prop('disabled', true);
             paymentAddressInput.prop('disabled', true);
             paymentPostCodeInput.prop('disabled', true);
             paymentCityInput.prop('disabled', true);
@@ -203,21 +213,27 @@ CommonFormsUtil = {
 
         } else {
             //restore billing info
-            let name = paymentNameInput.prop('billing_value');
+            let firstName = paymentFirstNameInput.prop('billing_value');
+            let lastName = paymentLastNameInput.prop('billing_value');
+            let company = paymentCompanyInput.prop('billing_value');
             let address = paymentAddressInput.prop('billing_value');
             let postCode = paymentPostCodeInput.prop('billing_value');
             let city = paymentCityInput.prop('billing_value');
             let country = paymentCountryInput.prop('billing_value');
             let email = paymentEmailInput.prop('billing_value');
 
-            paymentNameInput.val(name);
+            paymentCompanyInput.val(company);
+            paymentFirstNameInput.val(firstName);
+            paymentLastNameInput.val(lastName);
             paymentAddressInput.val(address);
             paymentPostCodeInput.val(postCode);
             paymentCityInput.val(city);
             paymentCountryInput.val(country);
             paymentEmailInput.val(email);
 
-            paymentNameInput.prop('disabled', false);
+            paymentCompanyInput.prop('disabled', false);
+            paymentFirstNameInput.prop('disabled', false);
+            paymentLastNameInput.prop('disabled', false);
             paymentAddressInput.prop('disabled', false);
             paymentPostCodeInput.prop('disabled', false);
             paymentCityInput.prop('disabled', false);

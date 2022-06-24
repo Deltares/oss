@@ -45,6 +45,7 @@
                         name="<%= KeycloakUtils.ATTRIBUTES.first_name.name() %>"
                         label="registrationform.firstname"
                         value="<%= user.getFirstName() %>"
+                        original_value="<%= user.getFirstName() %>"
                         disabled="true">
                     <aui:validator name="required">
                                 function () {
@@ -58,6 +59,7 @@
                         name="<%= KeycloakUtils.ATTRIBUTES.last_name.name() %>"
                         label="registrationform.lastname"
                         value="<%= user.getLastName() %>"
+                        original_value="<%= user.getLastName() %>"
                         disabled="true">
                     <aui:validator name="required">
                                 function () {
@@ -72,6 +74,7 @@
                 name="<%= KeycloakUtils.ATTRIBUTES.email.name() %>"
                 label="registrationform.email"
                 value="<%= user.getEmailAddress() %>"
+                original_value="<%= user.getEmailAddress() %>"
                 disabled="true">
             <aui:validator name="required">
                         function () {
@@ -80,28 +83,6 @@
             </aui:validator>
             <aui:validator name="email"/>
         </aui:input>
-
-<%--        <div class="row">--%>
-<%--            <div class="col">--%>
-<%--                <aui:input--%>
-<%--                        name="username"--%>
-<%--                        label="registrationform.username"--%>
-<%--                        value="<%= user.getScreenName() %>"--%>
-<%--                        disabled="true">--%>
-<%--                    <aui:validator name="required">--%>
-<%--                                function () {--%>
-<%--                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);--%>
-<%--                                }--%>
-<%--                    </aui:validator>--%>
-<%--                </aui:input>--%>
-<%--            </div>--%>
-<%--            <div class="col">--%>
-<%--                <aui:input--%>
-<%--                        name="<%= KeycloakUtils.ATTRIBUTES.jobTitle.name() %>"--%>
-<%--                        label="registrationform.job.titles"--%>
-<%--                        value="${jobTitle}" />--%>
-<%--            </div>--%>
-<%--        </div   >--%>
 
         <span><liferay-ui:message key="registrationform.organizationInfo"/></span>
 

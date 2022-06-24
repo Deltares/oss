@@ -167,7 +167,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
-    public void validateRegistrations(User user, List<Registration> registrations) throws PortalException {
+    public void validateRegistrations(User user, List<Registration> registrations, List<Registration> childRegistrations) throws PortalException {
         //checks registrations in list
         double maxPrice = 0;
         for (Registration registration : registrations) {
@@ -178,7 +178,9 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
                 maxPrice = registration.getPrice();
             }
         }
-        List<Registration> overlapping = checkIfRegistrationsOverlap(registrations);
+        final ArrayList<Registration> combined = new ArrayList<>(registrations);
+        combined.addAll(childRegistrations);
+        List<Registration> overlapping = checkIfRegistrationsOverlap(combined);
         if (overlapping.size() > 0){
             StringBuilder titles = new StringBuilder();
             overlapping.forEach(registration -> {titles.append(registration.getTitle()); titles.append(", ");});
@@ -262,8 +264,8 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         for (Registration reg1 : list) {
             registrations.forEach(registration -> {
                 if (registration == reg1) return;
-                if (registration.getParentRegistration() == reg1 && registration.isOverlapWithParent()) return;
-                if (reg1.getParentRegistration() == registration && reg1.isOverlapWithParent()) return;
+                if (checkNoOverlapWithParent(reg1, registration)) return;
+                if (checkNoOverlapWithParent(registration, reg1)) return;
                 if (periodsOverlap(reg1, registration)){
                     if (!overlapping.contains(reg1)) overlapping.add(reg1);
                 }
@@ -273,6 +275,11 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         return overlapping;
     }
 
+    private boolean checkNoOverlapWithParent(Registration child, Registration parent) {
+        if (child.getParentRegistration() == null) return true;
+        return child.getParentRegistration().getArticleId().equals(parent.getArticleId()) && child.isOverlapWithParent();
+    }
+
     private boolean periodsOverlap(Registration reg1, Registration reg2) {
 
         List<Period> reg1Periods = reg1.getStartAndEndTimesPerDay();
@@ -280,7 +287,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
         final boolean[] overlap = {false};
         for (Period reg1Period : reg1Periods) {
-            reg2Periods.forEach(reg2Period -> overlap[0] = reg2Period.isAnyTimeCommon(reg1Period));
+            reg2Periods.forEach(reg2Period -> overlap[0] = reg2Period.isAnyTimeCommon(reg1Period, true));
             if (overlap[0]) return true;
         }
         return false;

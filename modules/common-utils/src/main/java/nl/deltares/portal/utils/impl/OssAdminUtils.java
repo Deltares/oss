@@ -88,6 +88,9 @@ public class OssAdminUtils implements AdminUtils {
     public User getOrCreateRegistrationUser(long companyId, User loggedInUser, String registrationEmail,
                                              String firstName, String lastName, Locale locale) throws Exception {
 
+        if (registrationEmail == null || registrationEmail.isEmpty()){
+            throw new IllegalArgumentException("Registration email missing");
+        }
         final User registrationUser = UserLocalServiceUtil.fetchUserByEmailAddress(companyId, registrationEmail);
         if (registrationUser != null) return registrationUser; //user already exists.
 
