@@ -96,10 +96,11 @@ public interface DsdSessionUtils {
      * Validates if user can register for all registrations in list.
      * @param user User wanting to register
      * @param registrations List of registrations that need to be registered
+     * @param childRegistrations List of child registration belonging to the registrations
      * @throws ValidationException Thrown if registration is not valid.
 
      */
-    void validateRegistrations(User user, List<Registration> registrations) throws PortalException;
+    void validateRegistrations(User user, List<Registration> registrations, List<Registration> childRegistrations) throws PortalException;
 
     /**
      * Delete all registrations linked to this registration article
