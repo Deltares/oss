@@ -1,16 +1,12 @@
 package nl.deltares.forms.portlet.action;
 
-import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
-import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
@@ -143,11 +139,9 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
     private boolean registerUser(ActionRequest actionRequest, User user, Map<String, String> userAttributes,
                                  RegistrationRequest registrationRequest, User registrationUser) {
 
-        List<Registration> registrations = registrationRequest.getRegistrations();
         boolean success = true;
-
         try {
-            dsdSessionUtils.validateRegistrations(user, registrations);
+            dsdSessionUtils.validateRegistrations(user, registrationRequest.getRegistrations(), getChildRegistrations(registrationRequest));
         } catch (PortalException e) {
             SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
             return false;
@@ -183,7 +177,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         if (badgeInfo.isShowTitle()) badgeInfo.setTitle(userAttributes.get(KeycloakUtils.ATTRIBUTES.academicTitle.name()));
         if (badgeInfo.isShowInitials()) badgeInfo.setInitials(userAttributes.get(KeycloakUtils.ATTRIBUTES.initials.name()));
         final Map<String, String> badge = badgeInfo.toMap();
-        for (Registration registration : registrations) {
+        for (Registration registration : registrationRequest.getRegistrations()) {
             preferences = new HashMap<>(userPreferences);
 // Always add billing info
 //            if (registration.getPrice() > 0) {
@@ -211,6 +205,14 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             }
         }
         return success;
+    }
+
+    private List<Registration> getChildRegistrations(RegistrationRequest registrationRequest) {
+        final ArrayList<Registration> children = new ArrayList<>();
+        for (Registration registration : registrationRequest.getRegistrations()) {
+            children.addAll(registrationRequest.getChildRegistrations(registration));
+        }
+        return children;
     }
 
     private RegistrationRequest getRegistrationRequest(ActionRequest actionRequest, ThemeDisplay themeDisplay, String action) {

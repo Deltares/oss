@@ -222,9 +222,10 @@ public class Period implements Comparable<Period>{
         return endTime == aDate.getTime();
     }
 
-    public boolean isAnyTimeCommon(Period period) {
+    public boolean isAnyTimeCommon(Period period, boolean allowSameBoundaries) {
         if (this == NEVER) return false;
         if (this == ANY_TIME) return true;
+        if ( allowSameBoundaries ) return startTime < period.endTime && period.startTime < endTime;
         return startTime <= period.endTime && period.startTime <= endTime;
     }
 
@@ -376,7 +377,7 @@ public class Period implements Comparable<Period>{
         Period previous = sorted[0];
         for (int i = 1; i < sorted.length; i++) {
             Period period = sorted[i];
-            if (period.isAnyTimeCommon(previous)) return true;
+            if (period.isAnyTimeCommon(previous, true)) return true;
             previous  = period;
         }
 

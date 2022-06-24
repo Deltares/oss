@@ -196,7 +196,7 @@ public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> 
         writer.append("<tr>");
         writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.billing.name", null)).append("</td>");
         writer.append("<td>");
-        writer.append(billingInfo.getName());
+        writer.append(billingInfo.getCompanyName());
         writer.append("</td>");
         writer.append("</tr>");
 

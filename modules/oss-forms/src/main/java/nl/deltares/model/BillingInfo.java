@@ -11,7 +11,8 @@ public class BillingInfo {
     public enum ATTRIBUTES {
         billing_company,
         billing_email,
-        billing_name,
+        billing_firstname,
+        billing_lastname,
         billing_address,
         billing_postal,
         billing_city,
@@ -23,7 +24,9 @@ public class BillingInfo {
         billing_website
     }
 
-    String name = null;
+    String companyName = null;
+    String firstName = null;
+    String lastName = null;
     String email = null;
     String address = null;
     String postal = null;
@@ -39,8 +42,10 @@ public class BillingInfo {
         switch (billingKey){
             case billing_city:
                 return KeycloakUtils.ATTRIBUTES.org_city;
-            case billing_name:
-                return KeycloakUtils.ATTRIBUTES.org_name;
+            case billing_firstname:
+                return KeycloakUtils.ATTRIBUTES.first_name;
+            case billing_lastname:
+                return KeycloakUtils.ATTRIBUTES.last_name;
             case billing_email:
                 return KeycloakUtils.ATTRIBUTES.email;
             case billing_postal:
@@ -55,6 +60,8 @@ public class BillingInfo {
                 return KeycloakUtils.ATTRIBUTES.org_phone;
             case billing_website:
                 return KeycloakUtils.ATTRIBUTES.org_website;
+            case billing_company:
+                return  KeycloakUtils.ATTRIBUTES.org_name;
             default:
                 return null;
         }
@@ -64,8 +71,10 @@ public class BillingInfo {
         switch (key){
             case billing_city:
                 return city;
-            case billing_name:
-                return name;
+            case billing_firstname:
+                return firstName;
+            case billing_lastname:
+                return lastName;
             case billing_email:
                 return email;
             case billing_postal:
@@ -84,6 +93,8 @@ public class BillingInfo {
                 return phone;
             case billing_website:
                 return website;
+            case billing_company:
+                return companyName;
             default:
                 throw new UnsupportedOperationException("Unsupported billing attribute: " + key);
         }
@@ -94,8 +105,11 @@ public class BillingInfo {
             case billing_city:
                 city = value;
                 break;
-            case billing_name:
-                name = value;
+            case billing_firstname:
+                firstName = value;
+                break;
+            case billing_lastname:
+                lastName = value;
                 break;
             case billing_email:
                 email = value;
@@ -124,6 +138,9 @@ public class BillingInfo {
             case billing_website:
                 website = value;
                 break;
+            case billing_company:
+                companyName = value;
+                break;
             default:
                 throw new UnsupportedOperationException("Unsupported billing attribute: " + key);
         }
@@ -140,12 +157,12 @@ public class BillingInfo {
         return map;
     }
 
-    public String getName() {
-        return name;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public String getEmail() {
@@ -226,5 +243,29 @@ public class BillingInfo {
 
     public void setWebsite(String website) {
         this.website = website;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

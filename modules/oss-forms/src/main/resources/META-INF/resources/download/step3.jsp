@@ -9,9 +9,10 @@
 
     <aui:col width="50">
         <c:if test="${not empty attributes}">
+            <c:set var="billingFirstName" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_firstname.name()) %>"/>
+            <c:set var="billingLastName" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_lastname.name()) %>"/>
             <c:set var="billingCompany" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_company.name()) %>"/>
             <c:set var="billingEmail" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_email.name()) %>"/>
-            <c:set var="billingName" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_name.name()) %>"/>
             <c:set var="billingAddress" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_address.name()) %>"/>
             <c:set var="billingPostal" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_postal.name()) %>"/>
             <c:set var="billingCity" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_city.name()) %>"/>
@@ -32,15 +33,43 @@
             <aui:validator name="email"/>
         </aui:input>
         <aui:input
-                name="<%= BillingInfo.ATTRIBUTES.billing_name.name() %>"
+                name="<%= BillingInfo.ATTRIBUTES.billing_company.name() %>"
                 label="dsd.registration.step3.billing.company"
-                value="${billingName}" billing_value="${billingName}">
+                value="${billingCompany}" billing_value="${billingCompany}">
             <aui:validator name="required">
                 function () {
-                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
+                return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
                 }
             </aui:validator>
         </aui:input>
+        <div class="row">
+            <div class="col">
+                <aui:input
+                        name="<%= KeycloakUtils.ATTRIBUTES.first_name.name() %>"
+                        label="registrationform.firstname"
+                        value="<%= user.getFirstName() %>"
+                        disabled="true">
+                    <aui:validator name="required">
+                        function () {
+                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                        }
+                    </aui:validator>
+                </aui:input>
+            </div>
+            <div class="col">
+                <aui:input
+                        name="<%= KeycloakUtils.ATTRIBUTES.last_name.name() %>"
+                        label="registrationform.lastname"
+                        value="<%= user.getLastName() %>"
+                        disabled="true">
+                    <aui:validator name="required">
+                        function () {
+                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                        }
+                    </aui:validator>
+                </aui:input>
+            </div>
+        </div>
 
         <aui:input
                 name="<%= BillingInfo.ATTRIBUTES.billing_address.name() %>"

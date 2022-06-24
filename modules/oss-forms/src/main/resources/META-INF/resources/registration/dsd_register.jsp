@@ -191,12 +191,16 @@
 
     validateFirstStep = function() {
 
+        if (getCurrentStep("<portlet:namespace />fm") > 1) return true;
+
         let FIRST_STEP_ERROR_MESSAGE = '<liferay-ui:message key="dsd.registration.step1.error"/>';
         let FIRST_STEP_ERROR_MESSAGE_PARENT_MISSING = '<liferay-ui:message key="dsd.registration.step1.error.missing.parent"/>';
         let errMessage = DsdRegistrationFormsUtil.validateFirstStep(FIRST_STEP_ERROR_MESSAGE, FIRST_STEP_ERROR_MESSAGE_PARENT_MISSING);
         if (errMessage) {
             alert(errMessage);
         }
+        registerOther();
+
         return errMessage == null;
     }
 
@@ -213,10 +217,19 @@
     }
 
     registerOther = function (){
-        let registerOther = $(document.getElementById("<portlet:namespace />registration_other"))[0].checked;
-        $(document.getElementById("<portlet:namespace />first_name"))[0].disabled = !registerOther;
-        $(document.getElementById("<portlet:namespace />last_name"))[0].disabled = !registerOther;
-        $(document.getElementById("<portlet:namespace />email"))[0].disabled = !registerOther;
+        let registerOther = document.getElementById("<portlet:namespace />registration_other").checked;
+        let firstName = document.getElementById("<portlet:namespace />first_name");
+        let lastName = document.getElementById("<portlet:namespace />last_name");
+        let email = document.getElementById("<portlet:namespace />email");
+        firstName.disabled = !registerOther;
+        lastName.disabled = !registerOther;
+        email.disabled = !registerOther;
+
+        if (!registerOther){
+            firstName.value = firstName.getAttribute('original_value');
+            lastName.value = lastName.getAttribute('original_value');
+            email.value = email.getAttribute('original_value');
+        }
     }
 
     $(document).ready(function() {
