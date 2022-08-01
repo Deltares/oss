@@ -1,13 +1,13 @@
 {
 	"devDependencies": {
-		"minimatch": "^5.1.0",
-		"lodash": "^4.17.21",
-		"diff": "^5.1.0",
-		"lodash.template": "^4.5.0",
 		"bl": "^5.0.0",
+		"diff": "^5.1.0",
 		"gulp": "^4.0.2",
 		"liferay-theme-deps-7.1": "8.2.4",
-		"liferay-theme-tasks": "11.4.0"
+		"liferay-theme-tasks": "11.4.0",
+		"lodash": "^4.17.21",
+		"lodash.template": "^4.5.0",
+		"minimatch": "^5.1.0"
 	},
 	"keywords": [
 		"liferay-theme"
@@ -29,5 +29,8 @@
 		"type": "git",
 		"url": "git@github.com:Deltares/oss.git"
 	},
-	"license": "GPL-3.0-only"
+	"license": "GPL-3.0-only",
+	"dependencies": {
+		"node-sass": "^7.0.1"
+	}
 }

@@ -27,5 +27,8 @@
 		"type": "git",
 		"url": "git@github.com:Deltares/oss.git"
 	},
-	"license": "GPL-3.0-only"
+	"license": "GPL-3.0-only",
+	"dependencies": {
+		"node-sass": "^7.0.1"
+	}
 }
