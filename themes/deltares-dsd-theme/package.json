@@ -2,10 +2,10 @@
 	"devDependencies": {
 		"bl": ">=1.2.3",
 		"gulp": "^4.0.2",
-		"liferay-theme-deps-7.1": "8.2.3",
-		"liferay-theme-tasks": "^10.4.0",
-		"lodash.template": ">=4.5.0",
-		"yargs-parser": ">=13.1.2"
+		"liferay-theme-deps-7.1": "8.2.4",
+		"liferay-theme-tasks": "^11.4.0",
+		"lodash.template": "^4.5.0",
+		"yargs-parser": "^21.0.1"
 	},
 	"keywords": [
 		"liferay-theme"
@@ -14,7 +14,10 @@
 		"baseTheme": "styled",
 		"screenshot": "",
 		"templateLanguage": "ftl",
-		"version": "7.1"
+		"version": "7.1",
+		"sassOptions": {
+			"dartSass": false
+		}
 	},
 	"main": "package.json",
 	"name": "deltares-dsd-theme",
