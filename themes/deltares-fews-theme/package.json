@@ -3,8 +3,8 @@
 		"bl": "^5.0.0",
 		"diff": "^5.1.0",
 		"gulp": "^4.0.2",
-		"liferay-theme-deps-7.1": "8.2.4",
-		"liferay-theme-tasks": "11.4.0",
+		"liferay-theme-deps-7.1": "*",
+		"liferay-theme-tasks": "*",
 		"lodash": "^4.17.21",
 		"lodash.template": "^4.5.0",
 		"minimatch": "^5.1.0"
@@ -16,10 +16,7 @@
 		"baseTheme": "styled",
 		"screenshot": "",
 		"templateLanguage": "ftl",
-		"version": "7.1",
-		"sassOptions": {
-			"dartSass": false
-		}
+		"version": "7.1"
 	},
 	"main": "package.json",
 	"name": "deltares-fews-theme",
@@ -29,8 +26,5 @@
 		"type": "git",
 		"url": "git@github.com:Deltares/oss.git"
 	},
-	"license": "GPL-3.0-only",
-	"dependencies": {
-		"node-sass": "^7.0.1"
-	}
+	"license": "GPL-3.0-only"
 }
