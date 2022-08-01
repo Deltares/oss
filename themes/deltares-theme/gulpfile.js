@@ -5,7 +5,7 @@
  */
 
 'use strict';
-const sass = require('gulp-sass')(require('sass'));
+
 var gulp = require('gulp');
 var liferayThemeTasks = require('liferay-theme-tasks');
 
