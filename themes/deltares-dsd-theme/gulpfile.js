@@ -12,3 +12,4 @@ var liferayThemeTasks = require('liferay-theme-tasks');
 liferayThemeTasks.registerTasks({
 	gulp,
 });
+const sass = require('gulp-sass')(require('node-sass'));
