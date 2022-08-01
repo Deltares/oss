@@ -2,8 +2,8 @@
 	"devDependencies": {
 		"bl": ">=1.2.3",
 		"gulp": "^4.0.2",
-		"liferay-theme-deps-7.1": "*",
-		"liferay-theme-tasks": "*",
+		"liferay-theme-deps-7.1": "8.2.4",
+		"liferay-theme-tasks": "10.5.3",
 		"lodash.template": "^4.5.0",
 		"yargs-parser": "^21.0.1"
 	},
