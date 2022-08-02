@@ -78,7 +78,7 @@ DsdAdminFormsUtil = {
                         } else {
                             CommonFormsUtil.startProgressMonitor(namespace);
                             CommonFormsUtil.setRunningProcess(namespace, setInterval(function () {
-                                CommonFormsUtil.callUpdateProgressRequest(resourceUrl, namespace, jsonResponse.id)
+                                CommonFormsUtil.callUpdateProgressRequest(resourceUrl, namespace, jsonResponse.id, 'downloadRegistrations.csv')
                             }, 1000));
                         }
                     } else {

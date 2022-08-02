@@ -11,7 +11,7 @@ OssFormsUtil = {
 
         if (siteId != null && siteId !== ''){
             resourceUrl = resourceUrl + '&' + namespace + 'siteId=' + siteId;
-            this.callOssAdminResource(resourceUrl, namespace, "deleteBannedUsers", "No Banned users found!")
+            this.callOssAdminResource(resourceUrl, namespace, "deleteBannedUsers", "No Banned users found!", "deleteBannedUsers.log")
         } else {
             CommonFormsUtil.writeInfo(namespace,'Please enter a valid articleId of Event or Registration');
         }
@@ -27,7 +27,7 @@ OssFormsUtil = {
             return;
         }
         resourceUrl = resourceUrl + '&' + namespace + 'disabledTime=' + new Date(disabledTime).getTime();
-        this.callOssAdminResource(resourceUrl, namespace, "downloadDisabledUsers", "No disabled users found!");
+        this.callOssAdminResource(resourceUrl, namespace, "downloadDisabledUsers", "No disabled users found!", "disabledUsers.csv");
     },
 
     deleteUsers: function(resourceUrl, namespace){
@@ -63,22 +63,27 @@ OssFormsUtil = {
                 //We do it different here because we are posting from a FORM
                 complete : function(response, status, xhr) {
                     if (xhr.responseText === undefined || xhr.responseText === ''){
-                        // POST does not return response.
-                        CommonFormsUtil.startProgressMonitor(namespace);
-                        CommonFormsUtil.setRunningProcess(namespace, setInterval(function(){
-                            CommonFormsUtil.callUpdateProgressRequest(resourceUrl, namespace, 'none')
-                        }, 1000));
-                    } else {
-                        let statusMsg = JSON.parse(xhr.responseText);
                         CommonFormsUtil.stopProgressMonitor(namespace)
-                        CommonFormsUtil.writeError(namespace, statusMsg.status + ':' + statusMsg.message);
+                        CommonFormsUtil.writeError(namespace, 'Error: internal server error.');
+                    } else {
+                        let jsonResponse = JSON.parse(xhr.responseText);
+                        if (jsonResponse.status === 'nodata'){
+                            CommonFormsUtil.writeInfo("No data found for request");
+                        } else if (jsonResponse.status === 'error'){
+                            CommonFormsUtil.writeError(namespace, jsonResponse.status + ': ' + jsonResponse.message);
+                        } else {
+                            CommonFormsUtil.startProgressMonitor(namespace);
+                            CommonFormsUtil.setRunningProcess(namespace, setInterval(function () {
+                                CommonFormsUtil.callUpdateProgressRequest(resourceUrl, namespace, jsonResponse.id, 'deleteUsers.log')
+                            }, 1000));
+                        }
                     }
                 }
             }
         });
     },
 
-    callOssAdminResource : function (resourceUrl, namespace, action, notfoundMessage){
+    callOssAdminResource : function (resourceUrl, namespace, action, notfoundMessage, downloadFileName){
 
         CommonFormsUtil.setActionButtons(['deleteBannedUsersButton', 'downloadDisabledButton', 'deleteUsersButton']);
         CommonFormsUtil.initProgressBar(namespace);
@@ -102,7 +107,7 @@ OssFormsUtil = {
                         } else {
                             CommonFormsUtil.startProgressMonitor(namespace);
                             CommonFormsUtil.setRunningProcess(namespace, setInterval(function () {
-                                CommonFormsUtil.callUpdateProgressRequest(resourceUrl, namespace, jsonResponse.id)
+                                CommonFormsUtil.callUpdateProgressRequest(resourceUrl, namespace, jsonResponse.id, downloadFileName)
                             }, 1000));
                         }
                     } else {
