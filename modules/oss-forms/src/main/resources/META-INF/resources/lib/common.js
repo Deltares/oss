@@ -71,7 +71,7 @@ CommonFormsUtil = {
             }).render();
         }
     },
-    callUpdateProgressRequest : function (resourceUrl, namespace, id){
+    callUpdateProgressRequest : function (resourceUrl, namespace, id, downloadFileName){
 
         let A = new AUI();
         A.io.request(resourceUrl + '&' + namespace + 'action=updateStatus' + '&' + namespace + 'id=' + id, {
@@ -84,7 +84,7 @@ CommonFormsUtil = {
                         CommonFormsUtil.writeError(namespace, xhr.status + ':' + xhr.responseText);
                     } else if(xhr.status === 204){
                         CommonFormsUtil.stopProgressMonitor(namespace);
-                        CommonFormsUtil.writeInfo(namespace,"204: No registrations found!");
+                        CommonFormsUtil.writeInfo(namespace,"204: No records found!");
                     } else if (xhr.status === 200){
                         let responseData = this.get('responseData');
                         let statusMsg = JSON.parse(responseData);
@@ -92,7 +92,7 @@ CommonFormsUtil = {
                             CommonFormsUtil.stopProgressMonitor(namespace);
                         } else if (statusMsg.status === 'available'){
                             CommonFormsUtil.stopProgressMonitor(namespace);
-                            CommonFormsUtil.callDownloadLogFileRequest(resourceUrl, namespace, id);
+                            CommonFormsUtil.callDownloadLogFileRequest(resourceUrl, namespace, id, downloadFileName);
                         } else {
                             CommonFormsUtil.updateProgressBar(namespace, statusMsg);
                         }
@@ -119,7 +119,7 @@ CommonFormsUtil = {
         });
 
     },
-    callDownloadLogFileRequest : function (resourceUrl, namespace, id){
+    callDownloadLogFileRequest : function (resourceUrl, namespace, id, downloadFileName){
         let A = new AUI();
         A.io.request(resourceUrl + '&' + namespace + 'action=downloadLog' + '&' + namespace + 'id=' + id, {
             on : {
@@ -128,7 +128,7 @@ CommonFormsUtil = {
                     if (xhr.status !== 200){
                         CommonFormsUtil.writeError(namespace, xhr.responseText);
                     } else {
-                        CommonFormsUtil.saveAs([responseData], "oss-admin-download.csv");
+                        CommonFormsUtil.saveAs([responseData], downloadFileName);
                     }
                 },
                 failure : function(response, status, xhr) {
