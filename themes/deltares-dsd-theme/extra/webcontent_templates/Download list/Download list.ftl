@@ -44,8 +44,7 @@
                 </#if>
 
                     <#if buttonDisable >
-                        <a href="#" data-article-id="${download.getArticleId()}"
-                           class="btn-lg btn-primary disabled"
+                        <a class="btn-lg btn-primary disabled"
                            role="button" aria-pressed="true" style="color:#fff">
                         ${buttonText}
                     </a>
