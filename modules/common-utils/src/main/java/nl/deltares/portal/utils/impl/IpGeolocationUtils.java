@@ -38,7 +38,7 @@ public class IpGeolocationUtils implements GeoIpUtils {
         API_KEY = PropsUtil.get("ipgeolocation.api.key");
 
         active = API_URL != null && API_KEY != null;
-        LOG.info("Initialised SanctionCheckUtils with properties: " + API_URL + API_KEY);
+        LOG.info("Initialised IpGeolocationUtils with properties: " + API_URL + API_KEY);
 
     }
 
