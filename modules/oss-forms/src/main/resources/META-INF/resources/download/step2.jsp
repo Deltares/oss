@@ -28,6 +28,7 @@
                         name="<%= KeycloakUtils.ATTRIBUTES.first_name.name() %>"
                         label="registrationform.firstname"
                         value="<%= user.getFirstName() %>"
+                        original_value="<%= user.getFirstName() %>"
                         disabled="true">
                     <aui:validator name="required">
                                 function () {
@@ -41,6 +42,7 @@
                         name="<%= KeycloakUtils.ATTRIBUTES.last_name.name() %>"
                         label="registrationform.lastname"
                         value="<%= user.getLastName() %>"
+                        original_value="<%= user.getLastName() %>"
                         disabled="true">
                     <aui:validator name="required">
                                 function () {
@@ -57,6 +59,7 @@
                         name="<%= KeycloakUtils.ATTRIBUTES.email.name() %>"
                         label="registrationform.email"
                         value="<%= user.getEmailAddress() %>"
+                        original_value="<%= user.getEmailAddress() %>"
                         disabled="true">
                     <aui:validator name="required">
                         function () {
