@@ -107,7 +107,7 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
     private void unsetStatusFromProcessing(User user, long downloadId) {
         try {
             final Map<String, Object> shareInfo = new HashMap<>();
-            shareInfo.put("id", -8);
+            shareInfo.put("id", -1);
             downloadUtils.registerDownload(user, downloadRequest.getGroupId(), downloadId, null, shareInfo, Collections.emptyMap());
         } catch (PortalException e) {
             LOG.warn("Error unsetting direct download url: " + e.getMessage());
