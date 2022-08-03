@@ -38,7 +38,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
 
     private final long maxProcessingTime = TimeUnit.MINUTES.toMillis(10);
 
-    public enum DOWNLOAD_STATUS {payment_pending, available, expired, unknown, invalid, processing}
+    public enum DOWNLOAD_STATUS {payment_pending, available, expired, none, processing}
 
     private final Document DUMMY;
     @SuppressWarnings("FieldCanBeLocal")
@@ -265,7 +265,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         final HashMap<String, Object> shareInfo = new HashMap<>();
         shareInfo.put("url", directDownloadUrl);
         shareInfo.put("expiration", new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(8)));
-        shareInfo.put("id", -8);
+        shareInfo.put("id", -1);
         registerDownload(user, groupId, downloadId, filePath, shareInfo, userAttributes);
 
     }
@@ -307,7 +307,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
             if (shareId != null) {
                 userDownload.setShareId((int) shareId);
             } else {
-                userDownload.setShareId(-8);
+                userDownload.setShareId(-1);
             }
             final Object url = shareInfo.get("url");
             if (url != null) {
@@ -449,11 +449,11 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
 
     @Override
     public String getDownloadStatus(Download download, User user) {
-        if (user == null || user.isDefaultUser()) return DOWNLOAD_STATUS.unknown.name();
+        if (user == null || user.isDefaultUser()) return DOWNLOAD_STATUS.none.name();
 
         nl.deltares.oss.download.model.Download dbDownload = DownloadLocalServiceUtil.fetchUserDownload(
                 download.getGroupId(), user.getUserId(), Long.parseLong(download.getArticleId()));
-        if (dbDownload == null) return DOWNLOAD_STATUS.unknown.name();
+        if (dbDownload == null) return DOWNLOAD_STATUS.none.name();
 
         if (dbDownload.getShareId() == -9) return DOWNLOAD_STATUS.processing.name();
         if (dbDownload.getShareId() == -1 && download.isBillingRequired()) return DOWNLOAD_STATUS.payment_pending.name();
@@ -465,7 +465,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
             if (isExpired(dbDownload)) return DOWNLOAD_STATUS.expired.name();
             return DOWNLOAD_STATUS.available.name();
         }
-        return DOWNLOAD_STATUS.invalid.name();
+        return DOWNLOAD_STATUS.none.name();
     }
 
     private boolean isTimedOut(nl.deltares.oss.download.model.Download dbDownload){
