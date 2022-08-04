@@ -246,6 +246,7 @@
                 </#if>
                 <div class="presentation_title">
                     <strong>${presentation.getTitle()}</strong>
+                </div>
             </a>
             <#if presentation.getPresenter() != "" >
                 <div>
