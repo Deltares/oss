@@ -10,7 +10,7 @@ import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
 import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.tableview.model.DisplayDownload;
-import nl.deltares.tableview.portlet.constants.DownloadTablePortletKeys;
+import nl.deltares.tableview.portlet.constants.TablePortletKeys;
 import nl.deltares.tableview.tasks.impl.DeletedSelectedDownloadsRequest;
 import nl.deltares.tableview.tasks.impl.ExportTableRequest;
 import nl.deltares.tableview.tasks.impl.PaidSelectedDownloadsRequest;
@@ -38,13 +38,13 @@ import java.util.TimeZone;
         property = {
                 "com.liferay.portlet.display-category=OSS-table",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
-                "com.liferay.portlet.header-portlet-javascript=/lib/tableview.js",
+                "com.liferay.portlet.header-portlet-javascript=/lib/downloadtableview.js",
                 "com.liferay.portlet.header-portlet-javascript=/lib/common.js",
                 "com.liferay.portlet.instanceable=true",
                 "javax.portlet.display-name=DownloadTable",
                 "javax.portlet.init-param.template-path=/",
                 "javax.portlet.init-param.view-template=/downloadsTable.jsp",
-                "javax.portlet.name=" + DownloadTablePortletKeys.DOWNLOADTABLE,
+                "javax.portlet.name=" + TablePortletKeys.DOWNLOADTABLE,
                 "javax.portlet.resource-bundle=content.Language",
                 "javax.portlet.security-role-ref=power-user,user"
         },

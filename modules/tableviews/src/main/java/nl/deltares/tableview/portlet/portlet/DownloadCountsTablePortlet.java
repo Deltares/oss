@@ -14,7 +14,7 @@ import nl.deltares.portal.model.impl.Download;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.tableview.model.DisplayDownloadCount;
-import nl.deltares.tableview.portlet.constants.DownloadTablePortletKeys;
+import nl.deltares.tableview.portlet.constants.TablePortletKeys;
 import nl.deltares.tableview.tasks.impl.DeletedSelectedDownloadCountsRequest;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
@@ -37,13 +37,13 @@ import java.util.*;
         property = {
                 "com.liferay.portlet.display-category=OSS-table",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
-                "com.liferay.portlet.header-portlet-javascript=/lib/countstableview.js",
+                "com.liferay.portlet.header-portlet-javascript=/lib/downloadcountstableview.js",
                 "com.liferay.portlet.header-portlet-javascript=/lib/common.js",
                 "com.liferay.portlet.instanceable=true",
                 "javax.portlet.display-name=DownloadCountsTable",
                 "javax.portlet.init-param.template-path=/",
                 "javax.portlet.init-param.view-template=/downloadCountsTable.jsp",
-                "javax.portlet.name=" + DownloadTablePortletKeys.DOWNLOADCOUNTTABLE,
+                "javax.portlet.name=" + TablePortletKeys.DOWNLOADCOUNTTABLE,
                 "javax.portlet.resource-bundle=content.Language",
                 "javax.portlet.security-role-ref=power-user,user"
         },
