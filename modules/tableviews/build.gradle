@@ -18,6 +18,7 @@ dependencies {
 
 	compileOnly project(":modules:common-utils")
 	compileOnly project(":modules:download:download-api")
+	compileOnly project(":modules:registration-service:registration-service-api")
 
 	cssBuilder group: "com.liferay", name: "com.liferay.css.builder", version: "3.0.2"
 }

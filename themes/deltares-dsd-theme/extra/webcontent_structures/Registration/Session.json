@@ -62,12 +62,8 @@
         }
       ],
       "predefinedValue": {
-        "nl_NL": [
-          ""
-        ],
-        "en_US": [
-          ""
-        ]
+        "nl_NL": [],
+        "en_US": []
       },
       "style": {
         "nl_NL": "",
@@ -410,12 +406,8 @@
             }
           ],
           "predefinedValue": {
-            "nl_NL": [
-              ""
-            ],
-            "en_US": [
-              ""
-            ]
+            "nl_NL": [],
+            "en_US": []
           },
           "style": {
             "nl_NL": "",
@@ -529,7 +521,7 @@
         "en_US": "Has presentations"
       },
       "predefinedValue": {
-        "nl_NL": "false",
+        "nl_NL": false,
         "en_US": false
       },
       "style": {
@@ -544,6 +536,33 @@
       "indexType": "keyword",
       "localizable": false,
       "name": "hasPresentations",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "checkbox"
+    },
+    {
+      "label": {
+        "nl_NL": "Hidden",
+        "en_US": "Hidden"
+      },
+      "predefinedValue": {
+        "nl_NL": false,
+        "en_US": false
+      },
+      "style": {
+        "nl_NL": "",
+        "en_US": ""
+      },
+      "tip": {
+        "nl_NL": "Use this to allow session to be hidden from the program list.",
+        "en_US": "Use this to allow session to be hidden from the program list."
+      },
+      "dataType": "boolean",
+      "indexType": "keyword",
+      "localizable": false,
+      "name": "Hidden",
       "readOnly": false,
       "repeatable": false,
       "required": false,
