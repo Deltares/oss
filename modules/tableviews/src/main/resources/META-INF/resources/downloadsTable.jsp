@@ -17,7 +17,7 @@
 %>
 <aui:input name="runningProcess" type="hidden"/>
 <span id="<portlet:namespace/>group-message-block"></span>
-<aui:fieldset label="table.portlet.title">
+<aui:fieldset label="table.download.title">
 
     <portlet:renderURL var="viewURL">
         <portlet:param name="mvcPath" value="/downloadsTable.jsp" />
