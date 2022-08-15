@@ -95,7 +95,7 @@ services:
       - DB_USER=keycloak
       - DB_PASSWORD=password
       - DEBUG=true
-      - DEBUG_PORT=8787
+      - DEBUG_PORT=*:8787
       - HOSTNAME=keycloak
     #    depends_on:
     #      - mariadb
