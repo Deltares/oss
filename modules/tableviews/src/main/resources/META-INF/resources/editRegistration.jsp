@@ -38,7 +38,6 @@
     </portlet:renderURL>
 
     <portlet:actionURL name="save" var="saveRegistrationURL">
-        <portlet:param name="redirectPage" value="/registrationSuccess.jsp"/>
         <portlet:param name="filterEmail" value="<%=email%>"/>
         <portlet:param name="registrationId" value="<%=registrationId%>"/>
     </portlet:actionURL>
