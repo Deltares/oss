@@ -18,6 +18,7 @@ import org.osgi.service.component.annotations.Component;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.util.*;
@@ -99,6 +100,68 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         //get response
         checkResponse(connection);
         return readAllBytes(connection);
+    }
+
+    @Override
+    public void deleteUserAvatar(String email) throws Exception {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer " + getAccessToken());
+
+        final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null);
+        //open connection
+        HttpURLConnection connection = getConnection(getAdminAvatarPath()  + '/' + userRepresentation.get("id"), "DELETE", headers);
+
+        //get response
+        checkResponse(connection);
+    }
+
+    @Override
+    public void updateUserAvatar(String email, byte[] avatar, String fileName) throws Exception {
+        String boundaryString = "----UploadAvatar";
+
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "multipart/form-data; boundary=" + boundaryString);
+        headers.put("Authorization", "Bearer " + getAccessToken());
+
+
+        final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null);
+
+        HttpURLConnection connection = getConnection(getAdminAvatarPath() + '/' + userRepresentation.get("id"), "POST", headers);
+        connection.setDoOutput(true);
+
+        OutputStream outputStream = connection.getOutputStream();
+        BufferedWriter httpRequestBodyWriter =
+                new BufferedWriter(new OutputStreamWriter(outputStream));
+
+        // Include the section to describe the file
+        httpRequestBodyWriter.write("\n--" + boundaryString + "\n");
+        httpRequestBodyWriter.write("Content-Disposition: form-data;"
+                + "name=\"image\";"
+                + "filename=\"" + fileName + "\""
+                + "\nContent-Type: " +  URLConnection.guessContentTypeFromName(fileName) + "\n\n");
+        httpRequestBodyWriter.flush();
+
+        // Write the actual file contents
+        InputStream inputStream = new ByteArrayInputStream(avatar);
+
+        int bytesRead;
+        byte[] dataBuffer = new byte[1024];
+        while ((bytesRead = inputStream.read(dataBuffer)) != -1) {
+            outputStream.write(dataBuffer, 0, bytesRead);
+        }
+
+        outputStream.flush();
+
+        // Mark the end of the multipart http request
+        httpRequestBodyWriter.write("\n--" + boundaryString + "--\n");
+        httpRequestBodyWriter.flush();
+
+        // Close the streams
+        outputStream.close();
+        httpRequestBodyWriter.close();
+
+        //get response
+        checkResponse(connection);
     }
 
     @Override
@@ -188,22 +251,53 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         return jsonUsers.getJSONObject(0);
     }
 
-    private void fromAttributes(JSONObject jsonUser, Map<String, String> attributes) {
+    private void fromAttributes(JSONObject jsonUser, Map<String, String> attributes, boolean includeUserInfo) {
         JSONObject jsonAttributes = jsonUser.getJSONObject("attributes");
         if (jsonAttributes == null) {
             jsonAttributes = JSONFactoryUtil.createJSONObject();
             jsonUser.put("attributes", jsonAttributes);
         }
         for (ATTRIBUTES key : ATTRIBUTES.values()) {
+            if (key == ATTRIBUTES.email) continue;
+            if (key == ATTRIBUTES.first_name) continue;
+            if (key == ATTRIBUTES.last_name) continue;
             final String value = attributes.get(key.name());
             if (Validator.isNotNull(value)){
                 jsonAttributes.put(key.name(), JSONFactoryUtil.createJSONArray().put(value));
             }
         }
+
+        if (includeUserInfo){
+            final String email = attributes.get(ATTRIBUTES.email.name());
+            if (Validator.isEmailAddress(email)) jsonUser.put("email", email);
+
+            final String firstName = attributes.get(ATTRIBUTES.first_name.name());
+            if (!Validator.isBlank(firstName)) jsonUser.put("firstName", firstName);
+
+            final String lastName = attributes.get(ATTRIBUTES.last_name.name());
+            if (!Validator.isBlank(lastName)) jsonUser.put("lastName", lastName);
+        }
     }
 
+    /**
+     * Update user information, including name and email
+     *
+     */
+    @Override
+    public int updateUserProfile(String email, Map<String, String> attributes) throws Exception{
+        return updateKeycloakUser(email, attributes, true);
+    }
+
+    /**
+     * Update user attributes, do not include name and email
+     *
+     */
     @Override
     public int updateUserAttributes(String email, Map<String, String> attributes) throws Exception {
+        return updateKeycloakUser(email, attributes, false);
+    }
+
+    private int updateKeycloakUser(String email, Map<String, String> attributes, boolean includeUserInfo) throws Exception {
         //get user representation
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
@@ -215,7 +309,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         //Keycloak wraps all attributes in a json array. we need to remove this
         JSONObject userObject = getJsonObject(jsonResponse);
         if (userObject == null) return -1;
-        fromAttributes(userObject, attributes);
+        fromAttributes(userObject, attributes, includeUserInfo);
 
         //write updated user representation
         connection = getConnection(getKeycloakUsersPath() + '/' + userObject.get("id"), "PUT", headers);

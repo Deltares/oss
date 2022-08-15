@@ -27,10 +27,6 @@ public abstract class HttpClientUtils {
     /**
      * Copy an input stream to an outputstream
      *
-     * @param input
-     * @param output
-     * @return
-     * @throws IOException
      */
     public static long stream(InputStream input, OutputStream output) throws IOException {
         try (

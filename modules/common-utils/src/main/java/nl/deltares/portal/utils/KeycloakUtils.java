@@ -51,6 +51,12 @@ public interface KeycloakUtils {
 
     byte[] getUserAvatar(String email) throws Exception;
 
+    void deleteUserAvatar(String email) throws Exception;
+
+    void updateUserAvatar(String emailAddress, byte[] image, String fileName) throws Exception;
+
+    int updateUserProfile(String email, Map<String, String> attributes) throws Exception;
+
     int updateUserAttributes(String email, Map<String, String> attributes) throws Exception;
 
     Map<String, String> getUserAttributes(String email) throws Exception;
