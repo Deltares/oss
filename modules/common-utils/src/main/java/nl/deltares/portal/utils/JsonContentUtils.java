@@ -164,4 +164,12 @@ public class JsonContentUtils {
             return true;
         }
     }
+
+    public static String[] toStringArray(JSONArray languages) {
+        final String[] outputs = new String[languages.length()];
+        for (int i = 0; i < outputs.length; i++) {
+             outputs[i] = languages.getString(i);
+        }
+        return outputs;
+    }
 }
