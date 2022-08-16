@@ -8,4 +8,6 @@ public class UserProfilePortletKeys {
 	public static final String USERPROFILE =
 		"nl_deltares_useraccount_UserProfilePortlet";
 
+	public static final String USERSUBSCRIPTION =
+			"nl_deltares_useraccount_UserSubscriptionPortlet";
 }
