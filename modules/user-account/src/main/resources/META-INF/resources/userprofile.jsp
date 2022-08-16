@@ -211,7 +211,7 @@
 						<aui:select
 								name="<%=KeycloakUtils.ATTRIBUTES.org_country.name()%>"
 								type="select"
-								label="registrationform.orgcountry"
+								label="userprofileform.orgcountry"
 								value="${country}" >
 							<aui:validator name="required" />
 							<aui:validator name="minLength">2</aui:validator>
