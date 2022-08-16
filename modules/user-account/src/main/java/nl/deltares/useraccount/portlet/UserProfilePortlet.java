@@ -2,7 +2,9 @@ package nl.deltares.useraccount.portlet;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.VirtualHost;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.service.VirtualHostLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -20,6 +22,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -149,9 +152,10 @@ public class UserProfilePortlet extends MVCPortlet {
 			final String currentEmail = user.getEmailAddress();
 
 			boolean includeUserInfo = false;
-			final String email = attributes.get(KeycloakUtils.ATTRIBUTES.email.name());
-			if (!currentEmail.equals(email) && Validator.isEmailAddress(email)){
-				user.setEmailAddress(email);
+			final String newEmail = attributes.get(KeycloakUtils.ATTRIBUTES.email.name());
+			if (!currentEmail.equals(newEmail) && Validator.isEmailAddress(newEmail)){
+				user.setEmailAddress(newEmail);
+				updateEmailAllSites(actionRequest, user, currentEmail);
 				includeUserInfo = true;
 			}
 			final String firstName = attributes.get(KeycloakUtils.ATTRIBUTES.first_name.name());
@@ -176,6 +180,23 @@ public class UserProfilePortlet extends MVCPortlet {
 			SessionErrors.add(actionRequest, "update-profile-failed", e.getMessage());
 		}
 
+	}
+
+	private void updateEmailAllSites(ActionRequest actionRequest,  User user, String oldEmail) {
+
+		final List<VirtualHost> virtualHosts = VirtualHostLocalServiceUtil.getVirtualHosts(0, 10);
+		for (VirtualHost virtualHost : virtualHosts) {
+			final long companyId = virtualHost.getCompanyId();
+			if (companyId == user.getCompanyId()) continue;
+			final User otherSiteUser = UserLocalServiceUtil.fetchUserByEmailAddress(companyId, oldEmail);
+			if (otherSiteUser == null) continue;
+			otherSiteUser.setEmailAddress(user.getEmailAddress());
+			try {
+				UserLocalServiceUtil.updateUser(otherSiteUser);
+			} catch (Exception e) {
+				SessionErrors.add(actionRequest, "update-profile-failed", String.format("Failed to update user email for virtual host %s: %s", virtualHost.getHostname(), e.getMessage()));
+			}
+		}
 	}
 
 	private void updateUserAvatar(ActionRequest actionRequest, User user, byte[] image, String fileName) {
