@@ -10,6 +10,8 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.portal.model.impl.Subscription;
+import nl.deltares.portal.model.keycloak.KeycloakMailing;
+import nl.deltares.portal.model.keycloak.KeycloakUserMailing;
 import nl.deltares.portal.utils.EmailSubscriptionUtils;
 import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
@@ -74,6 +76,12 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
     public String getAdminUserMailingsPath() {
         String basePath = getKeycloakBasePath();
         return basePath + "user-mailings/admin";
+    }
+
+    @Override
+    public String getAdminMailingsPath() {
+        String basePath = getKeycloakBasePath();
+        return basePath + "mailing-provider/admin";
     }
 
     public String getAdminUsersPath() {
@@ -373,13 +381,18 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
     }
 
     @Override
-    public void subscribe(String email, String mailingId) throws Exception {
-
+    public void subscribe(String email, String mailingId, String delivery, String language) throws Exception {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getAccessToken());
-        HttpURLConnection connection = getConnection(getAdminUserMailingsPath() + "/subscriptions/" + mailingId + "?email=" + email, "PUT", headers);
+        HttpURLConnection connection = getConnection(getAdminUserMailingsPath() + "/subscriptions/" + mailingId +
+                "?email=" + email + "&delivery=" + delivery + "&language=" + language, "PUT", headers);
         checkResponse(connection);
+    }
+
+    @Override
+    public void subscribe(String email, String mailingId) throws Exception {
+        subscribe(email, mailingId, "e-mail", "en");
     }
 
     @Override
@@ -410,6 +423,52 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
             }
         });
         return isSubscribed[0];
+    }
+
+    @Override
+    public List<KeycloakMailing> getMailings() throws IOException {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + getAccessToken());
+        HttpURLConnection connection = getConnection(getAdminMailingsPath(), "GET", headers);
+        checkResponse(connection);
+        String jsonResponse = readAll(connection);
+        //Keycloak wraps all attributes in a json array. we need to remove this
+        JSONArray mailings = getJsonObjects(jsonResponse);
+
+        final ArrayList<KeycloakMailing> keycloakMailings = new ArrayList<>();
+        mailings.forEach(jsonMailing -> keycloakMailings.add(new KeycloakMailing(
+                ((JSONObject)jsonMailing).getString("id"),
+                ((JSONObject)jsonMailing).getString("name"),
+                ((JSONObject)jsonMailing).getString("description"),
+                JsonContentUtils.toStringArray((JSONArray)((JSONObject)jsonMailing).get("languages")),
+                ((JSONObject)jsonMailing).getInt("frequency"),
+                ((JSONObject)jsonMailing).getInt("delivery")
+        )));
+        return keycloakMailings;
+    }
+
+    @Override
+    public List<KeycloakUserMailing> getUserMailings(String email) throws IOException {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + getAccessToken());
+        HttpURLConnection connection = getConnection(getAdminUserMailingsPath() + "/subscriptions?email=" + email, "GET", headers);
+        checkResponse(connection);
+        String jsonResponse = readAll(connection);
+        //Keycloak wraps all attributes in a json array. we need to remove this
+        JSONArray mailings = getJsonObjects(jsonResponse);
+
+        final ArrayList<KeycloakUserMailing> keycloakUserMailings = new ArrayList<>();
+        mailings.forEach(jsonUserMailing -> keycloakUserMailings.add(new KeycloakUserMailing(
+                true,
+                ((JSONObject)jsonUserMailing).getString("id"),
+                email,
+                ((JSONObject)jsonUserMailing).getString("mailingId"),
+                ((JSONObject)jsonUserMailing).getString("language"),
+                ((JSONObject)jsonUserMailing).getInt("delivery")
+        )));
+        return keycloakUserMailings;
     }
 
     @Override

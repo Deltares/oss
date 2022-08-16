@@ -1,5 +1,9 @@
 package nl.deltares.portal.utils;
 
+import nl.deltares.portal.model.keycloak.KeycloakMailing;
+import nl.deltares.portal.model.keycloak.KeycloakUserMailing;
+
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +49,8 @@ public interface KeycloakUtils {
 
     String getAdminAvatarPath();
 
+    String getAdminMailingsPath();
+
     String getAdminUsersPath();
 
     int downloadDisabledUsers(Long after, Long before, PrintWriter writer) throws Exception;
@@ -65,11 +71,17 @@ public interface KeycloakUtils {
 
     boolean isExistingUsername(String username) throws Exception;
 
+    List<KeycloakMailing> getMailings() throws IOException;
+
+    List<KeycloakUserMailing> getUserMailings(String email) throws IOException;
+
     int registerUserLogin(String email, String siteId) throws Exception;
 
     int disableUser(String email) throws Exception;
 
     void subscribe(String emailAddress, String mailingId) throws Exception;
+
+    void subscribe(String emailAddress, String mailingId, String delivery, String language) throws Exception;
 
     void unsubscribe(String emailAddress, String mailingId) throws Exception;
 
