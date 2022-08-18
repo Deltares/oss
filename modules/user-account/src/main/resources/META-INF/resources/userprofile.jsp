@@ -1,5 +1,6 @@
 <%@ page import="java.util.Map" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
+<%@ page import="com.liferay.portal.kernel.servlet.SessionMessages" %>
 <%@ page import="nl.deltares.portal.utils.KeycloakUtils" %>
 <%@ page import="com.liferay.portal.kernel.service.UserLocalServiceUtil" %>
 <%@ page import="com.liferay.portal.kernel.exception.PortalException" %>

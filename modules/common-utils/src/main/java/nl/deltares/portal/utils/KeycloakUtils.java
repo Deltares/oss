@@ -86,4 +86,6 @@ public interface KeycloakUtils {
     void unsubscribe(String emailAddress, String mailingId) throws Exception;
 
     boolean isSubscribed(String emailAddress, List<String> mailingIds) throws Exception;
+
+    int resetPassword(String username, String currentPassword, String newPassword) throws Exception;
 }

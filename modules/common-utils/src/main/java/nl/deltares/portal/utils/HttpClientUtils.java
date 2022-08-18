@@ -2,6 +2,7 @@ package nl.deltares.portal.utils;
 
 import com.liferay.portal.kernel.cache.MultiVMPoolUtil;
 import com.liferay.portal.kernel.cache.PortalCache;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
@@ -17,6 +18,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -199,6 +201,27 @@ public abstract class HttpClientUtils {
             return null;
         }
         return PropsUtil.get(propertyKey);
+    }
+
+    public static Map<String, String> parseAccessToken(String accessToken) throws JSONException {
+        if (accessToken == null) return Collections.emptyMap();
+
+        String[] chunks = accessToken.split("\\.");
+
+        final Base64.Decoder urlDecoder = Base64.getUrlDecoder();
+        final Map<String, String> map;
+        if (chunks.length > 0) {
+            final String header = new String(urlDecoder.decode(chunks[0]));
+            map = JsonContentUtils.parseJsonToMap(header);
+            if (chunks.length >1) {
+                final String payload = new String(urlDecoder.decode(chunks[1]));
+                map.putAll(JsonContentUtils.parseJsonToMap(payload));
+            }
+            return map;
+        } else {
+            return Collections.emptyMap();
+        }
+
     }
 
 

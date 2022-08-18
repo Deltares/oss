@@ -516,6 +516,39 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         return status;
     }
 
+    @Override
+    public int resetPassword(String username, String currentPassword, String newPassword) throws Exception {
+        //get user representation
+        final String accessToken;
+        try {
+            accessToken = getAccessToken(username, currentPassword);
+        } catch (Exception e) {
+            throw new IOException("Current password invalid for user " + username);
+        }
+
+        final Map<String, String> map = parseAccessToken(accessToken);
+        String id = map.get("sub");
+
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + getAccessToken()); //Get token with enough privileges
+
+        final JSONObject credentials = JSONFactoryUtil.createJSONObject();
+        credentials.put("type", "password");
+        credentials.put("temporary", false);
+        credentials.put("value", newPassword);
+
+        //write updated user representation
+        HttpURLConnection connection = getConnection(getKeycloakUsersPath() + '/' + id + "/reset-password", "PUT", headers);
+        connection.setDoOutput(true);
+        try (Writer w = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8)) {
+            credentials.write(w);
+        }
+        //get response
+        return checkResponse(connection);
+
+    }
+
     private String getKeycloakUsersPath() {
         String basePath = getKeycloakBaseApiPath();
         return basePath + "users";
@@ -576,6 +609,33 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         }
 
         return null;
+    }
+
+    private String getAccessToken(String username, String password) throws Exception {
+
+        Map<String,String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/x-www-form-urlencoded");
+
+        try {
+            HttpURLConnection connection = getConnection(getTokenPath(), "POST", headers);
+            writePostParameters(connection, getOAuthParameters(username, password));
+            checkResponse(connection);
+            String jsonResponse = readAll(connection);
+            Map<String, String> parsedToken = JsonContentUtils.parseJsonToMap(jsonResponse);
+            return parsedToken.get("access_token");
+        } catch (IOException | JSONException e){
+            throw new Exception(String.format("Failed to get access token for user %s: %s", username, e.getMessage()));
+        }
+    }
+
+    private Map<String, String> getOAuthParameters(String username, String password) {
+        Map<String,String> pathParameters = new HashMap<>();
+        pathParameters.put("client_id", getProperty("keycloak.clientid"));
+        pathParameters.put("client_secret", getProperty("keycloak.clientsecret"));
+        pathParameters.put("grant_type", "password"); // use refresh token to close previous session
+        pathParameters.put("username", username); // use refresh token to close previous session
+        pathParameters.put("password", password); // use refresh token to close previous session
+        return pathParameters;
     }
 
     private Map<String, String> getOAuthParameters() {
