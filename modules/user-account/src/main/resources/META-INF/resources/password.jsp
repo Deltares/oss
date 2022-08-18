@@ -72,7 +72,7 @@
                         >
                             <aui:validator name="required" />
                             <aui:validator name="custom" errorMessage="passwordform.complexity">
-
+                                //TODO: make this configurable
                                 function(val, fieldNode, ruleValue) {
                                     var regex = new RegExp("(?=^.{8,}$)(?=.*\\d)(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$");
                                     return regex.test(val);
