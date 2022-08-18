@@ -152,7 +152,7 @@
 			<aui:fieldset >
 				<aui:row >
 					<aui:col width="100">
-						<aui:input label="" name="image" type="file" cssClass="button" />
+						<aui:input label="" name="image" type="file" cssClass="button btn-lg btn-primary" />
 					</aui:col>
 				</aui:row>
 				<aui:button-row>
@@ -214,8 +214,6 @@
 								type="select"
 								label="userprofileform.orgcountry"
 								value="${country}" >
-							<aui:validator name="required" />
-							<aui:validator name="minLength">2</aui:validator>
 							<aui:option value="" label ="userprofileform.select.country" />
 							<% List<Country> countries = CountryServiceUtil.getCountries(true); %>
 							<%    for (Country country : countries) { %>

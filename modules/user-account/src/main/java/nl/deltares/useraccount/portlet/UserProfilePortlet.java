@@ -154,8 +154,9 @@ public class UserProfilePortlet extends MVCPortlet {
 			boolean includeUserInfo = false;
 			final String newEmail = attributes.get(KeycloakUtils.ATTRIBUTES.email.name());
 			if (!currentEmail.equals(newEmail) && Validator.isEmailAddress(newEmail)){
-				user.setEmailAddress(newEmail);
+				checkEmailAllSites(newEmail);
 				updateEmailAllSites(actionRequest, user, currentEmail);
+				user.setEmailAddress(newEmail);
 				includeUserInfo = true;
 			}
 			final String firstName = attributes.get(KeycloakUtils.ATTRIBUTES.first_name.name());
@@ -180,6 +181,18 @@ public class UserProfilePortlet extends MVCPortlet {
 			SessionErrors.add(actionRequest, "update-profile-failed", e.getMessage());
 		}
 
+	}
+
+	private void checkEmailAllSites(String newEmail) throws PortletException {
+
+		final List<VirtualHost> virtualHosts = VirtualHostLocalServiceUtil.getVirtualHosts(0, 10);
+		for (VirtualHost virtualHost : virtualHosts) {
+			final long companyId = virtualHost.getCompanyId();
+			final User otherSiteUser = UserLocalServiceUtil.fetchUserByEmailAddress(companyId, newEmail);
+			if (otherSiteUser != null){
+				throw new PortletException(String.format("Email %s already exists for another user on site %s", newEmail, virtualHost.getHostname()));
+			}
+		}
 	}
 
 	private void updateEmailAllSites(ActionRequest actionRequest,  User user, String oldEmail) {
