@@ -10,4 +10,7 @@ public class UserProfilePortletKeys {
 
 	public static final String USERSUBSCRIPTION =
 			"nl_deltares_useraccount_UserSubscriptionPortlet";
+
+	public static final String PASSWORD =
+			"nl_deltares_useraccount_PasswordPortlet";
 }
