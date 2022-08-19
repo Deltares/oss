@@ -74,8 +74,10 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
         contextObjects.put("is_site_admin", isAdmin);
         contextObjects.put("user_signout_url", themeDisplay.getURLSignOut());
         if (keycloakUtils.isActive()) {
-            contextObjects.put("user_mailing_url", appendWithReferrer(keycloakUtils.getUserMailingPath(), themeDisplay));
-            contextObjects.put("user_account_url", appendWithReferrer(keycloakUtils.getAccountPath(), themeDisplay));
+//            contextObjects.put("user_mailing_url", appendWithReferrer(keycloakUtils.getUserMailingPath(), themeDisplay));
+//            contextObjects.put("user_account_url", appendWithReferrer(keycloakUtils.getAccountPath(), themeDisplay));
+            contextObjects.put("user_mailing_url", "/subscriptions");
+            contextObjects.put("user_account_url", "/account");
         }
         User user = themeDisplay.getUser();
         long portraitId = user.getPortraitId();
