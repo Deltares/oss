@@ -18,6 +18,16 @@
     final String emailAddress = user.getEmailAddress();
 
     boolean deltaresUser = emailAddress.endsWith("@deltares.nl");
+
+    String complexity = (String) renderRequest.getAttribute("passwordComplexity");
+    if (complexity == null) complexity = "(?=^.{8,}$)(?=.*\\d)(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$";
+    String complexityMsg = (String) renderRequest.getAttribute("passwordComplexityMsg");
+    if(complexityMsg == null) complexityMsg = "<ul>" +
+            "<li>The password length must be greater than or equal to 8</li>" +
+            "<li>The password must contain one or more uppercase characters</li>" +
+            "<li>The password must contain one or more lowercase characters</li>" +
+            "<li>The password must contain one or more numeric values</li>" +
+            "</ul>";
 %>
 <portlet:renderURL var="viewURL">
     <portlet:param name="mvcPath" value="/password.jsp"/>
@@ -71,10 +81,9 @@
                                 type="password"
                         >
                             <aui:validator name="required" />
-                            <aui:validator name="custom" errorMessage="passwordform.complexity">
-                                //TODO: make this configurable
+                            <aui:validator name="custom" errorMessage="<%=complexityMsg%>">
                                 function(val, fieldNode, ruleValue) {
-                                    var regex = new RegExp("(?=^.{8,}$)(?=.*\\d)(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$");
+                                    var regex = new RegExp("<%=complexity%>");
                                     return regex.test(val);
                                 }
                             </aui:validator>

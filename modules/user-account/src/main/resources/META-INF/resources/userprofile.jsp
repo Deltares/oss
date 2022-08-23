@@ -80,6 +80,36 @@
 					</aui:col>
 				</aui:row>
 				<aui:row>
+					<aui:col width="100">
+						<aui:input
+								name="<%= KeycloakUtils.ATTRIBUTES.email.name() %>"
+								label="userprofileform.email"
+								value="<%= user.getEmailAddress() %>"
+								disabled="true"
+						/>
+
+					</aui:col>
+				</aui:row>
+				<aui:row>
+					<aui:col width="50">
+						<aui:input
+								name="<%= KeycloakUtils.ATTRIBUTES.first_name.name() %>"
+								label="userprofileform.firstname"
+								value="<%= user.getFirstName() %>">
+							<aui:validator name="required" />
+						</aui:input>
+					</aui:col>
+					<aui:col width="50">
+						<aui:input
+								name="<%= KeycloakUtils.ATTRIBUTES.last_name.name() %>"
+								label="userprofileform.lastname"
+								value="<%= user.getLastName() %>" >
+							<aui:validator name="required" />
+						</aui:input>
+
+					</aui:col>
+				</aui:row>
+				<aui:row>
 					<aui:col width="50">
 						<aui:input
 								name="<%= KeycloakUtils.ATTRIBUTES.academicTitle.name() %>"
@@ -103,37 +133,6 @@
 								value="${jobTitle}" />
 					</aui:col>
 				</aui:row>
-				<aui:row>
-					<aui:col width="50">
-						<aui:input
-								name="<%= KeycloakUtils.ATTRIBUTES.first_name.name() %>"
-								label="userprofileform.firstname"
-								value="<%= user.getFirstName() %>">
-							<aui:validator name="required" />
-						</aui:input>
-					</aui:col>
-					<aui:col width="50">
-						<aui:input
-								name="<%= KeycloakUtils.ATTRIBUTES.last_name.name() %>"
-								label="userprofileform.lastname"
-								value="<%= user.getLastName() %>" >
-							<aui:validator name="required" />
-						</aui:input>
-
-					</aui:col>
-				</aui:row>
-				<aui:row>
-					<aui:col width="100">
-						<aui:input
-								name="<%= KeycloakUtils.ATTRIBUTES.email.name() %>"
-								label="userprofileform.email"
-								value="<%= user.getEmailAddress() %>" >
-							<aui:validator name="required" />
-							<aui:validator name="email" />
-						</aui:input>
-					</aui:col>
-				</aui:row>
-
 				<aui:button-row>
 					<aui:button type="submit" name="updateProfile" value="userprofileform.saveProfile" />
 					<aui:button type="cancel" name="cancelProfile" value="userprofileform.cancel" href="<%= viewURL %>" />
