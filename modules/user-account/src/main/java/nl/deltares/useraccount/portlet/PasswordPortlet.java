@@ -1,6 +1,8 @@
 package nl.deltares.useraccount.portlet;
 
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
@@ -9,14 +11,14 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import nl.deltares.portal.configuration.UserAccountSystemConfiguration;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.useraccount.constants.UserProfilePortletKeys;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.portlet.Portlet;
+import javax.portlet.*;
+import java.io.IOException;
 
 /**
  * @author rooij_e
@@ -40,6 +42,30 @@ public class PasswordPortlet extends MVCPortlet {
 
     @Reference
     private KeycloakUtils keycloakUtils;
+
+    private ConfigurationProvider _configurationProvider;
+
+    @Reference
+    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
+        _configurationProvider = configurationProvider;
+    }
+
+    @Override
+    public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
+
+        if (_configurationProvider != null) {
+
+            try {
+                final UserAccountSystemConfiguration systemConfiguration = _configurationProvider.getSystemConfiguration(UserAccountSystemConfiguration.class);
+                renderRequest.setAttribute("passwordComplexity", systemConfiguration.passwordComplexityRegularExpression());
+                renderRequest.setAttribute("passwordComplexityMsg", systemConfiguration.passwordComplexityMessage());
+            } catch (ConfigurationException e) {
+                SessionErrors.add(renderRequest, "update-password-failed", "Error reading configuration: " + e.getMessage());
+            }
+        }
+
+        super.render(renderRequest, renderResponse);
+    }
 
     /**
      * Save user attributes to database

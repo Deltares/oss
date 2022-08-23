@@ -1,6 +1,7 @@
 package nl.deltares.portal.constants;
 
 public class OssConstants {
+    public static final String USER_ACCOUNT_SYSTEM_CONFIGURATIONS_PID = "nl.deltares.portal.configuration.UserAccountSystemConfiguration";
     public static final String WEBINAR_SITE_CONFIGURATIONS_PID = "nl.deltares.portal.configuration.WebinarSiteConfiguration";
     public static final String DSD_SITE_CONFIGURATIONS_PID = "nl.deltares.portal.configuration.DSDSiteConfiguration";
     public static final String Download_SITE_CONFIGURATIONS_PID = "nl.deltares.portal.configuration.DownloadSiteConfiguration";
