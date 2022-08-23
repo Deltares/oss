@@ -184,6 +184,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 preferences.putAll(billing);
                 preferences.putAll(badge);
                 preferences.put("registration_time", dateTimeFormatter.format(new Date()));
+                preferences.put(KeycloakUtils.ATTRIBUTES.org_name.name(), userAttributes.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
 //            }
             try {
                 dsdSessionUtils.registerUser(user, userAttributes, registration, preferences, registrationUser);

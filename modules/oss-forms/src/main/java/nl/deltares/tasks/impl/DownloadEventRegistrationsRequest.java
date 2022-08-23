@@ -324,7 +324,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
         StringBuilder header;
         if (reproVersion){
-            header = new StringBuilder("eventTitle,registrationTitle,email,badgeName");
+            header = new StringBuilder("eventTitle,registrationTitle,email,badgeName,organization");
         } else {
             header = new StringBuilder("eventId, eventTitle,registrationId, registrationTitle,start date,topic,type,email,firstName,lastName,webinarProvider,registrationStatus,remarks");
 
@@ -333,6 +333,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 header.append(value.name());
             }
             header.append(",registration time");
+            header.append(",organization");
         }
         writer.println(header);
     }
@@ -421,6 +422,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             logger.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
         }
         writeBadgeInfo(line, userPreferences, user);
+        writeField(line, userPreferences.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
         writer.println(line);
     }
 
@@ -470,7 +472,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         writeField(line, userPreferences.get("remarks"));
         writeBillingInfo(line, userPreferences);
         writeField(line, userPreferences.get("registration_time"));
-
+        writeField(line, userPreferences.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
         if (removeMissing && dsdRegistration == null){
             deleteBrokenRegistration((Long)record.get("registrationId"));
             writeField(line, "deleted record");
