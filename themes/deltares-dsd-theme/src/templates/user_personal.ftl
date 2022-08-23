@@ -10,13 +10,13 @@
         </div>
         <div class="dropdown-content">
             <#if user_account_url?? >
-                <a class="fs-small" href="${user_account_url}" >Account</a>
+                <a class="fs-smallest" href="${user_account_url}" >Account</a>
             </#if>
             <#if user_mailing_url?? >
-                <a class="fs-small" href="${user_mailing_url}" >Subscriptions</a>
+                <a class="fs-smallest" href="${user_mailing_url}" >Subscriptions</a>
             </#if>
             <hr>
-            <a class="fs-small" href="${user_signout_url}"  >Logout</a>
+            <a class="fs-smallest" href="${user_signout_url}"  >Logout</a>
         </div>
 <#--        <#if user_avatar_url??>-->
 <#--            <img id="user-image"  src="${user_avatar_url}" hidden>-->
