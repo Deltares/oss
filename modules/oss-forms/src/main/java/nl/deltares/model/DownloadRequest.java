@@ -5,6 +5,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
 import nl.deltares.portal.model.impl.Download;
 import nl.deltares.portal.model.impl.Subscription;
+import nl.deltares.portal.model.impl.Terms;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -131,5 +132,14 @@ public class DownloadRequest {
 
     public LicenseInfo getLicenseInfo() {
         return licenseInfo;
+    }
+
+    public List<Terms> getTerms() {
+        ArrayList<Terms> terms = new ArrayList<Terms>();
+        for (Download download : downloads) {
+            final Terms downloadTerms = download.getTerms();
+            if (downloadTerms != null && !terms.contains(downloadTerms)) terms.add(downloadTerms);
+        }
+        return terms;
     }
 }
