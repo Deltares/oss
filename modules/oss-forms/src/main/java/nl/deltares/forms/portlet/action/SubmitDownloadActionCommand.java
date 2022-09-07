@@ -10,16 +10,23 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.*;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
+import nl.deltares.emails.DownloadEmail;
 import nl.deltares.model.BillingInfo;
 import nl.deltares.model.DownloadRequest;
-import nl.deltares.emails.DownloadEmail;
 import nl.deltares.model.LicenseInfo;
 import nl.deltares.portal.configuration.DownloadSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Download;
 import nl.deltares.portal.model.impl.Subscription;
-import nl.deltares.portal.utils.*;
+import nl.deltares.portal.model.impl.Terms;
+import nl.deltares.portal.utils.DownloadUtils;
+import nl.deltares.portal.utils.DsdParserUtils;
+import nl.deltares.portal.utils.EmailSubscriptionUtils;
+import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
 import nl.deltares.tasks.impl.CreateDownloadLinksRequest;
@@ -30,6 +37,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,6 +52,11 @@ import java.util.stream.Collectors;
 public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
 
     private static final String DOWNLOAD_PREFIX = "download_";
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmm");
+
+    static {
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
 
     @Override
     protected void doProcessAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
@@ -69,6 +82,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         if ("download".equals(action)) {
             if (downloadRequest.isUserInfoRequired()) {
                 Map<String, String> userAttributes = getUserAttributes(actionRequest);
+                registerAcceptedTerms(downloadRequest, userAttributes);
                 downloadRequest.setUserAttributes(userAttributes);
                 success = updateUserAttributes(actionRequest, user, userAttributes);
 
@@ -77,7 +91,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
                 success = updateSubscriptions(downloadRequest, user);
             }
 
-            if (success){
+            if (success) {
                 DownloadEmail loadedEmail = prepareDownloadEmail(actionRequest, user, downloadRequest, themeDisplay, "download");
                 success = createShareLinks(actionRequest, downloadRequest, user, loadedEmail);
             }
@@ -85,7 +99,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         } else {
             SessionErrors.add(actionRequest, "sendlink-failed", "Unsupported action " + action);
         }
-        if (success){
+        if (success) {
             SessionMessages.add(actionRequest, "sendlink-success", new String[]{action, user.getEmailAddress()});
             if (!redirect.isEmpty()) {
                 sendRedirect(actionRequest, actionResponse, redirect);
@@ -100,7 +114,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         final DataRequestManager instance = DataRequestManager.getInstance();
         DataRequest dataRequest = instance.getDataRequest(id);
         if (dataRequest != null) {
-            if (dataRequest.getStatus() == DataRequest.STATUS.running || dataRequest.getStatus() == DataRequest.STATUS.pending){
+            if (dataRequest.getStatus() == DataRequest.STATUS.running || dataRequest.getStatus() == DataRequest.STATUS.pending) {
                 SessionMessages.add(actionRequest, String.format("Download process is still running. %s", dataRequest.getStatusMessage()));
                 return false;
             }
@@ -111,11 +125,24 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             dataRequest = new CreateDownloadLinksRequest(id, user, downloadRequest, downloadUtils, loadedEmail);
         } catch (IOException e) {
             SessionErrors.add(actionRequest, String.format("Failed to create downloadLinks request for user %s : %s",
-                    user.getEmailAddress(),  e.getMessage()));
+                    user.getEmailAddress(), e.getMessage()));
             return false;
         }
         instance.addToQueue(dataRequest);
         return true;
+    }
+
+    private void registerAcceptedTerms(DownloadRequest downloadRequest, Map<String, String> userAttributes) {
+
+        List<Terms> terms = downloadRequest.getTerms();
+
+        final long now = System.currentTimeMillis();
+        final String timeStamp = dateFormat.format(new Date(now));
+
+        for (Terms term : terms) {
+            userAttributes.put(term.getTitle(), timeStamp);
+        }
+
     }
 
     private boolean updateSubscriptions(DownloadRequest downloadRequest, User user) {
@@ -184,16 +211,16 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
 
         if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LICENSETYPES.network.name()))) {
             licenseInfo.setLicenseType(LicenseInfo.LICENSETYPES.network);
-        } else if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LICENSETYPES.standalone.name()))){
+        } else if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LICENSETYPES.standalone.name()))) {
             licenseInfo.setLicenseType(LicenseInfo.LICENSETYPES.standalone);
         }
 
         if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LOCKTYPES.new_usb_dongle.name()))) {
             licenseInfo.setLockType(LicenseInfo.LOCKTYPES.new_usb_dongle);
-        } else if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LOCKTYPES.existing_usb_dongle.name()))){
+        } else if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LOCKTYPES.existing_usb_dongle.name()))) {
             licenseInfo.setLockType(LicenseInfo.LOCKTYPES.existing_usb_dongle);
             licenseInfo.setDongleNumber(ParamUtil.getString(actionRequest, LicenseInfo.ATTRIBUTES.lock_address.name()));
-        } else if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LOCKTYPES.mac_address.name()))){
+        } else if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LOCKTYPES.mac_address.name()))) {
             licenseInfo.setLockType(LicenseInfo.LOCKTYPES.mac_address);
         }
         return licenseInfo;
@@ -257,7 +284,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
     }
 
     private DownloadEmail prepareDownloadEmail(ActionRequest actionRequest, User user, DownloadRequest registrationRequest,
-                                               ThemeDisplay themeDisplay, @SuppressWarnings("SameParameterValue") String action){
+                                               ThemeDisplay themeDisplay, @SuppressWarnings("SameParameterValue") String action) {
         try {
             DownloadSiteConfiguration configuration = _configurationProvider
                     .getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
@@ -280,42 +307,45 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             return null;
         }
     }
-    private boolean sendConfirmationEmail(ActionRequest actionRequest, User user, DownloadRequest registrationRequest,
-                                          ThemeDisplay themeDisplay, @SuppressWarnings("SameParameterValue") String action) {
-        try {
 
-            DownloadSiteConfiguration configuration = _configurationProvider
-                    .getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
+//    private boolean sendConfirmationEmail(ActionRequest actionRequest, User user, DownloadRequest registrationRequest,
+//                                          ThemeDisplay themeDisplay, @SuppressWarnings("SameParameterValue") String action) {
+//        try {
+//
+//            DownloadSiteConfiguration configuration = _configurationProvider
+//                    .getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
+//
+//            if (!configuration.enableEmails()) return true;
+//
+//            ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", themeDisplay.getLocale(), getClass());
+//            DownloadEmail email = new DownloadEmail(user, resourceBundle, registrationRequest);
+//            email.setReplyToEmail(configuration.replyToEmail());
+//            email.setBCCToEmail(configuration.bccToEmail());
+//            email.setSendFromEmail(configuration.sendFromEmail());
+//            if ("download".equals(action)) {
+//                email.sendDownloadsEmail();
+//                return true;
+//            }
+//            return false;
+//
+//        } catch (Exception e) {
+//            SessionErrors.add(actionRequest, "send-email-failed", "Could not send " + action + " email for user [" + user.getEmailAddress() + "] : " + e.getMessage());
+//            LOG.error("Could not send " + action + " email for user [" + user.getEmailAddress() + "]", e);
+//            return false;
+//        }
+//    }
 
-            if (!configuration.enableEmails()) return true;
-
-            ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", themeDisplay.getLocale(), getClass());
-            DownloadEmail email = new DownloadEmail(user, resourceBundle, registrationRequest);
-            email.setReplyToEmail(configuration.replyToEmail());
-            email.setBCCToEmail(configuration.bccToEmail());
-            email.setSendFromEmail(configuration.sendFromEmail());
-            if ("download".equals(action)) {
-                email.sendDownloadsEmail();
-                return true;
-            }
-            return false;
-
-        } catch (Exception e) {
-            SessionErrors.add(actionRequest, "send-email-failed", "Could not send " + action + " email for user [" + user.getEmailAddress() + "] : " + e.getMessage());
-            LOG.error("Could not send " + action + " email for user [" + user.getEmailAddress() + "]", e);
-            return false;
-        }
-    }
     //TODO: prepare for migration to sendinblue
     private EmailSubscriptionUtils subscriptionUtils;
     private KeycloakUtils keycloakUtils;
+
     @Reference(
             unbind = "-",
             cardinality = ReferenceCardinality.MANDATORY
     )
     protected void setKeycloakUtils(KeycloakUtils keycloakUtils) {
 
-        if (keycloakUtils.isActive()){
+        if (keycloakUtils.isActive()) {
             this.keycloakUtils = keycloakUtils;
             this.subscriptionUtils = (EmailSubscriptionUtils) keycloakUtils;
         }
