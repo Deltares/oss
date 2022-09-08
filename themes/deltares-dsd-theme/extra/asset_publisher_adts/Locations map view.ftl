@@ -17,7 +17,7 @@
 
         function initMap() {
             map = new google.maps.Map(document.getElementById('${mapId}map'), {
-                zoom: 13,
+                zoom: 12,
                 disableDefaultUI: true,
                 zoomControl: true,
                 fullscreenControl: true,
@@ -48,13 +48,13 @@
             var styleControl = document.getElementById("style-selector-control");
             map.controls[google.maps.ControlPosition.TOP_LEFT].push(styleControl);
 
-            // Apply new JSON when the user chooses to hide/show features.
-            document.getElementById("hide-poi").addEventListener("click", function () {
-                map.setOptions({styles: styles["hide"]});
-            });
-            document.getElementById("show-poi").addEventListener("click", function () {
-                map.setOptions({styles: styles["default"]});
-            });
+            // // Apply new JSON when the user chooses to hide/show features.
+            // document.getElementById("hide-poi").addEventListener("click", function () {
+            //     map.setOptions({styles: styles["hide"]});
+            // });
+            // document.getElementById("show-poi").addEventListener("click", function () {
+            //     map.setOptions({styles: styles["default"]});
+            // });
 
             markers.forEach(function (jsonMarker) {
                 addMarker(jsonMarker);
@@ -70,10 +70,11 @@
         function addMarker(jsonMarker) {
 
             var contentString = '<div class="blog-page"><div class="blog-page__item clearfix">' +
-                '<div class="left-column" style="width:120px">' +
-                '    <img height=100 width=100 src="' + jsonMarker.imgUrl + '" />' +
+                '<div class="row" >   ' +
+                '<div class="col-4">' +
+                '    <img height="100%" width="100%" src="' + jsonMarker.imgUrl + '" />' +
                 '</div>'+
-                '<div class="right-column" style="margin-left: 120px; width:250px">' +
+                '<div class="col-8">' +
                 '    <div class="expert-data__content">' +
                 '        <h4 class="h1 clear-margin">' + jsonMarker.title + '</h4>'+
                 '        <p>' + jsonMarker.address + '<br>'
@@ -84,7 +85,7 @@
 
             contentString   += ('<a target="_blank" href="https://www.google.com/maps/search/?api=1&query=' + jsonMarker.latitude + ',' + jsonMarker.longitude + '">'+
                 '${languageUtil.get(locale, "dsd.theme.locations.direction")}</a> ' +
-                '</p></div></div></div></div>')
+                '</p></div></div></div></div></div>')
 
             var infowindow = new google.maps.InfoWindow({
                 content: contentString
@@ -125,23 +126,23 @@
 
     </script>
 
-    <div id="style-selector-control" class="map-control">
-        <input
-                type="radio"
-                name="show-hide"
-                id="hide-poi"
-                class="selector-control"
-                checked="checked"
-        />
-        <label for="hide-poi">Hide</label>
-        <input
-                type="radio"
-                name="show-hide"
-                id="show-poi"
-                class="selector-control"
-        />
-        <label for="show-poi">Show - POI</label>
-    </div>
+    <!--<div id="style-selector-control" class="map-control">-->
+    <!--    <input-->
+    <!--            type="radio"-->
+    <!--            name="show-hide"-->
+    <!--            id="hide-poi"-->
+    <!--            class="selector-control"-->
+    <!--            checked="checked"-->
+    <!--    />-->
+    <!--    <label for="hide-poi">Hide</label>-->
+    <!--    <input-->
+    <!--            type="radio"-->
+    <!--            name="show-hide"-->
+    <!--            id="show-poi"-->
+    <!--            class="selector-control"-->
+    <!--    />-->
+    <!--    <label for="show-poi">Show - POI</label>-->
+    <!--</div>-->
     <div id="${mapId}map" >
         <script>
             <#list entries as curentry>
