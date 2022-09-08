@@ -14,12 +14,14 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.*;
 import nl.deltares.model.BadgeInfo;
 import nl.deltares.model.BillingInfo;
+import nl.deltares.model.DownloadRequest;
 import nl.deltares.model.RegistrationRequest;
 import nl.deltares.emails.DsdEmail;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
+import nl.deltares.portal.model.impl.Terms;
 import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -44,7 +46,13 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
     private static final String CHILD_PREFIX = "child_registration_";
 
     private static final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmm");
 
+    static {
+        final TimeZone gmt = TimeZone.getTimeZone("GMT");
+        dateTimeFormatter.setTimeZone(gmt);
+        dateFormat.setTimeZone(gmt);
+    }
     @Override
     protected void doProcessAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
         String redirect = ParamUtil.getString(actionRequest, "redirect");
@@ -87,6 +95,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 }
                 Map<String, String> userAttributes = getUserAttributes(actionRequest);
                 if (success) {
+                    registerAcceptedTerms(userAttributes);
                     success = updateUserAttributes(actionRequest, user, userAttributes);
                 }
                 if (success){
@@ -116,6 +125,12 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             }
         }
 
+    }
+
+    private void registerAcceptedTerms(Map<String, String> userAttributes) {
+        final long now = System.currentTimeMillis();
+        final String timeStamp = dateFormat.format(new Date(now));
+        userAttributes.put("general-course-conditions-deltares", timeStamp);
     }
 
     private boolean isRegisterSomeoneElse(ActionRequest actionRequest) {
