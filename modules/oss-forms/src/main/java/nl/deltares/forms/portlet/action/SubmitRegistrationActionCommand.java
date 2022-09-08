@@ -130,7 +130,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
     private void registerAcceptedTerms(Map<String, String> userAttributes) {
         final long now = System.currentTimeMillis();
         final String timeStamp = dateFormat.format(new Date(now));
-        userAttributes.put("general-course-conditions-deltares", timeStamp);
+        userAttributes.put("terms.general-course-conditions-deltares", timeStamp);
     }
 
     private boolean isRegisterSomeoneElse(ActionRequest actionRequest) {
