@@ -274,6 +274,12 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
                 jsonAttributes.put(key.name(), JSONFactoryUtil.createJSONArray().put(value));
             }
         }
+        //add terms
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            if (entry.getKey().startsWith("terms.")){
+                jsonAttributes.put(entry.getKey(), entry.getValue());
+            }
+        }
 
         if (includeUserInfo){
             final String email = attributes.get(ATTRIBUTES.email.name());

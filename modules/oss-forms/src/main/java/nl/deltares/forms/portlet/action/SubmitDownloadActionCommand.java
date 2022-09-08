@@ -140,7 +140,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         final String timeStamp = dateFormat.format(new Date(now));
 
         for (Terms term : terms) {
-            userAttributes.put(term.getTitle(), timeStamp);
+            userAttributes.put("terms." + term.getTitle(), timeStamp);
         }
 
     }
