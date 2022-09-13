@@ -1,20 +1,24 @@
 buildscript {
 	dependencies {
-		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.workspace", version: "2.0.7"
-		classpath group: "net.saliman", name: "gradle-properties-plugin", version: "1.5.0"
+		classpath(group: "biz.aQute.bnd", name: "biz.aQute.bnd", version: "5.2.0")
+		classpath(group: "com.liferay", name: "com.liferay.gradle.plugins.workspace", version: "3.4.19") {
+			exclude(group: "biz.aQute.bnd", module: "biz.aQute.bnd")
+		}
+		classpath group: "net.saliman", name: "gradle-properties-plugin", version: "1.5.1"
 	}
 
 	repositories {
 		maven {
 			url "https://repository-cdn.liferay.com/nexus/content/groups/public"
-			url "https://plugins.gradle.org/m2/"
+		}
+		maven {
+			url "https://repository.liferay.com/nexus/content/groups/public"
 		}
 		mavenCentral()
-		jcenter()
+		mavenLocal()
 	}
 }
 
 apply plugin: "net.saliman.properties"
 apply plugin: "com.liferay.workspace"
-include 'integration-tests'
-
+//include( 'integration-tests')
