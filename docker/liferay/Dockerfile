@@ -1,4 +1,4 @@
-FROM liferay/portal:7.4.3.41-ga41
+FROM liferay/dxp:7.4.13-u41
 
 MAINTAINER Erik de Rooij <erik.derooij@deltares.nl>
 
@@ -10,7 +10,7 @@ RUN chmod a+x /etc/liferay/wait-for-it.sh
 RUN chown -R liferay:liferay /opt/liferay/data/document_library
 
 COPY ["resources/keystore.jks", "/opt/liferay/data/keystore.jks"]
-COPY ["resources/activation-key-digitalenterprisedevelopment-7.1-developeractivationkeys.xml", "/opt/liferay/osgi/modules/activation-key-digitalenterprisedevelopment-7.1-developeractivationkeys.xml"]
+COPY ["resources/activation-key-dxpdevelopment-7.4-developeractivationkeys.xml", "/opt/liferay/osgi/modules/activation-key-dxpdevelopment-7.4-developeractivationkeys.xml"]
 
 USER liferay
 
