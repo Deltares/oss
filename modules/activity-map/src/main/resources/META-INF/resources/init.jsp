@@ -8,9 +8,8 @@
 
 <liferay-theme:defineObjects />
 
+<portlet:defineObjects />
 <%
     String googleMapsApiKey = PropsUtil.get("google.maps.api.key");
     String logsJson = (String) request.getAttribute("logsJson");
 %>
-
-<portlet:defineObjects />
