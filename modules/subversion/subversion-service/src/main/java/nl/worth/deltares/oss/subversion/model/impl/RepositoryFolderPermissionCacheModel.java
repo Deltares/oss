@@ -14,11 +14,9 @@
 
 package nl.worth.deltares.oss.subversion.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -32,26 +30,25 @@ import nl.worth.deltares.oss.subversion.model.RepositoryFolderPermission;
 /**
  * The cache model class for representing RepositoryFolderPermission in entity cache.
  *
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
  * @generated
  */
-@ProviderType
 public class RepositoryFolderPermissionCacheModel
 	implements CacheModel<RepositoryFolderPermission>, Externalizable {
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
+	public boolean equals(Object object) {
+		if (this == object) {
 			return true;
 		}
 
-		if (!(obj instanceof RepositoryFolderPermissionCacheModel)) {
+		if (!(object instanceof RepositoryFolderPermissionCacheModel)) {
 			return false;
 		}
 
 		RepositoryFolderPermissionCacheModel
 			repositoryFolderPermissionCacheModel =
-				(RepositoryFolderPermissionCacheModel)obj;
+				(RepositoryFolderPermissionCacheModel)object;
 
 		if (permissionId == repositoryFolderPermissionCacheModel.permissionId) {
 			return true;

@@ -14,43 +14,28 @@
 
 package nl.worth.deltares.oss.subversion.model;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.portal.kernel.model.ModelWrapper;
-import com.liferay.portal.kernel.service.ServiceContext;
-
-import java.io.Serializable;
+import com.liferay.portal.kernel.model.wrapper.BaseModelWrapper;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * <p>
  * This class is a wrapper for {@link Repository}.
  * </p>
  *
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
  * @see Repository
  * @generated
  */
-@ProviderType
-public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
+public class RepositoryWrapper
+	extends BaseModelWrapper<Repository>
+	implements ModelWrapper<Repository>, Repository {
 
 	public RepositoryWrapper(Repository repository) {
-		_repository = repository;
-	}
-
-	@Override
-	public Class<?> getModelClass() {
-		return Repository.class;
-	}
-
-	@Override
-	public String getModelClassName() {
-		return Repository.class.getName();
+		super(repository);
 	}
 
 	@Override
@@ -121,15 +106,8 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	}
 
 	@Override
-	public Object clone() {
-		return new RepositoryWrapper((Repository)_repository.clone());
-	}
-
-	@Override
-	public int compareTo(
-		nl.worth.deltares.oss.subversion.model.Repository repository) {
-
-		return _repository.compareTo(repository);
+	public Repository cloneWithOriginalValues() {
+		return wrap(model.cloneWithOriginalValues());
 	}
 
 	/**
@@ -139,7 +117,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public String getClassName() {
-		return _repository.getClassName();
+		return model.getClassName();
 	}
 
 	/**
@@ -149,7 +127,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public long getClassNameId() {
-		return _repository.getClassNameId();
+		return model.getClassNameId();
 	}
 
 	/**
@@ -159,7 +137,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public long getClassPK() {
-		return _repository.getClassPK();
+		return model.getClassPK();
 	}
 
 	/**
@@ -169,7 +147,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public long getCompanyId() {
-		return _repository.getCompanyId();
+		return model.getCompanyId();
 	}
 
 	/**
@@ -179,12 +157,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public Date getCreatedDate() {
-		return _repository.getCreatedDate();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _repository.getExpandoBridge();
+		return model.getCreatedDate();
 	}
 
 	/**
@@ -194,7 +167,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public long getGroupId() {
-		return _repository.getGroupId();
+		return model.getGroupId();
 	}
 
 	/**
@@ -204,7 +177,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public Date getModifiedDate() {
-		return _repository.getModifiedDate();
+		return model.getModifiedDate();
 	}
 
 	/**
@@ -214,12 +187,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public long getPrimaryKey() {
-		return _repository.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _repository.getPrimaryKeyObj();
+		return model.getPrimaryKey();
 	}
 
 	/**
@@ -229,7 +197,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public long getRepositoryId() {
-		return _repository.getRepositoryId();
+		return model.getRepositoryId();
 	}
 
 	/**
@@ -239,42 +207,17 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public String getRepositoryName() {
-		return _repository.getRepositoryName();
-	}
-
-	@Override
-	public int hashCode() {
-		return _repository.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _repository.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _repository.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _repository.isNew();
+		return model.getRepositoryName();
 	}
 
 	@Override
 	public void persist() {
-		_repository.persist();
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_repository.setCachedModel(cachedModel);
+		model.persist();
 	}
 
 	@Override
 	public void setClassName(String className) {
-		_repository.setClassName(className);
+		model.setClassName(className);
 	}
 
 	/**
@@ -284,7 +227,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public void setClassNameId(long classNameId) {
-		_repository.setClassNameId(classNameId);
+		model.setClassNameId(classNameId);
 	}
 
 	/**
@@ -294,7 +237,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public void setClassPK(long classPK) {
-		_repository.setClassPK(classPK);
+		model.setClassPK(classPK);
 	}
 
 	/**
@@ -304,7 +247,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public void setCompanyId(long companyId) {
-		_repository.setCompanyId(companyId);
+		model.setCompanyId(companyId);
 	}
 
 	/**
@@ -314,24 +257,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public void setCreatedDate(Date createdDate) {
-		_repository.setCreatedDate(createdDate);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-
-		_repository.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_repository.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
-		_repository.setExpandoBridgeAttributes(serviceContext);
+		model.setCreatedDate(createdDate);
 	}
 
 	/**
@@ -341,7 +267,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public void setGroupId(long groupId) {
-		_repository.setGroupId(groupId);
+		model.setGroupId(groupId);
 	}
 
 	/**
@@ -351,12 +277,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
-		_repository.setModifiedDate(modifiedDate);
-	}
-
-	@Override
-	public void setNew(boolean n) {
-		_repository.setNew(n);
+		model.setModifiedDate(modifiedDate);
 	}
 
 	/**
@@ -366,12 +287,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public void setPrimaryKey(long primaryKey) {
-		_repository.setPrimaryKey(primaryKey);
-	}
-
-	@Override
-	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
-		_repository.setPrimaryKeyObj(primaryKeyObj);
+		model.setPrimaryKey(primaryKey);
 	}
 
 	/**
@@ -381,7 +297,7 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public void setRepositoryId(long repositoryId) {
-		_repository.setRepositoryId(repositoryId);
+		model.setRepositoryId(repositoryId);
 	}
 
 	/**
@@ -391,77 +307,12 @@ public class RepositoryWrapper implements Repository, ModelWrapper<Repository> {
 	 */
 	@Override
 	public void setRepositoryName(String repositoryName) {
-		_repository.setRepositoryName(repositoryName);
+		model.setRepositoryName(repositoryName);
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel
-		<nl.worth.deltares.oss.subversion.model.Repository> toCacheModel() {
-
-		return _repository.toCacheModel();
+	protected RepositoryWrapper wrap(Repository repository) {
+		return new RepositoryWrapper(repository);
 	}
-
-	@Override
-	public nl.worth.deltares.oss.subversion.model.Repository toEscapedModel() {
-		return new RepositoryWrapper(_repository.toEscapedModel());
-	}
-
-	@Override
-	public String toString() {
-		return _repository.toString();
-	}
-
-	@Override
-	public nl.worth.deltares.oss.subversion.model.Repository
-		toUnescapedModel() {
-
-		return new RepositoryWrapper(_repository.toUnescapedModel());
-	}
-
-	@Override
-	public String toXmlString() {
-		return _repository.toXmlString();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-
-		if (!(obj instanceof RepositoryWrapper)) {
-			return false;
-		}
-
-		RepositoryWrapper repositoryWrapper = (RepositoryWrapper)obj;
-
-		if (Objects.equals(_repository, repositoryWrapper._repository)) {
-			return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	public Repository getWrappedModel() {
-		return _repository;
-	}
-
-	@Override
-	public boolean isEntityCacheEnabled() {
-		return _repository.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _repository.isFinderCacheEnabled();
-	}
-
-	@Override
-	public void resetOriginalValues() {
-		_repository.resetOriginalValues();
-	}
-
-	private final Repository _repository;
 
 }

@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
-<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.0.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_1_0.dtd">
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.4.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_4_0.dtd">
 
-<service-builder package-path="nl.worth.deltares.oss.subversion" database-name-max-length="75" >
-	<author>Pier-Angelo Gaetani @ Worth Systems</author>
+<service-builder dependency-injector="ds" package-path="nl.worth.deltares.oss.subversion"  database-name-max-length="75">
 	<namespace>Subversion</namespace>
 
 	<entity name="Repository" local-service="true" remote-service="true" uuid="false">

@@ -5,21 +5,10 @@ Export-Package: \
 	nl.worth.deltares.oss.subversion.exception,\
 	nl.worth.deltares.oss.subversion.model,\
 	nl.worth.deltares.oss.subversion.service,\
-	nl.worth.deltares.oss.subversion.service.persistence,\
--check: EXPORTS
--includeresource: META-INF/service.xml=../subversion-service/service.xml
+	nl.worth.deltares.oss.subversion.service.persistence
 Import-Package: \
-  !com.swabunga.spell.*, \
-  !net.fortuna.ical4j.*, \
-  !org.antlr.stringtemplate, \
-  !org.apache.axis.tools.ant.wsdl, \
-  !org.apache.poi.*, \
-  !com.liferay.petra.lang, \
-  !com.liferay.portal.kernel.portlet, \
   !org.apache.avalon.framework.logger, \
   !org.apache.log, \
-  !org.apache.log4j, \
-  com.liferay.counter.kernel.service,\
-  com.liferay.portal.kernel.*,\
-  javax.naming.*,\
   *
+-check: EXPORTS
+-includeresource: META-INF/service.xml=../subversion-service/service.xml

@@ -14,43 +14,27 @@
 
 package nl.worth.deltares.oss.subversion.model;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.portal.kernel.model.ModelWrapper;
-import com.liferay.portal.kernel.service.ServiceContext;
-
-import java.io.Serializable;
+import com.liferay.portal.kernel.model.wrapper.BaseModelWrapper;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * <p>
  * This class is a wrapper for {@link RepositoryLog}.
  * </p>
  *
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
  * @see RepositoryLog
  * @generated
  */
-@ProviderType
 public class RepositoryLogWrapper
-	implements RepositoryLog, ModelWrapper<RepositoryLog> {
+	extends BaseModelWrapper<RepositoryLog>
+	implements ModelWrapper<RepositoryLog>, RepositoryLog {
 
 	public RepositoryLogWrapper(RepositoryLog repositoryLog) {
-		_repositoryLog = repositoryLog;
-	}
-
-	@Override
-	public Class<?> getModelClass() {
-		return RepositoryLog.class;
-	}
-
-	@Override
-	public String getModelClassName() {
-		return RepositoryLog.class.getName();
+		super(repositoryLog);
 	}
 
 	@Override
@@ -107,15 +91,8 @@ public class RepositoryLogWrapper
 	}
 
 	@Override
-	public Object clone() {
-		return new RepositoryLogWrapper((RepositoryLog)_repositoryLog.clone());
-	}
-
-	@Override
-	public int compareTo(
-		nl.worth.deltares.oss.subversion.model.RepositoryLog repositoryLog) {
-
-		return _repositoryLog.compareTo(repositoryLog);
+	public RepositoryLog cloneWithOriginalValues() {
+		return wrap(model.cloneWithOriginalValues());
 	}
 
 	/**
@@ -125,7 +102,7 @@ public class RepositoryLogWrapper
 	 */
 	@Override
 	public String getAction() {
-		return _repositoryLog.getAction();
+		return model.getAction();
 	}
 
 	/**
@@ -135,12 +112,7 @@ public class RepositoryLogWrapper
 	 */
 	@Override
 	public long getCreateDate() {
-		return _repositoryLog.getCreateDate();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _repositoryLog.getExpandoBridge();
+		return model.getCreateDate();
 	}
 
 	/**
@@ -150,7 +122,7 @@ public class RepositoryLogWrapper
 	 */
 	@Override
 	public String getIpAddress() {
-		return _repositoryLog.getIpAddress();
+		return model.getIpAddress();
 	}
 
 	/**
@@ -160,7 +132,7 @@ public class RepositoryLogWrapper
 	 */
 	@Override
 	public long getLogId() {
-		return _repositoryLog.getLogId();
+		return model.getLogId();
 	}
 
 	/**
@@ -170,12 +142,7 @@ public class RepositoryLogWrapper
 	 */
 	@Override
 	public long getPrimaryKey() {
-		return _repositoryLog.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _repositoryLog.getPrimaryKeyObj();
+		return model.getPrimaryKey();
 	}
 
 	/**
@@ -185,7 +152,7 @@ public class RepositoryLogWrapper
 	 */
 	@Override
 	public String getRepository() {
-		return _repositoryLog.getRepository();
+		return model.getRepository();
 	}
 
 	/**
@@ -195,32 +162,12 @@ public class RepositoryLogWrapper
 	 */
 	@Override
 	public String getScreenName() {
-		return _repositoryLog.getScreenName();
-	}
-
-	@Override
-	public int hashCode() {
-		return _repositoryLog.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _repositoryLog.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _repositoryLog.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _repositoryLog.isNew();
+		return model.getScreenName();
 	}
 
 	@Override
 	public void persist() {
-		_repositoryLog.persist();
+		model.persist();
 	}
 
 	/**
@@ -230,12 +177,7 @@ public class RepositoryLogWrapper
 	 */
 	@Override
 	public void setAction(String action) {
-		_repositoryLog.setAction(action);
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_repositoryLog.setCachedModel(cachedModel);
+		model.setAction(action);
 	}
 
 	/**
@@ -245,24 +187,7 @@ public class RepositoryLogWrapper
 	 */
 	@Override
 	public void setCreateDate(long createDate) {
-		_repositoryLog.setCreateDate(createDate);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-
-		_repositoryLog.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_repositoryLog.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
-		_repositoryLog.setExpandoBridgeAttributes(serviceContext);
+		model.setCreateDate(createDate);
 	}
 
 	/**
@@ -272,7 +197,7 @@ public class RepositoryLogWrapper
 	 */
 	@Override
 	public void setIpAddress(String ipAddress) {
-		_repositoryLog.setIpAddress(ipAddress);
+		model.setIpAddress(ipAddress);
 	}
 
 	/**
@@ -282,12 +207,7 @@ public class RepositoryLogWrapper
 	 */
 	@Override
 	public void setLogId(long logId) {
-		_repositoryLog.setLogId(logId);
-	}
-
-	@Override
-	public void setNew(boolean n) {
-		_repositoryLog.setNew(n);
+		model.setLogId(logId);
 	}
 
 	/**
@@ -297,12 +217,7 @@ public class RepositoryLogWrapper
 	 */
 	@Override
 	public void setPrimaryKey(long primaryKey) {
-		_repositoryLog.setPrimaryKey(primaryKey);
-	}
-
-	@Override
-	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
-		_repositoryLog.setPrimaryKeyObj(primaryKeyObj);
+		model.setPrimaryKey(primaryKey);
 	}
 
 	/**
@@ -312,7 +227,7 @@ public class RepositoryLogWrapper
 	 */
 	@Override
 	public void setRepository(String repository) {
-		_repositoryLog.setRepository(repository);
+		model.setRepository(repository);
 	}
 
 	/**
@@ -322,81 +237,12 @@ public class RepositoryLogWrapper
 	 */
 	@Override
 	public void setScreenName(String screenName) {
-		_repositoryLog.setScreenName(screenName);
+		model.setScreenName(screenName);
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel
-		<nl.worth.deltares.oss.subversion.model.RepositoryLog> toCacheModel() {
-
-		return _repositoryLog.toCacheModel();
+	protected RepositoryLogWrapper wrap(RepositoryLog repositoryLog) {
+		return new RepositoryLogWrapper(repositoryLog);
 	}
-
-	@Override
-	public nl.worth.deltares.oss.subversion.model.RepositoryLog
-		toEscapedModel() {
-
-		return new RepositoryLogWrapper(_repositoryLog.toEscapedModel());
-	}
-
-	@Override
-	public String toString() {
-		return _repositoryLog.toString();
-	}
-
-	@Override
-	public nl.worth.deltares.oss.subversion.model.RepositoryLog
-		toUnescapedModel() {
-
-		return new RepositoryLogWrapper(_repositoryLog.toUnescapedModel());
-	}
-
-	@Override
-	public String toXmlString() {
-		return _repositoryLog.toXmlString();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-
-		if (!(obj instanceof RepositoryLogWrapper)) {
-			return false;
-		}
-
-		RepositoryLogWrapper repositoryLogWrapper = (RepositoryLogWrapper)obj;
-
-		if (Objects.equals(
-				_repositoryLog, repositoryLogWrapper._repositoryLog)) {
-
-			return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	public RepositoryLog getWrappedModel() {
-		return _repositoryLog;
-	}
-
-	@Override
-	public boolean isEntityCacheEnabled() {
-		return _repositoryLog.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _repositoryLog.isFinderCacheEnabled();
-	}
-
-	@Override
-	public void resetOriginalValues() {
-		_repositoryLog.resetOriginalValues();
-	}
-
-	private final RepositoryLog _repositoryLog;
 
 }

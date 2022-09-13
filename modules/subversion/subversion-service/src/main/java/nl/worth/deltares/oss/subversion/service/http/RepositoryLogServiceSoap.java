@@ -14,8 +14,6 @@
 
 package nl.worth.deltares.oss.subversion.service.http;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
@@ -58,11 +56,12 @@ import nl.worth.deltares.oss.subversion.service.RepositoryLogServiceUtil;
  * The SOAP utility is only generated for remote services.
  * </p>
  *
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
  * @see RepositoryLogServiceHttp
+ * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@ProviderType
+@Deprecated
 public class RepositoryLogServiceSoap {
 
 	public static void addRepositoryLog(
@@ -74,10 +73,10 @@ public class RepositoryLogServiceSoap {
 			RepositoryLogServiceUtil.addRepositoryLog(
 				requestMethod, remoteHost, remoteUser, requestUri);
 		}
-		catch (Exception e) {
-			_log.error(e, e);
+		catch (Exception exception) {
+			_log.error(exception, exception);
 
-			throw new RemoteException(e.getMessage());
+			throw new RemoteException(exception.getMessage());
 		}
 	}
 

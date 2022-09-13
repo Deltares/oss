@@ -14,11 +14,9 @@
 
 package nl.worth.deltares.oss.subversion.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -30,25 +28,24 @@ import nl.worth.deltares.oss.subversion.model.RepositoryLog;
 /**
  * The cache model class for representing RepositoryLog in entity cache.
  *
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
  * @generated
  */
-@ProviderType
 public class RepositoryLogCacheModel
 	implements CacheModel<RepositoryLog>, Externalizable {
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
+	public boolean equals(Object object) {
+		if (this == object) {
 			return true;
 		}
 
-		if (!(obj instanceof RepositoryLogCacheModel)) {
+		if (!(object instanceof RepositoryLogCacheModel)) {
 			return false;
 		}
 
 		RepositoryLogCacheModel repositoryLogCacheModel =
-			(RepositoryLogCacheModel)obj;
+			(RepositoryLogCacheModel)object;
 
 		if (logId == repositoryLogCacheModel.logId) {
 			return true;

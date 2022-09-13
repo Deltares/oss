@@ -14,11 +14,18 @@
 
 package nl.worth.deltares.oss.subversion.service;
 
-import aQute.bnd.annotation.ProviderType;
+import com.liferay.petra.sql.dsl.query.DSLQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.util.OrderByComparator;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.util.tracker.ServiceTracker;
+import java.io.Serializable;
+
+import java.util.List;
+
+import nl.worth.deltares.oss.subversion.model.RepositoryFolder;
 
 /**
  * Provides the local service utility for RepositoryFolder. This utility wraps
@@ -28,11 +35,10 @@ import org.osgi.util.tracker.ServiceTracker;
  * based on the propagated JAAS credentials because this service can only be
  * accessed from within the same VM.
  *
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
  * @see RepositoryFolderLocalService
  * @generated
  */
-@ProviderType
 public class RepositoryFolderLocalServiceUtil {
 
 	/*
@@ -40,8 +46,8 @@ public class RepositoryFolderLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to <code>nl.worth.deltares.oss.subversion.service.impl.RepositoryFolderLocalServiceImpl</code> and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static nl.worth.deltares.oss.subversion.model.RepositoryFolder
-		addRepositoryFolder(long repositoryId, String name) {
+	public static RepositoryFolder addRepositoryFolder(
+		long repositoryId, String name) {
 
 		return getService().addRepositoryFolder(repositoryId, name);
 	}
@@ -49,22 +55,32 @@ public class RepositoryFolderLocalServiceUtil {
 	/**
 	 * Adds the repository folder to the database. Also notifies the appropriate model listeners.
 	 *
+	 * <p>
+	 * <strong>Important:</strong> Inspect RepositoryFolderLocalServiceImpl for overloaded versions of the method. If provided, use these entry points to the API, as the implementation logic may require the additional parameters defined there.
+	 * </p>
+	 *
 	 * @param repositoryFolder the repository folder
 	 * @return the repository folder that was added
 	 * @throws SystemException
 	 */
-	public static nl.worth.deltares.oss.subversion.model.RepositoryFolder
-			addRepositoryFolder(
-				nl.worth.deltares.oss.subversion.model.RepositoryFolder
-					repositoryFolder)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static RepositoryFolder addRepositoryFolder(
+			RepositoryFolder repositoryFolder)
+		throws SystemException {
 
 		return getService().addRepositoryFolder(repositoryFolder);
 	}
 
-	public static nl.worth.deltares.oss.subversion.model.RepositoryFolder
-		createRepositoryFolder() {
+	/**
+	 * @throws PortalException
+	 */
+	public static PersistedModel createPersistedModel(
+			Serializable primaryKeyObj)
+		throws PortalException {
 
+		return getService().createPersistedModel(primaryKeyObj);
+	}
+
+	public static RepositoryFolder createRepositoryFolder() {
 		return getService().createRepositoryFolder();
 	}
 
@@ -74,19 +90,16 @@ public class RepositoryFolderLocalServiceUtil {
 	 * @param folderId the primary key for the new repository folder
 	 * @return the new repository folder
 	 */
-	public static nl.worth.deltares.oss.subversion.model.RepositoryFolder
-		createRepositoryFolder(long folderId) {
-
+	public static RepositoryFolder createRepositoryFolder(long folderId) {
 		return getService().createRepositoryFolder(folderId);
 	}
 
 	/**
 	 * @throws PortalException
 	 */
-	public static com.liferay.portal.kernel.model.PersistedModel
-			deletePersistedModel(
-				com.liferay.portal.kernel.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public static PersistedModel deletePersistedModel(
+			PersistedModel persistedModel)
+		throws PortalException {
 
 		return getService().deletePersistedModel(persistedModel);
 	}
@@ -94,13 +107,16 @@ public class RepositoryFolderLocalServiceUtil {
 	/**
 	 * Deletes the repository folder with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
+	 * <p>
+	 * <strong>Important:</strong> Inspect RepositoryFolderLocalServiceImpl for overloaded versions of the method. If provided, use these entry points to the API, as the implementation logic may require the additional parameters defined there.
+	 * </p>
+	 *
 	 * @param folderId the primary key of the repository folder
 	 * @return the repository folder that was removed
 	 * @throws PortalException if a repository folder with the primary key could not be found
 	 */
-	public static nl.worth.deltares.oss.subversion.model.RepositoryFolder
-			deleteRepositoryFolder(long folderId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public static RepositoryFolder deleteRepositoryFolder(long folderId)
+		throws PortalException {
 
 		return getService().deleteRepositoryFolder(folderId);
 	}
@@ -108,29 +124,34 @@ public class RepositoryFolderLocalServiceUtil {
 	/**
 	 * Deletes the repository folder from the database. Also notifies the appropriate model listeners.
 	 *
+	 * <p>
+	 * <strong>Important:</strong> Inspect RepositoryFolderLocalServiceImpl for overloaded versions of the method. If provided, use these entry points to the API, as the implementation logic may require the additional parameters defined there.
+	 * </p>
+	 *
 	 * @param repositoryFolder the repository folder
 	 * @return the repository folder that was removed
 	 * @throws SystemException
 	 */
-	public static nl.worth.deltares.oss.subversion.model.RepositoryFolder
-			deleteRepositoryFolder(
-				nl.worth.deltares.oss.subversion.model.RepositoryFolder
-					repositoryFolder)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static RepositoryFolder deleteRepositoryFolder(
+			RepositoryFolder repositoryFolder)
+		throws SystemException {
 
 		return getService().deleteRepositoryFolder(repositoryFolder);
 	}
 
-	public static void deleteRepositoryFolders(
-		java.util.List<nl.worth.deltares.oss.subversion.model.RepositoryFolder>
-			folders) {
-
+	public static void deleteRepositoryFolders(List<RepositoryFolder> folders) {
 		getService().deleteRepositoryFolders(folders);
 	}
 
-	public static com.liferay.portal.kernel.dao.orm.DynamicQuery
-		dynamicQuery() {
+	public static <T> T dslQuery(DSLQuery dslQuery) {
+		return getService().dslQuery(dslQuery);
+	}
 
+	public static int dslQueryCount(DSLQuery dslQuery) {
+		return getService().dslQueryCount(dslQuery);
+	}
+
+	public static DynamicQuery dynamicQuery() {
 		return getService().dynamicQuery();
 	}
 
@@ -140,9 +161,7 @@ public class RepositoryFolderLocalServiceUtil {
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
 	 */
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
-
+	public static <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
 		return getService().dynamicQuery(dynamicQuery);
 	}
 
@@ -150,7 +169,7 @@ public class RepositoryFolderLocalServiceUtil {
 	 * Performs a dynamic query on the database and returns a range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>nl.worth.deltares.oss.subversion.model.impl.RepositoryFolderModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.worth.deltares.oss.subversion.model.impl.RepositoryFolderModelImpl</code>.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -158,9 +177,8 @@ public class RepositoryFolderLocalServiceUtil {
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
 	 */
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+	public static <T> List<T> dynamicQuery(
+		DynamicQuery dynamicQuery, int start, int end) {
 
 		return getService().dynamicQuery(dynamicQuery, start, end);
 	}
@@ -169,7 +187,7 @@ public class RepositoryFolderLocalServiceUtil {
 	 * Performs a dynamic query on the database and returns an ordered range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>nl.worth.deltares.oss.subversion.model.impl.RepositoryFolderModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.worth.deltares.oss.subversion.model.impl.RepositoryFolderModelImpl</code>.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -178,10 +196,9 @@ public class RepositoryFolderLocalServiceUtil {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
 	 */
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+	public static <T> List<T> dynamicQuery(
+		DynamicQuery dynamicQuery, int start, int end,
+		OrderByComparator<T> orderByComparator) {
 
 		return getService().dynamicQuery(
 			dynamicQuery, start, end, orderByComparator);
@@ -193,9 +210,7 @@ public class RepositoryFolderLocalServiceUtil {
 	 * @param dynamicQuery the dynamic query
 	 * @return the number of rows matching the dynamic query
 	 */
-	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
-
+	public static long dynamicQueryCount(DynamicQuery dynamicQuery) {
 		return getService().dynamicQueryCount(dynamicQuery);
 	}
 
@@ -207,15 +222,13 @@ public class RepositoryFolderLocalServiceUtil {
 	 * @return the number of rows matching the dynamic query
 	 */
 	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
+		DynamicQuery dynamicQuery,
 		com.liferay.portal.kernel.dao.orm.Projection projection) {
 
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
-	public static nl.worth.deltares.oss.subversion.model.RepositoryFolder
-		fetchRepositoryFolder(long folderId) {
-
+	public static RepositoryFolder fetchRepositoryFolder(long folderId) {
 		return getService().fetchRepositoryFolder(folderId);
 	}
 
@@ -241,9 +254,11 @@ public class RepositoryFolderLocalServiceUtil {
 		return getService().getOSGiServiceIdentifier();
 	}
 
-	public static com.liferay.portal.kernel.model.PersistedModel
-			getPersistedModel(java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	/**
+	 * @throws PortalException
+	 */
+	public static PersistedModel getPersistedModel(Serializable primaryKeyObj)
+		throws PortalException {
 
 		return getService().getPersistedModel(primaryKeyObj);
 	}
@@ -255,30 +270,26 @@ public class RepositoryFolderLocalServiceUtil {
 	 * @return the repository folder
 	 * @throws PortalException if a repository folder with the primary key could not be found
 	 */
-	public static nl.worth.deltares.oss.subversion.model.RepositoryFolder
-			getRepositoryFolder(long folderId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public static RepositoryFolder getRepositoryFolder(long folderId)
+		throws PortalException {
 
 		return getService().getRepositoryFolder(folderId);
 	}
 
-	public static nl.worth.deltares.oss.subversion.model.RepositoryFolder
-		getRepositoryFolder(long repositoryId, String name) {
+	public static RepositoryFolder getRepositoryFolder(
+		long repositoryId, String name) {
 
 		return getService().getRepositoryFolder(repositoryId, name);
 	}
 
-	public static java.util.List
-		<nl.worth.deltares.oss.subversion.model.RepositoryFolder>
-			getRepositoryFolderChildren(
-				nl.worth.deltares.oss.subversion.model.RepositoryFolder
-					repositoryFolder) {
+	public static List<RepositoryFolder> getRepositoryFolderChildren(
+		RepositoryFolder repositoryFolder) {
 
 		return getService().getRepositoryFolderChildren(repositoryFolder);
 	}
 
-	public static nl.worth.deltares.oss.subversion.model.RepositoryFolder
-		getRepositoryFolderParent(long repositoryId, String folderName) {
+	public static RepositoryFolder getRepositoryFolderParent(
+		long repositoryId, String folderName) {
 
 		return getService().getRepositoryFolderParent(repositoryId, folderName);
 	}
@@ -287,31 +298,28 @@ public class RepositoryFolderLocalServiceUtil {
 	 * Returns a range of all the repository folders.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>nl.worth.deltares.oss.subversion.model.impl.RepositoryFolderModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.worth.deltares.oss.subversion.model.impl.RepositoryFolderModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of repository folders
 	 * @param end the upper bound of the range of repository folders (not inclusive)
 	 * @return the range of repository folders
 	 */
-	public static java.util.List
-		<nl.worth.deltares.oss.subversion.model.RepositoryFolder>
-			getRepositoryFolders(int start, int end) {
+	public static List<RepositoryFolder> getRepositoryFolders(
+		int start, int end) {
 
 		return getService().getRepositoryFolders(start, end);
 	}
 
-	public static java.util.List
-		<nl.worth.deltares.oss.subversion.model.RepositoryFolder>
-			getRepositoryFolders(long repositoryId) {
+	public static List<RepositoryFolder> getRepositoryFolders(
+		long repositoryId) {
 
 		return getService().getRepositoryFolders(repositoryId);
 	}
 
 	@Deprecated
-	public static java.util.List
-		<nl.worth.deltares.oss.subversion.model.RepositoryFolder>
-			getRepositoryFolders(long repositoryId, String name) {
+	public static List<RepositoryFolder> getRepositoryFolders(
+		long repositoryId, String name) {
 
 		return getService().getRepositoryFolders(repositoryId, name);
 	}
@@ -328,41 +336,23 @@ public class RepositoryFolderLocalServiceUtil {
 	/**
 	 * Updates the repository folder in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
+	 * <p>
+	 * <strong>Important:</strong> Inspect RepositoryFolderLocalServiceImpl for overloaded versions of the method. If provided, use these entry points to the API, as the implementation logic may require the additional parameters defined there.
+	 * </p>
+	 *
 	 * @param repositoryFolder the repository folder
 	 * @return the repository folder that was updated
 	 */
-	public static nl.worth.deltares.oss.subversion.model.RepositoryFolder
-		updateRepositoryFolder(
-			nl.worth.deltares.oss.subversion.model.RepositoryFolder
-				repositoryFolder) {
+	public static RepositoryFolder updateRepositoryFolder(
+		RepositoryFolder repositoryFolder) {
 
 		return getService().updateRepositoryFolder(repositoryFolder);
 	}
 
 	public static RepositoryFolderLocalService getService() {
-		return _serviceTracker.getService();
+		return _service;
 	}
 
-	private static ServiceTracker
-		<RepositoryFolderLocalService, RepositoryFolderLocalService>
-			_serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(
-			RepositoryFolderLocalService.class);
-
-		ServiceTracker
-			<RepositoryFolderLocalService, RepositoryFolderLocalService>
-				serviceTracker =
-					new ServiceTracker
-						<RepositoryFolderLocalService,
-						 RepositoryFolderLocalService>(
-							 bundle.getBundleContext(),
-							 RepositoryFolderLocalService.class, null);
-
-		serviceTracker.open();
-
-		_serviceTracker = serviceTracker;
-	}
+	private static volatile RepositoryFolderLocalService _service;
 
 }

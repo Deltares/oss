@@ -14,47 +14,31 @@
 
 package nl.worth.deltares.oss.subversion.model;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.portal.kernel.model.ModelWrapper;
-import com.liferay.portal.kernel.service.ServiceContext;
-
-import java.io.Serializable;
+import com.liferay.portal.kernel.model.wrapper.BaseModelWrapper;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * <p>
  * This class is a wrapper for {@link RepositoryFolderPermission}.
  * </p>
  *
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
  * @see RepositoryFolderPermission
  * @generated
  */
-@ProviderType
 public class RepositoryFolderPermissionWrapper
-	implements RepositoryFolderPermission,
-			   ModelWrapper<RepositoryFolderPermission> {
+	extends BaseModelWrapper<RepositoryFolderPermission>
+	implements ModelWrapper<RepositoryFolderPermission>,
+			   RepositoryFolderPermission {
 
 	public RepositoryFolderPermissionWrapper(
 		RepositoryFolderPermission repositoryFolderPermission) {
 
-		_repositoryFolderPermission = repositoryFolderPermission;
-	}
-
-	@Override
-	public Class<?> getModelClass() {
-		return RepositoryFolderPermission.class;
-	}
-
-	@Override
-	public String getModelClassName() {
-		return RepositoryFolderPermission.class.getName();
+		super(repositoryFolderPermission);
 	}
 
 	@Override
@@ -125,18 +109,8 @@ public class RepositoryFolderPermissionWrapper
 	}
 
 	@Override
-	public Object clone() {
-		return new RepositoryFolderPermissionWrapper(
-			(RepositoryFolderPermission)_repositoryFolderPermission.clone());
-	}
-
-	@Override
-	public int compareTo(
-		nl.worth.deltares.oss.subversion.model.RepositoryFolderPermission
-			repositoryFolderPermission) {
-
-		return _repositoryFolderPermission.compareTo(
-			repositoryFolderPermission);
+	public RepositoryFolderPermission cloneWithOriginalValues() {
+		return wrap(model.cloneWithOriginalValues());
 	}
 
 	/**
@@ -146,7 +120,7 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public Date getCreateDate() {
-		return _repositoryFolderPermission.getCreateDate();
+		return model.getCreateDate();
 	}
 
 	/**
@@ -156,7 +130,7 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public long getEntityId() {
-		return _repositoryFolderPermission.getEntityId();
+		return model.getEntityId();
 	}
 
 	/**
@@ -166,12 +140,7 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public String getEntityType() {
-		return _repositoryFolderPermission.getEntityType();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _repositoryFolderPermission.getExpandoBridge();
+		return model.getEntityType();
 	}
 
 	@Override
@@ -179,7 +148,7 @@ public class RepositoryFolderPermissionWrapper
 		throws com.liferay.portal.kernel.exception.PortalException,
 			   com.liferay.portal.kernel.exception.SystemException {
 
-		return _repositoryFolderPermission.getFolder();
+		return model.getFolder();
 	}
 
 	/**
@@ -189,7 +158,7 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public long getFolderId() {
-		return _repositoryFolderPermission.getFolderId();
+		return model.getFolderId();
 	}
 
 	@Override
@@ -197,7 +166,7 @@ public class RepositoryFolderPermissionWrapper
 		throws com.liferay.portal.kernel.exception.PortalException,
 			   com.liferay.portal.kernel.exception.SystemException {
 
-		return _repositoryFolderPermission.getGroup();
+		return model.getGroup();
 	}
 
 	/**
@@ -207,7 +176,7 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public Date getModifiedDate() {
-		return _repositoryFolderPermission.getModifiedDate();
+		return model.getModifiedDate();
 	}
 
 	/**
@@ -217,7 +186,7 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public String getPermission() {
-		return _repositoryFolderPermission.getPermission();
+		return model.getPermission();
 	}
 
 	/**
@@ -227,7 +196,7 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public long getPermissionId() {
-		return _repositoryFolderPermission.getPermissionId();
+		return model.getPermissionId();
 	}
 
 	/**
@@ -237,12 +206,7 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public long getPrimaryKey() {
-		return _repositoryFolderPermission.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _repositoryFolderPermission.getPrimaryKeyObj();
+		return model.getPrimaryKey();
 	}
 
 	/**
@@ -252,7 +216,7 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public boolean getRecurse() {
-		return _repositoryFolderPermission.getRecurse();
+		return model.getRecurse();
 	}
 
 	@Override
@@ -260,7 +224,7 @@ public class RepositoryFolderPermissionWrapper
 		throws com.liferay.portal.kernel.exception.PortalException,
 			   com.liferay.portal.kernel.exception.SystemException {
 
-		return _repositoryFolderPermission.getRepository();
+		return model.getRepository();
 	}
 
 	@Override
@@ -268,7 +232,7 @@ public class RepositoryFolderPermissionWrapper
 		throws com.liferay.portal.kernel.exception.PortalException,
 			   com.liferay.portal.kernel.exception.SystemException {
 
-		return _repositoryFolderPermission.getRole();
+		return model.getRole();
 	}
 
 	@Override
@@ -276,27 +240,7 @@ public class RepositoryFolderPermissionWrapper
 		throws com.liferay.portal.kernel.exception.PortalException,
 			   com.liferay.portal.kernel.exception.SystemException {
 
-		return _repositoryFolderPermission.getUser();
-	}
-
-	@Override
-	public int hashCode() {
-		return _repositoryFolderPermission.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _repositoryFolderPermission.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _repositoryFolderPermission.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _repositoryFolderPermission.isNew();
+		return model.getUser();
 	}
 
 	/**
@@ -306,17 +250,12 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public boolean isRecurse() {
-		return _repositoryFolderPermission.isRecurse();
+		return model.isRecurse();
 	}
 
 	@Override
 	public void persist() {
-		_repositoryFolderPermission.persist();
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_repositoryFolderPermission.setCachedModel(cachedModel);
+		model.persist();
 	}
 
 	/**
@@ -326,7 +265,7 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public void setCreateDate(Date createDate) {
-		_repositoryFolderPermission.setCreateDate(createDate);
+		model.setCreateDate(createDate);
 	}
 
 	/**
@@ -336,7 +275,7 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public void setEntityId(long entityId) {
-		_repositoryFolderPermission.setEntityId(entityId);
+		model.setEntityId(entityId);
 	}
 
 	/**
@@ -346,24 +285,7 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public void setEntityType(String entityType) {
-		_repositoryFolderPermission.setEntityType(entityType);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-
-		_repositoryFolderPermission.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_repositoryFolderPermission.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
-		_repositoryFolderPermission.setExpandoBridgeAttributes(serviceContext);
+		model.setEntityType(entityType);
 	}
 
 	/**
@@ -373,7 +295,7 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public void setFolderId(long folderId) {
-		_repositoryFolderPermission.setFolderId(folderId);
+		model.setFolderId(folderId);
 	}
 
 	/**
@@ -383,12 +305,7 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
-		_repositoryFolderPermission.setModifiedDate(modifiedDate);
-	}
-
-	@Override
-	public void setNew(boolean n) {
-		_repositoryFolderPermission.setNew(n);
+		model.setModifiedDate(modifiedDate);
 	}
 
 	/**
@@ -398,7 +315,7 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public void setPermission(String permission) {
-		_repositoryFolderPermission.setPermission(permission);
+		model.setPermission(permission);
 	}
 
 	/**
@@ -408,7 +325,7 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public void setPermissionId(long permissionId) {
-		_repositoryFolderPermission.setPermissionId(permissionId);
+		model.setPermissionId(permissionId);
 	}
 
 	/**
@@ -418,12 +335,7 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public void setPrimaryKey(long primaryKey) {
-		_repositoryFolderPermission.setPrimaryKey(primaryKey);
-	}
-
-	@Override
-	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
-		_repositoryFolderPermission.setPrimaryKeyObj(primaryKeyObj);
+		model.setPrimaryKey(primaryKey);
 	}
 
 	/**
@@ -433,87 +345,15 @@ public class RepositoryFolderPermissionWrapper
 	 */
 	@Override
 	public void setRecurse(boolean recurse) {
-		_repositoryFolderPermission.setRecurse(recurse);
+		model.setRecurse(recurse);
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel
-		<nl.worth.deltares.oss.subversion.model.RepositoryFolderPermission>
-			toCacheModel() {
-
-		return _repositoryFolderPermission.toCacheModel();
-	}
-
-	@Override
-	public nl.worth.deltares.oss.subversion.model.RepositoryFolderPermission
-		toEscapedModel() {
+	protected RepositoryFolderPermissionWrapper wrap(
+		RepositoryFolderPermission repositoryFolderPermission) {
 
 		return new RepositoryFolderPermissionWrapper(
-			_repositoryFolderPermission.toEscapedModel());
+			repositoryFolderPermission);
 	}
-
-	@Override
-	public String toString() {
-		return _repositoryFolderPermission.toString();
-	}
-
-	@Override
-	public nl.worth.deltares.oss.subversion.model.RepositoryFolderPermission
-		toUnescapedModel() {
-
-		return new RepositoryFolderPermissionWrapper(
-			_repositoryFolderPermission.toUnescapedModel());
-	}
-
-	@Override
-	public String toXmlString() {
-		return _repositoryFolderPermission.toXmlString();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-
-		if (!(obj instanceof RepositoryFolderPermissionWrapper)) {
-			return false;
-		}
-
-		RepositoryFolderPermissionWrapper repositoryFolderPermissionWrapper =
-			(RepositoryFolderPermissionWrapper)obj;
-
-		if (Objects.equals(
-				_repositoryFolderPermission,
-				repositoryFolderPermissionWrapper.
-					_repositoryFolderPermission)) {
-
-			return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	public RepositoryFolderPermission getWrappedModel() {
-		return _repositoryFolderPermission;
-	}
-
-	@Override
-	public boolean isEntityCacheEnabled() {
-		return _repositoryFolderPermission.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _repositoryFolderPermission.isFinderCacheEnabled();
-	}
-
-	@Override
-	public void resetOriginalValues() {
-		_repositoryFolderPermission.resetOriginalValues();
-	}
-
-	private final RepositoryFolderPermission _repositoryFolderPermission;
 
 }

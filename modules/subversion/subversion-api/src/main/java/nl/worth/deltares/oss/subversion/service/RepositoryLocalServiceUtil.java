@@ -14,11 +14,18 @@
 
 package nl.worth.deltares.oss.subversion.service;
 
-import aQute.bnd.annotation.ProviderType;
+import com.liferay.petra.sql.dsl.query.DSLQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.util.OrderByComparator;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.util.tracker.ServiceTracker;
+import java.io.Serializable;
+
+import java.util.List;
+
+import nl.worth.deltares.oss.subversion.model.Repository;
 
 /**
  * Provides the local service utility for Repository. This utility wraps
@@ -28,11 +35,10 @@ import org.osgi.util.tracker.ServiceTracker;
  * based on the propagated JAAS credentials because this service can only be
  * accessed from within the same VM.
  *
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
  * @see RepositoryLocalService
  * @generated
  */
-@ProviderType
 public class RepositoryLocalServiceUtil {
 
 	/*
@@ -44,21 +50,31 @@ public class RepositoryLocalServiceUtil {
 	/**
 	 * Adds the repository to the database. Also notifies the appropriate model listeners.
 	 *
+	 * <p>
+	 * <strong>Important:</strong> Inspect RepositoryLocalServiceImpl for overloaded versions of the method. If provided, use these entry points to the API, as the implementation logic may require the additional parameters defined there.
+	 * </p>
+	 *
 	 * @param repository the repository
 	 * @return the repository that was added
 	 * @throws SystemException
 	 */
-	public static nl.worth.deltares.oss.subversion.model.Repository
-			addRepository(
-				nl.worth.deltares.oss.subversion.model.Repository repository)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public static Repository addRepository(Repository repository)
+		throws SystemException {
 
 		return getService().addRepository(repository);
 	}
 
-	public static nl.worth.deltares.oss.subversion.model.Repository
-		createRepository() {
+	/**
+	 * @throws PortalException
+	 */
+	public static PersistedModel createPersistedModel(
+			Serializable primaryKeyObj)
+		throws PortalException {
 
+		return getService().createPersistedModel(primaryKeyObj);
+	}
+
+	public static Repository createRepository() {
 		return getService().createRepository();
 	}
 
@@ -68,19 +84,16 @@ public class RepositoryLocalServiceUtil {
 	 * @param repositoryId the primary key for the new repository
 	 * @return the new repository
 	 */
-	public static nl.worth.deltares.oss.subversion.model.Repository
-		createRepository(long repositoryId) {
-
+	public static Repository createRepository(long repositoryId) {
 		return getService().createRepository(repositoryId);
 	}
 
 	/**
 	 * @throws PortalException
 	 */
-	public static com.liferay.portal.kernel.model.PersistedModel
-			deletePersistedModel(
-				com.liferay.portal.kernel.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public static PersistedModel deletePersistedModel(
+			PersistedModel persistedModel)
+		throws PortalException {
 
 		return getService().deletePersistedModel(persistedModel);
 	}
@@ -88,13 +101,16 @@ public class RepositoryLocalServiceUtil {
 	/**
 	 * Deletes the repository with the primary key from the database. Also notifies the appropriate model listeners.
 	 *
+	 * <p>
+	 * <strong>Important:</strong> Inspect RepositoryLocalServiceImpl for overloaded versions of the method. If provided, use these entry points to the API, as the implementation logic may require the additional parameters defined there.
+	 * </p>
+	 *
 	 * @param repositoryId the primary key of the repository
 	 * @return the repository that was removed
 	 * @throws PortalException if a repository with the primary key could not be found
 	 */
-	public static nl.worth.deltares.oss.subversion.model.Repository
-			deleteRepository(long repositoryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public static Repository deleteRepository(long repositoryId)
+		throws PortalException {
 
 		return getService().deleteRepository(repositoryId);
 	}
@@ -102,19 +118,26 @@ public class RepositoryLocalServiceUtil {
 	/**
 	 * Deletes the repository from the database. Also notifies the appropriate model listeners.
 	 *
+	 * <p>
+	 * <strong>Important:</strong> Inspect RepositoryLocalServiceImpl for overloaded versions of the method. If provided, use these entry points to the API, as the implementation logic may require the additional parameters defined there.
+	 * </p>
+	 *
 	 * @param repository the repository
 	 * @return the repository that was removed
 	 */
-	public static nl.worth.deltares.oss.subversion.model.Repository
-		deleteRepository(
-			nl.worth.deltares.oss.subversion.model.Repository repository) {
-
+	public static Repository deleteRepository(Repository repository) {
 		return getService().deleteRepository(repository);
 	}
 
-	public static com.liferay.portal.kernel.dao.orm.DynamicQuery
-		dynamicQuery() {
+	public static <T> T dslQuery(DSLQuery dslQuery) {
+		return getService().dslQuery(dslQuery);
+	}
 
+	public static int dslQueryCount(DSLQuery dslQuery) {
+		return getService().dslQueryCount(dslQuery);
+	}
+
+	public static DynamicQuery dynamicQuery() {
 		return getService().dynamicQuery();
 	}
 
@@ -124,9 +147,7 @@ public class RepositoryLocalServiceUtil {
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
 	 */
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
-
+	public static <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
 		return getService().dynamicQuery(dynamicQuery);
 	}
 
@@ -134,7 +155,7 @@ public class RepositoryLocalServiceUtil {
 	 * Performs a dynamic query on the database and returns a range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>nl.worth.deltares.oss.subversion.model.impl.RepositoryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.worth.deltares.oss.subversion.model.impl.RepositoryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -142,9 +163,8 @@ public class RepositoryLocalServiceUtil {
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
 	 */
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+	public static <T> List<T> dynamicQuery(
+		DynamicQuery dynamicQuery, int start, int end) {
 
 		return getService().dynamicQuery(dynamicQuery, start, end);
 	}
@@ -153,7 +173,7 @@ public class RepositoryLocalServiceUtil {
 	 * Performs a dynamic query on the database and returns an ordered range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>nl.worth.deltares.oss.subversion.model.impl.RepositoryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.worth.deltares.oss.subversion.model.impl.RepositoryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -162,10 +182,9 @@ public class RepositoryLocalServiceUtil {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
 	 */
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+	public static <T> List<T> dynamicQuery(
+		DynamicQuery dynamicQuery, int start, int end,
+		OrderByComparator<T> orderByComparator) {
 
 		return getService().dynamicQuery(
 			dynamicQuery, start, end, orderByComparator);
@@ -177,9 +196,7 @@ public class RepositoryLocalServiceUtil {
 	 * @param dynamicQuery the dynamic query
 	 * @return the number of rows matching the dynamic query
 	 */
-	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
-
+	public static long dynamicQueryCount(DynamicQuery dynamicQuery) {
 		return getService().dynamicQueryCount(dynamicQuery);
 	}
 
@@ -191,15 +208,13 @@ public class RepositoryLocalServiceUtil {
 	 * @return the number of rows matching the dynamic query
 	 */
 	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
+		DynamicQuery dynamicQuery,
 		com.liferay.portal.kernel.dao.orm.Projection projection) {
 
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
-	public static nl.worth.deltares.oss.subversion.model.Repository
-		fetchRepository(long repositoryId) {
-
+	public static Repository fetchRepository(long repositoryId) {
 		return getService().fetchRepository(repositoryId);
 	}
 
@@ -225,9 +240,11 @@ public class RepositoryLocalServiceUtil {
 		return getService().getOSGiServiceIdentifier();
 	}
 
-	public static com.liferay.portal.kernel.model.PersistedModel
-			getPersistedModel(java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	/**
+	 * @throws PortalException
+	 */
+	public static PersistedModel getPersistedModel(Serializable primaryKeyObj)
+		throws PortalException {
 
 		return getService().getPersistedModel(primaryKeyObj);
 	}
@@ -236,32 +253,25 @@ public class RepositoryLocalServiceUtil {
 	 * Returns a range of all the repositories.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>nl.worth.deltares.oss.subversion.model.impl.RepositoryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.worth.deltares.oss.subversion.model.impl.RepositoryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of repositories
 	 * @param end the upper bound of the range of repositories (not inclusive)
 	 * @return the range of repositories
 	 */
-	public static java.util.List
-		<nl.worth.deltares.oss.subversion.model.Repository> getRepositories(
-			int start, int end) {
-
+	public static List<Repository> getRepositories(int start, int end) {
 		return getService().getRepositories(start, end);
 	}
 
-	public static java.util.List
-		<nl.worth.deltares.oss.subversion.model.Repository> getRepositories(
-				long groupId)
-			throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<Repository> getRepositories(long groupId)
+		throws SystemException {
 
 		return getService().getRepositories(groupId);
 	}
 
-	public static java.util.List
-		<nl.worth.deltares.oss.subversion.model.Repository> getRepositories(
-				String className)
-			throws com.liferay.portal.kernel.exception.SystemException {
+	public static List<Repository> getRepositories(String className)
+		throws SystemException {
 
 		return getService().getRepositories(className);
 	}
@@ -282,14 +292,13 @@ public class RepositoryLocalServiceUtil {
 	 * @return the repository
 	 * @throws PortalException if a repository with the primary key could not be found
 	 */
-	public static nl.worth.deltares.oss.subversion.model.Repository
-			getRepository(long repositoryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public static Repository getRepository(long repositoryId)
+		throws PortalException {
 
 		return getService().getRepository(repositoryId);
 	}
 
-	public static java.util.List
+	public static List
 		<nl.worth.deltares.oss.subversion.model.RepositoryFolderPermission>
 			getRepositoryPermissions(long repositoryId) {
 
@@ -299,36 +308,21 @@ public class RepositoryLocalServiceUtil {
 	/**
 	 * Updates the repository in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
+	 * <p>
+	 * <strong>Important:</strong> Inspect RepositoryLocalServiceImpl for overloaded versions of the method. If provided, use these entry points to the API, as the implementation logic may require the additional parameters defined there.
+	 * </p>
+	 *
 	 * @param repository the repository
 	 * @return the repository that was updated
 	 */
-	public static nl.worth.deltares.oss.subversion.model.Repository
-		updateRepository(
-			nl.worth.deltares.oss.subversion.model.Repository repository) {
-
+	public static Repository updateRepository(Repository repository) {
 		return getService().updateRepository(repository);
 	}
 
 	public static RepositoryLocalService getService() {
-		return _serviceTracker.getService();
+		return _service;
 	}
 
-	private static ServiceTracker
-		<RepositoryLocalService, RepositoryLocalService> _serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(RepositoryLocalService.class);
-
-		ServiceTracker<RepositoryLocalService, RepositoryLocalService>
-			serviceTracker =
-				new ServiceTracker
-					<RepositoryLocalService, RepositoryLocalService>(
-						bundle.getBundleContext(), RepositoryLocalService.class,
-						null);
-
-		serviceTracker.open();
-
-		_serviceTracker = serviceTracker;
-	}
+	private static volatile RepositoryLocalService _service;
 
 }

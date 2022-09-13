@@ -14,8 +14,6 @@
 
 package nl.worth.deltares.oss.subversion.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -25,10 +23,11 @@ import java.util.List;
 /**
  * This class is used by SOAP remote services, specifically {@link nl.worth.deltares.oss.subversion.service.http.RepositoryServiceSoap}.
  *
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
+ * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@ProviderType
+@Deprecated
 public class RepositorySoap implements Serializable {
 
 	public static RepositorySoap toSoapModel(Repository model) {

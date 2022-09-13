@@ -14,35 +14,27 @@
 
 package nl.worth.deltares.oss.subversion.service;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
 import com.liferay.portal.kernel.security.access.control.AccessControlled;
 import com.liferay.portal.kernel.service.BaseService;
-import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Transactional;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * Provides the remote service interface for RepositoryLog. Methods of this
  * service are expected to have security checks based on the propagated JAAS
  * credentials because this service can be accessed remotely.
  *
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
  * @see RepositoryLogServiceUtil
  * @generated
  */
 @AccessControlled
 @JSONWebService
-@OSGiBeanProperties(
-	property = {
-		"json.web.service.context.name=subversion",
-		"json.web.service.context.path=RepositoryLog"
-	},
-	service = RepositoryLogService.class
-)
 @ProviderType
 @Transactional(
 	isolation = Isolation.PORTAL,
@@ -53,7 +45,7 @@ public interface RepositoryLogService extends BaseService {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this interface directly. Always use {@link RepositoryLogServiceUtil} to access the repository log remote service. Add custom service methods to <code>nl.worth.deltares.oss.subversion.service.impl.RepositoryLogServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify this interface directly. Add custom service methods to <code>nl.worth.deltares.oss.subversion.service.impl.RepositoryLogServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface. Consume the repository log remote service via injection or a <code>org.osgi.util.tracker.ServiceTracker</code>. Use {@link RepositoryLogServiceUtil} if injection and service tracking are not available.
 	 */
 	public void addRepositoryLog(
 		String requestMethod, String remoteHost, String remoteUser,

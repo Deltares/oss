@@ -14,12 +14,6 @@
 
 package nl.worth.deltares.oss.subversion.service;
 
-import aQute.bnd.annotation.ProviderType;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.util.tracker.ServiceTracker;
-
 /**
  * Provides the remote service utility for RepositoryLog. This utility wraps
  * <code>nl.worth.deltares.oss.subversion.service.impl.RepositoryLogServiceImpl</code> and is an
@@ -28,11 +22,10 @@ import org.osgi.util.tracker.ServiceTracker;
  * based on the propagated JAAS credentials because this service can be
  * accessed remotely.
  *
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
  * @see RepositoryLogService
  * @generated
  */
-@ProviderType
 public class RepositoryLogServiceUtil {
 
 	/*
@@ -41,8 +34,8 @@ public class RepositoryLogServiceUtil {
 	 * Never modify this class directly. Add custom service methods to <code>nl.worth.deltares.oss.subversion.service.impl.RepositoryLogServiceImpl</code> and rerun ServiceBuilder to regenerate this class.
 	 */
 	public static void addRepositoryLog(
-		String requestMethod, String remoteHost, String remoteUser,
-		String requestUri) {
+		java.lang.String requestMethod, java.lang.String remoteHost,
+		java.lang.String remoteUser, java.lang.String requestUri) {
 
 		getService().addRepositoryLog(
 			requestMethod, remoteHost, remoteUser, requestUri);
@@ -53,29 +46,14 @@ public class RepositoryLogServiceUtil {
 	 *
 	 * @return the OSGi service identifier
 	 */
-	public static String getOSGiServiceIdentifier() {
+	public static java.lang.String getOSGiServiceIdentifier() {
 		return getService().getOSGiServiceIdentifier();
 	}
 
 	public static RepositoryLogService getService() {
-		return _serviceTracker.getService();
+		return _service;
 	}
 
-	private static ServiceTracker<RepositoryLogService, RepositoryLogService>
-		_serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(RepositoryLogService.class);
-
-		ServiceTracker<RepositoryLogService, RepositoryLogService>
-			serviceTracker =
-				new ServiceTracker<RepositoryLogService, RepositoryLogService>(
-					bundle.getBundleContext(), RepositoryLogService.class,
-					null);
-
-		serviceTracker.open();
-
-		_serviceTracker = serviceTracker;
-	}
+	private static volatile RepositoryLogService _service;
 
 }

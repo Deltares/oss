@@ -14,8 +14,8 @@
 
 package nl.worth.deltares.oss.subversion.service.persistence.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -23,34 +23,44 @@ import com.liferay.portal.kernel.dao.orm.Query;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.io.Serializable;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.sql.DataSource;
+
 import nl.worth.deltares.oss.subversion.exception.NoSuchRepositoryFolderException;
 import nl.worth.deltares.oss.subversion.model.RepositoryFolder;
+import nl.worth.deltares.oss.subversion.model.RepositoryFolderTable;
 import nl.worth.deltares.oss.subversion.model.impl.RepositoryFolderImpl;
 import nl.worth.deltares.oss.subversion.model.impl.RepositoryFolderModelImpl;
 import nl.worth.deltares.oss.subversion.service.persistence.RepositoryFolderPersistence;
+import nl.worth.deltares.oss.subversion.service.persistence.RepositoryFolderUtil;
+import nl.worth.deltares.oss.subversion.service.persistence.impl.constants.SubversionPersistenceConstants;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * The persistence implementation for the repository folder service.
@@ -59,10 +69,10 @@ import nl.worth.deltares.oss.subversion.service.persistence.RepositoryFolderPers
  * Caching information and settings can be found in <code>portal.properties</code>
  * </p>
  *
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
  * @generated
  */
-@ProviderType
+@Component(service = {RepositoryFolderPersistence.class, BasePersistence.class})
 public class RepositoryFolderPersistenceImpl
 	extends BasePersistenceImpl<RepositoryFolder>
 	implements RepositoryFolderPersistence {
@@ -104,7 +114,7 @@ public class RepositoryFolderPersistenceImpl
 	 * Returns a range of all the repository folders where repositoryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RepositoryFolderModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RepositoryFolderModelImpl</code>.
 	 * </p>
 	 *
 	 * @param repositoryId the repository ID
@@ -123,7 +133,7 @@ public class RepositoryFolderPersistenceImpl
 	 * Returns an ordered range of all the repository folders where repositoryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RepositoryFolderModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RepositoryFolderModelImpl</code>.
 	 * </p>
 	 *
 	 * @param repositoryId the repository ID
@@ -145,34 +155,34 @@ public class RepositoryFolderPersistenceImpl
 	 * Returns an ordered range of all the repository folders where repositoryId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RepositoryFolderModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RepositoryFolderModelImpl</code>.
 	 * </p>
 	 *
 	 * @param repositoryId the repository ID
 	 * @param start the lower bound of the range of repository folders
 	 * @param end the upper bound of the range of repository folders (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching repository folders
 	 */
 	@Override
 	public List<RepositoryFolder> findByRepositoryId(
 		long repositoryId, int start, int end,
 		OrderByComparator<RepositoryFolder> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
 
-			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByRepositoryId;
-			finderArgs = new Object[] {repositoryId};
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByRepositoryId;
+				finderArgs = new Object[] {repositoryId};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByRepositoryId;
 			finderArgs = new Object[] {
 				repositoryId, start, end, orderByComparator
@@ -181,13 +191,13 @@ public class RepositoryFolderPersistenceImpl
 
 		List<RepositoryFolder> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<RepositoryFolder>)finderCache.getResult(
-				finderPath, finderArgs, this);
+				finderPath, finderArgs);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (RepositoryFolder repositoryFolder : list) {
-					if ((repositoryId != repositoryFolder.getRepositoryId())) {
+					if (repositoryId != repositoryFolder.getRepositoryId()) {
 						list = null;
 
 						break;
@@ -197,62 +207,52 @@ public class RepositoryFolderPersistenceImpl
 		}
 
 		if (list == null) {
-			StringBundler query = null;
+			StringBundler sb = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(
+				sb = new StringBundler(
 					3 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
-				query = new StringBundler(3);
+				sb = new StringBundler(3);
 			}
 
-			query.append(_SQL_SELECT_REPOSITORYFOLDER_WHERE);
+			sb.append(_SQL_SELECT_REPOSITORYFOLDER_WHERE);
 
-			query.append(_FINDER_COLUMN_REPOSITORYID_REPOSITORYID_2);
+			sb.append(_FINDER_COLUMN_REPOSITORYID_REPOSITORYID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
-					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else if (pagination) {
-				query.append(RepositoryFolderModelImpl.ORDER_BY_JPQL);
+			else {
+				sb.append(RepositoryFolderModelImpl.ORDER_BY_JPQL);
 			}
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(repositoryId);
+				queryPos.add(repositoryId);
 
-				if (!pagination) {
-					list = (List<RepositoryFolder>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<RepositoryFolder>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<RepositoryFolder>)QueryUtil.list(
+					query, getDialect(), start, end);
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -283,16 +283,16 @@ public class RepositoryFolderPersistenceImpl
 			return repositoryFolder;
 		}
 
-		StringBundler msg = new StringBundler(4);
+		StringBundler sb = new StringBundler(4);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("repositoryId=");
-		msg.append(repositoryId);
+		sb.append("repositoryId=");
+		sb.append(repositoryId);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRepositoryFolderException(msg.toString());
+		throw new NoSuchRepositoryFolderException(sb.toString());
 	}
 
 	/**
@@ -338,16 +338,16 @@ public class RepositoryFolderPersistenceImpl
 			return repositoryFolder;
 		}
 
-		StringBundler msg = new StringBundler(4);
+		StringBundler sb = new StringBundler(4);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("repositoryId=");
-		msg.append(repositoryId);
+		sb.append("repositoryId=");
+		sb.append(repositoryId);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRepositoryFolderException(msg.toString());
+		throw new NoSuchRepositoryFolderException(sb.toString());
 	}
 
 	/**
@@ -414,8 +414,8 @@ public class RepositoryFolderPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -427,102 +427,102 @@ public class RepositoryFolderPersistenceImpl
 		OrderByComparator<RepositoryFolder> orderByComparator,
 		boolean previous) {
 
-		StringBundler query = null;
+		StringBundler sb = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(
+			sb = new StringBundler(
 				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			sb = new StringBundler(3);
 		}
 
-		query.append(_SQL_SELECT_REPOSITORYFOLDER_WHERE);
+		sb.append(_SQL_SELECT_REPOSITORYFOLDER_WHERE);
 
-		query.append(_FINDER_COLUMN_REPOSITORYID_REPOSITORYID_2);
+		sb.append(_FINDER_COLUMN_REPOSITORYID_REPOSITORYID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
 				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
-				query.append(WHERE_AND);
+				sb.append(WHERE_AND);
 			}
 
 			for (int i = 0; i < orderByConditionFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByConditionFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByConditionFields[i]);
 
 				if ((i + 1) < orderByConditionFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+						sb.append(WHERE_GREATER_THAN_HAS_NEXT);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+						sb.append(WHERE_LESSER_THAN_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN);
+						sb.append(WHERE_GREATER_THAN);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN);
+						sb.append(WHERE_LESSER_THAN);
 					}
 				}
 			}
 
-			query.append(ORDER_BY_CLAUSE);
+			sb.append(ORDER_BY_CLAUSE);
 
 			String[] orderByFields = orderByComparator.getOrderByFields();
 
 			for (int i = 0; i < orderByFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByFields[i]);
 
 				if ((i + 1) < orderByFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC_HAS_NEXT);
+						sb.append(ORDER_BY_ASC_HAS_NEXT);
 					}
 					else {
-						query.append(ORDER_BY_DESC_HAS_NEXT);
+						sb.append(ORDER_BY_DESC_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC);
+						sb.append(ORDER_BY_ASC);
 					}
 					else {
-						query.append(ORDER_BY_DESC);
+						sb.append(ORDER_BY_DESC);
 					}
 				}
 			}
 		}
 		else {
-			query.append(RepositoryFolderModelImpl.ORDER_BY_JPQL);
+			sb.append(RepositoryFolderModelImpl.ORDER_BY_JPQL);
 		}
 
-		String sql = query.toString();
+		String sql = sb.toString();
 
-		Query q = session.createQuery(sql);
+		Query query = session.createQuery(sql);
 
-		q.setFirstResult(0);
-		q.setMaxResults(2);
+		query.setFirstResult(0);
+		query.setMaxResults(2);
 
-		QueryPos qPos = QueryPos.getInstance(q);
+		QueryPos queryPos = QueryPos.getInstance(query);
 
-		qPos.add(repositoryId);
+		queryPos.add(repositoryId);
 
 		if (orderByComparator != null) {
 			for (Object orderByConditionValue :
 					orderByComparator.getOrderByConditionValues(
 						repositoryFolder)) {
 
-				qPos.add(orderByConditionValue);
+				queryPos.add(orderByConditionValue);
 			}
 		}
 
-		List<RepositoryFolder> list = q.list();
+		List<RepositoryFolder> list = query.list();
 
 		if (list.size() == 2) {
 			return list.get(1);
@@ -559,36 +559,34 @@ public class RepositoryFolderPersistenceImpl
 
 		Object[] finderArgs = new Object[] {repositoryId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(2);
+			StringBundler sb = new StringBundler(2);
 
-			query.append(_SQL_COUNT_REPOSITORYFOLDER_WHERE);
+			sb.append(_SQL_COUNT_REPOSITORYFOLDER_WHERE);
 
-			query.append(_FINDER_COLUMN_REPOSITORYID_REPOSITORYID_2);
+			sb.append(_FINDER_COLUMN_REPOSITORYID_REPOSITORYID_2);
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(repositoryId);
+				queryPos.add(repositoryId);
 
-				count = (Long)q.uniqueResult();
+				count = (Long)query.uniqueResult();
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -603,6 +601,11 @@ public class RepositoryFolderPersistenceImpl
 
 	public RepositoryFolderPersistenceImpl() {
 		setModelClass(RepositoryFolder.class);
+
+		setModelImplClass(RepositoryFolderImpl.class);
+		setModelPKClass(long.class);
+
+		setTable(RepositoryFolderTable.INSTANCE);
 	}
 
 	/**
@@ -613,12 +616,11 @@ public class RepositoryFolderPersistenceImpl
 	@Override
 	public void cacheResult(RepositoryFolder repositoryFolder) {
 		entityCache.putResult(
-			RepositoryFolderModelImpl.ENTITY_CACHE_ENABLED,
 			RepositoryFolderImpl.class, repositoryFolder.getPrimaryKey(),
 			repositoryFolder);
-
-		repositoryFolder.resetOriginalValues();
 	}
+
+	private int _valueObjectFinderCacheListThreshold;
 
 	/**
 	 * Caches the repository folders in the entity cache if it is enabled.
@@ -627,16 +629,20 @@ public class RepositoryFolderPersistenceImpl
 	 */
 	@Override
 	public void cacheResult(List<RepositoryFolder> repositoryFolders) {
+		if ((_valueObjectFinderCacheListThreshold == 0) ||
+			((_valueObjectFinderCacheListThreshold > 0) &&
+			 (repositoryFolders.size() >
+				 _valueObjectFinderCacheListThreshold))) {
+
+			return;
+		}
+
 		for (RepositoryFolder repositoryFolder : repositoryFolders) {
 			if (entityCache.getResult(
-					RepositoryFolderModelImpl.ENTITY_CACHE_ENABLED,
 					RepositoryFolderImpl.class,
 					repositoryFolder.getPrimaryKey()) == null) {
 
 				cacheResult(repositoryFolder);
-			}
-			else {
-				repositoryFolder.resetOriginalValues();
 			}
 		}
 	}
@@ -652,9 +658,7 @@ public class RepositoryFolderPersistenceImpl
 	public void clearCache() {
 		entityCache.clearCache(RepositoryFolderImpl.class);
 
-		finderCache.clearCache(FINDER_CLASS_NAME_ENTITY);
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+		finderCache.clearCache(RepositoryFolderImpl.class);
 	}
 
 	/**
@@ -666,23 +670,23 @@ public class RepositoryFolderPersistenceImpl
 	 */
 	@Override
 	public void clearCache(RepositoryFolder repositoryFolder) {
-		entityCache.removeResult(
-			RepositoryFolderModelImpl.ENTITY_CACHE_ENABLED,
-			RepositoryFolderImpl.class, repositoryFolder.getPrimaryKey());
-
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+		entityCache.removeResult(RepositoryFolderImpl.class, repositoryFolder);
 	}
 
 	@Override
 	public void clearCache(List<RepositoryFolder> repositoryFolders) {
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
 		for (RepositoryFolder repositoryFolder : repositoryFolders) {
 			entityCache.removeResult(
-				RepositoryFolderModelImpl.ENTITY_CACHE_ENABLED,
-				RepositoryFolderImpl.class, repositoryFolder.getPrimaryKey());
+				RepositoryFolderImpl.class, repositoryFolder);
+		}
+	}
+
+	@Override
+	public void clearCache(Set<Serializable> primaryKeys) {
+		finderCache.clearCache(RepositoryFolderImpl.class);
+
+		for (Serializable primaryKey : primaryKeys) {
+			entityCache.removeResult(RepositoryFolderImpl.class, primaryKey);
 		}
 	}
 
@@ -746,11 +750,11 @@ public class RepositoryFolderPersistenceImpl
 
 			return remove(repositoryFolder);
 		}
-		catch (NoSuchRepositoryFolderException nsee) {
-			throw nsee;
+		catch (NoSuchRepositoryFolderException noSuchEntityException) {
+			throw noSuchEntityException;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -774,8 +778,8 @@ public class RepositoryFolderPersistenceImpl
 				session.delete(repositoryFolder);
 			}
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -815,25 +819,25 @@ public class RepositoryFolderPersistenceImpl
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
-		Date now = new Date();
+		Date date = new Date();
 
 		if (isNew && (repositoryFolder.getCreateDate() == null)) {
 			if (serviceContext == null) {
-				repositoryFolder.setCreateDate(now);
+				repositoryFolder.setCreateDate(date);
 			}
 			else {
 				repositoryFolder.setCreateDate(
-					serviceContext.getCreateDate(now));
+					serviceContext.getCreateDate(date));
 			}
 		}
 
 		if (!repositoryFolderModelImpl.hasSetModifiedDate()) {
 			if (serviceContext == null) {
-				repositoryFolder.setModifiedDate(now);
+				repositoryFolder.setModifiedDate(date);
 			}
 			else {
 				repositoryFolder.setModifiedDate(
-					serviceContext.getModifiedDate(now));
+					serviceContext.getModifiedDate(date));
 			}
 		}
 
@@ -842,68 +846,27 @@ public class RepositoryFolderPersistenceImpl
 		try {
 			session = openSession();
 
-			if (repositoryFolder.isNew()) {
+			if (isNew) {
 				session.save(repositoryFolder);
-
-				repositoryFolder.setNew(false);
 			}
 			else {
 				repositoryFolder = (RepositoryFolder)session.merge(
 					repositoryFolder);
 			}
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
 		}
 
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-
-		if (!RepositoryFolderModelImpl.COLUMN_BITMASK_ENABLED) {
-			finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-		}
-		else if (isNew) {
-			Object[] args = new Object[] {
-				repositoryFolderModelImpl.getRepositoryId()
-			};
-
-			finderCache.removeResult(_finderPathCountByRepositoryId, args);
-			finderCache.removeResult(
-				_finderPathWithoutPaginationFindByRepositoryId, args);
-
-			finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
-			finderCache.removeResult(
-				_finderPathWithoutPaginationFindAll, FINDER_ARGS_EMPTY);
-		}
-		else {
-			if ((repositoryFolderModelImpl.getColumnBitmask() &
-				 _finderPathWithoutPaginationFindByRepositoryId.
-					 getColumnBitmask()) != 0) {
-
-				Object[] args = new Object[] {
-					repositoryFolderModelImpl.getOriginalRepositoryId()
-				};
-
-				finderCache.removeResult(_finderPathCountByRepositoryId, args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByRepositoryId, args);
-
-				args = new Object[] {
-					repositoryFolderModelImpl.getRepositoryId()
-				};
-
-				finderCache.removeResult(_finderPathCountByRepositoryId, args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByRepositoryId, args);
-			}
-		}
-
 		entityCache.putResult(
-			RepositoryFolderModelImpl.ENTITY_CACHE_ENABLED,
-			RepositoryFolderImpl.class, repositoryFolder.getPrimaryKey(),
-			repositoryFolder, false);
+			RepositoryFolderImpl.class, repositoryFolderModelImpl, false, true);
+
+		if (isNew) {
+			repositoryFolder.setNew(false);
+		}
 
 		repositoryFolder.resetOriginalValues();
 
@@ -952,163 +915,12 @@ public class RepositoryFolderPersistenceImpl
 	/**
 	 * Returns the repository folder with the primary key or returns <code>null</code> if it could not be found.
 	 *
-	 * @param primaryKey the primary key of the repository folder
-	 * @return the repository folder, or <code>null</code> if a repository folder with the primary key could not be found
-	 */
-	@Override
-	public RepositoryFolder fetchByPrimaryKey(Serializable primaryKey) {
-		Serializable serializable = entityCache.getResult(
-			RepositoryFolderModelImpl.ENTITY_CACHE_ENABLED,
-			RepositoryFolderImpl.class, primaryKey);
-
-		if (serializable == nullModel) {
-			return null;
-		}
-
-		RepositoryFolder repositoryFolder = (RepositoryFolder)serializable;
-
-		if (repositoryFolder == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				repositoryFolder = (RepositoryFolder)session.get(
-					RepositoryFolderImpl.class, primaryKey);
-
-				if (repositoryFolder != null) {
-					cacheResult(repositoryFolder);
-				}
-				else {
-					entityCache.putResult(
-						RepositoryFolderModelImpl.ENTITY_CACHE_ENABLED,
-						RepositoryFolderImpl.class, primaryKey, nullModel);
-				}
-			}
-			catch (Exception e) {
-				entityCache.removeResult(
-					RepositoryFolderModelImpl.ENTITY_CACHE_ENABLED,
-					RepositoryFolderImpl.class, primaryKey);
-
-				throw processException(e);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return repositoryFolder;
-	}
-
-	/**
-	 * Returns the repository folder with the primary key or returns <code>null</code> if it could not be found.
-	 *
 	 * @param folderId the primary key of the repository folder
 	 * @return the repository folder, or <code>null</code> if a repository folder with the primary key could not be found
 	 */
 	@Override
 	public RepositoryFolder fetchByPrimaryKey(long folderId) {
 		return fetchByPrimaryKey((Serializable)folderId);
-	}
-
-	@Override
-	public Map<Serializable, RepositoryFolder> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys) {
-
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, RepositoryFolder> map =
-			new HashMap<Serializable, RepositoryFolder>();
-
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			Serializable primaryKey = iterator.next();
-
-			RepositoryFolder repositoryFolder = fetchByPrimaryKey(primaryKey);
-
-			if (repositoryFolder != null) {
-				map.put(primaryKey, repositoryFolder);
-			}
-
-			return map;
-		}
-
-		Set<Serializable> uncachedPrimaryKeys = null;
-
-		for (Serializable primaryKey : primaryKeys) {
-			Serializable serializable = entityCache.getResult(
-				RepositoryFolderModelImpl.ENTITY_CACHE_ENABLED,
-				RepositoryFolderImpl.class, primaryKey);
-
-			if (serializable != nullModel) {
-				if (serializable == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<Serializable>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, (RepositoryFolder)serializable);
-				}
-			}
-		}
-
-		if (uncachedPrimaryKeys == null) {
-			return map;
-		}
-
-		StringBundler query = new StringBundler(
-			uncachedPrimaryKeys.size() * 2 + 1);
-
-		query.append(_SQL_SELECT_REPOSITORYFOLDER_WHERE_PKS_IN);
-
-		for (Serializable primaryKey : uncachedPrimaryKeys) {
-			query.append((long)primaryKey);
-
-			query.append(",");
-		}
-
-		query.setIndex(query.index() - 1);
-
-		query.append(")");
-
-		String sql = query.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query q = session.createQuery(sql);
-
-			for (RepositoryFolder repositoryFolder :
-					(List<RepositoryFolder>)q.list()) {
-
-				map.put(repositoryFolder.getPrimaryKeyObj(), repositoryFolder);
-
-				cacheResult(repositoryFolder);
-
-				uncachedPrimaryKeys.remove(repositoryFolder.getPrimaryKeyObj());
-			}
-
-			for (Serializable primaryKey : uncachedPrimaryKeys) {
-				entityCache.putResult(
-					RepositoryFolderModelImpl.ENTITY_CACHE_ENABLED,
-					RepositoryFolderImpl.class, primaryKey, nullModel);
-			}
-		}
-		catch (Exception e) {
-			throw processException(e);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
 	}
 
 	/**
@@ -1125,7 +937,7 @@ public class RepositoryFolderPersistenceImpl
 	 * Returns a range of all the repository folders.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RepositoryFolderModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RepositoryFolderModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of repository folders
@@ -1141,7 +953,7 @@ public class RepositoryFolderPersistenceImpl
 	 * Returns an ordered range of all the repository folders.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RepositoryFolderModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RepositoryFolderModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of repository folders
@@ -1161,65 +973,63 @@ public class RepositoryFolderPersistenceImpl
 	 * Returns an ordered range of all the repository folders.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RepositoryFolderModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RepositoryFolderModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of repository folders
 	 * @param end the upper bound of the range of repository folders (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of repository folders
 	 */
 	@Override
 	public List<RepositoryFolder> findAll(
 		int start, int end,
 		OrderByComparator<RepositoryFolder> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
 
-			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindAll;
-			finderArgs = FINDER_ARGS_EMPTY;
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindAll;
+				finderArgs = FINDER_ARGS_EMPTY;
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindAll;
 			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
 		List<RepositoryFolder> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<RepositoryFolder>)finderCache.getResult(
-				finderPath, finderArgs, this);
+				finderPath, finderArgs);
 		}
 
 		if (list == null) {
-			StringBundler query = null;
+			StringBundler sb = null;
 			String sql = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(
+				sb = new StringBundler(
 					2 + (orderByComparator.getOrderByFields().length * 2));
 
-				query.append(_SQL_SELECT_REPOSITORYFOLDER);
+				sb.append(_SQL_SELECT_REPOSITORYFOLDER);
 
 				appendOrderByComparator(
-					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 
-				sql = query.toString();
+				sql = sb.toString();
 			}
 			else {
 				sql = _SQL_SELECT_REPOSITORYFOLDER;
 
-				if (pagination) {
-					sql = sql.concat(RepositoryFolderModelImpl.ORDER_BY_JPQL);
-				}
+				sql = sql.concat(RepositoryFolderModelImpl.ORDER_BY_JPQL);
 			}
 
 			Session session = null;
@@ -1227,29 +1037,19 @@ public class RepositoryFolderPersistenceImpl
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				if (!pagination) {
-					list = (List<RepositoryFolder>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<RepositoryFolder>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<RepositoryFolder>)QueryUtil.list(
+					query, getDialect(), start, end);
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -1278,7 +1078,7 @@ public class RepositoryFolderPersistenceImpl
 	@Override
 	public int countAll() {
 		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
+			_finderPathCountAll, FINDER_ARGS_EMPTY);
 
 		if (count == null) {
 			Session session = null;
@@ -1286,18 +1086,15 @@ public class RepositoryFolderPersistenceImpl
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(_SQL_COUNT_REPOSITORYFOLDER);
+				Query query = session.createQuery(_SQL_COUNT_REPOSITORYFOLDER);
 
-				count = (Long)q.uniqueResult();
+				count = (Long)query.uniqueResult();
 
 				finderCache.putResult(
 					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
 			}
-			catch (Exception e) {
-				finderCache.removeResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -1308,6 +1105,21 @@ public class RepositoryFolderPersistenceImpl
 	}
 
 	@Override
+	protected EntityCache getEntityCache() {
+		return entityCache;
+	}
+
+	@Override
+	protected String getPKDBName() {
+		return "folderId";
+	}
+
+	@Override
+	protected String getSelectSQL() {
+		return _SQL_SELECT_REPOSITORYFOLDER;
+	}
+
+	@Override
 	protected Map<String, Integer> getTableColumnsMap() {
 		return RepositoryFolderModelImpl.TABLE_COLUMNS_MAP;
 	}
@@ -1315,69 +1127,101 @@ public class RepositoryFolderPersistenceImpl
 	/**
 	 * Initializes the repository folder persistence.
 	 */
-	public void afterPropertiesSet() {
+	@Activate
+	public void activate() {
+		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
+			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+
 		_finderPathWithPaginationFindAll = new FinderPath(
-			RepositoryFolderModelImpl.ENTITY_CACHE_ENABLED,
-			RepositoryFolderModelImpl.FINDER_CACHE_ENABLED,
-			RepositoryFolderImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"findAll", new String[0]);
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
+			new String[0], true);
 
 		_finderPathWithoutPaginationFindAll = new FinderPath(
-			RepositoryFolderModelImpl.ENTITY_CACHE_ENABLED,
-			RepositoryFolderModelImpl.FINDER_CACHE_ENABLED,
-			RepositoryFolderImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll",
-			new String[0]);
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
+			new String[0], true);
 
 		_finderPathCountAll = new FinderPath(
-			RepositoryFolderModelImpl.ENTITY_CACHE_ENABLED,
-			RepositoryFolderModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0]);
+			new String[0], new String[0], false);
 
 		_finderPathWithPaginationFindByRepositoryId = new FinderPath(
-			RepositoryFolderModelImpl.ENTITY_CACHE_ENABLED,
-			RepositoryFolderModelImpl.FINDER_CACHE_ENABLED,
-			RepositoryFolderImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"findByRepositoryId",
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByRepositoryId",
 			new String[] {
 				Long.class.getName(), Integer.class.getName(),
 				Integer.class.getName(), OrderByComparator.class.getName()
-			});
+			},
+			new String[] {"repositoryId"}, true);
 
 		_finderPathWithoutPaginationFindByRepositoryId = new FinderPath(
-			RepositoryFolderModelImpl.ENTITY_CACHE_ENABLED,
-			RepositoryFolderModelImpl.FINDER_CACHE_ENABLED,
-			RepositoryFolderImpl.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByRepositoryId",
-			new String[] {Long.class.getName()},
-			RepositoryFolderModelImpl.REPOSITORYID_COLUMN_BITMASK);
+			new String[] {Long.class.getName()}, new String[] {"repositoryId"},
+			true);
 
 		_finderPathCountByRepositoryId = new FinderPath(
-			RepositoryFolderModelImpl.ENTITY_CACHE_ENABLED,
-			RepositoryFolderModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByRepositoryId",
-			new String[] {Long.class.getName()});
+			new String[] {Long.class.getName()}, new String[] {"repositoryId"},
+			false);
+
+		_setRepositoryFolderUtilPersistence(this);
 	}
 
-	public void destroy() {
+	@Deactivate
+	public void deactivate() {
+		_setRepositoryFolderUtilPersistence(null);
+
 		entityCache.removeCache(RepositoryFolderImpl.class.getName());
-		finderCache.removeCache(FINDER_CLASS_NAME_ENTITY);
-		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
-	@ServiceReference(type = EntityCache.class)
+	private void _setRepositoryFolderUtilPersistence(
+		RepositoryFolderPersistence repositoryFolderPersistence) {
+
+		try {
+			Field field = RepositoryFolderUtil.class.getDeclaredField(
+				"_persistence");
+
+			field.setAccessible(true);
+
+			field.set(null, repositoryFolderPersistence);
+		}
+		catch (ReflectiveOperationException reflectiveOperationException) {
+			throw new RuntimeException(reflectiveOperationException);
+		}
+	}
+
+	@Override
+	@Reference(
+		target = SubversionPersistenceConstants.SERVICE_CONFIGURATION_FILTER,
+		unbind = "-"
+	)
+	public void setConfiguration(Configuration configuration) {
+	}
+
+	@Override
+	@Reference(
+		target = SubversionPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setDataSource(DataSource dataSource) {
+		super.setDataSource(dataSource);
+	}
+
+	@Override
+	@Reference(
+		target = SubversionPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		super.setSessionFactory(sessionFactory);
+	}
+
+	@Reference
 	protected EntityCache entityCache;
 
-	@ServiceReference(type = FinderCache.class)
+	@Reference
 	protected FinderCache finderCache;
 
 	private static final String _SQL_SELECT_REPOSITORYFOLDER =
 		"SELECT repositoryFolder FROM RepositoryFolder repositoryFolder";
-
-	private static final String _SQL_SELECT_REPOSITORYFOLDER_WHERE_PKS_IN =
-		"SELECT repositoryFolder FROM RepositoryFolder repositoryFolder WHERE folderId IN (";
 
 	private static final String _SQL_SELECT_REPOSITORYFOLDER_WHERE =
 		"SELECT repositoryFolder FROM RepositoryFolder repositoryFolder WHERE ";
@@ -1398,5 +1242,14 @@ public class RepositoryFolderPersistenceImpl
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		RepositoryFolderPersistenceImpl.class);
+
+	@Override
+	protected FinderCache getFinderCache() {
+		return finderCache;
+	}
+
+	@Reference
+	private RepositoryFolderModelArgumentsResolver
+		_repositoryFolderModelArgumentsResolver;
 
 }
