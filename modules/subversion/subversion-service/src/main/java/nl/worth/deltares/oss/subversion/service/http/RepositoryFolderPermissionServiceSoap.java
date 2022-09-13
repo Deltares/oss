@@ -14,8 +14,6 @@
 
 package nl.worth.deltares.oss.subversion.service.http;
 
-import aQute.bnd.annotation.ProviderType;
-
 /**
  * Provides the SOAP utility for the
  * <code>nl.worth.deltares.oss.subversion.service.RepositoryFolderPermissionServiceUtil</code> service
@@ -51,10 +49,11 @@ import aQute.bnd.annotation.ProviderType;
  * The SOAP utility is only generated for remote services.
  * </p>
  *
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
  * @see RepositoryFolderPermissionServiceHttp
+ * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@ProviderType
+@Deprecated
 public class RepositoryFolderPermissionServiceSoap {
 }

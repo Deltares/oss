@@ -14,12 +14,6 @@
 
 package nl.worth.deltares.oss.subversion.service;
 
-import aQute.bnd.annotation.ProviderType;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.util.tracker.ServiceTracker;
-
 /**
  * Provides the remote service utility for Repository. This utility wraps
  * <code>nl.worth.deltares.oss.subversion.service.impl.RepositoryServiceImpl</code> and is an
@@ -28,11 +22,10 @@ import org.osgi.util.tracker.ServiceTracker;
  * based on the propagated JAAS credentials because this service can be
  * accessed remotely.
  *
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
  * @see RepositoryService
  * @generated
  */
-@ProviderType
 public class RepositoryServiceUtil {
 
 	/*
@@ -46,27 +39,14 @@ public class RepositoryServiceUtil {
 	 *
 	 * @return the OSGi service identifier
 	 */
-	public static String getOSGiServiceIdentifier() {
+	public static java.lang.String getOSGiServiceIdentifier() {
 		return getService().getOSGiServiceIdentifier();
 	}
 
 	public static RepositoryService getService() {
-		return _serviceTracker.getService();
+		return _service;
 	}
 
-	private static ServiceTracker<RepositoryService, RepositoryService>
-		_serviceTracker;
-
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(RepositoryService.class);
-
-		ServiceTracker<RepositoryService, RepositoryService> serviceTracker =
-			new ServiceTracker<RepositoryService, RepositoryService>(
-				bundle.getBundleContext(), RepositoryService.class, null);
-
-		serviceTracker.open();
-
-		_serviceTracker = serviceTracker;
-	}
+	private static volatile RepositoryService _service;
 
 }

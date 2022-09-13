@@ -14,44 +14,28 @@
 
 package nl.worth.deltares.oss.subversion.model;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.portal.kernel.model.ModelWrapper;
-import com.liferay.portal.kernel.service.ServiceContext;
-
-import java.io.Serializable;
+import com.liferay.portal.kernel.model.wrapper.BaseModelWrapper;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * <p>
  * This class is a wrapper for {@link RepositoryFolder}.
  * </p>
  *
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
  * @see RepositoryFolder
  * @generated
  */
-@ProviderType
 public class RepositoryFolderWrapper
-	implements RepositoryFolder, ModelWrapper<RepositoryFolder> {
+	extends BaseModelWrapper<RepositoryFolder>
+	implements ModelWrapper<RepositoryFolder>, RepositoryFolder {
 
 	public RepositoryFolderWrapper(RepositoryFolder repositoryFolder) {
-		_repositoryFolder = repositoryFolder;
-	}
-
-	@Override
-	public Class<?> getModelClass() {
-		return RepositoryFolder.class;
-	}
-
-	@Override
-	public String getModelClassName() {
-		return RepositoryFolder.class.getName();
+		super(repositoryFolder);
 	}
 
 	@Override
@@ -115,17 +99,8 @@ public class RepositoryFolderWrapper
 	}
 
 	@Override
-	public Object clone() {
-		return new RepositoryFolderWrapper(
-			(RepositoryFolder)_repositoryFolder.clone());
-	}
-
-	@Override
-	public int compareTo(
-		nl.worth.deltares.oss.subversion.model.RepositoryFolder
-			repositoryFolder) {
-
-		return _repositoryFolder.compareTo(repositoryFolder);
+	public RepositoryFolder cloneWithOriginalValues() {
+		return wrap(model.cloneWithOriginalValues());
 	}
 
 	@Override
@@ -133,7 +108,7 @@ public class RepositoryFolderWrapper
 		<nl.worth.deltares.oss.subversion.model.RepositoryFolder>
 			getChildren() {
 
-		return _repositoryFolder.getChildren();
+		return model.getChildren();
 	}
 
 	/**
@@ -143,12 +118,7 @@ public class RepositoryFolderWrapper
 	 */
 	@Override
 	public Date getCreateDate() {
-		return _repositoryFolder.getCreateDate();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _repositoryFolder.getExpandoBridge();
+		return model.getCreateDate();
 	}
 
 	/**
@@ -158,7 +128,7 @@ public class RepositoryFolderWrapper
 	 */
 	@Override
 	public long getFolderId() {
-		return _repositoryFolder.getFolderId();
+		return model.getFolderId();
 	}
 
 	/**
@@ -168,7 +138,7 @@ public class RepositoryFolderWrapper
 	 */
 	@Override
 	public Date getModifiedDate() {
-		return _repositoryFolder.getModifiedDate();
+		return model.getModifiedDate();
 	}
 
 	/**
@@ -178,7 +148,7 @@ public class RepositoryFolderWrapper
 	 */
 	@Override
 	public String getName() {
-		return _repositoryFolder.getName();
+		return model.getName();
 	}
 
 	/**
@@ -188,12 +158,7 @@ public class RepositoryFolderWrapper
 	 */
 	@Override
 	public long getPrimaryKey() {
-		return _repositoryFolder.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _repositoryFolder.getPrimaryKeyObj();
+		return model.getPrimaryKey();
 	}
 
 	/**
@@ -203,7 +168,7 @@ public class RepositoryFolderWrapper
 	 */
 	@Override
 	public long getRepositoryId() {
-		return _repositoryFolder.getRepositoryId();
+		return model.getRepositoryId();
 	}
 
 	/**
@@ -213,7 +178,7 @@ public class RepositoryFolderWrapper
 	 */
 	@Override
 	public boolean getWorldRead() {
-		return _repositoryFolder.getWorldRead();
+		return model.getWorldRead();
 	}
 
 	/**
@@ -223,27 +188,7 @@ public class RepositoryFolderWrapper
 	 */
 	@Override
 	public boolean getWorldWrite() {
-		return _repositoryFolder.getWorldWrite();
-	}
-
-	@Override
-	public int hashCode() {
-		return _repositoryFolder.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _repositoryFolder.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _repositoryFolder.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _repositoryFolder.isNew();
+		return model.getWorldWrite();
 	}
 
 	/**
@@ -253,7 +198,7 @@ public class RepositoryFolderWrapper
 	 */
 	@Override
 	public boolean isWorldRead() {
-		return _repositoryFolder.isWorldRead();
+		return model.isWorldRead();
 	}
 
 	/**
@@ -263,17 +208,12 @@ public class RepositoryFolderWrapper
 	 */
 	@Override
 	public boolean isWorldWrite() {
-		return _repositoryFolder.isWorldWrite();
+		return model.isWorldWrite();
 	}
 
 	@Override
 	public void persist() {
-		_repositoryFolder.persist();
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_repositoryFolder.setCachedModel(cachedModel);
+		model.persist();
 	}
 
 	/**
@@ -283,24 +223,7 @@ public class RepositoryFolderWrapper
 	 */
 	@Override
 	public void setCreateDate(Date createDate) {
-		_repositoryFolder.setCreateDate(createDate);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-
-		_repositoryFolder.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_repositoryFolder.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
-		_repositoryFolder.setExpandoBridgeAttributes(serviceContext);
+		model.setCreateDate(createDate);
 	}
 
 	/**
@@ -310,7 +233,7 @@ public class RepositoryFolderWrapper
 	 */
 	@Override
 	public void setFolderId(long folderId) {
-		_repositoryFolder.setFolderId(folderId);
+		model.setFolderId(folderId);
 	}
 
 	/**
@@ -320,7 +243,7 @@ public class RepositoryFolderWrapper
 	 */
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
-		_repositoryFolder.setModifiedDate(modifiedDate);
+		model.setModifiedDate(modifiedDate);
 	}
 
 	/**
@@ -330,12 +253,7 @@ public class RepositoryFolderWrapper
 	 */
 	@Override
 	public void setName(String name) {
-		_repositoryFolder.setName(name);
-	}
-
-	@Override
-	public void setNew(boolean n) {
-		_repositoryFolder.setNew(n);
+		model.setName(name);
 	}
 
 	/**
@@ -345,12 +263,7 @@ public class RepositoryFolderWrapper
 	 */
 	@Override
 	public void setPrimaryKey(long primaryKey) {
-		_repositoryFolder.setPrimaryKey(primaryKey);
-	}
-
-	@Override
-	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
-		_repositoryFolder.setPrimaryKeyObj(primaryKeyObj);
+		model.setPrimaryKey(primaryKey);
 	}
 
 	/**
@@ -360,7 +273,7 @@ public class RepositoryFolderWrapper
 	 */
 	@Override
 	public void setRepositoryId(long repositoryId) {
-		_repositoryFolder.setRepositoryId(repositoryId);
+		model.setRepositoryId(repositoryId);
 	}
 
 	/**
@@ -370,7 +283,7 @@ public class RepositoryFolderWrapper
 	 */
 	@Override
 	public void setWorldRead(boolean worldRead) {
-		_repositoryFolder.setWorldRead(worldRead);
+		model.setWorldRead(worldRead);
 	}
 
 	/**
@@ -380,84 +293,12 @@ public class RepositoryFolderWrapper
 	 */
 	@Override
 	public void setWorldWrite(boolean worldWrite) {
-		_repositoryFolder.setWorldWrite(worldWrite);
+		model.setWorldWrite(worldWrite);
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel
-		<nl.worth.deltares.oss.subversion.model.RepositoryFolder>
-			toCacheModel() {
-
-		return _repositoryFolder.toCacheModel();
+	protected RepositoryFolderWrapper wrap(RepositoryFolder repositoryFolder) {
+		return new RepositoryFolderWrapper(repositoryFolder);
 	}
-
-	@Override
-	public nl.worth.deltares.oss.subversion.model.RepositoryFolder
-		toEscapedModel() {
-
-		return new RepositoryFolderWrapper(_repositoryFolder.toEscapedModel());
-	}
-
-	@Override
-	public String toString() {
-		return _repositoryFolder.toString();
-	}
-
-	@Override
-	public nl.worth.deltares.oss.subversion.model.RepositoryFolder
-		toUnescapedModel() {
-
-		return new RepositoryFolderWrapper(
-			_repositoryFolder.toUnescapedModel());
-	}
-
-	@Override
-	public String toXmlString() {
-		return _repositoryFolder.toXmlString();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-
-		if (!(obj instanceof RepositoryFolderWrapper)) {
-			return false;
-		}
-
-		RepositoryFolderWrapper repositoryFolderWrapper =
-			(RepositoryFolderWrapper)obj;
-
-		if (Objects.equals(
-				_repositoryFolder, repositoryFolderWrapper._repositoryFolder)) {
-
-			return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	public RepositoryFolder getWrappedModel() {
-		return _repositoryFolder;
-	}
-
-	@Override
-	public boolean isEntityCacheEnabled() {
-		return _repositoryFolder.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _repositoryFolder.isFinderCacheEnabled();
-	}
-
-	@Override
-	public void resetOriginalValues() {
-		_repositoryFolder.resetOriginalValues();
-	}
-
-	private final RepositoryFolder _repositoryFolder;
 
 }

@@ -14,18 +14,15 @@
 
 package nl.worth.deltares.oss.subversion.service;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.service.ServiceWrapper;
 
 /**
  * Provides a wrapper for {@link RepositoryFolderPermissionService}.
  *
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
  * @see RepositoryFolderPermissionService
  * @generated
  */
-@ProviderType
 public class RepositoryFolderPermissionServiceWrapper
 	implements RepositoryFolderPermissionService,
 			   ServiceWrapper<RepositoryFolderPermissionService> {

@@ -14,18 +14,15 @@
 
 package nl.worth.deltares.oss.subversion.service;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.service.ServiceWrapper;
 
 /**
  * Provides a wrapper for {@link RepositoryService}.
  *
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
  * @see RepositoryService
  * @generated
  */
-@ProviderType
 public class RepositoryServiceWrapper
 	implements RepositoryService, ServiceWrapper<RepositoryService> {
 
