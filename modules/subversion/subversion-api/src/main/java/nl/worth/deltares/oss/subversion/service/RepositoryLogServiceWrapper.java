@@ -32,15 +32,6 @@ public class RepositoryLogServiceWrapper
 		_repositoryLogService = repositoryLogService;
 	}
 
-	@Override
-	public void addRepositoryLog(
-		String requestMethod, String remoteHost, String remoteUser,
-		String requestUri) {
-
-		_repositoryLogService.addRepositoryLog(
-			requestMethod, remoteHost, remoteUser, requestUri);
-	}
-
 	/**
 	 * Returns the OSGi service identifier.
 	 *

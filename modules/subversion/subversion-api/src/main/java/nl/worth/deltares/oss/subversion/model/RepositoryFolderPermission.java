@@ -62,24 +62,4 @@ public interface RepositoryFolderPermission
 
 			};
 
-	public nl.worth.deltares.oss.subversion.model.RepositoryFolder getFolder()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			   com.liferay.portal.kernel.exception.SystemException;
-
-	public nl.worth.deltares.oss.subversion.model.Repository getRepository()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			   com.liferay.portal.kernel.exception.SystemException;
-
-	public com.liferay.portal.kernel.model.Role getRole()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			   com.liferay.portal.kernel.exception.SystemException;
-
-	public com.liferay.portal.kernel.model.User getUser()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			   com.liferay.portal.kernel.exception.SystemException;
-
-	public com.liferay.portal.kernel.model.Group getGroup()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			   com.liferay.portal.kernel.exception.SystemException;
-
 }

@@ -89,13 +89,11 @@ public abstract class RepositoryFolderPermissionLocalServiceBaseImpl
 	 *
 	 * @param repositoryFolderPermission the repository folder permission
 	 * @return the repository folder permission that was added
-	 * @throws SystemException
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public RepositoryFolderPermission addRepositoryFolderPermission(
-			RepositoryFolderPermission repositoryFolderPermission)
-		throws SystemException {
+		RepositoryFolderPermission repositoryFolderPermission) {
 
 		repositoryFolderPermission.setNew(true);
 

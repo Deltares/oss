@@ -17,7 +17,6 @@ package nl.worth.deltares.oss.subversion.service;
 import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
@@ -46,25 +45,6 @@ public class RepositoryFolderPermissionLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to <code>nl.worth.deltares.oss.subversion.service.impl.RepositoryFolderPermissionLocalServiceImpl</code> and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static RepositoryFolderPermission addRepositoryFolderPermission(
-		nl.worth.deltares.oss.subversion.model.RepositoryFolder
-			repositoryFolder,
-		com.liferay.portal.kernel.model.Role role, String permission,
-		boolean recurse) {
-
-		return getService().addRepositoryFolderPermission(
-			repositoryFolder, role, permission, recurse);
-	}
-
-	public static RepositoryFolderPermission addRepositoryFolderPermission(
-		nl.worth.deltares.oss.subversion.model.RepositoryFolder
-			repositoryFolder,
-		com.liferay.portal.kernel.model.User user, String permission,
-		boolean recurse) {
-
-		return getService().addRepositoryFolderPermission(
-			repositoryFolder, user, permission, recurse);
-	}
 
 	/**
 	 * Adds the repository folder permission to the database. Also notifies the appropriate model listeners.
@@ -75,25 +55,12 @@ public class RepositoryFolderPermissionLocalServiceUtil {
 	 *
 	 * @param repositoryFolderPermission the repository folder permission
 	 * @return the repository folder permission that was added
-	 * @throws SystemException
 	 */
 	public static RepositoryFolderPermission addRepositoryFolderPermission(
-			RepositoryFolderPermission repositoryFolderPermission)
-		throws SystemException {
+		RepositoryFolderPermission repositoryFolderPermission) {
 
 		return getService().addRepositoryFolderPermission(
 			repositoryFolderPermission);
-	}
-
-	public static List<RepositoryFolderPermission>
-			addRepositoryFolderPermissions(
-				nl.worth.deltares.oss.subversion.model.RepositoryFolder
-					repositoryFolder,
-				List<RepositoryFolderPermission> permissions, boolean recurse)
-		throws PortalException, SystemException {
-
-		return getService().addRepositoryFolderPermissions(
-			repositoryFolder, permissions, recurse);
 	}
 
 	/**
@@ -106,12 +73,6 @@ public class RepositoryFolderPermissionLocalServiceUtil {
 		return getService().createPersistedModel(primaryKeyObj);
 	}
 
-	public static RepositoryFolderPermission
-		createRepositoryFolderPermission() {
-
-		return getService().createRepositoryFolderPermission();
-	}
-
 	/**
 	 * Creates a new repository folder permission with the primary key. Does not add the repository folder permission to the database.
 	 *
@@ -122,40 +83,6 @@ public class RepositoryFolderPermissionLocalServiceUtil {
 		long permissionId) {
 
 		return getService().createRepositoryFolderPermission(permissionId);
-	}
-
-	public static RepositoryFolderPermission createRepositoryFolderPermission(
-		long repositoryId, String folderName,
-		com.liferay.portal.kernel.model.Role role, String permission) {
-
-		return getService().createRepositoryFolderPermission(
-			repositoryId, folderName, role, permission);
-	}
-
-	public static RepositoryFolderPermission createRepositoryFolderPermission(
-		long repositoryId, String folderName,
-		com.liferay.portal.kernel.model.User user, String permission) {
-
-		return getService().createRepositoryFolderPermission(
-			repositoryId, folderName, user, permission);
-	}
-
-	public static RepositoryFolderPermission createRepositoryFolderPermission(
-		nl.worth.deltares.oss.subversion.model.RepositoryFolder
-			repositoryFolder,
-		com.liferay.portal.kernel.model.Role role, String permission) {
-
-		return getService().createRepositoryFolderPermission(
-			repositoryFolder, role, permission);
-	}
-
-	public static RepositoryFolderPermission createRepositoryFolderPermission(
-		nl.worth.deltares.oss.subversion.model.RepositoryFolder
-			repositoryFolder,
-		com.liferay.portal.kernel.model.User user, String permission) {
-
-		return getService().createRepositoryFolderPermission(
-			repositoryFolder, user, permission);
 	}
 
 	/**
@@ -186,13 +113,6 @@ public class RepositoryFolderPermissionLocalServiceUtil {
 		return getService().deleteRepositoryFolderPermission(permissionId);
 	}
 
-	public static void deleteRepositoryFolderPermission(
-		long repositoryId, long folderId, long roleId) {
-
-		getService().deleteRepositoryFolderPermission(
-			repositoryId, folderId, roleId);
-	}
-
 	/**
 	 * Deletes the repository folder permission from the database. Also notifies the appropriate model listeners.
 	 *
@@ -208,12 +128,6 @@ public class RepositoryFolderPermissionLocalServiceUtil {
 
 		return getService().deleteRepositoryFolderPermission(
 			repositoryFolderPermission);
-	}
-
-	public static void deleteRepositoryFolderPermissions(
-		long repositoryId, long folderId) {
-
-		getService().deleteRepositoryFolderPermissions(repositoryId, folderId);
 	}
 
 	public static <T> T dslQuery(DSLQuery dslQuery) {
@@ -352,13 +266,6 @@ public class RepositoryFolderPermissionLocalServiceUtil {
 		return getService().getRepositoryFolderPermission(permissionId);
 	}
 
-	public static RepositoryFolderPermission getRepositoryFolderPermission(
-		long repositoryId, long folderId, long roleId) {
-
-		return getService().getRepositoryFolderPermission(
-			repositoryId, folderId, roleId);
-	}
-
 	/**
 	 * Returns a range of all the repository folder permissions.
 	 *
@@ -374,12 +281,6 @@ public class RepositoryFolderPermissionLocalServiceUtil {
 		getRepositoryFolderPermissions(int start, int end) {
 
 		return getService().getRepositoryFolderPermissions(start, end);
-	}
-
-	public static List<RepositoryFolderPermission>
-		getRepositoryFolderPermissions(long folderId) {
-
-		return getService().getRepositoryFolderPermissions(folderId);
 	}
 
 	/**

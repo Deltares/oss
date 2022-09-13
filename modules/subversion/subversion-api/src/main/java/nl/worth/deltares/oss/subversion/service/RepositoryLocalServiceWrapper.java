@@ -41,12 +41,10 @@ public class RepositoryLocalServiceWrapper
 	 *
 	 * @param repository the repository
 	 * @return the repository that was added
-	 * @throws SystemException
 	 */
 	@Override
 	public nl.worth.deltares.oss.subversion.model.Repository addRepository(
-			nl.worth.deltares.oss.subversion.model.Repository repository)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		nl.worth.deltares.oss.subversion.model.Repository repository) {
 
 		return _repositoryLocalService.addRepository(repository);
 	}
@@ -60,13 +58,6 @@ public class RepositoryLocalServiceWrapper
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _repositoryLocalService.createPersistedModel(primaryKeyObj);
-	}
-
-	@Override
-	public nl.worth.deltares.oss.subversion.model.Repository
-		createRepository() {
-
-		return _repositoryLocalService.createRepository();
 	}
 
 	/**
@@ -291,22 +282,6 @@ public class RepositoryLocalServiceWrapper
 		return _repositoryLocalService.getRepositories(start, end);
 	}
 
-	@Override
-	public java.util.List<nl.worth.deltares.oss.subversion.model.Repository>
-			getRepositories(long groupId)
-		throws com.liferay.portal.kernel.exception.SystemException {
-
-		return _repositoryLocalService.getRepositories(groupId);
-	}
-
-	@Override
-	public java.util.List<nl.worth.deltares.oss.subversion.model.Repository>
-			getRepositories(String className)
-		throws com.liferay.portal.kernel.exception.SystemException {
-
-		return _repositoryLocalService.getRepositories(className);
-	}
-
 	/**
 	 * Returns the number of repositories.
 	 *
@@ -330,14 +305,6 @@ public class RepositoryLocalServiceWrapper
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _repositoryLocalService.getRepository(repositoryId);
-	}
-
-	@Override
-	public java.util.List
-		<nl.worth.deltares.oss.subversion.model.RepositoryFolderPermission>
-			getRepositoryPermissions(long repositoryId) {
-
-		return _repositoryLocalService.getRepositoryPermissions(repositoryId);
 	}
 
 	/**

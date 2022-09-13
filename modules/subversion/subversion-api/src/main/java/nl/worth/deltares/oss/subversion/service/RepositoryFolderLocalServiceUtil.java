@@ -17,7 +17,6 @@ package nl.worth.deltares.oss.subversion.service;
 import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
@@ -46,11 +45,6 @@ public class RepositoryFolderLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to <code>nl.worth.deltares.oss.subversion.service.impl.RepositoryFolderLocalServiceImpl</code> and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static RepositoryFolder addRepositoryFolder(
-		long repositoryId, String name) {
-
-		return getService().addRepositoryFolder(repositoryId, name);
-	}
 
 	/**
 	 * Adds the repository folder to the database. Also notifies the appropriate model listeners.
@@ -61,11 +55,9 @@ public class RepositoryFolderLocalServiceUtil {
 	 *
 	 * @param repositoryFolder the repository folder
 	 * @return the repository folder that was added
-	 * @throws SystemException
 	 */
 	public static RepositoryFolder addRepositoryFolder(
-			RepositoryFolder repositoryFolder)
-		throws SystemException {
+		RepositoryFolder repositoryFolder) {
 
 		return getService().addRepositoryFolder(repositoryFolder);
 	}
@@ -78,10 +70,6 @@ public class RepositoryFolderLocalServiceUtil {
 		throws PortalException {
 
 		return getService().createPersistedModel(primaryKeyObj);
-	}
-
-	public static RepositoryFolder createRepositoryFolder() {
-		return getService().createRepositoryFolder();
 	}
 
 	/**
@@ -130,17 +118,11 @@ public class RepositoryFolderLocalServiceUtil {
 	 *
 	 * @param repositoryFolder the repository folder
 	 * @return the repository folder that was removed
-	 * @throws SystemException
 	 */
 	public static RepositoryFolder deleteRepositoryFolder(
-			RepositoryFolder repositoryFolder)
-		throws SystemException {
+		RepositoryFolder repositoryFolder) {
 
 		return getService().deleteRepositoryFolder(repositoryFolder);
-	}
-
-	public static void deleteRepositoryFolders(List<RepositoryFolder> folders) {
-		getService().deleteRepositoryFolders(folders);
 	}
 
 	public static <T> T dslQuery(DSLQuery dslQuery) {
@@ -276,24 +258,6 @@ public class RepositoryFolderLocalServiceUtil {
 		return getService().getRepositoryFolder(folderId);
 	}
 
-	public static RepositoryFolder getRepositoryFolder(
-		long repositoryId, String name) {
-
-		return getService().getRepositoryFolder(repositoryId, name);
-	}
-
-	public static List<RepositoryFolder> getRepositoryFolderChildren(
-		RepositoryFolder repositoryFolder) {
-
-		return getService().getRepositoryFolderChildren(repositoryFolder);
-	}
-
-	public static RepositoryFolder getRepositoryFolderParent(
-		long repositoryId, String folderName) {
-
-		return getService().getRepositoryFolderParent(repositoryId, folderName);
-	}
-
 	/**
 	 * Returns a range of all the repository folders.
 	 *
@@ -309,19 +273,6 @@ public class RepositoryFolderLocalServiceUtil {
 		int start, int end) {
 
 		return getService().getRepositoryFolders(start, end);
-	}
-
-	public static List<RepositoryFolder> getRepositoryFolders(
-		long repositoryId) {
-
-		return getService().getRepositoryFolders(repositoryId);
-	}
-
-	@Deprecated
-	public static List<RepositoryFolder> getRepositoryFolders(
-		long repositoryId, String name) {
-
-		return getService().getRepositoryFolders(repositoryId, name);
 	}
 
 	/**

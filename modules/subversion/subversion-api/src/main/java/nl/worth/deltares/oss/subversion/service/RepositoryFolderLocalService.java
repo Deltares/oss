@@ -62,7 +62,6 @@ public interface RepositoryFolderLocalService
 	 *
 	 * Never modify this interface directly. Add custom service methods to <code>nl.worth.deltares.oss.subversion.service.impl.RepositoryFolderLocalServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface. Consume the repository folder local service via injection or a <code>org.osgi.util.tracker.ServiceTracker</code>. Use {@link RepositoryFolderLocalServiceUtil} if injection and service tracking are not available.
 	 */
-	public RepositoryFolder addRepositoryFolder(long repositoryId, String name);
 
 	/**
 	 * Adds the repository folder to the database. Also notifies the appropriate model listeners.
@@ -73,20 +72,16 @@ public interface RepositoryFolderLocalService
 	 *
 	 * @param repositoryFolder the repository folder
 	 * @return the repository folder that was added
-	 * @throws SystemException
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	public RepositoryFolder addRepositoryFolder(
-			RepositoryFolder repositoryFolder)
-		throws SystemException;
+		RepositoryFolder repositoryFolder);
 
 	/**
 	 * @throws PortalException
 	 */
 	public PersistedModel createPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
-
-	public RepositoryFolder createRepositoryFolder();
 
 	/**
 	 * Creates a new repository folder with the primary key. Does not add the repository folder to the database.
@@ -128,14 +123,10 @@ public interface RepositoryFolderLocalService
 	 *
 	 * @param repositoryFolder the repository folder
 	 * @return the repository folder that was removed
-	 * @throws SystemException
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	public RepositoryFolder deleteRepositoryFolder(
-			RepositoryFolder repositoryFolder)
-		throws SystemException;
-
-	public void deleteRepositoryFolders(List<RepositoryFolder> folders);
+		RepositoryFolder repositoryFolder);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public <T> T dslQuery(DSLQuery dslQuery);
@@ -244,17 +235,6 @@ public interface RepositoryFolderLocalService
 	public RepositoryFolder getRepositoryFolder(long folderId)
 		throws PortalException;
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public RepositoryFolder getRepositoryFolder(long repositoryId, String name);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<RepositoryFolder> getRepositoryFolderChildren(
-		RepositoryFolder repositoryFolder);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public RepositoryFolder getRepositoryFolderParent(
-		long repositoryId, String folderName);
-
 	/**
 	 * Returns a range of all the repository folders.
 	 *
@@ -268,14 +248,6 @@ public interface RepositoryFolderLocalService
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<RepositoryFolder> getRepositoryFolders(int start, int end);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<RepositoryFolder> getRepositoryFolders(long repositoryId);
-
-	@Deprecated
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<RepositoryFolder> getRepositoryFolders(
-		long repositoryId, String name);
 
 	/**
 	 * Returns the number of repository folders.

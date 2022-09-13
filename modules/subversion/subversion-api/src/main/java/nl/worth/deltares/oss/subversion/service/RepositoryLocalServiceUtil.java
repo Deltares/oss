@@ -17,7 +17,6 @@ package nl.worth.deltares.oss.subversion.service;
 import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
@@ -56,11 +55,8 @@ public class RepositoryLocalServiceUtil {
 	 *
 	 * @param repository the repository
 	 * @return the repository that was added
-	 * @throws SystemException
 	 */
-	public static Repository addRepository(Repository repository)
-		throws SystemException {
-
+	public static Repository addRepository(Repository repository) {
 		return getService().addRepository(repository);
 	}
 
@@ -72,10 +68,6 @@ public class RepositoryLocalServiceUtil {
 		throws PortalException {
 
 		return getService().createPersistedModel(primaryKeyObj);
-	}
-
-	public static Repository createRepository() {
-		return getService().createRepository();
 	}
 
 	/**
@@ -264,18 +256,6 @@ public class RepositoryLocalServiceUtil {
 		return getService().getRepositories(start, end);
 	}
 
-	public static List<Repository> getRepositories(long groupId)
-		throws SystemException {
-
-		return getService().getRepositories(groupId);
-	}
-
-	public static List<Repository> getRepositories(String className)
-		throws SystemException {
-
-		return getService().getRepositories(className);
-	}
-
 	/**
 	 * Returns the number of repositories.
 	 *
@@ -296,13 +276,6 @@ public class RepositoryLocalServiceUtil {
 		throws PortalException {
 
 		return getService().getRepository(repositoryId);
-	}
-
-	public static List
-		<nl.worth.deltares.oss.subversion.model.RepositoryFolderPermission>
-			getRepositoryPermissions(long repositoryId) {
-
-		return getService().getRepositoryPermissions(repositoryId);
 	}
 
 	/**

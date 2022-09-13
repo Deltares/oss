@@ -89,13 +89,11 @@ public abstract class RepositoryFolderLocalServiceBaseImpl
 	 *
 	 * @param repositoryFolder the repository folder
 	 * @return the repository folder that was added
-	 * @throws SystemException
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public RepositoryFolder addRepositoryFolder(
-			RepositoryFolder repositoryFolder)
-		throws SystemException {
+		RepositoryFolder repositoryFolder) {
 
 		repositoryFolder.setNew(true);
 
@@ -142,13 +140,11 @@ public abstract class RepositoryFolderLocalServiceBaseImpl
 	 *
 	 * @param repositoryFolder the repository folder
 	 * @return the repository folder that was removed
-	 * @throws SystemException
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public RepositoryFolder deleteRepositoryFolder(
-			RepositoryFolder repositoryFolder)
-		throws SystemException {
+		RepositoryFolder repositoryFolder) {
 
 		return repositoryFolderPersistence.remove(repositoryFolder);
 	}

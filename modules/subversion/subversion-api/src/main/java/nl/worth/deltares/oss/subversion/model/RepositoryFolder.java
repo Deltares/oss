@@ -59,7 +59,4 @@ public interface RepositoryFolder
 
 		};
 
-	public java.util.List
-		<nl.worth.deltares.oss.subversion.model.RepositoryFolder> getChildren();
-
 }

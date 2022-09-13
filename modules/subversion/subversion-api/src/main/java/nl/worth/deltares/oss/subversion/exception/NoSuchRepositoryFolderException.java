@@ -13,14 +13,11 @@
  */
 package nl.worth.deltares.oss.subversion.exception;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.exception.NoSuchModelException;
 
 /**
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
  */
-@ProviderType
 public class NoSuchRepositoryFolderException extends NoSuchModelException {
 
 	public NoSuchRepositoryFolderException() {
@@ -30,12 +27,12 @@ public class NoSuchRepositoryFolderException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchRepositoryFolderException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchRepositoryFolderException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchRepositoryFolderException(Throwable cause) {
-		super(cause);
+	public NoSuchRepositoryFolderException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

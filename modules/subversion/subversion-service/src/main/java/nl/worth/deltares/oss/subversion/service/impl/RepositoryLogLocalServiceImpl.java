@@ -14,6 +14,7 @@
 
 package nl.worth.deltares.oss.subversion.service.impl;
 
+import com.liferay.portal.aop.AopService;
 
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
@@ -24,37 +25,27 @@ import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import java.util.List;
-
-import nl.worth.deltares.oss.subversion.constants.PropConstants;
 import nl.worth.deltares.oss.subversion.model.Activity;
 import nl.worth.deltares.oss.subversion.model.RepositoryLog;
 import nl.worth.deltares.oss.subversion.service.RepositoryLogLocalServiceUtil;
 import nl.worth.deltares.oss.subversion.service.base.RepositoryLogLocalServiceBaseImpl;
-import nl.worth.deltares.oss.subversion.service.persistence.RepositoryLogUtil;
 
+import nl.worth.deltares.oss.subversion.service.constants.PropConstants;
+import nl.worth.deltares.oss.subversion.service.persistence.RepositoryLogUtil;
+import org.osgi.service.component.annotations.Component;
+
+import java.util.List;
 
 /**
- * The implementation of the repository log local service.
- *
- * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>nl.worth.deltares.oss.subversion.service.RepositoryLogLocalService</code> interface.
- *
- * <p>
- * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
- * </p>
- *
- * @author Pier-Angelo Gaetani @ Worth Systems
- * @see RepositoryLogLocalServiceBaseImpl
+ * @author Brian Wing Shun Chan
  */
+@Component(
+	property = "model.class.name=nl.worth.deltares.oss.subversion.model.RepositoryLog",
+	service = AopService.class
+)
 public class RepositoryLogLocalServiceImpl
 	extends RepositoryLogLocalServiceBaseImpl {
 
-	/*
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this class directly. Use <code>nl.worth.deltares.oss.subversion.service.RepositoryLogLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>nl.worth.deltares.oss.subversion.service.RepositoryLogLocalServiceUtil</code>.
-	 */
 	private static Log LOG = LogFactoryUtil.getLog(RepositoryLogLocalServiceImpl.class);
 
 	public int getRepositoryLogsCount(String screenName, String ipAddress, String repository) {
@@ -117,12 +108,12 @@ public class RepositoryLogLocalServiceImpl
 		List<RepositoryLog> repositoryLogList = RepositoryLogUtil.findAll(0, number);
 
 		for (RepositoryLog repositoryLog : repositoryLogList) {
-		  Activity activity = new Activity(repositoryLog);
+			Activity activity = new Activity(repositoryLog);
 
-		  try {
-		  	logsArray.put(JSONFactoryUtil.createJSONObject(JSONFactoryUtil.serialize(activity)));
+			try {
+				logsArray.put(JSONFactoryUtil.createJSONObject(JSONFactoryUtil.serialize(activity)));
 			} catch (JSONException e) {
-		  	LOG.error("Error building RepositoryLogs JSONArray", e);
+				LOG.error("Error building RepositoryLogs JSONArray", e);
 			}
 		}
 

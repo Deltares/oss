@@ -143,14 +143,6 @@ public class RepositoryFolderPermissionWrapper
 		return model.getEntityType();
 	}
 
-	@Override
-	public nl.worth.deltares.oss.subversion.model.RepositoryFolder getFolder()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			   com.liferay.portal.kernel.exception.SystemException {
-
-		return model.getFolder();
-	}
-
 	/**
 	 * Returns the folder ID of this repository folder permission.
 	 *
@@ -159,14 +151,6 @@ public class RepositoryFolderPermissionWrapper
 	@Override
 	public long getFolderId() {
 		return model.getFolderId();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.Group getGroup()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			   com.liferay.portal.kernel.exception.SystemException {
-
-		return model.getGroup();
 	}
 
 	/**
@@ -217,30 +201,6 @@ public class RepositoryFolderPermissionWrapper
 	@Override
 	public boolean getRecurse() {
 		return model.getRecurse();
-	}
-
-	@Override
-	public nl.worth.deltares.oss.subversion.model.Repository getRepository()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			   com.liferay.portal.kernel.exception.SystemException {
-
-		return model.getRepository();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.Role getRole()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			   com.liferay.portal.kernel.exception.SystemException {
-
-		return model.getRole();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.User getUser()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			   com.liferay.portal.kernel.exception.SystemException {
-
-		return model.getUser();
 	}
 
 	/**

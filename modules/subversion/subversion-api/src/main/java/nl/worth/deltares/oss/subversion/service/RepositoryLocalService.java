@@ -36,7 +36,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import nl.worth.deltares.oss.subversion.model.Repository;
-import nl.worth.deltares.oss.subversion.model.RepositoryFolderPermission;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -73,19 +72,15 @@ public interface RepositoryLocalService
 	 *
 	 * @param repository the repository
 	 * @return the repository that was added
-	 * @throws SystemException
 	 */
 	@Indexable(type = IndexableType.REINDEX)
-	public Repository addRepository(Repository repository)
-		throws SystemException;
+	public Repository addRepository(Repository repository);
 
 	/**
 	 * @throws PortalException
 	 */
 	public PersistedModel createPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
-
-	public Repository createRepository();
 
 	/**
 	 * Creates a new repository with the primary key. Does not add the repository to the database.
@@ -241,14 +236,6 @@ public interface RepositoryLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Repository> getRepositories(int start, int end);
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<Repository> getRepositories(long groupId)
-		throws SystemException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<Repository> getRepositories(String className)
-		throws SystemException;
-
 	/**
 	 * Returns the number of repositories.
 	 *
@@ -266,10 +253,6 @@ public interface RepositoryLocalService
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Repository getRepository(long repositoryId) throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<RepositoryFolderPermission> getRepositoryPermissions(
-		long repositoryId);
 
 	/**
 	 * Updates the repository in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
