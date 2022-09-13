@@ -14,16 +14,9 @@
 
 package nl.worth.deltares.oss.subversion.service.http;
 
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
-
-import java.rmi.RemoteException;
-
-import nl.worth.deltares.oss.subversion.service.RepositoryLogServiceUtil;
-
 /**
  * Provides the SOAP utility for the
- * <code>RepositoryLogServiceUtil</code> service
+ * <code>nl.worth.deltares.oss.subversion.service.RepositoryLogServiceUtil</code> service
  * utility. The static methods of this class call the same methods of the
  * service utility. However, the signatures are different because it is
  * difficult for SOAP to support certain types.
@@ -63,24 +56,4 @@ import nl.worth.deltares.oss.subversion.service.RepositoryLogServiceUtil;
  */
 @Deprecated
 public class RepositoryLogServiceSoap {
-
-	public static void addRepositoryLog(
-			String requestMethod, String remoteHost, String remoteUser,
-			String requestUri)
-		throws RemoteException {
-
-		try {
-			RepositoryLogServiceUtil.addRepositoryLog(
-				requestMethod, remoteHost, remoteUser, requestUri);
-		}
-		catch (Exception exception) {
-			_log.error(exception, exception);
-
-			throw new RemoteException(exception.getMessage());
-		}
-	}
-
-	private static Log _log = LogFactoryUtil.getLog(
-		RepositoryLogServiceSoap.class);
-
 }

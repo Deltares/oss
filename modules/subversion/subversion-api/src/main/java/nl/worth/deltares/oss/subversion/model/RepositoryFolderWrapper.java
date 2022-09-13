@@ -103,14 +103,6 @@ public class RepositoryFolderWrapper
 		return wrap(model.cloneWithOriginalValues());
 	}
 
-	@Override
-	public java.util.List
-		<nl.worth.deltares.oss.subversion.model.RepositoryFolder>
-			getChildren() {
-
-		return model.getChildren();
-	}
-
 	/**
 	 * Returns the create date of this repository folder.
 	 *

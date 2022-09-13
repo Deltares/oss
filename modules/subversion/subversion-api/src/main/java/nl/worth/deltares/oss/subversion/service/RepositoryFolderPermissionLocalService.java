@@ -22,8 +22,6 @@ import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.model.PersistedModel;
-import com.liferay.portal.kernel.model.Role;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
@@ -37,7 +35,6 @@ import java.io.Serializable;
 
 import java.util.List;
 
-import nl.worth.deltares.oss.subversion.model.RepositoryFolder;
 import nl.worth.deltares.oss.subversion.model.RepositoryFolderPermission;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -65,13 +62,6 @@ public interface RepositoryFolderPermissionLocalService
 	 *
 	 * Never modify this interface directly. Add custom service methods to <code>nl.worth.deltares.oss.subversion.service.impl.RepositoryFolderPermissionLocalServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface. Consume the repository folder permission local service via injection or a <code>org.osgi.util.tracker.ServiceTracker</code>. Use {@link RepositoryFolderPermissionLocalServiceUtil} if injection and service tracking are not available.
 	 */
-	public RepositoryFolderPermission addRepositoryFolderPermission(
-		RepositoryFolder repositoryFolder, Role role, String permission,
-		boolean recurse);
-
-	public RepositoryFolderPermission addRepositoryFolderPermission(
-		RepositoryFolder repositoryFolder, User user, String permission,
-		boolean recurse);
 
 	/**
 	 * Adds the repository folder permission to the database. Also notifies the appropriate model listeners.
@@ -82,25 +72,16 @@ public interface RepositoryFolderPermissionLocalService
 	 *
 	 * @param repositoryFolderPermission the repository folder permission
 	 * @return the repository folder permission that was added
-	 * @throws SystemException
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	public RepositoryFolderPermission addRepositoryFolderPermission(
-			RepositoryFolderPermission repositoryFolderPermission)
-		throws SystemException;
-
-	public List<RepositoryFolderPermission> addRepositoryFolderPermissions(
-			RepositoryFolder repositoryFolder,
-			List<RepositoryFolderPermission> permissions, boolean recurse)
-		throws PortalException, SystemException;
+		RepositoryFolderPermission repositoryFolderPermission);
 
 	/**
 	 * @throws PortalException
 	 */
 	public PersistedModel createPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
-
-	public RepositoryFolderPermission createRepositoryFolderPermission();
 
 	/**
 	 * Creates a new repository folder permission with the primary key. Does not add the repository folder permission to the database.
@@ -111,18 +92,6 @@ public interface RepositoryFolderPermissionLocalService
 	@Transactional(enabled = false)
 	public RepositoryFolderPermission createRepositoryFolderPermission(
 		long permissionId);
-
-	public RepositoryFolderPermission createRepositoryFolderPermission(
-		long repositoryId, String folderName, Role role, String permission);
-
-	public RepositoryFolderPermission createRepositoryFolderPermission(
-		long repositoryId, String folderName, User user, String permission);
-
-	public RepositoryFolderPermission createRepositoryFolderPermission(
-		RepositoryFolder repositoryFolder, Role role, String permission);
-
-	public RepositoryFolderPermission createRepositoryFolderPermission(
-		RepositoryFolder repositoryFolder, User user, String permission);
 
 	/**
 	 * @throws PortalException
@@ -147,9 +116,6 @@ public interface RepositoryFolderPermissionLocalService
 			long permissionId)
 		throws PortalException;
 
-	public void deleteRepositoryFolderPermission(
-		long repositoryId, long folderId, long roleId);
-
 	/**
 	 * Deletes the repository folder permission from the database. Also notifies the appropriate model listeners.
 	 *
@@ -163,9 +129,6 @@ public interface RepositoryFolderPermissionLocalService
 	@Indexable(type = IndexableType.DELETE)
 	public RepositoryFolderPermission deleteRepositoryFolderPermission(
 		RepositoryFolderPermission repositoryFolderPermission);
-
-	public void deleteRepositoryFolderPermissions(
-		long repositoryId, long folderId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public <T> T dslQuery(DSLQuery dslQuery);
@@ -276,10 +239,6 @@ public interface RepositoryFolderPermissionLocalService
 			long permissionId)
 		throws PortalException;
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public RepositoryFolderPermission getRepositoryFolderPermission(
-		long repositoryId, long folderId, long roleId);
-
 	/**
 	 * Returns a range of all the repository folder permissions.
 	 *
@@ -294,10 +253,6 @@ public interface RepositoryFolderPermissionLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<RepositoryFolderPermission> getRepositoryFolderPermissions(
 		int start, int end);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<RepositoryFolderPermission> getRepositoryFolderPermissions(
-		long folderId);
 
 	/**
 	 * Returns the number of repository folder permissions.

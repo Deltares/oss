@@ -7,11 +7,12 @@ import com.liferay.portal.kernel.util.PropsUtil;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CityResponse;
+import nl.worth.deltares.oss.subversion.model.constants.PropConstants;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import nl.worth.deltares.oss.subversion.model.constants.PropConstants;
 
 
 public class Activity {

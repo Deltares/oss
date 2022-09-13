@@ -33,13 +33,6 @@ public class RepositoryLogServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to <code>nl.worth.deltares.oss.subversion.service.impl.RepositoryLogServiceImpl</code> and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static void addRepositoryLog(
-		java.lang.String requestMethod, java.lang.String remoteHost,
-		java.lang.String remoteUser, java.lang.String requestUri) {
-
-		getService().addRepositoryLog(
-			requestMethod, remoteHost, remoteUser, requestUri);
-	}
 
 	/**
 	 * Returns the OSGi service identifier.

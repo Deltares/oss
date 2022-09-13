@@ -14,26 +14,8 @@
 
 package nl.worth.deltares.oss.subversion.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 /**
- * The extended model implementation for the Repository service. Represents a row in the &quot;Subversion_Repository&quot; database table, with each column mapped to a property of this class.
- *
- * <p>
- * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>nl.worth.deltares.oss.subversion.model.Repository<code> interface.
- * </p>
- *
- * @author Pier-Angelo Gaetani @ Worth Systems
+ * @author Brian Wing Shun Chan
  */
-@ProviderType
 public class RepositoryImpl extends RepositoryBaseImpl {
-
-	/*
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this class directly. All methods that expect a repository model instance should use the {@link nl.worth.deltares.oss.subversion.model.Repository} interface instead.
-	 */
-	public RepositoryImpl() {
-	}
-
 }

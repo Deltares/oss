@@ -88,13 +88,10 @@ public abstract class RepositoryLocalServiceBaseImpl
 	 *
 	 * @param repository the repository
 	 * @return the repository that was added
-	 * @throws SystemException
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public Repository addRepository(Repository repository)
-		throws SystemException {
-
+	public Repository addRepository(Repository repository) {
 		repository.setNew(true);
 
 		return repositoryPersistence.update(repository);

@@ -33,14 +33,6 @@ public class RepositoryFolderLocalServiceWrapper
 		_repositoryFolderLocalService = repositoryFolderLocalService;
 	}
 
-	@Override
-	public nl.worth.deltares.oss.subversion.model.RepositoryFolder
-		addRepositoryFolder(long repositoryId, String name) {
-
-		return _repositoryFolderLocalService.addRepositoryFolder(
-			repositoryId, name);
-	}
-
 	/**
 	 * Adds the repository folder to the database. Also notifies the appropriate model listeners.
 	 *
@@ -50,14 +42,12 @@ public class RepositoryFolderLocalServiceWrapper
 	 *
 	 * @param repositoryFolder the repository folder
 	 * @return the repository folder that was added
-	 * @throws SystemException
 	 */
 	@Override
 	public nl.worth.deltares.oss.subversion.model.RepositoryFolder
-			addRepositoryFolder(
-				nl.worth.deltares.oss.subversion.model.RepositoryFolder
-					repositoryFolder)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		addRepositoryFolder(
+			nl.worth.deltares.oss.subversion.model.RepositoryFolder
+				repositoryFolder) {
 
 		return _repositoryFolderLocalService.addRepositoryFolder(
 			repositoryFolder);
@@ -73,13 +63,6 @@ public class RepositoryFolderLocalServiceWrapper
 
 		return _repositoryFolderLocalService.createPersistedModel(
 			primaryKeyObj);
-	}
-
-	@Override
-	public nl.worth.deltares.oss.subversion.model.RepositoryFolder
-		createRepositoryFolder() {
-
-		return _repositoryFolderLocalService.createRepositoryFolder();
 	}
 
 	/**
@@ -135,25 +118,15 @@ public class RepositoryFolderLocalServiceWrapper
 	 *
 	 * @param repositoryFolder the repository folder
 	 * @return the repository folder that was removed
-	 * @throws SystemException
 	 */
 	@Override
 	public nl.worth.deltares.oss.subversion.model.RepositoryFolder
-			deleteRepositoryFolder(
-				nl.worth.deltares.oss.subversion.model.RepositoryFolder
-					repositoryFolder)
-		throws com.liferay.portal.kernel.exception.SystemException {
+		deleteRepositoryFolder(
+			nl.worth.deltares.oss.subversion.model.RepositoryFolder
+				repositoryFolder) {
 
 		return _repositoryFolderLocalService.deleteRepositoryFolder(
 			repositoryFolder);
-	}
-
-	@Override
-	public void deleteRepositoryFolders(
-		java.util.List<nl.worth.deltares.oss.subversion.model.RepositoryFolder>
-			folders) {
-
-		_repositoryFolderLocalService.deleteRepositoryFolders(folders);
 	}
 
 	@Override
@@ -317,33 +290,6 @@ public class RepositoryFolderLocalServiceWrapper
 		return _repositoryFolderLocalService.getRepositoryFolder(folderId);
 	}
 
-	@Override
-	public nl.worth.deltares.oss.subversion.model.RepositoryFolder
-		getRepositoryFolder(long repositoryId, String name) {
-
-		return _repositoryFolderLocalService.getRepositoryFolder(
-			repositoryId, name);
-	}
-
-	@Override
-	public java.util.List
-		<nl.worth.deltares.oss.subversion.model.RepositoryFolder>
-			getRepositoryFolderChildren(
-				nl.worth.deltares.oss.subversion.model.RepositoryFolder
-					repositoryFolder) {
-
-		return _repositoryFolderLocalService.getRepositoryFolderChildren(
-			repositoryFolder);
-	}
-
-	@Override
-	public nl.worth.deltares.oss.subversion.model.RepositoryFolder
-		getRepositoryFolderParent(long repositoryId, String folderName) {
-
-		return _repositoryFolderLocalService.getRepositoryFolderParent(
-			repositoryId, folderName);
-	}
-
 	/**
 	 * Returns a range of all the repository folders.
 	 *
@@ -361,24 +307,6 @@ public class RepositoryFolderLocalServiceWrapper
 			getRepositoryFolders(int start, int end) {
 
 		return _repositoryFolderLocalService.getRepositoryFolders(start, end);
-	}
-
-	@Override
-	public java.util.List
-		<nl.worth.deltares.oss.subversion.model.RepositoryFolder>
-			getRepositoryFolders(long repositoryId) {
-
-		return _repositoryFolderLocalService.getRepositoryFolders(repositoryId);
-	}
-
-	@Deprecated
-	@Override
-	public java.util.List
-		<nl.worth.deltares.oss.subversion.model.RepositoryFolder>
-			getRepositoryFolders(long repositoryId, String name) {
-
-		return _repositoryFolderLocalService.getRepositoryFolders(
-			repositoryId, name);
 	}
 
 	/**
