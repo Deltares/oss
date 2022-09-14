@@ -60,6 +60,18 @@ public class DownloadLocalServiceUtil {
 		return getService().addDownload(download);
 	}
 
+	public static int countDirectDownloads(long groupId) {
+		return getService().countDirectDownloads(groupId);
+	}
+
+	public static int countDownloads(long groupId) {
+		return getService().countDownloads(groupId);
+	}
+
+	public static int countDownloadsByShareId(long groupId, int shareId) {
+		return getService().countDownloadsByShareId(groupId, shareId);
+	}
+
 	/**
 	 * Creates a new download with the primary key. Does not add the download to the database.
 	 *
@@ -206,6 +218,52 @@ public class DownloadLocalServiceUtil {
 
 	public static Download fetchDownload(long id) {
 		return getService().fetchDownload(id);
+	}
+
+	public static Download fetchUserDownload(
+		long groupId, long userId, long downloadId) {
+
+		return getService().fetchUserDownload(groupId, userId, downloadId);
+	}
+
+	public static List<Download> findDirectDownloads(long groupId) {
+		return getService().findDirectDownloads(groupId);
+	}
+
+	public static List<Download> findDirectDownloads(
+		long groupId, int start, int end) {
+
+		return getService().findDirectDownloads(groupId, start, end);
+	}
+
+	public static List<Download> findDownloads(long groupId) {
+		return getService().findDownloads(groupId);
+	}
+
+	public static List<Download> findDownloads(
+		long groupId, int start, int end) {
+
+		return getService().findDownloads(groupId, start, end);
+	}
+
+	public static List<Download> findDownloadsByShareId(
+		long groupId, int shareId) {
+
+		return getService().findDownloadsByShareId(groupId, shareId);
+	}
+
+	public static List<Download> findDownloadsByShareId(
+		long groupId, int shareId, int start, int end) {
+
+		return getService().findDownloadsByShareId(
+			groupId, shareId, start, end);
+	}
+
+	public static List<Download> findUserDownloadsByShareId(
+		long groupId, long userId, int shareId) {
+
+		return getService().findUserDownloadsByShareId(
+			groupId, userId, shareId);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
