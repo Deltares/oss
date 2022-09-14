@@ -15,6 +15,7 @@
 package nl.deltares.dsd.registration.service;
 
 import com.liferay.petra.sql.dsl.query.DSLQuery;
+import com.liferay.portal.kernel.dao.orm.*;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
@@ -33,8 +34,10 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 
 import java.io.Serializable;
 
+import java.util.Date;
 import java.util.List;
 
+import nl.deltares.dsd.registration.exception.NoSuchRegistrationException;
 import nl.deltares.dsd.registration.model.Registration;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -76,6 +79,14 @@ public interface RegistrationLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public Registration addRegistration(Registration registration);
 
+	public void addUserRegistration(
+		long companyId, long groupId, long resourceId, long eventResourceId,
+		long parentResourceId, long userId, Date startTime, Date endTime,
+		String preferences, long registeredByUserId);
+
+	public int countUserEventRegistrationsRegisteredByMe(
+		long groupId, long registeredByUserId, long eventResourceId);
+
 	/**
 	 * @throws PortalException
 	 */
@@ -90,6 +101,36 @@ public interface RegistrationLocalService
 	 */
 	@Transactional(enabled = false)
 	public Registration createRegistration(long registrationId);
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param eventResourceId Article Identifier of Event being removed.
+	 */
+	public void deleteAllEventRegistrations(long groupId, long eventResourceId);
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param resourceId Article Identifier being removed.
+	 */
+	public void deleteAllRegistrationsAndChildRegistrations(
+		long groupId, long resourceId);
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param userId User id
+	 * @param eventResourceId Article Identifier of Event being removed.
+	 */
+	public void deleteAllUserEventRegistrations(
+		long groupId, long userId, long eventResourceId);
 
 	/**
 	 * @throws PortalException
@@ -125,6 +166,30 @@ public interface RegistrationLocalService
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	public Registration deleteRegistration(Registration registration);
+
+	/**
+	 * Delete user registrations for 'resourceId' and a start date equal to 'startDate'
+	 * that matches 'resourceId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param resourceId Article Identifier being removed.
+	 * @param userId User for which to remove registration
+	 * @param startDate Start date for which to remove registration
+	 */
+	public void deleteUserRegistration(
+			long groupId, long resourceId, long userId, Date startDate)
+		throws NoSuchRegistrationException;
+
+	/**
+	 * Delete user registrations for 'resourceId'. This includes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param resourceId Article Identifier being removed.
+	 * @param userId User for which to remove registration
+	 */
+	public void deleteUserRegistrationAndChildRegistrations(
+		long groupId, long resourceId, long userId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public <T> T dslQuery(DSLQuery dslQuery);
@@ -205,6 +270,14 @@ public interface RegistrationLocalService
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getArticleRegistrations(
+		long groupId, long articleResourceId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getEventRegistrations(
+		long groupId, long eventResourceId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
 
 	/**
@@ -233,6 +306,10 @@ public interface RegistrationLocalService
 	public Registration getRegistration(long registrationId)
 		throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Date> getRegistrationDates(
+		long groupId, long userId, long resourceId);
+
 	/**
 	 * Returns a range of all the registrations.
 	 *
@@ -247,6 +324,14 @@ public interface RegistrationLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Registration> getRegistrations(int start, int end);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getRegistrations(
+		long groupId, Date start, Date end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getRegistrations(
+		long groupId, long userId, long resourceId);
+
 	/**
 	 * Returns the number of registrations.
 	 *
@@ -254,6 +339,41 @@ public interface RegistrationLocalService
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getRegistrationsCount();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getRegistrationsCount(long groupId, long resourceId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getRegistrationsCount(
+		long groupId, long resourceId, Date startDate);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getRegistrationsCount(
+		long groupId, long userId, long resourceId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getRegistrationsCount(
+		long groupId, long userId, long resourceId, Date startDate);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public long[] getRegistrationsWithOverlappingPeriod(
+		long groupId, long userId, Date startTime, Date endTime);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getUserEventRegistrations(
+		long groupId, long userId, long eventResourceId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getUserEventRegistrationsMadeForOthers(
+		long groupId, long registeredByUserId, long eventResourceId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getUserRegistrations(
+		long groupId, long userId, Date start, Date end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getUsersRegisteredByOtherUser(
+		long groupId, long otherUserId, long registrationResourceId);
 
 	/**
 	 * Updates the registration in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

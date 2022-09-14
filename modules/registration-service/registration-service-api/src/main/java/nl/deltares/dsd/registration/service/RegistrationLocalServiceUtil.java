@@ -60,6 +60,23 @@ public class RegistrationLocalServiceUtil {
 		return getService().addRegistration(registration);
 	}
 
+	public static void addUserRegistration(
+		long companyId, long groupId, long resourceId, long eventResourceId,
+		long parentResourceId, long userId, java.util.Date startTime,
+		java.util.Date endTime, String preferences, long registeredByUserId) {
+
+		getService().addUserRegistration(
+			companyId, groupId, resourceId, eventResourceId, parentResourceId,
+			userId, startTime, endTime, preferences, registeredByUserId);
+	}
+
+	public static int countUserEventRegistrationsRegisteredByMe(
+		long groupId, long registeredByUserId, long eventResourceId) {
+
+		return getService().countUserEventRegistrationsRegisteredByMe(
+			groupId, registeredByUserId, eventResourceId);
+	}
+
 	/**
 	 * @throws PortalException
 	 */
@@ -78,6 +95,48 @@ public class RegistrationLocalServiceUtil {
 	 */
 	public static Registration createRegistration(long registrationId) {
 		return getService().createRegistration(registrationId);
+	}
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param eventResourceId Article Identifier of Event being removed.
+	 */
+	public static void deleteAllEventRegistrations(
+		long groupId, long eventResourceId) {
+
+		getService().deleteAllEventRegistrations(groupId, eventResourceId);
+	}
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param resourceId Article Identifier being removed.
+	 */
+	public static void deleteAllRegistrationsAndChildRegistrations(
+		long groupId, long resourceId) {
+
+		getService().deleteAllRegistrationsAndChildRegistrations(
+			groupId, resourceId);
+	}
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param userId User id
+	 * @param eventResourceId Article Identifier of Event being removed.
+	 */
+	public static void deleteAllUserEventRegistrations(
+		long groupId, long userId, long eventResourceId) {
+
+		getService().deleteAllUserEventRegistrations(
+			groupId, userId, eventResourceId);
 	}
 
 	/**
@@ -119,6 +178,40 @@ public class RegistrationLocalServiceUtil {
 	 */
 	public static Registration deleteRegistration(Registration registration) {
 		return getService().deleteRegistration(registration);
+	}
+
+	/**
+	 * Delete user registrations for 'resourceId' and a start date equal to 'startDate'
+	 * that matches 'resourceId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param resourceId Article Identifier being removed.
+	 * @param userId User for which to remove registration
+	 * @param startDate Start date for which to remove registration
+	 */
+	public static void deleteUserRegistration(
+			long groupId, long resourceId, long userId,
+			java.util.Date startDate)
+		throws nl.deltares.dsd.registration.exception.
+			NoSuchRegistrationException {
+
+		getService().deleteUserRegistration(
+			groupId, resourceId, userId, startDate);
+	}
+
+	/**
+	 * Delete user registrations for 'resourceId'. This includes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
+	 * @param groupId Site Identifier
+	 * @param resourceId Article Identifier being removed.
+	 * @param userId User for which to remove registration
+	 */
+	public static void deleteUserRegistrationAndChildRegistrations(
+		long groupId, long resourceId, long userId) {
+
+		getService().deleteUserRegistrationAndChildRegistrations(
+			groupId, resourceId, userId);
 	}
 
 	public static <T> T dslQuery(DSLQuery dslQuery) {
@@ -216,6 +309,18 @@ public class RegistrationLocalServiceUtil {
 		return getService().getActionableDynamicQuery();
 	}
 
+	public static List<Registration> getArticleRegistrations(
+		long groupId, long articleResourceId) {
+
+		return getService().getArticleRegistrations(groupId, articleResourceId);
+	}
+
+	public static List<Registration> getEventRegistrations(
+		long groupId, long eventResourceId) {
+
+		return getService().getEventRegistrations(groupId, eventResourceId);
+	}
+
 	public static
 		com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery
 			getIndexableActionableDynamicQuery() {
@@ -254,6 +359,12 @@ public class RegistrationLocalServiceUtil {
 		return getService().getRegistration(registrationId);
 	}
 
+	public static List<java.util.Date> getRegistrationDates(
+		long groupId, long userId, long resourceId) {
+
+		return getService().getRegistrationDates(groupId, userId, resourceId);
+	}
+
 	/**
 	 * Returns a range of all the registrations.
 	 *
@@ -269,6 +380,18 @@ public class RegistrationLocalServiceUtil {
 		return getService().getRegistrations(start, end);
 	}
 
+	public static List<Registration> getRegistrations(
+		long groupId, java.util.Date start, java.util.Date end) {
+
+		return getService().getRegistrations(groupId, start, end);
+	}
+
+	public static List<Registration> getRegistrations(
+		long groupId, long userId, long resourceId) {
+
+		return getService().getRegistrations(groupId, userId, resourceId);
+	}
+
 	/**
 	 * Returns the number of registrations.
 	 *
@@ -276,6 +399,65 @@ public class RegistrationLocalServiceUtil {
 	 */
 	public static int getRegistrationsCount() {
 		return getService().getRegistrationsCount();
+	}
+
+	public static int getRegistrationsCount(long groupId, long resourceId) {
+		return getService().getRegistrationsCount(groupId, resourceId);
+	}
+
+	public static int getRegistrationsCount(
+		long groupId, long resourceId, java.util.Date startDate) {
+
+		return getService().getRegistrationsCount(
+			groupId, resourceId, startDate);
+	}
+
+	public static int getRegistrationsCount(
+		long groupId, long userId, long resourceId) {
+
+		return getService().getRegistrationsCount(groupId, userId, resourceId);
+	}
+
+	public static int getRegistrationsCount(
+		long groupId, long userId, long resourceId, java.util.Date startDate) {
+
+		return getService().getRegistrationsCount(
+			groupId, userId, resourceId, startDate);
+	}
+
+	public static long[] getRegistrationsWithOverlappingPeriod(
+		long groupId, long userId, java.util.Date startTime,
+		java.util.Date endTime) {
+
+		return getService().getRegistrationsWithOverlappingPeriod(
+			groupId, userId, startTime, endTime);
+	}
+
+	public static List<Registration> getUserEventRegistrations(
+		long groupId, long userId, long eventResourceId) {
+
+		return getService().getUserEventRegistrations(
+			groupId, userId, eventResourceId);
+	}
+
+	public static List<Registration> getUserEventRegistrationsMadeForOthers(
+		long groupId, long registeredByUserId, long eventResourceId) {
+
+		return getService().getUserEventRegistrationsMadeForOthers(
+			groupId, registeredByUserId, eventResourceId);
+	}
+
+	public static List<Registration> getUserRegistrations(
+		long groupId, long userId, java.util.Date start, java.util.Date end) {
+
+		return getService().getUserRegistrations(groupId, userId, start, end);
+	}
+
+	public static List<Registration> getUsersRegisteredByOtherUser(
+		long groupId, long otherUserId, long registrationResourceId) {
+
+		return getService().getUsersRegisteredByOtherUser(
+			groupId, otherUserId, registrationResourceId);
 	}
 
 	/**
