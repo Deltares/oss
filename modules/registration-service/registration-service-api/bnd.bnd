@@ -6,9 +6,5 @@ Export-Package:\
     nl.deltares.dsd.registration.model, \
     nl.deltares.dsd.registration.service, \
     nl.deltares.dsd.registration.service.persistence
-Import-Package: \
-    !org.apache.log, \
-    !org.apache.avalon.framework.logger, \
-    *
 -check: EXPORTS
 -includeresource: META-INF/service.xml=../registration-service-service/service.xml
