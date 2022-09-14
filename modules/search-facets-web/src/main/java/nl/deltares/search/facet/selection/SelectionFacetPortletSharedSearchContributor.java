@@ -44,7 +44,7 @@ public class SelectionFacetPortletSharedSearchContributor implements PortletShar
         String fieldName = configuration.fieldName();
         String name = structureName + '-' + fieldName;
 
-        Optional<String> selectionOptional = portletSharedSearchSettings.getParameter(name);
+        Optional<String> selectionOptional = portletSharedSearchSettings.getParameterOptional(name);
         String selection;
         if (selectionOptional.isPresent()) {
             selection = selectionOptional.get();
