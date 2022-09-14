@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author rooij_e
@@ -169,11 +170,7 @@ public class RegistrationTablePortlet extends MVCPortlet {
             SessionErrors.add(renderRequest, "filter-failed", e.getMessage());
         }
 
-        if (records == null) {
-            renderRequest.setAttribute("records", Collections.emptyList());
-        } else {
-            renderRequest.setAttribute("records", records);
-        }
+        renderRequest.setAttribute("records", Objects.requireNonNullElse(records, Collections.emptyList()));
     }
 
     private List<DisplayRegistration> convertToDisplayRegistrations(List<Registration> registrations, User user, JournalArticle event) {
@@ -249,7 +246,7 @@ public class RegistrationTablePortlet extends MVCPortlet {
         } catch (JSONException e) {
             SessionErrors.add(actionRequest, "action-failed", "Invalid JSON content: " + e.getMessage());
             PortalUtil.copyRequestParameters(actionRequest, actionResponse);
-            actionResponse.setRenderParameter("mvcPath", "/editRegistration.jsp");
+            actionResponse.getRenderParameters().setValue("mvcPath", "/editRegistration.jsp");
             return;
         }
         try {
