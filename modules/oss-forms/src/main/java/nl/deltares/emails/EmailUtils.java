@@ -1,6 +1,5 @@
 package nl.deltares.emails;
 
-import com.liferay.mail.kernel.service.MailServiceUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 
 import javax.activation.*;
@@ -8,6 +7,8 @@ import javax.mail.*;
 import javax.mail.internet.*;
 import java.net.URL;
 import java.util.Map;
+
+import static com.liferay.mail.kernel.service.MailServiceUtil.getSession;
 
 public class EmailUtils {
 
@@ -18,7 +19,7 @@ public class EmailUtils {
         mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
         mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
 
-        final Session session = MailServiceUtil.getSession();
+        final Session session = getSession();
         session.getProperties().setProperty("mail.smtp.starttls.enable", "true");
         Transport transport = session.getTransport();
         try {
