@@ -47,6 +47,9 @@ public interface RepositoryLogService extends BaseService {
 	 *
 	 * Never modify this interface directly. Add custom service methods to <code>nl.worth.deltares.oss.subversion.service.impl.RepositoryLogServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface. Consume the repository log remote service via injection or a <code>org.osgi.util.tracker.ServiceTracker</code>. Use {@link RepositoryLogServiceUtil} if injection and service tracking are not available.
 	 */
+	public void addRepositoryLog(
+		String requestMethod, String remoteHost, String remoteUser,
+		String requestUri);
 
 	/**
 	 * Returns the OSGi service identifier.

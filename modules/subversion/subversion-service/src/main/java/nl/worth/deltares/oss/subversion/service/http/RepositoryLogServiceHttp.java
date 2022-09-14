@@ -14,13 +14,22 @@
 
 package nl.worth.deltares.oss.subversion.service.http;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.auth.HttpPrincipal;
+import com.liferay.portal.kernel.service.http.TunnelUtil;
+import com.liferay.portal.kernel.util.MethodHandler;
+import com.liferay.portal.kernel.util.MethodKey;
+
+import nl.worth.deltares.oss.subversion.service.RepositoryLogServiceUtil;
+
 /**
  * Provides the HTTP utility for the
- * <code>nl.worth.deltares.oss.subversion.service.RepositoryLogServiceUtil</code> service
+ * <code>RepositoryLogServiceUtil</code> service
  * utility. The
  * static methods of this class calls the same methods of the service utility.
  * However, the signatures are different because it requires an additional
- * <code>com.liferay.portal.kernel.security.auth.HttpPrincipal</code> parameter.
+ * <code>HttpPrincipal</code> parameter.
  *
  * <p>
  * The benefits of using the HTTP utility is that it is fast and allows for
@@ -42,4 +51,40 @@ package nl.worth.deltares.oss.subversion.service.http;
  * @generated
  */
 public class RepositoryLogServiceHttp {
+
+	public static void addRepositoryLog(
+		HttpPrincipal httpPrincipal, String requestMethod, String remoteHost,
+		String remoteUser, String requestUri) {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				RepositoryLogServiceUtil.class, "addRepositoryLog",
+				_addRepositoryLogParameterTypes0);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, requestMethod, remoteHost, remoteUser, requestUri);
+
+			try {
+				TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception exception) {
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					exception);
+			}
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException
+					systemException) {
+
+			_log.error(systemException, systemException);
+
+			throw systemException;
+		}
+	}
+
+	private static Log _log = LogFactoryUtil.getLog(
+		RepositoryLogServiceHttp.class);
+
+	private static final Class<?>[] _addRepositoryLogParameterTypes0 =
+		new Class[] {String.class, String.class, String.class, String.class};
+
 }
