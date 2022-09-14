@@ -13,14 +13,11 @@
  */
 package nl.deltares.dsd.registration.exception;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.exception.NoSuchModelException;
 
 /**
  * @author Erik de Rooij @ Deltares
  */
-@ProviderType
 public class NoSuchRegistrationException extends NoSuchModelException {
 
 	public NoSuchRegistrationException() {
@@ -30,12 +27,12 @@ public class NoSuchRegistrationException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchRegistrationException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchRegistrationException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchRegistrationException(Throwable cause) {
-		super(cause);
+	public NoSuchRegistrationException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

@@ -14,8 +14,6 @@
 
 package nl.deltares.dsd.registration.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -26,9 +24,10 @@ import java.util.List;
  * This class is used by SOAP remote services.
  *
  * @author Erik de Rooij @ Deltares
+ * @deprecated As of Athanasius (7.3.x), with no direct replacement
  * @generated
  */
-@ProviderType
+@Deprecated
 public class RegistrationSoap implements Serializable {
 
 	public static RegistrationSoap toSoapModel(Registration model) {
