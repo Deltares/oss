@@ -3,7 +3,7 @@ dependencies {
 
 	compileOnly (group: "javax.mail", name: "mail", version: "1.4.7")
 
-	cssBuilder( group: "org.slf4j", name: "slf4j-simple", version:"1.7.10")
+	cssBuilder( group: "org.slf4j", name: "slf4j-simple", version:"2.0.0")
 
 	compileOnly( project(":modules:common-utils") )
 }
