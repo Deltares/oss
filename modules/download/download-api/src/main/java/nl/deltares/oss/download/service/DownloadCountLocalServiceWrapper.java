@@ -253,6 +253,13 @@ public class DownloadCountLocalServiceWrapper
 		return _downloadCountLocalService.getDownloadCount(id);
 	}
 
+	@Override
+	public nl.deltares.oss.download.model.DownloadCount getDownloadCount(
+		long groupId, long downloadId) {
+
+		return _downloadCountLocalService.getDownloadCount(groupId, downloadId);
+	}
+
 	/**
 	 * Returns a range of all the download counts.
 	 *

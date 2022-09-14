@@ -49,6 +49,21 @@ public class DownloadLocalServiceWrapper
 		return _downloadLocalService.addDownload(download);
 	}
 
+	@Override
+	public int countDirectDownloads(long groupId) {
+		return _downloadLocalService.countDirectDownloads(groupId);
+	}
+
+	@Override
+	public int countDownloads(long groupId) {
+		return _downloadLocalService.countDownloads(groupId);
+	}
+
+	@Override
+	public int countDownloadsByShareId(long groupId, int shareId) {
+		return _downloadLocalService.countDownloadsByShareId(groupId, shareId);
+	}
+
 	/**
 	 * Creates a new download with the primary key. Does not add the download to the database.
 	 *
@@ -222,6 +237,65 @@ public class DownloadLocalServiceWrapper
 	@Override
 	public nl.deltares.oss.download.model.Download fetchDownload(long id) {
 		return _downloadLocalService.fetchDownload(id);
+	}
+
+	@Override
+	public nl.deltares.oss.download.model.Download fetchUserDownload(
+		long groupId, long userId, long downloadId) {
+
+		return _downloadLocalService.fetchUserDownload(
+			groupId, userId, downloadId);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.oss.download.model.Download>
+		findDirectDownloads(long groupId) {
+
+		return _downloadLocalService.findDirectDownloads(groupId);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.oss.download.model.Download>
+		findDirectDownloads(long groupId, int start, int end) {
+
+		return _downloadLocalService.findDirectDownloads(groupId, start, end);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.oss.download.model.Download>
+		findDownloads(long groupId) {
+
+		return _downloadLocalService.findDownloads(groupId);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.oss.download.model.Download>
+		findDownloads(long groupId, int start, int end) {
+
+		return _downloadLocalService.findDownloads(groupId, start, end);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.oss.download.model.Download>
+		findDownloadsByShareId(long groupId, int shareId) {
+
+		return _downloadLocalService.findDownloadsByShareId(groupId, shareId);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.oss.download.model.Download>
+		findDownloadsByShareId(long groupId, int shareId, int start, int end) {
+
+		return _downloadLocalService.findDownloadsByShareId(
+			groupId, shareId, start, end);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.oss.download.model.Download>
+		findUserDownloadsByShareId(long groupId, long userId, int shareId) {
+
+		return _downloadLocalService.findUserDownloadsByShareId(
+			groupId, userId, shareId);
 	}
 
 	@Override
