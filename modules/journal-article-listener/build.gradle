@@ -1,7 +1,0 @@
-dependencies {
-	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "3.5.0"
-	compileOnly group: "com.liferay", name: "com.liferay.journal.api", version: "3.10.1"
-	compileOnly group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.5.0"
-	compileOnly group: 'com.liferay', name: 'com.liferay.portal.configuration.metatype', version: '2.0.18'
-	compileOnly project(":modules:common-utils")
-}
