@@ -50,7 +50,7 @@ public class CheckboxFacetPortletSharedSearchContributor implements PortletShare
         String name = structureName + '-' + fieldName; //important to use '-' because this translates to JSP id
 
         String selection = null;
-        Optional<String> facetSelection = portletSharedSearchSettings.getParameter(name);
+        Optional<String> facetSelection = portletSharedSearchSettings.getParameterOptional(name);
         if (facetSelection.isPresent()) {
             selection = facetSelection.get();
         } else if (!visible){

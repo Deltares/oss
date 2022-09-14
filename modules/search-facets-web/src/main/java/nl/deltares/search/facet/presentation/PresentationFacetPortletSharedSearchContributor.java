@@ -33,12 +33,12 @@ public class PresentationFacetPortletSharedSearchContributor implements PortletS
         long groupId = scopeGroup.getGroupId();
         final Locale siteDefaultLocale = LocaleUtil.fromLanguageId(scopeGroup.getDefaultLanguageId());
 
-        Optional<String> hasPresentations = portletSharedSearchSettings.getParameter("hasPresentations");
+        Optional<String> hasPresentations = portletSharedSearchSettings.getParameterOptional("hasPresentations");
         boolean onlyShowPresentations ;
         boolean visible = true;
         boolean defaultValue = false;
-        if (portletSharedSearchSettings.getPortletPreferences().isPresent()){
-            final PortletPreferences portletPreferences = portletSharedSearchSettings.getPortletPreferences().get();
+        if (portletSharedSearchSettings.getPortletPreferencesOptional().isPresent()){
+            final PortletPreferences portletPreferences = portletSharedSearchSettings.getPortletPreferencesOptional().get();
             final String visibleConf = portletPreferences.getValue("visible", "");
             final String defaultValueConf = portletPreferences.getValue("defaultValue", "");
 

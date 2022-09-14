@@ -41,7 +41,7 @@ public class RegistrationFacetPortletSharedSearchContributor implements PortletS
 
     private String[] getStructureKeys(PortletSharedSearchSettings portletSharedSearchSettings) {
 
-        Optional<String> optional = portletSharedSearchSettings.getParameter("structureList");
+        Optional<String> optional = portletSharedSearchSettings.getParameterOptional("structureList");
         return optional.map(s -> s.split(" ")).orElseGet(() -> {
             String structureList = getConfiguredValue( portletSharedSearchSettings);
             if (structureList != null && !structureList.isEmpty()){

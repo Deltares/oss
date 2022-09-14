@@ -59,7 +59,7 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
 
     @SuppressWarnings("SameParameterValue")
     private boolean getBoolean(PortletSharedSearchSettings portletSharedSearchSettings, String booleanField){
-        Optional<String> showPastOptional = portletSharedSearchSettings.getParameter(booleanField);
+        Optional<String> showPastOptional = portletSharedSearchSettings.getParameterOptional(booleanField);
         if (showPastOptional.isPresent()){
             return Boolean.parseBoolean(showPastOptional.get());
         }
@@ -69,7 +69,7 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
 
     private Date getDate(PortletSharedSearchSettings portletSharedSearchSettings, String dateField) {
 
-        Optional<String> optional = portletSharedSearchSettings.getParameter(dateField);
+        Optional<String> optional = portletSharedSearchSettings.getParameterOptional(dateField);
         Locale locale = portletSharedSearchSettings.getThemeDisplay().getLocale();
         if (optional.isPresent()) {
             try {
