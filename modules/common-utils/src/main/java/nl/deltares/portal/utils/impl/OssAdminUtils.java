@@ -9,22 +9,21 @@ import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
 import com.liferay.document.library.kernel.service.DLFolderLocalServiceUtil;
 import com.liferay.message.boards.exception.NoSuchMailingListException;
-import com.liferay.message.boards.kernel.service.MBThreadFlagLocalServiceUtil;
-import com.liferay.message.boards.model.*;
+import com.liferay.message.boards.model.MBCategory;
+import com.liferay.message.boards.model.MBMailingList;
+import com.liferay.message.boards.model.MBMessage;
+import com.liferay.message.boards.model.MBThread;
 import com.liferay.message.boards.service.*;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.*;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.*;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import nl.deltares.portal.utils.AdminUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.ActionRequest;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,9 +58,6 @@ public class OssAdminUtils implements AdminUtils {
         //remove thread flags for user
         deleteThreadFlags(writer, userId);
 
-        //remove user stats
-        deleteUserStats(writer, userId, siteId);
-
         //remove user asset entries for site
         writer.printf("Deleting asset entries for groupId '%s':\n", siteId);
         deleteAssetEntries(writer, userId, siteId);
@@ -86,9 +82,9 @@ public class OssAdminUtils implements AdminUtils {
 
     @Override
     public User getOrCreateRegistrationUser(long companyId, User loggedInUser, String registrationEmail,
-                                             String firstName, String lastName, Locale locale) throws Exception {
+                                            String firstName, String lastName, Locale locale) throws Exception {
 
-        if (registrationEmail == null || registrationEmail.isEmpty()){
+        if (registrationEmail == null || registrationEmail.isEmpty()) {
             throw new IllegalArgumentException("Registration email missing");
         }
         final User registrationUser = UserLocalServiceUtil.fetchUserByEmailAddress(companyId, registrationEmail);
@@ -96,10 +92,10 @@ public class OssAdminUtils implements AdminUtils {
 
         final Map<String, String> keycloakUser = keycloakUtils.getUserInfo(registrationEmail);
         String userName = null;
-        if (keycloakUser.isEmpty()){
+        if (keycloakUser.isEmpty()) {
             for (int i = 0; i < 3; i++) {
                 String testUserName = KeycloakUtils.extractUsernameFromEmail(registrationEmail, i);
-                if (!keycloakUtils.isExistingUsername(testUserName)){
+                if (!keycloakUtils.isExistingUsername(testUserName)) {
                     //do not create user, instead check if username is taken.
                     userName = testUserName;
                     break;
@@ -117,7 +113,7 @@ public class OssAdminUtils implements AdminUtils {
         serviceContext.setScopeGroupId(loggedInUser.getGroupId());
         final Role defaultGroupRole = RoleLocalServiceUtil.getDefaultGroupRole(loggedInUser.getGroupId());
         final User user = UserLocalServiceUtil.addUser(loggedInUser.getUserId(), companyId, true,
-                null, null, false, userName, registrationEmail, 0, null,
+                null, null, false, userName, registrationEmail,
                 locale, firstName, null, lastName, 0, 0, true,
                 1, 1, 1970, null, loggedInUser.getGroupIds(),
                 loggedInUser.getOrganizationIds(), new long[]{defaultGroupRole.getRoleId()}, loggedInUser.getUserGroupIds(), false, serviceContext);
@@ -379,15 +375,6 @@ public class OssAdminUtils implements AdminUtils {
             } catch (PortalException e) {
                 writer.printf("-Failed to delete user portrait image %d: %s\n", user.getPortraitId(), e.getMessage());
             }
-        }
-    }
-
-    private void deleteUserStats(PrintWriter writer, long userId, long siteId) {
-        writer.println("Deleting UserStats: ");
-        MBStatsUser statsUser = MBStatsUserLocalServiceUtil.getStatsUser(siteId, userId);
-        if (statsUser != null) {
-            MBStatsUserLocalServiceUtil.deleteStatsUser(statsUser);
-            writer.printf("Deleted user statistics\n");
         }
     }
 
