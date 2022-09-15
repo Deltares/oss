@@ -1,28 +1,38 @@
 {
-	"devDependencies": {
-		"bl": ">=1.2.3",
-		"gulp": "^4.0.2",
-		"liferay-theme-deps-7.1": "8.2.4",
-		"liferay-theme-tasks": "10.5.3",
-		"lodash.template": "^4.5.0",
-		"yargs-parser": "^21.0.1"
+	"name": "deltares-dsd-theme",
+	"version": "1.0.0",
+	"main": "package.json",
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:Deltares/oss.git"
 	},
+	"license": "GPL-3.0-only",
 	"keywords": [
 		"liferay-theme"
 	],
 	"liferayTheme": {
 		"baseTheme": "styled",
+		"fontAwesome": false,
 		"screenshot": "",
 		"templateLanguage": "ftl",
-		"version": "7.1"
+		"version": "7.4"
 	},
-	"main": "package.json",
-	"name": "deltares-dsd-theme",
-	"version": "1.0.1",
-	"description": "",
-	"repository": {
-		"type": "git",
-		"url": "git@github.com:Deltares/oss.git"
+	"devDependencies": {
+		"compass-mixins": "0.12.12",
+		"gulp": "4.0.2",
+		"liferay-frontend-css-common": "6.0.4",
+		"liferay-frontend-theme-styled": "6.0.10",
+		"liferay-frontend-theme-unstyled": "6.0.12",
+		"liferay-theme-tasks": "^11.4.0"
 	},
-	"license": "GPL-3.0-only"
+	"scripts": {
+		"init": "gulp init",
+		"build": "gulp build",
+		"deploy": "gulp deploy",
+		"extend": "gulp extend",
+		"kickstart": "gulp kickstart",
+		"status": "gulp status",
+		"upgrade": "gulp upgrade",
+		"watch": "gulp watch"
+	}
 }

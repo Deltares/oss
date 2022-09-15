@@ -1,4 +1,4 @@
-
+@use "liferay-frontend-common-css/liferay/variables";
 .portlet-asset-categories-navigation {
     display: none;
 }
@@ -65,7 +65,7 @@
     }
 }
 
-@media (min-width: $screen-md-min) {
+@media (min-width: variables.$screen-md-min) {
     //this creates the fake background on the right column to the edge of the browser
     .two-columns-full-height .portlet-column-first::before{
         content: "";
