@@ -14,7 +14,7 @@ company_logo = htmlUtil.escape(themeDisplay.getCompanyLogo())
 </#if>
 
 <#assign journalArticleLocalService = serviceLocator.findService("com.liferay.journal.service.JournalArticleLocalService") />
-
+<#--<#assign portletRequestModel = objectUtil("com.liferay.portal.kernel.portlet.PortletRequestModel", request.getAttribute("javax.portlet.request"), request.getAttribute("javax.portlet.response")) />-->
 <#assign footerWC = "" />
 
 <#assign footerContentID = getterUtil.getString(theme_settings["page-footer-webcontent-id"]) >
@@ -25,11 +25,11 @@ company_logo = htmlUtil.escape(themeDisplay.getCompanyLogo())
 
 <#if journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroupId(), footerWCArticleId)?? >
     <#assign footerWCArticle = journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroupId(), footerWCArticleId) >
-    <#assign footerWCContent = journalArticleLocalService.getArticleContent(footerWCArticle, footerWCArticle.getDDMTemplateKey(), "VIEW", locale, themeDisplay) />
+<#--    <#assign footerWCContent = journalArticleLocalService.getArticleContent(footerWCArticle, footerWCArticle.getDDMTemplateKey(), "VIEW", locale, portletRequestModel, themeDisplay) />-->
 <#elseif themeDisplay.getScopeGroup().getParentGroupId()?? &&
 journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroup().getParentGroupId(), footerWCArticleId)?? >
     <#assign footerWCArticle = journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroup().getParentGroupId(), footerWCArticleId) >
-    <#assign footerWCContent = journalArticleLocalService.getArticleContent(footerWCArticle, footerWCArticle.getDDMTemplateKey(), "VIEW", locale, themeDisplay) />
+<#--    <#assign footerWCContent = journalArticleLocalService.getArticleContent(footerWCArticle, footerWCArticle.getDDMTemplateKey(), "VIEW", locale, portletRequestModel, themeDisplay) />-->
 </#if>
 
 <#if !is_site_admin >

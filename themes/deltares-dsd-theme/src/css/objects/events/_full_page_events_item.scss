@@ -1,3 +1,4 @@
+@use "liferay-frontend-css-common/liferay/variables";
 .c-events.page, .c-sessions.page {
     padding-bottom: 40px;
     margin-bottom: 26px;
@@ -31,7 +32,7 @@
     }
 }
 
-@media (min-width: $screen-md-min) {
+@media (min-width: variables.$screen-md-min) {
 
     .c-events.page, .c-sessions.page {
         .media-section {
