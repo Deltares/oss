@@ -1,5 +1,6 @@
 package nl.deltares.portal.model.impl;
 
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -12,10 +13,7 @@ import com.liferay.portal.kernel.util.HtmlUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.Period;
-import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,32 +54,23 @@ public abstract class Registration extends AbsDsdArticle {
     private void init() throws PortalException {
 
         try {
-            Document document = getDocument();
-            String eventId = XmlContentUtils.getDynamicContentByName(document, "eventId", false);
-            this.eventId =  Long.parseLong(eventId);
-            String capacity = XmlContentUtils.getDynamicContentByName(document, "capacity", false);
-            this.capacity =  Integer.parseInt(capacity);
-            String price = XmlContentUtils.getDynamicContentByName(document, "price", false);
-            this.price =  Float.parseFloat(price);
-            String currency = XmlContentUtils.getDynamicContentByName(document, "currency", true);
+            this.eventId =  Long.parseLong(getFormFieldValue("eventId", false));
+            this.capacity =  Integer.parseInt(getFormFieldValue("capacity", false));
+            this.price =  Float.parseFloat(getFormFieldValue("price", false));
+            String currency = getFormFieldValue("currency", true);
             if (currency != null) this.currency = HtmlUtil.escape(currency);
-            String open = XmlContentUtils.getDynamicContentByName(document, "open", true);
-            this.open = Boolean.parseBoolean(open);
-            String type = XmlContentUtils.getDynamicContentByName(document, "registrationType", false);
-            if (type != null) this.type = type;
-            String topic = XmlContentUtils.getDynamicContentByName(document, "topic", false);
-            if (topic != null) this.topic = topic;
-            String parentJson = XmlContentUtils.getDynamicContentByName(document, "parent", true);
+            this.open = "open".equals(getFormFieldValue("open", true));
+            this.type = JsonContentUtils.parseJsonArrayToValue(getFormFieldValue("registrationType", false));
+            this.topic = JsonContentUtils.parseJsonArrayToValue(getFormFieldValue("topic", false));
+            String parentJson = getFormFieldValue("parent", true);
             if (parentJson != null) {
-                String overlap = XmlContentUtils.getDynamicContentByName(document, "overlaps", true);
-                overlapWithParent = Boolean.parseBoolean(overlap);
+                overlapWithParent = "overlaps".equals(getFormFieldValue( "overlaps", true));
                 hasParent = true;
             }
-            requiredTeam = XmlContentUtils.getDynamicContentByName(document, "requiredTeam", true);
-
-            timeZoneId = XmlContentUtils.getDynamicContentByName(document, "timeZone", true);
+            requiredTeam = getFormFieldValue( "requiredTeam", true);
+            timeZoneId = getFormFieldValue("timeZone", true);
             timeZoneId = correctTimeZone(timeZoneId);
-            String vatTxt = XmlContentUtils.getDynamicContentByName(document, "vat", true);
+            String vatTxt = getFormFieldValue( "vat", true);
             if (vatTxt != null) this.vat = Long.parseLong(vatTxt);
             defaultUserId = UserLocalServiceUtil.getDefaultUser(getCompanyId()).getUserId();
        } catch (Exception e) {
@@ -98,9 +87,8 @@ public abstract class Registration extends AbsDsdArticle {
 
     void initDates(Document document) throws PortalException, ParseException {
 
-        String datesOption = XmlContentUtils.getDynamicContentByName(document, "multipleDatesOption", true);
+        String datesOption = getFormFieldValue( "multipleDatesOption", true);
         daily = "daily".equals(datesOption);
-        NodeList registrationDates = XmlContentUtils.getDynamicElementsByName(document, "registrationDate");
         ArrayList<Period> dayPeriods = new ArrayList<>();
         final TimeZone timeZone;
         if (timeZoneId != null){
@@ -108,10 +96,15 @@ public abstract class Registration extends AbsDsdArticle {
         } else {
             timeZone = TimeZone.getTimeZone("CET");
         }
-        for (int i = 0; i < registrationDates.getLength(); i++) {
-            Node registrationDate = registrationDates.item(i);
-            Date startOfDay = XmlContentUtils.parseDateTimeFields(registrationDate, "startTime", timeZone);
-            Date endOfDay = XmlContentUtils.parseDateTimeFields(registrationDate, "endTime", timeZone);
+        List<DDMFormFieldValue> registrationDatesFieldSet = getDdmFormFieldValues( "registrationDateFieldSet", true);
+        for (DDMFormFieldValue fieldSet : registrationDatesFieldSet) {
+            final String dateValue = getFormFieldValue(fieldSet.getNestedDDMFormFieldValues(), "registrationDate", false);
+            final String startTimeString = getFormFieldValue(fieldSet.getNestedDDMFormFieldValues(), "startTime", false);
+            Date startOfDay = parseDateTimeFields(dateValue, startTimeString, timeZone);
+
+            final String endTimeString = getFormFieldValue(fieldSet.getNestedDDMFormFieldValues(), "endTime", false);
+            Date endOfDay = parseDateTimeFields(dateValue,endTimeString, timeZone);
+
             dayPeriods.add(new Period(startOfDay, endOfDay));
         }
 
@@ -157,7 +150,7 @@ public abstract class Registration extends AbsDsdArticle {
     }
 
     private void parseParentRegistration() throws PortalException {
-        String parentJson = XmlContentUtils.getDynamicContentByName(getDocument(), "parent", true);
+        String parentJson = getFormFieldValue( "parent", true);
         if (parentJson == null){
             return;
         }

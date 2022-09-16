@@ -7,14 +7,12 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
-import org.w3c.dom.Document;
 
 import java.util.*;
 
 public class Building extends AbsDsdArticle {
 
     private static final Log LOG = LogFactoryUtil.getLog(Building.class);
-    private boolean storeInParentSite;
     private List<Room> rooms = null;
     private double longitude;
     private double latitude;
@@ -26,14 +24,9 @@ public class Building extends AbsDsdArticle {
 
     private void init() throws PortalException {
         try {
-            Document document = getDocument();
-            String storeInParentSite = XmlContentUtils.getDynamicContentByName(document, "storeInParentSite", true);
-            this.storeInParentSite = Boolean.parseBoolean(storeInParentSite);
-
-            String geoLocation = XmlContentUtils.getDynamicContentByName(document, "location", false);
-            Map<String, String> coords = JsonContentUtils.parseJsonToMap(geoLocation);
-            this.longitude = Double.parseDouble(coords.get("longitude"));
-            this.latitude =  Double.parseDouble(coords.get("latitude"));
+            Map<String, String> coords = JsonContentUtils.parseJsonToMap(getFormFieldValue("location", false));
+            this.longitude = Double.parseDouble(coords.get("lng"));
+            this.latitude =  Double.parseDouble(coords.get("lat"));
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -50,11 +43,6 @@ public class Building extends AbsDsdArticle {
         return DSD_STRUCTURE_KEYS.Building.name();
     }
 
-    @Override
-    public boolean storeInParentSite() {
-        return storeInParentSite;
-    }
-
     public List<Room> getRooms() {
         if (rooms == null) {
             try {
@@ -68,8 +56,8 @@ public class Building extends AbsDsdArticle {
 
     private void parseRooms() throws PortalException {
         this.rooms = new ArrayList<>();
-        String[] rooms = XmlContentUtils.getDynamicContentsByName(getDocument(), "rooms");
-        if (rooms.length > 0){
+        List<String> rooms = extractStringValues(getDdmFormFieldValues( "rooms", true));
+        if (rooms.size() > 0){
             this.rooms = parseRooms(rooms);
         }
     }

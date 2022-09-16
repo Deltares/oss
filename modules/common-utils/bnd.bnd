@@ -8,8 +8,6 @@ Export-Package: \
   nl.deltares.portal.display.context, \
   nl.deltares.portal.configuration, \
   nl.deltares.portal.kernel.util.comparator, \
-  nl.deltares.emails.*, \
-  nl.deltares.model, \
   nl.deltares.tasks.*
 Import-Package: \
   nl.deltares.dsd.registration.service.*,\

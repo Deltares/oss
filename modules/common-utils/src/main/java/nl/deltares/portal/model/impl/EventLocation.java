@@ -7,7 +7,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DuplicateCheck;
 import nl.deltares.portal.utils.JsonContentUtils;
-import nl.deltares.portal.utils.XmlContentUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,8 +51,8 @@ public class EventLocation extends Location {
 
     private void parseRooms() throws PortalException {
         this.rooms = new ArrayList<>();
-        String[] rooms = XmlContentUtils.getDynamicContentsByName(getDocument(), "rooms");
-        if (rooms.length > 0){
+        List<String> rooms = extractStringValues(getDdmFormFieldValues( "rooms", true));
+        if (rooms.size() > 0){
             this.rooms.addAll(parseRooms(rooms));
         }
     }
@@ -73,13 +72,13 @@ public class EventLocation extends Location {
     }
     private void parseBuildings() throws PortalException {
         this.buildings = new ArrayList<>();
-        String[] buildings = XmlContentUtils.getDynamicContentsByName(getDocument(), "buildings");
-        if (buildings.length > 0){
+        List<String> buildings = extractStringValues(getDdmFormFieldValues( "buildings", true));
+        if (buildings.size() > 0){
             this.buildings.addAll(parseBuildings(buildings));
         }
     }
 
-    private List<Building> parseBuildings(String[] buildingReferences) throws PortalException {
+    private List<Building> parseBuildings(List<String> buildingReferences) throws PortalException {
 
         DuplicateCheck check = new DuplicateCheck();
         ArrayList<Building> buildings = new ArrayList<>();

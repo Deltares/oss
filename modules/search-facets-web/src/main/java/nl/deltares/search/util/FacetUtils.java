@@ -3,6 +3,8 @@ package nl.deltares.search.util;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.StringUtil;
+import nl.deltares.portal.configuration.DSDSiteConfiguration;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -17,6 +19,16 @@ public class FacetUtils {
         yesNo.put("yes", "facet.checkbox.yes");
         yesNo.put("no", "facet.checkbox.no");
     }
+
+    public static String[] getStructureKeys(DSDSiteConfiguration configuration) {
+        if (configuration == null) return new String[]{"SESSION"};
+        String structureList = configuration.dsdRegistrationStructures();
+        if (structureList != null && !structureList.isEmpty()){
+            return StringUtil.split(structureList, ' ');
+        }
+        return new String[0];
+    }
+
     public static LocalDate getStartDate(String date) throws DateTimeParseException {
         LocalDate startDate = parseDate(date);
         if (startDate == null) {

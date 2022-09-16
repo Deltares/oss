@@ -38,10 +38,6 @@ public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
         if (!userExists(user)){
             addUser(user, callerId);
         }
-//        DO not subscribe user as this allocates a license.
-//        if (!isUserSubscribed(user, courseId)){
-//            return subscribe(user, courseId);
-//        }
         return 0;
     }
 

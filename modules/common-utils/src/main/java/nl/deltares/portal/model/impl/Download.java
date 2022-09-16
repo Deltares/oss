@@ -6,7 +6,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import nl.deltares.portal.utils.*;
-import org.w3c.dom.Document;
 
 import java.util.*;
 
@@ -38,32 +37,31 @@ public class Download extends AbsDsdArticle {
 
     private void init(DsdJournalArticleUtils articleUtils, LayoutUtils layoutUtils) throws PortalException {
         try {
-            Document document = getDocument();
-            String fileId = XmlContentUtils.getDynamicContentByName(document, "FileId", true);
+            String fileId = getFormFieldValue( "FileId", true);
             if (fileId != null) this.fileId = Integer.parseInt(fileId);
-            filePath = XmlContentUtils.getDynamicContentByName(document, "FilePath", false);
-            fileName = XmlContentUtils.getDynamicContentByName(document, "FileName", false);
+            filePath = getFormFieldValue( "FilePath", false);
+            fileName = getFormFieldValue( "FileName", false);
 
-            String options = XmlContentUtils.getDynamicContentByName(document, "RequiredActions", false);
+            String options = getFormFieldValue( "RequiredActions", false);
             parseRequiredActions(options);
 
-            fileType = XmlContentUtils.getDynamicContentByName(document, "FileType", false);
+            fileType = getFormFieldValue( "FileType", false);
 
             final Map<String, String> fileTypesMap = articleUtils.getStructureFieldOptions(getGroupId(), getStructureKey(), "FileType", getLocale());
             fileTypeName = fileTypesMap.get(fileType);
 
-            String fileSize = XmlContentUtils.getDynamicContentByName(document, "FileSize", true);
+            String fileSize = getFormFieldValue( "FileSize", true);
             if (fileSize != null) this.fileSize = fileSize;
 
-            fileTopic = XmlContentUtils.getDynamicContentByName(document, "Topic", false);
+            fileTopic = getFormFieldValue( "Topic", false);
             final Map<String, String> fileTopicMap = articleUtils.getStructureFieldOptions(getGroupId(), getStructureKey(), "Topic", getLocale());
             fileTopicName = fileTopicMap.get(fileTopic);
 
-            String linkToPage = XmlContentUtils.getDynamicContentByName(document, "GroupPage", false);
+            String linkToPage = getFormFieldValue( "GroupPage", false);
             final Layout linkToPageLayout = layoutUtils.getLinkToPageLayout(linkToPage);
             groupPage = linkToPageLayout.getFriendlyURL();
 
-            final String automaticLinkCreation = XmlContentUtils.getDynamicContentByName(document, "AutomaticLinkCreation", true);
+            final String automaticLinkCreation = getFormFieldValue( "AutomaticLinkCreation", true);
             if (automaticLinkCreation != null) {
                 this.automaticLinkCreation = Boolean.parseBoolean(automaticLinkCreation);
             }

@@ -12,6 +12,7 @@ import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSe
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.search.constans.FacetPortletKeys;
+import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -33,7 +34,7 @@ public class EventFacetPortletSharedSearchContributor implements PortletSharedSe
         final Locale siteDefaultLocale = LocaleUtil.fromLanguageId(scopeGroup.getDefaultLanguageId());
 
         String eventId = null;
-
+        String[] structureKeys = null;
         try {
             DSDSiteConfiguration configuration = _configurationProvider.
                     getGroupConfiguration(DSDSiteConfiguration.class, groupId);
@@ -41,13 +42,14 @@ public class EventFacetPortletSharedSearchContributor implements PortletSharedSe
                 eventId = String.valueOf(configuration.eventId());
             }
 
+            structureKeys = FacetUtils.getStructureKeys(configuration);
         } catch (ConfigurationException e) {
             LOG.debug("Could not get event configuration", e);
         }
 
         if (eventId != null) {
-            _dsdJournalArticleUtils.contributeDsdEventRegistrations(
-                    groupId, eventId, portletSharedSearchSettings.getSearchContext(), siteDefaultLocale
+            _dsdJournalArticleUtils.queryDdmFieldValue(groupId, "eventId", eventId, structureKeys,
+                    portletSharedSearchSettings.getSearchContext(), siteDefaultLocale, false
             );
         }
 
