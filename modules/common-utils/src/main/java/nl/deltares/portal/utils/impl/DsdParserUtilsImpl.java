@@ -65,8 +65,8 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
     }
 
     @Override
-    public List<Registration> getRegistrations(long companyId, long siteId, String eventId, Locale locale) throws PortalException {
-        List<JournalArticle> articles = dsdJournalArticleUtils.getRegistrationsForEvent(companyId, siteId, String.valueOf(eventId), locale);
+    public List<Registration> getRegistrations(long companyId, long siteId, String eventId, String[] registrationStructureKeys, Locale locale) throws PortalException {
+        List<JournalArticle> articles = dsdJournalArticleUtils.getRegistrationsForEvent(companyId, siteId, eventId, registrationStructureKeys, locale);
         return articlesToDsd(articles);
     }
 

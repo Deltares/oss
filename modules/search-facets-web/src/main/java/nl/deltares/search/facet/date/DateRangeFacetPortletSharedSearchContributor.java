@@ -43,7 +43,7 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
 
         String[] structureKeys = getStructureKeys(portletSharedSearchSettings);
         String dateFieldName = getDsdConfiguredValue("dsdRegistrationDateField", portletSharedSearchSettings);
-        _dsDsdJournalArticleUtils.contributeDsdDateRangeRegistrations(
+        _dsDsdJournalArticleUtils.queryDateRange(
                 groupId, startDate, endDate, structureKeys, dateFieldName, portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
 
     }

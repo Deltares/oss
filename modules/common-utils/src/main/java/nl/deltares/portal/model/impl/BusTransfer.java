@@ -1,5 +1,6 @@
 package nl.deltares.portal.model.impl;
 
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -7,7 +8,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.Period;
-import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
 
 import java.text.ParseException;
@@ -30,8 +30,7 @@ public class BusTransfer extends Registration {
     private void init() throws PortalException {
 
         try {
-            Document document = getDocument();
-            initDates(document);
+            initDates(null);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -49,9 +48,10 @@ public class BusTransfer extends Registration {
             endTimeMillis = timef.parse(times.get(times.size() - 1)).getTime();
         }
 
-        String datesOption = XmlContentUtils.getDynamicContentByName(document, "multipleDatesOption", true);
+        String datesOption = getFormFieldValue( "multipleDatesOption", true);
         daily = "daily".equals(datesOption);
-        String[] registrationDates = XmlContentUtils.getDynamicContentsByName(document, "registrationDate");
+        List<DDMFormFieldValue> formFieldValues = getDdmFormFieldValues( "registrationDate", false);
+        final List<String> registrationDates = extractStringValues(formFieldValues);
         ArrayList<Period> dayPeriods = new ArrayList<>();
         for (String registrationDate : registrationDates) {
             long dayValueMillis = dayf.parse(registrationDate).getTime();
@@ -97,7 +97,7 @@ public class BusTransfer extends Registration {
 
     private BusRoute parseBusRoute() throws PortalException {
 
-        String busRouteJson = XmlContentUtils.getDynamicContentByName(getDocument(), "busRoute", false);
+        String busRouteJson = getFormFieldValue("busRoute", false);
         JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(busRouteJson);
         AbsDsdArticle busRoute = dsdParserUtils.toDsdArticle(article, getLocale());
         if (! (busRoute instanceof BusRoute)){

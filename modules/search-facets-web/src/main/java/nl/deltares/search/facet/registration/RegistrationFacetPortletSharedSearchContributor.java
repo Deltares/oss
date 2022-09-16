@@ -32,7 +32,7 @@ public class RegistrationFacetPortletSharedSearchContributor implements PortletS
         String[] structureKeys = getStructureKeys(portletSharedSearchSettings);
 
         final Locale siteDefaultLocale = LocaleUtil.fromLanguageId(themeDisplay.getScopeGroup().getDefaultLanguageId());
-        _dsdJournalArticleUtils.contributeDsdRegistrations(
+        _dsdJournalArticleUtils.queryMultipleFieldValues(
                 themeDisplay.getScopeGroupId(),
                 structureKeys,
                 portletSharedSearchSettings.getSearchContext(),

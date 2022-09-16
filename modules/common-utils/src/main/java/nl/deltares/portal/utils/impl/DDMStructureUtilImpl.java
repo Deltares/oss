@@ -4,6 +4,7 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -27,6 +28,19 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
 
     private static final Log LOGGER = LogFactoryUtil.getLog(DDMStructureUtil.class);
     private static final int ALL = QueryUtil.ALL_POS;
+
+    @Override
+    public List<String> getEncodedFieldNamesForStructures(long groupId, String fieldName, String[] structureNames, Locale locale) {
+        List<Optional<DDMStructure>> optionalList = getDDMStructuresByName(groupId, structureNames, locale);
+        List<String> fieldNameValues = new ArrayList<>();
+        for (Optional<DDMStructure> ddmStructureOptional : optionalList) {
+            ddmStructureOptional.ifPresent(ddmStructure -> {
+                        final long structureId = ddmStructure.getStructureId();
+                        fieldNameValues.add( _ddmIndexer.encodeName(structureId, fieldName, locale));
+                    }
+            );}
+        return fieldNameValues;
+    }
 
     @Override
     public List<Optional<DDMStructure>> getDDMStructuresByName(long groupId, String[] names, Locale locale) {
@@ -128,33 +142,12 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
         return 0;
     }
 
-//    private static void cacheDDMStructure(String name, DDMStructure structure) {
-//        if (Boolean.parseBoolean(PropsUtil.get("nocache"))) return;
-//
-//        PortalCache<String, Serializable> cache = MultiVMPoolUtil.getPortalCache("deltares", true);
-//        cache.put("STRUCTURE_" + name, structure);
-//        cache.put("STRUCTURE_EXP_" + name, System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10));
-//
-//    }
-
-//    private static Optional<DDMStructure> getCachedDDMStructure(String name) {
-//        if (name == null) return Optional.empty();
-//        if (Boolean.parseBoolean(PropsUtil.get("nocache"))) return Optional.empty();
-//        PortalCache<String, Serializable> cache = MultiVMPoolUtil.getPortalCache("deltares", true);
-//        DDMStructure structure = (DDMStructure) cache.get("STRUCTURE_" + name);
-//        if (structure != null) {
-//            Long expiryTime = (Long) cache.get("STRUCTURE_EXP_" + name);
-//            if (expiryTime != null && expiryTime > System.currentTimeMillis()){
-//                return Optional.of(structure);
-//            }
-//        }
-//        return Optional.empty();
-//    }
-
     @Reference
     private DDMStructureLocalService _ddmStructureLocalService;
 
     @Reference
     private DDMTemplateLocalService _ddmTemplateLocalService;
 
+    @Reference
+    private DDMIndexer _ddmIndexer;
 }

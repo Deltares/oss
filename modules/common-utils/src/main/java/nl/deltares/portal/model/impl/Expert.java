@@ -7,13 +7,9 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
-import nl.deltares.portal.utils.XmlContentUtils;
-import org.w3c.dom.Document;
-
 import java.util.Locale;
 
 public class Expert extends AbsDsdArticle {
-    private boolean storeInParentSite;
     private String name;
     private String imageUrl;
     private String jobTitle;
@@ -27,19 +23,15 @@ public class Expert extends AbsDsdArticle {
 
     private void init() throws PortalException {
         try {
-            Document document = getDocument();
+            this.email = getFormFieldValue( "expertEmailAddress", false);
+            this.name =  getFormFieldValue( "expertName", true);
+            this.jobTitle =  getFormFieldValue( "expertJobTitle", true);
+            this.company =  getFormFieldValue( "expertCompany", true);
 
-            this.email = XmlContentUtils.getDynamicContentByName(document, "expertEmailAddress", false);
-            this.name =  XmlContentUtils.getDynamicContentByName(document, "expertName", true);
-            this.jobTitle =  XmlContentUtils.getDynamicContentByName(document, "expertJobTitle", true);
-            this.company =  XmlContentUtils.getDynamicContentByName(document, "expertCompany", true);
-
-            String jsonImage = XmlContentUtils.getDynamicContentByName(document, "expertImage", true);
+            String jsonImage = getFormFieldValue( "expertImage", true);
             if (jsonImage != null) {
                 imageUrl = JsonContentUtils.parseImageJson(jsonImage);
             }
-            String storeInParentSite = XmlContentUtils.getDynamicContentByName(document, "storeInParentSite", true);
-            this.storeInParentSite = Boolean.parseBoolean(storeInParentSite);
 
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
@@ -49,11 +41,6 @@ public class Expert extends AbsDsdArticle {
     @Override
     public String getStructureKey() {
         return DSD_STRUCTURE_KEYS.Expert.name();
-    }
-
-    @Override
-    public boolean storeInParentSite() {
-        return storeInParentSite;
     }
 
     @Override

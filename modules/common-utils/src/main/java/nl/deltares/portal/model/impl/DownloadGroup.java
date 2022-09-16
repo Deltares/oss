@@ -27,16 +27,15 @@ public class DownloadGroup extends AbsDsdArticle {
 
     private void init(LayoutUtils layoutUtils) throws PortalException {
         try {
-            Document document = getDocument();
-            name = XmlContentUtils.getDynamicContentByName(document, "Name", false);
-            String linkToPage = XmlContentUtils.getDynamicContentByName(document, "GroupPage", false);
+            name = getFormFieldValue( "Name", false);
+            String linkToPage = getFormFieldValue( "GroupPage", false);
             final Layout linkToPageLayout = layoutUtils.getLinkToPageLayout(linkToPage);
             groupPage = linkToPageLayout.getFriendlyURL();
-            String jsonImage = XmlContentUtils.getDynamicContentByName(document, "Icon", false);
+            String jsonImage = getFormFieldValue( "Icon", false);
             if (jsonImage != null) {
                 imageUrl = JsonContentUtils.parseImageJson(jsonImage);
             }
-            String desc = XmlContentUtils.getDynamicContentByName(document, "Description", true);
+            String desc = getFormFieldValue( "Description", true);
             if (desc != null) {
                 description = desc;
             }
