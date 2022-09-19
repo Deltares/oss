@@ -102,7 +102,7 @@ public abstract class HttpClientUtils implements BaseLocalService {
                 result.write(buffer, 0, length);
             }
             // StandardCharsets.UTF_8.name() > JDK 7
-            return result.toString(StandardCharsets.UTF_8);
+            return result.toString(StandardCharsets.UTF_8.name());
         } finally {
             connection.disconnect();
         }
@@ -187,13 +187,12 @@ public abstract class HttpClientUtils implements BaseLocalService {
         keycloakCache.remove(key);
     }
 
-    public static boolean setCachedToken(String tokenKey, String expiryKey, String token, long expiryTimeMillis) {
+    public static void setCachedToken(String tokenKey, String expiryKey, String token, long expiryTimeMillis) {
         PortalCache<String, Serializable> keycloakCache = PortalCacheHelperUtil.getPortalCache("deltares", "deltares");
         keycloakCache.put(tokenKey, token);
         if (expiryKey != null) {
             keycloakCache.put(expiryKey, expiryTimeMillis);
         }
-        return true;
     }
 
     public static String getProperty(String propertyKey) {
