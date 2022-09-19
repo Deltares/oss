@@ -1,11 +1,11 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import FullCalendar from '@fullcalendar/react'
-import interaction from '@fullcalendar/interaction'
-import resourceTimeline from '@fullcalendar/resource-timeline'
-import resourceDayGrid from '@fullcalendar/resource-daygrid'
-import resourceTimeGrid from '@fullcalendar/resource-timegrid'
-import momentTimezonePlugin from '@fullcalendar/moment-timezone'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import FullCalendar from '@fullcalendar/react';
+import interaction from '@fullcalendar/interaction';
+import resourceTimeline from '@fullcalendar/resource-timeline';
+import resourceDayGrid from '@fullcalendar/resource-daygrid';
+import resourceTimeGrid from '@fullcalendar/resource-timegrid';
+import momentTimezonePlugin from '@fullcalendar/moment-timezone';
 
 class Calendar extends React.Component {
 
@@ -106,5 +106,5 @@ export default function (elementId, baseUrl, siteId, eventId, startDate, default
 
 	ReactDOM.render( <Calendar class="fc" baseUrl={baseUrl}
 							   siteId={siteId} eventId={eventId} startDate={startDate} defaultView={defaultView}
-							   portletId={portletId} layoutUuid={layoutUuid} p_auth={p_auth}/>, document.getElementById(elementId))
+							   portletId={portletId} layoutUuid={layoutUuid} p_auth={p_auth}/>, document.getElementById(elementId));
 }

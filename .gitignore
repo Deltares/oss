@@ -275,3 +275,4 @@ license*.xml
 /docker/resources/data/
 /configs/docker/osgi/modules/activation-key-dxpdevelopment-7.4-developeractivationkeys.xml
 /docker/liferay/resources/activation-key-dxpdevelopment-7.4-developeractivationkeys.xml
+/modules/fullcalendar/package-lock.json

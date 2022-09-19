@@ -4,7 +4,6 @@ import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 import nl.deltares.mock.MockProps;
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -85,7 +84,7 @@ public class KeycloakUtilsImplTest {
 
         File expectedFile = new File(getClass().getResource("/keycloak/expected.jpg").getFile());
         FileInputStream is = new FileInputStream(expectedFile);
-        byte[] bytes = IOUtils.toByteArray(is);
+        byte[] bytes = is.readAllBytes();
         Assert.assertArrayEquals(bytes, userAvatar);
 
     }
