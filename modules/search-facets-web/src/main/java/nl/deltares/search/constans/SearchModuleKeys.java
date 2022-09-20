@@ -3,7 +3,7 @@ package nl.deltares.search.constans;
 /**
  * @author allan
  */
-public class FacetPortletKeys {
+public class SearchModuleKeys {
 
     public static final String PRESENTATION_FACET_PORTLET =
             "nl_deltares_search_facet_presentation_PresentationFacetPortlet";
@@ -25,5 +25,8 @@ public class FacetPortletKeys {
 
     public static final String USER_PROGRAM_FACET_PORTLET =
             "nl_deltares_search_facet_event_UserProgramFacetPortlet";
+
+    public static final String SEARCH_RESULTS_PORTLET =
+            "nl_deltares_search_results_SearchResultsPortlet";
 
 }

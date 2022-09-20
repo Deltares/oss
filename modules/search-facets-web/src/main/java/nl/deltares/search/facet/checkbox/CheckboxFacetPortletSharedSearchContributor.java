@@ -14,7 +14,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 import nl.deltares.portal.utils.DDMStructureUtil;
-import nl.deltares.search.constans.FacetPortletKeys;
+import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -24,7 +24,7 @@ import java.util.Optional;
 
 @Component(
         immediate = true,
-        property = "javax.portlet.name=" + FacetPortletKeys.CHECKBOX_FACET_PORTLET,
+        property = "javax.portlet.name=" + SearchModuleKeys.CHECKBOX_FACET_PORTLET,
         service = PortletSharedSearchContributor.class
 )
 public class CheckboxFacetPortletSharedSearchContributor implements PortletSharedSearchContributor {

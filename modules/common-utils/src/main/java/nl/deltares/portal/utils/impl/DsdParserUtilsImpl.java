@@ -120,8 +120,8 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
     @Override
     public RegistrationDisplayContext getDisplayContextInstance(String articleId, ThemeDisplay themeDisplay) {
 
-        String articleAttrName = "javax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?program-list-registration-articleId";
-        String dayAttrName = "javax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?program-list-registration-day";
+        String articleAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?program-list-registration-articleId";
+        String dayAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?program-list-registration-day";
         final Object sessionArticleId = themeDisplay.getRequest().getSession().getAttribute(articleAttrName);
         final Object day = themeDisplay.getRequest().getSession().getAttribute(dayAttrName);
         int dayIndex = 0;
