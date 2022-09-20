@@ -1,3 +1,4 @@
+@use "liferay-frontend-css-common/liferay/variables" ;
 $items: 11;
 $transition-duration: 0.5s;
 $transition-delay: 0.05s;
@@ -17,11 +18,11 @@ $transition-delay: 0.05s;
         font-weight: normal;
     }
     
-    @media (max-width: $screen-sm-max) {
+    @media (max-width: variables.$screen-sm-max) {
         @import "mobile_menu";
     }
     
-    @media (min-width: $screen-md-min) {
+    @media (min-width: variables.$screen-md-min) {
         order: 3; 
         @import "regular_menu";
     }
