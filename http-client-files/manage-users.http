@@ -1,0 +1,33 @@
+###
+GET https://oss.deltares.nl/api/jsonws/user/get-user-id-by-email-address/company-id/10131/email-address/e.de.rooij2@gmail.com
+
+Authorization: Basic id-843b4a3b-94b8-8dae-0761-a8fd9d3269 secret-51f74660-6caa-5b37-fd85-d76474fc265
+Content-Type: text/plain
+
+
+###
+POST http://localhost:8090/o/dsd/user/info/
+Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+  "email": "test@liferay.com",
+  "firstName": "Test",
+  "lastName": "Test",
+  "screenName": "test",
+  "id": 20140,
+  "attributes": {
+    "org_city": "Kaatsheuvel",
+    "org_preferred_payment": "payLink",
+    "pay_reference": "testing",
+    "org_address": "Europalaan 1",
+    "org_country": "Belgie",
+    "org_vat": "",
+    "org_name": "Deltares",
+    "org_postal": "1000 AA"
+  }
+}
+
+
+
+

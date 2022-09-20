@@ -276,3 +276,4 @@ license*.xml
 /configs/docker/osgi/modules/activation-key-dxpdevelopment-7.4-developeractivationkeys.xml
 /docker/liferay/resources/activation-key-dxpdevelopment-7.4-developeractivationkeys.xml
 /modules/fullcalendar/package-lock.json
+/docker/keycloak/deployments/deltares-extension-bundle-2.0.ear.deployed
