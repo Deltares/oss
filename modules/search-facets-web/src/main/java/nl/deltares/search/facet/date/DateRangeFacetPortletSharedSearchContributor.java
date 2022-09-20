@@ -12,7 +12,7 @@ import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchCo
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
-import nl.deltares.search.constans.FacetPortletKeys;
+import nl.deltares.search.constans.SearchModuleKeys;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -23,7 +23,7 @@ import java.util.Optional;
 
 @Component(
         immediate = true,
-        property = "javax.portlet.name=" + FacetPortletKeys.DATE_RANGE_FACET_PORTLET,
+        property = "javax.portlet.name=" + SearchModuleKeys.DATE_RANGE_FACET_PORTLET,
         service = PortletSharedSearchContributor.class
 )
 public class DateRangeFacetPortletSharedSearchContributor implements PortletSharedSearchContributor {

@@ -4,7 +4,7 @@ import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
-import nl.deltares.search.constans.FacetPortletKeys;
+import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -35,7 +35,7 @@ import java.util.Optional;
                 "javax.portlet.init-param.template-path=/",
                 "javax.portlet.init-param.config-template=/facet/date/configuration.jsp",
                 "javax.portlet.init-param.view-template=/facet/date/view.jsp",
-                "javax.portlet.name=" + FacetPortletKeys.DATE_RANGE_FACET_PORTLET,
+                "javax.portlet.name=" + SearchModuleKeys.DATE_RANGE_FACET_PORTLET,
                 "javax.portlet.resource-bundle=content.Language",
                 "javax.portlet.security-role-ref=power-user,user"
         },

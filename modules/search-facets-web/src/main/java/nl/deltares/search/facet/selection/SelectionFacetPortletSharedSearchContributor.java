@@ -9,7 +9,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
-import nl.deltares.search.constans.FacetPortletKeys;
+import nl.deltares.search.constans.SearchModuleKeys;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @Component(
         immediate = true,
-        property = "javax.portlet.name=" + FacetPortletKeys.SELECTION_FACET_PORTLET,
+        property = "javax.portlet.name=" + SearchModuleKeys.SELECTION_FACET_PORTLET,
         service = PortletSharedSearchContributor.class
 )
 public class SelectionFacetPortletSharedSearchContributor implements PortletSharedSearchContributor {

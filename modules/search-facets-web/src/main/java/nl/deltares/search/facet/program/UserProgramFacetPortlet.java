@@ -11,7 +11,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.utils.DsdSessionUtils;
-import nl.deltares.search.constans.FacetPortletKeys;
+import nl.deltares.search.constans.SearchModuleKeys;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -36,7 +36,7 @@ import java.util.Map;
                 "javax.portlet.init-param.template-path=/",
                 "javax.portlet.init-param.config-template=/facet/program/configuration.jsp",
                 "javax.portlet.init-param.view-template=/facet/program/view.jsp",
-                "javax.portlet.name=" + FacetPortletKeys.USER_PROGRAM_FACET_PORTLET,
+                "javax.portlet.name=" + SearchModuleKeys.USER_PROGRAM_FACET_PORTLET,
                 "javax.portlet.resource-bundle=content.Language",
                 "javax.portlet.security-role-ref=power-user,user"
         },

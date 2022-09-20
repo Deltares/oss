@@ -11,7 +11,7 @@ import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRe
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
-import nl.deltares.search.constans.FacetPortletKeys;
+import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -21,7 +21,7 @@ import java.util.Locale;
 @Component(
         immediate = true,
         property = {
-                "javax.portlet.name=" + FacetPortletKeys.EVENT_FACET_PORTLET
+                "javax.portlet.name=" + SearchModuleKeys.EVENT_FACET_PORTLET
         },
         service = PortletSharedSearchContributor.class
 )
