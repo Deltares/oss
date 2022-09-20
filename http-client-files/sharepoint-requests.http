@@ -1,0 +1,18 @@
+###
+POST https://login.microsoftonline.com/{{tenantId}}/oauth2/v2.0/token
+Host: login.microsoftonline.com
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{clientId}}
+&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default
+&client_secret={{clientSecret}}
+&grant_type=client_credentials
+
+> {%
+client.global.set("auth_token", response.body.access_token);
+%}
+
+### Authorization by token, part 2. Use token to authorize.
+GET https://deltares.sharepoint.com/_api/v2.0/sites
+Authorization: Bearer {{auth_token}}
+Accept: "application/json;odata=verbose"
