@@ -12,7 +12,7 @@ RUN chown -R liferay:liferay /opt/liferay/data/document_library
 COPY ["resources/keystore.jks", "/opt/liferay/data/keystore.jks"]
 COPY ["resources/Liferay Connector to SAML 2.0.lpkg", "/opt/liferay/osgi/marketplace/Liferay Connector to SAML 2.0.lpkg"]
 COPY ["resources/Liferay Plugin for OAuth 2.0.lpkg", "/opt/liferay/osgi/marketplace/Liferay Plugin for OAuth 2.0.lpkg"]
-COPY ["resources/activation-key-digitalenterprisedevelopment-7.1-developeractivationkeys.xml", "/opt/liferay/osgi/modules/activation-key-digitalenterprisedevelopment-7.1-developeractivationkeys.xml"]
+COPY ["resources/activation-key.xml", "/opt/liferay/osgi/modules/activation-key.xml"]
 #COPY ["resources/server.xml", "/opt/liferay/tomcat/conf/server.xml"]
 
 USER liferay
