@@ -117,18 +117,39 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
 
     @Override
     public void queryDdmFieldValue(long groupId, String searchFieldName, String searchFieldValueKeywordValue,
-                                   String[] structureKeys, SearchContext searchContext, Locale locale, boolean localizeKeywordField) {
+                                   String[] structureKeys, SearchContext searchContext, Locale locale) {
+
+        queryDdmFieldValue(groupId, searchFieldName, searchFieldValueKeywordValue, structureKeys, searchContext, locale, false);
+    }
+
+    @Override
+    public void queryExcludeDdmFieldValue(long groupId, String searchFieldName, String searchFieldValueKeywordValue,
+                                   String[] structureKeys, SearchContext searchContext, Locale locale) {
+        queryDdmFieldValue(groupId, searchFieldName, searchFieldValueKeywordValue, structureKeys, searchContext, locale, true);
+    }
+
+    private void queryDdmFieldValue(long groupId, String searchFieldName, String searchFieldValueKeywordValue,
+                                   String[] structureKeys, SearchContext searchContext, Locale locale, boolean excludeValue) {
         if (searchFieldValueKeywordValue == null || searchFieldValueKeywordValue.isEmpty()) return;
 
+        final String languageString = locale.toString();
         final List<String> fieldNameValues = ddmStructureUtil.getEncodedFieldNamesForStructures(groupId, searchFieldName, structureKeys, locale);
+        boolean localizeKeywordField = checkIfValuesAreLocalized(languageString, fieldNameValues);
         DeltaresDdmFieldValueFacet nestedFacetImpl = new DeltaresDdmFieldValueFacet(searchFieldName, searchContext);
         nestedFacetImpl.setFieldNameValues(fieldNameValues.toArray(new String[0]));
         if (localizeKeywordField){
-            nestedFacetImpl.setFieldValueKeywordName("ddmFieldValueKeyword_" + locale.toString());
+            nestedFacetImpl.setFieldValueKeywordName("ddmFieldValueKeyword_" + languageString);
         }
         nestedFacetImpl.setFieldValueKeywordValue(searchFieldValueKeywordValue);
+        nestedFacetImpl.setExclude(excludeValue);
         searchContext.addFacet(nestedFacetImpl);
 
+    }
+    private boolean checkIfValuesAreLocalized(String languageString, List<String> fieldNameValues) {
+        for (String value : fieldNameValues) {
+            if (value.endsWith(languageString)) return true;
+        }
+        return false;
     }
 
     @Override
@@ -151,7 +172,7 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
     @Override
     public List<JournalArticle> getRegistrationsForEvent(long companyId, long groupId, String eventArticleId, String[] registrationStructureKeys, Locale locale) throws PortalException {
         final SearchContext searchContext = initSearchContext(companyId, groupId);
-        queryDdmFieldValue(groupId, "eventId", eventArticleId, registrationStructureKeys, searchContext, locale, false);
+        queryDdmFieldValue(groupId, "eventId", eventArticleId, registrationStructureKeys, searchContext, locale);
         return executeSearch(groupId, searchContext);
     }
 

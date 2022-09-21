@@ -65,7 +65,7 @@ public class MockDsdJournalArticleUtils implements DsdJournalArticleUtils {
     }
 
     @Override
-    public void queryDdmFieldValue(long groupId, String ddmFieldName, String ddmFieldValue, String[] structureKeys, SearchContext searchContext, Locale locale, boolean localizeKeywordField) {
+    public void queryDdmFieldValue(long groupId, String ddmFieldName, String ddmFieldValue, String[] structureKeys, SearchContext searchContext, Locale locale) {
 
     }
 

@@ -30,13 +30,14 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
     private static final int ALL = QueryUtil.ALL_POS;
 
     @Override
-    public List<String> getEncodedFieldNamesForStructures(long groupId, String fieldName, String[] structureNames, Locale locale) {
+    public List<String> getEncodedFieldNamesForStructures(long groupId, String fieldReference, String[] structureNames, Locale locale) {
         List<Optional<DDMStructure>> optionalList = getDDMStructuresByName(groupId, structureNames, locale);
         List<String> fieldNameValues = new ArrayList<>();
         for (Optional<DDMStructure> ddmStructureOptional : optionalList) {
             ddmStructureOptional.ifPresent(ddmStructure -> {
+                        if (!ddmStructure.hasFieldByFieldReference(fieldReference)) return;
                         final long structureId = ddmStructure.getStructureId();
-                        fieldNameValues.add( _ddmIndexer.encodeName(structureId, fieldName, locale));
+                        fieldNameValues.add( _ddmIndexer.encodeName(structureId, fieldReference, locale));
                     }
             );}
         return fieldNameValues;

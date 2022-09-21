@@ -46,7 +46,7 @@ public class SelectionFacetPortletSharedSearchContributor implements PortletShar
         if (selectionOptional.isPresent()) {
             selection = selectionOptional.get();
             _dsdJournalArticleUtils.queryDdmFieldValue(groupId, fieldName, selection, new String[]{structureName},
-                    portletSharedSearchSettings.getSearchContext(), siteDefaultLocale, true);
+                    portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
         }
 
     }
