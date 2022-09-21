@@ -3,10 +3,6 @@ package nl.deltares.portal.utils;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
-
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -27,7 +23,9 @@ public interface DsdJournalArticleUtils {
                                                    String[] structureKeys, String dateFieldName, Locale locale) throws PortalException;
     void queryMultipleFieldValues(long groupId, String[] structureKeys, SearchContext searchContext, Locale locale);
 
-    void queryDdmFieldValue(long groupId, String ddmFieldName, String ddmFieldValue, String[] structureKeys, SearchContext searchContext, Locale locale, boolean localizeKeywordField);
+    void queryDdmFieldValue(long groupId, String ddmFieldName, String ddmFieldValue, String[] structureKeys, SearchContext searchContext, Locale locale);
+
+    void queryExcludeDdmFieldValue(long groupId, String ddmFieldName, String ddmFieldValue, String[] structureKeys, SearchContext searchContext, Locale locale);
 
     void queryDateRange(long groupId, Date startDate, Date endDate, String[] structureKeys, String dateFieldName, SearchContext searchContext, Locale locale);
 

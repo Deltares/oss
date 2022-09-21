@@ -49,8 +49,7 @@ public class EventFacetPortletSharedSearchContributor implements PortletSharedSe
 
         if (eventId != null) {
             _dsdJournalArticleUtils.queryDdmFieldValue(groupId, "eventId", eventId, structureKeys,
-                    portletSharedSearchSettings.getSearchContext(), siteDefaultLocale, false
-            );
+                    portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
         }
 
     }

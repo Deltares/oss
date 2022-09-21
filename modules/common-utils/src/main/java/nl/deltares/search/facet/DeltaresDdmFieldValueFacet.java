@@ -26,6 +26,7 @@ public class DeltaresDdmFieldValueFacet extends BaseFacet {
 
     private String _ddmFieldValueKeywordName = "ddmFieldValueKeyword";
     private String _ddmFieldValueKeywordValue = null;
+    private boolean exclude = false;
 
     public DeltaresDdmFieldValueFacet(String name, SearchContext searchContext) {
         super(searchContext);
@@ -57,6 +58,13 @@ public class DeltaresDdmFieldValueFacet extends BaseFacet {
     }
 
 
+    /**
+     * Exclude wil result in a negative search of this field value. So if an item contains the field it will not
+     * be added to the results
+     */
+    public void setExclude(boolean exclude){
+        this.exclude = exclude;
+    }
     /**
      * Search value contained by the field set in the method {@link #setFieldValueKeywordName(String)}
      * @param fieldValue search value
@@ -97,7 +105,12 @@ public class DeltaresDdmFieldValueFacet extends BaseFacet {
 
         QueryFilter queryFilter = new QueryFilter(nestedQuery);
 
-        return new BooleanClauseImpl<>(queryFilter, BooleanClauseOccur.MUST);
+        if (exclude){
+            return new BooleanClauseImpl<>(queryFilter, BooleanClauseOccur.MUST_NOT);
+        } else {
+            return new BooleanClauseImpl<>(queryFilter, BooleanClauseOccur.MUST);
+        }
+
     }
 
 
