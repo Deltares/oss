@@ -1,4 +1,4 @@
-
+@use "liferay-frontend-css-common/liferay/variables" ;
 
 #banner {
     position: relative;
@@ -203,7 +203,7 @@ body.signed-in #banner .user-personal-bar { display:none;}
     }
     
     #navigationCollapse {
-		@include media-query(null, $screen-xs-max) {
+		@include media-query(null, variables.$screen-xs-max) {
 			font-size: 125%;
             padding: 0;
             margin: 0;
@@ -237,7 +237,7 @@ body.signed-in #banner .user-personal-bar { display:none;}
 			}
 		}
 
-		@include media-query(null, $screen-xs-max) {
+		@include media-query(null, variables.$screen-xs-max) {
 			.nav > li {
 				> a {
 					border-bottom: 1px solid #E1E1E1;
