@@ -273,3 +273,5 @@ license*.xml
 /docker/liferay/resources/activation-key-digitalenterprisedevelopment-7.1-developeractivationkeys.xml
 /docker/nextcloud/config/config.php
 /docker/resources/data/
+/docker/keycloak/deployments/deltares-extension-bundle-2.0.ear.deployed
+/docker/liferay/resources/activation-key-dxpdevelopment-7.4-developeractivationkeys.xml
