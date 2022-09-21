@@ -28,8 +28,7 @@ company_logo = htmlUtil.escape(themeDisplay.getCompanyLogo())
 <#assign footerWCArticleId = footerContentID >
 
 <#if journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroupId(), footerWCArticleId)?? >
-    <#assign footerWCArticle = journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroupId(), footerWCArticleId) >
-    <#assign footerWCContent = journalArticleLocalService.getArticleContent(footerWCArticle, footerWCArticle.getDDMTemplateKey(), "VIEW", locale, themeDisplay) />
+    <#assign footerWCContent = journalArticleLocalService.getArticleDisplay(themeDisplay.getScopeGroupId(), footerWCArticleId, "VIEW", locale, themeDisplay ).getContent() >
 </#if>
 
 <#if !is_site_admin >

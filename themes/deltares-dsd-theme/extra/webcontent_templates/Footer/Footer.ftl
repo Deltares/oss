@@ -10,14 +10,17 @@
     <ul>
         <#list FooterLinksLeft.LinkToPage.getSiblings() as cur_FooterLinksLeft>
             <li>
-                <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, cur_FooterLinksLeft.getData()) />
+                <#assign jsonObject = cur_FooterLinksLeft.getData()?eval />
+                <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, jsonObject.layoutId) />
                 <a href="${cur_FooterLinksLeft.getFriendlyUrl()}">${linkLayout.getName(themeDisplay.getLocale())}</a>
             </li>
         </#list>
     </ul>
 </#if>
 
-<p>${Copyright.getData()}</p>
+<#if Copyright?? && Copyright.getData()??>
+    <p>${Copyright.getData()}</p>
+</#if>
 
 <div>
     <ul class="media-links">
@@ -47,7 +50,8 @@
         <ul>
             <#list FooterLinksRight.LinkToPage1.getSiblings() as cur_FooterLinksRight>
                 <li>
-                    <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, cur_FooterLinksRight.getData()) />
+                    <#assign jsonObject = cur_FooterLinksRight.getData()?eval />
+                    <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, jsonObject.layoutId) />
                     <a href="${cur_FooterLinksRight.getFriendlyUrl()}">${linkLayout.getName(themeDisplay.getLocale())}</a>
                 </li>
             </#list>
