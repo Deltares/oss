@@ -10,11 +10,11 @@ RUN chmod a+x /etc/liferay/wait-for-it.sh
 RUN chown -R liferay:liferay /opt/liferay/data/document_library
 
 COPY ["resources/keystore.jks", "/opt/liferay/data/keystore.jks"]
-COPY ["resources/activation-key-dxpdevelopment-7.4-developeractivationkeys.xml", "/opt/liferay/osgi/modules/activation-key-dxpdevelopment-7.4-developeractivationkeys.xml"]
+COPY ["resources/activation-key.xml", "/opt/liferay/osgi/modules/activation-key.xml"]
 
 USER liferay
 
-ENV LIFERAY_UPGRADE_PERIOD_DATABASE_PERIOD_AUTO_PERIOD_RUN true
+ENV LIFERAY_UPGRADE_PERIOD_DATABASE_PERIOD_AUTO_PERIOD_RUN false
 ENV VIRTUAL_PORT 8080
 ENV LOGGING_LEVEL DEBUG
 ENV HOSTNAME liferay

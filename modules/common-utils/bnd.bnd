@@ -1,5 +1,5 @@
 Bundle-Name: common-utils
-Bundle-SymbolicName: nl.worth.portal.common-utils
+Bundle-SymbolicName: nl.deltares.portal.common-utils
 Bundle-Version: 1.0.0
 Export-Package: \
   nl.deltares.portal.utils.*, \

@@ -26,6 +26,11 @@ velocity seems not to be supported.
 - jQuery is default turned off
 - switch on: System Settings -> Third Party -> JQuery -> enable
 
+<h2>JAVA</h2>
+- bump java version from 1.8 to 11 for both project and gradle
+- when switching between 7.1 and 7.4 gradle java version needs to be set manually
+
+- 
 <h2>Freemarker Scripts</h2>
 - System Settings -> Template Engines -> FreeMarker Engine
 - Add Allowed Classes; nl.deltares.portal.utils.*
@@ -64,3 +69,9 @@ can be removed. The functionality is not being used.
   - Solution is to add to System_Default in Configuration->Service Access Policy of DSD site: 
     - com.liferay.portal.kernel.service.GroupService#getGroup
     - com.liferay.portal.kernel.service.LayoutService#getLayoutByUuidAndGroupId
+
+<h2>Steps to initialize Docker instance</h2>
+- Remove any existing volumes
+- First deploy without themes and modules
+- Check that the database upgrade processes complete successfully
+- Set the required Freemarker properties 
