@@ -33,9 +33,9 @@ velocity seems not to be supported.
 - 
 <h2>Freemarker Scripts</h2>
 - System Settings -> Template Engines -> FreeMarker Engine
-- Add Allowed Classes; nl.deltares.portal.utils.*
-- Remove restricted Variables; staticUtil (not sure yet about this)
-- Remove restricted Variables; objectUtils in order to retieve footer in init_custom.ftl
+- Add Allowed Classes; nl.deltares.portal.utils.* -- testing if required
+- Remove restricted Variables; staticUtil (required in template Locations map view)
+- Remove restricted Variables; objectUtil in order to retrieve footer in init_custom.ftl
 - Servicelocator does not return Deltares utils classes -> as of 7.4 portalext.property "template.engine.service.locator.restrict=true" 
   should be set to false;
 
@@ -73,5 +73,6 @@ can be removed. The functionality is not being used.
 <h2>Steps to initialize Docker instance</h2>
 - Remove any existing volumes
 - First deploy without themes and modules
-- Check that the database upgrade processes complete successfully
-- Set the required Freemarker properties 
+- Check that the database upgrade processes complete successfully 
+  - fix any errors that may arise by removing problem records from original database
+- Enable JQuery options
