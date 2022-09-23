@@ -72,7 +72,7 @@
 
     Date startDateTime = (Date) renderRequest.getAttribute("startDate");
 
-    Map<String, String> colorMap = new HashMap<>();
+    String colorMap = "";
     if (Validator.isNotNull(configuration)) {
         //noinspection UnusedAssignment
         baseUrl = portletPreferences.getValue("baseUrl", configuration.baseUrl());
@@ -90,11 +90,11 @@
             }
             //noinspection UnusedAssignment
             Map<String, String> finalColorMap = JsonContentUtils.parseSessionColorConfig(sessionColorMap);
-            Map<String, String> typeMap = (Map<String,String>) renderRequest.getAttribute("typeMap");
+            Map<String, String> typeMap = (Map<String, String>) renderRequest.getAttribute("typeMap");
             typeMap.keySet().forEach(typeKey -> {
                 finalColorMap.putIfAbsent(typeKey, "#17a2b8");
             });
-            colorMap = finalColorMap;
+            colorMap = JsonContentUtils.formatMapToJson(finalColorMap);
             defaultView = portletPreferences.getValue("defaultView", configuration.defaultView());
 
         } catch (Exception e) {

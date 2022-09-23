@@ -4,6 +4,5 @@ dependencies {
 	compileOnly group: "org.osgi", name: "org.osgi.service.jaxrs", version: "1.0.1"
 	compileOnly group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.13.4'
 	compileOnly project(":modules:common-utils")
-	compileOnly project(":modules:fullcalendar")
 }
 

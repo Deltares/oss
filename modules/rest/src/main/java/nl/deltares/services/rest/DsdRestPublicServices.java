@@ -31,9 +31,8 @@ import java.util.Set;
 
 			JaxrsWhiteboardConstants.JAX_RS_APPLICATION_BASE + "=/public/dsd/",
 			JaxrsWhiteboardConstants.JAX_RS_NAME + "=DSD.Rest.Public",
-				"oauth2.scopechecker.type=none",
 				"auth.verifier.guest.allowed=true",
-				"auth.verifier.auth.verifier.PortalSessionAuthVerifier.urls.includes=/*"
+				"liferay.access.control.disable=true"
         },
         service = Application.class
 )

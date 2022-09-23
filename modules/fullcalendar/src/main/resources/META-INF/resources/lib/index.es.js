@@ -11,6 +11,10 @@ class Calendar extends React.Component {
 
 	constructor(props, context) {
 		super(props, context);
+
+		let eventUrl = this.props.baseUrl + '/events/' + this.props.siteId + '/' + this.props.eventId + '?p_auth=' + this.props.p_auth;
+		let colorMap = JSON.parse(this.props.colorMap);
+
 		this.state = {
 			type: 'month',
 			defaultDate: this.props.startDate,
@@ -19,21 +23,45 @@ class Calendar extends React.Component {
 			businessHours: true,
 			defaultView: this.props.defaultView,
 			resources: {
-				url: this.props.baseUrl + '/resources/' + this.props.siteId + '/' + this.props.eventId+ '?p_auth=' + this.props.p_auth,
+				url: this.props.baseUrl + '/resources/' + this.props.siteId + '/' + this.props.eventId + '?p_auth=' + this.props.p_auth,
 				method: 'GET',
 				// data: {
 				// 	username: this.props.authUser,
 				// 	password:  this.props.authPassword
 				// }
 			},
-			events: {
-				url: this.props.baseUrl + '/events/' + this.props.siteId + '/' + this.props.eventId
-					+ '?portletId=' + this.props.portletId + '&layoutUuid=' + this.props.layoutUuid + '&p_auth=' + this.props.p_auth,
-				method: 'GET',
-				// data: {
-				// 	username: this.props.authUser,
-				// 	password:  this.props.authPassword
-				// }
+			events: function (fetchInfo, successCallback, failureCallback){
+
+				$.ajax({
+					url: eventUrl,
+					type: 'GET',
+					dataType: 'json',
+					data: {
+						start: fetchInfo.start.toISOString(),
+						end: fetchInfo.end.toISOString()
+					},
+					success: function (doc) {
+						let events = [];
+						$(doc).each(function () {
+
+							events.push(
+								{
+									resourceId: $(this).attr('resourceId'),
+									id: $(this).attr('id'),
+									start: $(this).attr('start'),
+									end: $(this).attr('end'),
+									url: $(this).attr('url'),
+									title: $(this).attr('title'),
+									color: colorMap[$(this).attr('type')]
+								}
+							);
+						});
+						successCallback(events);
+					},
+					error: function (xhr, ajaxOptions, thrownError) {
+						failureCallback(thrownError)
+					}
+				});
 			}
 		}
 	}
@@ -102,9 +130,9 @@ class Calendar extends React.Component {
 	}
 }
 
-export default function (elementId, baseUrl, siteId, eventId, startDate, defaultView, portletId, layoutUuid, p_auth) {
+export default function (elementId, baseUrl, siteId, eventId, startDate, defaultView, colorMap, p_auth) {
 
 	ReactDOM.render( <Calendar class="fc" baseUrl={baseUrl}
 							   siteId={siteId} eventId={eventId} startDate={startDate} defaultView={defaultView}
-							   portletId={portletId} layoutUuid={layoutUuid} p_auth={p_auth}/>, document.getElementById(elementId));
+							   colorMap={colorMap}  p_auth={p_auth}/>, document.getElementById(elementId));
 }

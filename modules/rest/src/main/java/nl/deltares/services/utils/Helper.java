@@ -23,7 +23,7 @@ import java.util.Properties;
 
 public class Helper {
 
-    private static Log _log = LogFactoryUtil.getLog(Helper.class.getName());
+    private static final Log _log = LogFactoryUtil.getLog(Helper.class.getName());
     private static Properties APP_MESSAGES;
     /*
      * Load a resource file when the module is running in a bundled environment
