@@ -31,9 +31,8 @@ import java.util.Set;
 
                 JaxrsWhiteboardConstants.JAX_RS_APPLICATION_BASE + "=/download/",
                 JaxrsWhiteboardConstants.JAX_RS_NAME + "=Deltares.Rest.Download",
-                "oauth2.scopechecker.type=none",
                 "auth.verifier.guest.allowed=true",
-                "auth.verifier.auth.verifier.PortalSessionAuthVerifier.urls.includes=/*"
+                "liferay.access.control.disable=true"
         },
         service = Application.class
 )

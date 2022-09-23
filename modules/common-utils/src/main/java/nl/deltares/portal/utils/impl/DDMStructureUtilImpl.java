@@ -10,7 +10,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.service.GroupServiceUtil;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import nl.deltares.portal.utils.DDMStructureUtil;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -133,7 +133,7 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
     private long getParentGroup(long groupId)  {
         Group group;
         try {
-            group = GroupServiceUtil.getGroup(groupId);
+            group = GroupLocalServiceUtil.getGroup(groupId);
         } catch (PortalException e) {
             LOGGER.warn(String.format("Cannot find group for %d : %s", groupId, e.getMessage()));
             return 0;
