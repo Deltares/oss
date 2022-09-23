@@ -13,6 +13,7 @@ import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSe
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
+import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -71,11 +72,14 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
 
         Optional<String> optional = portletSharedSearchSettings.getParameterOptional(dateField);
         Locale locale = portletSharedSearchSettings.getThemeDisplay().getLocale();
-        if (optional.isPresent()) {
+        //check for parameter is in namespace of searchResultsPortlet
+        String dateValue = optional.orElseGet(() -> FacetUtils.getIteratorParameter(dateField, portletSharedSearchSettings.getRenderRequest()));
+
+        if (dateValue != null) {
             try {
-                return DateUtil.parseDate( "dd-MM-yyyy", optional.get(), locale);
+                return DateUtil.parseDate("dd-MM-yyyy", dateValue, locale);
             } catch (ParseException e) {
-                LOG.warn(String.format("Could not parse configured date %s: %s", optional.get(), e.getMessage()), e);
+                LOG.warn(String.format("Could not parse configured date %s: %s", dateValue, e.getMessage()), e);
             }
         }
         String dateText = getConfiguredValue(dateField, portletSharedSearchSettings);

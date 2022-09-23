@@ -48,6 +48,7 @@ public class EventFacetPortletSharedSearchContributor implements PortletSharedSe
         }
 
         if (eventId != null) {
+            portletSharedSearchSettings.setPaginationDelta(100); //make sure to always get all event sessions otherwise sorting will not work.
             _dsdJournalArticleUtils.queryDdmFieldValue(groupId, "eventId", eventId, structureKeys,
                     portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
         }

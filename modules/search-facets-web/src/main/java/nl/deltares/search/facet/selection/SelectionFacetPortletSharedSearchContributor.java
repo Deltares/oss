@@ -10,6 +10,7 @@ import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchCo
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
+import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -42,9 +43,9 @@ public class SelectionFacetPortletSharedSearchContributor implements PortletShar
         String name = structureName + '-' + fieldName;
 
         Optional<String> selectionOptional = portletSharedSearchSettings.getParameterOptional(name);
-        String selection;
-        if (selectionOptional.isPresent()) {
-            selection = selectionOptional.get();
+        //check for parameter is in namespace of searchResultsPortlet
+        String selection = selectionOptional.orElseGet(() -> FacetUtils.getIteratorParameter(name, portletSharedSearchSettings.getRenderRequest()));
+        if (selection != null) {
             _dsdJournalArticleUtils.queryDdmFieldValue(groupId, fieldName, selection, new String[]{structureName},
                     portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
         }
