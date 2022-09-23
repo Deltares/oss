@@ -10,6 +10,7 @@ import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRe
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
+import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -67,10 +68,14 @@ public class SelectionFacetPortlet extends MVCPortlet {
 
     PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
     Optional<String> facetSelection = portletSharedSearchResponse.getParameter(name, renderRequest);
-    if (facetSelection.isPresent()) {
-      String selection = facetSelection.get();
-      renderRequest.setAttribute("selection", selection);
-    }
+
+    facetSelection.ifPresentOrElse(s -> renderRequest.setAttribute("selection", s), () ->
+            {
+              //check for parameter is in namespace of searchResultsPortlet
+              final String selection = FacetUtils.getIteratorParameter(name, renderRequest);
+              if (selection != null) renderRequest.setAttribute("selection", selection);
+            }
+    );
 
     try {
       Map<String, String> selectionMap = dsdJournalArticleUtils.getStructureFieldOptions(themeDisplay.getSiteGroupId(),

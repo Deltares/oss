@@ -14,6 +14,7 @@
 <%@ page import="nl.deltares.search.results.SearchResultsPortletDisplayContext" %>
 <%@ page import="nl.deltares.search.util.FacetUtils" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
+<%@ page import="javax.portlet.PortletURL" %>
 
 <liferay-theme:defineObjects/>
 
@@ -28,10 +29,9 @@
         return;
     }
     String templateKey = (String) renderRequest.getAttribute("displayTemplate");
+    PortletURL iteratorURL = (PortletURL) renderRequest.getAttribute("iteratorURL");
+
 %>
-<liferay-portlet:renderURL varImpl="iteratorURL">
-    <portlet:param name="mvcPath" value="/search/results/view-dsd.jsp" />
-</liferay-portlet:renderURL>
 
 <liferay-ui:search-container
         emptyResultsMessage='<%= LanguageUtil.format(request, "no-results-were-found-that-matched-the-keywords-x", "<strong>" + HtmlUtil.escape(searchResultsPortletDisplayContext.getKeywords()) + "</strong>", false) %>'
