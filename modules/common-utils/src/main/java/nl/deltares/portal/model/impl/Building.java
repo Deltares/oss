@@ -25,8 +25,8 @@ public class Building extends AbsDsdArticle {
     private void init() throws PortalException {
         try {
             Map<String, String> coords = JsonContentUtils.parseJsonToMap(getFormFieldValue("location", false));
-            this.longitude = Double.parseDouble(coords.get("lng"));
-            this.latitude =  Double.parseDouble(coords.get("lat"));
+            this.longitude = Double.parseDouble(coords.getOrDefault("longitude", coords.get("lng")));
+            this.latitude =  Double.parseDouble(coords.getOrDefault("latitude", coords.get("lat")));
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }

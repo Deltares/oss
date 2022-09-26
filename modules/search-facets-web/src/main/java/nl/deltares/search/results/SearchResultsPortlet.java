@@ -29,7 +29,6 @@ import java.util.Optional;
         configurationPid = "nl.deltares.search.results.SearchResultsPortletConfiguration",
         immediate = true,
         property = {
-                "javax.portlet.version=3.0",
                 "com.liferay.portlet.display-category=OSS-search",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.instanceable=true",
@@ -39,7 +38,8 @@ import java.util.Optional;
                 "javax.portlet.init-param.view-template=/search/results/view.jsp",
                 "javax.portlet.name=" + SearchModuleKeys.SEARCH_RESULTS_PORTLET,
                 "javax.portlet.resource-bundle=content.Language",
-                "javax.portlet.security-role-ref=power-user,user"
+                "javax.portlet.security-role-ref=power-user,user",
+                "javax.portlet.version=3.0"
         },
         service = Portlet.class
 )

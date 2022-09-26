@@ -27,7 +27,7 @@ public class RegistrationRequest {
     private boolean subscribe;
 
     public RegistrationRequest(ThemeDisplay themeDisplay) throws PortalException {
-        siteUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay);
+        siteUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay, themeDisplay.getLocale());
         baseUrl = themeDisplay.getCDNBaseURL();
     }
 

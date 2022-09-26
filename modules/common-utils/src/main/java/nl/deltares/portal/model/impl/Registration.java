@@ -59,12 +59,12 @@ public abstract class Registration extends AbsDsdArticle {
             this.price =  Float.parseFloat(getFormFieldValue("price", false));
             String currency = getFormFieldValue("currency", true);
             if (currency != null) this.currency = HtmlUtil.escape(currency);
-            this.open = "open".equals(getFormFieldValue("open", true));
+            this.open = Boolean.parseBoolean(getFormFieldValue("open", true));
             this.type = JsonContentUtils.parseJsonArrayToValue(getFormFieldValue("registrationType", false));
             this.topic = JsonContentUtils.parseJsonArrayToValue(getFormFieldValue("topic", false));
             String parentJson = getFormFieldValue("parent", true);
             if (parentJson != null) {
-                overlapWithParent = "overlaps".equals(getFormFieldValue( "overlaps", true));
+                overlapWithParent = Boolean.parseBoolean(getFormFieldValue( "overlaps", true));
                 hasParent = true;
             }
             requiredTeam = getFormFieldValue( "requiredTeam", true);
