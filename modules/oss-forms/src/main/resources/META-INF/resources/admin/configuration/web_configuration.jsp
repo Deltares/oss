@@ -108,6 +108,6 @@
     </aui:fieldset>
 
     <aui:button-row>
-        <aui:button type="submit"></aui:button>
+        <aui:button type="submit" />
     </aui:button-row>
 </aui:form>

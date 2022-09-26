@@ -29,7 +29,8 @@ import java.io.IOException;
                 "javax.portlet.init-param.view-template=/facet/event/view.jsp",
                 "javax.portlet.name=" + SearchModuleKeys.EVENT_FACET_PORTLET,
                 "javax.portlet.resource-bundle=content.Language",
-                "javax.portlet.security-role-ref=power-user,user"
+                "javax.portlet.security-role-ref=power-user,user",
+                "javax.portlet.version=3.0"
         },
         service = Portlet.class
 )
