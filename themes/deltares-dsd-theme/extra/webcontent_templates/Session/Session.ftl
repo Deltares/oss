@@ -187,8 +187,8 @@
                                 </a>
                             <#assign calDescription += (languageUtil.get(locale, "registrationform.join") + ": " + joinLink )/>
                         </#if>
-                <div class="add-to-calendar c-session__item__calendar"></div>
-                </span>
+                        <div class="add-to-calendar c-session__item__calendar"></div>
+                    </span>
 
                 </#if>
 
@@ -256,13 +256,12 @@
                 </div>
             </#if>
         </div>
-    </div>
     </#list>
-</div>
-</#if>
+    </div>
+    </#if>
 </div>
 <script>
-    var myCalendar = createCalendar({
+    let myCalendar = createCalendar({
         options: {
             class: '',
             id: '${articleId}' // You need to pass an ID. If you don't, one will be generated for you.
@@ -278,6 +277,9 @@
         }
     });
 
-    document.querySelector('.add-to-calendar').appendChild(myCalendar);
+    let elementsByClassName = document.getElementsByClassName('add-to-calendar');
+    if(elementsByClassName.length > 0 ) {
+        elementsByClassName[0].appendChild(myCalendar);
+    }
 
 </script>
