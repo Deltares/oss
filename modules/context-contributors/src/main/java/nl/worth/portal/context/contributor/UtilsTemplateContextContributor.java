@@ -105,20 +105,22 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
     private void setLanguages(Map<String, Object> contextObjects, ThemeDisplay themeDisplay) {
         ArrayList<LanguageImpl> languages = new ArrayList<>();
         String urlCurrent = themeDisplay.getURLCurrent();
-        String idCurrent = "en";
-        int startIndex = urlCurrent.indexOf("/web");
-        if (startIndex > 0){
-            idCurrent = urlCurrent.substring(1, startIndex);
-            urlCurrent = urlCurrent.substring(startIndex);
-        }
-        if (idCurrent.equals("en")){
-            languages.add(new LanguageImpl("nl", "NL", themeDisplay.getURLPortal() + "/nl" + urlCurrent, themeDisplay));
-            contextObjects.put("curr_language", new LanguageImpl("en", "EN", themeDisplay.getURLPortal() + "/en" + urlCurrent, themeDisplay));
+        final String noLanguagePath;
+        final String currLanguage;
+        if (urlCurrent.startsWith("/en") || urlCurrent.startsWith("/nl")) {
+            noLanguagePath = urlCurrent.substring(3);
+            currLanguage = urlCurrent.substring(1, 3);
         } else {
-            languages.add(new LanguageImpl("en", "EN", themeDisplay.getURLPortal() + "/en" + urlCurrent, themeDisplay));
-            contextObjects.put("curr_language", new LanguageImpl("nl", "NL", themeDisplay.getURLPortal() + "/nl" + urlCurrent, themeDisplay));
+            noLanguagePath = urlCurrent;
+            currLanguage = themeDisplay.getLocale().getLanguage();
         }
+        languages.add(new LanguageImpl("nl", "NL", themeDisplay.getURLPortal() + "/nl" + noLanguagePath, themeDisplay));
+        languages.add(new LanguageImpl("en", "EN", themeDisplay.getURLPortal() + "/en" + noLanguagePath, themeDisplay));
         contextObjects.put("languages", languages);
+
+        contextObjects.put("curr_language", new LanguageImpl(currLanguage, currLanguage.toUpperCase(), themeDisplay.getURLPortal() + "/" + currLanguage + noLanguagePath, themeDisplay));
+
+
     }
 
     private String appendWithReferrer(String accountPath, ThemeDisplay themeDisplay) {
