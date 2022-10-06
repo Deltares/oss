@@ -14,8 +14,8 @@ public interface SelectionFacetConfiguration {
     @Meta.AD(required = false, deflt = "", description = "Configure the field name that contains the list of selectable items")
     String fieldName();
 
-    @Meta.AD(required = false, deflt = "" , description = "Configure the title of facet")
-    String title();
+    @Meta.AD(required = false, deflt = "{}" , description = "Configure the title of facet per language")
+    String titleMap();
 
 
 }

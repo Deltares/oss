@@ -1,6 +1,11 @@
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
 <%@ page import="nl.deltares.search.facet.checkbox.CheckboxFacetConfiguration" %>
 <%@ page import="com.liferay.portal.kernel.util.Validator" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="nl.deltares.portal.utils.JsonContentUtils" %>
+<%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
+<%@ page import="com.liferay.portal.kernel.json.JSONException" %>
 <%@ include file="/META-INF/resources/init.jsp" %>
 
 <%
@@ -12,14 +17,22 @@
     String visible = null;
     String defaultValue = null;
     String explicitSearch = null;
-    String title = "";
+    Map<String, String> titleMap = new HashMap<>();
     String structureName = "";
     String fieldName = "";
     if (Validator.isNotNull(configuration)){
         visible = portletPreferences.getValue("visible", configuration.visible());
         defaultValue = portletPreferences.getValue("defaultValue", configuration.defaultValue());
         explicitSearch = portletPreferences.getValue("explicitSearch", configuration.explicitSearch());
-        title = portletPreferences.getValue("title", configuration.title());
+        String title = portletPreferences.getValue("titleMap", configuration.titleMap());
+        try {
+            titleMap = JsonContentUtils.parseJsonToMap(title);
+            Map<String, String> finalTitleMap = titleMap;
+            LanguageUtil.getAvailableLocales(themeDisplay.getSiteGroupId()).forEach(availableLocale ->
+                    finalTitleMap.putIfAbsent(availableLocale.toString(), "Title " + availableLocale.getDisplayLanguage()));
+        } catch (JSONException e) {
+            System.out.println(e.getMessage());
+        }
         structureName = portletPreferences.getValue("structureName", configuration.structureName());
         fieldName = portletPreferences.getValue("fieldName", configuration.fieldName());
     }
@@ -74,12 +87,14 @@
         >
         </aui:input>
 
+        <% for (String key : titleMap.keySet()) { %>
         <aui:input
-                label="Title of facet"
-                name="title"
-                value='<%= title %>'
+                label='<%="Title of facet (" + ( key ) + ")"%>'
+                name='<%="title_" + ( key )%>'
+                value='<%= titleMap.get(key) %>'
         >
         </aui:input>
+        <% } %>
         <aui:input
                 label="Name of structure containing checkbox"
                 name="structureName"
@@ -95,6 +110,6 @@
     </aui:fieldset>
 
     <aui:button-row>
-        <aui:button type="submit"></aui:button>
+        <aui:button type="submit"/>
     </aui:button-row>
 </aui:form>

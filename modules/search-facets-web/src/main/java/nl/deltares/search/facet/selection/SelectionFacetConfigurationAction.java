@@ -4,7 +4,9 @@ import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.util.ParamUtil;
+import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.search.constans.FacetPortletKeys;
+import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
@@ -45,16 +47,17 @@ public class SelectionFacetConfigurationAction extends DefaultConfigurationActio
         setPreference(actionRequest, "structureName", structureName);
         String fieldName = ParamUtil.getString(actionRequest, "fieldName");
         setPreference(actionRequest, "fieldName", fieldName);
-        String title = ParamUtil.getString(actionRequest, "title");
-        setPreference(actionRequest, "title", title);
+        Map<String, String> titleMap = FacetUtils.getLanguageFieldValueMap(actionRequest, "title");
+        setPreference(actionRequest, "titleMap", JsonContentUtils.formatMapToJson(titleMap));
+
         super.processAction(portletConfig, actionRequest, actionResponse);
     }
 
+
     /**
-     *
      * (1)If a method is annoted with @Activate then the method will be called at the time of activation of the component
-     *  so that we can perform initialization task
-     *
+     * so that we can perform initialization task
+     * <p>
      * (2) This class is annoted with @Component where we have used configurationPid with id com.proliferay.configuration.DemoConfiguration
      * So if we modify any configuration then this method will be called.
      */
