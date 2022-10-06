@@ -55,6 +55,7 @@ public class SelectionFacetConfigurationAction extends DefaultConfigurationActio
 
 
     /**
+     *
      * (1)If a method is annoted with @Activate then the method will be called at the time of activation of the component
      * so that we can perform initialization task
      * <p>
