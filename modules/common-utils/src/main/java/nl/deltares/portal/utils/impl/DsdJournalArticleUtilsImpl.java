@@ -128,7 +128,7 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
                 });
                 return optionValues;
             } catch (PortalException e) {
-                throw new PortalException(String.format("Could not find field '%s' in structure '%s' for groupId %d", structureName, optionsField, groupId));
+                throw new PortalException(String.format("Could not find field '%s' in structure '%s' for groupId %d", optionsField, structureName, groupId));
             }
         }
         throw new PortalException(String.format("Could not structure '%s' for groupId %d", structureName, groupId));
