@@ -28,7 +28,7 @@ company_logo = htmlUtil.escape(themeDisplay.getCompanyLogo())
     <#assign footerWCContent = journalArticleLocalService.getArticleDisplay(themeDisplay.getScopeGroupId(), footerWCArticleId, "VIEW", locale, themeDisplay ).getContent() >
 </#if>
 
-<#if !is_site_admin >
+<#if is_site_amin?? && !is_site_admin >
     <#assign css_class = stringUtil.replace(css_class, "open", "closed") />
 </#if>
 
