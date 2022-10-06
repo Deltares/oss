@@ -48,57 +48,58 @@ import java.util.Optional;
 public class SelectionFacetPortlet extends MVCPortlet {
 
 
-  @Override
-  public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
+    @Override
+    public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 
-    ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
-    SelectionFacetConfiguration configuration;
-    try {
-      configuration = _configurationProvider.getPortletInstanceConfiguration(
-              SelectionFacetConfiguration.class, themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
-    } catch (ConfigurationException e) {
-      throw new PortletException(String.format("Could not get configuration for portlet '%s': %s", themeDisplay.getPortletDisplay().getId(), e.getMessage()), e);
-    }
+        ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+        SelectionFacetConfiguration configuration;
+        try {
+            configuration = _configurationProvider.getPortletInstanceConfiguration(
+                    SelectionFacetConfiguration.class, themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
+        } catch (ConfigurationException e) {
+            throw new PortletException(String.format("Could not get configuration for portlet '%s': %s", themeDisplay.getPortletDisplay().getId(), e.getMessage()), e);
+        }
 
-    String structureName = configuration.structureName().toLowerCase();
-    String fieldName = configuration.fieldName();
-    String name = structureName + '-' + fieldName; //important to use '-' because this translates to JSP id
+        String structureName = configuration.structureName().toLowerCase();
+        String fieldName = configuration.fieldName();
+        String name = structureName + '-' + fieldName; //important to use '-' because this translates to JSP id
 
         renderRequest.setAttribute("name", name);
         renderRequest.setAttribute("titleMap", configuration.titleMap());
         renderRequest.setAttribute("title", FacetUtils.retrieveLanguageFieldValue(configuration.titleMap(), themeDisplay.getLanguageId()));
 
-    PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
-    Optional<String> facetSelection = portletSharedSearchResponse.getParameter(name, renderRequest);
+        PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
+        Optional<String> facetSelection = portletSharedSearchResponse.getParameter(name, renderRequest);
 
-    facetSelection.ifPresentOrElse(s -> renderRequest.setAttribute("selection", s), () ->
-            {
-              //check for parameter is in namespace of searchResultsPortlet
-              final String selection = FacetUtils.getIteratorParameter(name, renderRequest);
-              if (selection != null) renderRequest.setAttribute("selection", selection);
-            }
-    );
+        facetSelection.ifPresentOrElse(s -> renderRequest.setAttribute("selection", s), () ->
+                {
+                  //check for parameter is in namespace of searchResultsPortlet
+                  final String selection = FacetUtils.getIteratorParameter(name, renderRequest);
+                  if (selection != null) renderRequest.setAttribute("selection", selection);
+                }
+        );
 
-    try {
-      Map<String, String> selectionMap = dsdJournalArticleUtils.getStructureFieldOptions(themeDisplay.getSiteGroupId(),
-              structureName,
-              fieldName, themeDisplay.getLocale());
-      renderRequest.setAttribute("selectionMap", selectionMap);
-    } catch (PortalException e) {
-      throw new PortletException(String.format("Could not get options for field '%s' in structure %s: %s", fieldName, structureName, e.getMessage()), e);
+        try {
+            Map<String, String> selectionMap = dsdJournalArticleUtils.getStructureFieldOptions(themeDisplay.getSiteGroupId(),
+                    structureName,
+                    fieldName, themeDisplay.getLocale());
+            renderRequest.setAttribute("selectionMap", selectionMap);
+        } catch (PortalException e) {
+            throw new PortletException(String.format("Could not get options for field '%s' in structure %s: %s", fieldName, structureName, e.getMessage()), e);
+        }
+        super.render(renderRequest, renderResponse);
     }
-    super.render(renderRequest, renderResponse);
-  }
 
-  @Reference
-  protected PortletSharedSearchRequest portletSharedSearchRequest;
+    @Reference
+    protected PortletSharedSearchRequest portletSharedSearchRequest;
 
-  private ConfigurationProvider _configurationProvider;
+    private ConfigurationProvider _configurationProvider;
 
-  @Reference
-  protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
-    _configurationProvider = configurationProvider;
-  }
-  @Reference
-  DsdJournalArticleUtils dsdJournalArticleUtils;
+    @Reference
+    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
+        _configurationProvider = configurationProvider;
+    }
+
+    @Reference
+    DsdJournalArticleUtils dsdJournalArticleUtils;
 }
