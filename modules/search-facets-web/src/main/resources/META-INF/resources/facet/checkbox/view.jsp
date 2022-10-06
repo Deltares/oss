@@ -1,4 +1,3 @@
-<%@ page import="nl.deltares.search.facet.checkbox.CheckboxFacetConfiguration" %>
 <%@ page import="nl.deltares.search.util.FacetUtils" %>
 <%@ page import="java.util.Map" %>
 <%@ include file="/META-INF/resources/init.jsp" %>
@@ -6,21 +5,9 @@
 <%
 	String name = (String) renderRequest.getAttribute("name");
 	String title = (String) renderRequest.getAttribute("title");
-	CheckboxFacetConfiguration configuration =
-			(CheckboxFacetConfiguration)
-					renderRequest.getAttribute(CheckboxFacetConfiguration.class.getName());
-	String visibleConfig = null;
-	if (Validator.isNotNull(configuration)){
-		visibleConfig = portletPreferences.getValue("visible", configuration.visible());
-	}
-
 	String selection = (String)renderRequest.getAttribute("selection");
 	if (selection == null){
 		selection = "false";
-	}
-	String type = "checkbox";
-	if (visibleConfig != null && !visibleConfig.isEmpty()){
-		if (!Boolean.parseBoolean(visibleConfig)) type = "hidden";
 	}
 	final Map<String, String> yesNoFieldOptions = FacetUtils.getYesNoFieldOptions();
 

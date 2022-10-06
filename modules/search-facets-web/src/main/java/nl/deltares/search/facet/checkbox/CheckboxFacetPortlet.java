@@ -8,6 +8,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
 import nl.deltares.search.constans.SearchModuleKeys;
+import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -63,7 +64,7 @@ public class CheckboxFacetPortlet extends MVCPortlet {
         String name = structureName + '-' + fieldName; //important to use '-' because this translates to JSP id
 
         renderRequest.setAttribute("name", name);
-        renderRequest.setAttribute("title", _configuration.title());
+        renderRequest.setAttribute("title", FacetUtils.retrieveLanguageFieldValue(_configuration.titleMap(), themeDisplay.getLanguageId()));
 
         PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
         Optional<String> facetSelection = portletSharedSearchResponse.getParameter(name, renderRequest);

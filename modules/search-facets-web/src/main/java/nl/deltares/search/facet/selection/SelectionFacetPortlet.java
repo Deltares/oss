@@ -64,8 +64,9 @@ public class SelectionFacetPortlet extends MVCPortlet {
     String fieldName = configuration.fieldName();
     String name = structureName + '-' + fieldName; //important to use '-' because this translates to JSP id
 
-    renderRequest.setAttribute("name", name);
-    renderRequest.setAttribute("title", configuration.title());
+        renderRequest.setAttribute("name", name);
+        renderRequest.setAttribute("titleMap", configuration.titleMap());
+        renderRequest.setAttribute("title", FacetUtils.retrieveLanguageFieldValue(configuration.titleMap(), themeDisplay.getLanguageId()));
 
     PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
     Optional<String> facetSelection = portletSharedSearchResponse.getParameter(name, renderRequest);
