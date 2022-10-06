@@ -32,7 +32,7 @@ journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroup().getParentGr
     <#assign footerWCContent = journalArticleLocalService.getArticleContent(footerWCArticle, footerWCArticle.getDDMTemplateKey(), "VIEW", locale, themeDisplay) />
 </#if>
 
-<#if !is_site_admin >
+<#if is_site_amin?? && !is_site_admin >
     <#assign css_class = stringUtil.replace(css_class, "open", "closed") />
 </#if>
 
