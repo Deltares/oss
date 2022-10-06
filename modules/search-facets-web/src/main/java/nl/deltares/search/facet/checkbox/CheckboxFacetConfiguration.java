@@ -14,8 +14,8 @@ public interface CheckboxFacetConfiguration {
     @Meta.AD(required = false, deflt = "", description = "Configure the field name of the checkbox")
     String fieldName();
 
-    @Meta.AD(required = false, deflt = "" , description = "Configure the title of facet")
-    String title();
+    @Meta.AD(required = false, deflt = "{}" , description = "Configure the title of facet per language")
+    String titleMap();
 
     @Meta.AD(required = false, deflt = "", description = "Toggle visibility of facet portlet.")
     String visible();

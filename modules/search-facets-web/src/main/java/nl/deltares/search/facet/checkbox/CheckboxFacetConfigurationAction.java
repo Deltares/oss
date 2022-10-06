@@ -4,7 +4,9 @@ import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.util.ParamUtil;
+import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.search.constans.FacetPortletKeys;
+import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
@@ -43,7 +45,8 @@ public class CheckboxFacetConfigurationAction extends DefaultConfigurationAction
 
         setPreference(actionRequest, "structureName", ParamUtil.getString(actionRequest, "structureName"));
         setPreference(actionRequest, "fieldName", ParamUtil.getString(actionRequest, "fieldName"));
-        setPreference(actionRequest, "title", ParamUtil.getString(actionRequest, "title"));
+        Map<String, String> titleMap = FacetUtils.getLanguageFieldValueMap(actionRequest, "title");
+        setPreference(actionRequest, "titleMap", JsonContentUtils.formatMapToJson(titleMap));
         setPreference(actionRequest, "visible", ParamUtil.getString(actionRequest, "visible"));
         setPreference(actionRequest, "defaultValue", ParamUtil.getString(actionRequest, "defaultValue"));
         setPreference(actionRequest, "explicitSearch", ParamUtil.getString(actionRequest, "explicitSearch"));
