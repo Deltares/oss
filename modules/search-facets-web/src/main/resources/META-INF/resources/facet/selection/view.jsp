@@ -1,5 +1,5 @@
 <%@ page import="java.util.Map" %>
-<%@ include file="init.jsp" %>
+<%@ include file="/META-INF/resources/init.jsp" %>
 
 <%
 	String name = (String) renderRequest.getAttribute("name");
