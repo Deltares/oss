@@ -70,6 +70,16 @@ public class RegistrationLocalServiceUtil {
 			userId, startTime, endTime, preferences, registeredByUserId);
 	}
 
+	public static void addUserRegistration(
+		long companyId, long groupId, long resourceId, long eventResourceId,
+		long parentResourceId, long userId, java.util.Date transferDate,
+		long registeredByUserId) {
+
+		getService().addUserRegistration(
+			companyId, groupId, resourceId, eventResourceId, parentResourceId,
+			userId, transferDate, registeredByUserId);
+	}
+
 	public static int countUserEventRegistrationsRegisteredByMe(
 		long groupId, long registeredByUserId, long eventResourceId) {
 
