@@ -9,6 +9,8 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
+import nl.deltares.portal.kernel.util.comparator.DsdRegistrationComparator;
+import nl.deltares.portal.model.impl.BusTransfer;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.utils.DDMStructureUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
@@ -21,6 +23,7 @@ import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Component(
@@ -59,7 +62,9 @@ public class DsdBusRegistrationFormPortlet extends MVCPortlet {
             throw new PortletException(String.format("Could not get event for %d: %s" + configuration.eventId(), e.getMessage()));
         }
         renderRequest.setAttribute("event", event);
-        renderRequest.setAttribute("transfers", event.getBusTransfers(themeDisplay.getLocale()));
+        final List<BusTransfer> busTransfers = event.getBusTransfers(themeDisplay.getLocale());
+        busTransfers.sort(new DsdRegistrationComparator());
+        renderRequest.setAttribute("transfers", busTransfers);
 
         Optional<DDMTemplate> ddmTemplateOptional = _ddmStructureUtil
                 .getDDMTemplateByName(groupId, "BUSTRANSFER", themeDisplay.getLocale());

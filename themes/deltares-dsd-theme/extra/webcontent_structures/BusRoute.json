@@ -6,30 +6,7 @@
   "fields": [
     {
       "label": {
-        "en_US": "Store in parent site"
-      },
-      "predefinedValue": {
-        "en_US": true
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": "Choose to store content under parent site."
-      },
-      "dataType": "boolean",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "storeInParentSite",
-      "readOnly": false,
-      "repeatable": false,
-      "required": false,
-      "showLabel": true,
-      "type": "checkbox"
-    },
-    {
-      "label": {
-        "en_US": "Stops"
+        "en_US": "Bus stop location"
       },
       "predefinedValue": {
         "en_US": ""

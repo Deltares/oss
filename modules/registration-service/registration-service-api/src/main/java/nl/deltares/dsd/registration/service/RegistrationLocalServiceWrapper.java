@@ -61,6 +61,17 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	@Override
+	public void addUserRegistration(
+		long companyId, long groupId, long resourceId, long eventResourceId,
+		long parentResourceId, long userId, java.util.Date transferDate,
+		long registeredByUserId) {
+
+		_registrationLocalService.addUserRegistration(
+			companyId, groupId, resourceId, eventResourceId, parentResourceId,
+			userId, transferDate, registeredByUserId);
+	}
+
+	@Override
 	public int countUserEventRegistrationsRegisteredByMe(
 		long groupId, long registeredByUserId, long eventResourceId) {
 

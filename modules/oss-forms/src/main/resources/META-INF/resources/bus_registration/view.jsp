@@ -1,3 +1,10 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
+<%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
+<%@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %>
+<%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
+<%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
+<%@ taglib uri="http://liferay.com/tld/journal" prefix="liferay-journal" %>
 <%@ page import="com.liferay.journal.model.JournalArticleDisplay" %>
 <%@ page import="nl.deltares.forms.internal.RegistrationDisplayUtils" %>
 <%@ page import="nl.deltares.portal.model.impl.BusTransfer" %>
@@ -6,7 +13,12 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="nl.deltares.portal.utils.DsdTransferUtils" %>
-<%@ include file="init.jsp" %>
+<%@ page import="nl.deltares.portal.model.impl.Event" %>
+<%@ page import="nl.deltares.portal.model.impl.Registration" %>
+
+<liferay-theme:defineObjects />
+
+<portlet:defineObjects />
 
 <portlet:actionURL name="/submit/transfer/form" var="submitTransferForm"/>
 
@@ -22,9 +34,12 @@
 </liferay-ui:error>
 
 <aui:form action="<%= submitTransferForm %>" name="fm">
-    <aui:button-row>
-        <aui:button type="submit" value="dsd.transfer.save"></aui:button>
-    </aui:button-row>
+
+    <c:if test="<%=themeDisplay.isSignedIn()%>">
+        <aui:button-row>
+            <aui:button type="submit" value="dsd.transfer.save" />
+        </aui:button-row>
+    </c:if>
 
     <c:forEach var="busTransfer" items="${transfers}">
         <div class="row">
@@ -80,8 +95,10 @@
         </div>
     </c:forEach>
 
-    <aui:button-row>
-        <aui:button type="submit" value="dsd.transfer.save"></aui:button>
-    </aui:button-row>
+    <c:if test="<%=themeDisplay.isSignedIn()%>">
+        <aui:button-row>
+            <aui:button type="submit" value="dsd.transfer.save" />
+        </aui:button-row>
+    </c:if>
 
 </aui:form>

@@ -30,64 +30,6 @@
     },
     {
       "label": {
-        "en_US": "Topic"
-      },
-      "options": [
-        {
-          "value": "delftfews",
-          "label": {
-            "en_US": "Delft-FEWS Platform"
-          }
-        },
-        {
-          "value": "dhydro",
-          "label": {
-            "en_US": "D-HYDRO Suite"
-          }
-        },
-        {
-          "value": "dstability",
-          "label": {
-            "en_US": "D-GEO Suite (D-Stability, D-Settlement)"
-          }
-        },
-        {
-          "value": "imod",
-          "label": {
-            "en_US": "iMOD Suite"
-          }
-        },
-        {
-          "value": "wanda",
-          "label": {
-            "en_US": "WANDA"
-          }
-        }
-      ],
-      "predefinedValue": {
-        "en_US": [
-          ""
-        ]
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": ""
-      },
-      "dataType": "string",
-      "indexType": "keyword",
-      "localizable": true,
-      "multiple": false,
-      "name": "topic",
-      "readOnly": false,
-      "repeatable": false,
-      "required": true,
-      "showLabel": true,
-      "type": "select"
-    },
-    {
-      "label": {
         "en_US": "Price"
       },
       "predefinedValue": {
