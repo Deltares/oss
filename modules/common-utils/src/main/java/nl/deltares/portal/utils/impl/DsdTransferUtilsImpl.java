@@ -68,7 +68,7 @@ public class DsdTransferUtilsImpl implements DsdTransferUtils {
                 registration.getCompanyId(), registration.getGroupId(), registration.getResourceId(),
                 event == null ? 0 : event.getResourceId(),
                 parentRegistration == null ? 0 : parentRegistration.getResourceId(), user.getUserId(),
-                transferDate, transferDate, null, registeredByUserId);
+                transferDate, registeredByUserId);
     }
 
     @Override

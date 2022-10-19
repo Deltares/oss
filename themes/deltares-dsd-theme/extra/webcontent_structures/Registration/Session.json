@@ -1,76 +1,146 @@
 {
   "availableLanguageIds": [
-    "nl_NL",
     "en_US"
   ],
   "defaultLanguageId": "en_US",
   "fields": [
     {
       "label": {
-        "nl_NL": "Session type",
+        "en_US": "Topic"
+      },
+      "options": [
+        {
+          "value": "delftfews",
+          "label": {
+            "en_US": "Delft-FEWS Platform"
+          }
+        },
+        {
+          "value": "dhydro",
+          "label": {
+            "en_US": "D-HYDRO Suite"
+          }
+        },
+        {
+          "value": "dgeo",
+          "label": {
+            "en_US": "D-GEO Suite (D-Stability, D-Settlement)"
+          }
+        },
+        {
+          "value": "imod",
+          "label": {
+            "en_US": "iMOD Suite"
+          }
+        },
+        {
+          "value": "swash",
+          "label": {
+            "en_US": "SWASH"
+          }
+        },
+        {
+          "value": "wanda",
+          "label": {
+            "en_US": "WANDA"
+          }
+        },
+        {
+          "value": "wflow",
+          "label": {
+            "en_US": "wflow"
+          }
+        },
+        {
+          "value": "xbeach",
+          "label": {
+            "en_US": "XBeach"
+          }
+        },
+        {
+          "value": "datascience",
+          "label": {
+            "en_US": "Data Science"
+          }
+        }
+      ],
+      "predefinedValue": {
+        "en_US": [
+          ""
+        ]
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": false,
+      "multiple": false,
+      "name": "topic",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "select"
+    },
+    {
+      "label": {
         "en_US": "Session type"
       },
       "options": [
         {
           "value": "breakout",
           "label": {
-            "nl_NL": "Breakout",
             "en_US": "Breakout"
           }
         },
         {
           "value": "course",
           "label": {
-            "nl_NL": "Cursus",
-            "en_US": "Course"
+            "en_US": "Course (on-premises)"
           }
         },
         {
           "value": "onlinecourse",
           "label": {
-            "nl_NL": "Online Cursus",
             "en_US": "Online Course"
           }
         },
         {
           "value": "symposium",
           "label": {
-            "nl_NL": "Symposium",
             "en_US": "Symposium"
           }
         },
         {
           "value": "userdays",
           "label": {
-            "nl_NL": "Gebruikersdag",
             "en_US": "User Days"
           }
         },
         {
           "value": "webinar",
           "label": {
-            "nl_NL": "Webinar",
             "en_US": "Webinar"
           }
         },
         {
           "value": "workshop",
           "label": {
-            "nl_NL": "Workshop",
             "en_US": "Workshop"
           }
         }
       ],
       "predefinedValue": {
-        "nl_NL": [],
         "en_US": []
       },
       "style": {
-        "nl_NL": "",
         "en_US": ""
       },
       "tip": {
-        "nl_NL": "",
         "en_US": ""
       },
       "dataType": "string",
@@ -86,19 +156,15 @@
     },
     {
       "label": {
-        "nl_NL": "Registration Date",
         "en_US": "Registration Date"
       },
       "predefinedValue": {
-        "nl_NL": "",
         "en_US": ""
       },
       "style": {
-        "nl_NL": "",
         "en_US": ""
       },
       "tip": {
-        "nl_NL": "",
         "en_US": ""
       },
       "dataType": "date",
@@ -114,19 +180,15 @@
       "nestedFields": [
         {
           "label": {
-            "nl_NL": "start time",
             "en_US": "start time"
           },
           "predefinedValue": {
-            "nl_NL": "09:00",
             "en_US": "09:00"
           },
           "style": {
-            "nl_NL": "",
             "en_US": ""
           },
           "tip": {
-            "nl_NL": "Start time (format: HH:mm) ",
             "en_US": "Start time (format: HH:mm) "
           },
           "dataType": "string",
@@ -141,19 +203,15 @@
         },
         {
           "label": {
-            "nl_NL": "end time",
             "en_US": "end time"
           },
           "predefinedValue": {
-            "nl_NL": "17:00",
             "en_US": "17:00"
           },
           "style": {
-            "nl_NL": "",
             "en_US": ""
           },
           "tip": {
-            "nl_NL": "End time (format: HH:mm) ",
             "en_US": "End time (format: HH:mm) "
           },
           "dataType": "string",
@@ -170,35 +228,29 @@
     },
     {
       "label": {
-        "nl_NL": "Multiple Dates Option",
         "en_US": "Multiple Dates Option"
       },
       "options": [
         {
           "value": "daily",
           "label": {
-            "nl_NL": "Daily",
             "en_US": "Daily"
           }
         },
         {
           "value": "individual",
           "label": {
-            "nl_NL": "Individual days",
             "en_US": "Individual days"
           }
         }
       ],
       "predefinedValue": {
-        "nl_NL": "daily",
         "en_US": "daily"
       },
       "style": {
-        "nl_NL": "",
         "en_US": ""
       },
       "tip": {
-        "nl_NL": "Daily - Two dates represent a whole period.<br/>Individual - Each date is seperate",
         "en_US": "Daily - Two dates represent a whole period.<br/>Individual - Each date is seperate"
       },
       "dataType": "radio",
@@ -213,19 +265,15 @@
     },
     {
       "label": {
-        "nl_NL": "Time Zone",
         "en_US": "Time Zone"
       },
       "predefinedValue": {
-        "nl_NL": "CET",
         "en_US": "CET"
       },
       "style": {
-        "nl_NL": "",
         "en_US": ""
       },
       "tip": {
-        "nl_NL": "TimeZone identifier",
         "en_US": "TimeZone identifier"
       },
       "dataType": "string",
@@ -240,19 +288,15 @@
     },
     {
       "label": {
-        "nl_NL": "Presenters",
         "en_US": "Presenters"
       },
       "predefinedValue": {
-        "nl_NL": "",
         "en_US": ""
       },
       "style": {
-        "nl_NL": "",
         "en_US": ""
       },
       "tip": {
-        "nl_NL": "",
         "en_US": ""
       },
       "dataType": "journal-article",
@@ -268,19 +312,15 @@
     },
     {
       "label": {
-        "nl_NL": "Description",
         "en_US": "Description"
       },
       "predefinedValue": {
-        "nl_NL": "",
         "en_US": ""
       },
       "style": {
-        "nl_NL": "",
         "en_US": ""
       },
       "tip": {
-        "nl_NL": "",
         "en_US": ""
       },
       "dataType": "html",
@@ -296,19 +336,15 @@
     },
     {
       "label": {
-        "nl_NL": "Room",
         "en_US": "Room"
       },
       "predefinedValue": {
-        "nl_NL": "",
         "en_US": ""
       },
       "style": {
-        "nl_NL": "",
         "en_US": ""
       },
       "tip": {
-        "nl_NL": "",
         "en_US": ""
       },
       "dataType": "journal-article",
@@ -324,19 +360,15 @@
     },
     {
       "label": {
-        "nl_NL": "Image",
         "en_US": "Image"
       },
       "predefinedValue": {
-        "nl_NL": "",
         "en_US": ""
       },
       "style": {
-        "nl_NL": "",
         "en_US": ""
       },
       "tip": {
-        "nl_NL": "",
         "en_US": ""
       },
       "dataType": "image",
@@ -352,19 +384,15 @@
     },
     {
       "label": {
-        "nl_NL": "Webinar Key",
         "en_US": "Webinar Key"
       },
       "predefinedValue": {
-        "nl_NL": "",
         "en_US": ""
       },
       "style": {
-        "nl_NL": "",
         "en_US": ""
       },
       "tip": {
-        "nl_NL": "",
         "en_US": ""
       },
       "dataType": "string",
@@ -379,42 +407,35 @@
       "nestedFields": [
         {
           "label": {
-            "nl_NL": "Provider",
             "en_US": "Provider"
           },
           "options": [
             {
               "value": "goto",
               "label": {
-                "nl_NL": "GOTO Webinar",
                 "en_US": "GOTO Webinar"
               }
             },
             {
               "value": "anewspring",
               "label": {
-                "nl_NL": "aNewSpring",
                 "en_US": "aNewSpring"
               }
             },
             {
               "value": "msteams",
               "label": {
-                "nl_NL": "MS Teams",
                 "en_US": "MS Teams"
               }
             }
           ],
           "predefinedValue": {
-            "nl_NL": [],
             "en_US": []
           },
           "style": {
-            "nl_NL": "",
             "en_US": ""
           },
           "tip": {
-            "nl_NL": "",
             "en_US": ""
           },
           "dataType": "string",
@@ -430,19 +451,15 @@
         },
         {
           "label": {
-            "nl_NL": "Join link",
             "en_US": "Join link"
           },
           "predefinedValue": {
-            "nl_NL": "",
             "en_US": ""
           },
           "style": {
-            "nl_NL": "",
             "en_US": ""
           },
           "tip": {
-            "nl_NL": "",
             "en_US": ""
           },
           "dataType": "string",
@@ -459,19 +476,15 @@
     },
     {
       "label": {
-        "nl_NL": "Schedules",
         "en_US": "Schedules"
       },
       "predefinedValue": {
-        "nl_NL": "",
         "en_US": ""
       },
       "style": {
-        "nl_NL": "",
         "en_US": ""
       },
       "tip": {
-        "nl_NL": "",
         "en_US": ""
       },
       "dataType": "html",
@@ -487,19 +500,15 @@
       "nestedFields": [
         {
           "label": {
-            "nl_NL": "Schedule Date",
             "en_US": "Schedule Date"
           },
           "predefinedValue": {
-            "nl_NL": "",
             "en_US": ""
           },
           "style": {
-            "nl_NL": "",
             "en_US": ""
           },
           "tip": {
-            "nl_NL": "",
             "en_US": ""
           },
           "dataType": "date",
@@ -517,19 +526,15 @@
     },
     {
       "label": {
-        "nl_NL": "Has presentations",
         "en_US": "Has presentations"
       },
       "predefinedValue": {
-        "nl_NL": false,
         "en_US": false
       },
       "style": {
-        "nl_NL": "",
         "en_US": ""
       },
       "tip": {
-        "nl_NL": "Use this to allow filtering based on the presence of presentations.",
         "en_US": "Use this to allow filtering based on the presence of presentations."
       },
       "dataType": "boolean",
@@ -544,19 +549,15 @@
     },
     {
       "label": {
-        "nl_NL": "Hidden",
         "en_US": "Hidden"
       },
       "predefinedValue": {
-        "nl_NL": false,
         "en_US": false
       },
       "style": {
-        "nl_NL": "",
         "en_US": ""
       },
       "tip": {
-        "nl_NL": "Use this to allow session to be hidden from the program list.",
         "en_US": "Use this to allow session to be hidden from the program list."
       },
       "dataType": "boolean",
@@ -571,19 +572,15 @@
     },
     {
       "label": {
-        "nl_NL": "Presentation",
         "en_US": "Presentation"
       },
       "predefinedValue": {
-        "nl_NL": "",
         "en_US": ""
       },
       "style": {
-        "nl_NL": "",
         "en_US": ""
       },
       "tip": {
-        "nl_NL": "",
         "en_US": ""
       },
       "dataType": "journal-article",

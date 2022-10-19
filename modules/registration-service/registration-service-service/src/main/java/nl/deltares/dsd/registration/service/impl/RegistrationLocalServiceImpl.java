@@ -70,6 +70,29 @@ public class RegistrationLocalServiceImpl
 
 	}
 
+	public void addUserRegistration(long companyId, long groupId, long resourceId, long eventResourceId, long parentResourceId,
+									long userId, Date transferDate, long registeredByUserId) {
+
+		final DynamicQuery query = getDynamicQuery(groupId, resourceId, userId, transferDate);
+		List<Registration> registrations = RegistrationUtil.findWithDynamicQuery(query);
+
+		if (!registrations.isEmpty()) {
+			return; //already exists
+		}
+		Registration registration = RegistrationLocalServiceUtil.createRegistration(CounterLocalServiceUtil.increment(Registration.class.getName()));
+		registration.setCompanyId(companyId);
+		registration.setGroupId(groupId);
+		registration.setEventResourcePrimaryKey(eventResourceId);
+		registration.setResourcePrimaryKey(resourceId);
+		registration.setParentResourcePrimaryKey(parentResourceId);
+		registration.setUserId(userId);
+		registration.setStartTime(transferDate);
+		registration.setEndTime(transferDate);
+		registration.setRegisteredByUserId(registeredByUserId);
+		addRegistration(registration);
+
+	}
+
 	/**
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
