@@ -79,6 +79,11 @@ public interface RegistrationLocalService
 		long parentResourceId, long userId, Date startTime, Date endTime,
 		String preferences, long registeredByUserId);
 
+	public void addUserRegistration(
+		long companyId, long groupId, long resourceId, long eventResourceId,
+		long parentResourceId, long userId, Date transferDate,
+		long registeredByUserId);
+
 	public int countUserEventRegistrationsRegisteredByMe(
 		long groupId, long registeredByUserId, long eventResourceId);
 

@@ -6,6 +6,40 @@
   "fields": [
     {
       "label": {
+        "en_US": "Topic"
+      },
+      "options": [
+        {
+          "value": "transfer",
+          "label": {
+            "en_US": "Bus transfer"
+          }
+        }
+      ],
+      "predefinedValue": {
+        "en_US": [
+          "transfer"
+        ]
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "multiple": false,
+      "name": "topic",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "select"
+    },
+    {
+      "label": {
         "en_US": "Session type"
       },
       "options": [
