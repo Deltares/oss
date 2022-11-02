@@ -15,10 +15,7 @@ import nl.deltares.portal.utils.DDMStructureUtil;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @Component(
         immediate = true,
@@ -45,42 +42,25 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
 
     @Override
     public List<Optional<DDMStructure>> getDDMStructuresByName(long groupId, String[] names, Locale locale) {
-        List<Optional<DDMStructure>> optionalList = new ArrayList<>();
+        List<Optional<DDMStructure>>optionalList = new ArrayList<>();
 
-        if (groupId > 0) {
-            List<DDMStructure> allDDMStructures = null;
-            for (String name : names) {
-
-                if (allDDMStructures == null) {
-                    allDDMStructures = getDDStructuresForGroup(groupId);
-                    if (allDDMStructures.isEmpty()) return optionalList;
-                }
-                Optional<DDMStructure> matchingDDMStructure = findMatchingDDMStructure(name, allDDMStructures, locale);
-                if (matchingDDMStructure.isPresent()){
-                    optionalList.add(matchingDDMStructure);
-                }
+        List<DDMStructure> groupStructures = _ddmStructureLocalService.getStructures(groupId);
+        groupStructures.forEach(ddmStructure -> {
+            if (Arrays.stream(names).anyMatch(searchName -> matchName(searchName, ddmStructure.getName(locale)))) {
+                optionalList.add(Optional.of(ddmStructure));
             }
+        });
+
+        final long parentGroup = getParentGroup(groupId);
+        if (parentGroup > 0){
+            final List<DDMStructure> parentGroupStructures = _ddmStructureLocalService.getStructures(parentGroup);
+            parentGroupStructures.forEach(ddmStructure -> {
+                if (Arrays.stream(names).anyMatch(searchName -> matchName(searchName, ddmStructure.getName(locale)))) {
+                    optionalList.add(Optional.of(ddmStructure));
+                }
+            });
         }
         return optionalList;
-    }
-
-    private List<DDMStructure> getDDStructuresForGroup(long groupId) {
-        List<DDMStructure> structures = new ArrayList<>();
-        long parentGroupId = getParentGroup(groupId);
-        if (parentGroupId > 0){
-            structures.addAll(_ddmStructureLocalService.getStructures(parentGroupId));
-        }
-        structures.addAll(_ddmStructureLocalService.getStructures(groupId));
-        return structures;
-    }
-
-    private Optional<DDMStructure> findMatchingDDMStructure(String name, List<DDMStructure> allDDMStructures, Locale locale) {
-        for (DDMStructure ddmStructure : allDDMStructures) {
-            if (matchName(name, ddmStructure.getName(locale))) {
-                return Optional.of(ddmStructure);
-            }
-        }
-        return Optional.empty();
     }
 
     private Optional<DDMTemplate> findMatchingDDMTemplate(String name, List<DDMTemplate> allDDMTemplates, Locale locale) {
