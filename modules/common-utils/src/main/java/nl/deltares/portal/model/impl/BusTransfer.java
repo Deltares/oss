@@ -11,23 +11,29 @@ import nl.deltares.portal.utils.Period;
 import org.w3c.dom.Document;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class BusTransfer extends Registration {
 
     private static final Log LOG = LogFactoryUtil.getLog(BusTransfer.class);
     private BusRoute busRoute = null;
     private final List<Date> days = new ArrayList<>();
-
+    private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
     public BusTransfer(JournalArticle article, DsdParserUtils parserUtils, Locale locale) throws PortalException {
         super(article, parserUtils, locale);
         init();
     }
 
     private void init() throws PortalException {
+
+        final TimeZone timeZone;
+        if (busRoute != null){
+            timeZone = TimeZone.getTimeZone(getTimeZoneId());
+        } else {
+            timeZone = TimeZone.getTimeZone("CET");
+        }
+        dateTimeFormatter.setTimeZone(timeZone);
 
         try {
             initDates(null);
@@ -41,11 +47,12 @@ public class BusTransfer extends Registration {
 
         BusRoute busRoute = getBusRoute();
         List<String> times = busRoute.getTimes();
-        long startTimeMillis = 0;
-        long endTimeMillis = 0;
+
+        String startTimevalue = "00:00";
+        String endTimevalue = "00:00";
         if (times.size() > 0) {
-            startTimeMillis = timef.parse(times.get(0)).getTime();
-            endTimeMillis = timef.parse(times.get(times.size() - 1)).getTime();
+            startTimevalue = times.get(0);
+            endTimevalue = times.get(times.size() - 1);
         }
 
         String datesOption = getFormFieldValue( "multipleDatesOption", true);
@@ -54,8 +61,10 @@ public class BusTransfer extends Registration {
         final List<String> registrationDates = extractStringValues(formFieldValues);
         ArrayList<Period> dayPeriods = new ArrayList<>();
         for (String registrationDate : registrationDates) {
-            long dayValueMillis = dayf.parse(registrationDate).getTime();
-            dayPeriods.add(new Period(dayValueMillis + startTimeMillis, dayValueMillis + endTimeMillis));
+            dayPeriods.add(new Period(
+                    dateTimeFormatter.parse(String.format("%sT%s", registrationDate, startTimevalue)),
+                    dateTimeFormatter.parse(String.format("%sT%s", registrationDate, endTimevalue))
+            ));
         }
 
         if (daily && dayPeriods.size() == 2){
@@ -65,7 +74,7 @@ public class BusTransfer extends Registration {
         }
 
         for (Period dayPeriod : this.dayPeriods) {
-            days.add(new Date(dayPeriod.getStartTime() - startTimeMillis));
+            days.add(dayPeriod.getStartDate());
         }
 
         startTime = dayPeriods.get(0).getStartDate();
