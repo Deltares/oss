@@ -20,6 +20,7 @@ public class BusTransfer extends Registration {
     private BusRoute busRoute = null;
     private final List<Date> days = new ArrayList<>();
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+    private final Calendar calendar = Calendar.getInstance();
     public BusTransfer(JournalArticle article, DsdParserUtils parserUtils, Locale locale) throws PortalException {
         super(article, parserUtils, locale);
         init();
@@ -34,7 +35,7 @@ public class BusTransfer extends Registration {
             timeZone = TimeZone.getTimeZone("CET");
         }
         dateTimeFormatter.setTimeZone(timeZone);
-
+//        calendar.setTimeZone(timeZone);
         try {
             initDates(null);
         } catch (Exception e) {
@@ -72,9 +73,9 @@ public class BusTransfer extends Registration {
         } else {
             this.dayPeriods.addAll(dayPeriods);
         }
-
+        //convert to day values
         for (Period dayPeriod : this.dayPeriods) {
-            days.add(dayPeriod.getStartDate());
+            days.add(atStartOfDay(dayPeriod.getStartDate()));
         }
 
         startTime = dayPeriods.get(0).getStartDate();
@@ -121,5 +122,24 @@ public class BusTransfer extends Registration {
 
     public List<Date> getTransferDays(){
         return days;
+    }
+
+//    public Date atEndOfDay(Date date) {
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.setTime(date);
+//        calendar.set(Calendar.HOUR_OF_DAY, 23);
+//        calendar.set(Calendar.MINUTE, 59);
+//        calendar.set(Calendar.SECOND, 59);
+//        calendar.set(Calendar.MILLISECOND, 999);
+//        return calendar.getTime();
+//    }
+
+    private Date atStartOfDay(Date date) {
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
     }
 }
