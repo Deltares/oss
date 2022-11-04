@@ -71,7 +71,10 @@
                 <liferay-ui:search-container-column-text property="email" name="E-Mail"/>
                 <liferay-ui:search-container-column-text property="eventName" name="Event"/>
                 <liferay-ui:search-container-column-text property="registrationName" name="Registration"/>
-<%--                <liferay-ui:search-container-column-text property="preferences" name="Prefferences"/>--%>
+                <liferay-ui:search-container-column-text property="startTime" name="Start (GMT)"/>
+                <liferay-ui:search-container-column-text property="endTime" name="End (GMT)"/>
+
+                <%--                <liferay-ui:search-container-column-text property="preferences" name="Prefferences"/>--%>
                 <liferay-ui:search-container-column-text name="Actions">
                     <aui:button-row>
                         <portlet:renderURL var="editRegistrationURL">
