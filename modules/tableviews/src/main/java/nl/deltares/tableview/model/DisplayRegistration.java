@@ -1,14 +1,8 @@
 package nl.deltares.tableview.model;
 
-import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.UserLocalServiceUtil;
-import nl.deltares.dsd.registration.model.Registration;
-import nl.deltares.oss.download.model.Download;
-import nl.deltares.portal.model.impl.AbsDsdArticle;
-import nl.deltares.portal.model.impl.Event;
-import nl.deltares.portal.model.impl.SessionRegistration;
-
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 
 public class DisplayRegistration implements Comparable<DisplayRegistration> {
@@ -18,16 +12,24 @@ public class DisplayRegistration implements Comparable<DisplayRegistration> {
     final private String eventName;
     final private String registrationName;
     private final String preferences;
+    private final Date startTime;
+    private final Date endTime;
+    private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-    public DisplayRegistration(long registrationId, String email, String eventName, String registrationName, String preferences) {
+    public DisplayRegistration(long registrationId, String email, String eventName, String registrationName, String preferences,
+                               Date startTime, Date endTime) {
         this.id = registrationId;
         this.email = email;
         this.eventName = eventName;
         this.registrationName = registrationName;
         this.preferences = preferences;
+        this.startTime = startTime;
+        this.endTime = endTime;
+
+        format.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
-    public long getId(){
+    public long getId() {
         return id;
     }
 
@@ -35,7 +37,9 @@ public class DisplayRegistration implements Comparable<DisplayRegistration> {
         return email;
     }
 
-    public String getPreferences() {return preferences; }
+    public String getPreferences() {
+        return preferences;
+    }
 
     public String getEventName() {
         return eventName;
@@ -43,6 +47,14 @@ public class DisplayRegistration implements Comparable<DisplayRegistration> {
 
     public String getRegistrationName() {
         return registrationName;
+    }
+
+    public String getStartTime() {
+        return format.format(startTime);
+    }
+
+    public String getEndTime() {
+        return format.format(endTime);
     }
 
     @Override
