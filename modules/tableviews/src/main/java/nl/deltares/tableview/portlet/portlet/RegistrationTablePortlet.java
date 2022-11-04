@@ -111,7 +111,8 @@ public class RegistrationTablePortlet extends MVCPortlet {
         final String email = ParamUtil.getString(renderRequest, "filterEmail", null);
 
         renderRequest.setAttribute("record",
-                new DisplayRegistration(id,email, eventName, sessionName, formatJson(registration.getUserPreferences())));
+                new DisplayRegistration(id,email, eventName, sessionName, formatJson(registration.getUserPreferences()),
+                        registration.getStartTime(), registration.getEndTime()));
     }
 
     private String formatJson(String json) {
@@ -188,7 +189,7 @@ public class RegistrationTablePortlet extends MVCPortlet {
                 registrationTitle = String.valueOf(registration.getResourcePrimaryKey());
             }
             displays.add(new DisplayRegistration(registration.getRegistrationId(),
-                    emailAddress, eventTitle, registrationTitle, null));
+                    emailAddress, eventTitle, registrationTitle, null, registration.getStartTime(), registration.getEndTime()));
         });
 
         displays.sort(DisplayRegistration::compareTo);
