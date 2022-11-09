@@ -64,7 +64,7 @@
                             ${languageUtil.get(locale, "registrationform.unregister")}
                         </a>
 
-                    <#elseif available gt 0>
+                    <#else>
                         <a href="#" data-article-id="${registration.getArticleId()}" class="btn-lg btn-primary add-to-cart" role="button"
                            aria-pressed="true"  style="color:#fff">
                           ${languageUtil.get(locale, "shopping.cart.add")}
