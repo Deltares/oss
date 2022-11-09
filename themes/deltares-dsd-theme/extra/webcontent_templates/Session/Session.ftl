@@ -71,46 +71,46 @@
                     <b>${languageUtil.get(locale, "dsd.theme.session.closed")}</b>
                 </#if>
                 <p class="c-sessions__item__time-date-place">
-                <#if registration.isMultiDayEvent() >
-                    <#if registration.isDaily() >
-                        <#assign dateString = dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale, timeZone)
-                        + "&nbsp;-&nbsp;" + dateUtil.getDate(registration.getEndTime(), "dd MMM yyyy", locale, timeZone) />
-                        <#assign timeString = displayContext.getStartTime() + "&nbsp;-&nbsp;" +  displayContext.getEndTime() + " (" + timeZoneId + ")" />
-                        <span class="c-sessions__item__time-date-place__date">
+                    <#if registration.isMultiDayEvent() >
+                        <#if registration.isDaily() >
+                            <#assign dateString = dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale, timeZone)
+                            + "&nbsp;-&nbsp;" + dateUtil.getDate(registration.getEndTime(), "dd MMM yyyy", locale, timeZone) />
+                            <#assign timeString = displayContext.getStartTime() + "&nbsp;-&nbsp;" +  displayContext.getEndTime() + " (" + timeZoneId + ")" />
+                            <span class="c-sessions__item__time-date-place__date">
                             ${dateString}
                         </span>
-                        <span class="c-sessions__item__time-date-place__time">
+                            <span class="c-sessions__item__time-date-place__time">
                             ${timeString}
                         </span>
-                    <#else>
-                        <#assign periods = registration.getStartAndEndTimesPerDay() />
-                        <#list periods as period >
-                            <#assign dateString = dateUtil.getDate(period.getStartDate(), "dd MMM yyyy", locale, timeZone) />
-                            <#assign timeString = dateUtil.getDate(registration.getStartTime(), "HH:mm", locale, timeZone)
-                            + "&nbsp;-&nbsp;" + dateUtil.getDate(registration.getEndTime(), "HH:mm", locale, timeZone)
-                            + " (" + timeZoneId + ")" />
-                            <span class="c-sessions__item__time-date-place__date">
+                        <#else>
+                            <#assign periods = registration.getStartAndEndTimesPerDay() />
+                            <#list periods as period >
+                                <#assign dateString = dateUtil.getDate(period.getStartDate(), "dd MMM yyyy", locale, timeZone) />
+                                <#assign timeString = dateUtil.getDate(registration.getStartTime(), "HH:mm", locale, timeZone)
+                                + "&nbsp;-&nbsp;" + dateUtil.getDate(registration.getEndTime(), "HH:mm", locale, timeZone)
+                                + " (" + timeZoneId + ")" />
+                                <span class="c-sessions__item__time-date-place__date">
                                 ${dateString}
                             </span>
-                            <span class="c-sessions__item__time-date-place__time">
+                                <span class="c-sessions__item__time-date-place__time">
                                 ${timeString}
                             </span>
-                        </#list>
-                    </#if>
-                <#else>
-                    <#assign dateString = dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale, timeZone) />
-                    <#assign timeString = displayContext.getStartTime() + "&nbsp;-&nbsp;" + displayContext.getEndTime() + " (" + timeZone.getID() + ")" />
-                    <span class="c-sessions__item__time-date-place__date">
+                            </#list>
+                        </#if>
+                    <#else>
+                        <#assign dateString = dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale, timeZone) />
+                        <#assign timeString = displayContext.getStartTime() + "&nbsp;-&nbsp;" + displayContext.getEndTime() + " (" + timeZone.getID() + ")" />
+                        <span class="c-sessions__item__time-date-place__date">
                         ${dateString}
                     </span>
-                    <span class="c-sessions__item__time-date-place__time">
+                        <span class="c-sessions__item__time-date-place__time">
                         ${timeString}
                     </span>
-                </#if>
-                <br/>
-                <span class="c-sessions__item__time-date-place__place">
+                    </#if>
+                    <br/>
+                    <span class="c-sessions__item__time-date-place__place">
                 <img src="${themeDisplay.getPathThemeImages()}/dsd/${registration.getType()?lower_case}.png"
-                         alt=""> ${typeDisplayName} </img>
+                     alt=""> ${typeDisplayName} </img>
                 <#assign calDescription += typeDisplayName + "<br/>"/>
                 <br/>
                 <#if registration.isOpen() && !registration.isEventInPast() >
@@ -118,47 +118,47 @@
                     ${registration.getCurrency()}
                     <#assign calDescription += registration.getCurrency()/>
                     <#if price == 0 >
-                        ${languageUtil.get(locale, "dsd.theme.session.free")}
-                        <#assign calDescription += (languageUtil.get(locale, "dsd.theme.session.free") + "<br/>") />
-                    <#else>
-                        <#assign vatText = languageUtil.get(locale, "dsd.theme.session.vat")?replace("%d", vat) />
-                        ${registration.getPrice()}&nbsp;(${vatText})
-                        <#assign calDescription += (registration.getPrice() + "&nbsp;" +  vatText + "<br/>") />
-                    </#if>
+                    ${languageUtil.get(locale, "dsd.theme.session.free")}
+                    <#assign calDescription += (languageUtil.get(locale, "dsd.theme.session.free") + "<br/>") />
+                <#else>
+                    <#assign vatText = languageUtil.get(locale, "dsd.theme.session.vat")?replace("%d", vat) />
+                    ${registration.getPrice()}&nbsp;(${vatText})
+                    <#assign calDescription += (registration.getPrice() + "&nbsp;" +  vatText + "<br/>") />
+                </#if>
                     <br/>
 
                     <#if registration.getEventId() gt 0 >
-                        <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />
-                    </#if>
+                    <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />
+                </#if>
 
                     ${languageUtil.get(locale, "dsd.theme.session.room")} :
                     <#if room??>
 
-                        ${room.getTitle()}
-                        <#if event?? && event.findBuilding(room)?? >
-                            <#assign building = event.findBuilding(room) />
-                            -  ${languageUtil.get(locale, "dsd.theme.session.building")} : ${building.getTitle()}
-                        </#if>
+                    ${room.getTitle()}
+                    <#if event?? && event.findBuilding(room)?? >
+                        <#assign building = event.findBuilding(room) />
+                        -  ${languageUtil.get(locale, "dsd.theme.session.building")} : ${building.getTitle()}
                     </#if>
+                </#if>
                     <br/>
                     ${languageUtil.get(locale, "dsd.theme.session.available")} : ${available}
                 </#if>
 
                 </span>
-                <br/>
+                    <br/>
 
-                <#list registration.getPresenters() as presenter >
-                    <#assign expert = presenter />
-                    <#assign expertImageUrl = expert.getSmallImageURL(themeDisplay) />
-                    <span>
+                    <#list registration.getPresenters() as presenter >
+                        <#assign expert = presenter />
+                        <#assign expertImageUrl = expert.getSmallImageURL(themeDisplay) />
+                        <span>
                         <#if expertImageUrl?? && expertImageUrl != "">
                             <img class="expert-data__image" src="${expertImageUrl}"/>
                         </#if>
                         <a href="mailto:${expert.getEmail()}">${expert.getName()}</a>
                     </span>
-                </#list>
-                <#assign isRegistered = dsdSessionUtils.isUserRegisteredFor(user, registration) />
-                <span class="d-block">
+                    </#list>
+                    <#assign isRegistered = dsdSessionUtils.isUserRegisteredFor(user, registration) />
+                    <span class="d-block">
                     <#if registration.canUserRegister(user.getUserId()) && themeDisplay.isSignedIn()>
                         <#if isRegistered >
                             <a href="${displayContext.getUnregisterURL(renderRequest)}" class="btn-lg btn-primary"
@@ -171,22 +171,22 @@
                                  ${languageUtil.get(locale, "registrationform.update")}
                             </a>
                             &nbsp;
-                        <#elseif available gt 0 >
+                        <#else >
                             <a href="#" data-article-id="${articleId}" class="btn-lg btn-primary add-to-cart"
                                role="button" aria-pressed="true">
                                 ${languageUtil.get(locale, "shopping.cart.add")}
                             </a>
                         </#if>
                     </#if>
-                    <#assign joinLink = dsdSessionUtils.getUserJoinLink(user, registration) />
-                    <#if joinLink?? && joinLink != "">
-                        <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button"
-                           aria-pressed="true">
+                        <#assign joinLink = dsdSessionUtils.getUserJoinLink(user, registration) />
+                        <#if joinLink?? && joinLink != "">
+                            <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button"
+                               aria-pressed="true">
                              ${languageUtil.get(locale, "registrationform.join")}
                         </a>
-                        <#assign calDescription += (languageUtil.get(locale, "registrationform.join") + ": " + joinLink )/>
-                    </#if>
-                    <div class="add-to-calendar c-session__item__calendar"></div>
+                            <#assign calDescription += (languageUtil.get(locale, "registrationform.join") + ": " + joinLink )/>
+                        </#if>
+                <div class="add-to-calendar c-session__item__calendar"></div>
                 </span>
             </div>
         </div>
