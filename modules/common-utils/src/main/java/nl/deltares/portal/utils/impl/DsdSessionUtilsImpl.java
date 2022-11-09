@@ -71,6 +71,9 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     @Override
     public String getUserJoinLink(User user, Registration registration, boolean isRegistered) throws Exception {
+
+        if (user.isDefaultUser()) return "";
+
         if (!webinarUtilsFactory.isWebinarSupported(registration)) {
             return "";
         }
@@ -92,6 +95,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     @Override
     public String getUserJoinLink(User user, Registration registration) throws Exception {
+        if (user.isDefaultUser()) return "";
         final boolean userRegisteredFor = isUserRegisteredFor(user, registration);
         return getUserJoinLink(user, registration, userRegisteredFor);
     }
@@ -100,6 +104,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     public void registerUser(User user, Map<String, String> userAttributes, Registration registration, Map<String,
             String> registrationProperties, User registrationUser) throws PortalException {
 
+        if (user.isDefaultUser()) return;
         try {
             if (webinarUtilsFactory.isWebinarSupported(registration)) {
                 registerWebinarUser(user, userAttributes, (SessionRegistration) registration, registrationProperties);
@@ -136,6 +141,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     @Override
     public void unRegisterUser(User user, Registration registration) throws PortalException {
 
+        if (user.isDefaultUser()) return;
         try {
             if (webinarUtilsFactory.isWebinarSupported(registration)) {
 
