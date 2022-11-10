@@ -29,23 +29,13 @@
 			headerToolbar: {
 				left: 'today prev,next',
 				center: 'title',
-				right: 'horizontalDay,horizontalWeek,verticalWeek,dayGridMonth'
+				right: 'horizontalWeek,verticalWeek,dayGridMonth'
 			},
 			views: {
-				horizontalDay : {
-					type : 'resourceTimeline',
-					duration : {days : 1},
-					buttonText : 'Horizontal: day',
-					slotDuration: {hours: 1},
-					slotLabelFormat: [
-					{ day: '2-digit', month: 'short' },
-					{ hour: 'numeric', minute: '2-digit', omitZeroMinute: true, meridiem: false, hour12: false}
-					]
-				},
 				horizontalWeek : {
 					type: 'resourceTimeline',
 					duration : {days : 5},
-					buttonText : 'week',
+					buttonText : 'horizontal',
 					slotDuration: {hours: 1},
 					slotLabelFormat: [
 						{ day: '2-digit', month: 'short' },
@@ -54,7 +44,7 @@
 				},
 				verticalWeek : {
 					type: 'timeGridWeek',
-					buttonText : 'Vertical: week',
+					buttonText : 'vertical',
 					slotDuration: {minutes: 30},
 					slotLabelFormat: [
 						{ hour: 'numeric', minute: '2-digit', omitZeroMinute: true, meridiem: false, hour12: false}
