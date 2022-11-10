@@ -1,7 +1,5 @@
-package nl.deltares.npm.react.portlet.fullcalendar.portlet;
+package nl.deltares.fullcalendar.portlet;
 
-import com.liferay.frontend.js.loader.modules.extender.npm.JSPackage;
-import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
@@ -10,7 +8,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
-import nl.deltares.npm.react.portlet.fullcalendar.constants.FullCalendarPortletKeys;
+import nl.deltares.fullcalendar.constants.FullcalendarPortletKeys;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import org.osgi.service.component.annotations.Activate;
@@ -28,24 +26,25 @@ import java.text.SimpleDateFormat;
 import java.util.Map;
 import java.util.Optional;
 
-import static nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarUtils.getTypeMap;
+import static nl.deltares.fullcalendar.portlet.FullCalendarUtils.getTypeMap;
+
 
 /**
  * @author rooij_e
  */
 @Component(
-        configurationPid = "nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration",
+        configurationPid = "nl.deltares.fullcalendar.portlet.FullCalendarConfiguration",
         immediate = true,
         property = {
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
-                "com.liferay.portlet.header-portlet-js=/lib/index.es.js",
+                "com.liferay.portlet.header-portlet-javascript=/lib/main.js",
                 "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.instanceable=true",
                 "javax.portlet.display-name=FullCalendar Portlet",
                 "javax.portlet.init-param.config-template=/configuration.jsp",
                 "javax.portlet.init-param.template-path=/",
                 "javax.portlet.init-param.view-template=/view.jsp",
-                "javax.portlet.name=" + FullCalendarPortletKeys.FullCalendar,
+                "javax.portlet.name=" + FullcalendarPortletKeys.FULLCALENDAR,
                 "javax.portlet.resource-bundle=content.Language",
                 "javax.portlet.security-role-ref=power-user,user"
         },
@@ -84,19 +83,9 @@ public class FullCalendarPortlet extends MVCPortlet {
             RenderRequest renderRequest, RenderResponse renderResponse)
             throws IOException, PortletException {
 
-        JSPackage jsPackage = _npmResolver.getJSPackage();
-
-        renderRequest.setAttribute(
-                FullCalendarPortletKeys.BOOTSTRAP_REQUIRE,
-                jsPackage.getResolvedId() + " as bootstrapRequire");
-
         renderRequest.setAttribute(
                 FullCalendarConfiguration.class.getName(),
                 _configuration);
-
-        renderRequest.setAttribute(
-                "mainRequire",
-                _npmResolver.resolveModuleName("fullcalendar") + " as main");
 
         renderRequest.setAttribute(DsdParserUtils.class.getName(), dsdParserUtils);
 
@@ -116,8 +105,8 @@ public class FullCalendarPortlet extends MVCPortlet {
     @Reference
     protected PortletSharedSearchRequest portletSharedSearchRequest;
 
-    @Reference
-    private NPMResolver _npmResolver;
+//    @Reference
+//    private NPMResolver _npmResolver;
 
     @Reference
     private DsdParserUtils dsdParserUtils;
