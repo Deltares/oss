@@ -24,7 +24,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
-import java.text.SimpleDateFormat;
 
 @Component(
         immediate = true,
@@ -35,8 +34,6 @@ import java.text.SimpleDateFormat;
         service = MVCActionCommand.class
 )
 public class SubmitBusRegistrationActionActionCommand extends BaseMVCActionCommand {
-
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 
     @Override
     protected void doProcessAction(ActionRequest actionRequest, ActionResponse actionResponse) {
@@ -62,7 +59,7 @@ public class SubmitBusRegistrationActionActionCommand extends BaseMVCActionComma
 
             Event event = parserUtils.getEvent(groupId, String.valueOf(configuration.eventId()), themeDisplay.getLocale());
 
-            event.getBusTransfers(themeDisplay.getLocale()).stream()
+            event.getBusTransfers(themeDisplay.getLocale())
                     .forEach(busTransfer -> registerUser(actionRequest, event, user, busTransfer, registrationUser));
         } catch (Exception e) {
             SessionErrors.add(actionRequest, "registration-failed", e.getMessage());
@@ -75,27 +72,26 @@ public class SubmitBusRegistrationActionActionCommand extends BaseMVCActionComma
     }
 
     private void registerUser(ActionRequest actionRequest, Event event, User user, BusTransfer busTransfer, User registrationUser) {
-        busTransfer.getTransferDays().forEach(date -> {
 
-            String registrationParam = "registration_" + busTransfer.getResourceId() + "_" + DATE_FORMAT.format(date);
-            String errorMessage = String.format("Could not register user [%s] for transfer [%s] on [%s]",
-                    user.getEmailAddresses(), busTransfer.getResourceId(), date.toString());
+        String registrationParam = "registration_" + busTransfer.getResourceId();
+        String errorMessage = String.format("Could not register user [%s] for transfer [%s] on [%s]",
+                user.getEmailAddresses(), busTransfer.getResourceId(), busTransfer.getTransferDay());
 
-            try {
-                Registration registration = event.getRegistration(busTransfer.getResourceId(), actionRequest.getLocale());
+        try {
+            Registration registration = event.getRegistration(busTransfer.getResourceId(), actionRequest.getLocale());
 
-                if (ParamUtil.getString(actionRequest, registrationParam).equals("true")) {
-                    dsdTransferUtils.registerUser(user, registration, date, registrationUser);
-                } else {
-                    if (dsdTransferUtils.isUserRegisteredFor(user, registration, date)) {
-                        dsdTransferUtils.unRegisterUser(user, registration, date);
-                    }
+            if (ParamUtil.getString(actionRequest, registrationParam).equals("true")) {
+                dsdTransferUtils.registerUser(user, registration, registrationUser);
+            } else {
+                if (dsdTransferUtils.isUserRegisteredFor(user, registration)) {
+                    dsdTransferUtils.unRegisterUser(user, registration);
                 }
-            } catch (Exception e) {
-                SessionErrors.add(actionRequest, "registration-failed", e.getMessage());
-                LOG.debug(errorMessage, e);
             }
-        });
+        } catch (Exception e) {
+            SessionErrors.add(actionRequest, "registration-failed", e.getMessage());
+            LOG.debug(errorMessage, e);
+        }
+
     }
 
     @Reference

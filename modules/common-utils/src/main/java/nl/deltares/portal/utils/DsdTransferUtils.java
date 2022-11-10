@@ -11,27 +11,12 @@ import java.util.List;
 public interface DsdTransferUtils {
 
     /**
-     * Return the days for which the user is registered.
-     */
-    List<Date> getRegisteredDays(User user, Registration registration) throws PortalException;
-
-    /**
      * Register user for single date of this Registration
      * @param user User to register
      * @param registration Registration for which user must be registered
-     * @param transferDate Date of transfer for which user is registering.
      * @param registeredBy If registering for someone else add user making the registration
      */
-    void registerUser(User user, Registration registration, Date transferDate, User registeredBy) throws PortalException;
-
-    /**
-     * Unregister user for single date of this Registration
-     * @param user User to unregister
-     * @param registration Registration for which user must be unregistered
-     * @param transferDate Day for which user wants to unregister
-     */
-    void unRegisterUser(User user, Registration registration, Date transferDate) throws PortalException;
-
+    void registerUser(User user, Registration registration, User registeredBy) throws PortalException;
 
     /**
      * Unregister user for all dates of this Registration
@@ -43,33 +28,24 @@ public interface DsdTransferUtils {
     /**
      * Return number of current registrations for Registration.
      * @param registration Registration Article
-     * @param transferDate Day for which to retrieve count
      * @return number or registrations
      */
-    int getRegistrationCount(Registration registration, Date transferDate);
+    int getRegistrationCount(Registration registration);
 
     /**
      * Check if user is already registerd for this registration.
      * @param user User to check for registration
      * @param registration Registration to check
-     * @param transferDate Day for which to check if user is registered
      * @return TRUE if user is registered else false
      */
-    boolean isUserRegisteredFor(User user, Registration registration, Date transferDate);
+    boolean isUserRegisteredFor(User user, Registration registration);
 
     /**
      * Validates if user can register for current Registration.
      * @param user User wanting to register
      * @param registration Registration user wants to register for
-     * @param transferDate Day for which to validate
      * @throws ValidationException Thrown if registration is not valid.
      */
-    void validateRegistration(User user, Registration registration, Date transferDate) throws PortalException;
-
-    /**
-     * Delete all registrations linked to this registration article
-     * @param registration Registration Journal Article being deleted
-     */
-    void deleteRegistrationsFor(Registration registration);
+    void validateRegistration(User user, Registration registration) throws PortalException;
 
 }
