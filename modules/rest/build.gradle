@@ -11,6 +11,5 @@ dependencies {
 	compileOnly group: "com.fasterxml.jackson.core", name: "jackson-databind" , version: "2.9.10.1"
 	compileOnly group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.9.10'
 	compileOnly project(":modules:common-utils")
-	compileOnly project(":modules:fullcalendar")
 }
 
