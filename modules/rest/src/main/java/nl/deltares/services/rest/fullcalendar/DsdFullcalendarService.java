@@ -1,24 +1,17 @@
 package nl.deltares.services.rest.fullcalendar;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.GroupServiceUtil;
-import com.liferay.portal.kernel.service.LayoutServiceUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
-import nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.DsdParserUtils;
-import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.Period;
 import nl.deltares.services.rest.fullcalendar.models.Event;
 import nl.deltares.services.rest.fullcalendar.models.Resource;
@@ -38,7 +31,6 @@ import static nl.deltares.services.utils.Helper.toResponse;
  */
 @Path("/calendar")
 public class DsdFullcalendarService {
-    private static final Log LOG = LogFactoryUtil.getLog(DsdFullcalendarService.class);
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private final ConfigurationProvider configurationProvider;
     private final DsdParserUtils parserUtils;
@@ -53,7 +45,6 @@ public class DsdFullcalendarService {
     @Produces("application/json")
     public Response events(@Context HttpServletRequest request,
                            @PathParam("siteId") String siteId, @PathParam("eventId") String eventId,
-                           @QueryParam("portletId") String portletId, @QueryParam("layoutUuid") String layoutUuid,
                            @QueryParam("start") String start, @QueryParam("end") String end, @QueryParam("timeZone") String timeZone) {
 
 
@@ -81,20 +72,19 @@ public class DsdFullcalendarService {
             return Response.serverError().entity(String.format("Error getting DSD siteConfiguration: %s", e.getMessage())).build();
         }
 
-        Map<String, String> colorMap = getColorMap(layoutUuid, Long.parseLong(siteId), portletId);
         try {
             Group group = GroupLocalServiceUtil.getGroup(Long.parseLong(siteId));
             Locale locale = LocaleUtil.fromLanguageId(group.getDefaultLanguageId());
 
             List<Registration> registrations;
-            if (eventId.equals("0")){
+            if (eventId.equals("0")) {
                 registrations = parserUtils.getRegistrations(group.getCompanyId(), Long.parseLong(siteId), startSearch, endSearch,
                         getStructureKeys(siteConfiguration), siteConfiguration.dsdRegistrationDateField(), locale);
             } else {
                 nl.deltares.portal.model.impl.Event event = parserUtils.getEvent(Long.parseLong(siteId), eventId, locale);
                 registrations = event.getRegistrations(locale);
             }
-            return toResponse(getEvents(registrations, startSearch, endSearch, colorMap, siteConfiguration));
+            return toResponse(getEvents(registrations, startSearch, endSearch, siteConfiguration));
         } catch (PortalException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
@@ -121,13 +111,13 @@ public class DsdFullcalendarService {
     private String[] getStructureKeys(DSDSiteConfiguration configuration) {
         if (configuration == null) return new String[0];
         String structureList = configuration.dsdRegistrationStructures();
-        if (structureList != null && !structureList.isEmpty()){
+        if (structureList != null && !structureList.isEmpty()) {
             return StringUtil.split(structureList, ' ');
         }
         return new String[0];
     }
 
-    private List<Event> getEvents(List<Registration> registrations, Date startSearch, Date endSearch, Map<String, String> colorMap, DSDSiteConfiguration siteConfiguration) {
+    private List<Event> getEvents(List<Registration> registrations, Date startSearch, Date endSearch, DSDSiteConfiguration siteConfiguration) {
 
         List<Event> events = new ArrayList<>(registrations.size());
         for (Registration registration : registrations) {
@@ -140,14 +130,14 @@ public class DsdFullcalendarService {
             int dayCounter = 0;
             List<Period> periodsPerDay = registration.getStartAndEndTimesPerDay();
             for (Period period : periodsPerDay) {
-                events.add(createCalendarEvent(colorMap, registration, dayCounter++, period.getStartTime(), period.getEndTime(), siteConfiguration));
+                events.add(createCalendarEvent(registration, dayCounter++, period.getStartTime(), period.getEndTime(), siteConfiguration));
             }
         }
 
         return events;
     }
 
-    private Event createCalendarEvent(Map<String, String> colorMap, Registration registration, int dayCount, long startDay, long endDay, DSDSiteConfiguration siteConfiguration) {
+    private Event createCalendarEvent(Registration registration, int dayCount, long startDay, long endDay, DSDSiteConfiguration siteConfiguration) {
         Event event = new Event();
         event.setId(registration.getArticleId() + '_' + dayCount);
         if (registration instanceof SessionRegistration) {
@@ -160,7 +150,7 @@ public class DsdFullcalendarService {
             } else {
                 event.setUrl("-/" + registration.getJournalArticle().getUrlTitle());
             }
-        } else if (registration instanceof BusTransfer){
+        } else if (registration instanceof BusTransfer) {
             event.setResourceId("bustransfer");
             if (siteConfiguration != null && siteConfiguration.busTransferURL() != null) {
                 event.setUrl(getPageUrl(registration.getGroupId(), siteConfiguration.busTransferURL()));
@@ -168,7 +158,7 @@ public class DsdFullcalendarService {
         }
         event.setStart(startDay);
         event.setEnd(endDay);
-        event.setColor(colorMap.get(registration.getType()));
+        event.setType(registration.getType());
         event.setTitle(registration.getTitle());
 
         return event;
@@ -181,33 +171,6 @@ public class DsdFullcalendarService {
         } catch (PortalException e) {
             return "";
         }
-    }
-
-    private Map<String, String> getColorMap(String layoutUuid, long siteId, String portletId) {
-
-        Layout layout;
-        try {
-            layout = LayoutServiceUtil.getLayoutByUuidAndGroupId(layoutUuid, siteId, false);
-        } catch (PortalException e) {
-            LOG.error(String.format("Error retrieving FullCalendar portlet layout for uuid '%s': %s", layoutUuid, e.getMessage()));
-            return Collections.emptyMap();
-        }
-        FullCalendarConfiguration groupConfiguration ;
-        try {
-            groupConfiguration = configurationProvider.getPortletInstanceConfiguration(FullCalendarConfiguration.class, layout, portletId);
-        } catch (ConfigurationException e) {
-            LOG.error(String.format("Error retrieving FullCalendarConfiguration for siteId '%s': %s", portletId, e.getMessage()));
-            return Collections.emptyMap();
-        }
-
-        String jsonColorMap = groupConfiguration.sessionColorMap();
-        try {
-            return JsonContentUtils.parseJsonToMap(jsonColorMap);
-        } catch (JSONException e) {
-            LOG.error(String.format("Error parsing color map configuration for siteId '%s': %s", portletId, e.getMessage()));
-            return Collections.emptyMap();
-        }
-
     }
 
     private List<Resource> getResources(nl.deltares.portal.model.impl.Event dsdEvent, Locale locale) {
@@ -233,7 +196,7 @@ public class DsdFullcalendarService {
                 resource.setId(String.valueOf(restaurant.getResourceId()));
                 resource.setTitle(restaurant.getTitle());
                 externals.add(resource);
-            } else if (registration instanceof  BusTransfer){
+            } else if (registration instanceof BusTransfer) {
                 Resource resource = new Resource();
                 resource.setBuilding("Bus Transfer");
                 resource.setId("bustransfer");
