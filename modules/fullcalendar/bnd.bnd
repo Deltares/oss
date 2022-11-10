@@ -1,4 +1,4 @@
-Bundle-Name: fullcalendar2
+Bundle-Name: fullcalendar
 Bundle-SymbolicName: nl.deltares.fullcalendar
 Bundle-Version: 1.0.0
 Export-Package: \
