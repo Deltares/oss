@@ -9,7 +9,7 @@ public class Event implements Serializable {
     private long end;
     private String url;
     private String title;
-    private String color;
+    private String type;
 
     public String getTitle() {
         return title;
@@ -59,11 +59,11 @@ public class Event implements Serializable {
         return url;
     }
 
-    public String getColor() {
-        return color;
+    public String getType() {
+        return type;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setType(String type) {
+        this.type = type;
     }
 }
