@@ -1,14 +1,15 @@
 package nl.deltares.portal.model.impl;
 
-import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
-import nl.deltares.portal.utils.Period;
+import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,10 +18,12 @@ import java.util.*;
 public class BusTransfer extends Registration {
 
     private static final Log LOG = LogFactoryUtil.getLog(BusTransfer.class);
-    private BusRoute busRoute = null;
-    private final List<Date> days = new ArrayList<>();
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-    private final Calendar calendar = Calendar.getInstance();
+    private List<JournalArticle> stops = null;
+    private List<String> times = null;
+    private String transferDay;
+    private String name;
+
     public BusTransfer(JournalArticle article, DsdParserUtils parserUtils, Locale locale) throws PortalException {
         super(article, parserUtils, locale);
         init();
@@ -28,16 +31,13 @@ public class BusTransfer extends Registration {
 
     private void init() throws PortalException {
 
-        final TimeZone timeZone;
-        if (busRoute != null){
-            timeZone = TimeZone.getTimeZone(getTimeZoneId());
-        } else {
-            timeZone = TimeZone.getTimeZone("CET");
-        }
-        dateTimeFormatter.setTimeZone(timeZone);
-//        calendar.setTimeZone(timeZone);
+        dateTimeFormatter.setTimeZone(TimeZone.getTimeZone(getTimeZoneId()));
+
         try {
-            initDates(null);
+            Document document = getDocument();
+            final String name = XmlContentUtils.getDynamicContentByName(document, "Name", true);
+            this.name = name == null? getTitle() : name;
+            initDates(document);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -46,8 +46,7 @@ public class BusTransfer extends Registration {
     @Override
     void initDates(Document document) throws PortalException, ParseException {
 
-        BusRoute busRoute = getBusRoute();
-        List<String> times = busRoute.getTimes();
+        List<String> times = getTimes();
 
         String startTimevalue = "00:00";
         String endTimevalue = "00:00";
@@ -55,37 +54,9 @@ public class BusTransfer extends Registration {
             startTimevalue = times.get(0);
             endTimevalue = times.get(times.size() - 1);
         }
-
-        String datesOption = getFormFieldValue( "multipleDatesOption", true);
-        daily = "daily".equals(datesOption);
-        List<DDMFormFieldValue> formFieldValues = getDdmFormFieldValues( "registrationDate", false);
-        final List<String> registrationDates = extractStringValues(formFieldValues);
-        ArrayList<Period> dayPeriods = new ArrayList<>();
-        for (String registrationDate : registrationDates) {
-            dayPeriods.add(new Period(
-                    dateTimeFormatter.parse(String.format("%sT%s", registrationDate, startTimevalue)),
-                    dateTimeFormatter.parse(String.format("%sT%s", registrationDate, endTimevalue))
-            ));
-        }
-
-        if (daily && dayPeriods.size() == 2){
-            this.dayPeriods.addAll(toDayPeriods(dayPeriods.get(0).getStartDate(), dayPeriods.get(1).getEndDate()));
-        } else {
-            this.dayPeriods.addAll(dayPeriods);
-        }
-        //convert to day values
-        for (Period dayPeriod : this.dayPeriods) {
-            days.add(atStartOfDay(dayPeriod.getStartDate()));
-        }
-
-        startTime = dayPeriods.get(0).getStartDate();
-        endTime = dayPeriods.get(dayPeriods.size() - 1).getEndDate();
-    }
-
-    @Override
-    public void validate() throws PortalException {
-        parseBusRoute();
-        super.validate();
+        transferDay = XmlContentUtils.getDynamicContentByName(document, "registrationDate", false);
+        startTime = dateTimeFormatter.parse(String.format("%sT%s", transferDay, startTimevalue));
+        endTime = dateTimeFormatter.parse(String.format("%sT%s", transferDay, endTimevalue));
     }
 
     @Override
@@ -93,53 +64,56 @@ public class BusTransfer extends Registration {
         return DSD_STRUCTURE_KEYS.Bustransfer.name();
     }
 
-    public BusRoute getBusRoute(){
-        if (busRoute != null) {
-            return busRoute;
-        }
+    private void loadStops(){
         try {
-            busRoute = parseBusRoute();
+            parseStops();
         } catch (PortalException e) {
-            LOG.error(String.format("Error parsing bus route for transfer %s: %s", getTitle(), e.getMessage()));
+            LOG.error(String.format("Error parsing stops for route %s: %s", getTitle(), e.getMessage()));
         }
-        return busRoute;
     }
 
-    private BusRoute parseBusRoute() throws PortalException {
 
-        String busRouteJson = getFormFieldValue("busRoute", false);
-        JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(busRouteJson);
-        AbsDsdArticle busRoute = dsdParserUtils.toDsdArticle(article, getLocale());
-        if (! (busRoute instanceof BusRoute)){
-            throw new PortalException("Article not instance of BusRoute: " + busRoute.getTitle());
+    private void parseStops() throws PortalException {
+        this.stops = new ArrayList<>();
+        this.times = new ArrayList<>();
+        NodeList stopNodes = XmlContentUtils.getDynamicElementsByName(getDocument(), "location");
+        for (int i = 0; i < Objects.requireNonNull(stopNodes).getLength(); i++) {
+            Node stopNode = stopNodes.item(i);
+            String locationJson = XmlContentUtils.getDynamicContentForNode(stopNode);
+            JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(locationJson);
+            this.stops.add(article);
+            this.times.add(XmlContentUtils.getDynamicContentByName(stopNode, "time", false));
         }
-        return (BusRoute) busRoute;
+    }
+    public List<JournalArticle> getStops() {
+        if (stops == null) loadStops();
+        return Collections.unmodifiableList(stops);
     }
 
-    public boolean isValidDate(Date transferDate) {
-        return days.contains(transferDate);
+    public List<String> getTimes()  {
+        if (stops == null) loadStops();
+        return Collections.unmodifiableList(times);}
+
+    public JournalArticle getLocation(String time) {
+        if (stops == null) loadStops();
+        int i = times.indexOf(time);
+        if (i > -1) return stops.get(i);
+        return null;
     }
 
-    public List<Date> getTransferDays(){
-        return days;
+    public String getTime(JournalArticle stop) {
+        if (stops == null) loadStops();
+
+        int i = stops.indexOf(stop);
+        if (i > -1) return times.get(i);
+        return null;
     }
 
-//    public Date atEndOfDay(Date date) {
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.setTime(date);
-//        calendar.set(Calendar.HOUR_OF_DAY, 23);
-//        calendar.set(Calendar.MINUTE, 59);
-//        calendar.set(Calendar.SECOND, 59);
-//        calendar.set(Calendar.MILLISECOND, 999);
-//        return calendar.getTime();
-//    }
+    public String getTransferDay(){
+        return transferDay;
+    }
 
-    private Date atStartOfDay(Date date) {
-        calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
+    public String getName(){
+        return name;
     }
 }
