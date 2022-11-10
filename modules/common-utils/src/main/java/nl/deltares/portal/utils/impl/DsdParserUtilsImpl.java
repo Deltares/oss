@@ -189,9 +189,6 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
             case Event:
                 article = new Event(journalArticle, this, locale);
                 break;
-            case Busroute:
-                article = new BusRoute(journalArticle ,this, locale);
-                break;
             case Presentation:
                 article = new Presentation(journalArticle, this, locale);
                 return article;

@@ -6,6 +6,29 @@
   "fields": [
     {
       "label": {
+        "en_US": "Name"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "Name",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "text"
+    },
+    {
+      "label": {
         "en_US": "Topic"
       },
       "options": [
@@ -88,50 +111,13 @@
       "dataType": "date",
       "fieldNamespace": "ddm",
       "indexType": "keyword",
-      "localizable": true,
+      "localizable": false,
       "name": "registrationDate",
-      "readOnly": false,
-      "repeatable": true,
-      "required": true,
-      "showLabel": true,
-      "type": "ddm-date"
-    },
-    {
-      "label": {
-        "en_US": "Multiple Dates Option"
-      },
-      "options": [
-        {
-          "value": "daily",
-          "label": {
-            "en_US": "Daily"
-          }
-        },
-        {
-          "value": "individual",
-          "label": {
-            "en_US": "Individual days"
-          }
-        }
-      ],
-      "predefinedValue": {
-        "en_US": "daily"
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": "Daily - Two dates represent a whole period.<br/>Individual - Each date is seperate"
-      },
-      "dataType": "radio",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "multipleDatesOption",
       "readOnly": false,
       "repeatable": false,
       "required": true,
       "showLabel": true,
-      "type": "radio"
+      "type": "ddm-date"
     },
     {
       "label": {
@@ -148,7 +134,7 @@
       },
       "dataType": "string",
       "indexType": "keyword",
-      "localizable": true,
+      "localizable": false,
       "name": "timeZone",
       "readOnly": false,
       "repeatable": false,
@@ -158,7 +144,7 @@
     },
     {
       "label": {
-        "en_US": "Bus Route"
+        "en_US": "Bus stop location"
       },
       "predefinedValue": {
         "en_US": ""
@@ -173,12 +159,37 @@
       "fieldNamespace": "ddm",
       "indexType": "keyword",
       "localizable": true,
-      "name": "busRoute",
+      "name": "location",
       "readOnly": false,
-      "repeatable": false,
+      "repeatable": true,
       "required": true,
       "showLabel": true,
-      "type": "ddm-journal-article"
+      "type": "ddm-journal-article",
+      "nestedFields": [
+        {
+          "label": {
+            "en_US": "Time"
+          },
+          "predefinedValue": {
+            "en_US": "00:00"
+          },
+          "style": {
+            "en_US": ""
+          },
+          "tip": {
+            "en_US": "Expected departure time (format: HH:mm local time timezone)"
+          },
+          "dataType": "string",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "time",
+          "readOnly": false,
+          "repeatable": false,
+          "required": true,
+          "showLabel": true,
+          "type": "text"
+        }
+      ]
     }
   ]
 }
