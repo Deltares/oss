@@ -118,7 +118,7 @@ public class FullCalendarPortlet extends MVCPortlet {
 
     private ConfigurationProvider _configurationProvider;
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
     @Reference
     protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
         _configurationProvider = configurationProvider;
