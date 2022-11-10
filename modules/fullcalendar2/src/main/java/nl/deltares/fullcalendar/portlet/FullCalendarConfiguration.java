@@ -1,4 +1,4 @@
-package nl.deltares.npm.react.portlet.fullcalendar.portlet;
+package nl.deltares.fullcalendar.portlet;
 
 import aQute.bnd.annotation.metatype.Meta;
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
@@ -7,7 +7,7 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
         category = "oss-general"
 )
 @Meta.OCD(
-        id = "nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration",
+        id = "nl.deltares.fullcalendar.portlet.FullCalendarConfiguration",
         localization = "content/Language", name = "full-calendar-configuration"
 )
 public interface FullCalendarConfiguration {

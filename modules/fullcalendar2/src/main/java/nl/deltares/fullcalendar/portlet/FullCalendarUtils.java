@@ -1,4 +1,4 @@
-package nl.deltares.npm.react.portlet.fullcalendar.portlet;
+package nl.deltares.fullcalendar.portlet;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;

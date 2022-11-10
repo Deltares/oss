@@ -19,7 +19,7 @@
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
 
 
-<%@ include file="/init.jsp" %>
+<%@ include file="init.jsp" %>
 
 <liferay-portlet:actionURL
         portletConfiguration="<%= true %>"

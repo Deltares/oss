@@ -26,13 +26,9 @@
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.portal.kernel.util.Validator" %>
-<%@ page import="com.liferay.portal.kernel.util.WebKeys" %>
-<%@ page import="nl.deltares.npm.react.portlet.fullcalendar.constants.FullCalendarPortletKeys" %>
-<%@ page import="nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration" %>
 <%@ page import="nl.deltares.portal.model.impl.Event" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.Date" %>
-<%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="nl.deltares.portal.utils.DsdParserUtils" %>
 <%@ page import="nl.deltares.portal.configuration.DSDSiteConfiguration" %>
@@ -40,6 +36,7 @@
 <%@ page import="nl.deltares.portal.utils.JsonContentUtils" %>
 <%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationException" %>
 <%@ page import="java.util.TimeZone" %>
+<%@ page import="nl.deltares.fullcalendar.portlet.FullCalendarConfiguration" %>
 
 <liferay-theme:defineObjects/>
 
@@ -61,12 +58,9 @@
     SimpleDateFormat format = new SimpleDateFormat("yyy-MM-dd");
     format.setTimeZone(TimeZone.getTimeZone("GMT"));
     long siteId = themeDisplay.getSiteGroupId();
-    String bootstrapRequire = (String) renderRequest.getAttribute(FullCalendarPortletKeys.BOOTSTRAP_REQUIRE);
     FullCalendarConfiguration configuration =
             (FullCalendarConfiguration)
                     renderRequest.getAttribute(FullCalendarConfiguration.class.getName());
-    String portletId = (String) renderRequest.getAttribute(WebKeys.PORTLET_ID);
-    String layoutUuid = themeDisplay.getLayout().getUuid();
     String defaultView = "verticalWeek";
     String baseUrl = "";
 

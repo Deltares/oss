@@ -1,4 +1,4 @@
-package nl.deltares.npm.react.portlet.fullcalendar.portlet;
+package nl.deltares.fullcalendar.portlet;
 
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -8,7 +8,7 @@ import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.npm.react.portlet.fullcalendar.constants.FullCalendarPortletKeys;
+import nl.deltares.fullcalendar.constants.FullcalendarPortletKeys;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
@@ -23,13 +23,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
-import static nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarUtils.getTypeMap;
+import static nl.deltares.fullcalendar.portlet.FullCalendarUtils.getTypeMap;
 
 @Component(
         configurationPid = "nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration",
         configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
         property = {
-                "javax.portlet.name=" + FullCalendarPortletKeys.FullCalendar
+                "javax.portlet.name=" + FullcalendarPortletKeys.FULLCALENDAR
         },
         service = ConfigurationAction.class
 )
