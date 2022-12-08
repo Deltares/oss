@@ -136,7 +136,7 @@ public class UserProfilePortlet extends MVCPortlet {
         for (KeycloakUtils.ATTRIBUTES key : KeycloakUtils.ATTRIBUTES.values()) {
             String value = ParamUtil.getString(actionRequest, key.name());
             if (Validator.isNotNull(value)) {
-                attributes.put(key.name(), value);
+                attributes.put(key.name(), HtmlUtil.escape(value));
             }
         }
         return attributes;
