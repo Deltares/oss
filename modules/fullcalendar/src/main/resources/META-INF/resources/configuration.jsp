@@ -17,6 +17,8 @@
 --%>
 
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="com.liferay.portal.kernel.json.JSONException" %>
 
 
 <%@ include file="init.jsp" %>
@@ -53,12 +55,19 @@
 
         </aui:input>
 
-        <%    for (String key : colorMap.keySet()) { %>
+        <%
+            Map<String, String> map;
+            try {
+                map = JsonContentUtils.parseJsonToMap(colorMap);
+            } catch (JSONException e) {
+                map = new HashMap<>();
+            }
+            for (String key : map.keySet()) { %>
         <aui:input
                 label='<%=( key ) + " Color"%>'
                 name="<%= key %>"
                 type="color"
-                value="<%= colorMap.get(key) %>"
+                value="<%= map.get(key) %>"
         >
         </aui:input>
         <% } %>
