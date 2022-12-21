@@ -74,6 +74,7 @@
 		language: 'nl',
 		format: 'dd-mm-yyyy'
 	});
+	Liferay.Deltares.FacetUtil.initializeDates("<portlet:namespace />", "<%=formattedStartDate%>", "<%=formattedEndDate%>");
 
 	$(document).ready(function () {
 		$(".portlet-date-range-facet .date-picker").change(function () {
