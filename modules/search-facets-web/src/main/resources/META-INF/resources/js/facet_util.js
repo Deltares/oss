@@ -1,7 +1,20 @@
 AUI.add(
     'deltares-search-facet-util',
-    function (A) {
-        var FacetUtil = {
+    function () {
+        Liferay.namespace('Deltares').FacetUtil = {
+            initializeDates: function (namespace, start, end) {
+                let url = window.location.href;
+
+                if (start && !url.includes('startDate=')) {
+                    url = this.selectTerm(url, 'startDate', start);
+                }
+                if (end && !url.includes('endDate=')) {
+                    url = this.selectTerm(url, 'endDate', end);
+                }
+                if (url !== window.location.href) {
+                    window.location.href = url;
+                }
+            },
             updateQueryString: function (namespace, name) {
 
                 let startDate = $('input[name$="' + namespace + 'startDate"]').val();
@@ -9,29 +22,29 @@ AUI.add(
                 let url = window.location.href;
 
                 if (startDate !== undefined) {
-                    if (startDate === ''){
+                    if (startDate === '') {
                         url = this.removeTerm(url, 'startDate');
                     } else {
                         url = this.selectTerm(url, 'startDate', startDate);
                     }
                 }
-                if(endDate !== undefined) {
-                    if (endDate === ''){
+                if (endDate !== undefined) {
+                    if (endDate === '') {
                         url = this.removeTerm(url, 'endDate');
                     } else {
                         url = this.selectTerm(url, 'endDate', endDate);
                     }
                 }
-                let selection = $('select[name$="' + namespace  + "selection-facet-" + name + '"]').val();
+                let selection = $('select[name$="' + namespace + "selection-facet-" + name + '"]').val();
                 if (selection !== undefined) {
-                    if (selection === 'undefined' ){
+                    if (selection === 'undefined') {
                         url = this.removeTerm(url, name);
                     } else {
                         url = this.selectTerm(url, name, selection);
                     }
                 }
                 let showPastElement = $('input[name$="' + namespace + 'showPast"]');
-                if (showPastElement.val() !== undefined){
+                if (showPastElement.val() !== undefined) {
                     if (showPastElement[0].checked) {
                         url = this.selectTerm(url, 'showPast', showPastElement[0].checked);
                     } else {
@@ -39,16 +52,16 @@ AUI.add(
                     }
                 }
                 let presentationElement = $('input[name$="' + namespace + 'hasPresentations"]');
-                if (presentationElement.val() !== undefined){
+                if (presentationElement.val() !== undefined) {
                     if (presentationElement[0].checked) {
                         url = this.selectTerm(url, 'hasPresentations', presentationElement[0].checked);
                     } else {
                         url = this.removeTerm(url, 'hasPresentations');
                     }
                 }
-                selection = $('select[name$="' + namespace  + "checkbox-facet-" + name + '"]').val();
+                selection = $('select[name$="' + namespace + "checkbox-facet-" + name + '"]').val();
                 if (selection !== undefined) {
-                    if (selection === 'undefined' ){
+                    if (selection === 'undefined') {
                         url = this.removeTerm(url, name);
                     } else {
                         url = this.selectTerm(url, name, selection);
@@ -68,16 +81,14 @@ AUI.add(
 
                 let queryParts = urlParts[1].split('&');
                 let newParts = [];
-                for (let queryPart of queryParts){
+                for (let queryPart of queryParts) {
                     if (queryPart.startsWith(name)) continue;
                     newParts.push(queryPart);
                 }
                 newUrl.push(newParts.join('&'));
                 return newUrl.join('?');
             },
-        }
-
-        Liferay.namespace('Deltares').FacetUtil = FacetUtil;
+        };
     },
     '',
     {
