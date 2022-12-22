@@ -258,7 +258,7 @@ public abstract class Registration extends AbsDsdArticle {
     }
 
     public boolean isEventInPast(){
-        return System.currentTimeMillis() > endTime.getTime();
+        return !toBeDetermined && System.currentTimeMillis() > endTime.getTime();
     }
 
     public boolean isToBeDetermined(){
