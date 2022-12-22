@@ -43,6 +43,7 @@
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="nl.deltares.search.results.DsdResultsSearchContainer" %>
+<liferay-theme:defineObjects/>
 
 <portlet:defineObjects/>
 <%
@@ -57,7 +58,6 @@
     DSDSiteConfiguration configuration;
     String templateKey = "";
 
-    ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
     try {
         configuration = ConfigurationProviderUtil.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
         final String templateMapJson = configuration.templateMap();
@@ -126,7 +126,12 @@
             String date = registrationDisplayContext.getStartDate();
             boolean writeDateHeader = !date.isEmpty() && !lastDate.equals(date);
             lastDate = date;
-
+            String dateHeader;
+            if (registrationDisplayContext.getRegistration().isToBeDetermined()) {
+                dateHeader = LanguageUtil.format(locale, "dsd.theme.session.tobedetermined", java.util.Optional.empty());
+            } else {
+                dateHeader = date;
+            }
             String colorClass;
             if (registrationDisplayContext.isPastEvent()) {
                 colorClass = "past-event";
@@ -142,7 +147,7 @@
         >
             <c:if test="<%= writeDateHeader %>">
                 <div class="date-title <%= colorClass %>">
-                    <span><%= date %></span>
+                    <span><%= dateHeader %></span>
                 </div>
             </c:if>
             <%
