@@ -213,6 +213,8 @@ public class RegistrationDisplayContext {
     public boolean isPastEvent() {
         final Registration registration = getRegistration();
         if (registration != null) {
+
+            if (registration.isToBeDetermined()) return false;
             return getEndDate(this.registration).getTime() < System.currentTimeMillis();
         }
         return true;
@@ -332,11 +334,11 @@ public class RegistrationDisplayContext {
                                     action.equals("unregister") ? PortletRequest.ACTION_PHASE : PortletRequest.RENDER_PHASE);
                     portletURL.setWindowState(LiferayWindowState.NORMAL);
                     portletURL.setPortletMode(LiferayPortletMode.VIEW);
-                    portletURL.setParameter("javax.portlet.action", "/submit/register/form");
-                    portletURL.setParameter("articleId", getRegistration().getArticleId());
-                    portletURL.setParameter("action", action);
-                    if (userId != null) portletURL.setParameter("userId", userId.toString());
-                    portletURL.setParameter("redirect", redirect);
+                    portletURL.getRenderParameters().setValue("javax.portlet.action", "/submit/register/form");
+                    portletURL.getRenderParameters().setValue("articleId", getRegistration().getArticleId());
+                    portletURL.getRenderParameters().setValue("action", action);
+                    if (userId != null) portletURL.getRenderParameters().setValue("userId", userId.toString());
+                    portletURL.getRenderParameters().setValue("redirect", redirect);
                     return portletURL.toString();
                 }
             } catch (Exception e) {
