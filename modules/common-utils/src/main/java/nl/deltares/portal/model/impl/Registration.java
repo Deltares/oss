@@ -36,10 +36,11 @@ public abstract class Registration extends AbsDsdArticle {
     private Registration parentRegistration = null;
     private boolean overlapWithParent = true;
     private boolean hasParent = true;
-    Date startTime = new Date();
-    Date endTime = new Date();
+    Date startTime = new Date(0);
+    Date endTime = new Date(0);
     final List<Period> dayPeriods = new ArrayList<>();
     boolean daily = true;
+    boolean toBeDetermined = false;
     private String timeZoneId = "CET";
     private float vat = 21;
 
@@ -100,6 +101,7 @@ public abstract class Registration extends AbsDsdArticle {
 
         String datesOption = XmlContentUtils.getDynamicContentByName(document, "multipleDatesOption", true);
         daily = "daily".equals(datesOption);
+        toBeDetermined = "undetermined".equals(datesOption);
         NodeList registrationDates = XmlContentUtils.getDynamicElementsByName(document, "registrationDate");
         ArrayList<Period> dayPeriods = new ArrayList<>();
         final TimeZone timeZone;
@@ -108,11 +110,13 @@ public abstract class Registration extends AbsDsdArticle {
         } else {
             timeZone = TimeZone.getTimeZone("CET");
         }
-        for (int i = 0; i < registrationDates.getLength(); i++) {
-            Node registrationDate = registrationDates.item(i);
-            Date startOfDay = XmlContentUtils.parseDateTimeFields(registrationDate, "startTime", timeZone);
-            Date endOfDay = XmlContentUtils.parseDateTimeFields(registrationDate, "endTime", timeZone);
-            dayPeriods.add(new Period(startOfDay, endOfDay));
+        if (!toBeDetermined) {
+            for (int i = 0; i < registrationDates.getLength(); i++) {
+                Node registrationDate = registrationDates.item(i);
+                Date startOfDay = XmlContentUtils.parseDateTimeFields(registrationDate, "startTime", timeZone);
+                Date endOfDay = XmlContentUtils.parseDateTimeFields(registrationDate, "endTime", timeZone);
+                dayPeriods.add(new Period(startOfDay, endOfDay));
+            }
         }
 
         if (daily && dayPeriods.size() == 2){
@@ -121,8 +125,11 @@ public abstract class Registration extends AbsDsdArticle {
             this.dayPeriods.addAll(dayPeriods);
         }
 
-        startTime = dayPeriods.get(0).getStartDate();
-        endTime = dayPeriods.get(dayPeriods.size() - 1).getEndDate();
+        if (dayPeriods.size() > 0){
+            startTime = dayPeriods.get(0).getStartDate();
+            endTime = dayPeriods.get(dayPeriods.size() - 1).getEndDate();
+        }
+
 
     }
 
@@ -252,6 +259,10 @@ public abstract class Registration extends AbsDsdArticle {
 
     public boolean isEventInPast(){
         return System.currentTimeMillis() > endTime.getTime();
+    }
+
+    public boolean isToBeDetermined(){
+        return toBeDetermined;
     }
 
     public boolean isMultiDayEvent(){
