@@ -94,8 +94,8 @@
                             <#assign periods = registration.getStartAndEndTimesPerDay() />
                             <#list periods as period >
                                 <#assign dateString = dateUtil.getDate(period.getStartDate(), "dd MMM yyyy", locale, timeZone) />
-                                <#assign timeString = dateUtil.getDate(registration.getStartTime(), "HH:mm", locale, timeZone)
-                                + "&nbsp;-&nbsp;" + dateUtil.getDate(registration.getEndTime(), "HH:mm", locale, timeZone)
+                                <#assign timeString = dateUtil.getDate(period.getStartDate(), "HH:mm", locale, timeZone)
+                                + "&nbsp;-&nbsp;" + dateUtil.getDate(period.getEndDate(), "HH:mm", locale, timeZone)
                                 + " (" + timeZoneId + ")" />
                                 <span class="c-sessions__item__time-date-place__date">
                                     ${dateString}
