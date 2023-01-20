@@ -147,6 +147,7 @@
         <aui:input
                 name="<%= BillingInfo.ATTRIBUTES.billing_reference.name() %>"
                 label="dsd.registration.step3.billing.reference"
+                helpMessage="dsd.registration.step3.billing.reference.info"
                 value="${billingReference}" billing_value="${billingReference}">
             <aui:validator name="required">
                 function () {
