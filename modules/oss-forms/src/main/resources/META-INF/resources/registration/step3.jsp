@@ -157,6 +157,7 @@
         <aui:input
                 name="<%= BillingInfo.ATTRIBUTES.billing_vat.name() %>"
                 label="dsd.registration.step3.billing.vat"
+                helpMessage="dsd.registration.step3.billing.vat.info"
                 value="${billingVat}" billing_value="${billingVat}">
             <aui:validator name="required">
                 function () {
