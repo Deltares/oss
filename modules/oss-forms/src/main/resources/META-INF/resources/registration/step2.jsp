@@ -191,7 +191,7 @@
             String title_setting = (String) attributes.get(BadgeInfo.ATTRIBUTES.badge_title_setting.name());
             boolean yes_checked = "yes".equals(title_setting);
             boolean no_checked = "no".equals(title_setting);
-
+            if (!(yes_checked || no_checked)) no_checked = true;
         %>
         <div class="d-flex justify-content-start">
             <div class="pr-3">
@@ -220,6 +220,8 @@
             boolean name_checked = "name".equals(name_setting);
             boolean initials_checked = "initials".equals(name_setting);
             boolean both_checked = "both".equals(name_setting);
+
+            if (!(name_checked || initials_checked || both_checked)) name_checked = true;
         %>
         <div class="d-flex justify-content-start">
             <div class="pr-3">
