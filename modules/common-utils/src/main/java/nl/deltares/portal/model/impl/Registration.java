@@ -34,7 +34,7 @@ public abstract class Registration extends AbsDsdArticle {
     private String type = "unknown";
     private String topic = "unknown";
     private Registration parentRegistration = null;
-    private boolean overlapWithParent = true;
+    private boolean overlapWithParent = false;
     private boolean hasParent = true;
     Date startTime = new Date(0);
     Date endTime = new Date(0);
