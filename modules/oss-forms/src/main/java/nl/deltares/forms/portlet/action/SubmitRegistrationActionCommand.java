@@ -14,14 +14,12 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.*;
 import nl.deltares.model.BadgeInfo;
 import nl.deltares.model.BillingInfo;
-import nl.deltares.model.DownloadRequest;
 import nl.deltares.model.RegistrationRequest;
 import nl.deltares.emails.DsdEmail;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
-import nl.deltares.portal.model.impl.Terms;
 import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -272,7 +270,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 Registration parentRegistration = dsdParserUtils.getRegistration(siteId, articleId);
                 registrationRequest.addRegistration(parentRegistration);
 
-                List<Registration> childRegistrations = dsdSessionUtils.getChildRegistrations(parentRegistration, themeDisplay.getLocale());
+                List<Registration> childRegistrations = dsdSessionUtils.getChildRegistrations(parentRegistration);
                 for (Registration childRegistration : childRegistrations) {
                     if (ParamUtil.getString(actionRequest, CHILD_PREFIX + childRegistration.getArticleId()).equals("true")) {
                         registrationRequest.addChildRegistration(parentRegistration, childRegistration);
