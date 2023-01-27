@@ -1,9 +1,8 @@
 package nl.deltares.emails;
 
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.PropsUtil;
-
 import javax.activation.*;
 import javax.mail.*;
 import javax.mail.internet.*;

@@ -9,8 +9,10 @@
                 <#assign journalArticle = assetRenderer.getArticle() />
                 <#assign downloadGroup = parserUtils.toDsdArticle(journalArticle, locale) />
                 <#assign imageUrl = downloadGroup.getSmallImageURL(themeDisplay) />
+                <#assign groupPageUrl = downloadGroup.getGroupPage(themeDisplay) />
+
                 <!--repeatable element-->
-                <a href="${downloadGroup.getGroupPage()}" target="_blank" class="slide-holder">
+                <a href="${groupPageUrl}" target="_blank" class="slide-holder">
                     <div class="slide-content">
 
                         <img alt="${downloadGroup.getTitle()}" src="${imageUrl}" width="91"/>

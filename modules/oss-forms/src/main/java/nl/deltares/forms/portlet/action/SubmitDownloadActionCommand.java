@@ -136,7 +136,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             instance.removeDataRequest(dataRequest);
         }
         try {
-            dataRequest = new CreateDownloadLinksRequest(id, user, downloadRequest, downloadUtils, loadedEmail);
+            dataRequest = new CreateDownloadLinksRequest(id, user, downloadRequest, downloadUtils, loadedEmail, licenseManagerUtils);
         } catch (IOException e) {
             SessionErrors.add(actionRequest, String.format("Failed to create downloadLinks request for user %s : %s",
                     user.getEmailAddress(), e.getMessage()));
@@ -377,6 +377,9 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
 
     @Reference
     private DownloadUtils downloadUtils;
+
+    @Reference
+    protected LicenseManagerUtils licenseManagerUtils;
 
     private ConfigurationProvider _configurationProvider;
 
