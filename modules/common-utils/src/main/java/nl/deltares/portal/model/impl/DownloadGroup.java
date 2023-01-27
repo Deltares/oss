@@ -4,6 +4,7 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.PortalUtil;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.LayoutUtils;
 import nl.deltares.portal.utils.XmlContentUtils;
@@ -17,7 +18,7 @@ public class DownloadGroup extends AbsDsdArticle {
 
     private String name = "";
     private String imageUrl = "";
-    private String groupPage = "";
+    private Layout groupPage;
     private String description = "";
 
     public DownloadGroup(JournalArticle journalArticle, DsdParserUtilsImpl dsdParserUtils, LayoutUtils layoutUtils, Locale locale) throws PortalException {
@@ -30,8 +31,7 @@ public class DownloadGroup extends AbsDsdArticle {
             Document document = getDocument();
             name = XmlContentUtils.getDynamicContentByName(document, "Name", false);
             String linkToPage = XmlContentUtils.getDynamicContentByName(document, "GroupPage", false);
-            final Layout linkToPageLayout = layoutUtils.getLinkToPageLayout(linkToPage);
-            groupPage = linkToPageLayout.getFriendlyURL();
+            groupPage = layoutUtils.getLinkToPageLayout(linkToPage);
             String jsonImage = XmlContentUtils.getDynamicContentByName(document, "Icon", false);
             if (jsonImage != null) {
                 imageUrl = JsonContentUtils.parseImageJson(jsonImage);
@@ -50,8 +50,14 @@ public class DownloadGroup extends AbsDsdArticle {
         return name;
     }
 
-    public String getGroupPage() {
-        return groupPage;
+    public String getGroupPage(ThemeDisplay themeDisplay) throws PortalException {
+        try {
+            final String layoutFriendlyURL = PortalUtil.getLayoutFriendlyURL(groupPage, themeDisplay);
+            return layoutFriendlyURL == null ? groupPage.getFriendlyURL() : layoutFriendlyURL;
+        } catch (PortalException e) {
+            throw new PortalException(String.format("Error getting FriendlyUrl for group page %s: %s!", groupPage.getTitle(), e.getMessage()), e);
+        }
+
     }
 
     public String getDescription() {

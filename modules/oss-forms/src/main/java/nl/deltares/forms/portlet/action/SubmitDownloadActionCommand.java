@@ -23,10 +23,7 @@ import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Download;
 import nl.deltares.portal.model.impl.Subscription;
 import nl.deltares.portal.model.impl.Terms;
-import nl.deltares.portal.utils.DownloadUtils;
-import nl.deltares.portal.utils.DsdParserUtils;
-import nl.deltares.portal.utils.EmailSubscriptionUtils;
-import nl.deltares.portal.utils.KeycloakUtils;
+import nl.deltares.portal.utils.*;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
 import nl.deltares.tasks.impl.CreateDownloadLinksRequest;
@@ -122,7 +119,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             instance.removeDataRequest(dataRequest);
         }
         try {
-            dataRequest = new CreateDownloadLinksRequest(id, user, downloadRequest, downloadUtils, loadedEmail);
+            dataRequest = new CreateDownloadLinksRequest(id, user, downloadRequest, downloadUtils, loadedEmail, licenseManagerUtils);
         } catch (IOException e) {
             SessionErrors.add(actionRequest, String.format("Failed to create downloadLinks request for user %s : %s",
                     user.getEmailAddress(), e.getMessage()));
@@ -356,6 +353,9 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
 
     @Reference
     private DownloadUtils downloadUtils;
+
+    @Reference
+    protected LicenseManagerUtils licenseManagerUtils;
 
     private ConfigurationProvider _configurationProvider;
 
