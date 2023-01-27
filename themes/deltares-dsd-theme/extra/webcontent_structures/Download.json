@@ -80,12 +80,6 @@
       },
       "options": [
         {
-          "value": "terms",
-          "label": {
-            "en_US": "Accept-Terms"
-          }
-        },
-        {
           "value": "billinginfo",
           "label": {
             "en_US": "Billing-Info"
@@ -107,12 +101,6 @@
           "value": "locks",
           "label": {
             "en_US": "Lock-Info"
-          }
-        },
-        {
-          "value": "subscription",
-          "label": {
-            "en_US": "Subscriptions"
           }
         },
         {
@@ -160,7 +148,7 @@
           }
         },
         {
-          "value": "dyhdro",
+          "value": "delft3dfm",
           "label": {
             "en_US": "Delft3D FM Suite"
           }
@@ -174,7 +162,13 @@
         {
           "value": "delftfews",
           "label": {
-            "en_US": "Delft FEWS"
+            "en_US": "Delft-FEWS"
+          }
+        },
+        {
+          "value": "dhydro",
+          "label": {
+            "en_US": "D-HYDRO"
           }
         },
         {
@@ -304,6 +298,12 @@
           "label": {
             "en_US": "Release notes"
           }
+        },
+        {
+          "value": "servicepackage",
+          "label": {
+            "en_US": "Service Package"
+          }
         }
       ],
       "predefinedValue": {
@@ -343,6 +343,29 @@
       "indexType": "keyword",
       "localizable": false,
       "name": "AutomaticLinkCreation",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "checkbox"
+    },
+    {
+      "label": {
+        "en_US": "Dutch Market Only"
+      },
+      "predefinedValue": {
+        "en_US": false
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "boolean",
+      "indexType": "keyword",
+      "localizable": false,
+      "name": "DutchMarketOnly",
       "readOnly": false,
       "repeatable": false,
       "required": false,
@@ -438,6 +461,30 @@
       "indexType": "keyword",
       "localizable": false,
       "name": "Terms",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "ddm-journal-article"
+    },
+    {
+      "label": {
+        "en_US": "License File"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "License file template from which a license can be generated and sent to user."
+      },
+      "dataType": "journal-article",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": false,
+      "name": "LicenseFile",
       "readOnly": false,
       "repeatable": false,
       "required": false,

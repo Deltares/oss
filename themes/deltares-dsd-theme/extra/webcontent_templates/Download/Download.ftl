@@ -7,7 +7,7 @@
 <div class="row no-gutters">
     <div class="col-12 px-3">
         <h4>
-            <a href="${download.getGroupPage()}" target="_blank">
+            <a href="${download.getGroupPage(themeDisplay)}" target="_blank">
                 <strong>${download.getFileName()}</strong>
             </a>
         </h4>
