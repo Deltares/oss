@@ -5,11 +5,14 @@ import com.liferay.portal.kernel.model.User;
 import nl.deltares.model.BillingInfo;
 import nl.deltares.model.DownloadRequest;
 import nl.deltares.emails.serializer.DownloadsEmailSerializer;
+import nl.deltares.portal.model.impl.Download;
+import nl.deltares.portal.model.impl.LicenseFile;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import static nl.deltares.emails.EmailUtils.sendEmail;
@@ -65,7 +68,17 @@ public class DownloadEmail {
 
         loadEmailAddresses();
 
-        sendEmail(bodyBuilder.toString(), subject, sendToEmail, sendCCEmail, sendBCCEmail, sendFromEmail, replyToEmail, loadImageMap(), Collections.emptyMap());
+        sendEmail(bodyBuilder.toString(), subject, sendToEmail, sendCCEmail, sendBCCEmail, sendFromEmail, replyToEmail, loadImageMap(), loadAttachments());
+    }
+
+    private Map<String, File> loadAttachments() {
+        final HashMap<String, File> licenseFiles = new HashMap<>();
+        for (Download download : request.getDownloads()) {
+            final LicenseFile licenseFile = download.getLicenseFile();
+            if (licenseFile == null || licenseFile.getGeneratedFile() == null) continue;
+            licenseFiles.put(licenseFile.getName(), licenseFile.getGeneratedFile());
+        }
+        return licenseFiles;
     }
 
     private HashMap<String, URL> loadImageMap() throws MalformedURLException {

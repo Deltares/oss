@@ -23,10 +23,11 @@ public class Download extends AbsDsdArticle {
     private String fileTopicName;
     private String groupPage = "";
     private List<Subscription> subscriptions = null;
+    private LicenseFile licenseFile = null;
     private boolean automaticLinkCreation = false;
     private Terms terms = null;
 
-    enum ACTION {direct, terms, userinfo, billinginfo, subscription, locks, licenses}
+    enum ACTION {direct, userinfo, billinginfo, locks, licenses}
 
     private final List<ACTION> requiredActions = new ArrayList<>();
 
@@ -84,8 +85,32 @@ public class Download extends AbsDsdArticle {
         }
     }
 
+    public LicenseFile getLicenseFile(){
+        loadLicenseFile();
+        return licenseFile;
+    }
+
+    private void loadLicenseFile() {
+        if(licenseFile != null) return;
+        try {
+            parseLicenseFile();
+        } catch (PortalException e) {
+            LOG.error(String.format("Error parsing licenseFile for Download %s: %s", getTitle(), e.getMessage()));
+        }
+    }
+
+    private void parseLicenseFile() throws PortalException {
+
+        String content = XmlContentUtils.getDynamicContentByName(getDocument(), "LicenseFile", true);
+        if (content != null){
+            JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(content);
+            AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(article, super.getLocale());
+            if (!(dsdArticle instanceof LicenseFile)) throw new PortalException(String.format("Article %s not instance of LicenseFile", article.getTitle()));
+            licenseFile = (LicenseFile) dsdArticle;
+        }
+    }
+
     public Terms getTerms(){
-        if (!isTermsOfUseRequired()) return null;
         loadTerms();
         return terms;
     }
@@ -111,7 +136,6 @@ public class Download extends AbsDsdArticle {
     }
 
     public List<Subscription> getSubscriptions() {
-        if (!isShowSubscription()) return Collections.emptyList();
         loadSubscriptions();
         return Collections.unmodifiableList(subscriptions);
     }
@@ -198,7 +222,7 @@ public class Download extends AbsDsdArticle {
     }
 
     public boolean isShowSubscription() {
-        return requiredActions.contains(ACTION.subscription);
+        return getSubscriptions().size() > 0;
     }
 
     public boolean isUserInfoRequired() {
@@ -206,7 +230,7 @@ public class Download extends AbsDsdArticle {
     }
 
     public boolean isTermsOfUseRequired() {
-        return requiredActions.contains(ACTION.terms);
+        return getTerms() != null;
     }
 
     public boolean isLockTypeRequired() {

@@ -22,14 +22,17 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
     private final User user;
     private final DownloadUtils downloadUtils;
     private final DownloadEmail confirmationEmail;
+    private final LicenseManagerUtils licenseManagerUtils;
 
 
-    public CreateDownloadLinksRequest(String id, User user, DownloadRequest downloadRequest, DownloadUtils downloadUtils, DownloadEmail confirmationEmail) throws IOException {
+    public CreateDownloadLinksRequest(String id, User user, DownloadRequest downloadRequest, DownloadUtils downloadUtils,
+                                      DownloadEmail confirmationEmail, LicenseManagerUtils licenseManagerUtils) throws IOException {
         super(id, user.getUserId());
         this.downloadRequest = downloadRequest;
         this.downloadUtils = downloadUtils;
         this.user = user;
         this.confirmationEmail = confirmationEmail;
+        this.licenseManagerUtils = licenseManagerUtils;
     }
 
     @Override
@@ -79,6 +82,11 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
                     errorMessage = String.format("Failed to register link for file %s : %s ", download.getFileName(), e.getMessage());
                     LOG.warn(errorMessage);
                 }
+                LicenseFile licenseFile = download.getLicenseFile();
+                if (licenseFile != null){
+                    licenseManagerUtils.encryptLicense(licenseFile, user);
+                }
+
                 incrementProcessCount(1);
 
                 if (Thread.interrupted()) {
