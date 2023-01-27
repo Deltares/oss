@@ -3,7 +3,7 @@
 <#assign downloadGroup = parserUtils.toDsdArticle(groupId, articleId) />
 <#assign imageUrl = downloadGroup.getSmallImageURL(themeDisplay) />
 <div>
-    <a href="${downloadGroup.getGroupPage()}">
+    <a href="${downloadGroup.getGroupPage(themeDisplay)}">
         <img alt="${downloadGroup.getTitle()}" src="${imageUrl}" width="91"/>
         <ul>
             <li><h2>${downloadGroup.getName()}</h2></li>
