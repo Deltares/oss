@@ -5,6 +5,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.PortalUtil;
 import nl.deltares.portal.utils.*;
 
 import java.util.*;
@@ -21,7 +23,7 @@ public class Download extends AbsDsdArticle {
     private String fileTopic;
     private String fileTypeName;
     private String fileTopicName;
-    private String groupPage = "";
+    private Layout groupPage;
     private List<Subscription> subscriptions = null;
     private LicenseFile licenseFile = null;
     private boolean automaticLinkCreation = false;
@@ -59,8 +61,7 @@ public class Download extends AbsDsdArticle {
             fileTopicName = fileTopicMap.get(fileTopic);
 
             String linkToPage = getFormFieldValue( "GroupPage", false);
-            final Layout linkToPageLayout = layoutUtils.getLinkToPageLayout(linkToPage);
-            groupPage = linkToPageLayout.getFriendlyURL();
+            groupPage = layoutUtils.getLinkToPageLayout(linkToPage);
 
             final String automaticLinkCreation = getFormFieldValue( "AutomaticLinkCreation", true);
             if (automaticLinkCreation != null) {
@@ -209,8 +210,13 @@ public class Download extends AbsDsdArticle {
         return fileTopicName;
     }
 
-    public String getGroupPage() {
-        return groupPage;
+    public String getGroupPage(ThemeDisplay themeDisplay) throws PortalException {
+        try {
+            final String layoutFriendlyURL = PortalUtil.getLayoutFriendlyURL(groupPage, themeDisplay);
+            return layoutFriendlyURL == null ? groupPage.getFriendlyURL() : layoutFriendlyURL;
+        } catch (PortalException e) {
+            throw new PortalException(String.format("Error getting FriendlyUrl for group page %s: %s!", groupPage.getTitle(), e.getMessage()), e);
+        }
     }
 
     public boolean isBillingRequired() {
