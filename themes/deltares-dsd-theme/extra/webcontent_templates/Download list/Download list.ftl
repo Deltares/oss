@@ -2,20 +2,19 @@
 <#assign downloadUtils = serviceLocator.findService("nl.deltares.portal.utils.DownloadUtils") />
 <#assign articleId = .vars['reserved-article-id'].getData() />
 <#assign download = dsdParserUtils.toDsdArticle(themeDisplay.getScopeGroupId(), articleId) />
-<#assign count = downloadUtils.getDownloadCount(download) />
 <#assign showButtons = themeDisplay.isSignedIn() />
 
 <div class="row no-gutters">
 
     <div class="col-12 px-3">
         <h4>
-            <a href="${download.getGroupPage()}" target="_blank">
+            <a href="${download.getGroupPage(themeDisplay)}" target="_blank">
                 <strong>${download.getFileName()}</strong>
 
             </a>
         </h4>
         <div>
-            ${download.getFileTopicName()} | ${download.getFileTypeName()} | ${download.getFileSize()} | ${count} downloads
+            ${download.getFileTopicName()} | ${download.getFileTypeName()} | ${download.getFileSize()}
             <#if showButtons>
                 <span class="d-block" style="float:right">
                 <#if is_sanctioned?? && is_sanctioned >
@@ -44,7 +43,8 @@
                 </#if>
 
                     <#if buttonDisable >
-                        <a class="btn-lg btn-primary disabled"
+                        <a href="#" data-article-id="${download.getArticleId()}"
+                           class="btn-lg btn-primary disabled"
                            role="button" aria-pressed="true" style="color:#fff">
                         ${buttonText}
                     </a>
