@@ -3,6 +3,12 @@ FROM liferay/dxp:7.1.10-sp5
 MAINTAINER Allan Revolorio <allan@firelay.com>
 
 USER root
+
+#Install modules for lmcrypt
+RUN apt-get update
+RUN apt-get -y install gcc-multilib
+RUN apt-get -y install lsb-core
+
 COPY resources/wait-for-it.sh /etc/liferay/wait-for-it.sh
 RUN chown liferay:liferay /etc/liferay/wait-for-it.sh
 RUN chmod a+x /etc/liferay/wait-for-it.sh

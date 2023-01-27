@@ -7,6 +7,7 @@ import nl.deltares.model.DownloadRequest;
 import nl.deltares.emails.DownloadEmail;
 import nl.deltares.model.LicenseInfo;
 import nl.deltares.portal.model.impl.Download;
+import nl.deltares.portal.model.impl.LicenseFile;
 import nl.deltares.portal.utils.KeycloakUtils;
 
 import java.util.List;
@@ -303,6 +304,16 @@ public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> 
             writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.linkPassword", null)).append("</td>");
             writer.append("<td>");
             writer.append(sharePassword);
+            writer.append("</td>");
+            writer.append("</tr>");
+        }
+
+        final LicenseFile licenseFile = download.getLicenseFile();
+        if (licenseFile != null){
+            writer.append("<tr>");
+            writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.licenseAttachment", null)).append("</td>");
+            writer.append("<td>");
+            writer.append(licenseFile.getName());
             writer.append("</td>");
             writer.append("</tr>");
         }

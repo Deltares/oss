@@ -204,6 +204,9 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
             case Terms:
                 article = new Terms(journalArticle, this, locale);
                 return article;
+            case Licensefile:
+                article = new LicenseFile(journalArticle, this, locale);
+                return article;
             default:
                 article = new GenericArticle(journalArticle, this, locale);
         }
