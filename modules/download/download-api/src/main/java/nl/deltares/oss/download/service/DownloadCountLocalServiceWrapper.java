@@ -228,6 +228,11 @@ public class DownloadCountLocalServiceWrapper
 		return _downloadCountLocalService.getDownloadCount(groupId, downloadId);
 	}
 
+	@Override
+	public int getDownloadCountByGroupId(long groupId) {
+		return _downloadCountLocalService.getDownloadCountByGroupId(groupId);
+	}
+
 	/**
 	 * Returns a range of all the download counts.
 	 *

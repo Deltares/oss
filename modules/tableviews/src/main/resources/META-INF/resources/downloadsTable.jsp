@@ -6,13 +6,14 @@
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
+<%@ page import="com.liferay.portal.kernel.dao.search.RowChecker" %>
 <liferay-theme:defineObjects/>
 
 <portlet:defineObjects/>
 
 <%
     final Integer count = (Integer) request.getAttribute("total");
-    final String filterId = (String) request.getAttribute("filterId");
+    final String filterEmail = (String) request.getAttribute("filterEmail");
 
 %>
 <aui:input name="runningProcess" type="hidden"/>
@@ -43,12 +44,7 @@
                     <div class="control-label"><liferay-ui:message key="table.filter.label"/></div>
                 </aui:col>
                 <aui:col width="20">
-                    <aui:select name="filterSelection" label="" value="<%=filterId%>">
-                        <aui:option value="none" label="table.filter.option.none" />
-                        <aui:option value="pendingpayment" label="table.filter.option.payment"/>
-                        <aui:option value="processing" label="table.filter.option.processing"/>
-                        <aui:option value="direct" label="table.filter.option.direct"/>
-                    </aui:select>
+                    <aui:input name="filterEmail" label="" />
                 </aui:col>
                 <aui:col width="50"/>
                 <aui:col width="20">
@@ -76,24 +72,18 @@
         <jsp:useBean id="records" class="java.util.List" scope="request"/>
 
         <liferay-ui:search-container id="tableResults" delta="50" emptyResultsMessage='<%=LanguageUtil.get(locale, "no-download-records")%>'
-                                     total="<%=count%>">
+                                     total="<%=count%>" rowChecker="<%= new RowChecker(renderResponse) %>" >
             <liferay-ui:search-container-results results="<%= records %>" />
 
             <liferay-ui:search-container-row
                     className="nl.deltares.tableview.model.DisplayDownload"
                     modelVar="entry"
+                    keyProperty="id"
             >
-                <liferay-ui:search-container-column-text>
-                    <aui:input
-                            name="download_${entry.getId()}"
-                            label=""
-                            recordId="${entry.getId()}"
-                            type="checkbox"
-                            cssClass="downloadTableRecord"
-                            checked="false"/>
-                </liferay-ui:search-container-column-text>
-                <liferay-ui:search-container-column-text property="downloadId" name="Download ID"/>
+                <liferay-ui:search-container-column-text property="id" name="Record ID" />
+                <liferay-ui:search-container-column-text property="downloadId" name="Article ID"/>
                 <liferay-ui:search-container-column-date property="modifiedDate" name="Last download date"/>
+                <liferay-ui:search-container-column-date property="expirationDate" name="Expiration date"/>
                 <liferay-ui:search-container-column-text property="email" name="User"/>
                 <liferay-ui:search-container-column-text property="organization" name="Organization"/>
                 <liferay-ui:search-container-column-text property="city" name="City"/>
@@ -105,11 +95,11 @@
             </liferay-ui:search-container-row>
             <liferay-ui:search-iterator/>
         </liferay-ui:search-container>
-        <aui:input name="selectedFilterId" type="hidden" value="<%=filterId%>"/>
+
         <aui:button-row>
             <aui:button name="exportResultsButton" type="submit" value="Export"/>
             <aui:button name="deleteSelectedButton" type="submit" value="Delete selected"/>
-            <aui:button name="paidSelectedButton" type="submit" value="Set to paid"/>
+
         </aui:button-row>
     </aui:form>
     <hr>
@@ -133,11 +123,6 @@
     TableFormsUtil.deleteSelected("<portlet:resourceURL/>", "<liferay-portlet:renderURL/>", "<portlet:namespace/>", "delete-selected-downloads.csv")
     };
 
-    let paidSelectedButton = document.getElementById('<portlet:namespace/>paidSelectedButton');
-    paidSelectedButton.onclick = function(event){
-    event.preventDefault();
-    TableFormsUtil.paidSelected("<portlet:resourceURL/>", "<liferay-portlet:renderURL/>", "<portlet:namespace/>", "paid-selected-downloads.csv")
-    };
 
 </aui:script>
 

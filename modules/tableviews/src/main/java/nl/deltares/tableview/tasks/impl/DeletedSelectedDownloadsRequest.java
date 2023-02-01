@@ -72,7 +72,7 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
     }
 
     private void deleteSelectedRecords(PrintWriter writer) {
-        writer.println("downloadId,modifiedDate,shareId,filePath,directDownloadUrl,email,organization,city,country");
+        writer.println("downloadId,modifiedDate, expirationDate, shareId,filePath,directDownloadUrl,email,organization,city,country");
 
         totalCount = selectedRecords.size();
 
@@ -85,8 +85,9 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
                 if (user != null){
                     email = user.getEmailAddress();
                 }
-                writer.println(String.format("%d,%s,%d,%s,%s,%s,%s,%s,%s",
-                        download.getDownloadId(), dateFormat.format(download.getModifiedDate()), download.getShareId(),
+                writer.println(String.format("%d,%s,%s,%d,%s,%s,%s,%s,%s,%s",
+                        download.getDownloadId(), dateFormat.format(download.getModifiedDate()), dateFormat.format(download.getExpiryDate()),
+                        download.getShareId(),
                         download.getFilePath(), download.getDirectDownloadUrl(), email, download.getOrganization(),
                         download.getCity(), download.getCountryCode()));
             } catch (PortalException e) {

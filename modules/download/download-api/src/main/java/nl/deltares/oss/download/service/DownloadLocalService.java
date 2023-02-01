@@ -77,6 +77,8 @@ public interface DownloadLocalService
 
 	public int countDownloadsByShareId(long groupId, int shareId);
 
+	public int countDownloadsByUserId(long groupId, long userId);
+
 	/**
 	 * Creates a new download with the primary key. Does not add the download to the database.
 	 *
@@ -197,6 +199,11 @@ public interface DownloadLocalService
 
 	public List<Download> findDownloadsByShareId(
 		long groupId, int shareId, int start, int end);
+
+	public List<Download> findDownloadsByUserId(long groupId, long userId);
+
+	public List<Download> findDownloadsByUserId(
+		long groupId, long userId, int start, int end);
 
 	public List<Download> findUserDownloadsByShareId(
 		long groupId, long userId, int shareId);

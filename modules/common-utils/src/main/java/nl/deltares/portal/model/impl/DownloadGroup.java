@@ -53,7 +53,9 @@ public class DownloadGroup extends AbsDsdArticle {
     public String getGroupPage(ThemeDisplay themeDisplay) throws PortalException {
         try {
             final String layoutFriendlyURL = PortalUtil.getLayoutFriendlyURL(groupPage, themeDisplay);
-            return layoutFriendlyURL == null ? groupPage.getFriendlyURL() : layoutFriendlyURL;
+            return layoutFriendlyURL == null ?
+                    PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay) + groupPage.getFriendlyURL()
+                    : layoutFriendlyURL;
         } catch (PortalException e) {
             throw new PortalException(String.format("Error getting FriendlyUrl for group page %s: %s!", groupPage.getTitle(), e.getMessage()), e);
         }
