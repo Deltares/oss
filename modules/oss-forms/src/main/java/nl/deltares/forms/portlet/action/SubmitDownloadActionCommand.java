@@ -80,6 +80,23 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
 
         boolean success = true;
         if ("download".equals(action)) {
+
+            User registrationUser;
+            //noinspection DuplicatedCode
+            if (isRegisterSomeoneElse(actionRequest)){
+                try {
+                    registrationUser = themeDisplay.getUser();
+                    final String email = ParamUtil.getString(actionRequest, KeycloakUtils.ATTRIBUTES.email.name());
+                    final String firstName = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.first_name.name());
+                    final String lastName = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.last_name.name());
+                    user = adminUtils.getOrCreateRegistrationUser(themeDisplay.getCompanyId(), registrationUser,
+                            email, firstName, lastName, themeDisplay.getLocale());
+                } catch (Exception e) {
+                    success = false;
+                    SessionErrors.add(actionRequest, "registration-failed", e.getMessage() );
+                }
+            }
+
             if (downloadRequest.isUserInfoRequired()) {
                 Map<String, String> userAttributes = getUserAttributes(actionRequest);
                 registerAcceptedTerms(downloadRequest, userAttributes);
@@ -350,6 +367,13 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             this.subscriptionUtils = (EmailSubscriptionUtils) keycloakUtils;
         }
     }
+
+    private boolean isRegisterSomeoneElse(ActionRequest actionRequest) {
+        return Boolean.parseBoolean(ParamUtil.getString(actionRequest, "registration_other"));
+    }
+
+    @Reference
+    private AdminUtils adminUtils;
 
     @Reference
     private DsdParserUtils dsdParserUtils;

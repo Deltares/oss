@@ -1,7 +1,7 @@
 dependencies {
-	compileOnly project(":modules:download:download-api")
+	implementation(project(":modules:download:download-api"))
 
-	compileOnly group: "com.liferay.portal", name: "release.dxp.api"
+	implementation(group: "com.liferay.portal", name: "release.dxp.api")
 }
 
 buildService {

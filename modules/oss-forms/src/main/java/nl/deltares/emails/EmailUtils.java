@@ -1,10 +1,13 @@
 package nl.deltares.emails;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 
 import javax.activation.*;
 import javax.mail.*;
 import javax.mail.internet.*;
+import java.io.File;
 import java.net.URL;
 import java.util.Map;
 
@@ -12,15 +15,18 @@ import static com.liferay.mail.kernel.service.MailServiceUtil.getSession;
 
 public class EmailUtils {
 
+    private static final Log LOG = LogFactoryUtil.getLog(EmailUtils.class);
+
     static void sendEmail(String body, String subject, String sendToEmail, String sendCcEmail, String sendBccEmail,
-                          String sendFromEmail, String replyToEmail,  Map<String, URL> data) throws Exception {
+                          String sendFromEmail, String replyToEmail,  Map<String, URL> data, Map<String, File> attachments) throws Exception {
 
         MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
         mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
         mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
 
         final Session session = getSession();
-        session.getProperties().setProperty("mail.smtp.starttls.enable", "true");
+        String startTls = PropsUtil.get("mail.session.mail.smtp.starttls.enable");
+        session.getProperties().setProperty("mail.smtp.starttls.enable", startTls == null ? "true": startTls);
         Transport transport = session.getTransport();
         try {
             Message message = new MimeMessage(session);
@@ -48,6 +54,14 @@ public class EmailUtils {
 
             }
 
+            for (String attachmentId : attachments.keySet()) {
+                MimeBodyPart attachmentPart = new MimeBodyPart();
+                final File file = attachments.get(attachmentId);
+                attachmentPart.attachFile(file);
+                attachmentPart.setFileName(attachmentId);
+                multipart.addBodyPart(attachmentPart);
+            }
+
             // put everything together
             message.setContent(multipart);
             transport.connect(
@@ -56,7 +70,9 @@ public class EmailUtils {
                     PropsUtil.get("mail.session.mail.smtp.user"),
                     PropsUtil.get("mail.session.mail.smtp.password"));
             transport.sendMessage(message, message.getAllRecipients());
-        } finally {
+        } catch (Exception e){
+            LOG.warn(String.format("Failed to send email to %s: %s", sendToEmail, e.getMessage()));
+        }finally {
             transport.close();
         }
 
