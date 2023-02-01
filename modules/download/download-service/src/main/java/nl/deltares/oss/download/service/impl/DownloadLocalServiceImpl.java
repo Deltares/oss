@@ -87,7 +87,21 @@ public class DownloadLocalServiceImpl extends DownloadLocalServiceBaseImpl {
 		return DownloadUtil.findByDownloadsByShareId(groupId, shareId);
 	}
 
-	public int countDownloadsByShareId(long groupId, int shareId){
-		return DownloadUtil.countByDownloadsByShareId(groupId, shareId);
-	}
+    public int countDownloadsByShareId(long groupId, int shareId){
+        return DownloadUtil.countByDownloadsByShareId(groupId, shareId);
+    }
+
+    public List<Download> findDownloadsByUserId(long groupId, long userId){
+        return DownloadUtil.findByUserDownloads(groupId, userId);
+    }
+
+    public List<Download> findDownloadsByUserId(long groupId, long userId, int start, int end){
+        return DownloadUtil.findByUserDownloads(groupId, userId);
+    }
+
+    public int countDownloadsByUserId(long groupId, long userId){
+        return DownloadUtil.countByUserDownloads(groupId, userId);
+    }
+
+
 }

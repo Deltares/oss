@@ -1,6 +1,8 @@
 package nl.deltares.tableview.portlet.portlet;
 
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -13,7 +15,6 @@ import nl.deltares.tableview.model.DisplayDownload;
 import nl.deltares.tableview.portlet.constants.TablePortletKeys;
 import nl.deltares.tableview.tasks.impl.DeletedSelectedDownloadsRequest;
 import nl.deltares.tableview.tasks.impl.ExportTableRequest;
-import nl.deltares.tableview.tasks.impl.PaidSelectedDownloadsRequest;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
 import org.osgi.service.component.annotations.Component;
@@ -67,14 +68,14 @@ public class DownloadTablePortlet extends MVCPortlet {
 
         final int cur = ParamUtil.getInteger(renderRequest, "cur", 0);
         final int deltas = ParamUtil.getInteger(renderRequest, "delta", 50);
-        final String filterId = ParamUtil.getString(renderRequest, "filterId", "none");
+        final String email = ParamUtil.getString(renderRequest, "filterEmail", null);
 
-        doFilterValues(filterId, cur, deltas, renderRequest);
+        doFilterValues(email, cur, deltas, renderRequest);
 
         super.render(renderRequest, renderResponse);
     }
 
-    private void doFilterValues(String filterId, int cur, int deltas, RenderRequest renderRequest) {
+    private void doFilterValues(String email, int cur, int deltas, RenderRequest renderRequest) {
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest
                 .getAttribute(WebKeys.THEME_DISPLAY);
 
@@ -83,22 +84,13 @@ public class DownloadTablePortlet extends MVCPortlet {
         final int downloadsCount;
         final int end = cur + deltas;
         try {
-            switch (filterId) {
-                case "pendingpayment":
-                    downloads = DownloadLocalServiceUtil.findDownloadsByShareId(siteGroupId, -1, cur, end);
-                    downloadsCount = DownloadLocalServiceUtil.countDownloadsByShareId(siteGroupId, -1);
-                    break;
-                case "processing":
-                    downloads = DownloadLocalServiceUtil.findDownloadsByShareId(siteGroupId, -9, cur, end);
-                    downloadsCount = DownloadLocalServiceUtil.countDownloadsByShareId(siteGroupId, -9);
-                    break;
-                case "direct":
-                    downloads = DownloadLocalServiceUtil.findDirectDownloads(siteGroupId, cur, end);
-                    downloadsCount = DownloadLocalServiceUtil.countDirectDownloads(siteGroupId);
-                    break;
-                default:
-                    downloads = DownloadLocalServiceUtil.getDownloads(cur, end);
-                    downloadsCount = DownloadLocalServiceUtil.getDownloadsCount();
+            if (email != null && email.trim().length() > 0) {
+                User user = UserLocalServiceUtil.getUserByEmailAddress(themeDisplay.getCompanyId(), email);
+                downloads = DownloadLocalServiceUtil.findDownloadsByUserId(siteGroupId, user.getUserId(), cur, end);
+                downloadsCount = DownloadLocalServiceUtil.countDownloadsByUserId(siteGroupId, user.getUserId());
+            } else {
+                downloads = DownloadLocalServiceUtil.findDownloads(siteGroupId, cur, end);
+                downloadsCount = DownloadLocalServiceUtil.countDownloads(siteGroupId);
             }
 
             renderRequest.setAttribute("records", convertToDisplayDownloads(downloads));
@@ -125,17 +117,18 @@ public class DownloadTablePortlet extends MVCPortlet {
     @SuppressWarnings("unused")
     public void filter(ActionRequest actionRequest, ActionResponse actionResponse) {
 
-        final String filter = ParamUtil.getString(actionRequest, "filterSelection", "none");
-        actionResponse.getRenderParameters().setValue("filterId", filter);
+        final String filter = ParamUtil.getString(actionRequest, "filterEmail", "none");
+        actionResponse.getRenderParameters().setValue("filterEmail", filter);
     }
 
     /**
      * Get latest share information from cloud and update local database
-     * @param actionRequest Update action
+     *
+     * @param actionRequest  Update action
      * @param actionResponse Update response
      */
     @SuppressWarnings("unused")
-    public void updateShares(ActionRequest actionRequest, ActionResponse actionResponse){
+    public void updateShares(ActionRequest actionRequest, ActionResponse actionResponse) {
 
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest
                 .getAttribute(WebKeys.THEME_DISPLAY);
@@ -147,6 +140,8 @@ public class DownloadTablePortlet extends MVCPortlet {
         downloadUtils.updatePendingShares(null, siteGroupId);
         downloadUtils.updateProcessingShares(null, siteGroupId);
 
+        final String selectedEmail = ParamUtil.getString(actionRequest, "filterEmail", null);
+        actionResponse.getRenderParameters().setValue("filterEmail", selectedEmail);
     }
 
     @Override
@@ -161,23 +156,19 @@ public class DownloadTablePortlet extends MVCPortlet {
         }
         String action = ParamUtil.getString(request, "action");
         String id = ParamUtil.getString(request, "id", null);
-        String filterId = ParamUtil.getString(request, "filterId", "none");
+        String email = ParamUtil.getString(request, "filterEmail", null);
 
         if ("export".equals(action)) {
             if (id == null) {
                 id = DownloadTablePortlet.class.getName() + themeDisplay.getUserId();
             }
-            exportTable(id, filterId, response, themeDisplay);
+            exportTable(id, email, response, themeDisplay);
         } else if ("delete-selected".equals(action)) {
             if (id == null) {
                 id = DownloadTablePortlet.class.getName() + themeDisplay.getUserId();
             }
             deletedSelected(id, request, response, themeDisplay);
-        } else if ("paid-selected".equals(action)) {
-            if (id == null) {
-                id = DownloadTablePortlet.class.getName() + themeDisplay.getUserId();
-            }
-            paidSelected(id, request, response, themeDisplay);
+
         } else if ("updateStatus".equals(action)) {
             DataRequestManager.getInstance().updateStatus(id, response);
         } else if ("downloadLog".equals(action)) {
@@ -215,39 +206,14 @@ public class DownloadTablePortlet extends MVCPortlet {
         }
     }
 
-    private void paidSelected(String dataRequestId, ResourceRequest request, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
 
-        final HttpServletRequest httpReq = PortalUtil.getOriginalServletRequest(PortalUtil.getHttpServletRequest(request));
-        final String[] selectedIds = httpReq.getParameterValues("selection");
 
-        if (selectedIds.length == 0) {
-            response.setContentType("text/plain");
-            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-        } else {
-            response.setContentType("text/csv");
-            DataRequestManager instance = DataRequestManager.getInstance();
-            DataRequest dataRequest = instance.getDataRequest(dataRequestId);
-            if (dataRequest == null) {
-                dataRequest = new PaidSelectedDownloadsRequest(dataRequestId, themeDisplay.getUserId(), Arrays.asList(selectedIds));
-                instance.addToQueue(dataRequest);
-            } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
-                instance.removeDataRequest(dataRequest);
-            }
-            response.setStatus(HttpServletResponse.SC_OK);
-            String statusMessage = dataRequest.getStatusMessage();
-            response.setContentLength(statusMessage.length());
-            PrintWriter writer = response.getWriter();
-            writer.println(statusMessage);
-
-        }
-    }
-
-    private void exportTable(String dataRequestId, String filterId, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
+    private void exportTable(String dataRequestId, String filterEmail, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
         response.setContentType("text/csv");
         DataRequestManager instance = DataRequestManager.getInstance();
         DataRequest dataRequest = instance.getDataRequest(dataRequestId);
         if (dataRequest == null) {
-            dataRequest = new ExportTableRequest(dataRequestId, filterId, themeDisplay.getUserId(), themeDisplay.getSiteGroup());
+            dataRequest = new ExportTableRequest(dataRequestId, filterEmail, themeDisplay.getUserId(), themeDisplay.getSiteGroup());
             instance.addToQueue(dataRequest);
         } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
             instance.removeDataRequest(dataRequest);
