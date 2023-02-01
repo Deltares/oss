@@ -50,6 +50,8 @@ public class DisplayDownload implements Comparable<DisplayDownload> {
         return download.getModifiedDate();
     }
 
+    public Date getExpirationDate() {return download.getExpiryDate(); }
+
     public String getEmail() {
         return email;
     }
@@ -72,8 +74,6 @@ public class DisplayDownload implements Comparable<DisplayDownload> {
 
     public String getShareIdStatus() {
         final int shareId = download.getShareId();
-
-        if (!directDownloadUrl.isEmpty()) return "direct download";
         switch (shareId){
             case -9 : return "processing";
             case -1 : return "pending payment";

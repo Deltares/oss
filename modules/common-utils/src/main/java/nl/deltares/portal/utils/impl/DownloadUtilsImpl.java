@@ -309,9 +309,11 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
             } else {
                 userDownload.setShareId(-1);
             }
-            final Object url = shareInfo.get("url");
+            String url = (String) shareInfo.get("url");
             if (url != null) {
-                userDownload.setDirectDownloadUrl((String) url);
+                final Object password = shareInfo.get("password");
+                if (password != null) url = url.concat(" ( ").concat((String)password).concat(" )");
+                userDownload.setDirectDownloadUrl(url);
             }
         }
         DownloadLocalServiceUtil.updateDownload(userDownload);
@@ -412,9 +414,12 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         final int shareId = Integer.parseInt(shareIdNodes.item(shareIndex).getTextContent());
         final NodeList expNodes = document.getElementsByTagName("expiration");
         final Date expiration = dateFormat.parse(expNodes.item(shareIndex).getTextContent());
+        final NodeList tokenNodes = document.getElementsByTagName("token");
+        final String token = tokenNodes.item(shareIndex).getTextContent();
 
         download.setShareId(shareId);
         download.setExpiryDate(expiration);
+        download.setDirectDownloadUrl(SHARE_PATH.concat(token));
         return true;
     }
 

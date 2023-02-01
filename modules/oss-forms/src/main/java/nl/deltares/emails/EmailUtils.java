@@ -26,7 +26,6 @@ public class EmailUtils {
         final Session session = MailServiceUtil.getSession();
         String startTls = PropsUtil.get("mail.session.mail.smtp.starttls.enable");
         session.getProperties().setProperty("mail.smtp.starttls.enable", startTls == null ? "true": startTls);
-
         Transport transport = session.getTransport();
         try {
             Message message = new MimeMessage(session);
