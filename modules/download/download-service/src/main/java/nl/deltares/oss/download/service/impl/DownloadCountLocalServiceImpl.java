@@ -17,6 +17,7 @@ package nl.deltares.oss.download.service.impl;
 import nl.deltares.oss.download.model.DownloadCount;
 import nl.deltares.oss.download.service.base.DownloadCountLocalServiceBaseImpl;
 import nl.deltares.oss.download.service.persistence.DownloadCountUtil;
+import nl.deltares.oss.download.service.persistence.DownloadUtil;
 
 /**
  * The implementation of the download count local service.
@@ -41,5 +42,9 @@ public class DownloadCountLocalServiceImpl
      */
     public DownloadCount getDownloadCount(long groupId, long downloadId) {
         return DownloadCountUtil.fetchByDownloadCountByGroup(groupId, downloadId);
+    }
+
+    public int getDownloadCountByGroupId(long groupId) {
+        return DownloadUtil.countByGroupDownloads(groupId);
     }
 }

@@ -97,7 +97,7 @@
 </aui:fieldset>
 <aui:script use="event, node, aui-base">
 
-    userConfirm = function (){
+    userConfirm = function (event){
         if (confirm("You are about to delete this registration.\nDo you want to continue?") === false) {
             event.preventDefault();
         }
