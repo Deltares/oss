@@ -6,29 +6,6 @@
     "fields": [
         {
             "label": {
-                "en_US": "Store in parent site"
-            },
-            "predefinedValue": {
-                "en_US": true
-            },
-            "style": {
-                "en_US": ""
-            },
-            "tip": {
-                "en_US": "Choose to store content under parent site."
-            },
-            "dataType": "boolean",
-            "indexType": "keyword",
-            "localizable": true,
-            "name": "storeInParentSite",
-            "readOnly": false,
-            "repeatable": false,
-            "required": false,
-            "showLabel": true,
-            "type": "checkbox"
-        },
-        {
-            "label": {
                 "en_US": "Expert name"
             },
             "predefinedValue": {
@@ -142,6 +119,29 @@
                     "required": true,
                     "showLabel": true,
                     "type": "text"
+                },
+                {
+                    "label": {
+                        "en_US": "Fill missing fields"
+                    },
+                    "predefinedValue": {
+                        "en_US": false
+                    },
+                    "style": {
+                        "en_US": ""
+                    },
+                    "tip": {
+                        "en_US": "Automatically fill missing fields with values from the database."
+                    },
+                    "dataType": "boolean",
+                    "indexType": "keyword",
+                    "localizable": true,
+                    "name": "autoFill",
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": false,
+                    "showLabel": true,
+                    "type": "checkbox"
                 }
             ]
         }
