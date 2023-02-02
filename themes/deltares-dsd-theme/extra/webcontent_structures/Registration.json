@@ -1,247 +1,247 @@
 {
-  "availableLanguageIds": [
-    "en_US"
-  ],
-  "defaultLanguageId": "en_US",
-  "fields": [
-    {
-      "label": {
-        "en_US": "Event ID"
-      },
-      "predefinedValue": {
-        "en_US": ""
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": ""
-      },
-      "dataType": "number",
-      "fieldNamespace": "ddm",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "eventId",
-      "readOnly": false,
-      "repeatable": false,
-      "required": true,
-      "showLabel": true,
-      "type": "ddm-number"
-    },
-    {
-      "label": {
-        "en_US": "Price"
-      },
-      "predefinedValue": {
-        "en_US": ""
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": ""
-      },
-      "dataType": "double",
-      "fieldNamespace": "ddm",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "price",
-      "readOnly": false,
-      "repeatable": false,
-      "required": true,
-      "showLabel": true,
-      "type": "ddm-decimal",
-      "nestedFields": [
+    "availableLanguageIds": [
+        "en_US"
+    ],
+    "defaultLanguageId": "en_US",
+    "fields": [
         {
-          "label": {
-            "en_US": "Currency"
-          },
-          "predefinedValue": {
-            "en_US": "€ "
-          },
-          "style": {
-            "en_US": ""
-          },
-          "tip": {
-            "en_US": ""
-          },
-          "dataType": "string",
-          "indexType": "keyword",
-          "localizable": false,
-          "name": "currency",
-          "readOnly": false,
-          "repeatable": false,
-          "required": false,
-          "showLabel": true,
-          "type": "text"
+            "label": {
+                "en_US": "Event ID"
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "style": {
+                "en_US": ""
+            },
+            "tip": {
+                "en_US": ""
+            },
+            "dataType": "number",
+            "fieldNamespace": "ddm",
+            "indexType": "keyword",
+            "localizable": false,
+            "name": "eventId",
+            "readOnly": false,
+            "repeatable": false,
+            "required": true,
+            "showLabel": true,
+            "type": "ddm-number"
         },
         {
-          "label": {
-            "en_US": "vat"
-          },
-          "predefinedValue": {
-            "en_US": "21"
-          },
-          "style": {
-            "en_US": ""
-          },
-          "tip": {
-            "en_US": "Value Added Tax (%)"
-          },
-          "dataType": "number",
-          "fieldNamespace": "ddm",
-          "indexType": "keyword",
-          "localizable": false,
-          "name": "vat",
-          "readOnly": false,
-          "repeatable": false,
-          "required": false,
-          "showLabel": true,
-          "type": "ddm-number"
-        }
-      ]
-    },
-    {
-      "label": {
-        "en_US": "Capacity"
-      },
-      "predefinedValue": {
-        "en_US": ""
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": ""
-      },
-      "dataType": "integer",
-      "fieldNamespace": "ddm",
-      "indexType": "keyword",
-      "localizable": false,
-      "name": "capacity",
-      "readOnly": false,
-      "repeatable": false,
-      "required": true,
-      "showLabel": true,
-      "type": "ddm-integer"
-    },
-    {
-      "label": {
-        "en_US": "Parent registration"
-      },
-      "predefinedValue": {
-        "en_US": ""
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": ""
-      },
-      "dataType": "journal-article",
-      "fieldNamespace": "ddm",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "parent",
-      "readOnly": false,
-      "repeatable": false,
-      "required": false,
-      "showLabel": true,
-      "type": "ddm-journal-article",
-      "nestedFields": [
+            "label": {
+                "en_US": "Price"
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "style": {
+                "en_US": ""
+            },
+            "tip": {
+                "en_US": ""
+            },
+            "dataType": "number",
+            "fieldNamespace": "ddm",
+            "indexType": "keyword",
+            "localizable": true,
+            "name": "price",
+            "readOnly": false,
+            "repeatable": false,
+            "required": true,
+            "showLabel": true,
+            "type": "ddm-number",
+            "nestedFields": [
+                {
+                    "label": {
+                        "en_US": "Currency"
+                    },
+                    "predefinedValue": {
+                        "en_US": "€ "
+                    },
+                    "style": {
+                        "en_US": ""
+                    },
+                    "tip": {
+                        "en_US": ""
+                    },
+                    "dataType": "string",
+                    "indexType": "keyword",
+                    "localizable": false,
+                    "name": "currency",
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": false,
+                    "showLabel": true,
+                    "type": "text"
+                },
+                {
+                    "label": {
+                        "en_US": "vat"
+                    },
+                    "predefinedValue": {
+                        "en_US": "21"
+                    },
+                    "style": {
+                        "en_US": ""
+                    },
+                    "tip": {
+                        "en_US": "Value Added Tax (%)"
+                    },
+                    "dataType": "number",
+                    "fieldNamespace": "ddm",
+                    "indexType": "keyword",
+                    "localizable": false,
+                    "name": "vat",
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": false,
+                    "showLabel": true,
+                    "type": "ddm-number"
+                }
+            ]
+        },
         {
-          "label": {
-            "en_US": "Overlaps"
-          },
-          "predefinedValue": {
-            "en_US": false
-          },
-          "style": {
-            "en_US": ""
-          },
-          "tip": {
-            "en_US": "If registration period is expected to overlap with parent registration period."
-          },
-          "dataType": "boolean",
-          "indexType": "keyword",
-          "localizable": true,
-          "name": "overlaps",
-          "readOnly": false,
-          "repeatable": false,
-          "required": false,
-          "showLabel": true,
-          "type": "checkbox"
+            "label": {
+                "en_US": "Capacity"
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "style": {
+                "en_US": ""
+            },
+            "tip": {
+                "en_US": ""
+            },
+            "dataType": "integer",
+            "fieldNamespace": "ddm",
+            "indexType": "keyword",
+            "localizable": false,
+            "name": "capacity",
+            "readOnly": false,
+            "repeatable": false,
+            "required": true,
+            "showLabel": true,
+            "type": "ddm-integer"
+        },
+        {
+            "label": {
+                "en_US": "Parent registration"
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "style": {
+                "en_US": ""
+            },
+            "tip": {
+                "en_US": ""
+            },
+            "dataType": "journal-article",
+            "fieldNamespace": "ddm",
+            "indexType": "keyword",
+            "localizable": true,
+            "name": "parent",
+            "readOnly": false,
+            "repeatable": false,
+            "required": false,
+            "showLabel": true,
+            "type": "ddm-journal-article",
+            "nestedFields": [
+                {
+                    "label": {
+                        "en_US": "Overlaps"
+                    },
+                    "predefinedValue": {
+                        "en_US": false
+                    },
+                    "style": {
+                        "en_US": ""
+                    },
+                    "tip": {
+                        "en_US": "If registration period is expected to overlap with parent registration period."
+                    },
+                    "dataType": "boolean",
+                    "indexType": "keyword",
+                    "localizable": true,
+                    "name": "overlaps",
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": false,
+                    "showLabel": true,
+                    "type": "checkbox"
+                }
+            ]
+        },
+        {
+            "label": {
+                "en_US": "Open"
+            },
+            "predefinedValue": {
+                "en_US": false
+            },
+            "style": {
+                "en_US": ""
+            },
+            "tip": {
+                "en_US": ""
+            },
+            "dataType": "boolean",
+            "indexType": "keyword",
+            "localizable": false,
+            "name": "open",
+            "readOnly": false,
+            "repeatable": false,
+            "required": false,
+            "showLabel": true,
+            "type": "checkbox"
+        },
+        {
+            "label": {
+                "en_US": "Highlight"
+            },
+            "predefinedValue": {
+                "en_US": false
+            },
+            "style": {
+                "en_US": ""
+            },
+            "tip": {
+                "en_US": ""
+            },
+            "dataType": "boolean",
+            "indexType": "keyword",
+            "localizable": false,
+            "name": "highlight",
+            "readOnly": false,
+            "repeatable": false,
+            "required": false,
+            "showLabel": true,
+            "type": "checkbox"
+        },
+        {
+            "label": {
+                "en_US": "Required Team"
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "style": {
+                "en_US": ""
+            },
+            "tip": {
+                "en_US": ""
+            },
+            "dataType": "string",
+            "indexType": "keyword",
+            "localizable": false,
+            "name": "requiredTeam",
+            "readOnly": false,
+            "repeatable": false,
+            "required": false,
+            "showLabel": true,
+            "type": "text"
         }
-      ]
-    },
-    {
-      "label": {
-        "en_US": "Open"
-      },
-      "predefinedValue": {
-        "en_US": false
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": ""
-      },
-      "dataType": "boolean",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "open",
-      "readOnly": false,
-      "repeatable": false,
-      "required": false,
-      "showLabel": true,
-      "type": "checkbox"
-    },
-    {
-      "label": {
-        "en_US": "Highlight"
-      },
-      "predefinedValue": {
-        "en_US": false
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": ""
-      },
-      "dataType": "boolean",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "highlight",
-      "readOnly": false,
-      "repeatable": false,
-      "required": false,
-      "showLabel": true,
-      "type": "checkbox"
-    },
-    {
-      "label": {
-        "en_US": "Required Team"
-      },
-      "predefinedValue": {
-        "en_US": ""
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": ""
-      },
-      "dataType": "string",
-      "indexType": "keyword",
-      "localizable": false,
-      "name": "requiredTeam",
-      "readOnly": false,
-      "repeatable": false,
-      "required": false,
-      "showLabel": true,
-      "type": "text"
-    }
-  ]
+    ]
 }
