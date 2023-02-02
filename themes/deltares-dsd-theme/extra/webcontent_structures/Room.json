@@ -1,55 +1,32 @@
 {
-  "availableLanguageIds": [
-    "en_US"
-  ],
-  "defaultLanguageId": "en_US",
-  "fields": [
-    {
-      "label": {
-        "en_US": "Store in parent site"
-      },
-      "predefinedValue": {
-        "en_US": true
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": "Choose to store content under parent site."
-      },
-      "dataType": "boolean",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "storeInParentSite",
-      "readOnly": false,
-      "repeatable": false,
-      "required": false,
-      "showLabel": true,
-      "type": "checkbox"
-    },
-    {
-      "label": {
-        "en_US": "Capacity"
-      },
-      "predefinedValue": {
-        "en_US": ""
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": ""
-      },
-      "dataType": "integer",
-      "fieldNamespace": "ddm",
-      "indexType": "keyword",
-      "localizable": true,
-      "name": "capacity",
-      "readOnly": false,
-      "repeatable": false,
-      "required": true,
-      "showLabel": true,
-      "type": "ddm-integer"
-    }
-  ]
+    "availableLanguageIds": [
+        "en_US"
+    ],
+    "defaultLanguageId": "en_US",
+    "fields": [
+        {
+            "label": {
+                "en_US": "Capacity"
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "style": {
+                "en_US": ""
+            },
+            "tip": {
+                "en_US": ""
+            },
+            "dataType": "number",
+            "fieldNamespace": "ddm",
+            "indexType": "keyword",
+            "localizable": false,
+            "name": "capacity",
+            "readOnly": false,
+            "repeatable": false,
+            "required": true,
+            "showLabel": true,
+            "type": "ddm-number"
+        }
+    ]
 }
