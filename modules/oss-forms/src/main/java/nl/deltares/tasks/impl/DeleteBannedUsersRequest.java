@@ -14,6 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 import static nl.deltares.tasks.DataRequest.STATUS.*;
@@ -22,12 +23,10 @@ public class DeleteBannedUsersRequest extends AbstractDataRequest {
 
     private static final Log logger = LogFactoryUtil.getLog(DeleteBannedUsersRequest.class);
     private final AdminUtils adminUtils;
-    private final long siteId;
     private final List<MBBan> bannedUsers;
 
-    public DeleteBannedUsersRequest(String id, long siteId, long currentUserId,  List<MBBan> bannedUsers, AdminUtils adminUtils) throws IOException {
+    public DeleteBannedUsersRequest(String id, long currentUserId,  List<MBBan> bannedUsers, AdminUtils adminUtils) throws IOException {
         super(id, currentUserId);
-        this.siteId = siteId;
         this.bannedUsers = bannedUsers;
         this.adminUtils = adminUtils;
         totalCount = bannedUsers.size();
@@ -48,7 +47,7 @@ public class DeleteBannedUsersRequest extends AbstractDataRequest {
 
             //Create local session because the servlet session will close after call to endpoint is completed
             try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))){
-
+                List<User> deletionUsers = new ArrayList<>();
                 for (MBBan bannedUser : bannedUsers) {
                     if (bannedUser.getBanUserId() == currentUserId) {
                         writer.printf("Error: Not allowed to delete yourself %s", bannedUser.getUserName());
@@ -69,7 +68,8 @@ public class DeleteBannedUsersRequest extends AbstractDataRequest {
                         writer.println("Skipping Deltares or admin user : " + user.getEmailAddress());
                         continue;
                     }
-                    adminUtils.deleteUserAndRelatedContent(siteId, user, writer, true);
+                    if (!deletionUsers.contains(user)) deletionUsers.add(user);
+                    adminUtils.deleteUserRelatedContent(bannedUser.getGroupId(), user, writer);
                     //start flushing
                     writer.flush();
                     incrementProcessCount(1);
@@ -77,6 +77,23 @@ public class DeleteBannedUsersRequest extends AbstractDataRequest {
                         status = terminated;
                         errorMessage = String.format("Thread 'DeleteBannedUsersRequest' with id %s is interrupted!", id);
                         break;
+                    }
+                }
+                if (status != terminated) {
+                    for (User deletionUser : deletionUsers) {
+                        writer.printf("********** Start deleting user %s (%s) in company %d  ***********\n",
+                                deletionUser.getScreenName(), deletionUser.getEmailAddress(), deletionUser.getCompanyId());
+
+                        adminUtils.deleteLiferayUser(deletionUser, writer);
+                        try {
+                            adminUtils.getKeycloakUtils().deleteUserWithEmail(deletionUser.getEmailAddress());
+                            writer.printf("Deleted user in keycloak\n");
+                        } catch (Exception e) {
+                            writer.printf("Failed to delete user in Keycloak: %s\n", e.getMessage());
+                        }
+
+                        writer.printf("********** Finished deleting user %s (%s) in company %d  ***********\n",
+                                deletionUser.getScreenName(), deletionUser.getEmailAddress(), deletionUser.getCompanyId());
                     }
                 }
                 if (status != terminated) {

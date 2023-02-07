@@ -1,12 +1,11 @@
 package nl.deltares.tasks.impl;
 
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.model.VirtualHost;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.service.VirtualHostLocalServiceUtil;
 import nl.deltares.portal.utils.AdminUtils;
 import nl.deltares.tasks.AbstractDataRequest;
 
@@ -16,27 +15,25 @@ import java.util.List;
 
 import static nl.deltares.tasks.DataRequest.STATUS.*;
 
-public class DeleteDisabledUsersRequest extends AbstractDataRequest {
+public class DeleteUsersRequest extends AbstractDataRequest {
 
-    private static final Log logger = LogFactoryUtil.getLog(DeleteDisabledUsersRequest.class);
-    private final String disabledUsersPath;
-    private final long companyId;
+    private static final Log logger = LogFactoryUtil.getLog(DeleteUsersRequest.class);
+    private final String usersFilePath;
     private final AdminUtils adminUtils;
 
-    public DeleteDisabledUsersRequest(String id, long currentUserId, long companyId, String dataFile, AdminUtils adminUtils) throws IOException {
+    public DeleteUsersRequest(String id, long currentUserId, String dataFile, AdminUtils adminUtils) throws IOException {
         super(id, currentUserId);
 
-        this.disabledUsersPath = dataFile;
-        this.companyId = companyId;
+        this.usersFilePath = dataFile;
         this.adminUtils = adminUtils;
     }
 
     @Override
     public STATUS call() {
 
-        final File disabledUsersFile = new File(disabledUsersPath);
-        if (!disabledUsersFile.exists()) {
-            errorMessage = "Disabled users file does not exist: " + disabledUsersPath;
+        final File usersFile = new File(usersFilePath);
+        if (!usersFile.exists()) {
+            errorMessage = "File containing users does not exist: " + usersFilePath;
             status = terminated;
             fireStateChanged();
             return status;
@@ -50,19 +47,9 @@ public class DeleteDisabledUsersRequest extends AbstractDataRequest {
         status = running;
 
         try {
-            totalCount = (int) Files.size(disabledUsersFile.toPath());
+            totalCount = (int) Files.size(usersFile.toPath());
         } catch (IOException e) {
             errorMessage = "Error getting file size: " + e.getMessage();
-            status = terminated;
-            fireStateChanged();
-            return status;
-        }
-
-        final List<Group> siteGroups;
-        try {
-            siteGroups = GroupLocalServiceUtil.getGroups(companyId, 0, true);
-        } catch (Exception e) {
-            errorMessage = "Error getting siteGroups: " + e.getMessage();
             status = terminated;
             fireStateChanged();
             return status;
@@ -72,41 +59,57 @@ public class DeleteDisabledUsersRequest extends AbstractDataRequest {
             File tempFile = new File(getExportDir(), id + ".tmp");
             if (tempFile.exists()) Files.deleteIfExists(tempFile.toPath());
 
+            final List<VirtualHost> virtualHosts = VirtualHostLocalServiceUtil.getVirtualHosts(0, 10);
+            User user;
             //Download results to file
             try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
 
-                writer.println("Start deleting downloaded disabled users from file: " + disabledUsersPath);
+                writer.println("Start deleting downloaded disabled users from file: " + usersFilePath);
                 String line;
                 int processedUsers = 0;
-                try (BufferedReader reader = new BufferedReader(new FileReader(disabledUsersFile))) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(usersFile))) {
                     line = reader.readLine(); //skip header
                     incrementProcessCount(line.length());
                     while ((line = reader.readLine()) != null) {
                         incrementProcessCount(line.length());
                         final String[] split = line.split(";");
                         if (split.length == 0) continue;
-                        String email = split[0];
+                        String email;
+                        String keycloakId = null;
+                        if (split.length == 1){
+                            email = split[0];
+                        } else {
+                             keycloakId = split[0];
+                             email = split[1];
+                        }
                         processedUsers++;
-                        writer.println("Processing disabled user " + email);
-                        User user;
+                        writer.println("Processing user " + email);
+
+                        for (VirtualHost virtualHost : virtualHosts) {
+                            final long companyId = virtualHost.getCompanyId();
+                            user = UserLocalServiceUtil.fetchUserByEmailAddress(companyId, email);
+                            if (user != null) adminUtils.deleteLiferayUser(user, writer);
+                        }
                         try {
-                            user = UserLocalServiceUtil.getUserByEmailAddress(companyId, email);
-                        } catch (PortalException e) {
-                            writer.printf("Could not find user for %s in company %d", email, companyId);
-                            continue;
+                            if (keycloakId != null){
+                                adminUtils.getKeycloakUtils().deleteUserWithId(keycloakId);
+                            } else {
+                                adminUtils.getKeycloakUtils().deleteUserWithEmail(email);
+                            }
+                            writer.printf("Deleted user %s in keycloak\n", email);
+                        } catch (Exception e) {
+                            writer.printf("Failed to delete user in Keycloak: %s\n", e.getMessage());
                         }
-                        for (Group siteGroup : siteGroups) {
-                            adminUtils.deleteUserAndRelatedContent(siteGroup.getGroupId(), user, writer, false);
-                        }
+
                         if (Thread.interrupted()) {
                             status = terminated;
-                            errorMessage = String.format("Thread 'DeleteDisabledUsersRequest' with id %s is interrupted!", id);
+                            errorMessage = String.format("Thread 'DeleteUsersRequest' with id %s is interrupted!", id);
                             break;
                         }
                     }
                 }
                 if (processedUsers == 0) {
-                    writer.println("no disabled users found.");
+                    writer.println("no users found.");
                     status = nodata;
                 } else if (status != terminated) {
                     status = available;
