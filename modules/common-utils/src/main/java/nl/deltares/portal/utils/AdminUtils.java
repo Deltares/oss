@@ -7,9 +7,11 @@ import java.util.Locale;
 
 public interface AdminUtils {
 
-    int downloadDisabledUsers(long disabledAfterTime, PrintWriter writer) throws Exception;
+    KeycloakUtils getKeycloakUtils();
 
-    void deleteUserAndRelatedContent(long site, User user, PrintWriter writer, boolean deleteFromKeycloak);
+    void deleteUserRelatedContent(long site, User user, PrintWriter writer);
+
+    void deleteLiferayUser(User user, PrintWriter writer);
 
     User getOrCreateRegistrationUser(long companyId, User loggedInUser, String registrationEmail,
                                             String firstName, String lastName, Locale locale) throws Exception;

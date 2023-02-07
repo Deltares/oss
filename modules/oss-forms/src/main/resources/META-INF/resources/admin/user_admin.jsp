@@ -1,5 +1,3 @@
-<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider" %>
-<%@ page import="nl.deltares.portal.configuration.OSSSiteConfiguration" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
@@ -10,16 +8,6 @@
 <liferay-theme:defineObjects/>
 
 <portlet:defineObjects/>
-
-<%
-    ConfigurationProvider configurationProvider =
-            (ConfigurationProvider) request.getAttribute(ConfigurationProvider.class.getName());
-
-    OSSSiteConfiguration configuration = configurationProvider.getGroupConfiguration(OSSSiteConfiguration.class, themeDisplay.getScopeGroupId());
-
-    boolean enableSiteId = configuration.enableSiteId();
-
-%>
 
 <span id="<portlet:namespace/>group-message-block"></span>
 <aui:fieldset label="oss.admin.adminPageTitle">
@@ -39,18 +27,8 @@
                 <aui:col width="50">
                     <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.deleteBannedTitle"/></div>
                 </aui:col>
-                <aui:col width="20">
-                    <div class="control-label"><liferay-ui:message key="oss.admin.siteId"/></div>
-                </aui:col>
-                <aui:col width="25">
-                    <c:choose>
-                        <c:when test="<%=enableSiteId%>">
-                            <aui:input name="siteId" label="" value="<%=themeDisplay.getSiteGroupId()%>" />
-                        </c:when>
-                        <c:otherwise>
-                            <aui:input name="siteId" label="" value="<%=themeDisplay.getSiteGroupId()%>" disabled="true"/>
-                        </c:otherwise>
-                    </c:choose>
+                <aui:col width="45">
+                    <div class="control-label"><liferay-ui:message key="oss.admin.deleteBannedInfo"/></div>
                 </aui:col>
                 <aui:col width="5">
                     <aui:button type="submit" name="deleteBannedUsersButton" value="oss.admin.delete" />
@@ -59,20 +37,17 @@
         </aui:fieldset>
     </aui:form>
     <hr>
-    <aui:form name="downloadDisabled" enctype="multipart/form-data" >
+    <aui:form name="downloadInvalid" enctype="multipart/form-data" >
         <aui:fieldset >
             <aui:row>
                 <aui:col width="50">
                     <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.downloadDisabledTitle"/></div>
                 </aui:col>
-                <aui:col width="20">
-                    <div class="control-label"><liferay-ui:message key="oss.admin.disabledTime"/></div>
-                </aui:col>
-                <aui:col width="25">
-                    <aui:input name="disabledTime" value="" type="date"  label=""/>
+                <aui:col width="45">
+                    <div class="control-label"><liferay-ui:message key="oss.admin.downloadDisabledInfo"/></div>
                 </aui:col>
                 <aui:col width="5">
-                    <aui:button  name="downloadDisabledButton"  type="submit" value="oss.admin.download" />
+                    <aui:button  name="downloadInvalidButton"  type="submit" value="oss.admin.download" />
                 </aui:col>
             </aui:row>
         </aui:fieldset>
@@ -84,11 +59,13 @@
                 <aui:col width="50">
                     <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.deleteUsersTitle"/></div>
                 </aui:col>
-                <aui:col width="20">
-                    <div class="control-label"><liferay-ui:message key="oss.admin.usersFile"/></div>
-                </aui:col>
-                <aui:col width="25">
-                    <aui:input label="" name="userFile" type="file"  />
+                <aui:col width="45">
+                    <aui:row>
+                        <div class="control-label"><liferay-ui:message key="oss.admin.usersFile"/></div>
+                    </aui:row>
+                    <aui:row >
+                        <aui:input label="" name="userFile" type="file"  />
+                    </aui:row>
                 </aui:col>
                 <aui:col width="5">
                     <aui:button type="submit" name="deleteUsersButton" value="oss.admin.delete" />
@@ -111,18 +88,15 @@
         event.preventDefault();
         OssFormsUtil.deleteBannedUsers("<portlet:resourceURL/>", "<portlet:namespace/>")
     };
-    let downloadDisabledButton = document.getElementById('<portlet:namespace/>downloadDisabledButton');
-    downloadDisabledButton.onclick = function(event){
+    let downloadInvalidButton = document.getElementById('<portlet:namespace/>downloadInvalidButton');
+    downloadInvalidButton.onclick = function(event){
         event.preventDefault();
-        OssFormsUtil.downloadDisabled("<portlet:resourceURL/>", "<portlet:namespace/>")
+        OssFormsUtil.downloadInvalid("<portlet:resourceURL/>", "<portlet:namespace/>")
     };
     let deleteUsersButton = document.getElementById('<portlet:namespace/>deleteUsersButton');
     deleteUsersButton.onclick = function(event){
         event.preventDefault();
         OssFormsUtil.deleteUsers("<portlet:resourceURL/>", "<portlet:namespace/>")
     };
-    let year_millis = 86400000 * 365;
-    let disabledTime = document.getElementById('<portlet:namespace/>disabledTime');
-    disabledTime.innerHTML = new Date(Date.now() - year_millis).toDateString();
 
 </aui:script>

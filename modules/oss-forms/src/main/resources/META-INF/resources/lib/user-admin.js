@@ -2,32 +2,17 @@ OssFormsUtil = {
 
     deleteBannedUsers: function(resourceUrl, namespace){
         CommonFormsUtil.clearError(namespace);
-        let siteId = document.getElementById(namespace + 'siteId').value;
 
-        if (confirm("You are about to delete all banned users from site: " + siteId + "\nDo you want to continue?") === false) {
-            siteId = null;
+        if (confirm("You are about to delete all banned users from all sites !\nDo you want to continue?") === false) {
             return;
         }
-
-        if (siteId != null && siteId !== ''){
-            resourceUrl = resourceUrl + '&' + namespace + 'siteId=' + siteId;
-            this.callOssAdminResource(resourceUrl, namespace, "deleteBannedUsers", "No Banned users found!", "deleteBannedUsers.log")
-        } else {
-            CommonFormsUtil.writeInfo(namespace,'Please enter a valid articleId of Event or Registration');
-        }
+        this.callOssAdminResource(resourceUrl, namespace, "deleteBannedUsers", "No banned users found!", "deleteBannedUsers.log")
     },
 
-    downloadDisabled: function(resourceUrl, namespace){
+    downloadInvalid: function(resourceUrl, namespace){
 
         CommonFormsUtil.clearError(namespace);
-        let disabledTime = document.getElementById(namespace + 'disabledTime').value;
-
-        if (confirm("You are about to download all disabled users that have been disabled after: " + disabledTime + "\nDo you want to continue?") === false) {
-            disabledTime = null;
-            return;
-        }
-        resourceUrl = resourceUrl + '&' + namespace + 'disabledTime=' + new Date(disabledTime).getTime();
-        this.callOssAdminResource(resourceUrl, namespace, "downloadDisabledUsers", "No disabled users found!", "disabledUsers.csv");
+        this.callOssAdminResource(resourceUrl, namespace, "downloadInvalidUsers", "No invalid users found!", "invalidUsers.csv");
     },
 
     deleteUsers: function(resourceUrl, namespace){
@@ -47,7 +32,7 @@ OssFormsUtil = {
     },
 
     callDeleteUsersFromFile: function (resourceUrl, namespace, action, form){
-        CommonFormsUtil.setActionButtons(['deleteBannedUsersButton', 'downloadDisabledButton', 'deleteUsersButton']);
+        CommonFormsUtil.setActionButtons(['deleteBannedUsersButton', 'downloadInvalidButton', 'deleteUsersButton']);
         CommonFormsUtil.initProgressBar(namespace);
 
         let A = new AUI();
@@ -85,7 +70,7 @@ OssFormsUtil = {
 
     callOssAdminResource : function (resourceUrl, namespace, action, notfoundMessage, downloadFileName){
 
-        CommonFormsUtil.setActionButtons(['deleteBannedUsersButton', 'downloadDisabledButton', 'deleteUsersButton']);
+        CommonFormsUtil.setActionButtons(['deleteBannedUsersButton', 'downloadInvalidButton', 'deleteUsersButton']);
         CommonFormsUtil.initProgressBar(namespace);
 
         let A = new AUI();
