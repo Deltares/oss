@@ -16,15 +16,12 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.*;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.*;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import nl.deltares.portal.utils.AdminUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.ActionRequest;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,18 +37,17 @@ public class OssAdminUtils implements AdminUtils {
     @Reference
     KeycloakUtils keycloakUtils;
 
-    @Override
-    public int downloadDisabledUsers(long disabledAfterTime, PrintWriter writer) throws Exception {
-        return keycloakUtils.downloadDisabledUsers(disabledAfterTime, null, writer);
+    public KeycloakUtils getKeycloakUtils() {
+        return keycloakUtils;
     }
 
     @Override
-    public void deleteUserAndRelatedContent(long siteId, User user, PrintWriter writer, boolean deleteFromKeycloak) {
+    public void deleteUserRelatedContent(long siteId, User user, PrintWriter writer) {
 
         String screenName = user.getScreenName();
         String email = user.getEmailAddress();
         long userId = user.getUserId();
-        writer.printf("********** Start deleting content for user %s (%s, %d) in site %d  ***********\n", screenName, email, userId, siteId);
+        writer.printf("********** Start deleting content for user %s (%s, %d) in site %d, company %d  ***********\n", screenName, email, userId, siteId, user.getCompanyId());
 
         //Remove user message for group
         deleteMBMessages(writer, userId, siteId);
@@ -78,17 +74,14 @@ public class OssAdminUtils implements AdminUtils {
 
         deleteRemainingMBFolders(writer, userId, siteId);
 
-        //Delete Liferay User
-        deleteUser(writer, user, deleteFromKeycloak);
-
-        writer.printf("********** Finished deleting content for user %s (%s, %d) in site %d   ***********\n", screenName, email, userId, siteId);
+        writer.printf("********** Finished deleting content for user %s (%s, %d) in site %d, company %d   ***********\n", screenName, email, userId, siteId, user.getCompanyId());
     }
 
     @Override
     public User getOrCreateRegistrationUser(long companyId, User loggedInUser, String registrationEmail,
-                                             String firstName, String lastName, Locale locale) throws Exception {
+                                            String firstName, String lastName, Locale locale) throws Exception {
 
-        if (registrationEmail == null || registrationEmail.isEmpty()){
+        if (registrationEmail == null || registrationEmail.isEmpty()) {
             throw new IllegalArgumentException("Registration email missing");
         }
         final User registrationUser = UserLocalServiceUtil.fetchUserByEmailAddress(companyId, registrationEmail);
@@ -96,10 +89,10 @@ public class OssAdminUtils implements AdminUtils {
 
         final Map<String, String> keycloakUser = keycloakUtils.getUserInfo(registrationEmail);
         String userName = null;
-        if (keycloakUser.isEmpty()){
+        if (keycloakUser.isEmpty()) {
             for (int i = 0; i < 3; i++) {
                 String testUserName = KeycloakUtils.extractUsernameFromEmail(registrationEmail, i);
-                if (!keycloakUtils.isExistingUsername(testUserName)){
+                if (!keycloakUtils.isExistingUsername(testUserName)) {
                     //do not create user, instead check if username is taken.
                     userName = testUserName;
                     break;
@@ -127,8 +120,7 @@ public class OssAdminUtils implements AdminUtils {
 
     }
 
-    private void deleteUser(PrintWriter writer, User user, boolean deleteFromKeycloak) {
-
+    public void deleteLiferayUser(User user, PrintWriter writer) {
         deleteUserPortrait(writer, user);
 
         deletePortalPreferences(writer, user.getUserId());
@@ -140,17 +132,6 @@ public class OssAdminUtils implements AdminUtils {
             writer.printf("Deleted user from liferay\n");
         } catch (Exception e) {
             writer.printf("Failed to delete user from Liferay: %s\n", e.getMessage());
-        }
-
-        if (!deleteFromKeycloak) return;
-
-        //Delete Keycloak user
-        try {
-            keycloakUtils.disableUser(user.getEmailAddress());
-            keycloakUtils.disableUser(user.getEmailAddress());
-            writer.printf("Disabled user in keycloak\n");
-        } catch (Exception e) {
-            writer.printf("Failed to disable user in Keycloak: %s\n", e.getMessage());
         }
     }
 
@@ -402,20 +383,6 @@ public class OssAdminUtils implements AdminUtils {
                 } catch (Exception e) {
                     writer.printf("-Failed to delete asset entry %s (%d): %s\n", entry.getTitle(), entry.getEntryId(), e.getMessage());
                 }
-
-//                if (entry.getClassName().equals(DLFileEntry.class.getName())) {
-//
-//                    try {
-//                        DLFileEntry fileEntry = DLFileEntryLocalServiceUtil.getFileEntry(entry.getClassPK());
-//                        writer.printf("Deleted file entry %s (%d) for asset entry %s (%d)\n",
-//                                fileEntry.getFileName(), fileEntry.getFileEntryId(), entry.getTitle(), entry.getEntryId());
-//                        deleteFolder(userId, writer, fileEntry.getFolderId());
-//                    } catch (PortalException e) {//not a file entry item
-//                        writer.printf("Failed to delete file entry %d for asset entry %s (%d): %s\n",
-//                                entry.getClassPK(), entry.getTitle(), entry.getEntryId(), e.getMessage());
-//                    }
-//                }
-
             }
         } catch (Exception e) {
             writer.printf("-Failed to get asset entries for group %d: %s\n", siteId, e.getMessage());
@@ -442,20 +409,4 @@ public class OssAdminUtils implements AdminUtils {
         }
     }
 
-//    private void deleteFolder(long userId, PrintWriter writer, long folderId) {
-//        try {
-//            DLFolder dlFolder = DLFolderLocalServiceUtil.deleteDLFolder(folderId);
-//            writer.printf("Deleted folder %s (%d)\n", dlFolder.getName(), dlFolder.getFolderId());
-//            while (dlFolder.getParentFolder().getUserId() == userId) {
-//                try {
-//                    dlFolder = DLFolderLocalServiceUtil.deleteDLFolder(dlFolder.getParentFolderId());
-//                    writer.printf("Deleted parent folder %s (%d)\n", dlFolder.getName(), dlFolder.getFolderId());
-//                } catch (PortalException e) {
-//                    writer.printf("Failed to delete parent folder %s (%d): %s\n", dlFolder.getName(), dlFolder.getFolderId(), e.getMessage());
-//                }
-//            }
-//        } catch (PortalException e) {
-//            writer.printf("Failed to delete folder %s: %s\n", folderId, e.getMessage());
-//        }
-//    }
 }

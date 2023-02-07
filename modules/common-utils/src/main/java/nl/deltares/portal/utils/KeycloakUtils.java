@@ -51,9 +51,11 @@ public interface KeycloakUtils {
 
     String getAdminMailingsPath();
 
-    String getAdminUsersPath();
+    int downloadDisabledUsers(int maxResults, int paginationStart, PrintWriter writer) throws Exception;
 
-    int downloadDisabledUsers(Long after, Long before, PrintWriter writer) throws Exception;
+    int downloadUnverifiedUsers(int maxResults, int paginationStart, PrintWriter writer) throws Exception;
+
+    int countUnverifiedUsers(PrintWriter writer) throws IOException;
 
     byte[] getUserAvatar(String email) throws Exception;
 
@@ -77,7 +79,9 @@ public interface KeycloakUtils {
 
     int registerUserLogin(String email, String siteId) throws Exception;
 
-    int disableUser(String email) throws Exception;
+    int deleteUserWithEmail(String email) throws Exception;
+
+    int deleteUserWithId(String id) throws Exception;
 
     void subscribe(String emailAddress, String mailingId) throws Exception;
 
