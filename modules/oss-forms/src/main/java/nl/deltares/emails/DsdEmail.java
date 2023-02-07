@@ -10,6 +10,7 @@ import nl.deltares.emails.serializer.DsdUnRegisterEmailSerializer;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -50,7 +51,7 @@ public class DsdEmail {
 
         loadEmailAddresses();
 
-        sendEmail(bodyBuilder.toString(), subject, sendToEmail, sendCCEmail, sendBCCEmail, sendFromEmail, replyToEmail, loadImageMap());
+        sendEmail(bodyBuilder.toString(), subject, sendToEmail, sendCCEmail, sendBCCEmail, sendFromEmail, replyToEmail, loadImageMap(), Collections.emptyMap());
     }
 
     private void loadEmailAddresses() {
@@ -77,7 +78,7 @@ public class DsdEmail {
 
         loadEmailAddresses();
 
-        sendEmail(bodyBuilder.toString(), subject, sendToEmail, sendCCEmail, sendBCCEmail, sendFromEmail, replyToEmail, loadImageMap());
+        sendEmail(bodyBuilder.toString(), subject, sendToEmail, sendCCEmail, sendBCCEmail, sendFromEmail, replyToEmail, loadImageMap(), Collections.emptyMap());
     }
 
     private HashMap<String, URL> loadImageMap() throws MalformedURLException {

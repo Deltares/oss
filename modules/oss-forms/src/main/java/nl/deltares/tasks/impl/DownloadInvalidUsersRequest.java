@@ -3,6 +3,7 @@ package nl.deltares.tasks.impl;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.AdminUtils;
+import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.tasks.AbstractDataRequest;
 
 import java.io.File;
@@ -13,16 +14,14 @@ import java.nio.file.Files;
 
 import static nl.deltares.tasks.DataRequest.STATUS.*;
 
-public class DownloadDisabledUsersRequest extends AbstractDataRequest {
+public class DownloadInvalidUsersRequest extends AbstractDataRequest {
 
-    private static final Log logger = LogFactoryUtil.getLog(DownloadDisabledUsersRequest.class);
+    private static final Log logger = LogFactoryUtil.getLog(DownloadInvalidUsersRequest.class);
     private final AdminUtils adminUtils;
-    private final long disableTimeAfter;
 
-    public DownloadDisabledUsersRequest(String id, long disableTimeAfter, long currentUserId, AdminUtils adminUtils) throws IOException {
+    public DownloadInvalidUsersRequest(String id, long currentUserId, AdminUtils adminUtils) throws IOException {
         super(id, currentUserId);
         this.adminUtils = adminUtils;
-        this.disableTimeAfter = disableTimeAfter;
     }
 
     @Override
@@ -35,15 +34,28 @@ public class DownloadDisabledUsersRequest extends AbstractDataRequest {
 
         //dummy set something to show in progress bar
         totalCount = 100;
-
+        KeycloakUtils keycloakUtils = adminUtils.getKeycloakUtils();
         try {
             File tempFile = new File(getExportDir(), id + ".tmp");
             if (tempFile.exists()) Files.deleteIfExists(tempFile.toPath());
 
             //Download results to file
             try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
-                adminUtils.downloadDisabledUsers(disableTimeAfter, writer);
-                incrementProcessCount(100);
+                int start = 0;
+                int retrieved;
+                writer.println("keycloakId;email;username;enabled;emailVerified");
+                while ((retrieved = keycloakUtils.downloadDisabledUsers(100, start, writer)) > 0){
+                    incrementProcessCount(retrieved);
+                    start += retrieved;
+                }
+                totalCount = keycloakUtils.countUnverifiedUsers(writer);
+                setProcessCount(0);
+                start = 0;
+                while ((retrieved = keycloakUtils.downloadUnverifiedUsers(100, start, writer)) > 0){
+                    incrementProcessCount(retrieved);
+                    start += retrieved;
+                }
+                incrementProcessCount(totalCount);
                 status = available;
             } catch (Exception e) {
                 errorMessage = e.getMessage();
@@ -63,16 +75,6 @@ public class DownloadDisabledUsersRequest extends AbstractDataRequest {
 
         return status;
 
-    }
-
-    @Override
-    public int getProcessedCount() {
-        //dummy something to show in progress bar.
-        if (status == running){
-            incrementProcessCount(1);
-            if (getProcessedCount() == totalCount) setProcessCount(0);
-        }
-        return getProcessedCount();
     }
 
 }
