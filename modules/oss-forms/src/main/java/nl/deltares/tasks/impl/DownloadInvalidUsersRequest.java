@@ -3,7 +3,6 @@ package nl.deltares.tasks.impl;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.AdminUtils;
-import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.tasks.AbstractDataRequest;
 
 import java.io.File;
@@ -34,28 +33,14 @@ public class DownloadInvalidUsersRequest extends AbstractDataRequest {
 
         //dummy set something to show in progress bar
         totalCount = 100;
-        KeycloakUtils keycloakUtils = adminUtils.getKeycloakUtils();
         try {
             File tempFile = new File(getExportDir(), id + ".tmp");
             if (tempFile.exists()) Files.deleteIfExists(tempFile.toPath());
 
             //Download results to file
             try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
-                int start = 0;
-                int retrieved;
-                writer.println("keycloakId;email;username;enabled;emailVerified");
-                while ((retrieved = keycloakUtils.downloadDisabledUsers(100, start, writer)) > 0){
-                    incrementProcessCount(retrieved);
-                    start += retrieved;
-                }
-                totalCount = keycloakUtils.countUnverifiedUsers(writer);
-                setProcessCount(0);
-                start = 0;
-                while ((retrieved = keycloakUtils.downloadUnverifiedUsers(100, start, writer)) > 0){
-                    incrementProcessCount(retrieved);
-                    start += retrieved;
-                }
-                incrementProcessCount(totalCount);
+                adminUtils.getKeycloakUtils().downloadInvalidUsers(writer);
+                incrementProcessCount(100);
                 status = available;
             } catch (Exception e) {
                 errorMessage = e.getMessage();
@@ -75,6 +60,18 @@ public class DownloadInvalidUsersRequest extends AbstractDataRequest {
 
         return status;
 
+    }
+
+    @Override
+    public String getStatusMessage() {
+        //dummy something to show in progress bar.
+        if (status == running){
+            int processedCount = super.getProcessedCount();
+            processedCount++;
+            if (processedCount == totalCount) super.setProcessCount(0);
+            else setProcessCount(processedCount);
+        }
+        return super.getStatusMessage();
     }
 
 }
