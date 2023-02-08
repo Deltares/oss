@@ -51,11 +51,7 @@ public interface KeycloakUtils {
 
     String getAdminMailingsPath();
 
-    int downloadDisabledUsers(int maxResults, int paginationStart, PrintWriter writer) throws Exception;
-
-    int downloadUnverifiedUsers(int maxResults, int paginationStart, PrintWriter writer) throws Exception;
-
-    int countUnverifiedUsers(PrintWriter writer) throws IOException;
+    int downloadInvalidUsers(PrintWriter writer) throws Exception;
 
     byte[] getUserAvatar(String email) throws Exception;
 
