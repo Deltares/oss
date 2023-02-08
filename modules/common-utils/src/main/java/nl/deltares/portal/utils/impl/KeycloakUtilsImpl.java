@@ -84,57 +84,27 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         return basePath + "mailing-provider/admin";
     }
 
-    @Override
-    public int downloadDisabledUsers(int maxResults, int paginationStart, PrintWriter writer) throws Exception {
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "text/html");
-        headers.put("Authorization", "Bearer " + getAccessToken());
-        String queryParameters = String.format("?briefRepresentation=true&enabled=false&max=%d&first=%d", maxResults, paginationStart);
-        List<Map<String, String>> userMapArray = getKeycloakUsers(headers, queryParameters);
-        writeUserInfo(writer, userMapArray);
-        return userMapArray.size();
-    }
-
-    private boolean isSystemEmail(String email) {
-        return email.endsWith("@liferay.com") || email.endsWith("@placeholder.org");
+    public String getAdminUsersPath() {
+        String basePath = getKeycloakBasePath();
+        return basePath + "users-deltares";
     }
 
     @Override
-    public int downloadUnverifiedUsers(int maxResults, int paginationStart, PrintWriter writer) throws Exception {
+    public int downloadInvalidUsers(PrintWriter writer) throws Exception {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "text/html");
         headers.put("Authorization", "Bearer " + getAccessToken());
-        String queryParameters = String.format("?briefRepresentation=true&emailVerified=false&max=%d&first=%d", maxResults, paginationStart);
-        List<Map<String, String>> userMapArray = getKeycloakUsers(headers, queryParameters);
-        writeUserInfo(writer, userMapArray);
-        return userMapArray.size();
-    }
-
-    private void writeUserInfo(PrintWriter writer, List<Map<String, String>> userMapArray) {
-        for (Map<String, String> userMap : userMapArray) {
-            final String email = userMap.get("email");
-            if (isSystemEmail(email)) continue;
-            writer.println(String.format("%s;%s;%s;%s;%s", userMap.get("id"), email, userMap.get("username"), userMap.get("enabled"), userMap.get("emailVerified")));
+        HttpURLConnection urlConnection = getConnection(getAdminUsersPath() + "/invalid", "GET", headers);
+        int status = checkResponse(urlConnection);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                writer.write(line);
+                writer.write('\n');
+            }
+            writer.flush();
         }
-    }
-
-    private List<Map<String, String>> getKeycloakUsers(HashMap<String, String> headers, String queryParameters) throws IOException, JSONException {
-        HttpURLConnection urlConnection = getConnection(getKeycloakUsersPath() + queryParameters, "GET", headers);
-        checkResponse(urlConnection);
-        String jsonResponse = readAll(urlConnection);
-        return JsonContentUtils.parseJsonArrayToMap(jsonResponse);
-    }
-
-    @Override
-    public int countUnverifiedUsers(PrintWriter writer) throws IOException {
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "text/html");
-        headers.put("Authorization", "Bearer " + getAccessToken());
-        String queryParameters = "/count?emailVerified=false";
-        HttpURLConnection urlConnection = getConnection(getKeycloakUsersPath() + queryParameters, "GET", headers);
-        checkResponse(urlConnection);
-        String response = readAll(urlConnection);
-        return Integer.parseInt(response);
+        return status;
     }
 
     @Override
