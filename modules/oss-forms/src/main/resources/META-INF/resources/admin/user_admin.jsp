@@ -12,15 +12,6 @@
 <span id="<portlet:namespace/>group-message-block"></span>
 <aui:fieldset label="oss.admin.adminPageTitle">
     <aui:input name="runningProcess" type="hidden" />
-    <aui:row>
-        <aui:col width="50">
-            <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.siteConfigTitle"/></div>
-        </aui:col>
-        <aui:col width="50">
-            <div class="control-label"><liferay-ui:message key="oss.admin.siteConfigText"/></div>
-        </aui:col>
-    </aui:row>
-    <hr>
     <aui:form name="deleteBannedUsers" enctype="multipart/form-data" >
         <aui:fieldset >
             <aui:row>
