@@ -1,5 +1,6 @@
 package nl.deltares.portal.events;
 
+import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
 import com.liferay.portal.kernel.events.LifecycleAction;
 import com.liferay.portal.kernel.events.LifecycleEvent;
 import com.liferay.portal.kernel.log.Log;
@@ -77,7 +78,6 @@ public class PostLoginAction implements LifecycleAction {
 		}
 
 		if (keycloakUtils.isActive()){
-
 			try {
 
 				byte[] bytes = keycloakUtils.getUserAvatar(user.getEmailAddress());
@@ -106,10 +106,17 @@ public class PostLoginAction implements LifecycleAction {
 		}
 
 		if (downloadUtils.isActive()){
-			final LayoutSet layoutSet = (LayoutSet) request.getAttribute(WebKeys.VIRTUAL_HOST_LAYOUT_SET);
-			//Check if users has any pending shares that need to be updated
-			downloadUtils.updatePendingShares(user, layoutSet.getGroupId());
-			downloadUtils.updateProcessingShares(user, layoutSet.getGroupId());
+			LOG.info("Start waiting");
+			try {
+				Thread.currentThread().join(10000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			LOG.info("Finished waiting");
+//			final LayoutSet layoutSet = (LayoutSet) request.getAttribute(WebKeys.VIRTUAL_HOST_LAYOUT_SET);
+//			//Check if users has any pending shares that need to be updated
+//			downloadUtils.updatePendingShares(user, layoutSet.getGroupId());
+//			downloadUtils.updateProcessingShares(user, layoutSet.getGroupId());
 		}
 
 		if (geoIpUtils != null){
