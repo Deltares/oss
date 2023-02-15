@@ -34,7 +34,8 @@ public class UpdateDownloadStatusRequest extends AbstractDataRequest {
         if (getStatus() == available) return status;
         status = running;
         String userInfo = user != null? " user " + user.getEmailAddress() : "ALL users";
-        statusMessage = String.format("Start post login activity %s for %s", id, userInfo);
+        statusMessage = String.format("Start activity %s for %s", id, userInfo);
+        LOG.info(status);
         init();
 
         if (downloadUtils == null || !downloadUtils.isActive()) {
@@ -61,7 +62,7 @@ public class UpdateDownloadStatusRequest extends AbstractDataRequest {
             }
 
             status = available;
-            statusMessage = String.format("Post login activity %s completed for %s", id, userInfo);
+            statusMessage = String.format("Finished activity %s for %s", id, userInfo);
             LOG.info(statusMessage);
         } catch (Exception e) {
             LOG.warn(errorMessage, e);
