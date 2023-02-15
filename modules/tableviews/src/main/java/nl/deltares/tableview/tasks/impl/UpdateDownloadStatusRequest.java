@@ -16,8 +16,8 @@ public class UpdateDownloadStatusRequest extends AbstractDataRequest {
     private final DownloadUtils downloadUtils;
     private final long groupId;
 
-    public UpdateDownloadStatusRequest(String id, User user, long groupId, DownloadUtils downloadUtils) throws IOException {
-        super(id, user.getUserId());
+    public UpdateDownloadStatusRequest(String id, User user, long groupId, long currentUserId, DownloadUtils downloadUtils) throws IOException {
+        super(id, currentUserId);
         this.user = user;
         this.groupId = groupId;
         this.downloadUtils = downloadUtils;
