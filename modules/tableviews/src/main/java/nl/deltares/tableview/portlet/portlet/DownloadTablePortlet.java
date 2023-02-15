@@ -15,6 +15,7 @@ import nl.deltares.tableview.model.DisplayDownload;
 import nl.deltares.tableview.portlet.constants.TablePortletKeys;
 import nl.deltares.tableview.tasks.impl.DeletedSelectedDownloadsRequest;
 import nl.deltares.tableview.tasks.impl.ExportTableRequest;
+import nl.deltares.tableview.tasks.impl.UpdateDownloadStatusRequest;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
 import org.osgi.service.component.annotations.Component;
@@ -38,7 +39,6 @@ import java.util.TimeZone;
         immediate = true,
         property = {
                 "com.liferay.portlet.display-category=OSS-table",
-                "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.header-portlet-javascript=/lib/downloadtableview.js",
                 "com.liferay.portlet.header-portlet-javascript=/lib/common.js",
                 "com.liferay.portlet.instanceable=true",
@@ -128,7 +128,7 @@ public class DownloadTablePortlet extends MVCPortlet {
      * @param actionResponse Update response
      */
     @SuppressWarnings("unused")
-    public void updateShares(ActionRequest actionRequest, ActionResponse actionResponse) {
+    public void updateShares(ActionRequest actionRequest, ActionResponse actionResponse) throws IOException {
 
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest
                 .getAttribute(WebKeys.THEME_DISPLAY);
@@ -137,8 +137,9 @@ public class DownloadTablePortlet extends MVCPortlet {
             return;
         }
         final long siteGroupId = themeDisplay.getSiteGroupId();
-        downloadUtils.updatePendingShares(null, siteGroupId);
-        downloadUtils.updateProcessingShares(null, siteGroupId);
+        final String id = String.format("UpdateDownloadStatusRequest_%d_%d", themeDisplay.getCompanyId(), siteGroupId);
+        final UpdateDownloadStatusRequest updateRequest = new UpdateDownloadStatusRequest(id, themeDisplay.getUser(), siteGroupId, downloadUtils);
+        DataRequestManager.getInstance().addToQueue(updateRequest);
 
         final String selectedEmail = ParamUtil.getString(actionRequest, "filterEmail", null);
         actionResponse.getRenderParameters().setValue("filterEmail", selectedEmail);
@@ -205,7 +206,6 @@ public class DownloadTablePortlet extends MVCPortlet {
 
         }
     }
-
 
 
     private void exportTable(String dataRequestId, String filterEmail, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
