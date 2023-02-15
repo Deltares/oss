@@ -11,7 +11,8 @@ Export-Package: \
   nl.deltares.portal.display.context, \
   nl.deltares.portal.configuration, \
   nl.deltares.portal.kernel.util.comparator, \
-  nl.deltares.tasks
+  nl.deltares.tasks, \
+  nl.deltares.tasks.impl
 Import-Package: \
   nl.deltares.dsd.registration.service.*,\
   nl.deltares.oss.download.service.*,\
