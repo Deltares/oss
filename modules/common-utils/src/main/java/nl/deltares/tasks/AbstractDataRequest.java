@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.concurrent.TimeUnit;
 
 import static nl.deltares.tasks.DataRequest.STATUS.*;
 
@@ -97,6 +98,11 @@ public abstract class AbstractDataRequest implements DataRequest {
         if (System.currentTimeMillis() - lastProgressCheck > progressTimeOut){
             status = terminated;
         }
+    }
+
+    @Override
+    public long getTimeoutMillis() {
+        return TimeUnit.HOURS.toMillis(1);
     }
 
     @Override

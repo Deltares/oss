@@ -36,7 +36,6 @@ import java.util.*;
         immediate = true,
         property = {
                 "com.liferay.portlet.display-category=OSS-table",
-                "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.header-portlet-javascript=/lib/downloadcountstableview.js",
                 "com.liferay.portlet.header-portlet-javascript=/lib/common.js",
                 "com.liferay.portlet.instanceable=true",
@@ -155,26 +154,26 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
 
                 final long downloadId = downloadCount.getDownloadId();
                 final long groupId = downloadCount.getGroupId();
+                AbsDsdArticle dsdArticle;
                 try {
-                    final String downloadIdString = String.valueOf(downloadId);
-                    final AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(groupId, downloadIdString);
-                    String fileName;
-                    String topic;
-                    String topicKey = null;
-                    if (dsdArticle != null) {
-                        final Download download = (Download) dsdArticle;
-                        fileName = download.getFileName();
-                        topicKey = download.getFileTopic();
-                        topic = topicMap.getOrDefault(topicKey, topicKey);
-                    } else {
-                        fileName = downloadIdString;
-                        topic = "";
-                    }
-                    if (filterId != null && !filterId.equals(topicKey)) return;
-                    displayCounts.add(new DisplayDownloadCount(downloadCount.getId(), fileName, topic, downloadCount.getCount()));
+                    dsdArticle = dsdParserUtils.toDsdArticle(groupId, String.valueOf(downloadId));
                 } catch (PortalException e) {
-                    SessionErrors.add(renderRequest, "action-failed", "Error getting download for id " + downloadId);
+                    dsdArticle = null;
                 }
+                String fileName;
+                String topic;
+                String topicKey = null;
+                if (dsdArticle != null) {
+                    final Download download = (Download) dsdArticle;
+                    fileName = download.getFileName();
+                    topicKey = download.getFileTopic();
+                    topic = topicMap.getOrDefault(topicKey, topicKey);
+                } else {
+                    fileName = String.valueOf(downloadId);
+                    topic = "";
+                }
+                if (filterId != null && !filterId.equals(topicKey)) return;
+                displayCounts.add(new DisplayDownloadCount(downloadCount.getId(), fileName, topic, downloadCount.getCount()));
             });
             displayCounts.sort(DisplayDownloadCount::compareTo);
             renderRequest.setAttribute("records", displayCounts);

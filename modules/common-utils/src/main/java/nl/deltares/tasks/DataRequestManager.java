@@ -80,7 +80,7 @@ public class DataRequestManager {
                 removeDataRequest(request);
                 runningRequest.cancel(true);
                 return null;
-            }, TimeUnit.HOURS.toMillis(1), TimeUnit.MILLISECONDS);
+            }, request.getTimeoutMillis(), TimeUnit.MILLISECONDS);
 
             break;
         }
