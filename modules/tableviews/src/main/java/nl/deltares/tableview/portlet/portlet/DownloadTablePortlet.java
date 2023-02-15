@@ -138,7 +138,8 @@ public class DownloadTablePortlet extends MVCPortlet {
         }
         final long siteGroupId = themeDisplay.getSiteGroupId();
         final String id = String.format("UpdateDownloadStatusRequest_%d_%d", themeDisplay.getCompanyId(), siteGroupId);
-        final UpdateDownloadStatusRequest updateRequest = new UpdateDownloadStatusRequest(id, themeDisplay.getUser(), siteGroupId, downloadUtils);
+        final UpdateDownloadStatusRequest updateRequest =
+                new UpdateDownloadStatusRequest(id, null, siteGroupId, themeDisplay.getUser().getUserId(), downloadUtils);
         DataRequestManager.getInstance().addToQueue(updateRequest);
 
         final String selectedEmail = ParamUtil.getString(actionRequest, "filterEmail", null);
