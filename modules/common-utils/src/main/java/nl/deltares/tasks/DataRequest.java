@@ -23,4 +23,6 @@ public interface DataRequest extends Callable<DataRequest.STATUS> {
 
     boolean isCached();
 
+    long getTimeoutMillis();
+
 }
