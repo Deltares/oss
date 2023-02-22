@@ -7,7 +7,6 @@ import nl.deltares.model.DownloadRequest;
 import nl.deltares.emails.DownloadEmail;
 import nl.deltares.model.LicenseInfo;
 import nl.deltares.portal.model.impl.Download;
-import nl.deltares.portal.model.impl.LicenseFile;
 import nl.deltares.portal.utils.KeycloakUtils;
 
 import java.util.List;
@@ -289,7 +288,7 @@ public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> 
         writer.append("<tr>");
         writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.link", null)).append("</td>");
         writer.append("<td>");
-        final String shareLink = content.getDownloadRequest().getShareLink(download);
+        final String shareLink = content.getDownloadRequest().getShareLink(download.getArticleId());
         if (shareLink == null){
             writer.append(LanguageUtil.format(content.getBundle(), "download.email.linkSentSeparately", null));
         } else {
@@ -298,7 +297,7 @@ public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> 
         writer.append("</td>");
         writer.append("</tr>");
 
-        final String sharePassword = content.getDownloadRequest().getSharePassword(download);
+        final String sharePassword = content.getDownloadRequest().getSharePassword(download.getArticleId());
         if (sharePassword != null){
             writer.append("<tr>");
             writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.linkPassword", null)).append("</td>");
@@ -308,12 +307,12 @@ public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> 
             writer.append("</tr>");
         }
 
-        final LicenseFile licenseFile = download.getLicenseFile();
-        if (licenseFile != null){
+        final String licenseDownloadLink = content.getDownloadRequest().getLicenseDownloadLink(download.getArticleId());
+        if (licenseDownloadLink != null){
             writer.append("<tr>");
-            writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.licenseAttachment", null)).append("</td>");
+            writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.licenseDownload", null)).append("</td>");
             writer.append("<td>");
-            writer.append(licenseFile.getName());
+            writer.append("<a href=\"").append(licenseDownloadLink).append("\">").append("download").append("</a>");
             writer.append("</td>");
             writer.append("</tr>");
         }

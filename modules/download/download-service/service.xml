@@ -25,6 +25,7 @@
 		<column name="city" type="String" />
 		<column name="shareId" type="int" />
 		<column name="directDownloadUrl" type="String" />
+		<column name="licenseDownloadUrl" type="String" />
 
 		<!-- Order -->
 		<order by="desc">

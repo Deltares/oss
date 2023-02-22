@@ -21,7 +21,7 @@ public class DownloadRequest {
     private String bannerUrl = null;
     private BillingInfo billingInfo;
     final private Map<Subscription, Boolean> subscriptions = new HashMap<>();
-    final private Map<Download, Map<String, Object>> shareInfo = new HashMap<>();
+    final private Map<String, Map<String, String>> shareInfo = new HashMap<>();
     private LicenseInfo licenseInfo;
 
     public DownloadRequest(ThemeDisplay themeDisplay) throws PortalException {
@@ -42,9 +42,7 @@ public class DownloadRequest {
     public void addDownload(Download download) {
         downloads.add(download);
         final List<Subscription> subs = download.getSubscriptions();
-        subs.forEach(sub -> {
-            subscriptions.putIfAbsent(sub, false);
-        });
+        subs.forEach(sub -> subscriptions.putIfAbsent(sub, false));
     }
 
     public List<Download> getDownloads() {
@@ -110,19 +108,25 @@ public class DownloadRequest {
         return userAttributes;
     }
 
-    public void registerShareInfo(Download download, Map<String, Object> shareInfo) {
-        this.shareInfo.put(download, shareInfo);
+    public void registerShareInfo(String articleId, Map<String, String> shareInfo) {
+        this.shareInfo.put(articleId, shareInfo);
      }
 
-    public String getShareLink(Download download) {
-        final Map<String, Object> info = shareInfo.get(download);
-        if (info != null) return (String) info.get("url");
+    public String getShareLink(String articleId) {
+        final Map<String, String> info = shareInfo.get(articleId);
+        if (info != null) return info.get("url");
         return null;
     }
 
-    public String getSharePassword(Download download){
-        final Map<String, Object> info = shareInfo.get(download);
-        if (info != null) return (String) info.get("password");
+    public String getSharePassword(String articleId){
+        final Map<String, String> info = shareInfo.get(articleId);
+        if (info != null) return info.get("password");
+        return null;
+    }
+
+    public String getLicenseDownloadLink(String articleId){
+        final Map<String, String> info = shareInfo.get(articleId);
+        if (info != null) return info.get("licUrl");
         return null;
     }
 
@@ -135,7 +139,7 @@ public class DownloadRequest {
     }
 
     public List<Terms> getTerms() {
-        ArrayList<Terms> terms = new ArrayList<Terms>();
+        ArrayList<Terms> terms = new ArrayList<>();
         for (Download download : downloads) {
             final Terms downloadTerms = download.getTerms();
             if (downloadTerms != null && !terms.contains(downloadTerms)) terms.add(downloadTerms);
