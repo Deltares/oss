@@ -48,6 +48,7 @@ public class DownloadSoap implements Serializable {
 		soapModel.setCity(model.getCity());
 		soapModel.setShareId(model.getShareId());
 		soapModel.setDirectDownloadUrl(model.getDirectDownloadUrl());
+		soapModel.setLicenseDownloadUrl(model.getLicenseDownloadUrl());
 
 		return soapModel;
 	}
@@ -213,6 +214,14 @@ public class DownloadSoap implements Serializable {
 		_directDownloadUrl = directDownloadUrl;
 	}
 
+	public String getLicenseDownloadUrl() {
+		return _licenseDownloadUrl;
+	}
+
+	public void setLicenseDownloadUrl(String licenseDownloadUrl) {
+		_licenseDownloadUrl = licenseDownloadUrl;
+	}
+
 	private long _id;
 	private long _companyId;
 	private long _groupId;
@@ -227,5 +236,6 @@ public class DownloadSoap implements Serializable {
 	private String _city;
 	private int _shareId;
 	private String _directDownloadUrl;
+	private String _licenseDownloadUrl;
 
 }

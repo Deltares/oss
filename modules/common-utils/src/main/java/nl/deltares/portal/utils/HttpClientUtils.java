@@ -17,10 +17,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public abstract class HttpClientUtils {
 

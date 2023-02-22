@@ -278,6 +278,21 @@ public interface DownloadModel extends BaseModel<Download>, ShardedModel {
 	 */
 	public void setDirectDownloadUrl(String directDownloadUrl);
 
+	/**
+	 * Returns the license download url of this download.
+	 *
+	 * @return the license download url of this download
+	 */
+	@AutoEscape
+	public String getLicenseDownloadUrl();
+
+	/**
+	 * Sets the license download url of this download.
+	 *
+	 * @param licenseDownloadUrl the license download url of this download
+	 */
+	public void setLicenseDownloadUrl(String licenseDownloadUrl);
+
 	@Override
 	public boolean isNew();
 

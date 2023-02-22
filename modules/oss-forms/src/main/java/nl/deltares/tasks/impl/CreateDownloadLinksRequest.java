@@ -51,11 +51,11 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
             downloads.forEach(download -> setStatusToProcessing(user, Long.parseLong(download.getArticleId()), download.getFilePath()));
             for (Download download : downloads) {
 
-                Map<String, Object> shareInfo;
+                Map<String, String> shareInfo;
                 if (!download.isAutomaticLinkCreation()) {
                     LOG.info(String.format("Creation of share link for user '%s' on file '%s' will be sent once request has been processed.", emailAddress, download.getFileName()));
                     shareInfo = new HashMap<>();
-                    shareInfo.put("id", -1);
+                    shareInfo.put("id", "-1");
                 } else {
 
                     try {
@@ -63,7 +63,7 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
                         if (shareInfo.isEmpty()) {
                             shareInfo = downloadUtils.sendShareLink(download.getFilePath(), emailAddress);
                         } else {
-                            shareInfo = downloadUtils.resendShareLink((Integer) shareInfo.get("id"));
+                            shareInfo = downloadUtils.resendShareLink(Integer.parseInt(shareInfo.get("id")));
                         }
                     } catch (Exception e) {
                         errorMessage = String.format("Failed to send link for file %s : %s ", download.getFileName(), e.getMessage());
@@ -74,17 +74,19 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
                     }
                 }
 
-                downloadRequest.registerShareInfo(download, shareInfo);
+                String licenseType = download.getLicenseType();
+                if (licenseType != null){
+                    Map<String, String> licInfo = licenseManagerUtils.encryptLicense(licenseType, user);
+                    String licUrl = licInfo.get("url");
+                    if (licUrl != null) shareInfo.put("licUrl", licUrl);
+                }
+                downloadRequest.registerShareInfo(download.getArticleId(), shareInfo);
                 try {
                     downloadUtils.registerDownload(user, downloadRequest.getGroupId() , Long.parseLong(download.getArticleId()),
                             download.getFilePath(), shareInfo, downloadRequest.getUserAttributes());
                 } catch (PortalException e) {
                     errorMessage = String.format("Failed to register link for file %s : %s ", download.getFileName(), e.getMessage());
                     LOG.warn(errorMessage);
-                }
-                LicenseFile licenseFile = download.getLicenseFile();
-                if (licenseFile != null){
-                    licenseManagerUtils.encryptLicense(licenseFile, user);
                 }
 
                 incrementProcessCount(1);
@@ -114,8 +116,8 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
 
     private void unsetStatusFromProcessing(User user, long downloadId) {
         try {
-            final Map<String, Object> shareInfo = new HashMap<>();
-            shareInfo.put("id", -1);
+            final Map<String, String> shareInfo = new HashMap<>();
+            shareInfo.put("id", "-1");
             downloadUtils.registerDownload(user, downloadRequest.getGroupId(), downloadId, null, shareInfo, Collections.emptyMap());
         } catch (PortalException e) {
             LOG.warn("Error unsetting direct download url: " + e.getMessage());
@@ -124,8 +126,8 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
 
     private void setStatusToProcessing(User user, long downloadId, String filePath) {
         try {
-            final Map<String, Object> shareInfo = new HashMap<>();
-            shareInfo.put("id", -9);
+            final Map<String, String> shareInfo = new HashMap<>();
+            shareInfo.put("id", "-9");
             downloadUtils.registerDownload(user, downloadRequest.getGroupId(), downloadId, filePath, shareInfo, Collections.emptyMap());
         } catch (PortalException e) {
             LOG.warn("Error registering direct download url: " + e.getMessage());
