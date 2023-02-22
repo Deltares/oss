@@ -24,6 +24,7 @@
 			<validator name="required" />
 			<validator name="url" />
 		</field>
+		<field name="licenseDownloadUrl" type="String" />
 	</model>
 	<model name="nl.deltares.oss.download.model.DownloadCount">
 		<field name="id" type="long" />

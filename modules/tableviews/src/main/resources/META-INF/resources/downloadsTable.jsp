@@ -91,6 +91,7 @@
                 <liferay-ui:search-container-column-text property="shareIdStatus" name="Share status"/>
                 <liferay-ui:search-container-column-text property="filePath" name="File path"/>
                 <liferay-ui:search-container-column-text property="directDownloadUrl" name="Direct download"/>
+                <liferay-ui:search-container-column-text property="licenseDownloadUrl" name="License download"/>
 
             </liferay-ui:search-container-row>
             <liferay-ui:search-iterator/>

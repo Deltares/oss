@@ -120,7 +120,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
     }
 
     @Override
-    public Map<String, Object> sendShareLink(String filePath, String email) throws Exception {
+    public Map<String, String> sendShareLink(String filePath, String email) throws Exception {
         String directDownloadPath = API_PATH + "files_sharing/api/v1/shares";
         HttpURLConnection connection = getConnection(directDownloadPath, "POST", getDefaultHeaders());
         connection.setDoOutput(true);
@@ -143,19 +143,19 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         final Document document = XmlContentUtils.parseContent(DownloadUtilsImpl.class.getName(), xmlResponse);
 
         final NodeList idNode = document.getElementsByTagName("id");
-        final HashMap<String, Object> shareInfo = new HashMap<>();
+        final HashMap<String, String> shareInfo = new HashMap<>();
         if (idNode.getLength() == 0) {
             LOG.error("Failed to create a share for file " + filePath);
             return Collections.emptyMap();
         } else {
             final int shareId = Integer.parseInt(idNode.item(0).getTextContent());
-            shareInfo.put("id", shareId);
+            shareInfo.put("id", String.valueOf(shareId));
             LOG.info(String.format("Created share for user '%s' on file '%s'.", email, filePath));
         }
         final NodeList expNode = document.getElementsByTagName("expiration");
         if (expNode.getLength() > 0) {
             final String expDate = expNode.item(0).getTextContent();
-            shareInfo.put("expiration", dateFormat.parse(expDate));
+            shareInfo.put("expiration", String.valueOf(dateFormat.parse(expDate).getTime()));
         }
         final NodeList tokenNode = document.getElementsByTagName(("token"));
         if (tokenNode.getLength() > 0){
@@ -202,7 +202,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
     }
 
     @Override
-    public Map<String, Object> shareLinkExists(String filePath, String email) throws Exception {
+    public Map<String, String> shareLinkExists(String filePath, String email) throws Exception {
 
         final Document document = getFileShares(filePath);
         final NodeList emailNodes = document.getElementsByTagName("share_with");
@@ -219,28 +219,28 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         if (shareIndex == -1) return Collections.emptyMap();
         final NodeList shareIdNodes = document.getElementsByTagName("id");
 
-        final HashMap<String, Object> shareInfo = new HashMap<>();
+        final HashMap<String, String> shareInfo = new HashMap<>();
         final int shareId = Integer.parseInt(shareIdNodes.item(shareIndex).getTextContent());
-        shareInfo.put("id", shareId);
+        shareInfo.put("id", String.valueOf(shareId));
         final NodeList expNodes = document.getElementsByTagName("expiration");
         final Date expiration = dateFormat.parse(expNodes.item(shareIndex).getTextContent());
-        shareInfo.put("expiration", expiration);
+        shareInfo.put("expiration", String.valueOf(expiration.getTime()));
         return shareInfo;
     }
 
     @Override
-    public Map<String, Object> resendShareLink(int shareId) throws Exception {
+    public Map<String, String> resendShareLink(int shareId) throws Exception {
 
         //Get info from existing share
-        final Map<String, Object> existingShare = getShareLinkInfo(shareId);
+        final Map<String, String> existingShare = getShareLinkInfo(shareId);
         //Delete the old share, to force resending emails
-        deleteShareLink((Integer) existingShare.get("id"));
+        deleteShareLink(Integer.parseInt(existingShare.get("id")));
         //Create a new share
-        return sendShareLink(existingShare.get("path").toString(), existingShare.get("email").toString());
+        return sendShareLink(existingShare.get("path"), existingShare.get("email"));
     }
 
     @Override
-    public Map<String, Object> getShareLinkInfo(int shareId) throws Exception {
+    public Map<String, String> getShareLinkInfo(int shareId) throws Exception {
         String path = API_PATH + "files_sharing/api/v1/shares/" + shareId;
         HttpURLConnection connection = getConnection(path, "GET", getDefaultHeaders());
 
@@ -249,10 +249,10 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         final String xmlResponse = readAll(connection);
         final Document document = XmlContentUtils.parseContent(DownloadUtilsImpl.class.getName(), xmlResponse);
 
-        final HashMap<String, Object> shareInfo = new HashMap<>();
+        final HashMap<String, String> shareInfo = new HashMap<>();
         //Response should always have an element otherwise exception would have been thrown.
         shareInfo.put("email", document.getElementsByTagName("share_with").item(0).getTextContent());
-        shareInfo.put("id", Integer.parseInt(document.getElementsByTagName("id").item(0).getTextContent()));
+        shareInfo.put("id", document.getElementsByTagName("id").item(0).getTextContent());
         shareInfo.put("path", document.getElementsByTagName("path").item(0).getTextContent());
         shareInfo.put("url", tokenToShareLinkUrl(document.getElementsByTagName("token").item(0).getTextContent()));
         return shareInfo;
@@ -262,16 +262,16 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
     @Override
     public void registerDownload(User user, long groupId, long downloadId, String filePath, String directDownloadUrl, Map<String, String> userAttributes) {
 
-        final HashMap<String, Object> shareInfo = new HashMap<>();
+        final HashMap<String, String> shareInfo = new HashMap<>();
         shareInfo.put("url", directDownloadUrl);
-        shareInfo.put("expiration", new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(8)));
-        shareInfo.put("id", -1);
+        shareInfo.put("expiration", String.valueOf(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(8)));
+        shareInfo.put("id", "-1");
         registerDownload(user, groupId, downloadId, filePath, shareInfo, userAttributes);
 
     }
 
     @Override
-    public void registerDownload(User user,long groupId, long downloadId, String filePath, Map<String, Object> shareInfo, Map<String, String> userAttributes) {
+    public void registerDownload(User user,long groupId, long downloadId, String filePath, Map<String, String> shareInfo, Map<String, String> userAttributes) {
         nl.deltares.oss.download.model.Download userDownload = DownloadLocalServiceUtil.fetchUserDownload(groupId, user.getUserId(), downloadId);
         if (userDownload == null) {
             userDownload = DownloadLocalServiceUtil.createDownload(CounterLocalServiceUtil.increment(
@@ -299,21 +299,25 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         }
         if (!shareInfo.isEmpty()) {
             //Share info can be missing when user has not yet paid.
-            final Object expiration = shareInfo.get("expiration");
+            final String expiration = shareInfo.get("expiration");
             if (expiration != null) {
-                userDownload.setExpiryDate(((Date) expiration));
+                userDownload.setExpiryDate(new Date(Long.parseLong(expiration)));
             }
-            final Object shareId = shareInfo.get("id");
+            final String shareId = shareInfo.get("id");
             if (shareId != null) {
-                userDownload.setShareId((int) shareId);
+                userDownload.setShareId(Integer.parseInt(shareId));
             } else {
                 userDownload.setShareId(-1);
             }
-            String url = (String) shareInfo.get("url");
+            String url = shareInfo.get("url");
             if (url != null) {
-                final Object password = shareInfo.get("password");
-                if (password != null) url = url.concat(" ( ").concat((String)password).concat(" )");
+                final String password = shareInfo.get("password");
+                if (password != null) url = url.concat(" ( ").concat(password).concat(" )");
                 userDownload.setDirectDownloadUrl(url);
+            }
+            String licUrl = shareInfo.get("licUrl");
+            if (licUrl != null) {
+                userDownload.setLicenseDownloadUrl(licUrl);
             }
         }
         DownloadLocalServiceUtil.updateDownload(userDownload);

@@ -12,7 +12,8 @@ create table Downloads_Download (
 	countryCode VARCHAR(75) null,
 	city VARCHAR(75) null,
 	shareId INTEGER,
-	directDownloadUrl STRING null
+	directDownloadUrl STRING null,
+	licenseDownloadUrl VARCHAR(75) null
 );
 
 create table Downloads_DownloadCount (

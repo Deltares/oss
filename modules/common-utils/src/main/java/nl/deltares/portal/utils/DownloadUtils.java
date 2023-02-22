@@ -31,7 +31,7 @@ public interface DownloadUtils {
      * @return Share ID
      * @throws Exception If file is already shared to user if file does not exist.
      */
-    Map<String, Object> sendShareLink(String filePath, String email) throws Exception;
+    Map<String, String> sendShareLink(String filePath, String email) throws Exception;
 
     /**
      * Revoke an earlier created share.
@@ -53,7 +53,7 @@ public interface DownloadUtils {
      * @param email Email of user to check
      * @return Existing share info ('id', 'expiration').
      */
-    Map<String, Object> shareLinkExists(String filePath, String email) throws Exception;
+    Map<String, String> shareLinkExists(String filePath, String email) throws Exception;
 
     /**
      * Check if a download link has already been issued and is still valid.
@@ -70,14 +70,14 @@ public interface DownloadUtils {
      * Old share link is first removed before creating a new one.
      * @param shareId Id of existing share.
      */
-    Map<String, Object> resendShareLink(int shareId) throws Exception;
+    Map<String, String> resendShareLink(int shareId) throws Exception;
 
     /**
      * Retrieve information about an existing share link
      * @param shareId Share link identifier
      * @return Map containing relevant share link properties
      */
-    Map<String, Object> getShareLinkInfo(int shareId) throws Exception;
+    Map<String, String> getShareLinkInfo(int shareId) throws Exception;
 
     /**
      * Register the download request in the downloads table.
@@ -88,7 +88,7 @@ public interface DownloadUtils {
      * @param shareInfo Information regarding the share. If payment is pending then this info is not yet available
      * @param userAttributes Information about the user
      */
-    void registerDownload(User user, long groupId, long downloadId, String filePath, Map<String, Object> shareInfo, Map<String, String> userAttributes) throws PortalException;
+    void registerDownload(User user, long groupId, long downloadId, String filePath, Map<String, String> shareInfo, Map<String, String> userAttributes) throws PortalException;
 
     /**
      * Register the direct download request in the downloads table.

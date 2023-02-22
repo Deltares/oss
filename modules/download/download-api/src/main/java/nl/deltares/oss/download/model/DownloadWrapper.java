@@ -71,6 +71,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 		attributes.put("city", getCity());
 		attributes.put("shareId", getShareId());
 		attributes.put("directDownloadUrl", getDirectDownloadUrl());
+		attributes.put("licenseDownloadUrl", getLicenseDownloadUrl());
 
 		return attributes;
 	}
@@ -159,6 +160,13 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 
 		if (directDownloadUrl != null) {
 			setDirectDownloadUrl(directDownloadUrl);
+		}
+
+		String licenseDownloadUrl = (String)attributes.get(
+			"licenseDownloadUrl");
+
+		if (licenseDownloadUrl != null) {
+			setLicenseDownloadUrl(licenseDownloadUrl);
 		}
 	}
 
@@ -275,6 +283,16 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	@Override
 	public long getId() {
 		return _download.getId();
+	}
+
+	/**
+	 * Returns the license download url of this download.
+	 *
+	 * @return the license download url of this download
+	 */
+	@Override
+	public String getLicenseDownloadUrl() {
+		return _download.getLicenseDownloadUrl();
 	}
 
 	/**
@@ -487,6 +505,16 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	@Override
 	public void setId(long id) {
 		_download.setId(id);
+	}
+
+	/**
+	 * Sets the license download url of this download.
+	 *
+	 * @param licenseDownloadUrl the license download url of this download
+	 */
+	@Override
+	public void setLicenseDownloadUrl(String licenseDownloadUrl) {
+		_download.setLicenseDownloadUrl(licenseDownloadUrl);
 	}
 
 	/**
