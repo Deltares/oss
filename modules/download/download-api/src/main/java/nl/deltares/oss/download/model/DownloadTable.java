@@ -60,6 +60,10 @@ public class DownloadTable extends BaseTable<DownloadTable> {
 		"shareId", Integer.class, Types.INTEGER, Column.FLAG_DEFAULT);
 	public final Column<DownloadTable, String> directDownloadUrl = createColumn(
 		"directDownloadUrl", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
+	public final Column<DownloadTable, String> licenseDownloadUrl =
+		createColumn(
+			"licenseDownloadUrl", String.class, Types.VARCHAR,
+			Column.FLAG_DEFAULT);
 
 	private DownloadTable() {
 		super("Downloads_Download", DownloadTable::new);

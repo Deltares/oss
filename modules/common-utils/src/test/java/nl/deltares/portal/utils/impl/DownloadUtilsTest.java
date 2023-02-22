@@ -73,8 +73,8 @@ public class DownloadUtilsTest {
     public void testSendShareLink() throws Exception {
 
         final DownloadUtilsImpl downloadUtils = new DownloadUtilsImpl();
-        final Map<String, Object> info = downloadUtils.sendShareLink("/OSS/Nextcloud Manual.pdf", "teset@lifer.com");
-        final Integer shareId = (Integer) info.get("id");
+        final Map<String, String> info = downloadUtils.sendShareLink("/OSS/Nextcloud Manual.pdf", "teset@lifer.com");
+        final Integer shareId = Integer.parseInt(info.get("id"));
         System.out.printf("created share %d for user %s%n", shareId, "erik.derooij@deltares.nl");
         Assert.assertTrue(shareId > 0);
     }
@@ -94,12 +94,12 @@ public class DownloadUtilsTest {
 
         final DownloadUtilsImpl downloadUtils = new DownloadUtilsImpl();
 
-        Map<String, Object> shareInfo = downloadUtils.shareLinkExists("/unittests/test-direct.txt", "erik.derooij@deltares.nl");
+        Map<String, String> shareInfo = downloadUtils.shareLinkExists("/unittests/test-direct.txt", "erik.derooij@deltares.nl");
         Assert.assertTrue(shareInfo.isEmpty());
 
         shareInfo = downloadUtils.sendShareLink("/unittests/test-direct.txt", "erik.derooij@deltares.nl");
 
-        Map<String, Object> shareInfoChecked = downloadUtils.shareLinkExists("/unittests/test-direct.txt", "erik.derooij@deltares.nl");
+        Map<String, String> shareInfoChecked = downloadUtils.shareLinkExists("/unittests/test-direct.txt", "erik.derooij@deltares.nl");
         Assert.assertEquals(shareInfo.get("id"), shareInfoChecked.get("id"));
 
     }
@@ -109,12 +109,12 @@ public class DownloadUtilsTest {
 
         final DownloadUtilsImpl downloadUtils = new DownloadUtilsImpl();
 
-        Map<String, Object> shareInfo = downloadUtils.shareLinkExists("/unittests/test-direct.txt", "erik.derooij@deltares.nl");
+        Map<String, String> shareInfo = downloadUtils.shareLinkExists("/unittests/test-direct.txt", "erik.derooij@deltares.nl");
         if (shareInfo.isEmpty()) {
             shareInfo = downloadUtils.sendShareLink("/unittests/test-direct.txt", "erik.derooij@deltares.nl");
         }
 
-        final Map<String, Object> newInfo = downloadUtils.resendShareLink((Integer) shareInfo.get("id"));
+        final Map<String, String> newInfo = downloadUtils.resendShareLink(Integer.parseInt(shareInfo.get("id")));
 
 
     }

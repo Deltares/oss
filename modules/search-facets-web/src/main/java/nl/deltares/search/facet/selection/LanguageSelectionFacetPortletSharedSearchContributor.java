@@ -12,7 +12,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 import nl.deltares.portal.utils.DDMStructureUtil;
-import nl.deltares.search.constans.FacetPortletKeys;
+import nl.deltares.search.constans.SearchModuleKeys;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @Component(
         immediate = true,
-        property = "javax.portlet.name=" + FacetPortletKeys.LANGUAGE_SELECTION_FACET_PORTLET,
+        property = "javax.portlet.name=" + SearchModuleKeys.LANGUAGE_SELECTION_FACET_PORTLET,
         service = PortletSharedSearchContributor.class
 )
 public class LanguageSelectionFacetPortletSharedSearchContributor implements PortletSharedSearchContributor {
@@ -44,7 +44,7 @@ public class LanguageSelectionFacetPortletSharedSearchContributor implements Por
         String fieldName = configuration.fieldName();
         String name = structureName + '-' + fieldName;
 
-        Optional<String> selectionOptional = portletSharedSearchSettings.getParameter(name);
+        Optional<String> selectionOptional = portletSharedSearchSettings.getParameterOptional(name);
         String selection;
         if (selectionOptional.isPresent()) {
             selection = selectionOptional.get();
