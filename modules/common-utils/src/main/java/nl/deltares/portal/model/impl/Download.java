@@ -26,7 +26,7 @@ public class Download extends AbsDsdArticle {
     private String fileTopicName;
     private Layout groupPage;
     private List<Subscription> subscriptions = null;
-    private LicenseFile licenseFile = null;
+    private String licenseType = null;
     private boolean automaticLinkCreation = false;
     private Terms terms = null;
 
@@ -62,6 +62,8 @@ public class Download extends AbsDsdArticle {
             final Map<String, String> fileTopicMap = articleUtils.getStructureFieldOptions(getGroupId(), getStructureKey(), "Topic", getLocale());
             fileTopicName = fileTopicMap.get(fileTopic);
 
+            licenseType = XmlContentUtils.getDynamicContentByName(document, "GenerateLicense", true);
+
             String linkToPage = XmlContentUtils.getDynamicContentByName(document, "GroupPage", false);
             groupPage = layoutUtils.getLinkToPageLayout(linkToPage);
 
@@ -88,29 +90,8 @@ public class Download extends AbsDsdArticle {
         }
     }
 
-    public LicenseFile getLicenseFile(){
-        loadLicenseFile();
-        return licenseFile;
-    }
-
-    private void loadLicenseFile() {
-        if(licenseFile != null) return;
-        try {
-            parseLicenseFile();
-        } catch (PortalException e) {
-            LOG.error(String.format("Error parsing licenseFile for Download %s: %s", getTitle(), e.getMessage()));
-        }
-    }
-
-    private void parseLicenseFile() throws PortalException {
-
-        String content = XmlContentUtils.getDynamicContentByName(getDocument(), "LicenseFile", true);
-        if (content != null){
-            JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(content);
-            AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(article, super.getLocale());
-            if (!(dsdArticle instanceof LicenseFile)) throw new PortalException(String.format("Article %s not instance of LicenseFile", article.getTitle()));
-            licenseFile = (LicenseFile) dsdArticle;
-        }
+    public String getLicenseType(){
+        return licenseType;
     }
 
     public Terms getTerms(){

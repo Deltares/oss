@@ -128,8 +128,8 @@ public class DownloadRestService {
 
     private void setStatusToProcessing(User user, long groupId, long downloadId, String filePath) {
         try {
-            final Map<String, Object> shareInfo = new HashMap<>();
-            shareInfo.put("id", -9);
+            final Map<String, String> shareInfo = new HashMap<>();
+            shareInfo.put("id", "-9");
             downloadUtils.registerDownload(user, groupId, downloadId, filePath, shareInfo, Collections.emptyMap());
         } catch (PortalException e) {
             LOG.warn("Error registering direct download url: " + e.getMessage());
@@ -200,12 +200,12 @@ public class DownloadRestService {
 
         setStatusToProcessing(user, groupId, downloadId, filePath);
 
-        Map<String, Object> shareInfo = null;
+        Map<String, String> shareInfo = null;
         try {
              shareInfo = downloadUtils.shareLinkExists(filePath, user.getEmailAddress());
             if (!shareInfo.isEmpty()) {
                 if (resendLink) {
-                    shareInfo = downloadUtils.resendShareLink((Integer) shareInfo.get("id"));
+                    shareInfo = downloadUtils.resendShareLink(Integer.parseInt(shareInfo.get("id")));
                 } else {
                     return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Share link has already been sent to user " + user.getEmailAddress()).build();
                 }

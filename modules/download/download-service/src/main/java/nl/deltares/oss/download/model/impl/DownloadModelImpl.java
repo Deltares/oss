@@ -78,7 +78,8 @@ public class DownloadModelImpl
 		{"modifiedDate", Types.TIMESTAMP}, {"filePath", Types.VARCHAR},
 		{"expiryDate", Types.TIMESTAMP}, {"organization", Types.VARCHAR},
 		{"countryCode", Types.VARCHAR}, {"city", Types.VARCHAR},
-		{"shareId", Types.INTEGER}, {"directDownloadUrl", Types.VARCHAR}
+		{"shareId", Types.INTEGER}, {"directDownloadUrl", Types.VARCHAR},
+		{"licenseDownloadUrl", Types.VARCHAR}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -99,10 +100,11 @@ public class DownloadModelImpl
 		TABLE_COLUMNS_MAP.put("city", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("shareId", Types.INTEGER);
 		TABLE_COLUMNS_MAP.put("directDownloadUrl", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("licenseDownloadUrl", Types.VARCHAR);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table Downloads_Download (id_ LONG not null primary key,companyId LONG,groupId LONG,downloadId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,filePath STRING null,expiryDate DATE null,organization VARCHAR(75) null,countryCode VARCHAR(75) null,city VARCHAR(75) null,shareId INTEGER,directDownloadUrl STRING null)";
+		"create table Downloads_Download (id_ LONG not null primary key,companyId LONG,groupId LONG,downloadId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,filePath STRING null,expiryDate DATE null,organization VARCHAR(75) null,countryCode VARCHAR(75) null,city VARCHAR(75) null,shareId INTEGER,directDownloadUrl STRING null,licenseDownloadUrl VARCHAR(75) null)";
 
 	public static final String TABLE_SQL_DROP = "drop table Downloads_Download";
 
@@ -553,6 +555,28 @@ public class DownloadModelImpl
 				}
 
 			});
+		attributeGetterFunctions.put(
+			"licenseDownloadUrl",
+			new Function<Download, Object>() {
+
+				@Override
+				public Object apply(Download download) {
+					return download.getLicenseDownloadUrl();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"licenseDownloadUrl",
+			new BiConsumer<Download, Object>() {
+
+				@Override
+				public void accept(
+					Download download, Object licenseDownloadUrl) {
+
+					download.setLicenseDownloadUrl((String)licenseDownloadUrl);
+				}
+
+			});
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -797,6 +821,21 @@ public class DownloadModelImpl
 		_directDownloadUrl = directDownloadUrl;
 	}
 
+	@Override
+	public String getLicenseDownloadUrl() {
+		if (_licenseDownloadUrl == null) {
+			return "";
+		}
+		else {
+			return _licenseDownloadUrl;
+		}
+	}
+
+	@Override
+	public void setLicenseDownloadUrl(String licenseDownloadUrl) {
+		_licenseDownloadUrl = licenseDownloadUrl;
+	}
+
 	public long getColumnBitmask() {
 		return _columnBitmask;
 	}
@@ -847,6 +886,7 @@ public class DownloadModelImpl
 		downloadImpl.setCity(getCity());
 		downloadImpl.setShareId(getShareId());
 		downloadImpl.setDirectDownloadUrl(getDirectDownloadUrl());
+		downloadImpl.setLicenseDownloadUrl(getLicenseDownloadUrl());
 
 		downloadImpl.resetOriginalValues();
 
@@ -1014,6 +1054,16 @@ public class DownloadModelImpl
 			downloadCacheModel.directDownloadUrl = null;
 		}
 
+		downloadCacheModel.licenseDownloadUrl = getLicenseDownloadUrl();
+
+		String licenseDownloadUrl = downloadCacheModel.licenseDownloadUrl;
+
+		if ((licenseDownloadUrl != null) &&
+			(licenseDownloadUrl.length() == 0)) {
+
+			downloadCacheModel.licenseDownloadUrl = null;
+		}
+
 		return downloadCacheModel;
 	}
 
@@ -1110,6 +1160,7 @@ public class DownloadModelImpl
 	private int _originalShareId;
 	private boolean _setOriginalShareId;
 	private String _directDownloadUrl;
+	private String _licenseDownloadUrl;
 	private long _columnBitmask;
 	private Download _escapedModel;
 

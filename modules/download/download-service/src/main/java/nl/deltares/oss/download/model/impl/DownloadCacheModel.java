@@ -65,7 +65,7 @@ public class DownloadCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(29);
+		StringBundler sb = new StringBundler(31);
 
 		sb.append("{id=");
 		sb.append(id);
@@ -95,6 +95,8 @@ public class DownloadCacheModel
 		sb.append(shareId);
 		sb.append(", directDownloadUrl=");
 		sb.append(directDownloadUrl);
+		sb.append(", licenseDownloadUrl=");
+		sb.append(licenseDownloadUrl);
 		sb.append("}");
 
 		return sb.toString();
@@ -168,6 +170,13 @@ public class DownloadCacheModel
 			downloadImpl.setDirectDownloadUrl(directDownloadUrl);
 		}
 
+		if (licenseDownloadUrl == null) {
+			downloadImpl.setLicenseDownloadUrl("");
+		}
+		else {
+			downloadImpl.setLicenseDownloadUrl(licenseDownloadUrl);
+		}
+
 		downloadImpl.resetOriginalValues();
 
 		return downloadImpl;
@@ -194,6 +203,7 @@ public class DownloadCacheModel
 
 		shareId = objectInput.readInt();
 		directDownloadUrl = objectInput.readUTF();
+		licenseDownloadUrl = objectInput.readUTF();
 	}
 
 	@Override
@@ -248,6 +258,13 @@ public class DownloadCacheModel
 		else {
 			objectOutput.writeUTF(directDownloadUrl);
 		}
+
+		if (licenseDownloadUrl == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(licenseDownloadUrl);
+		}
 	}
 
 	public long id;
@@ -264,5 +281,6 @@ public class DownloadCacheModel
 	public String city;
 	public int shareId;
 	public String directDownloadUrl;
+	public String licenseDownloadUrl;
 
 }

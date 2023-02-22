@@ -16,6 +16,7 @@ public class DisplayDownload implements Comparable<DisplayDownload> {
     final private String countryCode;
     final private String filePath;
     final private String directDownloadUrl;
+    final private String licenseDownloadUrl;
 
     public DisplayDownload(Download download) {
         this.download = download;
@@ -36,6 +37,8 @@ public class DisplayDownload implements Comparable<DisplayDownload> {
         this.filePath = filePath != null ? filePath : "";
         final String directDownloadPath = download.getDirectDownloadUrl();
         this.directDownloadUrl = directDownloadPath != null ? directDownloadPath : "";
+        final String licenseDownloadPath = download.getLicenseDownloadUrl();
+        this.licenseDownloadUrl = licenseDownloadPath != null ? licenseDownloadPath : "";
     }
 
     public long getId(){
@@ -87,6 +90,10 @@ public class DisplayDownload implements Comparable<DisplayDownload> {
 
     public String getDirectDownloadUrl() {
         return directDownloadUrl;
+    }
+
+    public String getLicenseDownloadUrl() {
+        return licenseDownloadUrl;
     }
 
     @Override
