@@ -206,7 +206,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         long[] overlappingRegistrationIds = getOverlappingRegistrationIds(user, registration);
         if (overlappingRegistrationIds.length > 0) {
             throw new ValidationException(String.format("Registration period for %s overlaps with other existing registrations: %s",
-                    registration.getTitle(), Arrays.toString(getTitles(registration.getGroupId(), overlappingRegistrationIds))));
+                    registration.getTitle(), Arrays.toString(getTitles(overlappingRegistrationIds))));
         }
 
         if (registration.getParentRegistration() != null && !isUserRegisteredFor(user, registration.getParentRegistration())) {
@@ -214,11 +214,11 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         }
     }
 
-    private String[] getTitles(long groupId, long[] articleIds) {
+    private String[] getTitles(long[] articleIds) {
         String[] titles = new String[articleIds.length];
         for (int i = 0; i < articleIds.length; i++) {
             try {
-                JournalArticle journalArticle = dsdJournalArticleUtils.getJournalArticle(groupId, String.valueOf(articleIds[i]));
+                JournalArticle journalArticle = dsdJournalArticleUtils.getLatestArticle(articleIds[i]);
                 titles[i] = journalArticle == null ? String.valueOf(articleIds[i]) : journalArticle.getTitle();
             } catch (PortalException e) {
                 titles[i] = String.valueOf(articleIds[i]);
@@ -227,10 +227,10 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         return titles;
     }
 
-    public List<Registration> getChildRegistrations(Registration registration, Locale locale) throws PortalException {
+    public List<Registration> getChildRegistrations(Registration registration) throws PortalException {
         Event event = parserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()), registration.getLocale());
         if (event == null) return Collections.emptyList();
-        List<Registration> registrations = event.getRegistrations(locale);
+        List<Registration> registrations = event.getRegistrations(event.getLocale());
         ArrayList<Registration> children = new ArrayList<>();
         for (Registration eventRegistration : registrations) {
             if (eventRegistration.getParentRegistration() != null && eventRegistration.getParentRegistration().getResourceId() == registration.getResourceId()) {
@@ -265,9 +265,9 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         for (Registration reg1 : list) {
             registrations.forEach(registration -> {
                 if (registration == reg1) return;
-                if (checkNoOverlapWithParent(reg1, registration)) return;
-                if (checkNoOverlapWithParent(registration, reg1)) return;
-                if (periodsOverlap(reg1, registration)) {
+                if (canOverlapWithParent(reg1, registration)) return;
+                if (canOverlapWithParent(registration, reg1)) return;
+                if (periodsOverlap(reg1, registration)){
                     if (!overlapping.contains(reg1)) overlapping.add(reg1);
                 }
             });
@@ -276,8 +276,8 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         return overlapping;
     }
 
-    private boolean checkNoOverlapWithParent(Registration child, Registration parent) {
-        if (child.getParentRegistration() == null) return true;
+    private boolean canOverlapWithParent(Registration child, Registration parent) {
+        if (child.getParentRegistration() == null) return false; //no parent so cannot overlap
         return child.getParentRegistration().getArticleId().equals(parent.getArticleId()) && child.isOverlapWithParent();
     }
 
@@ -324,7 +324,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         }
         Registration overlappingRegistration = parserUtils.getRegistration(overlappingDbRegistration);
         return overlappingRegistration.isOverlapWithParent() &&
-                (overlappingRegistration.getParentRegistration() == null || overlappingRegistration.getParentRegistration().getArticleId().equals(validatingArticleId));
+                (overlappingRegistration.getParentRegistration() != null && overlappingRegistration.getParentRegistration().getArticleId().equals(validatingArticleId));
     }
 
     @Override

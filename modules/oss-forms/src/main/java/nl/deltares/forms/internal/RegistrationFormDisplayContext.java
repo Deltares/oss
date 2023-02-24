@@ -27,7 +27,7 @@ public class RegistrationFormDisplayContext {
         List<Registration> children = new ArrayList<>();
         try {
             children = dsdSessionUtils.getChildRegistrations(
-                    dsdParserUtils.getRegistration(siteId, articleId), portletRequest.getLocale());
+                    dsdParserUtils.getRegistration(siteId, articleId));
         } catch (Exception e) {
             LOG.debug("Error retrieving children for registration [" + articleId + "]", e);
         }
