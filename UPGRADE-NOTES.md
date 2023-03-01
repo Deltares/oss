@@ -76,3 +76,7 @@ can be removed. The functionality is not being used.
 - Check that the database upgrade processes complete successfully 
   - fix any errors that may arise by removing problem records from original database
 - Enable JQuery options
+
+<h2>PRE Upgrade Database tasks</h2>
+To prepare the Liferay 7.1 database for the upgrade process, run the scripts defined in SQL file 'pre-upgrade-cleanup.sql'
+that can be found in the docker/resources folder of this project.

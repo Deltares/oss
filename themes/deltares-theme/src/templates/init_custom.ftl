@@ -10,7 +10,7 @@ This file allows you to override and define new FreeMarker variables.
 
 <#assign current_url = htmlUtil.escape(theme_display.getURLCurrent()) />
 
-<#if !is_site_admin >
+<#if !is_site_admin?? && is_site_admin >
   <#assign css_class = stringUtil.replace(css_class, "open", "closed") />
 </#if>
 

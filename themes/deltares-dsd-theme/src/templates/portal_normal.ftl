@@ -37,7 +37,7 @@
 
 <@liferay_util["include"] page=body_top_include />
 
-<#if is_site_admin>
+<#if is_site_admin?? && is_site_admin >
 	<@liferay.control_menu />
 </#if>
 
