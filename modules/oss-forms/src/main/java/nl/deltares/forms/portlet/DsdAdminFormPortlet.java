@@ -88,7 +88,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		ThemeDisplay themeDisplay = (ThemeDisplay) resourceRequest
 				.getAttribute(WebKeys.THEME_DISPLAY);
 
-		if (!themeDisplay.isSignedIn() || !resourceRequest.isUserInRole("administrator")) {
+		if (!PortletPermissionUtils.isUserSiteOrOtherAdministrator(themeDisplay.getUserId(), themeDisplay.getSiteGroupId())) {
 			resourceResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			resourceResponse.getWriter().println("Unauthorized request!");
 			return;
