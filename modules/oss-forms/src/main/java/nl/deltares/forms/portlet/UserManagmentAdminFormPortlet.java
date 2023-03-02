@@ -64,7 +64,7 @@ public class UserManagmentAdminFormPortlet extends MVCPortlet {
         ThemeDisplay themeDisplay = (ThemeDisplay) resourceRequest
                 .getAttribute(WebKeys.THEME_DISPLAY);
 
-        if (!themeDisplay.isSignedIn() || !resourceRequest.isUserInRole("administrator")) {
+        if (!PortletPermissionUtils.isUserAdministrator(themeDisplay.getUserId())) {
             resourceResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             resourceResponse.getWriter().println("Unauthorized request!");
             return;
