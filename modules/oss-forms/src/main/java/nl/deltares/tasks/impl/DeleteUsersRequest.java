@@ -1,5 +1,6 @@
 package nl.deltares.tasks.impl;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -55,6 +56,16 @@ public class DeleteUsersRequest extends AbstractDataRequest {
             return status;
         }
 
+        final User currentUser;
+        try {
+            currentUser = UserLocalServiceUtil.getUser(currentUserId);
+        } catch (PortalException e) {
+            errorMessage = "Error getting currentUser for userId " + currentUserId + ": " + e.getMessage();
+            status = terminated;
+            fireStateChanged();
+            return status;
+        }
+
         try {
             File tempFile = new File(getExportDir(), id + ".tmp");
             if (tempFile.exists()) Files.deleteIfExists(tempFile.toPath());
@@ -68,8 +79,6 @@ public class DeleteUsersRequest extends AbstractDataRequest {
                 String line;
                 int processedUsers = 0;
                 try (BufferedReader reader = new BufferedReader(new FileReader(usersFile))) {
-                    line = reader.readLine(); //skip header
-                    incrementProcessCount(line.length());
                     while ((line = reader.readLine()) != null) {
                         incrementProcessCount(line.length());
                         final String[] split = line.split(";");
@@ -83,7 +92,12 @@ public class DeleteUsersRequest extends AbstractDataRequest {
                              email = split[1];
                         }
                         processedUsers++;
-                        writer.println("Processing user " + email);
+                        if (email.endsWith("@liferay.com") && currentUser.getEmailAddress().equals(email)){
+                            writer.println("Skipping admin user : " + email);
+                            continue;
+                        } else {
+                            writer.println("Processing user " + email);
+                        }
 
                         for (VirtualHost virtualHost : virtualHosts) {
                             final long companyId = virtualHost.getCompanyId();
