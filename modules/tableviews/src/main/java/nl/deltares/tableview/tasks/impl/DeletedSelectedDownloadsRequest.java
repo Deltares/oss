@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -37,7 +38,7 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
     }
 
     @Override
-    public STATUS call() throws Exception {
+    public STATUS call() {
         if (getStatus() == available) return status;
         status = running;
         statusMessage = "start deleting...";
@@ -85,8 +86,11 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
                 if (user != null){
                     email = user.getEmailAddress();
                 }
+                final Date modifiedDate = download.getModifiedDate();
+                final Date expiryDate = download.getExpiryDate();
                 writer.println(String.format("%d,%s,%s,%d,%s,%s,%s,%s,%s,%s",
-                        download.getDownloadId(), dateFormat.format(download.getModifiedDate()), dateFormat.format(download.getExpiryDate()),
+                        download.getDownloadId(), dateFormat.format(modifiedDate == null ? new Date(): modifiedDate),
+                        dateFormat.format(expiryDate == null ? new Date() : expiryDate),
                         download.getShareId(),
                         download.getFilePath(), download.getDirectDownloadUrl(), email, download.getOrganization(),
                         download.getCity(), download.getCountryCode()));
