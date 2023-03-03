@@ -4,12 +4,15 @@ import com.liferay.portal.kernel.events.LifecycleAction;
 import com.liferay.portal.kernel.events.LifecycleEvent;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalService;
+import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.portal.utils.GeoIpUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.portal.utils.SanctionCheckUtils;
 import nl.deltares.tasks.DataRequestManager;
+import nl.deltares.tasks.impl.PostLoginUpdateDownloadStatus;
 import nl.deltares.tasks.impl.PostLoginUpdateUserInfo;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -37,6 +40,9 @@ public class PostLoginAction implements LifecycleAction {
 
     @Reference
     private KeycloakUtils keycloakUtils;
+
+    @Reference
+    private DownloadUtils downloadUtils;
 
     @Reference
     private UserLocalService userLocalService;
@@ -77,12 +83,12 @@ public class PostLoginAction implements LifecycleAction {
             //this value should contain the origin of the login request
             final String id = String.format("PostLoginUpdateUserInfo_%d_%d", user.getCompanyId(), user.getUserId());
             String siteId = getSiteId(request.getParameter("redirect"));
-
+            LOG.info(String.format("Starting post login activity '%s'", id));
             try {
                 final PostLoginUpdateUserInfo postLoginRequest = new PostLoginUpdateUserInfo(id, user, siteId, keycloakUtils);
                 DataRequestManager.getInstance().addToQueue(postLoginRequest);
             } catch (Exception e) {
-                LOG.warn(String.format("Error updating portrait %d for user %s", user.getPortraitId(), user.getScreenName()), e);
+                LOG.warn(String.format("Error executing PostLoginUpdateUserInfo request %s", id), e);
             }
 
         }
@@ -96,6 +102,20 @@ public class PostLoginAction implements LifecycleAction {
                 LOG.info(String.format("User '%s' logged in from sanctioned country '%s'", user.getFullName(), countryName));
             } else {
                 LOG.info(String.format("User '%s' logged in from not-sanctioned country '%s'", user.getFullName(), countryName));
+            }
+        }
+        final LayoutSet layoutSet = (LayoutSet) lifecycleEvent.getRequest().getAttribute("VIRTUAL_HOST_LAYOUT_SET");
+        long siteGroupId = layoutSet != null ? layoutSet.getGroupId() : -1;
+        if (downloadUtils.isActive() && downloadUtils.isThisADownloadSite(siteGroupId)) {
+            //this value should contain the origin of the login request
+            final String id = String.format("PostLoginUpdateDownloadStatus_%d_%d", user.getCompanyId(), user.getUserId());
+            LOG.info(String.format("Starting post login activity '%s'", id));
+            try {
+                final PostLoginUpdateDownloadStatus postLoginRequest = new PostLoginUpdateDownloadStatus(id, user,
+                        siteGroupId, downloadUtils);
+                DataRequestManager.getInstance().addToQueue(postLoginRequest);
+            } catch (Exception e) {
+                LOG.warn(String.format("Error executing PostLoginUpdateDownloadStatus request %s", id), e);
             }
         }
     }
