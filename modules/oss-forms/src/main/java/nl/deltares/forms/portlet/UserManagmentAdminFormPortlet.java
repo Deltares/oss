@@ -16,6 +16,7 @@ import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.utils.AdminUtils;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
+import nl.deltares.tasks.impl.CheckNonKeycloakUsersRequest;
 import nl.deltares.tasks.impl.DeleteBannedUsersRequest;
 import nl.deltares.tasks.impl.DeleteUsersRequest;
 import nl.deltares.tasks.impl.DownloadInvalidUsersRequest;
@@ -80,6 +81,8 @@ public class UserManagmentAdminFormPortlet extends MVCPortlet {
             DataRequestManager.getInstance().downloadDataFile(id, resourceResponse);
         } else if ("downloadInvalidUsers".equals(action)) {
             downloadInvalidUsersAction(id, resourceResponse, themeDisplay);
+        } else if ("checkUsersExist".equals(action)) {
+            checkUsersExistAction(id, resourceRequest, resourceResponse, themeDisplay);
         } else if ("deleteUsers".equals(action)) {
             deleteUsersAction(id, resourceRequest, resourceResponse, themeDisplay);
         } else {
@@ -87,21 +90,51 @@ public class UserManagmentAdminFormPortlet extends MVCPortlet {
         }
     }
 
-    private void deleteUsersAction(String dataRequestId, ResourceRequest resourceRequest, ResourceResponse resourceResponse, ThemeDisplay themeDisplay) throws IOException {
+    private String getUploadedFile(String dataRequestId, ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws IOException {
         UploadRequest uploadRequest = PortalUtil.getUploadPortletRequest(resourceRequest);
         File tempFile = uploadRequest.getFile("userFile");
         if (tempFile != null && tempFile.exists()) {
-            String usersFilePath;
             try {
-                usersFilePath = copyTempFile(dataRequestId, tempFile, tempFile.getName());
+                return copyTempFile(dataRequestId, tempFile, tempFile.getName());
             } catch (IOException e) {
                 PrintWriter writer = resourceResponse.getWriter();
                 resourceResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 resourceResponse.setContentType("application/json");
                 writer.print(String.format("{\"status\"' : \"error\", \"message\" : \"Failed to copy tempFile %s: %s\"}", tempFile.getName(), e.getMessage()));
-                return;
             }
+        } else {
+            PrintWriter writer = resourceResponse.getWriter();
+            resourceResponse.setContentType("application/json");
+            resourceResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            writer.print("{\"status\" : \"error\", \"message\": \"Could not find uploaded file!\"}");
+        }
+        return null;
+    }
 
+    private void checkUsersExistAction(String dataRequestId, ResourceRequest resourceRequest, ResourceResponse resourceResponse, ThemeDisplay themeDisplay) throws IOException {
+
+        String usersFilePath = getUploadedFile(dataRequestId, resourceRequest, resourceResponse);
+        if (usersFilePath != null) {
+            resourceResponse.setContentType("application/json");
+            DataRequestManager instance = DataRequestManager.getInstance();
+            DataRequest dataRequest = instance.getDataRequest(dataRequestId);
+            if (dataRequest == null) {
+                dataRequest = new CheckNonKeycloakUsersRequest(dataRequestId, themeDisplay.getUserId(), usersFilePath, adminUtils);
+                instance.addToQueue(dataRequest);
+            } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
+                instance.removeDataRequest(dataRequest);
+            }
+            resourceResponse.setStatus(HttpServletResponse.SC_OK);
+            String statusMessage = dataRequest.getStatusMessage();
+            resourceResponse.setContentLength(statusMessage.length());
+            PrintWriter writer = resourceResponse.getWriter();
+            writer.println(statusMessage);
+        }
+    }
+
+    private void deleteUsersAction(String dataRequestId, ResourceRequest resourceRequest, ResourceResponse resourceResponse, ThemeDisplay themeDisplay) throws IOException {
+        String usersFilePath = getUploadedFile(dataRequestId, resourceRequest, resourceResponse);
+        if (usersFilePath != null) {
             resourceResponse.setContentType("application/json");
             DataRequestManager instance = DataRequestManager.getInstance();
             DataRequest dataRequest = instance.getDataRequest(dataRequestId);
@@ -116,13 +149,7 @@ public class UserManagmentAdminFormPortlet extends MVCPortlet {
             resourceResponse.setContentLength(statusMessage.length());
             PrintWriter writer = resourceResponse.getWriter();
             writer.println(statusMessage);
-        } else {
-            PrintWriter writer = resourceResponse.getWriter();
-            resourceResponse.setContentType("application/json");
-            resourceResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            writer.print("{\"status\" : \"error\", \"message\": \"Could not find uploaded file!\"}");
         }
-
     }
 
     private String copyTempFile(String dataRequestId, File tempFile, String fileName) throws IOException {
