@@ -3,6 +3,7 @@ package nl.deltares.portal.utils;
 import nl.deltares.portal.model.keycloak.KeycloakMailing;
 import nl.deltares.portal.model.keycloak.KeycloakUserMailing;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -50,6 +51,8 @@ public interface KeycloakUtils {
     String getAdminAvatarPath();
 
     String getAdminMailingsPath();
+
+    int callCheckUsersExist(File checkUsersInputFile, PrintWriter nonExistingUsersOutput) throws Exception;
 
     int downloadInvalidUsers(PrintWriter writer) throws Exception;
 

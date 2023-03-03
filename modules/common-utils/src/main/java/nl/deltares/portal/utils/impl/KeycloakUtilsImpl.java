@@ -31,7 +31,7 @@ import static java.time.LocalDateTime.now;
         immediate = true,
         service = KeycloakUtils.class
 )
-public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils, EmailSubscriptionUtils {
+public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils, EmailSubscriptionUtils {
 
     private static final Log LOG = LogFactoryUtil.getLog(KeycloakUtilsImpl.class);
 
@@ -90,6 +90,60 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
     }
 
     @Override
+    public int callCheckUsersExist(File checkUsersInputFile, PrintWriter nonExistingUsersOutput) throws IOException {
+        String boundaryString = "----CheckUsersExist";
+        HashMap<String, String> map = new HashMap<>();
+        map.put("Content-Type", "multipart/form-data; boundary=" + boundaryString);
+        HttpURLConnection urlConnection = getConnection(getAdminUsersPath() + "/check-users-exist", "POST", map);
+        urlConnection.setDoOutput(true);
+        urlConnection.setRequestProperty("Authorization", "Bearer " + getAccessToken());
+
+        OutputStream outputStream = urlConnection.getOutputStream();
+        BufferedWriter httpRequestBodyWriter =
+                new BufferedWriter(new OutputStreamWriter(outputStream));
+
+        // Include the section to describe the file
+        httpRequestBodyWriter.write("\n--" + boundaryString + "\n");
+        String fileName = checkUsersInputFile.getName();
+        httpRequestBodyWriter.write("Content-Disposition: form-data;"
+                + "name=\"data\";"
+                + "filename=\"" + fileName + "\""
+                + "\nContent-Type: application/octet-stream\n\n");
+        httpRequestBodyWriter.flush();
+
+        // Write the actual file contents
+        FileInputStream inputStreamToLogFile = new FileInputStream(checkUsersInputFile);
+
+        int bytesRead;
+        byte[] dataBuffer = new byte[1024];
+        while ((bytesRead = inputStreamToLogFile.read(dataBuffer)) != -1) {
+            outputStream.write(dataBuffer, 0, bytesRead);
+        }
+
+        outputStream.flush();
+
+        // Mark the end of the multipart http request
+        httpRequestBodyWriter.write("\n--" + boundaryString + "--\n");
+        httpRequestBodyWriter.flush();
+
+        // Close the streams
+        outputStream.close();
+        httpRequestBodyWriter.close();
+
+        // Read response from web server, which will trigger the multipart HTTP request to be sent.
+        int status = checkResponse(urlConnection);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                nonExistingUsersOutput.write(line);
+                nonExistingUsersOutput.write('\n');
+            }
+            nonExistingUsersOutput.flush();
+        }
+        return status;
+    }
+
+    @Override
     public int downloadInvalidUsers(PrintWriter writer) throws Exception {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "text/html");
@@ -135,7 +189,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
 
         final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null);
         //open connection
-        HttpURLConnection connection = getConnection(getAdminAvatarPath()  + '/' + userRepresentation.get("id"), "DELETE", headers);
+        HttpURLConnection connection = getConnection(getAdminAvatarPath() + '/' + userRepresentation.get("id"), "DELETE", headers);
 
         //get response
         checkResponse(connection);
@@ -164,7 +218,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         httpRequestBodyWriter.write("Content-Disposition: form-data;"
                 + "name=\"image\";"
                 + "filename=\"" + fileName + "\""
-                + "\nContent-Type: " +  URLConnection.guessContentTypeFromName(fileName) + "\n\n");
+                + "\nContent-Type: " + URLConnection.guessContentTypeFromName(fileName) + "\n\n");
         httpRequestBodyWriter.flush();
 
         // Write the actual file contents
@@ -232,9 +286,9 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getAccessToken());
         String query;
-        if (email != null){
+        if (email != null) {
             query = "?email=" + email;
-        } else if (username != null){
+        } else if (username != null) {
             query = "?username=" + username;
         } else {
             throw new IOException("Both email and username missing!");
@@ -248,7 +302,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         return userMapArray.get(0);
     }
 
-    private Map<String, String> getUserAttributesFromCacheOrKeycloak(String email, String[] searchKeys) throws Exception{
+    private Map<String, String> getUserAttributesFromCacheOrKeycloak(String email, String[] searchKeys) throws Exception {
 
         final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null);
         String attributesJson = userRepresentation.get("attributes");
@@ -288,18 +342,18 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
             if (key == ATTRIBUTES.first_name) continue;
             if (key == ATTRIBUTES.last_name) continue;
             final String value = attributes.get(key.name());
-            if (Validator.isNotNull(value)){
+            if (Validator.isNotNull(value)) {
                 jsonAttributes.put(key.name(), JSONFactoryUtil.createJSONArray().put(value));
             }
         }
         //add terms
         for (Map.Entry<String, String> entry : attributes.entrySet()) {
-            if (entry.getKey().startsWith("terms.")){
+            if (entry.getKey().startsWith("terms.")) {
                 jsonAttributes.put(entry.getKey(), entry.getValue());
             }
         }
 
-        if (includeUserInfo){
+        if (includeUserInfo) {
             final String email = attributes.get(ATTRIBUTES.email.name());
             if (Validator.isEmailAddress(email)) jsonUser.put("email", email);
 
@@ -313,16 +367,14 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
 
     /**
      * Update user information, including name and email
-     *
      */
     @Override
-    public int updateUserProfile(String email, Map<String, String> attributes) throws Exception{
+    public int updateUserProfile(String email, Map<String, String> attributes) throws Exception {
         return updateKeycloakUser(email, attributes, true);
     }
 
     /**
      * Update user attributes, do not include name and email
-     *
      */
     @Override
     public int updateUserAttributes(String email, Map<String, String> attributes) throws Exception {
@@ -395,7 +447,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
     public boolean isSubscribed(User user, List<Subscription> subscriptions) throws Exception {
         List<String> mailingIds = new ArrayList<>(subscriptions.size());
         subscriptions.forEach(subscription -> mailingIds.add(subscription.getId()));
-        return  isSubscribed(user.getEmailAddress(), mailingIds);
+        return isSubscribed(user.getEmailAddress(), mailingIds);
     }
 
     @Override
@@ -404,7 +456,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
     }
 
     @Override
-    public void subscribe(User user, Subscription subscription) throws Exception{
+    public void subscribe(User user, Subscription subscription) throws Exception {
         subscribe(user.getEmailAddress(), subscription.getId());
     }
 
@@ -451,7 +503,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
 
         boolean[] isSubscribed = new boolean[]{false};
         subscriptions.forEach(jsonMailing -> {
-            if (mailingIds.contains(((JSONObject)jsonMailing).getString("mailingId"))){
+            if (mailingIds.contains(((JSONObject) jsonMailing).getString("mailingId"))) {
                 isSubscribed[0] = true;
             }
         });
@@ -471,12 +523,12 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
 
         final ArrayList<KeycloakMailing> keycloakMailings = new ArrayList<>();
         mailings.forEach(jsonMailing -> keycloakMailings.add(new KeycloakMailing(
-                ((JSONObject)jsonMailing).getString("id"),
-                ((JSONObject)jsonMailing).getString("name"),
-                ((JSONObject)jsonMailing).getString("description"),
-                JsonContentUtils.toStringArray((JSONArray)((JSONObject)jsonMailing).get("languages")),
-                ((JSONObject)jsonMailing).getInt("frequency"),
-                ((JSONObject)jsonMailing).getInt("delivery")
+                ((JSONObject) jsonMailing).getString("id"),
+                ((JSONObject) jsonMailing).getString("name"),
+                ((JSONObject) jsonMailing).getString("description"),
+                JsonContentUtils.toStringArray((JSONArray) ((JSONObject) jsonMailing).get("languages")),
+                ((JSONObject) jsonMailing).getInt("frequency"),
+                ((JSONObject) jsonMailing).getInt("delivery")
         )));
         return keycloakMailings;
     }
@@ -495,11 +547,11 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         final ArrayList<KeycloakUserMailing> keycloakUserMailings = new ArrayList<>();
         mailings.forEach(jsonUserMailing -> keycloakUserMailings.add(new KeycloakUserMailing(
                 true,
-                ((JSONObject)jsonUserMailing).getString("id"),
+                ((JSONObject) jsonUserMailing).getString("id"),
                 email,
-                ((JSONObject)jsonUserMailing).getString("mailingId"),
-                ((JSONObject)jsonUserMailing).getString("language"),
-                ((JSONObject)jsonUserMailing).getInt("delivery")
+                ((JSONObject) jsonUserMailing).getString("mailingId"),
+                ((JSONObject) jsonUserMailing).getString("language"),
+                ((JSONObject) jsonUserMailing).getInt("delivery")
         )));
         return keycloakUserMailings;
     }
@@ -567,9 +619,9 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
             LOG.info(String.format("Missing property %s in portal-ext.properties file", BASEURL_KEY));
             return null;
         }
-        basePath =  PropsUtil.get(BASEURL_KEY);
+        basePath = PropsUtil.get(BASEURL_KEY);
 
-        if(basePath.endsWith("/")){
+        if (basePath.endsWith("/")) {
             return basePath;
         }
         basePath += '/';
@@ -584,19 +636,19 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
         return baseApiPath;
     }
 
-    private String getTokenPath(){
+    private String getTokenPath() {
         String basePath = getKeycloakBasePath();
         return basePath + "protocol/openid-connect/token";
     }
 
-    private String getAccessToken(){
+    private String getAccessToken() {
 
         String CACHED_TOKEN_KEY = "keycloak.token";
         String CACHED_EXPIRY_KEY = "keycloak.expirytime";
         String token = CACHE_TOKEN ? getCachedToken(CACHED_TOKEN_KEY, CACHED_EXPIRY_KEY) : null;
         if (token != null) return token;
 
-        Map<String,String> headers = new HashMap<>();
+        Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/x-www-form-urlencoded");
 
         try {
@@ -610,7 +662,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
                 cacheAccessTokens("keycloak", parsedToken);
             }
             return parsedToken.get("access_token");
-        } catch (IOException | JSONException e){
+        } catch (IOException | JSONException e) {
             clearAccessTokens("keycloak");
             LOG.error("Failed to get access token: " + e.getMessage());
         }
@@ -620,7 +672,7 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
 
     private String getAccessToken(String username, String password) throws Exception {
 
-        Map<String,String> headers = new HashMap<>();
+        Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/x-www-form-urlencoded");
 
         try {
@@ -630,13 +682,13 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
             String jsonResponse = readAll(connection);
             Map<String, String> parsedToken = JsonContentUtils.parseJsonToMap(jsonResponse);
             return parsedToken.get("access_token");
-        } catch (IOException | JSONException e){
+        } catch (IOException | JSONException e) {
             throw new Exception(String.format("Failed to get access token for user %s: %s", username, e.getMessage()));
         }
     }
 
     private Map<String, String> getOAuthParameters(String username, String password) {
-        Map<String,String> pathParameters = new HashMap<>();
+        Map<String, String> pathParameters = new HashMap<>();
         pathParameters.put("client_id", getProperty("keycloak.clientid"));
         pathParameters.put("client_secret", getProperty("keycloak.clientsecret"));
         pathParameters.put("grant_type", "password"); // use refresh token to close previous session
@@ -646,12 +698,12 @@ public class KeycloakUtilsImpl  extends HttpClientUtils implements KeycloakUtils
     }
 
     private Map<String, String> getOAuthParameters() {
-        Map<String,String> pathParameters = new HashMap<>();
+        Map<String, String> pathParameters = new HashMap<>();
         pathParameters.put("client_id", getProperty("keycloak.clientid"));
         pathParameters.put("client_secret", getProperty("keycloak.clientsecret"));
 
         final String refreshToken = getCachedToken("keycloak.refresh.token", "keycloak.refresh.expirytime");
-        if (refreshToken != null){
+        if (refreshToken != null) {
             pathParameters.put("grant_type", "refresh_token"); // use refresh token to close previous session
             pathParameters.put("refresh_token", refreshToken); // use refresh token to close previous session
         } else {

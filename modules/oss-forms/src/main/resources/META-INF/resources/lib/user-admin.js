@@ -1,5 +1,9 @@
 OssFormsUtil = {
 
+    getActionButtons: function (){
+        return ['deleteBannedUsersButton', 'downloadInvalidButton', 'deleteUsersButton', 'checkUsersButton'];
+    },
+
     deleteBannedUsers: function(resourceUrl, namespace){
         CommonFormsUtil.clearError(namespace);
 
@@ -15,6 +19,16 @@ OssFormsUtil = {
         this.callOssAdminResource(resourceUrl, namespace, "downloadInvalidUsers", "No invalid users found!", "invalidUsers.csv");
     },
 
+    checkUsersExist: function(resourceUrl, namespace){
+        CommonFormsUtil.clearError(namespace);
+        let usersFile = document.getElementById(namespace + "userFile").files[0];
+        if (!usersFile){
+            alert("Please select file to upload!");
+            return;
+        }
+        this.callOssAdminPostResource(resourceUrl, namespace, "checkUsersExist", "checkUsersExist", "nonExistingUserEmails.csv");
+
+    },
     deleteUsers: function(resourceUrl, namespace){
         CommonFormsUtil.clearError(namespace);
         let usersFile = document.getElementById(namespace + "userFile").files[0];
@@ -27,12 +41,12 @@ OssFormsUtil = {
             return;
         }
 
-        this.callDeleteUsersFromFile(resourceUrl, namespace, "deleteUsers", "deleteUsers");
+        this.callOssAdminPostResource(resourceUrl, namespace, "deleteUsers", "deleteUsers", "deleteUsers.log");
 
     },
 
-    callDeleteUsersFromFile: function (resourceUrl, namespace, action, form){
-        CommonFormsUtil.setActionButtons(['deleteBannedUsersButton', 'downloadInvalidButton', 'deleteUsersButton']);
+    callOssAdminPostResource: function (resourceUrl, namespace, action, form, downloadFileName){
+        CommonFormsUtil.setActionButtons(this.getActionButtons());
         CommonFormsUtil.initProgressBar(namespace);
 
         let A = new AUI();
@@ -59,7 +73,7 @@ OssFormsUtil = {
                         } else {
                             CommonFormsUtil.startProgressMonitor(namespace);
                             CommonFormsUtil.setRunningProcess(namespace, setInterval(function () {
-                                CommonFormsUtil.callUpdateProgressRequest(resourceUrl, namespace, jsonResponse.id, 'deleteUsers.log')
+                                CommonFormsUtil.callUpdateProgressRequest(resourceUrl, namespace, jsonResponse.id, downloadFileName)
                             }, 1000));
                         }
                     }
@@ -70,7 +84,7 @@ OssFormsUtil = {
 
     callOssAdminResource : function (resourceUrl, namespace, action, notfoundMessage, downloadFileName){
 
-        CommonFormsUtil.setActionButtons(['deleteBannedUsersButton', 'downloadInvalidButton', 'deleteUsersButton']);
+        CommonFormsUtil.setActionButtons(this.getActionButtons());
         CommonFormsUtil.initProgressBar(namespace);
 
         let A = new AUI();
