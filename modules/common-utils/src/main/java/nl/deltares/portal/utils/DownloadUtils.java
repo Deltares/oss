@@ -10,6 +10,13 @@ import java.util.Map;
 public interface DownloadUtils {
 
     /**
+     * Check if this site contains a download configuration.
+     * @param groupId Site groupId
+     * @return True if DownloadSiteConfiguration is present
+     */
+    boolean isThisADownloadSite(long groupId);
+
+    /**
      * Check if the download portal has been configured in portal-ext.properties
      * @return True if configuration is present. Else false.
      */
