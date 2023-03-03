@@ -44,6 +44,27 @@
         </aui:fieldset>
     </aui:form>
     <hr>
+    <aui:form name="checkUsersExist" enctype="multipart/form-data" >
+        <aui:fieldset >
+            <aui:row>
+                <aui:col width="50">
+                    <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.checkUsersExistTitle"/></div>
+                </aui:col>
+                <aui:col width="45">
+                    <aui:row>
+                        <div class="control-label"><liferay-ui:message key="oss.admin.checkUsersFile"/></div>
+                    </aui:row>
+                    <aui:row >
+                        <aui:input label="" name="userFile" type="file"  />
+                    </aui:row>
+                </aui:col>
+                <aui:col width="5">
+                    <aui:button type="submit" name="checkUsersButton" value="oss.admin.checkUsers" />
+                </aui:col>
+            </aui:row>
+        </aui:fieldset>
+    </aui:form>
+    <hr>
     <aui:form name="deleteUsers" enctype="multipart/form-data" >
         <aui:fieldset >
             <aui:row>
@@ -83,6 +104,11 @@
     downloadInvalidButton.onclick = function(event){
         event.preventDefault();
         OssFormsUtil.downloadInvalid("<portlet:resourceURL/>", "<portlet:namespace/>")
+    };
+    let checkUsersButton = document.getElementById('<portlet:namespace/>checkUsersButton');
+    checkUsersButton.onclick = function(event){
+    event.preventDefault();
+    OssFormsUtil.checkUsersExist("<portlet:resourceURL/>", "<portlet:namespace/>")
     };
     let deleteUsersButton = document.getElementById('<portlet:namespace/>deleteUsersButton');
     deleteUsersButton.onclick = function(event){
