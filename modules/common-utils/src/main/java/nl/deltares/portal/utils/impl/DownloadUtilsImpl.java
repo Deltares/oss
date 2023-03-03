@@ -5,15 +5,19 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.CountryServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 import nl.deltares.oss.download.model.DownloadCount;
 import nl.deltares.oss.download.service.DownloadCountLocalServiceUtil;
 import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
+import nl.deltares.portal.configuration.DownloadSiteConfiguration;
 import nl.deltares.portal.model.impl.Download;
 import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -82,6 +86,17 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         }
         this.DUMMY = dummy;
 
+    }
+
+    @Override
+    public boolean isThisADownloadSite(long groupId) {
+        if (groupId < 0 || _configurationProvider == null) return false;
+        try {
+            return _configurationProvider.getGroupConfiguration(DownloadSiteConfiguration.class, groupId) != null;
+        } catch (ConfigurationException e) {
+            System.err.println(e.getMessage());
+        }
+        return false;
     }
 
     @Override
@@ -539,5 +554,12 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
     private String tokenToShareLinkUrl(String token){
         if (SHARE_PATH == null) return token;
         return SHARE_PATH.concat(token);
+    }
+
+    private ConfigurationProvider _configurationProvider;
+
+    @Reference
+    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
+        _configurationProvider = configurationProvider;
     }
 }
