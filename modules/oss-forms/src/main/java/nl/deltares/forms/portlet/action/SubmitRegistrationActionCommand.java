@@ -163,7 +163,9 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         List<String> subscribableMailingIds = registrationRequest.getSubscribableMailingIds();
         if (subscribableMailingIds != null) {
             subscribableMailingIds.forEach(mailingId -> {
-                if (registrationRequest.isSubscribe()) {
+
+                final String selected = ParamUtil.getString(actionRequest, "subscription-" + mailingId);
+                if (Boolean.parseBoolean(selected)) {
                     try {
                         keycloakUtils.subscribe(user.getEmailAddress(), mailingId);
                     } catch (Exception e) {
