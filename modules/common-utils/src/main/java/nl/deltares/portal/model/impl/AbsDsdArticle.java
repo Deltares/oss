@@ -73,6 +73,13 @@ public abstract class AbsDsdArticle implements DsdArticle {
         return null;
     }
 
+    AbsDsdArticle(){
+        this.article = null;
+        this.instantiationTime = System.currentTimeMillis();
+        this.dsdParserUtils = null;
+        this.locale = null;
+    }
+
     AbsDsdArticle(JournalArticle article, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
         this.article = article;
         this.instantiationTime = System.currentTimeMillis();
@@ -120,11 +127,12 @@ public abstract class AbsDsdArticle implements DsdArticle {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AbsDsdArticle that = (AbsDsdArticle) o;
-        return article.getPrimaryKey() == that.article.getPrimaryKey();
+        return article != null && article.getPrimaryKey() == that.article.getPrimaryKey();
     }
 
     @Override
     public int hashCode() {
+        if (article == null) return 0;
         return Objects.hash(article.getPrimaryKey());
     }
 
