@@ -18,6 +18,11 @@ public class Subscription extends AbsDsdArticle {
         init();
     }
 
+    public Subscription(String id, String name){
+        super();
+        this.id = id;
+        this.name = name;
+    }
     private void init() throws PortalException {
         try {
             Document document = getDocument();
