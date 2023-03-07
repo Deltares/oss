@@ -12,6 +12,8 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
+import nl.deltares.portal.model.impl.Subscription;
+import nl.deltares.portal.model.keycloak.KeycloakMailing;
 import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -76,7 +78,7 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 			try {
 				DSDSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
 				List<String> mailingIdsList = Arrays.asList(dsdConfig.mailingIds().split(";"));
-				request.setAttribute("subscribed", keycloakUtils.isSubscribed(user.getEmailAddress(), mailingIdsList));
+				request.setAttribute("subscriptionSelection", getSubscriptionSelection(user.getEmailAddress(), mailingIdsList));
 			} catch (Exception e) {
 				LOG.warn("Error getting user subscriptions: " + e.getMessage());
 				request.setAttribute("subscribed", false);
@@ -110,6 +112,23 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 
 		request.setAttribute(ConfigurationProvider.class.getName(), _configurationProvider);
 		super.render(request, response);
+	}
+
+	private Map<Subscription, Boolean> getSubscriptionSelection(String email, List<String> mailingIdsList) {
+
+		HashMap<Subscription, Boolean> subscriptionSelection = new HashMap<>();
+		try {
+			final List<KeycloakMailing> mailings = keycloakUtils.getMailings();
+			for (KeycloakMailing mailing : mailings) {
+				final String id = mailing.getId();
+				if (mailingIdsList.contains(id)){
+					subscriptionSelection.put(new Subscription(id, mailing.getName()), keycloakUtils.isSubscribed(email, Collections.singletonList(id)));
+				}
+			}
+		} catch (Exception e) {
+			return Collections.emptyMap();
+		}
+		return subscriptionSelection;
 	}
 
 	private ConfigurationProvider _configurationProvider;
