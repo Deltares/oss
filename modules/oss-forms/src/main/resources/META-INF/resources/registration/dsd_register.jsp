@@ -24,6 +24,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="com.liferay.portal.kernel.exception.PortalException" %>
+<%@ page import="nl.deltares.portal.utils.EmailSubscriptionUtils" %>
+<%@ page import="java.util.HashMap" %>
 
 <liferay-theme:defineObjects/>
 
@@ -48,7 +50,7 @@
     Map attributes = (Map) renderRequest.getAttribute("attributes");
     String action = ParamUtil.getString(renderRequest, "action");
     DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
-
+    final Map<Subscription, Boolean>  subscriptionSelection = (Map<Subscription, Boolean>) request.getAttribute("subscriptionSelection");
     Event event = null;
     try {
         event = dsdParserUtils.getEvent(themeDisplay.getScopeGroupId(), String.valueOf(configuration.eventId()), themeDisplay.getLocale());
