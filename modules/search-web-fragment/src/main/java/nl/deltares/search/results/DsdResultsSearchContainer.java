@@ -60,7 +60,7 @@ public class DsdResultsSearchContainer extends SearchContainer<RegistrationDispl
     private void splitMultiDayRegistrations(List<Registration> registrations, List<RegistrationDisplayContext> registrationDisplayContexts) {
 
         for (Registration registration : registrations) {
-            if (registration.isMultiDayEvent()) {
+            if (registration.isMultiDayEvent() && !registration.isShowMultipleDaysAsSingleDate()) {
                 final List<Period> startAndEndTimesPerDay = registration.getStartAndEndTimesPerDay();
                 for (int i = 0; i < startAndEndTimesPerDay.size(); i++) {
                     final RegistrationDisplayContext displayContext = new RegistrationDisplayContext(registration, i, themeDisplay);
