@@ -3,10 +3,13 @@ package nl.deltares.forms.portlet.action;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.service.CountryServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -94,8 +97,13 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
                 }
             }
 
-            if (downloadRequest.isUserInfoRequired()) {
-                Map<String, String> userAttributes = getUserAttributes(actionRequest);
+            if (success) {
+                Map<String, String> userAttributes = new HashMap<>();
+                if (downloadRequest.isUserInfoRequired()) {
+                    userAttributes.putAll(getUserAttributes(actionRequest));
+                } else {
+                    userAttributes.putAll(getMinimumAttributes(actionRequest));
+                }
                 registerAcceptedTerms(downloadRequest, userAttributes);
                 downloadRequest.setUserAttributes(userAttributes);
                 success = updateUserAttributes(actionRequest, user, userAttributes);
@@ -297,6 +305,21 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         return attributes;
     }
 
+    private Map<String, String> getMinimumAttributes(ActionRequest actionRequest) {
+        Map<String, String> attributes = new HashMap<>();
+        final String remoteAddr = ((LiferayPortletRequest) actionRequest).getHttpServletRequest().getRemoteAddr();
+        try {
+            final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(remoteAddr);
+            final Country country = CountryServiceUtil.getCountryByA2(geoIpUtils.getCountryIso2Code(clientIpInfo));
+            if (country != null ) attributes.put(KeycloakUtils.ATTRIBUTES.org_country.name(), country.getName());
+            return attributes;
+        } catch (PortalException e) {
+            LOG.warn("Error getting country info: " + e.getMessage());
+        }
+        return attributes;
+
+    }
+
     private DownloadEmail prepareDownloadEmail(ActionRequest actionRequest, User user, DownloadRequest registrationRequest,
                                                ThemeDisplay themeDisplay, @SuppressWarnings("SameParameterValue") String action) {
         try {
@@ -389,4 +412,18 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
     }
 
     private static final Log LOG = LogFactoryUtil.getLog(SubmitDownloadActionCommand.class);
+
+    private GeoIpUtils geoIpUtils;
+
+    @Reference(
+            unbind = "-",
+            cardinality = ReferenceCardinality.AT_LEAST_ONE
+    )
+    protected void setGeoIpUtils(GeoIpUtils geoIpUtils) {
+
+        //todo: add check for preferred instance
+        if (geoIpUtils.isActive()) {
+            this.geoIpUtils = geoIpUtils;
+        }
+    }
 }
