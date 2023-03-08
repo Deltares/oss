@@ -45,7 +45,7 @@ public class Download extends AbsDsdArticle {
             filePath = getFormFieldValue( "FilePath", false);
             fileName = getFormFieldValue( "FileName", false);
 
-            String options = getFormFieldValue( "RequiredActions", false);
+            String options = getFormFieldValue( "RequiredActions", true);
             parseRequiredActions(options);
 
             fileType = getFormFieldValue( "FileType", false);
@@ -75,6 +75,9 @@ public class Download extends AbsDsdArticle {
     }
 
     private void parseRequiredActions(String options) {
+        if (options == null || options.isEmpty()){
+            return;
+        }
         options = options.trim();
         options = options.replace('\n', ' ');
         options = options.replace('\t', '\0');
