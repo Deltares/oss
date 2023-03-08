@@ -197,6 +197,7 @@ public class RegistrationDisplayContext {
 
     public String getTitle(){
         final String title = registration.getTitle();
+        if (registration.isShowMultipleDaysAsSingleDate()) return title;
         final String postFix = LanguageUtil.format(themeDisplay.getLocale(),
                 "program-list.day.count", new String[]{String.valueOf((getDayCount()+1)), String.valueOf(getNumberOfDays())});
         return (title + " ("  + postFix + ")");

@@ -264,6 +264,10 @@ public abstract class Registration extends AbsDsdArticle {
         return duration > TimeUnit.DAYS.toMillis(1);
     }
 
+    public boolean isShowMultipleDaysAsSingleDate(){
+        return false;
+    }
+
     public boolean isDaily(){
         return daily;
     }

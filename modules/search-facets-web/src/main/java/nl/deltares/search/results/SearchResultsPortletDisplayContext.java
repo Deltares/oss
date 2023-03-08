@@ -133,7 +133,7 @@ public class SearchResultsPortletDisplayContext implements Serializable {
         for (DsdArticle dsdArticle : registrations) {
             if (! (dsdArticle instanceof Registration) ) continue;
             Registration registration = (Registration) dsdArticle;
-            if (registration.isMultiDayEvent()) {
+            if (registration.isMultiDayEvent() && !registration.isShowMultipleDaysAsSingleDate()) {
                 final List<Period> startAndEndTimesPerDay = registration.getStartAndEndTimesPerDay();
                 for (int i = 0; i < startAndEndTimesPerDay.size(); i++) {
                     final RegistrationDisplayContext displayContext = new RegistrationDisplayContext(registration, i, themeDisplay);
