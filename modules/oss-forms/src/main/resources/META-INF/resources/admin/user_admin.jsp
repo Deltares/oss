@@ -55,7 +55,7 @@
                         <div class="control-label"><liferay-ui:message key="oss.admin.checkUsersFile"/></div>
                     </aui:row>
                     <aui:row >
-                        <aui:input label="" name="userFile" type="file"  />
+                        <aui:input label="" name="checkUserFile" type="file"  />
                     </aui:row>
                 </aui:col>
                 <aui:col width="5">
@@ -76,7 +76,7 @@
                         <div class="control-label"><liferay-ui:message key="oss.admin.usersFile"/></div>
                     </aui:row>
                     <aui:row >
-                        <aui:input label="" name="userFile" type="file"  />
+                        <aui:input label="" name="deleteUserFile" type="file"  />
                     </aui:row>
                 </aui:col>
                 <aui:col width="5">
