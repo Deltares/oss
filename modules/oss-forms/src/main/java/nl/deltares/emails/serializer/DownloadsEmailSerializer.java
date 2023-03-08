@@ -129,48 +129,50 @@ public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> 
         writer.append("</tr>");
 
         final DownloadRequest downloadRequest = content.getDownloadRequest();
-        final Map<String, String> userAttributes = downloadRequest.getUserAttributes();
-        writer.append("<tr>");
-        writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.user.phone", null)).append("</td>");
-        writer.append("<td>");
-        writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.phone.name(), ""));
-        writer.append("</td>");
-        writer.append("</tr>");
 
-        writer.append("<tr>");
-        writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.user.org_name", null)).append("</td>");
-        writer.append("<td>");
-        writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_name.name(), ""));
-        writer.append("</td>");
-        writer.append("</tr>");
+        if (downloadRequest.isUserInfoRequired()) {
+            final Map<String, String> userAttributes = downloadRequest.getUserAttributes();
+            writer.append("<tr>");
+            writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.user.phone", null)).append("</td>");
+            writer.append("<td>");
+            writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.phone.name(), ""));
+            writer.append("</td>");
+            writer.append("</tr>");
 
-        writer.append("<tr>");
-        writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.user.org_address", null)).append("</td>");
-        writer.append("<td>");
-        writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_address.name(), ""));
-        writer.append("</br>");
-        writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_postal.name(), ""));
-        writer.append(", ");
-        writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_city.name(), ""));
-        writer.append("</br>");
-        writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_country.name(), ""));
-        writer.append("</td>");
-        writer.append("</tr>");
+            writer.append("<tr>");
+            writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.user.org_name", null)).append("</td>");
+            writer.append("<td>");
+            writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_name.name(), ""));
+            writer.append("</td>");
+            writer.append("</tr>");
 
-        writer.append("<tr>");
-        writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.user.org_phone", null)).append("</td>");
-        writer.append("<td>");
-        writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_phone.name(), ""));
-        writer.append("</td>");
-        writer.append("</tr>");
+            writer.append("<tr>");
+            writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.user.org_address", null)).append("</td>");
+            writer.append("<td>");
+            writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_address.name(), ""));
+            writer.append("</br>");
+            writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_postal.name(), ""));
+            writer.append(", ");
+            writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_city.name(), ""));
+            writer.append("</br>");
+            writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_country.name(), ""));
+            writer.append("</td>");
+            writer.append("</tr>");
 
-        writer.append("<tr>");
-        writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.user.org_website", null)).append("</td>");
-        writer.append("<td>");
-        writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_website.name(), ""));
-        writer.append("</td>");
-        writer.append("</tr>");
+            writer.append("<tr>");
+            writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.user.org_phone", null)).append("</td>");
+            writer.append("<td>");
+            writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_phone.name(), ""));
+            writer.append("</td>");
+            writer.append("</tr>");
 
+            writer.append("<tr>");
+            writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.user.org_website", null)).append("</td>");
+            writer.append("<td>");
+            writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_website.name(), ""));
+            writer.append("</td>");
+            writer.append("</tr>");
+        }
         writer.append("<tr><td><hr></td><td><hr></td></tr>");
         writer.append("</table>");
     }
