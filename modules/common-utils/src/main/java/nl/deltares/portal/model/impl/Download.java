@@ -47,7 +47,7 @@ public class Download extends AbsDsdArticle {
             filePath = XmlContentUtils.getDynamicContentByName(document, "FilePath", false);
             fileName = XmlContentUtils.getDynamicContentByName(document, "FileName", false);
 
-            String options = XmlContentUtils.getDynamicContentByName(document, "RequiredActions", false);
+            String options = XmlContentUtils.getDynamicContentByName(document, "RequiredActions", true);
             parseRequiredActions(options);
 
             fileType = XmlContentUtils.getDynamicContentByName(document, "FileType", false);
@@ -77,6 +77,9 @@ public class Download extends AbsDsdArticle {
     }
 
     private void parseRequiredActions(String options) {
+        if (options == null || options.isEmpty()){
+            return;
+        }
         options = options.trim();
         options = options.replace('\n', ' ');
         options = options.replace('\t', '\0');
