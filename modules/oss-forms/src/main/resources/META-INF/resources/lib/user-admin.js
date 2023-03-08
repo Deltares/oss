@@ -21,7 +21,7 @@ OssFormsUtil = {
 
     checkUsersExist: function(resourceUrl, namespace){
         CommonFormsUtil.clearError(namespace);
-        let usersFile = document.getElementById(namespace + "userFile").files[0];
+        let usersFile = document.getElementById(namespace + "checkUserFile").files[0];
         if (!usersFile){
             alert("Please select file to upload!");
             return;
@@ -31,7 +31,7 @@ OssFormsUtil = {
     },
     deleteUsers: function(resourceUrl, namespace){
         CommonFormsUtil.clearError(namespace);
-        let usersFile = document.getElementById(namespace + "userFile").files[0];
+        let usersFile = document.getElementById(namespace + "deleteUserFile").files[0];
         if (!usersFile){
             alert("Please select file to upload!");
             return;
