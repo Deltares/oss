@@ -41,6 +41,11 @@ DELETE FROM WorkflowDefinitionLink ;
 --
 -- SELECT d.structureId, d.companyId, d.structureKey  , d.groupId , g.groupId ,  g.friendlyURL , g.site  FROM DDMStructure d LEFT JOIN Group_ g ON d.groupId = g.groupId ;
 --
+DELETE FROM AssetDisplayPageEntry  WHERE companyId NOT IN (SELECT c.companyId FROM Company c) AND companyId != 0;
+DELETE FROM DDMStructure  WHERE companyId NOT IN (SELECT c.companyId FROM Company c) AND companyId != 0;
+DELETE FROM DDMStructureLink  WHERE companyId NOT IN (SELECT c.companyId FROM Company c) AND companyId != 0;
+DELETE FROM DDMStructureLayout  WHERE companyId NOT IN (SELECT c.companyId FROM Company c) AND companyId != 0;
+
 DELETE FROM DDMStructure WHERE groupId NOT IN (SELECT g.groupId FROM Group_ g);
 DELETE FROM DDMTemplate WHERE groupId NOT IN (SELECT g.groupId FROM Group_ g );
 DELETE FROM DDMStructureLayout WHERE groupId NOT IN (SELECT g.groupId FROM Group_ g);

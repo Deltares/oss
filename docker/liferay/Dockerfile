@@ -14,10 +14,7 @@ COPY ["resources/keystore.jks", "/opt/liferay/data/keystore.jks"]
 COPY ["resources/Liferay Connector to SAML 2.0.lpkg", "/opt/liferay/osgi/marketplace/Liferay Connector to SAML 2.0.lpkg"]
 COPY ["resources/Liferay Plugin for OAuth 2.0.lpkg", "/opt/liferay/osgi/marketplace/Liferay Plugin for OAuth 2.0.lpkg"]
 COPY ["resources/activation-key.xml", "/opt/liferay/osgi/modules/activation-key.xml"]
-#COPY ["resources/server.xml", "/opt/liferay/tomcat/conf/server.xml"]
-#COPY ["resources/YourKit-JavaProfiler-2022.9-b171.zip", "/tmp/YourKit-JavaProfiler-2022.9.zip"]
-#RUN unzip /tmp/YourKit-JavaProfiler-2022.9.zip -d /usr/local && \
-#  rm /tmp/YourKit-JavaProfiler-2022.9.zip
+
 
 USER liferay
 
