@@ -25,6 +25,7 @@ public class SessionRegistration extends Registration {
     private String webinarKey = "";
     private String provider = "";
     private String joinLink = "";
+    private boolean showMultipleDaysAsSingleDate = false;
 
     public SessionRegistration(JournalArticle article, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
         super(article, dsdParserUtils, locale);
@@ -51,6 +52,11 @@ public class SessionRegistration extends Registration {
 
             String joinLink = XmlContentUtils.getDynamicContentByName(document, "joinLink", true);
             if (joinLink != null) this.joinLink = joinLink;
+
+            String value = XmlContentUtils.getDynamicContentByName(document, "ShowMultipleDaysAsSingleDate", true);
+            if (value != null) {
+                this.showMultipleDaysAsSingleDate = Boolean.parseBoolean(value);
+            }
 
             initDates(document);
         } catch (Exception e) {
@@ -153,6 +159,10 @@ public class SessionRegistration extends Registration {
 
     public String getJoinLink(){
         return joinLink;
+    }
+
+    public boolean isShowMultipleDaysAsSingleDate(){
+        return showMultipleDaysAsSingleDate;
     }
 
     @Override

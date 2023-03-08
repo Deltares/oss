@@ -6,6 +6,46 @@
   "fields": [
     {
       "label": {
+        "en_US": "Language"
+      },
+      "options": [
+        {
+          "value": "nl",
+          "label": {
+            "en_US": "Dutch"
+          }
+        },
+        {
+          "value": "en",
+          "label": {
+            "en_US": "English"
+          }
+        }
+      ],
+      "predefinedValue": {
+       "en_US": [
+          ""
+        ]
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "multiple": false,
+      "name": "Language",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "select"
+    },
+    {
+      "label": {
         "en_US": "Topic"
       },
       "options": [
@@ -34,12 +74,6 @@
           }
         },
         {
-          "value": "swash",
-          "label": {
-            "en_US": "SWASH"
-          }
-        },
-        {
           "value": "wanda",
           "label": {
             "en_US": "WANDA"
@@ -55,12 +89,6 @@
           "value": "xbeach",
           "label": {
             "en_US": "XBeach"
-          }
-        },
-        {
-          "value": "datascience",
-          "label": {
-            "en_US": "Data Science"
           }
         }
       ],
@@ -92,33 +120,17 @@
       },
       "options": [
         {
-          "value": "breakout",
-          "label": {
-            "en_US": "Breakout"
-          }
-        },
-        {
           "value": "course",
           "label": {
+            "nl_NL": "Cursus (op locatie)",
             "en_US": "Course (on-premises)"
           }
         },
         {
           "value": "onlinecourse",
           "label": {
+            "nl_NL": "Online Cursus",
             "en_US": "Online Course"
-          }
-        },
-        {
-          "value": "symposium",
-          "label": {
-            "en_US": "Symposium"
-          }
-        },
-        {
-          "value": "userdays",
-          "label": {
-            "en_US": "User Days"
           }
         },
         {
@@ -242,6 +254,13 @@
           "label": {
             "en_US": "Individual days"
           }
+        },
+        {
+          "value": "undetermined",
+          "label": {
+            "nl_NL": "To be determined",
+            "en_US": "To be determined"
+          }
         }
       ],
       "predefinedValue": {
@@ -345,12 +364,13 @@
         "en_US": ""
       },
       "tip": {
+        "nl_NL": "",
         "en_US": ""
       },
       "dataType": "journal-article",
       "fieldNamespace": "ddm",
       "indexType": "keyword",
-      "localizable": true,
+      "localizable": false,
       "name": "room",
       "readOnly": false,
       "repeatable": false,
@@ -374,7 +394,7 @@
       "dataType": "image",
       "fieldNamespace": "ddm",
       "indexType": "text",
-      "localizable": true,
+      "localizable": false,
       "name": "eventImage",
       "readOnly": false,
       "repeatable": false,
@@ -397,7 +417,7 @@
       },
       "dataType": "string",
       "indexType": "keyword",
-      "localizable": true,
+      "localizable": false,
       "name": "webinarKey",
       "readOnly": false,
       "repeatable": false,
@@ -514,7 +534,7 @@
           "dataType": "date",
           "fieldNamespace": "ddm",
           "indexType": "keyword",
-          "localizable": true,
+          "localizable": false,
           "name": "scheduleDate",
           "readOnly": false,
           "repeatable": false,
@@ -526,7 +546,7 @@
     },
     {
       "label": {
-        "en_US": "Has presentations"
+        "en_US": "ShowMultipleDaysAsSingleDate"
       },
       "predefinedValue": {
         "en_US": false
@@ -535,12 +555,12 @@
         "en_US": ""
       },
       "tip": {
-        "en_US": "Use this to allow filtering based on the presence of presentations."
+        "en_US": "Controls if multiple days are split into separate entries in the search results."
       },
       "dataType": "boolean",
       "indexType": "keyword",
       "localizable": false,
-      "name": "hasPresentations",
+      "name": "ShowMultipleDaysAsSingleDate",
       "readOnly": false,
       "repeatable": false,
       "required": false,
@@ -575,7 +595,54 @@
         "en_US": "Presentation"
       },
       "predefinedValue": {
+        "en_US": false
+      },
+      "style": {
         "en_US": ""
+      },
+      "tip": {
+        "en_US": "Use this to allow filtering based on the presence of presentations."
+      },
+      "dataType": "boolean",
+      "indexType": "keyword",
+      "localizable": false,
+      "name": "hasPresentations",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "checkbox"
+    },
+    {
+      "label": {
+        "en_US": "Presentation"
+      },
+      "predefinedValue": {
+        "en_US": "{}"
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "journal-article",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": false,
+      "name": "presentation",
+      "readOnly": false,
+      "repeatable": true,
+      "required": false,
+      "showLabel": true,
+      "type": "ddm-journal-article"
+    },
+    {
+      "label": {
+        "en_US": "Registration Information"
+      },
+      "predefinedValue": {
+        "en_US": "{}"
       },
       "style": {
         "en_US": ""
@@ -587,12 +654,60 @@
       "fieldNamespace": "ddm",
       "indexType": "keyword",
       "localizable": true,
-      "name": "presentation",
+      "name": "RegistrationInfo",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "ddm-journal-article"
+    },
+    {
+      "label": {
+        "en_US": "External link"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "ExternalLink",
       "readOnly": false,
       "repeatable": true,
       "required": false,
       "showLabel": true,
-      "type": "ddm-journal-article"
+      "type": "text",
+      "nestedFields": [
+        {
+          "label": {
+            "en_US": "External URL"
+          },
+          "predefinedValue": {
+            "en_US": ""
+          },
+          "style": {
+            "en_US": ""
+          },
+          "tip": {
+            "en_US": ""
+          },
+          "dataType": "string",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "ExternalURL",
+          "readOnly": false,
+          "repeatable": false,
+          "required": false,
+          "showLabel": true,
+          "type": "text"
+        }
+      ]
     }
   ]
 }
