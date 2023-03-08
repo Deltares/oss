@@ -58,7 +58,7 @@
         {
           "value": "dhydro",
           "label": {
-            "en_US": "D-HYDRO Suite"
+            "en_US": "Delft3D FM Suite"
           }
         },
         {
@@ -93,9 +93,7 @@
         }
       ],
       "predefinedValue": {
-        "en_US": [
-          ""
-        ]
+        "en_US": []
       },
       "style": {
         "en_US": ""
@@ -592,7 +590,8 @@
     },
     {
       "label": {
-        "en_US": "Presentation"
+        "nl_NL": "Has presentations",
+        "en_US": "Has presentations"
       },
       "predefinedValue": {
         "en_US": false
