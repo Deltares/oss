@@ -92,7 +92,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
     public boolean isThisADownloadSite(long groupId) {
         if (groupId < 0 || _configurationProvider == null) return false;
         try {
-            return _configurationProvider.getGroupConfiguration(DownloadSiteConfiguration.class, groupId) != null;
+            return !_configurationProvider.getGroupConfiguration(DownloadSiteConfiguration.class, groupId).downloadURL().isEmpty();
         } catch (ConfigurationException e) {
             System.err.println(e.getMessage());
         }
