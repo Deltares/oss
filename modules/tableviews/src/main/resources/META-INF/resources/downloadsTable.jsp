@@ -100,7 +100,7 @@
         <aui:button-row>
             <aui:button name="exportResultsButton" type="submit" value="Export"/>
             <aui:button name="deleteSelectedButton" type="submit" value="Delete selected"/>
-
+            <aui:button name="paidSelectedButton" type="submit" value="Set to paid"/>
         </aui:button-row>
     </aui:form>
     <hr>
@@ -123,6 +123,13 @@
     event.preventDefault();
     TableFormsUtil.deleteSelected("<portlet:resourceURL/>", "<liferay-portlet:renderURL/>", "<portlet:namespace/>", "delete-selected-downloads.csv")
     };
+
+    let paidSelectedButton = document.getElementById('<portlet:namespace/>paidSelectedButton');
+    paidSelectedButton.onclick = function(event){
+    event.preventDefault();
+    TableFormsUtil.paidSelected("<portlet:resourceURL/>", "<liferay-portlet:renderURL/>", "<portlet:namespace/>", "paid-selected-downloads.csv")
+    };
+
 
 
 </aui:script>
