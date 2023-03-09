@@ -310,6 +310,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         final String remoteAddr = ((LiferayPortletRequest) actionRequest).getHttpServletRequest().getRemoteAddr();
         try {
             final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(remoteAddr);
+            if (clientIpInfo.isEmpty()) return Collections.emptyMap();
             final Country country = CountryServiceUtil.getCountryByA2(geoIpUtils.getCountryIso2Code(clientIpInfo));
             if (country != null ) attributes.put(KeycloakUtils.ATTRIBUTES.org_country.name(), country.getName());
             return attributes;
