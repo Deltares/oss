@@ -4,7 +4,9 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.CountryServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import nl.deltares.portal.utils.*;
 
@@ -99,11 +101,27 @@ public class DownloadRestService {
             return Response.serverError().type(MediaType.TEXT_PLAIN).entity(msg).build();
         } finally {
             try {
-                downloadUtils.registerDownload(user, groupId, downloadId, filePath, directDownloadLink, Collections.emptyMap());
+                downloadUtils.registerDownload(user, groupId, downloadId, filePath, directDownloadLink, getMinimumAttributes(request));
             } catch (PortalException e) {
                 LOG.warn("Error registering direct download url: " + e.getMessage());
             }
         }
+
+    }
+    private Map<String, String> getMinimumAttributes(HttpServletRequest request) {
+        if (geoIpUtils == null || !geoIpUtils.isActive()) return Collections.emptyMap();
+        Map<String, String> attributes = new HashMap<>();
+        final String remoteAddr = request.getRemoteAddr();
+        try {
+            final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(remoteAddr);
+            if (clientIpInfo.isEmpty()) return Collections.emptyMap();
+            final Country country = CountryServiceUtil.getCountryByA2(geoIpUtils.getCountryIso2Code(clientIpInfo));
+            if (country != null ) attributes.put(KeycloakUtils.ATTRIBUTES.org_country.name(), country.getName());
+            return attributes;
+        } catch (PortalException e) {
+            LOG.warn("Error getting country info: " + e.getMessage());
+        }
+        return attributes;
 
     }
 

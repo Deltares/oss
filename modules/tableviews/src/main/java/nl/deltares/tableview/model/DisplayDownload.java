@@ -79,7 +79,7 @@ public class DisplayDownload implements Comparable<DisplayDownload> {
         final int shareId = download.getShareId();
         switch (shareId){
             case -9 : return "processing";
-            case -1 : return "pending payment";
+            case -1 : return directDownloadUrl.isEmpty() ? "pending payment" : "direct download";
             default: return String.valueOf(shareId);
         }
     }
