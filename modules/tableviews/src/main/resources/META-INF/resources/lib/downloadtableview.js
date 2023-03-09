@@ -26,7 +26,7 @@ TableFormsUtil = {
     paidSelected: function(resourceUrl, renderUrl, namespace, filename){
 
         let selected = [];
-        this.loadSelection(selected);
+        this.loadSelection(namespace, selected);
         if (selected.length === 0){
             alert("Please select one or more downloads before continuing.");
         } else {

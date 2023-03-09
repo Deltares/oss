@@ -432,7 +432,13 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         final NodeList shareIdNodes = document.getElementsByTagName("id");
         final int shareId = Integer.parseInt(shareIdNodes.item(shareIndex).getTextContent());
         final NodeList expNodes = document.getElementsByTagName("expiration");
-        final Date expiration = dateFormat.parse(expNodes.item(shareIndex).getTextContent());
+        final String expirationText = expNodes.item(shareIndex).getTextContent();
+        final Date expiration;
+        if (expirationText.isEmpty()){
+            expiration = new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365));
+        } else {
+            expiration = dateFormat.parse(expirationText);
+        }
         final NodeList tokenNodes = document.getElementsByTagName("token");
         final String token = tokenNodes.item(shareIndex).getTextContent();
 

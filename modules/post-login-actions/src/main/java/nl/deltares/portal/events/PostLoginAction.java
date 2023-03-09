@@ -104,20 +104,6 @@ public class PostLoginAction implements LifecycleAction {
                 LOG.info(String.format("User '%s' logged in from not-sanctioned country '%s'", user.getFullName(), countryName));
             }
         }
-        final LayoutSet layoutSet = (LayoutSet) lifecycleEvent.getRequest().getAttribute("VIRTUAL_HOST_LAYOUT_SET");
-        long siteGroupId = layoutSet != null ? layoutSet.getGroupId() : -1;
-        if (downloadUtils.isActive() && downloadUtils.isThisADownloadSite(siteGroupId)) {
-            //this value should contain the origin of the login request
-            final String id = String.format("PostLoginUpdateDownloadStatus_%d_%d", user.getCompanyId(), user.getUserId());
-            LOG.info(String.format("Starting post login activity '%s'", id));
-            try {
-                final PostLoginUpdateDownloadStatus postLoginRequest = new PostLoginUpdateDownloadStatus(id, user,
-                        siteGroupId, downloadUtils);
-                DataRequestManager.getInstance().addToQueue(postLoginRequest);
-            } catch (Exception e) {
-                LOG.warn(String.format("Error executing PostLoginUpdateDownloadStatus request %s", id), e);
-            }
-        }
     }
 
     private String getSiteId(String redirectUrl) {
