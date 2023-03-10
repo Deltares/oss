@@ -3,15 +3,17 @@
 <#assign articleId = .vars['reserved-article-id'].getData() />
 <#assign displayContext = dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay) />
 <#assign registration = dsdParserUtils.getRegistration(groupId,articleId) />
-<#assign urltitle= displayContext.getViewURL(registration) />
 <#assign presentations = displayContext.getPresentations() />
 <#assign prefix = languageUtil.get(locale, "dsd.theme.session.presentations", "Presentaties van programma:")/>
+<#assign siteUrl=themeDisplay.getSiteGroup().getDisplayURL(themeDisplay) />
+<#assign urltitle=siteUrl + "/-/" + registration.getJournalArticle().getUrlTitle() />
+
 <div class="row no-gutters">
 
     <div class="col-12 px-3">
         <p>
         <h4>
-            <a href="${urltitle}" target="_blank">
+            <a href="${urltitle}" target="_self">
                 ${prefix}<strong>${title}</strong>
             </a>
         </h4>
@@ -31,7 +33,7 @@
                     <#assign thumbnail = "" />
                 </#if>
 
-                <#assign viewURL = displayContext.getViewURL(presentation) />
+                <#assign viewURL = siteUrl + "/-/" + presentation.getJournalArticle().getUrlTitle() />
                 <tr><td>
                         <div class="row no-gutters presentation">
 
@@ -44,7 +46,7 @@
                             </div>
                             <div class="col-8 px-3">
                                 <h4>
-                                    <a href="${viewURL}">
+                                    <a href="${viewURL}" target="_self">
                                         <strong>${presentation.getTitle()}</strong>
                                     </a>
                                 </h4>
