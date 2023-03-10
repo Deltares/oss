@@ -312,7 +312,7 @@ public class RegistrationDisplayContext {
     }
 
     public String getViewURL(DsdArticle article){
-        return  themeDisplay.getCDNBaseURL() + "/-/" + article.getJournalArticle().getUrlTitle();
+        return  themeDisplay.getSiteGroup().getDisplayURL(themeDisplay) + "/-/" + article.getJournalArticle().getUrlTitle();
     }
 
     private String getPortletRequest(HttpServletRequest httpServletRequest, String action, Long userId, String redirect) {
