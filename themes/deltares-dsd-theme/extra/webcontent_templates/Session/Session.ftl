@@ -55,6 +55,7 @@
     <#assign vat = registration.getVAT() />
     <#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
     <#assign available = registration.getCapacity() - registrations />
+    <#assign siteUrl=themeDisplay.getSiteGroup().getDisplayURL(themeDisplay) />
 
     <div class="c-sessions page">
         <div class="c-sessions__item ${isEventPast}">
@@ -232,7 +233,7 @@
                     <#else>
                         <#assign thumbnail = "" />
                     </#if>
-                    <#assign viewURL = displayContext.getViewURL(presentation) />
+                    <#assign viewURL = siteUrl + "/-/" + presentation.getJournalArticle().getUrlTitle() />
                     <div class="presentation">
                         <a href="${viewURL}">
                             <#if thumbnail?? && thumbnail != "">
