@@ -110,33 +110,6 @@ services:
                "-Dkeycloak.import=/opt/jboss/keycloak/resources/realm-lportal.json",
                "-Dkeycloak.profile.feature.upload_scripts=enabled" ]
 
-  openldap:
-    image: bitnami/openldap:2
-    container_name: openldap
-    #      build: openldap
-    ports:
-      - '1389:1389'
-      - '1636:1636'
-    environment:
-      - BITNAMI_DEBUG=true
-      - LDAP_ADMIN_USERNAME=admin
-      - LDAP_ADMIN_PASSWORD=admin
-      #        - LDAP_USERS=rooij_e
-      #        - LDAP_PASSWORDS=password
-      - LDAP_ROOT=dc=oss,dc=deltares,dc=nl
-      - LDAP_BindDN=cn=admin,dc=oss,dc=deltares,dc=nl
-      - LDAP_BindPW=admin
-      - LDAP_USER_DC=people
-      - LDAP_GROUP=groups
-#      - LDAP_ADD_SCHEMAS=yes
-#      - LDAP_EXTRA_SCHEMAS=cosine, inetorgperson, nis,ppolicy
-    #        - LDAP_CUSTOM_LDIF_DIR=/opt/bitnami/openldap/etc/ldifs/
-    volumes:
-      - openldap74:/bitnami/openldap
-    networks:
-      - liferay
-
-
 volumes:
   esdata74:
     driver: local
@@ -144,13 +117,6 @@ volumes:
     driver: local
   dbkeycloak74:
     driver: local
-  openldap74:
-    driver: local
 
 networks:
   liferay:
-
-  ## admin account
-  # admin / pass
-  #
-  # Default user password: F$5tR32WFGt12_k98
