@@ -55,9 +55,6 @@ public class OssAdminUtils implements AdminUtils {
         //remove thread flags for user
         deleteThreadFlags(writer, userId);
 
-        //remove user stats
-        deleteUserStats(writer, userId, siteId);
-
         //remove user asset entries for site
         writer.printf("Deleting asset entries for groupId '%s':\n", siteId);
         deleteAssetEntries(writer, userId, siteId);
@@ -75,6 +72,16 @@ public class OssAdminUtils implements AdminUtils {
         deleteRemainingMBFolders(writer, userId, siteId);
 
         writer.printf("********** Finished deleting content for user %s (%s, %d) in site %d, company %d   ***********\n", screenName, email, userId, siteId, user.getCompanyId());
+    }
+
+    private void deleteUserGroups(PrintWriter writer,long userId) {
+        try {
+            final List<Group> userGroups = GroupLocalServiceUtil.getUserGroups(userId);
+            writer.printf("Deleting %d User Groups\n", userGroups.size());
+            GroupLocalServiceUtil.deleteUserGroups(userId, userGroups);
+        } catch (Exception e) {
+            writer.printf("Could not delete user Groups: %s\n", e.getMessage());
+        }
     }
 
     @Override
@@ -360,15 +367,6 @@ public class OssAdminUtils implements AdminUtils {
             } catch (PortalException e) {
                 writer.printf("-Failed to delete user portrait image %d: %s\n", user.getPortraitId(), e.getMessage());
             }
-        }
-    }
-
-    private void deleteUserStats(PrintWriter writer, long userId, long siteId) {
-        writer.println("Deleting UserStats: ");
-        MBStatsUser statsUser = MBStatsUserLocalServiceUtil.getStatsUser(siteId, userId);
-        if (statsUser != null) {
-            MBStatsUserLocalServiceUtil.deleteStatsUser(statsUser);
-            writer.printf("Deleted user statistics\n");
         }
     }
 
