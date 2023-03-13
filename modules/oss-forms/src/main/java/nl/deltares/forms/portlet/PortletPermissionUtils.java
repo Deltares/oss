@@ -31,7 +31,15 @@ public class PortletPermissionUtils {
                 if (userGroupRole.getName().equals("Site Administrator")) return true;
             }
         } catch (PortalException e) {
-            LOG.info("Error getting user group roles: " + e.getMessage());
+            LOG.info("Error getting user's site roles: " + e.getMessage());
+        }
+
+        try {
+            for (Role userGroupRole : RoleServiceUtil.getUserGroupGroupRoles(userId, siteGroupId)) {
+                if (userGroupRole.getName().equals("Site Administrator")) return true;
+            }
+        } catch (PortalException e) {
+            LOG.info("Error getting user's group site roles: " + e.getMessage());
         }
         return false;
     }
