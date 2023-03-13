@@ -90,9 +90,9 @@ public class UserManagmentAdminFormPortlet extends MVCPortlet {
         }
     }
 
-    private String getUploadedFile(String dataRequestId, ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws IOException {
+    private String getUploadedFile(String dataRequestId, String userFile, ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws IOException {
         UploadRequest uploadRequest = PortalUtil.getUploadPortletRequest(resourceRequest);
-        File tempFile = uploadRequest.getFile("userFile");
+        File tempFile = uploadRequest.getFile(userFile);
         if (tempFile != null && tempFile.exists()) {
             try {
                 return copyTempFile(dataRequestId, tempFile, tempFile.getName());
@@ -113,7 +113,7 @@ public class UserManagmentAdminFormPortlet extends MVCPortlet {
 
     private void checkUsersExistAction(String dataRequestId, ResourceRequest resourceRequest, ResourceResponse resourceResponse, ThemeDisplay themeDisplay) throws IOException {
 
-        String usersFilePath = getUploadedFile(dataRequestId, resourceRequest, resourceResponse);
+        String usersFilePath = getUploadedFile(dataRequestId, "checkUserFile", resourceRequest, resourceResponse);
         if (usersFilePath != null) {
             resourceResponse.setContentType("application/json");
             DataRequestManager instance = DataRequestManager.getInstance();
@@ -133,7 +133,7 @@ public class UserManagmentAdminFormPortlet extends MVCPortlet {
     }
 
     private void deleteUsersAction(String dataRequestId, ResourceRequest resourceRequest, ResourceResponse resourceResponse, ThemeDisplay themeDisplay) throws IOException {
-        String usersFilePath = getUploadedFile(dataRequestId, resourceRequest, resourceResponse);
+        String usersFilePath = getUploadedFile(dataRequestId, "deleteUserFile", resourceRequest, resourceResponse);
         if (usersFilePath != null) {
             resourceResponse.setContentType("application/json");
             DataRequestManager instance = DataRequestManager.getInstance();
