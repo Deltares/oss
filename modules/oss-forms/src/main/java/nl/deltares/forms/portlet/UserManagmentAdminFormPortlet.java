@@ -209,13 +209,9 @@ public class UserManagmentAdminFormPortlet extends MVCPortlet {
     private List<MBBan> getBannedUsersAllSites() {
 
         List<MBBan> bans = new ArrayList<>();
-        final List<VirtualHost> virtualHosts = VirtualHostLocalServiceUtil.getVirtualHosts(0, 10);
-        for (VirtualHost virtualHost : virtualHosts) {
-            final long companyId = virtualHost.getCompanyId();
-            for (Group companyGroup : GroupLocalServiceUtil.getCompanyGroups(companyId, 0, 50)) {
-                if (!companyGroup.isSite()) continue;
-                bans.addAll(MBBanLocalServiceUtil.getBans(companyGroup.getGroupId(), 0, 100));
-            }
+        final int totalBans = MBBanLocalServiceUtil.getMBBansCount();
+        for (int i = 0; i < totalBans; i+=50) {
+            bans.addAll(MBBanLocalServiceUtil.getMBBans(i, i + 50));
         }
         return bans;
     }

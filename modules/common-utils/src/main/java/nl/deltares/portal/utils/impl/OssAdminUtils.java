@@ -76,6 +76,16 @@ public class OssAdminUtils implements AdminUtils {
         writer.printf("********** Finished deleting content for user %s (%s, %d) in site %d, company %d   ***********\n", screenName, email, userId, siteId, user.getCompanyId());
     }
 
+    private void deleteUserGroups(PrintWriter writer,long userId) {
+        try {
+            final List<Group> userGroups = GroupLocalServiceUtil.getUserGroups(userId);
+            writer.printf("Deleting %d User Groups\n", userGroups.size());
+            GroupLocalServiceUtil.deleteUserGroups(userId, userGroups);
+        } catch (Exception e) {
+            writer.printf("Could not delete user Groups: %s\n", e.getMessage());
+        }
+    }
+
     @Override
     public User getOrCreateRegistrationUser(long companyId, User loggedInUser, String registrationEmail,
                                             String firstName, String lastName, Locale locale) throws Exception {
