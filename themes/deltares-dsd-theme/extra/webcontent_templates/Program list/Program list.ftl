@@ -21,7 +21,7 @@
     </div>
     <div class="col-10 px-3">
         <h4>
-            <a href="-/${urltitle}" target="_blank">
+            <a href="-/${urltitle}" >
                 <strong>${title}</strong>
             </a>
         </h4>
