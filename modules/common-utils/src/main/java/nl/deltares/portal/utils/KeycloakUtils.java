@@ -4,7 +4,6 @@ import nl.deltares.portal.model.keycloak.KeycloakMailing;
 import nl.deltares.portal.model.keycloak.KeycloakUserMailing;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
@@ -72,9 +71,9 @@ public interface KeycloakUtils {
 
     boolean isExistingUsername(String username) throws Exception;
 
-    List<KeycloakMailing> getMailings() throws IOException;
+    List<KeycloakMailing> getMailings() throws Exception;
 
-    List<KeycloakUserMailing> getUserMailings(String email) throws IOException;
+    List<KeycloakUserMailing> getUserMailings(String email) throws Exception;
 
     int registerUserLogin(String email, String siteId) throws Exception;
 

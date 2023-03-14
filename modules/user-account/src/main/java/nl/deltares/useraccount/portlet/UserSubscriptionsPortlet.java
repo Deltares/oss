@@ -93,10 +93,10 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
         User user = themeDisplay.getUser();
 
-        List<KeycloakMailing> userMailings = null;
+        List<KeycloakMailing> userMailings;
         try {
             userMailings = getUserSubscriptions(actionRequest);
-        } catch (IOException e) {
+        } catch (Exception e) {
             SessionErrors.add(actionRequest, "update-subscription-failed", e.getMessage());
             return;
         }
@@ -104,7 +104,7 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
 
     }
 
-    private List<KeycloakMailing> getUserSubscriptions(ActionRequest actionRequest) throws IOException {
+    private List<KeycloakMailing> getUserSubscriptions(ActionRequest actionRequest) throws Exception {
 
         final List<KeycloakMailing> mailings = keycloakUtils.getMailings();
         for (KeycloakMailing mailing : mailings) {

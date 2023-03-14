@@ -90,7 +90,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
     }
 
     @Override
-    public int callCheckUsersExist(File checkUsersInputFile, PrintWriter nonExistingUsersOutput) throws IOException {
+    public int callCheckUsersExist(File checkUsersInputFile, PrintWriter nonExistingUsersOutput) throws Exception {
         String boundaryString = "----CheckUsersExist";
         HashMap<String, String> map = new HashMap<>();
         map.put("Content-Type", "multipart/form-data; boundary=" + boundaryString);
@@ -281,7 +281,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
         return !unfiltered.isEmpty();
     }
 
-    private Map<String, String> getKeycloakUserRepresentation(String email, String username) throws IOException, JSONException {
+    private Map<String, String> getKeycloakUserRepresentation(String email, String username) throws Exception {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getAccessToken());
@@ -511,7 +511,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
     }
 
     @Override
-    public List<KeycloakMailing> getMailings() throws IOException {
+    public List<KeycloakMailing> getMailings() throws Exception {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getAccessToken());
@@ -534,7 +534,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
     }
 
     @Override
-    public List<KeycloakUserMailing> getUserMailings(String email) throws IOException {
+    public List<KeycloakUserMailing> getUserMailings(String email) throws Exception {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getAccessToken());
@@ -641,7 +641,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
         return basePath + "protocol/openid-connect/token";
     }
 
-    private String getAccessToken() {
+    private String getAccessToken() throws Exception {
 
         String CACHED_TOKEN_KEY = "keycloak.token";
         String CACHED_EXPIRY_KEY = "keycloak.expirytime";
@@ -665,9 +665,8 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
         } catch (IOException | JSONException e) {
             clearAccessTokens("keycloak");
             LOG.error("Failed to get access token: " + e.getMessage());
+            throw e;
         }
-
-        return null;
     }
 
     private String getAccessToken(String username, String password) throws Exception {
