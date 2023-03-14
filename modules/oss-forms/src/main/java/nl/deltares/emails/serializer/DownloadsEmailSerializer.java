@@ -22,7 +22,9 @@ public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> 
 
         writer.append("<img src=\"cid:banner\" />");
         User user = content.getUser();
+        writer.append("<p>");
         writer.append(LanguageUtil.format(content.getBundle(), "download.email.header", new Object[]{user.getFirstName(), user.getLastName()}));
+        writer.append("</p>");
 
         appendDownloadAction(writer, content);
 
