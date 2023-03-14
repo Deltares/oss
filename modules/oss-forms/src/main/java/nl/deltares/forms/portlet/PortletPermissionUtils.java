@@ -10,25 +10,15 @@ public class PortletPermissionUtils {
 
     private static final Log LOG = LogFactoryUtil.getLog(PortletPermissionUtils.class);
 
-    static boolean isUserSiteOrOtherAdministrator(long userId, long siteGroupId){
-        return isUserAdministrator(userId) || isUserSiteAdministrator(userId, siteGroupId);
-    }
-
-    static boolean isUserAdministrator(long userId) {
-        try {
-            for (Role userGroupRole : RoleServiceUtil.getUserRoles(userId)) {
-                if (userGroupRole.getName().equals("Administrator")) return true;
-            }
-        } catch (PortalException e) {
-            LOG.info("Error getting user roles: " + e.getMessage());
-        }
-        return false;
-    }
-
     static boolean isUserSiteAdministrator(long userId, long siteGroupId){
+        return isUserInSiteRole(userId, siteGroupId, "Site Administrator");
+    }
+
+    static boolean isUserInSiteRole(long userId, long siteGroupId, String role) {
+
         try {
             for (Role userGroupRole : RoleServiceUtil.getUserGroupRoles(userId, siteGroupId)) {
-                if (userGroupRole.getName().equals("Site Administrator")) return true;
+                if (userGroupRole.getName().equals(role)) return true;
             }
         } catch (PortalException e) {
             LOG.info("Error getting user's site roles: " + e.getMessage());
@@ -36,7 +26,7 @@ public class PortletPermissionUtils {
 
         try {
             for (Role userGroupRole : RoleServiceUtil.getUserGroupGroupRoles(userId, siteGroupId)) {
-                if (userGroupRole.getName().equals("Site Administrator")) return true;
+                if (userGroupRole.getName().equals(role)) return true;
             }
         } catch (PortalException e) {
             LOG.info("Error getting user's group site roles: " + e.getMessage());
