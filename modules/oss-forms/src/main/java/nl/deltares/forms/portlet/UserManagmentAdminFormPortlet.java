@@ -2,11 +2,7 @@ package nl.deltares.forms.portlet;
 
 import com.liferay.message.boards.model.MBBan;
 import com.liferay.message.boards.service.MBBanLocalServiceUtil;
-import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.model.VirtualHost;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
-import com.liferay.portal.kernel.service.VirtualHostLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.upload.UploadRequest;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -65,7 +61,7 @@ public class UserManagmentAdminFormPortlet extends MVCPortlet {
         ThemeDisplay themeDisplay = (ThemeDisplay) resourceRequest
                 .getAttribute(WebKeys.THEME_DISPLAY);
 
-        if (!PortletPermissionUtils.isUserAdministrator(themeDisplay.getUserId())) {
+        if (!resourceRequest.isUserInRole("administrator")) {
             resourceResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             resourceResponse.getWriter().println("Unauthorized request!");
             return;
