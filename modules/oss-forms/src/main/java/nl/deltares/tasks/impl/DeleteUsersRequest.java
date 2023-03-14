@@ -74,8 +74,9 @@ public class DeleteUsersRequest extends AbstractDataRequest {
             User user;
             //Download results to file
             try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
-
-                writer.println("Start deleting downloaded disabled users from file: " + usersFilePath);
+                String message = String.format("Start deleting users from file: %s", usersFilePath);
+                logger.info(message);
+                writer.println(message);
                 String line;
                 int processedUsers = 0;
                 try (BufferedReader reader = new BufferedReader(new FileReader(usersFile))) {
@@ -118,6 +119,7 @@ public class DeleteUsersRequest extends AbstractDataRequest {
                         if (Thread.interrupted()) {
                             status = terminated;
                             errorMessage = String.format("Thread 'DeleteUsersRequest' with id %s is interrupted!", id);
+                            logger.warn(errorMessage);
                             break;
                         }
                     }
@@ -128,6 +130,7 @@ public class DeleteUsersRequest extends AbstractDataRequest {
                 } else if (status != terminated) {
                     status = available;
                 }
+                logger.info(String.format("Finished deleting %d users from file: %s", processedUsers,  usersFilePath));
             } catch (Exception e) {
                 errorMessage = e.getMessage();
                 logger.warn("Error serializing csv content: %s", e);
