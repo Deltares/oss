@@ -59,7 +59,7 @@ public class CheckNonKeycloakUsersRequest extends AbstractDataRequest {
                 status = available;
             } catch (Exception e) {
                 errorMessage = e.getMessage();
-                logger.warn("Error calling 'check-users-exist': %s", e);
+                logger.warn(String.format("Error calling 'check-users-exist': %s", errorMessage), e);
                 status = terminated;
             }
             if (status == available) {
