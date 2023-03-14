@@ -10,7 +10,7 @@ public class DsdUnRegisterEmailSerializer extends DsdRegistrationEmailSerializer
 
     public void appendRegistrationAction(StringBuilder writer, DsdEmail content) {
         writer.append("<p>");
-        writer.append(LanguageUtil.format(content.getBundle(), "dsd.email.unregister.event", content.getRegistrationRequest().getEvent().getTitle()));
+        writer.append(LanguageUtil.format(content.getBundle(), "dsd.email.unregister.event", null));
         writer.append("</p>");
     }
 

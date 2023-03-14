@@ -30,9 +30,7 @@ public abstract class DsdRegistrationEmailSerializer implements EmailSerializer<
             writer.append("<img src=\"cid:banner\" />");
         }
         User user = content.getUser();
-        writer.append("<h2>");
         writer.append(LanguageUtil.format(content.getBundle(), "dsd.email.header", new Object[]{user.getFirstName(), user.getLastName()}));
-        writer.append("</h2>");
 
         appendRegistrationAction(writer, content);
 
