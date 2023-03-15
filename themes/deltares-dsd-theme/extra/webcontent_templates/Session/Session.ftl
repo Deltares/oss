@@ -42,7 +42,7 @@
     <#else>
         <#assign isEventPast = "upcoming-event"/>
     </#if>
-    <#assign typeMap = dsdJournalArticleUtils.getStructureFieldOptions(groupId,"SESSION","registrationType", registration.getLocale()) />
+    <#assign typeMap = dsdJournalArticleUtils.getStructureFieldOptions(groupId,"SESSION","registrationType", themeDisplay.getLocale()) />
     <#if typeMap?? >
         <#assign typeDisplayName = typeMap[registration.getType()] />
     <#else>
@@ -50,98 +50,101 @@
     </#if>
     <#assign calDescription = "">
 
-    <#assign eventImageUrl = registration.getSmallImageURL(themeDisplay) />
     <#assign price = registration.getPrice() />
     <#assign vat = registration.getVAT() />
-    <#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
-    <#assign available = registration.getCapacity() - registrations />
-    <#assign siteUrl=themeDisplay.getSiteGroup().getDisplayURL(themeDisplay) />
+    <#if registration.getCapacity() == 0 >
+        <#assign available = ""  />
+    <#else>
+        <#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
+        <#assign available = registration.getCapacity() - registrations />
+    </#if>
+    <#assign locale = themeDisplay.getLocale() />
 
     <div class="c-sessions page">
         <div class="c-sessions__item ${isEventPast}">
             <div class="clearfix">
-                <div class="media-section">
-                    <#if entImageUrl??>
-                        <img class="c-sessions__item__image" src="${eventImageUrl}" alt="item image"/>
-                    </#if>
-                </div>
+
                 <div class="data-section">
                     <div class="c-sessions__item__date">
                         <#if registration.isToBeDetermined() >
-                            <span>00</span>???
+                            <span></span>
                         <#else>
                             <span>${dateUtil.getDate(registration.getStartTime(), "dd", locale, timeZone)}</span>
                             ${dateUtil.getDate(registration.getStartTime(), "MMM", locale, timeZone)}
                         </#if>
                     </div>
                     <h3 class="c-sessions__item__title h1">${registration.getTitle()}</h3>
+
+                    <div class="media-section">
+                        <img class="c-sessions__item__image" src="${displayContext.getSmallImageURL()}" alt="${registration.getTitle()}" style="max-width:400px;max-height:400px;"/>
+                    </div>
                     <#assign calDescription += (registration.getTitle() + "<br/>") />
                     <#if !registration.isOpen() || registration.isEventInPast() >
                         <b>${languageUtil.get(locale, "dsd.theme.session.closed")}</b>
                     </#if>
                     <p class="c-sessions__item__time-date-place">
-                    <#if registration.isMultiDayEvent() >
-                        <#if registration.isDaily() >
-                            <#assign dateString = dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale, timeZone)
-                            + "&nbsp;-&nbsp;" + dateUtil.getDate(registration.getEndTime(), "dd MMM yyyy", locale, timeZone) />
-                            <#assign timeString = displayContext.getStartTime() + "&nbsp;-&nbsp;" +  displayContext.getEndTime() + " (" + timeZoneId + ")" />
-                            <span class="c-sessions__item__time-date-place__date">
+                        <#if registration.isMultiDayEvent() >
+                            <#if registration.isDaily() >
+                                <#assign dateString = dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale, timeZone)
+                                + "&nbsp;-&nbsp;" + dateUtil.getDate(registration.getEndTime(), "dd MMM yyyy", locale, timeZone) />
+                                <#assign timeString = displayContext.getStartTime() + "&nbsp;-&nbsp;" +  displayContext.getEndTime() + " (" + timeZoneId + ")" />
+                                <span class="c-sessions__item__time-date-place__date">
                                 ${dateString}
                             </span>
-                            <span class="c-sessions__item__time-date-place__time">
+                                <span class="c-sessions__item__time-date-place__time">
                                 ${timeString}
                             </span>
-                        <#else>
-                            <#assign periods = registration.getStartAndEndTimesPerDay() />
-                            <#list periods as period >
-                                <#assign dateString = dateUtil.getDate(period.getStartDate(), "dd MMM yyyy", locale, timeZone) />
-                                <#assign timeString = dateUtil.getDate(period.getStartDate(), "HH:mm", locale, timeZone)
-                                + "&nbsp;-&nbsp;" + dateUtil.getDate(period.getEndDate(), "HH:mm", locale, timeZone)
-                                + " (" + timeZoneId + ")" />
-                                <span class="c-sessions__item__time-date-place__date">
+                            <#else>
+                                <#assign periods = registration.getStartAndEndTimesPerDay() />
+                                <#list periods as period >
+                                    <#assign dateString = dateUtil.getDate(period.getStartDate(), "dd MMM yyyy", locale, timeZone) />
+                                    <#assign timeString = dateUtil.getDate(period.getStartDate(), "HH:mm", locale, timeZone)
+                                    + "&nbsp;-&nbsp;" + dateUtil.getDate(period.getEndDate(), "HH:mm", locale, timeZone)
+                                    + " (" + timeZoneId + ")" />
+                                    <span class="c-sessions__item__time-date-place__date">
                                     ${dateString}
                                 </span>
-                                <span class="c-sessions__item__time-date-place__time">
+                                    <span class="c-sessions__item__time-date-place__time">
                                     ${timeString}
                                 </span>
-                            </#list>
-                        </#if>
-                    <#elseif registration.isToBeDetermined() >
-                        <span class="c-sessions__item__time-date-place__date">
+                                </#list>
+                            </#if>
+                        <#elseif registration.isToBeDetermined() >
+                            <span class="c-sessions__item__time-date-place__date">
                             ${languageUtil.get(locale, "dsd.theme.session.tobedetermined")}
                         </span>
-                    <#else>
-                        <#assign dateString = dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale, timeZone) />
-                        <#assign timeString = displayContext.getStartTime() + "&nbsp;-&nbsp;" + displayContext.getEndTime() + " (" + timeZone.getID() + ")" />
-                        <span class="c-sessions__item__time-date-place__date">
+                        <#else>
+                            <#assign dateString = dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale, timeZone) />
+                            <#assign timeString = displayContext.getStartTime() + "&nbsp;-&nbsp;" + displayContext.getEndTime() + " (" + timeZone.getID() + ")" />
+                            <span class="c-sessions__item__time-date-place__date">
                             ${dateString}
                         </span>
-                        <span class="c-sessions__item__time-date-place__time">
+                            <span class="c-sessions__item__time-date-place__time">
                             ${timeString}
                         </span>
-                    </#if>
-                    <br/>
-                    <span class="c-sessions__item__time-date-place__place">
+                        </#if>
+                        <br/>
+                        <span class="c-sessions__item__time-date-place__place">
                         <img src="${themeDisplay.getPathThemeImages()}/dsd/${registration.getType()?lower_case}.png"
                              alt=""> ${typeDisplayName} </img>
                         <#assign calDescription += typeDisplayName + "<br/>"/>
                         <br/>
                         <br/>
                         ${registration.getCurrency()}
-                        <#assign calDescription += registration.getCurrency()/>
-                        <#if price == 0 >
-                            ${languageUtil.get(locale, "dsd.theme.session.free")}
-                            <#assign calDescription += (languageUtil.get(locale, "dsd.theme.session.free") + "<br/>") />
-                        <#else>
-                            <#assign vatText = languageUtil.get(locale, "dsd.theme.session.vat")?replace("%d", vat) />
-                            ${registration.getPrice()}&nbsp;(${vatText})
-                            <#assign calDescription += (registration.getPrice() + "&nbsp;" +  vatText + "<br/>") />
-                        </#if>
+                            <#assign calDescription += registration.getCurrency()/>
+                            <#if price == 0 >
+                                ${languageUtil.get(locale, "dsd.theme.session.free")}
+                                <#assign calDescription += (languageUtil.get(locale, "dsd.theme.session.free") + "<br/>") />
+                            <#else>
+                                <#assign vatText = languageUtil.get(locale, "dsd.theme.session.vat")?replace("%d", vat) />
+                                ${registration.getPrice()}&nbsp;(${vatText})
+                                <#assign calDescription += (registration.getPrice() + "&nbsp;" +  vatText + "<br/>") />
+                            </#if>
                         <br/>
                         <#if registration.getEventId() gt 0 >
-                            <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string) />
+                            <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string, themeDisplay.getLocale()) />
                         </#if>
-                        ${languageUtil.get(locale, "dsd.theme.session.room")} :
+                            ${languageUtil.get(locale, "dsd.theme.session.room")} :
                         <#if room??>
                             ${room.getTitle()}
                             <#if event?? && event.findBuilding(room)?? >
@@ -154,19 +157,19 @@
                             ${languageUtil.get(locale, "dsd.theme.session.available")} : ${available}
                         </#if>
                     </span>
-                    <br/>
-                    <#list registration.getPresenters() as presenter >
-                        <#assign expert = presenter />
-                        <#assign expertImageUrl = expert.getSmallImageURL(themeDisplay) />
-                        <span>
+                        <br/>
+                        <#list registration.getPresenters() as presenter >
+                            <#assign expert = presenter />
+                            <#assign expertImageUrl = expert.getSmallImageURL(themeDisplay) />
+                            <span>
                             <#if expertImageUrl?? && expertImageUrl != "">
                                 <img class="expert-data__image" src="${expertImageUrl}" alt="expert image"/>
                             </#if>
                             <a href="mailto:${expert.getEmail()}">${expert.getName()}</a>
                         </span>
-                    </#list>
-                    <#assign isRegistered = dsdSessionUtils.isUserRegisteredFor(user, registration) />
-                    <span class="d-block">
+                        </#list>
+                        <#assign isRegistered = dsdSessionUtils.isUserRegisteredFor(user, registration) />
+                        <span class="d-block">
                         <#if registration.canUserRegister(user.getUserId()) && themeDisplay.isSignedIn()>
                             <#if isRegistered >
                                 <a href="${displayContext.getUnregisterURL(renderRequest)}" class="btn-lg btn-primary"
@@ -186,15 +189,15 @@
                                 </a>
                             </#if>
                         </#if>
-                        <#assign joinLink = dsdSessionUtils.getUserJoinLink(user, registration) />
-                        <#if joinLink?? && joinLink != "">
-                            <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button"
-                               aria-pressed="true">
+                            <#assign joinLink = dsdSessionUtils.getUserJoinLink(user, registration) />
+                            <#if joinLink?? && joinLink != "">
+                                <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button"
+                                   aria-pressed="true">
                                 ${languageUtil.get(locale, "registrationform.join")}
                             </a>
-                            <#assign calDescription += (languageUtil.get(locale, "registrationform.join") + ": " + joinLink )/>
-                        </#if>
-                        <div class="add-to-calendar c-session__item__calendar"></div>
+                                <#assign calDescription += (languageUtil.get(locale, "registrationform.join") + ": " + joinLink )/>
+                            </#if>
+                    <div class="add-to-calendar c-session__item__calendar"></div>
                     </span>
                 </div>
             </div>
@@ -233,7 +236,7 @@
                     <#else>
                         <#assign thumbnail = "" />
                     </#if>
-                    <#assign viewURL = siteUrl + "/-/" + presentation.getJournalArticle().getUrlTitle() />
+                    <#assign viewURL = displayContext.getViewURL(presentation) />
                     <div class="presentation">
                         <a href="${viewURL}">
                             <#if thumbnail?? && thumbnail != "">
@@ -255,6 +258,41 @@
                     </div>
                 </#list>
             </div>
+        </#if>
+        <#-- This section below is need to translate Registration text based on Language selection -->
+        <#if RegistrationInfo?? && RegistrationInfo.getData()?? &&  RegistrationInfo.getData() != "">
+            <#assign cur_webContent_map = RegistrationInfo.getData()?eval />
+            <#assign cur_webContent_classPK = cur_webContent_map.classPK />
+            <#assign article = journalArticleLocalService.fetchLatestArticle(cur_webContent_classPK?number)! />
+            <#if article?has_content && article.getStatus() == 0>
+                <#if Language?? && Language.getData()?? && Language.getData() == "nl" >
+                    <#assign localeId = "nl_NL" />
+                <#else>
+                    <#assign localeId = locale.toString() />
+                </#if>
+                <div class="c-sessions__item__description">
+                    ${journalContent.getContent(article.getGroupId(), article.getArticleId(), viewMode, localeId)}
+
+                </div>
+            </#if>
+        </#if>
+        <#if ExternalLink?? && ExternalLink.getData()?has_content >
+            <div class="c-sessions__item__description">
+                <table style="table-layout: fixed; width: 100%;background-color: #e5eef2;" cellspacing="10" cellpadding="10" border="0"><tbody>
+                    <#list ExternalLink.getSiblings() as cur_ExternalLink>
+                        <tr>
+                            <td>
+                                <strong>
+                                    <a href="${cur_ExternalLink.ExternalURL.getData()}">
+                                        ${cur_ExternalLink.getData()}
+                                    </a>
+                                </strong>
+                            </td>
+                        </tr>
+                    </#list>
+                    </tbody></table>
+            </div>
+
         </#if>
     </div>
     <script>
