@@ -28,10 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * @author rooij_e
@@ -98,6 +95,8 @@ public class DownloadTablePortlet extends MVCPortlet {
             renderRequest.setAttribute("total", downloadsCount);
         } catch (Exception e) {
             SessionErrors.add(renderRequest, "filter-failed", e.getMessage());
+            renderRequest.setAttribute("records", Collections.emptyList());
+            renderRequest.setAttribute("total", 0);
         }
     }
 
