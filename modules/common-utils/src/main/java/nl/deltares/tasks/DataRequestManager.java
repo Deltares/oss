@@ -139,7 +139,7 @@ public class DataRequestManager {
             resourceResponse.setContentType("text/plain");
             PrintWriter writer = resourceResponse.getWriter();
             if (status != DataRequest.STATUS.available) {
-                writer.printf("Requested log file does not available yet: %s", dataRequestId);
+                writer.printf("Requested log file is not available yet: %s", dataRequestId);
             } else if (!dataRequest.getDataFile().exists()){
                 writer.printf("Requested log file does not exist: %s", dataRequest.getDataFile().getAbsolutePath());
                 removeDataRequest(dataRequest);
