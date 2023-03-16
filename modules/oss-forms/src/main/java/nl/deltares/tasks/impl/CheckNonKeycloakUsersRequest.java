@@ -55,7 +55,6 @@ public class CheckNonKeycloakUsersRequest extends AbstractDataRequest {
                 logger.info("Calling Keycloak 'check-users-exist' for file: " + usersFilePath);
                 adminUtils.getKeycloakUtils().callCheckUsersExist(usersFile, writer);
                 incrementProcessCount(100);
-                logger.info("Finished calling Keycloak 'check-users-exist' for file: " + usersFilePath);
             } catch (Exception e) {
                 errorMessage = e.getMessage();
                 logger.warn(String.format("Error calling 'check-users-exist': %s", errorMessage), e);
@@ -65,6 +64,7 @@ public class CheckNonKeycloakUsersRequest extends AbstractDataRequest {
                 this.dataFile = new File(getExportDir(), id + ".data");
                 if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
                 Files.move(tempFile.toPath(), dataFile.toPath());
+                logger.info("Finished calling Keycloak 'check-users-exist' for file: " + usersFilePath);
                 status = available;
             }
         } catch (IOException e) {
