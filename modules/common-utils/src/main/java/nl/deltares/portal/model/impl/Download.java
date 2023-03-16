@@ -25,7 +25,7 @@ public class Download extends AbsDsdArticle {
     private String fileTopicName;
     private Layout groupPage;
     private List<Subscription> subscriptions = null;
-    private String licenseType = null;
+    private String generateLicenseType = null;
     private boolean automaticLinkCreation = false;
     private Terms terms = null;
 
@@ -60,7 +60,7 @@ public class Download extends AbsDsdArticle {
             final Map<String, String> fileTopicMap = articleUtils.getStructureFieldOptions(getGroupId(), getStructureKey(), "Topic", getLocale());
             fileTopicName = fileTopicMap.get(fileTopic);
 
-            licenseType = getFormFieldValue("GenerateLicense", true);
+            generateLicenseType = getFormFieldValue("GenerateLicense", true);
 
             String linkToPage = getFormFieldValue( "GroupPage", false);
             groupPage = layoutUtils.getLinkToPageLayout(linkToPage);
@@ -92,7 +92,7 @@ public class Download extends AbsDsdArticle {
     }
 
     public String getLicenseType(){
-        return licenseType;
+        return generateLicenseType;
     }
 
     public Terms getTerms(){
