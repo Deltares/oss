@@ -126,7 +126,7 @@
       "name": "RequiredActions",
       "readOnly": false,
       "repeatable": false,
-      "required": true,
+      "required": false,
       "showLabel": true,
       "type": "select"
     },
@@ -469,7 +469,7 @@
     },
     {
       "label": {
-        "en_US": "License File"
+        "en_US": "GenerateLicense"
       },
       "predefinedValue": {
         "en_US": ""
@@ -478,18 +478,17 @@
         "en_US": ""
       },
       "tip": {
-        "en_US": "License file template from which a license can be generated and sent to user."
+        "en_US": "Endpoint ID of the license file that needs to be generated. Supported types:  delft3d-gui-lic"
       },
-      "dataType": "journal-article",
-      "fieldNamespace": "ddm",
+      "dataType": "string",
       "indexType": "keyword",
       "localizable": false,
-      "name": "LicenseFile",
+      "name": "GenerateLicense",
       "readOnly": false,
       "repeatable": false,
       "required": false,
       "showLabel": true,
-      "type": "ddm-journal-article"
+      "type": "text"
     }
   ]
 }

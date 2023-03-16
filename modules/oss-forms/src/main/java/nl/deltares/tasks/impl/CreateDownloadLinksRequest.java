@@ -74,7 +74,7 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
                     }
                 }
 
-                String licenseType = download.getLicenseType();
+                String licenseType = download.getGenerateLicenseType();
                 if (licenseType != null){
                     Map<String, String> licInfo = licenseManagerUtils.encryptLicense(licenseType, user);
                     String licUrl = licInfo.get("url");
