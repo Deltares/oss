@@ -1,0 +1,19 @@
+// Open Sans Semibold (served as regular weight)
+// --------------------------------------------------
+
+$path-fonts: 'settings/fonts/' !default;
+
+// Import the font file as regular weight
+// --------------------------------------------------
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 400;
+  src: url('#{$path-fonts}open-sans-v17-latin_greek_cyrillic-italic.eot');
+  src: url('#{$path-fonts}open-sans-v17-latin_greek_cyrillic-italic.eot?#iefix') format('embedded-opentype'),
+  url('#{$path-fonts}open-sans-v17-latin_greek_cyrillic-italic.woff') format('woff'),
+  url('#{$path-fonts}open-sans-v17-latin_greek_cyrillic-italic.ttf')  format('truetype'),
+  url('#{$path-fonts}open-sans-v17-latin_greek_cyrillic-italic.svg#open-sans-italic') format('svg');
+}
+

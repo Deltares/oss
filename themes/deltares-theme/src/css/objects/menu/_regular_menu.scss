@@ -1,0 +1,39 @@
+$x-padding: 15px;
+
+ 
+.nav {
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        background: white;
+        display: flex;
+    }
+    
+    li {
+        padding: 0 $x-padding;
+        position: relative;
+
+    }
+    > ul > li.selected > a {
+        @include selected-arrow;
+    }
+
+    ul.child-menu {
+        display: none;
+        position: absolute;
+        background: white;
+        left: -$x-padding;
+        padding: $x-padding $x-padding*2 $x-padding*2 $x-padding*2;
+        li {
+            padding: 0;
+        }
+        a {
+            white-space: nowrap;
+        }
+    }
+
+    li:hover ul.child-menu {
+        display: block;
+    }
+}

@@ -1,0 +1,10 @@
+.portlet-login {
+    margin: 30px auto;
+    max-width: 800px;
+}
+
+@media (max-width: 1023px) {
+    .portlet-login {
+        padding: 0 1rem;
+    }
+}
