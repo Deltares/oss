@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>Group</title>
+    <desc>Created with Sketch.</desc>
+    <g id="DELFT-FEWS" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Home" transform="translate(-241.000000, -407.000000)" fill-rule="nonzero">
+            <g id="Group-11" transform="translate(223.000000, 331.000000)">
+                <g id="Group-4" transform="translate(0.000000, 62.000000)">
+                    <g id="Group" transform="translate(18.000000, 14.000000)">
+                        <circle id="Oval" fill="#080C80" cx="10" cy="10" r="10"></circle>
+                        <polyline id="Path-2" stroke="#FFFFFF" stroke-width="2" transform="translate(8.453990, 9.992452) scale(-1, 1) rotate(45.000000) translate(-8.453990, -9.992452) " points="5.37706737 6.91552891 5.37706737 13.0693751 11.5309135 13.0693751"></polyline>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

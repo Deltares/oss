@@ -43,18 +43,19 @@
     var infoWindow;
 
     setInterval(function() {
-      if (intervalCounter >= geoJSON.length) {
-        intervalCounter = 0;
-      }
+        if (intervalCounter >= geoJSON.length) {
+            intervalCounter = 0;
+        }
 
-      var panLoc = geoJSON[intervalCounter];
-      var latLng = new google.maps.LatLng(panLoc.latitude, panLoc.longitude);
+        var panLoc = geoJSON[intervalCounter];
+        if (panLoc) {
+            var latLng = new google.maps.LatLng(panLoc.latitude, panLoc.longitude);
+            map.panTo(latLng);
+        }
 
-      map.panTo(latLng);
-
-      if (infoWindow) {
-        infoWindow.close();
-      }
+        if (infoWindow) {
+            infoWindow.close();
+        }
 
       var contentString = '<div class="<portlet:namespace/>map-info">'
           + '<p class="<portlet:namespace/>map-type">' + panLoc.type + '</p>'

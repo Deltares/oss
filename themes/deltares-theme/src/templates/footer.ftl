@@ -1,5 +1,5 @@
-<footer class="container-fluid-1280" id="footer" role="contentinfo">
-    <div class="row">
-
-	</div>
+<footer id="footer" role="contentinfo">
+    <#if footerWCContent?has_content>
+        ${footerWCContent}
+    </#if>
 </footer>

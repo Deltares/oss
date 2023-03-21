@@ -1,0 +1,130 @@
+$datebar-width: 60px;
+$colorbar-width: 60px;
+
+.c-events__item {
+    min-height: 180px;
+    position: relative;
+    padding: 0 22px 7px 74px;
+    text-align: right;
+    background-color: white;
+    /*aligns the readmore to the right*/
+}
+
+.c-sessions__item {
+    min-height: 180px;
+    position: relative;
+    padding: 0 22px 7px 74px;
+    text-align: right;
+    background-color: white;
+    /*aligns the readmore to the right*/
+}
+
+.c-events__item__date,
+.c-sessions__item__date {
+    width: $datebar-width;
+    white-space: pre-wrap;
+    text-align: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: white;
+    span {
+        font-size: 40px;
+        display: block;
+        padding-top: 40px;
+    }
+}
+
+.c-events__item__title,
+.c-sessions__item__title {
+    padding: 35px 0 0 0;
+    margin: 0 0 4px 0;
+}
+
+.c-events__item__title,
+.c-events__item__introduction,
+.c-events__item__time-date-place,
+.c-sessions__item__title,
+.c-sessions__item__introduction,
+.c-sessions__item__time-date-place,
+.c-session__item__calendar{
+    text-align: left;
+}
+
+.c-events__item__link,
+.c-sessions__item__link{
+    position: absolute;
+    bottom: 8px;
+    white-space: nowrap;
+    right: 29px;  
+    color: $color-site-black;
+}
+
+.c-events__item__time-date-place,
+.c-sessions__item__time-date-place{
+    margin-bottom: 32px;
+}
+
+.c-events__item__time-date-place__date {
+    display: block;
+    color:$color-orange;
+    font-weight: bold;
+}
+.c-sessions__item__time-date-place__date {
+    display: block;
+    color:$color-dark-blue;
+    font-weight: bold;
+}
+
+
+.past-event .c-events__item__time-date-place__date,
+.past-session .c-sessions__item__time-date-place__date{
+    color: $color-dark-gray;
+}
+
+.c-events__item {
+    &::before {
+        content: '';
+        background: $color-orange;
+        width: $datebar-width;
+        height: 100%;
+        position: absolute;
+        z-index: 0;
+        text-align: left;
+        left: 0;
+    }
+}
+.c-sessions__item {
+    &::before {
+        content: '';
+        background: $color-dark-blue;
+        width: $datebar-width;
+        height: 100%;
+        position: absolute;
+        z-index: 0;
+        text-align: left;
+        left: 0;
+    }
+}
+.c-events__item.past-event::before,
+.c-sessions__item.past-session::before{
+    background: $color-dark-gray;
+}
+
+.c-events__item__description,
+.c-events__item__uploads,
+.c-events__item__register {
+    margin-left: $colorbar-width + 5;
+    margin-right: $colorbar-width + 5;
+}
+.c-sessions__item__description,
+.c-sessions__item__uploads,
+.c-sessions__item__register{
+    margin-left: $datebar-width + 5;
+    margin-right: $datebar-width + 5;
+}
+
+.c-events__item__description,
+.c-sessions__item__description {
+    margin-top: 40px;
+}
