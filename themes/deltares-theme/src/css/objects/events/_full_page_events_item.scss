@@ -1,0 +1,47 @@
+.c-events.page, .c-sessions.page {
+    padding-bottom: 40px;
+    margin-bottom: 26px;
+    background: white;
+
+    .c-events__item,
+    .c-sessions__item {
+        padding-right: 0;
+    }
+    .c-events__item__uploads{
+        margin-top: 40px;
+        margin-bottom: 40px;
+        .presenter:before {
+            content: ",";
+            margin-left: -0.2em;
+        }
+        .presenter:first-child::before {
+            content: "By";
+            margin-left: 0;
+        }
+        .presenter:last-child::before {
+            content: "and";
+            margin-left: 0;
+        }
+
+        .company::before {
+            content: "/";
+            padding-left: 0.2em;
+            padding-right: 0.2em; 
+        }
+    }
+}
+
+@media (min-width: $screen-md-min) {
+
+    .c-events.page, .c-sessions.page {
+        .media-section {
+            float: right;
+            width: 50%;
+            margin-left: 33px;
+
+            img {
+                width: 100%;
+            }
+        }
+    }
+}

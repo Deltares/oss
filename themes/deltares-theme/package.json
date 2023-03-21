@@ -1,13 +1,11 @@
 {
 	"devDependencies": {
-		"bl": "^5.0.0",
-		"diff": "^5.1.0",
+		"bl": ">=1.2.3",
 		"gulp": "^4.0.2",
 		"liferay-theme-deps-7.1": "8.2.4",
 		"liferay-theme-tasks": "10.5.3",
-		"lodash": "^4.17.21",
 		"lodash.template": "^4.5.0",
-		"minimatch": "^5.1.0"
+		"yargs-parser": "^21.0.1"
 	},
 	"keywords": [
 		"liferay-theme"

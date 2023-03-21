@@ -1,0 +1,15 @@
+@media (min-width: 1024px) {
+  .bg-gradient {
+    &:before {
+      -webkit-clip-path: circle(50% at 50% 50%);
+      background-image: linear-gradient(330deg, hsla(0, 0%, 100%, .8) 60%, hsla(0, 0%, 100%, 0) 85%);
+      clip-path: circle(50% at 50% 50%);
+      content: "";
+      padding-top: 80%;
+      position: fixed;
+      transform: translate3d(10%, 11%, 0);
+      width: 80%;
+      z-index: 0;
+    }
+  }
+}

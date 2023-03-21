@@ -1,0 +1,102 @@
+// Colors in root element
+// Note: must be hex values; values are equal to variables found in: settings/_colors.scss
+:root {
+    --text-primary: #000;
+    --text-secondary: #141E95;
+    --text-tertiary: #fff;
+    --text-quaternary: #00E399;
+    --text-quinary: #00AB7F;
+    --text-button: #141E95;
+    --text-button--secondary: #F0FCFA;
+    --text-secondary--home: #fff;
+    --bg-primary: #141E95;
+    --bg-secondary: #00E399;
+    --bg-tertiary: #F0FCFA;
+    --bg-quaternary: #00C2EB;
+    --bg-quinary: #1B32E8;
+    --bg-senary: #00C68D;
+    --bg-septenary: #fff;
+    --bg-button: #FFD434;
+    --bg-button--hover: #00E399;
+    --bg-button--secondary--hover: #00C2EB;
+    --bg-homepage: #141E95;
+    --border-primary: #141E95;
+    --border-secondary: #00E399
+}
+
+// Reset
+body, h1, h2, h3, h4, h5, h6,
+p, blockquote, ul, ol, li,
+table, tr, th, td, form, fieldset,
+legend, button, div, object, img {
+  border: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  vertical-align: top;
+}
+
+strong {
+  font-weight: bold;
+}
+
+// Generic styling
+html,
+body {
+    font-family: $default-font;
+}
+
+body {
+    color: $color-site-black;
+    font-size: $base-font-size;
+    line-height: 32px;
+}
+
+.flex-row {
+    flex-direction: row;
+    display: flex;
+}
+
+.flex-column {
+    flex-direction: column;
+    display: flex;
+}
+
+.font-sansa-pro {
+    font-family: $font-sansa-pro;
+}
+.font-sansa-pro-bold {
+    font-family: $font-sansa-pro;
+    font-weight: 700;
+}
+
+a.underline,
+a.link_underline,
+a.link-underline {
+    border-bottom: 1px solid $color-alpha-blue;
+    padding-bottom: 7px;
+    pointer-events: none;
+}
+
+.position-sticky {
+    position: sticky;
+    top: 0;
+}
+
+.blue-background {
+    background: $color-alpha-blue;
+}
+
+.clear-margin {
+    @include clear-margin;
+}
+
+.clearList,
+.clear-list {
+    @include clean-ul;
+}
+
+.display-block {
+    display: block;
+}

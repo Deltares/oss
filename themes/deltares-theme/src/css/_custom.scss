@@ -5,16 +5,60 @@
 
 /* This file allows you to override default styles in one central location for easier upgrade and maintenance. */
 
-@import 'aui_custom';
-@import 'variables';
-@import 'portlet_decorator';
-@import 'custom_base';
-@import 'header';
-@import 'footer';
-@import 'pages/home';
-@import 'modules/blogs';
-@import 'modules/events';
-@import 'modules/slides';
-@import 'portlets/general';
-@import 'portlets/messageboard';
-@import 'portlets/activitymaps';
+
+// Settings
+@import "settings/colors";
+@import "settings/variables";
+@import "settings/fonts";
+@import "settings/type";
+@import "settings/mixins";
+
+// Third party
+@import "lib/tailwind/tailwind-preflight";
+@import "lib/tailwind/tailwind-base";
+@import "lib/tailwind/tailwind-classes";
+
+// Utilities
+@import "utilities/general";
+@import "utilities/color_schemes";
+
+// Global
+@import "global/header";
+@import "global/footer";
+@import "global/layout";
+@import "global/navigation";
+
+// Page objects
+@import "objects/forms/inputs";
+@import "objects/header/page_header";
+@import "objects/links/links";
+@import "objects/layouts/layouts";
+@import "objects/portlet/general";
+@import "objects/portlet/portlet";
+@import "objects/portlet/search";
+@import "objects/grids/generic";
+@import "objects/grids/expert";
+@import "objects/grids/news";
+@import "objects/grids/event";
+@import "objects/grids/new_ideas";
+@import "objects/call_to_action/cta_regular";
+@import "objects/events/events_item";
+@import "objects/events/full_page_events_item";
+@import "objects/news/featured_news_item";
+@import "objects/news/full_page_news_item";
+@import "objects/news/card_news_item";
+@import "objects/forum/message_board";
+@import "objects/forum/latest_posts";
+@import "objects/downloads/download_list";
+@import "objects/faq/faq";
+@import "objects/cart/cart";
+@import "objects/site_dir/site_dir";
+@import "objects/presentation/presentation";
+
+// MyDeltares
+@import "mydeltares/menu/menu";
+@import "mydeltares/main/main";
+
+// Assets
+@import "assets/bg-gradient";
+@import "assets/mobile-menu";

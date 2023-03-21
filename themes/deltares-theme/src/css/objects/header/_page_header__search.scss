@@ -1,0 +1,50 @@
+.header_search {
+    float: right;
+    padding: 0px;
+    margin: 18px 0 0 15px;
+    .portlet-title-text {
+        display: none;
+    }
+    .field.search-input.form-control {
+        font-size: 12px;
+        border-color: transparent;
+        box-shadow: none;
+        width: 10em;
+        padding: 0 36px 0 0;
+        margin: 0;
+        border-radius: 0;
+        text-align: right;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        box-sizing: content-box;
+        color: $color-glacier;
+        
+        &:focus {
+            border-bottom-color: $color-glacier;
+        }
+        &::placeholder {
+            text-transform: uppercase;
+            color: $color-glacier;
+        }
+    }
+    .fieldset,
+    .form-group.form-group-inline.input-text-wrapper {
+        position: relative;
+    }
+
+    .lfr-ddm-field-group, 
+    .portlet, 
+    .portlet > .portlet-content {
+        margin: 0;
+        padding: 0;
+    }
+
+    .lfr-ddm-field-group {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+    .icon-monospaced .lexicon-icon {
+        color: $color-glacier;
+    }
+}
