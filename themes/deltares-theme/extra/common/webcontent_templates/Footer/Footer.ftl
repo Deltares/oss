@@ -10,6 +10,7 @@
         <div class="row px-3">
             <div class="col-sm-12 col-md-6 col-lg-4">
                 <#if FooterLinksLeft.LinkToPage?? && FooterLinksLeft.LinkToPage.getSiblings()?has_content && validator.isNotNull(FooterLinksLeft.LinkToPage.getSiblings()?first.getData())>
+                    <h2 class="mb-3 text-base font-semibold text-white">${languageUtil.get(locale, "dsd.theme.footer.info.header")}</h2>
                     <ul class="link-list">
                         <#list FooterLinksLeft.LinkToPage.getSiblings() as cur_FooterLinksLeft>
                             <li>
@@ -29,14 +30,30 @@
             </div>
 
             <div class="col-sm-12 col-md-6 col-lg-4">
-                <p>${Copyright.getData()}</p>
+                <h2 class="mb-3 text-base font-semibold text-white">${languageUtil.get(locale, "dsd.theme.footer.watch.header")}</h2>
+                <ul class="link-list">
+                    <li class="mb-1.5 leading-normal">
+                        <a href="/deltares-podcasts" class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
+                            <div class="text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" aria-hidden="false" role="img" class="mr-3"><path fill="currentColor" d="M1,17.9h22.8L13.3,28.4L16,31l15-15L16,1l-2.6,2.6l10.4,10.5H1V17.9z"></path></svg>
+                            </div>
+                            <span>Podcasts</span>
+                        </a>
+                    </li>
+                    <li class="mb-1.5">
+                        <a href="/deltares-webinars"  class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
+                            <div class="text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" aria-hidden="false" role="img" class="mr-3"><path fill="currentColor" d="M1,17.9h22.8L13.3,28.4L16,31l15-15L16,1l-2.6,2.6l10.4,10.5H1V17.9z"></path></svg>
+                            </div>
+                            <span>Webinars</span></a></li>
+                </ul>
             </div>
 
             <div class="col-sm-12 col-md-6 col-lg-4">
                 <h2 class="mb-3 text-base font-semibold text-white">Contact</h2>
                 <ul class="link-list">
                     <li class="mb-1.5 leading-normal">
-                        <a href="/contact" class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
+                        <a href="/deltares-contact" class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
                             <div class="text-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" aria-hidden="false" role="img">
                                     <path fill="currentColor" d="M1,17.9h22.8L13.3,28.4L16,31l15-15L16,1l-2.6,2.6l10.4,10.5H1V17.9z"></path>
