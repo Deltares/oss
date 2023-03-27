@@ -30,7 +30,7 @@
                     </a>
                 </li>
             </#if>
-            <li class="px-3">
+            <li class="px-3 border-white border-left">
                 <a class="block text-sm font-sm text-white leading-none" href="${user_signout_url}">Logout</a>
             </li>
         <#else>
@@ -39,4 +39,23 @@
             </li>
         </#if>
     </ol>
+    <#if languages?size != 0>
+        <ol class="flex flex-row items-center language-selector">
+            <#list languages as language>
+                <li class="px-1 text-sm leading-none text-white border-right border-white">
+                    <#if language.getId() == themeDisplay.getLocale().getLanguage()>
+                        <span class="font-medium underline">
+                            <span aria-hidden="true">${language.getName()}</span>
+                            <span class="sr-only">${language.getName()}</span>
+                        </span>
+                    <#else>
+                        <a href="${language.getUrl()}" class="text-white">
+                            <span aria-hidden="true">${language.getName()}</span>
+                            <span class="sr-only">${language.getName()}</span>
+                        </a>
+                    </#if>
+                </li>
+            </#list>
+        </ol>
+    </#if>
 </nav>

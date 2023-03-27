@@ -167,6 +167,28 @@
       }
     }
   }
+
+  .language-selector {
+    li {
+      &:last-child {
+        border: 0 !important; // Override for border-right class
+      }
+
+      &.border-right {
+        margin-right: inherit;
+        padding-right: 0.25rem !important; // Override for border-right class
+      }
+
+      a {
+        font-size: inherit;
+
+        &:hover,
+        &:focus {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
 }
 
 .menu-overlay {

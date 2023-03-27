@@ -8,6 +8,10 @@ $colorbar-width: 60px;
     text-align: right;
     background-color: white;
     /*aligns the readmore to the right*/
+
+    &.upcoming-event {
+        background-color: $white;
+    }
 }
 
 .c-sessions__item {
@@ -61,8 +65,12 @@ $colorbar-width: 60px;
 }
 
 .c-events__item__time-date-place,
-.c-sessions__item__time-date-place{
+.c-sessions__item__time-date-place {
     margin-bottom: 32px;
+
+    .btn-primary {
+        margin-top: 0.5rem;
+    }
 }
 
 .c-events__item__time-date-place__date {
