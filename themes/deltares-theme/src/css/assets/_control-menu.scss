@@ -1,0 +1,41 @@
+body {
+  &.has-control-menu {
+    .affix,
+    #wrapper {
+      margin-top: 0;
+    }
+
+    .control-menu + #wrapper {
+      margin-top: 48px;
+
+      #header {
+        &.hidden-servicebar {
+          &.logged-in {
+            transform: none;
+            transition: none;
+            z-index: 988;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    &.has-control-menu {
+      .control-menu + #wrapper {
+        margin-top: 56px;
+
+        #header {
+          &.hidden-servicebar {
+            &.logged-in {
+              border-top: 1px solid $white;
+              transform: translateY(-1px);
+            }
+          }
+        }
+      }
+    }
+  }
+}
