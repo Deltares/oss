@@ -15,9 +15,6 @@
 
     .container {
       > .row {
-        padding-bottom: 18px;
-        padding-top: 2.75rem;
-
         > div {
           border-bottom: 1px solid $white;
           padding: 2rem 0;
@@ -100,9 +97,14 @@
 
 @media (min-width: 768px) {
   #footer {
+    margin-bottom: 58px;
+
     .footer-top {
       .container {
         > .row {
+          padding-bottom: 18px;
+          padding-top: 2.75rem;
+
           > div {
             border-bottom: 0;
             padding-left: 1.75rem;
@@ -132,14 +134,10 @@
   }
 }
 
-@media (max-width: 1023px) {
-  #footer {
-    margin-bottom: 58px;
-  }
-}
-
 @media (min-width: 1024px) {
   #footer {
+    margin-bottom: 0;
+
     .footer-top {
       .container {
         > .row {

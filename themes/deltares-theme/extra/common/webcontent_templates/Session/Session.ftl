@@ -3,16 +3,6 @@
 <#if !(portletName?ends_with("SearchResultsPortlet")) >
 
     <style xmlns="http://www.w3.org/1999/html">
-        .videoThumbnail {
-            width: 250px;
-            border: 1px solid grey;
-        }
-
-        .icon-film {
-            line-height: 72px;
-            padding: 21px;
-            border: 1px solid grey;
-        }
 
         .presentation {
             margin-bottom: 24px;
