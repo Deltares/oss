@@ -4,13 +4,6 @@
 
   &.hidden-servicebar {
     transform: translateY(-38px);
-
-    &.logged-in {
-      border-top: 1px solid $white;
-      transform: translateY(-1px);
-      transition: none;
-      z-index: 988;
-    }
   }
 
   .header-container {
