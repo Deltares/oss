@@ -10,7 +10,7 @@
         <div class="row px-3">
             <div class="col-sm-12 col-md-6 col-lg-4">
                 <#if FooterLinksLeft.LinkToPage?? && FooterLinksLeft.LinkToPage.getSiblings()?has_content && validator.isNotNull(FooterLinksLeft.LinkToPage.getSiblings()?first.getData())>
-                    <h2 class="mb-3 text-base font-semibold text-white">${languageUtil.get(locale, "dsd.theme.footer.info.header")}</h2>
+                    <h2 class="mb-3 text-base font-semibold text-white"><@liferay.language key='dsd.theme.footer.info.header' /></h2>
                     <ul class="link-list">
                         <#list FooterLinksLeft.LinkToPage.getSiblings() as cur_FooterLinksLeft>
                             <li>
@@ -30,7 +30,7 @@
             </div>
 
             <div class="col-sm-12 col-md-6 col-lg-4">
-                <h2 class="mb-3 text-base font-semibold text-white">${languageUtil.get(locale, "dsd.theme.footer.watch.header")}</h2>
+                <h2 class="mb-3 text-base font-semibold text-white"><@liferay.language key='dsd.theme.footer.watch.header' /></h2>
                 <ul class="link-list">
                     <li class="mb-1.5 leading-normal">
                         <a href="/deltares-podcasts" class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
@@ -50,7 +50,7 @@
             </div>
 
             <div class="col-sm-12 col-md-6 col-lg-4">
-                <h2 class="mb-3 text-base font-semibold text-white">Contact</h2>
+                <h2 class="mb-3 text-base font-semibold text-white"><@liferay.language key='dsd.theme.footer.contact.header' /></h2>
                 <ul class="link-list">
                     <li class="mb-1.5 leading-normal">
                         <a href="/deltares-contact" class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
@@ -59,11 +59,11 @@
                                     <path fill="currentColor" d="M1,17.9h22.8L13.3,28.4L16,31l15-15L16,1l-2.6,2.6l10.4,10.5H1V17.9z"></path>
                                 </svg>
                             </div>
-                            <span>Neem contact op</span>
+                            <span><@liferay.language key='dsd.theme.footer.contact.link' /></span>
                         </a>
                     </li>
                 </ul>
-                <p class="mb-4 text-sm leading-6">Blijf via social media op de hoogte van waar onze experts mee bezig zijn.</p>
+                <p class="mb-4 text-sm leading-6"><@liferay.language key='dsd.theme.footer.contact.content' /></p>
 
                 <ul class="media-links flex gap-2">
                     <#if FooterSocialMediaLinks.Facebook?? && FooterSocialMediaLinks.Facebook.getData()??>

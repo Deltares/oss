@@ -17,7 +17,7 @@
 		"version": "7.1"
 	},
 	"main": "package.json",
-	"name": "deltares-dsd-theme",
+	"name": "deltares-theme",
 	"version": "1.0.1",
 	"description": "",
 	"repository": {
