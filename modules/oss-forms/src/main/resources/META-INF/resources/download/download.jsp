@@ -78,16 +78,16 @@
 <div class="bs-stepper">
 
     <div class="registration-controls d-flex justify-content-between">
-        <a class="prev-step disabled btn-lg btn-primary">
+        <a class="prev-step disabled btn-primary">
             <liferay-ui:message key="prev.step"/>
         </a>
 <%--        <a class="clear-cart enabled btn-lg btn-primary">--%>
 <%--            <liferay-ui:message key="clear.cart"/>--%>
 <%--        </a>--%>
-        <a class="next-step enabled btn-lg btn-primary">
+        <a class="next-step enabled btn-primary">
             <liferay-ui:message key="next.step"/>
         </a>
-        <a class="submit btn-lg btn-primary d-none">
+        <a class="submit btn-primary d-none">
             <liferay-ui:message key="last.step"/>
         </a>
     </div>
@@ -95,37 +95,37 @@
     <div class="flex-row justify-content-between bs-stepper-indicators py-3">
         <ul class="navbar navbar-nav">
             <li class="nav-item active icon-circle-blank" id="<portlet:namespace/>nav-stepper-step-1">
-                <a class="active" href="#stepper-step-1" title="Step 1" style="font-family:Open Sans,serif">
+                <a class="active" href="#stepper-step-1" title="Step 1" >
                     <span><liferay-ui:message key="dsd.registration.steps.step1"/></span>
                 </a>
             </li>
             <li class="nav-item icon-circle-blank disabled"  id="<portlet:namespace/>nav-stepper-step-2">
-                <a href="#stepper-step-2" title="Step 2" style="font-family:Open Sans,serif">
+                <a href="#stepper-step-2" title="Step 2" >
                     <span><liferay-ui:message key="dsd.registration.steps.step2"/></span>
                 </a>
             </li>
             <li class="nav-item icon-circle-blank disabled" id="<portlet:namespace/>nav-stepper-step-3">
-                <a href="#stepper-step-3" title="Step 3" style="font-family:Open Sans,serif">
+                <a href="#stepper-step-3" title="Step 3" >
                     <span><liferay-ui:message key="dsd.registration.steps.step3"/></span>
                 </a>
             </li>
             <li class="nav-item icon-circle-blank disabled" id="<portlet:namespace/>nav-stepper-step-3b">
-                <a href="#stepper-step-3b" title="Step 3b" style="font-family:Open Sans,serif">
+                <a href="#stepper-step-3b" title="Step 3b" >
                     <span><liferay-ui:message key="dsd.registration.steps.step3b"/></span>
                 </a>
             </li>
             <li class="nav-item icon-circle-blank disabled" id="<portlet:namespace/>nav-stepper-step-4">
-                <a href="#stepper-step-4" title="Step 4" style="font-family:Open Sans,serif">
+                <a href="#stepper-step-4" title="Step 4" >
                     <span><liferay-ui:message key="dsd.registration.steps.step4"/></span>
                 </a>
             </li>
             <li class="nav-item icon-circle-blank disabled" id="<portlet:namespace/>nav-stepper-step-5">
-                <a href="#stepper-step-5" title="Step 5" style="font-family:Open Sans,serif">
+                <a href="#stepper-step-5" title="Step 5" >
                     <span><liferay-ui:message key="dsd.registration.steps.step5"/></span>
                 </a>
             </li>
             <li class="nav-item icon-circle-blank" id="<portlet:namespace/>nav-stepper-step-6">
-                <a href="#stepper-step-6" title="Step 6" style="font-family:Open Sans,serif">
+                <a href="#stepper-step-6" title="Step 6" >
                     <span><liferay-ui:message key="dsd.registration.steps.step6"/></span>
                 </a>
             </li>
@@ -181,13 +181,13 @@
     </div>
 
     <div class="registration-controls d-flex justify-content-between">
-        <a class="prev-step disabled btn-lg btn-primary">
+        <a class="prev-step disabled btn-primary">
             <liferay-ui:message key="prev.step"/>
         </a>
-        <a class="next-step enabled btn-lg btn-primary">
+        <a class="next-step enabled btn-primary">
             <liferay-ui:message key="next.step"/>
         </a>
-        <a class="submit btn-lg btn-primary d-none">
+        <a class="submit btn-primary d-none">
             <liferay-ui:message key="last.step"/>
         </a>
     </div>
