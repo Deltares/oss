@@ -104,7 +104,7 @@ a.link-underline {
 .journal-content-article ul li {
     padding-left: 1rem;
 }
-.journal-content-article ul li::before{
+.journal-content-article a:not([class*="slide-holder"]) ul li::before{
     content: "\2022";
     color: #00E399;
     font-weight: bold; /* If you want it to be bold */

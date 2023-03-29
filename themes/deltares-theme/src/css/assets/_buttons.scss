@@ -74,3 +74,14 @@ button {
 .btn-group-lg .btn-group > .btn {
   font-size: 1rem;
 }
+
+.btn-primary.disabled {
+  background-color: gray;
+
+  &:focus,
+  &:focus-visible,
+  &:hover {
+    background-color: gray;
+    text-decoration: none;
+  }
+}
