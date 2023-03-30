@@ -31,6 +31,7 @@ import static nl.deltares.tasks.DataRequest.STATUS.*;
 
 public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
+    private enum DOWNLOAD_ACTIONS {download, downloadRepro, downloadLight}
     private static final Log logger = LogFactoryUtil.getLog(DownloadEventRegistrationsRequest.class);
     private final String articleId;
     private final DsdParserUtils dsdParserUtils;
@@ -42,14 +43,14 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     private final Locale locale;
     private final boolean removeMissing;
     private final boolean useResourcePrimKey;
-    private final boolean reproVersion;
+    private final DOWNLOAD_ACTIONS downloadAction;
     private boolean disableCallWebinar;
 
     public DownloadEventRegistrationsRequest(String id, long currentUser, String articleId, Group siteGroup,
                                              DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils,
                                              DsdJournalArticleUtils dsdJournalArticleUtils,
                                              WebinarUtilsFactory webinarUtilsFactory, boolean primKey,
-                                             boolean delete, boolean removeMissing, boolean reproVersion) throws IOException {
+                                             boolean delete, boolean removeMissing, int donwloadAction) throws IOException {
         super(id, currentUser);
         this.articleId = articleId;
         this.group = siteGroup;
@@ -61,7 +62,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         this.deleteOnCompletion = delete;
         this.removeMissing = removeMissing;
         this.useResourcePrimKey = primKey;
-        this.reproVersion = reproVersion;
+        this.downloadAction = DOWNLOAD_ACTIONS.values()[donwloadAction];
         this.locale = LocaleUtil.fromLanguageId(siteGroup.getDefaultLanguageId());
 
     }
@@ -296,9 +297,12 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 } catch (PortalException e) {
                     //
                 }
-                if (reproVersion) {
+                if (downloadAction == DOWNLOAD_ACTIONS.downloadRepro) {
                     //write short output for printing badges
                     writeReproRecord(writer, recordObjects, event, matchingRegistration, matchingUser);
+                } else if (downloadAction == DOWNLOAD_ACTIONS.downloadLight) {
+                    //write short output for printing badges
+                    writeLightRecord(writer, recordObjects, matchingRegistration, matchingUser);
                 } else {
                     writeRecord(writer, recordObjects, event, matchingRegistration, matchingUser,
                             webinarKeyCache, locale);
@@ -323,11 +327,21 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     private void writeHeader(PrintWriter writer) {
 
         StringBuilder header;
-        if (reproVersion){
+        if (downloadAction == DOWNLOAD_ACTIONS.downloadRepro){
             header = new StringBuilder("eventTitle,registrationTitle,email,badgeName,organization");
+        } else if (downloadAction == DOWNLOAD_ACTIONS.downloadLight) {
+            header = new StringBuilder("registrationTitle,projectNumber,email,firstName,lastName,remarks");
+            for (BillingInfo.ATTRIBUTES value : BillingInfo.ATTRIBUTES.values()) {
+                if (value == BillingInfo.ATTRIBUTES.billing_phone) continue;
+                if (value == BillingInfo.ATTRIBUTES.billing_website) continue;
+                header.append(',');
+                header.append(value.name());
+            }
+            header.append(",registration time");
+            header.append(",organization");
+
         } else {
             header = new StringBuilder("eventId, eventTitle, projectNumber, registrationId, registrationTitle,start date,topic,type,email,firstName,lastName,webinarProvider,registrationStatus,remarks");
-
             for (BillingInfo.ATTRIBUTES value : BillingInfo.ATTRIBUTES.values()) {
                 header.append(',');
                 header.append(value.name());
@@ -426,6 +440,50 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         writer.println(line);
     }
 
+    private void writeLightRecord(PrintWriter writer, Map<String, Object> record,
+                             Registration dsdRegistration, User user) {
+
+        StringBuilder line = new StringBuilder();
+        if (dsdRegistration == null) {
+            writeField(line, null);
+            writeField(line, record.get("resourcePrimaryKey").toString());
+        } else {
+            writeField(line, dsdRegistration.getProjectNumber());
+            writeField(line, dsdRegistration.getTitle());
+        }
+        writeUserInfo(record, user, line);
+        String userPreferencesValue = (String) record.get("userPreferences");
+        Map<String, String> userPreferences = Collections.emptyMap();
+        try {
+            userPreferences = JsonContentUtils.parseJsonToMap(userPreferencesValue);
+        } catch (JSONException e) {
+            logger.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
+        }
+        writeField(line, userPreferences.get("remarks"));
+        writeBillingInfo(line, userPreferences, true);
+        writeField(line, userPreferences.get("registration_time"));
+        writeField(line, userPreferences.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
+        if (removeMissing && dsdRegistration == null){
+            deleteBrokenRegistration((Long)record.get("registrationId"));
+            writeField(line, "deleted record");
+        }
+
+        writer.println(line);
+    }
+
+    private void writeUserInfo(Map<String, Object> record, User user, StringBuilder line) {
+        if (user == null){
+            writeField(line, record.get("userId").toString());
+            writeField(line,null);
+            writeField(line,null);
+        } else {
+            writeField(line, user.getEmailAddress());
+            writeField(line, user.getFirstName());
+            writeField(line, user.getLastName());
+        }
+
+    }
+
     private void writeRecord(PrintWriter writer, Map<String, Object> record, Event event,
                              Registration dsdRegistration, User user, Map<String, List<String>> courseRegistrationsCache, Locale locale) {
 
@@ -454,15 +512,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             writeField(line, dsdRegistration.getTopic());
             writeField(line, dsdRegistration.getType());
         }
-        if (user == null){
-            writeField(line, record.get("userId").toString());
-            writeField(line,null);
-            writeField(line,null);
-        } else {
-            writeField(line, user.getEmailAddress());
-            writeField(line, user.getFirstName());
-            writeField(line, user.getLastName());
-        }
+        writeUserInfo(record, user, line);
         String userPreferencesValue = (String) record.get("userPreferences");
         Map<String, String> userPreferences = Collections.emptyMap();
         try {
@@ -472,7 +522,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         }
         writeWebinarInfo(line, user, dsdRegistration, courseRegistrationsCache, userPreferences);
         writeField(line, userPreferences.get("remarks"));
-        writeBillingInfo(line, userPreferences);
+        writeBillingInfo(line, userPreferences, false);
         writeField(line, userPreferences.get("registration_time"));
         writeField(line, userPreferences.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
         if (removeMissing && dsdRegistration == null){
@@ -551,10 +601,12 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         writeField(line, status);
     }
 
-    private void writeBillingInfo(StringBuilder line, Map<String, String> billingInfo){
+    private void writeBillingInfo(StringBuilder line, Map<String, String> billingInfo, boolean light){
 
         //Write billing information.
         for (BillingInfo.ATTRIBUTES key : BillingInfo.ATTRIBUTES.values()) {
+            if (light && key == BillingInfo.ATTRIBUTES.billing_phone) continue;
+            if (light && key == BillingInfo.ATTRIBUTES.billing_website) continue;
             String billingAttribute = billingInfo.get(key.name());
             writeField(line, billingAttribute);
         }
