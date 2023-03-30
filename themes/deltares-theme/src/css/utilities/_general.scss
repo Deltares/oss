@@ -104,7 +104,7 @@ a.link-underline {
 .journal-content-article ul li {
     padding-left: 1rem;
 }
-.journal-content-article a:not([class*="slide-holder"]) ul li::before{
+.journal-content-article ul li::before{
     content: "\2022";
     color: #00E399;
     font-weight: bold; /* If you want it to be bold */
@@ -128,6 +128,25 @@ a.link-underline {
 }
 
 .journal-content-article :where(a):not(:where([class~="not-prose"] *)) {
+    color: var(--tw-prose-links);
+    text-decoration: underline;
+    font-weight: 500;
+}
+.tab-pane a:not([class*="button"]):focus, .tab-pane a:not([class*="button"]):hover {
+    color: var(--text-quinary);
+}
+
+.tab-pane a:not([class*="button"]) {
+    color: var(--text-secondary);
+    text-underline-offset: 2px;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+    -webkit-text-decoration-skip-ink: none;
+    text-decoration-skip-ink: none;
+}
+
+.tab-pane :where(a):not(:where([class~="not-prose"] *)) {
     color: var(--tw-prose-links);
     text-decoration: underline;
     font-weight: 500;
