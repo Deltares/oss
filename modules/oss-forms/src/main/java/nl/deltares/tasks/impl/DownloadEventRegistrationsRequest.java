@@ -326,7 +326,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         if (reproVersion){
             header = new StringBuilder("eventTitle,registrationTitle,email,badgeName,organization");
         } else {
-            header = new StringBuilder("eventId, eventTitle,registrationId, registrationTitle,start date,topic,type,email,firstName,lastName,webinarProvider,registrationStatus,remarks");
+            header = new StringBuilder("eventId, eventTitle, projectNumber, registrationId, registrationTitle,start date,topic,type,email,firstName,lastName,webinarProvider,registrationStatus,remarks");
 
             for (BillingInfo.ATTRIBUTES value : BillingInfo.ATTRIBUTES.values()) {
                 header.append(',');
@@ -438,9 +438,11 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             writeField(line, event.getTitle());
         }
         if (dsdRegistration == null) {
+            writeField(line, null);
             writeField(line, record.get("resourcePrimaryKey").toString());
             writeField(line, null);
         } else {
+            writeField(line, dsdRegistration.getProjectNumber());
             writeField(line, dsdRegistration.getArticleId());
             writeField(line, dsdRegistration.getTitle());
         }

@@ -29,6 +29,7 @@ public abstract class Registration extends AbsDsdArticle {
     private int capacity;
     private float price;
     private boolean open;
+    private String projectNumber = null;
     private String requiredTeam;
     private String currency = "&#8364"; //euro sign
     private String type = "unknown";
@@ -79,7 +80,7 @@ public abstract class Registration extends AbsDsdArticle {
                 hasParent = true;
             }
             requiredTeam = XmlContentUtils.getDynamicContentByName(document, "requiredTeam", true);
-
+            projectNumber = XmlContentUtils.getDynamicContentByName(document, "ProjectNumber", true);
             timeZoneId = XmlContentUtils.getDynamicContentByName(document, "timeZone", true);
             timeZoneId = correctTimeZone(timeZoneId);
             String vatTxt = XmlContentUtils.getDynamicContentByName(document, "vat", true);
@@ -187,6 +188,10 @@ public abstract class Registration extends AbsDsdArticle {
             LOG.error(String.format("Error retrieving SiteTeam %s : %s", requiredTeam, e.getMessage()));
         }
         return false;
+    }
+
+    public String getProjectNumber() {
+        return projectNumber;
     }
 
     public boolean isOpen() {
