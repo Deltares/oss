@@ -242,6 +242,29 @@
             "required": false,
             "showLabel": true,
             "type": "text"
+        },
+        {
+            "label": {
+                "en_US": "Project number"
+            },
+            "predefinedValue": {
+                "en_US": ""
+            },
+            "style": {
+                "en_US": ""
+            },
+            "tip": {
+                "en_US": ""
+            },
+            "dataType": "string",
+            "indexType": "keyword",
+            "localizable": false,
+            "name": "ProjectNumber",
+            "readOnly": false,
+            "repeatable": false,
+            "required": false,
+            "showLabel": true,
+            "type": "text"
         }
     ]
 }
