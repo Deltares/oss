@@ -16,13 +16,14 @@ import java.util.TimeZone;
 
 public abstract class DsdRegistrationEmailSerializer implements EmailSerializer<DsdEmail>{
 
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
+    private SimpleDateFormat dateFormat ;
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("kk:mm");
 
     @SuppressWarnings("RedundantThrows")
     @Override
     public void serialize(DsdEmail content, StringBuilder writer) throws Exception {
 
+        dateFormat = new SimpleDateFormat("dd MMMM yyyy", content.getBundle().getLocale());
         RegistrationRequest request = content.getRegistrationRequest();
         Event event = request.getEvent();
 

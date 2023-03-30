@@ -287,7 +287,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             Map<String, String> typeTranslations = new HashMap<>();
             for (String structureKey : structureKeys) {
                 typeTranslations.putAll(dsdJournalArticleUtils.getStructureFieldOptions(event.getGroupId(),
-                        structureKey, dsdRegistrationTypeField, event.getLocale()));
+                        structureKey, dsdRegistrationTypeField, themeDisplay.getLocale()));
             }
             registrationRequest.setTypeTranslations(typeTranslations);
 
