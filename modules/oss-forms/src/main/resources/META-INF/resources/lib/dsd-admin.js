@@ -1,5 +1,9 @@
 DsdAdminFormsUtil = {
 
+    getActionButtons: function (){
+        return ['downloadRegistrationsButton', 'deleteRegistrationsButton', 'downloadReproButton', 'downloadLightButton'];
+    },
+
     downloadRegistrations: function(resourceUrl, namespace){
 
         CommonFormsUtil.clearError(namespace);
@@ -30,6 +34,17 @@ DsdAdminFormsUtil = {
         }
     },
 
+    downloadLight: function(resourceUrl, namespace){
+
+        CommonFormsUtil.clearError(namespace);
+        let element = document.getElementById( namespace + "eventSelection");
+        var eventArticleId = element.options[ element.selectedIndex ].value;
+        if (eventArticleId != null && eventArticleId!=="") {
+            resourceUrl = resourceUrl + '&' + namespace + 'articleId=' + eventArticleId;
+            let action = "downloadLight";
+            this.callDownloadRegistrations(resourceUrl, namespace, action);
+        }
+    },
     deleteRegistrations: function(resourceUrl, namespace){
         CommonFormsUtil.clearError(namespace);
         let eventArticleId = document.getElementById( namespace + "articleId").value;
@@ -56,7 +71,7 @@ DsdAdminFormsUtil = {
 
     callDownloadRegistrations : function (resourceUrl, namespace, action){
 
-        CommonFormsUtil.setActionButtons(['downloadRegistrationsButton', 'deleteRegistrationsButton', 'downloadReproButton']);
+        CommonFormsUtil.setActionButtons(this.getActionButtons());
         CommonFormsUtil.initProgressBar(namespace);
 
         let A = new AUI();
