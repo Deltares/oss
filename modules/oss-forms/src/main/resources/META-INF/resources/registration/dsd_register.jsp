@@ -9,51 +9,36 @@
 
 <%@ page import="com.liferay.journal.model.JournalArticleDisplay" %>
 <%@ page import="com.liferay.portal.kernel.model.Country" %>
-<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider" %>
 <%@ page import="com.liferay.portal.kernel.service.CountryServiceUtil" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionMessages" %>
 <%@ page import="com.liferay.portal.kernel.util.DateUtil" %>
 <%@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
 <%@ page import="nl.deltares.forms.internal.RegistrationFormDisplayContext" %>
-<%@ page import="nl.deltares.portal.configuration.DSDSiteConfiguration" %>
 <%@ page import="nl.deltares.portal.model.impl.Event" %>
-<%@ page import="nl.deltares.portal.utils.DsdParserUtils" %>
-<%@ page import="nl.deltares.portal.utils.DsdSessionUtils" %>
-<%@ page import="nl.deltares.portal.utils.KeycloakUtils" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="com.liferay.portal.kernel.exception.PortalException" %>
-<%@ page import="nl.deltares.portal.utils.EmailSubscriptionUtils" %>
 <%@ page import="java.util.HashMap" %>
+<%@ page import="nl.deltares.portal.utils.*" %>
 
 <liferay-theme:defineObjects/>
 
 <portlet:defineObjects/>
 
 <%
-    ConfigurationProvider configurationProvider =
-            (ConfigurationProvider) request.getAttribute(ConfigurationProvider.class.getName());
-
-    DSDSiteConfiguration configuration = configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
-
-    String conditionsURL = configuration.conditionsURL();
-
-    String homeUrl = themeDisplay.getCDNBaseURL();
-    String webUrl = themeDisplay.getPathFriendlyURLPublic();
-    String groupUrl = themeDisplay.getSiteGroup().getFriendlyURL();
-    String privacyURL = homeUrl + webUrl + groupUrl + configuration.privacyURL();
-    String contactURL = homeUrl + webUrl + groupUrl + configuration.contactURL();
-
     String remarks = "";
+    Map<String, String> attributes = (Map) renderRequest.getAttribute("attributes");
+    String conditionsURL = (String) renderRequest.getAttribute("conditionsURL");
+    String privacyURL = (String) renderRequest.getAttribute("privacyURL");
+    String contactURL = (String) renderRequest.getAttribute("contactURL");
 
-    Map attributes = (Map) renderRequest.getAttribute("attributes");
     String action = ParamUtil.getString(renderRequest, "action");
     DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
     final Map<Subscription, Boolean>  subscriptionSelection = (Map<Subscription, Boolean>) request.getAttribute("subscriptionSelection");
     Event event = null;
     try {
-        event = dsdParserUtils.getEvent(themeDisplay.getScopeGroupId(), String.valueOf(configuration.eventId()), themeDisplay.getLocale());
+        event = dsdParserUtils.getEvent(themeDisplay.getScopeGroupId(), String.valueOf(request.getAttribute("eventId")), themeDisplay.getLocale());
     } catch (PortalException e) {
         SessionErrors.add(liferayPortletRequest, "registration-failed", e.getMessage());
     }

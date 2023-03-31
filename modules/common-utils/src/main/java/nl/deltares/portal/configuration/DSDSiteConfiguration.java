@@ -26,13 +26,13 @@ public interface DSDSiteConfiguration {
     @Meta.AD(required = false, deflt = "", description = "Configure the friendly URL of the travel and stay page")
     String travelStayURL();
 
-    @Meta.AD(required = false, deflt = "", description = "Configure the URL where the General Course Conditions of Deltares can be found")
+    @Meta.AD(required = false, deflt = "{}", description = "Configure the URL where the General Course Conditions of Deltares can be found")
     String conditionsURL();
 
-    @Meta.AD(required = false, deflt = "/privacy-declaration", description = "Configure the URL where the Privacy Policy of Deltares can be found")
+    @Meta.AD(required = false, deflt = "{}", description = "Configure the URL where the Privacy Policy of Deltares can be found")
     String privacyURL();
 
-    @Meta.AD(required = false, deflt = "/contact", description = "Configure the URL where the Privacy Policy of Deltares can be found")
+    @Meta.AD(required = false, deflt = "{}", description = "Configure the URL where the Privacy Policy of Deltares can be found")
     String contactURL();
 
     @Meta.AD(required = false, deflt = "mydeltares@deltares.nl", description = "Configure the Send From email address")
