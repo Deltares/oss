@@ -24,8 +24,7 @@ import javax.portlet.PortletConfig;
 import javax.portlet.PortletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component(
         configurationPid = OssConstants.DSD_SITE_CONFIGURATIONS_PID,
@@ -48,8 +47,11 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
 
         try {
             ThemeDisplay themeDisplay = (ThemeDisplay) httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY);
-            Map<String, String> templateMap = getTemplateMap(themeDisplay, _configurationProvider);
-            httpServletRequest.setAttribute("templateMap", templateMap);
+            httpServletRequest.setAttribute("templateMap", getParsedJsonParameter(themeDisplay, _configurationProvider, "templateMap"));
+            httpServletRequest.setAttribute("conditionsURL", getParsedJsonParameter(themeDisplay, _configurationProvider, "conditionsURL"));
+            httpServletRequest.setAttribute("contactURL", getParsedJsonParameter(themeDisplay, _configurationProvider, "contactURL"));
+            httpServletRequest.setAttribute("privacyURL", getParsedJsonParameter(themeDisplay, _configurationProvider, "privacyURL"));
+            httpServletRequest.setAttribute("languageIds", getAvailableLanguageIds(httpServletRequest));
         } catch (PortalException e) {
             throw new PortletException("Could not get options for field 'registrationType' in structure SESSIONS: " + e.getMessage(), e);
         }
@@ -67,9 +69,9 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         String registrationURL = ParamUtil.getString(actionRequest, "registrationURL");
         String busTransferURL = ParamUtil.getString(actionRequest, "busTransferURL");
         String travelStayURL = ParamUtil.getString(actionRequest, "travelStayURL");
-        String conditionsURL = ParamUtil.getString(actionRequest, "conditionsURL");
-        String privacyURL = ParamUtil.getString(actionRequest, "privacyURL");
-        String contactURL = ParamUtil.getString(actionRequest, "contactURL");
+        Map<String,String> conditionsURL = convertToLocalizedMap(actionRequest, "conditionsURL");
+        Map<String,String> privacyURL = convertToLocalizedMap(actionRequest, "privacyURL");
+        Map<String,String> contactURL = convertToLocalizedMap(actionRequest, "contactURL");
         String sendFromEmail = ParamUtil.getString(actionRequest, "sendFromEmail");
         String replyToEmail = ParamUtil.getString(actionRequest, "replyToEmail");
         String bccToEmail = ParamUtil.getString(actionRequest, "bccToEmail");
@@ -93,9 +95,9 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         modifiableSettings.setValue("registrationURL", registrationURL);
         modifiableSettings.setValue("busTransferURL", busTransferURL);
         modifiableSettings.setValue("travelStayURL", travelStayURL);
-        modifiableSettings.setValue("conditionsURL", conditionsURL);
-        modifiableSettings.setValue("privacyURL", privacyURL);
-        modifiableSettings.setValue("contactURL", contactURL);
+        modifiableSettings.setValue("conditionsURL", JsonContentUtils.formatMapToJson(conditionsURL));
+        modifiableSettings.setValue("privacyURL", JsonContentUtils.formatMapToJson(privacyURL));
+        modifiableSettings.setValue("contactURL", JsonContentUtils.formatMapToJson(contactURL));
         modifiableSettings.setValue("sendFromEmail", sendFromEmail);
         modifiableSettings.setValue("replyToEmail", replyToEmail);
         modifiableSettings.setValue("bccToEmail", bccToEmail);
@@ -120,6 +122,28 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         _configurationProvider = configurationProvider;
     }
 
+    private List<String> getAvailableLanguageIds(HttpServletRequest httpServletRequest) {
+        final List<String> ids = new ArrayList<>();
+        final Enumeration<Locale> supportedLocales = httpServletRequest.getLocales();
+        while (supportedLocales.hasMoreElements()){
+            final String language = supportedLocales.nextElement().getLanguage();
+            if (!ids.contains(language)) ids.add(language);
+        }
+        return ids;
+    }
+    private Map<String, String> convertToLocalizedMap(ActionRequest actionRequest, String parameterId){
+
+        HashMap<String, String> map = new HashMap<>();
+        final Enumeration<Locale> locales = actionRequest.getLocales();
+        while (locales.hasMoreElements()){
+            final Locale locale = locales.nextElement();
+            final String language = locale.getLanguage();
+            final String localizedValue = ParamUtil.getString(actionRequest, parameterId + '-' + language);
+            if (localizedValue != null && !map.containsKey(language)) map.put(language, localizedValue);
+        }
+        return map;
+
+    }
     private Map<String, String> convertTemplatesToMap(ActionRequest actionRequest) {
 
         HashMap<String, String> map = new HashMap<>();
@@ -135,7 +159,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         return map;
     }
 
-    public static Map<String, String> getTemplateMap(ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider) throws PortalException {
+    public static Map<String, String> getParsedJsonParameter(ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider, String parameterId) throws PortalException {
 
         DSDSiteConfiguration siteConfiguration;
         try {
@@ -145,7 +169,29 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         } catch (ConfigurationException e) {
             throw new PortalException(String.format("Error getting DSD siteConfiguration: %s", e.getMessage()));
         }
-        String typeMapJson = siteConfiguration.templateMap();
-        return JsonContentUtils.parseJsonToMap(typeMapJson);
+        String json;
+        switch (parameterId){
+            case "templateMap":
+                json = siteConfiguration.templateMap();
+                break;
+            case "conditionsURL":
+                json = siteConfiguration.conditionsURL();
+                break;
+            case "contactURL":
+                json = siteConfiguration.contactURL();
+                break;
+            case "privacyURL":
+                json = siteConfiguration.privacyURL();
+                break;
+            default:
+                json = null ;
+        }
+        try {
+            return JsonContentUtils.parseJsonToMap(json);
+        } catch (Exception e){
+            return Collections.emptyMap();
+        }
+
     }
+
 }
