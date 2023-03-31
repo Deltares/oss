@@ -1,6 +1,7 @@
 package nl.deltares.forms.portlet;
 
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -64,6 +65,7 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
 		User user = themeDisplay.getUser();
+		final String language = themeDisplay.getLocale().getLanguage();
 		if (!user.isDefaultUser()) {
             try {
 				final Map<String, String> userAttributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
@@ -79,6 +81,10 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 				DSDSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
 				List<String> mailingIdsList = Arrays.asList(dsdConfig.mailingIds().split(";"));
 				request.setAttribute("subscriptionSelection", getSubscriptionSelection(user.getEmailAddress(), mailingIdsList));
+				request.setAttribute("conditionsURL", getLocalizedValue(dsdConfig.conditionsURL(), language));
+				request.setAttribute("privacyURL", getLocalizedValue(dsdConfig.privacyURL(), language));
+				request.setAttribute("contactURL", getLocalizedValue(dsdConfig.contactURL(), language));
+				request.setAttribute("eventId", dsdConfig.eventId());
 			} catch (Exception e) {
 				LOG.warn("Error getting user subscriptions: " + e.getMessage());
 				request.setAttribute("subscribed", false);
@@ -112,6 +118,21 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 
 		request.setAttribute(ConfigurationProvider.class.getName(), _configurationProvider);
 		super.render(request, response);
+	}
+
+	private String getLocalizedValue(String jsonValue, String language) {
+
+		if (jsonValue != null && jsonValue.isEmpty()) return null;
+		try {
+			final Map<String, String> map = JsonContentUtils.parseJsonToMap(jsonValue);
+			final String value = map.get(language);
+			if (value != null && !value.isEmpty()) return value;
+			final Iterator<String> iterator = map.values().iterator();
+			if (iterator.hasNext()) return iterator.next();
+		} catch (JSONException e) {
+			//
+		}
+		return null;
 	}
 
 	private Map<Subscription, Boolean> getSubscriptionSelection(String email, List<String> mailingIdsList) {
