@@ -38,6 +38,9 @@ project.ext {
     downloadPass = getEnvProperty('DOWNLOAD_APPPW', '')
     ipgeolocationApiUrl = getEnvProperty('IPGEOLOCATION_APIURL', '')
     ipgeolocationApiKey = getEnvProperty('IPGEOLOCATION_APIKEY', '')
+    licenseUrl = getEnvProperty('LICENSE_URL', '')
+    licenseUser = getEnvProperty('LICENSE_USER', '')
+    licensePass = getEnvProperty('LICENSE_PASSWORD', '')
 }
 task startContainers(
         description: 'Start all docker containers',
@@ -82,8 +85,11 @@ task startLiferay(
                     'DOWNLOAD_URL'          : downloadUrl,
                     'DOWNLOAD_APPNAME'      : downloadUser,
                     'DOWNLOAD_APPPW'        : downloadPass,
-                    'IPGEOLOCATION_APIURL'       : ipgeolocationApiUrl,
-                    'IPGEOLOCATION_APIKEY'       : ipgeolocationApiKey
+                    'IPGEOLOCATION_APIURL'  : ipgeolocationApiUrl,
+                    'IPGEOLOCATION_APIKEY'  : ipgeolocationApiKey,
+                    'LICENSE_URL'           : licenseUrl,
+                    'LICENSE_USER'          : licenseUser,
+                    'LICENSE_PASSWORD'      : licensePass
             ])
         }
         copy {
