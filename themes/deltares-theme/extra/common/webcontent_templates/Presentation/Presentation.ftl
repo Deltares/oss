@@ -32,5 +32,5 @@
         </#if>
     </div>
 <#else>
-    <strong>Om de presentaties te bekijken, gaarne inloggen.</strong>
+    <script>alert("<@liferay.language key='dsd.theme.presentation.loginrequired' />")</script>
 </#if>
