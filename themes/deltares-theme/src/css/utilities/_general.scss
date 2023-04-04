@@ -101,6 +101,11 @@ a.link-underline {
     display: block;
 }
 
+.journal-content-article ol li{
+    list-style-type: decimal;
+    list-style-position:inside;
+}
+
 .journal-content-article ul li {
     padding-left: 1rem;
 }
