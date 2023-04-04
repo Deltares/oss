@@ -50,7 +50,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                                              DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils,
                                              DsdJournalArticleUtils dsdJournalArticleUtils,
                                              WebinarUtilsFactory webinarUtilsFactory, boolean primKey,
-                                             boolean delete, boolean removeMissing, int donwloadAction) throws IOException {
+                                             boolean delete, boolean removeMissing, int downloadAction) throws IOException {
         super(id, currentUser);
         this.articleId = articleId;
         this.group = siteGroup;
@@ -62,7 +62,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         this.deleteOnCompletion = delete;
         this.removeMissing = removeMissing;
         this.useResourcePrimKey = primKey;
-        this.downloadAction = DOWNLOAD_ACTIONS.values()[donwloadAction];
+        this.downloadAction = DOWNLOAD_ACTIONS.values()[downloadAction];
         this.locale = LocaleUtil.fromLanguageId(siteGroup.getDefaultLanguageId());
 
     }
@@ -205,11 +205,16 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 } catch (PortalException e) {
                     //
                 }
-                writeRecord(writer, recordObjects, event, registration, matchingUser, null, locale);
-                if (Thread.interrupted()) {
-                    throw new RuntimeException("Thread interrupted");
+                if (downloadAction == DOWNLOAD_ACTIONS.downloadRepro) {
+                    //write short output for printing badges
+                    writeReproRecord(writer, recordObjects, event, registration, matchingUser);
+                } else if (downloadAction == DOWNLOAD_ACTIONS.downloadLight) {
+                    //write short output for printing badges
+                    writeLightRecord(writer, recordObjects, registration, matchingUser);
+                } else {
+                    writeRecord(writer, recordObjects, event, registration, matchingUser,
+                            null, locale);
                 }
-
                 if (Thread.interrupted()) {
                     status = terminated;
                     errorMessage = String.format("Thread 'DownloadEventRegistrationsRequest' with id %s is interrupted!", id);
@@ -249,8 +254,16 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             } catch (PortalException e) {
                 //
             }
-            writeRecord(writer, recordObjects, null, null, matchingUser,
-                    null, locale);
+            if (downloadAction == DOWNLOAD_ACTIONS.downloadRepro) {
+                //write short output for printing badges
+                writeReproRecord(writer, recordObjects, null, null, matchingUser);
+            } else if (downloadAction == DOWNLOAD_ACTIONS.downloadLight) {
+                //write short output for printing badges
+                writeLightRecord(writer, recordObjects, null, matchingUser);
+            } else {
+                writeRecord(writer, recordObjects, null, null, matchingUser,
+                        null, locale);
+            }
             if (Thread.interrupted()) {
                 status = terminated;
                 errorMessage = String.format("Thread 'DownloadEventRegistrationsRequest' with id %s is interrupted!", id);
@@ -330,7 +343,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         if (downloadAction == DOWNLOAD_ACTIONS.downloadRepro){
             header = new StringBuilder("eventTitle,registrationTitle,email,badgeName,organization");
         } else if (downloadAction == DOWNLOAD_ACTIONS.downloadLight) {
-            header = new StringBuilder("registrationTitle,projectNumber,email,firstName,lastName,remarks");
+            header = new StringBuilder(",projectNumber,registrationTitle,email,firstName,lastName,remarks");
             for (BillingInfo.ATTRIBUTES value : BillingInfo.ATTRIBUTES.values()) {
                 if (value == BillingInfo.ATTRIBUTES.billing_phone) continue;
                 if (value == BillingInfo.ATTRIBUTES.billing_website) continue;
