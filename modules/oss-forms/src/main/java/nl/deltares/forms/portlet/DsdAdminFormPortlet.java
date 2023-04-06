@@ -62,7 +62,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 	@Reference
 	WebinarUtilsFactory webinarUtilsFactory;
 
-	private final String[] downloadActions = new String[] {"download", "downlaodRepro", "downloadLight"};
+	private final String[] downloadActions = new String[] {"download", "downloadRepro", "downloadLight"};
 	public void render(RenderRequest request, RenderResponse response) throws IOException, PortletException {
 		ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
 		try {
@@ -101,7 +101,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		boolean delete = action != null && action.startsWith("delete");
 		boolean removeMissing = "removeMissing".equals(action);
 
-		final int downloadAction = Arrays.binarySearch(downloadActions, action);
+		final int downloadAction = getDownloadActionIndex(action);
 		if (downloadAction > -1 || delete || removeMissing) {
 			String articleId = ParamUtil.getString(resourceRequest, "articleId", null);
 
@@ -122,6 +122,13 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		} else {
 			DataRequestManager.getInstance().writeError("Unsupported Action error: " + action, resourceResponse);
 		}
+	}
+
+	private int getDownloadActionIndex(String action) {
+		for (int i = 0; i < downloadActions.length; i++) {
+			if (downloadActions[i].equals(action)) return i;
+		}
+		return -1;
 	}
 
 	private void downloadEventRegistrations(String dataRequestId, ResourceResponse resourceResponse,
