@@ -1,6 +1,5 @@
+<#assign locale = themeDisplay.getLocale() />
 <#if themeDisplay.isSignedIn() >
-
-
     <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
     <#assign dsdJournalArticleUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdJournalArticleUtils") />
     <#assign articleId = .vars['reserved-article-id'].getData() />
@@ -32,5 +31,6 @@
         </#if>
     </div>
 <#else>
-    <script>alert("<@liferay.language key='dsd.theme.presentation.loginrequired' />")</script>
+    <#assign loginText = languageUtil.get(locale, 'dsd.theme.presentation.loginrequired') />
+    <script>alert("${loginText}" )</script>
 </#if>
