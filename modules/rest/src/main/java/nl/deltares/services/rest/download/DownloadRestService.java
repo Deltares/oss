@@ -8,6 +8,7 @@ import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.CountryServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.util.PortalInstances;
 import nl.deltares.portal.utils.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -115,7 +116,7 @@ public class DownloadRestService {
         try {
             final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(remoteAddr);
             if (clientIpInfo.isEmpty()) return Collections.emptyMap();
-            final Country country = CountryServiceUtil.getCountryByA2(geoIpUtils.getCountryIso2Code(clientIpInfo));
+            final Country country = CountryServiceUtil.getCountryByA2(PortalInstances.getDefaultCompanyId(), geoIpUtils.getCountryIso2Code(clientIpInfo));
             if (country != null ) attributes.put(KeycloakUtils.ATTRIBUTES.org_country.name(), country.getName());
             return attributes;
         } catch (PortalException e) {
