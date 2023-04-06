@@ -13,10 +13,7 @@ import com.liferay.portal.kernel.util.HtmlUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.Period;
-import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,6 +27,7 @@ public abstract class Registration extends AbsDsdArticle {
     private int capacity;
     private float price;
     private boolean open;
+    private String projectNumber = null;
     private String requiredTeam;
     private String currency = "&#8364"; //euro sign
     private String type = "unknown";
@@ -72,6 +70,7 @@ public abstract class Registration extends AbsDsdArticle {
                 hasParent = true;
             }
             requiredTeam = getFormFieldValue( "requiredTeam", true);
+            projectNumber = getFormFieldValue("ProjectNumber", true);
             timeZoneId = getFormFieldValue("timeZone", true);
             timeZoneId = correctTimeZone(timeZoneId);
             String vatTxt = getFormFieldValue( "vat", true);
@@ -96,11 +95,7 @@ public abstract class Registration extends AbsDsdArticle {
         toBeDetermined = "undetermined".equals(datesOption);
         ArrayList<Period> dayPeriods = new ArrayList<>();
         final TimeZone timeZone;
-        if (timeZoneId != null){
-             timeZone = TimeZone.getTimeZone(timeZoneId);
-        } else {
-            timeZone = TimeZone.getTimeZone("CET");
-        }
+        timeZone = TimeZone.getTimeZone(Objects.requireNonNullElse(timeZoneId, "CET"));
         if (!toBeDetermined) {
             List<DDMFormFieldValue> registrationDatesFieldSet = getDdmFormFieldValues("registrationDateFieldSet", true);
             for (DDMFormFieldValue fieldSet : registrationDatesFieldSet) {
@@ -181,6 +176,10 @@ public abstract class Registration extends AbsDsdArticle {
             LOG.error(String.format("Error retrieving SiteTeam %s : %s", requiredTeam, e.getMessage()));
         }
         return false;
+    }
+
+    public String getProjectNumber() {
+        return projectNumber;
     }
 
     public boolean isOpen() {

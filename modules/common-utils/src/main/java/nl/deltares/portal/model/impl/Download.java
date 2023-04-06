@@ -91,7 +91,7 @@ public class Download extends AbsDsdArticle {
         }
     }
 
-    public String getLicenseType(){
+    public String getGenerateLicenseType(){
         return generateLicenseType;
     }
 
