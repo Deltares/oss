@@ -18,7 +18,7 @@
             </a>
         </h4>
         </p>
-        <table >
+        <table style="width: 100%">
             <#list presentations as presentation>
 
                 <#if presentation.isDownloadLink() >
@@ -39,7 +39,7 @@
 
                             <div class="col-4">
                                 <#if thumbnail?? && thumbnail != "">
-                                    <img class="videoThumbnail" src="${thumbnail}"  alt="${presentation.getTitle()}"/>
+                                    <img class="videoThumbnail" src="${thumbnail}"  alt="${presentation.getTitle()}" />
                                 <#else>
                                     <i class=${iconClass}></i>
                                 </#if>
