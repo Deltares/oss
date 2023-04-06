@@ -1,6 +1,4 @@
 <#if themeDisplay.isSignedIn() >
-
-
     <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
     <#assign dsdJournalArticleUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdJournalArticleUtils") />
     <#assign articleId = .vars['reserved-article-id'].getData() />
@@ -32,5 +30,5 @@
         </#if>
     </div>
 <#else>
-    <strong>Om de presentaties te bekijken, gaarne inloggen.</strong>
+    <script>alert("<@liferay.language key='dsd.theme.presentation.loginrequired' />")</script>
 </#if>
