@@ -1,23 +1,20 @@
 <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
-<#assign title=.vars['reserved-article-title'].data />
 <#assign articleId = .vars['reserved-article-id'].getData() />
 <#assign displayContext = dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay) />
 <#assign registration = dsdParserUtils.getRegistration(groupId,articleId) />
 <#assign presentations = displayContext.getPresentations() />
-<#assign prefix = languageUtil.get(locale, "dsd.theme.session.presentations", "Presentaties van programma:")/>
+<#assign gotoSessionText = languageUtil.get(locale, "dsd.theme.session.presentations")/>
 <#assign siteUrl=themeDisplay.getSiteGroup().getDisplayURL(themeDisplay) />
 <#assign urltitle=siteUrl + "/-/" + registration.getJournalArticle().getUrlTitle() />
-
+<style>
+    .float-right {
+        float : right;
+    }
+</style>
 <div class="row no-gutters">
 
     <div class="col-12 px-3">
-        <p>
-        <h4>
-            <a href="${urltitle}" target="_self">
-                ${prefix}<strong>${title}</strong>
-            </a>
-        </h4>
-        </p>
+
         <table style="width: 100%">
             <#list presentations as presentation>
 
@@ -50,18 +47,19 @@
                                         <strong>${presentation.getTitle()}</strong>
                                     </a>
                                 </h4>
-                                <#if presentation.getPresenter() != "" >
-                                    <div>
-                                        &nbsp;&gt;&nbsp;
-                                        <span>${presentation.getPresenter()}</span>
-                                        <span>(${presentation.getOrganization()})</span>
-                                    </div>
-                                </#if>
                             </div>
-
                         </div>
                     </td></tr>
             </#list>
         </table>
+        <p>
+        <div class="float-right">
+            <h4>
+                <a href="${urltitle}" target="_self">
+                    ${gotoSessionText}
+                </a>
+            </h4>
+        </div>
+        </p>
     </div>
 </div>
