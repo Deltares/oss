@@ -1,9 +1,5 @@
 <#assign title=.vars['reserved-article-title'].data />
-<#assign displaydate=.vars['reserved-article-display-date'].data>
-<#assign originalLocale=.locale>
-<#setting locale=localeUtil.getDefault()>
-<#assign displaydate=displaydate?datetime("EEE, d MMM yyyy HH:mm:ss Z")>
-<#assign locale=originalLocale>
+<#assign localePostfix = themeDisplay.getLocale().getLanguage() />
 
 <div class="footer-top">
     <div class="container mx-auto">
@@ -33,7 +29,7 @@
                 <h2 class="mb-3 text-base font-semibold text-white"><@liferay.language key='dsd.theme.footer.watch.header' /></h2>
                 <ul class="link-list">
                     <li class="mb-1.5 leading-normal">
-                        <a href="/deltares-podcasts" class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
+                        <a href="/deltares-podcasts-${localePostfix}" class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
                             <div class="text-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" aria-hidden="false" role="img" class="mr-3"><path fill="currentColor" d="M1,17.9h22.8L13.3,28.4L16,31l15-15L16,1l-2.6,2.6l10.4,10.5H1V17.9z"></path></svg>
                             </div>
@@ -41,7 +37,7 @@
                         </a>
                     </li>
                     <li class="mb-1.5">
-                        <a href="/deltares-webinars"  class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
+                        <a href="/deltares-webinars-${localePostfix}"  class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
                             <div class="text-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" aria-hidden="false" role="img" class="mr-3"><path fill="currentColor" d="M1,17.9h22.8L13.3,28.4L16,31l15-15L16,1l-2.6,2.6l10.4,10.5H1V17.9z"></path></svg>
                             </div>
@@ -53,7 +49,7 @@
                 <h2 class="mb-3 text-base font-semibold text-white"><@liferay.language key='dsd.theme.footer.contact.header' /></h2>
                 <ul class="link-list">
                     <li class="mb-1.5 leading-normal">
-                        <a href="/deltares-contact" class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
+                        <a href="/deltares-contact-${localePostfix}" class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
                             <div class="text-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" aria-hidden="false" role="img">
                                     <path fill="currentColor" d="M1,17.9h22.8L13.3,28.4L16,31l15-15L16,1l-2.6,2.6l10.4,10.5H1V17.9z"></path>
