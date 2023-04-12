@@ -37,7 +37,7 @@
         <liferay-ui:search-container-results results="<%= subscriptions %>"/>
 
         <liferay-ui:search-container-row
-                className="nl.deltares.portal.model.keycloak.KeycloakMailing"
+                className="nl.deltares.portal.model.subscriptions.Subscription"
                 modelVar="entry"
         >
 
@@ -51,32 +51,6 @@
                         checked="${entry.isSelected()}"/>
             </liferay-ui:search-container-column-text>
             <liferay-ui:search-container-column-text property="name" name="Subscription"/>
-            <liferay-ui:search-container-column-text property="description" name="Description"/>
-            <liferay-ui:search-container-column-text name="Language">
-                <aui:select
-                        name="language_${entry.getId()}"
-                        type="select"
-                        label=""
-                        value="${entry.getSelectedLanguage()}" >
-                    <% String[] languages = entry.getLanguages(); %>
-                    <%    for (String language : languages) { %>
-                    <aui:option value="<%=language%>" label ="<%= language %>" />
-                    <% } %>
-                </aui:select>
-            </liferay-ui:search-container-column-text>
-            <liferay-ui:search-container-column-text name="Delivery">
-                <aui:select
-                        name="delivery_${entry.getId()}"
-                        type="select"
-                        label=""
-                        value="${entry.getSelectedDelivery()}" >
-                    <% String[] deliveries = entry.getDeliveries(); %>
-                    <%    for (String delivery : deliveries) { %>
-                    <aui:option value="<%=delivery%>" label ="<%= delivery %>" />
-                    <% } %>
-                </aui:select>
-            </liferay-ui:search-container-column-text>
-            <liferay-ui:search-container-column-text property="frequency" name="Frequency"/>
         </liferay-ui:search-container-row>
         <liferay-ui:search-iterator/>
     </liferay-ui:search-container>

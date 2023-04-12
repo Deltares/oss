@@ -2,13 +2,17 @@ Bundle-Name: common-utils
 Bundle-SymbolicName: nl.deltares.portal.common-utils
 Bundle-Version: 1.0.0
 Export-Package: \
-  nl.deltares.portal.utils.*, \
-  nl.deltares.portal.model.*, \
+  nl.deltares.portal.utils, \
+  nl.deltares.portal.utils.impl, \
+  nl.deltares.portal.model, \
+  nl.deltares.portal.model.subscriptions, \
+  nl.deltares.portal.model.impl, \
   nl.deltares.portal.exception, \
   nl.deltares.portal.display.context, \
   nl.deltares.portal.configuration, \
   nl.deltares.portal.kernel.util.comparator, \
-  nl.deltares.tasks.*
+  nl.deltares.tasks, \
+  nl.deltares.tasks.impl
 Import-Package: \
   nl.deltares.dsd.registration.service.*,\
   nl.deltares.oss.download.service.*,\
