@@ -173,13 +173,13 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             subscriptions.forEach(subscription -> {
                 if (downloadRequest.isSubscribe(subscription)) {
                     try {
-                        subscriptionUtils.subscribe(user, subscription);
+                        subscriptionUtils.subscribe(user, subscription.getId());
                     } catch (Exception e) {
                         LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", user.getEmailAddress(), subscription.getName(), e.getMessage()));
                     }
                 } else {
                     try {
-                        subscriptionUtils.unsubscribe(user, subscription);
+                        subscriptionUtils.unsubscribe(user.getEmailAddress(), subscription.getId());
                     } catch (Exception e) {
                         LOG.warn(String.format("Failed to unsubscribe user %s for mailing %s: %s", user.getEmailAddress(), subscription.getName(), e.getMessage()));
                     }

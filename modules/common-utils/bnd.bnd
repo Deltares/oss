@@ -5,7 +5,7 @@ Export-Package: \
   nl.deltares.portal.utils, \
   nl.deltares.portal.utils.impl, \
   nl.deltares.portal.model, \
-  nl.deltares.portal.model.keycloak, \
+  nl.deltares.portal.model.subscriptions, \
   nl.deltares.portal.model.impl, \
   nl.deltares.portal.exception, \
   nl.deltares.portal.display.context, \

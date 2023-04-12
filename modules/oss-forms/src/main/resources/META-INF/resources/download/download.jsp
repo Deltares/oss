@@ -10,7 +10,6 @@
 <%@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
 <%@ page import="nl.deltares.portal.configuration.DownloadSiteConfiguration" %>
 <%@ page import="nl.deltares.portal.utils.DsdParserUtils" %>
-<%@ page import="nl.deltares.portal.utils.KeycloakUtils" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="nl.deltares.portal.model.impl.Subscription" %>
 <%@ page import="java.util.HashMap" %>

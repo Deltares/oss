@@ -13,8 +13,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
-import nl.deltares.portal.model.impl.Subscription;
-import nl.deltares.portal.model.keycloak.KeycloakMailing;
+import nl.deltares.portal.model.subscriptions.Subscription;
 import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -53,6 +52,9 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 	private KeycloakUtils keycloakUtils;
 
 	@Reference
+	private EmailSubscriptionUtils emailSubscriptionUtils;
+
+	@Reference
 	private DsdParserUtils dsdParserUtils;
 
 	@Reference
@@ -65,7 +67,6 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
 		User user = themeDisplay.getUser();
-		final String language = themeDisplay.getLocale().getLanguage();
 		if (!user.isDefaultUser()) {
             try {
 				final Map<String, String> userAttributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
@@ -80,11 +81,7 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 			try {
 				DSDSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
 				List<String> mailingIdsList = Arrays.asList(dsdConfig.mailingIds().split(";"));
-				request.setAttribute("subscriptionSelection", getSubscriptionSelection(user.getEmailAddress(), mailingIdsList));
-				request.setAttribute("conditionsURL", getLocalizedValue(dsdConfig.conditionsURL(), language));
-				request.setAttribute("privacyURL", getLocalizedValue(dsdConfig.privacyURL(), language));
-				request.setAttribute("contactURL", getLocalizedValue(dsdConfig.contactURL(), language));
-				request.setAttribute("eventId", dsdConfig.eventId());
+				request.setAttribute("subscribed", emailSubscriptionUtils.isSubscribed(user.getEmailAddress(), mailingIdsList));
 			} catch (Exception e) {
 				LOG.warn("Error getting user subscriptions: " + e.getMessage());
 				request.setAttribute("subscribed", false);
@@ -139,11 +136,11 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 
 		HashMap<Subscription, Boolean> subscriptionSelection = new HashMap<>();
 		try {
-			final List<KeycloakMailing> mailings = keycloakUtils.getMailings();
-			for (KeycloakMailing mailing : mailings) {
+			final List<Subscription> mailings = emailSubscriptionUtils.getSubscriptions(email);
+			for (Subscription mailing : mailings) {
 				final String id = mailing.getId();
 				if (mailingIdsList.contains(id)){
-					subscriptionSelection.put(new Subscription(id, mailing.getName()), keycloakUtils.isSubscribed(email, Collections.singletonList(id)));
+					subscriptionSelection.put(new Subscription(id, mailing.getName()), emailSubscriptionUtils.isSubscribed(email, Collections.singletonList(id)));
 				}
 			}
 		} catch (Exception e) {

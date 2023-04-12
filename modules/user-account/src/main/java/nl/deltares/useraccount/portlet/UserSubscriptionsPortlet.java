@@ -7,9 +7,8 @@ import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.portal.model.keycloak.KeycloakMailing;
-import nl.deltares.portal.model.keycloak.KeycloakUserMailing;
-import nl.deltares.portal.utils.KeycloakUtils;
+import nl.deltares.portal.model.subscriptions.Subscription;
+import nl.deltares.portal.utils.EmailSubscriptionUtils;
 import nl.deltares.useraccount.constants.UserProfilePortletKeys;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -40,7 +39,7 @@ import java.util.List;
 public class UserSubscriptionsPortlet extends MVCPortlet {
 
     @Reference
-    private KeycloakUtils keycloakUtils;
+    private EmailSubscriptionUtils subscriptionUtils;
 
     @Override
     public void render(RenderRequest request, RenderResponse response) throws IOException, PortletException {
@@ -48,10 +47,7 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
         User user = themeDisplay.getUser();
         if (!user.isDefaultUser() && user.isActive()) {
             try {
-                final List<KeycloakUserMailing> userMailings = keycloakUtils.getUserMailings(user.getEmailAddress());
-                final List<KeycloakMailing> mailings = keycloakUtils.getMailings();
-
-                setSelection(userMailings, mailings);
+                final List<Subscription> mailings = subscriptionUtils.getSubscriptions(user.getEmailAddress());
                 request.setAttribute("subscriptions", mailings);
             } catch (Exception e) {
                 SessionErrors.add(request, "update-subscription-failed", "Error reading subscriptions: " + e.getMessage());
@@ -60,25 +56,6 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
 
             super.render(request, response);
         }
-    }
-
-    private void setSelection(List<KeycloakUserMailing> userMailings, List<KeycloakMailing> mailings) {
-        for (KeycloakUserMailing userMailing : userMailings) {
-            KeycloakMailing mailing = findMailing(userMailing.getMailingId(), mailings);
-            if (mailing == null) {
-                continue;
-            }
-            mailing.setSelected(true);
-            mailing.setSelectedDeliveryType(userMailing.getDelivery());
-            mailing.setSelectedLanguage(userMailing.getLanguage());
-        }
-    }
-
-    private KeycloakMailing findMailing(String mailingId, List<KeycloakMailing> mailings) {
-        for (KeycloakMailing mailing : mailings) {
-            if (mailing.getId().equals(mailingId)) return mailing;
-        }
-        return null;
     }
 
     /**
@@ -93,44 +70,37 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
         User user = themeDisplay.getUser();
 
-        List<KeycloakMailing> userMailings;
+        List<Subscription> selectedSubscriptions;
         try {
-            userMailings = getUserSubscriptions(actionRequest);
+            selectedSubscriptions = getSelectedSubscriptions(actionRequest);
         } catch (Exception e) {
             SessionErrors.add(actionRequest, "update-subscription-failed", e.getMessage());
             return;
         }
-        updateUserSubscriptions(actionRequest, user, userMailings);
+        updateUserSubscriptions(actionRequest, user, selectedSubscriptions);
 
     }
 
-    private List<KeycloakMailing> getUserSubscriptions(ActionRequest actionRequest) throws Exception {
+    private List<Subscription> getSelectedSubscriptions(ActionRequest actionRequest) throws Exception {
 
-        final List<KeycloakMailing> mailings = keycloakUtils.getMailings();
-        for (KeycloakMailing mailing : mailings) {
+        final List<Subscription> allSubscriptions = subscriptionUtils.getSubscriptions(null); //get list of all subscriptions
+        for (Subscription mailing : allSubscriptions) {
             final String id = mailing.getId();
             final boolean selected = ParamUtil.getBoolean(actionRequest, "selected_" + id, false);
             mailing.setSelected(selected);
-            if (!selected) {
-                continue;
-            }
-            final String language = ParamUtil.getString(actionRequest, "language_" + id, null);
-            mailing.setSelectedLanguage(language);
-            final String delivery = ParamUtil.getString(actionRequest, "delivery_" + id, null);
-            mailing.setSelectedDelivery(delivery);
         }
-        return mailings;
+        return allSubscriptions;
     }
 
-    private void updateUserSubscriptions(ActionRequest actionRequest, User user, List<KeycloakMailing> subscriptions) {
+    private void updateUserSubscriptions(ActionRequest actionRequest, User user, List<Subscription> subscriptions) {
 
         final String emailAddress = user.getEmailAddress();
         try {
-            for (KeycloakMailing subscription : subscriptions) {
-                if(subscription.isSelected()){
-                    keycloakUtils.subscribe(emailAddress, subscription.getId(), subscription.getSelectedDelivery(), subscription.getSelectedLanguage());
+            for (Subscription subscription : subscriptions) {
+                if (subscription.isSelected()) {
+                    subscriptionUtils.subscribe(user, subscription.getId());
                 } else {
-                    keycloakUtils.unsubscribe(emailAddress, subscription.getId());
+                    subscriptionUtils.unsubscribe(emailAddress, subscription.getId());
                 }
             }
 
