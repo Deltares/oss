@@ -12,10 +12,10 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.*;
+import nl.deltares.emails.DsdEmail;
 import nl.deltares.model.BadgeInfo;
 import nl.deltares.model.BillingInfo;
 import nl.deltares.model.RegistrationRequest;
-import nl.deltares.emails.DsdEmail;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Event;
@@ -167,13 +167,13 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 final String selected = ParamUtil.getString(actionRequest, "subscription-" + mailingId);
                 if (Boolean.parseBoolean(selected)) {
                     try {
-                        keycloakUtils.subscribe(user.getEmailAddress(), mailingId);
+                        subscriptionUtils.subscribe(user, mailingId);
                     } catch (Exception e) {
                         LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", user.getEmailAddress(), mailingId, e.getMessage()));
                     }
                 } else {
                     try {
-                        keycloakUtils.unsubscribe(user.getEmailAddress(), mailingId);
+                        subscriptionUtils.unsubscribe(user.getEmailAddress(), mailingId);
                     } catch (Exception e) {
                         LOG.warn(String.format("Failed to unsubscribe user %s for mailing %s: %s", user.getEmailAddress(), mailingId, e.getMessage()));
                     }
@@ -410,6 +410,9 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
     @Reference
     private KeycloakUtils keycloakUtils;
+
+    @Reference
+    private EmailSubscriptionUtils subscriptionUtils;
 
     @Reference
     private DsdParserUtils dsdParserUtils;

@@ -38,6 +38,9 @@ project.ext {
     downloadPass = getEnvProperty('DOWNLOAD_APPPW', '')
     ipgeolocationApiUrl = getEnvProperty('IPGEOLOCATION_APIURL', '')
     ipgeolocationApiKey = getEnvProperty('IPGEOLOCATION_APIKEY', '')
+    sendinblueApiKey = getEnvProperty('SENDINBLUE_API_KEY', '')
+    sendinblueApiUrl = getEnvProperty('SENDINBLUE_API_URL', '')
+    sendinblueFolderId = getEnvProperty('SENDINBLUE_FOLDER', '')
     licenseUrl = getEnvProperty('LICENSE_URL', '')
     licenseUser = getEnvProperty('LICENSE_USER', '')
     licensePass = getEnvProperty('LICENSE_PASSWORD', '')
@@ -85,6 +88,11 @@ task startLiferay(
                     'DOWNLOAD_URL'          : downloadUrl,
                     'DOWNLOAD_APPNAME'      : downloadUser,
                     'DOWNLOAD_APPPW'        : downloadPass,
+                    'IPGEOLOCATION_APIURL'       : ipgeolocationApiUrl,
+                    'IPGEOLOCATION_APIKEY'       : ipgeolocationApiKey,
+                    'SENDINBLUE_API_KEY'    : sendinblueApiKey,
+                    'SENDINBLUE_API_URL'    : sendinblueApiUrl,
+                    'SENDINBLUE_FOLDER'    : sendinblueFolderId,
                     'IPGEOLOCATION_APIURL'  : ipgeolocationApiUrl,
                     'IPGEOLOCATION_APIKEY'  : ipgeolocationApiKey,
                     'LICENSE_URL'           : licenseUrl,
