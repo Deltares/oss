@@ -26,7 +26,7 @@
                 subscriptions.forEach(subscription -> {
                     if (subscriptionSelection.containsKey(subscription)) return; //do not check multiple times
                     try {
-                        final boolean subscribed = subscriptionUtils.isSubscribed(finalUser, subscription);
+                        final boolean subscribed = subscriptionUtils.isSubscribed(finalUser.getEmailAddress(), subscription.getId());
                         subscriptionSelection.put(subscription, subscribed);
                     } catch (Exception e) {
                         subscriptionSelection.put(subscription, false);

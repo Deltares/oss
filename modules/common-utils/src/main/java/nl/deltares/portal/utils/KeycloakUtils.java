@@ -1,11 +1,7 @@
 package nl.deltares.portal.utils;
 
-import nl.deltares.portal.model.keycloak.KeycloakMailing;
-import nl.deltares.portal.model.keycloak.KeycloakUserMailing;
-
 import java.io.File;
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.Map;
 
 public interface KeycloakUtils {
@@ -71,23 +67,11 @@ public interface KeycloakUtils {
 
     boolean isExistingUsername(String username) throws Exception;
 
-    List<KeycloakMailing> getMailings() throws Exception;
-
-    List<KeycloakUserMailing> getUserMailings(String email) throws Exception;
-
     int registerUserLogin(String email, String siteId) throws Exception;
 
     int deleteUserWithEmail(String email) throws Exception;
 
     int deleteUserWithId(String id) throws Exception;
-
-    void subscribe(String emailAddress, String mailingId) throws Exception;
-
-    void subscribe(String emailAddress, String mailingId, String delivery, String language) throws Exception;
-
-    void unsubscribe(String emailAddress, String mailingId) throws Exception;
-
-    boolean isSubscribed(String emailAddress, List<String> mailingIds) throws Exception;
 
     int resetPassword(String username, String currentPassword, String newPassword) throws Exception;
 }

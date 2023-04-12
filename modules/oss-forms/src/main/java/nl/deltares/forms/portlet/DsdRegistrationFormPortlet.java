@@ -1,6 +1,7 @@
 package nl.deltares.forms.portlet;
 
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -12,8 +13,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
-import nl.deltares.portal.model.impl.Subscription;
-import nl.deltares.portal.model.keycloak.KeycloakMailing;
+import nl.deltares.portal.model.subscriptions.Subscription;
 import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -52,6 +52,9 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 	private KeycloakUtils keycloakUtils;
 
 	@Reference
+	private EmailSubscriptionUtils emailSubscriptionUtils;
+
+	@Reference
 	private DsdParserUtils dsdParserUtils;
 
 	@Reference
@@ -78,7 +81,7 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 			try {
 				DSDSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
 				List<String> mailingIdsList = Arrays.asList(dsdConfig.mailingIds().split(";"));
-				request.setAttribute("subscriptionSelection", getSubscriptionSelection(user.getEmailAddress(), mailingIdsList));
+				request.setAttribute("subscribed", emailSubscriptionUtils.isSubscribed(user.getEmailAddress(), mailingIdsList));
 			} catch (Exception e) {
 				LOG.warn("Error getting user subscriptions: " + e.getMessage());
 				request.setAttribute("subscribed", false);
@@ -114,15 +117,30 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 		super.render(request, response);
 	}
 
+	private String getLocalizedValue(String jsonValue, String language) {
+
+		if (jsonValue != null && jsonValue.isEmpty()) return null;
+		try {
+			final Map<String, String> map = JsonContentUtils.parseJsonToMap(jsonValue);
+			final String value = map.get(language);
+			if (value != null && !value.isEmpty()) return value;
+			final Iterator<String> iterator = map.values().iterator();
+			if (iterator.hasNext()) return iterator.next();
+		} catch (JSONException e) {
+			//
+		}
+		return null;
+	}
+
 	private Map<Subscription, Boolean> getSubscriptionSelection(String email, List<String> mailingIdsList) {
 
 		HashMap<Subscription, Boolean> subscriptionSelection = new HashMap<>();
 		try {
-			final List<KeycloakMailing> mailings = keycloakUtils.getMailings();
-			for (KeycloakMailing mailing : mailings) {
+			final List<Subscription> mailings = emailSubscriptionUtils.getSubscriptions(email);
+			for (Subscription mailing : mailings) {
 				final String id = mailing.getId();
 				if (mailingIdsList.contains(id)){
-					subscriptionSelection.put(new Subscription(id, mailing.getName()), keycloakUtils.isSubscribed(email, Collections.singletonList(id)));
+					subscriptionSelection.put(new Subscription(id, mailing.getName()), emailSubscriptionUtils.isSubscribed(email, Collections.singletonList(id)));
 				}
 			}
 		} catch (Exception e) {

@@ -9,9 +9,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
-import nl.deltares.portal.model.impl.Subscription;
-import nl.deltares.portal.model.keycloak.KeycloakMailing;
-import nl.deltares.portal.model.keycloak.KeycloakUserMailing;
+import nl.deltares.portal.model.subscriptions.Subscription;
 import nl.deltares.portal.utils.EmailSubscriptionUtils;
 import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
@@ -286,9 +284,9 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getAccessToken());
         String query;
-        if (email != null) {
+        if (email != null){
             query = "?email=" + email;
-        } else if (username != null) {
+        } else if (username != null){
             query = "?username=" + username;
         } else {
             throw new IOException("Both email and username missing!");
@@ -302,7 +300,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
         return userMapArray.get(0);
     }
 
-    private Map<String, String> getUserAttributesFromCacheOrKeycloak(String email, String[] searchKeys) throws Exception {
+    private Map<String, String> getUserAttributesFromCacheOrKeycloak(String email, String[] searchKeys) throws Exception{
 
         final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null);
         String attributesJson = userRepresentation.get("attributes");
@@ -342,7 +340,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
             if (key == ATTRIBUTES.first_name) continue;
             if (key == ATTRIBUTES.last_name) continue;
             final String value = attributes.get(key.name());
-            if (Validator.isNotNull(value)) {
+            if (Validator.isNotNull(value)){
                 jsonAttributes.put(key.name(), JSONFactoryUtil.createJSONArray().put(value));
             }
         }
@@ -353,7 +351,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
             }
         }
 
-        if (includeUserInfo) {
+        if (includeUserInfo){
             final String email = attributes.get(ATTRIBUTES.email.name());
             if (Validator.isEmailAddress(email)) jsonUser.put("email", email);
 
@@ -444,40 +442,13 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
     }
 
     @Override
-    public boolean isSubscribed(User user, List<Subscription> subscriptions) throws Exception {
-        List<String> mailingIds = new ArrayList<>(subscriptions.size());
-        subscriptions.forEach(subscription -> mailingIds.add(subscription.getId()));
-        return isSubscribed(user.getEmailAddress(), mailingIds);
-    }
-
-    @Override
-    public boolean isSubscribed(User user, Subscription subscription) throws Exception {
-        return isSubscribed(user.getEmailAddress(), Collections.singletonList(subscription.getId()));
-    }
-
-    @Override
-    public void subscribe(User user, Subscription subscription) throws Exception {
-        subscribe(user.getEmailAddress(), subscription.getId());
-    }
-
-    @Override
-    public void unsubscribe(User user, Subscription subscription) throws Exception {
-        unsubscribe(user.getEmailAddress(), subscription.getId());
-    }
-
-    @Override
-    public void subscribe(String email, String mailingId, String delivery, String language) throws Exception {
+    public void subscribe(User user, String mailingId) throws Exception {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getAccessToken());
         HttpURLConnection connection = getConnection(getAdminUserMailingsPath() + "/subscriptions/" + mailingId +
-                "?email=" + email + "&delivery=" + delivery + "&language=" + language, "PUT", headers);
+                "?email=" + user.getEmailAddress() + "&delivery=e-mail&language=en", "PUT", headers);
         checkResponse(connection);
-    }
-
-    @Override
-    public void subscribe(String email, String mailingId) throws Exception {
-        subscribe(email, mailingId, "e-mail", "en");
     }
 
     @Override
@@ -502,16 +473,17 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
         JSONArray subscriptions = getJsonObjects(jsonResponse);
 
         boolean[] isSubscribed = new boolean[]{false};
-        subscriptions.forEach(jsonMailing -> {
-            if (mailingIds.contains(((JSONObject) jsonMailing).getString("mailingId"))) {
+        for (int i = 0; i < subscriptions.length(); i++) {
+            if (mailingIds.contains(subscriptions.getJSONObject(i).getString("mailingId"))){
                 isSubscribed[0] = true;
             }
-        });
+        }
+
         return isSubscribed[0];
     }
 
     @Override
-    public List<KeycloakMailing> getMailings() throws Exception {
+    public List<Subscription> getSubscriptions(String emailAddress) throws Exception {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getAccessToken());
@@ -521,20 +493,19 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
         //Keycloak wraps all attributes in a json array. we need to remove this
         JSONArray mailings = getJsonObjects(jsonResponse);
 
-        final ArrayList<KeycloakMailing> keycloakMailings = new ArrayList<>();
-        mailings.forEach(jsonMailing -> keycloakMailings.add(new KeycloakMailing(
-                ((JSONObject) jsonMailing).getString("id"),
-                ((JSONObject) jsonMailing).getString("name"),
-                ((JSONObject) jsonMailing).getString("description"),
-                JsonContentUtils.toStringArray((JSONArray) ((JSONObject) jsonMailing).get("languages")),
-                ((JSONObject) jsonMailing).getInt("frequency"),
-                ((JSONObject) jsonMailing).getInt("delivery")
-        )));
-        return keycloakMailings;
+        final ArrayList<Subscription> allSubscriptions = new ArrayList<>();
+        for (int i = 0; i < mailings.length(); i++) {
+            final JSONObject jsonMailing = mailings.getJSONObject(i);
+            allSubscriptions.add(
+                    new Subscription(jsonMailing.getString("id"), jsonMailing.getString("name")));
+        }
+        if (emailAddress != null) setUserSubscriptionSelection(emailAddress, allSubscriptions);
+
+        return allSubscriptions;
     }
 
-    @Override
-    public List<KeycloakUserMailing> getUserMailings(String email) throws Exception {
+
+    private void setUserSubscriptionSelection(String email, List<Subscription> allSubscriptions) throws Exception {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getAccessToken());
@@ -544,16 +515,27 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
         //Keycloak wraps all attributes in a json array. we need to remove this
         JSONArray mailings = getJsonObjects(jsonResponse);
 
-        final ArrayList<KeycloakUserMailing> keycloakUserMailings = new ArrayList<>();
-        mailings.forEach(jsonUserMailing -> keycloakUserMailings.add(new KeycloakUserMailing(
-                true,
-                ((JSONObject) jsonUserMailing).getString("id"),
-                email,
-                ((JSONObject) jsonUserMailing).getString("mailingId"),
-                ((JSONObject) jsonUserMailing).getString("language"),
-                ((JSONObject) jsonUserMailing).getInt("delivery")
-        )));
-        return keycloakUserMailings;
+        for (int i = 0; i < mailings.length(); i++) {
+            final String subscriptionId = mailings.getJSONObject(i).getString("mailingId");
+            for (Subscription subscription : allSubscriptions) {
+                final boolean found = subscription.getId().equals(subscriptionId);
+                if (found) {
+                    subscription.setSelected(true);
+                    break;
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public boolean isSubscribed(String email, String subscriptionId) throws Exception {
+        return isSubscribed(email, Collections.singletonList(subscriptionId));
+    }
+
+    @Override
+    public void deleteUser(String email) throws Exception {
+        deleteUserWithEmail(email);
     }
 
     @Override
