@@ -3,12 +3,20 @@
 <#assign downloadUtils = serviceLocator.findService("nl.deltares.portal.utils.DownloadUtils") />
 
 <#assign baseUrl = "/o/download" />
+<#assign showButtons = themeDisplay.isSignedIn() />
 <#if entries?has_content>
 
-    <#if is_sanctioned?? && is_sanctioned>
-        <div class="lfr-status-alert-label" >${languageUtil.get(locale, "download.restriction.country")} ${sanctionCountry}
+    <#if showButtons>
+        <#if is_sanctioned?? && is_sanctioned>
+            <div class="lfr-status-alert-label" >${languageUtil.get(locale, "download.restriction.country")} ${sanctionCountry}
+            </div>
+        </#if>
+    <#else>
+        <div class="lfr-status-info-label" >
+            ${languageUtil.get(locale, "download.login.required")}
         </div>
     </#if>
+
     <ul class="c-downloads-list clear-list">
         <#list entries as entry>
             <#assign assetRenderer = entry.getAssetRenderer() />
@@ -22,7 +30,7 @@
                     </h4>
                     <div>
                         ${download.getFileTopicName()} | ${download.getFileTypeName()} | ${download.getFileSize()} | ${count} downloads
-                        <#if themeDisplay.isSignedIn() && !(is_sanctioned?? && is_sanctioned) >
+                        <#if showButtons && !(is_sanctioned?? && is_sanctioned) >
                             <span class="d-block" style="float:right">
                             <#assign downloadStatus = downloadUtils.getDownloadStatus(download, themeDisplay.getUser()) />
                                 <#assign directDownload = download.isDirectDownload() />
