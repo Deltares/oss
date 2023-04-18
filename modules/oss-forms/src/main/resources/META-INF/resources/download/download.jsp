@@ -14,6 +14,7 @@
 <%@ page import="nl.deltares.portal.model.impl.Subscription" %>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="nl.deltares.portal.utils.EmailSubscriptionUtils" %>
+<%@ page import="nl.deltares.portal.utils.KeycloakUtils" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="nl.deltares.portal.model.impl.Terms" %>
 <%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationException" %>
