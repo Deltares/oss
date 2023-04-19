@@ -1,7 +1,6 @@
 package nl.deltares.forms.portlet;
 
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
-import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -24,6 +23,8 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import java.io.IOException;
 import java.util.*;
+
+import static nl.deltares.portal.utils.LocalizationUtils.getLocalizedValue;
 
 /**
  * @author rooij_e
@@ -79,8 +80,14 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 				request.setAttribute("attributes", new HashMap<>());
 			}
 			try {
+				final String language = themeDisplay.getLocale().getLanguage();
 				DSDSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
+				request.setAttribute("conditionsURL", getLocalizedValue(dsdConfig.conditionsURL(), language));
+				request.setAttribute("privacyURL", getLocalizedValue(dsdConfig.privacyURL(), language));
+				request.setAttribute("contactURL", getLocalizedValue(dsdConfig.contactURL(), language));
+				request.setAttribute("eventId", dsdConfig.eventId());
 				List<String> mailingIdsList = Arrays.asList(dsdConfig.mailingIds().split(";"));
+				request.setAttribute("subscriptionSelection", getSubscriptionSelection(user.getEmailAddress(), mailingIdsList));
 				request.setAttribute("subscribed", emailSubscriptionUtils.isSubscribed(user.getEmailAddress(), mailingIdsList));
 			} catch (Exception e) {
 				LOG.warn("Error getting user subscriptions: " + e.getMessage());
@@ -117,20 +124,7 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 		super.render(request, response);
 	}
 
-	private String getLocalizedValue(String jsonValue, String language) {
 
-		if (jsonValue != null && jsonValue.isEmpty()) return null;
-		try {
-			final Map<String, String> map = JsonContentUtils.parseJsonToMap(jsonValue);
-			final String value = map.get(language);
-			if (value != null && !value.isEmpty()) return value;
-			final Iterator<String> iterator = map.values().iterator();
-			if (iterator.hasNext()) return iterator.next();
-		} catch (JSONException e) {
-			//
-		}
-		return null;
-	}
 
 	private Map<Subscription, Boolean> getSubscriptionSelection(String email, List<String> mailingIdsList) {
 

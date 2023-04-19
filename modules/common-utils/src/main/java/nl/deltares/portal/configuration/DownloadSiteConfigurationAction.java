@@ -27,6 +27,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
+import static nl.deltares.portal.configuration.DSDSiteConfigurationAction.getParsedJsonParameter;
+import static nl.deltares.portal.utils.LocalizationUtils.convertToLocalizedMap;
+import static nl.deltares.portal.utils.LocalizationUtils.getAvailableLanguageIds;
+
 @Component(
         configurationPid = OssConstants.Download_SITE_CONFIGURATIONS_PID,
         configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
@@ -50,6 +54,10 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
             ThemeDisplay themeDisplay = (ThemeDisplay) httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY);
             Map<String, String> templateMap = getTemplateMap(themeDisplay, _configurationProvider);
             httpServletRequest.setAttribute("templateMap", templateMap);
+            httpServletRequest.setAttribute("contactURL", getParsedJsonParameter(themeDisplay, _configurationProvider, "contactURL"));
+            httpServletRequest.setAttribute("privacyURL", getParsedJsonParameter(themeDisplay, _configurationProvider, "privacyURL"));
+            httpServletRequest.setAttribute("languageIds", getAvailableLanguageIds(httpServletRequest));
+
         } catch (PortalException e) {
             throw new PortletException("Could not get 'templateMap' for DownloadSiteConfiguration: " + e.getMessage(), e);
         }
@@ -64,8 +72,8 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
         String downloadURL = ParamUtil.getString(actionRequest, "downloadURL");
-        String privacyURL = ParamUtil.getString(actionRequest, "privacyURL");
-        String contactURL = ParamUtil.getString(actionRequest, "contactURL");
+        Map<String,String> privacyURL = convertToLocalizedMap(actionRequest, "privacyURL");
+        Map<String,String> contactURL = convertToLocalizedMap(actionRequest, "contactURL");
         String sendFromEmail = ParamUtil.getString(actionRequest, "sendFromEmail");
         String replyToEmail = ParamUtil.getString(actionRequest, "replyToEmail");
         String bccToEmail = ParamUtil.getString(actionRequest, "bccToEmail");
@@ -80,8 +88,8 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
                 settings.getModifiableSettings();
 
         modifiableSettings.setValue("downloadURL", downloadURL);
-        modifiableSettings.setValue("privacyURL", privacyURL);
-        modifiableSettings.setValue("contactURL", contactURL);
+        modifiableSettings.setValue("privacyURL", JsonContentUtils.formatMapToJson(privacyURL));
+        modifiableSettings.setValue("contactURL", JsonContentUtils.formatMapToJson(contactURL));
         modifiableSettings.setValue("bannerURL", bannerURL);
         modifiableSettings.setValue("sendFromEmail", sendFromEmail);
         modifiableSettings.setValue("replyToEmail", replyToEmail);

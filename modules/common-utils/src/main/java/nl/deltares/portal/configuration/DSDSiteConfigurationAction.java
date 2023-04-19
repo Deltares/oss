@@ -26,6 +26,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
+import static nl.deltares.portal.utils.LocalizationUtils.convertToLocalizedMap;
+import static nl.deltares.portal.utils.LocalizationUtils.getAvailableLanguageIds;
+
 @Component(
         configurationPid = OssConstants.DSD_SITE_CONFIGURATIONS_PID,
         configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
@@ -122,28 +125,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         _configurationProvider = configurationProvider;
     }
 
-    private List<String> getAvailableLanguageIds(HttpServletRequest httpServletRequest) {
-        final List<String> ids = new ArrayList<>();
-        final Enumeration<Locale> supportedLocales = httpServletRequest.getLocales();
-        while (supportedLocales.hasMoreElements()){
-            final String language = supportedLocales.nextElement().getLanguage();
-            if (!ids.contains(language)) ids.add(language);
-        }
-        return ids;
-    }
-    private Map<String, String> convertToLocalizedMap(ActionRequest actionRequest, String parameterId){
 
-        HashMap<String, String> map = new HashMap<>();
-        final Enumeration<Locale> locales = actionRequest.getLocales();
-        while (locales.hasMoreElements()){
-            final Locale locale = locales.nextElement();
-            final String language = locale.getLanguage();
-            final String localizedValue = ParamUtil.getString(actionRequest, parameterId + '-' + language);
-            if (localizedValue != null && !map.containsKey(language)) map.put(language, localizedValue);
-        }
-        return map;
-
-    }
     private Map<String, String> convertTemplatesToMap(ActionRequest actionRequest) {
 
         HashMap<String, String> map = new HashMap<>();
