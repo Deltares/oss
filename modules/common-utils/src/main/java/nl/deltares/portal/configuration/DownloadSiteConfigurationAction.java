@@ -23,7 +23,6 @@ import javax.portlet.PortletConfig;
 import javax.portlet.PortletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Map;
 
 import static nl.deltares.portal.configuration.DSDSiteConfigurationAction.getParsedJsonParameter;
