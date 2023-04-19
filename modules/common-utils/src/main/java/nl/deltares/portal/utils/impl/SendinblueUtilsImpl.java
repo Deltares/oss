@@ -36,8 +36,18 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
     private static final String API_NAME = "api-key";
     private static final String BASEURL_KEY = "sendinblue.baseurl";
     private static final String FOLDER_ID_KEY = "sendinblue.folderid";
+    private static final String DEFAULT_KEY = "sendinblue.subscriptions.default";
     private String baseApiPath;
+    private Boolean defaultSubscriptionsUtil = null;
 
+    @Override
+    public boolean isDefault() {
+        if (defaultSubscriptionsUtil != null) return defaultSubscriptionsUtil;
+        if (PropsUtil.contains(DEFAULT_KEY)){
+            defaultSubscriptionsUtil = Boolean.parseBoolean(PropsUtil.get(DEFAULT_KEY));
+        }
+        return defaultSubscriptionsUtil;
+    }
 
     @Override
     public boolean isActive() {
