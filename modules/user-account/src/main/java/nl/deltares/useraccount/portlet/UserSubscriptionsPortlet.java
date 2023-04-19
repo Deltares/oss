@@ -12,6 +12,7 @@ import nl.deltares.portal.utils.EmailSubscriptionUtils;
 import nl.deltares.useraccount.constants.UserProfilePortletKeys;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import javax.portlet.*;
 import java.io.IOException;
@@ -38,8 +39,15 @@ import java.util.List;
 )
 public class UserSubscriptionsPortlet extends MVCPortlet {
 
-    @Reference
     private EmailSubscriptionUtils subscriptionUtils;
+    @Reference(
+            unbind = "-",
+            cardinality = ReferenceCardinality.MANDATORY
+    )
+    protected void setSubscriptionUtilsUtils(EmailSubscriptionUtils subscriptionUtils) {
+        if (!subscriptionUtils.isActive()) return;
+        this.subscriptionUtils = subscriptionUtils;
+    }
 
     @Override
     public void render(RenderRequest request, RenderResponse response) throws IOException, PortletException {
