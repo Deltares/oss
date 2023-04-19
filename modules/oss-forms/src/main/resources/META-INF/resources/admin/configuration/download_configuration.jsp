@@ -5,18 +5,26 @@
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
-<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider" %>
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider" %>
 <%@ page import="nl.deltares.portal.configuration.DownloadSiteConfiguration" %>
+<%@ page import="java.util.List" %>
 
-<liferay-theme:defineObjects/>
+<liferay-theme:defineObjects />
 
-<portlet:defineObjects/>
+<portlet:defineObjects />
 
 <%
     ConfigurationProvider configurationProvider =
             (ConfigurationProvider) request.getAttribute(ConfigurationProvider.class.getName());
     DownloadSiteConfiguration configuration = configurationProvider.getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
+
+    Map<String, String> templateMap = (Map<String,String>) renderRequest.getAttribute("templateMap");
+    if (templateMap == null) templateMap = new HashMap<>();
+
+    final List<String> languageIds = (List<String>) renderRequest.getAttribute("languageIds");
 %>
 <liferay-portlet:actionURL
         portletConfiguration="<%= true %>"
@@ -47,16 +55,32 @@
                 label="download-url"
                 name="downloadURL"
                 value="<%= configuration.downloadURL() %>"/>
-
+        <%
+            Map<String, String> privacyURL = (Map<String,String>) renderRequest.getAttribute("privacyURL");
+            for (String languageId : languageIds) {
+                String name = "privacyURL-" + languageId;
+        %>
         <aui:input
                 label="privacy-url"
-                name="privacyURL"
-                value="<%= configuration.privacyURL() %>"/>
-
+                prefix="<%=languageId%>"
+                name="<%=name%>"
+                value="<%= privacyURL.get(languageId) %>"/>
+        <%
+            }
+        %>
+        <%
+            Map<String, String> contactURL = (Map<String,String>) renderRequest.getAttribute("contactURL");
+            for (String languageId : languageIds) {
+                String name = "contactURL-" + languageId;
+        %>
         <aui:input
                 label="contact-url"
-                name="contactURL"
-                value="<%= configuration.contactURL() %>"/>
+                prefix="<%=languageId%>"
+                name="<%=name%>"
+                value="<%= contactURL.get(languageId) %>"/>
+        <%
+            }
+        %>
 
         <aui:input
                 label="download.configuration.sendFrom"
