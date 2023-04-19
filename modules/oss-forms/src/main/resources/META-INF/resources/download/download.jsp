@@ -5,10 +5,8 @@
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <%@ taglib uri="http://liferay.com/tld/journal" prefix="liferay-journal" %>
-<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
-<%@ page import="nl.deltares.portal.configuration.DownloadSiteConfiguration" %>
 <%@ page import="nl.deltares.portal.utils.DsdParserUtils" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="nl.deltares.portal.model.impl.Subscription" %>
@@ -17,31 +15,20 @@
 <%@ page import="nl.deltares.portal.utils.KeycloakUtils" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="nl.deltares.portal.model.impl.Terms" %>
-<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationException" %>
 
 <liferay-theme:defineObjects />
 
 <portlet:defineObjects />
 
 <%
-    ConfigurationProvider configurationProvider =
-            (ConfigurationProvider) request.getAttribute(ConfigurationProvider.class.getName());
-
-    DownloadSiteConfiguration configuration = null;
-    try {
-        configuration = configurationProvider.getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
-    } catch (ConfigurationException e) {
-        System.err.println(e.getMessage());
-    }
-
     String homeUrl = themeDisplay.getCDNBaseURL();
     String webUrl = themeDisplay.getPathFriendlyURLPublic();
     String groupUrl = themeDisplay.getSiteGroup().getFriendlyURL();
-    String privacyURL = homeUrl + webUrl + groupUrl + configuration.privacyURL();
-    String contactURL = homeUrl + webUrl + groupUrl + configuration.contactURL();
 
 
     Map attributes = (Map) renderRequest.getAttribute("attributes");
+    String privacyURL = (String) renderRequest.getAttribute("privacyURL");
+    String contactURL = (String) renderRequest.getAttribute("contactURL");
     String action = ParamUtil.getString(renderRequest, "action");
     DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
     EmailSubscriptionUtils subscriptionUtils = (EmailSubscriptionUtils) request.getAttribute("subscriptionUtils");
