@@ -49,6 +49,11 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
     }
 
     @Override
+    public boolean isDefault() {
+        return false;
+    }
+
+    @Override
     public boolean isActive() {
         return PropsUtil.contains(BASEURL_KEY);
     }

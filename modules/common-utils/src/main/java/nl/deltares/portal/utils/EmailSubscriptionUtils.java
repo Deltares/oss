@@ -9,6 +9,8 @@ public interface EmailSubscriptionUtils {
 
     boolean isActive();
 
+    boolean isDefault();
+
     boolean isSubscribed(String email, List<String> subscriptionIds) throws Exception;
 
     boolean isSubscribed(String email, String subscriptionId) throws Exception;
