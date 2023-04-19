@@ -1,5 +1,6 @@
 package nl.deltares.portal.configuration;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
@@ -11,6 +12,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.constants.OssConstants;
+import nl.deltares.portal.utils.JsonContentUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
@@ -18,8 +20,15 @@ import org.osgi.service.component.annotations.Reference;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletConfig;
+import javax.portlet.PortletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.Map;
+
+import static nl.deltares.portal.configuration.DSDSiteConfigurationAction.getParsedJsonParameter;
+import static nl.deltares.portal.utils.LocalizationUtils.convertToLocalizedMap;
+import static nl.deltares.portal.utils.LocalizationUtils.getAvailableLanguageIds;
 
 @Component(
         configurationPid = OssConstants.Download_SITE_CONFIGURATIONS_PID,
@@ -40,6 +49,16 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
                 ConfigurationProvider.class.getName(),
                 _configurationProvider);
 
+        try {
+            ThemeDisplay themeDisplay = (ThemeDisplay) httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY);
+            httpServletRequest.setAttribute("contactURL", getParsedJsonParameter(themeDisplay, _configurationProvider, "contactURL"));
+            httpServletRequest.setAttribute("privacyURL", getParsedJsonParameter(themeDisplay, _configurationProvider, "privacyURL"));
+            httpServletRequest.setAttribute("languageIds", getAvailableLanguageIds(httpServletRequest));
+
+        } catch (PortalException e) {
+            throw new PortletException("Could not get 'templateMap' for DownloadSiteConfiguration: " + e.getMessage(), e);
+        }
+
         super.include(portletConfig, httpServletRequest, httpServletResponse);
     }
 
@@ -50,8 +69,8 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
         String downloadURL = ParamUtil.getString(actionRequest, "downloadURL");
-        String privacyURL = ParamUtil.getString(actionRequest, "privacyURL");
-        String contactURL = ParamUtil.getString(actionRequest, "contactURL");
+        Map<String,String> privacyURL = convertToLocalizedMap(actionRequest, "privacyURL");
+        Map<String,String> contactURL = convertToLocalizedMap(actionRequest, "contactURL");
         String sendFromEmail = ParamUtil.getString(actionRequest, "sendFromEmail");
         String replyToEmail = ParamUtil.getString(actionRequest, "replyToEmail");
         String bccToEmail = ParamUtil.getString(actionRequest, "bccToEmail");
@@ -65,8 +84,8 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
                 settings.getModifiableSettings();
 
         modifiableSettings.setValue("downloadURL", downloadURL);
-        modifiableSettings.setValue("privacyURL", privacyURL);
-        modifiableSettings.setValue("contactURL", contactURL);
+        modifiableSettings.setValue("privacyURL", JsonContentUtils.formatMapToJson(privacyURL));
+        modifiableSettings.setValue("contactURL", JsonContentUtils.formatMapToJson(contactURL));
         modifiableSettings.setValue("bannerURL", bannerURL);
         modifiableSettings.setValue("sendFromEmail", sendFromEmail);
         modifiableSettings.setValue("replyToEmail", replyToEmail);

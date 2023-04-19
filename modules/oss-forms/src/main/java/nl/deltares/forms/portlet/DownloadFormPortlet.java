@@ -1,6 +1,7 @@
 package nl.deltares.forms.portlet;
 
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -10,11 +11,9 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
-import nl.deltares.portal.utils.DDMStructureUtil;
-import nl.deltares.portal.utils.DsdParserUtils;
-import nl.deltares.portal.utils.EmailSubscriptionUtils;
-import nl.deltares.portal.utils.KeycloakUtils;
+import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -25,6 +24,8 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import java.io.IOException;
 import java.util.*;
+
+import static nl.deltares.portal.utils.LocalizationUtils.getLocalizedValue;
 
 /**
  * @author rooij_e
@@ -93,6 +94,14 @@ public class DownloadFormPortlet extends MVCPortlet {
             } catch (Exception e) {
                 SessionErrors.add(request, "retrieve-attributes-failed", "Error reading user attributes: " + e.getMessage());
                 request.setAttribute("attributes", new HashMap<>());
+            }
+            try {
+                final String language = themeDisplay.getLocale().getLanguage();
+                DSDSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
+                request.setAttribute("privacyURL", getLocalizedValue(dsdConfig.privacyURL(), language));
+                request.setAttribute("contactURL", getLocalizedValue(dsdConfig.contactURL(), language));
+            } catch (Exception e) {
+                LOG.warn("Error getting configuration: " + e.getMessage());
             }
         }
 
