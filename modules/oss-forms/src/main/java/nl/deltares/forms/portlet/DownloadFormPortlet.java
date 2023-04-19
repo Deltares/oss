@@ -1,7 +1,6 @@
 package nl.deltares.forms.portlet;
 
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
-import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -49,21 +48,21 @@ import static nl.deltares.portal.utils.LocalizationUtils.getLocalizedValue;
 )
 public class DownloadFormPortlet extends MVCPortlet {
 
-
-    //TODO: prepare for migration to sendinblue
     private EmailSubscriptionUtils subscriptionUtils;
-    private KeycloakUtils keycloakUtils;
     @Reference(
             unbind = "-",
             cardinality = ReferenceCardinality.MANDATORY
     )
-    protected void setKeycloakUtils(KeycloakUtils keycloakUtils) {
-
-        if (keycloakUtils.isActive()){
-            this.keycloakUtils = keycloakUtils;
-            this.subscriptionUtils = (EmailSubscriptionUtils) keycloakUtils;
+    protected void setSubscriptionUtilsUtils(EmailSubscriptionUtils subscriptionUtils) {
+        if (!subscriptionUtils.isActive()) return;
+        if (this.subscriptionUtils == null){
+            this.subscriptionUtils = subscriptionUtils;
+        } else if (subscriptionUtils.isDefault()){
+            this.subscriptionUtils = subscriptionUtils;
         }
     }
+    @Reference
+    private KeycloakUtils keycloakUtils;
 
     @Reference
     private DsdParserUtils dsdParserUtils;

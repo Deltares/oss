@@ -16,6 +16,7 @@ import nl.deltares.portal.model.subscriptions.Subscription;
 import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
@@ -52,9 +53,19 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 	@Reference
 	private KeycloakUtils keycloakUtils;
 
-	@Reference
-	private EmailSubscriptionUtils emailSubscriptionUtils;
-
+	private EmailSubscriptionUtils subscriptionUtils;
+	@Reference(
+			unbind = "-",
+			cardinality = ReferenceCardinality.MANDATORY
+	)
+	protected void setSubscriptionUtilsUtils(EmailSubscriptionUtils subscriptionUtils) {
+		if (!subscriptionUtils.isActive()) return;
+		if (this.subscriptionUtils == null){
+			this.subscriptionUtils = subscriptionUtils;
+		} else if (subscriptionUtils.isDefault()){
+			this.subscriptionUtils = subscriptionUtils;
+		}
+	}
 	@Reference
 	private DsdParserUtils dsdParserUtils;
 
@@ -88,7 +99,7 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 				request.setAttribute("eventId", dsdConfig.eventId());
 				List<String> mailingIdsList = Arrays.asList(dsdConfig.mailingIds().split(";"));
 				request.setAttribute("subscriptionSelection", getSubscriptionSelection(user.getEmailAddress(), mailingIdsList));
-				request.setAttribute("subscribed", emailSubscriptionUtils.isSubscribed(user.getEmailAddress(), mailingIdsList));
+				request.setAttribute("subscribed", subscriptionUtils.isSubscribed(user.getEmailAddress(), mailingIdsList));
 			} catch (Exception e) {
 				LOG.warn("Error getting user subscriptions: " + e.getMessage());
 				request.setAttribute("subscribed", false);
@@ -130,11 +141,11 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 
 		HashMap<Subscription, Boolean> subscriptionSelection = new HashMap<>();
 		try {
-			final List<Subscription> mailings = emailSubscriptionUtils.getSubscriptions(email);
+			final List<Subscription> mailings = subscriptionUtils.getSubscriptions(email);
 			for (Subscription mailing : mailings) {
 				final String id = mailing.getId();
 				if (mailingIdsList.contains(id)){
-					subscriptionSelection.put(new Subscription(id, mailing.getName()), emailSubscriptionUtils.isSubscribed(email, Collections.singletonList(id)));
+					subscriptionSelection.put(new Subscription(id, mailing.getName()), subscriptionUtils.isSubscribed(email, Collections.singletonList(id)));
 				}
 			}
 		} catch (Exception e) {

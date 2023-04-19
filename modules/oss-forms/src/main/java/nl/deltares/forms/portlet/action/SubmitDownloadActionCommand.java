@@ -346,48 +346,21 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         }
     }
 
-//    private boolean sendConfirmationEmail(ActionRequest actionRequest, User user, DownloadRequest registrationRequest,
-//                                          ThemeDisplay themeDisplay, @SuppressWarnings("SameParameterValue") String action) {
-//        try {
-//
-//            DownloadSiteConfiguration configuration = _configurationProvider
-//                    .getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
-//
-//            if (!configuration.enableEmails()) return true;
-//
-//            ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", themeDisplay.getLocale(), getClass());
-//            DownloadEmail email = new DownloadEmail(user, resourceBundle, registrationRequest);
-//            email.setReplyToEmail(configuration.replyToEmail());
-//            email.setBCCToEmail(configuration.bccToEmail());
-//            email.setSendFromEmail(configuration.sendFromEmail());
-//            if ("download".equals(action)) {
-//                email.sendDownloadsEmail();
-//                return true;
-//            }
-//            return false;
-//
-//        } catch (Exception e) {
-//            SessionErrors.add(actionRequest, "send-email-failed", "Could not send " + action + " email for user [" + user.getEmailAddress() + "] : " + e.getMessage());
-//            LOG.error("Could not send " + action + " email for user [" + user.getEmailAddress() + "]", e);
-//            return false;
-//        }
-//    }
-
-    //TODO: prepare for migration to sendinblue
     private EmailSubscriptionUtils subscriptionUtils;
-    private KeycloakUtils keycloakUtils;
-
     @Reference(
             unbind = "-",
             cardinality = ReferenceCardinality.MANDATORY
     )
-    protected void setKeycloakUtils(KeycloakUtils keycloakUtils) {
-
-        if (keycloakUtils.isActive()) {
-            this.keycloakUtils = keycloakUtils;
-            this.subscriptionUtils = (EmailSubscriptionUtils) keycloakUtils;
+    protected void setSubscriptionUtilsUtils(EmailSubscriptionUtils subscriptionUtils) {
+        if (!subscriptionUtils.isActive()) return;
+        if (this.subscriptionUtils == null){
+            this.subscriptionUtils = subscriptionUtils;
+        } else if (subscriptionUtils.isDefault()){
+            this.subscriptionUtils = subscriptionUtils;
         }
     }
+    @Reference
+    private KeycloakUtils keycloakUtils;
 
     private boolean isRegisterSomeoneElse(ActionRequest actionRequest) {
         return Boolean.parseBoolean(ParamUtil.getString(actionRequest, "registration_other"));
