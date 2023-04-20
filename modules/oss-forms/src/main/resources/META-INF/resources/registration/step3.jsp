@@ -8,6 +8,7 @@
 <div class="row">
 
     <aui:col width="50">
+        <%--@elvariable id="attributes" type="java.util.Map"--%>
         <c:if test="${not empty attributes}">
             <c:set var="billingEmail" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_email.name()) %>"/>
             <c:set var="billingFirstName" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_firstname.name()) %>"/>

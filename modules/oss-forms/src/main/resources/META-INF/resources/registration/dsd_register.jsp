@@ -9,51 +9,35 @@
 
 <%@ page import="com.liferay.journal.model.JournalArticleDisplay" %>
 <%@ page import="com.liferay.portal.kernel.model.Country" %>
-<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider" %>
 <%@ page import="com.liferay.portal.kernel.service.CountryServiceUtil" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionMessages" %>
 <%@ page import="com.liferay.portal.kernel.util.DateUtil" %>
 <%@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
-<%@ page import="nl.deltares.forms.internal.RegistrationFormDisplayContext" %>
-<%@ page import="nl.deltares.portal.configuration.DSDSiteConfiguration" %>
 <%@ page import="nl.deltares.portal.model.impl.Event" %>
-<%@ page import="nl.deltares.portal.utils.DsdParserUtils" %>
-<%@ page import="nl.deltares.portal.utils.DsdSessionUtils" %>
-<%@ page import="nl.deltares.portal.utils.KeycloakUtils" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="nl.deltares.portal.model.subscriptions.SubscriptionSelection" %>
 <%@ page import="com.liferay.portal.kernel.exception.PortalException" %>
-<%@ page import="nl.deltares.portal.utils.EmailSubscriptionUtils" %>
-<%@ page import="java.util.HashMap" %>
+<%@ page import="nl.deltares.portal.utils.*" %>
 
 <liferay-theme:defineObjects/>
 
 <portlet:defineObjects/>
 
 <%
-    ConfigurationProvider configurationProvider =
-            (ConfigurationProvider) request.getAttribute(ConfigurationProvider.class.getName());
-
-    DSDSiteConfiguration configuration = configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
-
-    String conditionsURL = configuration.conditionsURL();
-
-    String homeUrl = themeDisplay.getCDNBaseURL();
-    String webUrl = themeDisplay.getPathFriendlyURLPublic();
-    String groupUrl = themeDisplay.getSiteGroup().getFriendlyURL();
-    String privacyURL = homeUrl + webUrl + groupUrl + configuration.privacyURL();
-    String contactURL = homeUrl + webUrl + groupUrl + configuration.contactURL();
-
     String remarks = "";
+    Map<String, String> attributes = (Map) renderRequest.getAttribute("attributes");
+    String conditionsURL = (String) renderRequest.getAttribute("conditionsURL");
+    String privacyURL = (String) renderRequest.getAttribute("privacyURL");
+    String contactURL = (String) renderRequest.getAttribute("contactURL");
 
-    Map attributes = (Map) renderRequest.getAttribute("attributes");
     String action = ParamUtil.getString(renderRequest, "action");
     DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
-    final Map<Subscription, Boolean>  subscriptionSelection = (Map<Subscription, Boolean>) request.getAttribute("subscriptionSelection");
+    final List<SubscriptionSelection>  subscriptionSelections = (List) request.getAttribute("subscriptionSelection");
     Event event = null;
     try {
-        event = dsdParserUtils.getEvent(themeDisplay.getScopeGroupId(), String.valueOf(configuration.eventId()), themeDisplay.getLocale());
+        event = dsdParserUtils.getEvent(themeDisplay.getScopeGroupId(), String.valueOf(request.getAttribute("eventId")), themeDisplay.getLocale());
     } catch (PortalException e) {
         SessionErrors.add(liferayPortletRequest, "registration-failed", e.getMessage());
     }
@@ -90,16 +74,16 @@
     <%--    <h2><liferay-ui:message key="dsd.registration.title"/></h2>--%>
 
     <div class="registration-controls d-flex justify-content-between">
-        <a class="prev-step disabled btn-lg btn-primary">
+        <a class="prev-step disabled btn-primary">
             <liferay-ui:message key="prev.step"/>
         </a>
         <%--        <a class="clear-cart enabled btn-lg btn-primary">--%>
         <%--            <liferay-ui:message key="clear.cart"/>--%>
         <%--        </a>--%>
-        <a class="next-step enabled btn-lg btn-primary">
+        <a class="next-step enabled btn-primary">
             <liferay-ui:message key="next.step"/>
         </a>
-        <a class="submit btn-lg btn-primary d-none">
+        <a class="submit btn-primary d-none">
             <liferay-ui:message key="register"/>
         </a>
     </div>
@@ -107,27 +91,27 @@
     <div class="flex-row justify-content-between bs-stepper-indicators py-3">
         <ul class="navbar navbar-nav">
             <li class="nav-item active icon-circle-blank" id="<portlet:namespace/>nav-stepper-step-1">
-                <a class="active" href="#stepper-step-1" title="Step 1" style="font-family:Open Sans,serif">
+                <a class="active" href="#stepper-step-1" title="Step 1" >
                     <span><liferay-ui:message key="dsd.registration.steps.step1"/></span>
                 </a>
             </li>
             <li class="nav-item icon-circle-blank" id="<portlet:namespace/>nav-stepper-step-2">
-                <a href="#stepper-step-2" title="Step 2" style="font-family:Open Sans,serif">
+                <a href="#stepper-step-2" title="Step 2" >
                     <span><liferay-ui:message key="dsd.registration.steps.step2"/></span>
                 </a>
             </li>
             <li class="nav-item icon-circle-blank disabled" id="<portlet:namespace/>nav-stepper-step-3">
-                <a href="#stepper-step-3" title="Step 3" style="font-family:Open Sans,serif">
+                <a href="#stepper-step-3" title="Step 3" >
                     <span><liferay-ui:message key="dsd.registration.steps.step3"/></span>
                 </a>
             </li>
             <li class="nav-item icon-circle-blank" id="<portlet:namespace/>nav-stepper-step-4">
-                <a href="#stepper-step-4" title="Step 4" style="font-family:Open Sans,serif">
+                <a href="#stepper-step-4" title="Step 4" >
                     <span><liferay-ui:message key="dsd.registration.steps.step4"/></span>
                 </a>
             </li>
             <li class="nav-item icon-circle-blank" id="<portlet:namespace/>nav-stepper-step-6">
-                <a href="#stepper-step-6" title="Step 6" style="font-family:Open Sans,serif">
+                <a href="#stepper-step-6" title="Step 6" >
                     <span><liferay-ui:message key="dsd.registration.steps.step6"/></span>
                 </a>
             </li>
@@ -177,13 +161,13 @@
     </div>
 
     <div class="registration-controls d-flex justify-content-between">
-        <a class="prev-step disabled btn-lg btn-primary">
+        <a class="prev-step disabled btn-primary">
             <liferay-ui:message key="prev.step"/>
         </a>
-        <a class="next-step enabled btn-lg btn-primary">
+        <a class="next-step enabled btn-primary">
             <liferay-ui:message key="next.step"/>
         </a>
-        <a class="submit btn-lg btn-primary d-none">
+        <a class="submit btn-primary d-none">
             <liferay-ui:message key="register"/>
         </a>
     </div>

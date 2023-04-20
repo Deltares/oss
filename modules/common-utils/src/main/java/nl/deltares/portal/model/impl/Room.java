@@ -32,4 +32,5 @@ public class Room extends AbsDsdArticle {
         return capacity;
     }
 
+
 }

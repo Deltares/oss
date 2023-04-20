@@ -415,7 +415,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
     private EmailSubscriptionUtils subscriptionUtils;
     @Reference(
             unbind = "-",
-            cardinality = ReferenceCardinality.MANDATORY
+            cardinality = ReferenceCardinality.AT_LEAST_ONE
     )
     protected void setSubscriptionUtilsUtils(EmailSubscriptionUtils subscriptionUtils) {
         if (!subscriptionUtils.isActive()) return;
