@@ -14,7 +14,6 @@ import java.util.*;
 public class Building extends AbsDsdArticle {
 
     private static final Log LOG = LogFactoryUtil.getLog(Building.class);
-    private boolean storeInParentSite;
     private List<Room> rooms = null;
     private double longitude;
     private double latitude;
@@ -27,9 +26,6 @@ public class Building extends AbsDsdArticle {
     private void init() throws PortalException {
         try {
             Document document = getDocument();
-            String storeInParentSite = XmlContentUtils.getDynamicContentByName(document, "storeInParentSite", true);
-            this.storeInParentSite = Boolean.parseBoolean(storeInParentSite);
-
             String geoLocation = XmlContentUtils.getDynamicContentByName(document, "location", false);
             Map<String, String> coords = JsonContentUtils.parseJsonToMap(geoLocation);
             this.longitude = Double.parseDouble(coords.get("longitude"));
@@ -48,11 +44,6 @@ public class Building extends AbsDsdArticle {
     @Override
     public String getStructureKey() {
         return DSD_STRUCTURE_KEYS.Building.name();
-    }
-
-    @Override
-    public boolean storeInParentSite() {
-        return storeInParentSite;
     }
 
     public List<Room> getRooms() {

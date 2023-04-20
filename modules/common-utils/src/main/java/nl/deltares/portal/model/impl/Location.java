@@ -11,7 +11,6 @@ import java.util.Locale;
 import java.util.Map;
 
 public class Location extends AbsDsdArticle {
-    private boolean storeInParentSite;
     private String city = "";
     private String country = "";
     private String address = "";
@@ -29,8 +28,6 @@ public class Location extends AbsDsdArticle {
     private void init() throws PortalException {
         try {
             Document document = getDocument();
-            String storeInParentSite = XmlContentUtils.getDynamicContentByName(document, "storeInParentSite", true);
-            this.storeInParentSite = Boolean.parseBoolean(storeInParentSite);
             this.city = XmlContentUtils.getDynamicContentByName(document, "city", false);
             this.country = XmlContentUtils.getDynamicContentByName(document, "country", false);
             this.address = XmlContentUtils.getDynamicContentByName(document, "address", false);
@@ -52,11 +49,6 @@ public class Location extends AbsDsdArticle {
     @Override
     public String getStructureKey() {
         return DSD_STRUCTURE_KEYS.Location.name();
-    }
-
-    @Override
-    public boolean storeInParentSite() {
-        return storeInParentSite;
     }
 
     public String getCity(){

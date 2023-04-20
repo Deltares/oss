@@ -7,7 +7,7 @@ import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.portal.model.subscriptions.Subscription;
+import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 import nl.deltares.portal.utils.EmailSubscriptionUtils;
 import nl.deltares.useraccount.constants.UserProfilePortletKeys;
 import org.osgi.service.component.annotations.Component;
@@ -42,7 +42,7 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
     private EmailSubscriptionUtils subscriptionUtils;
     @Reference(
             unbind = "-",
-            cardinality = ReferenceCardinality.MANDATORY
+            cardinality = ReferenceCardinality.AT_LEAST_ONE
     )
     protected void setSubscriptionUtilsUtils(EmailSubscriptionUtils subscriptionUtils) {
         if (!subscriptionUtils.isActive()) return;
@@ -59,7 +59,7 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
         User user = themeDisplay.getUser();
         if (!user.isDefaultUser() && user.isActive()) {
             try {
-                final List<Subscription> mailings = subscriptionUtils.getSubscriptions(user.getEmailAddress());
+                final List<SubscriptionSelection> mailings = subscriptionUtils.getSubscriptions(user.getEmailAddress());
                 request.setAttribute("subscriptions", mailings);
             } catch (Exception e) {
                 SessionErrors.add(request, "update-subscription-failed", "Error reading subscriptions: " + e.getMessage());
@@ -82,7 +82,7 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
         User user = themeDisplay.getUser();
 
-        List<Subscription> selectedSubscriptions;
+        List<SubscriptionSelection> selectedSubscriptions;
         try {
             selectedSubscriptions = getSelectedSubscriptions(actionRequest);
         } catch (Exception e) {
@@ -93,10 +93,10 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
 
     }
 
-    private List<Subscription> getSelectedSubscriptions(ActionRequest actionRequest) throws Exception {
+    private List<SubscriptionSelection> getSelectedSubscriptions(ActionRequest actionRequest) throws Exception {
 
-        final List<Subscription> allSubscriptions = subscriptionUtils.getSubscriptions(null); //get list of all subscriptions
-        for (Subscription mailing : allSubscriptions) {
+        final List<SubscriptionSelection> allSubscriptions = subscriptionUtils.getSubscriptions(null); //get list of all subscriptions
+        for (SubscriptionSelection mailing : allSubscriptions) {
             final String id = mailing.getId();
             final boolean selected = ParamUtil.getBoolean(actionRequest, "selected_" + id, false);
             mailing.setSelected(selected);
@@ -104,11 +104,11 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
         return allSubscriptions;
     }
 
-    private void updateUserSubscriptions(ActionRequest actionRequest, User user, List<Subscription> subscriptions) {
+    private void updateUserSubscriptions(ActionRequest actionRequest, User user, List<SubscriptionSelection> subscriptions) {
 
         final String emailAddress = user.getEmailAddress();
         try {
-            for (Subscription subscription : subscriptions) {
+            for (SubscriptionSelection subscription : subscriptions) {
                 if (subscription.isSelected()) {
                     subscriptionUtils.subscribe(user, subscription.getId());
                 } else {
