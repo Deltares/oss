@@ -7,14 +7,12 @@
 <%@ taglib uri="http://liferay.com/tld/journal" prefix="liferay-journal" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
-<%@ page import="nl.deltares.portal.utils.DsdParserUtils" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="nl.deltares.portal.model.impl.Subscription" %>
-<%@ page import="java.util.HashMap" %>
-<%@ page import="nl.deltares.portal.utils.EmailSubscriptionUtils" %>
 <%@ page import="nl.deltares.portal.utils.KeycloakUtils" %>
-<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="nl.deltares.portal.model.subscriptions.SubscriptionSelection" %>
 <%@ page import="nl.deltares.portal.model.impl.Terms" %>
+<%@ page import="nl.deltares.portal.model.impl.Download" %>
+<%@ page import="java.util.List" %>
 
 <liferay-theme:defineObjects />
 
@@ -30,13 +28,13 @@
     String privacyURL = (String) renderRequest.getAttribute("privacyURL");
     String contactURL = (String) renderRequest.getAttribute("contactURL");
     String action = ParamUtil.getString(renderRequest, "action");
-    DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
-    EmailSubscriptionUtils subscriptionUtils = (EmailSubscriptionUtils) request.getAttribute("subscriptionUtils");
-    final Map<Subscription, Boolean> subscriptionSelection = new HashMap<>();
-    final List<Terms> terms = new ArrayList<>();
+    String ddmTemplateKey = (String) request.getAttribute("ddmTemplateKey");
+    List<Download> downloads = (List<Download>) request.getAttribute("downloads");
+    List<SubscriptionSelection> subscriptionSelections = (List<SubscriptionSelection>) request.getAttribute("subscriptionSelections");
+    final List<Terms> terms = (List) renderRequest.getAttribute("terms");
 
-    boolean showLockTypes = false;
-    boolean showLicenseTypes = false;
+    boolean showLockTypes = (boolean) renderRequest.getAttribute("showLockTypes");
+    boolean showLicenseTypes = (boolean) renderRequest.getAttribute("showLicenseTypes");
 
 %>
 

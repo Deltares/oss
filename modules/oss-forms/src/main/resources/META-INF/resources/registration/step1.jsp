@@ -1,4 +1,5 @@
 <%@ page import="nl.deltares.portal.model.impl.Registration" %>
+<%@ page import="nl.deltares.forms.internal.RegistrationFormDisplayContext" %>
 
 <%
     String ddmTemplateKey = (String) request.getAttribute("ddmTemplateKey");

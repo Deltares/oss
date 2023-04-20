@@ -9,7 +9,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
-import nl.deltares.portal.model.subscriptions.Subscription;
+import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 import nl.deltares.portal.utils.EmailSubscriptionUtils;
 import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
@@ -27,7 +27,7 @@ import static java.time.LocalDateTime.now;
 
 @Component(
         immediate = true,
-        service = KeycloakUtils.class
+        service = {KeycloakUtils.class,EmailSubscriptionUtils.class}
 )
 public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils, EmailSubscriptionUtils {
 
@@ -488,7 +488,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
     }
 
     @Override
-    public List<Subscription> getSubscriptions(String emailAddress) throws Exception {
+    public List<SubscriptionSelection> getSubscriptions(String emailAddress) throws Exception {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getAccessToken());
@@ -498,11 +498,11 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
         //Keycloak wraps all attributes in a json array. we need to remove this
         JSONArray mailings = getJsonObjects(jsonResponse);
 
-        final ArrayList<Subscription> allSubscriptions = new ArrayList<>();
+        final ArrayList<SubscriptionSelection> allSubscriptions = new ArrayList<>();
         for (int i = 0; i < mailings.length(); i++) {
             final JSONObject jsonMailing = mailings.getJSONObject(i);
             allSubscriptions.add(
-                    new Subscription(jsonMailing.getString("id"), jsonMailing.getString("name")));
+                    new SubscriptionSelection(jsonMailing.getString("id"), jsonMailing.getString("name")));
         }
         if (emailAddress != null) setUserSubscriptionSelection(emailAddress, allSubscriptions);
 
@@ -510,7 +510,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
     }
 
 
-    private void setUserSubscriptionSelection(String email, List<Subscription> allSubscriptions) throws Exception {
+    private void setUserSubscriptionSelection(String email, List<SubscriptionSelection> allSubscriptions) throws Exception {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getAccessToken());
@@ -522,7 +522,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
 
         for (int i = 0; i < mailings.length(); i++) {
             final String subscriptionId = mailings.getJSONObject(i).getString("mailingId");
-            for (Subscription subscription : allSubscriptions) {
+            for (SubscriptionSelection subscription : allSubscriptions) {
                 final boolean found = subscription.getId().equals(subscriptionId);
                 if (found) {
                     subscription.setSelected(true);
