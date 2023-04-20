@@ -1,7 +1,0 @@
-Bundle-Name: journal-article-listener
-Bundle-SymbolicName: nl.worth.fews.journal-article-listener
-Bundle-Version: 1.0.0
-Import-Package: \
-    nl.deltares.portal.utils, \
-    *
-
