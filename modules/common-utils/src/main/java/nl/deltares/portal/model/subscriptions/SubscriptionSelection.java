@@ -1,13 +1,13 @@
 package nl.deltares.portal.model.subscriptions;
 
-public class Subscription {
+public class SubscriptionSelection {
 
     private final String id;
     private final String name;
 
     private boolean selected;
 
-    public Subscription(String id, String name) {
+    public SubscriptionSelection(String id, String name) {
         this.id = id;
         this.name = name;
     }

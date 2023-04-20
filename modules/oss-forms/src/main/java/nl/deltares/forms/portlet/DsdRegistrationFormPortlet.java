@@ -12,7 +12,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
-import nl.deltares.portal.model.subscriptions.Subscription;
+import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -56,7 +56,7 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 	private EmailSubscriptionUtils subscriptionUtils;
 	@Reference(
 			unbind = "-",
-			cardinality = ReferenceCardinality.MANDATORY
+			cardinality = ReferenceCardinality.AT_LEAST_ONE
 	)
 	protected void setSubscriptionUtilsUtils(EmailSubscriptionUtils subscriptionUtils) {
 		if (!subscriptionUtils.isActive()) return;
@@ -137,21 +137,18 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 
 
 
-	private Map<Subscription, Boolean> getSubscriptionSelection(String email, List<String> mailingIdsList) {
+	private List<SubscriptionSelection> getSubscriptionSelection(String email, List<String> configuredSubscriptionIds) {
 
-		HashMap<Subscription, Boolean> subscriptionSelection = new HashMap<>();
 		try {
-			final List<Subscription> mailings = subscriptionUtils.getSubscriptions(email);
-			for (Subscription mailing : mailings) {
-				final String id = mailing.getId();
-				if (mailingIdsList.contains(id)){
-					subscriptionSelection.put(new Subscription(id, mailing.getName()), subscriptionUtils.isSubscribed(email, Collections.singletonList(id)));
-				}
-			}
+			final List<SubscriptionSelection> subset = new ArrayList<>();
+			final List<SubscriptionSelection> allSubscriptionSelections = subscriptionUtils.getSubscriptions(email);
+			allSubscriptionSelections.forEach(s -> {
+				if (configuredSubscriptionIds.contains(s.getId())) subset.add(s);
+			});
+			return subset;
 		} catch (Exception e) {
-			return Collections.emptyMap();
+			return Collections.emptyList();
 		}
-		return subscriptionSelection;
 	}
 
 	private ConfigurationProvider _configurationProvider;

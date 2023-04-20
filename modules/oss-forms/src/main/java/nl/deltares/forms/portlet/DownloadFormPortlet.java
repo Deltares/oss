@@ -1,6 +1,7 @@
 package nl.deltares.forms.portlet;
 
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -12,6 +13,9 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
+import nl.deltares.portal.model.impl.Download;
+import nl.deltares.portal.model.impl.Terms;
+import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -51,7 +55,7 @@ public class DownloadFormPortlet extends MVCPortlet {
     private EmailSubscriptionUtils subscriptionUtils;
     @Reference(
             unbind = "-",
-            cardinality = ReferenceCardinality.MANDATORY
+            cardinality = ReferenceCardinality.AT_LEAST_ONE
     )
     protected void setSubscriptionUtilsUtils(EmailSubscriptionUtils subscriptionUtils) {
         if (!subscriptionUtils.isActive()) return;
@@ -105,16 +109,16 @@ public class DownloadFormPortlet extends MVCPortlet {
         }
 
         String action = ParamUtil.getString(request, "action");
-        List<String> downloads = new ArrayList<>();
+        List<String> downloadIds = new ArrayList<>();
         String ids;
 
         if ("download".equals(action)) {
             ids = ParamUtil.getString(request, "ids");
             LOG.info(Arrays.toString(ids.split(",", -1)));
-            downloads = new ArrayList<>(Arrays.asList(ids.split(",", -1)));
+            downloadIds = new ArrayList<>(Arrays.asList(ids.split(",", -1)));
         } else {
             ids = ParamUtil.getString(request, "articleId");
-            downloads.add(ids);
+            downloadIds.add(ids);
         }
 
         Optional<DDMTemplate> ddmTemplateOptional = _ddmStructureUtil
@@ -124,11 +128,71 @@ public class DownloadFormPortlet extends MVCPortlet {
                 request.setAttribute("ddmTemplateKey", ddmTemplate.getTemplateKey()));
 
         request.setAttribute("dsdParserUtils", dsdParserUtils);
-        request.setAttribute("subscriptionUtils", subscriptionUtils);
-        request.setAttribute("downloadList", downloads);
-        request.setAttribute("ids", ids);
-
-        request.setAttribute(ConfigurationProvider.class.getName(), _configurationProvider);
+        final List<Download> downloads = toDownloads(themeDisplay.getScopeGroupId(), downloadIds);
+        request.setAttribute("downloads", downloads);
+        request.setAttribute("subscriptionSelections", getSubscriptionSelection(user.getEmailAddress(), downloads));
+        request.setAttribute("terms", getTerms(downloads));
+        final boolean[] requiredTypes = getRequiredTypes(downloads);
+        request.setAttribute("showLockTypes" , requiredTypes[0]);
+        request.setAttribute("showLicenseTypes" , requiredTypes[1]);
         super.render(request, response);
+    }
+
+    private boolean[] getRequiredTypes(List<Download> downloads) {
+        final boolean[] requiredTypes = {false, false};
+        downloads.forEach(d -> {
+            if (d.isLockTypeRequired()) requiredTypes[0] = true;
+            if (d.isLicenseTypeRequired()) requiredTypes[1] = true;
+        });
+        return requiredTypes;
+    }
+
+    private List<Terms> getTerms(List<Download> downloads) {
+
+        final ArrayList<Terms> terms = new ArrayList<>();
+        for (Download download : downloads) {
+            final Terms downloadTerms = download.getTerms();
+            if (downloadTerms != null && !terms.contains(downloadTerms)) {
+                terms.add(download.getTerms());
+            }
+        }
+        return terms;
+    }
+
+    private List<Download> toDownloads(long scopeGroupId, List<String> downloadIds) {
+        final ArrayList<Download> downloads = new ArrayList<>();
+
+        downloadIds.forEach(downloadId -> {
+            try {
+                downloads.add((Download) dsdParserUtils.toDsdArticle(scopeGroupId, downloadId));
+            } catch (PortalException e) {
+                LOG.warn(String.format("Error getting download %s: %s", downloadId, e.getMessage()));
+            }
+        });
+        return downloads;
+    }
+
+    private List<SubscriptionSelection> getSubscriptionSelection(String email, List<Download> downloads) {
+
+        List<SubscriptionSelection> subscriptionSelection = new ArrayList<>();
+        try {
+            for (Download download : downloads) {
+
+                final List<nl.deltares.portal.model.impl.Subscription> subscriptions = download.getSubscriptions();
+                subscriptions.forEach(subscription -> {
+                    final SubscriptionSelection displaySubscription = new SubscriptionSelection(subscription.getId(), subscription.getName());
+                    if (subscriptionSelection.contains(displaySubscription)) return; //do not check multiple times
+                    try {
+                        displaySubscription.setSelected(subscriptionUtils.isSubscribed(email, subscription.getId()));
+                    } catch (Exception e) {
+                        displaySubscription.setSelected(false);
+                    }
+                    subscriptionSelection.add(displaySubscription);
+                });
+            }
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
+        return subscriptionSelection;
     }
 }

@@ -37,7 +37,7 @@
         <liferay-ui:search-container-results results="<%= subscriptions %>"/>
 
         <liferay-ui:search-container-row
-                className="nl.deltares.portal.model.subscriptions.Subscription"
+                className="nl.deltares.portal.model.subscriptions.SubscriptionSelection"
                 modelVar="entry"
         >
 

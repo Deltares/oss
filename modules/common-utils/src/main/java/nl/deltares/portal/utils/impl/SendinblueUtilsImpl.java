@@ -8,7 +8,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.PropsUtil;
-import nl.deltares.portal.model.subscriptions.Subscription;
+import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 import nl.deltares.portal.utils.EmailSubscriptionUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import org.osgi.service.component.annotations.Component;
@@ -45,6 +45,8 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
         if (defaultSubscriptionsUtil != null) return defaultSubscriptionsUtil;
         if (PropsUtil.contains(DEFAULT_KEY)){
             defaultSubscriptionsUtil = Boolean.parseBoolean(PropsUtil.get(DEFAULT_KEY));
+        } else {
+            defaultSubscriptionsUtil = false;
         }
         return defaultSubscriptionsUtil;
     }
@@ -138,7 +140,7 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
     }
 
     @Override
-    public List<Subscription> getSubscriptions(String emailAddress) throws IOException {
+    public List<SubscriptionSelection> getSubscriptions(String emailAddress) throws IOException {
         if (!PropsUtil.contains(FOLDER_ID_KEY)){
             LOG.error("No 'sendinblue.folderid' configured in portal-ext.properties!");
             return Collections.emptyList();
@@ -160,13 +162,13 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
         }
 
         String jsonResponse = readAll(connection);
-        List<Subscription> subscriptions = new ArrayList<>();
+        List<SubscriptionSelection> subscriptions = new ArrayList<>();
         try {
             final JSONObject jsonObject = JsonContentUtils.parseContent(jsonResponse);
             final JSONArray lists = jsonObject.getJSONArray("lists");
             for (int i = 0; i < lists.length(); i++) {
                 final JSONObject list = lists.getJSONObject(i);
-                subscriptions.add(new Subscription(list.getString("id"), list.getString("name")));
+                subscriptions.add(new SubscriptionSelection(list.getString("id"), list.getString("name")));
             }
         } catch (JSONException e) {
             LOG.warn(String.format("Failed to parse lists from response for folder  %s : %s", folderId, e.getMessage()));
@@ -176,7 +178,7 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
         return subscriptions;
     }
 
-    private void setUserSubscriptionSelection(String email, List<Subscription> allSubscriptions) throws IOException {
+    private void setUserSubscriptionSelection(String email, List<SubscriptionSelection> allSubscriptions) throws IOException {
 
         final JSONObject contactInfo = getContactInfo(email);
         if ( contactInfo == null) return;

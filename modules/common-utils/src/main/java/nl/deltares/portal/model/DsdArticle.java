@@ -21,7 +21,6 @@ public interface DsdArticle {
     String getArticleId();
     String getStructureKey();
     Document getDocument();
-    boolean storeInParentSite();
     String getSmallImageURL(ThemeDisplay themeDisplay);
     JournalArticle getJournalArticle();
     void validate() throws PortalException;

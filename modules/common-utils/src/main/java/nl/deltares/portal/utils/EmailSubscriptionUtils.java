@@ -1,7 +1,7 @@
 package nl.deltares.portal.utils;
 
 import com.liferay.portal.kernel.model.User;
-import nl.deltares.portal.model.subscriptions.Subscription;
+import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public interface EmailSubscriptionUtils {
 
     void deleteUser(String email) throws Exception;
 
-    List<Subscription> getSubscriptions(String emailAddress) throws Exception;
+    List<SubscriptionSelection> getSubscriptions(String emailAddress) throws Exception;
 
 
 }
