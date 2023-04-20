@@ -46,7 +46,11 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
     )
     protected void setSubscriptionUtilsUtils(EmailSubscriptionUtils subscriptionUtils) {
         if (!subscriptionUtils.isActive()) return;
-        this.subscriptionUtils = subscriptionUtils;
+        if (this.subscriptionUtils == null){
+            this.subscriptionUtils = subscriptionUtils;
+        } else if (subscriptionUtils.isDefault()){
+            this.subscriptionUtils = subscriptionUtils;
+        }
     }
 
     @Override
