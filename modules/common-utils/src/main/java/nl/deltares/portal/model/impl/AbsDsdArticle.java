@@ -36,11 +36,6 @@ public abstract class AbsDsdArticle implements DsdArticle {
     }
 
     @Override
-    public boolean storeInParentSite() {
-        return false;
-    }
-
-    @Override
     public long getResourceId() {
         if (article == null) return 0;
         return article.getResourcePrimKey();

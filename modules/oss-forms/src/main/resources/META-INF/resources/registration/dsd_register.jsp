@@ -14,12 +14,11 @@
 <%@ page import="com.liferay.portal.kernel.servlet.SessionMessages" %>
 <%@ page import="com.liferay.portal.kernel.util.DateUtil" %>
 <%@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
-<%@ page import="nl.deltares.forms.internal.RegistrationFormDisplayContext" %>
 <%@ page import="nl.deltares.portal.model.impl.Event" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="nl.deltares.portal.model.subscriptions.SubscriptionSelection" %>
 <%@ page import="com.liferay.portal.kernel.exception.PortalException" %>
-<%@ page import="java.util.HashMap" %>
 <%@ page import="nl.deltares.portal.utils.*" %>
 
 <liferay-theme:defineObjects/>
@@ -35,7 +34,7 @@
 
     String action = ParamUtil.getString(renderRequest, "action");
     DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
-    final Map<Subscription, Boolean>  subscriptionSelection = (Map<Subscription, Boolean>) request.getAttribute("subscriptionSelection");
+    final List<SubscriptionSelection>  subscriptionSelections = (List) request.getAttribute("subscriptionSelection");
     Event event = null;
     try {
         event = dsdParserUtils.getEvent(themeDisplay.getScopeGroupId(), String.valueOf(request.getAttribute("eventId")), themeDisplay.getLocale());
