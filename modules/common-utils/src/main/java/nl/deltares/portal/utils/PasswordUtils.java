@@ -4,11 +4,11 @@ import java.security.SecureRandom;
 import java.util.Random;
 
 public class PasswordUtils {
-    static char[] SYMBOLS = "^$*.[]{}()?-\"!@#%&/\\,><':;|_~`".toCharArray();
+    static char[] SYMBOLS = "^$*.?-!@#%&,:;|_~`".toCharArray(); //remove values that can be interpreted bij JSON, XML or HTML
     static char[] LOWERCASE = "abcdefghijklmnopqrstuvwxyz".toCharArray();
     static char[] UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
     static char[] NUMBERS = "0123456789".toCharArray();
-    static char[] ALL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789^$*.[]{}()?-\"!@#%&/\\,><':;|_~`".toCharArray();
+    static char[] ALL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789^$*.?-!@#%&,:;|_~`".toCharArray();
     static Random rand = new SecureRandom();
 
     public static String getPassword(int length) {
