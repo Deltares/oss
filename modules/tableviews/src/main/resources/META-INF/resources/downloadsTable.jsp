@@ -13,7 +13,6 @@
 
 <%
     final Integer count = (Integer) request.getAttribute("total");
-    final String filterEmail = (String) request.getAttribute("filterEmail");
 
 %>
 <aui:input name="runningProcess" type="hidden"/>
@@ -71,7 +70,7 @@
     <aui:form >
         <jsp:useBean id="records" class="java.util.List" scope="request"/>
 
-        <liferay-ui:search-container id="tableResults" delta="50" emptyResultsMessage='<%=LanguageUtil.get(locale, "no-download-records")%>'
+        <liferay-ui:search-container id="tableResults" delta="20" emptyResultsMessage='<%=LanguageUtil.get(locale, "no-download-records")%>'
                                      total="<%=count%>" rowChecker="<%= new RowChecker(renderResponse) %>" >
             <liferay-ui:search-container-results results="<%= records %>" />
 
