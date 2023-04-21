@@ -24,8 +24,8 @@ import nl.deltares.model.LicenseInfo;
 import nl.deltares.portal.configuration.DownloadSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Download;
-import nl.deltares.portal.model.impl.Subscription;
 import nl.deltares.portal.model.impl.Terms;
+import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 import nl.deltares.portal.utils.*;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
@@ -168,23 +168,32 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
     }
 
     private boolean updateSubscriptions(DownloadRequest downloadRequest, User user) {
-        Set<Subscription> subscriptions = downloadRequest.getSubscriptions();
-        if (subscriptions != null) {
-            subscriptions.forEach(subscription -> {
-                if (downloadRequest.isSubscribe(subscription)) {
-                    try {
-                        subscriptionUtils.subscribe(user, subscription.getId());
-                    } catch (Exception e) {
-                        LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", user.getEmailAddress(), subscription.getName(), e.getMessage()));
-                    }
+        List<SubscriptionSelection> subscriptionSelections = downloadRequest.getSubscriptionSelections();
+        if (subscriptionSelections != null) {
+            List<String> subscribeIds = new ArrayList<>();
+            List<String> unsubscribeIds = new ArrayList<>();
+            for (SubscriptionSelection subscription : subscriptionSelections) {
+                if (subscription.isSelected()) {
+                    subscribeIds.add(subscription.getId());
                 } else {
-                    try {
-                        subscriptionUtils.unsubscribe(user.getEmailAddress(), subscription.getId());
-                    } catch (Exception e) {
-                        LOG.warn(String.format("Failed to unsubscribe user %s for mailing %s: %s", user.getEmailAddress(), subscription.getName(), e.getMessage()));
-                    }
+                    unsubscribeIds.add(subscription.getId());
                 }
-            });
+            }
+            if (subscribeIds.size() > 0) {
+                try {
+                    subscriptionUtils.subscribeAll(user, subscribeIds);
+                } catch (Exception e) {
+                    LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", user.getEmailAddress(), subscribeIds, e.getMessage()));
+                }
+            }
+            if (unsubscribeIds.size() > 0) {
+                try {
+                    subscriptionUtils.unsubscribeAll(user.getEmailAddress(), unsubscribeIds);
+                } catch (Exception e) {
+                    LOG.warn(String.format("Failed to unsubscribe user %s for mailing %s: %s", user.getEmailAddress(), unsubscribeIds, e.getMessage()));
+                }
+            }
+
         }
         return true;
     }
@@ -253,10 +262,10 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
      */
     private void setSubscriptionSelection(ActionRequest actionRequest, DownloadRequest downloadRequest) {
 
-        final Set<Subscription> subscriptions = downloadRequest.getSubscriptions();
-        for (Subscription subscription : subscriptions) {
+        final List<SubscriptionSelection> subscriptions = downloadRequest.getSubscriptionSelections();
+        for (SubscriptionSelection subscription : subscriptions) {
             final String selected = ParamUtil.getString(actionRequest, "subscription-" + subscription.getId());
-            downloadRequest.setSubscribe(subscription, Boolean.parseBoolean(selected));
+            subscription.setSelected(Boolean.parseBoolean(selected));
         }
     }
 

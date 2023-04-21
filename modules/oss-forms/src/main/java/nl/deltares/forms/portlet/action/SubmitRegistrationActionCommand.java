@@ -163,23 +163,31 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
         List<String> subscribableMailingIds = registrationRequest.getSubscribableMailingIds();
         if (subscribableMailingIds != null) {
+            List<String> subscribeIds = new ArrayList<>();
+            List<String> unsubscribeIds = new ArrayList<>();
             subscribableMailingIds.forEach(mailingId -> {
-
                 final String selected = ParamUtil.getString(actionRequest, "subscription-" + mailingId);
                 if (Boolean.parseBoolean(selected)) {
-                    try {
-                        subscriptionUtils.subscribe(user, mailingId);
-                    } catch (Exception e) {
-                        LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", user.getEmailAddress(), mailingId, e.getMessage()));
-                    }
+                    subscribeIds.add(mailingId);
                 } else {
-                    try {
-                        subscriptionUtils.unsubscribe(user.getEmailAddress(), mailingId);
-                    } catch (Exception e) {
-                        LOG.warn(String.format("Failed to unsubscribe user %s for mailing %s: %s", user.getEmailAddress(), mailingId, e.getMessage()));
-                    }
+                    unsubscribeIds.add(mailingId);
                 }
             });
+
+            if (subscribeIds.size() > 0) {
+                try {
+                    subscriptionUtils.subscribeAll(user, subscribeIds);
+                } catch (Exception e) {
+                    LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", user.getEmailAddress(), subscribeIds, e.getMessage()));
+                }
+            }
+            if (unsubscribeIds.size() > 0) {
+                try {
+                    subscriptionUtils.unsubscribeAll(user.getEmailAddress(), unsubscribeIds);
+                } catch (Exception e) {
+                    LOG.warn(String.format("Failed to unsubscribe user %s for mailing %s: %s", user.getEmailAddress(), unsubscribeIds, e.getMessage()));
+                }
+            }
         }
 
         HashMap<String, String> userPreferences = new HashMap<>();
