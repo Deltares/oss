@@ -16,6 +16,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import javax.portlet.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -108,14 +109,17 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
 
         final String emailAddress = user.getEmailAddress();
         try {
+            List<String> subscribeIds = new ArrayList<>();
+            List<String> unsubscribeIds = new ArrayList<>();
             for (SubscriptionSelection subscription : subscriptions) {
                 if (subscription.isSelected()) {
-                    subscriptionUtils.subscribe(user, subscription.getId());
+                    subscribeIds.add(subscription.getId());
                 } else {
-                    subscriptionUtils.unsubscribe(emailAddress, subscription.getId());
+                    unsubscribeIds.add(subscription.getId());
                 }
             }
-
+            subscriptionUtils.subscribeAll(user, subscribeIds);
+            subscriptionUtils.unsubscribeAll(emailAddress, unsubscribeIds);
             SessionMessages.add(actionRequest, "update-subscription-success");
         } catch (Exception e) {
             SessionErrors.add(actionRequest, "update-subscription-failed", e.getMessage());

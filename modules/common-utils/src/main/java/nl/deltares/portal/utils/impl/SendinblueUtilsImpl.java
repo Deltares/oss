@@ -63,28 +63,31 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
         if (contactInfo == null) return false;
 
         //Keycloak wraps all attributes in a json array. we need to remove this
-        return isSubscriptionInList(subscriptionIds, contactInfo.getJSONArray("listIds"));
+        final ArrayList<Integer> intList = new ArrayList<>();
+        subscriptionIds.forEach(s -> intList.add(Integer.parseInt(s)));
+        return isSubscriptionInList(intList, contactInfo.getJSONArray("listIds"));
 
     }
 
-    private boolean isSubscriptionInList(String subscriptionId, JSONArray listIds) {
+    private boolean isSubscriptionInList(int subscriptionId, JSONArray listIds) {
         boolean[] subscribed = {false};
 
         if (listIds == null) return false;
         for (int i = 0; i < listIds.length(); i++) {
-            if (subscriptionId.equals(listIds.getString(i))) {
+            if (subscriptionId == listIds.getInt(i)) {
                 subscribed[0] = true;
                 break;
             }
         }
         return subscribed[0];
     }
-    private boolean isSubscriptionInList(List<String> subscriptionIds, JSONArray listIds) {
+
+    private boolean isSubscriptionInList(List<Integer> subscriptionIds, JSONArray listIds) {
         boolean[] subscribed = {false};
 
         if (listIds == null) return false;
         for (int i = 0; i < listIds.length(); i++) {
-            if (subscriptionIds.contains(listIds.getString(i))) {
+            if (subscriptionIds.contains(listIds.getInt(i))) {
                 subscribed[0] = true;
                 break;
             }
@@ -99,26 +102,37 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
 
     @Override
     public void subscribe(User user, String subscriptionId) throws Exception {
-
-        final JSONObject contactInfo = getContactInfo(user.getEmailAddress());
-        JSONObject jsonUser = convertToContact(user, contactInfo);
-        addSubscription(jsonUser, subscriptionId);
-        updateContact(jsonUser);
-
-        LOG.info(String.format("User %s is subscribed for subscription %s", user.getEmailAddress(), subscriptionId ));
+        subscribeAll(user, Collections.singletonList(subscriptionId));
     }
 
     @Override
+    public void subscribeAll(User user, List<String> subscriptionIds) throws Exception {
+
+        final JSONObject contactInfo = getContactInfo(user.getEmailAddress());
+        JSONObject jsonUser = convertToContact(user, contactInfo);
+        if (addSubscriptions(jsonUser, subscriptionIds)) {
+            updateContact(jsonUser);
+            LOG.info(String.format("User %s is subscribed for subscriptions %s", user.getEmailAddress(), subscriptionIds));
+        }
+    }
+
+
+    @Override
     public void unsubscribe(String email, String subscriptionId) throws Exception {
+        unsubscribeAll(email, Collections.singletonList(subscriptionId));
+    }
+
+    @Override
+    public void unsubscribeAll(String email, List<String> subscriptionIds) throws Exception {
 
         final JSONObject contactInfo = getContactInfo(email);
         if (contactInfo == null) return; // user doesn't exist
 
         JSONObject jsonUser = convertToContact(null, contactInfo);
-        removeSubscription(jsonUser, subscriptionId);
-        updateContact(jsonUser);
-
-        LOG.info(String.format("User %s is un-subscribed for subscription %s", email, subscriptionId ));
+        if (removeSubscriptions(jsonUser, subscriptionIds)) {
+            updateContact(jsonUser);
+            LOG.info(String.format("User %s is un-subscribed for subscription %s", email, subscriptionIds ));
+        }
     }
 
     @Override
@@ -187,7 +201,7 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
         if (listIds == null || listIds.length() == 0) return;
 
         allSubscriptions.forEach(subscription -> {
-            if (isSubscriptionInList(subscription.getId(), listIds)){
+            if (isSubscriptionInList(Integer.parseInt(subscription.getId()), listIds)){
                 subscription.setSelected(true);
             }
         });
@@ -197,9 +211,9 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put(API_NAME, PropsUtil.get(API_KEY));
-
+        final String email = jsonUser.getString("email");
         //open connection
-        HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts", "POST", headers);
+        HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/" + email, "PUT", headers);
         connection.setDoOutput(true);
         try (Writer w = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8)) {
             w.write(jsonUser.toJSONString());
@@ -207,22 +221,31 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
         checkResponse(connection);
     }
 
-    private void addSubscription(JSONObject jsonUser, String listId) {
-        final JSONArray listIds = jsonUser.getJSONArray("listIds");
-        if (!isSubscriptionInList(Collections.singletonList(listId), listIds)){
-            listIds.put(listId);
-        }
-    }
-
-    private void removeSubscription(JSONObject jsonUser, String listId) {
+    private boolean addSubscriptions(JSONObject jsonUser, List<String> newIds) {
         final JSONArray listIds = jsonUser.getJSONArray("listIds");
         final JSONArray newArray = JSONFactoryUtil.createJSONArray();
+        for (String newId : newIds) {
+            final int intId = Integer.parseInt(newId);
+            if (!isSubscriptionInList(Collections.singletonList(intId), listIds)) {
+                newArray.put(intId);
+            }
+        }
+        jsonUser.put("listIds", newArray); //put only the values that need to be added
+        return newArray.length() > 0;
+    }
+
+    private boolean removeSubscriptions(JSONObject jsonUser, List<String> removeIds) {
+        final JSONArray listIds = jsonUser.getJSONArray("listIds");
+        jsonUser.remove("listIds");
+        final JSONArray removeArray = JSONFactoryUtil.createJSONArray();
         for (int i = 0; i < listIds.length(); i++) {
             final String id = listIds.getString(i);
-            if (id.equals(listId)) continue;
-            newArray.put(id);
+            if (removeIds.contains(id)){
+                removeArray.put(listIds.getInt(i));
+            }
         }
-        jsonUser.put("listIds", newArray);
+        jsonUser.put("unlinkListIds", removeArray);
+        return removeArray.length() > 0;
     }
 
     private JSONObject convertToContact(User user, JSONObject contactInfo)  {
