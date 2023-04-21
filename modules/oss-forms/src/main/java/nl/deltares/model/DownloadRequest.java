@@ -6,6 +6,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import nl.deltares.portal.model.impl.Download;
 import nl.deltares.portal.model.impl.Subscription;
 import nl.deltares.portal.model.impl.Terms;
+import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -20,7 +21,7 @@ public class DownloadRequest {
     private final long groupId;
     private String bannerUrl = null;
     private BillingInfo billingInfo;
-    final private Map<Subscription, Boolean> subscriptions = new HashMap<>();
+    final private List<SubscriptionSelection> subscriptionSelections = new ArrayList<>();
     final private Map<String, Map<String, String>> shareInfo = new HashMap<>();
     private LicenseInfo licenseInfo;
 
@@ -42,7 +43,12 @@ public class DownloadRequest {
     public void addDownload(Download download) {
         downloads.add(download);
         final List<Subscription> subs = download.getSubscriptions();
-        subs.forEach(sub -> subscriptions.putIfAbsent(sub, false));
+
+        subs.forEach(sub -> {
+            final SubscriptionSelection subSelection = new SubscriptionSelection(sub.getId(), sub.getName());
+            subSelection.setSelected(false);
+            if (!subscriptionSelections.contains(subSelection)) subscriptionSelections.add(subSelection);
+        });
     }
 
     public List<Download> getDownloads() {
@@ -57,17 +63,8 @@ public class DownloadRequest {
         return billingInfo;
     }
 
-    public Set<Subscription> getSubscriptions() {
-        return subscriptions.keySet();
-    }
-
-    public void setSubscribe(Subscription subscription, boolean subscribe) {
-        this.subscriptions.put(subscription, subscribe);
-    }
-
-    public boolean isSubscribe(Subscription subscription) {
-        final Boolean subscribe = subscriptions.get(subscription);
-        return Boolean.TRUE.equals(subscribe);
+    public List<SubscriptionSelection> getSubscriptionSelections() {
+        return subscriptionSelections;
     }
 
     public URL getBannerURL() throws MalformedURLException {
@@ -89,13 +86,6 @@ public class DownloadRequest {
     public boolean isShowSubscription(){
         for (Download download : downloads) {
             if (download.isShowSubscription()) return true;
-        }
-        return false;
-    }
-
-    public boolean isBillingRequired(){
-        for (Download download : downloads) {
-            if (download.isBillingRequired()) return true;
         }
         return false;
     }

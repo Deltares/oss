@@ -281,3 +281,4 @@ license*.xml
 /modules/fullcalendar/package-lock.json
 /docker/keycloak/deployments/deltares-extension-bundle-2.0.ear.deployed
 /docker/liferay/lmcrypt/lmcrypt
+/http-client-files/http-client.env.json

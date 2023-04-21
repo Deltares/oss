@@ -447,6 +447,12 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
     }
 
     @Override
+    public void subscribeAll(User user, List<String> mailingIds) throws Exception {
+        for (String mailingId : mailingIds) {
+            subscribe(user, mailingId);
+        }
+    }
+    @Override
     public void subscribe(User user, String mailingId) throws Exception {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
@@ -456,6 +462,12 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
         checkResponse(connection);
     }
 
+    @Override
+    public void unsubscribeAll(String email, List<String> mailingIds) throws Exception {
+        for (String mailingId : mailingIds) {
+            unsubscribe(email, mailingId);
+        }
+    }
     @Override
     public void unsubscribe(String email, String mailingId) throws Exception {
 
