@@ -1,6 +1,5 @@
 <div class="row">
     <span>
-        <liferay-ui:message key="dsd.registration.step4.relevant.information"/>
         <p>
             <liferay-ui:message key="dsd.registration.step4.newsletter.register"/>:
         </p>
