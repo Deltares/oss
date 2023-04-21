@@ -1,5 +1,7 @@
 package nl.deltares.portal.model.subscriptions;
 
+import java.util.Objects;
+
 public class SubscriptionSelection {
 
     private final String id;
@@ -28,4 +30,16 @@ public class SubscriptionSelection {
         this.selected = selected;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SubscriptionSelection that = (SubscriptionSelection) o;
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

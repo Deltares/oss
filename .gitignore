@@ -278,3 +278,4 @@ license*.xml
 /themes/deltares-main-theme/
 /themes/deltares-theme/src/WEB-INF/src/resources-importer/
 /http-client-files/http-client.env-bk.json
+/http-client-files/http-client.env.json
