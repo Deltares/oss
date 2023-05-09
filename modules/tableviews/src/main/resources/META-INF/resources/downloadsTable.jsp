@@ -43,9 +43,28 @@
                     <div class="control-label"><liferay-ui:message key="table.filter.label"/></div>
                 </aui:col>
                 <aui:col width="20">
-                    <aui:input name="filterEmail" label="" />
+                    <aui:input name="filterValue" label="" />
                 </aui:col>
-                <aui:col width="50"/>
+                <aui:col width="50">
+                    <div class="d-flex justify-content-start">
+                    <div class="pr-3">
+                        <aui:input
+                                name="filterSelection"
+                                label="E-mail"
+                                type="radio"
+                                value="email"
+                                checked="true"/>
+                    </div>
+                    <div class="pr-3">
+                        <aui:input
+                                name="filterSelection"
+                                label="Article ID"
+                                type="radio"
+                                value="articleid"
+                                checked="false"/>
+                    </div>
+                    </div>
+                </aui:col>
                 <aui:col width="20">
                     <aui:button type="submit" value="table.filter.button" />
                     <aui:button type="cancel" onClick="<%= viewURL %>" value="table.filter.clear"/>
