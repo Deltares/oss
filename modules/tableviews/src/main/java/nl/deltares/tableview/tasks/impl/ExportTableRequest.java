@@ -117,8 +117,20 @@ public class ExportTableRequest extends AbstractDataRequest {
                         email = user.getEmailAddress();
                     }
                 }
+                final String modifiedDate;
+                if (download.getModifiedDate() != null) {
+                    modifiedDate = dateFormat.format(download.getModifiedDate());
+                } else {
+                    modifiedDate = "";
+                }
+                final String expiryDate;
+                if (download.getExpiryDate() != null) {
+                    expiryDate = dateFormat.format(download.getExpiryDate());
+                } else {
+                    expiryDate = "";
+                }
                 writer.println(String.format("%d,%s,%s,%d,%s,%s,%s,%s,%s,%s",
-                        download.getDownloadId(), dateFormat.format(download.getModifiedDate()), dateFormat.format(download.getExpiryDate()),
+                        download.getDownloadId(), modifiedDate, expiryDate,
                         download.getShareId(), download.getFilePath(), email, download.getOrganization(),
                         download.getCity(), download.getCountryCode(), download.getDirectDownloadUrl()));
 
