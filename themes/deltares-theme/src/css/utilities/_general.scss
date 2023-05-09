@@ -101,15 +101,15 @@ a.link-underline {
     display: block;
 }
 
-.journal-content-article ol li{
+.portlet-body ol li{
     list-style-type: decimal;
     list-style-position:inside;
 }
 
-.journal-content-article ul li {
+.portlet-body ul li {
     padding-left: 1rem;
 }
-.journal-content-article ul li::before{
+.portlet-body ul li::before{
     content: "\2022";
     color: #00E399;
     font-weight: bold; /* If you want it to be bold */
@@ -118,11 +118,11 @@ a.link-underline {
     margin-left: -1em; /* Also needed for space (tweak if needed) */
 }
 
-.journal-content-article a:not([class*="button"]):focus, .journal-content-article a:not([class*="button"]):hover {
+.portlet-body a:not([class*="button"]):focus, .portlet-body a:not([class*="button"]):hover {
     color: var(--text-quinary);
 }
 
-.journal-content-article a:not([class*="button"]) {
+.portlet-body a:not([class*="button"]) {
     color: var(--text-secondary);
     text-underline-offset: 2px;
     transition-property: all;
@@ -132,7 +132,7 @@ a.link-underline {
     text-decoration-skip-ink: none;
 }
 
-.journal-content-article :where(a):not(:where([class~="not-prose"] *)) {
+.portlet-body :where(a):not(:where([class~="not-prose"] *)) {
     color: var(--tw-prose-links);
     text-decoration: underline;
     font-weight: 500;
