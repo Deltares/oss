@@ -101,15 +101,15 @@ a.link-underline {
     display: block;
 }
 
-.cta_box ol li, .journal-content-article ol li{
+.journal-content-article ol li{
     list-style-type: decimal;
     list-style-position:inside;
 }
 
-.cta_box ul li, .journal-content-article ul li {
+.journal-content-article ul li {
     padding-left: 1rem;
 }
-.cta_box ul li::before, .journal-content-article ul li::before{
+.journal-content-article ul li::before{
     content: "\2022";
     color: #00E399;
     font-weight: bold; /* If you want it to be bold */
