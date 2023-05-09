@@ -80,6 +80,8 @@ public interface DownloadLocalService
 
 	public int countDownloads(long groupId);
 
+	public int countDownloadsByArticleId(long groupId, long articleId);
+
 	public int countDownloadsByShareId(long groupId, int shareId);
 
 	public int countDownloadsByUserId(long groupId, long userId);
@@ -219,6 +221,9 @@ public interface DownloadLocalService
 	public List<Download> findDownloads(long groupId);
 
 	public List<Download> findDownloads(long groupId, int start, int end);
+
+	public List<Download> findDownloadsByArticleId(
+		long groupId, long articleId);
 
 	public List<Download> findDownloadsByShareId(long groupId, int shareId);
 

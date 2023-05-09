@@ -60,6 +60,12 @@ public class DownloadLocalServiceWrapper
 	}
 
 	@Override
+	public int countDownloadsByArticleId(long groupId, long articleId) {
+		return _downloadLocalService.countDownloadsByArticleId(
+			groupId, articleId);
+	}
+
+	@Override
 	public int countDownloadsByShareId(long groupId, int shareId) {
 		return _downloadLocalService.countDownloadsByShareId(groupId, shareId);
 	}
@@ -278,6 +284,14 @@ public class DownloadLocalServiceWrapper
 		findDownloads(long groupId, int start, int end) {
 
 		return _downloadLocalService.findDownloads(groupId, start, end);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.oss.download.model.Download>
+		findDownloadsByArticleId(long groupId, long articleId) {
+
+		return _downloadLocalService.findDownloadsByArticleId(
+			groupId, articleId);
 	}
 
 	@Override

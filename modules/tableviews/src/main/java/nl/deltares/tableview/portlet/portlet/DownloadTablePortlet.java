@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
+import nl.deltares.oss.download.service.persistence.DownloadUtil;
 import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.tableview.model.DisplayDownload;
 import nl.deltares.tableview.portlet.constants.TablePortletKeys;
@@ -66,27 +67,35 @@ public class DownloadTablePortlet extends MVCPortlet {
 
         final int cur = ParamUtil.getInteger(renderRequest, "cur", 0);
         final int deltas = ParamUtil.getInteger(renderRequest, "delta", 50);
-        final String email = ParamUtil.getString(renderRequest, "filterEmail", null);
+        final String filterValue = ParamUtil.getString(renderRequest, "filterValue", null);
+        final String filterSelection = ParamUtil.getString(renderRequest, "filterSelection", null);
 
-        doFilterValues(email, cur, deltas, renderRequest);
+        doFilterValues(filterValue, filterSelection, cur, deltas, renderRequest);
 
         super.render(renderRequest, renderResponse);
     }
 
-    private void doFilterValues(String email, int cur, int deltas, RenderRequest renderRequest) {
+    private void doFilterValues(String filterValue, String filterSelection, int cur, int deltas, RenderRequest renderRequest) {
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest
                 .getAttribute(WebKeys.THEME_DISPLAY);
 
         final long siteGroupId = themeDisplay.getSiteGroupId();
-        final List<Download> downloads;
-        final int downloadsCount;
+        List<Download> downloads = null;
+        int downloadsCount = 0;
         final int end = cur + deltas;
         try {
-            if (email != null && email.trim().length() > 0) {
-                User user = UserLocalServiceUtil.getUserByEmailAddress(themeDisplay.getCompanyId(), email);
-                downloads = DownloadLocalServiceUtil.findDownloadsByUserId(siteGroupId, user.getUserId(), cur, end);
-                downloadsCount = DownloadLocalServiceUtil.countDownloadsByUserId(siteGroupId, user.getUserId());
-            } else {
+            if (filterValue != null && filterValue.trim().length() > 0) {
+                if (filterSelection.equals("email")) {
+                    User user = UserLocalServiceUtil.getUserByEmailAddress(themeDisplay.getCompanyId(), filterValue);
+                    downloads = DownloadLocalServiceUtil.findDownloadsByUserId(siteGroupId, user.getUserId(), cur, end);
+                    downloadsCount = DownloadLocalServiceUtil.countDownloadsByUserId(siteGroupId, user.getUserId());
+                } else if (filterSelection.equals("articleid")){
+                    final long downloadId = Long.parseLong(filterValue);
+                    downloads = DownloadLocalServiceUtil.findDownloadsByArticleId(siteGroupId, downloadId);
+                    downloadsCount = DownloadLocalServiceUtil.countDownloadsByArticleId(siteGroupId, downloadId);
+                }
+            }
+            if (downloads == null) {
                 downloads = DownloadLocalServiceUtil.findDownloads(siteGroupId, cur, end);
                 downloadsCount = DownloadLocalServiceUtil.countDownloads(siteGroupId);
             }
@@ -104,7 +113,7 @@ public class DownloadTablePortlet extends MVCPortlet {
         final ArrayList<DisplayDownload> displays = new ArrayList<>(downloads.size());
         downloads.forEach(download -> displays.add(new DisplayDownload(download)));
 
-        displays.sort(DisplayDownload::compareTo);
+        displays.sort(DisplayDownload::compareDesc);
         return displays;
     }
 

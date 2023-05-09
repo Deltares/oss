@@ -7,7 +7,7 @@ import nl.deltares.oss.download.model.Download;
 import java.util.Date;
 
 
-public class DisplayDownload implements Comparable<DisplayDownload> {
+public class DisplayDownload {
 
     final private Download download;
     final private String email;
@@ -96,14 +96,13 @@ public class DisplayDownload implements Comparable<DisplayDownload> {
         return licenseDownloadUrl;
     }
 
-    @Override
-    public int compareTo(DisplayDownload o) {
-
-        final int compare = getModifiedDate().compareTo(o.getModifiedDate());
+    public int compareDesc(DisplayDownload o){
+        final int compare = o.getModifiedDate().compareTo(getModifiedDate());
         if (compare == 0) {
-            return Long.compare(getDownloadId(), o.getDownloadId());
+            return Long.compare(o.getDownloadId(), getDownloadId());
         } else {
             return compare;
         }
+
     }
 }

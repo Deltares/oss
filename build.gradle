@@ -3,7 +3,6 @@ import org.codehaus.groovy.runtime.GStringImpl
 
 plugins {
   id "org.sonarqube" version "2.7.1"
-  id 'net.saliman.properties' version '1.4.6'
 }
 
 project.ext {

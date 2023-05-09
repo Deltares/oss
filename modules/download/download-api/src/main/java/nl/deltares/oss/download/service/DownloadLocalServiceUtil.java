@@ -68,6 +68,10 @@ public class DownloadLocalServiceUtil {
 		return getService().countDownloads(groupId);
 	}
 
+	public static int countDownloadsByArticleId(long groupId, long articleId) {
+		return getService().countDownloadsByArticleId(groupId, articleId);
+	}
+
 	public static int countDownloadsByShareId(long groupId, int shareId) {
 		return getService().countDownloadsByShareId(groupId, shareId);
 	}
@@ -248,6 +252,12 @@ public class DownloadLocalServiceUtil {
 		long groupId, int start, int end) {
 
 		return getService().findDownloads(groupId, start, end);
+	}
+
+	public static List<Download> findDownloadsByArticleId(
+		long groupId, long articleId) {
+
+		return getService().findDownloadsByArticleId(groupId, articleId);
 	}
 
 	public static List<Download> findDownloadsByShareId(
