@@ -1,0 +1,35 @@
+#content {
+  padding-top: 56px;
+
+  > .inner {
+    overflow-x: unset;
+    padding: 2rem 0;
+  }
+}
+
+@media (max-width: 1023px) {
+  #content {
+    > .inner {
+      min-height: calc(100vh - 114px);
+
+      .has-control-menu & {
+        min-height: 40vh;
+      }
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  #content {
+    padding-top: 129px;
+
+    > .inner {
+      min-height: calc(100vh - 362px - 129px);
+      padding: 4rem 0;
+
+      .has-control-menu & {
+        min-height: 60vh;
+      }
+    }
+  }
+}
