@@ -78,7 +78,7 @@
     </div>
 
     <div class="flex-row justify-content-between bs-stepper-indicators py-3">
-        <ul class="navbar navbar-nav">
+        <ul class="navbar navbar-nav form-step">
             <li class="nav-item active icon-circle-blank" id="<portlet:namespace/>nav-stepper-step-1">
                 <a class="active" href="#stepper-step-1" title="Step 1" style="font-family:Open Sans,serif">
                     <span><liferay-ui:message key="dsd.registration.steps.step1"/></span>

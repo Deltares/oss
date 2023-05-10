@@ -101,15 +101,15 @@ a.link-underline {
     display: block;
 }
 
-.journal-content-article ol li{
+.portlet-body ol li{
     list-style-type: decimal;
     list-style-position:inside;
 }
 
-.journal-content-article ul li {
+.portlet-body ul li {
     padding-left: 1rem;
 }
-.journal-content-article ul li::before{
+.portlet-body ul li::before{
     content: "\2022";
     color: #00E399;
     font-weight: bold; /* If you want it to be bold */
