@@ -109,7 +109,7 @@ a.link-underline {
 .portlet-body ul li {
     padding-left: 1rem;
 }
-.portlet-body ul li::before{
+.portlet-body ul:not(.nav):not(.form-step):not(.download-group):not(.c-downloads-list)  li::before{
     content: "\2022";
     color: #00E399;
     font-weight: bold; /* If you want it to be bold */
