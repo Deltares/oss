@@ -29,16 +29,16 @@ body, h1, h2, h3, h4, h5, h6,
 p, blockquote, ul, ol, li,
 table, tr, th, td, form, fieldset,
 legend, button, div, object, img {
-  border: 0;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  text-align: left;
-  vertical-align: top;
+    border: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    vertical-align: top;
 }
 
 strong {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 // Generic styling
@@ -101,15 +101,15 @@ a.link-underline {
     display: block;
 }
 
-.portlet-body ol li{
+.cta_box ol li, .journal-content-article ol li{
     list-style-type: decimal;
     list-style-position:inside;
 }
 
-.portlet-body ul li {
+.cta_box ul li, .journal-content-article ul li {
     padding-left: 1rem;
 }
-.portlet-body ul li::before{
+.cta_box ul li::before, .journal-content-article ul li::before{
     content: "\2022";
     color: #00E399;
     font-weight: bold; /* If you want it to be bold */
