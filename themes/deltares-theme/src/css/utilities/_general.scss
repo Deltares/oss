@@ -101,15 +101,15 @@ a.link-underline {
     display: block;
 }
 
-.portlet-body ol li{
+.cta_box ol li{
     list-style-type: decimal;
     list-style-position:inside;
 }
 
-.portlet-body ul li {
+.cta_box ul li {
     padding-left: 1rem;
 }
-.portlet-body ul:not(.nav):not(.form-step):not(.download-group):not(.c-downloads-list)  li::before{
+.cta_box ul li::before{
     content: "\2022";
     color: #00E399;
     font-weight: bold; /* If you want it to be bold */
