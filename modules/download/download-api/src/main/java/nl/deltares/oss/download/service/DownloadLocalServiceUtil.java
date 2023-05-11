@@ -250,6 +250,14 @@ public class DownloadLocalServiceUtil {
 	}
 
 	public static java.util.List<nl.deltares.oss.download.model.Download>
+		findDownloadsByArticleId(
+			long groupId, long articleId, int start, int end) {
+
+		return getService().findDownloadsByArticleId(
+			groupId, articleId, start, end);
+	}
+
+	public static java.util.List<nl.deltares.oss.download.model.Download>
 		findDownloadsByShareId(long groupId, int shareId) {
 
 		return getService().findDownloadsByShareId(groupId, shareId);

@@ -200,6 +200,9 @@ public interface DownloadLocalService
 	public List<Download> findDownloadsByArticleId(
 		long groupId, long articleId);
 
+	public List<Download> findDownloadsByArticleId(
+		long groupId, long articleId, int start, int end);
+
 	public List<Download> findDownloadsByShareId(long groupId, int shareId);
 
 	public List<Download> findDownloadsByShareId(
