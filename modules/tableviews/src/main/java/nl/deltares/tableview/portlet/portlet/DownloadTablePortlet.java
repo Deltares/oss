@@ -126,8 +126,10 @@ public class DownloadTablePortlet extends MVCPortlet {
     @SuppressWarnings("unused")
     public void filter(ActionRequest actionRequest, ActionResponse actionResponse) {
 
-        final String filter = ParamUtil.getString(actionRequest, "filterEmail", "none");
-        actionResponse.getRenderParameters().setValue("filterEmail", filter);
+        final String filter = ParamUtil.getString(actionRequest, "filterValue", "none");
+        actionResponse.getRenderParameters().setValue("filterValue", filter);
+        final String filterSelection = ParamUtil.getString(actionRequest, "filterSelection", "none");
+        actionResponse.getRenderParameters().setValue("filterSelection", filterSelection);
     }
 
     /**
@@ -151,8 +153,10 @@ public class DownloadTablePortlet extends MVCPortlet {
                 new UpdateDownloadStatusRequest(id, null, siteGroupId, themeDisplay.getUser().getUserId(), downloadUtils);
         DataRequestManager.getInstance().addToQueue(updateRequest);
 
-        final String selectedEmail = ParamUtil.getString(actionRequest, "filterEmail", null);
-        actionResponse.getRenderParameters().setValue("filterEmail", selectedEmail);
+        final String filter = ParamUtil.getString(actionRequest, "filterValue", null);
+        actionResponse.getRenderParameters().setValue("filterValue", filter);
+        final String filterSelection = ParamUtil.getString(actionRequest, "filterSelection", null);
+        actionResponse.getRenderParameters().setValue("filterSelection", filterSelection);
     }
 
     @Override
@@ -167,13 +171,14 @@ public class DownloadTablePortlet extends MVCPortlet {
         }
         String action = ParamUtil.getString(request, "action");
         String id = ParamUtil.getString(request, "id", null);
-        String email = ParamUtil.getString(request, "filterEmail", null);
+        String filterValue = ParamUtil.getString(request, "filterValue", null);
+        String filterSelection = ParamUtil.getString(request, "filterSelection", null);
 
         if ("export".equals(action)) {
             if (id == null) {
                 id = DownloadTablePortlet.class.getName() + themeDisplay.getUserId();
             }
-            exportTable(id, email, response, themeDisplay);
+            exportTable(id, filterValue, filterSelection, response, themeDisplay);
         } else if ("delete-selected".equals(action)) {
             if (id == null) {
                 id = DownloadTablePortlet.class.getName() + themeDisplay.getUserId();
@@ -250,12 +255,12 @@ public class DownloadTablePortlet extends MVCPortlet {
     }
 
 
-    private void exportTable(String dataRequestId, String filterEmail, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
+    private void exportTable(String dataRequestId, String filterValue, String filterSelection, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
         response.setContentType("text/csv");
         DataRequestManager instance = DataRequestManager.getInstance();
         DataRequest dataRequest = instance.getDataRequest(dataRequestId);
         if (dataRequest == null) {
-            dataRequest = new ExportTableRequest(dataRequestId, filterEmail, themeDisplay.getUserId(), themeDisplay.getSiteGroup());
+            dataRequest = new ExportTableRequest(dataRequestId, filterValue, filterSelection, themeDisplay.getUserId(), themeDisplay.getSiteGroup());
             instance.addToQueue(dataRequest);
         } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
             instance.removeDataRequest(dataRequest);
