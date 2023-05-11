@@ -260,6 +260,13 @@ public class DownloadLocalServiceUtil {
 		return getService().findDownloadsByArticleId(groupId, articleId);
 	}
 
+	public static List<Download> findDownloadsByArticleId(
+		long groupId, long articleId, int start, int end) {
+
+		return getService().findDownloadsByArticleId(
+			groupId, articleId, start, end);
+	}
+
 	public static List<Download> findDownloadsByShareId(
 		long groupId, int shareId) {
 
