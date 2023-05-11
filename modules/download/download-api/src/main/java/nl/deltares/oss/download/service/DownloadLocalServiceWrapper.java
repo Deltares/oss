@@ -264,6 +264,15 @@ public class DownloadLocalServiceWrapper
 
 	@Override
 	public java.util.List<nl.deltares.oss.download.model.Download>
+		findDownloadsByArticleId(
+			long groupId, long articleId, int start, int end) {
+
+		return _downloadLocalService.findDownloadsByArticleId(
+			groupId, articleId, start, end);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.oss.download.model.Download>
 		findDownloadsByShareId(long groupId, int shareId) {
 
 		return _downloadLocalService.findDownloadsByShareId(groupId, shareId);
