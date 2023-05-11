@@ -30,18 +30,26 @@ public class ExportTableRequest extends AbstractDataRequest {
     }
 
     private final Group group;
-    private final String filterEmail;
+    private final String filterValue;
+    private final String filterSelection;
+    private final boolean findByUser;
+    private final boolean findByArticleId;
 
-    public ExportTableRequest(String id, String filterEmail, long currentUserId, Group siteGroup) throws IOException {
+    public ExportTableRequest(String id, String filterValue, String filterSelection, long currentUserId, Group siteGroup) throws IOException {
         super(id, currentUserId);
         this.group = siteGroup;
-        this.filterEmail = filterEmail;
+        this.filterValue = filterValue;
+        this.filterSelection = filterSelection;
+
+        this.findByUser = "email".equals(filterSelection);
+        this.findByArticleId = "articleid".equals(filterSelection);
     }
 
     @Override
     public STATUS call()  {
         if (getStatus() == available) return status;
-        statusMessage = "starting exporting for filter " + (filterEmail == null ? "none": filterEmail);
+        String filter = filterSelection == null ? "none": filterSelection + " = " + filterValue;
+        statusMessage = "starting exporting for filter " + filter;
         init();
         status = running;
         try {
@@ -84,10 +92,18 @@ public class ExportTableRequest extends AbstractDataRequest {
         int end = 100;
 
         final User filterUser;
-        if (filterEmail != null) {
-            filterUser = UserLocalServiceUtil.fetchUserByEmailAddress(group.getCompanyId(), filterEmail);
+        final Long filterArticleId;
+        if (findByUser) {
+            filterArticleId = null;
+            filterUser = UserLocalServiceUtil.fetchUserByEmailAddress(group.getCompanyId(), filterValue);
             if (filterUser != null) totalCount = DownloadLocalServiceUtil.countDownloadsByUserId(group.getGroupId(), filterUser.getUserId());
-        } else {
+        } else if (findByArticleId) {
+            filterUser = null;
+            filterArticleId = Long.parseLong(filterValue);
+            totalCount = DownloadLocalServiceUtil.countDownloadsByArticleId(group.getGroupId(), filterArticleId);
+        } else
+        {
+            filterArticleId = null;
             filterUser = null;
             totalCount = DownloadLocalServiceUtil.countDownloads(group.getGroupId());
         }
@@ -97,7 +113,10 @@ public class ExportTableRequest extends AbstractDataRequest {
             final List<Download> downloads;
             if (filterUser != null) {
                 downloads = DownloadLocalServiceUtil.findDownloadsByUserId(group.getGroupId(), filterUser.getUserId(), start, end);
-            } else {
+            } else if (filterArticleId != null ) {
+                downloads = DownloadLocalServiceUtil.findDownloadsByArticleId(group.getGroupId(), filterArticleId, start, end);
+            } else
+            {
                 downloads = DownloadLocalServiceUtil.findDownloads(group.getGroupId(), start, end);
             }
             if (downloads.size() == 0) {
@@ -110,7 +129,7 @@ public class ExportTableRequest extends AbstractDataRequest {
                 if (group.getGroupId() != download.getGroupId()) return;
                 String email = "";
                 if (filterUser != null){
-                    email = filterEmail;
+                    email = filterValue;
                 } else {
                     final User user = UserLocalServiceUtil.fetchUser(download.getUserId());
                     if (user != null) {
