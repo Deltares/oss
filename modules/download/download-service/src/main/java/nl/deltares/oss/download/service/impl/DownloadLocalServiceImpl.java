@@ -1,19 +1,21 @@
-/**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
- *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+/*
+  Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+  <p>
+  This library is free software; you can redistribute it and/or modify it under
+  the terms of the GNU Lesser General Public License as published by the Free
+  Software Foundation; either version 2.1 of the License, or (at your option)
+  any later version.
+  <p>
+  This library is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+  FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+  details.
  */
 
 package nl.deltares.oss.download.service.impl;
 
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.aop.AopService;
 
 import nl.deltares.oss.download.model.Download;
@@ -62,9 +64,34 @@ public class DownloadLocalServiceImpl extends DownloadLocalServiceBaseImpl {
 		return DownloadUtil.countByDirectDownloads(groupId);
 	}
 
-	public List<Download> findDownloads(long groupId){
-		return DownloadUtil.findByGroupDownloads(groupId);
-	}
+    public List<Download> findPaymentPendingDownloads(long groupId){
+        final DynamicQuery dynamicQuery = getPaymentPendingQuery(groupId);
+        return DownloadUtil.findWithDynamicQuery(dynamicQuery);
+    }
+
+    public List<Download> findPaymentPendingDownloads(long groupId, int start, int end){
+        final DynamicQuery dynamicQuery = getPaymentPendingQuery(groupId);
+        return DownloadUtil.findWithDynamicQuery(dynamicQuery, start, end);
+    }
+
+    private DynamicQuery getPaymentPendingQuery(long groupId) {
+        final DynamicQuery dynamicQuery = dynamicQuery();
+        dynamicQuery
+                .add(RestrictionsFactoryUtil.eq("groupId", groupId))
+                .add(RestrictionsFactoryUtil.eq("shareId", -1))
+                .add(RestrictionsFactoryUtil.or(
+                        RestrictionsFactoryUtil.isNull("directDownloadUrl"),
+                        RestrictionsFactoryUtil.ne("directDownloadUrl", "")));
+        return dynamicQuery;
+    }
+
+    public int countPaymentPendingDownloads(long groupId){
+        return (int) DownloadUtil.countWithDynamicQuery(getPaymentPendingQuery(groupId));
+    }
+
+    public List<Download> findDownloads(long groupId){
+        return DownloadUtil.findByGroupDownloads(groupId);
+    }
 
 	public List<Download> findDownloads(long groupId, int start, int end){
 		return DownloadUtil.findByGroupDownloads(groupId, start, end);

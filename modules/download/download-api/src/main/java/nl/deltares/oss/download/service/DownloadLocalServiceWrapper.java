@@ -75,6 +75,11 @@ public class DownloadLocalServiceWrapper
 		return _downloadLocalService.countDownloadsByUserId(groupId, userId);
 	}
 
+	@Override
+	public int countPaymentPendingDownloads(long groupId) {
+		return _downloadLocalService.countPaymentPendingDownloads(groupId);
+	}
+
 	/**
 	 * Creates a new download with the primary key. Does not add the download to the database.
 	 *
@@ -331,6 +336,21 @@ public class DownloadLocalServiceWrapper
 
 		return _downloadLocalService.findDownloadsByUserId(
 			groupId, userId, start, end);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.oss.download.model.Download>
+		findPaymentPendingDownloads(long groupId) {
+
+		return _downloadLocalService.findPaymentPendingDownloads(groupId);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.oss.download.model.Download>
+		findPaymentPendingDownloads(long groupId, int start, int end) {
+
+		return _downloadLocalService.findPaymentPendingDownloads(
+			groupId, start, end);
 	}
 
 	@Override

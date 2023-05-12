@@ -55,22 +55,30 @@
                 </aui:col>
                 <aui:col width="50">
                     <div class="d-flex justify-content-start">
-                    <div class="pr-3">
-                        <aui:input
-                                name="filterSelection"
-                                label="E-mail"
-                                type="radio"
-                                value="email"
-                                checked='<%="email".equals(filterSelection)%>'/>
-                    </div>
-                    <div class="pr-3">
-                        <aui:input
-                                name="filterSelection"
-                                label="Article ID"
-                                type="radio"
-                                value="articleid"
-                                checked='<%="articleid".equals(filterSelection)%>'/>
-                    </div>
+                        <div class="pr-3">
+                            <aui:input
+                                    name="filterSelection"
+                                    label="E-mail"
+                                    type="radio"
+                                    value="email"
+                                    checked='<%="email".equals(filterSelection)%>'/>
+                        </div>
+                        <div class="pr-3">
+                            <aui:input
+                                    name="filterSelection"
+                                    label="Article ID"
+                                    type="radio"
+                                    value="articleid"
+                                    checked='<%="articleid".equals(filterSelection)%>'/>
+                        </div>
+                        <div class="pr-3">
+                            <aui:input
+                                    name="filterSelection"
+                                    label="Share status"
+                                    type="radio"
+                                    value="status"
+                                    checked='<%="status".equals(filterSelection)%>'/>
+                        </div>
                     </div>
                 </aui:col>
                 <aui:col width="20">
