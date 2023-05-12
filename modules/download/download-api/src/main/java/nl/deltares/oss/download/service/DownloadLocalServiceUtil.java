@@ -80,6 +80,10 @@ public class DownloadLocalServiceUtil {
 		return getService().countDownloadsByUserId(groupId, userId);
 	}
 
+	public static int countPaymentPendingDownloads(long groupId) {
+		return getService().countPaymentPendingDownloads(groupId);
+	}
+
 	/**
 	 * Creates a new download with the primary key. Does not add the download to the database.
 	 *
@@ -290,6 +294,16 @@ public class DownloadLocalServiceUtil {
 		long groupId, long userId, int start, int end) {
 
 		return getService().findDownloadsByUserId(groupId, userId, start, end);
+	}
+
+	public static List<Download> findPaymentPendingDownloads(long groupId) {
+		return getService().findPaymentPendingDownloads(groupId);
+	}
+
+	public static List<Download> findPaymentPendingDownloads(
+		long groupId, int start, int end) {
+
+		return getService().findPaymentPendingDownloads(groupId, start, end);
 	}
 
 	public static List<Download> findUserDownloadsByShareId(

@@ -93,6 +93,19 @@ public class DownloadTablePortlet extends MVCPortlet {
                     final long downloadId = Long.parseLong(filterValue);
                     downloads = DownloadLocalServiceUtil.findDownloadsByArticleId(siteGroupId, downloadId, start, end);
                     downloadsCount = DownloadLocalServiceUtil.countDownloadsByArticleId(siteGroupId, downloadId);
+                } else if (filterSelection.equals("status")){
+                    if (isDirectDownload(filterValue)) {
+                        downloads = DownloadLocalServiceUtil.findDirectDownloads(siteGroupId, start, end);
+                        downloadsCount = DownloadLocalServiceUtil.countDirectDownloads(siteGroupId);
+                    } else if (isPaymentPending(filterValue)){
+                        downloads = DownloadLocalServiceUtil.findPaymentPendingDownloads(siteGroupId, start, end);
+                        downloadsCount = DownloadLocalServiceUtil.countPaymentPendingDownloads(siteGroupId);
+                    } else {
+                        final int shareId = Integer.parseInt(filterValue);
+                        downloads = DownloadLocalServiceUtil.findDownloadsByShareId(siteGroupId, shareId, start, end);
+                        downloadsCount = DownloadLocalServiceUtil.countDownloadsByShareId(siteGroupId, shareId);
+                    }
+
                 }
             }
             if (downloads == null) {
@@ -109,6 +122,14 @@ public class DownloadTablePortlet extends MVCPortlet {
             renderRequest.setAttribute("records", Collections.emptyList());
             renderRequest.setAttribute("total", 0);
         }
+    }
+
+    private boolean isDirectDownload(String filterValue) {
+        return filterValue.contains("direct") || filterValue.contains("download");
+    }
+
+    private boolean isPaymentPending(String filterValue) {
+        return filterValue.contains("payment") || filterValue.contains("pending");
     }
 
     private List<DisplayDownload> convertToDisplayDownloads(List<Download> downloads) {
