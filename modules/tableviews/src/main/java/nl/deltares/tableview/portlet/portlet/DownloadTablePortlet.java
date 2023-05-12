@@ -10,7 +10,6 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
-import nl.deltares.oss.download.service.persistence.DownloadUtil;
 import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.tableview.model.DisplayDownload;
 import nl.deltares.tableview.portlet.constants.TablePortletKeys;
@@ -65,48 +64,72 @@ public class DownloadTablePortlet extends MVCPortlet {
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 
-        final int cur = ParamUtil.getInteger(renderRequest, "cur", 0);
-        final int deltas = ParamUtil.getInteger(renderRequest, "delta", 50);
+        final int curPage = ParamUtil.getInteger(renderRequest, "cur", 1);
+        final int deltas = ParamUtil.getInteger(renderRequest, "delta", 25);
         final String filterValue = ParamUtil.getString(renderRequest, "filterValue", null);
         final String filterSelection = ParamUtil.getString(renderRequest, "filterSelection", null);
 
-        doFilterValues(filterValue, filterSelection, cur, deltas, renderRequest);
+        doFilterValues(filterValue, filterSelection, curPage, deltas, renderRequest);
 
         super.render(renderRequest, renderResponse);
     }
 
-    private void doFilterValues(String filterValue, String filterSelection, int cur, int deltas, RenderRequest renderRequest) {
+    private void doFilterValues(String filterValue, String filterSelection, int curPage, int deltas, RenderRequest renderRequest) {
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest
                 .getAttribute(WebKeys.THEME_DISPLAY);
 
         final long siteGroupId = themeDisplay.getSiteGroupId();
         List<Download> downloads = null;
         int downloadsCount = 0;
-        final int end = cur + deltas;
+        final int start = (curPage - 1) * deltas;
+        final int end = curPage * deltas;
         try {
             if (filterValue != null && filterValue.trim().length() > 0) {
                 if (filterSelection.equals("email")) {
                     User user = UserLocalServiceUtil.getUserByEmailAddress(themeDisplay.getCompanyId(), filterValue);
-                    downloads = DownloadLocalServiceUtil.findDownloadsByUserId(siteGroupId, user.getUserId(), cur, end);
+                    downloads = DownloadLocalServiceUtil.findDownloadsByUserId(siteGroupId, user.getUserId(), start, end);
                     downloadsCount = DownloadLocalServiceUtil.countDownloadsByUserId(siteGroupId, user.getUserId());
                 } else if (filterSelection.equals("articleid")){
                     final long downloadId = Long.parseLong(filterValue);
-                    downloads = DownloadLocalServiceUtil.findDownloadsByArticleId(siteGroupId, downloadId);
+                    downloads = DownloadLocalServiceUtil.findDownloadsByArticleId(siteGroupId, downloadId, start, end);
                     downloadsCount = DownloadLocalServiceUtil.countDownloadsByArticleId(siteGroupId, downloadId);
+                } else if (filterSelection.equals("status")){
+                    if (isDirectDownload(filterValue)) {
+                        downloads = DownloadLocalServiceUtil.findDirectDownloads(siteGroupId, start, end);
+                        downloadsCount = DownloadLocalServiceUtil.countDirectDownloads(siteGroupId);
+                    } else if (isPaymentPending(filterValue)){
+                        downloads = DownloadLocalServiceUtil.findPaymentPendingDownloads(siteGroupId, start, end);
+                        downloadsCount = DownloadLocalServiceUtil.countPaymentPendingDownloads(siteGroupId);
+                    } else {
+                        final int shareId = Integer.parseInt(filterValue);
+                        downloads = DownloadLocalServiceUtil.findDownloadsByShareId(siteGroupId, shareId, start, end);
+                        downloadsCount = DownloadLocalServiceUtil.countDownloadsByShareId(siteGroupId, shareId);
+                    }
+
                 }
             }
             if (downloads == null) {
-                downloads = DownloadLocalServiceUtil.findDownloads(siteGroupId, cur, end);
+                downloads = DownloadLocalServiceUtil.findDownloads(siteGroupId, start, end);
                 downloadsCount = DownloadLocalServiceUtil.countDownloads(siteGroupId);
             }
 
             renderRequest.setAttribute("records", convertToDisplayDownloads(downloads));
             renderRequest.setAttribute("total", downloadsCount);
+            renderRequest.setAttribute("filterValue", filterValue);
+            renderRequest.setAttribute("filterSelection", filterSelection);
         } catch (Exception e) {
             SessionErrors.add(renderRequest, "filter-failed", e.getMessage());
             renderRequest.setAttribute("records", Collections.emptyList());
             renderRequest.setAttribute("total", 0);
         }
+    }
+
+    private boolean isDirectDownload(String filterValue) {
+        return filterValue.contains("direct") || filterValue.contains("download");
+    }
+
+    private boolean isPaymentPending(String filterValue) {
+        return filterValue.contains("payment") || filterValue.contains("pending");
     }
 
     private List<DisplayDownload> convertToDisplayDownloads(List<Download> downloads) {
