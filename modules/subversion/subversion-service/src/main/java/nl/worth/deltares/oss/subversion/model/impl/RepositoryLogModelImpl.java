@@ -529,7 +529,12 @@ public class RepositoryLogModelImpl
 	@Override
 	public RepositoryLog toEscapedModel() {
 		if (_escapedModel == null) {
-			_escapedModel = _escapedModelProxyProviderFunction.apply(
+			Function<InvocationHandler, RepositoryLog>
+				escapedModelProxyProviderFunction =
+					EscapedModelProxyProviderFunctionHolder.
+						_escapedModelProxyProviderFunction;
+
+			_escapedModel = escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -723,8 +728,12 @@ public class RepositoryLogModelImpl
 		return sb.toString();
 	}
 
-	private static final Function<InvocationHandler, RepositoryLog>
-		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+	private static class EscapedModelProxyProviderFunctionHolder {
+
+		private static final Function<InvocationHandler, RepositoryLog>
+			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+
+	}
 
 	private long _logId;
 	private String _ipAddress;
