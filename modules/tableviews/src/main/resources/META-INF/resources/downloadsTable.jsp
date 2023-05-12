@@ -13,6 +13,8 @@
 
 <%
     final Integer count = (Integer) request.getAttribute("total");
+    final String filterValue = (String) request.getAttribute("filterValue");
+    final String filterSelection = (String) request.getAttribute("filterSelection");
 
 %>
 <aui:input name="runningProcess" type="hidden"/>
@@ -22,6 +24,12 @@
     <portlet:renderURL var="viewURL">
         <portlet:param name="mvcPath" value="/downloadsTable.jsp" />
     </portlet:renderURL>
+
+
+    <liferay-portlet:renderURL varImpl="iteratorURL">
+        <portlet:param name="filterValue" value="<%=filterValue%>" />
+        <portlet:param name="filterSelection" value="<%= filterSelection %>" />
+    </liferay-portlet:renderURL>
 
     <portlet:actionURL name="filter" var="filterTableURL" />
 
@@ -43,7 +51,7 @@
                     <div class="control-label"><liferay-ui:message key="table.filter.label"/></div>
                 </aui:col>
                 <aui:col width="20">
-                    <aui:input name="filterValue" label="" />
+                    <aui:input name="filterValue" label="" value="<%=filterValue%>"/>
                 </aui:col>
                 <aui:col width="50">
                     <div class="d-flex justify-content-start">
@@ -53,7 +61,7 @@
                                 label="E-mail"
                                 type="radio"
                                 value="email"
-                                checked="true"/>
+                                checked='<%="email".equals(filterSelection)%>'/>
                     </div>
                     <div class="pr-3">
                         <aui:input
@@ -61,7 +69,7 @@
                                 label="Article ID"
                                 type="radio"
                                 value="articleid"
-                                checked="false"/>
+                                checked='<%="articleid".equals(filterSelection)%>'/>
                     </div>
                     </div>
                 </aui:col>
@@ -89,7 +97,7 @@
     <aui:form >
         <jsp:useBean id="records" class="java.util.List" scope="request"/>
 
-        <liferay-ui:search-container id="tableResults" delta="20" emptyResultsMessage='<%=LanguageUtil.get(locale, "no-download-records")%>'
+        <liferay-ui:search-container id="tableResults" iteratorURL="<%= iteratorURL %>" delta="25" emptyResultsMessage='<%=LanguageUtil.get(locale, "no-download-records")%>'
                                      total="<%=count%>" rowChecker="<%= new RowChecker(renderResponse) %>" >
             <liferay-ui:search-container-results results="<%= records %>" />
 
