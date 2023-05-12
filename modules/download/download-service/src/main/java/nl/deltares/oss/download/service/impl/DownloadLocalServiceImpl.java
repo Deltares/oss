@@ -52,17 +52,20 @@ public class DownloadLocalServiceImpl extends DownloadLocalServiceBaseImpl {
 		return DownloadUtil.fetchByUserDownload(groupId, userId, downloadId);
 	}
 
-	public List<Download> findDirectDownloads(long groupId){
-		return DownloadUtil.findByDirectDownloads(groupId);
-	}
+    public List<Download> findDirectDownloads(long groupId){
+        final DynamicQuery dynamicQuery = getDirectDownloadQuery(groupId);
+        return DownloadUtil.findWithDynamicQuery(dynamicQuery);
+    }
 
-	public List<Download> findDirectDownloads(long groupId, int start, int end){
-		return DownloadUtil.findByDirectDownloads(groupId, start, end);
-	}
+    public List<Download> findDirectDownloads(long groupId, int start, int end){
+        final DynamicQuery dynamicQuery = getDirectDownloadQuery(groupId);
+        return DownloadUtil.findWithDynamicQuery(dynamicQuery, start, end);
+    }
 
-	public int countDirectDownloads(long groupId){
-		return DownloadUtil.countByDirectDownloads(groupId);
-	}
+    public int countDirectDownloads(long groupId){
+        final DynamicQuery dynamicQuery = getDirectDownloadQuery(groupId);
+        return (int) DownloadUtil.countWithDynamicQuery(dynamicQuery);
+    }
 
     public List<Download> findPaymentPendingDownloads(long groupId){
         final DynamicQuery dynamicQuery = getPaymentPendingQuery(groupId);
@@ -74,14 +77,21 @@ public class DownloadLocalServiceImpl extends DownloadLocalServiceBaseImpl {
         return DownloadUtil.findWithDynamicQuery(dynamicQuery, start, end);
     }
 
+    private DynamicQuery getDirectDownloadQuery(long groupId) {
+        final DynamicQuery dynamicQuery = dynamicQuery();
+        dynamicQuery
+                .add(RestrictionsFactoryUtil.eq("groupId", groupId))
+                .add(RestrictionsFactoryUtil.eq("shareId", -1))
+                .add(RestrictionsFactoryUtil.isNotNull("directDownloadUrl"));
+        return dynamicQuery;
+    }
+
     private DynamicQuery getPaymentPendingQuery(long groupId) {
         final DynamicQuery dynamicQuery = dynamicQuery();
         dynamicQuery
                 .add(RestrictionsFactoryUtil.eq("groupId", groupId))
                 .add(RestrictionsFactoryUtil.eq("shareId", -1))
-                .add(RestrictionsFactoryUtil.or(
-                        RestrictionsFactoryUtil.isNull("directDownloadUrl"),
-                        RestrictionsFactoryUtil.ne("directDownloadUrl", "")));
+                .add(RestrictionsFactoryUtil.isNull("directDownloadUrl"));
         return dynamicQuery;
     }
 
