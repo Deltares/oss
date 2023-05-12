@@ -81,6 +81,8 @@ public interface DownloadLocalService
 
 	public int countDownloadsByUserId(long groupId, long userId);
 
+	public int countPaymentPendingDownloads(long groupId);
+
 	/**
 	 * Creates a new download with the primary key. Does not add the download to the database.
 	 *
@@ -212,6 +214,11 @@ public interface DownloadLocalService
 
 	public List<Download> findDownloadsByUserId(
 		long groupId, long userId, int start, int end);
+
+	public List<Download> findPaymentPendingDownloads(long groupId);
+
+	public List<Download> findPaymentPendingDownloads(
+		long groupId, int start, int end);
 
 	public List<Download> findUserDownloadsByShareId(
 		long groupId, long userId, int shareId);
