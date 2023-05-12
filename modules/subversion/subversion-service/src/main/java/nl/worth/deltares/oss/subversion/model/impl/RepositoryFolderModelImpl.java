@@ -602,7 +602,12 @@ public class RepositoryFolderModelImpl
 	@Override
 	public RepositoryFolder toEscapedModel() {
 		if (_escapedModel == null) {
-			_escapedModel = _escapedModelProxyProviderFunction.apply(
+			Function<InvocationHandler, RepositoryFolder>
+				escapedModelProxyProviderFunction =
+					EscapedModelProxyProviderFunctionHolder.
+						_escapedModelProxyProviderFunction;
+
+			_escapedModel = escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -803,8 +808,12 @@ public class RepositoryFolderModelImpl
 		return sb.toString();
 	}
 
-	private static final Function<InvocationHandler, RepositoryFolder>
-		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+	private static class EscapedModelProxyProviderFunctionHolder {
+
+		private static final Function<InvocationHandler, RepositoryFolder>
+			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+
+	}
 
 	private long _folderId;
 	private long _repositoryId;

@@ -14,6 +14,8 @@
 
 package nl.deltares.oss.download.service.impl;
 
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.service.base.DownloadLocalServiceBaseImpl;
 import nl.deltares.oss.download.service.persistence.DownloadUtil;
@@ -54,6 +56,31 @@ public class DownloadLocalServiceImpl extends DownloadLocalServiceBaseImpl {
 
     public int countDirectDownloads(long groupId){
         return DownloadUtil.countByDirectDownloads(groupId);
+    }
+
+    public List<Download> findPaymentPendingDownloads(long groupId){
+        final DynamicQuery dynamicQuery = getPaymentPendingQuery(groupId);
+        return DownloadUtil.findWithDynamicQuery(dynamicQuery);
+    }
+
+    public List<Download> findPaymentPendingDownloads(long groupId, int start, int end){
+        final DynamicQuery dynamicQuery = getPaymentPendingQuery(groupId);
+        return DownloadUtil.findWithDynamicQuery(dynamicQuery, start, end);
+    }
+
+    private DynamicQuery getPaymentPendingQuery(long groupId) {
+        final DynamicQuery dynamicQuery = dynamicQuery();
+        dynamicQuery
+                .add(RestrictionsFactoryUtil.eq("groupId", groupId))
+                .add(RestrictionsFactoryUtil.eq("shareId", -1))
+                .add(RestrictionsFactoryUtil.or(
+                        RestrictionsFactoryUtil.isNull("directDownloadUrl"),
+                        RestrictionsFactoryUtil.ne("directDownloadUrl", "")));
+        return dynamicQuery;
+    }
+
+    public int countPaymentPendingDownloads(long groupId){
+        return (int) DownloadUtil.countWithDynamicQuery(getPaymentPendingQuery(groupId));
     }
 
     public List<Download> findDownloads(long groupId){
