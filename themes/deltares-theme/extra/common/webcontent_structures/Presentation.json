@@ -1,0 +1,193 @@
+{
+  "availableLanguageIds": [
+    "en_US"
+  ],
+  "defaultLanguageId": "en_US",
+  "fields": [
+    {
+      "label": {
+        "en_US": "Presentation Link"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "Embedded link to online presentation."
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "presentationLink",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "text",
+      "nestedFields": [
+        {
+          "label": {
+            "en_US": "Presentation Type"
+          },
+          "options": [
+            {
+              "value": "video",
+              "label": {
+                "en_US": "Video"
+              }
+            },
+            {
+              "value": "slides",
+              "label": {
+                "en_US": "Slides"
+              }
+            },
+            {
+              "value": "document",
+              "label": {
+                "en_US": "Document"
+              }
+            }
+          ],
+          "predefinedValue": {
+            "en_US": "video"
+          },
+          "style": {
+            "en_US": ""
+          },
+          "tip": {
+            "en_US": ""
+          },
+          "dataType": "radio",
+          "indexType": "keyword",
+          "localizable": false,
+          "name": "presentationType",
+          "readOnly": false,
+          "repeatable": false,
+          "required": false,
+          "showLabel": true,
+          "type": "radio"
+        }
+      ]
+    },
+    {
+      "label": {
+        "en_US": "Thumbnail URL"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "",
+      "localizable": false,
+      "name": "thumbnailURL",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "text"
+    },
+    {
+      "label": {
+        "en_US": "Thumbnail Image"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "For more info on how to obtain this image https://publicwiki.deltares.nl/display/MyDeltares/Frequently+asked+Questions"
+      },
+      "dataType": "image",
+      "fieldNamespace": "ddm",
+      "indexType": "",
+      "localizable": false,
+      "name": "thumbnailImage",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "ddm-image"
+    },
+    {
+      "label": {
+        "en_US": "Presentation Document"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "Select a local document"
+      },
+      "dataType": "document-library",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "document",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "ddm-documentlibrary"
+    },
+    {
+      "label": {
+        "en_US": "Presenter Name"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "presenterName",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "text"
+    },
+    {
+      "label": {
+        "en_US": "Presenter Organization"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "presenterOrganization",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "text"
+    }
+  ]
+}

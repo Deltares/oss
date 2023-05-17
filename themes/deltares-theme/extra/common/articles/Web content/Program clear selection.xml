@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<root available-locales="en_US" default-locale="en_US">
+    <dynamic-element name="content" type="text_area" index-type="text" instance-id="iqsu">
+        <dynamic-content language-id="en_US"><![CDATA[
+                <style type="text/css">.cta_box {
+        margin: 0px;
+    }</style><div id="clear"><script>
+     var urlParts = document.URL.split('?');
+     if (urlParts.length >= 1) {
+    // Get first part from array
+         var urlBase = urlParts.shift();
+          document.getElementById('clear').innerHTML =
+                "<a href='" + urlBase + "'>Clear selection</a>";
+     }
+    </script></div>]]></dynamic-content>
+    </dynamic-element>
+</root>

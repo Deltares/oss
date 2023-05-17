@@ -1,0 +1,195 @@
+{
+  "availableLanguageIds": [
+    "en_US"
+  ],
+  "defaultLanguageId": "en_US",
+  "fields": [
+    {
+      "label": {
+        "en_US": "Topic"
+      },
+      "options": [
+        {
+          "value": "delftfews",
+          "label": {
+            "en_US": "Delft-FEWS Platform"
+          }
+        }
+      ],
+      "predefinedValue": {
+        "en_US": [
+          ""
+        ]
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "multiple": false,
+      "name": "topic",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "select"
+    },
+    {
+      "label": {
+        "en_US": "Session type"
+      },
+      "options": [
+        {
+          "value": "Dinner",
+          "label": {
+            "en_US": "Dinner"
+          }
+        }
+      ],
+      "predefinedValue": {
+        "en_US": [
+          ""
+        ]
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "multiple": false,
+      "name": "registrationType",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "select"
+    },
+    {
+      "label": {
+        "en_US": "Registration Date"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "date",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "registrationDate",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-date",
+      "nestedFields": [
+        {
+          "label": {
+            "en_US": "start time"
+          },
+          "predefinedValue": {
+            "en_US": "09:00"
+          },
+          "style": {
+            "en_US": ""
+          },
+          "tip": {
+            "en_US": "Start time (format: HH:mm) "
+          },
+          "dataType": "string",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "startTime",
+          "readOnly": false,
+          "repeatable": false,
+          "required": true,
+          "showLabel": true,
+          "type": "text"
+        },
+        {
+          "label": {
+            "en_US": "end time"
+          },
+          "predefinedValue": {
+            "en_US": "17:00"
+          },
+          "style": {
+            "en_US": ""
+          },
+          "tip": {
+            "en_US": "End time (format: HH:mm) "
+          },
+          "dataType": "string",
+          "indexType": "keyword",
+          "localizable": true,
+          "name": "endTime",
+          "readOnly": false,
+          "repeatable": false,
+          "required": true,
+          "showLabel": true,
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "label": {
+        "en_US": "Time Zone"
+      },
+      "predefinedValue": {
+        "en_US": "CET"
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": "TimeZone identifier"
+      },
+      "dataType": "string",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "timeZone",
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "type": "text"
+    },
+    {
+      "label": {
+        "en_US": "Restaurant"
+      },
+      "predefinedValue": {
+        "en_US": ""
+      },
+      "style": {
+        "en_US": ""
+      },
+      "tip": {
+        "en_US": ""
+      },
+      "dataType": "journal-article",
+      "fieldNamespace": "ddm",
+      "indexType": "keyword",
+      "localizable": true,
+      "name": "restaurant",
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "type": "ddm-journal-article"
+    }
+  ]
+}

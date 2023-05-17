@@ -5,103 +5,65 @@
 <html class="${root_css_class}" dir="<@liferay.language key="lang.dir" />" lang="${w3c_language_id}">
 
 <head>
-	<title>${the_title} - ${company_name} </title>
+	<title>${the_title} - ${company_name}</title>
 
 	<meta content="initial-scale=1.0, width=device-width" name="viewport" />
 
 	<@liferay_util["include"] page=top_head_include />
+
+	 <#if google_tag_id?? && google_tag_id?has_content >
+        <!-- Google Tag Manager -->
+        <script>
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','${google_tag_id}');
+        </script>
+        <!-- End Google Tag Manager -->
+    </#if>
+	<link rel="stylesheet" type="text/css" href="${css_folder}/lib/cookies/cookieconsent.min.css" />
 </head>
 
+<script src="${javascript_folder}/cookies/cookieconsent.min.js" data-cfasync="false"></script>
+<script src="${javascript_folder}/calendar/calendar.js" ></script>
 <body class="${css_class}">
+
+<#if google_tag_id?? && google_tag_id?has_content >
+        <!-- Google Tag Manager (noscript) --><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${google_tag_id}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript><!-- End Google Tag Manager (noscript) -->
+</#if>
+
+<@liferay_ui["quick-access"] contentId="#main-content" />
 
 <@liferay_util["include"] page=body_top_include />
 
-<#if is_site_admin?? && is_site_admin>
+<#if is_site_admin>
 	<@liferay.control_menu />
 </#if>
 
-<div id="wrapper">
-	<header class="container-fluid-1280" >
-		<div class="pull-right">
-			<#include "${full_templates_path}/user_personal.ftl" />
-		</div>
-	</header>
-	<header class="container-fluid-1280 ${is_home}" id="banner" role="banner">
-		<div class="row">
-			<div class="navbar-header" id="heading">
-				<a class="${logo_css_class}" href="${site_default_url}" title="<@liferay.language_format arguments="${site_name}" key="go-to-x" />">
-					<img alt="${logo_description}" height="90" src="${site_logo}" width="auto" />
-				</a>
+<div id="wrapper" class="antialiased bg-gradient bg-theme-tertiary">
+	<#include "${full_templates_path}/header.ftl" />
 
-				<#if is_home == "nohome">
-					<#if show_site_name>
-						<span class="site-name" title="<@liferay.language_format arguments="${site_name}" key="go-to-x" />">
-							${site_name}
-						</span>
-					</#if>
-				</#if>
+	<section id="content">
+		<div class="inner">
+			<h1 class="hide-accessible">${the_title}</h1>
 
-				<#if is_setup_complete>
-					<button aria-controls="navigation" aria-expanded="false" class="collapsed navbar-toggle" data-target="#navigationCollapse" data-toggle="collapse" type="button">
-						<span class="icon-bar"></span>
-
-						<span class="icon-bar"></span>
-
-						<span class="icon-bar"></span>
-					</button>
-
-				</#if>
-
-
-			</div>
-
-			<#if is_home == "nohome">
-				<#include "${full_templates_path}/navigation.ftl" />
-			</#if>
-			<#if is_home == "home">
-				<#include "${full_templates_path}/navigation_home.ftl" />
-			</#if>
-
-		</div>
-
-		<#if is_home == "home">
-			<div class="row">
-				<div class="statement">
-					<blockquote>
-						<img class="statement-portrait" src="${images_folder}/Kwadijk-Jaap-175x200.jpg" />
-						We believe in openness and transparency, as is evident from the free availability of our software and models. It is our firm conviction that sharing knowledge and innovative insights worldwide enables living in deltas.
-						<span>- Jaap Kwadijk science director Deltares</span>
-					</blockquote>
-				</div>
-			</div>
-		</#if>
-
-	</header>
-
-		<section class="container-fluid-1280" id="content">
-			<h1 class="sr-only">${the_title}</h1>
-
-		<#if selectable>
-			<@liferay_util["include"] page=content_include />
-		<#else>
-			${portletDisplay.recycle()}
-
-			${portletDisplay.setTitle(the_title)}
-
-			<@liferay_theme["wrap-portlet"] page="portlet.ftl">
+			<#if selectable>
 				<@liferay_util["include"] page=content_include />
-			</@>
-		</#if>
+			<#else>
+				${portletDisplay.recycle()}
 
-		</section>
-		<#if variable_name>
-		<nav id="variable_name">
-		</nav>
-		</#if>
+				${portletDisplay.setTitle(the_title)}
 
+				<@liferay_theme["wrap-portlet"] page="portlet.ftl">
+					<@liferay_util["include"] page=content_include />
+				</@>
+			</#if>
+		</div>
+	</section>
+
+	<#include "${full_templates_path}/footer.ftl" />
 </div>
-
-
 
 <@liferay_util["include"] page=body_bottom_include />
 
@@ -111,5 +73,36 @@
 <!-- endinject -->
 
 </body>
+<script>
+	var checkoutCartURL = '${checkout_cart_url}';
+	var downloadCartURL = '${download_cart_url}';
+	var shoppingCart = new ShoppingCart({'languageKeys': {
+			'add-to-cart': '${languageUtil.get(locale, "shopping.cart.add")}',
+			'remove-from-cart': '${languageUtil.get(locale, "shopping.cart.remove")}'
+		}});
+	shoppingCart.refreshCart();
+
+	<#if is_show_cookies >
+	window.cookieconsent.initialise({
+		palette: {
+			popup: {
+				background: "#252e39"
+			},
+			button: {
+				background: "#0d38e0"
+			}
+		},
+		content : {
+			message: "${languageUtil.get(locale, "oss.cookies.message")}",
+			dismiss: "${languageUtil.get(locale, "oss.cookies.accept")}",
+			link: "${languageUtil.get(locale, "oss.cookies.moreinfo")}",
+			href: "${siteUrl}/cookie-policy"
+		},
+		cookie : {
+			secure : true
+		}
+	});
+	</#if>
+</script>
 
 </html>

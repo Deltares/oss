@@ -1,0 +1,49 @@
+#header {
+  line-height: 1.5;
+  z-index: 999;
+
+  &.hidden-servicebar {
+    transform: translateY(-38px);
+  }
+
+  .header-container {
+    z-index: 20;
+  }
+
+  .site-logo {
+    padding-top: 1.75rem;
+
+    a {
+      color: $dark-blue;
+    }
+  }
+}
+
+@media (max-width: 1023px) {
+  #header {
+    &.hidden-servicebar {
+      transform: none;
+
+      &.logged-in {
+        border: 0;
+        transform: none;
+      }
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  #header {
+    position: fixed;
+    transform: translate(0, 0);
+    transition: all .2s ease-out .1s;
+
+    .header-container {
+      display: flex;
+    }
+
+    .mobile-container {
+      display: none;
+    }
+  }
+}
