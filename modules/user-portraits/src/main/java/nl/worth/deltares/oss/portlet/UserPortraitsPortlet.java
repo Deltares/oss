@@ -84,14 +84,14 @@ public class UserPortraitsPortlet extends MVCPortlet {
 					LOG.warn(String.format("Un-setting portrait %d for user %s", user.getPortraitId(),  user.getScreenName()));
 					user.setPortraitId(0);
 					userLocalService.updateUser(user);
-					return "/o/user-portraits/images/missing_avatar.png";
+					return "";
 				}
 				return user.getPortraitURL(themeDisplay);
 			}
 		} catch (Exception e){
 			LOG.error("Error retrieving portrait URL for user " + userId, e);
 		}
-		return "/o/user-portraits/images/missing_avatar.png";
+		return "";
 	}
 
 	private List<String> getRandomPortraits(ThemeDisplay themeDisplay, int number) {
