@@ -1,0 +1,157 @@
+.border-theme-primary {
+  border-color: var(--border-primary);
+}
+
+.border-theme-secondary {
+  border-color: var(--border-secondary);
+}
+
+.bg-theme-secondary {
+  background-color: var(--bg-secondary);
+}
+
+.bg-theme-quaternary {
+  background-color: var(--bg-quaternary);
+}
+
+.bg-theme-senary {
+  background-color: var(--bg-senary);
+}
+
+.bg-theme-tertiary {
+  background-color: var(--bg-tertiary);
+}
+
+.bg-theme-homepage {
+  background-color: var(--bg-homepage);
+}
+
+.bg-theme-button {
+  background-color: var(--bg-button);
+}
+
+.bg-theme-septenary {
+  background-color: var(--bg-septenary);
+}
+
+.bg-theme-quinary {
+  background-color: var(--bg-quinary);
+}
+
+.bg-theme-primary {
+  background-color: var(--bg-primary);
+}
+
+.text-theme-secondary {
+  color: var(--text-secondary);
+}
+
+.text-theme-button--secondary {
+  color: var(--text-button--secondary);
+}
+
+.text-theme-button {
+  color: var(--text-button);
+}
+
+.text-theme-quaternary {
+  color: var(--text-quaternary);
+}
+
+.text-theme-primary {
+  color: var(--text-primary);
+}
+
+.text-theme-secondary--home {
+  color: var(--text-secondary--home);
+}
+
+.text-theme-tertiary {
+  color: var(--text-tertiary);
+}
+
+.placeholder\:text-theme-secondary::-moz-placeholder {
+  color: var(--text-secondary);
+}
+
+.placeholder\:text-theme-secondary:-ms-input-placeholder {
+  color: var(--text-secondary);
+}
+
+.placeholder\:text-theme-secondary::placeholder {
+  color: var(--text-secondary);
+}
+
+.before\:border-theme-secondary::before {
+  content: var(--tw-content);
+  border-color: var(--border-secondary);
+}
+
+.focus-within\:border-theme-primary:focus-within {
+  border-color: var(--border-primary);
+}
+
+.hover\:bg-theme-primary:hover {
+  background-color: var(--bg-primary);
+}
+
+.hover\:bg-theme-secondary:hover {
+  background-color: var(--bg-secondary);
+}
+
+.hover\:bg-theme-button--hover:hover {
+  background-color: var(--bg-button--hover);
+}
+
+.hover\:bg-theme-button--secondary--hover:hover {
+  background-color: var(--bg-button--secondary--hover);
+}
+
+.hover\:text-theme-tertiary:hover {
+  color: var(--text-tertiary);
+}
+
+.hover\:text-theme-secondary:hover {
+  color: var(--text-secondary);
+}
+
+.hover\:text-theme-button--hover:hover {
+  color: var(--text-button--hover);
+}
+
+.focus\:bg-theme-secondary:focus {
+  background-color: var(--bg-secondary);
+}
+
+.focus\:bg-theme-button--hover:focus {
+  background-color: var(--bg-button--hover);
+}
+
+.focus\:text-theme-tertiary:focus {
+  color: var(--text-tertiary);
+}
+
+.focus-visible\:bg-theme-button--hover:focus-visible {
+  background-color: var(--bg-button--hover);
+}
+
+.group:hover .group-hover\:bg-theme-button--hover {
+  background-color: var(--bg-button--hover);
+}
+
+.group:focus .group-focus\:bg-theme-button--hover {
+  background-color: var(--bg-button--hover);
+}
+
+.lg\:bg-theme-tertiary {
+  background-color: var(--bg-tertiary);
+}
+
+.bg-theme-homepage .tns-controls [aria-controls] {
+  background-color: $bright-green;
+}
+
+.bg-theme-homepage .tns-controls [aria-controls]:hover {
+  background-color: $mid-green;
+  border-color: $mid-green;
+}

@@ -5,7 +5,7 @@
 	<compatibility>
 		<version>7.4.0+</version>
 	</compatibility>
-	<theme id="deltares-fews-theme" name="Deltares OSS Theme">
+	<theme id="deltares-theme" name="Deltares Theme">
 		<template-extension>ftl</template-extension>
 		<settings>
 			<setting configurable="true" key="google-tag-id" type="text" value="" />

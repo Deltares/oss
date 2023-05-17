@@ -1,0 +1,206 @@
+@mixin fs-hero {
+    font-size: 48px;
+    font-size: 3rem;
+}
+
+@mixin fs-1 {
+    font-size: 24px;
+    font-size: 1.5rem;
+}
+
+@mixin fs-2 {
+    font-size: 18px;
+    font-size: 1.125rem;
+}
+
+@mixin fs-3 {
+    font-size: 16px;
+    font-size: 1rem;
+}
+
+@mixin fs-4 {
+    font-size: 14px;
+    font-size: 0.875rem;
+}
+
+@mixin fs-5 {
+    font-size: 12px;
+    font-size: 0.75rem;
+}
+
+@mixin title-margins {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+@mixin title {
+    @include title-margins;
+    font-weight: 300;
+}
+
+@mixin subtitle {
+    @include title-margins;
+    font-weight: 600;
+}
+
+@mixin hero_title {
+    @include title-margins;
+    @include fs-hero;
+    font-weight: bold;
+    line-height: 54px;
+}
+
+@mixin title_1 {
+    @include title;
+    @include fs-1;
+    line-height: 30px;
+}
+
+@mixin title_2 {
+    @include title;
+    @include fs-2;
+    line-height: 30px;
+}
+ 
+@mixin title_3 {
+    @include title;
+    @include fs-2;
+    line-height: 30px;
+}
+
+@mixin title_4 {
+    @include subtitle;
+    @include fs-3;
+    line-height: 30px;
+}
+
+@mixin title_5 {
+    @include subtitle;
+    @include fs-3;
+    line-height: 21px;
+}
+
+@mixin paragraph {
+    @include fs-3;
+    font-weight: 300;
+}
+
+@mixin title_6 {
+    @include title-margins;
+    @include paragraph;
+    font-weight: 300;
+    margin-bottom: 10px;
+}
+
+html {
+    font-weight: 300;
+}
+
+h1, .h1,
+h1 p, .h1 p {
+    @include title_1;
+}
+
+h2, .h2,
+h2 p, .h2 p {
+    @include title_2;
+}
+
+h3, .h3,
+h3 p, .h3 p {
+    @include title_3;
+    color: $color-link;
+}
+
+h4, .h4,
+h4 p, .h4 p {
+    @include title_4;
+    color: $color-dark-blue;
+}
+
+h5, .h5,
+h5 p, .h5 p {
+    @include title_5;
+}
+
+h6, .h6,
+h6 p, .h6 p {
+    @include title_6;
+}
+
+small,
+.fs-small {
+    @include fs-4;
+    line-height: 30px;
+}
+
+.fs-smallest {
+    @include fs-5;
+    line-height: 30px;
+}
+
+p, a, label, li {
+    @include paragraph;
+}
+
+a {
+    color: $color-link;
+    cursor: pointer;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+
+    &.black-link {
+        color: $color-site-black;
+    }
+
+    &.regular_text,
+    &.regular-text {
+        color: inherit;
+        font-weight: inherit;
+        text-decoration: none;
+    }
+}
+
+.type-inherit, 
+.type-inherit:hover {
+    color: inherit;
+    font-size: inherit;
+    font-style: inherit;
+    font-weight: inherit;
+    text-decoration: inherit;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.regular-font-weight,
+.font-weight-regular {
+    font-weight: 400;
+}
+
+.bold {
+    font-weight: 600;
+}
+
+.bolder {
+    font-weight: 900;
+}
+
+.no-text-decoration {
+    text-decoration: none;
+}
+
+.text_center,
+.text_centered,
+.text-center,
+.text-centered {
+    text-align: center;
+}

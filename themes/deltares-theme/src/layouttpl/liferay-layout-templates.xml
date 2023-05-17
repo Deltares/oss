@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE layout-templates PUBLIC "-//Liferay//DTD Layout Templates 7.4.0//EN" "http://www.liferay.com/dtd/liferay-layout-templates_7_4_0.dtd">
+
+<layout-templates>
+
+	<custom>
+		<layout-template id="1-column-restricted" name="1 column restricted">
+			<template-path>/layouttpl/custom/1-column-restricted-layouttpl/1_column_restricted.tpl</template-path>
+			<thumbnail-path>/layouttpl/custom/1-column-restricted-layouttpl/1_column_restricted.png</thumbnail-path>
+		</layout-template>
+		<layout-template id="1-column-unrestricted" name="1 column unrestricted">
+			<template-path>/layouttpl/custom/1-column-unrestricted-layouttpl/1_column_unrestricted.tpl</template-path>
+			<thumbnail-path>/layouttpl/custom/1-column-unrestricted-layouttpl/1_column_unrestricted.png</thumbnail-path>
+		</layout-template>
+		<layout-template id="2-columns-full-height" name="2 columns full height">
+			<template-path>/layouttpl/custom/2-columns-full-height-layouttpl/2_columns_full_height.tpl</template-path>
+			<thumbnail-path>/layouttpl/custom/2-columns-full-height-layouttpl/2_columns_full_height.png</thumbnail-path>
+		</layout-template>
+		<layout-template id="restricted-1-2__2-1" name="restricted 1-2 Columns (2/1-sticky)">
+			<template-path>/layouttpl/custom/restricted-1-2__2-1-layouttpl/restricted_1_2_2_1.tpl</template-path>
+			<thumbnail-path>/layouttpl/custom/restricted-1-2__2-1-layouttpl/restricted_1_2_2_1.png</thumbnail-path>
+		</layout-template>
+	</custom>
+</layout-templates>
