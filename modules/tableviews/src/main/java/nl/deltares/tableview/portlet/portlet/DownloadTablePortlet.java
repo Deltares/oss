@@ -36,6 +36,7 @@ import java.util.*;
 @Component(
         immediate = true,
         property = {
+                "javax.portlet.version=3.0",
                 "com.liferay.portlet.display-category=OSS-table",
                 "com.liferay.portlet.header-portlet-javascript=/lib/downloadtableview.js",
                 "com.liferay.portlet.header-portlet-javascript=/lib/common.js",

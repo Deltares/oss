@@ -307,7 +307,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
             userDownload.setCity(userAttributes.get(KeycloakUtils.ATTRIBUTES.org_city.name()));
             final String country = userAttributes.get(KeycloakUtils.ATTRIBUTES.org_country.name());
             try {
-                if (country != null) userDownload.setCountryCode(CountryServiceUtil.getCountryByName(country).getA2());
+                if (country != null) userDownload.setCountryCode(CountryServiceUtil.getCountryByName(user.getCompanyId(), country).getA2());
             } catch (PortalException e) {
                 LOG.warn("Invalid country name " + country);
             }
