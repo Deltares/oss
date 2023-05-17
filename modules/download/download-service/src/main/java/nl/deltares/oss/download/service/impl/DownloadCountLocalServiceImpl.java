@@ -14,10 +14,12 @@
 
 package nl.deltares.oss.download.service.impl;
 
+import com.liferay.portal.aop.AopService;
 import nl.deltares.oss.download.model.DownloadCount;
 import nl.deltares.oss.download.service.base.DownloadCountLocalServiceBaseImpl;
 import nl.deltares.oss.download.service.persistence.DownloadCountUtil;
 import nl.deltares.oss.download.service.persistence.DownloadUtil;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * The implementation of the download count local service.
@@ -32,6 +34,10 @@ import nl.deltares.oss.download.service.persistence.DownloadUtil;
  * @author Erik de Rooij @ Deltares
  * @see DownloadCountLocalServiceBaseImpl
  */
+@Component(
+        property = "model.class.name=nl.deltares.oss.download.model.DownloadCount",
+        service = AopService.class
+)
 public class DownloadCountLocalServiceImpl
         extends DownloadCountLocalServiceBaseImpl {
 
