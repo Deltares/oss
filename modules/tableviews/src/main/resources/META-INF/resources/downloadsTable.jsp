@@ -83,7 +83,7 @@
                 </aui:col>
                 <aui:col width="20">
                     <aui:button type="submit" value="table.filter.button" />
-                    <aui:button type="cancel" onClick="<%= viewURL %>" value="table.filter.clear"/>
+                    <aui:button type="submit" onClick="<%= viewURL %>" value="table.filter.clear"/>
                 </aui:col>
             </aui:row>
         </aui:fieldset>
