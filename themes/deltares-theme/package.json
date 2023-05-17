@@ -12,10 +12,10 @@
 	],
 	"liferayTheme": {
 		"baseTheme": "styled",
-		"fontAwesome": false,
 		"screenshot": "",
 		"templateLanguage": "ftl",
-		"version": "7.4"
+		"version": "7.4",
+		"fontAwesome": false
 	},
 	"devDependencies": {
 		"compass-mixins": "0.12.12",
@@ -34,5 +34,8 @@
 		"status": "gulp status",
 		"upgrade": "gulp upgrade",
 		"watch": "gulp watch"
+	},
+	"dependencies": {
+		"@liferay/bs3-bs4-compat": "*"
 	}
 }
