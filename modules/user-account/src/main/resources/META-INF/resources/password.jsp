@@ -110,7 +110,7 @@
 
                 <aui:button-row>
                     <aui:button type="submit" name="updatePasseord" value="passwordform.save"/>
-                    <aui:button type="cancel" name="cancelPassword" value="passwordform.cancel" href="<%= viewURL %>"/>
+                    <aui:button type="submit" name="cancelPassword" value="passwordform.cancel" href="<%= viewURL %>"/>
                 </aui:button-row>
             </aui:fieldset>
         </aui:form>
