@@ -59,8 +59,8 @@ public class LayoutUtilsImpl implements LayoutUtils {
   }
 
   @Override
-  public Layout getLinkToPageLayout(long groupId, boolean privateLayout, String layoutId) {
-    return layoutLocalService.fetchLayout(groupId, privateLayout, Long.parseLong(layoutId));
+  public Layout getLinkToPageLayout(long groupId, boolean privateLayout, long layoutId) {
+    return layoutLocalService.fetchLayout(groupId, privateLayout, layoutId);
   }
 
   @Override
