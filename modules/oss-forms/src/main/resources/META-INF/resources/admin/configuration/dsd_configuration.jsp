@@ -9,6 +9,8 @@
 <%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider"  %>
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
 <%@ page import="nl.deltares.portal.configuration.DSDSiteConfiguration" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
 
 <liferay-theme:defineObjects/>
 
@@ -30,6 +32,11 @@
         portletConfiguration="<%= true %>"
         var="configurationRenderURL"
 />
+<%
+
+    final List<String> languageIds = (List<String>) renderRequest.getAttribute("languageIds");
+
+%>
 <aui:form action="<%= configurationActionURL %>" method="post" name="fm">
     <aui:input
             name="<%= Constants.CMD %>"
@@ -70,21 +77,45 @@
                 name="travelStayURL"
                 value="<%= configuration.travelStayURL() %>"/>
 
+        <%
+            Map<String, String> conditionsURL = (Map<String,String>) renderRequest.getAttribute("conditionsURL");
+            for (String languageId : languageIds) {
+                String name = "conditionsURL-" + languageId;
+        %>
         <aui:input
                 label="conditions-url"
-                name="conditionsURL"
-                value="<%= configuration.conditionsURL() %>"/>
-
+                prefix="<%=languageId%>"
+                name="<%=name%>"
+                value="<%= conditionsURL.get(languageId) %>"/>
+        <%
+            }
+        %>
+        <%
+            Map<String, String> privacyURL = (Map<String,String>) renderRequest.getAttribute("privacyURL");
+            for (String languageId : languageIds) {
+                String name = "privacyURL-" + languageId;
+        %>
         <aui:input
                 label="privacy-url"
-                name="privacyURL"
-                value="<%= configuration.privacyURL() %>"/>
-
+                prefix="<%=languageId%>"
+                name="<%=name%>"
+                value="<%= privacyURL.get(languageId) %>"/>
+        <%
+            }
+        %>
+        <%
+            Map<String, String> contactURL = (Map<String,String>) renderRequest.getAttribute("contactURL");
+            for (String languageId : languageIds) {
+                String name = "contactURL-" + languageId;
+        %>
         <aui:input
                 label="contact-url"
-                name="contactURL"
-                value="<%= configuration.contactURL() %>"/>
-
+                prefix="<%=languageId%>"
+                name="<%=name%>"
+                value="<%= contactURL.get(languageId) %>"/>
+        <%
+            }
+        %>
         <aui:input
                 label="dsd.email.sendFrom"
                 name="sendFromEmail"
