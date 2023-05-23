@@ -168,6 +168,7 @@ public class RegistrationDisplayContext {
     private Date getEndDate(Registration registration) {
         if (registration.isMultiDayEvent()){
             final List<Period> startAndEndTimesPerDay = registration.getStartAndEndTimesPerDay();
+            if (startAndEndTimesPerDay.isEmpty()) return registration.getEndTime();
             final Period period = startAndEndTimesPerDay.get(dayIndex);
             return period.getEndDate();
         } else {

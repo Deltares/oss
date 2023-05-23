@@ -132,9 +132,9 @@ public abstract class Registration extends AbsDsdArticle {
         Date day = dayf.parse(startDayString);
         ArrayList<Period> dayPeriods = new ArrayList<>();
         while (day.before(endTime)){
-            if (isWeekDay(day)) {
+//            if (isWeekDay(day)) {
                 dayPeriods.add(new Period(day.getTime() + startTimeMillis, day.getTime() + endTimeMillis ));
-            }
+//            }
             day = new Date(day.getTime() + dayMillis);
         }
         return dayPeriods;

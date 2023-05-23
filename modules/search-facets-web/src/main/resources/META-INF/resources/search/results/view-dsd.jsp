@@ -51,7 +51,12 @@
             String date = context.getStartDate();
             boolean writeDateHeader = !date.isEmpty() && !lastDate.equals(date);
             lastDate = date;
-
+            String dateHeader;
+            if (context.getRegistration().isToBeDetermined()) {
+                dateHeader = LanguageUtil.format(locale, "dsd.theme.session.tobedetermined", java.util.Optional.empty());
+            } else {
+                dateHeader = date;
+            }
             String colorClass;
             if (context.isPastEvent()) {
                 colorClass = "past-event";
@@ -72,7 +77,7 @@
         >
             <c:if test="<%= writeDateHeader %>">
                 <div class="date-title <%= colorClass %>">
-                    <span><%= date %></span>
+                    <span><%= dateHeader %></span>
                 </div>
             </c:if>
             <%
