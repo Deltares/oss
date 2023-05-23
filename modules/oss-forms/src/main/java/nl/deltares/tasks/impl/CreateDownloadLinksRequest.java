@@ -60,10 +60,11 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
 
                     try {
                         shareInfo = downloadUtils.shareLinkExists(download.getFilePath(), emailAddress);
+                        //todo: make password protection configurable
                         if (shareInfo.isEmpty()) {
-                            shareInfo = downloadUtils.sendShareLink(download.getFilePath(), emailAddress);
+                            shareInfo = downloadUtils.sendShareLink(download.getFilePath(), emailAddress, false);
                         } else {
-                            shareInfo = downloadUtils.resendShareLink(Integer.parseInt(shareInfo.get("id")));
+                            shareInfo = downloadUtils.resendShareLink(Integer.parseInt(shareInfo.get("id")), false);
                         }
                     } catch (Exception e) {
                         errorMessage = String.format("Failed to send link for file %s : %s ", download.getFileName(), e.getMessage());
