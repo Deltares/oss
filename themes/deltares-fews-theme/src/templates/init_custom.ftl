@@ -1,7 +1,6 @@
 <#--
 This file allows you to override and define new FreeMarker variables.
 -->
-
 <#assign
 layoutSet = layout.getLayoutSet()
 company_logo = htmlUtil.escape(themeDisplay.getCompanyLogo())
