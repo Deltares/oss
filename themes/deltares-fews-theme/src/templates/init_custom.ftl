@@ -13,7 +13,6 @@ company_logo = htmlUtil.escape(themeDisplay.getCompanyLogo())
     <#assign logo_img = images_folder + '/logo.png' />
 </#if>
 
-
 <#assign journalArticleLocalService = serviceLocator.findService("com.liferay.journal.service.JournalArticleLocalService") />
 
 <#assign footerWC = "" />
