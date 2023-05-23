@@ -41,6 +41,17 @@ public interface DownloadUtils {
     Map<String, String> sendShareLink(String filePath, String email) throws Exception;
 
     /**
+     * Create a new download link and send this to user via email
+     *
+     * @param filePath File or directory to share
+     * @param email    Email to send link to
+     * @param password Option to include a password
+     * @return Share ID
+     * @throws Exception If file is already shared to user if file does not exist.
+     */
+    Map<String, String> sendShareLink(String filePath, String email, boolean password) throws Exception;
+
+    /**
      * Revoke an earlier created share.
      * @param shareId Share identifier
      * @throws Exception If share does not exist.
@@ -78,6 +89,14 @@ public interface DownloadUtils {
      * @param shareId Id of existing share.
      */
     Map<String, String> resendShareLink(int shareId) throws Exception;
+
+    /**
+     * Resend an email to recipient of share link.
+     * Old share link is first removed before creating a new one.
+     * @param shareId Id of existing share.
+     * @param password option to protect with password
+     */
+    Map<String, String> resendShareLink(int shareId, boolean password) throws Exception;
 
     /**
      * Retrieve information about an existing share link

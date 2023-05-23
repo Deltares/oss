@@ -220,15 +220,16 @@ public class DownloadRestService {
 
         Map<String, String> shareInfo = null;
         try {
+            //todo: make password protect configurable
              shareInfo = downloadUtils.shareLinkExists(filePath, user.getEmailAddress());
             if (!shareInfo.isEmpty()) {
                 if (resendLink) {
-                    shareInfo = downloadUtils.resendShareLink(Integer.parseInt(shareInfo.get("id")));
+                    shareInfo = downloadUtils.resendShareLink(Integer.parseInt(shareInfo.get("id")), false);
                 } else {
                     return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Share link has already been sent to user " + user.getEmailAddress()).build();
                 }
             } else {
-                shareInfo = downloadUtils.sendShareLink(filePath, user.getEmailAddress());
+                shareInfo = downloadUtils.sendShareLink(filePath, user.getEmailAddress(), false);
             }
             return Response.ok().entity(String.format("Share link for '%s' created and sent to '%s'", filePath, user.getEmailAddress())).build();
         } catch (Exception e) {
