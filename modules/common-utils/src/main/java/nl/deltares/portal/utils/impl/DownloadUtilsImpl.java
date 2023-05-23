@@ -136,6 +136,11 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
 
     @Override
     public Map<String, String> sendShareLink(String filePath, String email) throws Exception {
+        return  sendShareLink(filePath, email, true);
+    }
+
+    @Override
+    public Map<String, String> sendShareLink(String filePath, String email, boolean passwordProtect) throws Exception {
         String directDownloadPath = API_PATH + "files_sharing/api/v1/shares";
         HttpURLConnection connection = getConnection(directDownloadPath, "POST", getDefaultHeaders());
         connection.setDoOutput(true);
@@ -143,8 +148,11 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         final HashMap<String, String> params = new HashMap<>();
         params.put("path", filePath);
         params.put("shareType", String.valueOf(3)); //3 - public, 4 - share by email
-        final String password = PasswordUtils.getPassword(passwordLength);
-        params.put("password", password);
+        String password = null;
+        if (passwordProtect) {
+            password = PasswordUtils.getPassword(passwordLength);
+            params.put("password", password);
+        }
 //        params.put("shareWith", email); not required for type 3
         params.put("permissions", String.valueOf(1));
 
@@ -176,7 +184,9 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         if (tokenNode.getLength() > 0){
             final String token = tokenNode.item(0).getTextContent();
             shareInfo.put("url", tokenToShareLinkUrl(token));
-            shareInfo.put("password", password);
+            if (passwordProtect) {
+                shareInfo.put("password", password);
+            }
         }
 
         return shareInfo;
@@ -245,13 +255,18 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
 
     @Override
     public Map<String, String> resendShareLink(int shareId) throws Exception {
+        return resendShareLink(shareId, true);
+    }
+
+    @Override
+    public Map<String, String> resendShareLink(int shareId, boolean passwordProtect) throws Exception {
 
         //Get info from existing share
         final Map<String, String> existingShare = getShareLinkInfo(shareId);
         //Delete the old share, to force resending emails
         deleteShareLink(Integer.parseInt(existingShare.get("id")));
         //Create a new share
-        return sendShareLink(existingShare.get("path"), existingShare.get("email"));
+        return sendShareLink(existingShare.get("path"), existingShare.get("email"), passwordProtect);
     }
 
     @Override
