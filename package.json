@@ -1,5 +1,13 @@
 {
-  "devDependencies": {
-    "liferay-npm-bundler": "^2.28.3"
-  }
+    "devDependencies": {
+        "liferay-npm-bundler": "^2.28.3"
+    },
+    "private": true,
+    "workspaces": {
+        "packages": [
+            "themes\\deltares-dsd-theme",
+            "themes\\deltares-fews-theme",
+            "themes\\deltares-theme"
+        ]
+    }
 }

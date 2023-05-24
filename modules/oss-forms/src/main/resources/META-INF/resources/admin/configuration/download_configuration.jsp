@@ -21,9 +21,6 @@
             (ConfigurationProvider) request.getAttribute(ConfigurationProvider.class.getName());
     DownloadSiteConfiguration configuration = configurationProvider.getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
 
-    Map<String, String> templateMap = (Map<String,String>) renderRequest.getAttribute("templateMap");
-    if (templateMap == null) templateMap = new HashMap<>();
-
     final List<String> languageIds = (List<String>) renderRequest.getAttribute("languageIds");
 %>
 <liferay-portlet:actionURL
