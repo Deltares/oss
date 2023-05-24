@@ -55,7 +55,7 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
             httpServletRequest.setAttribute("languageIds", getAvailableLanguageIds(httpServletRequest));
 
         } catch (PortalException e) {
-            throw new PortletException("Could not get 'templateMap' for DownloadSiteConfiguration: " + e.getMessage(), e);
+            throw new PortletException("Could not get configuration for DownloadSiteConfiguration: " + e.getMessage(), e);
         }
 
         super.include(portletConfig, httpServletRequest, httpServletResponse);

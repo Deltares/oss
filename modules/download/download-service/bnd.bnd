@@ -1,4 +1,3 @@
-Bundle-Activator: nl.deltares.oss.download.activator.DownloadServiceBundleActivator
 Bundle-Name: download-service
 Bundle-SymbolicName: nl.deltares.oss.download.service
 Bundle-Version: 1.0.1
