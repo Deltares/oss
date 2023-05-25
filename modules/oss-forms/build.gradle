@@ -1,8 +1,14 @@
 dependencies {
-	compileOnly( group: "com.liferay.portal", name: "release.dxp.api")
+	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
+	compileOnly group: 'com.liferay', name: 'com.liferay.journal.api'
+	compileOnly group: 'com.liferay', name: 'com.liferay.dynamic.data.mapping.api'
+	compileOnly group: "com.liferay", name: "com.liferay.message.boards.api"
+	compileOnly group: 'com.liferay', name: 'com.liferay.petra.sql.dsl.api'
 
-	compileOnly (group: "javax.mail", name: "mail", version: "1.4.7")
-
+	compileOnly group: 'biz.aQute.bnd', name: 'biz.aQute.bnd.gradle', version: '3.4.0'
+	compileOnly group: "javax.portlet", name: "portlet-api"
+	compileOnly group: "javax.servlet", name: "javax.servlet-api"
+	compileOnly group: 'javax.mail', name: 'mail', version: '1.4.7'
 	cssBuilder( group: "org.slf4j", name: "slf4j-simple", version:"2.0.0")
 
 	compileOnly( project(":modules:common-utils") )
