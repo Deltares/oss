@@ -21,6 +21,8 @@ import nl.deltares.oss.download.service.persistence.DownloadCountUtil;
 import nl.deltares.oss.download.service.persistence.DownloadUtil;
 import org.osgi.service.component.annotations.Component;
 
+import java.util.List;
+
 /**
  * The implementation of the download count local service.
  *
@@ -48,6 +50,10 @@ public class DownloadCountLocalServiceImpl
      */
     public DownloadCount getDownloadCount(long groupId, long downloadId) {
         return DownloadCountUtil.fetchByDownloadCountByGroup(groupId, downloadId);
+    }
+
+    public List<DownloadCount> fetchDownloadCounts(int start, int end){
+        return DownloadCountUtil.findAll(start, end);
     }
 
     public int getDownloadCountByGroupId(long groupId) {

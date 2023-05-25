@@ -212,6 +212,10 @@ public class DownloadCountLocalServiceUtil {
 		return getService().fetchDownloadCount(id);
 	}
 
+	public static List<DownloadCount> fetchDownloadCounts(int start, int end) {
+		return getService().fetchDownloadCounts(start, end);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 
