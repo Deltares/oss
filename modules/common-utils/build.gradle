@@ -1,19 +1,35 @@
 dependencies {
 
-    implementation( group: 'com.liferay.portal', name: 'release.dxp.api')
-    implementation( group: 'javax.mail', name: 'mail', version: '1.4.7')
-    compileInclude( group: 'com.maxmind.geoip2', name: 'geoip2', version: '2.12.0')
-    implementation( group: 'com.liferay', name: 'com.liferay.portal.search', version: '8.0.22')
+    compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
+    compileOnly group: 'com.liferay', name: 'com.liferay.dynamic.data.mapping.api'
+    compileOnly group: 'com.liferay', name: 'com.liferay.portal.configuration.metatype.api'
+    compileOnly group: 'com.liferay', name: 'com.liferay.journal.api'
+    compileOnly group: 'com.liferay', name: 'com.liferay.configuration.admin.api'
+    compileOnly group: 'com.liferay', name: 'com.liferay.portal.search'
+    compileOnly group: "com.liferay", name: "com.liferay.petra.string"
+    compileOnly group: "com.liferay", name: "com.liferay.petra.function"
+    compileOnly group: 'com.liferay', name: 'com.liferay.petra.sql.dsl.api'
+    compileOnly group: "com.liferay", name: "com.liferay.message.boards.api"
+    compileOnly group: 'com.liferay', name: 'com.liferay.document.library.api'
 
+    compileOnly group: 'biz.aQute.bnd', name: 'biz.aQute.bnd.gradle', version: '3.4.0'
+    compileOnly group: 'javax.mail', name: 'mail', version: '1.4.7'
+    compileOnly group: 'javax.portlet', name: 'portlet-api'
+    compileOnly group: 'javax.servlet', name: 'javax.servlet-api'
+    compileInclude group: "com.maxmind.geoip2", name: "geoip2", version: "2.15.0"
 
-    implementation( project(":modules:registration-service:registration-service-api"))
-    implementation( project(":modules:download:download-api"))
+    compileOnly project(":modules:registration-service:registration-service-api")
+    compileOnly project(":modules:download:download-api")
 
+    testCompile group: 'com.liferay.portal', name: 'com.liferay.portal.kernel'
+    testCompile group: 'com.liferay.portal', name: 'com.liferay.portal.impl'
+    testCompile group: "com.liferay", name: "com.liferay.petra.string"
+    testCompile group: 'com.liferay', name: 'com.liferay.petra.lang'
+    testCompile group: 'com.liferay', name: 'com.liferay.journal.api'
 
-    testImplementation( group: 'com.liferay.portal', name: 'release.dxp.api')
-    testImplementation( group: 'junit', name: 'junit', version: '4.12')
-    testImplementation( group: 'com.liferay.portal' , name: 'com.liferay.portal.impl')
-    testImplementation( group: 'org.jodd', name: 'jodd-json')
-    testImplementation (group: 'commons-io', name: 'commons-io')
-    testImplementation( group: 'com.maxmind.geoip2', name: 'geoip2', version: '2.12.0')
+    testCompile group: "junit", name: "junit", version: "4.12"
+    testCompile group: 'org.jodd', name: 'jodd-json'
+    testCompile group: 'commons-io', name: 'commons-io', version: '2.11.0'
+    testCompile group: "com.maxmind.geoip2", name: "geoip2", version: "2.15.0"
+
 }
