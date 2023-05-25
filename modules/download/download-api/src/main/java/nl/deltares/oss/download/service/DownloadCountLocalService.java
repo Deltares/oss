@@ -201,6 +201,9 @@ public interface DownloadCountLocalService
 	public DownloadCount fetchDownloadCount(long id);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DownloadCount> fetchDownloadCounts(int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
 	/**

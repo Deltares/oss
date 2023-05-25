@@ -236,6 +236,13 @@ public class DownloadCountLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List<nl.deltares.oss.download.model.DownloadCount>
+		fetchDownloadCounts(int start, int end) {
+
+		return _downloadCountLocalService.fetchDownloadCounts(start, end);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 
