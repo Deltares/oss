@@ -150,9 +150,6 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
         final List<DisplayDownloadCount> displayCounts = new ArrayList<>();
         final int end = cur + deltas;
         try {
-            if (DownloadCountLocalServiceUtil.getService() == null){
-                throw new Exception("DownloadCount service is null");
-            }
             final List<DownloadCount> downloadCounts = DownloadCountLocalServiceUtil.getDownloadCounts(cur, end);
             downloadCounts.forEach(downloadCount -> {
 
