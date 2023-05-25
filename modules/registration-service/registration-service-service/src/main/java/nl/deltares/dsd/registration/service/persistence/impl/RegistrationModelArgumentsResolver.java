@@ -33,12 +33,7 @@ import org.osgi.service.component.annotations.Component;
  * @author Erik de Rooij @ Deltares
  * @generated
  */
-@Component(
-	immediate = true,
-	service = {
-		RegistrationModelArgumentsResolver.class, ArgumentsResolver.class
-	}
-)
+@Component(service = ArgumentsResolver.class)
 public class RegistrationModelArgumentsResolver implements ArgumentsResolver {
 
 	@Override
