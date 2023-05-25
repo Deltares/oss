@@ -27,6 +27,10 @@ public class RegistrationLocalServiceWrapper
 	implements RegistrationLocalService,
 			   ServiceWrapper<RegistrationLocalService> {
 
+	public RegistrationLocalServiceWrapper() {
+		this(null);
+	}
+
 	public RegistrationLocalServiceWrapper(
 		RegistrationLocalService registrationLocalService) {
 
