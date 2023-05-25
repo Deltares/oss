@@ -10,7 +10,6 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.template.TemplateContextContributor;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.portal.utils.URLUtils;
@@ -123,31 +122,31 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
 
     }
 
-    private String appendWithReferrer(String accountPath, ThemeDisplay themeDisplay) {
+//    private String appendWithReferrer(String accountPath, ThemeDisplay themeDisplay) {
+//
+//        int startPath = accountPath.indexOf('?');
+//        if (startPath > 0) {
+//            if (startPath == accountPath.length() - 1) {
+//                accountPath += getReferrerPath(themeDisplay);
+//                return accountPath;
+//            }
+//        }
+//        accountPath += '?';
+//        accountPath += getReferrerPath(themeDisplay);
+//        return accountPath;
+//    }
 
-        int startPath = accountPath.indexOf('?');
-        if (startPath > 0) {
-            if (startPath == accountPath.length() - 1) {
-                accountPath += getReferrerPath(themeDisplay);
-                return accountPath;
-            }
-        }
-        accountPath += '?';
-        accountPath += getReferrerPath(themeDisplay);
-        return accountPath;
-    }
-
-    private String getReferrerPath(ThemeDisplay themeDisplay) {
-        String path = "referrer_uri=" + themeDisplay.getCDNBaseURL() + themeDisplay.getURLCurrent();
-        String descriptiveName;
-        try {
-            descriptiveName = themeDisplay.getScopeGroup().getDescriptiveName();
-        } catch (PortalException e) {
-            descriptiveName = "OSS Community Portal";
-        }
-        path += "&referrer=" + descriptiveName;
-
-        return HttpUtil.encodeParameters(path);
-    }
+//    private String getReferrerPath(ThemeDisplay themeDisplay) {
+//        String path = "referrer_uri=" + themeDisplay.getCDNBaseURL() + themeDisplay.getURLCurrent();
+//        String descriptiveName;
+//        try {
+//            descriptiveName = themeDisplay.getScopeGroup().getDescriptiveName();
+//        } catch (PortalException e) {
+//            descriptiveName = "OSS Community Portal";
+//        }
+//        path += "&referrer=" + descriptiveName;
+//
+//        return URLEncoder.encode(path, StandardCharsets.UTF_8);
+//    }
 
 }
