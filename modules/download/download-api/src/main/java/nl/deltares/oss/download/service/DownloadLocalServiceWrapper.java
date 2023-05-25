@@ -26,6 +26,10 @@ import com.liferay.portal.kernel.service.ServiceWrapper;
 public class DownloadLocalServiceWrapper
 	implements DownloadLocalService, ServiceWrapper<DownloadLocalService> {
 
+	public DownloadLocalServiceWrapper() {
+		this(null);
+	}
+
 	public DownloadLocalServiceWrapper(
 		DownloadLocalService downloadLocalService) {
 

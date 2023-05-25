@@ -27,6 +27,10 @@ public class DownloadCountLocalServiceWrapper
 	implements DownloadCountLocalService,
 			   ServiceWrapper<DownloadCountLocalService> {
 
+	public DownloadCountLocalServiceWrapper() {
+		this(null);
+	}
+
 	public DownloadCountLocalServiceWrapper(
 		DownloadCountLocalService downloadCountLocalService) {
 

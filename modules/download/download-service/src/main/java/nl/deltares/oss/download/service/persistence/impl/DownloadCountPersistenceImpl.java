@@ -172,7 +172,7 @@ public class DownloadCountPersistenceImpl
 
 		if (useFinderCache) {
 			result = finderCache.getResult(
-				_finderPathFetchByDownloadCountByGroup, finderArgs);
+				_finderPathFetchByDownloadCountByGroup, finderArgs, this);
 		}
 
 		if (result instanceof DownloadCount) {
@@ -273,7 +273,7 @@ public class DownloadCountPersistenceImpl
 
 		Object[] finderArgs = new Object[] {groupId, downloadId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(3);
@@ -389,7 +389,7 @@ public class DownloadCountPersistenceImpl
 
 		if (useFinderCache) {
 			result = finderCache.getResult(
-				_finderPathFetchByDownloadCount, finderArgs);
+				_finderPathFetchByDownloadCount, finderArgs, this);
 		}
 
 		if (result instanceof DownloadCount) {
@@ -479,7 +479,7 @@ public class DownloadCountPersistenceImpl
 
 		Object[] finderArgs = new Object[] {downloadId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(2);
@@ -939,7 +939,7 @@ public class DownloadCountPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<DownloadCount>)finderCache.getResult(
-				finderPath, finderArgs);
+				finderPath, finderArgs, this);
 		}
 
 		if (list == null) {
@@ -1009,7 +1009,7 @@ public class DownloadCountPersistenceImpl
 	@Override
 	public int countAll() {
 		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY);
+			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
 
 		if (count == null) {
 			Session session = null;
@@ -1189,9 +1189,5 @@ public class DownloadCountPersistenceImpl
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
-
-	@Reference
-	private DownloadCountModelArgumentsResolver
-		_downloadCountModelArgumentsResolver;
 
 }
