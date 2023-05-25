@@ -198,7 +198,7 @@ public class DownloadPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<Download>)finderCache.getResult(
-				finderPath, finderArgs);
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Download download : list) {
@@ -586,7 +586,7 @@ public class DownloadPersistenceImpl
 
 		Object[] finderArgs = new Object[] {groupId, downloadId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(3);
@@ -736,7 +736,7 @@ public class DownloadPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<Download>)finderCache.getResult(
-				finderPath, finderArgs);
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Download download : list) {
@@ -1122,7 +1122,7 @@ public class DownloadPersistenceImpl
 
 		Object[] finderArgs = new Object[] {groupId, shareId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(3);
@@ -1280,7 +1280,7 @@ public class DownloadPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<Download>)finderCache.getResult(
-				finderPath, finderArgs);
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Download download : list) {
@@ -1695,7 +1695,7 @@ public class DownloadPersistenceImpl
 
 		Object[] finderArgs = new Object[] {groupId, userId, shareId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(4);
@@ -1834,7 +1834,7 @@ public class DownloadPersistenceImpl
 
 		if (useFinderCache) {
 			result = finderCache.getResult(
-				_finderPathFetchByUserDownload, finderArgs);
+				_finderPathFetchByUserDownload, finderArgs, this);
 		}
 
 		if (result instanceof Download) {
@@ -1940,7 +1940,7 @@ public class DownloadPersistenceImpl
 
 		Object[] finderArgs = new Object[] {groupId, userId, downloadId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(4);
@@ -2096,7 +2096,7 @@ public class DownloadPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<Download>)finderCache.getResult(
-				finderPath, finderArgs);
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Download download : list) {
@@ -2482,7 +2482,7 @@ public class DownloadPersistenceImpl
 
 		Object[] finderArgs = new Object[] {groupId, userId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(3);
@@ -2625,7 +2625,7 @@ public class DownloadPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<Download>)finderCache.getResult(
-				finderPath, finderArgs);
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Download download : list) {
@@ -2983,7 +2983,7 @@ public class DownloadPersistenceImpl
 
 		Object[] finderArgs = new Object[] {groupId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(2);
@@ -3119,7 +3119,7 @@ public class DownloadPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<Download>)finderCache.getResult(
-				finderPath, finderArgs);
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Download download : list) {
@@ -3477,7 +3477,7 @@ public class DownloadPersistenceImpl
 
 		Object[] finderArgs = new Object[] {groupId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(2);
@@ -3942,7 +3942,7 @@ public class DownloadPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<Download>)finderCache.getResult(
-				finderPath, finderArgs);
+				finderPath, finderArgs, this);
 		}
 
 		if (list == null) {
@@ -4012,7 +4012,7 @@ public class DownloadPersistenceImpl
 	@Override
 	public int countAll() {
 		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY);
+			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
 
 		if (count == null) {
 			Session session = null;
@@ -4308,8 +4308,5 @@ public class DownloadPersistenceImpl
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
-
-	@Reference
-	private DownloadModelArgumentsResolver _downloadModelArgumentsResolver;
 
 }
