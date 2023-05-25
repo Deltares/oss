@@ -27,6 +27,10 @@ public class RepositoryFolderPermissionServiceWrapper
 	implements RepositoryFolderPermissionService,
 			   ServiceWrapper<RepositoryFolderPermissionService> {
 
+	public RepositoryFolderPermissionServiceWrapper() {
+		this(null);
+	}
+
 	public RepositoryFolderPermissionServiceWrapper(
 		RepositoryFolderPermissionService repositoryFolderPermissionService) {
 

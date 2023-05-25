@@ -27,6 +27,10 @@ public class RepositoryLogLocalServiceWrapper
 	implements RepositoryLogLocalService,
 			   ServiceWrapper<RepositoryLogLocalService> {
 
+	public RepositoryLogLocalServiceWrapper() {
+		this(null);
+	}
+
 	public RepositoryLogLocalServiceWrapper(
 		RepositoryLogLocalService repositoryLogLocalService) {
 

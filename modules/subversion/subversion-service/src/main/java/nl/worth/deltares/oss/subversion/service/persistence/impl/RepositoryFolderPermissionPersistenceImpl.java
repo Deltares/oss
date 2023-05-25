@@ -194,7 +194,7 @@ public class RepositoryFolderPermissionPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<RepositoryFolderPermission>)finderCache.getResult(
-				finderPath, finderArgs);
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (RepositoryFolderPermission repositoryFolderPermission :
@@ -565,7 +565,7 @@ public class RepositoryFolderPermissionPersistenceImpl
 
 		Object[] finderArgs = new Object[] {folderId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(2);
@@ -1045,7 +1045,7 @@ public class RepositoryFolderPermissionPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<RepositoryFolderPermission>)finderCache.getResult(
-				finderPath, finderArgs);
+				finderPath, finderArgs, this);
 		}
 
 		if (list == null) {
@@ -1118,7 +1118,7 @@ public class RepositoryFolderPermissionPersistenceImpl
 	@Override
 	public int countAll() {
 		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY);
+			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
 
 		if (count == null) {
 			Session session = null;
@@ -1290,9 +1290,5 @@ public class RepositoryFolderPermissionPersistenceImpl
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
-
-	@Reference
-	private RepositoryFolderPermissionModelArgumentsResolver
-		_repositoryFolderPermissionModelArgumentsResolver;
 
 }

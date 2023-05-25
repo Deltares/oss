@@ -29,18 +29,15 @@ import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.Serializable;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 
 import java.sql.Blob;
 import java.sql.Types;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -48,7 +45,6 @@ import java.util.function.Function;
 
 import nl.worth.deltares.oss.subversion.model.RepositoryFolder;
 import nl.worth.deltares.oss.subversion.model.RepositoryFolderModel;
-import nl.worth.deltares.oss.subversion.model.RepositoryFolderSoap;
 
 /**
  * The base model implementation for the RepositoryFolder service. Represents a row in the &quot;Subversion_RepositoryFolder&quot; database table, with each column mapped to a property of this class.
@@ -137,57 +133,6 @@ public class RepositoryFolderModelImpl
 	public static void setFinderCacheEnabled(boolean finderCacheEnabled) {
 	}
 
-	/**
-	 * Converts the soap model instance into a normal model instance.
-	 *
-	 * @param soapModel the soap model instance to convert
-	 * @return the normal model instance
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
-	 */
-	@Deprecated
-	public static RepositoryFolder toModel(RepositoryFolderSoap soapModel) {
-		if (soapModel == null) {
-			return null;
-		}
-
-		RepositoryFolder model = new RepositoryFolderImpl();
-
-		model.setFolderId(soapModel.getFolderId());
-		model.setRepositoryId(soapModel.getRepositoryId());
-		model.setName(soapModel.getName());
-		model.setWorldRead(soapModel.isWorldRead());
-		model.setWorldWrite(soapModel.isWorldWrite());
-		model.setCreateDate(soapModel.getCreateDate());
-		model.setModifiedDate(soapModel.getModifiedDate());
-
-		return model;
-	}
-
-	/**
-	 * Converts the soap model instances into normal model instances.
-	 *
-	 * @param soapModels the soap model instances to convert
-	 * @return the normal model instances
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
-	 */
-	@Deprecated
-	public static List<RepositoryFolder> toModels(
-		RepositoryFolderSoap[] soapModels) {
-
-		if (soapModels == null) {
-			return null;
-		}
-
-		List<RepositoryFolder> models = new ArrayList<RepositoryFolder>(
-			soapModels.length);
-
-		for (RepositoryFolderSoap soapModel : soapModels) {
-			models.add(toModel(soapModel));
-		}
-
-		return models;
-	}
-
 	public RepositoryFolderModelImpl() {
 	}
 
@@ -271,34 +216,6 @@ public class RepositoryFolderModelImpl
 		getAttributeSetterBiConsumers() {
 
 		return _attributeSetterBiConsumers;
-	}
-
-	private static Function<InvocationHandler, RepositoryFolder>
-		_getProxyProviderFunction() {
-
-		Class<?> proxyClass = ProxyUtil.getProxyClass(
-			RepositoryFolder.class.getClassLoader(), RepositoryFolder.class,
-			ModelWrapper.class);
-
-		try {
-			Constructor<RepositoryFolder> constructor =
-				(Constructor<RepositoryFolder>)proxyClass.getConstructor(
-					InvocationHandler.class);
-
-			return invocationHandler -> {
-				try {
-					return constructor.newInstance(invocationHandler);
-				}
-				catch (ReflectiveOperationException
-							reflectiveOperationException) {
-
-					throw new InternalError(reflectiveOperationException);
-				}
-			};
-		}
-		catch (NoSuchMethodException noSuchMethodException) {
-			throw new InternalError(noSuchMethodException);
-		}
 	}
 
 	private static final Map<String, Function<RepositoryFolder, Object>>
@@ -755,41 +672,12 @@ public class RepositoryFolderModelImpl
 		return sb.toString();
 	}
 
-	@Override
-	public String toXmlString() {
-		Map<String, Function<RepositoryFolder, Object>>
-			attributeGetterFunctions = getAttributeGetterFunctions();
-
-		StringBundler sb = new StringBundler(
-			(5 * attributeGetterFunctions.size()) + 4);
-
-		sb.append("<model><model-name>");
-		sb.append(getModelClassName());
-		sb.append("</model-name>");
-
-		for (Map.Entry<String, Function<RepositoryFolder, Object>> entry :
-				attributeGetterFunctions.entrySet()) {
-
-			String attributeName = entry.getKey();
-			Function<RepositoryFolder, Object> attributeGetterFunction =
-				entry.getValue();
-
-			sb.append("<column><column-name>");
-			sb.append(attributeName);
-			sb.append("</column-name><column-value><![CDATA[");
-			sb.append(attributeGetterFunction.apply((RepositoryFolder)this));
-			sb.append("]]></column-value></column>");
-		}
-
-		sb.append("</model>");
-
-		return sb.toString();
-	}
-
 	private static class EscapedModelProxyProviderFunctionHolder {
 
 		private static final Function<InvocationHandler, RepositoryFolder>
-			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+			_escapedModelProxyProviderFunction =
+				ProxyUtil.getProxyProviderFunction(
+					RepositoryFolder.class, ModelWrapper.class);
 
 	}
 

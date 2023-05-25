@@ -26,6 +26,10 @@ import com.liferay.portal.kernel.service.ServiceWrapper;
 public class RepositoryLogServiceWrapper
 	implements RepositoryLogService, ServiceWrapper<RepositoryLogService> {
 
+	public RepositoryLogServiceWrapper() {
+		this(null);
+	}
+
 	public RepositoryLogServiceWrapper(
 		RepositoryLogService repositoryLogService) {
 

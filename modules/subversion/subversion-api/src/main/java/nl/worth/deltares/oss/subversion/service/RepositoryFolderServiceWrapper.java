@@ -27,6 +27,10 @@ public class RepositoryFolderServiceWrapper
 	implements RepositoryFolderService,
 			   ServiceWrapper<RepositoryFolderService> {
 
+	public RepositoryFolderServiceWrapper() {
+		this(null);
+	}
+
 	public RepositoryFolderServiceWrapper(
 		RepositoryFolderService repositoryFolderService) {
 

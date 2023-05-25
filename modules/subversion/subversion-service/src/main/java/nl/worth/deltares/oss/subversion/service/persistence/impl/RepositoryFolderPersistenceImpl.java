@@ -193,7 +193,7 @@ public class RepositoryFolderPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<RepositoryFolder>)finderCache.getResult(
-				finderPath, finderArgs);
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (RepositoryFolder repositoryFolder : list) {
@@ -559,7 +559,7 @@ public class RepositoryFolderPersistenceImpl
 
 		Object[] finderArgs = new Object[] {repositoryId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(2);
@@ -1008,7 +1008,7 @@ public class RepositoryFolderPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<RepositoryFolder>)finderCache.getResult(
-				finderPath, finderArgs);
+				finderPath, finderArgs, this);
 		}
 
 		if (list == null) {
@@ -1078,7 +1078,7 @@ public class RepositoryFolderPersistenceImpl
 	@Override
 	public int countAll() {
 		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY);
+			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
 
 		if (count == null) {
 			Session session = null;
@@ -1247,9 +1247,5 @@ public class RepositoryFolderPersistenceImpl
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
-
-	@Reference
-	private RepositoryFolderModelArgumentsResolver
-		_repositoryFolderModelArgumentsResolver;
 
 }

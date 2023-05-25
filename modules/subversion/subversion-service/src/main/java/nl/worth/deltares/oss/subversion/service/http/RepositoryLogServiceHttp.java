@@ -47,7 +47,6 @@ import nl.worth.deltares.oss.subversion.service.RepositoryLogServiceUtil;
  * </p>
  *
  * @author Brian Wing Shun Chan
- * @see RepositoryLogServiceSoap
  * @generated
  */
 public class RepositoryLogServiceHttp {
