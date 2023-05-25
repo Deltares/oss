@@ -29,18 +29,15 @@ import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.Serializable;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 
 import java.sql.Blob;
 import java.sql.Types;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -48,7 +45,6 @@ import java.util.function.Function;
 
 import nl.worth.deltares.oss.subversion.model.RepositoryFolderPermission;
 import nl.worth.deltares.oss.subversion.model.RepositoryFolderPermissionModel;
-import nl.worth.deltares.oss.subversion.model.RepositoryFolderPermissionSoap;
 
 /**
  * The base model implementation for the RepositoryFolderPermission service. Represents a row in the &quot;Subversion_RepositoryFolderPermission&quot; database table, with each column mapped to a property of this class.
@@ -140,60 +136,6 @@ public class RepositoryFolderPermissionModelImpl
 	public static void setFinderCacheEnabled(boolean finderCacheEnabled) {
 	}
 
-	/**
-	 * Converts the soap model instance into a normal model instance.
-	 *
-	 * @param soapModel the soap model instance to convert
-	 * @return the normal model instance
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
-	 */
-	@Deprecated
-	public static RepositoryFolderPermission toModel(
-		RepositoryFolderPermissionSoap soapModel) {
-
-		if (soapModel == null) {
-			return null;
-		}
-
-		RepositoryFolderPermission model = new RepositoryFolderPermissionImpl();
-
-		model.setPermissionId(soapModel.getPermissionId());
-		model.setFolderId(soapModel.getFolderId());
-		model.setPermission(soapModel.getPermission());
-		model.setRecurse(soapModel.isRecurse());
-		model.setEntityType(soapModel.getEntityType());
-		model.setEntityId(soapModel.getEntityId());
-		model.setCreateDate(soapModel.getCreateDate());
-		model.setModifiedDate(soapModel.getModifiedDate());
-
-		return model;
-	}
-
-	/**
-	 * Converts the soap model instances into normal model instances.
-	 *
-	 * @param soapModels the soap model instances to convert
-	 * @return the normal model instances
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
-	 */
-	@Deprecated
-	public static List<RepositoryFolderPermission> toModels(
-		RepositoryFolderPermissionSoap[] soapModels) {
-
-		if (soapModels == null) {
-			return null;
-		}
-
-		List<RepositoryFolderPermission> models =
-			new ArrayList<RepositoryFolderPermission>(soapModels.length);
-
-		for (RepositoryFolderPermissionSoap soapModel : soapModels) {
-			models.add(toModel(soapModel));
-		}
-
-		return models;
-	}
-
 	public RepositoryFolderPermissionModelImpl() {
 	}
 
@@ -279,34 +221,6 @@ public class RepositoryFolderPermissionModelImpl
 		getAttributeSetterBiConsumers() {
 
 		return _attributeSetterBiConsumers;
-	}
-
-	private static Function<InvocationHandler, RepositoryFolderPermission>
-		_getProxyProviderFunction() {
-
-		Class<?> proxyClass = ProxyUtil.getProxyClass(
-			RepositoryFolderPermission.class.getClassLoader(),
-			RepositoryFolderPermission.class, ModelWrapper.class);
-
-		try {
-			Constructor<RepositoryFolderPermission> constructor =
-				(Constructor<RepositoryFolderPermission>)
-					proxyClass.getConstructor(InvocationHandler.class);
-
-			return invocationHandler -> {
-				try {
-					return constructor.newInstance(invocationHandler);
-				}
-				catch (ReflectiveOperationException
-							reflectiveOperationException) {
-
-					throw new InternalError(reflectiveOperationException);
-				}
-			};
-		}
-		catch (NoSuchMethodException noSuchMethodException) {
-			throw new InternalError(noSuchMethodException);
-		}
 	}
 
 	private static final Map
@@ -804,45 +718,13 @@ public class RepositoryFolderPermissionModelImpl
 		return sb.toString();
 	}
 
-	@Override
-	public String toXmlString() {
-		Map<String, Function<RepositoryFolderPermission, Object>>
-			attributeGetterFunctions = getAttributeGetterFunctions();
-
-		StringBundler sb = new StringBundler(
-			(5 * attributeGetterFunctions.size()) + 4);
-
-		sb.append("<model><model-name>");
-		sb.append(getModelClassName());
-		sb.append("</model-name>");
-
-		for (Map.Entry<String, Function<RepositoryFolderPermission, Object>>
-				entry : attributeGetterFunctions.entrySet()) {
-
-			String attributeName = entry.getKey();
-			Function<RepositoryFolderPermission, Object>
-				attributeGetterFunction = entry.getValue();
-
-			sb.append("<column><column-name>");
-			sb.append(attributeName);
-			sb.append("</column-name><column-value><![CDATA[");
-			sb.append(
-				attributeGetterFunction.apply(
-					(RepositoryFolderPermission)this));
-			sb.append("]]></column-value></column>");
-		}
-
-		sb.append("</model>");
-
-		return sb.toString();
-	}
-
 	private static class EscapedModelProxyProviderFunctionHolder {
 
 		private static final Function
 			<InvocationHandler, RepositoryFolderPermission>
 				_escapedModelProxyProviderFunction =
-					_getProxyProviderFunction();
+					ProxyUtil.getProxyProviderFunction(
+						RepositoryFolderPermission.class, ModelWrapper.class);
 
 	}
 

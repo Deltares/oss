@@ -27,6 +27,10 @@ public class RepositoryFolderPermissionLocalServiceWrapper
 	implements RepositoryFolderPermissionLocalService,
 			   ServiceWrapper<RepositoryFolderPermissionLocalService> {
 
+	public RepositoryFolderPermissionLocalServiceWrapper() {
+		this(null);
+	}
+
 	public RepositoryFolderPermissionLocalServiceWrapper(
 		RepositoryFolderPermissionLocalService
 			repositoryFolderPermissionLocalService) {

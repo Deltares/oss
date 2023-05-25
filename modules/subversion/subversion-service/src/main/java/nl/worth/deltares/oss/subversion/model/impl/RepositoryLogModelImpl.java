@@ -28,18 +28,15 @@ import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.Serializable;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 
 import java.sql.Blob;
 import java.sql.Types;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -47,7 +44,6 @@ import java.util.function.Function;
 
 import nl.worth.deltares.oss.subversion.model.RepositoryLog;
 import nl.worth.deltares.oss.subversion.model.RepositoryLogModel;
-import nl.worth.deltares.oss.subversion.model.RepositoryLogSoap;
 
 /**
  * The base model implementation for the RepositoryLog service. Represents a row in the &quot;Subversion_RepositoryLog&quot; database table, with each column mapped to a property of this class.
@@ -126,54 +122,6 @@ public class RepositoryLogModelImpl
 	 */
 	@Deprecated
 	public static void setFinderCacheEnabled(boolean finderCacheEnabled) {
-	}
-
-	/**
-	 * Converts the soap model instance into a normal model instance.
-	 *
-	 * @param soapModel the soap model instance to convert
-	 * @return the normal model instance
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
-	 */
-	@Deprecated
-	public static RepositoryLog toModel(RepositoryLogSoap soapModel) {
-		if (soapModel == null) {
-			return null;
-		}
-
-		RepositoryLog model = new RepositoryLogImpl();
-
-		model.setLogId(soapModel.getLogId());
-		model.setIpAddress(soapModel.getIpAddress());
-		model.setScreenName(soapModel.getScreenName());
-		model.setAction(soapModel.getAction());
-		model.setCreateDate(soapModel.getCreateDate());
-		model.setRepository(soapModel.getRepository());
-
-		return model;
-	}
-
-	/**
-	 * Converts the soap model instances into normal model instances.
-	 *
-	 * @param soapModels the soap model instances to convert
-	 * @return the normal model instances
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
-	 */
-	@Deprecated
-	public static List<RepositoryLog> toModels(RepositoryLogSoap[] soapModels) {
-		if (soapModels == null) {
-			return null;
-		}
-
-		List<RepositoryLog> models = new ArrayList<RepositoryLog>(
-			soapModels.length);
-
-		for (RepositoryLogSoap soapModel : soapModels) {
-			models.add(toModel(soapModel));
-		}
-
-		return models;
 	}
 
 	public RepositoryLogModelImpl() {
@@ -259,34 +207,6 @@ public class RepositoryLogModelImpl
 		getAttributeSetterBiConsumers() {
 
 		return _attributeSetterBiConsumers;
-	}
-
-	private static Function<InvocationHandler, RepositoryLog>
-		_getProxyProviderFunction() {
-
-		Class<?> proxyClass = ProxyUtil.getProxyClass(
-			RepositoryLog.class.getClassLoader(), RepositoryLog.class,
-			ModelWrapper.class);
-
-		try {
-			Constructor<RepositoryLog> constructor =
-				(Constructor<RepositoryLog>)proxyClass.getConstructor(
-					InvocationHandler.class);
-
-			return invocationHandler -> {
-				try {
-					return constructor.newInstance(invocationHandler);
-				}
-				catch (ReflectiveOperationException
-							reflectiveOperationException) {
-
-					throw new InternalError(reflectiveOperationException);
-				}
-			};
-		}
-		catch (NoSuchMethodException noSuchMethodException) {
-			throw new InternalError(noSuchMethodException);
-		}
 	}
 
 	private static final Map<String, Function<RepositoryLog, Object>>
@@ -698,41 +618,12 @@ public class RepositoryLogModelImpl
 		return sb.toString();
 	}
 
-	@Override
-	public String toXmlString() {
-		Map<String, Function<RepositoryLog, Object>> attributeGetterFunctions =
-			getAttributeGetterFunctions();
-
-		StringBundler sb = new StringBundler(
-			(5 * attributeGetterFunctions.size()) + 4);
-
-		sb.append("<model><model-name>");
-		sb.append(getModelClassName());
-		sb.append("</model-name>");
-
-		for (Map.Entry<String, Function<RepositoryLog, Object>> entry :
-				attributeGetterFunctions.entrySet()) {
-
-			String attributeName = entry.getKey();
-			Function<RepositoryLog, Object> attributeGetterFunction =
-				entry.getValue();
-
-			sb.append("<column><column-name>");
-			sb.append(attributeName);
-			sb.append("</column-name><column-value><![CDATA[");
-			sb.append(attributeGetterFunction.apply((RepositoryLog)this));
-			sb.append("]]></column-value></column>");
-		}
-
-		sb.append("</model>");
-
-		return sb.toString();
-	}
-
 	private static class EscapedModelProxyProviderFunctionHolder {
 
 		private static final Function<InvocationHandler, RepositoryLog>
-			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+			_escapedModelProxyProviderFunction =
+				ProxyUtil.getProxyProviderFunction(
+					RepositoryLog.class, ModelWrapper.class);
 
 	}
 

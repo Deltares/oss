@@ -38,7 +38,6 @@ package nl.worth.deltares.oss.subversion.service.http;
  * </p>
  *
  * @author Brian Wing Shun Chan
- * @see RepositoryServiceSoap
  * @generated
  */
 public class RepositoryServiceHttp {

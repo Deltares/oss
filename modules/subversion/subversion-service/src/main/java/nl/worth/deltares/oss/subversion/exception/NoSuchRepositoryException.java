@@ -1,8 +1,8 @@
 package nl.worth.deltares.oss.subversion.exception;
 
 
-import aQute.bnd.annotation.ProviderType;
 import com.liferay.portal.kernel.exception.NoSuchModelException;
+import org.osgi.annotation.versioning.ProviderType;
 
 
 @ProviderType

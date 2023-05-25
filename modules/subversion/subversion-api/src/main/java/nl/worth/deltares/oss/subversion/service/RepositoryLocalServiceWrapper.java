@@ -26,6 +26,10 @@ import com.liferay.portal.kernel.service.ServiceWrapper;
 public class RepositoryLocalServiceWrapper
 	implements RepositoryLocalService, ServiceWrapper<RepositoryLocalService> {
 
+	public RepositoryLocalServiceWrapper() {
+		this(null);
+	}
+
 	public RepositoryLocalServiceWrapper(
 		RepositoryLocalService repositoryLocalService) {
 

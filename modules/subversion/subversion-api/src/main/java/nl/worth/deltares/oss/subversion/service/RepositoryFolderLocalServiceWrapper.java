@@ -27,6 +27,10 @@ public class RepositoryFolderLocalServiceWrapper
 	implements RepositoryFolderLocalService,
 			   ServiceWrapper<RepositoryFolderLocalService> {
 
+	public RepositoryFolderLocalServiceWrapper() {
+		this(null);
+	}
+
 	public RepositoryFolderLocalServiceWrapper(
 		RepositoryFolderLocalService repositoryFolderLocalService) {
 
