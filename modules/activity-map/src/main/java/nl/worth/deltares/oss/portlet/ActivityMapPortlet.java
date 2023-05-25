@@ -17,6 +17,7 @@ import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import java.io.IOException;
+import java.util.Collections;
 
 
 /**
@@ -59,8 +60,10 @@ public class ActivityMapPortlet extends MVCPortlet {
             JSONArray logsArray = RepositoryLogLocalServiceUtil.getLastActivityLogs(number);
             logsJson.put("total", logsArray.length());
             logsJson.put("objects", logsArray);
-        } catch (SystemException e) {
+        } catch (Exception e) {
             LOG.error("Error retrieving RepositoryLogs", e);
+            logsJson.put("total", 0);
+            logsJson.put("objects", Collections.emptyList());
         }
 
         return logsJson;
