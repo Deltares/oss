@@ -57,6 +57,8 @@ can be removed. The functionality is not being used.
 - Deactivate all locals in structure fields that do not require translation.
 - Multiselect and single select fields do not work with Asset Publisher filtering options. Looks to be a bug. 
   - Apparently this is a known issue: resolve by making sure the field is localizable
+- In old version Structures and Templates where named using a Key that needed to be inserted using SQL scripts. 
+  This is very difficult to manage and update. To avoid this problem we let Liferay create the keys and use configuration to map these to the internal key values.
 
 <h2>Themes configuration</h2>
 - When opening program item the '.header-back-to' appears and redirects to non-existing page. User main.css to set display: none 

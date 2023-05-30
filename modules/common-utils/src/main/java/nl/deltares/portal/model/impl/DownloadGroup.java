@@ -2,6 +2,8 @@ package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -13,6 +15,8 @@ import java.util.Locale;
 
 
 public class DownloadGroup extends AbsDsdArticle {
+
+    private static final Log LOGGER = LogFactoryUtil.getLog(DownloadGroup.class);
 
     private String name = "";
     private String imageUrl = "";
@@ -29,6 +33,9 @@ public class DownloadGroup extends AbsDsdArticle {
             name = getFormFieldValue( "Name", false);
             String linkToPage = getFormFieldValue( "GroupPage", false);
             groupPage = layoutUtils.getLinkToPageLayout(linkToPage);
+            if (groupPage == null){
+                LOGGER.warn("No groupPage layout found for page link: " + linkToPage);
+            }
             String jsonImage = getFormFieldValue( "Icon", false);
             if (jsonImage != null) {
                 imageUrl = JsonContentUtils.parseImageJson(jsonImage);
@@ -49,6 +56,7 @@ public class DownloadGroup extends AbsDsdArticle {
 
     public String getGroupPage(ThemeDisplay themeDisplay) throws PortalException {
         try {
+            if (groupPage == null) throw new PortalException("GroupPage is null");
             final String layoutFriendlyURL = PortalUtil.getLayoutFriendlyURL(groupPage, themeDisplay);
             return layoutFriendlyURL == null ? groupPage.getFriendlyURL() : layoutFriendlyURL;
         } catch (PortalException e) {

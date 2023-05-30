@@ -1,18 +1,23 @@
 package nl.deltares.portal.utils.impl;
 
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import nl.deltares.portal.configuration.StructureKeyMapConfiguration;
 import nl.deltares.portal.display.context.RegistrationDisplayContext;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.LayoutUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -23,7 +28,7 @@ import java.util.*;
         immediate = true,
         service = DsdParserUtils.class
 )
-public class DsdParserUtilsImpl implements DsdParserUtils {
+public class DsdParserUtilsImpl implements DsdParserUtils{
 
     private static final Log LOG = LogFactoryUtil.getLog(DsdParserUtilsImpl.class);
 
@@ -32,6 +37,8 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
 
     @Reference
     LayoutUtils layoutUtils;
+
+    private Map<Long, Map<String, String>> structureKeyMap = new HashMap<>();
 
     @Override
     public Event getEvent(long siteId, String articleId, Locale locale) throws PortalException {
@@ -151,13 +158,19 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
         Locale locale = LocaleUtil.fromLanguageId(defaultLanguageId);
         return toDsdArticle(journalArticle, locale);
     }
+
+    @Override
+    public void clearConfigCache(Long groupId, String configKey) {
+        structureKeyMap.clear();
+    }
+
     public AbsDsdArticle toDsdArticle(JournalArticle journalArticle, Locale locale) throws  PortalException{
 
         if (locale == null){
             locale = LocaleUtil.getDefault();
         }
 
-        String parseStructureKey = DsdParserUtils.parseStructureKey(journalArticle);
+        String parseStructureKey = getParseStructureKey(journalArticle);
         DsdArticle.DSD_STRUCTURE_KEYS dsd_structure_key = DsdParserUtils.getDsdStructureKey(parseStructureKey);
 
         AbsDsdArticle article;
@@ -209,6 +222,30 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
         }
 
         return article;
+    }
+
+    private String getParseStructureKey(JournalArticle journalArticle) throws ConfigurationException {
+        final DDMStructure ddmStructure = journalArticle.getDDMStructure();
+        final String ddmStructureKey = ddmStructure.getStructureKey();
+        if (ddmStructureKey.matches(DsdParserUtils.STRUCTURE_KEY_REGEX)) {
+            //This is the old way structures where named in the system
+            return DsdParserUtils.parseStructureKey(journalArticle);
+        }
+        final long groupId = ddmStructure.getGroupId();
+        Map<String, String> groupMap = structureKeyMap.get(groupId);
+        if (groupMap == null) {
+            //Now structure keys are LONG identifiers and need to be mapped.
+            StructureKeyMapConfiguration configuration = _configurationProvider.getGroupConfiguration(
+                    StructureKeyMapConfiguration.class, groupId);
+            try {
+                groupMap = JsonContentUtils.parseJsonToMap(configuration.structureKeyMap());
+            } catch (JSONException e) {
+                LOG.warn("Error parsing the configured StructureKey map: " + e.getMessage());
+                groupMap = Collections.emptyMap();
+            }
+            structureKeyMap.put(groupId, groupMap);
+        }
+        return groupMap.get(String.valueOf(ddmStructure.getStructureId()));
     }
 
 }

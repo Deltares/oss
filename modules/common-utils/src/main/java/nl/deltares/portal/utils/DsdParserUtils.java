@@ -13,6 +13,8 @@ import java.util.Locale;
 
 public interface DsdParserUtils {
 
+    String STRUCTURE_KEY_REGEX = "([A-Z])+-(\\d+\\.)(\\d+\\.)(\\d+)";
+
     Event getEvent(long siteId, String eventId, Locale locale) throws PortalException;
 
     @Deprecated
@@ -42,21 +44,13 @@ public interface DsdParserUtils {
     static String parseStructureKey(JournalArticle dsdArticle) {
         String structureKey = dsdArticle.getDDMStructureKey();
 
-        if (structureKey.matches("([A-Z])+-(\\d+\\.)(\\d+\\.)(\\d+)")) {
+        if (structureKey.matches(STRUCTURE_KEY_REGEX)) {
             structureKey = structureKey.substring(0, 1).toUpperCase()
                     + structureKey.substring(1, structureKey.lastIndexOf("-")).toLowerCase();
         }
         return structureKey;
     }
 
-    static boolean isDsdArticle(JournalArticle article) {
-        try {
-            getDsdStructureKey(parseStructureKey(article));
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
 
     static DsdArticle.DSD_STRUCTURE_KEYS getDsdStructureKey(String structureKey) {
         DsdArticle.DSD_STRUCTURE_KEYS dsd_structure_key;
@@ -67,4 +61,6 @@ public interface DsdParserUtils {
         }
         return dsd_structure_key;
     }
+
+    void clearConfigCache(Long groupId, String configKey);
 }
