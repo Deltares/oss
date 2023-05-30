@@ -1,7 +1,7 @@
 <div class="absolute w-full bottom-[58px] left-0 overflow-hidden mobile-navpanel">
 	<#assign preferences = freeMarkerPortletPreferences.getPreferences("portletSetupPortletDecoratorId", "barebone") />
 	<nav class="${nav_css_class} w-full h-full bg-app-blue--egyptian z-20 overflow-auto mobile-mainnav" id="mobile-navigation" role="navigation">
-		<h1 class="hide-accessible"><@liferay.language key="navigation" /></h1>
+		<h1 class="hide-accessible" hidden=""><@liferay.language key="navigation" /></h1>
 		<ol aria-label="<@liferay.language key="site-pages" />" class="mobile-mainnav-inner py-3" role="menubar">
 			<#list nav_items as nav_item>
 				<#assign

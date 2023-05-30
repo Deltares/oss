@@ -12,7 +12,7 @@
 		<div class="nav-menu ml-auto">
 			<#assign preferences = freeMarkerPortletPreferences.getPreferences("portletSetupPortletDecoratorId", "barebone") />
 			<nav class="${nav_css_class}" id="navigation" role="navigation">
-				<h1 class="hide-accessible"><@liferay.language key="navigation" /></h1>
+				<h1 class="hide-accessible" hidden=""><@liferay.language key="navigation" /></h1>
 
 				<ol aria-label="<@liferay.language key="site-pages" />" class="flex flex-row items-center" role="menubar">
 					<#list nav_items as nav_item>
