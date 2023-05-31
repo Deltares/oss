@@ -175,7 +175,7 @@
 
 <aui:script use="liferay-form">
 
-    validateFirstStep = function() {
+    const validateFirstStep = function() {
 
         if (getCurrentStep("<portlet:namespace />fm") > 1) return true;
 
@@ -190,19 +190,19 @@
         return errMessage == null;
     }
 
-    preSubmitAction = function (){
+    const preSubmitAction = function (){
         shoppingCart.clearCart();
     }
 
-    checkSelection = function (){
+    const checkSelection = function (){
         DsdRegistrationFormsUtil.checkSelection("<portlet:namespace />");
     }
 
-    updateBadge = function (){
+    const updateBadge = function (){
         DsdRegistrationFormsUtil.updateBadge('<portlet:namespace />');
     }
 
-    registerOther = function (){
+    const registerOther = function (){
         let registerOther = $(document.getElementById("<portlet:namespace />registration_other"))[0].checked;
         let firstName = $(document.getElementById("<portlet:namespace />first_name"))[0];
         let lastName = $(document.getElementById("<portlet:namespace />last_name"))[0];
@@ -227,6 +227,8 @@
 
     $(document).ready(function() {
         let form = Liferay.Form.get("<portlet:namespace/>fm").formValidator;
+        form.validateFirstStep = validateFirstStep;
+        form.preSubmitAction = preSubmitAction;
         $('.bs-stepper').formStepper(form);
         updateBadge();
         checkSelection();
