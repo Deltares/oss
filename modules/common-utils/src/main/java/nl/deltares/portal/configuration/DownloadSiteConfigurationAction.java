@@ -1,6 +1,7 @@
 package nl.deltares.portal.configuration;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
@@ -23,9 +24,9 @@ import javax.portlet.PortletConfig;
 import javax.portlet.PortletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
 import java.util.Map;
 
-import static nl.deltares.portal.configuration.DSDSiteConfigurationAction.getParsedJsonParameter;
 import static nl.deltares.portal.utils.LocalizationUtils.convertToLocalizedMap;
 import static nl.deltares.portal.utils.LocalizationUtils.getAvailableLanguageIds;
 
@@ -100,5 +101,34 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
     @Reference
     protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
         _configurationProvider = configurationProvider;
+    }
+
+    public static Map<String, String> getParsedJsonParameter(ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider, String parameterId) throws PortalException {
+
+        DownloadSiteConfiguration siteConfiguration;
+        try {
+            siteConfiguration = configurationProvider
+                    .getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getSiteGroupId());
+
+        } catch (ConfigurationException e) {
+            throw new PortalException(String.format("Error getting DSD siteConfiguration: %s", e.getMessage()));
+        }
+        String json;
+        switch (parameterId){
+            case "contactURL":
+                json = siteConfiguration.contactURL();
+                break;
+            case "privacyURL":
+                json = siteConfiguration.privacyURL();
+                break;
+            default:
+                json = null ;
+        }
+        try {
+            return JsonContentUtils.parseJsonToMap(json);
+        } catch (Exception e){
+            return Collections.emptyMap();
+        }
+
     }
 }
