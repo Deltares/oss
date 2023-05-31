@@ -180,7 +180,7 @@
 
 <aui:script use="liferay-form">
 
-    validateFirstStep = function (){
+    const validateFirstStep = function (){
         let FIRST_STEP_ERROR_MESSAGE = '<liferay-ui:message key="download.step1.error"/>'
         let isValid = DownloadFormsUtil.validateFirstStep(FIRST_STEP_ERROR_MESSAGE);
         if (! isValid ) {
@@ -189,25 +189,25 @@
         return isValid;
     }
 
-    checkSelection = function (){
+    const checkSelection = function (){
         DownloadFormsUtil.checkSelection("<portlet:namespace />");
     }
-    preSubmitAction = function (){
+    const preSubmitAction = function (){
         shoppingCart.clearDownloadsCart();
     }
 
-    updateLockSelection = function (active) {
+    const updateLockSelection = function (active) {
         $(document.getElementById("<portlet:namespace />lock-new"))[0].checked = (active === "lock-new");
         $(document.getElementById("<portlet:namespace />lock-existing"))[0].checked = (active === "lock-existing");
         $(document.getElementById("<portlet:namespace />lock-mac"))[0].checked = (active === "lock-mac");
     }
 
-    updateLicenseSelection = function (active) {
+    const updateLicenseSelection = function (active) {
         $(document.getElementById("<portlet:namespace />license-network"))[0].checked = (active === "license-network");
         $(document.getElementById("<portlet:namespace />license-standalone"))[0].checked = (active === "license-standalone");
     }
 
-    registerOther = function (){
+    const registerOther = function (){
         let registerOther = $(document.getElementById("<portlet:namespace />registration_other"))[0].checked;
         let firstName = $(document.getElementById("<portlet:namespace />first_name"))[0];
         let lastName = $(document.getElementById("<portlet:namespace />last_name"))[0];
@@ -232,6 +232,8 @@
 
     $(document).ready(function() {
         let form = Liferay.Form.get("<portlet:namespace />fm").formValidator;
+        form.validateFirstStep = validateFirstStep;
+        form.preSubmitAction = preSubmitAction;
         $('.bs-stepper').formStepper(form);
         checkSelection();
         $(document.getElementById("<portlet:namespace />use_organization_address")).change(function() {
