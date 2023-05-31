@@ -45,8 +45,14 @@ public class Download extends AbsDsdArticle {
             filePath = getFormFieldValue( "FilePath", false);
             fileName = getFormFieldValue( "FileName", false);
 
-            String options = getFormFieldValue( "RequiredActions", true);
-            parseRequiredActions(options);
+            final List<String> actions = getFormFieldArrayValue("RequiredActions", true);
+            actions.forEach(a -> {
+                try {
+                    requiredActions.add(ACTION.valueOf(a));
+                } catch (IllegalArgumentException e) {
+                    //skip
+                }
+            });
 
             fileType = getFormFieldValue( "FileType", false);
 
@@ -71,23 +77,6 @@ public class Download extends AbsDsdArticle {
             }
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
-        }
-    }
-
-    private void parseRequiredActions(String options) {
-        if (options == null || options.isEmpty()){
-            return;
-        }
-        options = options.trim();
-        options = options.replace('\n', ' ');
-        options = options.replace('\t', '\0');
-        final String[] actionList = options.split(" ");
-        for (String action : actionList) {
-            try {
-                requiredActions.add(ACTION.valueOf(action.trim()));
-            } catch (IllegalArgumentException e) {
-                //skip
-            }
         }
     }
 

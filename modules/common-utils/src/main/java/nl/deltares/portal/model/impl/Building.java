@@ -55,7 +55,7 @@ public class Building extends AbsDsdArticle {
 
     private void parseRooms() throws PortalException {
         this.rooms = new ArrayList<>();
-        List<String> rooms = extractStringValues(getDdmFormFieldValues( "rooms", true));
+        List<String> rooms = getFormFieldValues("rooms", true);
         if (rooms.size() > 0){
             this.rooms = parseRooms(rooms);
         }

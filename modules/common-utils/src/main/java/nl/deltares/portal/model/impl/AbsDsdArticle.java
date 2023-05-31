@@ -7,6 +7,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Validator;
@@ -140,31 +141,49 @@ public abstract class AbsDsdArticle implements DsdArticle {
         return locale;
     }
 
+    public List<String> getFormFieldValues(List<DDMFormFieldValue> searchList, String fieldName, boolean optional) throws PortalException {
+        return extractStringValues(getDdmFormFieldValues(searchList, fieldName, optional));
+    }
+
+    public List<String> getFormFieldArrayValue(List<DDMFormFieldValue> searchList, String fieldName, boolean optional) throws PortalException {
+        return extractStringArray(getDdmFormFieldValue(searchList, fieldName, optional));
+    }
+
+    public List<String> getFormFieldArrayValue(String fieldName, boolean optional) throws PortalException {
+        return extractStringArray(getDdmFormFieldValue(ddmFormFieldValues, fieldName, optional));
+    }
     public String getFormFieldValue(List<DDMFormFieldValue> searchList, String fieldName, boolean optional) throws PortalException {
-        final ArrayList<DDMFormFieldValue> foundFormFieldValues = new ArrayList<>();
-        loadFormFieldValues(fieldName, searchList, foundFormFieldValues, true);
+        return extractStringValue(getDdmFormFieldValue(searchList, fieldName, optional));
+    }
 
-        if (foundFormFieldValues.size() == 0){
-            if (optional) return null;
-            throw new PortalException(String.format("Could not find required field %s in DSD article %s!", fieldName, getTitle()));
-        }
-
-        final List<String> strings = extractStringValues(foundFormFieldValues);
-        if (strings.size() > 0){
-            return strings.get(0);
-        }
-        if (optional) return null;
-        throw new PortalException(String.format("No value found for field %s and language %s in DSD article %s!", fieldName, locale.getLanguage(), getTitle()));
+    public List<String> getFormFieldValues(String fieldName, boolean optional) throws PortalException {
+        return getFormFieldValues(ddmFormFieldValues, fieldName, optional);
     }
 
     public String getFormFieldValue(String fieldName, boolean optional) throws PortalException {
         return getFormFieldValue(ddmFormFieldValues, fieldName, optional);
     }
 
-    public List<DDMFormFieldValue> getDdmFormFieldValues(String fieldName, boolean optional) throws PortalException {
+    public DDMFormFieldValue getDdmFormFieldValue(List<DDMFormFieldValue> searchList, String fieldName, boolean optional) throws PortalException {
 
         final ArrayList<DDMFormFieldValue> foundFormFieldValues = new ArrayList<>();
-        loadFormFieldValues(fieldName, ddmFormFieldValues, foundFormFieldValues, false);
+        loadFormFieldValues(fieldName, searchList, foundFormFieldValues, false);
+
+        if (foundFormFieldValues.size() == 0){
+            if (optional) return null;
+            throw new PortalException(String.format("Could not find required field %s in DSD article %s!", fieldName, getTitle()));
+        } else {
+            return foundFormFieldValues.get(0);
+        }
+    }
+    public List<DDMFormFieldValue> getDdmFormFieldValues(String fieldName, boolean optional) throws PortalException {
+        return getDdmFormFieldValues(ddmFormFieldValues, fieldName, optional);
+    }
+
+    public List<DDMFormFieldValue> getDdmFormFieldValues(List<DDMFormFieldValue> searchList, String fieldName, boolean optional) throws PortalException {
+
+        final ArrayList<DDMFormFieldValue> foundFormFieldValues = new ArrayList<>();
+        loadFormFieldValues(fieldName, searchList, foundFormFieldValues, false);
 
         if (foundFormFieldValues.size() == 0 && !optional){
             throw new PortalException(String.format("Could not find required field %s in DSD article %s!", fieldName, getTitle()));
@@ -173,19 +192,29 @@ public abstract class AbsDsdArticle implements DsdArticle {
         return foundFormFieldValues;
     }
 
-    public String extractStringValue(DDMFormFieldValue formFieldValue){
-        final List<String> values = extractStringValues(Collections.singletonList(formFieldValue));
-        assert values.size() > 0;
-        return values.get(0);
+    private List<String> extractStringArray(DDMFormFieldValue formFieldValue){
+        final String localStringValue = formFieldValue.getValue().getString(locale);
+        if (!localStringValue.isEmpty() && !localStringValue.equals("{}")) {
+            return parseToArray(localStringValue);
+        }
+        return Collections.singletonList(localStringValue);
     }
 
-    public List<String> extractStringValues(List<DDMFormFieldValue> formFieldValues){
+    private String extractStringValue(DDMFormFieldValue formFieldValue){
+        if (formFieldValue == null) return null;
+        final String localStringValue = formFieldValue.getValue().getString(locale);
+        if (localStringValue.isEmpty()) return null;
+        if (!localStringValue.equals("{}")) {
+            return removeBrackets(localStringValue);
+        }
+        return localStringValue;
+    }
+
+    private List<String> extractStringValues(List<DDMFormFieldValue> formFieldValues){
         final List<String> stringValues = new ArrayList<>(formFieldValues.size());
         for (DDMFormFieldValue fieldValue : formFieldValues) {
-            final String localStringValue = fieldValue.getValue().getString(locale);
-            if (!localStringValue.isEmpty() && !localStringValue.equals("{}")) {
-                stringValues.add(removeBrackets(localStringValue));
-            }
+            final String e = extractStringValue(fieldValue);
+            if (e != null) stringValues.add(e);
         }
         return stringValues;
     }
@@ -203,6 +232,21 @@ public abstract class AbsDsdArticle implements DsdArticle {
         }
     }
 
+    /**
+     * As of 7.4 checkbox values contain brackets
+     * @param localStringValue row input string
+     * @return trimmed string
+     */
+    private List<String> parseToArray(String localStringValue) {
+        try {
+            final JSONArray jsonArray = JsonContentUtils.parseContentArray(localStringValue);
+            final ArrayList<String> values = new ArrayList<>();
+            jsonArray.forEach(o -> values.add(String.valueOf(o)));
+            return values;
+        } catch (JSONException e) {
+            return Collections.singletonList(localStringValue);
+        }
+    }
     public Date parseDateTimeFields(String dateValue, String timeValue, TimeZone timeZone) throws PortalException {
         if (timeValue == null){
             timeValue = "00:00";
@@ -216,6 +260,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
             throw new PortalException(String.format("Error parsing dateTime %s: %s", dateTimeValue, e.getMessage()));
         }
     }
+
     private void loadFormFieldValues(String fieldName, List<DDMFormFieldValue> searchList, List<DDMFormFieldValue> foundList, boolean singleValue) {
 
         for (DDMFormFieldValue ddmFormFieldValue : searchList) {

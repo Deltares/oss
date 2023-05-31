@@ -33,7 +33,7 @@ public class Location extends AbsDsdArticle {
             if (this.website != null && !this.website.toLowerCase().startsWith("http")){
                 this.website = "http://" + this.website; //we need to do this otherwise Liferay makes href relative.
             }
-            this.locationType = JsonContentUtils.parseJsonArrayToValue(getFormFieldValue( "locationType", false));
+            this.locationType = getFormFieldValue( "locationType", false);
             String geoLocation = getFormFieldValue( "location", false);
             Map<String, String> coords = JsonContentUtils.parseJsonToMap(geoLocation);
 
