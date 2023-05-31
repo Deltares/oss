@@ -51,7 +51,7 @@ public class EventLocation extends Location {
 
     private void parseRooms() throws PortalException {
         this.rooms = new ArrayList<>();
-        List<String> rooms = extractStringValues(getDdmFormFieldValues( "rooms", true));
+        List<String> rooms = getFormFieldValues( "rooms", true);
         if (rooms.size() > 0){
             this.rooms.addAll(parseRooms(rooms));
         }
@@ -72,7 +72,7 @@ public class EventLocation extends Location {
     }
     private void parseBuildings() throws PortalException {
         this.buildings = new ArrayList<>();
-        List<String> buildings = extractStringValues(getDdmFormFieldValues( "buildings", true));
+        List<String> buildings = getFormFieldValues( "buildings", true);
         if (buildings.size() > 0){
             this.buildings.addAll(parseBuildings(buildings));
         }

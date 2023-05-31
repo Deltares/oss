@@ -67,20 +67,18 @@ public class JsonContentUtils {
         }
         return mapList;
     }
-//
-//    public static List<String> parseJsonArrayToList(String jsonContent) throws JSONException {
-//        ArrayList<String> list = new ArrayList<>();
-//        if (jsonContent == null) {
-//            return list;
-//        }
-//        if (jsonContent.startsWith("[")){
-//            JSONArray jsonArray = JsonContentUtils.parseContentArray(jsonContent);
-//            for (int i = 0; i < jsonArray.length(); i++) {
-//                list.add(jsonArray.getString(i));
-//            }
-//        }
-//        return list;
-//    }
+
+    public static List<String> parseJsonArrayToList(String jsonContent) throws JSONException {
+        ArrayList<String> list = new ArrayList<>();
+        if (jsonContent == null) {
+            return list;
+        }
+        if (jsonContent.startsWith("[")){
+            JSONArray jsonArray = JsonContentUtils.parseContentArray(jsonContent);
+            jsonArray.forEach(o -> list.add(String.valueOf(o)));
+        }
+        return list;
+    }
 
     public static Map<String, String> parseJsonToMap(String jsonContent) throws JSONException {
         if (jsonContent == null) return new HashMap<>();
@@ -124,7 +122,12 @@ public class JsonContentUtils {
         if (!jsonArray.startsWith("[")) return jsonArray;
         JSONArray values = JSONFactoryUtil.createJSONArray(jsonArray);
         if (values.length() == 0) return null;
-        return values.getString(0);
+        StringBuilder arrayValue = new StringBuilder();
+        for (int i = 0; i < values.length(); i++) {
+            if (i > 0) arrayValue.append(',');
+            arrayValue.append(values.getString(i));
+        }
+        return arrayValue.toString();
     }
 
     public static String parseImageJson(String jsonData) {

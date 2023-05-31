@@ -89,7 +89,7 @@ public class SessionRegistration extends Registration {
 
     private void parsePresenter() throws PortalException {
 
-        List<String> presenters = extractStringValues(getDdmFormFieldValues( "presenters", true));
+        List<String> presenters = getFormFieldValues( "presenters", true);
         for (String presenterJson : presenters) {
             JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(presenterJson);
             this.presenters.add( dsdParserUtils.getExpert(journalArticle) );
@@ -146,7 +146,7 @@ public class SessionRegistration extends Registration {
     }
 
     private void parsePresentations() throws PortalException {
-        List<String> presentations = extractStringValues(getDdmFormFieldValues( "presentation", true));
+        List<String> presentations = getFormFieldValues( "presentation", true);
         for (String presentationJson : presentations) {
             JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(presentationJson);
             this.presentations.add((Presentation) dsdParserUtils.toDsdArticle(journalArticle, getLocale()));
