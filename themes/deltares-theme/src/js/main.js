@@ -25,7 +25,7 @@
 
             this._getSubmitButton().on('click', function () {
                 if (plugin._isFormValid()) {
-                    preSubmitAction();
+                    plugin.form.preSubmitAction();
                     plugin._getForm().submit();
                 }
             });
@@ -39,7 +39,7 @@
         _navigate: function (event) {
             let plugin = event.data.plugin;
             let action = event.data.action;
-            let isFormValid = plugin._isFormValid() && validateFirstStep();
+            let isFormValid = plugin._isFormValid() && plugin.form.validateFirstStep();
 
             let element = $(plugin.element);
             let active = element.find('li.active');
