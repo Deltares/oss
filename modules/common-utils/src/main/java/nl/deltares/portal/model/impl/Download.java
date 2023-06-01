@@ -50,7 +50,7 @@ public class Download extends AbsDsdArticle {
                 try {
                     requiredActions.add(ACTION.valueOf(a));
                 } catch (IllegalArgumentException e) {
-                    //skip
+                    LOG.warn(String.format("Invalid 'RequiredActions' %s found for download %s", a, getTitle()));
                 }
             });
 
