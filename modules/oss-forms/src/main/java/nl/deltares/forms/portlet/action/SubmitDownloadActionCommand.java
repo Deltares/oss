@@ -102,7 +102,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
                 if (downloadRequest.isUserInfoRequired()) {
                     userAttributes.putAll(getUserAttributes(actionRequest));
                 } else {
-                    userAttributes.putAll(getMinimumAttributes(actionRequest));
+                    userAttributes.putAll(getMinimumAttributes(actionRequest, themeDisplay));
                 }
                 registerAcceptedTerms(downloadRequest, userAttributes);
                 downloadRequest.setUserAttributes(userAttributes);
@@ -310,13 +310,14 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         return attributes;
     }
 
-    private Map<String, String> getMinimumAttributes(ActionRequest actionRequest) {
+    private Map<String, String> getMinimumAttributes(ActionRequest actionRequest, ThemeDisplay themeDisplay) {
         Map<String, String> attributes = new HashMap<>();
+        if (geoIpUtils == null) return attributes;
         final String remoteAddr = ((LiferayPortletRequest) actionRequest).getHttpServletRequest().getRemoteAddr();
         try {
             final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(remoteAddr);
             if (clientIpInfo.isEmpty()) return Collections.emptyMap();
-            final Country country = CountryServiceUtil.getCountryByA2(geoIpUtils.getCountryIso2Code(clientIpInfo));
+            final Country country = CountryServiceUtil.getCountryByA2(themeDisplay.getCompanyId(), geoIpUtils.getCountryIso2Code(clientIpInfo));
             if (country != null ) attributes.put(KeycloakUtils.ATTRIBUTES.org_country.name(), country.getName());
             return attributes;
         } catch (PortalException e) {

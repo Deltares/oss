@@ -130,13 +130,15 @@ public class DownloadFormPortlet extends MVCPortlet {
                 request.setAttribute("ddmTemplateKey", ddmTemplate.getTemplateKey()));
 
         request.setAttribute("dsdParserUtils", dsdParserUtils);
-        final List<Download> downloads = toDownloads(themeDisplay.getScopeGroupId(), downloadIds);
-        request.setAttribute("downloads", downloads);
-        request.setAttribute("subscriptionSelections", getSubscriptionSelection(user.getEmailAddress(), downloads));
-        request.setAttribute("terms", getTerms(downloads));
-        final boolean[] requiredTypes = getRequiredTypes(downloads);
-        request.setAttribute("showLockTypes" , requiredTypes[0]);
-        request.setAttribute("showLicenseTypes" , requiredTypes[1]);
+        if (downloadIds.size() > 0) {
+            final List<Download> downloads = toDownloads(themeDisplay.getScopeGroupId(), downloadIds);
+            request.setAttribute("downloads", downloads);
+            request.setAttribute("subscriptionSelections", getSubscriptionSelection(user.getEmailAddress(), downloads));
+            request.setAttribute("terms", getTerms(downloads));
+            final boolean[] requiredTypes = getRequiredTypes(downloads);
+            request.setAttribute("showLockTypes", requiredTypes[0]);
+            request.setAttribute("showLicenseTypes", requiredTypes[1]);
+        }
         super.render(request, response);
     }
 
