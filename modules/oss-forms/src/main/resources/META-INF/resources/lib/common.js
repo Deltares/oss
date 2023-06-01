@@ -3,10 +3,10 @@ var actionButtons = [];
 CommonFormsUtil = {
 
     registerOther : function (namespace){
-        let registerOther = $(document.getElementById(namespace + "registration_other")).checked;
-        let firstName = $(document.getElementById(namespace + "first_name"));
-        let lastName = $(document.getElementById(namespace + "last_name"));
-        let email = $(document.getElementById(namespace + "email"));
+        let registerOther = document.getElementById(namespace + "registration_other").checked;
+        let firstName = document.getElementById(namespace + "first_name");
+        let lastName = document.getElementById(namespace + "last_name");
+        let email = document.getElementById(namespace + "email");
         firstName.disabled = !registerOther;
         lastName.disabled = !registerOther;
         email.disabled = !registerOther;

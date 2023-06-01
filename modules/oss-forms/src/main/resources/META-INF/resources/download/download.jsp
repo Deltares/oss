@@ -200,8 +200,9 @@
         form.preSubmitAction = preSubmitAction;
         $('.bs-stepper').formStepper(form);
         DownloadFormsUtil.checkSelection(namespace);
-        $(document.getElementsByClassName("download")).forEach(function () {
-            DownloadFormsUtil.checkSelection(namespace);
+        let downloads = $(document.getElementsByClassName("download"));
+        [...downloads].forEach(function (download) {
+            download.onchange = function (){ DownloadFormsUtil.checkSelection(namespace)};
         });
         $(document.getElementById(namespace + "registration_other")).change(function() {
             CommonFormsUtil.registerOther(namespace);
