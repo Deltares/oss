@@ -185,8 +185,7 @@
         if (errMessage) {
             alert(errMessage);
         }
-        registerOther();
-
+        // registerOther();
         return errMessage == null;
     }
 
@@ -194,46 +193,28 @@
         shoppingCart.clearCart();
     }
 
-    const checkSelection = function (){
-        DsdRegistrationFormsUtil.checkSelection("<portlet:namespace />");
-    }
-
-    const updateBadge = function (){
-        DsdRegistrationFormsUtil.updateBadge('<portlet:namespace />');
-    }
-
-    const registerOther = function (){
-        let registerOther = $(document.getElementById("<portlet:namespace />registration_other"))[0].checked;
-        let firstName = $(document.getElementById("<portlet:namespace />first_name"))[0];
-        let lastName = $(document.getElementById("<portlet:namespace />last_name"))[0];
-        let email = $(document.getElementById("<portlet:namespace />email"))[0];
-        firstName.disabled = !registerOther;
-        lastName.disabled = !registerOther;
-        email.disabled = !registerOther;
-        if (registerOther){
-            firstName.classList.remove("disabled");
-            lastName.classList.remove("disabled");
-            email.classList.remove("disabled");
-        } else {
-            firstName.classList.add("disabled");
-            lastName.classList.add("disabled");
-            email.classList.add("disabled");
-
-            firstName.value = firstName.getAttribute('original_value');
-            lastName.value = lastName.getAttribute('original_value');
-            email.value = email.getAttribute('original_value');
-        }
-    }
-
     $(document).ready(function() {
-        let form = Liferay.Form.get("<portlet:namespace/>fm").formValidator;
+        let namespace = "<portlet:namespace />";
+        let form = Liferay.Form.get(namespace + "fm").formValidator;
         form.validateFirstStep = validateFirstStep;
         form.preSubmitAction = preSubmitAction;
         $('.bs-stepper').formStepper(form);
         updateBadge();
-        checkSelection();
-        $(document.getElementById("<portlet:namespace />use_organization_address")).change(function() {
-            CommonFormsUtil.updatePaymentAddress('<portlet:namespace />', this.checked);
+        DsdRegistrationFormsUtil.checkSelection(namespace);
+        $(document.getElementsByClassName("update-badge")).forEach(function () {
+            DsdRegistrationFormsUtil.updateBadge(namespace);
+        });
+        $(document.getElementsByClassName("parent-registration")).forEach(function () {
+            DsdRegistrationFormsUtil.checkSelection(namespace);
+        });
+        $(document.getElementsByClassName("child-registration")).forEach(function () {
+            DsdRegistrationFormsUtil.checkSelection(namespace);
+        });
+        $(document.getElementById(namespace + "registration_other")).change(function() {
+            CommonFormsUtil.registerOther(namespace);
+        });
+        $(document.getElementById(namespace + "use_organization_address")).change(function() {
+            CommonFormsUtil.updatePaymentAddress(namespace, this.checked);
         });
 
         <c:if test='<%= !SessionErrors.isEmpty(liferayPortletRequest) %>'>shoppingCart.clearCart()</c:if>

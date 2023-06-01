@@ -22,7 +22,7 @@
                         terms="<%= download.isTermsOfUseRequired() %>"
                         licenseinfo="<%= download.isLicenseTypeRequired() || download.isLockTypeRequired() %>"
                         cssClass="download"
-                        checked="true" onChange="checkSelection()"/>
+                        checked="true"/>
             </div>
             <div class="float-left w-100">
                 <%

@@ -1,5 +1,11 @@
-$default-color: #6B6C7E;
-$active: #272833;
+$default-color: #141E95;
+$active: #FFD434;
+$completed-color: #00E399;
+$font-sans: "Franca", Helvetica, Arial, sans-serif !default;
+$font-sansa-pro: 'Open Sans', Verdana, Arial, sans-serif !default;
+
+$base-font-size: 1rem !default; // 16px
+$default-font: $font-sans !default;
 
 .card-header {
   color: #F2F2F2;
@@ -10,24 +16,27 @@ $active: #272833;
   h2 {
     text-transform: uppercase;
   }
-
-  .btn-lg.btn-primary.disabled{
-    color: #F2F2F2;
-    background-color: #6B6C7E;
-    border-color: #6B6C7E;
-    font-size: 16px;
-  }
-  .btn-lg.btn-primary.d-inline, .btn-lg.btn-primary.enabled{
-    color: #F2F2F2;
-    background-color: #007bff;
-    border-color: #007bff;
-    font-size: 16px;
+  ul li {
+    font-family: $default-font;
+    font-size: $base-font-size;
   }
 
-  .btn-lg.btn-primary.d-inline:hover, .btn-lg.btn-primary.enabled:hover{
-    color: #F2F2F2;
-    background-color: $active;
-    border-color: $active;
+  ul li:where([class*="icon-circle-blank"]):before {
+    content: "\25FB";
+  }
+
+  ul li:where([class*="icon-circle-blank"]):where([class*="active"]):before {
+    content: "\25FC";
+  }
+
+  ul li:where([class*="icon-circle"]):where([class*="completed"]):before {
+    content: "\2713";
+  }
+  .icon-circle.completed {
+    color: $completed-color;
+  }
+  .icon-circle-blank.active {
+    color: $active;
   }
 }
 
@@ -57,12 +66,6 @@ $active: #272833;
     color: $active;
   }
 
-  .icon-circle.completed {
-    color: $default-color;
-  }
-  .icon-circle-blank.active {
-    color: $active;
-  }
 }
 
 .registration-container {

@@ -99,8 +99,7 @@ public class Download extends AbsDsdArticle {
     }
 
     private void parseTerms() throws PortalException {
-
-        String content = XmlContentUtils.getDynamicContentByName(getDocument(), "Terms", true);
+        String content = getFormFieldValue( "Terms", true);
         if (content != null){
             JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(content);
             AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(article, super.getLocale());
@@ -124,12 +123,11 @@ public class Download extends AbsDsdArticle {
     }
 
     private void parseSubscriptions() throws PortalException {
-
         subscriptions = new ArrayList<>();
-        String[] dynamicContentsByName = XmlContentUtils.getDynamicContentsByName(getDocument(), "Subscription");
+        List<String> subscriptionsJson = getFormFieldValues("Subscription", true);
         DuplicateCheck check = new DuplicateCheck();
-        if (dynamicContentsByName.length > 0){
-            for (String content : dynamicContentsByName) {
+        if (subscriptionsJson.size() > 0){
+            for (String content : subscriptionsJson) {
                 JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(content);
                 AbsDsdArticle subscription = dsdParserUtils.toDsdArticle(article, super.getLocale());
                 if (!(subscription instanceof Subscription)) throw new PortalException(String.format("Article %s not instance of Subscription", article.getTitle()));

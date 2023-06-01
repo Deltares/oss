@@ -11,22 +11,22 @@
 <div class="row">
     <div class="col">
         <aui:input
-                name="<%=LicenseInfo.LOCKTYPES.new_usb_dongle.name()%>"
+                name="licenseinfo.locktypes"
                 label="download.step3b.lock.new"
-                type="checkbox"
+                type="radio"
                 checked="false"
-                onClick="updateLockSelection('lock-new')"
+                value="<%=LicenseInfo.LOCKTYPES.new_usb_dongle.name()%>"
         />
     </div>
 </div>
 <div class="row">
     <div class="col">
         <aui:input
-                name="<%=LicenseInfo.LOCKTYPES.existing_usb_dongle.name()%>"
+                name="licenseinfo.locktypes"
                 label="download.step3b.lock.existing"
-                type="checkbox"
+                type="radio"
                 checked="false"
-                onClick="updateLockSelection('lock-existing')"
+                value="<%=LicenseInfo.LOCKTYPES.existing_usb_dongle.name()%>"
         />
     </div>
     <div class="col">
@@ -41,11 +41,11 @@
 <div class="row">
     <div class="col">
         <aui:input
-                name="<%=LicenseInfo.LOCKTYPES.mac_address.name()%>"
+                name="licenseinfo.locktypes"
                 label="download.step3b.lock.mac"
-                type="checkbox"
+                type="radio"
                 checked="false"
-                onClick="updateLockSelection('lock-mac')"
+                value="<%=LicenseInfo.LOCKTYPES.mac_address.name()%>"
         />
     </div>
 </div>
@@ -64,22 +64,22 @@
 <div class="row">
     <div class="col">
         <aui:input
-                name="<%=LicenseInfo.LICENSETYPES.network.name()%>"
+                name="licenseinfo.licensetypes"
                 label="download.step3b.license.network"
-                type="checkbox"
+                type="radio"
                 checked="false"
-                onClick="updateLicenseSelection('license-network')"
+                value="<%=LicenseInfo.LICENSETYPES.network.name()%>"
         />
     </div>
 </div>
 <div class="row">
     <div class="col">
         <aui:input
-                name="<%=LicenseInfo.LICENSETYPES.standalone.name()%>"
+                name="licenseinfo.licensetypes"
                 label="download.step3b.license.standalone"
-                type="checkbox"
+                type="radio"
                 checked="false"
-                onClick="updateLicenseSelection('license-standalone')"
+                value="<%=LicenseInfo.LICENSETYPES.standalone.name()%>"
         />
     </div>
 </div>
