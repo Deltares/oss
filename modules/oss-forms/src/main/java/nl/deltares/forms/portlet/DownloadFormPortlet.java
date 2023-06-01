@@ -12,6 +12,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
+import nl.deltares.portal.configuration.DownloadSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Download;
 import nl.deltares.portal.model.impl.Terms;
@@ -101,7 +102,7 @@ public class DownloadFormPortlet extends MVCPortlet {
             }
             try {
                 final String language = themeDisplay.getLocale().getLanguage();
-                DSDSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
+                DownloadSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
                 request.setAttribute("privacyURL", getLocalizedValue(dsdConfig.privacyURL(), language));
                 request.setAttribute("contactURL", getLocalizedValue(dsdConfig.contactURL(), language));
             } catch (Exception e) {

@@ -201,14 +201,23 @@
         $('.bs-stepper').formStepper(form);
         updateBadge();
         DsdRegistrationFormsUtil.checkSelection(namespace);
-        $(document.getElementsByClassName("update-badge")).forEach(function () {
-            DsdRegistrationFormsUtil.updateBadge(namespace);
+        let badgeListeners = $(document.getElementsByClassName("update-badge"));
+        [...badgeListeners].forEach(function (item) {
+            item.onchange(function (){
+                DsdRegistrationFormsUtil.updateBadge(namespace);
+            });
         });
-        $(document.getElementsByClassName("parent-registration")).forEach(function () {
-            DsdRegistrationFormsUtil.checkSelection(namespace);
+        let parents = $(document.getElementsByClassName("parent-registration"));
+        [...parents].forEach(function (registration) {
+            registration.onchange(function (){
+                DsdRegistrationFormsUtil.checkSelection(namespace);
+            });
         });
-        $(document.getElementsByClassName("child-registration")).forEach(function () {
-            DsdRegistrationFormsUtil.checkSelection(namespace);
+        let children = $(document.getElementsByClassName("child-registration"));
+        [...children].forEach(function (registration) {
+            registration.onchange(function (){
+                DsdRegistrationFormsUtil.checkSelection(namespace);
+            });
         });
         $(document.getElementById(namespace + "registration_other")).change(function() {
             CommonFormsUtil.registerOther(namespace);
