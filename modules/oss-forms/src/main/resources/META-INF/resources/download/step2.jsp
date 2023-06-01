@@ -19,7 +19,7 @@
                         name="registration_other"
                         label="registrationform.register.other"
                         type="checkbox"
-                        checked="false" onChange="registerOther()"/>
+                        checked="false"/>
             </div>
         </div>
         <div class="row">
@@ -154,7 +154,7 @@
                         2
                     </aui:validator>
                     <aui:option value="" label="registrationform.select.country"/>
-                    <% List<Country> countries = CountryServiceUtil.getCountries(true); %>
+                    <% List<Country> countries = CountryServiceUtil.getCompanyCountries(themeDisplay.getCompanyId()); %>
                     <% for (Country country : countries) { %>
                     <aui:option value="<%=country.getName()%>" label="<%= country.getName(locale) %>"/>
                     <% } %>

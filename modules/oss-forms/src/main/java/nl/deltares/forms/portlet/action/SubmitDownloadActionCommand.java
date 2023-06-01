@@ -240,19 +240,15 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
     private LicenseInfo getLicenseInfo(ActionRequest actionRequest) {
         LicenseInfo licenseInfo = new LicenseInfo();
 
-        if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LICENSETYPES.network.name()))) {
-            licenseInfo.setLicenseType(LicenseInfo.LICENSETYPES.network);
-        } else if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LICENSETYPES.standalone.name()))) {
-            licenseInfo.setLicenseType(LicenseInfo.LICENSETYPES.standalone);
+        final String licenseTypes = ParamUtil.getString(actionRequest, "licenseinfo.licensetypes");
+        if (!licenseTypes.isEmpty()){
+            licenseInfo.setLicenseType(LicenseInfo.LICENSETYPES.valueOf(licenseTypes));
         }
 
-        if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LOCKTYPES.new_usb_dongle.name()))) {
-            licenseInfo.setLockType(LicenseInfo.LOCKTYPES.new_usb_dongle);
-        } else if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LOCKTYPES.existing_usb_dongle.name()))) {
-            licenseInfo.setLockType(LicenseInfo.LOCKTYPES.existing_usb_dongle);
+        final String lockTypes = ParamUtil.getString(actionRequest, "licenseinfo.locktypes");
+        if (!lockTypes.isEmpty()) {
+            licenseInfo.setLockType(LicenseInfo.LOCKTYPES.valueOf(lockTypes));
             licenseInfo.setDongleNumber(ParamUtil.getString(actionRequest, LicenseInfo.ATTRIBUTES.lock_address.name()));
-        } else if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LOCKTYPES.mac_address.name()))) {
-            licenseInfo.setLockType(LicenseInfo.LOCKTYPES.mac_address);
         }
         return licenseInfo;
     }

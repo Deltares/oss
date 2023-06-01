@@ -2,6 +2,28 @@ var actionButtons = [];
 
 CommonFormsUtil = {
 
+    registerOther : function (namespace){
+        let registerOther = $(document.getElementById(namespace + "registration_other")).checked;
+        let firstName = $(document.getElementById(namespace + "first_name"));
+        let lastName = $(document.getElementById(namespace + "last_name"));
+        let email = $(document.getElementById(namespace + "email"));
+        firstName.disabled = !registerOther;
+        lastName.disabled = !registerOther;
+        email.disabled = !registerOther;
+        if (registerOther){
+            firstName.classList.remove("disabled");
+            lastName.classList.remove("disabled");
+            email.classList.remove("disabled");
+        } else {
+            firstName.classList.add("disabled");
+            lastName.classList.add("disabled");
+            email.classList.add("disabled");
+            firstName.value = firstName.getAttribute('original_value');
+            lastName.value = lastName.getAttribute('original_value');
+            email.value = email.getAttribute('original_value');
+        }
+    },
+
     writeError: function(namespace,  message){
         let errorBlock = document.getElementById(namespace + "group-message-block");
         let messageNode = document.createElement("div");
