@@ -1,6 +1,6 @@
 Bundle-Name: registration-service-service
 Bundle-SymbolicName: nl.deltares.dsd.registration.service
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Liferay-Require-SchemaVersion: 1.2.0
 Liferay-Service: true
 -dsannotations-options: inherit
