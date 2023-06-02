@@ -50,7 +50,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.forms",
-    "version" : "1.0.2",
+    "version" : "1.0.3",
     "extension" : "jar"
   },
   {
@@ -98,7 +98,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.tableview.portlet",
-    "version" : "1.0.1",
+    "version" : "1.0.2",
     "extension" : "jar"
   },
   {
