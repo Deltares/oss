@@ -62,13 +62,13 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.dsd.registration.api",
-    "version" : "1.0.0",
+    "version" : "1.0.1",
     "extension" : "jar"
   },
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.dsd.registration.service",
-    "version" : "1.0.0",
+    "version" : "1.0.1",
     "extension" : "jar"
   },
   {
