@@ -199,25 +199,25 @@
         form.validateFirstStep = validateFirstStep;
         form.preSubmitAction = preSubmitAction;
         $('.bs-stepper').formStepper(form);
-        updateBadge();
+        DsdRegistrationFormsUtil.updateBadge();
         DsdRegistrationFormsUtil.checkSelection(namespace);
         let badgeListeners = $(document.getElementsByClassName("update-badge"));
         [...badgeListeners].forEach(function (item) {
-            item.onchange(function (){
+            item.onchange = function (){
                 DsdRegistrationFormsUtil.updateBadge(namespace);
-            });
+            };
         });
         let parents = $(document.getElementsByClassName("parent-registration"));
         [...parents].forEach(function (registration) {
-            registration.onchange(function (){
+            registration.onchange = function (){
                 DsdRegistrationFormsUtil.checkSelection(namespace);
-            });
+            };
         });
         let children = $(document.getElementsByClassName("child-registration"));
         [...children].forEach(function (registration) {
-            registration.onchange(function (){
+            registration.onchange = function (){
                 DsdRegistrationFormsUtil.checkSelection(namespace);
-            });
+            };
         });
         $(document.getElementById(namespace + "registration_other")).change(function() {
             CommonFormsUtil.registerOther(namespace);

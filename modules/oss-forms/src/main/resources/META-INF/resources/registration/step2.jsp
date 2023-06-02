@@ -19,7 +19,7 @@
                         name="registration_other"
                         label="registrationform.register.other"
                         type="checkbox"
-                        checked="false" onChange="registerOther()"/>
+                        checked="false" />
             </div>
         </div>
         <div class="row">
@@ -148,7 +148,7 @@
                 2
             </aui:validator>
             <aui:option value="" label ="registrationform.select.country" />
-            <% List<Country> countries = CountryServiceUtil.getCountries(true); %>
+            <% List<Country> countries = CountryServiceUtil.getCompanyCountries(themeDisplay.getCompanyId()); %>
             <%    for (Country country : countries) { %>
             <aui:option value="<%=country.getName()%>" label ="<%= country.getName(locale) %>" />
             <% } %>
@@ -188,7 +188,7 @@
 
         <span><liferay-ui:message key="dsd.registration.step2.show.title"/></span>
         <%
-            String title_setting = (String) attributes.get(BadgeInfo.ATTRIBUTES.badge_title_setting.name());
+            String title_setting = attributes.get(BadgeInfo.ATTRIBUTES.badge_title_setting.name());
             boolean yes_checked = "yes".equals(title_setting);
             boolean no_checked = "no".equals(title_setting);
             if (!(yes_checked || no_checked)) no_checked = true;
@@ -216,7 +216,7 @@
 
         <span><liferay-ui:message key="dsd.registration.step2.badge.name"/></span>
         <%
-            String name_setting = (String) attributes.get(BadgeInfo.ATTRIBUTES.badge_name_setting.name());
+            String name_setting = attributes.get(BadgeInfo.ATTRIBUTES.badge_name_setting.name());
             boolean name_checked = "name".equals(name_setting);
             boolean initials_checked = "initials".equals(name_setting);
             boolean both_checked = "both".equals(name_setting);

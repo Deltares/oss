@@ -46,7 +46,7 @@
                     <div class="control-label"><liferay-ui:message key="table.filter.email.label"/></div>
                 </aui:col>
                 <aui:col width="20">
-                    <aui:input name="filterEmail" label="" />
+                    <aui:input name="filterEmail" label="" value="<%=filterEmail%>" />
                 </aui:col>
                 <aui:col width="50"/>
                 <aui:col width="20">
@@ -87,7 +87,7 @@
                             <portlet:param name="filterEmail" value="${entry.getEmail()}"/>
                         </portlet:actionURL>
                         <aui:button name="editButton" type="submit" value="Edit" href="<%=editRegistrationURL%>"/>
-                        <aui:button name="deleteButton" type="submit" value="Delete" href="<%=deleteRegistrationURL%>" onClick="userConfirm()" />
+                        <aui:button name="deleteButton" type="submit" cssClass="deleteButton" value="Delete" href="<%=deleteRegistrationURL%>"  />
                    </aui:button-row>
                 </liferay-ui:search-container-column-text>
             </liferay-ui:search-container-row>
@@ -97,11 +97,14 @@
 </aui:fieldset>
 <aui:script use="event, node, aui-base">
 
-    userConfirm = function (event){
-        if (confirm("You are about to delete this registration.\nDo you want to continue?") === false) {
-            event.preventDefault();
-        }
-    }
+    let deleteButtons = $(document.getElementsByClassName("deleteButton"));
+    [...deleteButtons].forEach(function (button) {
+        button.onclick = function (event){
+            if (confirm("You are about to delete this registration.\nDo you want to continue?") === false) {
+                event.preventDefault();
+            }
+        };
+    });
 
 </aui:script>
 
