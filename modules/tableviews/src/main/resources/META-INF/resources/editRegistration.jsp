@@ -6,7 +6,6 @@
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="nl.deltares.tableview.model.DisplayRegistration" %>
-<%@ page import="java.util.List" %>
 <liferay-theme:defineObjects/>
 
 <portlet:defineObjects/>
@@ -86,7 +85,7 @@
             <aui:row>
                 <aui:col width="20">
                     <aui:button type="submit" value="table.edit.save"/>
-                    <aui:button type="cancel" onClick="<%= viewURL %>" value="table.edit.cancel" />
+                    <aui:button type="submit" onClick="<%= viewURL %>" value="table.edit.cancel" />
                 </aui:col>
             </aui:row>
 
