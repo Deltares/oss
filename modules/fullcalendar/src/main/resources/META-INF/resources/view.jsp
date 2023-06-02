@@ -101,5 +101,6 @@
 	var content = construct(props);
 	var calendar = new FullCalendar.Calendar(calendarEl, content);
     calendar.render();
+    calendar.gotoDate(props.startDate)
 
 </aui:script>
