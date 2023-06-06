@@ -72,6 +72,15 @@ can be removed. The functionality is not being used.
     - com.liferay.portal.kernel.service.GroupService#getGroup
     - com.liferay.portal.kernel.service.LayoutService#getLayoutByUuidAndGroupId
 
+<h2>IP Mapping</h2>
+For a number of purposes we need to map the IP addresses of users to a Country. For this we use the database 'GeoLite2-City.mmdb'. 
+This file needs to be located in a folder that is accessible Liferay. The folder can be configured in: <p> <code>portal-ext.properties > maxmind.geoip.database.dir</code></p>
+
+Furthermore it allow tracking of user IPs in a container environment it is necessary to add a Valve to the 'server.xml' configuration of Tomcat 
+<p><code>&lt;Valve className=&quot;org.apache.catalina.valves.RemoteIpValve&quot; internalProxies=&quot;10\.128\.0\.1|10\.129\.0\.1|10\.130\.0\.1&quot; remoteIpHeader=&quot;x-forwarded-for&quot; requestAttributesEnabled=&quot;true&quot; protocolHeader=&quot;x-forwarded-proto&quot; protocolHeaderHttpsValue=&quot;https&quot;/&gt;</code></p>
+
+Where the value for 'internalProxies' should be updated to match that of the google cloud environment. 
+
 <h2>Steps to initialize Docker instance</h2>
 - Remove any existing volumes
 - First deploy without themes and modules
