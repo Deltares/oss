@@ -38,7 +38,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.fullcalendar",
-    "version" : "1.0.0",
+    "version" : "1.0.1",
     "extension" : "jar"
   },
   {
