@@ -1,0 +1,10 @@
+Bundle-Name: geolocation-api
+Bundle-SymbolicName: nl.deltares.oss.geolocation.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	nl.deltares.oss.geolocation.exception,\
+	nl.deltares.oss.geolocation.model,\
+	nl.deltares.oss.geolocation.service,\
+	nl.deltares.oss.geolocation.service.persistence
+-check: EXPORTS
+-includeresource: META-INF/service.xml=../geolocation-service/service.xml

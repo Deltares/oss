@@ -1,12 +1,16 @@
 package nl.deltares.tableview.tasks.impl;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.CountryServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
+import nl.deltares.oss.geolocation.model.GeoLocation;
+import nl.deltares.oss.geolocation.service.GeoLocationLocalServiceUtil;
 import nl.deltares.tasks.AbstractDataRequest;
 
 import java.io.File;
@@ -136,6 +140,16 @@ public class ExportTableRequest extends AbstractDataRequest {
                         email = user.getEmailAddress();
                     }
                 }
+                String city;
+                String countryCode;
+                try {
+                    final GeoLocation geoLocation = GeoLocationLocalServiceUtil.getGeoLocation(download.getGeoLocationId());
+                    city = geoLocation.getCityName();
+                    countryCode = CountryServiceUtil.getCountry(geoLocation.getCountryId()).getA2();
+                } catch (PortalException e) {
+                    city  = "";
+                    countryCode = "";
+                }
                 final String modifiedDate;
                 if (download.getModifiedDate() != null) {
                     modifiedDate = dateFormat.format(download.getModifiedDate());
@@ -151,7 +165,7 @@ public class ExportTableRequest extends AbstractDataRequest {
                 writer.println(String.format("%d,%s,%s,%d,%s,%s,%s,%s,%s,%s",
                         download.getDownloadId(), modifiedDate, expiryDate,
                         download.getShareId(), download.getFilePath(), email, download.getOrganization(),
-                        download.getCity(), download.getCountryCode(), download.getDirectDownloadUrl()));
+                        city, countryCode, download.getDirectDownloadUrl()));
 
                 if (Thread.interrupted()) {
                     status = terminated;

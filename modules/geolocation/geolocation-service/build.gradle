@@ -1,0 +1,14 @@
+dependencies {
+	compile project(":modules:geolocation:geolocation-api")
+
+	compileOnly group: "com.liferay.portal", name: "release.dxp.api"
+
+	compile group: "com.liferay", name: "com.liferay.portal.upgrade.api", version: "2.0.3"
+
+}
+
+buildService {
+	apiDir = "../geolocation-api/src/main/java"
+}
+
+group = "nl.deltares.oss.geolocation"

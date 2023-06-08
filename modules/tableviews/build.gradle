@@ -17,6 +17,7 @@ dependencies {
 
 	compileOnly project(":modules:common-utils")
 	compileOnly project(":modules:download:download-api")
+	compileOnly project(":modules:geolocation:geolocation-api")
 	compileOnly project(":modules:registration-service:registration-service-api")
 
 

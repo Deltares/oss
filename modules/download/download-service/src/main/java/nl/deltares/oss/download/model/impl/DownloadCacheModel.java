@@ -62,7 +62,7 @@ public class DownloadCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(31);
+		StringBundler sb = new StringBundler(29);
 
 		sb.append("{id=");
 		sb.append(id);
@@ -84,10 +84,8 @@ public class DownloadCacheModel
 		sb.append(expiryDate);
 		sb.append(", organization=");
 		sb.append(organization);
-		sb.append(", countryCode=");
-		sb.append(countryCode);
-		sb.append(", city=");
-		sb.append(city);
+		sb.append(", geoLocationId=");
+		sb.append(geoLocationId);
 		sb.append(", shareId=");
 		sb.append(shareId);
 		sb.append(", directDownloadUrl=");
@@ -144,20 +142,7 @@ public class DownloadCacheModel
 			downloadImpl.setOrganization(organization);
 		}
 
-		if (countryCode == null) {
-			downloadImpl.setCountryCode("");
-		}
-		else {
-			downloadImpl.setCountryCode(countryCode);
-		}
-
-		if (city == null) {
-			downloadImpl.setCity("");
-		}
-		else {
-			downloadImpl.setCity(city);
-		}
-
+		downloadImpl.setGeoLocationId(geoLocationId);
 		downloadImpl.setShareId(shareId);
 
 		if (directDownloadUrl == null) {
@@ -195,8 +180,8 @@ public class DownloadCacheModel
 		filePath = objectInput.readUTF();
 		expiryDate = objectInput.readLong();
 		organization = objectInput.readUTF();
-		countryCode = objectInput.readUTF();
-		city = objectInput.readUTF();
+
+		geoLocationId = objectInput.readLong();
 
 		shareId = objectInput.readInt();
 		directDownloadUrl = objectInput.readUTF();
@@ -233,19 +218,7 @@ public class DownloadCacheModel
 			objectOutput.writeUTF(organization);
 		}
 
-		if (countryCode == null) {
-			objectOutput.writeUTF("");
-		}
-		else {
-			objectOutput.writeUTF(countryCode);
-		}
-
-		if (city == null) {
-			objectOutput.writeUTF("");
-		}
-		else {
-			objectOutput.writeUTF(city);
-		}
+		objectOutput.writeLong(geoLocationId);
 
 		objectOutput.writeInt(shareId);
 
@@ -274,8 +247,7 @@ public class DownloadCacheModel
 	public String filePath;
 	public long expiryDate;
 	public String organization;
-	public String countryCode;
-	public String city;
+	public long geoLocationId;
 	public int shareId;
 	public String directDownloadUrl;
 	public String licenseDownloadUrl;

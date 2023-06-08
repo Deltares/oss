@@ -4,6 +4,13 @@ import java.util.Map;
 
 public interface GeoIpUtils {
 
+    enum ATTRIBUTES {
+        country_id,
+        county_iso2code,
+        city_name,
+        latitude,
+        longitude
+    }
     boolean isActive();
     Map<String, String> getClientIpInfo(String ipAddress);
 
@@ -11,5 +18,15 @@ public interface GeoIpUtils {
 
     String getCountryName(Map<String, String> clientIpInfo);
 
-    double[] getLatitudeLongitude(Map<String, String> clientIpInfo);
+    String getCityName(Map<String, String> clientIpInfo);
+
+    String getPostalCode(Map<String, String> clientIpInfo);
+
+    double getLatitude(Map<String, String> clientIpInfo);
+
+    double getLongitude(Map<String, String> clientIpInfo);
+
+    long getGeoLocationId(Map<String, String> clientIpInfo, boolean registerIfNotExists) throws Exception;
+
+    long registerGeolocation(Map<String, String> clientIpInfo) throws Exception;
 }

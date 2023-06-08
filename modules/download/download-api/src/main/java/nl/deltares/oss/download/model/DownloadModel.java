@@ -215,34 +215,18 @@ public interface DownloadModel extends BaseModel<Download>, ShardedModel {
 	public void setOrganization(String organization);
 
 	/**
-	 * Returns the country code of this download.
+	 * Returns the geo location ID of this download.
 	 *
-	 * @return the country code of this download
+	 * @return the geo location ID of this download
 	 */
-	@AutoEscape
-	public String getCountryCode();
+	public long getGeoLocationId();
 
 	/**
-	 * Sets the country code of this download.
+	 * Sets the geo location ID of this download.
 	 *
-	 * @param countryCode the country code of this download
+	 * @param geoLocationId the geo location ID of this download
 	 */
-	public void setCountryCode(String countryCode);
-
-	/**
-	 * Returns the city of this download.
-	 *
-	 * @return the city of this download
-	 */
-	@AutoEscape
-	public String getCity();
-
-	/**
-	 * Sets the city of this download.
-	 *
-	 * @param city the city of this download
-	 */
-	public void setCity(String city);
+	public void setGeoLocationId(long geoLocationId);
 
 	/**
 	 * Returns the share ID of this download.
