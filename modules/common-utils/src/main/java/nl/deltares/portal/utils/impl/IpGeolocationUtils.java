@@ -81,15 +81,32 @@ public class IpGeolocationUtils implements GeoIpUtils {
     }
 
     @Override
-    public double[] getLatitudeLongitude(Map<String, String> clientIpInfo) {
-        final double[] latlon = new double[]{Double.NaN, Double.NaN};
+    public String getCityName(Map<String, String> clientIpInfo) {
+        return clientIpInfo.get("city");
+    }
 
-        final String latitude = clientIpInfo.get("latitude");
-        if (latitude != null) latlon[0] = Double.parseDouble(latitude);
+    @Override
+    public String getPostalCode(Map<String, String> clientIpInfo) {
+        return clientIpInfo.get("zipcode");
+    }
 
-        final String longitude = clientIpInfo.get("longitude");
-        if (longitude != null) latlon[1] = Double.parseDouble(longitude);
+    @Override
+    public double getLatitude(Map<String, String> clientIpInfo) {
+        return Double.parseDouble(clientIpInfo.get("latitude"));
+    }
 
-        return latlon;
+    @Override
+    public double getLongitude(Map<String, String> clientIpInfo) {
+        return Double.parseDouble(clientIpInfo.get("longitude"));
+    }
+
+    @Override
+    public long getGeoLocationId(Map<String, String> clientIpInfo, boolean registerIfNotExists) throws Exception {
+        throw new UnsupportedOperationException("getGeoLocationId");
+    }
+
+    @Override
+    public long registerGeolocation(Map<String, String> clientIpInfo) throws Exception {
+        throw new UnsupportedOperationException("registerGeoLocation");
     }
 }

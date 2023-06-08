@@ -2,13 +2,13 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.worth.deltares.oss.portlet.activity-map",
-    "version" : "1.0.2",
+    "version" : "1.0.3",
     "extension" : "jar"
   },
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.portal.common-utils",
-    "version" : "1.0.4",
+    "version" : "1.0.5",
     "extension" : "jar"
   },
   {
@@ -26,13 +26,13 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.oss.download.api",
-    "version" : "1.0.2",
+    "version" : "1.0.3",
     "extension" : "jar"
   },
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.oss.download.service",
-    "version" : "1.0.2",
+    "version" : "1.0.3",
     "extension" : "jar"
   },
   {
@@ -85,20 +85,20 @@
   },
   {
     "groupId" : "nl.deltares",
-    "artifactId" : "nl.worth.deltares.oss.subversion.api",
-    "version" : "1.0.1",
+    "artifactId" : "nl.deltares.oss.geolocation.api",
+    "version" : "1.0.0",
     "extension" : "jar"
   },
   {
     "groupId" : "nl.deltares",
-    "artifactId" : "nl.worth.deltares.oss.subversion.service",
-    "version" : "1.0.1",
+    "artifactId" : "nl.deltares.oss.geolocation.service",
+    "version" : "1.0.0",
     "extension" : "jar"
   },
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.tableview.portlet",
-    "version" : "1.0.2",
+    "version" : "1.0.3",
     "extension" : "jar"
   },
   {

@@ -21,8 +21,7 @@
 		<column name="filePath" type="String" />
 		<column name="expiryDate" type="Date" />
 		<column name="organization" type="String" />
-		<column name="countryCode" type="String" />
-		<column name="city" type="String" />
+		<column name="geoLocationId" type="long" />
 		<column name="shareId" type="int" />
 		<column name="directDownloadUrl" type="String" />
 		<column name="licenseDownloadUrl" type="String" />

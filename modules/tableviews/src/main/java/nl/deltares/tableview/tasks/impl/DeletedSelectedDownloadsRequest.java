@@ -73,7 +73,7 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
     }
 
     private void deleteSelectedRecords(PrintWriter writer) {
-        writer.println("downloadId,modifiedDate, expirationDate, shareId,filePath,directDownloadUrl,email,organization,city,country");
+        writer.println("downloadId,modifiedDate, expirationDate, shareId,filePath,directDownloadUrl,email,organization,geolocationId");
 
         totalCount = selectedRecords.size();
 
@@ -88,12 +88,12 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
                 }
                 final Date modifiedDate = download.getModifiedDate();
                 final Date expiryDate = download.getExpiryDate();
-                writer.println(String.format("%d,%s,%s,%d,%s,%s,%s,%s,%s,%s",
+                writer.println(String.format("%d,%s,%s,%d,%s,%s,%s,%s,%d",
                         download.getDownloadId(), dateFormat.format(modifiedDate == null ? new Date(): modifiedDate),
                         dateFormat.format(expiryDate == null ? new Date() : expiryDate),
                         download.getShareId(),
                         download.getFilePath(), download.getDirectDownloadUrl(), email, download.getOrganization(),
-                        download.getCity(), download.getCountryCode()));
+                        download.getGeoLocationId()));
             } catch (PortalException e) {
                 writer.println(String.format("Failed to delete record %s: %s", id, e.getMessage()));
             } finally {
