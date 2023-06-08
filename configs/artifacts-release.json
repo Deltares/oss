@@ -1,8 +1,8 @@
 [
   {
     "groupId" : "nl.deltares",
-    "artifactId" : "nl.worth.deltares.oss.portlet.activity-map",
-    "version" : "1.0.3",
+    "artifactId" : "nl.deltares.oss.portlet.activity-map",
+    "version" : "1.0.0",
     "extension" : "jar"
   },
   {

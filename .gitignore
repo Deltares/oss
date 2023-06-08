@@ -282,3 +282,6 @@ license*.xml
 /docker/keycloak/deployments/deltares-extension-bundle-2.0.ear.deployed
 /docker/liferay/lmcrypt/lmcrypt
 /http-client-files/http-client.env.json
+/node_modules_cache/
+/yarn.lock
+/.yarnrc
