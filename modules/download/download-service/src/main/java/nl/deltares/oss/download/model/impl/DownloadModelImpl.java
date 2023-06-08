@@ -76,8 +76,8 @@ public class DownloadModelImpl
 		{"userId", Types.BIGINT}, {"createDate", Types.TIMESTAMP},
 		{"modifiedDate", Types.TIMESTAMP}, {"filePath", Types.VARCHAR},
 		{"expiryDate", Types.TIMESTAMP}, {"organization", Types.VARCHAR},
-		{"countryCode", Types.VARCHAR}, {"city", Types.VARCHAR},
-		{"shareId", Types.INTEGER}, {"directDownloadUrl", Types.VARCHAR},
+		{"geoLocationId", Types.BIGINT}, {"shareId", Types.INTEGER},
+		{"directDownloadUrl", Types.VARCHAR},
 		{"licenseDownloadUrl", Types.VARCHAR}
 	};
 
@@ -95,15 +95,14 @@ public class DownloadModelImpl
 		TABLE_COLUMNS_MAP.put("filePath", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("expiryDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("organization", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("countryCode", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("city", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("geoLocationId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("shareId", Types.INTEGER);
 		TABLE_COLUMNS_MAP.put("directDownloadUrl", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("licenseDownloadUrl", Types.VARCHAR);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table Downloads_Download (id_ LONG not null primary key,companyId LONG,groupId LONG,downloadId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,filePath STRING null,expiryDate DATE null,organization VARCHAR(75) null,countryCode VARCHAR(75) null,city VARCHAR(75) null,shareId INTEGER,directDownloadUrl STRING null,licenseDownloadUrl STRING null)";
+		"create table Downloads_Download (id_ LONG not null primary key,companyId LONG,groupId LONG,downloadId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,filePath STRING null,expiryDate DATE null,organization VARCHAR(75) null,geoLocationId LONG,shareId INTEGER,directDownloadUrl STRING null,licenseDownloadUrl STRING null)";
 
 	public static final String TABLE_SQL_DROP = "drop table Downloads_Download";
 
@@ -291,13 +290,11 @@ public class DownloadModelImpl
 		attributeSetterBiConsumers.put(
 			"organization",
 			(BiConsumer<Download, String>)Download::setOrganization);
-		attributeGetterFunctions.put("countryCode", Download::getCountryCode);
+		attributeGetterFunctions.put(
+			"geoLocationId", Download::getGeoLocationId);
 		attributeSetterBiConsumers.put(
-			"countryCode",
-			(BiConsumer<Download, String>)Download::setCountryCode);
-		attributeGetterFunctions.put("city", Download::getCity);
-		attributeSetterBiConsumers.put(
-			"city", (BiConsumer<Download, String>)Download::setCity);
+			"geoLocationId",
+			(BiConsumer<Download, Long>)Download::setGeoLocationId);
 		attributeGetterFunctions.put("shareId", Download::getShareId);
 		attributeSetterBiConsumers.put(
 			"shareId", (BiConsumer<Download, Integer>)Download::setShareId);
@@ -519,41 +516,17 @@ public class DownloadModelImpl
 	}
 
 	@Override
-	public String getCountryCode() {
-		if (_countryCode == null) {
-			return "";
-		}
-		else {
-			return _countryCode;
-		}
+	public long getGeoLocationId() {
+		return _geoLocationId;
 	}
 
 	@Override
-	public void setCountryCode(String countryCode) {
+	public void setGeoLocationId(long geoLocationId) {
 		if (_columnOriginalValues == Collections.EMPTY_MAP) {
 			_setColumnOriginalValues();
 		}
 
-		_countryCode = countryCode;
-	}
-
-	@Override
-	public String getCity() {
-		if (_city == null) {
-			return "";
-		}
-		else {
-			return _city;
-		}
-	}
-
-	@Override
-	public void setCity(String city) {
-		if (_columnOriginalValues == Collections.EMPTY_MAP) {
-			_setColumnOriginalValues();
-		}
-
-		_city = city;
+		_geoLocationId = geoLocationId;
 	}
 
 	@Override
@@ -684,8 +657,7 @@ public class DownloadModelImpl
 		downloadImpl.setFilePath(getFilePath());
 		downloadImpl.setExpiryDate(getExpiryDate());
 		downloadImpl.setOrganization(getOrganization());
-		downloadImpl.setCountryCode(getCountryCode());
-		downloadImpl.setCity(getCity());
+		downloadImpl.setGeoLocationId(getGeoLocationId());
 		downloadImpl.setShareId(getShareId());
 		downloadImpl.setDirectDownloadUrl(getDirectDownloadUrl());
 		downloadImpl.setLicenseDownloadUrl(getLicenseDownloadUrl());
@@ -716,9 +688,8 @@ public class DownloadModelImpl
 			this.<Date>getColumnOriginalValue("expiryDate"));
 		downloadImpl.setOrganization(
 			this.<String>getColumnOriginalValue("organization"));
-		downloadImpl.setCountryCode(
-			this.<String>getColumnOriginalValue("countryCode"));
-		downloadImpl.setCity(this.<String>getColumnOriginalValue("city"));
+		downloadImpl.setGeoLocationId(
+			this.<Long>getColumnOriginalValue("geoLocationId"));
 		downloadImpl.setShareId(
 			this.<Integer>getColumnOriginalValue("shareId"));
 		downloadImpl.setDirectDownloadUrl(
@@ -856,21 +827,7 @@ public class DownloadModelImpl
 			downloadCacheModel.organization = null;
 		}
 
-		downloadCacheModel.countryCode = getCountryCode();
-
-		String countryCode = downloadCacheModel.countryCode;
-
-		if ((countryCode != null) && (countryCode.length() == 0)) {
-			downloadCacheModel.countryCode = null;
-		}
-
-		downloadCacheModel.city = getCity();
-
-		String city = downloadCacheModel.city;
-
-		if ((city != null) && (city.length() == 0)) {
-			downloadCacheModel.city = null;
-		}
+		downloadCacheModel.geoLocationId = getGeoLocationId();
 
 		downloadCacheModel.shareId = getShareId();
 
@@ -964,8 +921,7 @@ public class DownloadModelImpl
 	private String _filePath;
 	private Date _expiryDate;
 	private String _organization;
-	private String _countryCode;
-	private String _city;
+	private long _geoLocationId;
 	private int _shareId;
 	private String _directDownloadUrl;
 	private String _licenseDownloadUrl;
@@ -1009,8 +965,7 @@ public class DownloadModelImpl
 		_columnOriginalValues.put("filePath", _filePath);
 		_columnOriginalValues.put("expiryDate", _expiryDate);
 		_columnOriginalValues.put("organization", _organization);
-		_columnOriginalValues.put("countryCode", _countryCode);
-		_columnOriginalValues.put("city", _city);
+		_columnOriginalValues.put("geoLocationId", _geoLocationId);
 		_columnOriginalValues.put("shareId", _shareId);
 		_columnOriginalValues.put("directDownloadUrl", _directDownloadUrl);
 		_columnOriginalValues.put("licenseDownloadUrl", _licenseDownloadUrl);
@@ -1057,15 +1012,13 @@ public class DownloadModelImpl
 
 		columnBitmasks.put("organization", 512L);
 
-		columnBitmasks.put("countryCode", 1024L);
+		columnBitmasks.put("geoLocationId", 1024L);
 
-		columnBitmasks.put("city", 2048L);
+		columnBitmasks.put("shareId", 2048L);
 
-		columnBitmasks.put("shareId", 4096L);
+		columnBitmasks.put("directDownloadUrl", 4096L);
 
-		columnBitmasks.put("directDownloadUrl", 8192L);
-
-		columnBitmasks.put("licenseDownloadUrl", 16384L);
+		columnBitmasks.put("licenseDownloadUrl", 8192L);
 
 		_columnBitmasks = Collections.unmodifiableMap(columnBitmasks);
 	}

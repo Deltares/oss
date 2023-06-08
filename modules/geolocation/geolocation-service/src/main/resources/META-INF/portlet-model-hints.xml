@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="nl.deltares.oss.geolocation.model.GeoLocation">
+		<field name="uuid" type="String" />
+		<field name="locationId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="countryId" type="long" />
+		<field name="cityName" type="String" />
+		<field name="latitude" type="double" />
+		<field name="longitude" type="double" />
+	</model>
+</model-hints>

@@ -10,6 +10,7 @@ dependencies {
 
     compileOnly project(":modules:registration-service:registration-service-api")
     compileOnly project(":modules:download:download-api")
+    compileOnly project(":modules:geolocation:geolocation-api")
 
     testCompile group: 'com.liferay.portal', name: 'com.liferay.portal.kernel'
     testCompile group: 'com.liferay.portal', name: 'com.liferay.portal.impl'

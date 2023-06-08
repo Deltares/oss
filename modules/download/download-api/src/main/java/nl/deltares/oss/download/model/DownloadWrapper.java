@@ -52,8 +52,7 @@ public class DownloadWrapper
 		attributes.put("filePath", getFilePath());
 		attributes.put("expiryDate", getExpiryDate());
 		attributes.put("organization", getOrganization());
-		attributes.put("countryCode", getCountryCode());
-		attributes.put("city", getCity());
+		attributes.put("geoLocationId", getGeoLocationId());
 		attributes.put("shareId", getShareId());
 		attributes.put("directDownloadUrl", getDirectDownloadUrl());
 		attributes.put("licenseDownloadUrl", getLicenseDownloadUrl());
@@ -123,16 +122,10 @@ public class DownloadWrapper
 			setOrganization(organization);
 		}
 
-		String countryCode = (String)attributes.get("countryCode");
+		Long geoLocationId = (Long)attributes.get("geoLocationId");
 
-		if (countryCode != null) {
-			setCountryCode(countryCode);
-		}
-
-		String city = (String)attributes.get("city");
-
-		if (city != null) {
-			setCity(city);
+		if (geoLocationId != null) {
+			setGeoLocationId(geoLocationId);
 		}
 
 		Integer shareId = (Integer)attributes.get("shareId");
@@ -161,16 +154,6 @@ public class DownloadWrapper
 	}
 
 	/**
-	 * Returns the city of this download.
-	 *
-	 * @return the city of this download
-	 */
-	@Override
-	public String getCity() {
-		return model.getCity();
-	}
-
-	/**
 	 * Returns the company ID of this download.
 	 *
 	 * @return the company ID of this download
@@ -178,16 +161,6 @@ public class DownloadWrapper
 	@Override
 	public long getCompanyId() {
 		return model.getCompanyId();
-	}
-
-	/**
-	 * Returns the country code of this download.
-	 *
-	 * @return the country code of this download
-	 */
-	@Override
-	public String getCountryCode() {
-		return model.getCountryCode();
 	}
 
 	/**
@@ -238,6 +211,16 @@ public class DownloadWrapper
 	@Override
 	public String getFilePath() {
 		return model.getFilePath();
+	}
+
+	/**
+	 * Returns the geo location ID of this download.
+	 *
+	 * @return the geo location ID of this download
+	 */
+	@Override
+	public long getGeoLocationId() {
+		return model.getGeoLocationId();
 	}
 
 	/**
@@ -336,16 +319,6 @@ public class DownloadWrapper
 	}
 
 	/**
-	 * Sets the city of this download.
-	 *
-	 * @param city the city of this download
-	 */
-	@Override
-	public void setCity(String city) {
-		model.setCity(city);
-	}
-
-	/**
 	 * Sets the company ID of this download.
 	 *
 	 * @param companyId the company ID of this download
@@ -353,16 +326,6 @@ public class DownloadWrapper
 	@Override
 	public void setCompanyId(long companyId) {
 		model.setCompanyId(companyId);
-	}
-
-	/**
-	 * Sets the country code of this download.
-	 *
-	 * @param countryCode the country code of this download
-	 */
-	@Override
-	public void setCountryCode(String countryCode) {
-		model.setCountryCode(countryCode);
 	}
 
 	/**
@@ -413,6 +376,16 @@ public class DownloadWrapper
 	@Override
 	public void setFilePath(String filePath) {
 		model.setFilePath(filePath);
+	}
+
+	/**
+	 * Sets the geo location ID of this download.
+	 *
+	 * @param geoLocationId the geo location ID of this download
+	 */
+	@Override
+	public void setGeoLocationId(long geoLocationId) {
+		model.setGeoLocationId(geoLocationId);
 	}
 
 	/**

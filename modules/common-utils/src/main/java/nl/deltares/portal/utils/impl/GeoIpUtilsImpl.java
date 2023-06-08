@@ -1,17 +1,25 @@
 package nl.deltares.portal.utils.impl;
 
+import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Country;
+import com.liferay.portal.kernel.service.CountryServiceUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.util.PortalInstances;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CityResponse;
+import nl.deltares.oss.geolocation.model.GeoLocation;
+import nl.deltares.oss.geolocation.service.GeoLocationLocalServiceUtil;
 import nl.deltares.portal.utils.GeoIpUtils;
 import org.osgi.service.component.annotations.Component;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,15 +91,69 @@ public class GeoIpUtilsImpl implements GeoIpUtils {
     }
 
     @Override
-    public double[] getLatitudeLongitude(Map<String, String> clientIpInfo) {
-        final double[] latlon = new double[]{Double.NaN, Double.NaN};
+    public String getCityName(Map<String, String> clientIpInfo) {
+        return clientIpInfo.get("city");
+    }
+
+    @Override
+    public String getPostalCode(Map<String, String> clientIpInfo) {
+        return clientIpInfo.get("postal");
+    }
+
+    @Override
+    public double getLatitude(Map<String, String> clientIpInfo) {
 
         final String latitude = clientIpInfo.get("latitude");
-        if (latitude != null) latlon[0] = Double.parseDouble(latitude);
+        if (latitude != null) return Double.parseDouble(latitude);
+        return Double.NaN;
+    }
+
+    @Override
+    public double getLongitude(Map<String, String> clientIpInfo) {
 
         final String longitude = clientIpInfo.get("longitude");
-        if (longitude != null) latlon[1] = Double.parseDouble(longitude);
-
-        return latlon;
+        if (longitude != null) return Double.parseDouble(longitude);
+        return Double.NaN;
     }
+
+    @Override
+    public long getGeoLocationId(Map<String, String> clientIpInfo, boolean registerIfNotExists) throws Exception {
+
+        if (clientIpInfo.isEmpty()) return -1;
+        final Country country = CountryServiceUtil.getCountryByA2(PortalInstances.getDefaultCompanyId(), getCountryIso2Code(clientIpInfo));
+        if (country != null ){
+            final String countryName = getCountryName(clientIpInfo);
+            final GeoLocation geoLocation = GeoLocationLocalServiceUtil.fetchByCity(country.getCountryId(), countryName);
+            return geoLocation.getLocationId();
+        } else {
+            return registerGeolocation(clientIpInfo);
+        }
+
+    }
+
+    @Override
+    public long registerGeolocation(Map<String, String> clientIpInfo) throws Exception {
+        if (clientIpInfo.isEmpty()) throw new IOException("ClientIP info is empty! Cannot register country");
+        final String countryIso2Code = getCountryIso2Code(clientIpInfo);
+        final long defaultCompanyId = PortalInstances.getDefaultCompanyId();
+        final Country country = CountryServiceUtil.getCountryByA2(defaultCompanyId, countryIso2Code);
+        if (country == null) throw new IOException("Cannot find valid country for ISO code " + countryIso2Code);
+
+        final String city = getCityName(clientIpInfo);
+        final GeoLocation geoLocation = GeoLocationLocalServiceUtil.fetchByCity(country.getCountryId(), city);
+        if (geoLocation != null){
+            throw new IOException(String.format("Geolocation already exists for country '%s' and city '%s'", country.getName(), city));
+        }
+
+        final GeoLocation newGeoLocation = GeoLocationLocalServiceUtil.createGeoLocation(CounterLocalServiceUtil.increment(
+                GeoLocation.class.getName()));
+        newGeoLocation.setCompanyId(defaultCompanyId);
+        newGeoLocation.setCountryId(country.getCountryId());
+        newGeoLocation.setCityName(city);
+        newGeoLocation.setLatitude(getLatitude(clientIpInfo));
+        newGeoLocation.setLongitude(getLongitude(clientIpInfo));
+        GeoLocationLocalServiceUtil.updateGeoLocation(newGeoLocation);
+        return newGeoLocation.getLocationId();
+    }
+
 }

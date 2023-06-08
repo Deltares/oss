@@ -220,6 +220,8 @@ public interface DownloadLocalService
 
 	public List<Download> findDirectDownloads(long groupId, int start, int end);
 
+	public List<Long> findDistinctDownloadIdsByGeoLocation(long locationId);
+
 	public List<Download> findDownloads(long groupId);
 
 	public List<Download> findDownloads(long groupId, int start, int end);

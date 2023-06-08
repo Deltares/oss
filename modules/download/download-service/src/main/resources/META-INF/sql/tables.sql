@@ -9,8 +9,7 @@ create table Downloads_Download (
 	filePath STRING null,
 	expiryDate DATE null,
 	organization VARCHAR(75) null,
-	countryCode VARCHAR(75) null,
-	city VARCHAR(75) null,
+	geoLocationId LONG,
 	shareId INTEGER,
 	directDownloadUrl STRING null,
 	licenseDownloadUrl STRING null

@@ -282,6 +282,14 @@ public class DownloadLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List<Long> findDistinctDownloadIdsByGeoLocation(
+		long locationId) {
+
+		return _downloadLocalService.findDistinctDownloadIdsByGeoLocation(
+			locationId);
+	}
+
+	@Override
 	public java.util.List<nl.deltares.oss.download.model.Download>
 		findDownloads(long groupId) {
 

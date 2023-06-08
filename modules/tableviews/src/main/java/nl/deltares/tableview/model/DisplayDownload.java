@@ -1,8 +1,12 @@
 package nl.deltares.tableview.model;
 
+import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.CountryServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import nl.deltares.oss.download.model.Download;
+import nl.deltares.oss.geolocation.model.GeoLocation;
+import nl.deltares.oss.geolocation.service.GeoLocationLocalServiceUtil;
 
 import java.util.Date;
 
@@ -27,12 +31,19 @@ public class DisplayDownload {
         } else {
             email = user.getEmailAddress();
         }
+        final long geoLocationId = download.getGeoLocationId();
+        final GeoLocation geoLocation = GeoLocationLocalServiceUtil.fetchGeoLocation(geoLocationId);
+
+        final Country country;
+        if (geoLocation != null){
+             country = CountryServiceUtil.fetchCountry(geoLocation.getCountryId());
+        } else {
+            country = null;
+        }
         final String organization = download.getOrganization();
         this.organization = organization != null ? organization : "";
-        final String city = download.getCity();
-        this.city =  city != null ? city : "";
-        final String countryCode = download.getCountryCode();
-        this.countryCode = countryCode != null ? countryCode : "";
+        this.city =  geoLocation != null ? geoLocation.getCityName() : "";
+        this.countryCode = country != null ? country.getA2() : "";
         final String filePath = download.getFilePath();
         this.filePath = filePath != null ? filePath : "";
         final String directDownloadPath = download.getDirectDownloadUrl();

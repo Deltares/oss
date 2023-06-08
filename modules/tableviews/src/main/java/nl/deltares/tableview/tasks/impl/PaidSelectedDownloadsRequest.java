@@ -72,7 +72,7 @@ public class PaidSelectedDownloadsRequest extends AbstractDataRequest {
     }
 
     private void updateSelectedRecords(PrintWriter writer) {
-        writer.println("downloadId,modifiedDate,shareId,filePath,directDownloadUrl,email,organization,city,country");
+        writer.println("downloadId,modifiedDate,shareId,filePath,directDownloadUrl,email,organization,geoLocationId");
 
         totalCount = selectedRecords.size();
 
@@ -90,10 +90,10 @@ public class PaidSelectedDownloadsRequest extends AbstractDataRequest {
                 if (user != null){
                     email = user.getEmailAddress();
                 }
-                writer.println(String.format("%d,%s,%d,%s,%s,%s,%s,%s,%s",
+                writer.println(String.format("%d,%s,%d,%s,%s,%s,%s,%d",
                         download.getDownloadId(), dateFormat.format(download.getModifiedDate()), download.getShareId(),
                         download.getFilePath(), download.getDirectDownloadUrl(), email, download.getOrganization(),
-                        download.getCity(), download.getCountryCode()));
+                        download.getGeoLocationId()));
             } catch (PortalException e) {
                 writer.println(String.format("Failed to update record %s: %s", id, e.getMessage()));
             } finally {
