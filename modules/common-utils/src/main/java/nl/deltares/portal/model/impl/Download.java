@@ -48,6 +48,7 @@ public class Download extends AbsDsdArticle {
             final List<String> actions = getFormFieldArrayValue("RequiredActions", true);
             actions.forEach(a -> {
                 try {
+                    if (a == null || a.trim().isEmpty()) return;
                     requiredActions.add(ACTION.valueOf(a));
                 } catch (IllegalArgumentException e) {
                     LOG.warn(String.format("Invalid 'RequiredActions' %s found for download %s", a, getTitle()));
