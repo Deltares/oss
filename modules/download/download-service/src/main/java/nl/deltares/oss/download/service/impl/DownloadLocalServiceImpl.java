@@ -15,6 +15,7 @@
 package nl.deltares.oss.download.service.impl;
 
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.aop.AopService;
 
@@ -149,6 +150,19 @@ public class DownloadLocalServiceImpl extends DownloadLocalServiceBaseImpl {
 
     public int countDownloadsByUserId(long groupId, long userId){
         return DownloadUtil.countByUserDownloads(groupId, userId);
+    }
+
+    public List<Long> findDistinctDownloadIdsByGeoLocation(long locationId){
+        final DynamicQuery dynamicQuery = getGeoLocationQuery( locationId);
+        dynamicQuery.setProjection(ProjectionFactoryUtil.distinct(ProjectionFactoryUtil.property("downloadId")));
+        return DownloadUtil.getPersistence().findWithDynamicQuery(dynamicQuery);
+    }
+
+    private DynamicQuery getGeoLocationQuery(long locationId) {
+        final DynamicQuery dynamicQuery = dynamicQuery();
+        dynamicQuery
+                .add(RestrictionsFactoryUtil.eq("geoLocationId", locationId));
+        return dynamicQuery;
     }
 
 

@@ -248,6 +248,12 @@ public class DownloadLocalServiceUtil {
 		return getService().findDirectDownloads(groupId, start, end);
 	}
 
+	public static List<Long> findDistinctDownloadIdsByGeoLocation(
+		long locationId) {
+
+		return getService().findDistinctDownloadIdsByGeoLocation(locationId);
+	}
+
 	public static List<Download> findDownloads(long groupId) {
 		return getService().findDownloads(groupId);
 	}

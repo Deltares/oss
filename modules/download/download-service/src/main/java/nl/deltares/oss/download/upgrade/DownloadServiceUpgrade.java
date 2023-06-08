@@ -2,6 +2,7 @@ package nl.deltares.oss.download.upgrade;
 
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
 import nl.deltares.oss.download.upgrade.v1_1_0.DownloadTableAddColumnLicenseDownloadUrl;
+import nl.deltares.oss.download.upgrade.v1_2_0.DownloadTableAddReplaceCountryReferences;
 import org.osgi.service.component.annotations.Component;
 
 @Component(service = UpgradeStepRegistrator.class)
@@ -11,5 +12,8 @@ public class DownloadServiceUpgrade implements UpgradeStepRegistrator {
         registry.register(
                 "1.0.0", "1.1.0",
                 new DownloadTableAddColumnLicenseDownloadUrl());
+        registry.register(
+                "1.1.0", "1.2.0",
+                new DownloadTableAddReplaceCountryReferences());
     }
 }

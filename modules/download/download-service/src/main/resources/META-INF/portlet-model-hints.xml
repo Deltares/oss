@@ -16,8 +16,7 @@
 		</field>
 		<field name="expiryDate" type="Date" />
 		<field name="organization" type="String" />
-		<field name="countryCode" type="String" />
-		<field name="city" type="String" />
+		<field name="geoLocationId" type="long" />
 		<field name="shareId" type="int" />
 		<field name="directDownloadUrl" type="String">
 			<hint-collection name="URL" />

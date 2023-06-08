@@ -3,13 +3,11 @@ package nl.deltares.forms.portlet.action;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
-import com.liferay.portal.kernel.service.CountryServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -101,9 +99,9 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
                 Map<String, String> userAttributes = new HashMap<>();
                 if (downloadRequest.isUserInfoRequired()) {
                     userAttributes.putAll(getUserAttributes(actionRequest));
-                } else {
-                    userAttributes.putAll(getMinimumAttributes(actionRequest, themeDisplay));
                 }
+                userAttributes.putAll(parseGeoLocationFromIp(actionRequest));
+
                 registerAcceptedTerms(downloadRequest, userAttributes);
                 downloadRequest.setUserAttributes(userAttributes);
                 success = updateUserAttributes(actionRequest, user, userAttributes);
@@ -310,17 +308,19 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         return attributes;
     }
 
-    private Map<String, String> getMinimumAttributes(ActionRequest actionRequest, ThemeDisplay themeDisplay) {
+    private Map<String, String> parseGeoLocationFromIp(ActionRequest actionRequest) {
+        if (geoIpUtils == null || !geoIpUtils.isActive()) return Collections.emptyMap();
         Map<String, String> attributes = new HashMap<>();
-        if (geoIpUtils == null) return attributes;
         final String remoteAddr = ((LiferayPortletRequest) actionRequest).getHttpServletRequest().getRemoteAddr();
+
         try {
             final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(remoteAddr);
-            if (clientIpInfo.isEmpty()) return Collections.emptyMap();
-            final Country country = CountryServiceUtil.getCountryByA2(themeDisplay.getCompanyId(), geoIpUtils.getCountryIso2Code(clientIpInfo));
-            if (country != null ) attributes.put(KeycloakUtils.ATTRIBUTES.org_country.name(), country.getName());
+            long geoLocationId = geoIpUtils.getGeoLocationId(clientIpInfo, true);
+            if (geoLocationId > -1) {
+                attributes.put("geoLocationId", String.valueOf(geoLocationId));
+            }
             return attributes;
-        } catch (PortalException e) {
+        } catch (Exception e) {
             LOG.warn("Error getting country info: " + e.getMessage());
         }
         return attributes;
