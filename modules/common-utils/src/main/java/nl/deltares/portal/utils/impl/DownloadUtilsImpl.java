@@ -9,7 +9,7 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 import nl.deltares.oss.download.model.DownloadCount;
-import nl.deltares.oss.download.service.DownloadCountLocalServiceUtil;
+import nl.deltares.oss.download.service.DownloadCountLocalService;
 import nl.deltares.oss.download.service.DownloadLocalService;
 import nl.deltares.portal.configuration.DownloadSiteConfiguration;
 import nl.deltares.portal.model.impl.Download;
@@ -43,6 +43,13 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
     protected void setDownloadLocalService(DownloadLocalService downloadLocalService){
         LOG.info("DownloadLocalService is " + (downloadLocalService == null ? "equal to null" : "loaded successfully"));
         _downloadLocalService = downloadLocalService;
+    }
+
+    private DownloadCountLocalService _downloadCountLocalService;
+    @Reference(unbind = "-")
+    protected void setDownloadCountLocalService(DownloadCountLocalService downloadCountLocalService){
+        LOG.info("DownloadCountLocalService is " + (downloadCountLocalService == null ? "equal to null" : "loaded successfully"));
+        _downloadCountLocalService = downloadCountLocalService;
     }
     private final long maxProcessingTime = TimeUnit.MINUTES.toMillis(10);
 
@@ -362,9 +369,9 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
     public void incrementDownloadCount(long companyId, long groupId, long downloadId) {
         //Update statistics
 
-        DownloadCount downloadCount = DownloadCountLocalServiceUtil.getDownloadCount(groupId, downloadId);
+        DownloadCount downloadCount = _downloadCountLocalService.getDownloadCount(groupId, downloadId);
         if (downloadCount == null) {
-            downloadCount = DownloadCountLocalServiceUtil.createDownloadCount(CounterLocalServiceUtil.increment(
+            downloadCount = _downloadCountLocalService.createDownloadCount(CounterLocalServiceUtil.increment(
                     nl.deltares.oss.download.model.DownloadCount.class.getName()));
             downloadCount.setDownloadId(downloadId);
             downloadCount.setGroupId(groupId);
@@ -372,7 +379,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         }
         int count = downloadCount.getCount();
         downloadCount.setCount(++count);
-        DownloadCountLocalServiceUtil.updateDownloadCount(downloadCount);
+        _downloadCountLocalService.updateDownloadCount(downloadCount);
     }
 
     @Override
@@ -486,7 +493,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
 
     @Override
     public int getDownloadCount(Download download) {
-        final DownloadCount downloadCount = DownloadCountLocalServiceUtil.getDownloadCount(download.getGroupId(), Long.parseLong(download.getArticleId()));
+        final DownloadCount downloadCount = _downloadCountLocalService.getDownloadCount(download.getGroupId(), Long.parseLong(download.getArticleId()));
         if (downloadCount == null) return 0;
 
         return downloadCount.getCount();
