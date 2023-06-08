@@ -10,7 +10,7 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 import nl.deltares.oss.download.model.DownloadCount;
 import nl.deltares.oss.download.service.DownloadCountLocalServiceUtil;
-import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
+import nl.deltares.oss.download.service.DownloadLocalService;
 import nl.deltares.portal.configuration.DownloadSiteConfiguration;
 import nl.deltares.portal.model.impl.Download;
 import nl.deltares.portal.utils.*;
@@ -38,6 +38,12 @@ import java.util.concurrent.TimeUnit;
 )
 public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils {
 
+    private DownloadLocalService _downloadLocalService;
+    @Reference(unbind = "-")
+    protected void setDownloadLocalService(DownloadLocalService downloadLocalService){
+        LOG.info("DownloadLocalService is " + (downloadLocalService == null ? "equal to null" : "loaded successfully"));
+        _downloadLocalService = downloadLocalService;
+    }
     private final long maxProcessingTime = TimeUnit.MINUTES.toMillis(10);
 
     public enum DOWNLOAD_STATUS {payment_pending, available, expired, none, processing}
@@ -199,7 +205,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
     }
 
     public String directDownloadExists(long downloadId, long userId, long groupId) {
-        final nl.deltares.oss.download.model.Download download = DownloadLocalServiceUtil.fetchUserDownload(groupId, userId, downloadId);
+        final nl.deltares.oss.download.model.Download download = _downloadLocalService.fetchUserDownload(groupId, userId, downloadId);
         if (download == null) return null;
 
         //check if expired
@@ -300,9 +306,9 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
 
     @Override
     public void registerDownload(User user, long groupId, long downloadId, String filePath, Map<String, String> shareInfo, Map<String, String> userAttributes) {
-        nl.deltares.oss.download.model.Download userDownload = DownloadLocalServiceUtil.fetchUserDownload(groupId, user.getUserId(), downloadId);
+        nl.deltares.oss.download.model.Download userDownload = _downloadLocalService.fetchUserDownload(groupId, user.getUserId(), downloadId);
         if (userDownload == null) {
-            userDownload = DownloadLocalServiceUtil.createDownload(CounterLocalServiceUtil.increment(
+            userDownload = _downloadLocalService.createDownload(CounterLocalServiceUtil.increment(
                     nl.deltares.oss.download.model.Download.class.getName()));
 
             userDownload.setCompanyId(user.getCompanyId());
@@ -344,7 +350,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
                 userDownload.setLicenseDownloadUrl(licUrl);
             }
         }
-        DownloadLocalServiceUtil.updateDownload(userDownload);
+        _downloadLocalService.updateDownload(userDownload);
 
         if (userDownload.getShareId() >= -1) { //request completed
             incrementDownloadCount(user.getCompanyId(), groupId, downloadId);
@@ -388,7 +394,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
 
                 if (document == null) return;
                 if (extractShareInformation(download, document, email)) {
-                    DownloadLocalServiceUtil.updateDownload(download);
+                    _downloadLocalService.updateDownload(download);
                     LOG.info(String.format("Updated pending download %s for user %s.", download.getFilePath(), email));
                 }
 
@@ -420,7 +426,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
                 } else {
                     download.setShareId(0); //start by setting to 0
                 }
-                DownloadLocalServiceUtil.updateDownload(download);
+                _downloadLocalService.updateDownload(download);
             } catch (Exception e) {
                 LOG.warn(String.format("Error checking for shares of %s: %s", download.getFilePath(), e.getMessage()));
             }
@@ -471,9 +477,9 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
     private List<nl.deltares.oss.download.model.Download> getDownloadRecords(User user, long groupId, int shareId) {
         final List<nl.deltares.oss.download.model.Download> byPendingUserDownloads;
         if (user == null) {
-            byPendingUserDownloads = DownloadLocalServiceUtil.findDownloadsByShareId(groupId, shareId);
+            byPendingUserDownloads = _downloadLocalService.findDownloadsByShareId(groupId, shareId);
         } else {
-            byPendingUserDownloads = DownloadLocalServiceUtil.findUserDownloadsByShareId(groupId, user.getUserId(), shareId);
+            byPendingUserDownloads = _downloadLocalService.findUserDownloadsByShareId(groupId, user.getUserId(), shareId);
         }
         return byPendingUserDownloads;
     }
@@ -490,7 +496,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
     public String getDownloadStatus(Download download, User user) {
         if (user == null || user.isDefaultUser()) return DOWNLOAD_STATUS.none.name();
 
-        nl.deltares.oss.download.model.Download dbDownload = DownloadLocalServiceUtil.fetchUserDownload(
+        nl.deltares.oss.download.model.Download dbDownload = _downloadLocalService.fetchUserDownload(
                 download.getGroupId(), user.getUserId(), Long.parseLong(download.getArticleId()));
         if (dbDownload == null) return DOWNLOAD_STATUS.none.name();
 
@@ -525,7 +531,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         if (!download.isBillingRequired()) return false;
         if (user == null || user.isDefaultUser()) return false;
 
-        final nl.deltares.oss.download.model.Download dbDownload = DownloadLocalServiceUtil.fetchUserDownload(
+        final nl.deltares.oss.download.model.Download dbDownload = _downloadLocalService.fetchUserDownload(
                 download.getGroupId(), user.getUserId(), Long.parseLong(download.getArticleId()));
         return dbDownload != null && dbDownload.getShareId() == -1;
     }
