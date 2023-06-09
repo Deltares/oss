@@ -34,18 +34,18 @@ public class DownloadTable extends BaseTable<DownloadTable> {
 
 	public final Column<DownloadTable, Long> id = createColumn(
 		"id_", Long.class, Types.BIGINT, Column.FLAG_PRIMARY);
-	public final Column<DownloadTable, Long> companyId = createColumn(
-		"companyId", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
 	public final Column<DownloadTable, Long> groupId = createColumn(
 		"groupId", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
-	public final Column<DownloadTable, Long> downloadId = createColumn(
-		"downloadId", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
+	public final Column<DownloadTable, Long> companyId = createColumn(
+		"companyId", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
 	public final Column<DownloadTable, Long> userId = createColumn(
 		"userId", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
 	public final Column<DownloadTable, Date> createDate = createColumn(
 		"createDate", Date.class, Types.TIMESTAMP, Column.FLAG_DEFAULT);
 	public final Column<DownloadTable, Date> modifiedDate = createColumn(
 		"modifiedDate", Date.class, Types.TIMESTAMP, Column.FLAG_DEFAULT);
+	public final Column<DownloadTable, Long> downloadId = createColumn(
+		"downloadId", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
 	public final Column<DownloadTable, String> filePath = createColumn(
 		"filePath", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 	public final Column<DownloadTable, Date> expiryDate = createColumn(

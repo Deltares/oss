@@ -3,12 +3,12 @@
 <model-hints>
 	<model name="nl.deltares.oss.download.model.Download">
 		<field name="id" type="long" />
-		<field name="companyId" type="long" />
 		<field name="groupId" type="long" />
-		<field name="downloadId" type="long" />
+		<field name="companyId" type="long" />
 		<field name="userId" type="long" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
+		<field name="downloadId" type="long" />
 		<field name="filePath" type="String">
 			<hint-collection name="URL" />
 			<validator name="required" />

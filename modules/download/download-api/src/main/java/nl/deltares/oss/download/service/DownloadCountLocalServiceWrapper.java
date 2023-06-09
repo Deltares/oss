@@ -265,15 +265,11 @@ public class DownloadCountLocalServiceWrapper
 	}
 
 	@Override
-	public nl.deltares.oss.download.model.DownloadCount getDownloadCount(
-		long groupId, long downloadId) {
+	public nl.deltares.oss.download.model.DownloadCount
+		getDownloadCountByGroupId(long groupId, long downloadId) {
 
-		return _downloadCountLocalService.getDownloadCount(groupId, downloadId);
-	}
-
-	@Override
-	public int getDownloadCountByGroupId(long groupId) {
-		return _downloadCountLocalService.getDownloadCountByGroupId(groupId);
+		return _downloadCountLocalService.getDownloadCountByGroupId(
+			groupId, downloadId);
 	}
 
 	/**

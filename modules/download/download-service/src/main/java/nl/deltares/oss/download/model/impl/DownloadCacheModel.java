@@ -66,18 +66,18 @@ public class DownloadCacheModel
 
 		sb.append("{id=");
 		sb.append(id);
-		sb.append(", companyId=");
-		sb.append(companyId);
 		sb.append(", groupId=");
 		sb.append(groupId);
-		sb.append(", downloadId=");
-		sb.append(downloadId);
+		sb.append(", companyId=");
+		sb.append(companyId);
 		sb.append(", userId=");
 		sb.append(userId);
 		sb.append(", createDate=");
 		sb.append(createDate);
 		sb.append(", modifiedDate=");
 		sb.append(modifiedDate);
+		sb.append(", downloadId=");
+		sb.append(downloadId);
 		sb.append(", filePath=");
 		sb.append(filePath);
 		sb.append(", expiryDate=");
@@ -102,9 +102,8 @@ public class DownloadCacheModel
 		DownloadImpl downloadImpl = new DownloadImpl();
 
 		downloadImpl.setId(id);
-		downloadImpl.setCompanyId(companyId);
 		downloadImpl.setGroupId(groupId);
-		downloadImpl.setDownloadId(downloadId);
+		downloadImpl.setCompanyId(companyId);
 		downloadImpl.setUserId(userId);
 
 		if (createDate == Long.MIN_VALUE) {
@@ -120,6 +119,8 @@ public class DownloadCacheModel
 		else {
 			downloadImpl.setModifiedDate(new Date(modifiedDate));
 		}
+
+		downloadImpl.setDownloadId(downloadId);
 
 		if (filePath == null) {
 			downloadImpl.setFilePath("");
@@ -168,15 +169,15 @@ public class DownloadCacheModel
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		id = objectInput.readLong();
 
-		companyId = objectInput.readLong();
-
 		groupId = objectInput.readLong();
 
-		downloadId = objectInput.readLong();
+		companyId = objectInput.readLong();
 
 		userId = objectInput.readLong();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+
+		downloadId = objectInput.readLong();
 		filePath = objectInput.readUTF();
 		expiryDate = objectInput.readLong();
 		organization = objectInput.readUTF();
@@ -192,15 +193,15 @@ public class DownloadCacheModel
 	public void writeExternal(ObjectOutput objectOutput) throws IOException {
 		objectOutput.writeLong(id);
 
-		objectOutput.writeLong(companyId);
-
 		objectOutput.writeLong(groupId);
 
-		objectOutput.writeLong(downloadId);
+		objectOutput.writeLong(companyId);
 
 		objectOutput.writeLong(userId);
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
+
+		objectOutput.writeLong(downloadId);
 
 		if (filePath == null) {
 			objectOutput.writeUTF("");
@@ -238,12 +239,12 @@ public class DownloadCacheModel
 	}
 
 	public long id;
-	public long companyId;
 	public long groupId;
-	public long downloadId;
+	public long companyId;
 	public long userId;
 	public long createDate;
 	public long modifiedDate;
+	public long downloadId;
 	public String filePath;
 	public long expiryDate;
 	public String organization;

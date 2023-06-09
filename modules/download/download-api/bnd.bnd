@@ -1,6 +1,6 @@
 Bundle-Name: download-api
 Bundle-SymbolicName: nl.deltares.oss.download.api
-Bundle-Version: 1.0.4
+Bundle-Version: 1.0.5
 Export-Package:\
 	nl.deltares.oss.download.exception,\
 	nl.deltares.oss.download.model,\

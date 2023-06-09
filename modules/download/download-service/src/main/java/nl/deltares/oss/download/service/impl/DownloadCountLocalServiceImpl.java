@@ -18,7 +18,6 @@ import com.liferay.portal.aop.AopService;
 import nl.deltares.oss.download.model.DownloadCount;
 import nl.deltares.oss.download.service.base.DownloadCountLocalServiceBaseImpl;
 import nl.deltares.oss.download.service.persistence.DownloadCountUtil;
-import nl.deltares.oss.download.service.persistence.DownloadUtil;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.List;
@@ -48,7 +47,7 @@ public class DownloadCountLocalServiceImpl
      *
      * Never reference this class directly. Use <code>nl.deltares.oss.download.service.DownloadCountLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>nl.deltares.oss.download.service.DownloadCountLocalServiceUtil</code>.
      */
-    public DownloadCount getDownloadCount(long groupId, long downloadId) {
+    public DownloadCount getDownloadCountByGroupId(long groupId, long downloadId) {
         return DownloadCountUtil.fetchByDownloadCountByGroup(groupId, downloadId);
     }
 
@@ -56,7 +55,4 @@ public class DownloadCountLocalServiceImpl
         return DownloadCountUtil.findAll(start, end);
     }
 
-    public int getDownloadCountByGroupId(long groupId) {
-        return DownloadUtil.countByGroupDownloads(groupId);
-    }
 }
