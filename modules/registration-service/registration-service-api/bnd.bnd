@@ -1,6 +1,6 @@
 Bundle-Name: registration-service-api
 Bundle-SymbolicName: nl.deltares.dsd.registration.api
-Bundle-Version: 1.0.1
+Bundle-Version: 1.0.2
 Export-Package:\
     nl.deltares.dsd.registration.exception, \
     nl.deltares.dsd.registration.model, \
