@@ -256,10 +256,30 @@ public class RegistrationLocalServiceImpl
 		return RegistrationUtil.findByEventRegistrations(groupId, eventResourceId);
 	}
 
+	public List<Registration> getEventRegistrations(long groupId, long eventResourceId, int start, int end){
+		return RegistrationUtil.findByEventRegistrations(groupId, eventResourceId, start, end);
+	}
+
+	public int getEventRegistrationsCount(long groupId, long eventResourceId)
+	{
+		return RegistrationUtil.countByEventRegistrations(groupId, eventResourceId);
+	}
+
 	public List<Registration> getArticleRegistrations(long groupId, long articleResourceId){
 		return RegistrationUtil.findByArticleRegistrations(groupId, articleResourceId);
 	}
 
+	public List<Registration> getArticleRegistrations(long groupId, long articleResourceId, int start, int end){
+		return RegistrationUtil.findByArticleRegistrations(groupId, articleResourceId, start, end);
+	}
+
+	public List<Registration> getUserRegistrations(long groupId, long userId, int start, int end){
+		return RegistrationUtil.findByUserRegistrations(groupId, userId, start, end);
+	}
+
+	public int getUserRegistrationsCount(long groupId, long userId){
+		return RegistrationUtil.countByUserRegistrations(groupId, userId);
+	}
 	public List<Registration> getUserRegistrations(long groupId, long userId, Date start, Date end){
 		Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
 		Criterion checkUserId = PropertyFactoryUtil.forName("userId").eq(userId);

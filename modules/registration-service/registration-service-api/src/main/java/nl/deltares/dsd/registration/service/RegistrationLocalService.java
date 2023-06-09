@@ -279,8 +279,19 @@ public interface RegistrationLocalService
 		long groupId, long articleResourceId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getArticleRegistrations(
+		long groupId, long articleResourceId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Registration> getEventRegistrations(
 		long groupId, long eventResourceId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getEventRegistrations(
+		long groupId, long eventResourceId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getEventRegistrationsCount(long groupId, long eventResourceId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
@@ -375,6 +386,13 @@ public interface RegistrationLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Registration> getUserRegistrations(
 		long groupId, long userId, Date start, Date end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getUserRegistrations(
+		long groupId, long userId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getUserRegistrationsCount(long groupId, long userId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Registration> getUsersRegisteredByOtherUser(

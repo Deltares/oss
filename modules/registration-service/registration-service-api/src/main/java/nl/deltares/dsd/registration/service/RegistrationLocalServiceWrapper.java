@@ -364,9 +364,33 @@ public class RegistrationLocalServiceWrapper
 
 	@Override
 	public java.util.List<nl.deltares.dsd.registration.model.Registration>
+		getArticleRegistrations(
+			long groupId, long articleResourceId, int start, int end) {
+
+		return _registrationLocalService.getArticleRegistrations(
+			groupId, articleResourceId, start, end);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.dsd.registration.model.Registration>
 		getEventRegistrations(long groupId, long eventResourceId) {
 
 		return _registrationLocalService.getEventRegistrations(
+			groupId, eventResourceId);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.dsd.registration.model.Registration>
+		getEventRegistrations(
+			long groupId, long eventResourceId, int start, int end) {
+
+		return _registrationLocalService.getEventRegistrations(
+			groupId, eventResourceId, start, end);
+	}
+
+	@Override
+	public int getEventRegistrationsCount(long groupId, long eventResourceId) {
+		return _registrationLocalService.getEventRegistrationsCount(
 			groupId, eventResourceId);
 	}
 
@@ -530,6 +554,20 @@ public class RegistrationLocalServiceWrapper
 
 		return _registrationLocalService.getUserRegistrations(
 			groupId, userId, start, end);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.dsd.registration.model.Registration>
+		getUserRegistrations(long groupId, long userId, int start, int end) {
+
+		return _registrationLocalService.getUserRegistrations(
+			groupId, userId, start, end);
+	}
+
+	@Override
+	public int getUserRegistrationsCount(long groupId, long userId) {
+		return _registrationLocalService.getUserRegistrationsCount(
+			groupId, userId);
 	}
 
 	@Override
