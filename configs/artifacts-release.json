@@ -14,13 +14,13 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.oss.download.api",
-    "version" : "1.0.4",
+    "version" : "1.0.5",
     "extension" : "jar"
   },
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.oss.download.service",
-    "version" : "1.0.4",
+    "version" : "1.0.5",
     "extension" : "jar"
   },
   {
@@ -38,7 +38,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.portal.common-utils",
-    "version" : "1.0.7",
+    "version" : "1.0.8",
     "extension" : "jar"
   },
   {

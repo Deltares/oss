@@ -217,10 +217,8 @@ public interface DownloadCountLocalService
 	public DownloadCount getDownloadCount(long id) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public DownloadCount getDownloadCount(long groupId, long downloadId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getDownloadCountByGroupId(long groupId);
+	public DownloadCount getDownloadCountByGroupId(
+		long groupId, long downloadId);
 
 	/**
 	 * Returns a range of all the download counts.

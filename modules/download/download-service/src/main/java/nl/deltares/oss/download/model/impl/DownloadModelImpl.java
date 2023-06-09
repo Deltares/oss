@@ -25,7 +25,6 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
-import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -71,10 +70,10 @@ public class DownloadModelImpl
 	public static final String TABLE_NAME = "Downloads_Download";
 
 	public static final Object[][] TABLE_COLUMNS = {
-		{"id_", Types.BIGINT}, {"companyId", Types.BIGINT},
-		{"groupId", Types.BIGINT}, {"downloadId", Types.BIGINT},
-		{"userId", Types.BIGINT}, {"createDate", Types.TIMESTAMP},
-		{"modifiedDate", Types.TIMESTAMP}, {"filePath", Types.VARCHAR},
+		{"id_", Types.BIGINT}, {"groupId", Types.BIGINT},
+		{"companyId", Types.BIGINT}, {"userId", Types.BIGINT},
+		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
+		{"downloadId", Types.BIGINT}, {"filePath", Types.VARCHAR},
 		{"expiryDate", Types.TIMESTAMP}, {"organization", Types.VARCHAR},
 		{"geoLocationId", Types.BIGINT}, {"shareId", Types.INTEGER},
 		{"directDownloadUrl", Types.VARCHAR},
@@ -86,12 +85,12 @@ public class DownloadModelImpl
 
 	static {
 		TABLE_COLUMNS_MAP.put("id_", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("companyId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("groupId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("downloadId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("companyId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("userId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("downloadId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("filePath", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("expiryDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("organization", Types.VARCHAR);
@@ -102,15 +101,14 @@ public class DownloadModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table Downloads_Download (id_ LONG not null primary key,companyId LONG,groupId LONG,downloadId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,filePath STRING null,expiryDate DATE null,organization VARCHAR(75) null,geoLocationId LONG,shareId INTEGER,directDownloadUrl STRING null,licenseDownloadUrl STRING null)";
+		"create table Downloads_Download (id_ LONG not null primary key,groupId LONG,companyId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,downloadId LONG,filePath STRING null,expiryDate DATE null,organization VARCHAR(75) null,geoLocationId LONG,shareId INTEGER,directDownloadUrl STRING null,licenseDownloadUrl STRING null)";
 
 	public static final String TABLE_SQL_DROP = "drop table Downloads_Download";
 
-	public static final String ORDER_BY_JPQL =
-		" ORDER BY download.modifiedDate DESC";
+	public static final String ORDER_BY_JPQL = " ORDER BY download.id ASC";
 
 	public static final String ORDER_BY_SQL =
-		" ORDER BY Downloads_Download.modifiedDate DESC";
+		" ORDER BY Downloads_Download.id_ ASC";
 
 	public static final String DATA_SOURCE = "liferayDataSource";
 
@@ -147,7 +145,7 @@ public class DownloadModelImpl
 	 *		#getColumnBitmask(String)}
 	 */
 	@Deprecated
-	public static final long MODIFIEDDATE_COLUMN_BITMASK = 16L;
+	public static final long ID_COLUMN_BITMASK = 16L;
 
 	/**
 	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
@@ -261,15 +259,12 @@ public class DownloadModelImpl
 		attributeGetterFunctions.put("id", Download::getId);
 		attributeSetterBiConsumers.put(
 			"id", (BiConsumer<Download, Long>)Download::setId);
-		attributeGetterFunctions.put("companyId", Download::getCompanyId);
-		attributeSetterBiConsumers.put(
-			"companyId", (BiConsumer<Download, Long>)Download::setCompanyId);
 		attributeGetterFunctions.put("groupId", Download::getGroupId);
 		attributeSetterBiConsumers.put(
 			"groupId", (BiConsumer<Download, Long>)Download::setGroupId);
-		attributeGetterFunctions.put("downloadId", Download::getDownloadId);
+		attributeGetterFunctions.put("companyId", Download::getCompanyId);
 		attributeSetterBiConsumers.put(
-			"downloadId", (BiConsumer<Download, Long>)Download::setDownloadId);
+			"companyId", (BiConsumer<Download, Long>)Download::setCompanyId);
 		attributeGetterFunctions.put("userId", Download::getUserId);
 		attributeSetterBiConsumers.put(
 			"userId", (BiConsumer<Download, Long>)Download::setUserId);
@@ -280,6 +275,9 @@ public class DownloadModelImpl
 		attributeSetterBiConsumers.put(
 			"modifiedDate",
 			(BiConsumer<Download, Date>)Download::setModifiedDate);
+		attributeGetterFunctions.put("downloadId", Download::getDownloadId);
+		attributeSetterBiConsumers.put(
+			"downloadId", (BiConsumer<Download, Long>)Download::setDownloadId);
 		attributeGetterFunctions.put("filePath", Download::getFilePath);
 		attributeSetterBiConsumers.put(
 			"filePath", (BiConsumer<Download, String>)Download::setFilePath);
@@ -330,20 +328,6 @@ public class DownloadModelImpl
 	}
 
 	@Override
-	public long getCompanyId() {
-		return _companyId;
-	}
-
-	@Override
-	public void setCompanyId(long companyId) {
-		if (_columnOriginalValues == Collections.EMPTY_MAP) {
-			_setColumnOriginalValues();
-		}
-
-		_companyId = companyId;
-	}
-
-	@Override
 	public long getGroupId() {
 		return _groupId;
 	}
@@ -367,27 +351,17 @@ public class DownloadModelImpl
 	}
 
 	@Override
-	public long getDownloadId() {
-		return _downloadId;
+	public long getCompanyId() {
+		return _companyId;
 	}
 
 	@Override
-	public void setDownloadId(long downloadId) {
+	public void setCompanyId(long companyId) {
 		if (_columnOriginalValues == Collections.EMPTY_MAP) {
 			_setColumnOriginalValues();
 		}
 
-		_downloadId = downloadId;
-	}
-
-	/**
-	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
-	 *             #getColumnOriginalValue(String)}
-	 */
-	@Deprecated
-	public long getOriginalDownloadId() {
-		return GetterUtil.getLong(
-			this.<Long>getColumnOriginalValue("downloadId"));
+		_companyId = companyId;
 	}
 
 	@Override
@@ -461,6 +435,30 @@ public class DownloadModelImpl
 		}
 
 		_modifiedDate = modifiedDate;
+	}
+
+	@Override
+	public long getDownloadId() {
+		return _downloadId;
+	}
+
+	@Override
+	public void setDownloadId(long downloadId) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_downloadId = downloadId;
+	}
+
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
+	 *             #getColumnOriginalValue(String)}
+	 */
+	@Deprecated
+	public long getOriginalDownloadId() {
+		return GetterUtil.getLong(
+			this.<Long>getColumnOriginalValue("downloadId"));
 	}
 
 	@Override
@@ -648,12 +646,12 @@ public class DownloadModelImpl
 		DownloadImpl downloadImpl = new DownloadImpl();
 
 		downloadImpl.setId(getId());
-		downloadImpl.setCompanyId(getCompanyId());
 		downloadImpl.setGroupId(getGroupId());
-		downloadImpl.setDownloadId(getDownloadId());
+		downloadImpl.setCompanyId(getCompanyId());
 		downloadImpl.setUserId(getUserId());
 		downloadImpl.setCreateDate(getCreateDate());
 		downloadImpl.setModifiedDate(getModifiedDate());
+		downloadImpl.setDownloadId(getDownloadId());
 		downloadImpl.setFilePath(getFilePath());
 		downloadImpl.setExpiryDate(getExpiryDate());
 		downloadImpl.setOrganization(getOrganization());
@@ -672,16 +670,16 @@ public class DownloadModelImpl
 		DownloadImpl downloadImpl = new DownloadImpl();
 
 		downloadImpl.setId(this.<Long>getColumnOriginalValue("id_"));
+		downloadImpl.setGroupId(this.<Long>getColumnOriginalValue("groupId"));
 		downloadImpl.setCompanyId(
 			this.<Long>getColumnOriginalValue("companyId"));
-		downloadImpl.setGroupId(this.<Long>getColumnOriginalValue("groupId"));
-		downloadImpl.setDownloadId(
-			this.<Long>getColumnOriginalValue("downloadId"));
 		downloadImpl.setUserId(this.<Long>getColumnOriginalValue("userId"));
 		downloadImpl.setCreateDate(
 			this.<Date>getColumnOriginalValue("createDate"));
 		downloadImpl.setModifiedDate(
 			this.<Date>getColumnOriginalValue("modifiedDate"));
+		downloadImpl.setDownloadId(
+			this.<Long>getColumnOriginalValue("downloadId"));
 		downloadImpl.setFilePath(
 			this.<String>getColumnOriginalValue("filePath"));
 		downloadImpl.setExpiryDate(
@@ -702,18 +700,17 @@ public class DownloadModelImpl
 
 	@Override
 	public int compareTo(Download download) {
-		int value = 0;
+		long primaryKey = download.getPrimaryKey();
 
-		value = DateUtil.compareTo(
-			getModifiedDate(), download.getModifiedDate());
-
-		value = value * -1;
-
-		if (value != 0) {
-			return value;
+		if (getPrimaryKey() < primaryKey) {
+			return -1;
 		}
-
-		return 0;
+		else if (getPrimaryKey() > primaryKey) {
+			return 1;
+		}
+		else {
+			return 0;
+		}
 	}
 
 	@Override
@@ -776,11 +773,9 @@ public class DownloadModelImpl
 
 		downloadCacheModel.id = getId();
 
-		downloadCacheModel.companyId = getCompanyId();
-
 		downloadCacheModel.groupId = getGroupId();
 
-		downloadCacheModel.downloadId = getDownloadId();
+		downloadCacheModel.companyId = getCompanyId();
 
 		downloadCacheModel.userId = getUserId();
 
@@ -801,6 +796,8 @@ public class DownloadModelImpl
 		else {
 			downloadCacheModel.modifiedDate = Long.MIN_VALUE;
 		}
+
+		downloadCacheModel.downloadId = getDownloadId();
 
 		downloadCacheModel.filePath = getFilePath();
 
@@ -911,13 +908,13 @@ public class DownloadModelImpl
 	}
 
 	private long _id;
-	private long _companyId;
 	private long _groupId;
-	private long _downloadId;
+	private long _companyId;
 	private long _userId;
 	private Date _createDate;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
+	private long _downloadId;
 	private String _filePath;
 	private Date _expiryDate;
 	private String _organization;
@@ -956,12 +953,12 @@ public class DownloadModelImpl
 		_columnOriginalValues = new HashMap<String, Object>();
 
 		_columnOriginalValues.put("id_", _id);
-		_columnOriginalValues.put("companyId", _companyId);
 		_columnOriginalValues.put("groupId", _groupId);
-		_columnOriginalValues.put("downloadId", _downloadId);
+		_columnOriginalValues.put("companyId", _companyId);
 		_columnOriginalValues.put("userId", _userId);
 		_columnOriginalValues.put("createDate", _createDate);
 		_columnOriginalValues.put("modifiedDate", _modifiedDate);
+		_columnOriginalValues.put("downloadId", _downloadId);
 		_columnOriginalValues.put("filePath", _filePath);
 		_columnOriginalValues.put("expiryDate", _expiryDate);
 		_columnOriginalValues.put("organization", _organization);
@@ -994,17 +991,17 @@ public class DownloadModelImpl
 
 		columnBitmasks.put("id_", 1L);
 
-		columnBitmasks.put("companyId", 2L);
+		columnBitmasks.put("groupId", 2L);
 
-		columnBitmasks.put("groupId", 4L);
+		columnBitmasks.put("companyId", 4L);
 
-		columnBitmasks.put("downloadId", 8L);
+		columnBitmasks.put("userId", 8L);
 
-		columnBitmasks.put("userId", 16L);
+		columnBitmasks.put("createDate", 16L);
 
-		columnBitmasks.put("createDate", 32L);
+		columnBitmasks.put("modifiedDate", 32L);
 
-		columnBitmasks.put("modifiedDate", 64L);
+		columnBitmasks.put("downloadId", 64L);
 
 		columnBitmasks.put("filePath", 128L);
 

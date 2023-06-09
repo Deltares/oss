@@ -1,11 +1,11 @@
 create table Downloads_Download (
 	id_ LONG not null primary key,
-	companyId LONG,
 	groupId LONG,
-	downloadId LONG,
+	companyId LONG,
 	userId LONG,
 	createDate DATE null,
 	modifiedDate DATE null,
+	downloadId LONG,
 	filePath STRING null,
 	expiryDate DATE null,
 	organization VARCHAR(75) null,

@@ -71,22 +71,6 @@ public interface DownloadModel extends BaseModel<Download>, ShardedModel {
 	public void setId(long id);
 
 	/**
-	 * Returns the company ID of this download.
-	 *
-	 * @return the company ID of this download
-	 */
-	@Override
-	public long getCompanyId();
-
-	/**
-	 * Sets the company ID of this download.
-	 *
-	 * @param companyId the company ID of this download
-	 */
-	@Override
-	public void setCompanyId(long companyId);
-
-	/**
 	 * Returns the group ID of this download.
 	 *
 	 * @return the group ID of this download
@@ -101,18 +85,20 @@ public interface DownloadModel extends BaseModel<Download>, ShardedModel {
 	public void setGroupId(long groupId);
 
 	/**
-	 * Returns the download ID of this download.
+	 * Returns the company ID of this download.
 	 *
-	 * @return the download ID of this download
+	 * @return the company ID of this download
 	 */
-	public long getDownloadId();
+	@Override
+	public long getCompanyId();
 
 	/**
-	 * Sets the download ID of this download.
+	 * Sets the company ID of this download.
 	 *
-	 * @param downloadId the download ID of this download
+	 * @param companyId the company ID of this download
 	 */
-	public void setDownloadId(long downloadId);
+	@Override
+	public void setCompanyId(long companyId);
 
 	/**
 	 * Returns the user ID of this download.
@@ -169,6 +155,20 @@ public interface DownloadModel extends BaseModel<Download>, ShardedModel {
 	 * @param modifiedDate the modified date of this download
 	 */
 	public void setModifiedDate(Date modifiedDate);
+
+	/**
+	 * Returns the download ID of this download.
+	 *
+	 * @return the download ID of this download
+	 */
+	public long getDownloadId();
+
+	/**
+	 * Sets the download ID of this download.
+	 *
+	 * @param downloadId the download ID of this download
+	 */
+	public void setDownloadId(long downloadId);
 
 	/**
 	 * Returns the file path of this download.

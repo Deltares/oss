@@ -43,12 +43,12 @@ public class DownloadWrapper
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
 		attributes.put("id", getId());
-		attributes.put("companyId", getCompanyId());
 		attributes.put("groupId", getGroupId());
-		attributes.put("downloadId", getDownloadId());
+		attributes.put("companyId", getCompanyId());
 		attributes.put("userId", getUserId());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
+		attributes.put("downloadId", getDownloadId());
 		attributes.put("filePath", getFilePath());
 		attributes.put("expiryDate", getExpiryDate());
 		attributes.put("organization", getOrganization());
@@ -68,22 +68,16 @@ public class DownloadWrapper
 			setId(id);
 		}
 
-		Long companyId = (Long)attributes.get("companyId");
-
-		if (companyId != null) {
-			setCompanyId(companyId);
-		}
-
 		Long groupId = (Long)attributes.get("groupId");
 
 		if (groupId != null) {
 			setGroupId(groupId);
 		}
 
-		Long downloadId = (Long)attributes.get("downloadId");
+		Long companyId = (Long)attributes.get("companyId");
 
-		if (downloadId != null) {
-			setDownloadId(downloadId);
+		if (companyId != null) {
+			setCompanyId(companyId);
 		}
 
 		Long userId = (Long)attributes.get("userId");
@@ -102,6 +96,12 @@ public class DownloadWrapper
 
 		if (modifiedDate != null) {
 			setModifiedDate(modifiedDate);
+		}
+
+		Long downloadId = (Long)attributes.get("downloadId");
+
+		if (downloadId != null) {
+			setDownloadId(downloadId);
 		}
 
 		String filePath = (String)attributes.get("filePath");

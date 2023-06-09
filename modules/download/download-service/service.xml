@@ -7,17 +7,20 @@
 	<entity local-service="true" name="Download" remote-service="false" uuid="false">
 
 		<!-- PK fields -->
-		<column name="id" type="long"  primary="true" id-type="increment"/>
+		<column name="id" type="long"  primary="true" />
+
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
 
 		<!-- Audit fields -->
 		<column name="companyId" type="long" />
-		<column name="groupId" type="long" />
-		<column name="downloadId" type="long" />
-		<column name="userId"  type="long" />
+		<column name="userId" type="long" />
 		<column name="createDate" type="Date" />
 		<column name="modifiedDate" type="Date" />
 
 		<!-- Other fields -->
+		<column name="downloadId" type="long" />
 		<column name="filePath" type="String" />
 		<column name="expiryDate" type="Date" />
 		<column name="organization" type="String" />
@@ -27,9 +30,10 @@
 		<column name="licenseDownloadUrl" type="String" />
 
 		<!-- Order -->
-		<order by="desc">
-			<order-column name="modifiedDate" />
-		</order>
+
+<!--		<order by="asc">-->
+<!--			<order-column name="field1" />-->
+<!--		</order>-->
 
 		<!-- Finder methods -->
 		<finder name="Downloads" return-type="Collection">
@@ -59,14 +63,13 @@
 			<finder-column name="userId" />
 		</finder>
 
-		<finder name="DirectDownloads" return-type="Collection" where="directDownloadUrl IS NOT NULL">
-			<finder-column name="groupId" />
-		</finder>
-
 		<finder name="GroupDownloads" return-type="Collection">
 			<finder-column name="groupId" />
 		</finder>
+		<!-- References -->
 
+<!--		<reference entity="AssetEntry" package-path="com.liferay.portlet.asset" />-->
+<!--		<reference entity="AssetTag" package-path="com.liferay.portlet.asset" />-->
 	</entity>
 
 	<entity local-service="true" name="DownloadCount" remote-service="false" uuid="false">

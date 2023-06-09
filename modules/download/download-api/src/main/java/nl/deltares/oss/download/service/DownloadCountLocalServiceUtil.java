@@ -235,14 +235,10 @@ public class DownloadCountLocalServiceUtil {
 		return getService().getDownloadCount(id);
 	}
 
-	public static DownloadCount getDownloadCount(
+	public static DownloadCount getDownloadCountByGroupId(
 		long groupId, long downloadId) {
 
-		return getService().getDownloadCount(groupId, downloadId);
-	}
-
-	public static int getDownloadCountByGroupId(long groupId) {
-		return getService().getDownloadCountByGroupId(groupId);
+		return getService().getDownloadCountByGroupId(groupId, downloadId);
 	}
 
 	/**
