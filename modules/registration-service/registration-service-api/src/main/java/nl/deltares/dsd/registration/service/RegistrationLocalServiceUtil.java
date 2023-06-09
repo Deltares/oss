@@ -325,10 +325,31 @@ public class RegistrationLocalServiceUtil {
 		return getService().getArticleRegistrations(groupId, articleResourceId);
 	}
 
+	public static List<Registration> getArticleRegistrations(
+		long groupId, long articleResourceId, int start, int end) {
+
+		return getService().getArticleRegistrations(
+			groupId, articleResourceId, start, end);
+	}
+
 	public static List<Registration> getEventRegistrations(
 		long groupId, long eventResourceId) {
 
 		return getService().getEventRegistrations(groupId, eventResourceId);
+	}
+
+	public static List<Registration> getEventRegistrations(
+		long groupId, long eventResourceId, int start, int end) {
+
+		return getService().getEventRegistrations(
+			groupId, eventResourceId, start, end);
+	}
+
+	public static int getEventRegistrationsCount(
+		long groupId, long eventResourceId) {
+
+		return getService().getEventRegistrationsCount(
+			groupId, eventResourceId);
 	}
 
 	public static
@@ -461,6 +482,16 @@ public class RegistrationLocalServiceUtil {
 		long groupId, long userId, java.util.Date start, java.util.Date end) {
 
 		return getService().getUserRegistrations(groupId, userId, start, end);
+	}
+
+	public static List<Registration> getUserRegistrations(
+		long groupId, long userId, int start, int end) {
+
+		return getService().getUserRegistrations(groupId, userId, start, end);
+	}
+
+	public static int getUserRegistrationsCount(long groupId, long userId) {
+		return getService().getUserRegistrationsCount(groupId, userId);
 	}
 
 	public static List<Registration> getUsersRegisteredByOtherUser(
