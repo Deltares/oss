@@ -1,26 +1,14 @@
 [
   {
     "groupId" : "nl.deltares",
-    "artifactId" : "nl.deltares.oss.portlet.activity-map",
-    "version" : "1.0.0",
+    "artifactId" : "nl.deltares.dsd.registration.api",
+    "version" : "1.0.2",
     "extension" : "jar"
   },
   {
     "groupId" : "nl.deltares",
-    "artifactId" : "nl.deltares.portal.common-utils",
-    "version" : "1.0.7",
-    "extension" : "jar"
-  },
-  {
-    "groupId" : "nl.deltares",
-    "artifactId" : "nl.deltares.portal.config.contributor",
-    "version" : "1.0.0",
-    "extension" : "jar"
-  },
-  {
-    "groupId" : "nl.deltares",
-    "artifactId" : "nl.worth.portal.context.contributor",
-    "version" : "1.0.0",
+    "artifactId" : "nl.deltares.dsd.registration.service",
+    "version" : "1.0.2",
     "extension" : "jar"
   },
   {
@@ -35,6 +23,43 @@
     "version" : "1.0.4",
     "extension" : "jar"
   },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.oss.geolocation.api",
+    "version" : "1.0.0",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.oss.geolocation.service",
+    "version" : "1.0.0",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.portal.common-utils",
+    "version" : "1.0.7",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.oss.portlet.activity-map",
+    "version" : "1.0.0",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.portal.config.contributor",
+    "version" : "1.0.0",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.worth.portal.context.contributor",
+    "version" : "1.0.0",
+    "extension" : "jar"
+  },
+
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.fullcalendar",
@@ -61,18 +86,6 @@
   },
   {
     "groupId" : "nl.deltares",
-    "artifactId" : "nl.deltares.dsd.registration.api",
-    "version" : "1.0.1",
-    "extension" : "jar"
-  },
-  {
-    "groupId" : "nl.deltares",
-    "artifactId" : "nl.deltares.dsd.registration.service",
-    "version" : "1.0.1",
-    "extension" : "jar"
-  },
-  {
-    "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.services.rest",
     "version" : "1.0.0",
     "extension" : "jar"
@@ -83,22 +96,11 @@
     "version" : "1.0.0",
     "extension" : "jar"
   },
-  {
-    "groupId" : "nl.deltares",
-    "artifactId" : "nl.deltares.oss.geolocation.api",
-    "version" : "1.0.0",
-    "extension" : "jar"
-  },
-  {
-    "groupId" : "nl.deltares",
-    "artifactId" : "nl.deltares.oss.geolocation.service",
-    "version" : "1.0.0",
-    "extension" : "jar"
-  },
+
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.tableview.portlet",
-    "version" : "1.0.3",
+    "version" : "1.0.4",
     "extension" : "jar"
   },
   {
