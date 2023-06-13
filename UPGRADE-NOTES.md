@@ -36,6 +36,7 @@ velocity seems not to be supported.
 - Add Allowed Classes; nl.deltares.portal.utils.* -- testing if required
 - Remove restricted Variables; staticUtil (required in template Locations map view)
 - Remove restricted Variables; objectUtil in order to retrieve footer in init_custom.ftl
+- Remove restricted variables; serviceLocator
 - Servicelocator does not return Deltares utils classes -> as of 7.4 portalext.property "template.engine.service.locator.restrict=true" 
   should be set to false;
 
