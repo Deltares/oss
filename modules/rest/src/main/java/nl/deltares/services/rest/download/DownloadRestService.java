@@ -108,19 +108,13 @@ public class DownloadRestService {
     }
     private Map<String, String> parseGeoLocationFromIp(HttpServletRequest request) {
         if (geoIpUtils == null || !geoIpUtils.isActive()) return Collections.emptyMap();
-        Map<String, String> attributes = new HashMap<>();
         final String remoteAddr = request.getRemoteAddr();
         try {
-            final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(remoteAddr);
-            long geoLocationId = geoIpUtils.getGeoLocationId(clientIpInfo, true);
-            if (geoLocationId > -1) {
-                attributes.put("geoLocationId", String.valueOf(geoLocationId));
-            }
-            return attributes;
+            return geoIpUtils.getClientIpInfo(remoteAddr);
         } catch (Exception e) {
             LOG.warn("Error getting country info: " + e.getMessage());
         }
-        return attributes;
+        return Collections.emptyMap();
 
     }
 
