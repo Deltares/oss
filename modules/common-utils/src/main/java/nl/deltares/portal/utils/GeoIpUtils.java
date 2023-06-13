@@ -26,7 +26,6 @@ public interface GeoIpUtils {
 
     double getLongitude(Map<String, String> clientIpInfo);
 
-    long getGeoLocationId(Map<String, String> clientIpInfo, boolean registerIfNotExists) throws Exception;
+    long getGeoLocationId(Map<String, String> clientIpInfo) throws Exception;
 
-    long registerGeolocation(Map<String, String> clientIpInfo) throws Exception;
 }

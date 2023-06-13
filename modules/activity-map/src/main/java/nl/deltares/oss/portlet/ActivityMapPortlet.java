@@ -83,7 +83,7 @@ public class ActivityMapPortlet extends MVCPortlet {
                 nl.deltares.portal.model.impl.Download dsdDownload = getDownloadArticle(siteGroupId, downloadId);
                 if (dsdDownload == null) return;
 
-                final DownloadCount downloadCount = DownloadCountLocalServiceUtil.getDownloadCount(dsdDownload.getGroupId(), downloadId);
+                final DownloadCount downloadCount = DownloadCountLocalServiceUtil.getDownloadCountByGroupId(dsdDownload.getGroupId(), downloadId);
                 if (downloadCount == null) return;
 
                 JSONObject jsonProduct = JSONFactoryUtil.createJSONObject();

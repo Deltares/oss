@@ -101,12 +101,7 @@ public class IpGeolocationUtils implements GeoIpUtils {
     }
 
     @Override
-    public long getGeoLocationId(Map<String, String> clientIpInfo, boolean registerIfNotExists) throws Exception {
+    public long getGeoLocationId(Map<String, String> clientIpInfo) {
         throw new UnsupportedOperationException("getGeoLocationId");
-    }
-
-    @Override
-    public long registerGeolocation(Map<String, String> clientIpInfo) throws Exception {
-        throw new UnsupportedOperationException("registerGeoLocation");
     }
 }
