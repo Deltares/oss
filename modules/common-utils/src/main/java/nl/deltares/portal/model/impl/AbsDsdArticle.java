@@ -164,6 +164,13 @@ public abstract class AbsDsdArticle implements DsdArticle {
         return getFormFieldValue(ddmFormFieldValues, fieldName, optional);
     }
 
+    public float getFormFieldFloatValue(String fieldName, boolean optional) throws PortalException {
+        String formFieldValue = getFormFieldValue(fieldName, optional);
+        if (formFieldValue.indexOf(',') > 0) {
+            formFieldValue = formFieldValue.replace(',', '.');
+        }
+        return Float.parseFloat(formFieldValue);
+    }
     public DDMFormFieldValue getDdmFormFieldValue(List<DDMFormFieldValue> searchList, String fieldName, boolean optional) throws PortalException {
 
         final ArrayList<DDMFormFieldValue> foundFormFieldValues = new ArrayList<>();
