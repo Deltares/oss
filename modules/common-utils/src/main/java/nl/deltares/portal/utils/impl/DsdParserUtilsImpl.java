@@ -38,7 +38,7 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
     @Reference
     LayoutUtils layoutUtils;
 
-    private Map<Long, Map<String, String>> structureKeyMap = new HashMap<>();
+    private final Map<Long, Map<String, String>> structureKeyMap = new HashMap<>();
 
     @Override
     public Event getEvent(long siteId, String articleId, Locale locale) throws PortalException {
