@@ -3,6 +3,8 @@ package nl.deltares.search.results;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -22,6 +24,7 @@ import java.util.List;
 
 public class SearchResultsPortletDisplayContext implements Serializable {
 
+    private static final Log LOG = LogFactoryUtil.getLog(SearchResultsPortletDisplayContext.class);
     private final DsdParserUtils dsdParserUtils;
     private final ThemeDisplay themeDisplay;
     private boolean _renderNothing;
@@ -122,7 +125,7 @@ public class SearchResultsPortletDisplayContext implements Serializable {
                 final AbsDsdArticle absDsdArticle = dsdParserUtils.toDsdArticle(registrationArticle);
                 articles.add(absDsdArticle);
             } catch (PortalException e) {
-                //
+                LOG.warn("Error parsing DSD article " + registrationArticle.getTitle());
             }
         }
         return articles;

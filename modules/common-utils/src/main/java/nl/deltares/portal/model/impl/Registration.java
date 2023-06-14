@@ -58,7 +58,7 @@ public abstract class Registration extends AbsDsdArticle {
         try {
             this.eventId =  Long.parseLong(getFormFieldValue("eventId", false));
             this.capacity =  Integer.parseInt(getFormFieldValue("capacity", false));
-            this.price =  Float.parseFloat(getFormFieldValue("price", false));
+            this.price =  getFormFieldFloatValue("price", false);
             String currency = getFormFieldValue("currency", true);
             if (currency != null) this.currency = HtmlUtil.escape(currency);
             this.open = Boolean.parseBoolean(getFormFieldValue("open", true));
