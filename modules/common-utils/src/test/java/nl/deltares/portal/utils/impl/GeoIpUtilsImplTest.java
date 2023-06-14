@@ -39,11 +39,12 @@ public class GeoIpUtilsImplTest {
         DatabaseReader reader = new DatabaseReader.Builder(database).build();
 
         //Switzerland
-        final InetAddress byName = InetAddress.getByName("212.102.36.251");
-        final CountryResponse country = reader.country(byName);
+        InetAddress byName = InetAddress.getByName("212.102.36.251");
+        Assert.assertEquals("CH", reader.country(byName).getCountry().getIsoCode());
 
+        byName = InetAddress.getByName("185.24.9.76");
+        Assert.assertEquals("CA", reader.country(byName).getCountry().getIsoCode());
 
-        Assert.assertEquals("CH", country.getCountry().getIsoCode());
     }
     @Test
     public void testLocationInfo() {
