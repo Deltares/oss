@@ -94,8 +94,10 @@ public class ActivityMapPortlet extends MVCPortlet {
                 products.put(jsonProduct);
 
             });
-            downloadLocation.put("products", products);
-            downloadLocations.put(downloadLocation);
+            if (products.length() > 0) {
+                downloadLocation.put("products", products);
+                downloadLocations.put(downloadLocation);
+            }
         }
 
 
