@@ -92,3 +92,8 @@ Where the value for 'internalProxies' should be updated to match that of the goo
 <h2>PRE Upgrade Database tasks</h2>
 To prepare the Liferay 7.1 database for the upgrade process, run the scripts defined in SQL file 'pre-upgrade-cleanup.sql'
 that can be found in the docker/resources folder of this project.
+
+
+<h2>POST Upgrade Database tasks</h2>
+- fix templates on the homepage of oss.deltares.nl
+- Check if all countries available for companyId = 3948845
