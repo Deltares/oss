@@ -88,7 +88,9 @@ public class PostLoginAction implements LifecycleAction {
         }
 
         if (geoIpUtils != null) {
-            final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(request.getRemoteAddr());
+            final String remoteAddr = request.getRemoteAddr();
+            LOG.info("Parsing location info for IP " + remoteAddr);
+            final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(remoteAddr);
             final String countryName = geoIpUtils.getCountryName(clientIpInfo);
             if (sanctionCheckUtils.isSanctioned(geoIpUtils.getCountryIso2Code(clientIpInfo))) {
                 request.getSession().setAttribute("LIFERAY_SHARED_isSanctioned", true);

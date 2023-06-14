@@ -38,7 +38,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.portal.common-utils",
-    "version" : "1.0.9",
+    "version" : "1.0.10",
     "extension" : "jar"
   },
   {
