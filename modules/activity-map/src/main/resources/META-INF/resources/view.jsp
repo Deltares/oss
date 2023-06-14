@@ -7,6 +7,7 @@
         height: 300px;
         width: 100%;
     }
+    th, td { padding: 10px; }
 </style>
 
 <script>
@@ -26,16 +27,19 @@
           const label = location.city;
           const position = location.position;
           let contentString = '<div>'
-              + '<strong>City: ' + label + '</strong>'
-          + '<table>'
-          +     '<tr><th>Download</th><th>Count</th></tr>';
+              + '<strong>City: ' + label + '</strong>';
 
           let products = location.products;
-          products.forEach(function (product) {
-              contentString += '<tr><td>' + product.downloadName + '</td><td>' + product.downloadCount + '</td></tr>';
-          });
-
-          contentString += '</table></div>';
+          if (products.length > 0){
+              contentString += '<table><tr><th>Download</th><th>Count</th></tr>';
+              products.forEach(function (product) {
+                  contentString += '<tr><td>' + product.downloadName + '</td><td>' + product.downloadCount + '</td></tr>';
+              });
+              contentString += '</table>';
+          } else {
+              contentString += '<p>User login</p>'
+          }
+          contentString += '</div>';
 
           const marker = new google.maps.Marker({
               position
