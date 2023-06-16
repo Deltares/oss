@@ -106,3 +106,4 @@ that can be found in the docker/resources folder of this project.
       "liferay-frontend-theme-styled": "6.0.63",
       "liferay-frontend-theme-unstyled": "6.0.52"
     </code>
+- Ratings of ADT: can be set under Site Settings -> Community Tools -> Ratings

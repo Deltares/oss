@@ -135,9 +135,9 @@ public class XmlContentUtils {
         if (length == 0 && !optional) {
             throw new PortalException(String.format("Node name '%s' not found in document! ", nodeName));
         }
-        if (contentValues.length == 0) return null;
+        if (contentValues.length == 0) return "";
         final String returnValue = contentValues[0].trim();
-        if (returnValue.isEmpty()) return null;
+        if (returnValue.isEmpty()) return "";
         return returnValue;
     }
 
