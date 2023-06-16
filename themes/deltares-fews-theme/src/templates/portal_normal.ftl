@@ -43,7 +43,7 @@
 	<#include "${full_templates_path}/header.ftl" />
 
 	<section id="content">
-			<h1 class="hide-accessible">${the_title}</h1>
+			<h1 class="hide-accessible" hidden="">${the_title}</h1>
 
 				<#if selectable>
 					<@liferay_util["include"] page=content_include />

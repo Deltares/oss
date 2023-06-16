@@ -4,26 +4,10 @@
   overflow: hidden;
 
   .slide-holder {
-    width: 25%;
+    width: 50%;
     float: left;
     padding: 0.8em;
-
-    @media (max-width: 1200px){
-      width: 33.33%;
-    }
-    @media (max-width: 920px){
-      width: 50%;
-    }
-    @media (max-width: 620px){
-      width: 100%;
-    }
-
-    body.open-admin-panel &, body.has-control-menu.open & {
-      width: 50%;
-    }
-
   }
-
 }
 
 .slide-container .slide-holder .slide-content  {
@@ -48,6 +32,7 @@
 
   img {
     float:left;
+    height: 100%;
   }
 
   .description {
@@ -70,6 +55,9 @@
 
   }
 
+  ul li:before {
+    content: none;
+  }
 
   @media (max-width: 620px){
     height: auto;

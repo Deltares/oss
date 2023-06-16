@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 import static nl.deltares.portal.utils.XmlContentUtils.parseContent;
 
@@ -58,8 +59,8 @@ public class XmlContentUtilsTest {
 
         URL xml = this.getClass().getResource("/data/dsdevent.xml");
         Document document = XmlContentUtils.parseContent("testGetOptionalDynamicElementsByName", new FileInputStream(xml.getFile()));
-        NodeList nodes = XmlContentUtils.getDynamicElementsByName(document, "doesNotExist");
-        Assert.assertTrue(nodes.getLength() == 0);
+        List<Node> nodes = XmlContentUtils.getDynamicElementsByNameAsList(document, "doesNotExist");
+        Assert.assertTrue(nodes.size() == 0);
 
     }
 
@@ -68,8 +69,8 @@ public class XmlContentUtilsTest {
 
         URL xml = this.getClass().getResource("/data/dsdevent.xml");
         Document document = XmlContentUtils.parseContent("testGetDynamicElementsByName", new FileInputStream(xml.getFile()));
-        NodeList nodes = XmlContentUtils.getDynamicElementsByName(document, "eventLocation");
-        Assert.assertEquals(1, nodes.getLength());
+        List<Node> nodes = XmlContentUtils.getDynamicElementsByNameAsList(document, "eventLocation");
+        Assert.assertEquals(1, nodes.size());
     }
 
     @Test
