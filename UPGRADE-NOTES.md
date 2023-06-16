@@ -95,5 +95,14 @@ that can be found in the docker/resources folder of this project.
 
 
 <h2>POST Upgrade Database tasks</h2>
-- fix templates on the homepage of oss.deltares.nl
+- fix templates on the homepage of oss.deltares.nl:
+  - delete velocity templates and related structures
+  - create new Caroussel slides
+  - create new Front Page Contact in (Basic Web Content)
 - Check if all countries available for companyId = 3948845
+- Portlet options no longer visible: (https://help.liferay.com/hc/en-us/articles/12734525927565-Portlet-options-lost-after-upgrading-to-7-4-U51)
+  - update the package.json of theme:
+    <code>
+      "liferay-frontend-theme-styled": "6.0.63",
+      "liferay-frontend-theme-unstyled": "6.0.52"
+    </code>

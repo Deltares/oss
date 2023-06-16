@@ -22,7 +22,7 @@
 <#--            <img id="user-image"  src="${user_avatar_url}" hidden>-->
 <#--        </#if>-->
 
-    <#else>
+    <#elseif show_sign_in>
         <div class="dropbtn">
             <a class="fs-smallest" href="${sign_in_url}" >Login</a>
         </div>
