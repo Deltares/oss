@@ -75,11 +75,15 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
                     }
                 }
 
-                String licenseType = download.getGenerateLicenseType();
-                if (licenseType != null){
-                    Map<String, String> licInfo = licenseManagerUtils.encryptLicense(licenseType, user);
+                LicenseFile licenseFile = download.getLicenseFile();
+                if (licenseFile != null){
+                    try {
+                    Map<String, String> licInfo = licenseManagerUtils.encryptLicense(licenseFile, user);
                     String licUrl = licInfo.get("url");
                     if (licUrl != null) shareInfo.put("licUrl", licUrl);
+                    } catch (Exception e){
+                        LOG.warn(String.format("Error signing license file %s: %s", licenseFile.getName(),e.getMessage() ));
+                    }
                 }
                 downloadRequest.registerShareInfo(download.getArticleId(), shareInfo);
                 try {
