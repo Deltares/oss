@@ -171,6 +171,9 @@ public class DsdParserUtilsImpl implements DsdParserUtils {
             case Dinner:
                 article = new DinnerRegistration(journalArticle, this, locale);
                 break;
+            case Licensefile:
+                article = new LicenseFile(journalArticle, this, locale);
+                break;
             case Location:
                 article = new Location(journalArticle, this, locale);
                 break;
