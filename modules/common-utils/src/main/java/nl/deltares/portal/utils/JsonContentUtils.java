@@ -157,12 +157,22 @@ public class JsonContentUtils {
     }
 
     public static boolean isEmpty(String response) {
+        if (response == null || response.isEmpty()) return true;
+
         try {
-            final JSONArray jsonArray = parseContentArray(response);
-            return  jsonArray.length() == 0;
-        } catch (JSONException e) {
-            return true;
-        }
+            if (response.startsWith("[")){
+                final JSONArray jsonArray = JSONFactoryUtil.createJSONArray(response);
+                if (jsonArray.length() == 0) return true;
+                for (int i = 0; i < jsonArray.length(); i++) {
+                     if (jsonArray.getJSONObject(i).keys().hasNext()) return false;
+                }
+                return true;
+            } else if (response.startsWith("{")){
+                final JSONObject jsonObject = JsonContentUtils.parseContent(response);
+                return !jsonObject.keys().hasNext();
+            }
+        } catch (JSONException e) {}
+        return true;
     }
 
     public static String[] toStringArray(JSONArray languages) {
