@@ -25,10 +25,9 @@ public class Download extends AbsDsdArticle {
     private String fileTopicName;
     private Layout groupPage;
     private List<Subscription> subscriptions = null;
-    private String generateLicenseType = null;
     private boolean automaticLinkCreation = false;
     private Terms terms = null;
-
+    private LicenseFile licenseFile = null;
     enum ACTION {direct, userinfo, billinginfo, locks, licenses}
 
     private final List<ACTION> requiredActions = new ArrayList<>();
@@ -67,8 +66,6 @@ public class Download extends AbsDsdArticle {
             final Map<String, String> fileTopicMap = articleUtils.getStructureFieldOptions(getGroupId(), getStructureKey(), "Topic", getLocale());
             fileTopicName = fileTopicMap.get(fileTopic);
 
-            generateLicenseType = getFormFieldValue("GenerateLicense", true);
-
             String linkToPage = getFormFieldValue( "GroupPage", false);
             groupPage = layoutUtils.getLinkToPageLayout(linkToPage);
 
@@ -79,10 +76,6 @@ public class Download extends AbsDsdArticle {
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
-    }
-
-    public String getGenerateLicenseType(){
-        return generateLicenseType;
     }
 
     public Terms getTerms(){
@@ -137,6 +130,29 @@ public class Download extends AbsDsdArticle {
         }
     }
 
+    public LicenseFile getLicenseFile(){
+        loadLicenseFile();
+        return licenseFile;
+    }
+
+    private void loadLicenseFile() {
+        if (licenseFile != null) return;
+        try {
+            parseLicenseFile();
+        } catch (PortalException e){
+            LOG.error(String.format("Error parsing licenseFile for Download %s: %s", getTitle(), e.getMessage()));
+        }
+    }
+
+    private void parseLicenseFile() throws PortalException {
+        String content = getFormFieldValue( "LicenseFile", true);
+        if (!JsonContentUtils.isEmpty(content)){
+            JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(content);
+            AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(article, super.getLocale());
+            if (!(dsdArticle instanceof LicenseFile)) throw new PortalException(String.format("Article %s not instance of LicenseFile", article.getTitle()));
+            licenseFile = (LicenseFile) dsdArticle;
+        }
+    }
     @Override
     public String getStructureKey() {
         return "download";

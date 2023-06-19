@@ -5,16 +5,22 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.PropsUtil;
+import nl.deltares.portal.model.impl.LicenseFile;
 import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.LicenseManagerUtils;
 import org.osgi.service.component.annotations.Component;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,6 +55,52 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
     }
 
     @Override
+    public Map<String, String> encryptLicense(LicenseFile licenseFile, User user) throws IOException, JSONException {
+        if (!isActive()) {
+            LOG.warn("Unable to generate license files as the LicenseManager is not active!");
+            return Collections.emptyMap();
+        }
+        if (user == null || user.isDefaultUser()) return Collections.emptyMap();
+
+        String boundaryString = "----SignLicense";
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "multipart/form-data; boundary=" + boundaryString );
+        headers.put("Authorization", "Bearer " + getAccessToken());
+
+        HttpURLConnection connection = getConnection(getBasePath() + "/sign-lic", "POST", headers);
+        connection.setDoOutput(true);
+
+        OutputStream outputStream = connection.getOutputStream();
+        BufferedWriter httpRequestBodyWriter =
+                new BufferedWriter(new OutputStreamWriter(outputStream));
+
+        // Include the section to describe the file
+        httpRequestBodyWriter.write("\n--" + boundaryString + "\n");
+        httpRequestBodyWriter.write("Content-Disposition: form-data;"
+                + "name=\"licenseFile\";"
+                + "filename=\"" + licenseFile.getName() + "\""
+                + "\nContent-Type: text/plain\n\n");
+        httpRequestBodyWriter.flush();
+
+        String licenseFileTemplateContent = replaceTags(licenseFile, user);
+        httpRequestBodyWriter.write(licenseFileTemplateContent);
+
+        // Mark the end of the multipart http request
+        httpRequestBodyWriter.write("\n--" + boundaryString + "--\n");
+        httpRequestBodyWriter.flush();
+
+        // Close the streams
+        outputStream.close();
+        httpRequestBodyWriter.close();
+
+        //get response
+        checkResponse(connection);
+
+        final String response = readAll(connection);
+        return JsonContentUtils.parseJsonToMap(response);
+    }
+
+    @Override
     public Map<String, String> encryptLicense(String licenseType, User user) throws IOException, JSONException {
 
         if (!isActive()) {
@@ -67,11 +119,24 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
                 URLEncoder.encode(user.getEmailAddress(), StandardCharsets.UTF_8.name()));
         HttpURLConnection connection = getConnection(getBasePath() + licenseType + "?" + queryParameters, "GET", headers);
         checkResponse(connection);
+
         final String response = readAll(connection);
         return JsonContentUtils.parseJsonToMap(response);
 
     }
 
+    private String replaceTags(LicenseFile licenseFile, User user) {
+        String licenseFileTemplateContent = licenseFile.getTemplateContent();
+        licenseFileTemplateContent = licenseFileTemplateContent.replaceAll("@FIRSTNAME@", user.getFirstName());
+        licenseFileTemplateContent = licenseFileTemplateContent.replaceAll("@LASTNAME@", user.getLastName());
+        licenseFileTemplateContent = licenseFileTemplateContent.replaceAll("@EMAIL@", user.getEmailAddress());
+
+        final SimpleDateFormat dateFormat = new SimpleDateFormat(licenseFile.getDateFormat());
+        final String expirationDate = dateFormat.format(new Date(System.currentTimeMillis() + licenseFile.getExpirationPeriodInMillis()));
+        licenseFileTemplateContent = licenseFileTemplateContent.replaceAll("@EXPIRATIONDATE@", expirationDate);
+
+        return licenseFileTemplateContent;
+    }
 
     private String getAccessToken() {
 

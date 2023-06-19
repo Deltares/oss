@@ -11,7 +11,6 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.configuration.DownloadSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Download;
@@ -91,8 +90,13 @@ public class DownloadFormPortlet extends MVCPortlet {
         User user = themeDisplay.getUser();
         if (!user.isDefaultUser()) {
             try {
-                final Map<String, String> userAttributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
-                request.setAttribute("attributes", userAttributes);
+                final Map<String, String> userAttributes;
+                if (keycloakUtils.isActive()) {
+                     userAttributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
+                    request.setAttribute("attributes", userAttributes);
+                } else {
+                    userAttributes = new HashMap<>();
+                }
                 //translate org vat code
                 final String org_vat = userAttributes.get(KeycloakUtils.ATTRIBUTES.org_vat.name());
                 if (org_vat != null) userAttributes.put("billing_vat", org_vat);

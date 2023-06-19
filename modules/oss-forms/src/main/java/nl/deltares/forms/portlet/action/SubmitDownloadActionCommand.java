@@ -286,6 +286,10 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
 
     private boolean updateUserAttributes(ActionRequest actionRequest, User user, Map<String, String> attributes) {
 
+        if (!keycloakUtils.isActive()){
+            LOG.warn("Keycloak is not active so no user information can be stored.");
+            return true;
+        }
         try {
             return keycloakUtils.updateUserAttributes(user.getEmailAddress(), attributes) < 300;
         } catch (Exception e) {
