@@ -4,7 +4,6 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.display.context.RegistrationDisplayContext;
-import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.*;
 
 import java.util.Date;
@@ -51,16 +50,6 @@ public interface DsdParserUtils {
         return structureKey;
     }
 
-
-    static DsdArticle.DSD_STRUCTURE_KEYS getDsdStructureKey(String structureKey) {
-        DsdArticle.DSD_STRUCTURE_KEYS dsd_structure_key;
-        try {
-            dsd_structure_key = DsdArticle.DSD_STRUCTURE_KEYS.valueOf(structureKey);
-        } catch (IllegalArgumentException e) {
-            return DsdArticle.DSD_STRUCTURE_KEYS.Generic;
-        }
-        return dsd_structure_key;
-    }
 
     void clearConfigCache(Long groupId, String configKey);
 }

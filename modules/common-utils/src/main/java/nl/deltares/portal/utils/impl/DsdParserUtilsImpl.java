@@ -171,7 +171,13 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
         }
 
         String parseStructureKey = getParseStructureKey(journalArticle);
-        DsdArticle.DSD_STRUCTURE_KEYS dsd_structure_key = DsdParserUtils.getDsdStructureKey(parseStructureKey);
+        DsdArticle.DSD_STRUCTURE_KEYS dsd_structure_key;
+        try {
+            dsd_structure_key = DsdArticle.DSD_STRUCTURE_KEYS.valueOf(parseStructureKey);
+        } catch (Exception e){
+            dsd_structure_key = DsdArticle.DSD_STRUCTURE_KEYS.Generic;
+            LOG.warn(String.format("Article %s has invalid structure key %s", journalArticle.getTitle(), parseStructureKey));
+        }
 
         AbsDsdArticle article;
         switch (dsd_structure_key){
