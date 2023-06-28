@@ -24,10 +24,10 @@ import javax.portlet.PortletConfig;
 import javax.portlet.PortletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static nl.deltares.portal.configuration.DSDSiteConfigurationAction.getParsedJsonParameter;
 import static nl.deltares.portal.utils.LocalizationUtils.convertToLocalizedMap;
 import static nl.deltares.portal.utils.LocalizationUtils.getAvailableLanguageIds;
 
@@ -135,5 +135,37 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
         }
         String typeMapJson = siteConfiguration.templateMap();
         return JsonContentUtils.parseJsonToMap(typeMapJson);
+    }
+
+    public static Map<String, String> getParsedJsonParameter(ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider, String parameterId) throws PortalException {
+
+        DownloadSiteConfiguration siteConfiguration;
+        try {
+            siteConfiguration = configurationProvider
+                    .getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getSiteGroupId());
+
+        } catch (ConfigurationException e) {
+            throw new PortalException(String.format("Error getting DSD siteConfiguration: %s", e.getMessage()));
+        }
+        String json;
+        switch (parameterId){
+            case "templateMap":
+                json = siteConfiguration.templateMap();
+                break;
+            case "contactURL":
+                json = siteConfiguration.contactURL();
+                break;
+            case "privacyURL":
+                json = siteConfiguration.privacyURL();
+                break;
+            default:
+                json = null ;
+        }
+        try {
+            return JsonContentUtils.parseJsonToMap(json);
+        } catch (Exception e){
+            return Collections.emptyMap();
+        }
+
     }
 }
