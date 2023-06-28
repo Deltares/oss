@@ -13,6 +13,7 @@ import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.*;
 import nl.deltares.emails.DsdEmail;
+import nl.deltares.forms.portlet.DsdRegistrationFormConfiguration;
 import nl.deltares.model.BadgeInfo;
 import nl.deltares.model.BillingInfo;
 import nl.deltares.model.RegistrationRequest;
@@ -66,11 +67,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 sendRedirect(actionRequest, actionResponse, redirect);
             }
             return;
-        } else if (redirect.isEmpty()) {
-            redirect = registrationRequest.getSiteURL();
         }
-
-        LOG.info(redirect);
 
         boolean success = true;
         switch (action){
@@ -119,11 +116,39 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         }
         if (success){
             SessionMessages.add(actionRequest, "registration-success", new String[]{action, user.getEmailAddress(), registrationRequest.getTitle()});
-            if (!redirect.isEmpty()) {
-                sendRedirect(actionRequest, actionResponse, redirect);
-            }
+            redirect = getRedirectURL(themeDisplay, "success");
+            sendRedirect(actionRequest, actionResponse, redirect);
+        } else {
+            redirect = getRedirectURL(themeDisplay, "fail");
+            sendRedirect(actionRequest, actionResponse, redirect);
         }
 
+    }
+
+    private String getRedirectURL(ThemeDisplay themeDisplay, String key) {
+
+        String friendlyUrl = null;
+        try {
+            String configuredRedirect = null;
+            final DsdRegistrationFormConfiguration configuration = _configurationProvider.getGroupConfiguration(DsdRegistrationFormConfiguration.class, themeDisplay.getSiteGroupId());
+            switch (key){
+                case "success":
+                    configuredRedirect =  configuration.successURL();
+                    break;
+                case "fail":
+                    configuredRedirect =  configuration.failureURL();
+            }
+
+            if (configuredRedirect == null || configuredRedirect.isEmpty()) {
+                friendlyUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay, themeDisplay.getLocale());
+            } else {
+                friendlyUrl = PortalUtil.getAbsoluteURL(themeDisplay.getRequest(), configuredRedirect);
+            }
+            LOG.info("Redirecting registration request to " + friendlyUrl);
+        } catch (PortalException e) {
+            LOG.warn("Failed to get configuredRedirect URL: " + e.getMessage());
+        }
+        return friendlyUrl;
     }
 
     private void registerAcceptedTerms(Map<String, String> userAttributes) {

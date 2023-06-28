@@ -1,9 +1,5 @@
 dependencies {
-	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
-	compileOnly group: 'com.liferay', name: 'com.liferay.journal.api'
-	compileOnly group: 'com.liferay', name: 'com.liferay.dynamic.data.mapping.api'
-	compileOnly group: "com.liferay", name: "com.liferay.message.boards.api"
-	compileOnly group: 'com.liferay', name: 'com.liferay.petra.sql.dsl.api'
+	implementation( group: "com.liferay.portal", name: "release.dxp.api")
 
 	compileOnly group: 'biz.aQute.bnd', name: 'biz.aQute.bnd.gradle', version: '3.4.0'
 	compileOnly group: "javax.portlet", name: "portlet-api"

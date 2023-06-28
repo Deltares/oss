@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.dsd.registration.service.persistence.RegistrationUtil;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
+import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.DsdParserUtils;
@@ -328,7 +329,7 @@ public class RegistrationDisplayContext {
                 if (registrationPage != null) {
                     PortletURL portletURL = PortletURLFactoryUtil
                             .create(httpServletRequest,
-                                    "dsd_RegistrationFormPortlet",
+                                    OssConstants.DSD_REGISTRATIONFORM,
                                     registrationPage.getPlid(),
                                     action.equals("unregister") ? PortletRequest.ACTION_PHASE : PortletRequest.RENDER_PHASE);
                     portletURL.setWindowState(LiferayWindowState.NORMAL);
@@ -375,7 +376,7 @@ public class RegistrationDisplayContext {
                 if (registrationPage != null) {
                     PortletURL portletURL = PortletURLFactoryUtil
                             .create(portletRequest,
-                                    "dsd_RegistrationFormPortlet",
+                                    OssConstants.DSD_REGISTRATIONFORM,
                                     registrationPage.getPlid(),
                                     action.equals("unregister") ? PortletRequest.ACTION_PHASE : PortletRequest.RENDER_PHASE);
                     portletURL.setWindowState(LiferayWindowState.NORMAL);
