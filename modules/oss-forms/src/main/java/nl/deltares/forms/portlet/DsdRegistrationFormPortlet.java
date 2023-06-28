@@ -31,6 +31,7 @@ import static nl.deltares.portal.utils.LocalizationUtils.getLocalizedValue;
  * @author rooij_e
  */
 @Component(
+		configurationPid = OssConstants.DSD_REGISTRATIONFORM_CONFIGURATIONS_PID,
 	immediate = true,
 	property = {
 			"javax.portlet.version=3.0",
@@ -40,6 +41,7 @@ import static nl.deltares.portal.utils.LocalizationUtils.getLocalizedValue;
 			"com.liferay.portlet.header-portlet-javascript=/lib/common.js",
 			"com.liferay.portlet.instanceable=false",
 			"javax.portlet.display-name=DsdRegistrationForm",
+			"javax.portlet.init-param.config-template=/registration/configuration.jsp",
 			"javax.portlet.init-param.template-path=/",
 			"javax.portlet.init-param.view-template=/registration/dsd_register.jsp",
 			"javax.portlet.name=" + OssConstants.DSD_REGISTRATIONFORM,
