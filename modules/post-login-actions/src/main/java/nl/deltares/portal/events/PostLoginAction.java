@@ -92,7 +92,7 @@ public class PostLoginAction implements LifecycleAction {
             LOG.info("Parsing location info for IP " + remoteAddr);
             final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(remoteAddr);
             final String countryName = geoIpUtils.getCountryName(clientIpInfo);
-            if (sanctionCheckUtils.isSanctioned(geoIpUtils.getCountryIso2Code(clientIpInfo))) {
+            if (sanctionCheckUtils.isSanctionedByCountyCode(geoIpUtils.getCountryIso2Code(clientIpInfo))) {
                 request.getSession().setAttribute("LIFERAY_SHARED_isSanctioned", true);
                 request.getSession().setAttribute("LIFERAY_SHARED_sanctionCountry", countryName);
                 LOG.info(String.format("User '%s' logged in from sanctioned country '%s'", user.getFullName(), countryName));
