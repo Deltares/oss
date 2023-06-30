@@ -124,7 +124,7 @@ public class DownloadRestService {
             return;
         }
         final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(request.getRemoteAddr());
-        final boolean sanctioned = sanctionCheckUtils.isSanctioned(geoIpUtils.getCountryIso2Code(clientIpInfo));
+        final boolean sanctioned = sanctionCheckUtils.isSanctionedByCountyCode(geoIpUtils.getCountryIso2Code(clientIpInfo));
 
         if (sanctioned){
             LOG.warn(String.format("%s: Invalid sanction check for user %s and country %s ",
