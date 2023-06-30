@@ -3,20 +3,9 @@
 <#assign downloadUtils = serviceLocator.findService("nl.deltares.portal.utils.DownloadUtils") />
 
 <#assign baseUrl = "/o/download" />
-<#assign showButtons = themeDisplay.isSignedIn() />
+<#assign showButtons = true />
+<#assign isLoggedIn = themeDisplay.isSignedIn() />
 <#if entries?has_content>
-
-    <#if showButtons>
-        <#if is_sanctioned?? && is_sanctioned>
-            <#assign showButtons = false />
-            <div class="lfr-status-alert-label" >${languageUtil.get(locale, "download.restriction.country")} ${sanctionCountry}
-            </div>
-        </#if>
-    <#else>
-        <div class="lfr-status-info-label" >
-            <b>You must log in before you can download software.</b> <a href="https://download.deltares.nl/c/portal/login">Click here to log in</a>.
-        </div>
-    </#if>
 
     <ul class="c-downloads-list clear-list">
         <#list entries as entry>
@@ -47,7 +36,7 @@
                                                         ${buttonText}
                                         </a>
                                     </span>
-                                <#else>
+                                <#elseif isLoggedIn>
                                     <#assign buttonText = languageUtil.get(locale, "shopping.cart.add")/>
                                     <a href="#" data-article-id="${download.getArticleId()}"
                                        class="btn-lg btn-primary add-download-to-cart"
@@ -59,19 +48,18 @@
                             </span>
                         </#if>
                     </div>
-                </div>
-                <div id="${download.getArticleId()}-alert" class="alert alert-dismissible hidden" role="alert">
-                    <button aria-label="Close" class="close" data-dismiss="alert" type="button">
+                    <div id="${download.getArticleId()}-alert" class="alert alert-dismissible hidden" role="alert">
+                        <button aria-label="Close" class="close" data-dismiss="alert" type="button">
                             <span id="download-alert-icon">
                                 <svg aria-hidden="true" class="lexicon-icon lexicon-icon-times" focusable="false" viewBox="0 0 512 512">
                                     <path class="lexicon-icon-outline" d="M301.1,256.1L502.3,54.9c30.1-30.1-16.8-73.6-45.2-45.2L255.9,210.8L54.6,9.7C24.6-20.4-19,26.5,9.4,54.9l201.2,201.2L9.3,457.3c-28.9,28.9,15.8,74.6,45.2,45.2l201.3-201.2l201.3,201.2c28.9,28.9,74.2-16.3,45.2-45.2L301.1,256.1z"></path>
                                 </svg>
                             </span>
-                        <span class="sr-only">Close</span>
-                    </button>
+                            <span class="sr-only">Close</span>
+                        </button>
 
-                    <div id="${download.getArticleId()}-message" />
-                </div>
+                        <div id="${download.getArticleId()}-message" />
+                    </div>
                 </div>
             </li>
         </#list>

@@ -1,0 +1,45 @@
+###
+DELETE http://localhost:8090/o/dsd/session/register/{{siteId}}/{{articleId}}
+Authorization: Basic {{username}} {{password}}
+Accept: application/json
+
+> {%
+client.test("Delete Request", function() {
+   client.assert(response.status === 202, "Response status is not 202 but " + response.status);
+   var s = response.body.message;
+   client.assert(s === "User un-registered for User Days", "Expected 'User un-registered forUser Days' but found : " + s)
+});
+%}
+
+###
+POST http://localhost:8090/o/dsd/session/register/{{siteId}}/{{articleId}}
+Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+  "userProps" : "hello"
+}
+
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 202, "Response status is not 202 but " + response.status);
+var s = response.body.message;
+client.assert(s === "User registered for User Days", "Expected 'User registered for User Days' but found : " + s)
+});
+%}
+
+###
+GET http://localhost:8090/o/dsd/session/register/{{siteId}}/{{eventId}}
+Authorization: Basic {{username}} {{password}}
+Accept: application/json
+
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 200, "Response status is not 200");
+var jsonObject = response.body;
+client.assert(jsonObject[0].title === "User Days", "Expected 'User Days' but found : " + jsonObject[0].title)
+});
+%}
+
+
+
