@@ -175,7 +175,7 @@ public class Download extends AbsDsdArticle {
     }
 
     public boolean isDirectDownload() {
-        return requiredActions.contains(ACTION.direct) && fileId > 0;
+        return requiredActions.contains(ACTION.direct);
     }
 
     public boolean isSendLink() {
