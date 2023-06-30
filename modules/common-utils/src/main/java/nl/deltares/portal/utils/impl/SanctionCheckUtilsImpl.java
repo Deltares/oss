@@ -5,11 +5,13 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import nl.deltares.portal.configuration.SanctionSystemConfiguration;
+import nl.deltares.portal.utils.GeoIpUtils;
 import nl.deltares.portal.utils.SanctionCheckUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.util.Arrays;
+import java.util.Map;
 
 @Component(
         immediate = true,
@@ -19,6 +21,8 @@ public class SanctionCheckUtilsImpl implements SanctionCheckUtils {
 
     private static final Log LOG = LogFactoryUtil.getLog(SanctionCheckUtilsImpl.class);
 
+    @Reference
+    protected GeoIpUtils geoIpUtils;
 
     private ConfigurationProvider _configurationProvider;
 
@@ -44,9 +48,15 @@ public class SanctionCheckUtilsImpl implements SanctionCheckUtils {
     }
 
     @Override
-    public boolean isSanctioned(String isoCountryCode) {
+    public boolean isSanctionedByCountyCode(String isoCountryCode) {
         final String[] sanctionList = getSanctionedCountryCodes(_configurationProvider);
         return Arrays.stream(sanctionList).anyMatch(sanctionCode -> sanctionCode.toUpperCase().equals(isoCountryCode));
     }
 
+    @Override
+    public boolean isSanctionedByIp(String remoteAddress) {
+        if (!geoIpUtils.isActive()) return false;
+        final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(remoteAddress);
+        return isSanctionedByCountyCode(geoIpUtils.getCountryIso2Code(clientIpInfo));
+    }
 }

@@ -4,15 +4,12 @@ import com.liferay.portal.kernel.events.LifecycleAction;
 import com.liferay.portal.kernel.events.LifecycleEvent;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalService;
-import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.portal.utils.GeoIpUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.portal.utils.SanctionCheckUtils;
 import nl.deltares.tasks.DataRequestManager;
-import nl.deltares.tasks.impl.PostLoginUpdateDownloadStatus;
 import nl.deltares.tasks.impl.PostLoginUpdateUserInfo;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -40,9 +37,6 @@ public class PostLoginAction implements LifecycleAction {
 
     @Reference
     private KeycloakUtils keycloakUtils;
-
-    @Reference
-    private DownloadUtils downloadUtils;
 
     @Reference
     private UserLocalService userLocalService;
@@ -96,7 +90,7 @@ public class PostLoginAction implements LifecycleAction {
         if (geoIpUtils != null) {
             final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(request.getRemoteAddr());
             final String countryName = geoIpUtils.getCountryName(clientIpInfo);
-            if (sanctionCheckUtils.isSanctioned(geoIpUtils.getCountryIso2Code(clientIpInfo))) {
+            if (sanctionCheckUtils.isSanctionedByCountyCode(geoIpUtils.getCountryIso2Code(clientIpInfo))) {
                 request.getSession().setAttribute("LIFERAY_SHARED_isSanctioned", true);
                 request.getSession().setAttribute("LIFERAY_SHARED_sanctionCountry", countryName);
                 LOG.info(String.format("User '%s' logged in from sanctioned country '%s'", user.getFullName(), countryName));
