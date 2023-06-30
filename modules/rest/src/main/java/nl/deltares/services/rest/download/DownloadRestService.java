@@ -36,6 +36,48 @@ public class DownloadRestService {
     }
 
     @POST
+    @Path("register")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response registerDownload(@Context HttpServletRequest request, String json) {
+
+        final String remoteUser = request.getRemoteUser();
+        final User user;
+        if (remoteUser != null && !remoteUser.isEmpty()) {
+            try {
+                user = UserLocalServiceUtil.getUser(Long.parseLong(remoteUser));
+            } catch (PortalException e) {
+                return Response.status(Response.Status.UNAUTHORIZED).type(MediaType.TEXT_PLAIN).entity(e.getMessage()).build();
+            }
+        } else {
+            user = null;
+        }
+
+        String fileShare;
+        String fileName;
+        long downloadId;
+        long groupId;
+        try {
+            final Map<String, String> jsonToMap = JsonContentUtils.parseJsonToMap(json);
+            fileName = jsonToMap.get("fileName");
+            fileShare = jsonToMap.get("fileShare");
+            downloadId = Long.parseLong(jsonToMap.get("downloadId"));
+            groupId = Long.parseLong(jsonToMap.get("groupId"));
+        } catch (Exception e) {
+            LOG.warn(String.format("Error parsing json request '%s': %s", json, e.getMessage()));
+            return Response.serverError().type(MediaType.TEXT_PLAIN).entity("Failed to parse request parameter: " + e.getMessage()).build();
+        }
+
+        try {
+            downloadUtils.registerDownload(user, groupId, downloadId, fileName, fileShare, getMinimumAttributes(request));
+            return Response.ok().entity(String.format("Download registered for file '%s':  '%s'", fileName, fileShare)).build();
+        } catch (PortalException e) {
+            LOG.warn("Error registering direct download url: " + e.getMessage());
+            return Response.serverError().type(MediaType.TEXT_PLAIN).entity("Failed register download: " + e.getMessage()).build();
+        }
+
+    }
+
+    @POST
     @Path("direct")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response directDownload(@Context HttpServletRequest request, String json) {
