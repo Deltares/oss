@@ -20,8 +20,8 @@ public class RemoveShareIdColumn extends AbsUpgradeProcess {
             return;
         }
         alterTableDropColumn(tableName, "shareId");
-        alterColumnName(tableName, "filePath", "fileName STRING");
-        alterColumnName(tableName, "directDownloadUrl", "fileShareUrl VARCHAR(2083)");
+        alterColumnName(tableName, "filePath", "fileName longtext");
+        alterColumnName(tableName, "directDownloadUrl", "fileShareUrl longtext");
 
     }
 

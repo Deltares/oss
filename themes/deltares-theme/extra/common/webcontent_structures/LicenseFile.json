@@ -2,100 +2,348 @@
   "availableLanguageIds": [
     "en_US"
   ],
-  "defaultLanguageId": "en_US",
-  "fields": [
+  "contentType": "journal",
+  "dataDefinitionFields": [
     {
+      "customProperties": {
+        "labelAtStructureLevel": true,
+        "hideField": false,
+        "confirmationErrorMessage": {},
+        "autocomplete": false,
+        "ddmDataProviderInstanceId": [],
+        "dataType": "string",
+        "tooltip": {},
+        "requireConfirmation": false,
+        "displayStyle": "singleline",
+        "fieldNamespace": "",
+        "visibilityExpression": "",
+        "ddmDataProviderInstanceOutput": [],
+        "options": {},
+        "nativeField": false,
+        "confirmationLabel": {},
+        "fieldReference": "Name",
+        "placeholder": {},
+        "dataSourceType": "",
+        "direction": []
+      },
+      "defaultValue": {},
+      "fieldType": "text",
+      "indexType": "keyword",
+      "indexable": true,
       "label": {
         "en_US": "Name"
       },
-      "predefinedValue": {
-        "en_US": ""
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": ""
-      },
-      "dataType": "string",
-      "indexType": "keyword",
       "localizable": false,
-      "name": "Name",
+      "name": "Text79137635",
+      "nestedDataDefinitionFields": [],
       "readOnly": false,
       "repeatable": false,
       "required": true,
       "showLabel": true,
-      "type": "text"
+      "tip": {}
     },
     {
+      "customProperties": {
+        "labelAtStructureLevel": true,
+        "ddmStructureLayoutId": "",
+        "ddmStructureId": "5935248",
+        "upgradedStructure": false,
+        "fieldReference": "Expiration",
+        "rows": [
+          {
+            "columns": [
+              {
+                "size": 12,
+                "fields": [
+                  "Date20081043"
+                ]
+              }
+            ]
+          },
+          {
+            "columns": [
+              {
+                "size": 12,
+                "fields": [
+                  "Numeric63401225"
+                ]
+              }
+            ]
+          }
+        ],
+        "collapsible": true
+      },
+      "defaultValue": {},
+      "fieldType": "fieldset",
+      "indexable": false,
       "label": {
-        "en_US": "ExpirationDays"
+        "en_US": "Expiration"
       },
-      "predefinedValue": {
-        "en_US": "365"
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": "Duration in days of license period"
-      },
-      "dataType": "number",
-      "fieldNamespace": "ddm",
-      "indexType": "",
       "localizable": false,
-      "name": "ExpirationDays",
+      "name": "Fieldset31948331",
+      "nestedDataDefinitionFields": [
+        {
+          "customProperties": {
+            "fieldNamespace": "",
+            "requiredErrorMessage": {
+              "en_US": ""
+            },
+            "visibilityExpression": "",
+            "labelAtStructureLevel": true,
+            "objectFieldName": "",
+            "dataType": "date",
+            "nativeField": false,
+            "fieldReference": "ExpirationDate"
+          },
+          "defaultValue": {
+            "en_US": ""
+          },
+          "fieldType": "date",
+          "indexType": "none",
+          "indexable": true,
+          "label": {
+            "en_US": "Expiration date"
+          },
+          "localizable": false,
+          "name": "Date20081043",
+          "nestedDataDefinitionFields": [],
+          "readOnly": false,
+          "repeatable": false,
+          "required": false,
+          "showLabel": true,
+          "tip": {
+            "en_US": "Fixed expiration date."
+          }
+        },
+        {
+          "customProperties": {
+            "labelAtStructureLevel": true,
+            "hideField": false,
+            "confirmationErrorMessage": {
+              "en_US": ""
+            },
+            "dataType": "integer",
+            "tooltip": {
+              "en_US": ""
+            },
+            "requireConfirmation": false,
+            "inputMask": false,
+            "characterOptions": false,
+            "fieldNamespace": "",
+            "requiredErrorMessage": {
+              "en_US": ""
+            },
+            "visibilityExpression": "",
+            "objectFieldName": "",
+            "inputMaskFormat": {
+              "en_US": ""
+            },
+            "nativeField": false,
+            "confirmationLabel": {
+              "en_US": ""
+            },
+            "fieldReference": "ExpirationDays",
+            "numericInputMask": {
+              "en_US": {
+                "decimalPlaces": 2,
+                "append": "",
+                "symbols": {
+                  "decimalSymbol": ".",
+                  "thousandsSeparator": "none"
+                },
+                "appendType": "prefix"
+              }
+            },
+            "placeholder": {
+              "en_US": ""
+            },
+            "direction": [
+              "vertical"
+            ]
+          },
+          "defaultValue": {
+            "en_US": ""
+          },
+          "fieldType": "numeric",
+          "indexType": "none",
+          "indexable": true,
+          "label": {
+            "en_US": "Expiration days"
+          },
+          "localizable": false,
+          "name": "Numeric63401225",
+          "nestedDataDefinitionFields": [],
+          "readOnly": false,
+          "repeatable": false,
+          "required": false,
+          "showLabel": true,
+          "tip": {
+            "en_US": "Duration in days of license period."
+          }
+        }
+      ],
       "readOnly": false,
       "repeatable": false,
-      "required": true,
+      "required": false,
       "showLabel": true,
-      "type": "ddm-number"
+      "tip": {}
     },
     {
+      "customProperties": {
+        "labelAtStructureLevel": true,
+        "hideField": false,
+        "confirmationErrorMessage": {
+          "en_US": ""
+        },
+        "autocomplete": false,
+        "ddmDataProviderInstanceId": [],
+        "dataType": "string",
+        "tooltip": {
+          "en_US": ""
+        },
+        "requireConfirmation": false,
+        "displayStyle": "singleline",
+        "fieldNamespace": "",
+        "visibilityExpression": "",
+        "ddmDataProviderInstanceOutput": [],
+        "options": {},
+        "nativeField": false,
+        "confirmationLabel": {
+          "en_US": ""
+        },
+        "fieldReference": "DateFormat",
+        "placeholder": {
+          "en_US": "dd-MMM-yyyy"
+        },
+        "dataSourceType": "",
+        "direction": [
+          "vertical"
+        ]
+      },
+      "defaultValue": {},
+      "fieldType": "text",
+      "indexType": "none",
+      "indexable": true,
       "label": {
         "en_US": "Date Format"
       },
-      "predefinedValue": {
-        "en_US": "dd-MMM-yyyy"
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": "Date format required by license file."
-      },
-      "dataType": "string",
-      "indexType": "",
       "localizable": false,
-      "name": "DateFormat",
+      "name": "Text57063280",
+      "nestedDataDefinitionFields": [],
       "readOnly": false,
       "repeatable": false,
       "required": true,
       "showLabel": true,
-      "type": "text"
+      "tip": {
+        "en_US": "Date format required by license file."
+      }
     },
     {
+      "customProperties": {
+        "labelAtStructureLevel": true,
+        "hideField": false,
+        "confirmationErrorMessage": {},
+        "autocomplete": false,
+        "ddmDataProviderInstanceId": [],
+        "dataType": "string",
+        "tooltip": {},
+        "requireConfirmation": false,
+        "displayStyle": "multiline",
+        "fieldNamespace": "",
+        "visibilityExpression": "",
+        "ddmDataProviderInstanceOutput": [],
+        "options": {},
+        "nativeField": false,
+        "confirmationLabel": {},
+        "fieldReference": "TemplateContent",
+        "placeholder": {},
+        "dataSourceType": "",
+        "direction": []
+      },
+      "defaultValue": {},
+      "fieldType": "text",
+      "indexType": "none",
+      "indexable": true,
       "label": {
         "en_US": "TemplateContent"
       },
-      "predefinedValue": {
-        "en_US": ""
-      },
-      "style": {
-        "en_US": ""
-      },
-      "tip": {
-        "en_US": ""
-      },
-      "dataType": "string",
-      "indexType": "",
       "localizable": false,
-      "name": "TemplateContent",
+      "name": "Text66691929",
+      "nestedDataDefinitionFields": [],
       "readOnly": false,
       "repeatable": false,
       "required": true,
       "showLabel": true,
-      "type": "textarea"
+      "tip": {
+        "en_US": "Enter content of License template here. Supported tags for replacement are; @EXPIRATIONDATE@,  @FIRSTNAME@, @LASTNAME@, @EMAIL@"
+      }
     }
-  ]
+  ],
+  "defaultDataLayout": {
+    "dataLayoutFields": {},
+    "dataLayoutPages": [
+      {
+        "dataLayoutRows": [
+          {
+            "dataLayoutColumns": [
+              {
+                "columnSize": 12,
+                "fieldNames": [
+                  "Text79137635"
+                ]
+              }
+            ]
+          },
+          {
+            "dataLayoutColumns": [
+              {
+                "columnSize": 12,
+                "fieldNames": [
+                  "Fieldset31948331"
+                ]
+              }
+            ]
+          },
+          {
+            "dataLayoutColumns": [
+              {
+                "columnSize": 12,
+                "fieldNames": [
+                  "Text57063280"
+                ]
+              }
+            ]
+          },
+          {
+            "dataLayoutColumns": [
+              {
+                "columnSize": 12,
+                "fieldNames": [
+                  "Text66691929"
+                ]
+              }
+            ]
+          }
+        ],
+        "description": {
+          "en_US": ""
+        },
+        "title": {
+          "en_US": ""
+        }
+      }
+    ],
+    "dataRules": [],
+    "description": {},
+    "name": {
+      "en_US": "LicenseFile - 1.0.0"
+    },
+    "paginationMode": "single-page"
+  },
+  "defaultLanguageId": "en_US",
+  "description": {},
+  "name": {
+    "en_US": "LicenseFile - 1.0.0"
+  },
+  "storageType": "default"
 }
