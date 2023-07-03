@@ -49,12 +49,11 @@ public class DownloadWrapper
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("downloadId", getDownloadId());
-		attributes.put("filePath", getFilePath());
+		attributes.put("fileName", getFileName());
 		attributes.put("expiryDate", getExpiryDate());
 		attributes.put("organization", getOrganization());
 		attributes.put("geoLocationId", getGeoLocationId());
-		attributes.put("shareId", getShareId());
-		attributes.put("directDownloadUrl", getDirectDownloadUrl());
+		attributes.put("fileShareUrl", getFileShareUrl());
 		attributes.put("licenseDownloadUrl", getLicenseDownloadUrl());
 
 		return attributes;
@@ -104,10 +103,10 @@ public class DownloadWrapper
 			setDownloadId(downloadId);
 		}
 
-		String filePath = (String)attributes.get("filePath");
+		String fileName = (String)attributes.get("fileName");
 
-		if (filePath != null) {
-			setFilePath(filePath);
+		if (fileName != null) {
+			setFileName(fileName);
 		}
 
 		Date expiryDate = (Date)attributes.get("expiryDate");
@@ -128,16 +127,10 @@ public class DownloadWrapper
 			setGeoLocationId(geoLocationId);
 		}
 
-		Integer shareId = (Integer)attributes.get("shareId");
+		String fileShareUrl = (String)attributes.get("fileShareUrl");
 
-		if (shareId != null) {
-			setShareId(shareId);
-		}
-
-		String directDownloadUrl = (String)attributes.get("directDownloadUrl");
-
-		if (directDownloadUrl != null) {
-			setDirectDownloadUrl(directDownloadUrl);
+		if (fileShareUrl != null) {
+			setFileShareUrl(fileShareUrl);
 		}
 
 		String licenseDownloadUrl = (String)attributes.get(
@@ -174,16 +167,6 @@ public class DownloadWrapper
 	}
 
 	/**
-	 * Returns the direct download url of this download.
-	 *
-	 * @return the direct download url of this download
-	 */
-	@Override
-	public String getDirectDownloadUrl() {
-		return model.getDirectDownloadUrl();
-	}
-
-	/**
 	 * Returns the download ID of this download.
 	 *
 	 * @return the download ID of this download
@@ -204,13 +187,23 @@ public class DownloadWrapper
 	}
 
 	/**
-	 * Returns the file path of this download.
+	 * Returns the file name of this download.
 	 *
-	 * @return the file path of this download
+	 * @return the file name of this download
 	 */
 	@Override
-	public String getFilePath() {
-		return model.getFilePath();
+	public String getFileName() {
+		return model.getFileName();
+	}
+
+	/**
+	 * Returns the file share url of this download.
+	 *
+	 * @return the file share url of this download
+	 */
+	@Override
+	public String getFileShareUrl() {
+		return model.getFileShareUrl();
 	}
 
 	/**
@@ -284,16 +277,6 @@ public class DownloadWrapper
 	}
 
 	/**
-	 * Returns the share ID of this download.
-	 *
-	 * @return the share ID of this download
-	 */
-	@Override
-	public int getShareId() {
-		return model.getShareId();
-	}
-
-	/**
 	 * Returns the user ID of this download.
 	 *
 	 * @return the user ID of this download
@@ -339,16 +322,6 @@ public class DownloadWrapper
 	}
 
 	/**
-	 * Sets the direct download url of this download.
-	 *
-	 * @param directDownloadUrl the direct download url of this download
-	 */
-	@Override
-	public void setDirectDownloadUrl(String directDownloadUrl) {
-		model.setDirectDownloadUrl(directDownloadUrl);
-	}
-
-	/**
 	 * Sets the download ID of this download.
 	 *
 	 * @param downloadId the download ID of this download
@@ -369,13 +342,23 @@ public class DownloadWrapper
 	}
 
 	/**
-	 * Sets the file path of this download.
+	 * Sets the file name of this download.
 	 *
-	 * @param filePath the file path of this download
+	 * @param fileName the file name of this download
 	 */
 	@Override
-	public void setFilePath(String filePath) {
-		model.setFilePath(filePath);
+	public void setFileName(String fileName) {
+		model.setFileName(fileName);
+	}
+
+	/**
+	 * Sets the file share url of this download.
+	 *
+	 * @param fileShareUrl the file share url of this download
+	 */
+	@Override
+	public void setFileShareUrl(String fileShareUrl) {
+		model.setFileShareUrl(fileShareUrl);
 	}
 
 	/**
@@ -446,16 +429,6 @@ public class DownloadWrapper
 	@Override
 	public void setPrimaryKey(long primaryKey) {
 		model.setPrimaryKey(primaryKey);
-	}
-
-	/**
-	 * Sets the share ID of this download.
-	 *
-	 * @param shareId the share ID of this download
-	 */
-	@Override
-	public void setShareId(int shareId) {
-		model.setShareId(shareId);
 	}
 
 	/**

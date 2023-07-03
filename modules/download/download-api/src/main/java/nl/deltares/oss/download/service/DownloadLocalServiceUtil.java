@@ -72,10 +72,6 @@ public class DownloadLocalServiceUtil {
 		return getService().countDownloadsByArticleId(groupId, articleId);
 	}
 
-	public static int countDownloadsByShareId(long groupId, int shareId) {
-		return getService().countDownloadsByShareId(groupId, shareId);
-	}
-
 	public static int countDownloadsByUserId(long groupId, long userId) {
 		return getService().countDownloadsByUserId(groupId, userId);
 	}
@@ -277,19 +273,6 @@ public class DownloadLocalServiceUtil {
 			groupId, articleId, start, end);
 	}
 
-	public static List<Download> findDownloadsByShareId(
-		long groupId, int shareId) {
-
-		return getService().findDownloadsByShareId(groupId, shareId);
-	}
-
-	public static List<Download> findDownloadsByShareId(
-		long groupId, int shareId, int start, int end) {
-
-		return getService().findDownloadsByShareId(
-			groupId, shareId, start, end);
-	}
-
 	public static List<Download> findDownloadsByUserId(
 		long groupId, long userId) {
 
@@ -310,13 +293,6 @@ public class DownloadLocalServiceUtil {
 		long groupId, int start, int end) {
 
 		return getService().findPaymentPendingDownloads(groupId, start, end);
-	}
-
-	public static List<Download> findUserDownloadsByShareId(
-		long groupId, long userId, int shareId) {
-
-		return getService().findUserDownloadsByShareId(
-			groupId, userId, shareId);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery

@@ -82,8 +82,6 @@ public interface DownloadLocalService
 
 	public int countDownloadsByArticleId(long groupId, long articleId);
 
-	public int countDownloadsByShareId(long groupId, int shareId);
-
 	public int countDownloadsByUserId(long groupId, long userId);
 
 	public int countPaymentPendingDownloads(long groupId);
@@ -232,11 +230,6 @@ public interface DownloadLocalService
 	public List<Download> findDownloadsByArticleId(
 		long groupId, long articleId, int start, int end);
 
-	public List<Download> findDownloadsByShareId(long groupId, int shareId);
-
-	public List<Download> findDownloadsByShareId(
-		long groupId, int shareId, int start, int end);
-
 	public List<Download> findDownloadsByUserId(long groupId, long userId);
 
 	public List<Download> findDownloadsByUserId(
@@ -246,9 +239,6 @@ public interface DownloadLocalService
 
 	public List<Download> findPaymentPendingDownloads(
 		long groupId, int start, int end);
-
-	public List<Download> findUserDownloadsByShareId(
-		long groupId, long userId, int shareId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();

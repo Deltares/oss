@@ -18,8 +18,8 @@ public class DisplayDownload {
     final private String organization;
     final private String city;
     final private String countryCode;
-    final private String filePath;
-    final private String directDownloadUrl;
+    final private String fileName;
+    final private String fileShareUrl;
     final private String licenseDownloadUrl;
 
     public DisplayDownload(Download download) {
@@ -44,10 +44,10 @@ public class DisplayDownload {
         this.organization = organization != null ? organization : "";
         this.city =  geoLocation != null ? geoLocation.getCityName() : "";
         this.countryCode = country != null ? country.getA2() : "";
-        final String filePath = download.getFilePath();
-        this.filePath = filePath != null ? filePath : "";
-        final String directDownloadPath = download.getDirectDownloadUrl();
-        this.directDownloadUrl = directDownloadPath != null ? directDownloadPath : "";
+        final String filePath = download.getFileName();
+        this.fileName = filePath != null ? filePath : "";
+        final String directDownloadPath = download.getFileShareUrl();
+        this.fileShareUrl = directDownloadPath != null ? directDownloadPath : "";
         final String licenseDownloadPath = download.getLicenseDownloadUrl();
         this.licenseDownloadUrl = licenseDownloadPath != null ? licenseDownloadPath : "";
     }
@@ -82,25 +82,13 @@ public class DisplayDownload {
         return countryCode;
     }
 
-    public int getShareId() {
-        return download.getShareId();
+
+    public String getFileName() {
+        return fileName;
     }
 
-    public String getShareIdStatus() {
-        final int shareId = download.getShareId();
-        switch (shareId){
-            case -9 : return "processing";
-            case -1 : return directDownloadUrl.isEmpty() ? "pending payment" : "direct download";
-            default: return String.valueOf(shareId);
-        }
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public String getDirectDownloadUrl() {
-        return directDownloadUrl;
+    public String getFileShareUrl() {
+        return fileShareUrl;
     }
 
     public String getLicenseDownloadUrl() {
