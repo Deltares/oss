@@ -53,51 +53,22 @@ public class DownloadLocalServiceImpl extends DownloadLocalServiceBaseImpl {
 		return DownloadUtil.fetchByUserDownload(groupId, userId, downloadId);
 	}
 
-    public List<Download> findDirectDownloads(long groupId){
-        final DynamicQuery dynamicQuery = getDirectDownloadQuery(groupId);
-        return DownloadUtil.findWithDynamicQuery(dynamicQuery);
+    public List<Download> findDownloadsByFileName(long groupId, String fileName, int start, int end){
+        final DynamicQuery fileNameQuery = getFileNameQuery(groupId, fileName);
+        return DownloadUtil.findWithDynamicQuery(fileNameQuery, start, end);
     }
 
-    public List<Download> findDirectDownloads(long groupId, int start, int end){
-        final DynamicQuery dynamicQuery = getDirectDownloadQuery(groupId);
-        return DownloadUtil.findWithDynamicQuery(dynamicQuery, start, end);
+    public int countDownloadsByFileName(long groupId, String fileName){
+        final DynamicQuery fileNameQuery = getFileNameQuery(groupId, fileName);
+        return (int) DownloadUtil.countWithDynamicQuery(fileNameQuery);
     }
 
-    public int countDirectDownloads(long groupId){
-        final DynamicQuery dynamicQuery = getDirectDownloadQuery(groupId);
-        return (int) DownloadUtil.countWithDynamicQuery(dynamicQuery);
-    }
-
-    public List<Download> findPaymentPendingDownloads(long groupId){
-        final DynamicQuery dynamicQuery = getPaymentPendingQuery(groupId);
-        return DownloadUtil.findWithDynamicQuery(dynamicQuery);
-    }
-
-    public List<Download> findPaymentPendingDownloads(long groupId, int start, int end){
-        final DynamicQuery dynamicQuery = getPaymentPendingQuery(groupId);
-        return DownloadUtil.findWithDynamicQuery(dynamicQuery, start, end);
-    }
-
-    private DynamicQuery getDirectDownloadQuery(long groupId) {
+    private DynamicQuery getFileNameQuery(long groupId, String fileName) {
         final DynamicQuery dynamicQuery = dynamicQuery();
         dynamicQuery
                 .add(RestrictionsFactoryUtil.eq("groupId", groupId))
-                .add(RestrictionsFactoryUtil.eq("shareId", -1))
-                .add(RestrictionsFactoryUtil.isNotNull("directDownloadUrl"));
+                .add(RestrictionsFactoryUtil.like("fileName", '%' + fileName + '%'));
         return dynamicQuery;
-    }
-
-    private DynamicQuery getPaymentPendingQuery(long groupId) {
-        final DynamicQuery dynamicQuery = dynamicQuery();
-        dynamicQuery
-                .add(RestrictionsFactoryUtil.eq("groupId", groupId))
-                .add(RestrictionsFactoryUtil.eq("shareId", -1))
-                .add(RestrictionsFactoryUtil.isNull("directDownloadUrl"));
-        return dynamicQuery;
-    }
-
-    public int countPaymentPendingDownloads(long groupId){
-        return (int) DownloadUtil.countWithDynamicQuery(getPaymentPendingQuery(groupId));
     }
 
     public List<Download> findDownloads(long groupId){
@@ -119,7 +90,6 @@ public class DownloadLocalServiceImpl extends DownloadLocalServiceBaseImpl {
     public List<Download> findDownloadsByArticleId(long groupId, long articleId, int start, int end){
         return DownloadUtil.findByDownloads(groupId, articleId, start, end);
     }
-
 
     public int countDownloadsByArticleId(long groupId, long articleId){
         return DownloadUtil.countByDownloads(groupId, articleId);

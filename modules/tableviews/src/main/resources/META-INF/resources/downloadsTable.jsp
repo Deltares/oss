@@ -64,10 +64,10 @@
                         <div class="pr-3">
                             <aui:input
                                     name="filterSelection"
-                                    label="Article ID"
+                                    label="File name"
                                     type="radio"
-                                    value="articleid"
-                                    checked='<%="articleid".equals(filterSelection)%>'/>
+                                    value="fileName"
+                                    checked='<%="fileName".equals(filterSelection)%>'/>
                         </div>
                     </div>
                 </aui:col>
@@ -92,16 +92,17 @@
                     keyProperty="id"
             >
                 <liferay-ui:search-container-column-text property="id" name="Record ID" />
-                <liferay-ui:search-container-column-text property="downloadId" name="Article ID"/>
-                <liferay-ui:search-container-column-date property="modifiedDate" name="Last download date"/>
-                <liferay-ui:search-container-column-date property="expirationDate" name="Expiration date"/>
+                <liferay-ui:search-container-column-text property="fileName" name="File name"/>
                 <liferay-ui:search-container-column-text property="email" name="User"/>
                 <liferay-ui:search-container-column-text property="organization" name="Organization"/>
                 <liferay-ui:search-container-column-text property="city" name="City"/>
                 <liferay-ui:search-container-column-text property="countryCode" name="Country"/>
-                <liferay-ui:search-container-column-text property="fileName" name="File name"/>
                 <liferay-ui:search-container-column-text property="fileShareUrl" name="Share link"/>
                 <liferay-ui:search-container-column-text property="licenseDownloadUrl" name="License download"/>
+                <liferay-ui:search-container-column-text property="downloadId" name="Article ID"/>
+                <liferay-ui:search-container-column-date property="modifiedDate" name="Last download date"/>
+                <liferay-ui:search-container-column-date property="expirationDate" name="Expiration date"/>
+
 
             </liferay-ui:search-container-row>
             <liferay-ui:search-iterator/>

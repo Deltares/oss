@@ -76,15 +76,13 @@ public interface DownloadLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public Download addDownload(Download download);
 
-	public int countDirectDownloads(long groupId);
-
 	public int countDownloads(long groupId);
 
 	public int countDownloadsByArticleId(long groupId, long articleId);
 
-	public int countDownloadsByUserId(long groupId, long userId);
+	public int countDownloadsByFileName(long groupId, String fileName);
 
-	public int countPaymentPendingDownloads(long groupId);
+	public int countDownloadsByUserId(long groupId, long userId);
 
 	/**
 	 * Creates a new download with the primary key. Does not add the download to the database.
@@ -214,10 +212,6 @@ public interface DownloadLocalService
 	public Download fetchUserDownload(
 		long groupId, long userId, long downloadId);
 
-	public List<Download> findDirectDownloads(long groupId);
-
-	public List<Download> findDirectDownloads(long groupId, int start, int end);
-
 	public List<Long> findDistinctDownloadIdsByGeoLocation(long locationId);
 
 	public List<Download> findDownloads(long groupId);
@@ -230,15 +224,13 @@ public interface DownloadLocalService
 	public List<Download> findDownloadsByArticleId(
 		long groupId, long articleId, int start, int end);
 
+	public List<Download> findDownloadsByFileName(
+		long groupId, String fileName, int start, int end);
+
 	public List<Download> findDownloadsByUserId(long groupId, long userId);
 
 	public List<Download> findDownloadsByUserId(
 		long groupId, long userId, int start, int end);
-
-	public List<Download> findPaymentPendingDownloads(long groupId);
-
-	public List<Download> findPaymentPendingDownloads(
-		long groupId, int start, int end);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();

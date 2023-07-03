@@ -10,7 +10,7 @@ create table Downloads_Download (
 	expiryDate DATE null,
 	organization VARCHAR(75) null,
 	geoLocationId LONG,
-	fileShareUrl VARCHAR(75) null,
+	fileShareUrl STRING null,
 	licenseDownloadUrl STRING null
 );
 

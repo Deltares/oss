@@ -85,10 +85,10 @@ public class DownloadTablePortlet extends MVCPortlet {
                         downloads = DownloadLocalServiceUtil.findDownloadsByUserId(siteGroupId, user.getUserId(), start, end);
                         downloadsCount = DownloadLocalServiceUtil.countDownloadsByUserId(siteGroupId, user.getUserId());
                         break;
-                    case "articleid":
-                        final long downloadId = Long.parseLong(filterValue);
-                        downloads = DownloadLocalServiceUtil.findDownloadsByArticleId(siteGroupId, downloadId, start, end);
-                        downloadsCount = DownloadLocalServiceUtil.countDownloadsByArticleId(siteGroupId, downloadId);
+                    case "fileName":
+                        final String fileName = filterValue;
+                        downloads = DownloadLocalServiceUtil.findDownloadsByFileName(siteGroupId, fileName, start, end);
+                        downloadsCount = DownloadLocalServiceUtil.countDownloadsByFileName(siteGroupId, fileName);
                         break;
                 }
             }
