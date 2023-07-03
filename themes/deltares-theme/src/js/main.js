@@ -395,21 +395,21 @@ function getCurrentStep(form) {
     // Scroll service bar (desktop)
     var header = $('#header');
 
-    window.addEventListener('scroll', function() {
-        if ($('body').hasClass('signed-in')) {
-            if (document.documentElement.scrollTop > 94) {
-                header.addClass('hidden-servicebar logged-in');
-            } else {
-                header.removeClass('hidden-servicebar logged-in');
-            }
-        } else {
-            if (document.documentElement.scrollTop > 38) {
-                header.addClass('hidden-servicebar');
-            } else {
-                header.removeClass('hidden-servicebar');
-            }
-        }
-    });
+    // window.addEventListener('scroll', function() {
+    //     if ($('body').hasClass('signed-in')) {
+    //         if (document.documentElement.scrollTop > 94) {
+    //             header.addClass('hidden-servicebar logged-in');
+    //         } else {
+    //             header.removeClass('hidden-servicebar logged-in');
+    //         }
+    //     } else {
+    //         if (document.documentElement.scrollTop > 38) {
+    //             header.addClass('hidden-servicebar');
+    //         } else {
+    //             header.removeClass('hidden-servicebar');
+    //         }
+    //     }
+    // });
 
     // Mobile menu
     var mobileContainer = $('.mobile-container');
