@@ -20,7 +20,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -132,7 +131,7 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
         licenseFileTemplateContent = licenseFileTemplateContent.replaceAll("@EMAIL@", user.getEmailAddress());
 
         final SimpleDateFormat dateFormat = new SimpleDateFormat(licenseFile.getDateFormat());
-        final String expirationDate = dateFormat.format(new Date(System.currentTimeMillis() + licenseFile.getExpirationPeriodInMillis()));
+        final String expirationDate = dateFormat.format(licenseFile.getExpirationDate());
         licenseFileTemplateContent = licenseFileTemplateContent.replaceAll("@EXPIRATIONDATE@", expirationDate);
 
         return licenseFileTemplateContent;

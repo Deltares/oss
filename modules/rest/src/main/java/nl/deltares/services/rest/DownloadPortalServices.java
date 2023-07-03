@@ -72,7 +72,7 @@ public class DownloadPortalServices extends Application {
         singletons.add(this);
         singletons.add(getJacksonJsonProvider());
         //Services for FullCalendar
-        singletons.add(new DownloadRestService(downloadUtils, sanctionCheckUtils, geoIpUtils));
+        singletons.add(new DownloadRestService(downloadUtils, geoIpUtils));
         return singletons;
     }
 

@@ -90,7 +90,7 @@ public class ExportTableRequest extends AbstractDataRequest {
     }
 
     private void exportAllRecords(PrintWriter writer) {
-        writer.println("downloadId,modifiedDate,expirationDate,shareId,filePath,directDownloadUrl,email,organization,city,country");
+        writer.println("downloadId,modifiedDate,expirationDate,fileName,shareUrl,email,organization,city,country");
 
         int start = 0;
         int end = 100;
@@ -162,10 +162,10 @@ public class ExportTableRequest extends AbstractDataRequest {
                 } else {
                     expiryDate = "";
                 }
-                writer.println(String.format("%d,%s,%s,%d,%s,%s,%s,%s,%s,%s",
+                writer.println(String.format("%d,%s,%s,%s,%s,%s,%s,%s,%s",
                         download.getDownloadId(), modifiedDate, expiryDate,
-                        download.getShareId(), download.getFilePath(), email, download.getOrganization(),
-                        city, countryCode, download.getDirectDownloadUrl()));
+                        download.getFileName(), email, download.getOrganization(),
+                        city, countryCode, download.getFileShareUrl()));
 
                 if (Thread.interrupted()) {
                     status = terminated;

@@ -3,7 +3,6 @@ package nl.deltares.portal.utils.impl;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
-import com.maxmind.geoip2.model.CountryResponse;
 import nl.deltares.mock.MockProps;
 import org.junit.Assert;
 import org.junit.Before;

@@ -10,17 +10,13 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
-import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.tableview.model.DisplayDownload;
 import nl.deltares.tableview.portlet.constants.TablePortletKeys;
 import nl.deltares.tableview.tasks.impl.DeletedSelectedDownloadsRequest;
 import nl.deltares.tableview.tasks.impl.ExportTableRequest;
-import nl.deltares.tableview.tasks.impl.PaidSelectedDownloadsRequest;
-import nl.deltares.tableview.tasks.impl.UpdateDownloadStatusRequest;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -51,9 +47,6 @@ import java.util.*;
         service = Portlet.class
 )
 public class DownloadTablePortlet extends MVCPortlet {
-
-    @Reference
-    private DownloadUtils downloadUtils;
 
     final static String datePattern = "yyy-MM-dd";
     final static SimpleDateFormat dateFormat = new SimpleDateFormat(datePattern);
@@ -86,27 +79,17 @@ public class DownloadTablePortlet extends MVCPortlet {
         final int end = curPage * deltas;
         try {
             if (filterValue != null && filterValue.trim().length() > 0) {
-                if (filterSelection.equals("email")) {
-                    User user = UserLocalServiceUtil.getUserByEmailAddress(themeDisplay.getCompanyId(), filterValue);
-                    downloads = DownloadLocalServiceUtil.findDownloadsByUserId(siteGroupId, user.getUserId(), start, end);
-                    downloadsCount = DownloadLocalServiceUtil.countDownloadsByUserId(siteGroupId, user.getUserId());
-                } else if (filterSelection.equals("articleid")){
-                    final long downloadId = Long.parseLong(filterValue);
-                    downloads = DownloadLocalServiceUtil.findDownloadsByArticleId(siteGroupId, downloadId, start, end);
-                    downloadsCount = DownloadLocalServiceUtil.countDownloadsByArticleId(siteGroupId, downloadId);
-                } else if (filterSelection.equals("status")){
-                    if (isDirectDownload(filterValue)) {
-                        downloads = DownloadLocalServiceUtil.findDirectDownloads(siteGroupId, start, end);
-                        downloadsCount = DownloadLocalServiceUtil.countDirectDownloads(siteGroupId);
-                    } else if (isPaymentPending(filterValue)){
-                        downloads = DownloadLocalServiceUtil.findPaymentPendingDownloads(siteGroupId, start, end);
-                        downloadsCount = DownloadLocalServiceUtil.countPaymentPendingDownloads(siteGroupId);
-                    } else {
-                        final int shareId = Integer.parseInt(filterValue);
-                        downloads = DownloadLocalServiceUtil.findDownloadsByShareId(siteGroupId, shareId, start, end);
-                        downloadsCount = DownloadLocalServiceUtil.countDownloadsByShareId(siteGroupId, shareId);
-                    }
-
+                switch (filterSelection) {
+                    case "email":
+                        User user = UserLocalServiceUtil.getUserByEmailAddress(themeDisplay.getCompanyId(), filterValue);
+                        downloads = DownloadLocalServiceUtil.findDownloadsByUserId(siteGroupId, user.getUserId(), start, end);
+                        downloadsCount = DownloadLocalServiceUtil.countDownloadsByUserId(siteGroupId, user.getUserId());
+                        break;
+                    case "fileName":
+                        final String fileName = filterValue;
+                        downloads = DownloadLocalServiceUtil.findDownloadsByFileName(siteGroupId, fileName, start, end);
+                        downloadsCount = DownloadLocalServiceUtil.countDownloadsByFileName(siteGroupId, fileName);
+                        break;
                 }
             }
             if (downloads == null) {
@@ -123,14 +106,6 @@ public class DownloadTablePortlet extends MVCPortlet {
             renderRequest.setAttribute("records", Collections.emptyList());
             renderRequest.setAttribute("total", 0);
         }
-    }
-
-    private boolean isDirectDownload(String filterValue) {
-        return filterValue.contains("direct") || filterValue.contains("download");
-    }
-
-    private boolean isPaymentPending(String filterValue) {
-        return filterValue.contains("payment") || filterValue.contains("pending");
     }
 
     private List<DisplayDownload> convertToDisplayDownloads(List<Download> downloads) {
@@ -153,33 +128,6 @@ public class DownloadTablePortlet extends MVCPortlet {
         final String filter = ParamUtil.getString(actionRequest, "filterValue", "none");
         actionResponse.getRenderParameters().setValue("filterValue", filter);
         final String filterSelection = ParamUtil.getString(actionRequest, "filterSelection", "none");
-        actionResponse.getRenderParameters().setValue("filterSelection", filterSelection);
-    }
-
-    /**
-     * Get latest share information from cloud and update local database
-     *
-     * @param actionRequest  Update action
-     * @param actionResponse Update response
-     */
-    @SuppressWarnings("unused")
-    public void updateShares(ActionRequest actionRequest, ActionResponse actionResponse) throws IOException {
-
-        ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest
-                .getAttribute(WebKeys.THEME_DISPLAY);
-        if (!themeDisplay.isSignedIn() || !actionRequest.isUserInRole("administrator")) {
-            SessionErrors.add(actionRequest, "action-failed", "You are not authorized to perform this action.");
-            return;
-        }
-        final long siteGroupId = themeDisplay.getSiteGroupId();
-        final String id = String.format("UpdateDownloadStatusRequest_%d_%d", themeDisplay.getCompanyId(), siteGroupId);
-        final UpdateDownloadStatusRequest updateRequest =
-                new UpdateDownloadStatusRequest(id, null, siteGroupId, themeDisplay.getUser().getUserId(), downloadUtils);
-        DataRequestManager.getInstance().addToQueue(updateRequest);
-
-        final String filter = ParamUtil.getString(actionRequest, "filterValue", null);
-        actionResponse.getRenderParameters().setValue("filterValue", filter);
-        final String filterSelection = ParamUtil.getString(actionRequest, "filterSelection", null);
         actionResponse.getRenderParameters().setValue("filterSelection", filterSelection);
     }
 
@@ -209,11 +157,6 @@ public class DownloadTablePortlet extends MVCPortlet {
             }
             deletedSelected(id, request, response, themeDisplay);
 
-        } else if ("paid-selected".equals(action)) {
-            if (id == null) {
-                id = DownloadTablePortlet.class.getName() + themeDisplay.getUserId();
-            }
-            paidSelected(id, request, response, themeDisplay);
         } else if ("updateStatus".equals(action)) {
             DataRequestManager.getInstance().updateStatus(id, response);
         } else if ("downloadLog".equals(action)) {
@@ -222,33 +165,6 @@ public class DownloadTablePortlet extends MVCPortlet {
             DataRequestManager.getInstance().writeError("Unsupported Action error: " + action, response);
         }
 
-    }
-
-    private void paidSelected(String dataRequestId, ResourceRequest request, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
-
-        final HttpServletRequest httpReq = PortalUtil.getOriginalServletRequest(PortalUtil.getHttpServletRequest(request));
-        final String[] selectedIds = httpReq.getParameterValues("selection");
-
-        if (selectedIds.length == 0) {
-            response.setContentType("text/plain");
-            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-        } else {
-            response.setContentType("text/csv");
-            DataRequestManager instance = DataRequestManager.getInstance();
-            DataRequest dataRequest = instance.getDataRequest(dataRequestId);
-            if (dataRequest == null) {
-                dataRequest = new PaidSelectedDownloadsRequest(dataRequestId, themeDisplay.getUserId(), Arrays.asList(selectedIds));
-                instance.addToQueue(dataRequest);
-            } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
-                instance.removeDataRequest(dataRequest);
-            }
-            response.setStatus(HttpServletResponse.SC_OK);
-            String statusMessage = dataRequest.getStatusMessage();
-            response.setContentLength(statusMessage.length());
-            PrintWriter writer = response.getWriter();
-            writer.println(statusMessage);
-
-        }
     }
 
     private void deletedSelected(String dataRequestId, ResourceRequest request, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {

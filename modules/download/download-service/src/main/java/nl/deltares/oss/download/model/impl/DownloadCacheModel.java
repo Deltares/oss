@@ -62,7 +62,7 @@ public class DownloadCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(29);
+		StringBundler sb = new StringBundler(27);
 
 		sb.append("{id=");
 		sb.append(id);
@@ -78,18 +78,16 @@ public class DownloadCacheModel
 		sb.append(modifiedDate);
 		sb.append(", downloadId=");
 		sb.append(downloadId);
-		sb.append(", filePath=");
-		sb.append(filePath);
+		sb.append(", fileName=");
+		sb.append(fileName);
 		sb.append(", expiryDate=");
 		sb.append(expiryDate);
 		sb.append(", organization=");
 		sb.append(organization);
 		sb.append(", geoLocationId=");
 		sb.append(geoLocationId);
-		sb.append(", shareId=");
-		sb.append(shareId);
-		sb.append(", directDownloadUrl=");
-		sb.append(directDownloadUrl);
+		sb.append(", fileShareUrl=");
+		sb.append(fileShareUrl);
 		sb.append(", licenseDownloadUrl=");
 		sb.append(licenseDownloadUrl);
 		sb.append("}");
@@ -122,11 +120,11 @@ public class DownloadCacheModel
 
 		downloadImpl.setDownloadId(downloadId);
 
-		if (filePath == null) {
-			downloadImpl.setFilePath("");
+		if (fileName == null) {
+			downloadImpl.setFileName("");
 		}
 		else {
-			downloadImpl.setFilePath(filePath);
+			downloadImpl.setFileName(fileName);
 		}
 
 		if (expiryDate == Long.MIN_VALUE) {
@@ -144,13 +142,12 @@ public class DownloadCacheModel
 		}
 
 		downloadImpl.setGeoLocationId(geoLocationId);
-		downloadImpl.setShareId(shareId);
 
-		if (directDownloadUrl == null) {
-			downloadImpl.setDirectDownloadUrl("");
+		if (fileShareUrl == null) {
+			downloadImpl.setFileShareUrl("");
 		}
 		else {
-			downloadImpl.setDirectDownloadUrl(directDownloadUrl);
+			downloadImpl.setFileShareUrl(fileShareUrl);
 		}
 
 		if (licenseDownloadUrl == null) {
@@ -178,14 +175,12 @@ public class DownloadCacheModel
 		modifiedDate = objectInput.readLong();
 
 		downloadId = objectInput.readLong();
-		filePath = objectInput.readUTF();
+		fileName = objectInput.readUTF();
 		expiryDate = objectInput.readLong();
 		organization = objectInput.readUTF();
 
 		geoLocationId = objectInput.readLong();
-
-		shareId = objectInput.readInt();
-		directDownloadUrl = objectInput.readUTF();
+		fileShareUrl = objectInput.readUTF();
 		licenseDownloadUrl = objectInput.readUTF();
 	}
 
@@ -203,11 +198,11 @@ public class DownloadCacheModel
 
 		objectOutput.writeLong(downloadId);
 
-		if (filePath == null) {
+		if (fileName == null) {
 			objectOutput.writeUTF("");
 		}
 		else {
-			objectOutput.writeUTF(filePath);
+			objectOutput.writeUTF(fileName);
 		}
 
 		objectOutput.writeLong(expiryDate);
@@ -221,13 +216,11 @@ public class DownloadCacheModel
 
 		objectOutput.writeLong(geoLocationId);
 
-		objectOutput.writeInt(shareId);
-
-		if (directDownloadUrl == null) {
+		if (fileShareUrl == null) {
 			objectOutput.writeUTF("");
 		}
 		else {
-			objectOutput.writeUTF(directDownloadUrl);
+			objectOutput.writeUTF(fileShareUrl);
 		}
 
 		if (licenseDownloadUrl == null) {
@@ -245,12 +238,11 @@ public class DownloadCacheModel
 	public long createDate;
 	public long modifiedDate;
 	public long downloadId;
-	public String filePath;
+	public String fileName;
 	public long expiryDate;
 	public String organization;
 	public long geoLocationId;
-	public int shareId;
-	public String directDownloadUrl;
+	public String fileShareUrl;
 	public String licenseDownloadUrl;
 
 }
