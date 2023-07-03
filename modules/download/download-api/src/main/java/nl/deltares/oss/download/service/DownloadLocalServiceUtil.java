@@ -60,10 +60,6 @@ public class DownloadLocalServiceUtil {
 		return getService().addDownload(download);
 	}
 
-	public static int countDirectDownloads(long groupId) {
-		return getService().countDirectDownloads(groupId);
-	}
-
 	public static int countDownloads(long groupId) {
 		return getService().countDownloads(groupId);
 	}
@@ -72,16 +68,12 @@ public class DownloadLocalServiceUtil {
 		return getService().countDownloadsByArticleId(groupId, articleId);
 	}
 
-	public static int countDownloadsByShareId(long groupId, int shareId) {
-		return getService().countDownloadsByShareId(groupId, shareId);
+	public static int countDownloadsByFileName(long groupId, String fileName) {
+		return getService().countDownloadsByFileName(groupId, fileName);
 	}
 
 	public static int countDownloadsByUserId(long groupId, long userId) {
 		return getService().countDownloadsByUserId(groupId, userId);
-	}
-
-	public static int countPaymentPendingDownloads(long groupId) {
-		return getService().countPaymentPendingDownloads(groupId);
 	}
 
 	/**
@@ -238,16 +230,6 @@ public class DownloadLocalServiceUtil {
 		return getService().fetchUserDownload(groupId, userId, downloadId);
 	}
 
-	public static List<Download> findDirectDownloads(long groupId) {
-		return getService().findDirectDownloads(groupId);
-	}
-
-	public static List<Download> findDirectDownloads(
-		long groupId, int start, int end) {
-
-		return getService().findDirectDownloads(groupId, start, end);
-	}
-
 	public static List<Long> findDistinctDownloadIdsByGeoLocation(
 		long locationId) {
 
@@ -277,17 +259,11 @@ public class DownloadLocalServiceUtil {
 			groupId, articleId, start, end);
 	}
 
-	public static List<Download> findDownloadsByShareId(
-		long groupId, int shareId) {
+	public static List<Download> findDownloadsByFileName(
+		long groupId, String fileName, int start, int end) {
 
-		return getService().findDownloadsByShareId(groupId, shareId);
-	}
-
-	public static List<Download> findDownloadsByShareId(
-		long groupId, int shareId, int start, int end) {
-
-		return getService().findDownloadsByShareId(
-			groupId, shareId, start, end);
+		return getService().findDownloadsByFileName(
+			groupId, fileName, start, end);
 	}
 
 	public static List<Download> findDownloadsByUserId(
@@ -300,23 +276,6 @@ public class DownloadLocalServiceUtil {
 		long groupId, long userId, int start, int end) {
 
 		return getService().findDownloadsByUserId(groupId, userId, start, end);
-	}
-
-	public static List<Download> findPaymentPendingDownloads(long groupId) {
-		return getService().findPaymentPendingDownloads(groupId);
-	}
-
-	public static List<Download> findPaymentPendingDownloads(
-		long groupId, int start, int end) {
-
-		return getService().findPaymentPendingDownloads(groupId, start, end);
-	}
-
-	public static List<Download> findUserDownloadsByShareId(
-		long groupId, long userId, int shareId) {
-
-		return getService().findUserDownloadsByShareId(
-			groupId, userId, shareId);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery

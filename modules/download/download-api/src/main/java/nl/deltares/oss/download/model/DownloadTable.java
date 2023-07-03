@@ -46,18 +46,16 @@ public class DownloadTable extends BaseTable<DownloadTable> {
 		"modifiedDate", Date.class, Types.TIMESTAMP, Column.FLAG_DEFAULT);
 	public final Column<DownloadTable, Long> downloadId = createColumn(
 		"downloadId", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
-	public final Column<DownloadTable, String> filePath = createColumn(
-		"filePath", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
+	public final Column<DownloadTable, String> fileName = createColumn(
+		"fileName", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 	public final Column<DownloadTable, Date> expiryDate = createColumn(
 		"expiryDate", Date.class, Types.TIMESTAMP, Column.FLAG_DEFAULT);
 	public final Column<DownloadTable, String> organization = createColumn(
 		"organization", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 	public final Column<DownloadTable, Long> geoLocationId = createColumn(
 		"geoLocationId", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
-	public final Column<DownloadTable, Integer> shareId = createColumn(
-		"shareId", Integer.class, Types.INTEGER, Column.FLAG_DEFAULT);
-	public final Column<DownloadTable, String> directDownloadUrl = createColumn(
-		"directDownloadUrl", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
+	public final Column<DownloadTable, String> fileShareUrl = createColumn(
+		"fileShareUrl", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 	public final Column<DownloadTable, String> licenseDownloadUrl =
 		createColumn(
 			"licenseDownloadUrl", String.class, Types.VARCHAR,

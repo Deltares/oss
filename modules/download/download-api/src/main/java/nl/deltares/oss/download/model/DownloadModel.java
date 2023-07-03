@@ -171,19 +171,19 @@ public interface DownloadModel extends BaseModel<Download>, ShardedModel {
 	public void setDownloadId(long downloadId);
 
 	/**
-	 * Returns the file path of this download.
+	 * Returns the file name of this download.
 	 *
-	 * @return the file path of this download
+	 * @return the file name of this download
 	 */
 	@AutoEscape
-	public String getFilePath();
+	public String getFileName();
 
 	/**
-	 * Sets the file path of this download.
+	 * Sets the file name of this download.
 	 *
-	 * @param filePath the file path of this download
+	 * @param fileName the file name of this download
 	 */
-	public void setFilePath(String filePath);
+	public void setFileName(String fileName);
 
 	/**
 	 * Returns the expiry date of this download.
@@ -229,33 +229,19 @@ public interface DownloadModel extends BaseModel<Download>, ShardedModel {
 	public void setGeoLocationId(long geoLocationId);
 
 	/**
-	 * Returns the share ID of this download.
+	 * Returns the file share url of this download.
 	 *
-	 * @return the share ID of this download
-	 */
-	public int getShareId();
-
-	/**
-	 * Sets the share ID of this download.
-	 *
-	 * @param shareId the share ID of this download
-	 */
-	public void setShareId(int shareId);
-
-	/**
-	 * Returns the direct download url of this download.
-	 *
-	 * @return the direct download url of this download
+	 * @return the file share url of this download
 	 */
 	@AutoEscape
-	public String getDirectDownloadUrl();
+	public String getFileShareUrl();
 
 	/**
-	 * Sets the direct download url of this download.
+	 * Sets the file share url of this download.
 	 *
-	 * @param directDownloadUrl the direct download url of this download
+	 * @param fileShareUrl the file share url of this download
 	 */
-	public void setDirectDownloadUrl(String directDownloadUrl);
+	public void setFileShareUrl(String fileShareUrl);
 
 	/**
 	 * Returns the license download url of this download.

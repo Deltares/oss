@@ -21,12 +21,11 @@
 
 		<!-- Other fields -->
 		<column name="downloadId" type="long" />
-		<column name="filePath" type="String" />
+		<column name="fileName" type="String" />
 		<column name="expiryDate" type="Date" />
 		<column name="organization" type="String" />
 		<column name="geoLocationId" type="long" />
-		<column name="shareId" type="int" />
-		<column name="directDownloadUrl" type="String" />
+		<column name="fileShareUrl" type="String" />
 		<column name="licenseDownloadUrl" type="String" />
 
 		<!-- Order -->
@@ -39,17 +38,6 @@
 		<finder name="Downloads" return-type="Collection">
 			<finder-column name="groupId" />
 			<finder-column name="downloadId" />
-		</finder>
-
-		<finder name="DownloadsByShareId" return-type="Collection">
-			<finder-column name="groupId" />
-			<finder-column name="shareId" />
-		</finder>
-
-		<finder name="UserDownloadsByShareId" return-type="Collection">
-			<finder-column name="groupId" />
-			<finder-column name="userId" />
-			<finder-column name="shareId" />
 		</finder>
 
 		<finder name="UserDownload" return-type="Download" unique="true">

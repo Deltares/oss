@@ -5,7 +5,6 @@
     "private": true,
     "workspaces": {
         "packages": [
-            "themes\\deltares-dsd-theme",
             "themes\\deltares-fews-theme",
             "themes\\deltares-theme"
         ]

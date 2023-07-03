@@ -6,12 +6,11 @@ create table Downloads_Download (
 	createDate DATE null,
 	modifiedDate DATE null,
 	downloadId LONG,
-	filePath STRING null,
+	fileName STRING null,
 	expiryDate DATE null,
 	organization VARCHAR(75) null,
 	geoLocationId LONG,
-	shareId INTEGER,
-	directDownloadUrl STRING null,
+	fileShareUrl STRING null,
 	licenseDownloadUrl STRING null
 );
 

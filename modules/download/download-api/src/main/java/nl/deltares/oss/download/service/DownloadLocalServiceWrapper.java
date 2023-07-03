@@ -54,11 +54,6 @@ public class DownloadLocalServiceWrapper
 	}
 
 	@Override
-	public int countDirectDownloads(long groupId) {
-		return _downloadLocalService.countDirectDownloads(groupId);
-	}
-
-	@Override
 	public int countDownloads(long groupId) {
 		return _downloadLocalService.countDownloads(groupId);
 	}
@@ -70,18 +65,14 @@ public class DownloadLocalServiceWrapper
 	}
 
 	@Override
-	public int countDownloadsByShareId(long groupId, int shareId) {
-		return _downloadLocalService.countDownloadsByShareId(groupId, shareId);
+	public int countDownloadsByFileName(long groupId, String fileName) {
+		return _downloadLocalService.countDownloadsByFileName(
+			groupId, fileName);
 	}
 
 	@Override
 	public int countDownloadsByUserId(long groupId, long userId) {
 		return _downloadLocalService.countDownloadsByUserId(groupId, userId);
-	}
-
-	@Override
-	public int countPaymentPendingDownloads(long groupId) {
-		return _downloadLocalService.countPaymentPendingDownloads(groupId);
 	}
 
 	/**
@@ -268,20 +259,6 @@ public class DownloadLocalServiceWrapper
 	}
 
 	@Override
-	public java.util.List<nl.deltares.oss.download.model.Download>
-		findDirectDownloads(long groupId) {
-
-		return _downloadLocalService.findDirectDownloads(groupId);
-	}
-
-	@Override
-	public java.util.List<nl.deltares.oss.download.model.Download>
-		findDirectDownloads(long groupId, int start, int end) {
-
-		return _downloadLocalService.findDirectDownloads(groupId, start, end);
-	}
-
-	@Override
 	public java.util.List<Long> findDistinctDownloadIdsByGeoLocation(
 		long locationId) {
 
@@ -322,17 +299,11 @@ public class DownloadLocalServiceWrapper
 
 	@Override
 	public java.util.List<nl.deltares.oss.download.model.Download>
-		findDownloadsByShareId(long groupId, int shareId) {
+		findDownloadsByFileName(
+			long groupId, String fileName, int start, int end) {
 
-		return _downloadLocalService.findDownloadsByShareId(groupId, shareId);
-	}
-
-	@Override
-	public java.util.List<nl.deltares.oss.download.model.Download>
-		findDownloadsByShareId(long groupId, int shareId, int start, int end) {
-
-		return _downloadLocalService.findDownloadsByShareId(
-			groupId, shareId, start, end);
+		return _downloadLocalService.findDownloadsByFileName(
+			groupId, fileName, start, end);
 	}
 
 	@Override
@@ -348,29 +319,6 @@ public class DownloadLocalServiceWrapper
 
 		return _downloadLocalService.findDownloadsByUserId(
 			groupId, userId, start, end);
-	}
-
-	@Override
-	public java.util.List<nl.deltares.oss.download.model.Download>
-		findPaymentPendingDownloads(long groupId) {
-
-		return _downloadLocalService.findPaymentPendingDownloads(groupId);
-	}
-
-	@Override
-	public java.util.List<nl.deltares.oss.download.model.Download>
-		findPaymentPendingDownloads(long groupId, int start, int end) {
-
-		return _downloadLocalService.findPaymentPendingDownloads(
-			groupId, start, end);
-	}
-
-	@Override
-	public java.util.List<nl.deltares.oss.download.model.Download>
-		findUserDownloadsByShareId(long groupId, long userId, int shareId) {
-
-		return _downloadLocalService.findUserDownloadsByShareId(
-			groupId, userId, shareId);
 	}
 
 	@Override
