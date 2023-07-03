@@ -73,10 +73,9 @@ public class DownloadModelImpl
 		{"id_", Types.BIGINT}, {"groupId", Types.BIGINT},
 		{"companyId", Types.BIGINT}, {"userId", Types.BIGINT},
 		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
-		{"downloadId", Types.BIGINT}, {"filePath", Types.VARCHAR},
+		{"downloadId", Types.BIGINT}, {"fileName", Types.VARCHAR},
 		{"expiryDate", Types.TIMESTAMP}, {"organization", Types.VARCHAR},
-		{"geoLocationId", Types.BIGINT}, {"shareId", Types.INTEGER},
-		{"directDownloadUrl", Types.VARCHAR},
+		{"geoLocationId", Types.BIGINT}, {"fileShareUrl", Types.VARCHAR},
 		{"licenseDownloadUrl", Types.VARCHAR}
 	};
 
@@ -91,17 +90,16 @@ public class DownloadModelImpl
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("downloadId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("filePath", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("fileName", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("expiryDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("organization", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("geoLocationId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("shareId", Types.INTEGER);
-		TABLE_COLUMNS_MAP.put("directDownloadUrl", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("fileShareUrl", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("licenseDownloadUrl", Types.VARCHAR);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table Downloads_Download (id_ LONG not null primary key,groupId LONG,companyId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,downloadId LONG,filePath STRING null,expiryDate DATE null,organization VARCHAR(75) null,geoLocationId LONG,shareId INTEGER,directDownloadUrl STRING null,licenseDownloadUrl STRING null)";
+		"create table Downloads_Download (id_ LONG not null primary key,groupId LONG,companyId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,downloadId LONG,fileName VARCHAR(75) null,expiryDate DATE null,organization VARCHAR(75) null,geoLocationId LONG,fileShareUrl VARCHAR(75) null,licenseDownloadUrl STRING null)";
 
 	public static final String TABLE_SQL_DROP = "drop table Downloads_Download";
 
@@ -132,20 +130,14 @@ public class DownloadModelImpl
 	 * @deprecated As of Athanasius (7.3.x), replaced by {@link #getColumnBitmask(String)}
 	 */
 	@Deprecated
-	public static final long SHAREID_COLUMN_BITMASK = 4L;
-
-	/**
-	 * @deprecated As of Athanasius (7.3.x), replaced by {@link #getColumnBitmask(String)}
-	 */
-	@Deprecated
-	public static final long USERID_COLUMN_BITMASK = 8L;
+	public static final long USERID_COLUMN_BITMASK = 4L;
 
 	/**
 	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
 	 *		#getColumnBitmask(String)}
 	 */
 	@Deprecated
-	public static final long ID_COLUMN_BITMASK = 16L;
+	public static final long ID_COLUMN_BITMASK = 8L;
 
 	/**
 	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
@@ -278,9 +270,9 @@ public class DownloadModelImpl
 		attributeGetterFunctions.put("downloadId", Download::getDownloadId);
 		attributeSetterBiConsumers.put(
 			"downloadId", (BiConsumer<Download, Long>)Download::setDownloadId);
-		attributeGetterFunctions.put("filePath", Download::getFilePath);
+		attributeGetterFunctions.put("fileName", Download::getFileName);
 		attributeSetterBiConsumers.put(
-			"filePath", (BiConsumer<Download, String>)Download::setFilePath);
+			"fileName", (BiConsumer<Download, String>)Download::setFileName);
 		attributeGetterFunctions.put("expiryDate", Download::getExpiryDate);
 		attributeSetterBiConsumers.put(
 			"expiryDate", (BiConsumer<Download, Date>)Download::setExpiryDate);
@@ -293,14 +285,10 @@ public class DownloadModelImpl
 		attributeSetterBiConsumers.put(
 			"geoLocationId",
 			(BiConsumer<Download, Long>)Download::setGeoLocationId);
-		attributeGetterFunctions.put("shareId", Download::getShareId);
+		attributeGetterFunctions.put("fileShareUrl", Download::getFileShareUrl);
 		attributeSetterBiConsumers.put(
-			"shareId", (BiConsumer<Download, Integer>)Download::setShareId);
-		attributeGetterFunctions.put(
-			"directDownloadUrl", Download::getDirectDownloadUrl);
-		attributeSetterBiConsumers.put(
-			"directDownloadUrl",
-			(BiConsumer<Download, String>)Download::setDirectDownloadUrl);
+			"fileShareUrl",
+			(BiConsumer<Download, String>)Download::setFileShareUrl);
 		attributeGetterFunctions.put(
 			"licenseDownloadUrl", Download::getLicenseDownloadUrl);
 		attributeSetterBiConsumers.put(
@@ -462,22 +450,22 @@ public class DownloadModelImpl
 	}
 
 	@Override
-	public String getFilePath() {
-		if (_filePath == null) {
+	public String getFileName() {
+		if (_fileName == null) {
 			return "";
 		}
 		else {
-			return _filePath;
+			return _fileName;
 		}
 	}
 
 	@Override
-	public void setFilePath(String filePath) {
+	public void setFileName(String fileName) {
 		if (_columnOriginalValues == Collections.EMPTY_MAP) {
 			_setColumnOriginalValues();
 		}
 
-		_filePath = filePath;
+		_fileName = fileName;
 	}
 
 	@Override
@@ -528,46 +516,22 @@ public class DownloadModelImpl
 	}
 
 	@Override
-	public int getShareId() {
-		return _shareId;
-	}
-
-	@Override
-	public void setShareId(int shareId) {
-		if (_columnOriginalValues == Collections.EMPTY_MAP) {
-			_setColumnOriginalValues();
-		}
-
-		_shareId = shareId;
-	}
-
-	/**
-	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
-	 *             #getColumnOriginalValue(String)}
-	 */
-	@Deprecated
-	public int getOriginalShareId() {
-		return GetterUtil.getInteger(
-			this.<Integer>getColumnOriginalValue("shareId"));
-	}
-
-	@Override
-	public String getDirectDownloadUrl() {
-		if (_directDownloadUrl == null) {
+	public String getFileShareUrl() {
+		if (_fileShareUrl == null) {
 			return "";
 		}
 		else {
-			return _directDownloadUrl;
+			return _fileShareUrl;
 		}
 	}
 
 	@Override
-	public void setDirectDownloadUrl(String directDownloadUrl) {
+	public void setFileShareUrl(String fileShareUrl) {
 		if (_columnOriginalValues == Collections.EMPTY_MAP) {
 			_setColumnOriginalValues();
 		}
 
-		_directDownloadUrl = directDownloadUrl;
+		_fileShareUrl = fileShareUrl;
 	}
 
 	@Override
@@ -652,12 +616,11 @@ public class DownloadModelImpl
 		downloadImpl.setCreateDate(getCreateDate());
 		downloadImpl.setModifiedDate(getModifiedDate());
 		downloadImpl.setDownloadId(getDownloadId());
-		downloadImpl.setFilePath(getFilePath());
+		downloadImpl.setFileName(getFileName());
 		downloadImpl.setExpiryDate(getExpiryDate());
 		downloadImpl.setOrganization(getOrganization());
 		downloadImpl.setGeoLocationId(getGeoLocationId());
-		downloadImpl.setShareId(getShareId());
-		downloadImpl.setDirectDownloadUrl(getDirectDownloadUrl());
+		downloadImpl.setFileShareUrl(getFileShareUrl());
 		downloadImpl.setLicenseDownloadUrl(getLicenseDownloadUrl());
 
 		downloadImpl.resetOriginalValues();
@@ -680,18 +643,16 @@ public class DownloadModelImpl
 			this.<Date>getColumnOriginalValue("modifiedDate"));
 		downloadImpl.setDownloadId(
 			this.<Long>getColumnOriginalValue("downloadId"));
-		downloadImpl.setFilePath(
-			this.<String>getColumnOriginalValue("filePath"));
+		downloadImpl.setFileName(
+			this.<String>getColumnOriginalValue("fileName"));
 		downloadImpl.setExpiryDate(
 			this.<Date>getColumnOriginalValue("expiryDate"));
 		downloadImpl.setOrganization(
 			this.<String>getColumnOriginalValue("organization"));
 		downloadImpl.setGeoLocationId(
 			this.<Long>getColumnOriginalValue("geoLocationId"));
-		downloadImpl.setShareId(
-			this.<Integer>getColumnOriginalValue("shareId"));
-		downloadImpl.setDirectDownloadUrl(
-			this.<String>getColumnOriginalValue("directDownloadUrl"));
+		downloadImpl.setFileShareUrl(
+			this.<String>getColumnOriginalValue("fileShareUrl"));
 		downloadImpl.setLicenseDownloadUrl(
 			this.<String>getColumnOriginalValue("licenseDownloadUrl"));
 
@@ -799,12 +760,12 @@ public class DownloadModelImpl
 
 		downloadCacheModel.downloadId = getDownloadId();
 
-		downloadCacheModel.filePath = getFilePath();
+		downloadCacheModel.fileName = getFileName();
 
-		String filePath = downloadCacheModel.filePath;
+		String fileName = downloadCacheModel.fileName;
 
-		if ((filePath != null) && (filePath.length() == 0)) {
-			downloadCacheModel.filePath = null;
+		if ((fileName != null) && (fileName.length() == 0)) {
+			downloadCacheModel.fileName = null;
 		}
 
 		Date expiryDate = getExpiryDate();
@@ -826,14 +787,12 @@ public class DownloadModelImpl
 
 		downloadCacheModel.geoLocationId = getGeoLocationId();
 
-		downloadCacheModel.shareId = getShareId();
+		downloadCacheModel.fileShareUrl = getFileShareUrl();
 
-		downloadCacheModel.directDownloadUrl = getDirectDownloadUrl();
+		String fileShareUrl = downloadCacheModel.fileShareUrl;
 
-		String directDownloadUrl = downloadCacheModel.directDownloadUrl;
-
-		if ((directDownloadUrl != null) && (directDownloadUrl.length() == 0)) {
-			downloadCacheModel.directDownloadUrl = null;
+		if ((fileShareUrl != null) && (fileShareUrl.length() == 0)) {
+			downloadCacheModel.fileShareUrl = null;
 		}
 
 		downloadCacheModel.licenseDownloadUrl = getLicenseDownloadUrl();
@@ -915,12 +874,11 @@ public class DownloadModelImpl
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
 	private long _downloadId;
-	private String _filePath;
+	private String _fileName;
 	private Date _expiryDate;
 	private String _organization;
 	private long _geoLocationId;
-	private int _shareId;
-	private String _directDownloadUrl;
+	private String _fileShareUrl;
 	private String _licenseDownloadUrl;
 
 	public <T> T getColumnValue(String columnName) {
@@ -959,12 +917,11 @@ public class DownloadModelImpl
 		_columnOriginalValues.put("createDate", _createDate);
 		_columnOriginalValues.put("modifiedDate", _modifiedDate);
 		_columnOriginalValues.put("downloadId", _downloadId);
-		_columnOriginalValues.put("filePath", _filePath);
+		_columnOriginalValues.put("fileName", _fileName);
 		_columnOriginalValues.put("expiryDate", _expiryDate);
 		_columnOriginalValues.put("organization", _organization);
 		_columnOriginalValues.put("geoLocationId", _geoLocationId);
-		_columnOriginalValues.put("shareId", _shareId);
-		_columnOriginalValues.put("directDownloadUrl", _directDownloadUrl);
+		_columnOriginalValues.put("fileShareUrl", _fileShareUrl);
 		_columnOriginalValues.put("licenseDownloadUrl", _licenseDownloadUrl);
 	}
 
@@ -1003,7 +960,7 @@ public class DownloadModelImpl
 
 		columnBitmasks.put("downloadId", 64L);
 
-		columnBitmasks.put("filePath", 128L);
+		columnBitmasks.put("fileName", 128L);
 
 		columnBitmasks.put("expiryDate", 256L);
 
@@ -1011,11 +968,9 @@ public class DownloadModelImpl
 
 		columnBitmasks.put("geoLocationId", 1024L);
 
-		columnBitmasks.put("shareId", 2048L);
+		columnBitmasks.put("fileShareUrl", 2048L);
 
-		columnBitmasks.put("directDownloadUrl", 4096L);
-
-		columnBitmasks.put("licenseDownloadUrl", 8192L);
+		columnBitmasks.put("licenseDownloadUrl", 4096L);
 
 		_columnBitmasks = Collections.unmodifiableMap(columnBitmasks);
 	}

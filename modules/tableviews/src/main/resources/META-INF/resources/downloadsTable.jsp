@@ -33,8 +33,6 @@
 
     <portlet:actionURL name="filter" var="filterTableURL" />
 
-    <portlet:actionURL name="updateShares" var="updateSharesURL" />
-
     <liferay-ui:error key="action-failed">
         <liferay-ui:message key="action-failed"
                             arguments='<%= SessionErrors.get(liferayPortletRequest, "action-failed") %>'/>
@@ -71,32 +69,11 @@
                                     value="articleid"
                                     checked='<%="articleid".equals(filterSelection)%>'/>
                         </div>
-                        <div class="pr-3">
-                            <aui:input
-                                    name="filterSelection"
-                                    label="Share status"
-                                    type="radio"
-                                    value="status"
-                                    checked='<%="status".equals(filterSelection)%>'/>
-                        </div>
                     </div>
                 </aui:col>
                 <aui:col width="20">
                     <aui:button type="submit" value="table.filter.button" />
                     <aui:button type="submit" onClick="<%= viewURL %>" value="table.filter.clear"/>
-                </aui:col>
-            </aui:row>
-        </aui:fieldset>
-    </aui:form>
-    <aui:form action="<%=updateSharesURL%>" name="<portlet:namespace />updateForm" >
-        <aui:fieldset>
-            <aui:row>
-                <aui:col width="20">
-                    <div class="control-label" title="<liferay-ui:message key="table.update.help"/>"><liferay-ui:message key="table.update.label"/></div>
-                </aui:col>
-                <aui:col width="70"/>
-                <aui:col width="20">
-                    <aui:button type="submit" value="table.update.button" />
                 </aui:col>
             </aui:row>
         </aui:fieldset>
@@ -122,9 +99,8 @@
                 <liferay-ui:search-container-column-text property="organization" name="Organization"/>
                 <liferay-ui:search-container-column-text property="city" name="City"/>
                 <liferay-ui:search-container-column-text property="countryCode" name="Country"/>
-                <liferay-ui:search-container-column-text property="shareIdStatus" name="Share status"/>
-                <liferay-ui:search-container-column-text property="filePath" name="File path"/>
-                <liferay-ui:search-container-column-text property="directDownloadUrl" name="Direct download"/>
+                <liferay-ui:search-container-column-text property="fileName" name="File name"/>
+                <liferay-ui:search-container-column-text property="fileShareUrl" name="Share link"/>
                 <liferay-ui:search-container-column-text property="licenseDownloadUrl" name="License download"/>
 
             </liferay-ui:search-container-row>
@@ -134,7 +110,6 @@
         <aui:button-row>
             <aui:button name="exportResultsButton" type="submit" value="Export"/>
             <aui:button name="deleteSelectedButton" type="submit" value="Delete selected"/>
-            <aui:button name="paidSelectedButton" type="submit" value="Set to paid"/>
         </aui:button-row>
     </aui:form>
     <hr>
@@ -157,14 +132,6 @@
     event.preventDefault();
     TableFormsUtil.deleteSelected("<portlet:resourceURL/>", "<liferay-portlet:renderURL/>", "<portlet:namespace/>", "delete-selected-downloads.csv")
     };
-
-    let paidSelectedButton = document.getElementById('<portlet:namespace/>paidSelectedButton');
-    paidSelectedButton.onclick = function(event){
-    event.preventDefault();
-    TableFormsUtil.paidSelected("<portlet:resourceURL/>", "<liferay-portlet:renderURL/>", "<portlet:namespace/>", "paid-selected-downloads.csv")
-    };
-
-
 
 </aui:script>
 
