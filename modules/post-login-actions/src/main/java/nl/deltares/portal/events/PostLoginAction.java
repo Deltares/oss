@@ -84,7 +84,6 @@ public class PostLoginAction implements LifecycleAction {
             } catch (Exception e) {
                 LOG.warn(String.format("Error executing PostLoginUpdateUserInfo request %s", id), e);
             }
-
         }
 
         if (geoIpUtils != null) {
