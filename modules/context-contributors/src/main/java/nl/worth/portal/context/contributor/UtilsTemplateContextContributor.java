@@ -10,12 +10,8 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.template.TemplateContextContributor;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.portal.utils.KeycloakUtils;
-import nl.deltares.portal.utils.URLUtils;
-import nl.deltares.portal.utils.DDLUtils;
-import nl.deltares.portal.utils.LayoutUtils;
+import nl.deltares.portal.utils.*;
 import nl.deltares.portal.utils.impl.LanguageImpl;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -51,6 +47,12 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
     @Reference
     private URLUtils urlUtils;
 
+    @Reference
+    private GeoIpUtils geoIpUtils;
+
+    @Reference
+    private SanctionCheckUtils sanctionCheckUtils;
+
     @Override
     public void prepare(Map<String, Object> contextObjects, HttpServletRequest request) {
         contextObjects.put("journalArticleLocalService", journalArticleLocalService);
@@ -74,8 +76,6 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
         contextObjects.put("is_site_admin", isAdmin);
         contextObjects.put("user_signout_url", themeDisplay.getURLSignOut());
         if (keycloakUtils.isActive()) {
-//            contextObjects.put("user_mailing_url", appendWithReferrer(keycloakUtils.getUserMailingPath(), themeDisplay));
-//            contextObjects.put("user_account_url", appendWithReferrer(keycloakUtils.getAccountPath(), themeDisplay));
             contextObjects.put("user_mailing_url", "/subscriptions");
             contextObjects.put("user_account_url", "/account");
         }
@@ -88,13 +88,15 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
                 //
             }
         }
-
-        final Object isSanctioned = request.getSession().getAttribute("LIFERAY_SHARED_isSanctioned");
-        if (isSanctioned != null) {
-            contextObjects.put("is_sanctioned", isSanctioned);
-            contextObjects.put("sanctionCountry", request.getSession().getAttribute("LIFERAY_SHARED_sanctionCountry"));
+        if (geoIpUtils != null) {
+            final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(request.getRemoteAddr());
+            final String countryIso2Code = geoIpUtils.getCountryIso2Code(clientIpInfo);
+            contextObjects.put("is_sanctioned", sanctionCheckUtils.isSanctionedByCountyCode(countryIso2Code));
+            contextObjects.put("sanctionCountry", geoIpUtils.getCountryName(clientIpInfo));
+        } else {
+            contextObjects.put("is_sanctioned", false);
+            contextObjects.put("sanctionCountry", "");
         }
-
         //set languages
         setLanguages(contextObjects, themeDisplay);
 
@@ -121,33 +123,6 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
         contextObjects.put("curr_language", new LanguageImpl(currLanguage, currLanguage.toUpperCase(), themeDisplay.getURLPortal() + "/" + currLanguage + noLanguagePath, themeDisplay));
 
 
-    }
-
-    private String appendWithReferrer(String accountPath, ThemeDisplay themeDisplay) {
-
-        int startPath = accountPath.indexOf('?');
-        if (startPath > 0) {
-            if (startPath == accountPath.length() - 1) {
-                accountPath += getReferrerPath(themeDisplay);
-                return accountPath;
-            }
-        }
-        accountPath += '?';
-        accountPath += getReferrerPath(themeDisplay);
-        return accountPath;
-    }
-
-    private String getReferrerPath(ThemeDisplay themeDisplay) {
-        String path = "referrer_uri=" + themeDisplay.getCDNBaseURL() + themeDisplay.getURLCurrent();
-        String descriptiveName;
-        try {
-            descriptiveName = themeDisplay.getScopeGroup().getDescriptiveName();
-        } catch (PortalException e) {
-            descriptiveName = "OSS Community Portal";
-        }
-        path += "&referrer=" + descriptiveName;
-
-        return HttpUtil.encodeParameters(path);
     }
 
 }

@@ -84,20 +84,8 @@ public class PostLoginAction implements LifecycleAction {
             } catch (Exception e) {
                 LOG.warn(String.format("Error executing PostLoginUpdateUserInfo request %s", id), e);
             }
-
         }
 
-        if (geoIpUtils != null) {
-            final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(request.getRemoteAddr());
-            final String countryName = geoIpUtils.getCountryName(clientIpInfo);
-            if (sanctionCheckUtils.isSanctionedByCountyCode(geoIpUtils.getCountryIso2Code(clientIpInfo))) {
-                request.getSession().setAttribute("LIFERAY_SHARED_isSanctioned", true);
-                request.getSession().setAttribute("LIFERAY_SHARED_sanctionCountry", countryName);
-                LOG.info(String.format("User '%s' logged in from sanctioned country '%s'", user.getFullName(), countryName));
-            } else {
-                LOG.info(String.format("User '%s' logged in from not-sanctioned country '%s'", user.getFullName(), countryName));
-            }
-        }
     }
 
     private String getSiteId(String redirectUrl) {
