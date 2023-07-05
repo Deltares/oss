@@ -215,6 +215,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
 
     @Override
     public boolean isUserInCourseRegistrationsList(List<String> courseRegistrations, User user) {
+        if (user == null) return false;
         return courseRegistrations.contains(user.getEmailAddress().toLowerCase());
     }
 
