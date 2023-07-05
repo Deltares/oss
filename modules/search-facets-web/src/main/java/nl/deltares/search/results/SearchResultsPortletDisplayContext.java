@@ -48,26 +48,36 @@ public class SearchResultsPortletDisplayContext implements Serializable {
         _renderNothing = renderNothing;
     }
 
-    public void setResultsDocuments(List<Document> documents, String type){
+    public void setResultsDocuments(List<Document> documents, String type, boolean reverseSortOrder){
 
         if ("dsd".equals(type)){
-            loadRegistrations(documents);
+            loadRegistrations(documents, reverseSortOrder);
         } else if ("download".equals(type)){
-            loadDownloads(documents);
+            loadDownloads(documents, reverseSortOrder);
         }
 
     }
 
-    private void loadDownloads(List<Document> documents) {
+    private void loadDownloads(List<Document> documents, boolean reverseSortOrder) {
         dsdArticles = loadDsdArticles(documents);
-        dsdArticles.sort(new DsdArticleComparator());
+        final DsdArticleComparator c = new DsdArticleComparator();
+        if (reverseSortOrder) {
+            dsdArticles.sort(c.reversed());
+        } else {
+            dsdArticles.sort(c);
+        }
         totalHits = dsdArticles.size();
 
     }
-    private void loadRegistrations(List<Document> documents) {
+    private void loadRegistrations(List<Document> documents, boolean reverseSortOrder) {
         registrations = new ArrayList<>(documents.size() + 20);
         splitMultiDayRegistrations(loadDsdArticles(documents), registrations);
-        registrations.sort(new RegistrationDisplayContextComparator());
+        final RegistrationDisplayContextComparator c = new RegistrationDisplayContextComparator();
+        if (reverseSortOrder){
+            registrations.sort(c.reversed());
+        } else {
+            registrations.sort(c);
+        }
         totalHits = registrations.size();
     }
 

@@ -14,4 +14,7 @@ public interface SearchResultsPortletConfiguration {
 
     @Meta.AD(required = false, deflt = "dsd", description = "Display option type")
     String displayType();
+
+    @Meta.AD(required = false, deflt = "false", description = "Reverse sort order")
+    String reverseOrder();
 }

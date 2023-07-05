@@ -45,6 +45,9 @@ public class SearchResultsPortletConfigurationAction extends DefaultConfiguratio
         setPreference(actionRequest, "displayTemplate", displayTemplate);
         String displayType = ParamUtil.getString(actionRequest, "displayType");
         setPreference(actionRequest, "displayType", displayType);
+        Boolean reverseOrder = ParamUtil.getBoolean(actionRequest, "reverseOrder");
+        setPreference(actionRequest, "reverseOrder", String.valueOf(reverseOrder));
+
         super.processAction(portletConfig, actionRequest, actionResponse);
     }
 

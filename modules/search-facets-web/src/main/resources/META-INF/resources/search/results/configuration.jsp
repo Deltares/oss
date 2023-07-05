@@ -20,9 +20,11 @@
 
     String displayTemplate = "";
     String displayType = "";
+    boolean reverseOrder = false;
     if (Validator.isNotNull(configuration)) {
         displayTemplate = portletPreferences.getValue("displayTemplate", configuration.displayTemplate());
         displayType = portletPreferences.getValue("displayType", configuration.displayType());
+        reverseOrder = Boolean.parseBoolean(portletPreferences.getValue("reverseOrder", configuration.reverseOrder()));
     }
 %>
 <liferay-portlet:actionURL
@@ -49,6 +51,13 @@
     />
 
     <aui:fieldset>
+
+        <aui:input
+                name="reverseOrder"
+                label="Reverse order of results"
+                type="checkbox"
+                value="<%= reverseOrder %>">
+        </aui:input>
 
         <aui:input
                 name="displayTemplate"
