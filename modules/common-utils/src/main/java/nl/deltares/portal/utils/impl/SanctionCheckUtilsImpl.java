@@ -57,6 +57,7 @@ public class SanctionCheckUtilsImpl implements SanctionCheckUtils {
     public boolean isSanctionedByIp(String remoteAddress) {
         if (!geoIpUtils.isActive()) return false;
         final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(remoteAddress);
+        if (clientIpInfo.isEmpty()) return false;
         return isSanctionedByCountyCode(geoIpUtils.getCountryIso2Code(clientIpInfo));
     }
 }
