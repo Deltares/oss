@@ -88,15 +88,17 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
                 //
             }
         }
+        boolean isSanctioned = false;
+        String sanctionCountry = null;
         if (geoIpUtils != null) {
             final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(request.getRemoteAddr());
             final String countryIso2Code = geoIpUtils.getCountryIso2Code(clientIpInfo);
-            contextObjects.put("is_sanctioned", sanctionCheckUtils.isSanctionedByCountyCode(countryIso2Code));
-            contextObjects.put("sanctionCountry", geoIpUtils.getCountryName(clientIpInfo));
-        } else {
-            contextObjects.put("is_sanctioned", false);
-            contextObjects.put("sanctionCountry", "");
+            isSanctioned = sanctionCheckUtils.isSanctionedByCountyCode(countryIso2Code);
+            sanctionCountry = geoIpUtils.getCountryName(clientIpInfo);
         }
+        contextObjects.put("is_sanctioned", isSanctioned);
+        contextObjects.put("sanctionCountry", sanctionCountry == null ? "" : sanctionCountry);
+
         //set languages
         setLanguages(contextObjects, themeDisplay);
 

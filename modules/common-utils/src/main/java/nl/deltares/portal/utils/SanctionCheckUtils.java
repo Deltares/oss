@@ -1,6 +1,5 @@
 package nl.deltares.portal.utils;
 
-import javax.servlet.http.HttpServletRequest;
 
 public interface SanctionCheckUtils {
 
