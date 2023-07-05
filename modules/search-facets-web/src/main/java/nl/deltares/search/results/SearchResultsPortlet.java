@@ -77,18 +77,20 @@ public class SearchResultsPortlet extends MVCPortlet {
         final String type = configuration.displayType();
         renderRequest.setAttribute("displayType", type);
 
+        final boolean reverseOrder = Boolean.parseBoolean(configuration.reverseOrder());
+
         PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
         passSearchParametersToResponse(portletSharedSearchResponse, renderRequest, renderResponse);
 
         SearchResultsPortletDisplayContext displayContext = _buildDisplayContext(portletSharedSearchResponse, renderRequest,
-                themeDisplay, type);
+                themeDisplay, type, reverseOrder);
         renderRequest.setAttribute(WebKeys.PORTLET_DISPLAY_CONTEXT, displayContext);
 
         super.render(renderRequest, renderResponse);
     }
 
     private SearchResultsPortletDisplayContext _buildDisplayContext(PortletSharedSearchResponse portletSharedSearchResponse,
-                                                                    RenderRequest renderRequest, ThemeDisplay themeDisplay, String type) {
+                                                                    RenderRequest renderRequest, ThemeDisplay themeDisplay, String type, boolean reverseOrder) {
 
         final SearchResultsPortletDisplayContext displayContext = new SearchResultsPortletDisplayContext(dsdParserUtils, themeDisplay);
         final SearchResponse searchResponse = portletSharedSearchResponse.getSearchResponse();
@@ -103,7 +105,7 @@ public class SearchResultsPortlet extends MVCPortlet {
 
         displayContext.setDelta(deltas);
         displayContext.setPaginationStart((cur - 1) * deltas);
-        displayContext.setResultsDocuments(portletSharedSearchResponse.getDocuments(), type);
+        displayContext.setResultsDocuments(portletSharedSearchResponse.getDocuments(), type, reverseOrder);
 
         return displayContext;
     }
