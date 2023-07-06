@@ -9,17 +9,13 @@ DsdAdminFormsUtil = {
         CommonFormsUtil.clearError(namespace);
         let element = document.getElementById( namespace + "eventSelection");
         var eventArticleId = element.options[ element.selectedIndex ].value;
-        let checkBox = $('input[name='+ namespace + "removeMissing" + ']');
 
         if (eventArticleId != null && eventArticleId!=="") {
             resourceUrl = resourceUrl + '&' + namespace + 'articleId=' + eventArticleId;
-            let action;
-            if (checkBox[0].checked){
-                action = "removeMissing"
-            } else {
-                action = "download"
-            }
-            this.callDownloadRegistrations(resourceUrl, namespace, action);
+            let action = "download";
+            let checkBox = $('input[name='+ namespace + "removeMissing" + ']');
+            let removeMissing = checkBox[0].checked
+            this.callDownloadRegistrations(resourceUrl, namespace, action, removeMissing);
         }
     },
     downloadRepro: function(resourceUrl, namespace){
@@ -30,7 +26,9 @@ DsdAdminFormsUtil = {
         if (eventArticleId != null && eventArticleId!=="") {
             resourceUrl = resourceUrl + '&' + namespace + 'articleId=' + eventArticleId;
             let action = "downloadRepro";
-            this.callDownloadRegistrations(resourceUrl, namespace, action);
+            let checkBox = $('input[name='+ namespace + "removeMissing" + ']');
+            let removeMissing = checkBox[0].checked
+            this.callDownloadRegistrations(resourceUrl, namespace, action, removeMissing);
         }
     },
 
@@ -42,7 +40,9 @@ DsdAdminFormsUtil = {
         if (eventArticleId != null && eventArticleId!=="") {
             resourceUrl = resourceUrl + '&' + namespace + 'articleId=' + eventArticleId;
             let action = "downloadLight";
-            this.callDownloadRegistrations(resourceUrl, namespace, action);
+            let checkBox = $('input[name='+ namespace + "removeMissing" + ']');
+            let removeMissing = checkBox[0].checked
+            this.callDownloadRegistrations(resourceUrl, namespace, action, removeMissing);
         }
     },
     deleteRegistrations: function(resourceUrl, namespace){
@@ -69,13 +69,13 @@ DsdAdminFormsUtil = {
         }
     },
 
-    callDownloadRegistrations : function (resourceUrl, namespace, action){
+    callDownloadRegistrations : function (resourceUrl, namespace, action, removeMissing){
 
         CommonFormsUtil.setActionButtons(this.getActionButtons());
         CommonFormsUtil.initProgressBar(namespace);
 
         let A = new AUI();
-        A.io.request(resourceUrl + '&' + namespace + 'action=' + action, {
+        A.io.request(resourceUrl + '&' + namespace + 'action=' + action + '&' + namespace + 'removeMissing=' + removeMissing, {
             on : {
                 success : function(response, status, xhr) {
                     if (xhr.status > 299){
