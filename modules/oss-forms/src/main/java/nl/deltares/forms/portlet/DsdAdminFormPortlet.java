@@ -96,13 +96,12 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 			return;
 		}
 		String action = ParamUtil.getString(resourceRequest, "action");
+		boolean removeMissing = ParamUtil.getBoolean(resourceRequest, "removeMissing");
 		String id = ParamUtil.getString(resourceRequest, "id", null);
 
 		boolean delete = action != null && action.startsWith("delete");
-		boolean removeMissing = "removeMissing".equals(action);
-
 		final int downloadAction = getDownloadActionIndex(action);
-		if (downloadAction > -1 || delete || removeMissing) {
+		if (downloadAction > -1 || delete) {
 			String articleId = ParamUtil.getString(resourceRequest, "articleId", null);
 
 			if (articleId == null) {
@@ -150,6 +149,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		resourceResponse.setContentLength(statusMessage.length());
 		PrintWriter writer = resourceResponse.getWriter();
 		writer.println(statusMessage);
+		writer.flush();
 
 	}
 
