@@ -9,7 +9,9 @@
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 		<field name="downloadId" type="long" />
-		<field name="fileName" type="String" />
+		<field name="fileName" type="String">
+			<hint name="max-length">255</hint>
+		</field>
 		<field name="expiryDate" type="Date" />
 		<field name="organization" type="String" />
 		<field name="geoLocationId" type="long" />

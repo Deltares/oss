@@ -5,7 +5,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.oss.download.upgrade.AbsUpgradeProcess;
 
-public class RemoveShareIdColumn extends AbsUpgradeProcess {
+public class RemoveAndRenameColumns extends AbsUpgradeProcess {
 
     @Override
     protected void doUpgrade() throws Exception {
@@ -19,13 +19,21 @@ public class RemoveShareIdColumn extends AbsUpgradeProcess {
             }
             return;
         }
-        alterTableDropColumn(tableName, "shareId");
-        alterColumnName(tableName, "filePath", "fileName longtext");
-        alterColumnName(tableName, "directDownloadUrl", "fileShareUrl longtext");
+        if (hasColumn(tableName, "shareId")) {
+            alterTableDropColumn(tableName, "shareId");
+        }
+        if (hasColumn(tableName, "filePath")) {
+            alterTableDropColumn(tableName, "filePath");
+        }
+        if (hasColumn(tableName, "directDownloadUrl")) {
+            alterTableDropColumn(tableName, "directDownloadUrl");
+        }
 
+        addColumn(tableName, "fileName", "text");
+        addColumn(tableName, "fileShareLink", "text");
     }
 
 
     private static final Log _log = LogFactoryUtil.getLog(
-            RemoveShareIdColumn.class);
+            RemoveAndRenameColumns.class);
 }
