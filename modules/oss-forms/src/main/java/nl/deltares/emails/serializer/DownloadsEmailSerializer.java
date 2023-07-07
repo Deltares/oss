@@ -314,7 +314,7 @@ public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> 
             writer.append("<tr>");
             writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.licenseDownload", null)).append("</td>");
             writer.append("<td>");
-            writer.append("<a href=\"").append(licenseDownloadLink).append("\">").append("download").append("</a>");
+            writer.append("<a href=\"").append(licenseDownloadLink).append("\">").append("download link").append("</a>");
             writer.append("</td>");
             writer.append("</tr>");
         }
