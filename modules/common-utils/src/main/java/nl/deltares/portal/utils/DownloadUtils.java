@@ -8,6 +8,7 @@ import java.util.Map;
 
 public interface DownloadUtils {
 
+    enum APP_NAME {nextcloud, seeburger}
     /**
      * Check if the download portal has been configured in portal-ext.properties
      *

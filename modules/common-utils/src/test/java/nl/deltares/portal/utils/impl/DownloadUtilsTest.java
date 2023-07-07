@@ -38,7 +38,7 @@ public class DownloadUtilsTest {
     @Test
     public void testSendShareLink() throws Exception {
 
-        final DownloadUtilsImpl downloadUtils = new DownloadUtilsImpl();
+        final NextcloudDownloadUtilsImpl downloadUtils = new NextcloudDownloadUtilsImpl();
         final Map<String, String> info = downloadUtils.createShareLink("/OSS/Nextcloud Manual.pdf", "teset@lifer.com", false);
         final Integer shareId = Integer.parseInt(info.get("id"));
         System.out.printf("created share %d for user %s%n", shareId, "erik.derooij@deltares.nl");

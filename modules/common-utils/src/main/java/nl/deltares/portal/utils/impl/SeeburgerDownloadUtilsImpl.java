@@ -11,13 +11,11 @@ import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
 import nl.deltares.portal.model.impl.Download;
 import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -26,13 +24,15 @@ import java.util.concurrent.TimeUnit;
         immediate = true,
         service = DownloadUtils.class
 )
-public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils {
+public class SeeburgerDownloadUtilsImpl extends HttpClientUtils implements DownloadUtils {
 
     @SuppressWarnings("FieldCanBeLocal")
     private final int passwordLength = 10;
-
-    private static final Log LOG = LogFactoryUtil.getLog(DownloadUtilsImpl.class);
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    @SuppressWarnings("FieldCanBeLocal")
+    private final int maxDownloads = 5;
+    private final long validPeriodMillis = TimeUnit.DAYS.toMillis(5);
+    private static final Log LOG = LogFactoryUtil.getLog(SeeburgerDownloadUtilsImpl.class);
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     static {
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -40,20 +40,26 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
 
     private static final String BASEURL_KEY = "download.baseurl";
     private static final String APP_NAME_KEY = "download.app.name";
+    private static final String APP_USER_KEY = "download.app.user";
     private static final String APP_PW_KEY = "download.app.password";
-    private final String AUTH_TOKEN;
-    private final String API_PATH;
-    private final String SHARE_PATH;
+    private String AUTH_TOKEN;
+    private String API_PATH;
     private final boolean active;
 
-    public DownloadUtilsImpl() {
+    public SeeburgerDownloadUtilsImpl() {
         String APP_NAME = PropsUtil.get(APP_NAME_KEY);
+        String APP_USER = PropsUtil.get(APP_USER_KEY);
         String APP_PW = PropsUtil.get(APP_PW_KEY);
+
+        if (!DownloadUtils.APP_NAME.seeburger.name().equals(APP_NAME)){
+            active = false;
+            LOG.info("SeeburgerDownloadUtils is not configured.");
+            return;
+        }
         API_PATH = getDownloadBasePath();
-        SHARE_PATH = getSharePath();
-        active = APP_NAME != null && APP_PW != null && API_PATH != null;
+        active = APP_USER != null && APP_PW != null && API_PATH != null;
         if (active) {
-            AUTH_TOKEN = getBasicAuthorization(APP_NAME, APP_PW);
+            AUTH_TOKEN = getBasicAuthorization(APP_USER, APP_PW);
             LOG.info(String.format("DownloadUtils has been initialized for APP_NAME '%s' and API_PATH '%s'.", APP_NAME, API_PATH));
         } else {
             AUTH_TOKEN = null;
@@ -69,55 +75,76 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
 
     @Override
     public Map<String, String> createShareLink(String filePath, String email, boolean passwordProtect) throws Exception {
-        String directDownloadPath = API_PATH + "files_sharing/api/v1/shares";
+        String directDownloadPath = API_PATH + "portal-seefx/ws/FileTransferService3";
         HttpURLConnection connection = getConnection(directDownloadPath, "POST", getDefaultHeaders());
         connection.setDoOutput(true);
 
         final HashMap<String, String> params = new HashMap<>();
-        params.put("path", filePath);
-        params.put("shareType", String.valueOf(3)); //3 - public, 4 - share by email
-        String password = null;
+        params.put("FullFilePath", filePath);
+        params.put("Recipient", email);
         if (passwordProtect) {
-            password = PasswordUtils.getPassword(passwordLength);
-            params.put("password", password);
+            String password = PasswordUtils.getPassword(passwordLength);
+            params.put("TransferPassword", password);
         }
-//        params.put("shareWith", email); not required for type 3
-        params.put("permissions", String.valueOf(1));
+        params.put("MaxNumberOfDownloads", String.valueOf(maxDownloads));
+        params.put("ValidUntil", dateFormat.format(new Date(System.currentTimeMillis() + validPeriodMillis)));
 
         try (Writer w = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8)) {
-            //noinspection ConstantConditions
-            w.write(JsonContentUtils.formatMapToJson(params));
+            w.write(getDownloadPortal(params));
         }
+
         checkResponse(connection);
 
         final String xmlResponse = readAll(connection);
-        final Document document = XmlContentUtils.parseContent(DownloadUtilsImpl.class.getName(), xmlResponse);
 
-        final NodeList idNode = document.getElementsByTagName("id");
+        final String urlString = extractXmlTagValue(xmlResponse, "UrlString");
         final HashMap<String, String> shareInfo = new HashMap<>();
-        if (idNode.getLength() == 0) {
+        if (urlString.isEmpty()) {
             LOG.error("Failed to create a share for file " + filePath);
             return Collections.emptyMap();
         } else {
-            final int shareId = Integer.parseInt(idNode.item(0).getTextContent());
-            shareInfo.put("id", String.valueOf(shareId));
+            shareInfo.put("url", urlString);
             LOG.info(String.format("Created share for user '%s' on file '%s'.", email, filePath));
-        }
-        final NodeList expNode = document.getElementsByTagName("expiration");
-        if (expNode.getLength() > 0) {
-            final String expDate = expNode.item(0).getTextContent();
-            shareInfo.put("expiration", String.valueOf(dateFormat.parse(expDate).getTime()));
-        }
-        final NodeList tokenNode = document.getElementsByTagName(("token"));
-        if (tokenNode.getLength() > 0) {
-            final String token = tokenNode.item(0).getTextContent();
-            shareInfo.put("url", tokenToShareLinkUrl(token));
-            if (passwordProtect) {
-                shareInfo.put("password", password);
+            shareInfo.put("expiration", params.get("ValidUntil"));
+            if (passwordProtect){
+                shareInfo.put("password", params.get("TransferPassword"));
             }
         }
 
         return shareInfo;
+    }
+
+    private String extractXmlTagValue(String xmlResponse, String tagName) {
+
+        String startTag = String.format("<%s>", tagName);
+        String endTag = String.format("</%s>", tagName);
+        final int startIndex = xmlResponse.indexOf(startTag) + startTag.length();
+        final int endIndex = xmlResponse.indexOf(endTag);
+        return xmlResponse.substring(startIndex, endIndex);
+
+    }
+
+    private String getDownloadPortal(HashMap<String, String> params) {
+
+        final StringBuilder sb = new StringBuilder();
+        sb.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:shar=\"http://uri.seeburger.com/seefx/fileTransfer/3\">\n");
+        sb.append("   <soapenv:Header/>\n");
+        sb.append("   <soapenv:Body>\n");
+        sb.append("      <shar:CreateDownloadPermit3>\n");
+        sb.append(String.format("    <shar:FullFilePath>%s</shar:FullFilePath>\n", params.get("FullFilePath")));
+        sb.append("         <shar:PermitRecipients>\n");
+        sb.append(String.format("    <shar:Recipient>%s</shar:Recipient>\n", params.get("Recipient")));
+        sb.append("         </shar:PermitRecipients>\n");
+        sb.append(String.format("    <shar:MaxNumberOfDownloads>%s</shar:MaxNumberOfDownloads>\n", params.get("MaxNumberOfDownloads")));
+        if (params.containsKey("TransferPassword\n")) {
+            sb.append("     <shar:PasswordProtected>true</shar:PasswordProtected>\n");
+            sb.append(String.format("<shar:TransferPassword>%s</shar:TransferPassword>\n", params.get("TransferPassword")));
+        }
+        sb.append(String.format("<shar:ValidUntil>%s</shar:ValidUntil>\n", params.get("ValidUntil")));
+        sb.append("      </shar:CreateDownloadPermit3>\n");
+        sb.append("   </soapenv:Body>\n");
+        sb.append("</soapenv:Envelope>");
+        return sb.toString();
     }
 
     @Override
@@ -126,7 +153,6 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         final HashMap<String, String> shareInfo = new HashMap<>();
         shareInfo.put("url", fileShare);
         shareInfo.put("expiration", String.valueOf(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(8)));
-        shareInfo.put("id", "-1");
         registerDownload(user, groupId, downloadId, fileName, shareInfo, userAttributes);
 
     }
@@ -158,7 +184,11 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
             //Share info can be missing when user has not yet paid.
             final String expiration = shareInfo.get("expiration");
             if (expiration != null) {
-                userDownload.setExpiryDate(new Date(Long.parseLong(expiration)));
+                try {
+                    userDownload.setExpiryDate(dateFormat.parse(expiration));
+                } catch (ParseException e) {
+                    LOG.warn(String.format("Error parsing expiration date %s : %s", expiration, e.getMessage()));
+                }
             }
 
             String url = shareInfo.get("url");
@@ -187,7 +217,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         DownloadCount downloadCount = DownloadCountLocalServiceUtil.getDownloadCountByGroupId(groupId, downloadId);
         if (downloadCount == null) {
             downloadCount = DownloadCountLocalServiceUtil.createDownloadCount(CounterLocalServiceUtil.increment(
-                    nl.deltares.oss.download.model.DownloadCount.class.getName()));
+                    DownloadCount.class.getName()));
             downloadCount.setDownloadId(downloadId);
             downloadCount.setGroupId(groupId);
             downloadCount.setCompanyId(companyId);
@@ -207,9 +237,7 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
 
     private HashMap<String, String> getDefaultHeaders() {
         HashMap<String, String> headers = new HashMap<>();
-        headers.put("OCS-APIRequest", "true");
-        headers.put("Content-Type", "application/json");
-//        headers.put("Content-Type", " application/x-www-form-urlencoded");
+        headers.put("Content-Type", "application/xml");
         headers.put("Authorization", "Basic " + AUTH_TOKEN);
         return headers;
     }
@@ -227,23 +255,4 @@ public class DownloadUtilsImpl extends HttpClientUtils implements DownloadUtils 
         return baseApiPath;
     }
 
-    private String getSharePath() {
-        if (!PropsUtil.contains(BASEURL_KEY)) {
-            return null;
-        }
-        String baseApiPath = PropsUtil.get(BASEURL_KEY);
-
-        final int startTrim = baseApiPath.indexOf("ocs");
-        if (startTrim > 0) {
-            final String rootUrl = baseApiPath.substring(0, startTrim);
-            return rootUrl.concat("s/");
-
-        }
-        return null;
-    }
-
-    private String tokenToShareLinkUrl(String token) {
-        if (SHARE_PATH == null) return token;
-        return SHARE_PATH.concat(token);
-    }
 }
