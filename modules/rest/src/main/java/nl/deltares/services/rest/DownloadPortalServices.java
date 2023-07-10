@@ -39,8 +39,17 @@ import java.util.Set;
 
 public class DownloadPortalServices extends Application {
 
-    @Reference
-    DownloadUtils downloadUtils;
+    private DownloadUtils downloadUtils;
+
+    @Reference(
+            unbind = "-",
+            cardinality = ReferenceCardinality.AT_LEAST_ONE
+    )
+    protected void setDownloadUtils(DownloadUtils downloadUtils){
+        if (downloadUtils.isActive()) {
+            this.downloadUtils = downloadUtils;
+        }
+    }
 
     @Reference
     SanctionCheckUtils sanctionCheckUtils;
