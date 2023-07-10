@@ -1,13 +1,8 @@
-FROM liferay/dxp:7.4.13-u70
+FROM liferay/dxp:7.4.13-u77
 
 MAINTAINER Erik de Rooij <erik.derooij@deltares.nl>
 
 USER root
-
-#Install modules for lmcrypt
-RUN apt-get update
-RUN apt-get -y install gcc-multilib
-RUN apt-get -y install lsb-core
 
 COPY resources/wait-for-it.sh /etc/liferay/wait-for-it.sh
 RUN chown liferay:liferay /etc/liferay/wait-for-it.sh

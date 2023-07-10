@@ -40,10 +40,10 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
 
         Optional<DDMStructure> eventStructure = ddmStructureUtil.getDDMStructureByName(groupId, "EVENT", locale);
         if (eventStructure.isPresent()) {
-            String structureKey = eventStructure.get().getStructureKey();
+            long structureId = eventStructure.get().getStructureId();
             DuplicateCheck check = new DuplicateCheck();
             try {
-                List<JournalArticle> structureArticles = JournalArticleLocalServiceUtil.getStructureArticles(groupId, structureKey);
+                List<JournalArticle> structureArticles = JournalArticleLocalServiceUtil.getStructureArticles(groupId, structureId);
                 return check.filterLatest(structureArticles);
             } catch (Exception e) {
                 throw new PortalException(e);

@@ -121,7 +121,7 @@ public class OssAdminUtils implements AdminUtils {
         final User user = UserLocalServiceUtil.addUser(loggedInUser.getUserId(), companyId, true,
                 null, null, false, userName, registrationEmail,
                 locale, firstName, null, lastName, 0, 0, true,
-                1, 1, 1970, null, loggedInUser.getGroupIds(),
+                1, 1, 1970, null, 1,loggedInUser.getGroupIds(),
                 loggedInUser.getOrganizationIds(), new long[]{defaultGroupRole.getRoleId()}, loggedInUser.getUserGroupIds(), false, serviceContext);
         user.setPasswordReset(false);
         UserLocalServiceUtil.updateUser(user);
