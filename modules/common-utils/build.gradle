@@ -1,6 +1,6 @@
 dependencies {
 
-    compileOnly group: "com.liferay.portal", name: "release.dxp.api"
+    compileOnly group: "com.liferay.portal", name: "release.dxp.api", version:'7.4.13.u77'
 
     compileOnly group: 'biz.aQute.bnd', name: 'biz.aQute.bnd.gradle', version: '3.4.0'
     compileOnly group: 'javax.mail', name: 'mail', version: '1.4.7'

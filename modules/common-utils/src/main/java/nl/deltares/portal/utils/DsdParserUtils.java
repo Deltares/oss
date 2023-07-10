@@ -1,5 +1,6 @@
 package nl.deltares.portal.utils;
 
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -41,8 +42,10 @@ public interface DsdParserUtils {
     AbsDsdArticle toDsdArticle(JournalArticle article) throws PortalException;
 
     static String parseStructureKey(JournalArticle dsdArticle) {
-        String structureKey = dsdArticle.getDDMStructureKey();
+        final DDMStructure ddmStructure = dsdArticle.getDDMStructure();
+        if (ddmStructure == null) return  null;
 
+        String structureKey = ddmStructure.getStructureKey();
         if (structureKey.matches(STRUCTURE_KEY_REGEX)) {
             structureKey = structureKey.substring(0, 1).toUpperCase()
                     + structureKey.substring(1, structureKey.lastIndexOf("-")).toLowerCase();
