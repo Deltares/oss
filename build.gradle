@@ -33,7 +33,8 @@ project.ext {
     emailUser = getLocalProperty(localProperties, 'EMAIL_USER', '')
     emailPass = getLocalProperty(localProperties, 'EMAIL_PASSWORD','')
     downloadUrl = getEnvProperty('DOWNLOAD_URL', '')
-    downloadUser = getEnvProperty('DOWNLOAD_APPNAME', '')
+    downloadName = getEnvProperty('DOWNLOAD_APPNAME', '')
+    downloadUser = getEnvProperty('DOWNLOAD_APPUSER', '')
     downloadPass = getEnvProperty('DOWNLOAD_APPPW', '')
     ipgeolocationApiUrl = getEnvProperty('IPGEOLOCATION_APIURL', '')
     ipgeolocationApiKey = getEnvProperty('IPGEOLOCATION_APIKEY', '')
@@ -85,7 +86,8 @@ task startLiferay(
                     'EMAIL_USER'            : emailUser,
                     'EMAIL_PASSWORD'        : emailPass,
                     'DOWNLOAD_URL'          : downloadUrl,
-                    'DOWNLOAD_APPNAME'      : downloadUser,
+                    'DOWNLOAD_APPNAME'      : downloadName,
+                    'DOWNLOAD_APPUSER'      : downloadUser,
                     'DOWNLOAD_APPPW'        : downloadPass,
                     'IPGEOLOCATION_APIURL'  : ipgeolocationApiUrl,
                     'IPGEOLOCATION_APIKEY'  : ipgeolocationApiKey,
