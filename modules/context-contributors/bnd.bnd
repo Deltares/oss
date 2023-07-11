@@ -1,6 +1,6 @@
 Bundle-Name: context-contributors
 Bundle-SymbolicName: nl.worth.portal.context.contributor
-Bundle-Version: 1.0.2
+Bundle-Version: 1.0.3
 Export-Package: \
   nl.worth.portal.utils
 -noee: true
