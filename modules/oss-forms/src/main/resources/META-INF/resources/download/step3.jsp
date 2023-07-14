@@ -41,6 +41,7 @@
                 return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
                 }
             </aui:validator>
+            <aui:validator name="maxLength">75</aui:validator>
         </aui:input>
         <div class="row">
             <div class="col">
@@ -54,6 +55,7 @@
                         return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
+                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
             <div class="col">
@@ -67,6 +69,7 @@
                         return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
+                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
         </div>
@@ -80,6 +83,7 @@
                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
                 }
             </aui:validator>
+            <aui:validator name="maxLength">255</aui:validator>
         </aui:input>
 
         <div class="row">
@@ -93,6 +97,7 @@
                             return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
                         }
                     </aui:validator>
+                    <aui:validator name="maxLength">10</aui:validator>
                 </aui:input>
             </div>
             <div class="col">
@@ -105,6 +110,7 @@
                             return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
                         }
                     </aui:validator>
+                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
         </div>
@@ -150,11 +156,13 @@
                 name="<%= BillingInfo.ATTRIBUTES.billing_reference.name() %>"
                 label="dsd.registration.step3.billing.reference"
                 value="${billingReference}" billing_value="${billingReference}">
+            <aui:validator name="maxLength">75</aui:validator>
         </aui:input>
         <aui:input
                 name="<%= BillingInfo.ATTRIBUTES.billing_vat.name() %>"
                 label="dsd.registration.step3.billing.vat"
                 value="${billingVat}" billing_value="${billingVat}" helpMessage="dsd.registration.step3.billing.vat.info">
+            <aui:validator name="maxLength">25</aui:validator>
         </aui:input>
     </div>
 </div>

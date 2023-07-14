@@ -40,6 +40,8 @@
                     type="textarea"
                     maxLength="255"
                     resizable="false"
-                    value="${remarks}" />
+                    value="${remarks}" >
+                <aui:validator name="maxLength">255</aui:validator>
+            </aui:input>
     </div>
 </div>
