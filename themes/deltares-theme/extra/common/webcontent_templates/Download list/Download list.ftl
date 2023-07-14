@@ -18,44 +18,19 @@
             <#if showButtons>
                 <span class="d-block" style="float:right">
                 <#if is_sanctioned?? && is_sanctioned >
-                    <#assign buttonText = languageUtil.get(locale, "shopping.cart.sanctioned")/>
-                    <#assign buttonDisable = true />
+                    <a href="#" data-article-id="${download.getArticleId()}"
+                       class="btn-lg btn-primary disabled"
+                       role="button" aria-pressed="true" style="color:#fff">
+                        ${languageUtil.get(locale, "shopping.cart.sanctioned")}
+                    </a>
                 <#else >
-                    <#assign downloadStatus = downloadUtils.getDownloadStatus(download, themeDisplay.getUser()) />
-                    <#switch downloadStatus >
-
-                        <#case "payment_pending" >
-                            <#assign buttonText = languageUtil.get(locale, "shopping.cart.paymentPending")/>
-                            <#assign buttonDisable = true/>
-                            <#break >
-                        <#case "available">
-                            <#assign buttonText = languageUtil.get(locale, "shopping.cart.available")/>
-                            <#assign buttonDisable = true/>
-                            <#break >
-                        <#case "processing">
-                            <#assign buttonText = languageUtil.get(locale, "shopping.cart.processing")/>
-                            <#assign buttonDisable = true/>
-                            <#break >
-                        <#default >
-                            <#assign buttonText = languageUtil.get(locale, "shopping.cart.add")/>
-                            <#assign buttonDisable = false />
-                    </#switch>
+                    <a href="#" data-article-id="${download.getArticleId()}"
+                       class="btn-lg btn-primary add-download-to-cart"
+                       role="button" aria-pressed="true" style="color:#fff">
+                        ${languageUtil.get(locale, "shopping.cart.add")}
+                    </a>
                 </#if>
-
-                    <#if buttonDisable >
-                        <a href="#" data-article-id="${download.getArticleId()}"
-                           class="btn-lg btn-primary disabled"
-                           role="button" aria-pressed="true" style="color:#fff">
-                        ${buttonText}
-                    </a>
-                <#else >
-                        <a href="#" data-article-id="${download.getArticleId()}"
-                           class="btn-lg btn-primary add-download-to-cart"
-                           role="button" aria-pressed="true" style="color:#fff">
-                        ${buttonText}
-                    </a>
-                    </#if>
-            </span>
+                </span>
             </#if>
         </div>
 
