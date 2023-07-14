@@ -35,6 +35,7 @@
                                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
+                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
             <div class="col">
@@ -49,6 +50,7 @@
                                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
+                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
         </div>
@@ -67,13 +69,16 @@
                         }
                     </aui:validator>
                     <aui:validator name="email"/>
+                    <aui:validator name="maxLength">254</aui:validator>
                 </aui:input>
             </div>
             <div class="col">
                 <aui:input
                         name="<%= KeycloakUtils.ATTRIBUTES.phone.name() %>"
                         label="registrationform.phone"
-                        value="${phone}"/>
+                        value="${phone}">
+                    <aui:validator name="maxLength">15</aui:validator>
+                </aui:input>
             </div>
         </div>
 
@@ -90,13 +95,16 @@
                         return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
+                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
             <div class="col">
                 <aui:input
                         name="<%= KeycloakUtils.ATTRIBUTES.org_website.name() %>"
                         label="registrationform.orgwebsite"
-                        value="${org_website}"/>
+                        value="${org_website}">
+                    <aui:validator name="maxLength">75</aui:validator>
+                </aui:input>
             </div>
         </div>
 
@@ -110,6 +118,7 @@
                         }
 
             </aui:validator>
+            <aui:validator name="maxLength">255</aui:validator>
         </aui:input>
 
         <div class="row">
@@ -123,6 +132,7 @@
                                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
+                    <aui:validator name="maxLength">10</aui:validator>
                 </aui:input>
             </div>
             <div class="col">
@@ -135,6 +145,7 @@
                                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
+                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
         </div>
@@ -170,6 +181,7 @@
                         return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
+                    <aui:validator name="maxLength">15</aui:validator>
                 </aui:input>
             </div>
         </div>

@@ -35,7 +35,9 @@
                 label=""
                 type="text"
                 value="9- "
-        />
+        >
+            <aui:validator name="maxLength">25</aui:validator>
+        </aui:input>
     </div>
 </div>
 <div class="row">
@@ -46,7 +48,9 @@
                 type="radio"
                 checked="false"
                 value="<%=LicenseInfo.LOCKTYPES.mac_address.name()%>"
-        />
+        >
+            <aui:validator name="maxLength">25</aui:validator>
+        </aui:input>
     </div>
 </div>
 <%

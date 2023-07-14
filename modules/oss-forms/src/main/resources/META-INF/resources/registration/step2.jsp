@@ -28,14 +28,18 @@
                         name="<%= KeycloakUtils.ATTRIBUTES.academicTitle.name() %>"
                         label="registrationform.academic.titles"
                         value="${academicTitle}"
-                        cssClass="update-badge"/>
+                        cssClass="update-badge">
+                    <aui:validator name="maxLength">75</aui:validator>
+                </aui:input>
             </div>
             <div class="col">
                 <aui:input
                         name="<%= KeycloakUtils.ATTRIBUTES.initials.name() %>"
                         label="registrationform.initials"
                         value="${initials}"
-                        cssClass="update-badge"/>
+                        cssClass="update-badge">
+                    <aui:validator name="maxLength">75</aui:validator>
+                </aui:input>
             </div>
         </div>
 
@@ -52,6 +56,7 @@
                                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
+                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
             <div class="col">
@@ -66,6 +71,7 @@
                                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
+                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
         </div>
@@ -82,6 +88,7 @@
                         }
             </aui:validator>
             <aui:validator name="email"/>
+            <aui:validator name="maxLength">254</aui:validator>
         </aui:input>
 
         <span><liferay-ui:message key="registrationform.organizationInfo"/></span>
@@ -95,6 +102,7 @@
                             return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
             </aui:validator>
+            <aui:validator name="maxLength">75</aui:validator>
         </aui:input>
         <aui:input
                 name="<%= KeycloakUtils.ATTRIBUTES.org_address.name() %>"
@@ -106,6 +114,7 @@
                         }
 
             </aui:validator>
+            <aui:validator name="maxLength">255</aui:validator>
         </aui:input>
 
         <div class="row">
@@ -119,6 +128,7 @@
                                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
+                    <aui:validator name="maxLength">10</aui:validator>
                 </aui:input>
             </div>
             <div class="col">
@@ -131,6 +141,7 @@
                                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
+                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
         </div>
