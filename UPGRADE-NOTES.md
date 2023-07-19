@@ -1,5 +1,147 @@
-Upgrade notes for upgrade Liferay 7.1 to 7.4:
+<h1>Upgrade script for upgrade Liferay 7.1 to 7.4</h1>
 
+<h2>Step 1 - Docker preparation</h2>
+
+Make sure to clean all the containers & volumes from the Docker desktop instance
+
+<h2>Step 2 - Pre upgrade data preparation</h2>
+
+Before we can upgrade the database we need to clean up data and make some preparations.
+
+Follow these steps:
+<ol type="1">
+<li>Obtain a database dump of the production database from Firelay.</li>
+<li>Copy and rename the dump file over file /docker/resources/dump-liferay.sql (do not commit to github)</li>
+<li>In the file /docker/docker-compose.yml, comment out all services except for 'database'. This will assure that Liferay is not loaded.</li>
+<li>Start Docker by running the following command in the 'Terminal' panel from the project root folder!<br>
+<code>./gradlew startLiferay</code></li>
+<li>Connect to the database using a DB viewer such as DBeaver.<br> 
+<code>jdbc:mariadb://localhost:3307/liferay</code><br>
+<code> user: liferay, password: liferay</code>
+</li>
+<li>Execute the SQL script /docker/resources/pre-upgrade-cleanup.sql.</li>
+<li>To make sure you can login after start execute the following SQL statement: <br>
+<code>UPDATE User_ SET password_='your password here', passwordEncrypted=0 WHERE emailAddress='test@liferay.com';</code></li>
+<li>Stop Docker by running the following command in the 'Terminal' panel from the project root folder!<br>
+<code>./gradlew stopLiferay</code></li>
+</ol>
+
+<h2>Step 3 - Run the Liferay Upgrade</h2>
+
+Check that all containers have stopped and that the 'docker-compose.yml' file has been restored. 
+Run the following command in the 'Terminal' panel from the project root folder!<br>
+<code>./gradlew startLiferay</code>
+<p>
+This command will start the 'oss-liferay-74' container which will initiate the database upgrade. Open the container logs
+and make sure no errors occur.
+
+<h2>Step 4 - Update settings in Liferay</h2>
+
+First begin by logging into Liferay:
+
+http://localhost:8081
+
+<code>screen name=liferay, password='value entered in Step 2 - sub step 7</code>
+
+<h3>Enable JQuery</h3>
+By default JQuery is turned off in Liferay 7.4. We need to switch it on.
+
+<ol type="1">
+
+<li>Open Control Panel -> System Settings -> Search: JQuery. Check 'Enable JQuery' and save</li>
+</ol>
+
+<h3>FreeMarker settings</h3>
+We need to update some freemarker settings to allow our utilities classes to work properly.
+
+<ol type="1">
+<li>Open Control Panel -> System Settings -> Template Engines -> FreeMarker Engine</li>
+<li>Add 'nl.deltares.portal.utils.*' to Allowed Classes</li>
+<li>Remove <strong>staticUtil</strong> from list of Restricted Variables</li>
+<li>Remove <strong>objectUtil</strong> from list of Restricted Variables</li>
+<li>Remove <strong>serviceLocator</strong> from list of Restricted Variables</li>
+<li>Save changes</li>
+</ol>
+
+<h3>REST service settings</h3>
+In Liferay 7.4 Guest users are no longer allowed to access the REST services.
+<ol type="1">
+<li>Open Control Panel -> Service Access Policy -> SYSTEM_DEFAULT</li>
+<li>Add Service Class: <code>com.liferay.portal.kernel.service.GroupService</code> and Method Name: <code>getGroup</code>
+<li>Add Service Class: <code>com.liferay.portal.kernel.service.LayoutService</code> and Method Name: <code>getLayoutByUuidAndGroupId</code>
+<li>Save changes</li>
+</ol>
+
+<h2>Step 5 - Update Site configurations and content</h2>
+
+<h3>OSS and all child sites</h3>
+
+Actions: 
+<ol type="1">
+<li>Set theme to <strong>deltares-fews-theme</strong>. Make sure to copy the settings as they get lost when changing themes;<br>
+<ul>
+<li>google-tag-id</li>
+<li>page-footer-webcontent-id</li>
+<li>Shopping Cart</li>
+<li>show-cookies</li>
+</ul>
+</li>
+<li>Clean the Velocity templates from oss.deltares.nl site</li>
+<li>Update template Carrousel-template</li>
+
+</ol>
+
+<h3>Softwaredagen/Software days/Academy site</h3>
+
+Actions:
+<ol type="1">
+<li>Set theme to <strong>deltares-theme</strong>. Make sure to copy the settings as they get lost when changing themes;<br>
+<ul>
+<li>google-tag-id</li>
+<li>page-footer-webcontent-id</li>
+<li>Shopping Cart</li>
+<li>show-cookies</li>
+</ul>
+</li>
+<li>Update Footer.ftl</li>
+<li>Replace search results portlet with the Deltares search results portlet</li>
+</ol>
+
+<h3>Download site</h3>
+
+Actions:
+<ol type="1">
+<li>Set theme to <strong>deltares-theme</strong>. Make sure to copy the settings as they get lost when changing themes;<br>
+<ul>
+<li>google-tag-id</li>
+<li>page-footer-webcontent-id</li>
+<li>Shopping Cart</li>
+<li>show-cookies</li>
+</ul>
+</li>
+<li>Update Footer.ftl</li>
+</ol>
+
+<h2>Step 6 - Upgrade system settings </h2>
+
+<h3>portal-ext.properties file</h3>
+
+<ol type="1">
+<li><code>company.default.web.id=liferay.com</code> This value must coincide with the 'webId' for the Company record of site 'oss.deltares.nl' </li>
+<li><code>template.engine.service.locator.restrict=false</code> Set this so the Servicelocator will return Deltares utilities classes</li>
+</ol>
+
+<h3>GeoIP database</h3>
+Make sure a recent version of the <strong>Geolite2-City.mmdb</strong> is available (> 23 Feb. 2023). <br>
+
+To ensure the IP addresses of users are passed to the Liferay backend, add a Valve to 'server.xml' configuration of Tomacat:
+<p><code>&lt;Valve className=&quot;org.apache.catalina.valves.RemoteIpValve&quot; internalProxies=&quot;10\.128\.0\.1|10\.129\.0\.1|10\.130\.0\.1&quot; remoteIpHeader=&quot;x-forwarded-for&quot; requestAttributesEnabled=&quot;true&quot; protocolHeader=&quot;x-forwarded-proto&quot; protocolHeaderHttpsValue=&quot;https&quot;/&gt;</code></p>
+<h1>End Upgrade script</h1>
+Once the upgrade of the database is completed, the database needs to be exported as
+a dump file and then sent to Firelay.
+
+<h3>Google Maps</h3>
+To show the Activity Map it is necessary to acquire an API Key using a Google developer account. 
 
 <h1>System Settings</h1>
 
@@ -81,6 +223,12 @@ Furthermore it allow tracking of user IPs in a container environment it is neces
 <p><code>&lt;Valve className=&quot;org.apache.catalina.valves.RemoteIpValve&quot; internalProxies=&quot;10\.128\.0\.1|10\.129\.0\.1|10\.130\.0\.1&quot; remoteIpHeader=&quot;x-forwarded-for&quot; requestAttributesEnabled=&quot;true&quot; protocolHeader=&quot;x-forwarded-proto&quot; protocolHeaderHttpsValue=&quot;https&quot;/&gt;</code></p>
 
 Where the value for 'internalProxies' should be updated to match that of the google cloud environment. 
+
+<h2>Setup portal-ext.properties</h2>
+As of u77 it is required that the properties file contains entry:
+<code>company.default.web.id=liferay.com</code>
+This value must coincide with the 'webId' for the Company record of site 'oss.deltares.nl'
+
 
 <h2>Steps to initialize Docker instance</h2>
 - Remove any existing volumes
