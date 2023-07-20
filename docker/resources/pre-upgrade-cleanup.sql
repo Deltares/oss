@@ -106,4 +106,5 @@ DELETE FROM MBMessage  WHERE userId NOT IN (SELECT u.userId FROM User_ u) AND cr
 -- We can only remove users from the User_ table when we are sure no other tables link to these users
 -- We can only remove user group records from Group_ when we are sure the corresponding users no longer exist.
 
-
+-- Fix problem with longtext index field.
+ALTER TABLE liferay.DDMTemplate MODIFY COLUMN templateKey varchar(75) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL NULL;
