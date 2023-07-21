@@ -3,14 +3,18 @@ Upgrade checklist
 This file constains a list of system checks that must be performed on upgrading from Liferay 7.1 to 7.4
 
 
-Deltares checks:
+Deltares checks (before creating db dump for firelay):
 
 - Replace all SearchResults portlets for sites: academy, dsdnl, dsdint and co-udlab
-- Setup SAML authentication for all sites
+- Setup SAML authentication for all sites (enabled=false) (it is possible to point to existing accounts.deltares.nl)
 - Check all Footers
 - Update Slides-opensource web content on oss.deltares.nl
--
+- Set correct themes for all sites. (copy all settings as they are lost when switching between themes)
+- Add download success page(can be added later). Also configure this in download form
+- Add registration success page(can be added later). Also configure this in registration form
 
+Deltares checks (after upload to Liferay 7.4 production)
+- Enable SAML authentication for all sites (enabled=true)
 
 Firelay checks:
 
@@ -21,4 +25,4 @@ Firelay checks:
   internal proxies.
 
   <Valve className="org.apache.catalina.valves.RemoteIpValve" internalProxies="10\.128\.0\.1|10\.129\.0\.1|10\.130\.0\.1" remoteIpHeader="x-forwarded-for" requestAttributesEnabled="true" protocolHeader="x-forwarded-proto" protocolHeaderHttpsValue="https"/>
-- Ensure that is possible to create SAML certificates
+- Ensure that is possible to create SAML certificates (set owner liferay for keystore.jks )

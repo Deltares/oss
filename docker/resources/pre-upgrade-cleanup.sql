@@ -70,7 +70,10 @@ DROP TABLE SVN_SVNLog;
 
 
 -- Clean configurations
-DELETE FROM Configuration_ WHERE configurationId NOT LIKE ('nl.%') AND configurationId NOT LIKE ('com.liferay.saml.%');
+DELETE FROM Configuration_ WHERE configurationId NOT LIKE ('nl.%')
+                             AND configurationId NOT LIKE ('com.liferay.saml.%')
+                             AND configurationId NOT LIKE ('com.liferay.portal.template.freemarker.configuration.FreeMarkerEngineConfiguration')
+                             AND configurationId NOT LIKE ('com.liferay.frontend.js.jquery.web.internal.configuration.JSJQueryConfiguration');
 
 --
 -- Remove orphaned structures, templates, layouts
