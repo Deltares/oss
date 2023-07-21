@@ -70,7 +70,7 @@ DROP TABLE SVN_SVNLog;
 
 
 -- Clean configurations
-DELETE FROM Configuration_ WHERE configurationId NOT LIKE ('nl.%');
+DELETE FROM Configuration_ WHERE configurationId NOT LIKE ('nl.%') AND configurationId NOT LIKE ('com.liferay.saml.%');
 
 --
 -- Remove orphaned structures, templates, layouts
