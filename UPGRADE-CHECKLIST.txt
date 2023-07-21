@@ -1,0 +1,24 @@
+Upgrade checklist
+
+This file constains a list of system checks that must be performed on upgrading from Liferay 7.1 to 7.4
+
+
+Deltares checks:
+
+- Replace all SearchResults portlets for sites: academy, dsdnl, dsdint and co-udlab
+- Setup SAML authentication for all sites
+- Check all Footers
+- Update Slides-opensource web content on oss.deltares.nl
+-
+
+
+Firelay checks:
+
+- Create a Google Maps API Key provide this to Deltares.
+- Check the version of the 'GeoLite2-City.mmdb' this should be from 12-06-2023
+- Check portal-ext.properties file. Request version from Erik
+- Check Valve in Tomcat server.xml file. This is to allow caller IPs to be forwarded to backend. Make sure to replace the
+  internal proxies.
+
+  <Valve className="org.apache.catalina.valves.RemoteIpValve" internalProxies="10\.128\.0\.1|10\.129\.0\.1|10\.130\.0\.1" remoteIpHeader="x-forwarded-for" requestAttributesEnabled="true" protocolHeader="x-forwarded-proto" protocolHeaderHttpsValue="https"/>
+- Ensure that is possible to create SAML certificates

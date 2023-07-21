@@ -13,6 +13,7 @@ RUN chown -R liferay:liferay /opt/liferay/data/document_library
 COPY ["resources/keystore.jks", "/opt/liferay/data/keystore.jks"]
 COPY ["resources/activation-key.xml", "/opt/liferay/osgi/modules/activation-key.xml"]
 
+RUN chown liferay:liferay /opt/liferay/data/keystore.jks
 USER liferay
 
 ENV LIFERAY_UPGRADE_PERIOD_DATABASE_PERIOD_AUTO_PERIOD_RUN true

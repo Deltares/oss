@@ -105,6 +105,7 @@ Actions:
 </li>
 <li>Update Footer.ftl</li>
 <li>Replace search results portlet with the Deltares search results portlet</li>
+<li>Add registration success page. Configure this page in the registration form</li>
 </ol>
 
 <h3>Download site</h3>
@@ -120,6 +121,7 @@ Actions:
 </ul>
 </li>
 <li>Update Footer.ftl</li>
+<li>Add download success page. Configure this page in the download form</li>
 </ol>
 
 <h2>Step 6 - Upgrade system settings </h2>
