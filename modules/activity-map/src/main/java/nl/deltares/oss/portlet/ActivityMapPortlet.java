@@ -37,10 +37,10 @@ import java.util.List;
                 "javax.portlet.version=3.0",
                 "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.instanceable=true",
-                "com.liferay.portlet.header-portlet-javascript=/lib/markerclusterer.js",
+//                "com.liferay.portlet.header-portlet-javascript=/lib/markerclusterer.js",
                 "javax.portlet.display-name=ActivityMap Portlet",
                 "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.view-template=/view.jsp",
+                "javax.portlet.init-param.view-template=/view-leaflet.jsp",
                 "javax.portlet.name=" + ActivityMapPortletKeys.ACTIVITY_MAP,
                 "javax.portlet.resource-bundle=content.Language",
                 "javax.portlet.security-role-ref=power-user,user"
