@@ -259,11 +259,8 @@ public class DownloadLocalServiceWrapper
 	}
 
 	@Override
-	public java.util.List<Long> findDistinctDownloadIdsByGeoLocation(
-		long locationId) {
-
-		return _downloadLocalService.findDistinctDownloadIdsByGeoLocation(
-			locationId);
+	public java.util.List<Long> findDownloadIdsByGeoLocation(long locationId) {
+		return _downloadLocalService.findDownloadIdsByGeoLocation(locationId);
 	}
 
 	@Override

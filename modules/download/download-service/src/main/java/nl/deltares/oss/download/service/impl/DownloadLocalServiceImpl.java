@@ -107,9 +107,9 @@ public class DownloadLocalServiceImpl extends DownloadLocalServiceBaseImpl {
         return DownloadUtil.countByUserDownloads(groupId, userId);
     }
 
-    public List<Long> findDistinctDownloadIdsByGeoLocation(long locationId){
-        final DynamicQuery dynamicQuery = getGeoLocationQuery( locationId);
-        dynamicQuery.setProjection(ProjectionFactoryUtil.distinct(ProjectionFactoryUtil.property("downloadId")));
+    public List<Long> findDownloadIdsByGeoLocation(long locationId){
+        final DynamicQuery dynamicQuery = getGeoLocationQuery(locationId);
+        dynamicQuery.setProjection(ProjectionFactoryUtil.property("downloadId"));
         return DownloadUtil.getPersistence().findWithDynamicQuery(dynamicQuery);
     }
 

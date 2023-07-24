@@ -212,7 +212,7 @@ public interface DownloadLocalService
 	public Download fetchUserDownload(
 		long groupId, long userId, long downloadId);
 
-	public List<Long> findDistinctDownloadIdsByGeoLocation(long locationId);
+	public List<Long> findDownloadIdsByGeoLocation(long locationId);
 
 	public List<Download> findDownloads(long groupId);
 
