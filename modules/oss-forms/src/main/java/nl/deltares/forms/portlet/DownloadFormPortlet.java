@@ -43,6 +43,7 @@ import static nl.deltares.portal.utils.LocalizationUtils.getLocalizedValue;
                 "com.liferay.portlet.header-portlet-javascript=/lib/common.js",
                 "com.liferay.portlet.instanceable=false",
                 "javax.portlet.display-name=Download Form",
+                "javax.portlet.init-param.config-template=/download/configuration.jsp",
                 "javax.portlet.init-param.template-path=/",
                 "javax.portlet.init-param.view-template=/download/download.jsp",
                 "javax.portlet.name=" + OssConstants.DOWNLOADFORM,
