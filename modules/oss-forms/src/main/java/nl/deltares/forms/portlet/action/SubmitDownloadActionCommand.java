@@ -11,11 +11,9 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.ResourceBundleUtil;
-import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.util.*;
 import nl.deltares.emails.DownloadEmail;
+import nl.deltares.forms.portlet.DownloadFormConfiguration;
 import nl.deltares.model.BillingInfo;
 import nl.deltares.model.DownloadRequest;
 import nl.deltares.model.LicenseInfo;
@@ -71,11 +69,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
                 sendRedirect(actionRequest, actionResponse, redirect);
             }
             return;
-        } else if (redirect.isEmpty()) {
-            redirect = downloadRequest.getSiteURL();
         }
-
-        LOG.info(redirect);
 
         boolean success = true;
         if ("download".equals(action)) {
@@ -124,11 +118,39 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         }
         if (success) {
             SessionMessages.add(actionRequest, "sendlink-success", new String[]{action, user.getEmailAddress()});
-            if (!redirect.isEmpty()) {
-                sendRedirect(actionRequest, actionResponse, redirect);
-            }
+            redirect = getRedirectURL(themeDisplay, "success");
+            sendRedirect(actionRequest, actionResponse, redirect);
+        } else {
+            redirect = getRedirectURL(themeDisplay, "fail");
+            sendRedirect(actionRequest, actionResponse, redirect);
         }
 
+    }
+
+    private String getRedirectURL(ThemeDisplay themeDisplay, String key) {
+
+        String friendlyUrl = null;
+        try {
+            String configuredRedirect = null;
+            final DownloadFormConfiguration configuration = _configurationProvider.getGroupConfiguration(DownloadFormConfiguration.class, themeDisplay.getSiteGroupId());
+            switch (key){
+                case "success":
+                    configuredRedirect =  configuration.successURL();
+                    break;
+                case "fail":
+                    configuredRedirect =  configuration.failureURL();
+            }
+
+            if (configuredRedirect == null || configuredRedirect.isEmpty()) {
+                friendlyUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay, themeDisplay.getLocale());
+            } else {
+                friendlyUrl = PortalUtil.getAbsoluteURL(themeDisplay.getRequest(), configuredRedirect);
+            }
+            LOG.info("Redirecting download request to " + friendlyUrl);
+        } catch (PortalException e) {
+            LOG.warn("Failed to get configuredRedirect URL: " + e.getMessage());
+        }
+        return friendlyUrl;
     }
 
     private boolean createShareLinks(ActionRequest actionRequest, DownloadRequest downloadRequest, User user, DownloadEmail loadedEmail) {
