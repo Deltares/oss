@@ -83,15 +83,17 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             User registrationUser;
             //noinspection DuplicatedCode
             if (isRegisterSomeoneElse(actionRequest)){
+                String email = "";
                 try {
                     registrationUser = themeDisplay.getUser();
-                    final String email = ParamUtil.getString(actionRequest, KeycloakUtils.ATTRIBUTES.email.name());
+                    email = ParamUtil.getString(actionRequest, KeycloakUtils.ATTRIBUTES.email.name());
                     final String firstName = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.first_name.name());
                     final String lastName = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.last_name.name());
                     user = adminUtils.getOrCreateRegistrationUser(themeDisplay.getCompanyId(), registrationUser,
                             email, firstName, lastName, themeDisplay.getLocale());
                 } catch (Exception e) {
                     success = false;
+                    LOG.warn(String.format("Error getting user '%s' for registration: %s", email, e.getMessage()));
                     SessionErrors.add(actionRequest, "registration-failed", e.getMessage() );
                 }
             }
@@ -295,7 +297,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             return keycloakUtils.updateUserAttributes(user.getEmailAddress(), attributes) < 300;
         } catch (Exception e) {
             SessionErrors.add(actionRequest, "update-attributes-failed", e.getMessage());
-            LOG.debug("Could not update keycloak attributes for user [" + user.getEmailAddress() + "]", e);
+            LOG.warn("Could not update keycloak attributes for user [" + user.getEmailAddress() + "]", e);
         }
         return false;
     }
