@@ -10,8 +10,8 @@ Deltares checks (before creating db dump for firelay):
 - Check all Footers
 - Update Slides-opensource web content on oss.deltares.nl
 - Set correct themes for all sites. (copy all settings as they are lost when switching between themes)
-- Add download success page(can be added later). Also configure this in download form
-- Add registration success page(can be added later). Also configure this in registration form
+- Import download success page(can be added later). Also configure this in download form
+- Import registration success page(can be added later). Also configure this in registration form
 
 Deltares checks (after upload to Liferay 7.4 production)
 - Enable SAML authentication for all sites (enabled=true)
