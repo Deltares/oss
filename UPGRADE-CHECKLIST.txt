@@ -12,6 +12,7 @@ Deltares checks (before creating db dump for firelay):
 - Set correct themes for all sites. (copy all settings as they are lost when switching between themes)
 - Import download success page(can be added later). Also configure this in download form
 - Import registration success page(can be added later). Also configure this in registration form
+- Update ADT Locations map view.ftl for Travel and Stay page (DSDINT and DSDNL)
 
 Deltares checks (after upload to Liferay 7.4 production)
 - Enable SAML authentication for all sites (enabled=true)
