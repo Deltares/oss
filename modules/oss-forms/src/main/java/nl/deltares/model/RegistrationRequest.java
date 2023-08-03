@@ -106,13 +106,15 @@ public class RegistrationRequest {
     }
 
     public URL getBannerURL() throws MalformedURLException {
-        if (event.getEmailBannerURL() == null) return null;
-        return new URL(baseUrl + event.getEmailBannerURL());
+        final String emailBannerURL = event.getEmailBannerURL();
+        if (emailBannerURL == null || emailBannerURL.isBlank()) return null;
+        return new URL(baseUrl + emailBannerURL);
     }
 
     public URL getFooterURL() throws MalformedURLException {
-        if (event.getEmailFooterURL() == null) return  null;
-        return new URL(baseUrl + event.getEmailFooterURL());
+        final String emailFooterURL = event.getEmailFooterURL();
+        if (emailFooterURL == null || emailFooterURL.isBlank()) return  null;
+        return new URL(baseUrl + emailFooterURL);
     }
 
     public void setBusInfo(boolean enableBusInfo) {
