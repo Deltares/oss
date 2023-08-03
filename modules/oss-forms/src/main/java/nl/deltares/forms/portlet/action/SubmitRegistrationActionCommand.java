@@ -130,7 +130,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         String friendlyUrl = null;
         try {
             String configuredRedirect = null;
-            final DsdRegistrationFormConfiguration configuration = _configurationProvider.getGroupConfiguration(DsdRegistrationFormConfiguration.class, themeDisplay.getSiteGroupId());
+            final DsdRegistrationFormConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(DsdRegistrationFormConfiguration.class, themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
             switch (key){
                 case "success":
                     configuredRedirect =  configuration.successURL();

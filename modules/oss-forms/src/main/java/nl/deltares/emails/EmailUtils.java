@@ -70,7 +70,7 @@ public class EmailUtils {
                     PropsUtil.get("mail.session.mail.smtp.password"));
             transport.sendMessage(message, message.getAllRecipients());
         } catch (Exception e){
-            LOG.warn(String.format("Failed to send email to %s: %s", sendToEmail, e.getMessage()));
+            LOG.warn(String.format("Failed to send email to %s: %s", sendToEmail, e.getMessage()), e);
         }finally {
             transport.close();
         }
