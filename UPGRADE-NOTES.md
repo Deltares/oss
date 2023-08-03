@@ -22,6 +22,8 @@ Follow these steps:
 <li>Execute the SQL script /docker/resources/pre-upgrade-cleanup.sql.</li>
 <li>To make sure you can login after start execute the following SQL statement: <br>
 <code>UPDATE User_ SET password_='your password here', passwordEncrypted=0 WHERE emailAddress='test@liferay.com';</code></li>
+<li>Go to table Configuration_ and select the SAML records: <code>SELECT * FROM Configuration_ WHERE configurationId LIKE 'com.liferay.saml%'</code><br>
+In the resultset update the 'dictionary' values. Set 'saml.enabled="false"'
 <li>Stop Docker by running the following command in the 'Terminal' panel from the project root folder!<br>
 <code>./gradlew stopLiferay</code></li>
 </ol>
@@ -140,11 +142,13 @@ To ensure the IP addresses of users are passed to the Liferay backend, add a Val
 <p><code>&lt;Valve className=&quot;org.apache.catalina.valves.RemoteIpValve&quot; internalProxies=&quot;10\.128\.0\.1|10\.129\.0\.1|10\.130\.0\.1&quot; remoteIpHeader=&quot;x-forwarded-for&quot; requestAttributesEnabled=&quot;true&quot; protocolHeader=&quot;x-forwarded-proto&quot; protocolHeaderHttpsValue=&quot;https&quot;/&gt;</code></p>
 <h1>End Upgrade script</h1>
 Once the upgrade of the database is completed, the database needs to be exported as
-a dump file and then sent to Firelay.
+a dump file and then sent to Firelay.<br>
+Before sending DB Dump, test if it works by restoring the DB Dump into the database and check if errors occur.
 
+<del>
 <h3>Google Maps</h3>
 To show the Activity Map it is necessary to acquire an API Key using a Google developer account. 
-
+</del>
 <h1>System Settings</h1>
 
 <h2>Upgrade issues</h2>

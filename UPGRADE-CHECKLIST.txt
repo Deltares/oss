@@ -1,3 +1,36 @@
+Pre - Upgrade actions
+
+Before we can create a DB dump of the PRODUCTION environment we need to freeze the database.
+We can do this by limiting access permissions to the following functionalities:
+- Forums
+- Registrations
+- Downloads
+- Content
+
+Here a break down of actions per site:
+
+OSS.DELTARES.NL
+- Web content updates have been restricted by showing a notification. This should stop moderators from updating. If not
+  it is their problem data is lost.
+
+-  Forum Delft3D 4: remove permissions for users to add to form.
+-  Forum Delft3D FM: remove permissions for users to add to form.
+-  Forum Embankment
+-  Forum iMOD
+-  Forum Riverlab-models
+
+SOFTWAREDAYS.DELTARES.NL
+ - Programme list: turn off add to cart in template Program list - 1.0.1 and Session - 1.0.1
+
+SOFTWAREDAGEN.DELTARES.NL (not necessary)
+ - Programme list: turn off add to cart in template Program list - 1.0.1 and Session - 1.0.1
+
+CO-UDLABS.DELTARES.NL
+ - Programme list: turn off add to cart in template Program list - 1.0.1 and Session - 1.0.1
+
+DOWNLOAD.DElTARES.NL
+ - ADT: turn off download button for 'Download list view' and 'Download list view (no login)'
+
 Upgrade checklist
 
 This file constains a list of system checks that must be performed on upgrading from Liferay 7.1 to 7.4
@@ -19,7 +52,7 @@ Deltares checks (after upload to Liferay 7.4 production)
 
 Firelay checks:
 
-- Create a Google Maps API Key provide this to Deltares.
+--> No longer required - Create a Google Maps API Key provide this to Deltares.
 - Check the version of the 'GeoLite2-City.mmdb' this should be from 12-06-2023
 - Check portal-ext.properties file. Request version from Erik
 - Check Valve in Tomcat server.xml file. This is to allow caller IPs to be forwarded to backend. Make sure to replace the
