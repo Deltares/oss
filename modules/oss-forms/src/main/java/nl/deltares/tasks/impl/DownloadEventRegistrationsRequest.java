@@ -533,7 +533,9 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         } catch (JSONException e) {
             logger.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
         }
-        writeWebinarInfo(line, user, dsdRegistration, courseRegistrationsCache, userPreferences);
+        if (user != null) {
+            writeWebinarInfo(line, user, dsdRegistration, courseRegistrationsCache, userPreferences);
+        }
         writeField(line, userPreferences.get("remarks"));
         writeBillingInfo(line, userPreferences, false);
         writeField(line, userPreferences.get("registration_time"));
