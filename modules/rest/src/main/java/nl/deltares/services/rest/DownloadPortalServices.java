@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.portal.utils.GeoIpUtils;
-import nl.deltares.portal.utils.SanctionCheckUtils;
 import nl.deltares.services.rest.download.DownloadRestService;
 import nl.deltares.services.rest.exception.JsonProcessingExceptionMapper;
 import nl.deltares.services.rest.exception.LiferayRestExceptionMapper;
@@ -50,9 +49,6 @@ public class DownloadPortalServices extends Application {
             this.downloadUtils = downloadUtils;
         }
     }
-
-    @Reference
-    SanctionCheckUtils sanctionCheckUtils;
 
     private GeoIpUtils geoIpUtils;
     @Reference(

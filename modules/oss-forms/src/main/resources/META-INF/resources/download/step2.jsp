@@ -165,7 +165,7 @@
                         2
                     </aui:validator>
                     <aui:option value="" label="registrationform.select.country"/>
-                    <% List<Country> countries = CountryServiceUtil.getCompanyCountries(themeDisplay.getCompanyId()); %>
+                    <% List<Country> countries = CountryServiceUtil.getCompanyCountries(themeDisplay.getCompanyId(), true); %>
                     <% for (Country country : countries) { %>
                     <aui:option value="<%=country.getName()%>" label="<%= country.getName(locale) %>"/>
                     <% } %>
