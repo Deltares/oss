@@ -135,7 +135,7 @@ public class JsonContentUtils {
             JSONObject jsonObject = JsonContentUtils.parseContent(jsonData);
             if (jsonObject.isNull("fileEntryId")) return "";
             FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(jsonObject.getLong("fileEntryId"));
-            if (fileEntry == null) return null;
+            if (fileEntry == null) return "";
             return DLURLHelperUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), null, "", false, true);
         } catch (Exception e) {
             return "";

@@ -18,8 +18,8 @@ public class Event extends AbsDsdArticle {
     private EventLocation eventLocation = null;
     private Date startTime = null;
     private Date endTime = null;
-    private String emailBannerURL = null;
-    private String emailFooterURL = null;
+    private String emailBannerURL = "";
+    private String emailFooterURL = "";
     private String timeZoneId = "CET";
 
     public Event(JournalArticle journalArticle, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
