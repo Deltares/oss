@@ -32,7 +32,7 @@ public class DownloadRequest {
     }
 
     public void setBannerUrl(String bannerUrl) {
-        if (bannerUrl == null || bannerUrl.isEmpty()) return;
+        if (bannerUrl == null || bannerUrl.isBlank()) return;
         this.bannerUrl = bannerUrl;
     }
 
