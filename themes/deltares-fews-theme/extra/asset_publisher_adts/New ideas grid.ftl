@@ -15,7 +15,7 @@
             <#assign cur_expertPhoto = ""/>
             <#assign cur_selectedExpert = ""/>
             <#assign viewURL = htmlUtil.escapeHREF(assetPublisherHelper.getAssetViewURL(renderRequest, renderResponse, entry, true)) />
-            
+
             <#list rootElement.elements()>
                 <#items as dynamicElement>
                     <#if "MandatoryFields"==dynamicElement.attributeValue("name")>
@@ -34,7 +34,7 @@
                                     <#assign cur_phase =  child.element("dynamic-content").getData()?string?replace('["', "")?replace('"]', "")/>
                                 </#if>
                             </#if>
-                        </#list>    
+                        </#list>
                     </#if>
                     <#if "OptionalFields"==dynamicElement.attributeValue("name")>
                         <#list dynamicElement.elements() as child>
@@ -56,10 +56,10 @@
                     </#if>
                 </#items>
             </#list>
-                
+
             <div class="c-new-ideas__item c-asset-publisher-item">
                 <h4 class="c-new-ideas__item__title h1"><a class="type-inherit" href="${viewURL}" title="read more about ${entryTitle}">${entryTitle}</a></h4>
-                <div class="c-new-ideas__item__summary">${stringUtil.shorten(cur_content, 136)}</div>
+                <div class="c-new-ideas__item__summary">${stringUtil.shorten(assetRenderer.getSummary(), 136)}</div>
                 <div class="c-new-ideas__item__rating clearfix"><@getRatings entry/></div>
                 <p class="c-new-ideas__item__phase ${cur_phase}">
                     <strong class="font-weight-regular">Phase:&nbsp;</strong>
@@ -76,10 +76,10 @@
 
 <#macro getRatings entry>
     <#if getterUtil.getBoolean(enableRatings) && assetRenderer.isRatable()>
-        <div class="asset-ratings ideas-adt">
-            <@liferay_ui["ratings"]
-                className=entry.getClassName()
-                classPK=entry.getClassPK()
+        <div class="asset-ratings">
+            <@liferay_ratings["ratings"]
+            className=entry.getClassName()
+            classPK=entry.getClassPK()
             />
         </div>
     </#if>
