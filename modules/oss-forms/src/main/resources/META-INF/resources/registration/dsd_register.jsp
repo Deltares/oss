@@ -199,7 +199,7 @@
         form.validateFirstStep = validateFirstStep;
         form.preSubmitAction = preSubmitAction;
         $('.bs-stepper').formStepper(form);
-        DsdRegistrationFormsUtil.updateBadge();
+        DsdRegistrationFormsUtil.updateBadge(namespace);
         DsdRegistrationFormsUtil.checkSelection(namespace);
         let badgeListeners = $(document.getElementsByClassName("update-badge"));
         [...badgeListeners].forEach(function (item) {
