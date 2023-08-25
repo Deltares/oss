@@ -132,7 +132,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         String friendlyUrl = null;
         try {
             String configuredRedirect = null;
-            final DownloadFormConfiguration configuration = _configurationProvider.getGroupConfiguration(DownloadFormConfiguration.class, themeDisplay.getSiteGroupId());
+            final DownloadFormConfiguration configuration =  _configurationProvider.getPortletInstanceConfiguration(DownloadFormConfiguration.class, themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
             switch (key){
                 case "success":
                     configuredRedirect =  configuration.successURL();
@@ -202,14 +202,14 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
                     unsubscribeIds.add(subscription.getId());
                 }
             }
-            if (subscribeIds.size() > 0) {
+            if (!subscribeIds.isEmpty()) {
                 try {
                     subscriptionUtils.subscribeAll(user, subscribeIds);
                 } catch (Exception e) {
                     LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", user.getEmailAddress(), subscribeIds, e.getMessage()));
                 }
             }
-            if (unsubscribeIds.size() > 0) {
+            if (!unsubscribeIds.isEmpty()) {
                 try {
                     subscriptionUtils.unsubscribeAll(user.getEmailAddress(), unsubscribeIds);
                 } catch (Exception e) {
