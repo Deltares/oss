@@ -1,7 +1,12 @@
 package nl.deltares.tableview.portlet.portlet;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.service.CountryLocalServiceUtil;
+import com.liferay.portal.kernel.service.CountryServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -10,13 +15,17 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
+import nl.deltares.oss.geolocation.model.GeoLocation;
+import nl.deltares.oss.geolocation.service.GeoLocationLocalServiceUtil;
+import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.tableview.model.DisplayDownload;
 import nl.deltares.tableview.portlet.constants.TablePortletKeys;
 import nl.deltares.tableview.tasks.impl.DeletedSelectedDownloadsRequest;
-import nl.deltares.tableview.tasks.impl.ExportTableRequest;
+import nl.deltares.tableview.tasks.impl.ExportDownloadsTableRequest;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -48,6 +57,10 @@ import java.util.*;
 )
 public class DownloadTablePortlet extends MVCPortlet {
 
+    private static final Log logger = LogFactoryUtil.getLog(DownloadTablePortlet.class);
+
+    @Reference
+    KeycloakUtils keycloakUtils;
     final static String datePattern = "yyy-MM-dd";
     final static SimpleDateFormat dateFormat = new SimpleDateFormat(datePattern);
 
@@ -78,7 +91,7 @@ public class DownloadTablePortlet extends MVCPortlet {
         final int start = (curPage - 1) * deltas;
         final int end = curPage * deltas;
         try {
-            if (filterValue != null && filterValue.trim().length() > 0) {
+            if (filterValue != null && !filterValue.trim().isEmpty()) {
                 switch (filterSelection) {
                     case "email":
                         User user = UserLocalServiceUtil.getUserByEmailAddress(themeDisplay.getCompanyId(), filterValue);
@@ -86,9 +99,8 @@ public class DownloadTablePortlet extends MVCPortlet {
                         downloadsCount = DownloadLocalServiceUtil.countDownloadsByUserId(siteGroupId, user.getUserId());
                         break;
                     case "fileName":
-                        final String fileName = filterValue;
-                        downloads = DownloadLocalServiceUtil.findDownloadsByFileName(siteGroupId, fileName, start, end);
-                        downloadsCount = DownloadLocalServiceUtil.countDownloadsByFileName(siteGroupId, fileName);
+                        downloads = DownloadLocalServiceUtil.findDownloadsByFileName(siteGroupId, filterValue, start, end);
+                        downloadsCount = DownloadLocalServiceUtil.countDownloadsByFileName(siteGroupId, filterValue);
                         break;
                 }
             }
@@ -107,10 +119,46 @@ public class DownloadTablePortlet extends MVCPortlet {
             renderRequest.setAttribute("total", 0);
         }
     }
-
     private List<DisplayDownload> convertToDisplayDownloads(List<Download> downloads) {
         final ArrayList<DisplayDownload> displays = new ArrayList<>(downloads.size());
-        downloads.forEach(download -> displays.add(new DisplayDownload(download)));
+
+        HashMap<Long, Map<String, String>> userAttributeCache = new HashMap<>();
+        downloads.forEach(download -> {
+            final DisplayDownload displayDownload = new DisplayDownload(download);
+            displays.add(displayDownload);
+
+            if (download.getGeoLocationId() == 0){
+                final long userId = download.getUserId();
+                Map<String, String> attributes = userAttributeCache.get(userId);
+                if (attributes == null){
+                    final User user = UserLocalServiceUtil.fetchUser(userId);
+                    if (user != null) {
+                        try {
+                            attributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
+                            userAttributeCache.put(userId, attributes);
+                        } catch (Exception e) {
+                            logger.warn(String.format("Error getting user attributes for %s: %s", user.getEmailAddress(), e.getMessage()));
+                            attributes = Collections.emptyMap();
+                            userAttributeCache.put(userId, attributes);
+                        }
+                    } else {
+                        attributes = Collections.emptyMap();
+                    }
+                }
+                displayDownload.setCity(attributes.get(KeycloakUtils.ATTRIBUTES.org_city.name()));
+                final Country country = CountryLocalServiceUtil.fetchCountryByName(download.getCompanyId(), attributes.get(KeycloakUtils.ATTRIBUTES.org_country.name()));
+                if (country != null) displayDownload.setCountryCode(country.getA2());
+            } else {
+                final long geoLocationId = download.getGeoLocationId();
+                final GeoLocation geoLocation = GeoLocationLocalServiceUtil.fetchGeoLocation(geoLocationId);
+                if (geoLocation != null){
+                    displayDownload.setCity(geoLocation.getCityName());
+                    Country country = CountryServiceUtil.fetchCountry(geoLocation.getCountryId());
+                    displayDownload.setCountryCode(country.getA2());
+                }
+            }
+
+        });
 
         displays.sort(DisplayDownload::compareDesc);
         return displays;
@@ -200,7 +248,7 @@ public class DownloadTablePortlet extends MVCPortlet {
         DataRequestManager instance = DataRequestManager.getInstance();
         DataRequest dataRequest = instance.getDataRequest(dataRequestId);
         if (dataRequest == null) {
-            dataRequest = new ExportTableRequest(dataRequestId, filterValue, filterSelection, themeDisplay.getUserId(), themeDisplay.getSiteGroup());
+            dataRequest = new ExportDownloadsTableRequest(dataRequestId, filterValue, filterSelection, themeDisplay.getUserId(), themeDisplay.getSiteGroup(), keycloakUtils);
             instance.addToQueue(dataRequest);
         } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
             instance.removeDataRequest(dataRequest);

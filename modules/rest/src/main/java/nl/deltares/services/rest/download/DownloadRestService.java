@@ -8,6 +8,7 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.portal.utils.GeoIpUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
+import nl.deltares.portal.utils.KeycloakUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -17,6 +18,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public class DownloadRestService {
@@ -24,10 +26,12 @@ public class DownloadRestService {
     private static final Log LOG = LogFactoryUtil.getLog(DownloadRestService.class);
     private final DownloadUtils downloadUtils;
     private final GeoIpUtils geoIpUtils;
+    private final KeycloakUtils keycloakUtils;
 
-    public DownloadRestService(DownloadUtils downloadUtils, GeoIpUtils geoIpUtils) {
+    public DownloadRestService(DownloadUtils downloadUtils, GeoIpUtils geoIpUtils, KeycloakUtils keycloakUtils) {
         this.downloadUtils = downloadUtils;
         this.geoIpUtils = geoIpUtils;
+        this.keycloakUtils = keycloakUtils;
     }
 
     @POST
@@ -63,7 +67,12 @@ public class DownloadRestService {
         }
 
         try {
-            downloadUtils.registerDownload(user, groupId, downloadId, fileName, fileShare, parseGeoLocationFromIp(request));
+            if (downloadUtils == null){
+                LOG.warn("DownloadUtils is not configured!");
+            } else {
+                final Map<String, String> userAttributes = getUserAttributes(user, request);
+                downloadUtils.registerDownload(user, groupId, downloadId, fileName, fileShare, userAttributes);
+            }
             return Response.ok().entity(String.format("Download registered for file '%s':  '%s'", fileName, fileShare)).build();
         } catch (PortalException e) {
             LOG.warn("Error registering direct download url: " + e.getMessage());
@@ -72,6 +81,19 @@ public class DownloadRestService {
 
     }
 
+    private Map<String, String> getUserAttributes(User user, HttpServletRequest request){
+
+        final Map<String, String> attributes = new HashMap<>(parseGeoLocationFromIp(request));
+
+        if (user == null || user.isDefaultUser()) return attributes;
+
+        try {
+            attributes.putAll(keycloakUtils.getUserAttributes(user.getEmailAddress()));
+        } catch (Exception e) {
+            LOG.warn(String.format("Error getting user attributes for user %s: %s", user.getEmailAddress(), e.getMessage()));
+        }
+        return attributes;
+    }
     private Map<String, String> parseGeoLocationFromIp(HttpServletRequest request) {
         if (geoIpUtils == null || !geoIpUtils.isActive()) return Collections.emptyMap();
         final String remoteAddr = request.getRemoteAddr();

@@ -16,8 +16,8 @@ public class DisplayDownload {
     final private Download download;
     final private String email;
     final private String organization;
-    final private String city;
-    final private String countryCode;
+    private String city = "";
+    private String countryCode = "";
     final private String fileName;
     final private String fileShareUrl;
     final private String licenseDownloadUrl;
@@ -31,19 +31,9 @@ public class DisplayDownload {
         } else {
             email = user.getEmailAddress();
         }
-        final long geoLocationId = download.getGeoLocationId();
-        final GeoLocation geoLocation = GeoLocationLocalServiceUtil.fetchGeoLocation(geoLocationId);
 
-        final Country country;
-        if (geoLocation != null){
-             country = CountryServiceUtil.fetchCountry(geoLocation.getCountryId());
-        } else {
-            country = null;
-        }
         final String organization = download.getOrganization();
         this.organization = organization != null ? organization : "";
-        this.city =  geoLocation != null ? geoLocation.getCityName() : "";
-        this.countryCode = country != null ? country.getA2() : "";
         final String filePath = download.getFileName();
         this.fileName = filePath != null ? filePath : "";
         final String directDownloadPath = download.getFileShareUrl();
@@ -51,6 +41,7 @@ public class DisplayDownload {
         final String licenseDownloadPath = download.getLicenseDownloadUrl();
         this.licenseDownloadUrl = licenseDownloadPath != null ? licenseDownloadPath : "";
     }
+
 
     public long getId(){
         return download.getId();
@@ -72,6 +63,16 @@ public class DisplayDownload {
 
     public String getOrganization() {
         return  organization;
+    }
+
+    public void setCity(String city) {
+        if (city == null) return;
+        this.city = city;
+    }
+
+    public void setCountryCode(String countryCode) {
+        if (countryCode == null) return;
+        this.countryCode = countryCode;
     }
 
     public String getCity() {

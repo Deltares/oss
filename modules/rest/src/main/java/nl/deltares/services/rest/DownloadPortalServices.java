@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.portal.utils.GeoIpUtils;
+import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.services.rest.download.DownloadRestService;
 import nl.deltares.services.rest.exception.JsonProcessingExceptionMapper;
 import nl.deltares.services.rest.exception.LiferayRestExceptionMapper;
@@ -37,6 +38,9 @@ import java.util.Set;
 )
 
 public class DownloadPortalServices extends Application {
+
+    @Reference
+    KeycloakUtils keycloakUtils;
 
     private DownloadUtils downloadUtils;
 
@@ -77,7 +81,7 @@ public class DownloadPortalServices extends Application {
         singletons.add(this);
         singletons.add(getJacksonJsonProvider());
         //Services for FullCalendar
-        singletons.add(new DownloadRestService(downloadUtils, geoIpUtils));
+        singletons.add(new DownloadRestService(downloadUtils, geoIpUtils, keycloakUtils));
         return singletons;
     }
 
