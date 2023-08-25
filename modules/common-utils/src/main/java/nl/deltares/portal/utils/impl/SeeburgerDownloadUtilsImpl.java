@@ -1,21 +1,16 @@
 package nl.deltares.portal.utils.impl;
 
-import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.PropsUtil;
-import nl.deltares.oss.download.model.DownloadCount;
-import nl.deltares.oss.download.service.DownloadCountLocalServiceUtil;
-import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
-import nl.deltares.portal.model.impl.Download;
-import nl.deltares.portal.utils.*;
+import nl.deltares.portal.utils.DownloadUtils;
+import nl.deltares.portal.utils.PasswordUtils;
 import org.osgi.service.component.annotations.Component;
 
-import java.io.*;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -24,7 +19,7 @@ import java.util.concurrent.TimeUnit;
         immediate = true,
         service = DownloadUtils.class
 )
-public class SeeburgerDownloadUtilsImpl extends HttpClientUtils implements DownloadUtils {
+public class SeeburgerDownloadUtilsImpl extends AbsDownloadUtilsImpl  {
 
     @SuppressWarnings("FieldCanBeLocal")
     private final int passwordLength = 10;
@@ -37,14 +32,6 @@ public class SeeburgerDownloadUtilsImpl extends HttpClientUtils implements Downl
     static {
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
-
-    private static final String BASEURL_KEY = "download.baseurl";
-    private static final String APP_NAME_KEY = "download.app.name";
-    private static final String APP_USER_KEY = "download.app.user";
-    private static final String APP_PW_KEY = "download.app.password";
-    private String AUTH_TOKEN;
-    private String API_PATH;
-    private final boolean active;
 
     public SeeburgerDownloadUtilsImpl() {
         String APP_NAME = PropsUtil.get(APP_NAME_KEY);
@@ -66,11 +53,6 @@ public class SeeburgerDownloadUtilsImpl extends HttpClientUtils implements Downl
             LOG.info("DownloadUtils has not been initialized.");
         }
 
-    }
-
-    @Override
-    public boolean isActive() {
-        return active;
     }
 
     @Override
@@ -147,112 +129,11 @@ public class SeeburgerDownloadUtilsImpl extends HttpClientUtils implements Downl
         return sb.toString();
     }
 
-    @Override
-    public void registerDownload(User user, long groupId, long downloadId, String fileName, String fileShare, Map<String, String> userAttributes) {
-
-        final HashMap<String, String> shareInfo = new HashMap<>();
-        shareInfo.put("url", fileShare);
-        shareInfo.put("expiration", String.valueOf(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(8)));
-        registerDownload(user, groupId, downloadId, fileName, shareInfo, userAttributes);
-
-    }
-
-    @Override
-    public void registerDownload(User user, long groupId, long downloadId, String fileName, Map<String, String> shareInfo, Map<String, String> userAttributes) {
-        nl.deltares.oss.download.model.Download userDownload = DownloadLocalServiceUtil.fetchUserDownload(groupId, user.getUserId(), downloadId);
-        if (userDownload == null) {
-            userDownload = DownloadLocalServiceUtil.createDownload(CounterLocalServiceUtil.increment(
-                    nl.deltares.oss.download.model.Download.class.getName()));
-
-            userDownload.setCompanyId(user.getCompanyId());
-            userDownload.setGroupId(groupId);
-            userDownload.setUserId(user.getUserId());
-            userDownload.setDownloadId(downloadId);
-
-            userDownload.setCreateDate(new Date(System.currentTimeMillis()));
-            userDownload.setFileName(fileName);
-
-            if (userAttributes.containsKey("geoLocationId")) {
-                userDownload.setGeoLocationId(Long.parseLong(userAttributes.get("geoLocationId")));
-            }
-        }
-        userDownload.setModifiedDate(new Date(System.currentTimeMillis()));
-        if (!userAttributes.isEmpty()) {
-            userDownload.setOrganization(userAttributes.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
-        }
-        if (!shareInfo.isEmpty()) {
-            //Share info can be missing when user has not yet paid.
-            final String expiration = shareInfo.get("expiration");
-            if (expiration != null) {
-                try {
-                    userDownload.setExpiryDate(dateFormat.parse(expiration));
-                } catch (ParseException e) {
-                    LOG.warn(String.format("Error parsing expiration date %s : %s", expiration, e.getMessage()));
-                }
-            }
-
-            String url = shareInfo.get("url");
-            if (url != null) {
-                final String password = shareInfo.get("password");
-                if (password != null) url = url.concat(" ( ").concat(password).concat(" )");
-                userDownload.setFileShareUrl(url);
-            }
-            String licUrl = shareInfo.get("licUrl");
-            if (licUrl != null) {
-                userDownload.setLicenseDownloadUrl(licUrl);
-            }
-        }
-        DownloadLocalServiceUtil.updateDownload(userDownload);
-
-        if (userDownload.getFileShareUrl() != null) { //request completed
-            incrementDownloadCount(user.getCompanyId(), groupId, downloadId);
-        }
-
-    }
-
-    @Override
-    public void incrementDownloadCount(long companyId, long groupId, long downloadId) {
-        //Update statistics
-
-        DownloadCount downloadCount = DownloadCountLocalServiceUtil.getDownloadCountByGroupId(groupId, downloadId);
-        if (downloadCount == null) {
-            downloadCount = DownloadCountLocalServiceUtil.createDownloadCount(CounterLocalServiceUtil.increment(
-                    DownloadCount.class.getName()));
-            downloadCount.setDownloadId(downloadId);
-            downloadCount.setGroupId(groupId);
-            downloadCount.setCompanyId(companyId);
-        }
-        int count = downloadCount.getCount();
-        downloadCount.setCount(++count);
-        DownloadCountLocalServiceUtil.updateDownloadCount(downloadCount);
-    }
-
-    @Override
-    public int getDownloadCount(Download download) {
-        final DownloadCount downloadCount = DownloadCountLocalServiceUtil.getDownloadCountByGroupId(download.getGroupId(), Long.parseLong(download.getArticleId()));
-        if (downloadCount == null) return 0;
-
-        return downloadCount.getCount();
-    }
-
     private HashMap<String, String> getDefaultHeaders() {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/xml");
         headers.put("Authorization", "Basic " + AUTH_TOKEN);
         return headers;
-    }
-
-    private String getDownloadBasePath() {
-        if (!PropsUtil.contains(BASEURL_KEY)) {
-            return null;
-        }
-        String baseApiPath = PropsUtil.get(BASEURL_KEY);
-
-        if (baseApiPath.endsWith("/")) {
-            return baseApiPath;
-        }
-        baseApiPath += '/';
-        return baseApiPath;
     }
 
 }
