@@ -21,8 +21,6 @@ public interface DataRequest extends Callable<DataRequest.STATUS> {
 
     void setDataRequestManager(DataRequestManager manager);
 
-    boolean isCached();
-
     long getTimeoutMillis();
 
 }
