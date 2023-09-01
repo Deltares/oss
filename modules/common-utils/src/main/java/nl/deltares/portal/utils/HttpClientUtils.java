@@ -3,6 +3,7 @@ package nl.deltares.portal.utils;
 
 import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.cache.PortalCacheHelperUtil;
+import com.liferay.portal.kernel.cache.PortalCacheManagerNames;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -167,7 +168,7 @@ public abstract class HttpClientUtils implements BaseLocalService {
 
     public static String getCachedToken(String tokenKey, String expiryKey) {
         if (tokenKey == null) return null;
-        PortalCache<String, Serializable> gotoCache = PortalCacheHelperUtil.getPortalCache("deltares", "deltares");
+        PortalCache<String, Serializable> gotoCache = PortalCacheHelperUtil.getPortalCache(PortalCacheManagerNames.SINGLE_VM, "deltares");
         String token = (String) gotoCache.get(tokenKey);
         if (token != null) {
             if (expiryKey == null) return token;
@@ -180,12 +181,12 @@ public abstract class HttpClientUtils implements BaseLocalService {
     }
 
     public static void removeCachedToken(String key) {
-        PortalCache<String, Serializable> keycloakCache = PortalCacheHelperUtil.getPortalCache("deltares", "deltares");
+        PortalCache<String, Serializable> keycloakCache = PortalCacheHelperUtil.getPortalCache(PortalCacheManagerNames.SINGLE_VM, "deltares");
         keycloakCache.remove(key);
     }
 
     public static void setCachedToken(String tokenKey, String expiryKey, String token, long expiryTimeMillis) {
-        PortalCache<String, Serializable> keycloakCache = PortalCacheHelperUtil.getPortalCache("deltares", "deltares");
+        PortalCache<String, Serializable> keycloakCache = PortalCacheHelperUtil.getPortalCache(PortalCacheManagerNames.SINGLE_VM, "deltares");
         keycloakCache.put(tokenKey, token);
         if (expiryKey != null) {
             keycloakCache.put(expiryKey, expiryTimeMillis);
