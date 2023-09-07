@@ -1,61 +1,13 @@
+<#assign xmlUtils = serviceLocator.findService("nl.deltares.portal.utils.XmlContentUtils") />
 <#if entries?has_content>
     <div class="c-new-ideas c-grid-3-cols">
         <#list entries as entry>
             <#assign assetRenderer = entry.getAssetRenderer() />
             <#assign entryTitle = htmlUtil.escape(assetRenderer.getTitle(locale)) />
             <#assign journalArticle = assetRenderer.getArticle() />
-            <#assign document = saxReaderUtil.read(journalArticle.getContent())/>
-            <#assign rootElement = document.getRootElement() />
-            <#assign cur_content = ""/>
-            <#assign cur_expertName = ""/>
-            <#assign cur_phase = ""/>
-            <#assign cur_expertEmailAddress = ""/>
-            <#assign cur_expertCompany = ""/>
-            <#assign cur_expertJobTitle = ""/>
-            <#assign cur_expertPhoto = ""/>
-            <#assign cur_selectedExpert = ""/>
+            <#assign rootElement = xmlUtils.parseContent(journalArticle,locale)/>
+            <#assign cur_phase = xmlUtils.getDynamicContentByName(rootElement, "NewIdeaPhase", false) />
             <#assign viewURL = htmlUtil.escapeHREF(assetPublisherHelper.getAssetViewURL(renderRequest, renderResponse, entry, true)) />
-
-            <#list rootElement.elements()>
-                <#items as dynamicElement>
-                    <#if "MandatoryFields"==dynamicElement.attributeValue("name")>
-                        <#list dynamicElement.elements() as child>
-                            <#if child.getName()=="dynamic-element">
-                                <#if "NewIdeaContent"==child.attributeValue("name")>
-                                    <#assign cur_content = child.element("dynamic-content").getData()/>
-                                </#if>
-                                <#if "ExpertName"==child.attributeValue("name")>
-                                    <#assign cur_expertName = child.element("dynamic-content").getData()/>
-                                </#if>
-                                <#if "ExpertEmailAddress"==child.attributeValue("name")>
-                                    <#assign cur_expertEmailAddress = child.element("dynamic-content").getData()/>
-                                </#if>
-                                <#if "NewIdeaPhase"==child.attributeValue("name")>
-                                    <#assign cur_phase =  child.element("dynamic-content").getData()?string?replace('["', "")?replace('"]', "")/>
-                                </#if>
-                            </#if>
-                        </#list>
-                    </#if>
-                    <#if "OptionalFields"==dynamicElement.attributeValue("name")>
-                        <#list dynamicElement.elements() as child>
-                            <#if child.getName()=="dynamic-element">
-                                <#if "ExpertCompany"==child.attributeValue("name")>
-                                    <#assign cur_expertCompany = child.element("dynamic-content").getData()/>
-                                </#if>
-                                <#if "ExpertJobTitle"==child.attributeValue("name")>
-                                    <#assign cur_expertJobTitle = child.element("dynamic-content").getData()/>
-                                </#if>
-                                <#if "ExpertPhoto"==child.attributeValue("name")>
-                                    <#assign cur_expertPhoto = child.element("dynamic-content").getData()/>
-                                </#if>
-                                <#if "SelectExpert_hide"==child.attributeValue("name")>
-                                    <#assign cur_selectedExpert = child.element("dynamic-content").getData()/>
-                                </#if>
-                            </#if>
-                        </#list>
-                    </#if>
-                </#items>
-            </#list>
 
             <div class="c-new-ideas__item c-asset-publisher-item">
                 <h4 class="c-new-ideas__item__title h1"><a class="type-inherit" href="${viewURL}" title="read more about ${entryTitle}">${entryTitle}</a></h4>
