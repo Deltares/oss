@@ -21,6 +21,9 @@ import java.util.concurrent.TimeUnit;
 )
 public class SeeburgerDownloadUtilsImpl extends AbsDownloadUtilsImpl  {
 
+    protected static final String URL_PREFIX_KEY = "download.url.prefix";
+    protected String FILE_PATH_PREFIX = "/My Subscriptions";
+
     @SuppressWarnings("FieldCanBeLocal")
     private final int passwordLength = 10;
     @SuppressWarnings("FieldCanBeLocal")
@@ -37,6 +40,10 @@ public class SeeburgerDownloadUtilsImpl extends AbsDownloadUtilsImpl  {
         String APP_NAME = PropsUtil.get(APP_NAME_KEY);
         String APP_USER = PropsUtil.get(APP_USER_KEY);
         String APP_PW = PropsUtil.get(APP_PW_KEY);
+        String URL_PREFIX = PropsUtil.get(URL_PREFIX_KEY);
+        if (URL_PREFIX != null){
+            FILE_PATH_PREFIX = URL_PREFIX;
+        }
 
         if (!DownloadUtils.APP_NAME.seeburger.name().equals(APP_NAME)){
             active = false;
@@ -62,7 +69,7 @@ public class SeeburgerDownloadUtilsImpl extends AbsDownloadUtilsImpl  {
         connection.setDoOutput(true);
 
         final HashMap<String, String> params = new HashMap<>();
-        params.put("FullFilePath", filePath);
+        params.put("FullFilePath", FILE_PATH_PREFIX + filePath);
         params.put("Recipient", email);
         if (passwordProtect) {
             String password = PasswordUtils.getPassword(passwordLength);
