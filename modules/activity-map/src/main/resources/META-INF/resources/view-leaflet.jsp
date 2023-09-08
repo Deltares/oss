@@ -18,6 +18,9 @@
 
 <portlet:defineObjects/>
 
+<%
+    String mapdata = (String) renderRequest.getAttribute("mapdata");
+%>
 <div id="<portlet:namespace/>map"></div>
 
 <style>
@@ -31,6 +34,10 @@
 <aui:input name="runningProcess" type="hidden" />
 <aui:script use="event, io, aui-io-request, node, aui-base">
 
-    ActivityMapUtil.startDownloadActivityMap("<portlet:resourceURL/>", "<portlet:namespace/>");
-
+    <% if (mapdata == null ) {%>
+        ActivityMapUtil.startDownloadActivityMap("<portlet:resourceURL/>", "<portlet:namespace/>");
+    <% } else { %>
+        let map  = ActivityMapUtil.initMap("<portlet:namespace/>");
+        ActivityMapUtil.updateMarkers(map, '<%=mapdata%>');
+    <% }%>
 </aui:script>

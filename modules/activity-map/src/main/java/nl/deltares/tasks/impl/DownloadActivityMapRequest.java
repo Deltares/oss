@@ -63,12 +63,13 @@ public class DownloadActivityMapRequest extends AbstractDataRequest {
                 final JSONArray products = JSONFactoryUtil.createJSONArray();
                 final List<Long> downloadsByGeoLocations = DownloadLocalServiceUtil.findDownloadIdsByGeoLocation(geoLocation.getLocationId());
                 Map<Long, Integer> distinctCounts = convertToDistinctCounts(downloadsByGeoLocations);
+                final int[] totalDownloadCount = {0};
                 distinctCounts.forEach((downloadId, count) -> {
 
                     JSONObject jsonProduct = JSONFactoryUtil.createJSONObject();
                     jsonProduct.put("downloadId", downloadId);
                     jsonProduct.put("downloadCount", count);
-
+                    totalDownloadCount[0] += count;
                     nl.deltares.portal.model.impl.Download dsdDownload = getDownloadArticle(siteGroupId, downloadId);
                     if (dsdDownload != null) {
                         jsonProduct.put("software", dsdDownload.getFileTopic());
@@ -79,6 +80,7 @@ public class DownloadActivityMapRequest extends AbstractDataRequest {
                 });
                 if (products.length() > 0) {
                     downloadLocation.put("products", products);
+                    downloadLocation.put("totalDownloadCount", totalDownloadCount[0]);
                     downloadLocations.put(downloadLocation);
                 }
 
