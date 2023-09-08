@@ -1,6 +1,6 @@
 Bundle-Name: common-utils
 Bundle-SymbolicName: nl.deltares.portal.common-utils
-Bundle-Version: 1.0.17
+Bundle-Version: 1.0.18
 Export-Package: \
   nl.deltares.portal.utils, \
   nl.deltares.portal.utils.impl, \

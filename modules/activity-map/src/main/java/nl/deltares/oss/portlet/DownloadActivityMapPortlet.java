@@ -63,6 +63,18 @@ public class DownloadActivityMapPortlet extends MVCPortlet {
     private static final Log LOG = LogFactoryUtil.getLog(DownloadActivityMapPortlet.class);
 
     @Override
+    public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
+
+        ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+        final String id = getId(themeDisplay);
+        final String cachedDownloads = getCachedDownloads(id);
+        if (cachedDownloads != null){
+            renderRequest.setAttribute("mapdata", cachedDownloads);
+        }
+        super.render(renderRequest, renderResponse);
+    }
+
+    @Override
     public void serveResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws IOException {
         ThemeDisplay themeDisplay = (ThemeDisplay) resourceRequest
                 .getAttribute(WebKeys.THEME_DISPLAY);
@@ -70,15 +82,15 @@ public class DownloadActivityMapPortlet extends MVCPortlet {
         String action = ParamUtil.getString(resourceRequest, "action");
 
         final String id = getId(themeDisplay);
-        final String cachedDownloads = getCachedDownloads(id);
 
         if ("start".equals(action)) {
+            final String cachedDownloads = getCachedDownloads(id);
             if (cachedDownloads == null) {
                 getDownloadRequest(id, themeDisplay);
             }
             writeToResponse(resourceResponse, cachedDownloads);
         } else if ("download".equals(action)) {
-
+            final String cachedDownloads = getCachedDownloads(id);
             if (cachedDownloads != null) {
                 writeToResponse(resourceResponse, cachedDownloads);
             } else {

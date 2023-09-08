@@ -1,6 +1,8 @@
-let titleControl;
-let mapControl;
-let markersLayer;
+if (typeof mapControl === 'undefined' || mapControl === null ){
+    let titleControl;
+    let mapControl;
+    let markersLayer;
+}
 ActivityMapUtil = {
 
     initMap : function(namespace) {
