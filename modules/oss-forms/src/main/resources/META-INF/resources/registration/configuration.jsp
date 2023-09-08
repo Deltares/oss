@@ -18,10 +18,12 @@
             (DsdRegistrationFormConfiguration)
                     renderRequest.getAttribute(DsdRegistrationFormConfiguration.class.getName());
 
-    String successURL = null;
+    String registerSuccessURL = null;
+    String unregisterSuccessURL = null;
     String failURL = null;
     if (Validator.isNotNull(configuration)){
-        successURL = portletPreferences.getValue("successURL", configuration.successURL());
+        registerSuccessURL = portletPreferences.getValue("registerSuccessURL", configuration.registerSuccessURL());
+        unregisterSuccessURL = portletPreferences.getValue("unregisterSuccessURL", configuration.unregisterSuccessURL());
         failURL = portletPreferences.getValue("failURL", configuration.failureURL());
     }
 %>
@@ -53,8 +55,13 @@
         <aui:fieldset id="site_config" collapsible="true" label="Site config">
             <aui:input
                     label="registrationform.successpage"
-                    name="successURL"
-                    value="<%= successURL %>"/>
+                    name="registerSuccessURL"
+                    value="<%= registerSuccessURL %>"/>
+
+            <aui:input
+                    label="registrationform.unregistersuccesspage"
+                    name="unregisterSuccessURL"
+                    value="<%= unregisterSuccessURL %>"/>
 
             <aui:input
                     label="registrationform.failpage"
