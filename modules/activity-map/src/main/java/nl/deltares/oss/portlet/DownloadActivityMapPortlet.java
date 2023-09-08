@@ -1,33 +1,32 @@
 package nl.deltares.oss.portlet;
 
 
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
-import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.cache.PortalCache;
+import com.liferay.portal.kernel.cache.PortalCacheHelperUtil;
+import com.liferay.portal.kernel.cache.PortalCacheManagerNames;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
-import nl.deltares.oss.geolocation.model.GeoLocation;
-import nl.deltares.oss.geolocation.service.GeoLocationLocalServiceUtil;
 import nl.deltares.oss.portlet.constants.ActivityMapPortletKeys;
 import nl.deltares.portal.configuration.SiteMapConfiguration;
 import nl.deltares.portal.utils.DsdParserUtils;
+import nl.deltares.tasks.DataRequest;
+import nl.deltares.tasks.DataRequestManager;
+import nl.deltares.tasks.impl.DownloadActivityMapRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.Portlet;
-import javax.portlet.PortletException;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.portlet.*;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -39,7 +38,7 @@ import java.util.Map;
                 "javax.portlet.version=3.0",
                 "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.instanceable=true",
-//                "com.liferay.portlet.header-portlet-javascript=/lib/markerclusterer.js",
+                "com.liferay.portlet.header-portlet-javascript=/lib/activitymap.js",
                 "javax.portlet.display-name=ActivityMap Portlet",
                 "javax.portlet.init-param.template-path=/",
                 "javax.portlet.init-param.view-template=/view-leaflet.jsp",
@@ -63,81 +62,121 @@ public class DownloadActivityMapPortlet extends MVCPortlet {
 
     private static final Log LOG = LogFactoryUtil.getLog(DownloadActivityMapPortlet.class);
 
-    public void render(RenderRequest request, RenderResponse response) throws IOException, PortletException {
+    @Override
+    public void serveResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws IOException {
+        ThemeDisplay themeDisplay = (ThemeDisplay) resourceRequest
+                .getAttribute(WebKeys.THEME_DISPLAY);
 
-        long downloadSiteId;
-        try {
-            SiteMapConfiguration configuration = _configurationProvider.getSystemConfiguration(
-                    SiteMapConfiguration.class);
-            downloadSiteId = Long.parseLong(configuration.downloadPortalSiteId());
-        } catch (Exception e) {
-            LOG.error("Error retrieving ID for download portal from SiteMapConfiguration: " + e.getMessage());
-            ThemeDisplay themeDisplay = (ThemeDisplay) request
-                    .getAttribute(WebKeys.THEME_DISPLAY);
-            downloadSiteId = themeDisplay.getSiteGroupId();
+        String action = ParamUtil.getString(resourceRequest, "action");
+
+        final String id = getId(themeDisplay);
+        final String cachedDownloads = getCachedDownloads(id);
+
+        if ("start".equals(action)) {
+            if (cachedDownloads == null) {
+                getDownloadRequest(id, themeDisplay);
+            }
+            writeToResponse(resourceResponse, cachedDownloads);
+        } else if ("download".equals(action)) {
+
+            if (cachedDownloads != null) {
+                writeToResponse(resourceResponse, cachedDownloads);
+            } else {
+                final DataRequest downloadRequest = DataRequestManager.getInstance().getDataRequest(id);
+                if (Objects.requireNonNull(downloadRequest.getStatus()) == DataRequest.STATUS.available) {
+                    final File dataFile = downloadRequest.getDataFile();
+                    try {
+                        if (dataFile != null && dataFile.exists()) {
+                            final byte[] content = Files.readAllBytes(dataFile.toPath());
+                            final String data = new String(content, StandardCharsets.UTF_8);
+                            cacheDownloads(id, data);
+                            writeToResponse(resourceResponse, data);
+                        }
+                    } catch (Exception e) {
+                        DataRequestManager.getInstance().writeError(e.getMessage(), resourceResponse);
+                    } finally {
+                        DataRequestManager.getInstance().removeDataRequest(downloadRequest);
+                    }
+                } else {
+                    resourceResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
+            }
+
+        } else if ("updateStatus".equals(action)){
+            DataRequestManager.getInstance().updateStatus(id, resourceResponse);
+        } else {
+            DataRequestManager.getInstance().writeError("Unsupported Action error: " + action, resourceResponse);
         }
-        String downloadsJson = getDownloadsJson(downloadSiteId).toJSONString();
-        request.setAttribute("downloadsJson", downloadsJson);
-        super.render(request, response);
     }
 
-    private JSONArray getDownloadsJson(long siteGroupId) {
-
-        JSONArray downloadLocations = JSONFactoryUtil.createJSONArray();
-        final List<GeoLocation> geoLocations = GeoLocationLocalServiceUtil.getGeoLocations(0, GeoLocationLocalServiceUtil.getGeoLocationsCount());
-
-        for (GeoLocation geoLocation : geoLocations) {
-            final JSONObject downloadLocation = JSONFactoryUtil.createJSONObject();
-            downloadLocation.put("city", geoLocation.getCityName());
-            final JSONObject position = JSONFactoryUtil.createJSONObject();
-            position.put("lat", geoLocation.getLatitude());
-            position.put("lng", geoLocation.getLongitude());
-            downloadLocation.put("position", position);
-
-            final JSONArray products = JSONFactoryUtil.createJSONArray();
-            final List<Long> downloadsByGeoLocations = DownloadLocalServiceUtil.findDownloadIdsByGeoLocation(geoLocation.getLocationId());
-            Map<Long, Integer> distinctCounts = convertToDistinctCounts(downloadsByGeoLocations);
-            distinctCounts.forEach((downloadId, count) -> {
-
-                JSONObject jsonProduct = JSONFactoryUtil.createJSONObject();
-                jsonProduct.put("downloadId", downloadId);
-                jsonProduct.put("downloadCount", count);
-
-                nl.deltares.portal.model.impl.Download dsdDownload = getDownloadArticle(siteGroupId, downloadId);
-                if (dsdDownload != null) {
-                    jsonProduct.put("software", dsdDownload.getFileTopic());
-                    jsonProduct.put("downloadName", dsdDownload.getFileName());
-                }
-                products.put(jsonProduct);
-
-            });
-            if (products.length() > 0) {
-                downloadLocation.put("products", products);
-                downloadLocations.put(downloadLocation);
+    private void writeToResponse(ResourceResponse resourceResponse, String jsonDownload) {
+        resourceResponse.setContentType("application/json");
+        if (jsonDownload == null){
+           resourceResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        } else {
+            resourceResponse.setStatus(HttpServletResponse.SC_OK);
+            resourceResponse.setContentLength(jsonDownload.getBytes(StandardCharsets.UTF_8).length);
+            try (Writer writer = resourceResponse.getWriter()) {
+                writer.write(jsonDownload);
+            } catch (IOException e) {
+                resourceResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         }
 
-
-        return downloadLocations;
     }
 
-    private Map<Long, Integer> convertToDistinctCounts(List<Long> downloadsByGeoLocations) {
-        final HashMap<Long, Integer> distinctCounts = new HashMap<>();
+    private static String getId(ThemeDisplay themeDisplay) {
+        return DownloadActivityMapRequest.class.getName().concat("_").concat(String.valueOf(themeDisplay.getCompanyId()))
+                .concat("_").concat(String.valueOf(themeDisplay.getSiteGroupId()));
+    }
 
-        for (Long downloadsByGeoLocation : downloadsByGeoLocations) {
-            Integer orDefault = distinctCounts.getOrDefault(downloadsByGeoLocation, 0);
-            distinctCounts.put(downloadsByGeoLocation, ++orDefault);
+    @SuppressWarnings("UnusedReturnValue")
+    private DataRequest getDownloadRequest(String id, ThemeDisplay themeDisplay) throws IOException {
+
+        DataRequestManager instance = DataRequestManager.getInstance();
+        DataRequest dataRequest = instance.getDataRequest(id);
+        if (dataRequest == null) {
+
+            long downloadSiteId;
+            try {
+                SiteMapConfiguration configuration = _configurationProvider.getSystemConfiguration(
+                        SiteMapConfiguration.class);
+                downloadSiteId = Long.parseLong(configuration.downloadPortalSiteId());
+            } catch (Exception e) {
+                LOG.error("Error retrieving ID for download portal from SiteMapConfiguration: " + e.getMessage());
+                downloadSiteId = themeDisplay.getSiteGroupId();
+            }
+            dataRequest = new DownloadActivityMapRequest(id, themeDisplay.getUserId(), downloadSiteId, dsdParserUtils);
+            instance.addToQueue(dataRequest);
+        } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
+            instance.removeDataRequest(dataRequest);
         }
-        return distinctCounts;
+        return dataRequest;
     }
 
-    private nl.deltares.portal.model.impl.Download getDownloadArticle(long siteGroupId, long downloadId) {
-        try {
-            return (nl.deltares.portal.model.impl.Download) dsdParserUtils.toDsdArticle(siteGroupId, String.valueOf(downloadId));
-        } catch (PortalException e) {
-            LOG.warn(String.format("Error parsing article %d : %s", downloadId, e.getMessage()));
-            return null;
+    private void cacheDownloads(String id, String data) {
+        long expTimeMillis = System.currentTimeMillis() + TimeUnit.HOURS.toMillis(1);
+        String expiryKey = id + "_expirytime";
+        PortalCache<String, Serializable> portalCache =
+                PortalCacheHelperUtil.getPortalCache(PortalCacheManagerNames.SINGLE_VM, "deltares");
+        portalCache.put(id, data);
+        portalCache.put(expiryKey, expTimeMillis);
+    }
+
+    private String getCachedDownloads(String id) {
+        if (id == null) return null;
+        PortalCache<String, Serializable> cache = PortalCacheHelperUtil.getPortalCache(PortalCacheManagerNames.SINGLE_VM, "deltares");
+        String data = (String) cache.get(id);
+        if (data != null) {
+            final String expiryKey = id + "_expirytime";
+            Long expiryTime = (Long) cache.get(expiryKey);
+            if (expiryTime != null && expiryTime > System.currentTimeMillis()) {
+                return data;
+            } else {
+                cache.remove(id);
+                cache.remove(expiryKey);
+            }
         }
+        return null;
     }
-
 }
