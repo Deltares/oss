@@ -1,5 +1,3 @@
-<%@ page import="java.util.List" %>
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
@@ -15,8 +13,8 @@
 	String userPortraitsData = (String) renderRequest.getAttribute("userportraitdata");
 %>
 
-
 <div class="top-content">
+	<div class="h2">Meet the OSS community members!</div>
 	<div class="container-fluid">
 		<div id="user-portraits-carousel" class="carousel slide" data-ride="carousel">
 			<div id="<portlet:namespace/>portraits"  class="carousel-inner row w-100 mx-auto" role="listbox">

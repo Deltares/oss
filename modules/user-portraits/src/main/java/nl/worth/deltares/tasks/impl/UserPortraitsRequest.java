@@ -1,6 +1,5 @@
 package nl.worth.deltares.tasks.impl;
 
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -88,13 +87,12 @@ public class UserPortraitsRequest extends AbstractDataRequest {
                     portraitUrls.put(addUserId(portraitURL, user.getUserId()));
                     incrementProcessCount(1);
                 }
-
                 if (Thread.interrupted()) {
                     status = terminated;
                     errorMessage = String.format("Thread 'UserPortraitsRequest' with id %s is interrupted!", id);
                     break;
                 }
-            } catch (PortalException e) {
+            } catch (Exception e) {
                 LOG.error("Error retrieving portrait URLs", e);
             }
         }
