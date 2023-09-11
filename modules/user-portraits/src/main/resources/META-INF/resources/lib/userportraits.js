@@ -13,18 +13,42 @@ UserPortraitUtil = {
             urls.map((url, i) => {
 
                 if (i === 0){
-                    contents.push('<div className="carousel-item col-12 col-sm-6 col-md-4 col-lg-3 active">');
+                    contents.push('<div class="carousel-item col-12 col-sm-6 col-md-4 col-lg-3 active">');
                 } else {
-                    contents.push('<div className="carousel-item col-12 col-sm-6 col-md-4 col-lg-3">');
+                    contents.push('<div class="carousel-item col-12 col-sm-6 col-md-4 col-lg-3">');
                 }
-                contents.push('<img src="' + url + '" alt="img'+ i + '" className="img-fluid mx-auto d-block">')
+                contents.push('<img src="' + url + '" alt="img'+ i + '" class="img-fluid mx-auto d-block">')
                 contents.push('</div>')
             });
             let userPortraits = document.getElementById(namespace + "portraits");
             userPortraits.innerHTML = contents.join("");
         }
+        this.addCarouselSlider();
     },
 
+    addCarouselSlider: function (){
+
+        $('#user-portraits-carousel').on('slide.bs.carousel', function(e) {
+            var $e = $(e.relatedTarget);
+            let idx = $e.index();
+            let itemsPerSide = 5;
+            let totalItems = $('.carousel-item').length;
+            if (idx >= itemsPerSide - (totalItems - idx) ){
+                let it = itemsPerSide - (totalItems - idx);
+                for (let i=0; i < it; i++){
+                    // append slides to end
+                    if (e.direction === "left") {
+                        $('.carousel-item').eq(i).appendTo('.carousel-inner');
+                    }
+                    else {
+                        $('.carousel-item').eq(0).appendTo('.carousel-inner');
+                    }
+                }
+            }
+
+        });
+
+    },
     getRunningProcess: function (namespace){
         let runningProcess = document.getElementById(namespace + "runningProcess");
         return runningProcess.value;

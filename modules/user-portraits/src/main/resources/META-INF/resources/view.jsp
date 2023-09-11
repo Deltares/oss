@@ -19,8 +19,8 @@
 		<div id="user-portraits-carousel" class="carousel slide" data-ride="carousel">
 			<div id="<portlet:namespace/>portraits"  class="carousel-inner row w-100 mx-auto" role="listbox">
 			</div>
-			<div id="<portlet:namespace/>title">
-			</div>
+		</div>
+		<div id="<portlet:namespace/>title">
 		</div>
 	</div>
 </div>
@@ -34,28 +34,5 @@
 	UserPortraitUtil.updatePortraits("<portlet:namespace/>", '<%=userPortraitsData%>');
 	<% }%>
 
-
-	$('#user-portraits-carousel').on('slide.bs.carousel', function (e) {
-	/*
-	CC 2.0 License Iatek LLC 2018 - Attribution required
-	*/
-	var $e = $(e.relatedTarget);
-	var idx = $e.index();
-	var itemsPerSlide = 5;
-	var totalItems = $('.carousel-item').length;
-
-	if (idx >= totalItems-(itemsPerSlide-1)) {
-	var it = itemsPerSlide - (totalItems - idx);
-	for (var i=0; i<it; i++) {
-	// append slides to end
-	if (e.direction === "left") {
-	$('.carousel-item').eq(i).appendTo('.carousel-inner');
-	}
-	else {
-	$('.carousel-item').eq(0).appendTo('.carousel-inner');
-	}
-	}
-	}
-	});
 
 </aui:script>
