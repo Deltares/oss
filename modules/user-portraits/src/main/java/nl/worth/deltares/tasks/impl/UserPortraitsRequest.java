@@ -99,7 +99,8 @@ public class UserPortraitsRequest extends AbstractDataRequest {
 
         int iterations = 0;
         while (usersWithPortrait.size() < DEFAULT_PORTRAITS && iterations < 1000) {
-            int startIndex = random.nextInt(allUserCount - 100);
+            final int bound = allUserCount - 100;
+            int startIndex = random.nextInt(Math.max(bound, 1));
             int endIndex = startIndex + 100;
             List<User> checkUsers = UserLocalServiceUtil.getUsers(startIndex, endIndex);
 
