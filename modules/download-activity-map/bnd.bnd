@@ -1,0 +1,7 @@
+Bundle-Name: download-activity-map
+Bundle-SymbolicName: nl.deltares.oss.portlet.download-activity-map
+Bundle-Version: 1.0.0
+Export-Package: nl.deltares.oss.portlet.constants
+Import-Package: \
+  nl.deltares.oss.download.service.*,\
+  *
