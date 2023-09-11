@@ -9,7 +9,7 @@ ActivityMapUtil = {
 
         const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 20,
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap.</a> <br/ ><strong>Deltares software download locations</strong>'
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap.</a>'
             }),
             latlng = L.latLng(22.5, 20);
 
