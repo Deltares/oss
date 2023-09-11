@@ -1,5 +1,6 @@
 package nl.worth.deltares.tasks.impl;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -70,33 +71,18 @@ public class UserPortraitsRequest extends AbstractDataRequest {
 
     private JSONArray getRandomPortraits(ThemeDisplay themeDisplay) {
 
-        //Retrieve only 1000 users to search for portraits. Start position is random.
-        int allUserCount = UserLocalServiceUtil.getUsersCount();
-
         JSONArray portraitUrls = JSONFactoryUtil.createJSONArray();
 
-        int maxIterations = 10;
-        int currentIteration = 0;
-        while (portraitUrls.length() < UserPortraitsRequest.DEFAULT_PORTRAITS && currentIteration < maxIterations) {
-            currentIteration++;
-            try {
-                Set<User> usersWithPortraits = getRandomUsersWithPortrait(allUserCount);
+        Set<User> usersWithPortraits = getRandomUsersWithPortrait();
 
-                for (User user : usersWithPortraits) {
-                    String portraitURL = user.getPortraitURL(themeDisplay);
-                    portraitUrls.put(addUserId(portraitURL, user.getUserId()));
-                    incrementProcessCount(1);
-                }
-                if (Thread.interrupted()) {
-                    status = terminated;
-                    errorMessage = String.format("Thread 'UserPortraitsRequest' with id %s is interrupted!", id);
-                    break;
-                }
-            } catch (Exception e) {
-                LOG.error("Error retrieving portrait URLs", e);
+        for (User user : usersWithPortraits) {
+            try {
+                String portraitURL = user.getPortraitURL(themeDisplay);
+                portraitUrls.put(addUserId(portraitURL, user.getUserId()));
+            } catch (PortalException e) {
+                LOG.warn(String.format("Error getting portraitURL for user %s: %s", user.getEmailAddress(), e.getMessage()));
             }
         }
-
         return portraitUrls;
     }
 
@@ -104,46 +90,46 @@ public class UserPortraitsRequest extends AbstractDataRequest {
         return portraitURL + "&user_id=" + userId;
     }
 
-    private Set<User> getRandomUsersWithPortrait(int allUserCount) {
+    private Set<User> getRandomUsersWithPortrait() {
+
+        //Retrieve only 1000 users to search for portraits. Start position is random.
+        int allUserCount = UserLocalServiceUtil.getUsersCount();
 
         Set<User> usersWithPortrait = new HashSet<>();
 
-        int countUsersWithPortrait = 0;
+        int iterations = 0;
+        while (usersWithPortrait.size() < DEFAULT_PORTRAITS && iterations < 1000) {
+            int startIndex = random.nextInt(allUserCount - 100);
+            int endIndex = startIndex + 100;
+            List<User> checkUsers = UserLocalServiceUtil.getUsers(startIndex, endIndex);
 
-        int startIndex;
-        int endIndex;
-        if (allUserCount < 1000) {
-            startIndex = 0;
-            endIndex = allUserCount;
-        } else {
-            startIndex = random.nextInt(allUserCount - 1000);
-            endIndex = startIndex + 1000;
-        }
-
-        List<User> allUsers = UserLocalServiceUtil.getUsers(startIndex, endIndex);
-
-        for (User user : allUsers) {
-            if (countUsersWithPortrait > UserPortraitsRequest.DEFAULT_PORTRAITS) break; // we have enough portraits
-            if (user.getPortraitId() != 0L) {
+            for (User checkUser : checkUsers) {
+                if (checkUser.getPortraitId() == 0 || usersWithPortrait.contains(checkUser)) continue;
 
                 try {
-                    Image image = ImageLocalServiceUtil.getImage(user.getPortraitId());
+                    Image image = ImageLocalServiceUtil.getImage(checkUser.getPortraitId());
                     if (image == null || image.getTextObj() == null) {
                         //This portraitId is not valid so remove it.
-                        LOG.warn(String.format("Un-setting portrait %d for user %s", user.getPortraitId(), user.getScreenName()));
-                        user.setPortraitId(0);
-                        UserLocalServiceUtil.updateUser(user);
+                        LOG.warn(String.format("Un-setting portrait %d for user %s", checkUser.getPortraitId(), checkUser.getScreenName()));
+                        checkUser.setPortraitId(0);
+                        UserLocalServiceUtil.updateUser(checkUser);
                     } else {
                         //Found a portrait so add it.
-                        usersWithPortrait.add(user);
-                        countUsersWithPortrait++;
+                        usersWithPortrait.add(checkUser);
+                        incrementProcessCount(1);
                     }
                 } catch (Exception e) {
-                    LOG.warn(String.format("Error getting portrait %d for user %s: %s", user.getPortraitId(), user.getScreenName(), e.getMessage()));
+                    LOG.warn(String.format("Error getting portrait %d for user %s: %s", checkUser.getPortraitId(), checkUser.getScreenName(), e.getMessage()));
                 }
-            }
-        }
 
+            }
+            if (Thread.interrupted()) {
+                status = terminated;
+                errorMessage = String.format("Thread 'UserPortraitsRequest' with id %s is interrupted!", id);
+                break;
+            }
+            iterations++;
+        }
         return usersWithPortrait;
     }
 
