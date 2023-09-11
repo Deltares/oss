@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
                 "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.instanceable=true",
                 "com.liferay.portlet.header-portlet-javascript=/lib/activitymap.js",
-                "javax.portlet.display-name=ActivityMap Portlet",
+                "javax.portlet.display-name=Download ActivityMap Portlet",
                 "javax.portlet.init-param.template-path=/",
                 "javax.portlet.init-param.view-template=/view-leaflet.jsp",
                 "javax.portlet.name=" + ActivityMapPortletKeys.ACTIVITY_MAP,
