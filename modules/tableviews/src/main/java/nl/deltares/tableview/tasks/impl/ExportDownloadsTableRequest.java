@@ -51,7 +51,7 @@ public class ExportDownloadsTableRequest extends AbstractDataRequest {
         this.filterSelection = filterSelection;
 
         this.findByUser = "email".equals(filterSelection);
-        this.findByArticleId = "articleid".equals(filterSelection);
+        this.findByArticleId = "fileName".equals(filterSelection);
 
         this.keycloakUtils = keycloakUtils;
     }
@@ -103,18 +103,18 @@ public class ExportDownloadsTableRequest extends AbstractDataRequest {
         int end = 100;
 
         final User filterUser;
-        final Long filterArticleId;
+        final String fileName;
         if (findByUser) {
-            filterArticleId = null;
+            fileName = null;
             filterUser = UserLocalServiceUtil.fetchUserByEmailAddress(group.getCompanyId(), filterValue);
             if (filterUser != null) totalCount = DownloadLocalServiceUtil.countDownloadsByUserId(group.getGroupId(), filterUser.getUserId());
         } else if (findByArticleId) {
             filterUser = null;
-            filterArticleId = Long.parseLong(filterValue);
-            totalCount = DownloadLocalServiceUtil.countDownloadsByArticleId(group.getGroupId(), filterArticleId);
+            fileName = filterValue;
+            totalCount = DownloadLocalServiceUtil.countDownloadsByFileName(group.getGroupId(), fileName);
         } else
         {
-            filterArticleId = null;
+            fileName = null;
             filterUser = null;
             totalCount = DownloadLocalServiceUtil.countDownloads(group.getGroupId());
         }
@@ -124,8 +124,8 @@ public class ExportDownloadsTableRequest extends AbstractDataRequest {
             final List<Download> downloads;
             if (filterUser != null) {
                 downloads = DownloadLocalServiceUtil.findDownloadsByUserId(group.getGroupId(), filterUser.getUserId(), start, end);
-            } else if (filterArticleId != null ) {
-                downloads = DownloadLocalServiceUtil.findDownloadsByArticleId(group.getGroupId(), filterArticleId, start, end);
+            } else if (fileName != null ) {
+                downloads = DownloadLocalServiceUtil.findDownloadsByFileName(group.getGroupId(), fileName, start, end);
             } else
             {
                 downloads = DownloadLocalServiceUtil.findDownloads(group.getGroupId(), start, end);
