@@ -44,7 +44,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.oss.portlet.download-activity-map",
-    "version" : "1.0.1",
+    "version" : "1.0.2",
     "extension" : "jar"
   },
   {
@@ -111,7 +111,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.worth.deltares.oss.portlet.user-portraits",
-    "version" : "1.0.5",
+    "version" : "1.0.6",
     "extension" : "jar"
   },
   {
