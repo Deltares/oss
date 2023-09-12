@@ -14,7 +14,6 @@
 %>
 
 <div class="top-content">
-	<div class="h2">Meet the OSS community members!</div>
 	<div class="container-fluid">
 		<div id="user-portraits-carousel" class="carousel slide" data-ride="carousel">
 			<div id="<portlet:namespace/>portraits"  class="carousel-inner row w-100 mx-auto" role="listbox">
