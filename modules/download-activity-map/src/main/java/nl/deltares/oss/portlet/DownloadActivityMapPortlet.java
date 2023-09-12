@@ -37,7 +37,8 @@ import java.util.concurrent.TimeUnit;
         property = {
                 "javax.portlet.version=3.0",
                 "com.liferay.portlet.display-category=OSS",
-                "com.liferay.portlet.instanceable=true",
+                "com.liferay.portlet.instanceable=false",
+                "com.liferay.portlet.footer-portlet-css=/css/main.css",
                 "com.liferay.portlet.header-portlet-javascript=/lib/activitymap.js",
                 "javax.portlet.display-name=Download ActivityMap Portlet",
                 "javax.portlet.init-param.template-path=/",
