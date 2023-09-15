@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.oss.portlet.constants.ActivityMapPortletKeys;
 import nl.deltares.portal.configuration.SiteMapConfiguration;
@@ -22,7 +23,10 @@ import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.*;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Objects;
@@ -69,7 +73,7 @@ public class DownloadActivityMapPortlet extends MVCPortlet {
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
         final String id = getId(themeDisplay);
         final String cachedDownloads = getCachedDownloads(id);
-        if (cachedDownloads != null){
+        if (cachedDownloads != null) {
             renderRequest.setAttribute("mapdata", cachedDownloads);
         }
         super.render(renderRequest, renderResponse);
@@ -85,37 +89,30 @@ public class DownloadActivityMapPortlet extends MVCPortlet {
         final String id = getId(themeDisplay);
 
         if ("start".equals(action)) {
-            final String cachedDownloads = getCachedDownloads(id);
-            if (cachedDownloads == null) {
-                getDownloadRequest(id, themeDisplay);
-            }
-            writeToResponse(resourceResponse, cachedDownloads);
+            getDownloadRequest(id, themeDisplay);
+            writeToResponse(resourceResponse, null);
         } else if ("download".equals(action)) {
-            final String cachedDownloads = getCachedDownloads(id);
-            if (cachedDownloads != null) {
-                writeToResponse(resourceResponse, cachedDownloads);
-            } else {
-                final DataRequest downloadRequest = DataRequestManager.getInstance().getDataRequest(id);
-                if (Objects.requireNonNull(downloadRequest.getStatus()) == DataRequest.STATUS.available) {
-                    final File dataFile = downloadRequest.getDataFile();
-                    try {
-                        if (dataFile != null && dataFile.exists()) {
-                            final byte[] content = Files.readAllBytes(dataFile.toPath());
-                            final String data = new String(content, StandardCharsets.UTF_8);
-                            cacheDownloads(id, data);
-                            writeToResponse(resourceResponse, data);
-                        }
-                    } catch (Exception e) {
-                        DataRequestManager.getInstance().writeError(e.getMessage(), resourceResponse);
-                    } finally {
-                        DataRequestManager.getInstance().removeDataRequest(downloadRequest);
+            final DataRequest downloadRequest = DataRequestManager.getInstance().getDataRequest(id);
+            if (Objects.requireNonNull(downloadRequest.getStatus()) == DataRequest.STATUS.available) {
+                final File dataFile = downloadRequest.getDataFile();
+                try {
+                    if (dataFile != null && dataFile.exists()) {
+                        final byte[] content = Files.readAllBytes(dataFile.toPath());
+                        final String data = new String(content, StandardCharsets.UTF_8);
+                        //Escape charaters when writing to the cache otherwise the render request returns invalid content.
+                        cacheDownloads(id, escapeCharacters(data));
+                        writeToResponse(resourceResponse, data);
                     }
-                } else {
-                    resourceResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                } catch (Exception e) {
+                    DataRequestManager.getInstance().writeError(e.getMessage(), resourceResponse);
+                } finally {
+                    DataRequestManager.getInstance().removeDataRequest(downloadRequest);
                 }
+            } else {
+                resourceResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
 
-        } else if ("updateStatus".equals(action)){
+        } else if ("updateStatus".equals(action)) {
             DataRequestManager.getInstance().updateStatus(id, resourceResponse);
         } else {
             DataRequestManager.getInstance().writeError("Unsupported Action error: " + action, resourceResponse);
@@ -124,8 +121,8 @@ public class DownloadActivityMapPortlet extends MVCPortlet {
 
     private void writeToResponse(ResourceResponse resourceResponse, String jsonDownload) {
         resourceResponse.setContentType("application/json");
-        if (jsonDownload == null){
-           resourceResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        if (jsonDownload == null) {
+            resourceResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
         } else {
             resourceResponse.setStatus(HttpServletResponse.SC_OK);
             resourceResponse.setContentLength(jsonDownload.getBytes(StandardCharsets.UTF_8).length);
@@ -136,6 +133,14 @@ public class DownloadActivityMapPortlet extends MVCPortlet {
             }
         }
 
+    }
+
+    public static String escapeCharacters(String attribute) {
+        if (attribute.contains("'")) {
+            attribute = StringUtil.replace(
+                    attribute, "'", "\\'");
+        }
+        return attribute;
     }
 
     private static String getId(ThemeDisplay themeDisplay) {
