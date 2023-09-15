@@ -12,15 +12,15 @@ dependencies {
     compileOnly project(":modules:download:download-api")
     compileOnly project(":modules:geolocation:geolocation-api")
 
-    testCompile group: 'com.liferay.portal', name: 'com.liferay.portal.kernel'
-    testCompile group: 'com.liferay.portal', name: 'com.liferay.portal.impl'
-    testCompile group: "com.liferay", name: "com.liferay.petra.string"
-    testCompile group: 'com.liferay', name: 'com.liferay.petra.lang'
-    testCompile group: 'com.liferay', name: 'com.liferay.journal.api'
+    testImplementation group: 'com.liferay.portal', name: 'com.liferay.portal.kernel'
+    testImplementation group: 'com.liferay.portal', name: 'com.liferay.portal.impl'
+    testImplementation group: "com.liferay", name: "com.liferay.petra.string"
+    testImplementation group: 'com.liferay', name: 'com.liferay.petra.lang'
+    testImplementation group: 'com.liferay', name: 'com.liferay.journal.api'
 
-    testCompile group: "junit", name: "junit", version: "4.12"
-    testCompile group: 'org.jodd', name: 'jodd-json'
-    testCompile group: 'commons-io', name: 'commons-io', version: '2.11.0'
-    testCompile group: "com.maxmind.geoip2", name: "geoip2", version: "2.15.0"
+    testImplementation group: "junit", name: "junit", version: "4.12"
+    testImplementation group: 'org.jodd', name: 'jodd-json'
+    testImplementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+    testImplementation group: "com.maxmind.geoip2", name: "geoip2", version: "2.15.0"
 
 }

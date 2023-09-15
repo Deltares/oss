@@ -13,7 +13,7 @@ dependencies {
 	compileOnly group: 'org.osgi', name: 'org.osgi.service.component.annotations'
 
 
-	compile group: "com.liferay", name: "com.liferay.portal.upgrade.api", version: "2.0.3"
+	implementation group: "com.liferay", name: "com.liferay.portal.upgrade.api", version: "2.0.3"
 
 }
 
