@@ -24,6 +24,7 @@
     <#else>
         <#assign typeDisplayName = registration.getType() />
     </#if>
+
     <#assign calDescription = "">
 
     <#assign price = registration.getPrice() />
@@ -162,19 +163,20 @@
                         </#list>
                         <#assign isRegistered = dsdSessionUtils.isUserRegisteredFor(user, registration) />
                         <span class="d-block">
-                        <#if registration.canUserRegister(user.getUserId()) && themeDisplay.isSignedIn()>
-                            <#if isRegistered >
-                                <a href="${displayContext.getUnregisterURL(renderRequest)}" class="btn-lg btn-primary"
-                                   role="button" aria-pressed="true">
-                                    ${languageUtil.get(locale, "registrationform.unregister")}
-                                </a>
-                                &nbsp;
-                                <a href="${displayContext.getUpdateURL(renderRequest)}" class="btn-lg btn-primary"
-                                   role="button" aria-pressed="true">
-                                     ${languageUtil.get(locale, "registrationform.update")}
-                                </a>
-                                &nbsp;
-                            <#else >
+                        <#if isRegistered >
+                            <a href="${displayContext.getUnregisterURL(renderRequest)}" class="btn-lg btn-primary"
+                               role="button" aria-pressed="true">
+                                ${languageUtil.get(locale, "registrationform.unregister")}
+                            </a>
+                            &nbsp;
+                            <a href="${displayContext.getUpdateURL(renderRequest)}" class="btn-lg btn-primary"
+                               role="button" aria-pressed="true">
+                                 ${languageUtil.get(locale, "registrationform.update")}
+                            </a>
+                            &nbsp;
+                        <#else >
+                            <#if registration.canUserRegister(user.getUserId()) && themeDisplay.isSignedIn() && available gt 0>
+
                                 <a href="#" data-article-id="${articleId}" class="btn-lg btn-primary add-to-cart"
                                    role="button" aria-pressed="true">
                                     ${languageUtil.get(locale, "shopping.cart.add")}
@@ -189,7 +191,7 @@
                             </a>
                                 <#assign calDescription += (languageUtil.get(locale, "registrationform.join") + ": " + joinLink )/>
                             </#if>
-                    <div class="add-to-calendar c-session__item__calendar"></div>
+                        <div class="add-to-calendar c-session__item__calendar"></div>
                     </span>
                 </div>
             </div>
@@ -216,7 +218,8 @@
         </#if>
         <#if (registration.getPresentations()?size > 0) >
             <div class="c-events__item__uploads">
-                <p class="bold">${languageUtil.get(locale, "dsd.theme.session.presentations")}</p>
+                <!--<p class="bold">${languageUtil.get(locale, "dsd.theme.session.presentations")}</p>-->
+                <p class="bold">Go to presentation</p>
                 <#list registration.getPresentations() as presentation>
                     <#if presentation.isDownloadLink() >
                         <#assign iconClass = "icon-download-alt" />
