@@ -1,6 +1,7 @@
 package nl.deltares.portal.utils.impl;
 
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.util.PropsValues;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import nl.deltares.mock.MockProps;
@@ -25,6 +26,7 @@ public class GeoIpUtilsImplTest {
         Properties properties = new Properties();
         properties.put(GeoIpUtilsImpl.PROP_GEOIP_DB_DIR, getClass().getResource("/geoip/").getFile());
         properties.put(GeoIpUtilsImpl.PROP_GEOIP_DB_NAME, "GeoLite2-City.mmdb");
+        properties.put("company.default.web.id", "00000");
         props.setProperties(properties);
         PropsUtil.setProps(props);
         geoIpUtils = new GeoIpUtilsImpl();
@@ -50,11 +52,11 @@ public class GeoIpUtilsImplTest {
 
         String ipAddress = "77.166.13.240";
 
-        Map<String, String> locationInfo = geoIpUtils.getClientIpInfo(ipAddress);
+        Map<String, String> locationInfo = geoIpUtils.getClientIpInfo(ipAddress, false);
         Assert.assertEquals("Delft", locationInfo.get("city"));
         Assert.assertEquals("Netherlands", locationInfo.get("country"));
         Assert.assertEquals( "NL", locationInfo.get("iso_code"));
-        Assert.assertEquals("2611", locationInfo.get("postal"));
+        Assert.assertEquals("2622", locationInfo.get("postal"));
 
     }
 
