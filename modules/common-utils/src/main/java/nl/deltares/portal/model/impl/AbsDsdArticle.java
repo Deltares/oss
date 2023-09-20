@@ -81,13 +81,6 @@ public abstract class AbsDsdArticle implements DsdArticle {
         this.locale = null;
     }
 
-    AbsDsdArticle(){
-        this.article = null;
-        this.instantiationTime = System.currentTimeMillis();
-        this.dsdParserUtils = null;
-        this.locale = null;
-    }
-
     AbsDsdArticle(JournalArticle article, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
         this.article = article;
         this.instantiationTime = System.currentTimeMillis();

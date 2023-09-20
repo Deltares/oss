@@ -23,6 +23,4 @@ public interface DataRequest extends Callable<DataRequest.STATUS> {
 
     long getTimeoutMillis();
 
-    long getTimeoutMillis();
-
 }
