@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.4.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_4_0.dtd">
+
+<service-builder dependency-injector="ds" package-path="nl.deltares.oss.geolocation">
+	<namespace>GeoLocations</namespace>
+	<entity local-service="true" name="GeoLocation" remote-service="false" uuid="true">
+
+		<!-- PK fields -->
+		<column name="locationId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+		<column name="companyId" type="long" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="countryId" type="long" />
+		<column name="cityName" type="String" />
+		<column name="latitude" type="double" />
+		<column name="longitude" type="double" />
+
+		<!-- Order -->
+
+		<order by="asc">
+			<order-column name="countryId" />
+		</order>
+
+		<!-- Finder methods -->
+
+		<finder name="City" return-type="GeoLocation" unique="true">
+			<finder-column name="countryId" />
+			<finder-column name="cityName" />
+		</finder>
+
+	</entity>
+</service-builder>

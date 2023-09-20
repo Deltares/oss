@@ -10,7 +10,8 @@
                     <ul class="link-list">
                         <#list FooterLinksLeft.LinkToPage.getSiblings() as cur_FooterLinksLeft>
                             <li>
-                                <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, cur_FooterLinksLeft.getData()) />
+                                <#assign linkData = cur_FooterLinksLeft.getData()?eval >
+                                <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, linkData.layoutId?number) />
                                 <a href="${cur_FooterLinksLeft.getFriendlyUrl()}" class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
                                     <div class="text-white">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" aria-hidden="false" role="img">
@@ -110,7 +111,8 @@
             <ul>
                 <#list FooterLinksRight.LinkToPage1.getSiblings() as cur_FooterLinksRight>
                     <li class="my-2 my-md-3 text-sm">
-                        <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, cur_FooterLinksRight.getData()) />
+                        <#assign linkData = cur_FooterLinksRight.getData()?eval >
+                        <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, linkData.layoutId?number) />
                         <a href="${cur_FooterLinksRight.getFriendlyUrl()}">${linkLayout.getName(themeDisplay.getLocale())}</a>
                     </li>
                 </#list>

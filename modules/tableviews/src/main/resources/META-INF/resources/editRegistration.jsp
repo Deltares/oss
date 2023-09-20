@@ -1,12 +1,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
+<%@ taglib uri="http://xmlns.jcp.org/portlet_3_0" prefix="portlet" %>
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
 <%@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %>
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="nl.deltares.tableview.model.DisplayRegistration" %>
-<%@ page import="java.util.List" %>
 <liferay-theme:defineObjects/>
 
 <portlet:defineObjects/>
@@ -14,13 +13,14 @@
 <%
 
     final DisplayRegistration displayRegistration = (DisplayRegistration) request.getAttribute("record");
+    String recordId = "";
     String registrationId = "";
     String registrationName = "";
     String eventName = "";
     String email = "";
     String preferences = "";
     if (displayRegistration != null) {
-        registrationId = String.valueOf(displayRegistration.getId());
+        recordId = String.valueOf(displayRegistration.getRecordId());
         registrationName = displayRegistration.getRegistrationName();
         eventName = displayRegistration.getEventName();
         email = displayRegistration.getEmail();
@@ -39,7 +39,7 @@
 
     <portlet:actionURL name="save" var="saveRegistrationURL">
         <portlet:param name="filterEmail" value="<%=email%>"/>
-        <portlet:param name="registrationId" value="<%=registrationId%>"/>
+        <portlet:param name="recordId" value="<%=recordId%>"/>
     </portlet:actionURL>
 
     <liferay-ui:error key="action-failed">
@@ -86,7 +86,7 @@
             <aui:row>
                 <aui:col width="20">
                     <aui:button type="submit" value="table.edit.save"/>
-                    <aui:button type="cancel" onClick="<%= viewURL %>" value="table.edit.cancel" />
+                    <aui:button type="submit" onClick="<%= viewURL %>" value="table.edit.cancel" />
                 </aui:col>
             </aui:row>
 

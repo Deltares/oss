@@ -1,0 +1,129 @@
+[
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.dsd.registration.api",
+    "version" : "1.0.2",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.dsd.registration.service",
+    "version" : "1.0.2",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.oss.download.api",
+    "version" : "1.0.9",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.oss.download.service",
+    "version" : "1.0.9",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.oss.geolocation.api",
+    "version" : "1.0.0",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.oss.geolocation.service",
+    "version" : "1.0.0",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.portal.common-utils",
+    "version" : "1.0.18",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.oss.portlet.download-activity-map",
+    "version" : "1.0.3",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.portal.config.contributor",
+    "version" : "1.0.0",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.worth.portal.context.contributor",
+    "version" : "1.0.4",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.fullcalendar",
+    "version" : "1.0.1",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.oss.language",
+    "version" : "1.0.0",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.forms",
+    "version" : "1.0.10",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.portal.events",
+    "version" : "1.0.3",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.services.rest",
+    "version" : "1.0.4",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.search.facet",
+    "version" : "1.0.1",
+    "extension" : "jar"
+  },
+
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.tableview.portlet",
+    "version" : "1.0.7",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.deltares.useraccount",
+    "version" : "1.0.0",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "nl.worth.deltares.oss.portlet.user-portraits",
+    "version" : "1.0.6",
+    "extension" : "jar"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "deltares-theme",
+    "version" : "1.0.6",
+    "extension" : "war"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "deltares-fews-theme",
+    "version" : "1.0.2",
+    "extension" : "war"
+  }
+]

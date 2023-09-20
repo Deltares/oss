@@ -25,7 +25,7 @@
 
             this._getSubmitButton().on('click', function () {
                 if (plugin._isFormValid()) {
-                    preSubmitAction();
+                    plugin.form.preSubmitAction();
                     plugin._getForm().submit();
                 }
             });
@@ -39,7 +39,7 @@
         _navigate: function (event) {
             let plugin = event.data.plugin;
             let action = event.data.action;
-            let isFormValid = plugin._isFormValid() && validateFirstStep();
+            let isFormValid = plugin._isFormValid() && plugin.form.validateFirstStep();
 
             let element = $(plugin.element);
             let active = element.find('li.active');
@@ -395,21 +395,21 @@ function getCurrentStep(form) {
     // Scroll service bar (desktop)
     var header = $('#header');
 
-    window.addEventListener('scroll', function() {
-        if ($('body').hasClass('signed-in')) {
-            if (document.documentElement.scrollTop > 94) {
-                header.addClass('hidden-servicebar logged-in');
-            } else {
-                header.removeClass('hidden-servicebar logged-in');
-            }
-        } else {
-            if (document.documentElement.scrollTop > 38) {
-                header.addClass('hidden-servicebar');
-            } else {
-                header.removeClass('hidden-servicebar');
-            }
-        }
-    });
+    // window.addEventListener('scroll', function() {
+    //     if ($('body').hasClass('signed-in')) {
+    //         if (document.documentElement.scrollTop > 94) {
+    //             header.addClass('hidden-servicebar logged-in');
+    //         } else {
+    //             header.removeClass('hidden-servicebar logged-in');
+    //         }
+    //     } else {
+    //         if (document.documentElement.scrollTop > 38) {
+    //             header.addClass('hidden-servicebar');
+    //         } else {
+    //             header.removeClass('hidden-servicebar');
+    //         }
+    //     }
+    // });
 
     // Mobile menu
     var mobileContainer = $('.mobile-container');

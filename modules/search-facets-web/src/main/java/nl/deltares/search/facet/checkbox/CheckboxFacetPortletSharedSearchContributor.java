@@ -1,20 +1,16 @@
 package nl.deltares.search.facet.checkbox;
 
-import com.liferay.dynamic.data.mapping.model.DDMStructure;
-import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
-import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
-import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
-import nl.deltares.portal.utils.DDMStructureUtil;
-import nl.deltares.search.constans.FacetPortletKeys;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
+import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -24,7 +20,7 @@ import java.util.Optional;
 
 @Component(
         immediate = true,
-        property = "javax.portlet.name=" + FacetPortletKeys.CHECKBOX_FACET_PORTLET,
+        property = "javax.portlet.name=" + SearchModuleKeys.CHECKBOX_FACET_PORTLET,
         service = PortletSharedSearchContributor.class
 )
 public class CheckboxFacetPortletSharedSearchContributor implements PortletSharedSearchContributor {
@@ -50,31 +46,33 @@ public class CheckboxFacetPortletSharedSearchContributor implements PortletShare
         String name = structureName + '-' + fieldName; //important to use '-' because this translates to JSP id
 
         String selection = null;
-        Optional<String> facetSelection = portletSharedSearchSettings.getParameter(name);
+        Optional<String> facetSelection = portletSharedSearchSettings.getParameterOptional(name);
         if (facetSelection.isPresent()) {
             selection = facetSelection.get();
-        } else if (!visible){
+        } else if (!visible) {
             selection = FacetUtils.serializeYesNo(Boolean.parseBoolean(_configuration.defaultValue()));
         }
 
         if (selection != null) {
             final Boolean option = FacetUtils.parseYesNo(selection);
-            Optional<DDMStructure> ddmStructureOptional = _ddmStructureUtil.getDDMStructureByName(groupId, structureName, siteDefaultLocale);
-            if (option != null && ddmStructureOptional.isPresent()) {
-                long ddmStructureId = ddmStructureOptional.get().getStructureId();
-                String encodeName = _ddmIndexer.encodeName(ddmStructureId, fieldName, siteDefaultLocale);
-
-                if (explicit){
+            if (option != null) {
+                if (explicit) {
                     //look only for article containing the search field
-                    portletSharedSearchSettings.addCondition(BooleanClauseFactoryUtil.create(encodeName, option.toString(), BooleanClauseOccur.MUST.getName()));
+                    _dsdJournalArticleUtils.queryDdmFieldValue(groupId, fieldName, option.toString(), new String[]{structureName},
+                            portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
                 } else {
-                    //look for any article containing the search field or articles that do not contain the field
-                    portletSharedSearchSettings.addCondition(BooleanClauseFactoryUtil.create(encodeName, Boolean.toString(!option), BooleanClauseOccur.MUST_NOT.getName()));
+                    //exclude all articles containing the opposite value, allowing all articles without value to pass through
+                    _dsdJournalArticleUtils.queryExcludeDdmFieldValue(groupId, fieldName, Boolean.toString(!option), new String[]{structureName},
+                            portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
                 }
+
             }
         }
 
     }
+
+    @Reference
+    private DsdJournalArticleUtils _dsdJournalArticleUtils;
 
     private ConfigurationProvider _configurationProvider;
 
@@ -82,12 +80,6 @@ public class CheckboxFacetPortletSharedSearchContributor implements PortletShare
     protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
         _configurationProvider = configurationProvider;
     }
-
-    @Reference
-    private DDMIndexer _ddmIndexer;
-
-    @Reference
-    private DDMStructureUtil _ddmStructureUtil;
 
     private static final Log LOG = LogFactoryUtil.getLog(CheckboxFacetPortletSharedSearchContributor.class);
 }

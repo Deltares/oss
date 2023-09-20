@@ -19,8 +19,15 @@ DELETE FROM Calendar;
 DELETE FROM CalendarBooking;
 DELETE FROM CalendarResource;
 DELETE FROM ChangesetCollection;
-DELETE FROM EmailAddress;
 DELETE FROM DLFileVersionPreview;
+DELETE FROM EmailAddress;
+DELETE FROM KaleoLog;
+DELETE FROM KaleoNotification;
+DELETE FROM KaleoNotificationRecipient;
+DELETE FROM KaleoTaskAssignment;
+DELETE FROM KaleoTaskAssignmentInstance;
+DELETE FROM KaleoTaskInstanceToken;
+DELETE FROM KaleoTransition;
 DELETE FROM SystemEvent;
 DELETE FROM OAuth2Application;
 DELETE FROM OAuth2Authorization;
@@ -59,9 +66,14 @@ DROP TABLE Subversion_RepositoryFolder;
 DROP TABLE Subversion_RepositoryFolderPermission;
 DROP TABLE Subversion_RepositoryLog;
 DROP TABLE subversion_SVNLog;
+DROP TABLE SVN_SVNLog;
+
 
 -- Clean configurations
-DELETE FROM Configuration_;
+DELETE FROM Configuration_ WHERE configurationId NOT LIKE ('nl.%')
+                             AND configurationId NOT LIKE ('com.liferay.saml.%')
+                             AND configurationId NOT LIKE ('com.liferay.portal.template.freemarker.configuration.FreeMarkerEngineConfiguration')
+                             AND configurationId NOT LIKE ('com.liferay.frontend.js.jquery.web.internal.configuration.JSJQueryConfiguration');
 
 --
 -- Remove orphaned structures, templates, layouts
@@ -97,4 +109,5 @@ DELETE FROM MBMessage  WHERE userId NOT IN (SELECT u.userId FROM User_ u) AND cr
 -- We can only remove users from the User_ table when we are sure no other tables link to these users
 -- We can only remove user group records from Group_ when we are sure the corresponding users no longer exist.
 
-
+-- Fix problem with longtext index field.
+ALTER TABLE DDMTemplate MODIFY COLUMN templateKey varchar(75) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL NULL;

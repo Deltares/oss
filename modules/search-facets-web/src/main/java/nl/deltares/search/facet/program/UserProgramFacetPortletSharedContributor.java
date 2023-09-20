@@ -15,7 +15,7 @@ import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
-import nl.deltares.search.constans.FacetPortletKeys;
+import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.facet.program.builder.UserProgramFacetBuilder;
 import nl.deltares.search.facet.program.builder.UserProgramFacetFactory;
 import org.osgi.service.component.annotations.Component;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 @Component(
         immediate = true,
-        property = "javax.portlet.name=" + FacetPortletKeys.USER_PROGRAM_FACET_PORTLET,
+        property = "javax.portlet.name=" + SearchModuleKeys.USER_PROGRAM_FACET_PORTLET,
         service = PortletSharedSearchContributor.class
 )
 public class UserProgramFacetPortletSharedContributor implements PortletSharedSearchContributor {

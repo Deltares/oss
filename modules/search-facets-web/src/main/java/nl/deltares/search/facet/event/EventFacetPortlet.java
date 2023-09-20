@@ -3,7 +3,7 @@ package nl.deltares.search.facet.event;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
-import nl.deltares.search.constans.FacetPortletKeys;
+import nl.deltares.search.constans.SearchModuleKeys;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -27,9 +27,10 @@ import java.io.IOException;
                 "javax.portlet.expiration-cache=0",
                 "javax.portlet.init-param.template-path=/",
                 "javax.portlet.init-param.view-template=/facet/event/view.jsp",
-                "javax.portlet.name=" + FacetPortletKeys.EVENT_FACET_PORTLET,
+                "javax.portlet.name=" + SearchModuleKeys.EVENT_FACET_PORTLET,
                 "javax.portlet.resource-bundle=content.Language",
-                "javax.portlet.security-role-ref=power-user,user"
+                "javax.portlet.security-role-ref=power-user,user",
+                "javax.portlet.version=3.0"
         },
         service = Portlet.class
 )

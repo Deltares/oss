@@ -48,30 +48,20 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
         totalCount = downloads.size();
 
         try {
-            downloads.forEach(download -> setStatusToProcessing(user, Long.parseLong(download.getArticleId()), download.getFilePath()));
             for (Download download : downloads) {
 
                 Map<String, String> shareInfo;
                 if (!download.isAutomaticLinkCreation()) {
                     LOG.info(String.format("Creation of share link for user '%s' on file '%s' will be sent once request has been processed.", emailAddress, download.getFileName()));
                     shareInfo = new HashMap<>();
-                    shareInfo.put("id", "-1");
                 } else {
 
                     try {
-                        shareInfo = downloadUtils.shareLinkExists(download.getFilePath(), emailAddress);
-                        //todo: make password protection configurable
-                        if (shareInfo.isEmpty()) {
-                            shareInfo = downloadUtils.sendShareLink(download.getFilePath(), emailAddress, false);
-                        } else {
-                            shareInfo = downloadUtils.resendShareLink(Integer.parseInt(shareInfo.get("id")), false);
-                        }
+                        shareInfo = downloadUtils.createShareLink(download.getFilePath(), emailAddress, false);
                     } catch (Exception e) {
                         errorMessage = String.format("Failed to send link for file %s : %s ", download.getFileName(), e.getMessage());
                         LOG.warn(errorMessage);
                         continue;
-                    } finally {
-                        unsetStatusFromProcessing(user, Long.parseLong(download.getArticleId()));
                     }
                 }
 
@@ -88,7 +78,7 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
                 downloadRequest.registerShareInfo(download.getArticleId(), shareInfo);
                 try {
                     downloadUtils.registerDownload(user, downloadRequest.getGroupId() , Long.parseLong(download.getArticleId()),
-                            download.getFilePath(), shareInfo, downloadRequest.getUserAttributes());
+                            download.getFileName(), shareInfo, downloadRequest.getUserAttributes());
                 } catch (PortalException e) {
                     errorMessage = String.format("Failed to register link for file %s : %s ", download.getFileName(), e.getMessage());
                     LOG.warn(errorMessage);
@@ -119,24 +109,5 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
         return status;
     }
 
-    private void unsetStatusFromProcessing(User user, long downloadId) {
-        try {
-            final Map<String, String> shareInfo = new HashMap<>();
-            shareInfo.put("id", "-1");
-            downloadUtils.registerDownload(user, downloadRequest.getGroupId(), downloadId, null, shareInfo, Collections.emptyMap());
-        } catch (PortalException e) {
-            LOG.warn("Error unsetting direct download url: " + e.getMessage());
-        }
-    }
-
-    private void setStatusToProcessing(User user, long downloadId, String filePath) {
-        try {
-            final Map<String, String> shareInfo = new HashMap<>();
-            shareInfo.put("id", "-9");
-            downloadUtils.registerDownload(user, downloadRequest.getGroupId(), downloadId, filePath, shareInfo, Collections.emptyMap());
-        } catch (PortalException e) {
-            LOG.warn("Error registering direct download url: " + e.getMessage());
-        }
-    }
 
 }

@@ -88,13 +88,16 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
                 //
             }
         }
-        boolean isSanctioned = false;
-        String sanctionCountry = null;
-        if (geoIpUtils != null) {
+        final Object isSanctioned_from_postlogin = request.getSession().getAttribute("LIFERAY_SHARED_isSanctioned");
+        boolean isSanctioned = isSanctioned_from_postlogin != null && (boolean) isSanctioned_from_postlogin;
+        String sanctionCountry = (String) request.getSession().getAttribute("LIFERAY_SHARED_sanctionCountry");
+        if (geoIpUtils != null && isSanctioned_from_postlogin == null) {
             final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(request.getRemoteAddr());
             final String countryIso2Code = geoIpUtils.getCountryIso2Code(clientIpInfo);
-            isSanctioned = sanctionCheckUtils.isSanctionedByCountyCode(countryIso2Code);
+            isSanctioned = sanctionCheckUtils.isSanctionedByCountyCode(themeDisplay.getCompanyId(), countryIso2Code);
             sanctionCountry = geoIpUtils.getCountryName(clientIpInfo);
+            request.getSession().setAttribute("LIFERAY_SHARED_isSanctioned", false);
+            request.getSession().setAttribute("LIFERAY_SHARED_sanctionCountry", sanctionCountry == null ? "unknown": sanctionCountry);
         }
         contextObjects.put("is_sanctioned", isSanctioned);
         contextObjects.put("sanctionCountry", sanctionCountry == null ? "" : sanctionCountry);

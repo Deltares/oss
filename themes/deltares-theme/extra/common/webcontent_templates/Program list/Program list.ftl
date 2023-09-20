@@ -29,14 +29,16 @@
             <#assign count = displayContext.getPresenterCount()/>
             <#if count gt 0>
                 <#list 0..(count-1) as i >
-                    <#assign imageUrl = displayContext.getPresenterSmallImageURL(i) />
-                    <#if imageUrl?has_content >
-                        <img width="32" class="expert-thumbnail" src="${imageUrl}"/>
-                    </#if>
-                    <#assign name = displayContext.getPresenterName(i) />
-                    <#if name?has_content>
-                        <span class="expert-name px-2">${name}</span> |
-                    </#if>
+                    <div class="items-line">
+                        <#assign imageUrl = displayContext.getPresenterSmallImageURL(i) />
+                        <#if imageUrl?has_content >
+                            <img width="32" class="expert-thumbnail" src="${imageUrl}"/>
+                        </#if>
+                        <#assign name = displayContext.getPresenterName(i) />
+                        <#if name?has_content>
+                            <span class="expert-name px-2">${name}</span> |
+                        </#if>
+                    </div>
                 </#list>
             </#if>
             <span class="c-sessions__item__time-date-place__time">
@@ -64,7 +66,7 @@
                             ${languageUtil.get(locale, "registrationform.unregister")}
                         </a>
 
-                    <#else>
+                    <#elseif available gt 0 >
                         <a href="#" data-article-id="${registration.getArticleId()}" class="btn-lg btn-primary add-to-cart" role="button"
                            aria-pressed="true"  style="color:#fff">
                           ${languageUtil.get(locale, "shopping.cart.add")}

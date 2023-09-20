@@ -14,18 +14,13 @@
 
 package nl.deltares.oss.download.model;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.portal.kernel.bean.AutoEscape;
 import com.liferay.portal.kernel.model.BaseModel;
-import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.ShardedModel;
-import com.liferay.portal.kernel.service.ServiceContext;
-
-import java.io.Serializable;
 
 import java.util.Date;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The base model interface for the Download service. Represents a row in the &quot;Downloads_Download&quot; database table, with each column mapped to a property of this class.
@@ -76,22 +71,6 @@ public interface DownloadModel extends BaseModel<Download>, ShardedModel {
 	public void setId(long id);
 
 	/**
-	 * Returns the company ID of this download.
-	 *
-	 * @return the company ID of this download
-	 */
-	@Override
-	public long getCompanyId();
-
-	/**
-	 * Sets the company ID of this download.
-	 *
-	 * @param companyId the company ID of this download
-	 */
-	@Override
-	public void setCompanyId(long companyId);
-
-	/**
 	 * Returns the group ID of this download.
 	 *
 	 * @return the group ID of this download
@@ -106,18 +85,20 @@ public interface DownloadModel extends BaseModel<Download>, ShardedModel {
 	public void setGroupId(long groupId);
 
 	/**
-	 * Returns the download ID of this download.
+	 * Returns the company ID of this download.
 	 *
-	 * @return the download ID of this download
+	 * @return the company ID of this download
 	 */
-	public long getDownloadId();
+	@Override
+	public long getCompanyId();
 
 	/**
-	 * Sets the download ID of this download.
+	 * Sets the company ID of this download.
 	 *
-	 * @param downloadId the download ID of this download
+	 * @param companyId the company ID of this download
 	 */
-	public void setDownloadId(long downloadId);
+	@Override
+	public void setCompanyId(long companyId);
 
 	/**
 	 * Returns the user ID of this download.
@@ -176,19 +157,33 @@ public interface DownloadModel extends BaseModel<Download>, ShardedModel {
 	public void setModifiedDate(Date modifiedDate);
 
 	/**
-	 * Returns the file path of this download.
+	 * Returns the download ID of this download.
 	 *
-	 * @return the file path of this download
+	 * @return the download ID of this download
 	 */
-	@AutoEscape
-	public String getFilePath();
+	public long getDownloadId();
 
 	/**
-	 * Sets the file path of this download.
+	 * Sets the download ID of this download.
 	 *
-	 * @param filePath the file path of this download
+	 * @param downloadId the download ID of this download
 	 */
-	public void setFilePath(String filePath);
+	public void setDownloadId(long downloadId);
+
+	/**
+	 * Returns the file name of this download.
+	 *
+	 * @return the file name of this download
+	 */
+	@AutoEscape
+	public String getFileName();
+
+	/**
+	 * Sets the file name of this download.
+	 *
+	 * @param fileName the file name of this download
+	 */
+	public void setFileName(String fileName);
 
 	/**
 	 * Returns the expiry date of this download.
@@ -220,63 +215,33 @@ public interface DownloadModel extends BaseModel<Download>, ShardedModel {
 	public void setOrganization(String organization);
 
 	/**
-	 * Returns the country code of this download.
+	 * Returns the geo location ID of this download.
 	 *
-	 * @return the country code of this download
+	 * @return the geo location ID of this download
+	 */
+	public long getGeoLocationId();
+
+	/**
+	 * Sets the geo location ID of this download.
+	 *
+	 * @param geoLocationId the geo location ID of this download
+	 */
+	public void setGeoLocationId(long geoLocationId);
+
+	/**
+	 * Returns the file share url of this download.
+	 *
+	 * @return the file share url of this download
 	 */
 	@AutoEscape
-	public String getCountryCode();
+	public String getFileShareUrl();
 
 	/**
-	 * Sets the country code of this download.
+	 * Sets the file share url of this download.
 	 *
-	 * @param countryCode the country code of this download
+	 * @param fileShareUrl the file share url of this download
 	 */
-	public void setCountryCode(String countryCode);
-
-	/**
-	 * Returns the city of this download.
-	 *
-	 * @return the city of this download
-	 */
-	@AutoEscape
-	public String getCity();
-
-	/**
-	 * Sets the city of this download.
-	 *
-	 * @param city the city of this download
-	 */
-	public void setCity(String city);
-
-	/**
-	 * Returns the share ID of this download.
-	 *
-	 * @return the share ID of this download
-	 */
-	public int getShareId();
-
-	/**
-	 * Sets the share ID of this download.
-	 *
-	 * @param shareId the share ID of this download
-	 */
-	public void setShareId(int shareId);
-
-	/**
-	 * Returns the direct download url of this download.
-	 *
-	 * @return the direct download url of this download
-	 */
-	@AutoEscape
-	public String getDirectDownloadUrl();
-
-	/**
-	 * Sets the direct download url of this download.
-	 *
-	 * @param directDownloadUrl the direct download url of this download
-	 */
-	public void setDirectDownloadUrl(String directDownloadUrl);
+	public void setFileShareUrl(String fileShareUrl);
 
 	/**
 	 * Returns the license download url of this download.
@@ -294,60 +259,6 @@ public interface DownloadModel extends BaseModel<Download>, ShardedModel {
 	public void setLicenseDownloadUrl(String licenseDownloadUrl);
 
 	@Override
-	public boolean isNew();
-
-	@Override
-	public void setNew(boolean n);
-
-	@Override
-	public boolean isCachedModel();
-
-	@Override
-	public void setCachedModel(boolean cachedModel);
-
-	@Override
-	public boolean isEscapedModel();
-
-	@Override
-	public Serializable getPrimaryKeyObj();
-
-	@Override
-	public void setPrimaryKeyObj(Serializable primaryKeyObj);
-
-	@Override
-	public ExpandoBridge getExpandoBridge();
-
-	@Override
-	public void setExpandoBridgeAttributes(BaseModel<?> baseModel);
-
-	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge);
-
-	@Override
-	public void setExpandoBridgeAttributes(ServiceContext serviceContext);
-
-	@Override
-	public Object clone();
-
-	@Override
-	public int compareTo(nl.deltares.oss.download.model.Download download);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public CacheModel<nl.deltares.oss.download.model.Download> toCacheModel();
-
-	@Override
-	public nl.deltares.oss.download.model.Download toEscapedModel();
-
-	@Override
-	public nl.deltares.oss.download.model.Download toUnescapedModel();
-
-	@Override
-	public String toString();
-
-	@Override
-	public String toXmlString();
+	public Download cloneWithOriginalValues();
 
 }

@@ -13,6 +13,7 @@ import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.*;
 import nl.deltares.emails.DsdEmail;
+import nl.deltares.forms.portlet.DsdRegistrationFormConfiguration;
 import nl.deltares.model.BadgeInfo;
 import nl.deltares.model.BillingInfo;
 import nl.deltares.model.RegistrationRequest;
@@ -66,11 +67,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 sendRedirect(actionRequest, actionResponse, redirect);
             }
             return;
-        } else if (redirect.isEmpty()) {
-            redirect = registrationRequest.getSiteURL();
         }
-
-        LOG.info(redirect);
 
         boolean success = true;
         switch (action){
@@ -119,11 +116,42 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         }
         if (success){
             SessionMessages.add(actionRequest, "registration-success", new String[]{action, user.getEmailAddress(), registrationRequest.getTitle()});
-            if (!redirect.isEmpty()) {
-                sendRedirect(actionRequest, actionResponse, redirect);
-            }
+            redirect = getRedirectURL(themeDisplay, action + "_success");
+            sendRedirect(actionRequest, actionResponse, redirect);
+        } else {
+            redirect = getRedirectURL(themeDisplay, "fail");
+            sendRedirect(actionRequest, actionResponse, redirect);
         }
 
+    }
+
+    private String getRedirectURL(ThemeDisplay themeDisplay, String key) {
+
+        String friendlyUrl = null;
+        try {
+            String configuredRedirect = null;
+            final DsdRegistrationFormConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(DsdRegistrationFormConfiguration.class, themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
+            switch (key){
+                case "register_success":
+                    configuredRedirect =  configuration.registerSuccessURL();
+                    break;
+                case "unregister_success":
+                    configuredRedirect =  configuration.unregisterSuccessURL();
+                    break;
+                case "fail":
+                    configuredRedirect =  configuration.failureURL();
+            }
+
+            if (configuredRedirect == null || configuredRedirect.isEmpty()) {
+                friendlyUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay, themeDisplay.getLocale());
+            } else {
+                friendlyUrl = PortalUtil.getAbsoluteURL(themeDisplay.getRequest(), configuredRedirect);
+            }
+            LOG.info("Redirecting registration request to " + friendlyUrl);
+        } catch (PortalException e) {
+            LOG.warn("Failed to get configuredRedirect URL: " + e.getMessage());
+        }
+        return friendlyUrl;
     }
 
     private void registerAcceptedTerms(Map<String, String> userAttributes) {
@@ -174,14 +202,14 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 }
             });
 
-            if (subscribeIds.size() > 0) {
+            if (!subscribeIds.isEmpty()) {
                 try {
                     subscriptionUtils.subscribeAll(user, subscribeIds);
                 } catch (Exception e) {
                     LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", user.getEmailAddress(), subscribeIds, e.getMessage()));
                 }
             }
-            if (unsubscribeIds.size() > 0) {
+            if (!unsubscribeIds.isEmpty()) {
                 try {
                     subscriptionUtils.unsubscribeAll(user.getEmailAddress(), unsubscribeIds);
                 } catch (Exception e) {
@@ -271,7 +299,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             registrationRequest.setBillingInfo(billingInfo);
             registrationRequest.setBadgeInfo(badgeInfo);
             registrationRequest.setRemarks(ParamUtil.getString(actionRequest, "remarks_registration", null));
-            if (configuration.mailingIds().length() > 0) {
+            if (!configuration.mailingIds().isEmpty()) {
                 registrationRequest.setSubscribableMailingIds(configuration.mailingIds());
             }
             registrationRequest.setSubscribe(ParamUtil.getBoolean(actionRequest, "subscribe_newsletter", false));
@@ -296,7 +324,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             Map<String, String> typeTranslations = new HashMap<>();
             for (String structureKey : structureKeys) {
                 typeTranslations.putAll(dsdJournalArticleUtils.getStructureFieldOptions(event.getGroupId(),
-                        structureKey, dsdRegistrationTypeField, themeDisplay.getLocale()));
+                        structureKey, dsdRegistrationTypeField, event.getLocale()));
             }
             registrationRequest.setTypeTranslations(typeTranslations);
 

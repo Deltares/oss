@@ -1,4 +1,5 @@
-.portlet {	
+@import "liferay-frontend-common-css/mixins";
+.portlet {
     > .portlet-content-editable {
         @include media-query(sm) {
             border-color: $portlet-topper-border;

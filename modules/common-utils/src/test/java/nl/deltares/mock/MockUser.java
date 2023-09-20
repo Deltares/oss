@@ -27,6 +27,11 @@ public class MockUser implements User {
     }
 
     @Override
+    public String fetchPortraitURL(ThemeDisplay themeDisplay) {
+        return null;
+    }
+
+    @Override
     public List<Address> getAddresses() {
         return null;
     }
@@ -53,16 +58,6 @@ public class MockUser implements User {
 
     @Override
     public String getDisplayEmailAddress() {
-        return null;
-    }
-
-    @Override
-    public String getDisplayURL(String portalURL, String mainPath) throws PortalException {
-        return null;
-    }
-
-    @Override
-    public String getDisplayURL(String portalURL, String mainPath, boolean privateLayout) throws PortalException {
         return null;
     }
 
@@ -367,6 +362,11 @@ public class MockUser implements User {
     }
 
     @Override
+    public void setContact(Contact contact) {
+
+    }
+
+    @Override
     public void setPasswordModified(boolean passwordModified) {
 
     }
@@ -398,6 +398,16 @@ public class MockUser implements User {
 
     @Override
     public void setMvccVersion(long mvccVersion) {
+
+    }
+
+    @Override
+    public long getCtCollectionId() {
+        return 0;
+    }
+
+    @Override
+    public void setCtCollectionId(long ctCollectionId) {
 
     }
 
@@ -864,6 +874,11 @@ public class MockUser implements User {
     @Override
     public void setStatus(int status) {
 
+    }
+
+    @Override
+    public User cloneWithOriginalValues() {
+        return null;
     }
 
     @Override

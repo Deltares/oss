@@ -3,7 +3,6 @@ package nl.deltares.tasks.impl;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.AdminUtils;
-import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.tasks.AbstractDataRequest;
 
 import java.io.File;
@@ -11,7 +10,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.util.Map;
 
 import static nl.deltares.tasks.DataRequest.STATUS.*;
 
@@ -40,32 +38,19 @@ public class DownloadInvalidUsersRequest extends AbstractDataRequest {
             if (tempFile.exists()) Files.deleteIfExists(tempFile.toPath());
 
             //Download results to file
-            int keycloakProcessStatus = 0;
-            try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile, false))) {
-                logger.info("Calling Keycloak 'download-invalid-users'");
-                keycloakProcessStatus = adminUtils.getKeycloakUtils().downloadInvalidUsers(null, writer);
+            try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
+                adminUtils.getKeycloakUtils().downloadInvalidUsers(writer);
+                incrementProcessCount(100);
+                status = available;
             } catch (Exception e) {
                 errorMessage = e.getMessage();
-                logger.warn(String.format("Error calling 'download-invalid-users': %s", e.getMessage()), e);
+                logger.warn("Error serializing csv content: %s", e);
                 status = terminated;
             }
-            if (keycloakProcessStatus == 102) {
-                try {
-                    waitForProcessToComplete(tempFile);
-                } catch (Exception e) {
-                    errorMessage = e.getMessage();
-                    logger.warn(String.format("Error calling 'download-invalid-users': %s", errorMessage), e);
-                    status = terminated;
-                }
-            }
-
-            incrementProcessCount(100);
-            if (status != terminated) {
+            if (status == available) {
                 this.dataFile = new File(getExportDir(), id + ".data");
                 if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
                 Files.move(tempFile.toPath(), dataFile.toPath());
-                logger.info("Finished calling Keycloak 'check-users-exist' for file: " + dataFile);
-                status = available;
             }
         } catch (IOException e) {
             errorMessage = e.getMessage();
@@ -77,23 +62,16 @@ public class DownloadInvalidUsersRequest extends AbstractDataRequest {
 
     }
 
-    private void waitForProcessToComplete(File tempFile) throws Exception {
-        int keycloakStatus = 102;
-        while (keycloakStatus == 102) {
-
-            String response = new String(Files.readAllBytes(tempFile.toPath()));
-            final Map<String, String> jsonToMap = JsonContentUtils.parseJsonToMap(response);
-            final String id = jsonToMap.get("id");
-            final String processed = jsonToMap.get("processed");
-            setProcessCount(Integer.parseInt(processed));
-
-            Thread.sleep(1000);
-
-            try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile, false))) {
-                keycloakStatus = adminUtils.getKeycloakUtils().downloadInvalidUsers(id, writer);
-            }
-
+    @Override
+    public String getStatusMessage() {
+        //dummy something to show in progress bar.
+        if (status == running){
+            int processedCount = super.getProcessedCount();
+            processedCount++;
+            if (processedCount == totalCount) super.setProcessCount(0);
+            else setProcessCount(processedCount);
         }
+        return super.getStatusMessage();
     }
 
 }

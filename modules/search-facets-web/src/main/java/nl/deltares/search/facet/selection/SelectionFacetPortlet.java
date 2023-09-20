@@ -9,7 +9,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
-import nl.deltares.search.constans.FacetPortletKeys;
+import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -27,22 +27,23 @@ import java.util.Optional;
  */
 @Component(
         configurationPid = "nl.deltares.search.facet.selection.SelectionFacetConfiguration",
-        immediate = true,
-        property = {
-                "com.liferay.portlet.css-class-wrapper=portlet-selection-facet",
-                "com.liferay.portlet.display-category=OSS-search",
-                "com.liferay.portlet.header-portlet-css=/css/main.css",
-                "com.liferay.portlet.instanceable=true",
-                "javax.portlet.display-name=SelectionFacet",
-                "javax.portlet.expiration-cache=0",
-                "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.config-template=/facet/selection/configuration.jsp",
-                "javax.portlet.init-param.view-template=/facet/selection/view.jsp",
-                "javax.portlet.name=" + FacetPortletKeys.SELECTION_FACET_PORTLET,
-                "javax.portlet.resource-bundle=content.Language",
-                "javax.portlet.security-role-ref=power-user,user"
-        },
-        service = Portlet.class
+  immediate = true,
+  property = {
+    "com.liferay.portlet.css-class-wrapper=portlet-selection-facet",
+    "com.liferay.portlet.display-category=OSS-search",
+    "com.liferay.portlet.header-portlet-css=/css/main.css",
+    "com.liferay.portlet.instanceable=true",
+    "javax.portlet.display-name=SelectionFacet",
+    "javax.portlet.expiration-cache=0",
+    "javax.portlet.init-param.template-path=/",
+    "javax.portlet.init-param.config-template=/facet/selection/configuration.jsp",
+    "javax.portlet.init-param.view-template=/facet/selection/view.jsp",
+    "javax.portlet.name=" + SearchModuleKeys.SELECTION_FACET_PORTLET,
+    "javax.portlet.resource-bundle=content.Language",
+    "javax.portlet.security-role-ref=power-user,user",
+          "javax.portlet.version=3.0"
+  },
+  service = Portlet.class
 )
 public class SelectionFacetPortlet extends MVCPortlet {
 
@@ -69,10 +70,14 @@ public class SelectionFacetPortlet extends MVCPortlet {
 
         PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
         Optional<String> facetSelection = portletSharedSearchResponse.getParameter(name, renderRequest);
-        if (facetSelection.isPresent()) {
-            String selection = facetSelection.get();
-            renderRequest.setAttribute("selection", selection);
-        }
+
+        facetSelection.ifPresentOrElse(s -> renderRequest.setAttribute("selection", s), () ->
+                {
+                  //check for parameter is in namespace of searchResultsPortlet
+                  final String selection = FacetUtils.getIteratorParameter(name, renderRequest);
+                  if (selection != null) renderRequest.setAttribute("selection", selection);
+                }
+        );
 
         try {
             Map<String, String> selectionMap = dsdJournalArticleUtils.getStructureFieldOptions(themeDisplay.getSiteGroupId(),

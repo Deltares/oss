@@ -14,26 +14,8 @@
 
 package nl.deltares.dsd.registration.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 /**
- * The extended model implementation for the Registration service. Represents a row in the &quot;Registrations_Registration&quot; database table, with each column mapped to a property of this class.
- *
- * <p>
- * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>nl.deltares.dsd.registration.model.Registration<code> interface.
- * </p>
- *
  * @author Erik de Rooij @ Deltares
  */
-@ProviderType
 public class RegistrationImpl extends RegistrationBaseImpl {
-
-	/*
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this class directly. All methods that expect a registration model instance should use the {@link nl.deltares.dsd.registration.model.Registration} interface instead.
-	 */
-	public RegistrationImpl() {
-	}
-
 }

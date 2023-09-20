@@ -1,7 +1,7 @@
+@use "liferay-frontend-css-common/liferay/variables" ;
 
 
-
-@media (min-width: $screen-md-min) {
+@media (min-width: variables.$screen-md-min) {
     #heading {
         display: flex;
         z-index: 2;
@@ -26,7 +26,7 @@
     
 }
 
-@media (max-width: $screen-sm-max) {
+@media (max-width: variables.$screen-sm-max) {
     #heading {
         z-index: 1;
         position: relative;
@@ -61,7 +61,7 @@
         vertical-align: middle;
         
         
-        @media (min-width: $screen-md-min) {
+        @media (min-width: variables.$screen-md-min) {
 
             width: 250px;
             height: 158px;

@@ -1,22 +1,4 @@
-<#function getArticleProperty journalArticle propertyName>
-    <#assign document = saxReaderUtil.read(journalArticle.getContent())/>
-    <#assign rootElement = document.getRootElement() />
-    <#assign defaultLanguageId = journalArticle.defaultLanguageId/>
-
-    <#assign introDefaultPropertySelector = saxReaderUtil.createXPath("dynamic-element[@name='${propertyName}']/dynamic-content[@language-id='${defaultLanguageId}']") />
-    <#assign introLocalisedPropertySelector = saxReaderUtil.createXPath("dynamic-element[@name='${propertyName}']/dynamic-content[@language-id='${locale}']") />
-
-    <#assign propertyValue = "" />
-    <#assign propertyValueDefaultNode = introDefaultPropertySelector.selectSingleNode(rootElement)! />
-    <#assign propertyValueLocalised = introLocalisedPropertySelector.selectSingleNode(rootElement)! />
-    <#if propertyValueDefaultNode?has_content>
-        <#assign propertyValue = propertyValueDefaultNode.getStringValue() />
-    </#if>
-    <#if propertyValueLocalised?has_content>
-        <#assign propertyValue = propertyValueLocalised.getStringValue() />
-    </#if>
-    <#return propertyValue />
-</#function>
+<#assign xmlUtils = serviceLocator.findService("nl.deltares.portal.utils.XmlContentUtils") />
 
 <div class="project-page">
     <#if entries?has_content>
@@ -25,46 +7,39 @@
                 <#assign assetRenderer = entry.getAssetRenderer() />
                 <#assign entryTitle = htmlUtil.escape(assetRenderer.getTitle(locale)) />
                 <#assign journalArticle = assetRenderer.getArticle() />
-                <#assign document = saxReaderUtil.read(journalArticle.getContent())/>
-                <#assign rootElement = document.getRootElement() />
-                <#if rootElement?has_content>
-                    <#list rootElement.elements() as dynamicElement>
-                    <#if "ProjectImage"==dynamicElement.attributeValue("name")>
-                        <#assign overviewPhotoData = dynamicElement.element("dynamic-content").getData()/>
-                        <#assign ProjectImage = ddlUtils.getFileEntryImage(overviewPhotoData) />
-                    </#if>
-                    </#list>
-                </#if>
+                <#assign document = xmlUtils.parseContent(journalArticle,locale)/>
+                <#assign overviewPhotoData = xmlUtils.getDynamicContentByName(document, "ProjectImage", true) />
+                <#assign ProjectImage =  ddlUtils.getFileEntryImage(overviewPhotoData)  />
                 <#assign viewURL = htmlUtil.escapeHREF(assetPublisherHelper.getAssetViewURL(renderRequest, renderResponse, entry, true)) />
-                
+
                 <div class="left-column small-form">
                     <#if ProjectImage?? && ProjectImage!= "">
-                        <a class="project-page__item__meta-data__image square-form display-block" 
-                            style="background-image:url(${ProjectImage})"
-                            href="${viewURL}" 
-                            title="read more about ${entryTitle}">
+                        <a class="project-page__item__meta-data__image square-form display-block"
+                           style="background-image:url(${ProjectImage})"
+                           href="${viewURL}"
+                           title="read more about ${entryTitle}">
                             <img src="${ProjectImage}" />
                         </a>
                     <#else>
                         <a class="project-page__item__meta-data__image-backup display-block"
-                            href="${viewURL}" 
-                            title="read more about ${entryTitle}"></a>
+                           href="${viewURL}"
+                           title="read more about ${entryTitle}"></a>
                     </#if>
                 </div>
                 <div class="right-column small-form">
                     <!--Project title-->
                     <h4 class="project-page__item__meta-data__title h1"><a class="type-inherit" href="${viewURL}" title="read more about ${entryTitle}">${entryTitle}</a></h4>
-                    
+
                     <div class="project-page__item__meta-data__content">
-                        <#assign projectSectionContent = "" />
-                        <#list rootElement.elements() as dynamicElement>
-                            <#if "ProjectSectionHeader"==dynamicElement.attributeValue("name") && !projectSectionContent?has_content>
-                            <#assign projectSectionContent = dynamicElement.element("dynamic-content").getData() />
+
+                        <#assign fieldSets = xmlUtils.getDynamicElementsByNameAsList(document, "ProjectSectionHeaderFieldSet") />
+                        <#list fieldSets as fieldSet>
+                            <#assign projectSectionContent = xmlUtils.getDynamicContentByName(fieldSet, "ProjectSectionHeader", true) />
                             <#if projectSectionContent?has_content >
-                                <#assign projectSectionContent = projectSectionContent?string + ": "/>
+                                <#assign projectSectionContent = projectSectionContent + ": "/>
                             </#if>
-                            <#assign projectSectionContent = projectSectionContent + dynamicElement.element("dynamic-element").element("dynamic-content").getData()?string/>
-                            </#if>
+                            <#assign projectSectionContent = projectSectionContent + xmlUtils.getDynamicContentByName(fieldSet, "ProjectSectionHTML", false)/>
+
                         </#list>
 
                         ${stringUtil.shorten(projectSectionContent, 200)}

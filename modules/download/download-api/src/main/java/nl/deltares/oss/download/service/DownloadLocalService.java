@@ -14,8 +14,7 @@
 
 package nl.deltares.oss.download.service;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
@@ -38,6 +37,8 @@ import java.util.List;
 
 import nl.deltares.oss.download.model.Download;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * Provides the local service interface for Download. Methods of this
  * service will not have security checks based on the propagated JAAS
@@ -59,11 +60,15 @@ public interface DownloadLocalService
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this interface directly. Always use {@link DownloadLocalServiceUtil} to access the download local service. Add custom service methods to <code>nl.deltares.oss.download.service.impl.DownloadLocalServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify this interface directly. Add custom service methods to <code>nl.deltares.oss.download.service.impl.DownloadLocalServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface. Consume the download local service via injection or a <code>org.osgi.util.tracker.ServiceTracker</code>. Use {@link DownloadLocalServiceUtil} if injection and service tracking are not available.
 	 */
 
 	/**
 	 * Adds the download to the database. Also notifies the appropriate model listeners.
+	 *
+	 * <p>
+	 * <strong>Important:</strong> Inspect DownloadLocalServiceImpl for overloaded versions of the method. If provided, use these entry points to the API, as the implementation logic may require the additional parameters defined there.
+	 * </p>
 	 *
 	 * @param download the download
 	 * @return the download that was added
@@ -71,17 +76,13 @@ public interface DownloadLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public Download addDownload(Download download);
 
-	public int countDirectDownloads(long groupId);
-
 	public int countDownloads(long groupId);
 
 	public int countDownloadsByArticleId(long groupId, long articleId);
 
-	public int countDownloadsByShareId(long groupId, int shareId);
+	public int countDownloadsByFileName(long groupId, String fileName);
 
 	public int countDownloadsByUserId(long groupId, long userId);
-
-	public int countPaymentPendingDownloads(long groupId);
 
 	/**
 	 * Creates a new download with the primary key. Does not add the download to the database.
@@ -93,7 +94,17 @@ public interface DownloadLocalService
 	public Download createDownload(long id);
 
 	/**
+	 * @throws PortalException
+	 */
+	public PersistedModel createPersistedModel(Serializable primaryKeyObj)
+		throws PortalException;
+
+	/**
 	 * Deletes the download from the database. Also notifies the appropriate model listeners.
+	 *
+	 * <p>
+	 * <strong>Important:</strong> Inspect DownloadLocalServiceImpl for overloaded versions of the method. If provided, use these entry points to the API, as the implementation logic may require the additional parameters defined there.
+	 * </p>
 	 *
 	 * @param download the download
 	 * @return the download that was removed
@@ -103,6 +114,10 @@ public interface DownloadLocalService
 
 	/**
 	 * Deletes the download with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * <p>
+	 * <strong>Important:</strong> Inspect DownloadLocalServiceImpl for overloaded versions of the method. If provided, use these entry points to the API, as the implementation logic may require the additional parameters defined there.
+	 * </p>
 	 *
 	 * @param id the primary key of the download
 	 * @return the download that was removed
@@ -117,6 +132,12 @@ public interface DownloadLocalService
 	@Override
 	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
 		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public <T> T dslQuery(DSLQuery dslQuery);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int dslQueryCount(DSLQuery dslQuery);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public DynamicQuery dynamicQuery();
@@ -134,7 +155,7 @@ public interface DownloadLocalService
 	 * Performs a dynamic query on the database and returns a range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -150,7 +171,7 @@ public interface DownloadLocalService
 	 * Performs a dynamic query on the database and returns an ordered range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -191,9 +212,7 @@ public interface DownloadLocalService
 	public Download fetchUserDownload(
 		long groupId, long userId, long downloadId);
 
-	public List<Download> findDirectDownloads(long groupId);
-
-	public List<Download> findDirectDownloads(long groupId, int start, int end);
+	public List<Long> findDownloadIdsByGeoLocation(long locationId);
 
 	public List<Download> findDownloads(long groupId);
 
@@ -205,23 +224,13 @@ public interface DownloadLocalService
 	public List<Download> findDownloadsByArticleId(
 		long groupId, long articleId, int start, int end);
 
-	public List<Download> findDownloadsByShareId(long groupId, int shareId);
-
-	public List<Download> findDownloadsByShareId(
-		long groupId, int shareId, int start, int end);
+	public List<Download> findDownloadsByFileName(
+		long groupId, String fileName, int start, int end);
 
 	public List<Download> findDownloadsByUserId(long groupId, long userId);
 
 	public List<Download> findDownloadsByUserId(
 		long groupId, long userId, int start, int end);
-
-	public List<Download> findPaymentPendingDownloads(long groupId);
-
-	public List<Download> findPaymentPendingDownloads(
-		long groupId, int start, int end);
-
-	public List<Download> findUserDownloadsByShareId(
-		long groupId, long userId, int shareId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
@@ -240,7 +249,7 @@ public interface DownloadLocalService
 	 * Returns a range of all the downloads.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of downloads
@@ -268,6 +277,9 @@ public interface DownloadLocalService
 	 */
 	public String getOSGiServiceIdentifier();
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
@@ -275,6 +287,10 @@ public interface DownloadLocalService
 
 	/**
 	 * Updates the download in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	 *
+	 * <p>
+	 * <strong>Important:</strong> Inspect DownloadLocalServiceImpl for overloaded versions of the method. If provided, use these entry points to the API, as the implementation logic may require the additional parameters defined there.
+	 * </p>
 	 *
 	 * @param download the download
 	 * @return the download that was updated

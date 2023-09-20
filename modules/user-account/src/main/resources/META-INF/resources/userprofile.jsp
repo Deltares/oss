@@ -135,7 +135,7 @@
 				</aui:row>
 				<aui:button-row>
 					<aui:button type="submit" name="updateProfile" value="userprofileform.saveProfile" />
-					<aui:button type="cancel" name="cancelProfile" value="userprofileform.cancel" href="<%= viewURL %>" />
+					<aui:button type="submit" name="cancelProfile" value="userprofileform.cancel" href="<%= viewURL %>" />
 				</aui:button-row>
 			</aui:fieldset>
 		</aui:form>
@@ -158,7 +158,7 @@
 					<aui:button type="submit" name="updateAvatar" value="userprofileform.saveAvatar" />
 					<aui:button type="submit" name="deleteAvatar" value="userprofileform.deleteAvatar"
 								href="<%=deleteUserAvatarForm%>"/>
-					<aui:button type="cancel" name="cancelAvatar" value="userprofileform.cancel" href="<%= viewURL %>" />
+					<aui:button type="submit" name="cancelAvatar" value="userprofileform.cancel" href="<%= viewURL %>" />
 				</aui:button-row>
 			</aui:fieldset>
 		</aui:form>
@@ -238,7 +238,7 @@
 
 				<aui:button-row>
 					<aui:button type="submit" name="updateProfile" value="userprofileform.saveProfile" />
-					<aui:button type="cancel" name="cancelProfile" value="userprofileform.cancel" href="<%= viewURL %>" />
+					<aui:button type="submit" name="cancelProfile" value="userprofileform.cancel" href="<%= viewURL %>" />
 				</aui:button-row>
 			</aui:fieldset>
 		</aui:form>

@@ -14,8 +14,6 @@
 
 package nl.deltares.oss.download.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import nl.deltares.oss.download.model.DownloadCount;
 import nl.deltares.oss.download.service.DownloadCountLocalServiceUtil;
 
@@ -31,7 +29,6 @@ import nl.deltares.oss.download.service.DownloadCountLocalServiceUtil;
  * @see DownloadCount
  * @generated
  */
-@ProviderType
 public abstract class DownloadCountBaseImpl
 	extends DownloadCountModelImpl implements DownloadCount {
 

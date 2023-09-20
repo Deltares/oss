@@ -14,11 +14,9 @@
 
 package nl.deltares.oss.download.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -35,21 +33,20 @@ import nl.deltares.oss.download.model.Download;
  * @author Erik de Rooij @ Deltares
  * @generated
  */
-@ProviderType
 public class DownloadCacheModel
 	implements CacheModel<Download>, Externalizable {
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
+	public boolean equals(Object object) {
+		if (this == object) {
 			return true;
 		}
 
-		if (!(obj instanceof DownloadCacheModel)) {
+		if (!(object instanceof DownloadCacheModel)) {
 			return false;
 		}
 
-		DownloadCacheModel downloadCacheModel = (DownloadCacheModel)obj;
+		DownloadCacheModel downloadCacheModel = (DownloadCacheModel)object;
 
 		if (id == downloadCacheModel.id) {
 			return true;
@@ -65,36 +62,32 @@ public class DownloadCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(31);
+		StringBundler sb = new StringBundler(27);
 
 		sb.append("{id=");
 		sb.append(id);
-		sb.append(", companyId=");
-		sb.append(companyId);
 		sb.append(", groupId=");
 		sb.append(groupId);
-		sb.append(", downloadId=");
-		sb.append(downloadId);
+		sb.append(", companyId=");
+		sb.append(companyId);
 		sb.append(", userId=");
 		sb.append(userId);
 		sb.append(", createDate=");
 		sb.append(createDate);
 		sb.append(", modifiedDate=");
 		sb.append(modifiedDate);
-		sb.append(", filePath=");
-		sb.append(filePath);
+		sb.append(", downloadId=");
+		sb.append(downloadId);
+		sb.append(", fileName=");
+		sb.append(fileName);
 		sb.append(", expiryDate=");
 		sb.append(expiryDate);
 		sb.append(", organization=");
 		sb.append(organization);
-		sb.append(", countryCode=");
-		sb.append(countryCode);
-		sb.append(", city=");
-		sb.append(city);
-		sb.append(", shareId=");
-		sb.append(shareId);
-		sb.append(", directDownloadUrl=");
-		sb.append(directDownloadUrl);
+		sb.append(", geoLocationId=");
+		sb.append(geoLocationId);
+		sb.append(", fileShareUrl=");
+		sb.append(fileShareUrl);
 		sb.append(", licenseDownloadUrl=");
 		sb.append(licenseDownloadUrl);
 		sb.append("}");
@@ -107,9 +100,8 @@ public class DownloadCacheModel
 		DownloadImpl downloadImpl = new DownloadImpl();
 
 		downloadImpl.setId(id);
-		downloadImpl.setCompanyId(companyId);
 		downloadImpl.setGroupId(groupId);
-		downloadImpl.setDownloadId(downloadId);
+		downloadImpl.setCompanyId(companyId);
 		downloadImpl.setUserId(userId);
 
 		if (createDate == Long.MIN_VALUE) {
@@ -126,11 +118,13 @@ public class DownloadCacheModel
 			downloadImpl.setModifiedDate(new Date(modifiedDate));
 		}
 
-		if (filePath == null) {
-			downloadImpl.setFilePath("");
+		downloadImpl.setDownloadId(downloadId);
+
+		if (fileName == null) {
+			downloadImpl.setFileName("");
 		}
 		else {
-			downloadImpl.setFilePath(filePath);
+			downloadImpl.setFileName(fileName);
 		}
 
 		if (expiryDate == Long.MIN_VALUE) {
@@ -147,27 +141,13 @@ public class DownloadCacheModel
 			downloadImpl.setOrganization(organization);
 		}
 
-		if (countryCode == null) {
-			downloadImpl.setCountryCode("");
+		downloadImpl.setGeoLocationId(geoLocationId);
+
+		if (fileShareUrl == null) {
+			downloadImpl.setFileShareUrl("");
 		}
 		else {
-			downloadImpl.setCountryCode(countryCode);
-		}
-
-		if (city == null) {
-			downloadImpl.setCity("");
-		}
-		else {
-			downloadImpl.setCity(city);
-		}
-
-		downloadImpl.setShareId(shareId);
-
-		if (directDownloadUrl == null) {
-			downloadImpl.setDirectDownloadUrl("");
-		}
-		else {
-			downloadImpl.setDirectDownloadUrl(directDownloadUrl);
+			downloadImpl.setFileShareUrl(fileShareUrl);
 		}
 
 		if (licenseDownloadUrl == null) {
@@ -186,23 +166,21 @@ public class DownloadCacheModel
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		id = objectInput.readLong();
 
-		companyId = objectInput.readLong();
-
 		groupId = objectInput.readLong();
 
-		downloadId = objectInput.readLong();
+		companyId = objectInput.readLong();
 
 		userId = objectInput.readLong();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
-		filePath = objectInput.readUTF();
+
+		downloadId = objectInput.readLong();
+		fileName = objectInput.readUTF();
 		expiryDate = objectInput.readLong();
 		organization = objectInput.readUTF();
-		countryCode = objectInput.readUTF();
-		city = objectInput.readUTF();
 
-		shareId = objectInput.readInt();
-		directDownloadUrl = objectInput.readUTF();
+		geoLocationId = objectInput.readLong();
+		fileShareUrl = objectInput.readUTF();
 		licenseDownloadUrl = objectInput.readUTF();
 	}
 
@@ -210,21 +188,21 @@ public class DownloadCacheModel
 	public void writeExternal(ObjectOutput objectOutput) throws IOException {
 		objectOutput.writeLong(id);
 
-		objectOutput.writeLong(companyId);
-
 		objectOutput.writeLong(groupId);
 
-		objectOutput.writeLong(downloadId);
+		objectOutput.writeLong(companyId);
 
 		objectOutput.writeLong(userId);
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
 
-		if (filePath == null) {
+		objectOutput.writeLong(downloadId);
+
+		if (fileName == null) {
 			objectOutput.writeUTF("");
 		}
 		else {
-			objectOutput.writeUTF(filePath);
+			objectOutput.writeUTF(fileName);
 		}
 
 		objectOutput.writeLong(expiryDate);
@@ -236,27 +214,13 @@ public class DownloadCacheModel
 			objectOutput.writeUTF(organization);
 		}
 
-		if (countryCode == null) {
+		objectOutput.writeLong(geoLocationId);
+
+		if (fileShareUrl == null) {
 			objectOutput.writeUTF("");
 		}
 		else {
-			objectOutput.writeUTF(countryCode);
-		}
-
-		if (city == null) {
-			objectOutput.writeUTF("");
-		}
-		else {
-			objectOutput.writeUTF(city);
-		}
-
-		objectOutput.writeInt(shareId);
-
-		if (directDownloadUrl == null) {
-			objectOutput.writeUTF("");
-		}
-		else {
-			objectOutput.writeUTF(directDownloadUrl);
+			objectOutput.writeUTF(fileShareUrl);
 		}
 
 		if (licenseDownloadUrl == null) {
@@ -268,19 +232,17 @@ public class DownloadCacheModel
 	}
 
 	public long id;
-	public long companyId;
 	public long groupId;
-	public long downloadId;
+	public long companyId;
 	public long userId;
 	public long createDate;
 	public long modifiedDate;
-	public String filePath;
+	public long downloadId;
+	public String fileName;
 	public long expiryDate;
 	public String organization;
-	public String countryCode;
-	public String city;
-	public int shareId;
-	public String directDownloadUrl;
+	public long geoLocationId;
+	public String fileShareUrl;
 	public String licenseDownloadUrl;
 
 }

@@ -1,0 +1,7 @@
+dependencies {
+	compileOnly( group: 'com.liferay.portal', name: 'release.dxp.api')
+
+	compileOnly project(":modules:common-utils")
+	compileOnly( project(":modules:download:download-api"))
+	compileOnly( project(":modules:geolocation:geolocation-api"))
+}

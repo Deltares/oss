@@ -14,8 +14,6 @@
 
 package nl.deltares.oss.download.service;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.service.ServiceWrapper;
 
 /**
@@ -25,9 +23,12 @@ import com.liferay.portal.kernel.service.ServiceWrapper;
  * @see DownloadLocalService
  * @generated
  */
-@ProviderType
 public class DownloadLocalServiceWrapper
 	implements DownloadLocalService, ServiceWrapper<DownloadLocalService> {
+
+	public DownloadLocalServiceWrapper() {
+		this(null);
+	}
 
 	public DownloadLocalServiceWrapper(
 		DownloadLocalService downloadLocalService) {
@@ -38,6 +39,10 @@ public class DownloadLocalServiceWrapper
 	/**
 	 * Adds the download to the database. Also notifies the appropriate model listeners.
 	 *
+	 * <p>
+	 * <strong>Important:</strong> Inspect DownloadLocalServiceImpl for overloaded versions of the method. If provided, use these entry points to the API, as the implementation logic may require the additional parameters defined there.
+	 * </p>
+	 *
 	 * @param download the download
 	 * @return the download that was added
 	 */
@@ -46,11 +51,6 @@ public class DownloadLocalServiceWrapper
 		nl.deltares.oss.download.model.Download download) {
 
 		return _downloadLocalService.addDownload(download);
-	}
-
-	@Override
-	public int countDirectDownloads(long groupId) {
-		return _downloadLocalService.countDirectDownloads(groupId);
 	}
 
 	@Override
@@ -65,18 +65,14 @@ public class DownloadLocalServiceWrapper
 	}
 
 	@Override
-	public int countDownloadsByShareId(long groupId, int shareId) {
-		return _downloadLocalService.countDownloadsByShareId(groupId, shareId);
+	public int countDownloadsByFileName(long groupId, String fileName) {
+		return _downloadLocalService.countDownloadsByFileName(
+			groupId, fileName);
 	}
 
 	@Override
 	public int countDownloadsByUserId(long groupId, long userId) {
 		return _downloadLocalService.countDownloadsByUserId(groupId, userId);
-	}
-
-	@Override
-	public int countPaymentPendingDownloads(long groupId) {
-		return _downloadLocalService.countPaymentPendingDownloads(groupId);
 	}
 
 	/**
@@ -91,7 +87,22 @@ public class DownloadLocalServiceWrapper
 	}
 
 	/**
+	 * @throws PortalException
+	 */
+	@Override
+	public com.liferay.portal.kernel.model.PersistedModel createPersistedModel(
+			java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _downloadLocalService.createPersistedModel(primaryKeyObj);
+	}
+
+	/**
 	 * Deletes the download from the database. Also notifies the appropriate model listeners.
+	 *
+	 * <p>
+	 * <strong>Important:</strong> Inspect DownloadLocalServiceImpl for overloaded versions of the method. If provided, use these entry points to the API, as the implementation logic may require the additional parameters defined there.
+	 * </p>
 	 *
 	 * @param download the download
 	 * @return the download that was removed
@@ -105,6 +116,10 @@ public class DownloadLocalServiceWrapper
 
 	/**
 	 * Deletes the download with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * <p>
+	 * <strong>Important:</strong> Inspect DownloadLocalServiceImpl for overloaded versions of the method. If provided, use these entry points to the API, as the implementation logic may require the additional parameters defined there.
+	 * </p>
 	 *
 	 * @param id the primary key of the download
 	 * @return the download that was removed
@@ -129,6 +144,18 @@ public class DownloadLocalServiceWrapper
 	}
 
 	@Override
+	public <T> T dslQuery(com.liferay.petra.sql.dsl.query.DSLQuery dslQuery) {
+		return _downloadLocalService.dslQuery(dslQuery);
+	}
+
+	@Override
+	public int dslQueryCount(
+		com.liferay.petra.sql.dsl.query.DSLQuery dslQuery) {
+
+		return _downloadLocalService.dslQueryCount(dslQuery);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
 		return _downloadLocalService.dynamicQuery();
 	}
@@ -150,7 +177,7 @@ public class DownloadLocalServiceWrapper
 	 * Performs a dynamic query on the database and returns a range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -170,7 +197,7 @@ public class DownloadLocalServiceWrapper
 	 * Performs a dynamic query on the database and returns an ordered range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -232,17 +259,8 @@ public class DownloadLocalServiceWrapper
 	}
 
 	@Override
-	public java.util.List<nl.deltares.oss.download.model.Download>
-		findDirectDownloads(long groupId) {
-
-		return _downloadLocalService.findDirectDownloads(groupId);
-	}
-
-	@Override
-	public java.util.List<nl.deltares.oss.download.model.Download>
-		findDirectDownloads(long groupId, int start, int end) {
-
-		return _downloadLocalService.findDirectDownloads(groupId, start, end);
+	public java.util.List<Long> findDownloadIdsByGeoLocation(long locationId) {
+		return _downloadLocalService.findDownloadIdsByGeoLocation(locationId);
 	}
 
 	@Override
@@ -278,17 +296,11 @@ public class DownloadLocalServiceWrapper
 
 	@Override
 	public java.util.List<nl.deltares.oss.download.model.Download>
-		findDownloadsByShareId(long groupId, int shareId) {
+		findDownloadsByFileName(
+			long groupId, String fileName, int start, int end) {
 
-		return _downloadLocalService.findDownloadsByShareId(groupId, shareId);
-	}
-
-	@Override
-	public java.util.List<nl.deltares.oss.download.model.Download>
-		findDownloadsByShareId(long groupId, int shareId, int start, int end) {
-
-		return _downloadLocalService.findDownloadsByShareId(
-			groupId, shareId, start, end);
+		return _downloadLocalService.findDownloadsByFileName(
+			groupId, fileName, start, end);
 	}
 
 	@Override
@@ -304,29 +316,6 @@ public class DownloadLocalServiceWrapper
 
 		return _downloadLocalService.findDownloadsByUserId(
 			groupId, userId, start, end);
-	}
-
-	@Override
-	public java.util.List<nl.deltares.oss.download.model.Download>
-		findPaymentPendingDownloads(long groupId) {
-
-		return _downloadLocalService.findPaymentPendingDownloads(groupId);
-	}
-
-	@Override
-	public java.util.List<nl.deltares.oss.download.model.Download>
-		findPaymentPendingDownloads(long groupId, int start, int end) {
-
-		return _downloadLocalService.findPaymentPendingDownloads(
-			groupId, start, end);
-	}
-
-	@Override
-	public java.util.List<nl.deltares.oss.download.model.Download>
-		findUserDownloadsByShareId(long groupId, long userId, int shareId) {
-
-		return _downloadLocalService.findUserDownloadsByShareId(
-			groupId, userId, shareId);
 	}
 
 	@Override
@@ -354,7 +343,7 @@ public class DownloadLocalServiceWrapper
 	 * Returns a range of all the downloads.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of downloads
@@ -395,6 +384,9 @@ public class DownloadLocalServiceWrapper
 		return _downloadLocalService.getOSGiServiceIdentifier();
 	}
 
+	/**
+	 * @throws PortalException
+	 */
 	@Override
 	public com.liferay.portal.kernel.model.PersistedModel getPersistedModel(
 			java.io.Serializable primaryKeyObj)
@@ -405,6 +397,10 @@ public class DownloadLocalServiceWrapper
 
 	/**
 	 * Updates the download in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	 *
+	 * <p>
+	 * <strong>Important:</strong> Inspect DownloadLocalServiceImpl for overloaded versions of the method. If provided, use these entry points to the API, as the implementation logic may require the additional parameters defined there.
+	 * </p>
 	 *
 	 * @param download the download
 	 * @return the download that was updated

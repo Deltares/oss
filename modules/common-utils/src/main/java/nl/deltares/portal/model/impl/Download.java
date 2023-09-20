@@ -8,7 +8,6 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
 import nl.deltares.portal.utils.*;
-import org.w3c.dom.Document;
 
 import java.util.*;
 
@@ -40,77 +39,42 @@ public class Download extends AbsDsdArticle {
 
     private void init(DsdJournalArticleUtils articleUtils, LayoutUtils layoutUtils) throws PortalException {
         try {
-            Document document = getDocument();
-            String fileId = XmlContentUtils.getDynamicContentByName(document, "FileId", true);
+            String fileId = getFormFieldValue( "FileId", true);
             if (fileId != null) this.fileId = Integer.parseInt(fileId);
-            filePath = XmlContentUtils.getDynamicContentByName(document, "FilePath", false);
-            fileName = XmlContentUtils.getDynamicContentByName(document, "FileName", false);
+            filePath = getFormFieldValue( "FilePath", false);
+            fileName = getFormFieldValue( "FileName", false);
 
-            String options = XmlContentUtils.getDynamicContentByName(document, "RequiredActions", true);
-            parseRequiredActions(options);
+            final List<String> actions = getFormFieldArrayValue("RequiredActions", true);
+            actions.forEach(a -> {
+                try {
+                    if (a == null || a.trim().isEmpty()) return;
+                    requiredActions.add(ACTION.valueOf(a));
+                } catch (IllegalArgumentException e) {
+                    LOG.warn(String.format("Invalid 'RequiredActions' %s found for download %s", a, getTitle()));
+                }
+            });
 
-            fileType = XmlContentUtils.getDynamicContentByName(document, "FileType", false);
+            fileType = getFormFieldValue( "FileType", false);
 
             final Map<String, String> fileTypesMap = articleUtils.getStructureFieldOptions(getGroupId(), getStructureKey(), "FileType", getLocale());
             fileTypeName = fileTypesMap.get(fileType);
 
-            String fileSize = XmlContentUtils.getDynamicContentByName(document, "FileSize", true);
+            String fileSize = getFormFieldValue( "FileSize", true);
             if (fileSize != null) this.fileSize = fileSize;
 
-            fileTopic = XmlContentUtils.getDynamicContentByName(document, "Topic", false);
+            fileTopic = getFormFieldValue( "Topic", false);
             final Map<String, String> fileTopicMap = articleUtils.getStructureFieldOptions(getGroupId(), getStructureKey(), "Topic", getLocale());
             fileTopicName = fileTopicMap.get(fileTopic);
 
-            String linkToPage = XmlContentUtils.getDynamicContentByName(document, "GroupPage", false);
+            String linkToPage = getFormFieldValue( "GroupPage", false);
             groupPage = layoutUtils.getLinkToPageLayout(linkToPage);
 
-            final String automaticLinkCreation = XmlContentUtils.getDynamicContentByName(document, "AutomaticLinkCreation", true);
+            final String automaticLinkCreation = getFormFieldValue( "AutomaticLinkCreation", true);
             if (automaticLinkCreation != null) {
                 this.automaticLinkCreation = Boolean.parseBoolean(automaticLinkCreation);
             }
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
-        }
-    }
-
-    private void parseRequiredActions(String options) {
-        if (options == null || options.isEmpty()){
-            return;
-        }
-        options = options.trim();
-        options = options.replace('\n', ' ');
-        options = options.replace('\t', '\0');
-        final String[] actionList = options.split(" ");
-        for (String action : actionList) {
-            try {
-                requiredActions.add(ACTION.valueOf(action.trim()));
-            } catch (IllegalArgumentException e) {
-                //skip
-            }
-        }
-    }
-
-    public LicenseFile getLicenseFile(){
-        loadLicenseFile();
-        return licenseFile;
-    }
-
-    private void loadLicenseFile() {
-        if (licenseFile != null) return;
-        try {
-            parseLicenseFile();
-        } catch (PortalException e){
-            LOG.error(String.format("Error parsing licenseFile for Download %s: %s", getTitle(), e.getMessage()));
-        }
-    }
-
-    private void parseLicenseFile() throws PortalException {
-        String content = XmlContentUtils.getDynamicContentByName(getDocument(), "LicenseFile", true);
-        if (!JsonContentUtils.isEmpty(content)){
-            JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(content);
-            AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(article, super.getLocale());
-            if (!(dsdArticle instanceof LicenseFile)) throw new PortalException(String.format("Article %s not instance of LicenseFile", article.getTitle()));
-            licenseFile = (LicenseFile) dsdArticle;
         }
     }
 
@@ -129,9 +93,8 @@ public class Download extends AbsDsdArticle {
     }
 
     private void parseTerms() throws PortalException {
-
-        String content = XmlContentUtils.getDynamicContentByName(getDocument(), "Terms", true);
-        if (!JsonContentUtils.isEmpty(content)){
+        String content = getFormFieldValue( "Terms", true);
+        if (content != null){
             JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(content);
             AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(article, super.getLocale());
             if (!(dsdArticle instanceof Terms)) throw new PortalException(String.format("Article %s not instance of Terms", article.getTitle()));
@@ -154,13 +117,11 @@ public class Download extends AbsDsdArticle {
     }
 
     private void parseSubscriptions() throws PortalException {
-
         subscriptions = new ArrayList<>();
-        String[] dynamicContentsByName = XmlContentUtils.getDynamicContentsByName(getDocument(), "Subscription");
+        List<String> subscriptionsJson = getFormFieldValues("Subscription", true);
         DuplicateCheck check = new DuplicateCheck();
-        if (dynamicContentsByName.length > 0){
-            for (String content : dynamicContentsByName) {
-                if (JsonContentUtils.isEmpty(content)) continue;
+        if (subscriptionsJson.size() > 0){
+            for (String content : subscriptionsJson) {
                 JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(content);
                 AbsDsdArticle subscription = dsdParserUtils.toDsdArticle(article, super.getLocale());
                 if (!(subscription instanceof Subscription)) throw new PortalException(String.format("Article %s not instance of Subscription", article.getTitle()));
@@ -169,6 +130,29 @@ public class Download extends AbsDsdArticle {
         }
     }
 
+    public LicenseFile getLicenseFile(){
+        loadLicenseFile();
+        return licenseFile;
+    }
+
+    private void loadLicenseFile() {
+        if (licenseFile != null) return;
+        try {
+            parseLicenseFile();
+        } catch (PortalException e){
+            LOG.error(String.format("Error parsing licenseFile for Download %s: %s", getTitle(), e.getMessage()));
+        }
+    }
+
+    private void parseLicenseFile() throws PortalException {
+        String content = getFormFieldValue( "LicenseFile", true);
+        if (!JsonContentUtils.isEmpty(content)){
+            JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(content);
+            AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(article, super.getLocale());
+            if (!(dsdArticle instanceof LicenseFile)) throw new PortalException(String.format("Article %s not instance of LicenseFile", article.getTitle()));
+            licenseFile = (LicenseFile) dsdArticle;
+        }
+    }
     @Override
     public String getStructureKey() {
         return "download";

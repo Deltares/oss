@@ -3,22 +3,16 @@ import org.codehaus.groovy.runtime.GStringImpl
 
 plugins {
   id "org.sonarqube" version "2.7.1"
-  id 'net.saliman.properties' version '1.4.6'
 }
 
 project.ext {
-    environment = getEnvProperty('env', 'local')
+    environment = getEnvProperty('env', 'docker') as Object
     bundleDir = getEnvProperty('liferay.workspace.home.dir', project.projectDir.toString() + '/bundles')
     liferayData = project.projectDir.toString() + '/docker/liferay/data'
     liferayMount = project.projectDir.toString() + '/docker/liferay/mount/files'
-    nextcloudMount = project.projectDir.toString() + '/docker/nextcloud/config'
     dockerContainerPrefix = getEnvProperty('liferay.docker.container.prefix', 'oss')
-    dockerComposeFilePath = getEnvProperty('liferay.docker.compose.path', project.projectDir.toString() + '/docker/docker-compose.yml') as Object
+    dockerComposeFilePath = getEnvProperty('liferay.docker.compose.path', project.projectDir.toString() + '/docker/docker-compose.yml')
     deployFolder = "${bundleDir}/deploy" as GStringImpl
-    dbName = getEnvProperty('dbName', 'liferay')
-    dbUser = getEnvProperty('dbUser', 'liferay')
-    dbPassword = getEnvProperty('dbPassword', 'liferay')
-    defaultLiferayAdminPassword = getEnvProperty('default.admin.password', 'test')
     bundleDirectories = [
             file("$bundleDir/deploy"),
             file("$bundleDir/osgi/deploy"),
@@ -26,15 +20,21 @@ project.ext {
             file("$liferayData"),
             file("$liferayMount")
     ]
-
-    keyUrl = getEnvProperty('KEYCLOAK_URL', '')
-    keyClient = getEnvProperty('KEYCLOAK_CLIENTID', '')
-    keySecret = getEnvProperty('KEYCLOAK_CLIENTSECRET', '')
-    googleKey = getEnvProperty('GOOGLE_API_KEY', '')
-    emailUser = getEnvProperty('EMAIL_USER', '')
-    emailPass = getEnvProperty('EMAIL_PASSWORD', '')
+    Properties localProperties = new Properties()
+    localProperties.load(file("${project.projectDir.toString()}/gradle-local.properties").newDataInputStream())
+    dbName = getLocalProperty(localProperties,'dbName', 'liferay')
+    dbUser = getLocalProperty(localProperties,'dbUser', 'liferay')
+    dbPassword = getLocalProperty(localProperties,'dbPassword', 'liferay')
+    defaultLiferayAdminPassword = getLocalProperty(localProperties,'default.admin.password', 'test')
+    keyUrl = getLocalProperty(localProperties, 'KEYCLOAK_URL', '')
+    keyClient = getLocalProperty(localProperties, 'KEYCLOAK_CLIENTID', '')
+    keySecret = getLocalProperty(localProperties, 'KEYCLOAK_CLIENTSECRET', '')
+    googleKey = getLocalProperty(localProperties, 'GOOGLE_API_KEY', '')
+    emailUser = getLocalProperty(localProperties, 'EMAIL_USER', '')
+    emailPass = getLocalProperty(localProperties, 'EMAIL_PASSWORD','')
     downloadUrl = getEnvProperty('DOWNLOAD_URL', '')
-    downloadUser = getEnvProperty('DOWNLOAD_APPNAME', '')
+    downloadName = getEnvProperty('DOWNLOAD_APPNAME', '')
+    downloadUser = getEnvProperty('DOWNLOAD_APPUSER', '')
     downloadPass = getEnvProperty('DOWNLOAD_APPPW', '')
     ipgeolocationApiUrl = getEnvProperty('IPGEOLOCATION_APIURL', '')
     ipgeolocationApiKey = getEnvProperty('IPGEOLOCATION_APIKEY', '')
@@ -86,15 +86,14 @@ task startLiferay(
                     'EMAIL_USER'            : emailUser,
                     'EMAIL_PASSWORD'        : emailPass,
                     'DOWNLOAD_URL'          : downloadUrl,
-                    'DOWNLOAD_APPNAME'      : downloadUser,
+                    'DOWNLOAD_APPNAME'      : downloadName,
+                    'DOWNLOAD_APPUSER'      : downloadUser,
                     'DOWNLOAD_APPPW'        : downloadPass,
-                    'IPGEOLOCATION_APIURL'       : ipgeolocationApiUrl,
-                    'IPGEOLOCATION_APIKEY'       : ipgeolocationApiKey,
-                    'SENDINBLUE_API_KEY'    : sendinblueApiKey,
-                    'SENDINBLUE_API_URL'    : sendinblueApiUrl,
-                    'SENDINBLUE_FOLDER'    : sendinblueFolderId,
                     'IPGEOLOCATION_APIURL'  : ipgeolocationApiUrl,
                     'IPGEOLOCATION_APIKEY'  : ipgeolocationApiKey,
+                    'SENDINBLUE_API_KEY'    : sendinblueApiKey,
+                    'SENDINBLUE_API_URL'    : sendinblueApiUrl,
+                    'SENDINBLUE_FOLDER'     : sendinblueFolderId,
                     'LICENSE_URL'           : licenseUrl,
                     'LICENSE_USER'          : licenseUser,
                     'LICENSE_PASSWORD'      : licensePass
@@ -121,15 +120,6 @@ task startLiferay(
             into("$liferayMount/osgi/modules")
             include "*.xml"
         }
-//        copy {
-//            from("$projectDir/configs/$environment/config/")
-//            into("$nextcloudMount")
-//            include("*.php")
-//            filter(ReplaceTokens, tokens: [
-//                    'EMAIL_USER'            : emailUser,
-//                    'EMAIL_PASSWORD'        : emailPass
-//            ])
-//        }
         copy {
             from projectDir
             into deployFolder
@@ -203,4 +193,11 @@ def getEnvProperty(String propertyName, String defaultValue) {
         return project.getProperty(propertyName) ?: defaultValue
     }
     return defaultValue
+}
+
+def getLocalProperty(Properties properties, String propertyName, String defaultValue) {
+    if (properties.containsKey(propertyName)) {
+        return properties.get(propertyName) ?: defaultValue
+    }
+    return getEnvProperty(propertyName, defaultValue)
 }

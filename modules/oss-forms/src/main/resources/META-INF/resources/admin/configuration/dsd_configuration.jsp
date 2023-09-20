@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
+<%@ taglib uri="http://xmlns.jcp.org/portlet_3_0" prefix="portlet" %>
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
 <%@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %>
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
@@ -9,11 +9,8 @@
 <%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider"  %>
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
 <%@ page import="nl.deltares.portal.configuration.DSDSiteConfiguration" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="java.util.HashMap" %>
-<%@ page import="java.util.Locale" %>
-<%@ page import="javax.portlet.RenderParameters" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
 
 <liferay-theme:defineObjects/>
 
@@ -37,9 +34,6 @@
 />
 <%
 
-    Map<String, String> templateMap = (Map<String,String>) renderRequest.getAttribute("templateMap");
-    if (templateMap == null) templateMap = new HashMap<>();
-
     final List<String> languageIds = (List<String>) renderRequest.getAttribute("languageIds");
 
 %>
@@ -55,150 +49,128 @@
             type="hidden"
             value="<%= configurationRenderURL %>"
     />
+    <div class="lfr-form-content">
+        <div class="sheet sheet-lg">
+            <div aria-multiselectable="true" class>
+        <aui:fieldset id="site_config" collapsible="true" label="Site config">
+            <aui:input
+                    label="event-id"
+                    name="eventId"
+                    value="<%= configuration.eventId() %>"/>
 
-    <aui:fieldset>
+            <aui:input
+                    label="mailing-ids"
+                    name="mailingIds"
+                    value="<%= configuration.mailingIds() %>"/>
 
-        <aui:input
-                label="event-id"
-                name="eventId"
-                value="<%= configuration.eventId() %>"/>
+            <aui:input
+                    label="registration-url"
+                    name="registrationURL"
+                    value="<%= configuration.registrationURL() %>"/>
 
-        <aui:input
-                label="mailing-ids"
-                name="mailingIds"
-                value="<%= configuration.mailingIds() %>"/>
+            <aui:input
+                    label="bustransfer-url"
+                    name="busTransferURL"
+                    value="<%= configuration.busTransferURL() %>"/>
 
-        <aui:input
-                label="registration-url"
-                name="registrationURL"
-                value="<%= configuration.registrationURL() %>"/>
+            <aui:input
+                    label="travelstay-url"
+                    name="travelStayURL"
+                    value="<%= configuration.travelStayURL() %>"/>
+            <aui:input
+                    label="dsd.email.sendFrom"
+                    name="sendFromEmail"
+                    value="<%= configuration.sendFromEmail() %>"/>
 
-        <aui:input
-                label="bustransfer-url"
-                name="busTransferURL"
-                value="<%= configuration.busTransferURL() %>"/>
+            <aui:input
+                    label="dsd.email.replyTo"
+                    name="replyToEmail"
+                    value="<%= configuration.replyToEmail() %>"/>
 
-        <aui:input
-                label="travelstay-url"
-                name="travelStayURL"
-                value="<%= configuration.travelStayURL() %>"/>
+            <aui:input
+                    label="dsd.email.bccTo"
+                    name="bccToEmail"
+                    value="<%= configuration.bccToEmail() %>"/>
 
-        <%
-            Map<String, String> conditionsURL = (Map<String,String>) renderRequest.getAttribute("conditionsURL");
-            for (String languageId : languageIds) {
-                String name = "conditionsURL-" + languageId;
-        %>
-        <aui:input
-                label="conditions-url"
-                prefix="<%=languageId%>"
-                name="<%=name%>"
-                value="<%= conditionsURL.get(languageId) %>"/>
-        <%
-            }
-        %>
-        <%
-            Map<String, String> privacyURL = (Map<String,String>) renderRequest.getAttribute("privacyURL");
-            for (String languageId : languageIds) {
-                String name = "privacyURL-" + languageId;
-        %>
-        <aui:input
-                label="privacy-url"
-                prefix="<%=languageId%>"
-                name="<%=name%>"
-                value="<%= privacyURL.get(languageId) %>"/>
-        <%
-            }
-        %>
-        <%
-            Map<String, String> contactURL = (Map<String,String>) renderRequest.getAttribute("contactURL");
-            for (String languageId : languageIds) {
-                String name = "contactURL-" + languageId;
-        %>
-        <aui:input
-                label="contact-url"
-                prefix="<%=languageId%>"
-                name="<%=name%>"
-                value="<%= contactURL.get(languageId) %>"/>
-        <%
-            }
-        %>
-        <aui:input
-                label="dsd.email.sendFrom"
-                name="sendFromEmail"
-                value="<%= configuration.sendFromEmail() %>"/>
+            <aui:input
+                    label="dsd.email.enableBusInfo"
+                    name="enableBusInfo"
+                    type="checkbox"
+                    value="<%= configuration.enableBusInfo() %>"/>
 
-        <aui:input
-                label="dsd.email.replyTo"
-                name="replyToEmail"
-                value="<%= configuration.replyToEmail() %>"/>
+            <aui:input
+                    label="dsd.email.enabled"
+                    name="enableEmails"
+                    type="checkbox"
+                    value="<%= configuration.enableEmails() %>"/>
 
-        <aui:input
-                label="dsd.email.bccTo"
-                name="bccToEmail"
-                value="<%= configuration.bccToEmail() %>"/>
+            <aui:input
+                    label="dsd.site"
+                    name="dsdSite"
+                    type="checkbox"
+                    value="<%= configuration.dsdSite() %>"/>
 
-        <aui:input
-                label="dsd.email.enableBusInfo"
-                name="enableBusInfo"
-                type="checkbox"
-                value="<%= configuration.enableBusInfo() %>"/>
+            <aui:input
+                    label="dsd.structure.keys"
+                    name="dsdRegistrationStructures"
+                    value="<%= configuration.dsdRegistrationStructures() %>"/>
 
-        <aui:input
-                label="dsd.email.enabled"
-                name="enableEmails"
-                type="checkbox"
-                value="<%= configuration.enableEmails() %>"/>
+            <aui:input
+                    label="dsd.date.field"
+                    name="dsdRegistrationDateField"
+                    value="<%= configuration.dsdRegistrationDateField() %>"/>
 
-        <aui:input
-                label="dsd.site"
-                name="dsdSite"
-                type="checkbox"
-                value="<%= configuration.dsdSite() %>"/>
-
-        <aui:input
-                label="dsd.structure.keys"
-                name="dsdRegistrationStructures"
-                value="<%= configuration.dsdRegistrationStructures() %>"/>
-
-        <aui:input
-                label="dsd.date.field"
-                name="dsdRegistrationDateField"
-                value="<%= configuration.dsdRegistrationDateField() %>"/>
-
-        <aui:input
-                label="dsd.type.field"
-                name="dsdRegistrationTypeField"
-                value="<%= configuration.dsdRegistrationTypeField() %>"/>
-
-        <table id="searchResultsMap" class="display" style="width:100%">
-            <thead>
-                <tr>
-                    <th>Search Result Portlet ID</th>
-                    <th>Result Type</th>
-                </tr>
-            </thead>
-            <tbody>
-            <% int row = 0; %>
-            <%    for (String portletId : templateMap.keySet()) { %>
-                <tr>
-                    <td><aui:input type="text" name='<%="portletId-" + (row)%>' value="<%=portletId%>" label=""/></td>
-                    <td><aui:input type="text" name='<%="templateId-" + (row)%>' value="<%=templateMap.get(portletId)%>" label=""/></td>
-                </tr>
+            <aui:input
+                    label="dsd.type.field"
+                    name="dsdRegistrationTypeField"
+                    value="<%= configuration.dsdRegistrationTypeField() %>"/>
+        </aui:fieldset>
+        <aui:fieldset id="external_links" collapsible="true" label="External links">
             <%
-                row++;
-            } %>
-            <tr>
-                <td><aui:input type="text" name='<%="portletId-" + (row)%>' value="enter id of search results portlet" label=""/></td>
-                <td><aui:input type="text" name='<%="templateId-" + (row)%>' value="enter template key" label=""/></td>
-            </tr>
-            <tr>
-                <td><button class="btn btn-lg btn-primary" type="submit" >Add Row</button></td>
-            </tr>
-            </tbody>
-        </table>
-    </aui:fieldset>
+                Map<String, String> conditionsURL = (Map<String,String>) renderRequest.getAttribute("conditionsURL");
+                for (String languageId : languageIds) {
+                    String name = "conditionsURL-" + languageId;
+            %>
+            <aui:input
+                    label="conditions-url"
+                    prefix="<%=languageId%>"
+                    name="<%=name%>"
+                    value="<%= conditionsURL.get(languageId) %>"/>
+            <%
+                }
+            %>
+            <%
+                Map<String, String> privacyURL = (Map<String,String>) renderRequest.getAttribute("privacyURL");
+                for (String languageId : languageIds) {
+                    String name = "privacyURL-" + languageId;
+            %>
+            <aui:input
+                    label="privacy-url"
+                    prefix="<%=languageId%>"
+                    name="<%=name%>"
+                    value="<%= privacyURL.get(languageId) %>"/>
+            <%
+                }
+            %>
+            <%
+                Map<String, String> contactURL = (Map<String,String>) renderRequest.getAttribute("contactURL");
+                for (String languageId : languageIds) {
+                    String name = "contactURL-" + languageId;
+            %>
+            <aui:input
+                    label="contact-url"
+                    prefix="<%=languageId%>"
+                    name="<%=name%>"
+                    value="<%= contactURL.get(languageId) %>"/>
+            <%
+                }
+            %>
 
+        </aui:fieldset>
+            </div>
+        </div>
+    </div>
     <aui:button-row>
-        <aui:button type="submit"></aui:button>
+        <aui:button type="submit" />
     </aui:button-row>
 </aui:form>

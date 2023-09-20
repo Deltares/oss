@@ -35,7 +35,7 @@
 
 <@liferay_util["include"] page=body_top_include />
 
-<#if is_site_admin>
+<#if is_site_admin?? && is_site_admin >
 	<@liferay.control_menu />
 </#if>
 
@@ -43,7 +43,7 @@
 	<#include "${full_templates_path}/header.ftl" />
 
 	<section id="content">
-			<h1 class="hide-accessible">${the_title}</h1>
+			<h1 class="hide-accessible" hidden="">${the_title}</h1>
 
 				<#if selectable>
 					<@liferay_util["include"] page=content_include />

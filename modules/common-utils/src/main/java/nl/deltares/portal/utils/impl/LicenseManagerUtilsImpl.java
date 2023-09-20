@@ -16,12 +16,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,7 +59,7 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
             LOG.warn("Unable to generate license files as the LicenseManager is not active!");
             return Collections.emptyMap();
         }
-        if (user == null || user.isDefaultUser()) return Collections.emptyMap();
+        if (user == null || user.isGuestUser()) return Collections.emptyMap();
 
         String boundaryString = "----SignLicense";
         HashMap<String, String> headers = new HashMap<>();
@@ -108,16 +106,16 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
             LOG.warn("Unable to generate license files as the LicenseManager is not active!");
             return Collections.emptyMap();
         }
-        if (user == null || user.isDefaultUser()) return Collections.emptyMap();
+        if (user == null || user.isGuestUser()) return Collections.emptyMap();
 
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/x-www-form-urlencoded");
         headers.put("Authorization", "Bearer " + getAccessToken());
 
         String queryParameters = String.format("first_name=%s&last_name=%s&email=%s",
-                URLEncoder.encode(user.getFirstName(), StandardCharsets.UTF_8.name()),
-                URLEncoder.encode(user.getLastName(), StandardCharsets.UTF_8.name()),
-                URLEncoder.encode(user.getEmailAddress(), StandardCharsets.UTF_8.name()));
+                URLEncoder.encode(user.getFirstName(), StandardCharsets.UTF_8),
+                URLEncoder.encode(user.getLastName(), StandardCharsets.UTF_8),
+                URLEncoder.encode(user.getEmailAddress(), StandardCharsets.UTF_8));
         HttpURLConnection connection = getConnection(getBasePath() + licenseType + "?" + queryParameters, "GET", headers);
         checkResponse(connection);
 
@@ -133,7 +131,7 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
         licenseFileTemplateContent = licenseFileTemplateContent.replaceAll("@EMAIL@", user.getEmailAddress());
 
         final SimpleDateFormat dateFormat = new SimpleDateFormat(licenseFile.getDateFormat());
-        final String expirationDate = dateFormat.format(new Date(System.currentTimeMillis() + licenseFile.getExpirationPeriodInMillis()));
+        final String expirationDate = dateFormat.format(licenseFile.getExpirationDate());
         licenseFileTemplateContent = licenseFileTemplateContent.replaceAll("@EXPIRATIONDATE@", expirationDate);
 
         return licenseFileTemplateContent;

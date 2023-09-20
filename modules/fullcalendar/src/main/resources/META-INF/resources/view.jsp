@@ -12,6 +12,7 @@
 	props.defaultView="<%= defaultView %>";
 	props.p_auth =  Liferay.authToken;
 
+
 	construct = function(props){
 		let eventUrl = props.baseUrl + '/events/' + props.siteId + '/' + props.eventId + '?p_auth=' + props.p_auth;
 		var colorMap = JSON.parse('<%=colorMap%>');
@@ -22,7 +23,7 @@
 			// slotMinTime: '07:00:00',
 			// slotMaxTime: '22:00:00',
 			scrollTime: '08:00:00',
-			initialDate: props.startDate,
+			defaultDate: props.startDate,
 			weekends : false,
 			businessHours: true,
 			headerToolbar: {
@@ -93,9 +94,6 @@
 				meridiem: false,
 				hour12: false,
 				timeZoneName: 'short'
-			},
-			dayHeaderContent: function (date) {
-				return date.date.toLocaleDateString('en-us', { weekday:"short", month:"short", day:"numeric", order:"DMY"})
 			}
 		}
 	};
@@ -103,5 +101,6 @@
 	var content = construct(props);
 	var calendar = new FullCalendar.Calendar(calendarEl, content);
     calendar.render();
+    calendar.gotoDate(props.startDate)
 
 </aui:script>

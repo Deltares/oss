@@ -5,52 +5,61 @@
 <#assign displaydate=displaydate?datetime("EEE, d MMM yyyy HH:mm:ss Z")>
 <#assign locale=originalLocale>
 
-<#if FooterLinksLeft.LinkToPage?? && FooterLinksLeft.LinkToPage.getSiblings()?has_content && validator.isNotNull(FooterLinksLeft.LinkToPage.getSiblings()?first.getData())>
+<#if FooterLinksLeftFieldSet.FooterLinksLeftFieldSetFieldSet.LinkToPage.getSiblings()?has_content>
 
     <ul>
-        <#list FooterLinksLeft.LinkToPage.getSiblings() as cur_FooterLinksLeft>
+        <#list FooterLinksLeftFieldSet.FooterLinksLeftFieldSetFieldSet.LinkToPage.getSiblings() as cur_FooterLinksLeft>
             <li>
-                <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, cur_FooterLinksLeft.getData()) />
+                <#assign linkData = cur_FooterLinksLeft.getData()?eval >
+                <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, linkData.layoutId?number) />
                 <a href="${cur_FooterLinksLeft.getFriendlyUrl()}">${linkLayout.getName(themeDisplay.getLocale())}</a>
             </li>
         </#list>
     </ul>
 </#if>
 
-<p>${Copyright.getData()}</p>
+<#if Copyright?? && Copyright.getData()??>
+    <p>${Copyright.getData()}</p>
+</#if>
 
 <div>
     <ul class="media-links">
-        <#if FooterSocialMediaLinks.Linkedin?? &&  FooterSocialMediaLinks.Linkedin.getData()??>
+        <#assign linkedIn = FooterSocialMediaLinksFieldSet.FooterSocialMediaLinksFieldSetFieldSet.Linkedin />
+        <#if linkedIn?? &&  linkedIn.getData()??>
             <li>
-                <a href="${FooterSocialMediaLinks.Linkedin.getData()}" aria-label="go to our linkedin page" title="go to our linkedin page"><img src="${themeDisplay.getPathThemeImages()}/linkedin.png"></a>
+                <a href="${linkedIn.getData()}" aria-label="go to our linkedin page" title="go to our linkedin page"><img src="${themeDisplay.getPathThemeImages()}/linkedin.png"></a>
             </li>
         </#if>
-        <#if FooterSocialMediaLinks.Youtube?? &&  FooterSocialMediaLinks.Youtube.getData()??>
+        <#assign youTube = FooterSocialMediaLinksFieldSet.FooterSocialMediaLinksFieldSetFieldSet.Youtube />
+        <#if youTube?? &&  youTube.getData()??>
             <li>
-                <a href="${FooterSocialMediaLinks.Youtube.getData()}" aria-label="go to our youtube page" title="go to our youtube page"><img src="${themeDisplay.getPathThemeImages()}/youtube.png"></a>
+                <a href="${youTube.getData()}" aria-label="go to our youtube page" title="go to our youtube page"><img src="${themeDisplay.getPathThemeImages()}/youtube.png"></a>
             </li>
         </#if>
-        <#if FooterSocialMediaLinks.Facebook?? &&  FooterSocialMediaLinks.Facebook.getData()??>
+        <#assign faceBook = FooterSocialMediaLinksFieldSet.FooterSocialMediaLinksFieldSetFieldSet.Facebook />
+        <#if faceBook?? &&  faceBook.getData()??>
             <li>
-                <a href="${FooterSocialMediaLinks.Facebook.getData()}" aria-label="go to our facebook page" title="go to our facebook page"><img src="${themeDisplay.getPathThemeImages()}/facebook.png"></a>
+                <a href="${faceBook.getData()}" aria-label="go to our facebook page" title="go to our facebook page"><img src="${themeDisplay.getPathThemeImages()}/facebook.png"></a>
             </li>
         </#if>
-        <#if FooterSocialMediaLinks.Twitter?? &&  FooterSocialMediaLinks.Twitter.getData()??>
+        <#assign twitter = FooterSocialMediaLinksFieldSet.FooterSocialMediaLinksFieldSetFieldSet.Twitter />
+        <#if twitter?? &&  twitter.getData()??>
             <li>
-                <a href="${FooterSocialMediaLinks.Twitter.getData()}" aria-label="go to our twitter page" title="go to our twitter page"><img src="${themeDisplay.getPathThemeImages()}/twitter.png"></a>
+                <a href="${twitter.getData()}" aria-label="go to our twitter page" title="go to our twitter page"><img src="${themeDisplay.getPathThemeImages()}/twitter.png"></a>
             </li>
         </#if>
     </ul>
 
-    <#if FooterLinksRight.LinkToPage1?? && FooterLinksRight.LinkToPage1.getSiblings()?has_content && validator.isNotNull(FooterLinksRight.LinkToPage1.getSiblings()?first.getData())>
+    <#if FooterLinksRightFieldSet.FooterLinksRightFieldSetFieldSet.LinkToPage1.getSiblings()?has_content>
         <ul>
-            <#list FooterLinksRight.LinkToPage1.getSiblings() as cur_FooterLinksRight>
+            <#list FooterLinksRightFieldSet.FooterLinksRightFieldSetFieldSet.LinkToPage1.getSiblings() as cur_FooterLinksRight>
                 <li>
-                    <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, cur_FooterLinksRight.getData()) />
+                    <#assign linkData = cur_FooterLinksRight.getData()?eval >
+                    <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, linkData.layoutId?number) />
                     <a href="${cur_FooterLinksRight.getFriendlyUrl()}">${linkLayout.getName(themeDisplay.getLocale())}</a>
                 </li>
             </#list>
         </ul>
     </#if>
+
 </div>

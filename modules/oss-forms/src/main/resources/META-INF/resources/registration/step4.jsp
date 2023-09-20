@@ -4,6 +4,7 @@
 </c:if>
 <div class="row">
     <span>
+        <liferay-ui:message key="dsd.registration.step4.relevant.information"/>
         <p>
             <liferay-ui:message key="dsd.registration.step4.newsletter.register"/>:
         </p>
@@ -39,6 +40,8 @@
                     type="textarea"
                     maxLength="255"
                     resizable="false"
-                    value="${remarks}" />
+                    value="${remarks}" >
+                <aui:validator name="maxLength">255</aui:validator>
+            </aui:input>
     </div>
 </div>

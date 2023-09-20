@@ -1,8 +1,12 @@
 package nl.deltares.tableview.model;
 
+import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.CountryServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import nl.deltares.oss.download.model.Download;
+import nl.deltares.oss.geolocation.model.GeoLocation;
+import nl.deltares.oss.geolocation.service.GeoLocationLocalServiceUtil;
 
 import java.util.Date;
 
@@ -12,10 +16,10 @@ public class DisplayDownload {
     final private Download download;
     final private String email;
     final private String organization;
-    final private String city;
-    final private String countryCode;
-    final private String filePath;
-    final private String directDownloadUrl;
+    private String city = "";
+    private String countryCode = "";
+    final private String fileName;
+    final private String fileShareUrl;
     final private String licenseDownloadUrl;
 
     public DisplayDownload(Download download) {
@@ -27,19 +31,17 @@ public class DisplayDownload {
         } else {
             email = user.getEmailAddress();
         }
+
         final String organization = download.getOrganization();
         this.organization = organization != null ? organization : "";
-        final String city = download.getCity();
-        this.city =  city != null ? city : "";
-        final String countryCode = download.getCountryCode();
-        this.countryCode = countryCode != null ? countryCode : "";
-        final String filePath = download.getFilePath();
-        this.filePath = filePath != null ? filePath : "";
-        final String directDownloadPath = download.getDirectDownloadUrl();
-        this.directDownloadUrl = directDownloadPath != null ? directDownloadPath : "";
+        final String filePath = download.getFileName();
+        this.fileName = filePath != null ? filePath : "";
+        final String directDownloadPath = download.getFileShareUrl();
+        this.fileShareUrl = directDownloadPath != null ? directDownloadPath : "";
         final String licenseDownloadPath = download.getLicenseDownloadUrl();
         this.licenseDownloadUrl = licenseDownloadPath != null ? licenseDownloadPath : "";
     }
+
 
     public long getId(){
         return download.getId();
@@ -63,6 +65,16 @@ public class DisplayDownload {
         return  organization;
     }
 
+    public void setCity(String city) {
+        if (city == null) return;
+        this.city = city;
+    }
+
+    public void setCountryCode(String countryCode) {
+        if (countryCode == null) return;
+        this.countryCode = countryCode;
+    }
+
     public String getCity() {
         return city;
     }
@@ -71,25 +83,13 @@ public class DisplayDownload {
         return countryCode;
     }
 
-    public int getShareId() {
-        return download.getShareId();
+
+    public String getFileName() {
+        return fileName;
     }
 
-    public String getShareIdStatus() {
-        final int shareId = download.getShareId();
-        switch (shareId){
-            case -9 : return "processing";
-            case -1 : return directDownloadUrl.isEmpty() ? "pending payment" : "direct download";
-            default: return String.valueOf(shareId);
-        }
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public String getDirectDownloadUrl() {
-        return directDownloadUrl;
+    public String getFileShareUrl() {
+        return fileShareUrl;
     }
 
     public String getLicenseDownloadUrl() {

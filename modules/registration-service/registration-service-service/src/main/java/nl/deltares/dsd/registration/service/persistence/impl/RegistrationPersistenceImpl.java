@@ -14,8 +14,8 @@
 
 package nl.deltares.dsd.registration.service.persistence.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -23,32 +23,42 @@ import com.liferay.portal.kernel.dao.orm.Query;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.io.Serializable;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.sql.DataSource;
+
 import nl.deltares.dsd.registration.exception.NoSuchRegistrationException;
 import nl.deltares.dsd.registration.model.Registration;
+import nl.deltares.dsd.registration.model.RegistrationTable;
 import nl.deltares.dsd.registration.model.impl.RegistrationImpl;
 import nl.deltares.dsd.registration.model.impl.RegistrationModelImpl;
 import nl.deltares.dsd.registration.service.persistence.RegistrationPersistence;
+import nl.deltares.dsd.registration.service.persistence.RegistrationUtil;
+import nl.deltares.dsd.registration.service.persistence.impl.constants.RegistrationsPersistenceConstants;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * The persistence implementation for the registration service.
@@ -60,7 +70,7 @@ import nl.deltares.dsd.registration.service.persistence.RegistrationPersistence;
  * @author Erik de Rooij @ Deltares
  * @generated
  */
-@ProviderType
+@Component(service = {RegistrationPersistence.class, BasePersistence.class})
 public class RegistrationPersistenceImpl
 	extends BasePersistenceImpl<Registration>
 	implements RegistrationPersistence {
@@ -106,7 +116,7 @@ public class RegistrationPersistenceImpl
 	 * Returns a range of all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -127,7 +137,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -151,7 +161,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -159,27 +169,28 @@ public class RegistrationPersistenceImpl
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
 	public List<Registration> findByEventRegistrations(
 		long groupId, long eventResourcePrimaryKey, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
 
-			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByEventRegistrations;
-			finderArgs = new Object[] {groupId, eventResourcePrimaryKey};
+			if (useFinderCache) {
+				finderPath =
+					_finderPathWithoutPaginationFindByEventRegistrations;
+				finderArgs = new Object[] {groupId, eventResourcePrimaryKey};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByEventRegistrations;
 			finderArgs = new Object[] {
 				groupId, eventResourcePrimaryKey, start, end, orderByComparator
@@ -188,7 +199,7 @@ public class RegistrationPersistenceImpl
 
 		List<Registration> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<Registration>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -207,67 +218,57 @@ public class RegistrationPersistenceImpl
 		}
 
 		if (list == null) {
-			StringBundler query = null;
+			StringBundler sb = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(
+				sb = new StringBundler(
 					4 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
-				query = new StringBundler(4);
+				sb = new StringBundler(4);
 			}
 
-			query.append(_SQL_SELECT_REGISTRATION_WHERE);
+			sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-			query.append(_FINDER_COLUMN_EVENTREGISTRATIONS_GROUPID_2);
+			sb.append(_FINDER_COLUMN_EVENTREGISTRATIONS_GROUPID_2);
 
-			query.append(
+			sb.append(
 				_FINDER_COLUMN_EVENTREGISTRATIONS_EVENTRESOURCEPRIMARYKEY_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
-					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else if (pagination) {
-				query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			else {
+				sb.append(RegistrationModelImpl.ORDER_BY_JPQL);
 			}
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(eventResourcePrimaryKey);
+				queryPos.add(eventResourcePrimaryKey);
 
-				if (!pagination) {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<Registration>)QueryUtil.list(
+					query, getDialect(), start, end);
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -299,19 +300,19 @@ public class RegistrationPersistenceImpl
 			return registration;
 		}
 
-		StringBundler msg = new StringBundler(6);
+		StringBundler sb = new StringBundler(6);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("groupId=");
-		msg.append(groupId);
+		sb.append("groupId=");
+		sb.append(groupId);
 
-		msg.append(", eventResourcePrimaryKey=");
-		msg.append(eventResourcePrimaryKey);
+		sb.append(", eventResourcePrimaryKey=");
+		sb.append(eventResourcePrimaryKey);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRegistrationException(msg.toString());
+		throw new NoSuchRegistrationException(sb.toString());
 	}
 
 	/**
@@ -359,19 +360,19 @@ public class RegistrationPersistenceImpl
 			return registration;
 		}
 
-		StringBundler msg = new StringBundler(6);
+		StringBundler sb = new StringBundler(6);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("groupId=");
-		msg.append(groupId);
+		sb.append("groupId=");
+		sb.append(groupId);
 
-		msg.append(", eventResourcePrimaryKey=");
-		msg.append(eventResourcePrimaryKey);
+		sb.append(", eventResourcePrimaryKey=");
+		sb.append(eventResourcePrimaryKey);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRegistrationException(msg.toString());
+		throw new NoSuchRegistrationException(sb.toString());
 	}
 
 	/**
@@ -441,8 +442,8 @@ public class RegistrationPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -454,106 +455,105 @@ public class RegistrationPersistenceImpl
 		long eventResourcePrimaryKey,
 		OrderByComparator<Registration> orderByComparator, boolean previous) {
 
-		StringBundler query = null;
+		StringBundler sb = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(
+			sb = new StringBundler(
 				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(4);
+			sb = new StringBundler(4);
 		}
 
-		query.append(_SQL_SELECT_REGISTRATION_WHERE);
+		sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-		query.append(_FINDER_COLUMN_EVENTREGISTRATIONS_GROUPID_2);
+		sb.append(_FINDER_COLUMN_EVENTREGISTRATIONS_GROUPID_2);
 
-		query.append(
-			_FINDER_COLUMN_EVENTREGISTRATIONS_EVENTRESOURCEPRIMARYKEY_2);
+		sb.append(_FINDER_COLUMN_EVENTREGISTRATIONS_EVENTRESOURCEPRIMARYKEY_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
 				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
-				query.append(WHERE_AND);
+				sb.append(WHERE_AND);
 			}
 
 			for (int i = 0; i < orderByConditionFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByConditionFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByConditionFields[i]);
 
 				if ((i + 1) < orderByConditionFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+						sb.append(WHERE_GREATER_THAN_HAS_NEXT);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+						sb.append(WHERE_LESSER_THAN_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN);
+						sb.append(WHERE_GREATER_THAN);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN);
+						sb.append(WHERE_LESSER_THAN);
 					}
 				}
 			}
 
-			query.append(ORDER_BY_CLAUSE);
+			sb.append(ORDER_BY_CLAUSE);
 
 			String[] orderByFields = orderByComparator.getOrderByFields();
 
 			for (int i = 0; i < orderByFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByFields[i]);
 
 				if ((i + 1) < orderByFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC_HAS_NEXT);
+						sb.append(ORDER_BY_ASC_HAS_NEXT);
 					}
 					else {
-						query.append(ORDER_BY_DESC_HAS_NEXT);
+						sb.append(ORDER_BY_DESC_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC);
+						sb.append(ORDER_BY_ASC);
 					}
 					else {
-						query.append(ORDER_BY_DESC);
+						sb.append(ORDER_BY_DESC);
 					}
 				}
 			}
 		}
 		else {
-			query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			sb.append(RegistrationModelImpl.ORDER_BY_JPQL);
 		}
 
-		String sql = query.toString();
+		String sql = sb.toString();
 
-		Query q = session.createQuery(sql);
+		Query query = session.createQuery(sql);
 
-		q.setFirstResult(0);
-		q.setMaxResults(2);
+		query.setFirstResult(0);
+		query.setMaxResults(2);
 
-		QueryPos qPos = QueryPos.getInstance(q);
+		QueryPos queryPos = QueryPos.getInstance(query);
 
-		qPos.add(groupId);
+		queryPos.add(groupId);
 
-		qPos.add(eventResourcePrimaryKey);
+		queryPos.add(eventResourcePrimaryKey);
 
 		if (orderByComparator != null) {
 			for (Object orderByConditionValue :
 					orderByComparator.getOrderByConditionValues(registration)) {
 
-				qPos.add(orderByConditionValue);
+				queryPos.add(orderByConditionValue);
 			}
 		}
 
-		List<Registration> list = q.list();
+		List<Registration> list = query.list();
 
 		if (list.size() == 2) {
 			return list.get(1);
@@ -600,38 +600,36 @@ public class RegistrationPersistenceImpl
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(3);
+			StringBundler sb = new StringBundler(3);
 
-			query.append(_SQL_COUNT_REGISTRATION_WHERE);
+			sb.append(_SQL_COUNT_REGISTRATION_WHERE);
 
-			query.append(_FINDER_COLUMN_EVENTREGISTRATIONS_GROUPID_2);
+			sb.append(_FINDER_COLUMN_EVENTREGISTRATIONS_GROUPID_2);
 
-			query.append(
+			sb.append(
 				_FINDER_COLUMN_EVENTREGISTRATIONS_EVENTRESOURCEPRIMARYKEY_2);
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(eventResourcePrimaryKey);
+				queryPos.add(eventResourcePrimaryKey);
 
-				count = (Long)q.uniqueResult();
+				count = (Long)query.uniqueResult();
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -673,7 +671,7 @@ public class RegistrationPersistenceImpl
 	 * Returns a range of all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -696,7 +694,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -721,7 +719,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -730,30 +728,30 @@ public class RegistrationPersistenceImpl
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
 	public List<Registration> findByUserEventRegistrations(
 		long groupId, long userId, long eventResourcePrimaryKey, int start,
 		int end, OrderByComparator<Registration> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
 
-			pagination = false;
-			finderPath =
-				_finderPathWithoutPaginationFindByUserEventRegistrations;
-			finderArgs = new Object[] {
-				groupId, userId, eventResourcePrimaryKey
-			};
+			if (useFinderCache) {
+				finderPath =
+					_finderPathWithoutPaginationFindByUserEventRegistrations;
+				finderArgs = new Object[] {
+					groupId, userId, eventResourcePrimaryKey
+				};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByUserEventRegistrations;
 			finderArgs = new Object[] {
 				groupId, userId, eventResourcePrimaryKey, start, end,
@@ -763,7 +761,7 @@ public class RegistrationPersistenceImpl
 
 		List<Registration> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<Registration>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -783,71 +781,61 @@ public class RegistrationPersistenceImpl
 		}
 
 		if (list == null) {
-			StringBundler query = null;
+			StringBundler sb = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(
+				sb = new StringBundler(
 					5 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
-				query = new StringBundler(5);
+				sb = new StringBundler(5);
 			}
 
-			query.append(_SQL_SELECT_REGISTRATION_WHERE);
+			sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-			query.append(_FINDER_COLUMN_USEREVENTREGISTRATIONS_GROUPID_2);
+			sb.append(_FINDER_COLUMN_USEREVENTREGISTRATIONS_GROUPID_2);
 
-			query.append(_FINDER_COLUMN_USEREVENTREGISTRATIONS_USERID_2);
+			sb.append(_FINDER_COLUMN_USEREVENTREGISTRATIONS_USERID_2);
 
-			query.append(
+			sb.append(
 				_FINDER_COLUMN_USEREVENTREGISTRATIONS_EVENTRESOURCEPRIMARYKEY_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
-					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else if (pagination) {
-				query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			else {
+				sb.append(RegistrationModelImpl.ORDER_BY_JPQL);
 			}
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(userId);
+				queryPos.add(userId);
 
-				qPos.add(eventResourcePrimaryKey);
+				queryPos.add(eventResourcePrimaryKey);
 
-				if (!pagination) {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<Registration>)QueryUtil.list(
+					query, getDialect(), start, end);
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -880,22 +868,22 @@ public class RegistrationPersistenceImpl
 			return registration;
 		}
 
-		StringBundler msg = new StringBundler(8);
+		StringBundler sb = new StringBundler(8);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("groupId=");
-		msg.append(groupId);
+		sb.append("groupId=");
+		sb.append(groupId);
 
-		msg.append(", userId=");
-		msg.append(userId);
+		sb.append(", userId=");
+		sb.append(userId);
 
-		msg.append(", eventResourcePrimaryKey=");
-		msg.append(eventResourcePrimaryKey);
+		sb.append(", eventResourcePrimaryKey=");
+		sb.append(eventResourcePrimaryKey);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRegistrationException(msg.toString());
+		throw new NoSuchRegistrationException(sb.toString());
 	}
 
 	/**
@@ -945,22 +933,22 @@ public class RegistrationPersistenceImpl
 			return registration;
 		}
 
-		StringBundler msg = new StringBundler(8);
+		StringBundler sb = new StringBundler(8);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("groupId=");
-		msg.append(groupId);
+		sb.append("groupId=");
+		sb.append(groupId);
 
-		msg.append(", userId=");
-		msg.append(userId);
+		sb.append(", userId=");
+		sb.append(userId);
 
-		msg.append(", eventResourcePrimaryKey=");
-		msg.append(eventResourcePrimaryKey);
+		sb.append(", eventResourcePrimaryKey=");
+		sb.append(eventResourcePrimaryKey);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRegistrationException(msg.toString());
+		throw new NoSuchRegistrationException(sb.toString());
 	}
 
 	/**
@@ -1034,8 +1022,8 @@ public class RegistrationPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -1047,24 +1035,24 @@ public class RegistrationPersistenceImpl
 		long eventResourcePrimaryKey,
 		OrderByComparator<Registration> orderByComparator, boolean previous) {
 
-		StringBundler query = null;
+		StringBundler sb = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(
+			sb = new StringBundler(
 				6 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(5);
+			sb = new StringBundler(5);
 		}
 
-		query.append(_SQL_SELECT_REGISTRATION_WHERE);
+		sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-		query.append(_FINDER_COLUMN_USEREVENTREGISTRATIONS_GROUPID_2);
+		sb.append(_FINDER_COLUMN_USEREVENTREGISTRATIONS_GROUPID_2);
 
-		query.append(_FINDER_COLUMN_USEREVENTREGISTRATIONS_USERID_2);
+		sb.append(_FINDER_COLUMN_USEREVENTREGISTRATIONS_USERID_2);
 
-		query.append(
+		sb.append(
 			_FINDER_COLUMN_USEREVENTREGISTRATIONS_EVENTRESOURCEPRIMARYKEY_2);
 
 		if (orderByComparator != null) {
@@ -1072,85 +1060,85 @@ public class RegistrationPersistenceImpl
 				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
-				query.append(WHERE_AND);
+				sb.append(WHERE_AND);
 			}
 
 			for (int i = 0; i < orderByConditionFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByConditionFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByConditionFields[i]);
 
 				if ((i + 1) < orderByConditionFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+						sb.append(WHERE_GREATER_THAN_HAS_NEXT);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+						sb.append(WHERE_LESSER_THAN_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN);
+						sb.append(WHERE_GREATER_THAN);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN);
+						sb.append(WHERE_LESSER_THAN);
 					}
 				}
 			}
 
-			query.append(ORDER_BY_CLAUSE);
+			sb.append(ORDER_BY_CLAUSE);
 
 			String[] orderByFields = orderByComparator.getOrderByFields();
 
 			for (int i = 0; i < orderByFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByFields[i]);
 
 				if ((i + 1) < orderByFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC_HAS_NEXT);
+						sb.append(ORDER_BY_ASC_HAS_NEXT);
 					}
 					else {
-						query.append(ORDER_BY_DESC_HAS_NEXT);
+						sb.append(ORDER_BY_DESC_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC);
+						sb.append(ORDER_BY_ASC);
 					}
 					else {
-						query.append(ORDER_BY_DESC);
+						sb.append(ORDER_BY_DESC);
 					}
 				}
 			}
 		}
 		else {
-			query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			sb.append(RegistrationModelImpl.ORDER_BY_JPQL);
 		}
 
-		String sql = query.toString();
+		String sql = sb.toString();
 
-		Query q = session.createQuery(sql);
+		Query query = session.createQuery(sql);
 
-		q.setFirstResult(0);
-		q.setMaxResults(2);
+		query.setFirstResult(0);
+		query.setMaxResults(2);
 
-		QueryPos qPos = QueryPos.getInstance(q);
+		QueryPos queryPos = QueryPos.getInstance(query);
 
-		qPos.add(groupId);
+		queryPos.add(groupId);
 
-		qPos.add(userId);
+		queryPos.add(userId);
 
-		qPos.add(eventResourcePrimaryKey);
+		queryPos.add(eventResourcePrimaryKey);
 
 		if (orderByComparator != null) {
 			for (Object orderByConditionValue :
 					orderByComparator.getOrderByConditionValues(registration)) {
 
-				qPos.add(orderByConditionValue);
+				queryPos.add(orderByConditionValue);
 			}
 		}
 
-		List<Registration> list = q.list();
+		List<Registration> list = query.list();
 
 		if (list.size() == 2) {
 			return list.get(1);
@@ -1201,42 +1189,40 @@ public class RegistrationPersistenceImpl
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(4);
+			StringBundler sb = new StringBundler(4);
 
-			query.append(_SQL_COUNT_REGISTRATION_WHERE);
+			sb.append(_SQL_COUNT_REGISTRATION_WHERE);
 
-			query.append(_FINDER_COLUMN_USEREVENTREGISTRATIONS_GROUPID_2);
+			sb.append(_FINDER_COLUMN_USEREVENTREGISTRATIONS_GROUPID_2);
 
-			query.append(_FINDER_COLUMN_USEREVENTREGISTRATIONS_USERID_2);
+			sb.append(_FINDER_COLUMN_USEREVENTREGISTRATIONS_USERID_2);
 
-			query.append(
+			sb.append(
 				_FINDER_COLUMN_USEREVENTREGISTRATIONS_EVENTRESOURCEPRIMARYKEY_2);
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(userId);
+				queryPos.add(userId);
 
-				qPos.add(eventResourcePrimaryKey);
+				queryPos.add(eventResourcePrimaryKey);
 
-				count = (Long)q.uniqueResult();
+				count = (Long)query.uniqueResult();
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -1280,7 +1266,7 @@ public class RegistrationPersistenceImpl
 	 * Returns a range of all the registrations where groupId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1300,7 +1286,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1323,7 +1309,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1331,27 +1317,28 @@ public class RegistrationPersistenceImpl
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
 	public List<Registration> findByUserRegistrations(
 		long groupId, long userId, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
 
-			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByUserRegistrations;
-			finderArgs = new Object[] {groupId, userId};
+			if (useFinderCache) {
+				finderPath =
+					_finderPathWithoutPaginationFindByUserRegistrations;
+				finderArgs = new Object[] {groupId, userId};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByUserRegistrations;
 			finderArgs = new Object[] {
 				groupId, userId, start, end, orderByComparator
@@ -1360,7 +1347,7 @@ public class RegistrationPersistenceImpl
 
 		List<Registration> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<Registration>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -1378,66 +1365,56 @@ public class RegistrationPersistenceImpl
 		}
 
 		if (list == null) {
-			StringBundler query = null;
+			StringBundler sb = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(
+				sb = new StringBundler(
 					4 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
-				query = new StringBundler(4);
+				sb = new StringBundler(4);
 			}
 
-			query.append(_SQL_SELECT_REGISTRATION_WHERE);
+			sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-			query.append(_FINDER_COLUMN_USERREGISTRATIONS_GROUPID_2);
+			sb.append(_FINDER_COLUMN_USERREGISTRATIONS_GROUPID_2);
 
-			query.append(_FINDER_COLUMN_USERREGISTRATIONS_USERID_2);
+			sb.append(_FINDER_COLUMN_USERREGISTRATIONS_USERID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
-					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else if (pagination) {
-				query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			else {
+				sb.append(RegistrationModelImpl.ORDER_BY_JPQL);
 			}
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(userId);
+				queryPos.add(userId);
 
-				if (!pagination) {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<Registration>)QueryUtil.list(
+					query, getDialect(), start, end);
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -1469,19 +1446,19 @@ public class RegistrationPersistenceImpl
 			return registration;
 		}
 
-		StringBundler msg = new StringBundler(6);
+		StringBundler sb = new StringBundler(6);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("groupId=");
-		msg.append(groupId);
+		sb.append("groupId=");
+		sb.append(groupId);
 
-		msg.append(", userId=");
-		msg.append(userId);
+		sb.append(", userId=");
+		sb.append(userId);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRegistrationException(msg.toString());
+		throw new NoSuchRegistrationException(sb.toString());
 	}
 
 	/**
@@ -1529,19 +1506,19 @@ public class RegistrationPersistenceImpl
 			return registration;
 		}
 
-		StringBundler msg = new StringBundler(6);
+		StringBundler sb = new StringBundler(6);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("groupId=");
-		msg.append(groupId);
+		sb.append("groupId=");
+		sb.append(groupId);
 
-		msg.append(", userId=");
-		msg.append(userId);
+		sb.append(", userId=");
+		sb.append(userId);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRegistrationException(msg.toString());
+		throw new NoSuchRegistrationException(sb.toString());
 	}
 
 	/**
@@ -1610,8 +1587,8 @@ public class RegistrationPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -1622,105 +1599,105 @@ public class RegistrationPersistenceImpl
 		Session session, Registration registration, long groupId, long userId,
 		OrderByComparator<Registration> orderByComparator, boolean previous) {
 
-		StringBundler query = null;
+		StringBundler sb = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(
+			sb = new StringBundler(
 				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(4);
+			sb = new StringBundler(4);
 		}
 
-		query.append(_SQL_SELECT_REGISTRATION_WHERE);
+		sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-		query.append(_FINDER_COLUMN_USERREGISTRATIONS_GROUPID_2);
+		sb.append(_FINDER_COLUMN_USERREGISTRATIONS_GROUPID_2);
 
-		query.append(_FINDER_COLUMN_USERREGISTRATIONS_USERID_2);
+		sb.append(_FINDER_COLUMN_USERREGISTRATIONS_USERID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
 				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
-				query.append(WHERE_AND);
+				sb.append(WHERE_AND);
 			}
 
 			for (int i = 0; i < orderByConditionFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByConditionFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByConditionFields[i]);
 
 				if ((i + 1) < orderByConditionFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+						sb.append(WHERE_GREATER_THAN_HAS_NEXT);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+						sb.append(WHERE_LESSER_THAN_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN);
+						sb.append(WHERE_GREATER_THAN);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN);
+						sb.append(WHERE_LESSER_THAN);
 					}
 				}
 			}
 
-			query.append(ORDER_BY_CLAUSE);
+			sb.append(ORDER_BY_CLAUSE);
 
 			String[] orderByFields = orderByComparator.getOrderByFields();
 
 			for (int i = 0; i < orderByFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByFields[i]);
 
 				if ((i + 1) < orderByFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC_HAS_NEXT);
+						sb.append(ORDER_BY_ASC_HAS_NEXT);
 					}
 					else {
-						query.append(ORDER_BY_DESC_HAS_NEXT);
+						sb.append(ORDER_BY_DESC_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC);
+						sb.append(ORDER_BY_ASC);
 					}
 					else {
-						query.append(ORDER_BY_DESC);
+						sb.append(ORDER_BY_DESC);
 					}
 				}
 			}
 		}
 		else {
-			query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			sb.append(RegistrationModelImpl.ORDER_BY_JPQL);
 		}
 
-		String sql = query.toString();
+		String sql = sb.toString();
 
-		Query q = session.createQuery(sql);
+		Query query = session.createQuery(sql);
 
-		q.setFirstResult(0);
-		q.setMaxResults(2);
+		query.setFirstResult(0);
+		query.setMaxResults(2);
 
-		QueryPos qPos = QueryPos.getInstance(q);
+		QueryPos queryPos = QueryPos.getInstance(query);
 
-		qPos.add(groupId);
+		queryPos.add(groupId);
 
-		qPos.add(userId);
+		queryPos.add(userId);
 
 		if (orderByComparator != null) {
 			for (Object orderByConditionValue :
 					orderByComparator.getOrderByConditionValues(registration)) {
 
-				qPos.add(orderByConditionValue);
+				queryPos.add(orderByConditionValue);
 			}
 		}
 
-		List<Registration> list = q.list();
+		List<Registration> list = query.list();
 
 		if (list.size() == 2) {
 			return list.get(1);
@@ -1763,37 +1740,35 @@ public class RegistrationPersistenceImpl
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(3);
+			StringBundler sb = new StringBundler(3);
 
-			query.append(_SQL_COUNT_REGISTRATION_WHERE);
+			sb.append(_SQL_COUNT_REGISTRATION_WHERE);
 
-			query.append(_FINDER_COLUMN_USERREGISTRATIONS_GROUPID_2);
+			sb.append(_FINDER_COLUMN_USERREGISTRATIONS_GROUPID_2);
 
-			query.append(_FINDER_COLUMN_USERREGISTRATIONS_USERID_2);
+			sb.append(_FINDER_COLUMN_USERREGISTRATIONS_USERID_2);
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(userId);
+				queryPos.add(userId);
 
-				count = (Long)q.uniqueResult();
+				count = (Long)query.uniqueResult();
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -1835,7 +1810,7 @@ public class RegistrationPersistenceImpl
 	 * Returns a range of all the registrations where groupId = &#63; and registeredByUserId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1856,7 +1831,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations where groupId = &#63; and registeredByUserId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1879,7 +1854,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations where groupId = &#63; and registeredByUserId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1887,28 +1862,28 @@ public class RegistrationPersistenceImpl
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
 	public List<Registration> findByUserRegistrationsRegisteredByMe(
 		long groupId, long registeredByUserId, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
 
-			pagination = false;
-			finderPath =
-				_finderPathWithoutPaginationFindByUserRegistrationsRegisteredByMe;
-			finderArgs = new Object[] {groupId, registeredByUserId};
+			if (useFinderCache) {
+				finderPath =
+					_finderPathWithoutPaginationFindByUserRegistrationsRegisteredByMe;
+				finderArgs = new Object[] {groupId, registeredByUserId};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath =
 				_finderPathWithPaginationFindByUserRegistrationsRegisteredByMe;
 			finderArgs = new Object[] {
@@ -1918,7 +1893,7 @@ public class RegistrationPersistenceImpl
 
 		List<Registration> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<Registration>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -1937,68 +1912,57 @@ public class RegistrationPersistenceImpl
 		}
 
 		if (list == null) {
-			StringBundler query = null;
+			StringBundler sb = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(
+				sb = new StringBundler(
 					4 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
-				query = new StringBundler(4);
+				sb = new StringBundler(4);
 			}
 
-			query.append(_SQL_SELECT_REGISTRATION_WHERE);
+			sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-			query.append(
-				_FINDER_COLUMN_USERREGISTRATIONSREGISTEREDBYME_GROUPID_2);
+			sb.append(_FINDER_COLUMN_USERREGISTRATIONSREGISTEREDBYME_GROUPID_2);
 
-			query.append(
+			sb.append(
 				_FINDER_COLUMN_USERREGISTRATIONSREGISTEREDBYME_REGISTEREDBYUSERID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
-					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else if (pagination) {
-				query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			else {
+				sb.append(RegistrationModelImpl.ORDER_BY_JPQL);
 			}
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(registeredByUserId);
+				queryPos.add(registeredByUserId);
 
-				if (!pagination) {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<Registration>)QueryUtil.list(
+					query, getDialect(), start, end);
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -2031,19 +1995,19 @@ public class RegistrationPersistenceImpl
 			return registration;
 		}
 
-		StringBundler msg = new StringBundler(6);
+		StringBundler sb = new StringBundler(6);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("groupId=");
-		msg.append(groupId);
+		sb.append("groupId=");
+		sb.append(groupId);
 
-		msg.append(", registeredByUserId=");
-		msg.append(registeredByUserId);
+		sb.append(", registeredByUserId=");
+		sb.append(registeredByUserId);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRegistrationException(msg.toString());
+		throw new NoSuchRegistrationException(sb.toString());
 	}
 
 	/**
@@ -2091,19 +2055,19 @@ public class RegistrationPersistenceImpl
 			return registration;
 		}
 
-		StringBundler msg = new StringBundler(6);
+		StringBundler sb = new StringBundler(6);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("groupId=");
-		msg.append(groupId);
+		sb.append("groupId=");
+		sb.append(groupId);
 
-		msg.append(", registeredByUserId=");
-		msg.append(registeredByUserId);
+		sb.append(", registeredByUserId=");
+		sb.append(registeredByUserId);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRegistrationException(msg.toString());
+		throw new NoSuchRegistrationException(sb.toString());
 	}
 
 	/**
@@ -2173,8 +2137,8 @@ public class RegistrationPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -2186,22 +2150,22 @@ public class RegistrationPersistenceImpl
 		long registeredByUserId,
 		OrderByComparator<Registration> orderByComparator, boolean previous) {
 
-		StringBundler query = null;
+		StringBundler sb = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(
+			sb = new StringBundler(
 				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(4);
+			sb = new StringBundler(4);
 		}
 
-		query.append(_SQL_SELECT_REGISTRATION_WHERE);
+		sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-		query.append(_FINDER_COLUMN_USERREGISTRATIONSREGISTEREDBYME_GROUPID_2);
+		sb.append(_FINDER_COLUMN_USERREGISTRATIONSREGISTEREDBYME_GROUPID_2);
 
-		query.append(
+		sb.append(
 			_FINDER_COLUMN_USERREGISTRATIONSREGISTEREDBYME_REGISTEREDBYUSERID_2);
 
 		if (orderByComparator != null) {
@@ -2209,83 +2173,83 @@ public class RegistrationPersistenceImpl
 				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
-				query.append(WHERE_AND);
+				sb.append(WHERE_AND);
 			}
 
 			for (int i = 0; i < orderByConditionFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByConditionFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByConditionFields[i]);
 
 				if ((i + 1) < orderByConditionFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+						sb.append(WHERE_GREATER_THAN_HAS_NEXT);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+						sb.append(WHERE_LESSER_THAN_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN);
+						sb.append(WHERE_GREATER_THAN);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN);
+						sb.append(WHERE_LESSER_THAN);
 					}
 				}
 			}
 
-			query.append(ORDER_BY_CLAUSE);
+			sb.append(ORDER_BY_CLAUSE);
 
 			String[] orderByFields = orderByComparator.getOrderByFields();
 
 			for (int i = 0; i < orderByFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByFields[i]);
 
 				if ((i + 1) < orderByFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC_HAS_NEXT);
+						sb.append(ORDER_BY_ASC_HAS_NEXT);
 					}
 					else {
-						query.append(ORDER_BY_DESC_HAS_NEXT);
+						sb.append(ORDER_BY_DESC_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC);
+						sb.append(ORDER_BY_ASC);
 					}
 					else {
-						query.append(ORDER_BY_DESC);
+						sb.append(ORDER_BY_DESC);
 					}
 				}
 			}
 		}
 		else {
-			query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			sb.append(RegistrationModelImpl.ORDER_BY_JPQL);
 		}
 
-		String sql = query.toString();
+		String sql = sb.toString();
 
-		Query q = session.createQuery(sql);
+		Query query = session.createQuery(sql);
 
-		q.setFirstResult(0);
-		q.setMaxResults(2);
+		query.setFirstResult(0);
+		query.setMaxResults(2);
 
-		QueryPos qPos = QueryPos.getInstance(q);
+		QueryPos queryPos = QueryPos.getInstance(query);
 
-		qPos.add(groupId);
+		queryPos.add(groupId);
 
-		qPos.add(registeredByUserId);
+		queryPos.add(registeredByUserId);
 
 		if (orderByComparator != null) {
 			for (Object orderByConditionValue :
 					orderByComparator.getOrderByConditionValues(registration)) {
 
-				qPos.add(orderByConditionValue);
+				queryPos.add(orderByConditionValue);
 			}
 		}
 
-		List<Registration> list = q.list();
+		List<Registration> list = query.list();
 
 		if (list.size() == 2) {
 			return list.get(1);
@@ -2333,39 +2297,36 @@ public class RegistrationPersistenceImpl
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(3);
+			StringBundler sb = new StringBundler(3);
 
-			query.append(_SQL_COUNT_REGISTRATION_WHERE);
+			sb.append(_SQL_COUNT_REGISTRATION_WHERE);
 
-			query.append(
-				_FINDER_COLUMN_USERREGISTRATIONSREGISTEREDBYME_GROUPID_2);
+			sb.append(_FINDER_COLUMN_USERREGISTRATIONSREGISTEREDBYME_GROUPID_2);
 
-			query.append(
+			sb.append(
 				_FINDER_COLUMN_USERREGISTRATIONSREGISTEREDBYME_REGISTEREDBYUSERID_2);
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(registeredByUserId);
+				queryPos.add(registeredByUserId);
 
-				count = (Long)q.uniqueResult();
+				count = (Long)query.uniqueResult();
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -2410,7 +2371,7 @@ public class RegistrationPersistenceImpl
 	 * Returns a range of all the registrations where groupId = &#63; and registeredByUserId = &#63; and eventResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2434,7 +2395,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations where groupId = &#63; and registeredByUserId = &#63; and eventResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2459,7 +2420,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations where groupId = &#63; and registeredByUserId = &#63; and eventResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -2468,30 +2429,30 @@ public class RegistrationPersistenceImpl
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
 	public List<Registration> findByUserEventRegistrationsRegisteredByMe(
 		long groupId, long registeredByUserId, long eventResourcePrimaryKey,
 		int start, int end, OrderByComparator<Registration> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
 
-			pagination = false;
-			finderPath =
-				_finderPathWithoutPaginationFindByUserEventRegistrationsRegisteredByMe;
-			finderArgs = new Object[] {
-				groupId, registeredByUserId, eventResourcePrimaryKey
-			};
+			if (useFinderCache) {
+				finderPath =
+					_finderPathWithoutPaginationFindByUserEventRegistrationsRegisteredByMe;
+				finderArgs = new Object[] {
+					groupId, registeredByUserId, eventResourcePrimaryKey
+				};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath =
 				_finderPathWithPaginationFindByUserEventRegistrationsRegisteredByMe;
 			finderArgs = new Object[] {
@@ -2502,7 +2463,7 @@ public class RegistrationPersistenceImpl
 
 		List<Registration> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<Registration>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -2523,73 +2484,63 @@ public class RegistrationPersistenceImpl
 		}
 
 		if (list == null) {
-			StringBundler query = null;
+			StringBundler sb = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(
+				sb = new StringBundler(
 					5 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
-				query = new StringBundler(5);
+				sb = new StringBundler(5);
 			}
 
-			query.append(_SQL_SELECT_REGISTRATION_WHERE);
+			sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-			query.append(
+			sb.append(
 				_FINDER_COLUMN_USEREVENTREGISTRATIONSREGISTEREDBYME_GROUPID_2);
 
-			query.append(
+			sb.append(
 				_FINDER_COLUMN_USEREVENTREGISTRATIONSREGISTEREDBYME_REGISTEREDBYUSERID_2);
 
-			query.append(
+			sb.append(
 				_FINDER_COLUMN_USEREVENTREGISTRATIONSREGISTEREDBYME_EVENTRESOURCEPRIMARYKEY_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
-					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else if (pagination) {
-				query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			else {
+				sb.append(RegistrationModelImpl.ORDER_BY_JPQL);
 			}
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(registeredByUserId);
+				queryPos.add(registeredByUserId);
 
-				qPos.add(eventResourcePrimaryKey);
+				queryPos.add(eventResourcePrimaryKey);
 
-				if (!pagination) {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<Registration>)QueryUtil.list(
+					query, getDialect(), start, end);
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -2624,22 +2575,22 @@ public class RegistrationPersistenceImpl
 			return registration;
 		}
 
-		StringBundler msg = new StringBundler(8);
+		StringBundler sb = new StringBundler(8);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("groupId=");
-		msg.append(groupId);
+		sb.append("groupId=");
+		sb.append(groupId);
 
-		msg.append(", registeredByUserId=");
-		msg.append(registeredByUserId);
+		sb.append(", registeredByUserId=");
+		sb.append(registeredByUserId);
 
-		msg.append(", eventResourcePrimaryKey=");
-		msg.append(eventResourcePrimaryKey);
+		sb.append(", eventResourcePrimaryKey=");
+		sb.append(eventResourcePrimaryKey);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRegistrationException(msg.toString());
+		throw new NoSuchRegistrationException(sb.toString());
 	}
 
 	/**
@@ -2692,22 +2643,22 @@ public class RegistrationPersistenceImpl
 			return registration;
 		}
 
-		StringBundler msg = new StringBundler(8);
+		StringBundler sb = new StringBundler(8);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("groupId=");
-		msg.append(groupId);
+		sb.append("groupId=");
+		sb.append(groupId);
 
-		msg.append(", registeredByUserId=");
-		msg.append(registeredByUserId);
+		sb.append(", registeredByUserId=");
+		sb.append(registeredByUserId);
 
-		msg.append(", eventResourcePrimaryKey=");
-		msg.append(eventResourcePrimaryKey);
+		sb.append(", eventResourcePrimaryKey=");
+		sb.append(eventResourcePrimaryKey);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRegistrationException(msg.toString());
+		throw new NoSuchRegistrationException(sb.toString());
 	}
 
 	/**
@@ -2782,8 +2733,8 @@ public class RegistrationPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -2797,26 +2748,26 @@ public class RegistrationPersistenceImpl
 			OrderByComparator<Registration> orderByComparator,
 			boolean previous) {
 
-		StringBundler query = null;
+		StringBundler sb = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(
+			sb = new StringBundler(
 				6 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(5);
+			sb = new StringBundler(5);
 		}
 
-		query.append(_SQL_SELECT_REGISTRATION_WHERE);
+		sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-		query.append(
+		sb.append(
 			_FINDER_COLUMN_USEREVENTREGISTRATIONSREGISTEREDBYME_GROUPID_2);
 
-		query.append(
+		sb.append(
 			_FINDER_COLUMN_USEREVENTREGISTRATIONSREGISTEREDBYME_REGISTEREDBYUSERID_2);
 
-		query.append(
+		sb.append(
 			_FINDER_COLUMN_USEREVENTREGISTRATIONSREGISTEREDBYME_EVENTRESOURCEPRIMARYKEY_2);
 
 		if (orderByComparator != null) {
@@ -2824,85 +2775,85 @@ public class RegistrationPersistenceImpl
 				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
-				query.append(WHERE_AND);
+				sb.append(WHERE_AND);
 			}
 
 			for (int i = 0; i < orderByConditionFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByConditionFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByConditionFields[i]);
 
 				if ((i + 1) < orderByConditionFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+						sb.append(WHERE_GREATER_THAN_HAS_NEXT);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+						sb.append(WHERE_LESSER_THAN_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN);
+						sb.append(WHERE_GREATER_THAN);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN);
+						sb.append(WHERE_LESSER_THAN);
 					}
 				}
 			}
 
-			query.append(ORDER_BY_CLAUSE);
+			sb.append(ORDER_BY_CLAUSE);
 
 			String[] orderByFields = orderByComparator.getOrderByFields();
 
 			for (int i = 0; i < orderByFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByFields[i]);
 
 				if ((i + 1) < orderByFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC_HAS_NEXT);
+						sb.append(ORDER_BY_ASC_HAS_NEXT);
 					}
 					else {
-						query.append(ORDER_BY_DESC_HAS_NEXT);
+						sb.append(ORDER_BY_DESC_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC);
+						sb.append(ORDER_BY_ASC);
 					}
 					else {
-						query.append(ORDER_BY_DESC);
+						sb.append(ORDER_BY_DESC);
 					}
 				}
 			}
 		}
 		else {
-			query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			sb.append(RegistrationModelImpl.ORDER_BY_JPQL);
 		}
 
-		String sql = query.toString();
+		String sql = sb.toString();
 
-		Query q = session.createQuery(sql);
+		Query query = session.createQuery(sql);
 
-		q.setFirstResult(0);
-		q.setMaxResults(2);
+		query.setFirstResult(0);
+		query.setMaxResults(2);
 
-		QueryPos qPos = QueryPos.getInstance(q);
+		QueryPos queryPos = QueryPos.getInstance(query);
 
-		qPos.add(groupId);
+		queryPos.add(groupId);
 
-		qPos.add(registeredByUserId);
+		queryPos.add(registeredByUserId);
 
-		qPos.add(eventResourcePrimaryKey);
+		queryPos.add(eventResourcePrimaryKey);
 
 		if (orderByComparator != null) {
 			for (Object orderByConditionValue :
 					orderByComparator.getOrderByConditionValues(registration)) {
 
-				qPos.add(orderByConditionValue);
+				queryPos.add(orderByConditionValue);
 			}
 		}
 
-		List<Registration> list = q.list();
+		List<Registration> list = query.list();
 
 		if (list.size() == 2) {
 			return list.get(1);
@@ -2954,44 +2905,42 @@ public class RegistrationPersistenceImpl
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(4);
+			StringBundler sb = new StringBundler(4);
 
-			query.append(_SQL_COUNT_REGISTRATION_WHERE);
+			sb.append(_SQL_COUNT_REGISTRATION_WHERE);
 
-			query.append(
+			sb.append(
 				_FINDER_COLUMN_USEREVENTREGISTRATIONSREGISTEREDBYME_GROUPID_2);
 
-			query.append(
+			sb.append(
 				_FINDER_COLUMN_USEREVENTREGISTRATIONSREGISTEREDBYME_REGISTEREDBYUSERID_2);
 
-			query.append(
+			sb.append(
 				_FINDER_COLUMN_USEREVENTREGISTRATIONSREGISTEREDBYME_EVENTRESOURCEPRIMARYKEY_2);
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(registeredByUserId);
+				queryPos.add(registeredByUserId);
 
-				qPos.add(eventResourcePrimaryKey);
+				queryPos.add(eventResourcePrimaryKey);
 
-				count = (Long)q.uniqueResult();
+				count = (Long)query.uniqueResult();
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -3037,7 +2986,7 @@ public class RegistrationPersistenceImpl
 	 * Returns a range of all the registrations where groupId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3058,7 +3007,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations where groupId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3081,7 +3030,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations where groupId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3089,27 +3038,28 @@ public class RegistrationPersistenceImpl
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
 	public List<Registration> findByArticleRegistrations(
 		long groupId, long resourcePrimaryKey, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
 
-			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByArticleRegistrations;
-			finderArgs = new Object[] {groupId, resourcePrimaryKey};
+			if (useFinderCache) {
+				finderPath =
+					_finderPathWithoutPaginationFindByArticleRegistrations;
+				finderArgs = new Object[] {groupId, resourcePrimaryKey};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByArticleRegistrations;
 			finderArgs = new Object[] {
 				groupId, resourcePrimaryKey, start, end, orderByComparator
@@ -3118,7 +3068,7 @@ public class RegistrationPersistenceImpl
 
 		List<Registration> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<Registration>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -3137,67 +3087,56 @@ public class RegistrationPersistenceImpl
 		}
 
 		if (list == null) {
-			StringBundler query = null;
+			StringBundler sb = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(
+				sb = new StringBundler(
 					4 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
-				query = new StringBundler(4);
+				sb = new StringBundler(4);
 			}
 
-			query.append(_SQL_SELECT_REGISTRATION_WHERE);
+			sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-			query.append(_FINDER_COLUMN_ARTICLEREGISTRATIONS_GROUPID_2);
+			sb.append(_FINDER_COLUMN_ARTICLEREGISTRATIONS_GROUPID_2);
 
-			query.append(
-				_FINDER_COLUMN_ARTICLEREGISTRATIONS_RESOURCEPRIMARYKEY_2);
+			sb.append(_FINDER_COLUMN_ARTICLEREGISTRATIONS_RESOURCEPRIMARYKEY_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
-					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else if (pagination) {
-				query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			else {
+				sb.append(RegistrationModelImpl.ORDER_BY_JPQL);
 			}
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(resourcePrimaryKey);
+				queryPos.add(resourcePrimaryKey);
 
-				if (!pagination) {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<Registration>)QueryUtil.list(
+					query, getDialect(), start, end);
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -3229,19 +3168,19 @@ public class RegistrationPersistenceImpl
 			return registration;
 		}
 
-		StringBundler msg = new StringBundler(6);
+		StringBundler sb = new StringBundler(6);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("groupId=");
-		msg.append(groupId);
+		sb.append("groupId=");
+		sb.append(groupId);
 
-		msg.append(", resourcePrimaryKey=");
-		msg.append(resourcePrimaryKey);
+		sb.append(", resourcePrimaryKey=");
+		sb.append(resourcePrimaryKey);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRegistrationException(msg.toString());
+		throw new NoSuchRegistrationException(sb.toString());
 	}
 
 	/**
@@ -3289,19 +3228,19 @@ public class RegistrationPersistenceImpl
 			return registration;
 		}
 
-		StringBundler msg = new StringBundler(6);
+		StringBundler sb = new StringBundler(6);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("groupId=");
-		msg.append(groupId);
+		sb.append("groupId=");
+		sb.append(groupId);
 
-		msg.append(", resourcePrimaryKey=");
-		msg.append(resourcePrimaryKey);
+		sb.append(", resourcePrimaryKey=");
+		sb.append(resourcePrimaryKey);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRegistrationException(msg.toString());
+		throw new NoSuchRegistrationException(sb.toString());
 	}
 
 	/**
@@ -3370,8 +3309,8 @@ public class RegistrationPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -3383,105 +3322,105 @@ public class RegistrationPersistenceImpl
 		long resourcePrimaryKey,
 		OrderByComparator<Registration> orderByComparator, boolean previous) {
 
-		StringBundler query = null;
+		StringBundler sb = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(
+			sb = new StringBundler(
 				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(4);
+			sb = new StringBundler(4);
 		}
 
-		query.append(_SQL_SELECT_REGISTRATION_WHERE);
+		sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-		query.append(_FINDER_COLUMN_ARTICLEREGISTRATIONS_GROUPID_2);
+		sb.append(_FINDER_COLUMN_ARTICLEREGISTRATIONS_GROUPID_2);
 
-		query.append(_FINDER_COLUMN_ARTICLEREGISTRATIONS_RESOURCEPRIMARYKEY_2);
+		sb.append(_FINDER_COLUMN_ARTICLEREGISTRATIONS_RESOURCEPRIMARYKEY_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
 				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
-				query.append(WHERE_AND);
+				sb.append(WHERE_AND);
 			}
 
 			for (int i = 0; i < orderByConditionFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByConditionFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByConditionFields[i]);
 
 				if ((i + 1) < orderByConditionFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+						sb.append(WHERE_GREATER_THAN_HAS_NEXT);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+						sb.append(WHERE_LESSER_THAN_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN);
+						sb.append(WHERE_GREATER_THAN);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN);
+						sb.append(WHERE_LESSER_THAN);
 					}
 				}
 			}
 
-			query.append(ORDER_BY_CLAUSE);
+			sb.append(ORDER_BY_CLAUSE);
 
 			String[] orderByFields = orderByComparator.getOrderByFields();
 
 			for (int i = 0; i < orderByFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByFields[i]);
 
 				if ((i + 1) < orderByFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC_HAS_NEXT);
+						sb.append(ORDER_BY_ASC_HAS_NEXT);
 					}
 					else {
-						query.append(ORDER_BY_DESC_HAS_NEXT);
+						sb.append(ORDER_BY_DESC_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC);
+						sb.append(ORDER_BY_ASC);
 					}
 					else {
-						query.append(ORDER_BY_DESC);
+						sb.append(ORDER_BY_DESC);
 					}
 				}
 			}
 		}
 		else {
-			query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			sb.append(RegistrationModelImpl.ORDER_BY_JPQL);
 		}
 
-		String sql = query.toString();
+		String sql = sb.toString();
 
-		Query q = session.createQuery(sql);
+		Query query = session.createQuery(sql);
 
-		q.setFirstResult(0);
-		q.setMaxResults(2);
+		query.setFirstResult(0);
+		query.setMaxResults(2);
 
-		QueryPos qPos = QueryPos.getInstance(q);
+		QueryPos queryPos = QueryPos.getInstance(query);
 
-		qPos.add(groupId);
+		queryPos.add(groupId);
 
-		qPos.add(resourcePrimaryKey);
+		queryPos.add(resourcePrimaryKey);
 
 		if (orderByComparator != null) {
 			for (Object orderByConditionValue :
 					orderByComparator.getOrderByConditionValues(registration)) {
 
-				qPos.add(orderByConditionValue);
+				queryPos.add(orderByConditionValue);
 			}
 		}
 
-		List<Registration> list = q.list();
+		List<Registration> list = query.list();
 
 		if (list.size() == 2) {
 			return list.get(1);
@@ -3528,38 +3467,35 @@ public class RegistrationPersistenceImpl
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(3);
+			StringBundler sb = new StringBundler(3);
 
-			query.append(_SQL_COUNT_REGISTRATION_WHERE);
+			sb.append(_SQL_COUNT_REGISTRATION_WHERE);
 
-			query.append(_FINDER_COLUMN_ARTICLEREGISTRATIONS_GROUPID_2);
+			sb.append(_FINDER_COLUMN_ARTICLEREGISTRATIONS_GROUPID_2);
 
-			query.append(
-				_FINDER_COLUMN_ARTICLEREGISTRATIONS_RESOURCEPRIMARYKEY_2);
+			sb.append(_FINDER_COLUMN_ARTICLEREGISTRATIONS_RESOURCEPRIMARYKEY_2);
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(resourcePrimaryKey);
+				queryPos.add(resourcePrimaryKey);
 
-				count = (Long)q.uniqueResult();
+				count = (Long)query.uniqueResult();
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -3602,7 +3538,7 @@ public class RegistrationPersistenceImpl
 	 * Returns a range of all the registrations where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3625,7 +3561,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3650,7 +3586,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3659,28 +3595,28 @@ public class RegistrationPersistenceImpl
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
 	public List<Registration> findByUserArticleRegistrations(
 		long groupId, long userId, long resourcePrimaryKey, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
 
-			pagination = false;
-			finderPath =
-				_finderPathWithoutPaginationFindByUserArticleRegistrations;
-			finderArgs = new Object[] {groupId, userId, resourcePrimaryKey};
+			if (useFinderCache) {
+				finderPath =
+					_finderPathWithoutPaginationFindByUserArticleRegistrations;
+				finderArgs = new Object[] {groupId, userId, resourcePrimaryKey};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath =
 				_finderPathWithPaginationFindByUserArticleRegistrations;
 			finderArgs = new Object[] {
@@ -3691,7 +3627,7 @@ public class RegistrationPersistenceImpl
 
 		List<Registration> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<Registration>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -3711,71 +3647,61 @@ public class RegistrationPersistenceImpl
 		}
 
 		if (list == null) {
-			StringBundler query = null;
+			StringBundler sb = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(
+				sb = new StringBundler(
 					5 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
-				query = new StringBundler(5);
+				sb = new StringBundler(5);
 			}
 
-			query.append(_SQL_SELECT_REGISTRATION_WHERE);
+			sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-			query.append(_FINDER_COLUMN_USERARTICLEREGISTRATIONS_GROUPID_2);
+			sb.append(_FINDER_COLUMN_USERARTICLEREGISTRATIONS_GROUPID_2);
 
-			query.append(_FINDER_COLUMN_USERARTICLEREGISTRATIONS_USERID_2);
+			sb.append(_FINDER_COLUMN_USERARTICLEREGISTRATIONS_USERID_2);
 
-			query.append(
+			sb.append(
 				_FINDER_COLUMN_USERARTICLEREGISTRATIONS_RESOURCEPRIMARYKEY_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
-					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else if (pagination) {
-				query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			else {
+				sb.append(RegistrationModelImpl.ORDER_BY_JPQL);
 			}
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(userId);
+				queryPos.add(userId);
 
-				qPos.add(resourcePrimaryKey);
+				queryPos.add(resourcePrimaryKey);
 
-				if (!pagination) {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<Registration>)QueryUtil.list(
+					query, getDialect(), start, end);
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -3808,22 +3734,22 @@ public class RegistrationPersistenceImpl
 			return registration;
 		}
 
-		StringBundler msg = new StringBundler(8);
+		StringBundler sb = new StringBundler(8);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("groupId=");
-		msg.append(groupId);
+		sb.append("groupId=");
+		sb.append(groupId);
 
-		msg.append(", userId=");
-		msg.append(userId);
+		sb.append(", userId=");
+		sb.append(userId);
 
-		msg.append(", resourcePrimaryKey=");
-		msg.append(resourcePrimaryKey);
+		sb.append(", resourcePrimaryKey=");
+		sb.append(resourcePrimaryKey);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRegistrationException(msg.toString());
+		throw new NoSuchRegistrationException(sb.toString());
 	}
 
 	/**
@@ -3873,22 +3799,22 @@ public class RegistrationPersistenceImpl
 			return registration;
 		}
 
-		StringBundler msg = new StringBundler(8);
+		StringBundler sb = new StringBundler(8);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("groupId=");
-		msg.append(groupId);
+		sb.append("groupId=");
+		sb.append(groupId);
 
-		msg.append(", userId=");
-		msg.append(userId);
+		sb.append(", userId=");
+		sb.append(userId);
 
-		msg.append(", resourcePrimaryKey=");
-		msg.append(resourcePrimaryKey);
+		sb.append(", resourcePrimaryKey=");
+		sb.append(resourcePrimaryKey);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRegistrationException(msg.toString());
+		throw new NoSuchRegistrationException(sb.toString());
 	}
 
 	/**
@@ -3962,8 +3888,8 @@ public class RegistrationPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -3975,110 +3901,109 @@ public class RegistrationPersistenceImpl
 		long resourcePrimaryKey,
 		OrderByComparator<Registration> orderByComparator, boolean previous) {
 
-		StringBundler query = null;
+		StringBundler sb = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(
+			sb = new StringBundler(
 				6 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(5);
+			sb = new StringBundler(5);
 		}
 
-		query.append(_SQL_SELECT_REGISTRATION_WHERE);
+		sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-		query.append(_FINDER_COLUMN_USERARTICLEREGISTRATIONS_GROUPID_2);
+		sb.append(_FINDER_COLUMN_USERARTICLEREGISTRATIONS_GROUPID_2);
 
-		query.append(_FINDER_COLUMN_USERARTICLEREGISTRATIONS_USERID_2);
+		sb.append(_FINDER_COLUMN_USERARTICLEREGISTRATIONS_USERID_2);
 
-		query.append(
-			_FINDER_COLUMN_USERARTICLEREGISTRATIONS_RESOURCEPRIMARYKEY_2);
+		sb.append(_FINDER_COLUMN_USERARTICLEREGISTRATIONS_RESOURCEPRIMARYKEY_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
 				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
-				query.append(WHERE_AND);
+				sb.append(WHERE_AND);
 			}
 
 			for (int i = 0; i < orderByConditionFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByConditionFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByConditionFields[i]);
 
 				if ((i + 1) < orderByConditionFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+						sb.append(WHERE_GREATER_THAN_HAS_NEXT);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+						sb.append(WHERE_LESSER_THAN_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN);
+						sb.append(WHERE_GREATER_THAN);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN);
+						sb.append(WHERE_LESSER_THAN);
 					}
 				}
 			}
 
-			query.append(ORDER_BY_CLAUSE);
+			sb.append(ORDER_BY_CLAUSE);
 
 			String[] orderByFields = orderByComparator.getOrderByFields();
 
 			for (int i = 0; i < orderByFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByFields[i]);
 
 				if ((i + 1) < orderByFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC_HAS_NEXT);
+						sb.append(ORDER_BY_ASC_HAS_NEXT);
 					}
 					else {
-						query.append(ORDER_BY_DESC_HAS_NEXT);
+						sb.append(ORDER_BY_DESC_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC);
+						sb.append(ORDER_BY_ASC);
 					}
 					else {
-						query.append(ORDER_BY_DESC);
+						sb.append(ORDER_BY_DESC);
 					}
 				}
 			}
 		}
 		else {
-			query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			sb.append(RegistrationModelImpl.ORDER_BY_JPQL);
 		}
 
-		String sql = query.toString();
+		String sql = sb.toString();
 
-		Query q = session.createQuery(sql);
+		Query query = session.createQuery(sql);
 
-		q.setFirstResult(0);
-		q.setMaxResults(2);
+		query.setFirstResult(0);
+		query.setMaxResults(2);
 
-		QueryPos qPos = QueryPos.getInstance(q);
+		QueryPos queryPos = QueryPos.getInstance(query);
 
-		qPos.add(groupId);
+		queryPos.add(groupId);
 
-		qPos.add(userId);
+		queryPos.add(userId);
 
-		qPos.add(resourcePrimaryKey);
+		queryPos.add(resourcePrimaryKey);
 
 		if (orderByComparator != null) {
 			for (Object orderByConditionValue :
 					orderByComparator.getOrderByConditionValues(registration)) {
 
-				qPos.add(orderByConditionValue);
+				queryPos.add(orderByConditionValue);
 			}
 		}
 
-		List<Registration> list = q.list();
+		List<Registration> list = query.list();
 
 		if (list.size() == 2) {
 			return list.get(1);
@@ -4129,42 +4054,40 @@ public class RegistrationPersistenceImpl
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(4);
+			StringBundler sb = new StringBundler(4);
 
-			query.append(_SQL_COUNT_REGISTRATION_WHERE);
+			sb.append(_SQL_COUNT_REGISTRATION_WHERE);
 
-			query.append(_FINDER_COLUMN_USERARTICLEREGISTRATIONS_GROUPID_2);
+			sb.append(_FINDER_COLUMN_USERARTICLEREGISTRATIONS_GROUPID_2);
 
-			query.append(_FINDER_COLUMN_USERARTICLEREGISTRATIONS_USERID_2);
+			sb.append(_FINDER_COLUMN_USERARTICLEREGISTRATIONS_USERID_2);
 
-			query.append(
+			sb.append(
 				_FINDER_COLUMN_USERARTICLEREGISTRATIONS_RESOURCEPRIMARYKEY_2);
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(userId);
+				queryPos.add(userId);
 
-				qPos.add(resourcePrimaryKey);
+				queryPos.add(resourcePrimaryKey);
 
-				count = (Long)q.uniqueResult();
+				count = (Long)query.uniqueResult();
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -4213,7 +4136,7 @@ public class RegistrationPersistenceImpl
 	 * Returns a range of all the registrations where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -4236,7 +4159,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -4261,7 +4184,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -4270,30 +4193,30 @@ public class RegistrationPersistenceImpl
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
 	public List<Registration> findByUserChildArticleRegistrations(
 		long groupId, long userId, long parentResourcePrimaryKey, int start,
 		int end, OrderByComparator<Registration> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
 
-			pagination = false;
-			finderPath =
-				_finderPathWithoutPaginationFindByUserChildArticleRegistrations;
-			finderArgs = new Object[] {
-				groupId, userId, parentResourcePrimaryKey
-			};
+			if (useFinderCache) {
+				finderPath =
+					_finderPathWithoutPaginationFindByUserChildArticleRegistrations;
+				finderArgs = new Object[] {
+					groupId, userId, parentResourcePrimaryKey
+				};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath =
 				_finderPathWithPaginationFindByUserChildArticleRegistrations;
 			finderArgs = new Object[] {
@@ -4304,7 +4227,7 @@ public class RegistrationPersistenceImpl
 
 		List<Registration> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<Registration>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -4324,72 +4247,61 @@ public class RegistrationPersistenceImpl
 		}
 
 		if (list == null) {
-			StringBundler query = null;
+			StringBundler sb = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(
+				sb = new StringBundler(
 					5 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
-				query = new StringBundler(5);
+				sb = new StringBundler(5);
 			}
 
-			query.append(_SQL_SELECT_REGISTRATION_WHERE);
+			sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-			query.append(
-				_FINDER_COLUMN_USERCHILDARTICLEREGISTRATIONS_GROUPID_2);
+			sb.append(_FINDER_COLUMN_USERCHILDARTICLEREGISTRATIONS_GROUPID_2);
 
-			query.append(_FINDER_COLUMN_USERCHILDARTICLEREGISTRATIONS_USERID_2);
+			sb.append(_FINDER_COLUMN_USERCHILDARTICLEREGISTRATIONS_USERID_2);
 
-			query.append(
+			sb.append(
 				_FINDER_COLUMN_USERCHILDARTICLEREGISTRATIONS_PARENTRESOURCEPRIMARYKEY_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
-					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else if (pagination) {
-				query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			else {
+				sb.append(RegistrationModelImpl.ORDER_BY_JPQL);
 			}
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(userId);
+				queryPos.add(userId);
 
-				qPos.add(parentResourcePrimaryKey);
+				queryPos.add(parentResourcePrimaryKey);
 
-				if (!pagination) {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<Registration>)QueryUtil.list(
+					query, getDialect(), start, end);
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -4422,22 +4334,22 @@ public class RegistrationPersistenceImpl
 			return registration;
 		}
 
-		StringBundler msg = new StringBundler(8);
+		StringBundler sb = new StringBundler(8);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("groupId=");
-		msg.append(groupId);
+		sb.append("groupId=");
+		sb.append(groupId);
 
-		msg.append(", userId=");
-		msg.append(userId);
+		sb.append(", userId=");
+		sb.append(userId);
 
-		msg.append(", parentResourcePrimaryKey=");
-		msg.append(parentResourcePrimaryKey);
+		sb.append(", parentResourcePrimaryKey=");
+		sb.append(parentResourcePrimaryKey);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRegistrationException(msg.toString());
+		throw new NoSuchRegistrationException(sb.toString());
 	}
 
 	/**
@@ -4487,22 +4399,22 @@ public class RegistrationPersistenceImpl
 			return registration;
 		}
 
-		StringBundler msg = new StringBundler(8);
+		StringBundler sb = new StringBundler(8);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("groupId=");
-		msg.append(groupId);
+		sb.append("groupId=");
+		sb.append(groupId);
 
-		msg.append(", userId=");
-		msg.append(userId);
+		sb.append(", userId=");
+		sb.append(userId);
 
-		msg.append(", parentResourcePrimaryKey=");
-		msg.append(parentResourcePrimaryKey);
+		sb.append(", parentResourcePrimaryKey=");
+		sb.append(parentResourcePrimaryKey);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRegistrationException(msg.toString());
+		throw new NoSuchRegistrationException(sb.toString());
 	}
 
 	/**
@@ -4576,8 +4488,8 @@ public class RegistrationPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -4589,24 +4501,24 @@ public class RegistrationPersistenceImpl
 		long parentResourcePrimaryKey,
 		OrderByComparator<Registration> orderByComparator, boolean previous) {
 
-		StringBundler query = null;
+		StringBundler sb = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(
+			sb = new StringBundler(
 				6 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(5);
+			sb = new StringBundler(5);
 		}
 
-		query.append(_SQL_SELECT_REGISTRATION_WHERE);
+		sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-		query.append(_FINDER_COLUMN_USERCHILDARTICLEREGISTRATIONS_GROUPID_2);
+		sb.append(_FINDER_COLUMN_USERCHILDARTICLEREGISTRATIONS_GROUPID_2);
 
-		query.append(_FINDER_COLUMN_USERCHILDARTICLEREGISTRATIONS_USERID_2);
+		sb.append(_FINDER_COLUMN_USERCHILDARTICLEREGISTRATIONS_USERID_2);
 
-		query.append(
+		sb.append(
 			_FINDER_COLUMN_USERCHILDARTICLEREGISTRATIONS_PARENTRESOURCEPRIMARYKEY_2);
 
 		if (orderByComparator != null) {
@@ -4614,85 +4526,85 @@ public class RegistrationPersistenceImpl
 				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
-				query.append(WHERE_AND);
+				sb.append(WHERE_AND);
 			}
 
 			for (int i = 0; i < orderByConditionFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByConditionFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByConditionFields[i]);
 
 				if ((i + 1) < orderByConditionFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+						sb.append(WHERE_GREATER_THAN_HAS_NEXT);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+						sb.append(WHERE_LESSER_THAN_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN);
+						sb.append(WHERE_GREATER_THAN);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN);
+						sb.append(WHERE_LESSER_THAN);
 					}
 				}
 			}
 
-			query.append(ORDER_BY_CLAUSE);
+			sb.append(ORDER_BY_CLAUSE);
 
 			String[] orderByFields = orderByComparator.getOrderByFields();
 
 			for (int i = 0; i < orderByFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByFields[i]);
 
 				if ((i + 1) < orderByFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC_HAS_NEXT);
+						sb.append(ORDER_BY_ASC_HAS_NEXT);
 					}
 					else {
-						query.append(ORDER_BY_DESC_HAS_NEXT);
+						sb.append(ORDER_BY_DESC_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC);
+						sb.append(ORDER_BY_ASC);
 					}
 					else {
-						query.append(ORDER_BY_DESC);
+						sb.append(ORDER_BY_DESC);
 					}
 				}
 			}
 		}
 		else {
-			query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			sb.append(RegistrationModelImpl.ORDER_BY_JPQL);
 		}
 
-		String sql = query.toString();
+		String sql = sb.toString();
 
-		Query q = session.createQuery(sql);
+		Query query = session.createQuery(sql);
 
-		q.setFirstResult(0);
-		q.setMaxResults(2);
+		query.setFirstResult(0);
+		query.setMaxResults(2);
 
-		QueryPos qPos = QueryPos.getInstance(q);
+		QueryPos queryPos = QueryPos.getInstance(query);
 
-		qPos.add(groupId);
+		queryPos.add(groupId);
 
-		qPos.add(userId);
+		queryPos.add(userId);
 
-		qPos.add(parentResourcePrimaryKey);
+		queryPos.add(parentResourcePrimaryKey);
 
 		if (orderByComparator != null) {
 			for (Object orderByConditionValue :
 					orderByComparator.getOrderByConditionValues(registration)) {
 
-				qPos.add(orderByConditionValue);
+				queryPos.add(orderByConditionValue);
 			}
 		}
 
-		List<Registration> list = q.list();
+		List<Registration> list = query.list();
 
 		if (list.size() == 2) {
 			return list.get(1);
@@ -4743,43 +4655,40 @@ public class RegistrationPersistenceImpl
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(4);
+			StringBundler sb = new StringBundler(4);
 
-			query.append(_SQL_COUNT_REGISTRATION_WHERE);
+			sb.append(_SQL_COUNT_REGISTRATION_WHERE);
 
-			query.append(
-				_FINDER_COLUMN_USERCHILDARTICLEREGISTRATIONS_GROUPID_2);
+			sb.append(_FINDER_COLUMN_USERCHILDARTICLEREGISTRATIONS_GROUPID_2);
 
-			query.append(_FINDER_COLUMN_USERCHILDARTICLEREGISTRATIONS_USERID_2);
+			sb.append(_FINDER_COLUMN_USERCHILDARTICLEREGISTRATIONS_USERID_2);
 
-			query.append(
+			sb.append(
 				_FINDER_COLUMN_USERCHILDARTICLEREGISTRATIONS_PARENTRESOURCEPRIMARYKEY_2);
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(userId);
+				queryPos.add(userId);
 
-				qPos.add(parentResourcePrimaryKey);
+				queryPos.add(parentResourcePrimaryKey);
 
-				count = (Long)q.uniqueResult();
+				count = (Long)query.uniqueResult();
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -4826,7 +4735,7 @@ public class RegistrationPersistenceImpl
 	 * Returns a range of all the registrations where groupId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -4847,7 +4756,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations where groupId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -4871,7 +4780,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations where groupId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -4879,28 +4788,28 @@ public class RegistrationPersistenceImpl
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
 	public List<Registration> findByChildArticleRegistrations(
 		long groupId, long parentResourcePrimaryKey, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
 
-			pagination = false;
-			finderPath =
-				_finderPathWithoutPaginationFindByChildArticleRegistrations;
-			finderArgs = new Object[] {groupId, parentResourcePrimaryKey};
+			if (useFinderCache) {
+				finderPath =
+					_finderPathWithoutPaginationFindByChildArticleRegistrations;
+				finderArgs = new Object[] {groupId, parentResourcePrimaryKey};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath =
 				_finderPathWithPaginationFindByChildArticleRegistrations;
 			finderArgs = new Object[] {
@@ -4910,7 +4819,7 @@ public class RegistrationPersistenceImpl
 
 		List<Registration> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<Registration>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -4929,67 +4838,57 @@ public class RegistrationPersistenceImpl
 		}
 
 		if (list == null) {
-			StringBundler query = null;
+			StringBundler sb = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(
+				sb = new StringBundler(
 					4 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
-				query = new StringBundler(4);
+				sb = new StringBundler(4);
 			}
 
-			query.append(_SQL_SELECT_REGISTRATION_WHERE);
+			sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-			query.append(_FINDER_COLUMN_CHILDARTICLEREGISTRATIONS_GROUPID_2);
+			sb.append(_FINDER_COLUMN_CHILDARTICLEREGISTRATIONS_GROUPID_2);
 
-			query.append(
+			sb.append(
 				_FINDER_COLUMN_CHILDARTICLEREGISTRATIONS_PARENTRESOURCEPRIMARYKEY_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
-					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else if (pagination) {
-				query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			else {
+				sb.append(RegistrationModelImpl.ORDER_BY_JPQL);
 			}
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(parentResourcePrimaryKey);
+				queryPos.add(parentResourcePrimaryKey);
 
-				if (!pagination) {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<Registration>)QueryUtil.list(
+					query, getDialect(), start, end);
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -5021,19 +4920,19 @@ public class RegistrationPersistenceImpl
 			return registration;
 		}
 
-		StringBundler msg = new StringBundler(6);
+		StringBundler sb = new StringBundler(6);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("groupId=");
-		msg.append(groupId);
+		sb.append("groupId=");
+		sb.append(groupId);
 
-		msg.append(", parentResourcePrimaryKey=");
-		msg.append(parentResourcePrimaryKey);
+		sb.append(", parentResourcePrimaryKey=");
+		sb.append(parentResourcePrimaryKey);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRegistrationException(msg.toString());
+		throw new NoSuchRegistrationException(sb.toString());
 	}
 
 	/**
@@ -5081,19 +4980,19 @@ public class RegistrationPersistenceImpl
 			return registration;
 		}
 
-		StringBundler msg = new StringBundler(6);
+		StringBundler sb = new StringBundler(6);
 
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("groupId=");
-		msg.append(groupId);
+		sb.append("groupId=");
+		sb.append(groupId);
 
-		msg.append(", parentResourcePrimaryKey=");
-		msg.append(parentResourcePrimaryKey);
+		sb.append(", parentResourcePrimaryKey=");
+		sb.append(parentResourcePrimaryKey);
 
-		msg.append("}");
+		sb.append("}");
 
-		throw new NoSuchRegistrationException(msg.toString());
+		throw new NoSuchRegistrationException(sb.toString());
 	}
 
 	/**
@@ -5164,8 +5063,8 @@ public class RegistrationPersistenceImpl
 
 			return array;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -5177,22 +5076,22 @@ public class RegistrationPersistenceImpl
 		long parentResourcePrimaryKey,
 		OrderByComparator<Registration> orderByComparator, boolean previous) {
 
-		StringBundler query = null;
+		StringBundler sb = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(
+			sb = new StringBundler(
 				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(4);
+			sb = new StringBundler(4);
 		}
 
-		query.append(_SQL_SELECT_REGISTRATION_WHERE);
+		sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-		query.append(_FINDER_COLUMN_CHILDARTICLEREGISTRATIONS_GROUPID_2);
+		sb.append(_FINDER_COLUMN_CHILDARTICLEREGISTRATIONS_GROUPID_2);
 
-		query.append(
+		sb.append(
 			_FINDER_COLUMN_CHILDARTICLEREGISTRATIONS_PARENTRESOURCEPRIMARYKEY_2);
 
 		if (orderByComparator != null) {
@@ -5200,83 +5099,83 @@ public class RegistrationPersistenceImpl
 				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
-				query.append(WHERE_AND);
+				sb.append(WHERE_AND);
 			}
 
 			for (int i = 0; i < orderByConditionFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByConditionFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByConditionFields[i]);
 
 				if ((i + 1) < orderByConditionFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+						sb.append(WHERE_GREATER_THAN_HAS_NEXT);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+						sb.append(WHERE_LESSER_THAN_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN);
+						sb.append(WHERE_GREATER_THAN);
 					}
 					else {
-						query.append(WHERE_LESSER_THAN);
+						sb.append(WHERE_LESSER_THAN);
 					}
 				}
 			}
 
-			query.append(ORDER_BY_CLAUSE);
+			sb.append(ORDER_BY_CLAUSE);
 
 			String[] orderByFields = orderByComparator.getOrderByFields();
 
 			for (int i = 0; i < orderByFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByFields[i]);
+				sb.append(_ORDER_BY_ENTITY_ALIAS);
+				sb.append(orderByFields[i]);
 
 				if ((i + 1) < orderByFields.length) {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC_HAS_NEXT);
+						sb.append(ORDER_BY_ASC_HAS_NEXT);
 					}
 					else {
-						query.append(ORDER_BY_DESC_HAS_NEXT);
+						sb.append(ORDER_BY_DESC_HAS_NEXT);
 					}
 				}
 				else {
 					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC);
+						sb.append(ORDER_BY_ASC);
 					}
 					else {
-						query.append(ORDER_BY_DESC);
+						sb.append(ORDER_BY_DESC);
 					}
 				}
 			}
 		}
 		else {
-			query.append(RegistrationModelImpl.ORDER_BY_JPQL);
+			sb.append(RegistrationModelImpl.ORDER_BY_JPQL);
 		}
 
-		String sql = query.toString();
+		String sql = sb.toString();
 
-		Query q = session.createQuery(sql);
+		Query query = session.createQuery(sql);
 
-		q.setFirstResult(0);
-		q.setMaxResults(2);
+		query.setFirstResult(0);
+		query.setMaxResults(2);
 
-		QueryPos qPos = QueryPos.getInstance(q);
+		QueryPos queryPos = QueryPos.getInstance(query);
 
-		qPos.add(groupId);
+		queryPos.add(groupId);
 
-		qPos.add(parentResourcePrimaryKey);
+		queryPos.add(parentResourcePrimaryKey);
 
 		if (orderByComparator != null) {
 			for (Object orderByConditionValue :
 					orderByComparator.getOrderByConditionValues(registration)) {
 
-				qPos.add(orderByConditionValue);
+				queryPos.add(orderByConditionValue);
 			}
 		}
 
-		List<Registration> list = q.list();
+		List<Registration> list = query.list();
 
 		if (list.size() == 2) {
 			return list.get(1);
@@ -5323,38 +5222,36 @@ public class RegistrationPersistenceImpl
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(3);
+			StringBundler sb = new StringBundler(3);
 
-			query.append(_SQL_COUNT_REGISTRATION_WHERE);
+			sb.append(_SQL_COUNT_REGISTRATION_WHERE);
 
-			query.append(_FINDER_COLUMN_CHILDARTICLEREGISTRATIONS_GROUPID_2);
+			sb.append(_FINDER_COLUMN_CHILDARTICLEREGISTRATIONS_GROUPID_2);
 
-			query.append(
+			sb.append(
 				_FINDER_COLUMN_CHILDARTICLEREGISTRATIONS_PARENTRESOURCEPRIMARYKEY_2);
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(parentResourcePrimaryKey);
+				queryPos.add(parentResourcePrimaryKey);
 
-				count = (Long)q.uniqueResult();
+				count = (Long)query.uniqueResult();
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -5374,6 +5271,11 @@ public class RegistrationPersistenceImpl
 
 	public RegistrationPersistenceImpl() {
 		setModelClass(Registration.class);
+
+		setModelImplClass(RegistrationImpl.class);
+		setModelPKClass(long.class);
+
+		setTable(RegistrationTable.INSTANCE);
 	}
 
 	/**
@@ -5384,11 +5286,10 @@ public class RegistrationPersistenceImpl
 	@Override
 	public void cacheResult(Registration registration) {
 		entityCache.putResult(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED, RegistrationImpl.class,
-			registration.getPrimaryKey(), registration);
-
-		registration.resetOriginalValues();
+			RegistrationImpl.class, registration.getPrimaryKey(), registration);
 	}
+
+	private int _valueObjectFinderCacheListThreshold;
 
 	/**
 	 * Caches the registrations in the entity cache if it is enabled.
@@ -5397,16 +5298,19 @@ public class RegistrationPersistenceImpl
 	 */
 	@Override
 	public void cacheResult(List<Registration> registrations) {
+		if ((_valueObjectFinderCacheListThreshold == 0) ||
+			((_valueObjectFinderCacheListThreshold > 0) &&
+			 (registrations.size() > _valueObjectFinderCacheListThreshold))) {
+
+			return;
+		}
+
 		for (Registration registration : registrations) {
 			if (entityCache.getResult(
-					RegistrationModelImpl.ENTITY_CACHE_ENABLED,
 					RegistrationImpl.class, registration.getPrimaryKey()) ==
 						null) {
 
 				cacheResult(registration);
-			}
-			else {
-				registration.resetOriginalValues();
 			}
 		}
 	}
@@ -5422,9 +5326,7 @@ public class RegistrationPersistenceImpl
 	public void clearCache() {
 		entityCache.clearCache(RegistrationImpl.class);
 
-		finderCache.clearCache(FINDER_CLASS_NAME_ENTITY);
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+		finderCache.clearCache(RegistrationImpl.class);
 	}
 
 	/**
@@ -5436,23 +5338,22 @@ public class RegistrationPersistenceImpl
 	 */
 	@Override
 	public void clearCache(Registration registration) {
-		entityCache.removeResult(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED, RegistrationImpl.class,
-			registration.getPrimaryKey());
-
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+		entityCache.removeResult(RegistrationImpl.class, registration);
 	}
 
 	@Override
 	public void clearCache(List<Registration> registrations) {
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
 		for (Registration registration : registrations) {
-			entityCache.removeResult(
-				RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-				RegistrationImpl.class, registration.getPrimaryKey());
+			entityCache.removeResult(RegistrationImpl.class, registration);
+		}
+	}
+
+	@Override
+	public void clearCache(Set<Serializable> primaryKeys) {
+		finderCache.clearCache(RegistrationImpl.class);
+
+		for (Serializable primaryKey : primaryKeys) {
+			entityCache.removeResult(RegistrationImpl.class, primaryKey);
 		}
 	}
 
@@ -5518,11 +5419,11 @@ public class RegistrationPersistenceImpl
 
 			return remove(registration);
 		}
-		catch (NoSuchRegistrationException nsee) {
-			throw nsee;
+		catch (NoSuchRegistrationException noSuchEntityException) {
+			throw noSuchEntityException;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -5545,8 +5446,8 @@ public class RegistrationPersistenceImpl
 				session.delete(registration);
 			}
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -5588,384 +5489,26 @@ public class RegistrationPersistenceImpl
 		try {
 			session = openSession();
 
-			if (registration.isNew()) {
+			if (isNew) {
 				session.save(registration);
-
-				registration.setNew(false);
 			}
 			else {
 				registration = (Registration)session.merge(registration);
 			}
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
 		}
 
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-
-		if (!RegistrationModelImpl.COLUMN_BITMASK_ENABLED) {
-			finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-		}
-		else if (isNew) {
-			Object[] args = new Object[] {
-				registrationModelImpl.getGroupId(),
-				registrationModelImpl.getEventResourcePrimaryKey()
-			};
-
-			finderCache.removeResult(
-				_finderPathCountByEventRegistrations, args);
-			finderCache.removeResult(
-				_finderPathWithoutPaginationFindByEventRegistrations, args);
-
-			args = new Object[] {
-				registrationModelImpl.getGroupId(),
-				registrationModelImpl.getUserId(),
-				registrationModelImpl.getEventResourcePrimaryKey()
-			};
-
-			finderCache.removeResult(
-				_finderPathCountByUserEventRegistrations, args);
-			finderCache.removeResult(
-				_finderPathWithoutPaginationFindByUserEventRegistrations, args);
-
-			args = new Object[] {
-				registrationModelImpl.getGroupId(),
-				registrationModelImpl.getUserId()
-			};
-
-			finderCache.removeResult(_finderPathCountByUserRegistrations, args);
-			finderCache.removeResult(
-				_finderPathWithoutPaginationFindByUserRegistrations, args);
-
-			args = new Object[] {
-				registrationModelImpl.getGroupId(),
-				registrationModelImpl.getRegisteredByUserId()
-			};
-
-			finderCache.removeResult(
-				_finderPathCountByUserRegistrationsRegisteredByMe, args);
-			finderCache.removeResult(
-				_finderPathWithoutPaginationFindByUserRegistrationsRegisteredByMe,
-				args);
-
-			args = new Object[] {
-				registrationModelImpl.getGroupId(),
-				registrationModelImpl.getRegisteredByUserId(),
-				registrationModelImpl.getEventResourcePrimaryKey()
-			};
-
-			finderCache.removeResult(
-				_finderPathCountByUserEventRegistrationsRegisteredByMe, args);
-			finderCache.removeResult(
-				_finderPathWithoutPaginationFindByUserEventRegistrationsRegisteredByMe,
-				args);
-
-			args = new Object[] {
-				registrationModelImpl.getGroupId(),
-				registrationModelImpl.getResourcePrimaryKey()
-			};
-
-			finderCache.removeResult(
-				_finderPathCountByArticleRegistrations, args);
-			finderCache.removeResult(
-				_finderPathWithoutPaginationFindByArticleRegistrations, args);
-
-			args = new Object[] {
-				registrationModelImpl.getGroupId(),
-				registrationModelImpl.getUserId(),
-				registrationModelImpl.getResourcePrimaryKey()
-			};
-
-			finderCache.removeResult(
-				_finderPathCountByUserArticleRegistrations, args);
-			finderCache.removeResult(
-				_finderPathWithoutPaginationFindByUserArticleRegistrations,
-				args);
-
-			args = new Object[] {
-				registrationModelImpl.getGroupId(),
-				registrationModelImpl.getUserId(),
-				registrationModelImpl.getParentResourcePrimaryKey()
-			};
-
-			finderCache.removeResult(
-				_finderPathCountByUserChildArticleRegistrations, args);
-			finderCache.removeResult(
-				_finderPathWithoutPaginationFindByUserChildArticleRegistrations,
-				args);
-
-			args = new Object[] {
-				registrationModelImpl.getGroupId(),
-				registrationModelImpl.getParentResourcePrimaryKey()
-			};
-
-			finderCache.removeResult(
-				_finderPathCountByChildArticleRegistrations, args);
-			finderCache.removeResult(
-				_finderPathWithoutPaginationFindByChildArticleRegistrations,
-				args);
-
-			finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
-			finderCache.removeResult(
-				_finderPathWithoutPaginationFindAll, FINDER_ARGS_EMPTY);
-		}
-		else {
-			if ((registrationModelImpl.getColumnBitmask() &
-				 _finderPathWithoutPaginationFindByEventRegistrations.
-					 getColumnBitmask()) != 0) {
-
-				Object[] args = new Object[] {
-					registrationModelImpl.getOriginalGroupId(),
-					registrationModelImpl.getOriginalEventResourcePrimaryKey()
-				};
-
-				finderCache.removeResult(
-					_finderPathCountByEventRegistrations, args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByEventRegistrations, args);
-
-				args = new Object[] {
-					registrationModelImpl.getGroupId(),
-					registrationModelImpl.getEventResourcePrimaryKey()
-				};
-
-				finderCache.removeResult(
-					_finderPathCountByEventRegistrations, args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByEventRegistrations, args);
-			}
-
-			if ((registrationModelImpl.getColumnBitmask() &
-				 _finderPathWithoutPaginationFindByUserEventRegistrations.
-					 getColumnBitmask()) != 0) {
-
-				Object[] args = new Object[] {
-					registrationModelImpl.getOriginalGroupId(),
-					registrationModelImpl.getOriginalUserId(),
-					registrationModelImpl.getOriginalEventResourcePrimaryKey()
-				};
-
-				finderCache.removeResult(
-					_finderPathCountByUserEventRegistrations, args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByUserEventRegistrations,
-					args);
-
-				args = new Object[] {
-					registrationModelImpl.getGroupId(),
-					registrationModelImpl.getUserId(),
-					registrationModelImpl.getEventResourcePrimaryKey()
-				};
-
-				finderCache.removeResult(
-					_finderPathCountByUserEventRegistrations, args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByUserEventRegistrations,
-					args);
-			}
-
-			if ((registrationModelImpl.getColumnBitmask() &
-				 _finderPathWithoutPaginationFindByUserRegistrations.
-					 getColumnBitmask()) != 0) {
-
-				Object[] args = new Object[] {
-					registrationModelImpl.getOriginalGroupId(),
-					registrationModelImpl.getOriginalUserId()
-				};
-
-				finderCache.removeResult(
-					_finderPathCountByUserRegistrations, args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByUserRegistrations, args);
-
-				args = new Object[] {
-					registrationModelImpl.getGroupId(),
-					registrationModelImpl.getUserId()
-				};
-
-				finderCache.removeResult(
-					_finderPathCountByUserRegistrations, args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByUserRegistrations, args);
-			}
-
-			if ((registrationModelImpl.getColumnBitmask() &
-				 _finderPathWithoutPaginationFindByUserRegistrationsRegisteredByMe.
-					 getColumnBitmask()) != 0) {
-
-				Object[] args = new Object[] {
-					registrationModelImpl.getOriginalGroupId(),
-					registrationModelImpl.getOriginalRegisteredByUserId()
-				};
-
-				finderCache.removeResult(
-					_finderPathCountByUserRegistrationsRegisteredByMe, args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByUserRegistrationsRegisteredByMe,
-					args);
-
-				args = new Object[] {
-					registrationModelImpl.getGroupId(),
-					registrationModelImpl.getRegisteredByUserId()
-				};
-
-				finderCache.removeResult(
-					_finderPathCountByUserRegistrationsRegisteredByMe, args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByUserRegistrationsRegisteredByMe,
-					args);
-			}
-
-			if ((registrationModelImpl.getColumnBitmask() &
-				 _finderPathWithoutPaginationFindByUserEventRegistrationsRegisteredByMe.
-					 getColumnBitmask()) != 0) {
-
-				Object[] args = new Object[] {
-					registrationModelImpl.getOriginalGroupId(),
-					registrationModelImpl.getOriginalRegisteredByUserId(),
-					registrationModelImpl.getOriginalEventResourcePrimaryKey()
-				};
-
-				finderCache.removeResult(
-					_finderPathCountByUserEventRegistrationsRegisteredByMe,
-					args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByUserEventRegistrationsRegisteredByMe,
-					args);
-
-				args = new Object[] {
-					registrationModelImpl.getGroupId(),
-					registrationModelImpl.getRegisteredByUserId(),
-					registrationModelImpl.getEventResourcePrimaryKey()
-				};
-
-				finderCache.removeResult(
-					_finderPathCountByUserEventRegistrationsRegisteredByMe,
-					args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByUserEventRegistrationsRegisteredByMe,
-					args);
-			}
-
-			if ((registrationModelImpl.getColumnBitmask() &
-				 _finderPathWithoutPaginationFindByArticleRegistrations.
-					 getColumnBitmask()) != 0) {
-
-				Object[] args = new Object[] {
-					registrationModelImpl.getOriginalGroupId(),
-					registrationModelImpl.getOriginalResourcePrimaryKey()
-				};
-
-				finderCache.removeResult(
-					_finderPathCountByArticleRegistrations, args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByArticleRegistrations,
-					args);
-
-				args = new Object[] {
-					registrationModelImpl.getGroupId(),
-					registrationModelImpl.getResourcePrimaryKey()
-				};
-
-				finderCache.removeResult(
-					_finderPathCountByArticleRegistrations, args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByArticleRegistrations,
-					args);
-			}
-
-			if ((registrationModelImpl.getColumnBitmask() &
-				 _finderPathWithoutPaginationFindByUserArticleRegistrations.
-					 getColumnBitmask()) != 0) {
-
-				Object[] args = new Object[] {
-					registrationModelImpl.getOriginalGroupId(),
-					registrationModelImpl.getOriginalUserId(),
-					registrationModelImpl.getOriginalResourcePrimaryKey()
-				};
-
-				finderCache.removeResult(
-					_finderPathCountByUserArticleRegistrations, args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByUserArticleRegistrations,
-					args);
-
-				args = new Object[] {
-					registrationModelImpl.getGroupId(),
-					registrationModelImpl.getUserId(),
-					registrationModelImpl.getResourcePrimaryKey()
-				};
-
-				finderCache.removeResult(
-					_finderPathCountByUserArticleRegistrations, args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByUserArticleRegistrations,
-					args);
-			}
-
-			if ((registrationModelImpl.getColumnBitmask() &
-				 _finderPathWithoutPaginationFindByUserChildArticleRegistrations.
-					 getColumnBitmask()) != 0) {
-
-				Object[] args = new Object[] {
-					registrationModelImpl.getOriginalGroupId(),
-					registrationModelImpl.getOriginalUserId(),
-					registrationModelImpl.getOriginalParentResourcePrimaryKey()
-				};
-
-				finderCache.removeResult(
-					_finderPathCountByUserChildArticleRegistrations, args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByUserChildArticleRegistrations,
-					args);
-
-				args = new Object[] {
-					registrationModelImpl.getGroupId(),
-					registrationModelImpl.getUserId(),
-					registrationModelImpl.getParentResourcePrimaryKey()
-				};
-
-				finderCache.removeResult(
-					_finderPathCountByUserChildArticleRegistrations, args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByUserChildArticleRegistrations,
-					args);
-			}
-
-			if ((registrationModelImpl.getColumnBitmask() &
-				 _finderPathWithoutPaginationFindByChildArticleRegistrations.
-					 getColumnBitmask()) != 0) {
-
-				Object[] args = new Object[] {
-					registrationModelImpl.getOriginalGroupId(),
-					registrationModelImpl.getOriginalParentResourcePrimaryKey()
-				};
-
-				finderCache.removeResult(
-					_finderPathCountByChildArticleRegistrations, args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByChildArticleRegistrations,
-					args);
-
-				args = new Object[] {
-					registrationModelImpl.getGroupId(),
-					registrationModelImpl.getParentResourcePrimaryKey()
-				};
-
-				finderCache.removeResult(
-					_finderPathCountByChildArticleRegistrations, args);
-				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByChildArticleRegistrations,
-					args);
-			}
-		}
-
 		entityCache.putResult(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED, RegistrationImpl.class,
-			registration.getPrimaryKey(), registration, false);
+			RegistrationImpl.class, registrationModelImpl, false, true);
+
+		if (isNew) {
+			registration.setNew(false);
+		}
 
 		registration.resetOriginalValues();
 
@@ -6014,161 +5557,12 @@ public class RegistrationPersistenceImpl
 	/**
 	 * Returns the registration with the primary key or returns <code>null</code> if it could not be found.
 	 *
-	 * @param primaryKey the primary key of the registration
-	 * @return the registration, or <code>null</code> if a registration with the primary key could not be found
-	 */
-	@Override
-	public Registration fetchByPrimaryKey(Serializable primaryKey) {
-		Serializable serializable = entityCache.getResult(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED, RegistrationImpl.class,
-			primaryKey);
-
-		if (serializable == nullModel) {
-			return null;
-		}
-
-		Registration registration = (Registration)serializable;
-
-		if (registration == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				registration = (Registration)session.get(
-					RegistrationImpl.class, primaryKey);
-
-				if (registration != null) {
-					cacheResult(registration);
-				}
-				else {
-					entityCache.putResult(
-						RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-						RegistrationImpl.class, primaryKey, nullModel);
-				}
-			}
-			catch (Exception e) {
-				entityCache.removeResult(
-					RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-					RegistrationImpl.class, primaryKey);
-
-				throw processException(e);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return registration;
-	}
-
-	/**
-	 * Returns the registration with the primary key or returns <code>null</code> if it could not be found.
-	 *
 	 * @param registrationId the primary key of the registration
 	 * @return the registration, or <code>null</code> if a registration with the primary key could not be found
 	 */
 	@Override
 	public Registration fetchByPrimaryKey(long registrationId) {
 		return fetchByPrimaryKey((Serializable)registrationId);
-	}
-
-	@Override
-	public Map<Serializable, Registration> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys) {
-
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, Registration> map =
-			new HashMap<Serializable, Registration>();
-
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			Serializable primaryKey = iterator.next();
-
-			Registration registration = fetchByPrimaryKey(primaryKey);
-
-			if (registration != null) {
-				map.put(primaryKey, registration);
-			}
-
-			return map;
-		}
-
-		Set<Serializable> uncachedPrimaryKeys = null;
-
-		for (Serializable primaryKey : primaryKeys) {
-			Serializable serializable = entityCache.getResult(
-				RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-				RegistrationImpl.class, primaryKey);
-
-			if (serializable != nullModel) {
-				if (serializable == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<Serializable>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, (Registration)serializable);
-				}
-			}
-		}
-
-		if (uncachedPrimaryKeys == null) {
-			return map;
-		}
-
-		StringBundler query = new StringBundler(
-			uncachedPrimaryKeys.size() * 2 + 1);
-
-		query.append(_SQL_SELECT_REGISTRATION_WHERE_PKS_IN);
-
-		for (Serializable primaryKey : uncachedPrimaryKeys) {
-			query.append((long)primaryKey);
-
-			query.append(",");
-		}
-
-		query.setIndex(query.index() - 1);
-
-		query.append(")");
-
-		String sql = query.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query q = session.createQuery(sql);
-
-			for (Registration registration : (List<Registration>)q.list()) {
-				map.put(registration.getPrimaryKeyObj(), registration);
-
-				cacheResult(registration);
-
-				uncachedPrimaryKeys.remove(registration.getPrimaryKeyObj());
-			}
-
-			for (Serializable primaryKey : uncachedPrimaryKeys) {
-				entityCache.putResult(
-					RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-					RegistrationImpl.class, primaryKey, nullModel);
-			}
-		}
-		catch (Exception e) {
-			throw processException(e);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
 	}
 
 	/**
@@ -6185,7 +5579,7 @@ public class RegistrationPersistenceImpl
 	 * Returns a range of all the registrations.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of registrations
@@ -6201,7 +5595,7 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of registrations
@@ -6220,64 +5614,62 @@ public class RegistrationPersistenceImpl
 	 * Returns an ordered range of all the registrations.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of registrations
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of registrations
 	 */
 	@Override
 	public List<Registration> findAll(
 		int start, int end, OrderByComparator<Registration> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
 
-			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindAll;
-			finderArgs = FINDER_ARGS_EMPTY;
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindAll;
+				finderArgs = FINDER_ARGS_EMPTY;
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindAll;
 			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
 		List<Registration> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<Registration>)finderCache.getResult(
 				finderPath, finderArgs, this);
 		}
 
 		if (list == null) {
-			StringBundler query = null;
+			StringBundler sb = null;
 			String sql = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(
+				sb = new StringBundler(
 					2 + (orderByComparator.getOrderByFields().length * 2));
 
-				query.append(_SQL_SELECT_REGISTRATION);
+				sb.append(_SQL_SELECT_REGISTRATION);
 
 				appendOrderByComparator(
-					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 
-				sql = query.toString();
+				sql = sb.toString();
 			}
 			else {
 				sql = _SQL_SELECT_REGISTRATION;
 
-				if (pagination) {
-					sql = sql.concat(RegistrationModelImpl.ORDER_BY_JPQL);
-				}
+				sql = sql.concat(RegistrationModelImpl.ORDER_BY_JPQL);
 			}
 
 			Session session = null;
@@ -6285,29 +5677,19 @@ public class RegistrationPersistenceImpl
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				if (!pagination) {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<Registration>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<Registration>)QueryUtil.list(
+					query, getDialect(), start, end);
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -6344,18 +5726,15 @@ public class RegistrationPersistenceImpl
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(_SQL_COUNT_REGISTRATION);
+				Query query = session.createQuery(_SQL_COUNT_REGISTRATION);
 
-				count = (Long)q.uniqueResult();
+				count = (Long)query.uniqueResult();
 
 				finderCache.putResult(
 					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
 			}
-			catch (Exception e) {
-				finderCache.removeResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -6366,6 +5745,21 @@ public class RegistrationPersistenceImpl
 	}
 
 	@Override
+	protected EntityCache getEntityCache() {
+		return entityCache;
+	}
+
+	@Override
+	protected String getPKDBName() {
+		return "registrationId";
+	}
+
+	@Override
+	protected String getSelectSQL() {
+		return _SQL_SELECT_REGISTRATION;
+	}
+
+	@Override
 	protected Map<String, Integer> getTableColumnsMap() {
 		return RegistrationModelImpl.TABLE_COLUMNS_MAP;
 	}
@@ -6373,334 +5767,325 @@ public class RegistrationPersistenceImpl
 	/**
 	 * Initializes the registration persistence.
 	 */
-	public void afterPropertiesSet() {
+	@Activate
+	public void activate() {
+		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
+			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+
 		_finderPathWithPaginationFindAll = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, RegistrationImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0]);
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
+			new String[0], true);
 
 		_finderPathWithoutPaginationFindAll = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, RegistrationImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll",
-			new String[0]);
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
+			new String[0], true);
 
 		_finderPathCountAll = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0]);
+			new String[0], new String[0], false);
 
 		_finderPathWithPaginationFindByEventRegistrations = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, RegistrationImpl.class,
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByEventRegistrations",
 			new String[] {
 				Long.class.getName(), Long.class.getName(),
 				Integer.class.getName(), Integer.class.getName(),
 				OrderByComparator.class.getName()
-			});
+			},
+			new String[] {"groupId", "eventResourcePrimaryKey"}, true);
 
 		_finderPathWithoutPaginationFindByEventRegistrations = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, RegistrationImpl.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"findByEventRegistrations",
 			new String[] {Long.class.getName(), Long.class.getName()},
-			RegistrationModelImpl.GROUPID_COLUMN_BITMASK |
-			RegistrationModelImpl.EVENTRESOURCEPRIMARYKEY_COLUMN_BITMASK |
-			RegistrationModelImpl.STARTTIME_COLUMN_BITMASK);
+			new String[] {"groupId", "eventResourcePrimaryKey"}, true);
 
 		_finderPathCountByEventRegistrations = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByEventRegistrations",
-			new String[] {Long.class.getName(), Long.class.getName()});
+			new String[] {Long.class.getName(), Long.class.getName()},
+			new String[] {"groupId", "eventResourcePrimaryKey"}, false);
 
 		_finderPathWithPaginationFindByUserEventRegistrations = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, RegistrationImpl.class,
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
 			"findByUserEventRegistrations",
 			new String[] {
 				Long.class.getName(), Long.class.getName(),
 				Long.class.getName(), Integer.class.getName(),
 				Integer.class.getName(), OrderByComparator.class.getName()
-			});
+			},
+			new String[] {"groupId", "userId", "eventResourcePrimaryKey"},
+			true);
 
 		_finderPathWithoutPaginationFindByUserEventRegistrations =
 			new FinderPath(
-				RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-				RegistrationModelImpl.FINDER_CACHE_ENABLED,
-				RegistrationImpl.class,
 				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 				"findByUserEventRegistrations",
 				new String[] {
 					Long.class.getName(), Long.class.getName(),
 					Long.class.getName()
 				},
-				RegistrationModelImpl.GROUPID_COLUMN_BITMASK |
-				RegistrationModelImpl.USERID_COLUMN_BITMASK |
-				RegistrationModelImpl.EVENTRESOURCEPRIMARYKEY_COLUMN_BITMASK |
-				RegistrationModelImpl.STARTTIME_COLUMN_BITMASK);
+				new String[] {"groupId", "userId", "eventResourcePrimaryKey"},
+				true);
 
 		_finderPathCountByUserEventRegistrations = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByUserEventRegistrations",
 			new String[] {
 				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			});
+			},
+			new String[] {"groupId", "userId", "eventResourcePrimaryKey"},
+			false);
 
 		_finderPathWithPaginationFindByUserRegistrations = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, RegistrationImpl.class,
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUserRegistrations",
 			new String[] {
 				Long.class.getName(), Long.class.getName(),
 				Integer.class.getName(), Integer.class.getName(),
 				OrderByComparator.class.getName()
-			});
+			},
+			new String[] {"groupId", "userId"}, true);
 
 		_finderPathWithoutPaginationFindByUserRegistrations = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, RegistrationImpl.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"findByUserRegistrations",
 			new String[] {Long.class.getName(), Long.class.getName()},
-			RegistrationModelImpl.GROUPID_COLUMN_BITMASK |
-			RegistrationModelImpl.USERID_COLUMN_BITMASK |
-			RegistrationModelImpl.STARTTIME_COLUMN_BITMASK);
+			new String[] {"groupId", "userId"}, true);
 
 		_finderPathCountByUserRegistrations = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByUserRegistrations",
-			new String[] {Long.class.getName(), Long.class.getName()});
+			new String[] {Long.class.getName(), Long.class.getName()},
+			new String[] {"groupId", "userId"}, false);
 
 		_finderPathWithPaginationFindByUserRegistrationsRegisteredByMe =
 			new FinderPath(
-				RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-				RegistrationModelImpl.FINDER_CACHE_ENABLED,
-				RegistrationImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
 				"findByUserRegistrationsRegisteredByMe",
 				new String[] {
 					Long.class.getName(), Long.class.getName(),
 					Integer.class.getName(), Integer.class.getName(),
 					OrderByComparator.class.getName()
-				});
+				},
+				new String[] {"groupId", "registeredByUserId"}, true);
 
 		_finderPathWithoutPaginationFindByUserRegistrationsRegisteredByMe =
 			new FinderPath(
-				RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-				RegistrationModelImpl.FINDER_CACHE_ENABLED,
-				RegistrationImpl.class,
 				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 				"findByUserRegistrationsRegisteredByMe",
 				new String[] {Long.class.getName(), Long.class.getName()},
-				RegistrationModelImpl.GROUPID_COLUMN_BITMASK |
-				RegistrationModelImpl.REGISTEREDBYUSERID_COLUMN_BITMASK |
-				RegistrationModelImpl.STARTTIME_COLUMN_BITMASK);
+				new String[] {"groupId", "registeredByUserId"}, true);
 
 		_finderPathCountByUserRegistrationsRegisteredByMe = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByUserRegistrationsRegisteredByMe",
-			new String[] {Long.class.getName(), Long.class.getName()});
+			new String[] {Long.class.getName(), Long.class.getName()},
+			new String[] {"groupId", "registeredByUserId"}, false);
 
 		_finderPathWithPaginationFindByUserEventRegistrationsRegisteredByMe =
 			new FinderPath(
-				RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-				RegistrationModelImpl.FINDER_CACHE_ENABLED,
-				RegistrationImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
 				"findByUserEventRegistrationsRegisteredByMe",
 				new String[] {
 					Long.class.getName(), Long.class.getName(),
 					Long.class.getName(), Integer.class.getName(),
 					Integer.class.getName(), OrderByComparator.class.getName()
-				});
+				},
+				new String[] {
+					"groupId", "registeredByUserId", "eventResourcePrimaryKey"
+				},
+				true);
 
 		_finderPathWithoutPaginationFindByUserEventRegistrationsRegisteredByMe =
 			new FinderPath(
-				RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-				RegistrationModelImpl.FINDER_CACHE_ENABLED,
-				RegistrationImpl.class,
 				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 				"findByUserEventRegistrationsRegisteredByMe",
 				new String[] {
 					Long.class.getName(), Long.class.getName(),
 					Long.class.getName()
 				},
-				RegistrationModelImpl.GROUPID_COLUMN_BITMASK |
-				RegistrationModelImpl.REGISTEREDBYUSERID_COLUMN_BITMASK |
-				RegistrationModelImpl.EVENTRESOURCEPRIMARYKEY_COLUMN_BITMASK |
-				RegistrationModelImpl.STARTTIME_COLUMN_BITMASK);
+				new String[] {
+					"groupId", "registeredByUserId", "eventResourcePrimaryKey"
+				},
+				true);
 
 		_finderPathCountByUserEventRegistrationsRegisteredByMe = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByUserEventRegistrationsRegisteredByMe",
 			new String[] {
 				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			});
+			},
+			new String[] {
+				"groupId", "registeredByUserId", "eventResourcePrimaryKey"
+			},
+			false);
 
 		_finderPathWithPaginationFindByArticleRegistrations = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, RegistrationImpl.class,
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
 			"findByArticleRegistrations",
 			new String[] {
 				Long.class.getName(), Long.class.getName(),
 				Integer.class.getName(), Integer.class.getName(),
 				OrderByComparator.class.getName()
-			});
+			},
+			new String[] {"groupId", "resourcePrimaryKey"}, true);
 
 		_finderPathWithoutPaginationFindByArticleRegistrations = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, RegistrationImpl.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"findByArticleRegistrations",
 			new String[] {Long.class.getName(), Long.class.getName()},
-			RegistrationModelImpl.GROUPID_COLUMN_BITMASK |
-			RegistrationModelImpl.RESOURCEPRIMARYKEY_COLUMN_BITMASK |
-			RegistrationModelImpl.STARTTIME_COLUMN_BITMASK);
+			new String[] {"groupId", "resourcePrimaryKey"}, true);
 
 		_finderPathCountByArticleRegistrations = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByArticleRegistrations",
-			new String[] {Long.class.getName(), Long.class.getName()});
+			new String[] {Long.class.getName(), Long.class.getName()},
+			new String[] {"groupId", "resourcePrimaryKey"}, false);
 
 		_finderPathWithPaginationFindByUserArticleRegistrations =
 			new FinderPath(
-				RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-				RegistrationModelImpl.FINDER_CACHE_ENABLED,
-				RegistrationImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
 				"findByUserArticleRegistrations",
 				new String[] {
 					Long.class.getName(), Long.class.getName(),
 					Long.class.getName(), Integer.class.getName(),
 					Integer.class.getName(), OrderByComparator.class.getName()
-				});
+				},
+				new String[] {"groupId", "userId", "resourcePrimaryKey"}, true);
 
 		_finderPathWithoutPaginationFindByUserArticleRegistrations =
 			new FinderPath(
-				RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-				RegistrationModelImpl.FINDER_CACHE_ENABLED,
-				RegistrationImpl.class,
 				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 				"findByUserArticleRegistrations",
 				new String[] {
 					Long.class.getName(), Long.class.getName(),
 					Long.class.getName()
 				},
-				RegistrationModelImpl.GROUPID_COLUMN_BITMASK |
-				RegistrationModelImpl.USERID_COLUMN_BITMASK |
-				RegistrationModelImpl.RESOURCEPRIMARYKEY_COLUMN_BITMASK |
-				RegistrationModelImpl.STARTTIME_COLUMN_BITMASK);
+				new String[] {"groupId", "userId", "resourcePrimaryKey"}, true);
 
 		_finderPathCountByUserArticleRegistrations = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByUserArticleRegistrations",
 			new String[] {
 				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			});
+			},
+			new String[] {"groupId", "userId", "resourcePrimaryKey"}, false);
 
 		_finderPathWithPaginationFindByUserChildArticleRegistrations =
 			new FinderPath(
-				RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-				RegistrationModelImpl.FINDER_CACHE_ENABLED,
-				RegistrationImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
 				"findByUserChildArticleRegistrations",
 				new String[] {
 					Long.class.getName(), Long.class.getName(),
 					Long.class.getName(), Integer.class.getName(),
 					Integer.class.getName(), OrderByComparator.class.getName()
-				});
+				},
+				new String[] {"groupId", "userId", "parentResourcePrimaryKey"},
+				true);
 
 		_finderPathWithoutPaginationFindByUserChildArticleRegistrations =
 			new FinderPath(
-				RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-				RegistrationModelImpl.FINDER_CACHE_ENABLED,
-				RegistrationImpl.class,
 				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 				"findByUserChildArticleRegistrations",
 				new String[] {
 					Long.class.getName(), Long.class.getName(),
 					Long.class.getName()
 				},
-				RegistrationModelImpl.GROUPID_COLUMN_BITMASK |
-				RegistrationModelImpl.USERID_COLUMN_BITMASK |
-				RegistrationModelImpl.PARENTRESOURCEPRIMARYKEY_COLUMN_BITMASK |
-				RegistrationModelImpl.STARTTIME_COLUMN_BITMASK);
+				new String[] {"groupId", "userId", "parentResourcePrimaryKey"},
+				true);
 
 		_finderPathCountByUserChildArticleRegistrations = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByUserChildArticleRegistrations",
 			new String[] {
 				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			});
+			},
+			new String[] {"groupId", "userId", "parentResourcePrimaryKey"},
+			false);
 
 		_finderPathWithPaginationFindByChildArticleRegistrations =
 			new FinderPath(
-				RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-				RegistrationModelImpl.FINDER_CACHE_ENABLED,
-				RegistrationImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
 				"findByChildArticleRegistrations",
 				new String[] {
 					Long.class.getName(), Long.class.getName(),
 					Integer.class.getName(), Integer.class.getName(),
 					OrderByComparator.class.getName()
-				});
+				},
+				new String[] {"groupId", "parentResourcePrimaryKey"}, true);
 
 		_finderPathWithoutPaginationFindByChildArticleRegistrations =
 			new FinderPath(
-				RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-				RegistrationModelImpl.FINDER_CACHE_ENABLED,
-				RegistrationImpl.class,
 				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 				"findByChildArticleRegistrations",
 				new String[] {Long.class.getName(), Long.class.getName()},
-				RegistrationModelImpl.GROUPID_COLUMN_BITMASK |
-				RegistrationModelImpl.PARENTRESOURCEPRIMARYKEY_COLUMN_BITMASK |
-				RegistrationModelImpl.STARTTIME_COLUMN_BITMASK);
+				new String[] {"groupId", "parentResourcePrimaryKey"}, true);
 
 		_finderPathCountByChildArticleRegistrations = new FinderPath(
-			RegistrationModelImpl.ENTITY_CACHE_ENABLED,
-			RegistrationModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByChildArticleRegistrations",
-			new String[] {Long.class.getName(), Long.class.getName()});
+			new String[] {Long.class.getName(), Long.class.getName()},
+			new String[] {"groupId", "parentResourcePrimaryKey"}, false);
+
+		_setRegistrationUtilPersistence(this);
 	}
 
-	public void destroy() {
+	@Deactivate
+	public void deactivate() {
+		_setRegistrationUtilPersistence(null);
+
 		entityCache.removeCache(RegistrationImpl.class.getName());
-		finderCache.removeCache(FINDER_CLASS_NAME_ENTITY);
-		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
-	@ServiceReference(type = EntityCache.class)
+	private void _setRegistrationUtilPersistence(
+		RegistrationPersistence registrationPersistence) {
+
+		try {
+			Field field = RegistrationUtil.class.getDeclaredField(
+				"_persistence");
+
+			field.setAccessible(true);
+
+			field.set(null, registrationPersistence);
+		}
+		catch (ReflectiveOperationException reflectiveOperationException) {
+			throw new RuntimeException(reflectiveOperationException);
+		}
+	}
+
+	@Override
+	@Reference(
+		target = RegistrationsPersistenceConstants.SERVICE_CONFIGURATION_FILTER,
+		unbind = "-"
+	)
+	public void setConfiguration(Configuration configuration) {
+	}
+
+	@Override
+	@Reference(
+		target = RegistrationsPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setDataSource(DataSource dataSource) {
+		super.setDataSource(dataSource);
+	}
+
+	@Override
+	@Reference(
+		target = RegistrationsPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		super.setSessionFactory(sessionFactory);
+	}
+
+	@Reference
 	protected EntityCache entityCache;
 
-	@ServiceReference(type = FinderCache.class)
+	@Reference
 	protected FinderCache finderCache;
 
 	private static final String _SQL_SELECT_REGISTRATION =
 		"SELECT registration FROM Registration registration";
-
-	private static final String _SQL_SELECT_REGISTRATION_WHERE_PKS_IN =
-		"SELECT registration FROM Registration registration WHERE registrationId IN (";
 
 	private static final String _SQL_SELECT_REGISTRATION_WHERE =
 		"SELECT registration FROM Registration registration WHERE ";
@@ -6721,5 +6106,10 @@ public class RegistrationPersistenceImpl
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		RegistrationPersistenceImpl.class);
+
+	@Override
+	protected FinderCache getFinderCache() {
+		return finderCache;
+	}
 
 }

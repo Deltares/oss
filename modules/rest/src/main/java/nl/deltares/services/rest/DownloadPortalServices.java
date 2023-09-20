@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.portal.utils.GeoIpUtils;
-import nl.deltares.portal.utils.SanctionCheckUtils;
+import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.services.rest.download.DownloadRestService;
 import nl.deltares.services.rest.exception.JsonProcessingExceptionMapper;
 import nl.deltares.services.rest.exception.LiferayRestExceptionMapper;
@@ -31,9 +31,8 @@ import java.util.Set;
 
                 JaxrsWhiteboardConstants.JAX_RS_APPLICATION_BASE + "=/download/",
                 JaxrsWhiteboardConstants.JAX_RS_NAME + "=Deltares.Rest.Download",
-                "oauth2.scopechecker.type=none",
                 "auth.verifier.guest.allowed=true",
-                "auth.verifier.auth.verifier.PortalSessionAuthVerifier.urls.includes=/*"
+                "liferay.access.control.disable=true"
         },
         service = Application.class
 )
@@ -41,10 +40,19 @@ import java.util.Set;
 public class DownloadPortalServices extends Application {
 
     @Reference
-    DownloadUtils downloadUtils;
+    KeycloakUtils keycloakUtils;
 
-    @Reference
-    SanctionCheckUtils sanctionCheckUtils;
+    private DownloadUtils downloadUtils;
+
+    @Reference(
+            unbind = "-",
+            cardinality = ReferenceCardinality.AT_LEAST_ONE
+    )
+    protected void setDownloadUtils(DownloadUtils downloadUtils){
+        if (downloadUtils.isActive()) {
+            this.downloadUtils = downloadUtils;
+        }
+    }
 
     private GeoIpUtils geoIpUtils;
     @Reference(
@@ -73,7 +81,7 @@ public class DownloadPortalServices extends Application {
         singletons.add(this);
         singletons.add(getJacksonJsonProvider());
         //Services for FullCalendar
-        singletons.add(new DownloadRestService(downloadUtils, sanctionCheckUtils, geoIpUtils));
+        singletons.add(new DownloadRestService(downloadUtils, geoIpUtils, keycloakUtils));
         return singletons;
     }
 

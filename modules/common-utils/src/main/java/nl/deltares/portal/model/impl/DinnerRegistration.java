@@ -6,8 +6,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
-import nl.deltares.portal.utils.XmlContentUtils;
-import org.w3c.dom.Document;
 
 import java.util.Locale;
 
@@ -24,8 +22,7 @@ public class DinnerRegistration extends Registration {
     private void init() throws PortalException {
 
         try {
-            Document document = getDocument();
-            initDates(document);
+            initDates(null);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -54,7 +51,7 @@ public class DinnerRegistration extends Registration {
     }
 
     private void parserRestaurant() throws PortalException {
-        String json = XmlContentUtils.getDynamicContentByName(getDocument(), "restaurant", false);
+        String json = getFormFieldValue( "restaurant", false);
         JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(json);
         AbsDsdArticle location = dsdParserUtils.toDsdArticle(article, getLocale());
         if (!(location instanceof Location)) throw new PortalException(String.format("Article %s not instance of Location", article.getTitle()));

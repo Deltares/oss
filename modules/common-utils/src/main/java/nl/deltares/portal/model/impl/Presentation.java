@@ -4,8 +4,6 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
-import nl.deltares.portal.utils.XmlContentUtils;
-import org.w3c.dom.Document;
 
 import java.util.Locale;
 
@@ -25,24 +23,23 @@ public class Presentation  extends AbsDsdArticle{
 
     private void init() throws PortalException {
         try {
-            Document document = getDocument();
-            String presenterName = XmlContentUtils.getDynamicContentByName(document, "presenterName", true);
+            String presenterName = getFormFieldValue("presenterName", true);
             if (presenterName != null) this.presenterName = presenterName;
-            String presenterOrg = XmlContentUtils.getDynamicContentByName(document, "presenterOrganization", true);
+            String presenterOrg = getFormFieldValue( "presenterOrganization", true);
             if (presenterOrg != null) this.presenterOrg = presenterOrg;
-            final String presentationLink = XmlContentUtils.getDynamicContentByName(document, "presentationLink", true);
+            final String presentationLink = getFormFieldValue( "presentationLink", true);
             if (presentationLink != null) this.presentationLink = presentationLink;
 
-            String typeJson = XmlContentUtils.getDynamicContentByName(document, "presentationType", true);
+            String typeJson = getFormFieldValue( "presentationType", true);
             if (typeJson != null) presentationType = typeJson;
 
-            String docJson = XmlContentUtils.getDynamicContentByName(document, "document", true);
+            String docJson = getFormFieldValue( "document", true);
             if (docJson != null) documentLink = JsonContentUtils.parseDocumentJson(docJson);
 
-            String imgUrl = XmlContentUtils.getDynamicContentByName(document, "thumbnailURL", true);
+            String imgUrl = getFormFieldValue( "thumbnailURL", true);
             if (imgUrl != null) thumbnailLink = imgUrl;
             if (thumbnailLink.isEmpty()) {
-                String imgJson = XmlContentUtils.getDynamicContentByName(document, "thumbnailImage", true);
+                String imgJson = getFormFieldValue( "thumbnailImage", true);
                 if (imgJson != null) thumbnailLink = JsonContentUtils.parseImageJson(imgJson);
             }
 

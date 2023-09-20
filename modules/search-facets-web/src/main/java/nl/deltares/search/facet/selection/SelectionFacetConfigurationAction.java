@@ -4,8 +4,8 @@ import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.util.ParamUtil;
+import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.portal.utils.JsonContentUtils;
-import nl.deltares.search.constans.FacetPortletKeys;
 import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -23,7 +23,7 @@ import java.util.Map;
         configurationPid = "nl.deltares.search.facet.selection.SelectionFacetConfiguration",
         configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
         property = {
-                "javax.portlet.name=" + FacetPortletKeys.SELECTION_FACET_PORTLET
+                "javax.portlet.name=" + SearchModuleKeys.SELECTION_FACET_PORTLET
         },
         service = ConfigurationAction.class
 )
@@ -55,6 +55,7 @@ public class SelectionFacetConfigurationAction extends DefaultConfigurationActio
 
 
     /**
+     *
      * (1)If a method is annoted with @Activate then the method will be called at the time of activation of the component
      * so that we can perform initialization task
      * <p>

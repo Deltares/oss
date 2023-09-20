@@ -11,7 +11,7 @@
 	</label>
 
 	<nav class="${nav_css_class} nav" id="navigation" role="navigation">
-		<h1 class="hide-accessible"><@liferay.language key="navigation" /></h1>
+		<h1 class="hide-accessible" hidden=""><@liferay.language key="navigation" /></h1>
 
 		<ul aria-label="<@liferay.language key="site-pages" />" role="menubar">
 			<#list nav_items as nav_item>

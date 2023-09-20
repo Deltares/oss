@@ -1,6 +1,10 @@
 Bundle-Name: fullcalendar
 Bundle-SymbolicName: nl.deltares.fullcalendar
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
+Import-Package: \
+nl.deltares.portal.model, \
+nl.deltares.portal.model.impl, \
+*
 Export-Package: \
 nl.deltares.fullcalendar.constants, \
 nl.deltares.fullcalendar.portlet

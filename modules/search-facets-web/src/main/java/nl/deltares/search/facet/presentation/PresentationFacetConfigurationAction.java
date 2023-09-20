@@ -4,7 +4,7 @@ import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.util.ParamUtil;
-import nl.deltares.search.constans.FacetPortletKeys;
+import nl.deltares.search.constans.SearchModuleKeys;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
@@ -21,7 +21,7 @@ import java.util.Map;
         configurationPid = "nl.deltares.search.facet.presentation.PresentationFacetConfigurationAction",
         configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
         property = {
-                "javax.portlet.name=" + FacetPortletKeys.PRESENTATION_FACET_PORTLET
+                "javax.portlet.name=" + SearchModuleKeys.PRESENTATION_FACET_PORTLET
         },
         service = ConfigurationAction.class
 )

@@ -7,7 +7,7 @@ import java.util.TimeZone;
 
 public class DisplayRegistration implements Comparable<DisplayRegistration> {
 
-    final private long id;
+    final private long recordId;
     final private String email;
     final private String eventName;
     final private String registrationName;
@@ -15,10 +15,14 @@ public class DisplayRegistration implements Comparable<DisplayRegistration> {
     private final Date startTime;
     private final Date endTime;
     private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    private final long eventResourceId;
+    private final long resourceId;
 
-    public DisplayRegistration(long registrationId, String email, String eventName, String registrationName, String preferences,
+    public DisplayRegistration(long recordId, long resourceId, long eventResourceId, String email, String eventName, String registrationName, String preferences,
                                Date startTime, Date endTime) {
-        this.id = registrationId;
+        this.recordId = recordId;
+        this.resourceId = resourceId;
+        this.eventResourceId = eventResourceId;
         this.email = email;
         this.eventName = eventName;
         this.registrationName = registrationName;
@@ -29,8 +33,8 @@ public class DisplayRegistration implements Comparable<DisplayRegistration> {
         format.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
-    public long getId() {
-        return id;
+    public long getResourceId() {
+        return resourceId;
     }
 
     public String getEmail() {
@@ -57,8 +61,16 @@ public class DisplayRegistration implements Comparable<DisplayRegistration> {
         return format.format(endTime);
     }
 
+    public long getEventResourceId() {
+        return eventResourceId;
+    }
+
+    public long getRecordId() {
+        return recordId;
+    }
+
     @Override
     public int compareTo(DisplayRegistration o) {
-        return Long.compare(id, o.id);
+        return Long.compare(recordId, o.recordId);
     }
 }

@@ -13,7 +13,9 @@ body{
     line-height: 32px;
 }
 
-
+.pull-right{
+    float: right !important;
+}
 .flex-row {
     flex-direction: row;
     display: flex;

@@ -3,21 +3,17 @@ package nl.deltares.forms.portlet.action;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
-import com.liferay.portal.kernel.service.CountryServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.ResourceBundleUtil;
-import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.util.*;
 import nl.deltares.emails.DownloadEmail;
+import nl.deltares.forms.portlet.DownloadFormConfiguration;
 import nl.deltares.model.BillingInfo;
 import nl.deltares.model.DownloadRequest;
 import nl.deltares.model.LicenseInfo;
@@ -33,6 +29,7 @@ import nl.deltares.tasks.impl.CreateDownloadLinksRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -72,11 +69,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
                 sendRedirect(actionRequest, actionResponse, redirect);
             }
             return;
-        } else if (redirect.isEmpty()) {
-            redirect = downloadRequest.getSiteURL();
         }
-
-        LOG.info(redirect);
 
         boolean success = true;
         if ("download".equals(action)) {
@@ -84,15 +77,17 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             User registrationUser;
             //noinspection DuplicatedCode
             if (isRegisterSomeoneElse(actionRequest)){
+                String email = "";
                 try {
                     registrationUser = themeDisplay.getUser();
-                    final String email = ParamUtil.getString(actionRequest, KeycloakUtils.ATTRIBUTES.email.name());
+                    email = ParamUtil.getString(actionRequest, KeycloakUtils.ATTRIBUTES.email.name());
                     final String firstName = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.first_name.name());
                     final String lastName = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.last_name.name());
                     user = adminUtils.getOrCreateRegistrationUser(themeDisplay.getCompanyId(), registrationUser,
                             email, firstName, lastName, themeDisplay.getLocale());
                 } catch (Exception e) {
                     success = false;
+                    LOG.warn(String.format("Error getting user '%s' for registration: %s", email, e.getMessage()));
                     SessionErrors.add(actionRequest, "registration-failed", e.getMessage() );
                 }
             }
@@ -101,9 +96,9 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
                 Map<String, String> userAttributes = new HashMap<>();
                 if (downloadRequest.isUserInfoRequired()) {
                     userAttributes.putAll(getUserAttributes(actionRequest));
-                } else {
-                    userAttributes.putAll(getMinimumAttributes(actionRequest));
                 }
+                userAttributes.putAll(parseGeoLocationFromIp(actionRequest));
+
                 registerAcceptedTerms(downloadRequest, userAttributes);
                 downloadRequest.setUserAttributes(userAttributes);
                 success = updateUserAttributes(actionRequest, user, userAttributes);
@@ -123,11 +118,39 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         }
         if (success) {
             SessionMessages.add(actionRequest, "sendlink-success", new String[]{action, user.getEmailAddress()});
-            if (!redirect.isEmpty()) {
-                sendRedirect(actionRequest, actionResponse, redirect);
-            }
+            redirect = getRedirectURL(themeDisplay, "success");
+            sendRedirect(actionRequest, actionResponse, redirect);
+        } else {
+            redirect = getRedirectURL(themeDisplay, "fail");
+            sendRedirect(actionRequest, actionResponse, redirect);
         }
 
+    }
+
+    private String getRedirectURL(ThemeDisplay themeDisplay, String key) {
+
+        String friendlyUrl = null;
+        try {
+            String configuredRedirect = null;
+            final DownloadFormConfiguration configuration =  _configurationProvider.getPortletInstanceConfiguration(DownloadFormConfiguration.class, themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
+            switch (key){
+                case "success":
+                    configuredRedirect =  configuration.successURL();
+                    break;
+                case "fail":
+                    configuredRedirect =  configuration.failureURL();
+            }
+
+            if (configuredRedirect == null || configuredRedirect.isEmpty()) {
+                friendlyUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay, themeDisplay.getLocale());
+            } else {
+                friendlyUrl = PortalUtil.getAbsoluteURL(themeDisplay.getRequest(), configuredRedirect);
+            }
+            LOG.info("Redirecting download request to " + friendlyUrl);
+        } catch (PortalException e) {
+            LOG.warn("Failed to get configuredRedirect URL: " + e.getMessage());
+        }
+        return friendlyUrl;
     }
 
     private boolean createShareLinks(ActionRequest actionRequest, DownloadRequest downloadRequest, User user, DownloadEmail loadedEmail) {
@@ -179,14 +202,14 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
                     unsubscribeIds.add(subscription.getId());
                 }
             }
-            if (subscribeIds.size() > 0) {
+            if (!subscribeIds.isEmpty()) {
                 try {
                     subscriptionUtils.subscribeAll(user, subscribeIds);
                 } catch (Exception e) {
                     LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", user.getEmailAddress(), subscribeIds, e.getMessage()));
                 }
             }
-            if (unsubscribeIds.size() > 0) {
+            if (!unsubscribeIds.isEmpty()) {
                 try {
                     subscriptionUtils.unsubscribeAll(user.getEmailAddress(), unsubscribeIds);
                 } catch (Exception e) {
@@ -240,19 +263,15 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
     private LicenseInfo getLicenseInfo(ActionRequest actionRequest) {
         LicenseInfo licenseInfo = new LicenseInfo();
 
-        if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LICENSETYPES.network.name()))) {
-            licenseInfo.setLicenseType(LicenseInfo.LICENSETYPES.network);
-        } else if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LICENSETYPES.standalone.name()))) {
-            licenseInfo.setLicenseType(LicenseInfo.LICENSETYPES.standalone);
+        final String licenseTypes = ParamUtil.getString(actionRequest, "licenseinfo.licensetypes");
+        if (!licenseTypes.isEmpty()){
+            licenseInfo.setLicenseType(LicenseInfo.LICENSETYPES.valueOf(licenseTypes));
         }
 
-        if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LOCKTYPES.new_usb_dongle.name()))) {
-            licenseInfo.setLockType(LicenseInfo.LOCKTYPES.new_usb_dongle);
-        } else if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LOCKTYPES.existing_usb_dongle.name()))) {
-            licenseInfo.setLockType(LicenseInfo.LOCKTYPES.existing_usb_dongle);
+        final String lockTypes = ParamUtil.getString(actionRequest, "licenseinfo.locktypes");
+        if (!lockTypes.isEmpty()) {
+            licenseInfo.setLockType(LicenseInfo.LOCKTYPES.valueOf(lockTypes));
             licenseInfo.setDongleNumber(ParamUtil.getString(actionRequest, LicenseInfo.ATTRIBUTES.lock_address.name()));
-        } else if (Boolean.parseBoolean(ParamUtil.getString(actionRequest, LicenseInfo.LOCKTYPES.mac_address.name()))) {
-            licenseInfo.setLockType(LicenseInfo.LOCKTYPES.mac_address);
         }
         return licenseInfo;
     }
@@ -300,7 +319,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             return keycloakUtils.updateUserAttributes(user.getEmailAddress(), attributes) < 300;
         } catch (Exception e) {
             SessionErrors.add(actionRequest, "update-attributes-failed", e.getMessage());
-            LOG.debug("Could not update keycloak attributes for user [" + user.getEmailAddress() + "]", e);
+            LOG.warn("Could not update keycloak attributes for user [" + user.getEmailAddress() + "]", e);
         }
         return false;
     }
@@ -318,19 +337,15 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         return attributes;
     }
 
-    private Map<String, String> getMinimumAttributes(ActionRequest actionRequest) {
-        Map<String, String> attributes = new HashMap<>();
+    private Map<String, String> parseGeoLocationFromIp(ActionRequest actionRequest) {
+        if (geoIpUtils == null || !geoIpUtils.isActive()) return Collections.emptyMap();
         final String remoteAddr = ((LiferayPortletRequest) actionRequest).getHttpServletRequest().getRemoteAddr();
         try {
-            final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(remoteAddr);
-            if (clientIpInfo.isEmpty()) return Collections.emptyMap();
-            final Country country = CountryServiceUtil.getCountryByA2(geoIpUtils.getCountryIso2Code(clientIpInfo));
-            if (country != null ) attributes.put(KeycloakUtils.ATTRIBUTES.org_country.name(), country.getName());
-            return attributes;
-        } catch (PortalException e) {
+            return geoIpUtils.getClientIpInfo(remoteAddr);
+        } catch (Exception e) {
             LOG.warn("Error getting country info: " + e.getMessage());
         }
-        return attributes;
+        return Collections.emptyMap();
 
     }
 
@@ -385,8 +400,19 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
     @Reference
     private DsdParserUtils dsdParserUtils;
 
-    @Reference
     private DownloadUtils downloadUtils;
+
+    @Reference(
+            unbind = "setDownloadUtils",
+            cardinality = ReferenceCardinality.AT_LEAST_ONE,
+            policy = ReferencePolicy.DYNAMIC
+    )
+    protected void setDownloadUtils(DownloadUtils downloadUtils){
+        if (downloadUtils.isActive()) {
+            this.downloadUtils = downloadUtils;
+        }
+    }
+
 
     @Reference
     protected LicenseManagerUtils licenseManagerUtils;

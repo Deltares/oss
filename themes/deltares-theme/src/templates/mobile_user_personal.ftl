@@ -32,7 +32,7 @@
                 </a>
             </li>
         </#if>
-    <#else>
+    <#elseif show_sign_in>
         <li class="flex flex-row items-center even:pl-10 odd:border-r odd:border-solid odd:border-white">
             <a class="block text-sm font-medium text-white leading-none" href="${sign_in_url}">Login</a>
         </li>
