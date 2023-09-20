@@ -273,15 +273,12 @@ license*.xml
 /docker/liferay/resources/activation-key-digitalenterprisedevelopment-7.1-developeractivationkeys.xml
 /docker/nextcloud/config/config.php
 /docker/resources/data/
-/configs/docker/osgi/modules/activation-key-dxpdevelopment-7.4-developeractivationkeys.xml
+/docker/keycloak/deployments/deltares-extension-bundle-2.0.ear.deployed
 /docker/liferay/resources/activation-key-dxpdevelopment-7.4-developeractivationkeys.xml
 /themes/deltares-main-theme/
 /themes/deltares-theme/src/WEB-INF/src/resources-importer/
 /http-client-files/http-client.env-bk.json
-/modules/fullcalendar/package-lock.json
-/docker/keycloak/deployments/deltares-extension-bundle-2.0.ear.deployed
-/docker/liferay/lmcrypt/lmcrypt
 /http-client-files/http-client.env.json
 /node_modules_cache/
-/yarn.lock
 /.yarnrc
+/yarn.lock
