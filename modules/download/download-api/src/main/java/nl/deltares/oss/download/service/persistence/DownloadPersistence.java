@@ -14,17 +14,12 @@
 
 package nl.deltares.oss.download.service.persistence;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
-
-import java.io.Serializable;
-
-import java.util.Map;
-import java.util.Set;
 
 import nl.deltares.oss.download.exception.NoSuchDownloadException;
 import nl.deltares.oss.download.model.Download;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The persistence interface for the download service.
@@ -45,9 +40,6 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link DownloadUtil} to access the download persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this interface.
 	 */
-	@Override
-	public Map<Serializable, Download> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys);
 
 	/**
 	 * Returns all the downloads where groupId = &#63; and downloadId = &#63;.
@@ -63,7 +55,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns a range of all the downloads where groupId = &#63; and downloadId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -79,7 +71,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns an ordered range of all the downloads where groupId = &#63; and downloadId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -98,7 +90,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns an ordered range of all the downloads where groupId = &#63; and downloadId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -106,14 +98,14 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * @param start the lower bound of the range of downloads
 	 * @param end the upper bound of the range of downloads (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching downloads
 	 */
 	public java.util.List<Download> findByDownloads(
 		long groupId, long downloadId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Download>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first download in the ordered set where groupId = &#63; and downloadId = &#63;.
@@ -205,329 +197,6 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	public int countByDownloads(long groupId, long downloadId);
 
 	/**
-	 * Returns all the downloads where groupId = &#63; and shareId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param shareId the share ID
-	 * @return the matching downloads
-	 */
-	public java.util.List<Download> findByDownloadsByShareId(
-		long groupId, int shareId);
-
-	/**
-	 * Returns a range of all the downloads where groupId = &#63; and shareId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param shareId the share ID
-	 * @param start the lower bound of the range of downloads
-	 * @param end the upper bound of the range of downloads (not inclusive)
-	 * @return the range of matching downloads
-	 */
-	public java.util.List<Download> findByDownloadsByShareId(
-		long groupId, int shareId, int start, int end);
-
-	/**
-	 * Returns an ordered range of all the downloads where groupId = &#63; and shareId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param shareId the share ID
-	 * @param start the lower bound of the range of downloads
-	 * @param end the upper bound of the range of downloads (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching downloads
-	 */
-	public java.util.List<Download> findByDownloadsByShareId(
-		long groupId, int shareId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<Download>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the downloads where groupId = &#63; and shareId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param shareId the share ID
-	 * @param start the lower bound of the range of downloads
-	 * @param end the upper bound of the range of downloads (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the ordered range of matching downloads
-	 */
-	public java.util.List<Download> findByDownloadsByShareId(
-		long groupId, int shareId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<Download>
-			orderByComparator,
-		boolean retrieveFromCache);
-
-	/**
-	 * Returns the first download in the ordered set where groupId = &#63; and shareId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param shareId the share ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching download
-	 * @throws NoSuchDownloadException if a matching download could not be found
-	 */
-	public Download findByDownloadsByShareId_First(
-			long groupId, int shareId,
-			com.liferay.portal.kernel.util.OrderByComparator<Download>
-				orderByComparator)
-		throws NoSuchDownloadException;
-
-	/**
-	 * Returns the first download in the ordered set where groupId = &#63; and shareId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param shareId the share ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching download, or <code>null</code> if a matching download could not be found
-	 */
-	public Download fetchByDownloadsByShareId_First(
-		long groupId, int shareId,
-		com.liferay.portal.kernel.util.OrderByComparator<Download>
-			orderByComparator);
-
-	/**
-	 * Returns the last download in the ordered set where groupId = &#63; and shareId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param shareId the share ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching download
-	 * @throws NoSuchDownloadException if a matching download could not be found
-	 */
-	public Download findByDownloadsByShareId_Last(
-			long groupId, int shareId,
-			com.liferay.portal.kernel.util.OrderByComparator<Download>
-				orderByComparator)
-		throws NoSuchDownloadException;
-
-	/**
-	 * Returns the last download in the ordered set where groupId = &#63; and shareId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param shareId the share ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching download, or <code>null</code> if a matching download could not be found
-	 */
-	public Download fetchByDownloadsByShareId_Last(
-		long groupId, int shareId,
-		com.liferay.portal.kernel.util.OrderByComparator<Download>
-			orderByComparator);
-
-	/**
-	 * Returns the downloads before and after the current download in the ordered set where groupId = &#63; and shareId = &#63;.
-	 *
-	 * @param id the primary key of the current download
-	 * @param groupId the group ID
-	 * @param shareId the share ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next download
-	 * @throws NoSuchDownloadException if a download with the primary key could not be found
-	 */
-	public Download[] findByDownloadsByShareId_PrevAndNext(
-			long id, long groupId, int shareId,
-			com.liferay.portal.kernel.util.OrderByComparator<Download>
-				orderByComparator)
-		throws NoSuchDownloadException;
-
-	/**
-	 * Removes all the downloads where groupId = &#63; and shareId = &#63; from the database.
-	 *
-	 * @param groupId the group ID
-	 * @param shareId the share ID
-	 */
-	public void removeByDownloadsByShareId(long groupId, int shareId);
-
-	/**
-	 * Returns the number of downloads where groupId = &#63; and shareId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param shareId the share ID
-	 * @return the number of matching downloads
-	 */
-	public int countByDownloadsByShareId(long groupId, int shareId);
-
-	/**
-	 * Returns all the downloads where groupId = &#63; and userId = &#63; and shareId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param shareId the share ID
-	 * @return the matching downloads
-	 */
-	public java.util.List<Download> findByUserDownloadsByShareId(
-		long groupId, long userId, int shareId);
-
-	/**
-	 * Returns a range of all the downloads where groupId = &#63; and userId = &#63; and shareId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param shareId the share ID
-	 * @param start the lower bound of the range of downloads
-	 * @param end the upper bound of the range of downloads (not inclusive)
-	 * @return the range of matching downloads
-	 */
-	public java.util.List<Download> findByUserDownloadsByShareId(
-		long groupId, long userId, int shareId, int start, int end);
-
-	/**
-	 * Returns an ordered range of all the downloads where groupId = &#63; and userId = &#63; and shareId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param shareId the share ID
-	 * @param start the lower bound of the range of downloads
-	 * @param end the upper bound of the range of downloads (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching downloads
-	 */
-	public java.util.List<Download> findByUserDownloadsByShareId(
-		long groupId, long userId, int shareId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<Download>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the downloads where groupId = &#63; and userId = &#63; and shareId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param shareId the share ID
-	 * @param start the lower bound of the range of downloads
-	 * @param end the upper bound of the range of downloads (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the ordered range of matching downloads
-	 */
-	public java.util.List<Download> findByUserDownloadsByShareId(
-		long groupId, long userId, int shareId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<Download>
-			orderByComparator,
-		boolean retrieveFromCache);
-
-	/**
-	 * Returns the first download in the ordered set where groupId = &#63; and userId = &#63; and shareId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param shareId the share ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching download
-	 * @throws NoSuchDownloadException if a matching download could not be found
-	 */
-	public Download findByUserDownloadsByShareId_First(
-			long groupId, long userId, int shareId,
-			com.liferay.portal.kernel.util.OrderByComparator<Download>
-				orderByComparator)
-		throws NoSuchDownloadException;
-
-	/**
-	 * Returns the first download in the ordered set where groupId = &#63; and userId = &#63; and shareId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param shareId the share ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching download, or <code>null</code> if a matching download could not be found
-	 */
-	public Download fetchByUserDownloadsByShareId_First(
-		long groupId, long userId, int shareId,
-		com.liferay.portal.kernel.util.OrderByComparator<Download>
-			orderByComparator);
-
-	/**
-	 * Returns the last download in the ordered set where groupId = &#63; and userId = &#63; and shareId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param shareId the share ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching download
-	 * @throws NoSuchDownloadException if a matching download could not be found
-	 */
-	public Download findByUserDownloadsByShareId_Last(
-			long groupId, long userId, int shareId,
-			com.liferay.portal.kernel.util.OrderByComparator<Download>
-				orderByComparator)
-		throws NoSuchDownloadException;
-
-	/**
-	 * Returns the last download in the ordered set where groupId = &#63; and userId = &#63; and shareId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param shareId the share ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching download, or <code>null</code> if a matching download could not be found
-	 */
-	public Download fetchByUserDownloadsByShareId_Last(
-		long groupId, long userId, int shareId,
-		com.liferay.portal.kernel.util.OrderByComparator<Download>
-			orderByComparator);
-
-	/**
-	 * Returns the downloads before and after the current download in the ordered set where groupId = &#63; and userId = &#63; and shareId = &#63;.
-	 *
-	 * @param id the primary key of the current download
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param shareId the share ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next download
-	 * @throws NoSuchDownloadException if a download with the primary key could not be found
-	 */
-	public Download[] findByUserDownloadsByShareId_PrevAndNext(
-			long id, long groupId, long userId, int shareId,
-			com.liferay.portal.kernel.util.OrderByComparator<Download>
-				orderByComparator)
-		throws NoSuchDownloadException;
-
-	/**
-	 * Removes all the downloads where groupId = &#63; and userId = &#63; and shareId = &#63; from the database.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param shareId the share ID
-	 */
-	public void removeByUserDownloadsByShareId(
-		long groupId, long userId, int shareId);
-
-	/**
-	 * Returns the number of downloads where groupId = &#63; and userId = &#63; and shareId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param shareId the share ID
-	 * @return the number of matching downloads
-	 */
-	public int countByUserDownloadsByShareId(
-		long groupId, long userId, int shareId);
-
-	/**
 	 * Returns the download where groupId = &#63; and userId = &#63; and downloadId = &#63; or throws a <code>NoSuchDownloadException</code> if it could not be found.
 	 *
 	 * @param groupId the group ID
@@ -557,11 +226,11 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * @param groupId the group ID
 	 * @param userId the user ID
 	 * @param downloadId the download ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching download, or <code>null</code> if a matching download could not be found
 	 */
 	public Download fetchByUserDownload(
-		long groupId, long userId, long downloadId, boolean retrieveFromCache);
+		long groupId, long userId, long downloadId, boolean useFinderCache);
 
 	/**
 	 * Removes the download where groupId = &#63; and userId = &#63; and downloadId = &#63; from the database.
@@ -599,7 +268,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns a range of all the downloads where groupId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -615,7 +284,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns an ordered range of all the downloads where groupId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -634,7 +303,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns an ordered range of all the downloads where groupId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -642,14 +311,14 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * @param start the lower bound of the range of downloads
 	 * @param end the upper bound of the range of downloads (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching downloads
 	 */
 	public java.util.List<Download> findByUserDownloads(
 		long groupId, long userId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Download>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first download in the ordered set where groupId = &#63; and userId = &#63;.
@@ -746,156 +415,13 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * @param groupId the group ID
 	 * @return the matching downloads
 	 */
-	public java.util.List<Download> findByDirectDownloads(long groupId);
-
-	/**
-	 * Returns a range of all the downloads where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of downloads
-	 * @param end the upper bound of the range of downloads (not inclusive)
-	 * @return the range of matching downloads
-	 */
-	public java.util.List<Download> findByDirectDownloads(
-		long groupId, int start, int end);
-
-	/**
-	 * Returns an ordered range of all the downloads where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of downloads
-	 * @param end the upper bound of the range of downloads (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching downloads
-	 */
-	public java.util.List<Download> findByDirectDownloads(
-		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<Download>
-			orderByComparator);
-
-	/**
-	 * Returns an ordered range of all the downloads where groupId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param groupId the group ID
-	 * @param start the lower bound of the range of downloads
-	 * @param end the upper bound of the range of downloads (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the ordered range of matching downloads
-	 */
-	public java.util.List<Download> findByDirectDownloads(
-		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<Download>
-			orderByComparator,
-		boolean retrieveFromCache);
-
-	/**
-	 * Returns the first download in the ordered set where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching download
-	 * @throws NoSuchDownloadException if a matching download could not be found
-	 */
-	public Download findByDirectDownloads_First(
-			long groupId,
-			com.liferay.portal.kernel.util.OrderByComparator<Download>
-				orderByComparator)
-		throws NoSuchDownloadException;
-
-	/**
-	 * Returns the first download in the ordered set where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching download, or <code>null</code> if a matching download could not be found
-	 */
-	public Download fetchByDirectDownloads_First(
-		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<Download>
-			orderByComparator);
-
-	/**
-	 * Returns the last download in the ordered set where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching download
-	 * @throws NoSuchDownloadException if a matching download could not be found
-	 */
-	public Download findByDirectDownloads_Last(
-			long groupId,
-			com.liferay.portal.kernel.util.OrderByComparator<Download>
-				orderByComparator)
-		throws NoSuchDownloadException;
-
-	/**
-	 * Returns the last download in the ordered set where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching download, or <code>null</code> if a matching download could not be found
-	 */
-	public Download fetchByDirectDownloads_Last(
-		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<Download>
-			orderByComparator);
-
-	/**
-	 * Returns the downloads before and after the current download in the ordered set where groupId = &#63;.
-	 *
-	 * @param id the primary key of the current download
-	 * @param groupId the group ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next download
-	 * @throws NoSuchDownloadException if a download with the primary key could not be found
-	 */
-	public Download[] findByDirectDownloads_PrevAndNext(
-			long id, long groupId,
-			com.liferay.portal.kernel.util.OrderByComparator<Download>
-				orderByComparator)
-		throws NoSuchDownloadException;
-
-	/**
-	 * Removes all the downloads where groupId = &#63; from the database.
-	 *
-	 * @param groupId the group ID
-	 */
-	public void removeByDirectDownloads(long groupId);
-
-	/**
-	 * Returns the number of downloads where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the number of matching downloads
-	 */
-	public int countByDirectDownloads(long groupId);
-
-	/**
-	 * Returns all the downloads where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @return the matching downloads
-	 */
 	public java.util.List<Download> findByGroupDownloads(long groupId);
 
 	/**
 	 * Returns a range of all the downloads where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -910,7 +436,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns an ordered range of all the downloads where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -928,21 +454,21 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns an ordered range of all the downloads where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
 	 * @param start the lower bound of the range of downloads
 	 * @param end the upper bound of the range of downloads (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching downloads
 	 */
 	public java.util.List<Download> findByGroupDownloads(
 		long groupId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Download>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first download in the ordered set where groupId = &#63;.
@@ -1087,7 +613,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns a range of all the downloads.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of downloads
@@ -1100,7 +626,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns an ordered range of all the downloads.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of downloads
@@ -1117,20 +643,20 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns an ordered range of all the downloads.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of downloads
 	 * @param end the upper bound of the range of downloads (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of downloads
 	 */
 	public java.util.List<Download> findAll(
 		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Download>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Removes all the downloads from the database.
@@ -1143,8 +669,5 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * @return the number of downloads
 	 */
 	public int countAll();
-
-	@Override
-	public Set<String> getBadColumnNames();
 
 }

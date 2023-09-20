@@ -14,8 +14,6 @@
 
 package nl.deltares.dsd.registration.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import nl.deltares.dsd.registration.model.Registration;
 import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 
@@ -31,7 +29,6 @@ import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
  * @see Registration
  * @generated
  */
-@ProviderType
 public abstract class RegistrationBaseImpl
 	extends RegistrationModelImpl implements Registration {
 

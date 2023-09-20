@@ -3,14 +3,14 @@ version: '3.1'
 services:
 
   database:
-    image: mariadb:10.2.25
-    container_name: oss-mariadb
+    image: mariadb:10.4.22
+    container_name: oss-mariadb-74
     ports:
       - "3307:3306"
     env_file:
       - .env
     volumes:
-      - dbliferay:/var/lib/mysql
+      - dbliferay74:/var/lib/mysql
       - ./resources/dump-liferay.sql:/docker-entrypoint-initdb.d/dump.sql
     restart: always
     command: [ 'mysqld', '--character-set-server=utf8', '--collation-server=utf8_general_ci' ]
@@ -18,8 +18,8 @@ services:
       - liferay
 
   mariadb-keycloak:
-    image: mariadb:10.2.25
-    container_name: keycloak-mariadb
+    image: mariadb:10.4.22
+    container_name: keycloak-mariadb-74
     ports:
       - "3308:3306"
     environment:
@@ -29,7 +29,7 @@ services:
       - MYSQL_PASSWORD=password
       - HOSTNAME=mariadb-keycloak
     volumes:
-      - dbkeycloak:/var/lib/mysql
+      - dbkeycloak74:/var/lib/mysql
       - ./resources/dump-keycloak.sql:/docker-entrypoint-initdb.d/dump.sql
     restart: always
     command: [ 'mysqld', '--character-set-server=utf8', '--collation-server=utf8_general_ci' ]
@@ -37,13 +37,12 @@ services:
       - liferay
 
   liferay:
-    container_name: oss-liferay
+    container_name: oss-liferay-74
     build: liferay
     ports:
       #      - 80:8080
       - 8081:8080
       - 8000:8000
-#      - 10001:10001
     volumes:
       - ./liferay/data:/opt/liferay/data/document_library
       - ./liferay/mount/files:/mnt/liferay/files
@@ -56,16 +55,18 @@ services:
       - liferay
 
   elasticsearch:
-    container_name: oss-elastic
+    container_name: oss-elastic-74
     build: elasticsearch
     environment:
       - cluster.name=oss-cluster
       - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - xpack.security.enabled=false
       - "ES_JAVA_OPTS=-Xms2048m -Xmx2048m"
     ports:
       - 9200:9200
     volumes:
-      - esdata:/usr/share/elasticsearch/data
+      - esdata74:/usr/share/elasticsearch/data
     ulimits:
       memlock:
         soft: -1
@@ -110,11 +111,11 @@ services:
                "-Dkeycloak.profile.feature.upload_scripts=enabled" ]
 
 volumes:
-  esdata:
+  esdata74:
     driver: local
-  dbliferay:
+  dbliferay74:
     driver: local
-  dbkeycloak:
+  dbkeycloak74:
     driver: local
 
 networks:

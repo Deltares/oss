@@ -14,8 +14,6 @@
 
 package nl.deltares.oss.download.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
 
@@ -31,7 +29,6 @@ import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
  * @see Download
  * @generated
  */
-@ProviderType
 public abstract class DownloadBaseImpl
 	extends DownloadModelImpl implements Download {
 

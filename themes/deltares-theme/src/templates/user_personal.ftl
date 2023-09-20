@@ -33,7 +33,7 @@
             <li class="px-3 border-white border-left">
                 <a class="block text-sm font-sm text-white leading-none" href="${user_signout_url}">Logout</a>
             </li>
-        <#else>
+        <#elseif show_sign_in>
             <li class="px-3">
                 <a class="block text-sm font-sm text-white leading-none" href="${sign_in_url}">Login</a>
             </li>

@@ -49,9 +49,7 @@ public interface KeycloakUtils {
 
     int callCheckUsersExist(File checkUsersInputFile, PrintWriter nonExistingUsersOutput) throws Exception;
 
-    int callCheckUsersExist(String requestId, PrintWriter nonExistingUsersOutput) throws Exception;
-
-    int downloadInvalidUsers(String requestId, PrintWriter writer) throws Exception;
+    int downloadInvalidUsers(PrintWriter writer) throws Exception;
 
     byte[] getUserAvatar(String email) throws Exception;
 

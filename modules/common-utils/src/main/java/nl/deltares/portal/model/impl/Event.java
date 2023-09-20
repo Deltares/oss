@@ -6,8 +6,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
-import nl.deltares.portal.utils.XmlContentUtils;
-import org.w3c.dom.Document;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -20,8 +18,8 @@ public class Event extends AbsDsdArticle {
     private EventLocation eventLocation = null;
     private Date startTime = null;
     private Date endTime = null;
-    private String emailBannerURL = null;
-    private String emailFooterURL = null;
+    private String emailBannerURL = "";
+    private String emailFooterURL = "";
     private String timeZoneId = "CET";
 
     public Event(JournalArticle journalArticle, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
@@ -30,18 +28,26 @@ public class Event extends AbsDsdArticle {
     }
 
     private void init() throws PortalException {
-        Document document = getDocument();
-        startTime = XmlContentUtils.parseDateTimeFields(document, "start", "starttime");
-        endTime = XmlContentUtils.parseDateTimeFields(document, "end", "endtime");
-        String bannerImageJson = XmlContentUtils.getDynamicContentByName(document, "bannerImage", true);
+
+        timeZoneId = getFormFieldValue("timeZone", true);
+
+        final String startDateString = getFormFieldValue("start", false);
+        final String startTimeString = getFormFieldValue("starttime", false);
+        startTime = parseDateTimeFields(startDateString, startTimeString, TimeZone.getTimeZone(getTimeZoneId()));
+
+        final String endDateString = getFormFieldValue("end", false);
+        final String endTimeString = getFormFieldValue("endtime", false);
+        endTime = parseDateTimeFields(endDateString, endTimeString, TimeZone.getTimeZone(getTimeZoneId()));
+
+        String bannerImageJson = getFormFieldValue( "bannerImage", true);
         if (bannerImageJson != null) {
             emailBannerURL = JsonContentUtils.parseImageJson(bannerImageJson);
         }
-        String footerImageJson = XmlContentUtils.getDynamicContentByName(document, "footerImage", true);
+        String footerImageJson = getFormFieldValue( "footerImage", true);
         if (footerImageJson != null) {
             emailFooterURL = JsonContentUtils.parseImageJson(footerImageJson);
         }
-        timeZoneId = XmlContentUtils.getDynamicContentByName(document, "timeZone", true);
+
     }
 
     @Override
@@ -59,7 +65,7 @@ public class Event extends AbsDsdArticle {
         }
     }
     private void parseEventLocation() throws PortalException {
-        String eventLocationJson = XmlContentUtils.getDynamicContentByName(getDocument(), "eventLocation", false);
+        String eventLocationJson = getFormFieldValue( "eventLocation", false);
         JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(eventLocationJson);
         AbsDsdArticle location = dsdParserUtils.toDsdArticle(article, getLocale());
         if (! (location instanceof EventLocation)){
@@ -87,6 +93,16 @@ public class Event extends AbsDsdArticle {
     @Override
     public String getStructureKey() {
         return DSD_STRUCTURE_KEYS.Event.name();
+    }
+
+    public String[] getRegistrationsStructureKey() {
+
+        final DSD_REGISTRATION_STRUCTURE_KEYS[] values = DSD_REGISTRATION_STRUCTURE_KEYS.values();
+        final String[] structureKeys = new String[values.length];
+        for (int i = 0; i < values.length; i++) {
+            structureKeys[i] = values[i].name();
+        }
+        return structureKeys;
     }
 
     public EventLocation getEventLocation(){
@@ -152,7 +168,7 @@ public class Event extends AbsDsdArticle {
     }
 
     private void parseRegistrations(Locale locale) throws PortalException {
-        this.registrations = dsdParserUtils.getRegistrations(getCompanyId(), getGroupId(), getArticleId(), locale);
+        this.registrations = dsdParserUtils.getRegistrations(getCompanyId(), getGroupId(), getArticleId(), getRegistrationsStructureKey(),locale);
     }
 
 }

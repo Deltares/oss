@@ -12,7 +12,8 @@ import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchCo
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
-import nl.deltares.search.constans.FacetPortletKeys;
+import nl.deltares.search.constans.SearchModuleKeys;
+import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -23,7 +24,7 @@ import java.util.Optional;
 
 @Component(
         immediate = true,
-        property = "javax.portlet.name=" + FacetPortletKeys.DATE_RANGE_FACET_PORTLET,
+        property = "javax.portlet.name=" + SearchModuleKeys.DATE_RANGE_FACET_PORTLET,
         service = PortletSharedSearchContributor.class
 )
 public class DateRangeFacetPortletSharedSearchContributor implements PortletSharedSearchContributor {
@@ -43,7 +44,7 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
 
         String[] structureKeys = getStructureKeys(portletSharedSearchSettings);
         String dateFieldName = getDsdConfiguredValue("dsdRegistrationDateField", portletSharedSearchSettings);
-        _dsDsdJournalArticleUtils.contributeDsdDateRangeRegistrations(
+        _dsDsdJournalArticleUtils.queryDateRange(
                 groupId, startDate, endDate, structureKeys, dateFieldName, portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
 
     }
@@ -59,7 +60,7 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
 
     @SuppressWarnings("SameParameterValue")
     private boolean getBoolean(PortletSharedSearchSettings portletSharedSearchSettings, String booleanField){
-        Optional<String> showPastOptional = portletSharedSearchSettings.getParameter(booleanField);
+        Optional<String> showPastOptional = portletSharedSearchSettings.getParameterOptional(booleanField);
         if (showPastOptional.isPresent()){
             return Boolean.parseBoolean(showPastOptional.get());
         }
@@ -69,13 +70,16 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
 
     private Date getDate(PortletSharedSearchSettings portletSharedSearchSettings, String dateField) {
 
-        Optional<String> optional = portletSharedSearchSettings.getParameter(dateField);
+        Optional<String> optional = portletSharedSearchSettings.getParameterOptional(dateField);
         Locale locale = portletSharedSearchSettings.getThemeDisplay().getLocale();
-        if (optional.isPresent()) {
+        //check for parameter is in namespace of searchResultsPortlet
+        String dateValue = optional.orElseGet(() -> FacetUtils.getIteratorParameter(dateField, portletSharedSearchSettings.getRenderRequest()));
+
+        if (dateValue != null) {
             try {
-                return DateUtil.parseDate( "dd-MM-yyyy", optional.get(), locale);
+                return DateUtil.parseDate("dd-MM-yyyy", dateValue, locale);
             } catch (ParseException e) {
-                LOG.warn(String.format("Could not parse configured date %s: %s", optional.get(), e.getMessage()), e);
+                LOG.warn(String.format("Could not parse configured date %s: %s", dateValue, e.getMessage()), e);
             }
         }
         String dateText = getConfiguredValue(dateField, portletSharedSearchSettings);

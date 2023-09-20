@@ -1,10 +1,13 @@
 package nl.deltares.portal.utils;
 
-import com.liferay.portal.kernel.cache.MultiVMPoolUtil;
+
 import com.liferay.portal.kernel.cache.PortalCache;
+import com.liferay.portal.kernel.cache.PortalCacheHelperUtil;
+import com.liferay.portal.kernel.cache.PortalCacheManagerNames;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.util.PropsUtil;
 
 import java.io.*;
@@ -19,13 +22,12 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public abstract class HttpClientUtils {
+public abstract class HttpClientUtils implements BaseLocalService {
 
     private static final Log LOG = LogFactoryUtil.getLog(HttpClientUtils.class);
 
     /**
      * Copy an input stream to an outputstream
-     *
      */
     public static long stream(InputStream input, OutputStream output) throws IOException {
         try (
@@ -98,26 +100,26 @@ public abstract class HttpClientUtils {
                 result.write(buffer, 0, length);
             }
             // StandardCharsets.UTF_8.name() > JDK 7
-            return result.toString("UTF-8");
+            return result.toString(StandardCharsets.UTF_8.name());
         } finally {
             connection.disconnect();
         }
     }
 
-    public static String readError(HttpURLConnection connection) throws IOException {
-        try (InputStream is = connection.getErrorStream()) {
-            ByteArrayOutputStream result = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = is.read(buffer)) != -1) {
-                result.write(buffer, 0, length);
-            }
-            // StandardCharsets.UTF_8.name() > JDK 7
-            return result.toString("UTF-8");
-        } finally {
-            connection.disconnect();
-        }
-    }
+//    public static String readError(HttpURLConnection connection) throws IOException {
+//        try (InputStream is = connection.getErrorStream()) {
+//            ByteArrayOutputStream result = new ByteArrayOutputStream();
+//            byte[] buffer = new byte[1024];
+//            int length;
+//            while ((length = is.read(buffer)) != -1) {
+//                result.write(buffer, 0, length);
+//            }
+//            // StandardCharsets.UTF_8.name() > JDK 7
+//            return result.toString(StandardCharsets.UTF_8);
+//        } finally {
+//            connection.disconnect();
+//        }
+//    }
 
     public static byte[] readAllBytes(HttpURLConnection connection) throws IOException {
         try (InputStream is = connection.getInputStream()) {
@@ -166,7 +168,7 @@ public abstract class HttpClientUtils {
 
     public static String getCachedToken(String tokenKey, String expiryKey) {
         if (tokenKey == null) return null;
-        PortalCache<String, Serializable> gotoCache = MultiVMPoolUtil.getPortalCache("deltares", true);
+        PortalCache<String, Serializable> gotoCache = PortalCacheHelperUtil.getPortalCache(PortalCacheManagerNames.SINGLE_VM, "deltares");
         String token = (String) gotoCache.get(tokenKey);
         if (token != null) {
             if (expiryKey == null) return token;
@@ -179,17 +181,16 @@ public abstract class HttpClientUtils {
     }
 
     public static void removeCachedToken(String key) {
-        PortalCache<String, Serializable> keycloakCache = MultiVMPoolUtil.getPortalCache("deltares", true);
+        PortalCache<String, Serializable> keycloakCache = PortalCacheHelperUtil.getPortalCache(PortalCacheManagerNames.SINGLE_VM, "deltares");
         keycloakCache.remove(key);
     }
 
-    public static boolean setCachedToken(String tokenKey, String expiryKey, String token, long expiryTimeMillis) {
-        PortalCache<String, Serializable> keycloakCache = MultiVMPoolUtil.getPortalCache("deltares", true);
+    public static void setCachedToken(String tokenKey, String expiryKey, String token, long expiryTimeMillis) {
+        PortalCache<String, Serializable> keycloakCache = PortalCacheHelperUtil.getPortalCache(PortalCacheManagerNames.SINGLE_VM, "deltares");
         keycloakCache.put(tokenKey, token);
         if (expiryKey != null) {
             keycloakCache.put(expiryKey, expiryTimeMillis);
         }
-        return true;
     }
 
     public static String getProperty(String propertyKey) {
@@ -210,7 +211,7 @@ public abstract class HttpClientUtils {
         if (chunks.length > 0) {
             final String header = new String(urlDecoder.decode(chunks[0]));
             map = JsonContentUtils.parseJsonToMap(header);
-            if (chunks.length >1) {
+            if (chunks.length > 1) {
                 final String payload = new String(urlDecoder.decode(chunks[1]));
                 map.putAll(JsonContentUtils.parseJsonToMap(payload));
             }

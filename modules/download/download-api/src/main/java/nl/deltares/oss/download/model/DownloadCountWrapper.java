@@ -14,17 +14,11 @@
 
 package nl.deltares.oss.download.model;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.portal.kernel.model.ModelWrapper;
-import com.liferay.portal.kernel.service.ServiceContext;
-
-import java.io.Serializable;
+import com.liferay.portal.kernel.model.wrapper.BaseModelWrapper;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * <p>
@@ -35,22 +29,12 @@ import java.util.Objects;
  * @see DownloadCount
  * @generated
  */
-@ProviderType
 public class DownloadCountWrapper
+	extends BaseModelWrapper<DownloadCount>
 	implements DownloadCount, ModelWrapper<DownloadCount> {
 
 	public DownloadCountWrapper(DownloadCount downloadCount) {
-		_downloadCount = downloadCount;
-	}
-
-	@Override
-	public Class<?> getModelClass() {
-		return DownloadCount.class;
-	}
-
-	@Override
-	public String getModelClassName() {
-		return DownloadCount.class.getName();
+		super(downloadCount);
 	}
 
 	@Override
@@ -100,15 +84,8 @@ public class DownloadCountWrapper
 	}
 
 	@Override
-	public Object clone() {
-		return new DownloadCountWrapper((DownloadCount)_downloadCount.clone());
-	}
-
-	@Override
-	public int compareTo(
-		nl.deltares.oss.download.model.DownloadCount downloadCount) {
-
-		return _downloadCount.compareTo(downloadCount);
+	public DownloadCount cloneWithOriginalValues() {
+		return wrap(model.cloneWithOriginalValues());
 	}
 
 	/**
@@ -118,7 +95,7 @@ public class DownloadCountWrapper
 	 */
 	@Override
 	public long getCompanyId() {
-		return _downloadCount.getCompanyId();
+		return model.getCompanyId();
 	}
 
 	/**
@@ -128,7 +105,7 @@ public class DownloadCountWrapper
 	 */
 	@Override
 	public int getCount() {
-		return _downloadCount.getCount();
+		return model.getCount();
 	}
 
 	/**
@@ -138,12 +115,7 @@ public class DownloadCountWrapper
 	 */
 	@Override
 	public long getDownloadId() {
-		return _downloadCount.getDownloadId();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _downloadCount.getExpandoBridge();
+		return model.getDownloadId();
 	}
 
 	/**
@@ -153,7 +125,7 @@ public class DownloadCountWrapper
 	 */
 	@Override
 	public long getGroupId() {
-		return _downloadCount.getGroupId();
+		return model.getGroupId();
 	}
 
 	/**
@@ -163,7 +135,7 @@ public class DownloadCountWrapper
 	 */
 	@Override
 	public long getId() {
-		return _downloadCount.getId();
+		return model.getId();
 	}
 
 	/**
@@ -173,42 +145,12 @@ public class DownloadCountWrapper
 	 */
 	@Override
 	public long getPrimaryKey() {
-		return _downloadCount.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _downloadCount.getPrimaryKeyObj();
-	}
-
-	@Override
-	public int hashCode() {
-		return _downloadCount.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _downloadCount.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _downloadCount.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _downloadCount.isNew();
+		return model.getPrimaryKey();
 	}
 
 	@Override
 	public void persist() {
-		_downloadCount.persist();
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_downloadCount.setCachedModel(cachedModel);
+		model.persist();
 	}
 
 	/**
@@ -218,7 +160,7 @@ public class DownloadCountWrapper
 	 */
 	@Override
 	public void setCompanyId(long companyId) {
-		_downloadCount.setCompanyId(companyId);
+		model.setCompanyId(companyId);
 	}
 
 	/**
@@ -228,7 +170,7 @@ public class DownloadCountWrapper
 	 */
 	@Override
 	public void setCount(int count) {
-		_downloadCount.setCount(count);
+		model.setCount(count);
 	}
 
 	/**
@@ -238,24 +180,7 @@ public class DownloadCountWrapper
 	 */
 	@Override
 	public void setDownloadId(long downloadId) {
-		_downloadCount.setDownloadId(downloadId);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-
-		_downloadCount.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_downloadCount.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
-		_downloadCount.setExpandoBridgeAttributes(serviceContext);
+		model.setDownloadId(downloadId);
 	}
 
 	/**
@@ -265,7 +190,7 @@ public class DownloadCountWrapper
 	 */
 	@Override
 	public void setGroupId(long groupId) {
-		_downloadCount.setGroupId(groupId);
+		model.setGroupId(groupId);
 	}
 
 	/**
@@ -275,12 +200,7 @@ public class DownloadCountWrapper
 	 */
 	@Override
 	public void setId(long id) {
-		_downloadCount.setId(id);
-	}
-
-	@Override
-	public void setNew(boolean n) {
-		_downloadCount.setNew(n);
+		model.setId(id);
 	}
 
 	/**
@@ -290,82 +210,12 @@ public class DownloadCountWrapper
 	 */
 	@Override
 	public void setPrimaryKey(long primaryKey) {
-		_downloadCount.setPrimaryKey(primaryKey);
+		model.setPrimaryKey(primaryKey);
 	}
 
 	@Override
-	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
-		_downloadCount.setPrimaryKeyObj(primaryKeyObj);
+	protected DownloadCountWrapper wrap(DownloadCount downloadCount) {
+		return new DownloadCountWrapper(downloadCount);
 	}
-
-	@Override
-	public com.liferay.portal.kernel.model.CacheModel
-		<nl.deltares.oss.download.model.DownloadCount> toCacheModel() {
-
-		return _downloadCount.toCacheModel();
-	}
-
-	@Override
-	public nl.deltares.oss.download.model.DownloadCount toEscapedModel() {
-		return new DownloadCountWrapper(_downloadCount.toEscapedModel());
-	}
-
-	@Override
-	public String toString() {
-		return _downloadCount.toString();
-	}
-
-	@Override
-	public nl.deltares.oss.download.model.DownloadCount toUnescapedModel() {
-		return new DownloadCountWrapper(_downloadCount.toUnescapedModel());
-	}
-
-	@Override
-	public String toXmlString() {
-		return _downloadCount.toXmlString();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-
-		if (!(obj instanceof DownloadCountWrapper)) {
-			return false;
-		}
-
-		DownloadCountWrapper downloadCountWrapper = (DownloadCountWrapper)obj;
-
-		if (Objects.equals(
-				_downloadCount, downloadCountWrapper._downloadCount)) {
-
-			return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	public DownloadCount getWrappedModel() {
-		return _downloadCount;
-	}
-
-	@Override
-	public boolean isEntityCacheEnabled() {
-		return _downloadCount.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _downloadCount.isFinderCacheEnabled();
-	}
-
-	@Override
-	public void resetOriginalValues() {
-		_downloadCount.resetOriginalValues();
-	}
-
-	private final DownloadCount _downloadCount;
 
 }

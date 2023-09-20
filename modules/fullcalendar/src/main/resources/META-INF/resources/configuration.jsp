@@ -45,16 +45,24 @@
             type="hidden"
             value="<%= configurationRenderURL %>"
     />
-
-    <aui:fieldset>
+    <div class="lfr-form-content">
+        <div class="sheet sheet-lg">
+            <div aria-multiselectable="true" class>
+    <aui:fieldset id="fc_config" collapsible="true" label="Calendar config">
         <aui:input
                 label="Calender Base URL"
                 name="baseUrl"
                 value="<%= baseUrl %>"
-                >
+                />
+        <aui:input
+                label="Defaul calendar view"
+                name="defaultView"
+                helpMessage="full-calendar.defaultValue"
+                value="<%= defaultView %>"
+        />
+    </aui:fieldset>
 
-        </aui:input>
-
+    <aui:fieldset id="colormap_config" collapsible="true" label="Color Map">
         <%
             Map<String, String> map;
             try {
@@ -72,16 +80,10 @@
         </aui:input>
         <% } %>
 
-        <aui:input
-                label="Defaul calendar view"
-                name="defaultView"
-                helpMessage="full-calendar.defaultValue"
-                value="<%= defaultView %>"
-        >
-
-        </aui:input>
     </aui:fieldset>
-
+            </div>
+        </div>
+    </div>
     <aui:button-row>
         <aui:button type="submit" />
     </aui:button-row>

@@ -133,11 +133,6 @@ public abstract class AbstractDataRequest implements DataRequest {
         this.manager = manager;
     }
 
-    @Override
-    public boolean isCached(){
-        return false;
-    }
-
     protected File getExportDir() throws IOException {
         if (tempDir != null) return tempDir;
         String property = System.getProperty("java.io.tmpdir");

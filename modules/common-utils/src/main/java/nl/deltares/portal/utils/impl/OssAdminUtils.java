@@ -9,8 +9,10 @@ import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
 import com.liferay.document.library.kernel.service.DLFolderLocalServiceUtil;
 import com.liferay.message.boards.exception.NoSuchMailingListException;
-import com.liferay.message.boards.kernel.service.MBThreadFlagLocalServiceUtil;
-import com.liferay.message.boards.model.*;
+import com.liferay.message.boards.model.MBCategory;
+import com.liferay.message.boards.model.MBMailingList;
+import com.liferay.message.boards.model.MBMessage;
+import com.liferay.message.boards.model.MBThread;
 import com.liferay.message.boards.service.*;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.*;
@@ -117,9 +119,9 @@ public class OssAdminUtils implements AdminUtils {
         serviceContext.setScopeGroupId(loggedInUser.getGroupId());
         final Role defaultGroupRole = RoleLocalServiceUtil.getDefaultGroupRole(loggedInUser.getGroupId());
         final User user = UserLocalServiceUtil.addUser(loggedInUser.getUserId(), companyId, true,
-                null, null, false, userName, registrationEmail, 0, null,
+                null, null, false, userName, registrationEmail,
                 locale, firstName, null, lastName, 0, 0, true,
-                1, 1, 1970, null, loggedInUser.getGroupIds(),
+                1, 1, 1970, null, 1,loggedInUser.getGroupIds(),
                 loggedInUser.getOrganizationIds(), new long[]{defaultGroupRole.getRoleId()}, loggedInUser.getUserGroupIds(), false, serviceContext);
         user.setPasswordReset(false);
         UserLocalServiceUtil.updateUser(user);

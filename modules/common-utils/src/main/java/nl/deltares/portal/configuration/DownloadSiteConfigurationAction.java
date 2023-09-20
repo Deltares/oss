@@ -52,14 +52,12 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
 
         try {
             ThemeDisplay themeDisplay = (ThemeDisplay) httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY);
-            Map<String, String> templateMap = getTemplateMap(themeDisplay, _configurationProvider);
-            httpServletRequest.setAttribute("templateMap", templateMap);
             httpServletRequest.setAttribute("contactURL", getParsedJsonParameter(themeDisplay, _configurationProvider, "contactURL"));
             httpServletRequest.setAttribute("privacyURL", getParsedJsonParameter(themeDisplay, _configurationProvider, "privacyURL"));
             httpServletRequest.setAttribute("languageIds", getAvailableLanguageIds(httpServletRequest));
 
         } catch (PortalException e) {
-            throw new PortletException("Could not get 'templateMap' for DownloadSiteConfiguration: " + e.getMessage(), e);
+            throw new PortletException("Could not get configuration for DownloadSiteConfiguration: " + e.getMessage(), e);
         }
 
         super.include(portletConfig, httpServletRequest, httpServletResponse);
@@ -79,7 +77,6 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
         String bccToEmail = ParamUtil.getString(actionRequest, "bccToEmail");
         String bannerURL = ParamUtil.getString(actionRequest, "bannerURL");
         boolean isSendEmails = ParamUtil.getBoolean(actionRequest, "enableEmails");
-        Map<String, String> templateMap = convertTemplatesToMap(actionRequest);
 
         Settings settings = SettingsFactoryUtil.getSettings(
                 new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), DownloadSiteConfiguration.class.getName()));
@@ -95,7 +92,6 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
         modifiableSettings.setValue("replyToEmail", replyToEmail);
         modifiableSettings.setValue("bccToEmail", bccToEmail);
         modifiableSettings.setValue("enableEmails", String.valueOf(isSendEmails));
-        modifiableSettings.setValue("templateMap", JsonContentUtils.formatMapToJson(templateMap));
         modifiableSettings.store();
 
         super.processAction(portletConfig, actionRequest, actionResponse);
@@ -106,35 +102,6 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
     @Reference
     protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
         _configurationProvider = configurationProvider;
-    }
-
-    private Map<String, String> convertTemplatesToMap(ActionRequest actionRequest) {
-
-        HashMap<String, String> map = new HashMap<>();
-        int row = 0;
-        String portletId;
-        while(!(portletId = ParamUtil.getString(actionRequest, "portletId-" + row)).isEmpty()){
-            if (!portletId.startsWith("enter")) {
-                final String type = ParamUtil.getString(actionRequest, "templateId-" + row);
-                map.put(portletId, type);
-            }
-            row++;
-        }
-        return map;
-    }
-
-    public static Map<String, String> getTemplateMap(ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider) throws PortalException {
-
-        DownloadSiteConfiguration siteConfiguration;
-        try {
-            siteConfiguration = configurationProvider
-                    .getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getSiteGroupId());
-
-        } catch (ConfigurationException e) {
-            throw new PortalException(String.format("Error getting Download siteConfiguration: %s", e.getMessage()));
-        }
-        String typeMapJson = siteConfiguration.templateMap();
-        return JsonContentUtils.parseJsonToMap(typeMapJson);
     }
 
     public static Map<String, String> getParsedJsonParameter(ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider, String parameterId) throws PortalException {
@@ -149,9 +116,6 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
         }
         String json;
         switch (parameterId){
-            case "templateMap":
-                json = siteConfiguration.templateMap();
-                break;
             case "contactURL":
                 json = siteConfiguration.contactURL();
                 break;

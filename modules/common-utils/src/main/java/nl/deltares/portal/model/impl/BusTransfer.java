@@ -6,10 +6,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
-import nl.deltares.portal.utils.XmlContentUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,10 +31,9 @@ public class BusTransfer extends Registration {
         dateTimeFormatter.setTimeZone(TimeZone.getTimeZone(getTimeZoneId()));
 
         try {
-            Document document = getDocument();
-            final String name = XmlContentUtils.getDynamicContentByName(document, "Name", true);
-            this.name = name == null? getTitle() : name;
-            initDates(document);
+            final String name = getFormFieldValue("Name", true);
+            this.name = name == null ? getTitle() : name;
+            initDates(null);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -54,7 +50,7 @@ public class BusTransfer extends Registration {
             startTimevalue = times.get(0);
             endTimevalue = times.get(times.size() - 1);
         }
-        transferDay = XmlContentUtils.getDynamicContentByName(document, "registrationDate", false);
+        transferDay = getFormFieldValue("registrationDate", false);
         startTime = dateTimeFormatter.parse(String.format("%sT%s", transferDay, startTimevalue));
         endTime = dateTimeFormatter.parse(String.format("%sT%s", transferDay, endTimevalue));
     }
@@ -64,7 +60,7 @@ public class BusTransfer extends Registration {
         return DSD_STRUCTURE_KEYS.Bustransfer.name();
     }
 
-    private void loadStops(){
+    private void loadStops() {
         try {
             parseStops();
         } catch (PortalException e) {
@@ -76,23 +72,25 @@ public class BusTransfer extends Registration {
     private void parseStops() throws PortalException {
         this.stops = new ArrayList<>();
         this.times = new ArrayList<>();
-        NodeList stopNodes = XmlContentUtils.getDynamicElementsByName(getDocument(), "location");
-        for (int i = 0; i < Objects.requireNonNull(stopNodes).getLength(); i++) {
-            Node stopNode = stopNodes.item(i);
-            String locationJson = XmlContentUtils.getDynamicContentForNode(stopNode);
-            JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(locationJson);
-            this.stops.add(article);
-            this.times.add(XmlContentUtils.getDynamicContentByName(stopNode, "time", false));
+        List<String> locationsJson = getFormFieldValues("location", false);
+        List<String> timesJson = getFormFieldValues("time", false);
+        for (int i = 0; i < locationsJson.size(); i++) {
+            String locationJson = locationsJson.get(i);
+            String timeJson = timesJson.get(i);
+            this.stops.add(JsonContentUtils.jsonReferenceToJournalArticle(locationJson));
+            this.times.add(timeJson);
         }
     }
+
     public List<JournalArticle> getStops() {
         if (stops == null) loadStops();
         return Collections.unmodifiableList(stops);
     }
 
-    public List<String> getTimes()  {
+    public List<String> getTimes() {
         if (stops == null) loadStops();
-        return Collections.unmodifiableList(times);}
+        return Collections.unmodifiableList(times);
+    }
 
     public JournalArticle getLocation(String time) {
         if (stops == null) loadStops();
@@ -109,11 +107,11 @@ public class BusTransfer extends Registration {
         return null;
     }
 
-    public String getTransferDay(){
+    public String getTransferDay() {
         return transferDay;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 }

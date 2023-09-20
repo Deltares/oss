@@ -1,6 +1,6 @@
 Bundle-Name: common-utils
-Bundle-SymbolicName: nl.worth.portal.common-utils
-Bundle-Version: 1.0.0
+Bundle-SymbolicName: nl.deltares.portal.common-utils
+Bundle-Version: 1.0.18
 Export-Package: \
   nl.deltares.portal.utils, \
   nl.deltares.portal.utils.impl, \
@@ -22,3 +22,5 @@ Import-Package: \
   *
 -liferay-aggregate-resource-bundles:
   global-resource-bundle
+-fixupmessages: Classes found in the wrong directory: ...;is:=ignore
+-noee: true

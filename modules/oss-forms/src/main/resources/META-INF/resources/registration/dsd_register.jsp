@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
+<%@ taglib uri="http://xmlns.jcp.org/portlet_3_0" prefix="portlet" %>
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
 <%@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %>
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
@@ -175,7 +175,7 @@
 
 <aui:script use="liferay-form">
 
-    validateFirstStep = function() {
+    const validateFirstStep = function() {
 
         if (getCurrentStep("<portlet:namespace />fm") > 1) return true;
 
@@ -185,53 +185,45 @@
         if (errMessage) {
             alert(errMessage);
         }
-        registerOther();
-
+        // registerOther();
         return errMessage == null;
     }
 
-    preSubmitAction = function (){
+    const preSubmitAction = function (){
         shoppingCart.clearCart();
     }
 
-    checkSelection = function (){
-        DsdRegistrationFormsUtil.checkSelection("<portlet:namespace />");
-    }
-
-    updateBadge = function (){
-        DsdRegistrationFormsUtil.updateBadge('<portlet:namespace />');
-    }
-
-    registerOther = function (){
-        let registerOther = $(document.getElementById("<portlet:namespace />registration_other"))[0].checked;
-        let firstName = $(document.getElementById("<portlet:namespace />first_name"))[0];
-        let lastName = $(document.getElementById("<portlet:namespace />last_name"))[0];
-        let email = $(document.getElementById("<portlet:namespace />email"))[0];
-        firstName.disabled = !registerOther;
-        lastName.disabled = !registerOther;
-        email.disabled = !registerOther;
-        if (registerOther){
-            firstName.classList.remove("disabled");
-            lastName.classList.remove("disabled");
-            email.classList.remove("disabled");
-        } else {
-            firstName.classList.add("disabled");
-            lastName.classList.add("disabled");
-            email.classList.add("disabled");
-
-            firstName.value = firstName.getAttribute('original_value');
-            lastName.value = lastName.getAttribute('original_value');
-            email.value = email.getAttribute('original_value');
-        }
-    }
-
     $(document).ready(function() {
-        let form = Liferay.Form.get("<portlet:namespace/>fm").formValidator;
+        let namespace = "<portlet:namespace />";
+        let form = Liferay.Form.get(namespace + "fm").formValidator;
+        form.validateFirstStep = validateFirstStep;
+        form.preSubmitAction = preSubmitAction;
         $('.bs-stepper').formStepper(form);
-        updateBadge();
-        checkSelection();
-        $(document.getElementById("<portlet:namespace />use_organization_address")).change(function() {
-            CommonFormsUtil.updatePaymentAddress('<portlet:namespace />', this.checked);
+        DsdRegistrationFormsUtil.updateBadge(namespace);
+        DsdRegistrationFormsUtil.checkSelection(namespace);
+        let badgeListeners = $(document.getElementsByClassName("update-badge"));
+        [...badgeListeners].forEach(function (item) {
+            item.onchange = function (){
+                DsdRegistrationFormsUtil.updateBadge(namespace);
+            };
+        });
+        let parents = $(document.getElementsByClassName("parent-registration"));
+        [...parents].forEach(function (registration) {
+            registration.onchange = function (){
+                DsdRegistrationFormsUtil.checkSelection(namespace);
+            };
+        });
+        let children = $(document.getElementsByClassName("child-registration"));
+        [...children].forEach(function (registration) {
+            registration.onchange = function (){
+                DsdRegistrationFormsUtil.checkSelection(namespace);
+            };
+        });
+        $(document.getElementById(namespace + "registration_other")).change(function() {
+            CommonFormsUtil.registerOther(namespace);
+        });
+        $(document.getElementById(namespace + "use_organization_address")).change(function() {
+            CommonFormsUtil.updatePaymentAddress(namespace, this.checked);
         });
 
         <c:if test='<%= !SessionErrors.isEmpty(liferayPortletRequest) %>'>shoppingCart.clearCart()</c:if>

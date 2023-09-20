@@ -11,7 +11,7 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.portal.configuration.DSDSiteConfiguration;
+import nl.deltares.portal.configuration.DownloadSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Download;
 import nl.deltares.portal.model.impl.Terms;
@@ -36,12 +36,14 @@ import static nl.deltares.portal.utils.LocalizationUtils.getLocalizedValue;
 @Component(
         immediate = true,
         property = {
+                "javax.portlet.version=3.0",
                 "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.header-portlet-javascript=/lib/download.js",
                 "com.liferay.portlet.header-portlet-javascript=/lib/common.js",
                 "com.liferay.portlet.instanceable=false",
                 "javax.portlet.display-name=Download Form",
+                "javax.portlet.init-param.config-template=/download/configuration.jsp",
                 "javax.portlet.init-param.template-path=/",
                 "javax.portlet.init-param.view-template=/download/download.jsp",
                 "javax.portlet.name=" + OssConstants.DOWNLOADFORM,
@@ -105,7 +107,7 @@ public class DownloadFormPortlet extends MVCPortlet {
             }
             try {
                 final String language = themeDisplay.getLocale().getLanguage();
-                DSDSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
+                DownloadSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
                 request.setAttribute("privacyURL", getLocalizedValue(dsdConfig.privacyURL(), language));
                 request.setAttribute("contactURL", getLocalizedValue(dsdConfig.contactURL(), language));
             } catch (Exception e) {
@@ -133,13 +135,15 @@ public class DownloadFormPortlet extends MVCPortlet {
                 request.setAttribute("ddmTemplateKey", ddmTemplate.getTemplateKey()));
 
         request.setAttribute("dsdParserUtils", dsdParserUtils);
-        final List<Download> downloads = toDownloads(themeDisplay.getScopeGroupId(), downloadIds);
-        request.setAttribute("downloads", downloads);
-        request.setAttribute("subscriptionSelections", getSubscriptionSelection(user.getEmailAddress(), downloads));
-        request.setAttribute("terms", getTerms(downloads));
-        final boolean[] requiredTypes = getRequiredTypes(downloads);
-        request.setAttribute("showLockTypes" , requiredTypes[0]);
-        request.setAttribute("showLicenseTypes" , requiredTypes[1]);
+        if (downloadIds.size() > 0) {
+            final List<Download> downloads = toDownloads(themeDisplay.getScopeGroupId(), downloadIds);
+            request.setAttribute("downloads", downloads);
+            request.setAttribute("subscriptionSelections", getSubscriptionSelection(user.getEmailAddress(), downloads));
+            request.setAttribute("terms", getTerms(downloads));
+            final boolean[] requiredTypes = getRequiredTypes(downloads);
+            request.setAttribute("showLockTypes", requiredTypes[0]);
+            request.setAttribute("showLicenseTypes", requiredTypes[1]);
+        }
         super.render(request, response);
     }
 

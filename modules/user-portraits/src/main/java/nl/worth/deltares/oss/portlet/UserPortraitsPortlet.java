@@ -1,180 +1,170 @@
 package nl.worth.deltares.oss.portlet;
 
 
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Image;
-import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.cache.PortalCache;
+import com.liferay.portal.kernel.cache.PortalCacheHelperUtil;
+import com.liferay.portal.kernel.cache.PortalCacheManagerNames;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.security.SecureRandom;
-import com.liferay.portal.kernel.service.ImageLocalService;
-import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import nl.deltares.tasks.DataRequest;
+import nl.deltares.tasks.DataRequestManager;
 import nl.worth.deltares.oss.portlet.constants.UserPortraitsPortletKeys;
+import nl.worth.deltares.tasks.impl.UserPortraitsRequest;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.Portlet;
-import javax.portlet.PortletException;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
+import javax.portlet.*;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.Serializable;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 
 /**
  * @author Pier-Angelo Gaetani @ Worth Systems
  */
 @Component(
-	immediate = true,
-	property = {
-		"com.liferay.portlet.display-category=OSS",
-		"com.liferay.portlet.instanceable=false",
-		"com.liferay.portlet.footer-portlet-css=/css/main.css",
-		"com.liferay.portlet.footer-portlet-javascript=/js/main.js",
-		"javax.portlet.init-param.template-path=/",
-		"javax.portlet.init-param.view-template=/view.jsp",
-		"javax.portlet.name=" + UserPortraitsPortletKeys.USER_PORTRAITS,
-		"javax.portlet.resource-bundle=content.Language",
-		"javax.portlet.security-role-ref=power-user,user"
-	},
-	service = Portlet.class
+        immediate = true,
+        property = {
+                "com.liferay.portlet.display-category=OSS",
+                "com.liferay.portlet.instanceable=false",
+                "com.liferay.portlet.footer-portlet-css=/css/main.css",
+                "com.liferay.portlet.header-portlet-javascript=/lib/userportraits.js",
+                "javax.portlet.init-param.template-path=/",
+                "javax.portlet.init-param.view-template=/view.jsp",
+                "javax.portlet.name=" + UserPortraitsPortletKeys.USER_PORTRAITS,
+                "javax.portlet.resource-bundle=content.Language",
+                "javax.portlet.security-role-ref=power-user,user",
+                "javax.portlet.version=3.0"
+        },
+        service = Portlet.class
 )
 public class UserPortraitsPortlet extends MVCPortlet {
+    @Override
+    public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 
-	private static final Log LOG = LogFactoryUtil.getLog(UserPortraitsPortlet.class);
+        ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+        final String id = getId(themeDisplay);
+        final String cachedPortraits = getCachedPortraits(id);
+        if (cachedPortraits != null) {
+            renderRequest.setAttribute("userportraitdata", cachedPortraits);
+        }
+        super.render(renderRequest, renderResponse);
+    }
 
-	private static final int DEFAULT_PORTRAITS = 12;
+    @Override
+    public void serveResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws IOException {
+        ThemeDisplay themeDisplay = (ThemeDisplay) resourceRequest
+                .getAttribute(WebKeys.THEME_DISPLAY);
 
-	private final SecureRandom random = new SecureRandom();
+        String action = ParamUtil.getString(resourceRequest, "action");
 
-	public void render(RenderRequest request, RenderResponse response) throws IOException, PortletException {
+        final String id = getId(themeDisplay);
 
-		ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
-		// TODO: make portrait load amount configurable
-		List<String> randomPortraits = getRandomPortraits(themeDisplay, DEFAULT_PORTRAITS);
-		Principal userPrincipal = request.getUserPrincipal();
-		if (userPrincipal != null) {
-			randomPortraits.add(0, getPortrait(Long.parseLong(userPrincipal.getName()), themeDisplay));
-		}
-		request.setAttribute("userPortraitsList",
-				randomPortraits);
+        if ("start".equals(action)) {
+            final String cachedPortraits = getCachedPortraits(id);
+            if (cachedPortraits == null) {
+                getUserPortraitRequest(id, themeDisplay);
+            }
+            writeToResponse(resourceResponse, cachedPortraits);
+        } else if ("download".equals(action)) {
+            final String cachedPortraits = getCachedPortraits(id);
+            if (cachedPortraits != null) {
+                writeToResponse(resourceResponse, cachedPortraits);
+            } else {
+                final DataRequest downloadRequest = DataRequestManager.getInstance().getDataRequest(id);
+                if (Objects.requireNonNull(downloadRequest.getStatus()) == DataRequest.STATUS.available) {
+                    final File dataFile = downloadRequest.getDataFile();
+                    try {
+                        if (dataFile != null && dataFile.exists()) {
+                            final byte[] content = Files.readAllBytes(dataFile.toPath());
+                            final String data = new String(content, StandardCharsets.UTF_8);
+                            cachePortraits(id, data);
+                            writeToResponse(resourceResponse, data);
+                        }
+                    } catch (Exception e) {
+                        DataRequestManager.getInstance().writeError(e.getMessage(), resourceResponse);
+                    } finally {
+                        DataRequestManager.getInstance().removeDataRequest(downloadRequest);
+                    }
+                } else {
+                    resourceResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
+            }
 
-		super.render(request, response);
-	}
+        } else if ("updateStatus".equals(action)) {
+            DataRequestManager.getInstance().updateStatus(id, resourceResponse);
+        } else {
+            DataRequestManager.getInstance().writeError("Unsupported Action error: " + action, resourceResponse);
+        }
+    }
 
-	private String addUserId(String portraitURL, long userId) {
-		return portraitURL + "&user_id=" + userId;
-	}
+    private void writeToResponse(ResourceResponse resourceResponse, String jsonDownload) {
+        resourceResponse.setContentType("application/json");
+        if (jsonDownload == null) {
+            resourceResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        } else {
+            resourceResponse.setStatus(HttpServletResponse.SC_OK);
+            resourceResponse.setContentLength(jsonDownload.getBytes(StandardCharsets.UTF_8).length);
+            try (Writer writer = resourceResponse.getWriter()) {
+                writer.write(jsonDownload);
+            } catch (IOException e) {
+                resourceResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        }
 
-	private String getPortrait(long userId, ThemeDisplay themeDisplay) {
+    }
 
-		try {
-			User user = userLocalService.getUser(userId);
-			if (user.getPortraitId() != 0L){
-				Image image = imageLocalService.getImage(user.getPortraitId());
-				if (image == null || image.getTextObj() == null){
-					//This portraitId is not valid so remove it.
-					LOG.warn(String.format("Un-setting portrait %d for user %s", user.getPortraitId(),  user.getScreenName()));
-					user.setPortraitId(0);
-					userLocalService.updateUser(user);
-					return "/o/user-portraits/images/missing_avatar.png";
-				}
-				return user.getPortraitURL(themeDisplay);
-			}
-		} catch (Exception e){
-			LOG.error("Error retrieving portrait URL for user " + userId, e);
-		}
-		return "/o/user-portraits/images/missing_avatar.png";
-	}
+    @SuppressWarnings("UnusedReturnValue")
+    private DataRequest getUserPortraitRequest(String id, ThemeDisplay themeDisplay) throws IOException {
 
-	private List<String> getRandomPortraits(ThemeDisplay themeDisplay, int number) {
+        DataRequestManager instance = DataRequestManager.getInstance();
+        DataRequest dataRequest = instance.getDataRequest(id);
+        if (dataRequest == null) {
 
-		List<String> portraitUrlList = new ArrayList<>();
+            dataRequest = new UserPortraitsRequest(id, themeDisplay.getUserId(), themeDisplay);
+            instance.addToQueue(dataRequest);
+        } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
+            instance.removeDataRequest(dataRequest);
+        }
+        return dataRequest;
+    }
 
-		int maxIterations = 10;
-		int currentIteration = 0;
-		while (portraitUrlList.size() < number && currentIteration < maxIterations){
-			currentIteration++;
-			try {
-				Set<User> usersWithPortraits = getRandomUsersWithPortrait(themeDisplay, number);
+    private static String getId(ThemeDisplay themeDisplay) {
+        return UserPortraitsRequest.class.getName().concat("_").concat(String.valueOf(themeDisplay.getCompanyId()))
+                .concat("_").concat(String.valueOf(themeDisplay.getSiteGroupId()));
+    }
 
-				for (User user : usersWithPortraits) {
-					String portraitURL = user.getPortraitURL(themeDisplay);
-					portraitUrlList.add(addUserId(portraitURL, user.getUserId()));
-				}
-			} catch (PortalException e) {
-				LOG.error("Error retrieving portrait URLs", e);
-			}
-		}
+    private void cachePortraits(String id, String data) {
+        long expTimeMillis = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10);
+        String expiryKey = id + "_expirytime";
+        PortalCache<String, Serializable> portalCache =
+                PortalCacheHelperUtil.getPortalCache(PortalCacheManagerNames.SINGLE_VM, "deltares");
+        portalCache.put(id, data);
+        portalCache.put(expiryKey, expTimeMillis);
+    }
 
-		return portraitUrlList;
-	}
+    private String getCachedPortraits(String id) {
+        if (id == null) return null;
+        PortalCache<String, Serializable> cache = PortalCacheHelperUtil.getPortalCache(PortalCacheManagerNames.SINGLE_VM, "deltares");
+        String data = (String) cache.get(id);
+        if (data != null) {
+            final String expiryKey = id + "_expirytime";
+            Long expiryTime = (Long) cache.get(expiryKey);
+            if (expiryTime != null && expiryTime > System.currentTimeMillis()) {
+                return data;
+            } else {
+                cache.remove(id);
+                cache.remove(expiryKey);
+            }
+        }
+        return null;
+    }
 
-	private Set<User> getRandomUsersWithPortrait(ThemeDisplay themeDisplay ,int number) {
-
-		Set<User> usersWithPortrait = new HashSet<>();
-
-		//Retrieve only 1000 users to search for portraits. Start position is random.
-		int allUserCount = userLocalService.getUsersCount();
-
-		int countUsersWithPortrait = 0;
-
-		int startIndex;
-		int endIndex;
-		if (allUserCount < 1000){
-			startIndex = 0;
-			endIndex = allUserCount;
-		} else {
-			startIndex = random.nextInt(allUserCount - 1000);
-			endIndex = startIndex + 1000;
-		}
-
-		List<User> allUsers = userLocalService.getCompanyUsers(themeDisplay.getCompanyId(),
-				startIndex, endIndex);
-
-		for (User user : allUsers) {
-			if (countUsersWithPortrait > number) break; // we have enough portraits
-			if (user.getPortraitId() != 0L) {
-
-				try {
-					Image image = imageLocalService.getImage(user.getPortraitId());
-					if (image == null || image.getTextObj() == null){
-						//This portraitId is not valid so remove it.
-						LOG.warn(String.format("Un-setting portrait %d for user %s", user.getPortraitId(),  user.getScreenName()));
-						user.setPortraitId(0);
-						userLocalService.updateUser(user);
-					} else {
-						//Found a portrait so add it.
-						usersWithPortrait.add(user);
-						countUsersWithPortrait++;
-					}
-				} catch (Exception e){
-					LOG.warn(String.format("Error getting portrait %d for user %s: %s", user.getPortraitId(),  user.getScreenName(), e.getMessage()));
-				}
-			}
-		}
-
-		return usersWithPortrait;
-	}
-
-
-	private UserLocalService userLocalService;
-	private ImageLocalService imageLocalService;
-
-	@Reference(unbind = "-")
-	private void setUserLocalService(UserLocalService userLocalService) {
-		this.userLocalService = userLocalService;
-	}
-
-	@Reference(unbind = "-")
-	private void setImageLocalService(ImageLocalService imageLocalService) {
-		this.imageLocalService = imageLocalService;
-	}
 }

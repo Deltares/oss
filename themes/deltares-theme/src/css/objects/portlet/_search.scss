@@ -1,3 +1,27 @@
+.date-title {
+  text-align: center;
+  color: white;
+}
+
+.date-title span {
+  font-size: 25px;
+  display: block;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.list-group-item-flex .autofit-col {
+  padding: 0;
+}
+
+.past-event {
+  background: #9B9B9B;
+}
+
+.upcoming-event {
+  background: #0D38E0;
+}
+
 div#main-content.columns-max #portlet_com_liferay_portal_search_web_portlet_SearchPortlet .row.search-layout.menu-column > .col-md-3 {
     display: none;
 }

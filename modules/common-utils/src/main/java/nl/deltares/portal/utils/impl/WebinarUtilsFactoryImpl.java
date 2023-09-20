@@ -14,6 +14,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 @Component(
+        immediate = true,
         service = WebinarUtilsFactory.class
 )
 public class WebinarUtilsFactoryImpl implements WebinarUtilsFactory {

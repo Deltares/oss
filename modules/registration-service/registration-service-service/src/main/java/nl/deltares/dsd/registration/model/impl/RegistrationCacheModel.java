@@ -14,11 +14,9 @@
 
 package nl.deltares.dsd.registration.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -35,22 +33,21 @@ import nl.deltares.dsd.registration.model.Registration;
  * @author Erik de Rooij @ Deltares
  * @generated
  */
-@ProviderType
 public class RegistrationCacheModel
 	implements CacheModel<Registration>, Externalizable {
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
+	public boolean equals(Object object) {
+		if (this == object) {
 			return true;
 		}
 
-		if (!(obj instanceof RegistrationCacheModel)) {
+		if (!(object instanceof RegistrationCacheModel)) {
 			return false;
 		}
 
 		RegistrationCacheModel registrationCacheModel =
-			(RegistrationCacheModel)obj;
+			(RegistrationCacheModel)object;
 
 		if (registrationId == registrationCacheModel.registrationId) {
 			return true;

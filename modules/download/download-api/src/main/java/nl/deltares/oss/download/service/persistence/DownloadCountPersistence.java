@@ -14,17 +14,12 @@
 
 package nl.deltares.oss.download.service.persistence;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
-
-import java.io.Serializable;
-
-import java.util.Map;
-import java.util.Set;
 
 import nl.deltares.oss.download.exception.NoSuchDownloadCountException;
 import nl.deltares.oss.download.model.DownloadCount;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The persistence interface for the download count service.
@@ -46,9 +41,6 @@ public interface DownloadCountPersistence
 	 *
 	 * Never modify or reference this interface directly. Always use {@link DownloadCountUtil} to access the download count persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this interface.
 	 */
-	@Override
-	public Map<Serializable, DownloadCount> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys);
 
 	/**
 	 * Returns the download count where groupId = &#63; and downloadId = &#63; or throws a <code>NoSuchDownloadCountException</code> if it could not be found.
@@ -77,11 +69,11 @@ public interface DownloadCountPersistence
 	 *
 	 * @param groupId the group ID
 	 * @param downloadId the download ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching download count, or <code>null</code> if a matching download count could not be found
 	 */
 	public DownloadCount fetchByDownloadCountByGroup(
-		long groupId, long downloadId, boolean retrieveFromCache);
+		long groupId, long downloadId, boolean useFinderCache);
 
 	/**
 	 * Removes the download count where groupId = &#63; and downloadId = &#63; from the database.
@@ -125,11 +117,11 @@ public interface DownloadCountPersistence
 	 * Returns the download count where downloadId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param downloadId the download ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching download count, or <code>null</code> if a matching download count could not be found
 	 */
 	public DownloadCount fetchByDownloadCount(
-		long downloadId, boolean retrieveFromCache);
+		long downloadId, boolean useFinderCache);
 
 	/**
 	 * Removes the download count where downloadId = &#63; from the database.
@@ -210,7 +202,7 @@ public interface DownloadCountPersistence
 	 * Returns a range of all the download counts.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadCountModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadCountModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of download counts
@@ -223,7 +215,7 @@ public interface DownloadCountPersistence
 	 * Returns an ordered range of all the download counts.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadCountModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadCountModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of download counts
@@ -240,20 +232,20 @@ public interface DownloadCountPersistence
 	 * Returns an ordered range of all the download counts.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadCountModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadCountModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of download counts
 	 * @param end the upper bound of the range of download counts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of download counts
 	 */
 	public java.util.List<DownloadCount> findAll(
 		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<DownloadCount>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Removes all the download counts from the database.
@@ -266,8 +258,5 @@ public interface DownloadCountPersistence
 	 * @return the number of download counts
 	 */
 	public int countAll();
-
-	@Override
-	public Set<String> getBadColumnNames();
 
 }

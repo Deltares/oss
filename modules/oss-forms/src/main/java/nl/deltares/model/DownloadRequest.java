@@ -26,13 +26,13 @@ public class DownloadRequest {
     private LicenseInfo licenseInfo;
 
     public DownloadRequest(ThemeDisplay themeDisplay) throws PortalException {
-        siteUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay);
+        siteUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay, themeDisplay.getSiteDefaultLocale());
         baseUrl = themeDisplay.getCDNBaseURL();
         groupId = themeDisplay.getScopeGroupId();
     }
 
     public void setBannerUrl(String bannerUrl) {
-        if (bannerUrl == null || bannerUrl.isEmpty()) return;
+        if (bannerUrl == null || bannerUrl.isBlank()) return;
         this.bannerUrl = bannerUrl;
     }
 

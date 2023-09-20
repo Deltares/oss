@@ -14,11 +14,9 @@
 
 package nl.deltares.oss.download.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -33,22 +31,21 @@ import nl.deltares.oss.download.model.DownloadCount;
  * @author Erik de Rooij @ Deltares
  * @generated
  */
-@ProviderType
 public class DownloadCountCacheModel
 	implements CacheModel<DownloadCount>, Externalizable {
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
+	public boolean equals(Object object) {
+		if (this == object) {
 			return true;
 		}
 
-		if (!(obj instanceof DownloadCountCacheModel)) {
+		if (!(object instanceof DownloadCountCacheModel)) {
 			return false;
 		}
 
 		DownloadCountCacheModel downloadCountCacheModel =
-			(DownloadCountCacheModel)obj;
+			(DownloadCountCacheModel)object;
 
 		if (id == downloadCountCacheModel.id) {
 			return true;

@@ -2,19 +2,21 @@ package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.LayoutUtils;
-import nl.deltares.portal.utils.XmlContentUtils;
 import nl.deltares.portal.utils.impl.DsdParserUtilsImpl;
-import org.w3c.dom.Document;
 
 import java.util.Locale;
 
 
 public class DownloadGroup extends AbsDsdArticle {
+
+    private static final Log LOGGER = LogFactoryUtil.getLog(DownloadGroup.class);
 
     private String name = "";
     private String imageUrl = "";
@@ -28,15 +30,17 @@ public class DownloadGroup extends AbsDsdArticle {
 
     private void init(LayoutUtils layoutUtils) throws PortalException {
         try {
-            Document document = getDocument();
-            name = XmlContentUtils.getDynamicContentByName(document, "Name", false);
-            String linkToPage = XmlContentUtils.getDynamicContentByName(document, "GroupPage", false);
+            name = getFormFieldValue( "Name", false);
+            String linkToPage = getFormFieldValue( "GroupPage", false);
             groupPage = layoutUtils.getLinkToPageLayout(linkToPage);
-            String jsonImage = XmlContentUtils.getDynamicContentByName(document, "Icon", false);
+            if (groupPage == null){
+                LOGGER.warn("No groupPage layout found for page link: " + linkToPage);
+            }
+            String jsonImage = getFormFieldValue( "Icon", false);
             if (jsonImage != null) {
                 imageUrl = JsonContentUtils.parseImageJson(jsonImage);
             }
-            String desc = XmlContentUtils.getDynamicContentByName(document, "Description", true);
+            String desc = getFormFieldValue( "Description", true);
             if (desc != null) {
                 description = desc;
             }
@@ -52,10 +56,9 @@ public class DownloadGroup extends AbsDsdArticle {
 
     public String getGroupPage(ThemeDisplay themeDisplay) throws PortalException {
         try {
+            if (groupPage == null) throw new PortalException("GroupPage is null");
             final String layoutFriendlyURL = PortalUtil.getLayoutFriendlyURL(groupPage, themeDisplay);
-            return layoutFriendlyURL == null ?
-                    PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay) + groupPage.getFriendlyURL()
-                    : layoutFriendlyURL;
+            return layoutFriendlyURL == null ? groupPage.getFriendlyURL() : layoutFriendlyURL;
         } catch (PortalException e) {
             throw new PortalException(String.format("Error getting FriendlyUrl for group page %s: %s!", groupPage.getTitle(), e.getMessage()), e);
         }

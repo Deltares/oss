@@ -19,7 +19,7 @@
                         name="registration_other"
                         label="registrationform.register.other"
                         type="checkbox"
-                        checked="false" onChange="registerOther()"/>
+                        checked="false" />
             </div>
         </div>
         <div class="row">
@@ -28,14 +28,18 @@
                         name="<%= KeycloakUtils.ATTRIBUTES.academicTitle.name() %>"
                         label="registrationform.academic.titles"
                         value="${academicTitle}"
-                        cssClass="update-badge"/>
+                        cssClass="update-badge">
+                    <aui:validator name="maxLength">75</aui:validator>
+                </aui:input>
             </div>
             <div class="col">
                 <aui:input
                         name="<%= KeycloakUtils.ATTRIBUTES.initials.name() %>"
                         label="registrationform.initials"
                         value="${initials}"
-                        cssClass="update-badge"/>
+                        cssClass="update-badge">
+                    <aui:validator name="maxLength">75</aui:validator>
+                </aui:input>
             </div>
         </div>
 
@@ -52,6 +56,7 @@
                                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
+                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
             <div class="col">
@@ -66,6 +71,7 @@
                                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
+                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
         </div>
@@ -82,6 +88,7 @@
                         }
             </aui:validator>
             <aui:validator name="email"/>
+            <aui:validator name="maxLength">254</aui:validator>
         </aui:input>
 
         <span><liferay-ui:message key="registrationform.organizationInfo"/></span>
@@ -95,6 +102,7 @@
                             return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
             </aui:validator>
+            <aui:validator name="maxLength">75</aui:validator>
         </aui:input>
         <aui:input
                 name="<%= KeycloakUtils.ATTRIBUTES.org_address.name() %>"
@@ -106,6 +114,7 @@
                         }
 
             </aui:validator>
+            <aui:validator name="maxLength">255</aui:validator>
         </aui:input>
 
         <div class="row">
@@ -119,6 +128,7 @@
                                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
+                    <aui:validator name="maxLength">10</aui:validator>
                 </aui:input>
             </div>
             <div class="col">
@@ -131,6 +141,7 @@
                                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
+                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
         </div>
@@ -148,7 +159,7 @@
                 2
             </aui:validator>
             <aui:option value="" label ="registrationform.select.country" />
-            <% List<Country> countries = CountryServiceUtil.getCountries(true); %>
+            <% List<Country> countries = CountryServiceUtil.getCompanyCountries(themeDisplay.getCompanyId(), true); %>
             <%    for (Country country : countries) { %>
             <aui:option value="<%=country.getName()%>" label ="<%= country.getName(locale) %>" />
             <% } %>
@@ -188,7 +199,7 @@
 
         <span><liferay-ui:message key="dsd.registration.step2.show.title"/></span>
         <%
-            String title_setting = (String) attributes.get(BadgeInfo.ATTRIBUTES.badge_title_setting.name());
+            String title_setting = attributes.get(BadgeInfo.ATTRIBUTES.badge_title_setting.name());
             boolean yes_checked = "yes".equals(title_setting);
             boolean no_checked = "no".equals(title_setting);
             if (!(yes_checked || no_checked)) no_checked = true;
@@ -201,7 +212,7 @@
                         cssClass="update-badge"
                         type="radio"
                         value="yes"
-                        checked="<%=yes_checked%>" onChange="updateBadge()"/>
+                        checked="<%=yes_checked%>" />
             </div>
             <div class="pr-3">
                 <aui:input
@@ -210,13 +221,13 @@
                         cssClass="update-badge"
                         type="radio"
                         value="no"
-                        checked="<%=no_checked%>" onChange="updateBadge()" />
+                        checked="<%=no_checked%>"  />
             </div>
         </div>
 
         <span><liferay-ui:message key="dsd.registration.step2.badge.name"/></span>
         <%
-            String name_setting = (String) attributes.get(BadgeInfo.ATTRIBUTES.badge_name_setting.name());
+            String name_setting = attributes.get(BadgeInfo.ATTRIBUTES.badge_name_setting.name());
             boolean name_checked = "name".equals(name_setting);
             boolean initials_checked = "initials".equals(name_setting);
             boolean both_checked = "both".equals(name_setting);
@@ -231,7 +242,7 @@
                         cssClass="update-badge"
                         type="radio"
                         value="name"
-                        checked="<%=name_checked%>" onChange="updateBadge()"/>
+                        checked="<%=name_checked%>"/>
             </div>
             <div class="pr-3">
                 <aui:input
@@ -240,7 +251,7 @@
                         cssClass="update-badge"
                         type="radio"
                         value="initials"
-                        checked="<%=initials_checked%>" onChange="updateBadge()"/>
+                        checked="<%=initials_checked%>" />
             </div>
             <div class="pr-3">
                 <aui:input
@@ -249,7 +260,7 @@
                         cssClass="update-badge"
                         type="radio"
                         value="both"
-                        checked="<%=both_checked%>" onChange="updateBadge()"/>
+                        checked="<%=both_checked%>" />
             </div>
         </div>
 

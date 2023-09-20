@@ -14,8 +14,8 @@
 
 package nl.deltares.oss.download.service.persistence.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -23,34 +23,44 @@ import com.liferay.portal.kernel.dao.orm.Query;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.service.persistence.BasePersistence;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.io.Serializable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.sql.DataSource;
+
 import nl.deltares.oss.download.exception.NoSuchDownloadCountException;
 import nl.deltares.oss.download.model.DownloadCount;
+import nl.deltares.oss.download.model.DownloadCountTable;
 import nl.deltares.oss.download.model.impl.DownloadCountImpl;
 import nl.deltares.oss.download.model.impl.DownloadCountModelImpl;
 import nl.deltares.oss.download.service.persistence.DownloadCountPersistence;
+import nl.deltares.oss.download.service.persistence.DownloadCountUtil;
+import nl.deltares.oss.download.service.persistence.impl.constants.DownloadsPersistenceConstants;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * The persistence implementation for the download count service.
@@ -62,7 +72,7 @@ import nl.deltares.oss.download.service.persistence.DownloadCountPersistence;
  * @author Erik de Rooij @ Deltares
  * @generated
  */
-@ProviderType
+@Component(service = {DownloadCountPersistence.class, BasePersistence.class})
 public class DownloadCountPersistenceImpl
 	extends BasePersistenceImpl<DownloadCount>
 	implements DownloadCountPersistence {
@@ -104,23 +114,23 @@ public class DownloadCountPersistenceImpl
 			groupId, downloadId);
 
 		if (downloadCount == null) {
-			StringBundler msg = new StringBundler(6);
+			StringBundler sb = new StringBundler(6);
 
-			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-			msg.append("groupId=");
-			msg.append(groupId);
+			sb.append("groupId=");
+			sb.append(groupId);
 
-			msg.append(", downloadId=");
-			msg.append(downloadId);
+			sb.append(", downloadId=");
+			sb.append(downloadId);
 
-			msg.append("}");
+			sb.append("}");
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(msg.toString());
+				_log.debug(sb.toString());
 			}
 
-			throw new NoSuchDownloadCountException(msg.toString());
+			throw new NoSuchDownloadCountException(sb.toString());
 		}
 
 		return downloadCount;
@@ -145,18 +155,22 @@ public class DownloadCountPersistenceImpl
 	 *
 	 * @param groupId the group ID
 	 * @param downloadId the download ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching download count, or <code>null</code> if a matching download count could not be found
 	 */
 	@Override
 	public DownloadCount fetchByDownloadCountByGroup(
-		long groupId, long downloadId, boolean retrieveFromCache) {
+		long groupId, long downloadId, boolean useFinderCache) {
 
-		Object[] finderArgs = new Object[] {groupId, downloadId};
+		Object[] finderArgs = null;
+
+		if (useFinderCache) {
+			finderArgs = new Object[] {groupId, downloadId};
+		}
 
 		Object result = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			result = finderCache.getResult(
 				_finderPathFetchByDownloadCountByGroup, finderArgs, this);
 		}
@@ -172,35 +186,37 @@ public class DownloadCountPersistenceImpl
 		}
 
 		if (result == null) {
-			StringBundler query = new StringBundler(4);
+			StringBundler sb = new StringBundler(4);
 
-			query.append(_SQL_SELECT_DOWNLOADCOUNT_WHERE);
+			sb.append(_SQL_SELECT_DOWNLOADCOUNT_WHERE);
 
-			query.append(_FINDER_COLUMN_DOWNLOADCOUNTBYGROUP_GROUPID_2);
+			sb.append(_FINDER_COLUMN_DOWNLOADCOUNTBYGROUP_GROUPID_2);
 
-			query.append(_FINDER_COLUMN_DOWNLOADCOUNTBYGROUP_DOWNLOADID_2);
+			sb.append(_FINDER_COLUMN_DOWNLOADCOUNTBYGROUP_DOWNLOADID_2);
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(downloadId);
+				queryPos.add(downloadId);
 
-				List<DownloadCount> list = q.list();
+				List<DownloadCount> list = query.list();
 
 				if (list.isEmpty()) {
-					finderCache.putResult(
-						_finderPathFetchByDownloadCountByGroup, finderArgs,
-						list);
+					if (useFinderCache) {
+						finderCache.putResult(
+							_finderPathFetchByDownloadCountByGroup, finderArgs,
+							list);
+					}
 				}
 				else {
 					DownloadCount downloadCount = list.get(0);
@@ -210,11 +226,8 @@ public class DownloadCountPersistenceImpl
 					cacheResult(downloadCount);
 				}
 			}
-			catch (Exception e) {
-				finderCache.removeResult(
-					_finderPathFetchByDownloadCountByGroup, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -263,37 +276,35 @@ public class DownloadCountPersistenceImpl
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(3);
+			StringBundler sb = new StringBundler(3);
 
-			query.append(_SQL_COUNT_DOWNLOADCOUNT_WHERE);
+			sb.append(_SQL_COUNT_DOWNLOADCOUNT_WHERE);
 
-			query.append(_FINDER_COLUMN_DOWNLOADCOUNTBYGROUP_GROUPID_2);
+			sb.append(_FINDER_COLUMN_DOWNLOADCOUNTBYGROUP_GROUPID_2);
 
-			query.append(_FINDER_COLUMN_DOWNLOADCOUNTBYGROUP_DOWNLOADID_2);
+			sb.append(_FINDER_COLUMN_DOWNLOADCOUNTBYGROUP_DOWNLOADID_2);
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(groupId);
+				queryPos.add(groupId);
 
-				qPos.add(downloadId);
+				queryPos.add(downloadId);
 
-				count = (Long)q.uniqueResult();
+				count = (Long)query.uniqueResult();
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -327,20 +338,20 @@ public class DownloadCountPersistenceImpl
 		DownloadCount downloadCount = fetchByDownloadCount(downloadId);
 
 		if (downloadCount == null) {
-			StringBundler msg = new StringBundler(4);
+			StringBundler sb = new StringBundler(4);
 
-			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+			sb.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-			msg.append("downloadId=");
-			msg.append(downloadId);
+			sb.append("downloadId=");
+			sb.append(downloadId);
 
-			msg.append("}");
+			sb.append("}");
 
 			if (_log.isDebugEnabled()) {
-				_log.debug(msg.toString());
+				_log.debug(sb.toString());
 			}
 
-			throw new NoSuchDownloadCountException(msg.toString());
+			throw new NoSuchDownloadCountException(sb.toString());
 		}
 
 		return downloadCount;
@@ -361,18 +372,22 @@ public class DownloadCountPersistenceImpl
 	 * Returns the download count where downloadId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param downloadId the download ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching download count, or <code>null</code> if a matching download count could not be found
 	 */
 	@Override
 	public DownloadCount fetchByDownloadCount(
-		long downloadId, boolean retrieveFromCache) {
+		long downloadId, boolean useFinderCache) {
 
-		Object[] finderArgs = new Object[] {downloadId};
+		Object[] finderArgs = null;
+
+		if (useFinderCache) {
+			finderArgs = new Object[] {downloadId};
+		}
 
 		Object result = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			result = finderCache.getResult(
 				_finderPathFetchByDownloadCount, finderArgs, this);
 		}
@@ -380,36 +395,38 @@ public class DownloadCountPersistenceImpl
 		if (result instanceof DownloadCount) {
 			DownloadCount downloadCount = (DownloadCount)result;
 
-			if ((downloadId != downloadCount.getDownloadId())) {
+			if (downloadId != downloadCount.getDownloadId()) {
 				result = null;
 			}
 		}
 
 		if (result == null) {
-			StringBundler query = new StringBundler(3);
+			StringBundler sb = new StringBundler(3);
 
-			query.append(_SQL_SELECT_DOWNLOADCOUNT_WHERE);
+			sb.append(_SQL_SELECT_DOWNLOADCOUNT_WHERE);
 
-			query.append(_FINDER_COLUMN_DOWNLOADCOUNT_DOWNLOADID_2);
+			sb.append(_FINDER_COLUMN_DOWNLOADCOUNT_DOWNLOADID_2);
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(downloadId);
+				queryPos.add(downloadId);
 
-				List<DownloadCount> list = q.list();
+				List<DownloadCount> list = query.list();
 
 				if (list.isEmpty()) {
-					finderCache.putResult(
-						_finderPathFetchByDownloadCount, finderArgs, list);
+					if (useFinderCache) {
+						finderCache.putResult(
+							_finderPathFetchByDownloadCount, finderArgs, list);
+					}
 				}
 				else {
 					DownloadCount downloadCount = list.get(0);
@@ -419,11 +436,8 @@ public class DownloadCountPersistenceImpl
 					cacheResult(downloadCount);
 				}
 			}
-			catch (Exception e) {
-				finderCache.removeResult(
-					_finderPathFetchByDownloadCount, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -468,33 +482,31 @@ public class DownloadCountPersistenceImpl
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(2);
+			StringBundler sb = new StringBundler(2);
 
-			query.append(_SQL_COUNT_DOWNLOADCOUNT_WHERE);
+			sb.append(_SQL_COUNT_DOWNLOADCOUNT_WHERE);
 
-			query.append(_FINDER_COLUMN_DOWNLOADCOUNT_DOWNLOADID_2);
+			sb.append(_FINDER_COLUMN_DOWNLOADCOUNT_DOWNLOADID_2);
 
-			String sql = query.toString();
+			String sql = sb.toString();
 
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				QueryPos qPos = QueryPos.getInstance(q);
+				QueryPos queryPos = QueryPos.getInstance(query);
 
-				qPos.add(downloadId);
+				queryPos.add(downloadId);
 
-				count = (Long)q.uniqueResult();
+				count = (Long)query.uniqueResult();
 
 				finderCache.putResult(finderPath, finderArgs, count);
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -508,25 +520,18 @@ public class DownloadCountPersistenceImpl
 		"downloadCount.downloadId = ?";
 
 	public DownloadCountPersistenceImpl() {
-		setModelClass(DownloadCount.class);
-
 		Map<String, String> dbColumnNames = new HashMap<String, String>();
 
 		dbColumnNames.put("id", "id_");
 
-		try {
-			Field field = BasePersistenceImpl.class.getDeclaredField(
-				"_dbColumnNames");
+		setDBColumnNames(dbColumnNames);
 
-			field.setAccessible(true);
+		setModelClass(DownloadCount.class);
 
-			field.set(this, dbColumnNames);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
-		}
+		setModelImplClass(DownloadCountImpl.class);
+		setModelPKClass(long.class);
+
+		setTable(DownloadCountTable.INSTANCE);
 	}
 
 	/**
@@ -537,7 +542,6 @@ public class DownloadCountPersistenceImpl
 	@Override
 	public void cacheResult(DownloadCount downloadCount) {
 		entityCache.putResult(
-			DownloadCountModelImpl.ENTITY_CACHE_ENABLED,
 			DownloadCountImpl.class, downloadCount.getPrimaryKey(),
 			downloadCount);
 
@@ -551,9 +555,9 @@ public class DownloadCountPersistenceImpl
 		finderCache.putResult(
 			_finderPathFetchByDownloadCount,
 			new Object[] {downloadCount.getDownloadId()}, downloadCount);
-
-		downloadCount.resetOriginalValues();
 	}
+
+	private int _valueObjectFinderCacheListThreshold;
 
 	/**
 	 * Caches the download counts in the entity cache if it is enabled.
@@ -562,16 +566,19 @@ public class DownloadCountPersistenceImpl
 	 */
 	@Override
 	public void cacheResult(List<DownloadCount> downloadCounts) {
+		if ((_valueObjectFinderCacheListThreshold == 0) ||
+			((_valueObjectFinderCacheListThreshold > 0) &&
+			 (downloadCounts.size() > _valueObjectFinderCacheListThreshold))) {
+
+			return;
+		}
+
 		for (DownloadCount downloadCount : downloadCounts) {
 			if (entityCache.getResult(
-					DownloadCountModelImpl.ENTITY_CACHE_ENABLED,
 					DownloadCountImpl.class, downloadCount.getPrimaryKey()) ==
 						null) {
 
 				cacheResult(downloadCount);
-			}
-			else {
-				downloadCount.resetOriginalValues();
 			}
 		}
 	}
@@ -587,9 +594,7 @@ public class DownloadCountPersistenceImpl
 	public void clearCache() {
 		entityCache.clearCache(DownloadCountImpl.class);
 
-		finderCache.clearCache(FINDER_CLASS_NAME_ENTITY);
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+		finderCache.clearCache(DownloadCountImpl.class);
 	}
 
 	/**
@@ -601,28 +606,22 @@ public class DownloadCountPersistenceImpl
 	 */
 	@Override
 	public void clearCache(DownloadCount downloadCount) {
-		entityCache.removeResult(
-			DownloadCountModelImpl.ENTITY_CACHE_ENABLED,
-			DownloadCountImpl.class, downloadCount.getPrimaryKey());
-
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		clearUniqueFindersCache((DownloadCountModelImpl)downloadCount, true);
+		entityCache.removeResult(DownloadCountImpl.class, downloadCount);
 	}
 
 	@Override
 	public void clearCache(List<DownloadCount> downloadCounts) {
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
 		for (DownloadCount downloadCount : downloadCounts) {
-			entityCache.removeResult(
-				DownloadCountModelImpl.ENTITY_CACHE_ENABLED,
-				DownloadCountImpl.class, downloadCount.getPrimaryKey());
+			entityCache.removeResult(DownloadCountImpl.class, downloadCount);
+		}
+	}
 
-			clearUniqueFindersCache(
-				(DownloadCountModelImpl)downloadCount, true);
+	@Override
+	public void clearCache(Set<Serializable> primaryKeys) {
+		finderCache.clearCache(DownloadCountImpl.class);
+
+		for (Serializable primaryKey : primaryKeys) {
+			entityCache.removeResult(DownloadCountImpl.class, primaryKey);
 		}
 	}
 
@@ -635,69 +634,17 @@ public class DownloadCountPersistenceImpl
 		};
 
 		finderCache.putResult(
-			_finderPathCountByDownloadCountByGroup, args, Long.valueOf(1),
-			false);
+			_finderPathCountByDownloadCountByGroup, args, Long.valueOf(1));
 		finderCache.putResult(
 			_finderPathFetchByDownloadCountByGroup, args,
-			downloadCountModelImpl, false);
+			downloadCountModelImpl);
 
 		args = new Object[] {downloadCountModelImpl.getDownloadId()};
 
 		finderCache.putResult(
-			_finderPathCountByDownloadCount, args, Long.valueOf(1), false);
+			_finderPathCountByDownloadCount, args, Long.valueOf(1));
 		finderCache.putResult(
-			_finderPathFetchByDownloadCount, args, downloadCountModelImpl,
-			false);
-	}
-
-	protected void clearUniqueFindersCache(
-		DownloadCountModelImpl downloadCountModelImpl, boolean clearCurrent) {
-
-		if (clearCurrent) {
-			Object[] args = new Object[] {
-				downloadCountModelImpl.getGroupId(),
-				downloadCountModelImpl.getDownloadId()
-			};
-
-			finderCache.removeResult(
-				_finderPathCountByDownloadCountByGroup, args);
-			finderCache.removeResult(
-				_finderPathFetchByDownloadCountByGroup, args);
-		}
-
-		if ((downloadCountModelImpl.getColumnBitmask() &
-			 _finderPathFetchByDownloadCountByGroup.getColumnBitmask()) != 0) {
-
-			Object[] args = new Object[] {
-				downloadCountModelImpl.getOriginalGroupId(),
-				downloadCountModelImpl.getOriginalDownloadId()
-			};
-
-			finderCache.removeResult(
-				_finderPathCountByDownloadCountByGroup, args);
-			finderCache.removeResult(
-				_finderPathFetchByDownloadCountByGroup, args);
-		}
-
-		if (clearCurrent) {
-			Object[] args = new Object[] {
-				downloadCountModelImpl.getDownloadId()
-			};
-
-			finderCache.removeResult(_finderPathCountByDownloadCount, args);
-			finderCache.removeResult(_finderPathFetchByDownloadCount, args);
-		}
-
-		if ((downloadCountModelImpl.getColumnBitmask() &
-			 _finderPathFetchByDownloadCount.getColumnBitmask()) != 0) {
-
-			Object[] args = new Object[] {
-				downloadCountModelImpl.getOriginalDownloadId()
-			};
-
-			finderCache.removeResult(_finderPathCountByDownloadCount, args);
-			finderCache.removeResult(_finderPathFetchByDownloadCount, args);
-		}
+			_finderPathFetchByDownloadCount, args, downloadCountModelImpl);
 	}
 
 	/**
@@ -760,11 +707,11 @@ public class DownloadCountPersistenceImpl
 
 			return remove(downloadCount);
 		}
-		catch (NoSuchDownloadCountException nsee) {
-			throw nsee;
+		catch (NoSuchDownloadCountException noSuchEntityException) {
+			throw noSuchEntityException;
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -787,8 +734,8 @@ public class DownloadCountPersistenceImpl
 				session.delete(downloadCount);
 			}
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
@@ -830,40 +777,28 @@ public class DownloadCountPersistenceImpl
 		try {
 			session = openSession();
 
-			if (downloadCount.isNew()) {
+			if (isNew) {
 				session.save(downloadCount);
-
-				downloadCount.setNew(false);
 			}
 			else {
 				downloadCount = (DownloadCount)session.merge(downloadCount);
 			}
 		}
-		catch (Exception e) {
-			throw processException(e);
+		catch (Exception exception) {
+			throw processException(exception);
 		}
 		finally {
 			closeSession(session);
 		}
 
-		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-
-		if (!DownloadCountModelImpl.COLUMN_BITMASK_ENABLED) {
-			finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-		}
-		else if (isNew) {
-			finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
-			finderCache.removeResult(
-				_finderPathWithoutPaginationFindAll, FINDER_ARGS_EMPTY);
-		}
-
 		entityCache.putResult(
-			DownloadCountModelImpl.ENTITY_CACHE_ENABLED,
-			DownloadCountImpl.class, downloadCount.getPrimaryKey(),
-			downloadCount, false);
+			DownloadCountImpl.class, downloadCountModelImpl, false, true);
 
-		clearUniqueFindersCache(downloadCountModelImpl, false);
 		cacheUniqueFindersCache(downloadCountModelImpl);
+
+		if (isNew) {
+			downloadCount.setNew(false);
+		}
 
 		downloadCount.resetOriginalValues();
 
@@ -912,161 +847,12 @@ public class DownloadCountPersistenceImpl
 	/**
 	 * Returns the download count with the primary key or returns <code>null</code> if it could not be found.
 	 *
-	 * @param primaryKey the primary key of the download count
-	 * @return the download count, or <code>null</code> if a download count with the primary key could not be found
-	 */
-	@Override
-	public DownloadCount fetchByPrimaryKey(Serializable primaryKey) {
-		Serializable serializable = entityCache.getResult(
-			DownloadCountModelImpl.ENTITY_CACHE_ENABLED,
-			DownloadCountImpl.class, primaryKey);
-
-		if (serializable == nullModel) {
-			return null;
-		}
-
-		DownloadCount downloadCount = (DownloadCount)serializable;
-
-		if (downloadCount == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				downloadCount = (DownloadCount)session.get(
-					DownloadCountImpl.class, primaryKey);
-
-				if (downloadCount != null) {
-					cacheResult(downloadCount);
-				}
-				else {
-					entityCache.putResult(
-						DownloadCountModelImpl.ENTITY_CACHE_ENABLED,
-						DownloadCountImpl.class, primaryKey, nullModel);
-				}
-			}
-			catch (Exception e) {
-				entityCache.removeResult(
-					DownloadCountModelImpl.ENTITY_CACHE_ENABLED,
-					DownloadCountImpl.class, primaryKey);
-
-				throw processException(e);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return downloadCount;
-	}
-
-	/**
-	 * Returns the download count with the primary key or returns <code>null</code> if it could not be found.
-	 *
 	 * @param id the primary key of the download count
 	 * @return the download count, or <code>null</code> if a download count with the primary key could not be found
 	 */
 	@Override
 	public DownloadCount fetchByPrimaryKey(long id) {
 		return fetchByPrimaryKey((Serializable)id);
-	}
-
-	@Override
-	public Map<Serializable, DownloadCount> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys) {
-
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, DownloadCount> map =
-			new HashMap<Serializable, DownloadCount>();
-
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			Serializable primaryKey = iterator.next();
-
-			DownloadCount downloadCount = fetchByPrimaryKey(primaryKey);
-
-			if (downloadCount != null) {
-				map.put(primaryKey, downloadCount);
-			}
-
-			return map;
-		}
-
-		Set<Serializable> uncachedPrimaryKeys = null;
-
-		for (Serializable primaryKey : primaryKeys) {
-			Serializable serializable = entityCache.getResult(
-				DownloadCountModelImpl.ENTITY_CACHE_ENABLED,
-				DownloadCountImpl.class, primaryKey);
-
-			if (serializable != nullModel) {
-				if (serializable == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<Serializable>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, (DownloadCount)serializable);
-				}
-			}
-		}
-
-		if (uncachedPrimaryKeys == null) {
-			return map;
-		}
-
-		StringBundler query = new StringBundler(
-			uncachedPrimaryKeys.size() * 2 + 1);
-
-		query.append(_SQL_SELECT_DOWNLOADCOUNT_WHERE_PKS_IN);
-
-		for (Serializable primaryKey : uncachedPrimaryKeys) {
-			query.append((long)primaryKey);
-
-			query.append(",");
-		}
-
-		query.setIndex(query.index() - 1);
-
-		query.append(")");
-
-		String sql = query.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query q = session.createQuery(sql);
-
-			for (DownloadCount downloadCount : (List<DownloadCount>)q.list()) {
-				map.put(downloadCount.getPrimaryKeyObj(), downloadCount);
-
-				cacheResult(downloadCount);
-
-				uncachedPrimaryKeys.remove(downloadCount.getPrimaryKeyObj());
-			}
-
-			for (Serializable primaryKey : uncachedPrimaryKeys) {
-				entityCache.putResult(
-					DownloadCountModelImpl.ENTITY_CACHE_ENABLED,
-					DownloadCountImpl.class, primaryKey, nullModel);
-			}
-		}
-		catch (Exception e) {
-			throw processException(e);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
 	}
 
 	/**
@@ -1083,7 +869,7 @@ public class DownloadCountPersistenceImpl
 	 * Returns a range of all the download counts.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadCountModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadCountModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of download counts
@@ -1099,7 +885,7 @@ public class DownloadCountPersistenceImpl
 	 * Returns an ordered range of all the download counts.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadCountModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadCountModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of download counts
@@ -1119,64 +905,62 @@ public class DownloadCountPersistenceImpl
 	 * Returns an ordered range of all the download counts.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DownloadCountModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadCountModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of download counts
 	 * @param end the upper bound of the range of download counts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of download counts
 	 */
 	@Override
 	public List<DownloadCount> findAll(
 		int start, int end, OrderByComparator<DownloadCount> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
 
-			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindAll;
-			finderArgs = FINDER_ARGS_EMPTY;
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindAll;
+				finderArgs = FINDER_ARGS_EMPTY;
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindAll;
 			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
 		List<DownloadCount> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<DownloadCount>)finderCache.getResult(
 				finderPath, finderArgs, this);
 		}
 
 		if (list == null) {
-			StringBundler query = null;
+			StringBundler sb = null;
 			String sql = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(
+				sb = new StringBundler(
 					2 + (orderByComparator.getOrderByFields().length * 2));
 
-				query.append(_SQL_SELECT_DOWNLOADCOUNT);
+				sb.append(_SQL_SELECT_DOWNLOADCOUNT);
 
 				appendOrderByComparator(
-					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+					sb, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 
-				sql = query.toString();
+				sql = sb.toString();
 			}
 			else {
 				sql = _SQL_SELECT_DOWNLOADCOUNT;
 
-				if (pagination) {
-					sql = sql.concat(DownloadCountModelImpl.ORDER_BY_JPQL);
-				}
+				sql = sql.concat(DownloadCountModelImpl.ORDER_BY_JPQL);
 			}
 
 			Session session = null;
@@ -1184,29 +968,19 @@ public class DownloadCountPersistenceImpl
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(sql);
+				Query query = session.createQuery(sql);
 
-				if (!pagination) {
-					list = (List<DownloadCount>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<DownloadCount>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<DownloadCount>)QueryUtil.list(
+					query, getDialect(), start, end);
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
-			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -1243,18 +1017,15 @@ public class DownloadCountPersistenceImpl
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(_SQL_COUNT_DOWNLOADCOUNT);
+				Query query = session.createQuery(_SQL_COUNT_DOWNLOADCOUNT);
 
-				count = (Long)q.uniqueResult();
+				count = (Long)query.uniqueResult();
 
 				finderCache.putResult(
 					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
 			}
-			catch (Exception e) {
-				finderCache.removeResult(
-					_finderPathCountAll, FINDER_ARGS_EMPTY);
-
-				throw processException(e);
+			catch (Exception exception) {
+				throw processException(exception);
 			}
 			finally {
 				closeSession(session);
@@ -1270,6 +1041,21 @@ public class DownloadCountPersistenceImpl
 	}
 
 	@Override
+	protected EntityCache getEntityCache() {
+		return entityCache;
+	}
+
+	@Override
+	protected String getPKDBName() {
+		return "id_";
+	}
+
+	@Override
+	protected String getSelectSQL() {
+		return _SQL_SELECT_DOWNLOADCOUNT;
+	}
+
+	@Override
 	protected Map<String, Integer> getTableColumnsMap() {
 		return DownloadCountModelImpl.TABLE_COLUMNS_MAP;
 	}
@@ -1277,73 +1063,104 @@ public class DownloadCountPersistenceImpl
 	/**
 	 * Initializes the download count persistence.
 	 */
-	public void afterPropertiesSet() {
+	@Activate
+	public void activate() {
+		_valueObjectFinderCacheListThreshold = GetterUtil.getInteger(
+			PropsUtil.get(PropsKeys.VALUE_OBJECT_FINDER_CACHE_LIST_THRESHOLD));
+
 		_finderPathWithPaginationFindAll = new FinderPath(
-			DownloadCountModelImpl.ENTITY_CACHE_ENABLED,
-			DownloadCountModelImpl.FINDER_CACHE_ENABLED,
-			DownloadCountImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"findAll", new String[0]);
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0],
+			new String[0], true);
 
 		_finderPathWithoutPaginationFindAll = new FinderPath(
-			DownloadCountModelImpl.ENTITY_CACHE_ENABLED,
-			DownloadCountModelImpl.FINDER_CACHE_ENABLED,
-			DownloadCountImpl.class, FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findAll", new String[0]);
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0],
+			new String[0], true);
 
 		_finderPathCountAll = new FinderPath(
-			DownloadCountModelImpl.ENTITY_CACHE_ENABLED,
-			DownloadCountModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
-			new String[0]);
+			new String[0], new String[0], false);
 
 		_finderPathFetchByDownloadCountByGroup = new FinderPath(
-			DownloadCountModelImpl.ENTITY_CACHE_ENABLED,
-			DownloadCountModelImpl.FINDER_CACHE_ENABLED,
-			DownloadCountImpl.class, FINDER_CLASS_NAME_ENTITY,
-			"fetchByDownloadCountByGroup",
+			FINDER_CLASS_NAME_ENTITY, "fetchByDownloadCountByGroup",
 			new String[] {Long.class.getName(), Long.class.getName()},
-			DownloadCountModelImpl.GROUPID_COLUMN_BITMASK |
-			DownloadCountModelImpl.DOWNLOADID_COLUMN_BITMASK);
+			new String[] {"groupId", "downloadId"}, true);
 
 		_finderPathCountByDownloadCountByGroup = new FinderPath(
-			DownloadCountModelImpl.ENTITY_CACHE_ENABLED,
-			DownloadCountModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 			"countByDownloadCountByGroup",
-			new String[] {Long.class.getName(), Long.class.getName()});
+			new String[] {Long.class.getName(), Long.class.getName()},
+			new String[] {"groupId", "downloadId"}, false);
 
 		_finderPathFetchByDownloadCount = new FinderPath(
-			DownloadCountModelImpl.ENTITY_CACHE_ENABLED,
-			DownloadCountModelImpl.FINDER_CACHE_ENABLED,
-			DownloadCountImpl.class, FINDER_CLASS_NAME_ENTITY,
-			"fetchByDownloadCount", new String[] {Long.class.getName()},
-			DownloadCountModelImpl.DOWNLOADID_COLUMN_BITMASK);
+			FINDER_CLASS_NAME_ENTITY, "fetchByDownloadCount",
+			new String[] {Long.class.getName()}, new String[] {"downloadId"},
+			true);
 
 		_finderPathCountByDownloadCount = new FinderPath(
-			DownloadCountModelImpl.ENTITY_CACHE_ENABLED,
-			DownloadCountModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByDownloadCount",
-			new String[] {Long.class.getName()});
+			new String[] {Long.class.getName()}, new String[] {"downloadId"},
+			false);
+
+		_setDownloadCountUtilPersistence(this);
 	}
 
-	public void destroy() {
+	@Deactivate
+	public void deactivate() {
+		_setDownloadCountUtilPersistence(null);
+
 		entityCache.removeCache(DownloadCountImpl.class.getName());
-		finderCache.removeCache(FINDER_CLASS_NAME_ENTITY);
-		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
-		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
-	@ServiceReference(type = EntityCache.class)
+	private void _setDownloadCountUtilPersistence(
+		DownloadCountPersistence downloadCountPersistence) {
+
+		try {
+			Field field = DownloadCountUtil.class.getDeclaredField(
+				"_persistence");
+
+			field.setAccessible(true);
+
+			field.set(null, downloadCountPersistence);
+		}
+		catch (ReflectiveOperationException reflectiveOperationException) {
+			throw new RuntimeException(reflectiveOperationException);
+		}
+	}
+
+	@Override
+	@Reference(
+		target = DownloadsPersistenceConstants.SERVICE_CONFIGURATION_FILTER,
+		unbind = "-"
+	)
+	public void setConfiguration(Configuration configuration) {
+	}
+
+	@Override
+	@Reference(
+		target = DownloadsPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setDataSource(DataSource dataSource) {
+		super.setDataSource(dataSource);
+	}
+
+	@Override
+	@Reference(
+		target = DownloadsPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		super.setSessionFactory(sessionFactory);
+	}
+
+	@Reference
 	protected EntityCache entityCache;
 
-	@ServiceReference(type = FinderCache.class)
+	@Reference
 	protected FinderCache finderCache;
 
 	private static final String _SQL_SELECT_DOWNLOADCOUNT =
 		"SELECT downloadCount FROM DownloadCount downloadCount";
-
-	private static final String _SQL_SELECT_DOWNLOADCOUNT_WHERE_PKS_IN =
-		"SELECT downloadCount FROM DownloadCount downloadCount WHERE id_ IN (";
 
 	private static final String _SQL_SELECT_DOWNLOADCOUNT_WHERE =
 		"SELECT downloadCount FROM DownloadCount downloadCount WHERE ";
@@ -1367,5 +1184,10 @@ public class DownloadCountPersistenceImpl
 
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"id"});
+
+	@Override
+	protected FinderCache getFinderCache() {
+		return finderCache;
+	}
 
 }

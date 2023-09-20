@@ -4,12 +4,13 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
+import com.liferay.dynamic.data.mapping.util.DDMIndexer;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.service.GroupServiceUtil;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import nl.deltares.portal.utils.DDMStructureUtil;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -24,6 +25,20 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
 
     private static final Log LOGGER = LogFactoryUtil.getLog(DDMStructureUtil.class);
     private static final int ALL = QueryUtil.ALL_POS;
+
+    @Override
+    public List<String> getEncodedFieldNamesForStructures(long groupId, String fieldReference, String[] structureNames, Locale locale) {
+        List<Optional<DDMStructure>> optionalList = getDDMStructuresByName(groupId, structureNames, locale);
+        List<String> fieldNameValues = new ArrayList<>();
+        for (Optional<DDMStructure> ddmStructureOptional : optionalList) {
+            ddmStructureOptional.ifPresent(ddmStructure -> {
+                        if (!ddmStructure.hasFieldByFieldReference(fieldReference)) return;
+                        final long structureId = ddmStructure.getStructureId();
+                        fieldNameValues.add( _ddmIndexer.encodeName(structureId, fieldReference, locale));
+                    }
+            );}
+        return fieldNameValues;
+    }
 
     @Override
     public List<Optional<DDMStructure>> getDDMStructuresByName(long groupId, String[] names, Locale locale) {
@@ -98,7 +113,7 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
     private long getParentGroup(long groupId)  {
         Group group;
         try {
-            group = GroupServiceUtil.getGroup(groupId);
+            group = GroupLocalServiceUtil.getGroup(groupId);
         } catch (PortalException e) {
             LOGGER.warn(String.format("Cannot find group for %d : %s", groupId, e.getMessage()));
             return 0;
@@ -114,4 +129,6 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
     @Reference
     private DDMTemplateLocalService _ddmTemplateLocalService;
 
+    @Reference
+    private DDMIndexer _ddmIndexer;
 }

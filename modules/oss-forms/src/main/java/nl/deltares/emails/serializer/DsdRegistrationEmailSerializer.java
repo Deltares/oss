@@ -27,7 +27,7 @@ public abstract class DsdRegistrationEmailSerializer implements EmailSerializer<
         RegistrationRequest request = content.getRegistrationRequest();
         Event event = request.getEvent();
 
-        if (event.getEmailBannerURL()  != null){
+        if (event.getEmailBannerURL() != null && !event.getEmailBannerURL().isBlank()){
             writer.append("<img src=\"cid:banner\" />");
         }
         User user = content.getUser();
@@ -65,7 +65,7 @@ public abstract class DsdRegistrationEmailSerializer implements EmailSerializer<
         writer.append("</br>");
         writer.append("</br>");
 
-        if (event.getEmailFooterURL() != null){
+        if (event.getEmailFooterURL() != null && !event.getEmailFooterURL().isBlank()){
             writer.append("<img src=\"cid:footer\" />");
         }
         writer.append("<br>");

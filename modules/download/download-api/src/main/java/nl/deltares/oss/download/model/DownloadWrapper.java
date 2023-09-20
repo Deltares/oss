@@ -14,18 +14,12 @@
 
 package nl.deltares.oss.download.model;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.portal.kernel.model.ModelWrapper;
-import com.liferay.portal.kernel.service.ServiceContext;
-
-import java.io.Serializable;
+import com.liferay.portal.kernel.model.wrapper.BaseModelWrapper;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * <p>
@@ -36,21 +30,12 @@ import java.util.Objects;
  * @see Download
  * @generated
  */
-@ProviderType
-public class DownloadWrapper implements Download, ModelWrapper<Download> {
+public class DownloadWrapper
+	extends BaseModelWrapper<Download>
+	implements Download, ModelWrapper<Download> {
 
 	public DownloadWrapper(Download download) {
-		_download = download;
-	}
-
-	@Override
-	public Class<?> getModelClass() {
-		return Download.class;
-	}
-
-	@Override
-	public String getModelClassName() {
-		return Download.class.getName();
+		super(download);
 	}
 
 	@Override
@@ -58,19 +43,17 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
 		attributes.put("id", getId());
-		attributes.put("companyId", getCompanyId());
 		attributes.put("groupId", getGroupId());
-		attributes.put("downloadId", getDownloadId());
+		attributes.put("companyId", getCompanyId());
 		attributes.put("userId", getUserId());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
-		attributes.put("filePath", getFilePath());
+		attributes.put("downloadId", getDownloadId());
+		attributes.put("fileName", getFileName());
 		attributes.put("expiryDate", getExpiryDate());
 		attributes.put("organization", getOrganization());
-		attributes.put("countryCode", getCountryCode());
-		attributes.put("city", getCity());
-		attributes.put("shareId", getShareId());
-		attributes.put("directDownloadUrl", getDirectDownloadUrl());
+		attributes.put("geoLocationId", getGeoLocationId());
+		attributes.put("fileShareUrl", getFileShareUrl());
 		attributes.put("licenseDownloadUrl", getLicenseDownloadUrl());
 
 		return attributes;
@@ -84,22 +67,16 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 			setId(id);
 		}
 
-		Long companyId = (Long)attributes.get("companyId");
-
-		if (companyId != null) {
-			setCompanyId(companyId);
-		}
-
 		Long groupId = (Long)attributes.get("groupId");
 
 		if (groupId != null) {
 			setGroupId(groupId);
 		}
 
-		Long downloadId = (Long)attributes.get("downloadId");
+		Long companyId = (Long)attributes.get("companyId");
 
-		if (downloadId != null) {
-			setDownloadId(downloadId);
+		if (companyId != null) {
+			setCompanyId(companyId);
 		}
 
 		Long userId = (Long)attributes.get("userId");
@@ -120,10 +97,16 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 			setModifiedDate(modifiedDate);
 		}
 
-		String filePath = (String)attributes.get("filePath");
+		Long downloadId = (Long)attributes.get("downloadId");
 
-		if (filePath != null) {
-			setFilePath(filePath);
+		if (downloadId != null) {
+			setDownloadId(downloadId);
+		}
+
+		String fileName = (String)attributes.get("fileName");
+
+		if (fileName != null) {
+			setFileName(fileName);
 		}
 
 		Date expiryDate = (Date)attributes.get("expiryDate");
@@ -138,28 +121,16 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 			setOrganization(organization);
 		}
 
-		String countryCode = (String)attributes.get("countryCode");
+		Long geoLocationId = (Long)attributes.get("geoLocationId");
 
-		if (countryCode != null) {
-			setCountryCode(countryCode);
+		if (geoLocationId != null) {
+			setGeoLocationId(geoLocationId);
 		}
 
-		String city = (String)attributes.get("city");
+		String fileShareUrl = (String)attributes.get("fileShareUrl");
 
-		if (city != null) {
-			setCity(city);
-		}
-
-		Integer shareId = (Integer)attributes.get("shareId");
-
-		if (shareId != null) {
-			setShareId(shareId);
-		}
-
-		String directDownloadUrl = (String)attributes.get("directDownloadUrl");
-
-		if (directDownloadUrl != null) {
-			setDirectDownloadUrl(directDownloadUrl);
+		if (fileShareUrl != null) {
+			setFileShareUrl(fileShareUrl);
 		}
 
 		String licenseDownloadUrl = (String)attributes.get(
@@ -171,23 +142,8 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	}
 
 	@Override
-	public Object clone() {
-		return new DownloadWrapper((Download)_download.clone());
-	}
-
-	@Override
-	public int compareTo(nl.deltares.oss.download.model.Download download) {
-		return _download.compareTo(download);
-	}
-
-	/**
-	 * Returns the city of this download.
-	 *
-	 * @return the city of this download
-	 */
-	@Override
-	public String getCity() {
-		return _download.getCity();
+	public Download cloneWithOriginalValues() {
+		return wrap(model.cloneWithOriginalValues());
 	}
 
 	/**
@@ -197,17 +153,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public long getCompanyId() {
-		return _download.getCompanyId();
-	}
-
-	/**
-	 * Returns the country code of this download.
-	 *
-	 * @return the country code of this download
-	 */
-	@Override
-	public String getCountryCode() {
-		return _download.getCountryCode();
+		return model.getCompanyId();
 	}
 
 	/**
@@ -217,17 +163,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public Date getCreateDate() {
-		return _download.getCreateDate();
-	}
-
-	/**
-	 * Returns the direct download url of this download.
-	 *
-	 * @return the direct download url of this download
-	 */
-	@Override
-	public String getDirectDownloadUrl() {
-		return _download.getDirectDownloadUrl();
+		return model.getCreateDate();
 	}
 
 	/**
@@ -237,12 +173,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public long getDownloadId() {
-		return _download.getDownloadId();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _download.getExpandoBridge();
+		return model.getDownloadId();
 	}
 
 	/**
@@ -252,17 +183,37 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public Date getExpiryDate() {
-		return _download.getExpiryDate();
+		return model.getExpiryDate();
 	}
 
 	/**
-	 * Returns the file path of this download.
+	 * Returns the file name of this download.
 	 *
-	 * @return the file path of this download
+	 * @return the file name of this download
 	 */
 	@Override
-	public String getFilePath() {
-		return _download.getFilePath();
+	public String getFileName() {
+		return model.getFileName();
+	}
+
+	/**
+	 * Returns the file share url of this download.
+	 *
+	 * @return the file share url of this download
+	 */
+	@Override
+	public String getFileShareUrl() {
+		return model.getFileShareUrl();
+	}
+
+	/**
+	 * Returns the geo location ID of this download.
+	 *
+	 * @return the geo location ID of this download
+	 */
+	@Override
+	public long getGeoLocationId() {
+		return model.getGeoLocationId();
 	}
 
 	/**
@@ -272,7 +223,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public long getGroupId() {
-		return _download.getGroupId();
+		return model.getGroupId();
 	}
 
 	/**
@@ -282,7 +233,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public long getId() {
-		return _download.getId();
+		return model.getId();
 	}
 
 	/**
@@ -292,7 +243,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public String getLicenseDownloadUrl() {
-		return _download.getLicenseDownloadUrl();
+		return model.getLicenseDownloadUrl();
 	}
 
 	/**
@@ -302,7 +253,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public Date getModifiedDate() {
-		return _download.getModifiedDate();
+		return model.getModifiedDate();
 	}
 
 	/**
@@ -312,7 +263,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public String getOrganization() {
-		return _download.getOrganization();
+		return model.getOrganization();
 	}
 
 	/**
@@ -322,22 +273,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public long getPrimaryKey() {
-		return _download.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _download.getPrimaryKeyObj();
-	}
-
-	/**
-	 * Returns the share ID of this download.
-	 *
-	 * @return the share ID of this download
-	 */
-	@Override
-	public int getShareId() {
-		return _download.getShareId();
+		return model.getPrimaryKey();
 	}
 
 	/**
@@ -347,7 +283,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public long getUserId() {
-		return _download.getUserId();
+		return model.getUserId();
 	}
 
 	/**
@@ -357,47 +293,12 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public String getUserUuid() {
-		return _download.getUserUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _download.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _download.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _download.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _download.isNew();
+		return model.getUserUuid();
 	}
 
 	@Override
 	public void persist() {
-		_download.persist();
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_download.setCachedModel(cachedModel);
-	}
-
-	/**
-	 * Sets the city of this download.
-	 *
-	 * @param city the city of this download
-	 */
-	@Override
-	public void setCity(String city) {
-		_download.setCity(city);
+		model.persist();
 	}
 
 	/**
@@ -407,17 +308,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public void setCompanyId(long companyId) {
-		_download.setCompanyId(companyId);
-	}
-
-	/**
-	 * Sets the country code of this download.
-	 *
-	 * @param countryCode the country code of this download
-	 */
-	@Override
-	public void setCountryCode(String countryCode) {
-		_download.setCountryCode(countryCode);
+		model.setCompanyId(companyId);
 	}
 
 	/**
@@ -427,17 +318,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public void setCreateDate(Date createDate) {
-		_download.setCreateDate(createDate);
-	}
-
-	/**
-	 * Sets the direct download url of this download.
-	 *
-	 * @param directDownloadUrl the direct download url of this download
-	 */
-	@Override
-	public void setDirectDownloadUrl(String directDownloadUrl) {
-		_download.setDirectDownloadUrl(directDownloadUrl);
+		model.setCreateDate(createDate);
 	}
 
 	/**
@@ -447,24 +328,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public void setDownloadId(long downloadId) {
-		_download.setDownloadId(downloadId);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-
-		_download.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_download.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
-		_download.setExpandoBridgeAttributes(serviceContext);
+		model.setDownloadId(downloadId);
 	}
 
 	/**
@@ -474,17 +338,37 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public void setExpiryDate(Date expiryDate) {
-		_download.setExpiryDate(expiryDate);
+		model.setExpiryDate(expiryDate);
 	}
 
 	/**
-	 * Sets the file path of this download.
+	 * Sets the file name of this download.
 	 *
-	 * @param filePath the file path of this download
+	 * @param fileName the file name of this download
 	 */
 	@Override
-	public void setFilePath(String filePath) {
-		_download.setFilePath(filePath);
+	public void setFileName(String fileName) {
+		model.setFileName(fileName);
+	}
+
+	/**
+	 * Sets the file share url of this download.
+	 *
+	 * @param fileShareUrl the file share url of this download
+	 */
+	@Override
+	public void setFileShareUrl(String fileShareUrl) {
+		model.setFileShareUrl(fileShareUrl);
+	}
+
+	/**
+	 * Sets the geo location ID of this download.
+	 *
+	 * @param geoLocationId the geo location ID of this download
+	 */
+	@Override
+	public void setGeoLocationId(long geoLocationId) {
+		model.setGeoLocationId(geoLocationId);
 	}
 
 	/**
@@ -494,7 +378,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public void setGroupId(long groupId) {
-		_download.setGroupId(groupId);
+		model.setGroupId(groupId);
 	}
 
 	/**
@@ -504,7 +388,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public void setId(long id) {
-		_download.setId(id);
+		model.setId(id);
 	}
 
 	/**
@@ -514,7 +398,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public void setLicenseDownloadUrl(String licenseDownloadUrl) {
-		_download.setLicenseDownloadUrl(licenseDownloadUrl);
+		model.setLicenseDownloadUrl(licenseDownloadUrl);
 	}
 
 	/**
@@ -524,12 +408,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
-		_download.setModifiedDate(modifiedDate);
-	}
-
-	@Override
-	public void setNew(boolean n) {
-		_download.setNew(n);
+		model.setModifiedDate(modifiedDate);
 	}
 
 	/**
@@ -539,7 +418,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public void setOrganization(String organization) {
-		_download.setOrganization(organization);
+		model.setOrganization(organization);
 	}
 
 	/**
@@ -549,22 +428,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public void setPrimaryKey(long primaryKey) {
-		_download.setPrimaryKey(primaryKey);
-	}
-
-	@Override
-	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
-		_download.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	/**
-	 * Sets the share ID of this download.
-	 *
-	 * @param shareId the share ID of this download
-	 */
-	@Override
-	public void setShareId(int shareId) {
-		_download.setShareId(shareId);
+		model.setPrimaryKey(primaryKey);
 	}
 
 	/**
@@ -574,7 +438,7 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public void setUserId(long userId) {
-		_download.setUserId(userId);
+		model.setUserId(userId);
 	}
 
 	/**
@@ -584,75 +448,12 @@ public class DownloadWrapper implements Download, ModelWrapper<Download> {
 	 */
 	@Override
 	public void setUserUuid(String userUuid) {
-		_download.setUserUuid(userUuid);
+		model.setUserUuid(userUuid);
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel
-		<nl.deltares.oss.download.model.Download> toCacheModel() {
-
-		return _download.toCacheModel();
+	protected DownloadWrapper wrap(Download download) {
+		return new DownloadWrapper(download);
 	}
-
-	@Override
-	public nl.deltares.oss.download.model.Download toEscapedModel() {
-		return new DownloadWrapper(_download.toEscapedModel());
-	}
-
-	@Override
-	public String toString() {
-		return _download.toString();
-	}
-
-	@Override
-	public nl.deltares.oss.download.model.Download toUnescapedModel() {
-		return new DownloadWrapper(_download.toUnescapedModel());
-	}
-
-	@Override
-	public String toXmlString() {
-		return _download.toXmlString();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-
-		if (!(obj instanceof DownloadWrapper)) {
-			return false;
-		}
-
-		DownloadWrapper downloadWrapper = (DownloadWrapper)obj;
-
-		if (Objects.equals(_download, downloadWrapper._download)) {
-			return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	public Download getWrappedModel() {
-		return _download;
-	}
-
-	@Override
-	public boolean isEntityCacheEnabled() {
-		return _download.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _download.isFinderCacheEnabled();
-	}
-
-	@Override
-	public void resetOriginalValues() {
-		_download.resetOriginalValues();
-	}
-
-	private final Download _download;
 
 }

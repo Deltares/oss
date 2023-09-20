@@ -1,7 +1,6 @@
 <#--
 This file allows you to override and define new FreeMarker variables.
 -->
-
 <#assign
 layoutSet = layout.getLayoutSet()
 company_logo = htmlUtil.escape(themeDisplay.getCompanyLogo())
@@ -12,7 +11,6 @@ company_logo = htmlUtil.escape(themeDisplay.getCompanyLogo())
 <#else>
     <#assign logo_img = images_folder + '/logo.png' />
 </#if>
-
 
 <#assign journalArticleLocalService = serviceLocator.findService("com.liferay.journal.service.JournalArticleLocalService") />
 
@@ -28,11 +26,10 @@ company_logo = htmlUtil.escape(themeDisplay.getCompanyLogo())
 <#assign footerWCArticleId = footerContentID >
 
 <#if journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroupId(), footerWCArticleId)?? >
-    <#assign footerWCArticle = journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroupId(), footerWCArticleId) >
-    <#assign footerWCContent = journalArticleLocalService.getArticleContent(footerWCArticle, footerWCArticle.getDDMTemplateKey(), "VIEW", locale, themeDisplay) />
+    <#assign footerWCContent = journalArticleLocalService.getArticleDisplay(themeDisplay.getScopeGroupId(), footerWCArticleId, "VIEW", locale, themeDisplay ).getContent() >
 </#if>
 
-<#if !is_site_admin >
+<#if is_site_admin?? && !is_site_admin >
     <#assign css_class = stringUtil.replace(css_class, "open", "closed") />
 </#if>
 

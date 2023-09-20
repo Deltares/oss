@@ -1,26 +1,16 @@
-/*
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
- *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- */
-
 package nl.deltares.dsd.registration.service.impl;
 
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
+import com.liferay.portal.aop.AopService;
+
 import com.liferay.portal.kernel.dao.orm.*;
 import nl.deltares.dsd.registration.exception.NoSuchRegistrationException;
 import nl.deltares.dsd.registration.model.Registration;
 import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.dsd.registration.service.base.RegistrationLocalServiceBaseImpl;
+
 import nl.deltares.dsd.registration.service.persistence.RegistrationUtil;
+import org.osgi.service.component.annotations.Component;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,8 +27,11 @@ import java.util.List;
  * </p>
  *
  * @author Erik de Rooij @ Deltares
- * @see RegistrationLocalServiceBaseImpl
  */
+@Component(
+	property = "model.class.name=nl.deltares.dsd.registration.model.Registration",
+	service = AopService.class
+)
 public class RegistrationLocalServiceImpl
 	extends RegistrationLocalServiceBaseImpl {
 
@@ -263,10 +256,30 @@ public class RegistrationLocalServiceImpl
 		return RegistrationUtil.findByEventRegistrations(groupId, eventResourceId);
 	}
 
+	public List<Registration> getEventRegistrations(long groupId, long eventResourceId, int start, int end){
+		return RegistrationUtil.findByEventRegistrations(groupId, eventResourceId, start, end);
+	}
+
+	public int getEventRegistrationsCount(long groupId, long eventResourceId)
+	{
+		return RegistrationUtil.countByEventRegistrations(groupId, eventResourceId);
+	}
+
 	public List<Registration> getArticleRegistrations(long groupId, long articleResourceId){
 		return RegistrationUtil.findByArticleRegistrations(groupId, articleResourceId);
 	}
 
+	public List<Registration> getArticleRegistrations(long groupId, long articleResourceId, int start, int end){
+		return RegistrationUtil.findByArticleRegistrations(groupId, articleResourceId, start, end);
+	}
+
+	public List<Registration> getUserRegistrations(long groupId, long userId, int start, int end){
+		return RegistrationUtil.findByUserRegistrations(groupId, userId, start, end);
+	}
+
+	public int getUserRegistrationsCount(long groupId, long userId){
+		return RegistrationUtil.countByUserRegistrations(groupId, userId);
+	}
 	public List<Registration> getUserRegistrations(long groupId, long userId, Date start, Date end){
 		Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
 		Criterion checkUserId = PropertyFactoryUtil.forName("userId").eq(userId);

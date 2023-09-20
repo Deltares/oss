@@ -22,7 +22,6 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.util.*;
-import java.util.List;
 
 import static java.time.LocalDateTime.now;
 
@@ -94,20 +93,6 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
     }
 
     @Override
-    public int callCheckUsersExist(String requestId, PrintWriter nonExistingUsersOutput) throws Exception{
-        HttpURLConnection urlConnection = getConnection(getAdminUsersPath() + "/check-users-exist/" + requestId, "GET", Collections.emptyMap());
-        urlConnection.setRequestProperty("Authorization", "Bearer " + getAccessToken());
-
-        // Read response from web server, which will trigger the multipart HTTP request to be sent.
-        int status = checkResponse(urlConnection);
-        writeResponse(nonExistingUsersOutput, urlConnection);
-        if (Objects.equals(urlConnection.getContentType(), "application/json")){
-            return 102; //running
-        }
-        return status;
-    }
-
-    @Override
     public int callCheckUsersExist(File checkUsersInputFile, PrintWriter nonExistingUsersOutput) throws Exception {
         String boundaryString = "----CheckUsersExist";
         HashMap<String, String> map = new HashMap<>();
@@ -150,33 +135,24 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
 
         // Read response from web server, which will trigger the multipart HTTP request to be sent.
         int status = checkResponse(urlConnection);
-        writeResponse(nonExistingUsersOutput, urlConnection);
-        if (Objects.equals(urlConnection.getContentType(), "application/json")){
-            return 102; //running
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                nonExistingUsersOutput.write(line);
+                nonExistingUsersOutput.write('\n');
+            }
+            nonExistingUsersOutput.flush();
         }
         return status;
     }
 
     @Override
-    public int downloadInvalidUsers(String requestId, PrintWriter writer) throws Exception {
+    public int downloadInvalidUsers(PrintWriter writer) throws Exception {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "text/html");
         headers.put("Authorization", "Bearer " + getAccessToken());
-        HttpURLConnection urlConnection;
-        if (requestId == null) {
-            urlConnection = getConnection(getAdminUsersPath() + "/invalid", "GET", headers);
-        } else {
-            urlConnection = getConnection(getAdminUsersPath() + "/invalid/" + requestId, "GET", headers);
-        }
+        HttpURLConnection urlConnection = getConnection(getAdminUsersPath() + "/invalid", "GET", headers);
         int status = checkResponse(urlConnection);
-        writeResponse(writer, urlConnection);
-        if (Objects.equals(urlConnection.getContentType(), "application/json")){
-            return 102; //running
-        }
-        return status;
-    }
-
-    private void writeResponse(PrintWriter writer, HttpURLConnection urlConnection) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -185,6 +161,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
             }
             writer.flush();
         }
+        return status;
     }
 
     @Override

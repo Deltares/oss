@@ -1,10 +1,11 @@
 package nl.deltares.portal.utils;
 
-import javax.servlet.http.HttpServletRequest;
 
 public interface SanctionCheckUtils {
 
     boolean isSanctionedByCountyCode(String isoCountryCode);
+
+    boolean isSanctionedByCountyCode(long companyId, String isoCountryCode);
 
     boolean isSanctionedByIp(String remoteAddress);
 }

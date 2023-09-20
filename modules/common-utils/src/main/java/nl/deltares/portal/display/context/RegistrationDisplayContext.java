@@ -3,7 +3,6 @@ package nl.deltares.portal.display.context;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.journal.model.JournalArticle;
-import com.liferay.journal.model.JournalArticleDisplay;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -14,7 +13,6 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletMode;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
-import com.liferay.portal.kernel.portlet.PortletRequestModel;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
@@ -25,13 +23,13 @@ import com.liferay.portal.kernel.util.StringUtil;
 import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.dsd.registration.service.persistence.RegistrationUtil;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
+import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.Period;
 
 import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -171,6 +169,7 @@ public class RegistrationDisplayContext {
     private Date getEndDate(Registration registration) {
         if (registration.isMultiDayEvent()){
             final List<Period> startAndEndTimesPerDay = registration.getStartAndEndTimesPerDay();
+            if (startAndEndTimesPerDay.isEmpty()) return registration.getEndTime();
             final Period period = startAndEndTimesPerDay.get(dayIndex);
             return period.getEndDate();
         } else {
@@ -185,7 +184,6 @@ public class RegistrationDisplayContext {
                     TimeZone.getTimeZone(registration.getTimeZoneId()));
         }
         return "";
-
     }
 
     public long getEndDateMillis(){
@@ -203,6 +201,7 @@ public class RegistrationDisplayContext {
                 "program-list.day.count", new String[]{String.valueOf((getDayCount()+1)), String.valueOf(getNumberOfDays())});
         return (title + " ("  + postFix + ")");
     }
+
     public int getDayCount(){
         return dayIndex;
     }
@@ -330,7 +329,7 @@ public class RegistrationDisplayContext {
                 if (registrationPage != null) {
                     PortletURL portletURL = PortletURLFactoryUtil
                             .create(httpServletRequest,
-                                    "dsd_RegistrationFormPortlet",
+                                    OssConstants.DSD_REGISTRATIONFORM,
                                     registrationPage.getPlid(),
                                     action.equals("unregister") ? PortletRequest.ACTION_PHASE : PortletRequest.RENDER_PHASE);
                     portletURL.setWindowState(LiferayWindowState.NORMAL);
@@ -377,7 +376,7 @@ public class RegistrationDisplayContext {
                 if (registrationPage != null) {
                     PortletURL portletURL = PortletURLFactoryUtil
                             .create(portletRequest,
-                                    "dsd_RegistrationFormPortlet",
+                                    OssConstants.DSD_REGISTRATIONFORM,
                                     registrationPage.getPlid(),
                                     action.equals("unregister") ? PortletRequest.ACTION_PHASE : PortletRequest.RENDER_PHASE);
                     portletURL.setWindowState(LiferayWindowState.NORMAL);
@@ -395,21 +394,6 @@ public class RegistrationDisplayContext {
         return "";
     }
 
-    public static JournalArticleDisplay getArticleDisplay(PortletRequest portletRequest, PortletResponse portletResponse,
-                                                          String ddmTemplateKey, String articleId, ThemeDisplay themeDisplay) {
-        JournalArticleDisplay articleDisplay = null;
-        try {
-            articleDisplay = JournalArticleLocalServiceUtil.getArticleDisplay(
-                    themeDisplay.getScopeGroupId(), articleId, ddmTemplateKey, "VIEW",
-                    themeDisplay.getLanguageId(), 1, new PortletRequestModel(portletRequest, portletResponse),
-                    themeDisplay);
-        } catch (Exception e) {
-            String message = String.format("Error getting article display object for article [%s] with template ID [%s]",
-                    articleId, ddmTemplateKey);
-            LOG.debug(message, e);
-        }
-        return articleDisplay;
-    }
 
     private final ThemeDisplay themeDisplay;
     private final ConfigurationProvider configurationProvider;

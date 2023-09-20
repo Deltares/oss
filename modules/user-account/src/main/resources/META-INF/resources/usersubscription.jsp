@@ -56,7 +56,7 @@
     </liferay-ui:search-container>
     <aui:button-row>
         <aui:button type="submit" name="updateSubscriptions" value="usersubscriptionform.save" />
-        <aui:button type="cancel" name="cancelSubscriptions" value="usersubscriptionform.cancel" href="<%= viewURL %>" />
+        <aui:button type="submit" name="cancelSubscriptions" value="usersubscriptionform.cancel" href="<%= viewURL %>" />
     </aui:button-row>
 </aui:form>
 <aui:script>

@@ -4,10 +4,15 @@ package nl.deltares.portal.utils.impl;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.asset.kernel.service.persistence.AssetEntryQuery;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.util.Validator;
+
+import java.util.Map;
 import java.util.Objects;
+
+import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.LayoutUtils;
 import nl.deltares.portal.utils.PermissionUtils;
 import org.osgi.service.component.annotations.Component;
@@ -38,10 +43,15 @@ public class LayoutUtilsImpl implements LayoutUtils {
   @Override
   public Layout getLinkToPageLayout(String linkToPage) {
     if(Validator.isNotNull(linkToPage)) {
-      String[] strings = linkToPage.split("@");
-      long layoutId = Long.parseLong(strings[0]);
-      boolean isPrivate = "private".equals(strings[1]);
-      long groupId = Long.parseLong(strings[2]);
+      final Map<String, String> jsonToMap;
+      try {
+        jsonToMap = JsonContentUtils.parseJsonToMap(linkToPage);
+      } catch (JSONException e) {
+        return null;
+      }
+      long layoutId = Long.parseLong(jsonToMap.get("layoutId"));
+      boolean isPrivate = Boolean.parseBoolean(jsonToMap.getOrDefault("privateLayout", "false"));
+      long groupId = Long.parseLong(jsonToMap.get("groupId"));
       return layoutLocalService.fetchLayout(groupId, isPrivate, layoutId);
     } else {
       return null;
@@ -49,8 +59,8 @@ public class LayoutUtilsImpl implements LayoutUtils {
   }
 
   @Override
-  public Layout getLinkToPageLayout(long groupId, boolean privateLayout, String layoutId) {
-    return layoutLocalService.fetchLayout(groupId, privateLayout, Long.parseLong(layoutId));
+  public Layout getLinkToPageLayout(long groupId, boolean privateLayout, long layoutId) {
+    return layoutLocalService.fetchLayout(groupId, privateLayout, layoutId);
   }
 
   @Override

@@ -1,15 +1,13 @@
 dependencies {
-	compileOnly group: "com.liferay", name: "com.liferay.journal.api", version: "3.10.1"
-	compileOnly group: 'com.liferay', name: 'com.liferay.portal.configuration.metatype', version: '2.0.18'
-	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "3.5.0"
-	compileOnly group: "javax.ws.rs", name: "javax.ws.rs-api", version: "2.1"
-	compileOnly group: "org.osgi", name: "org.osgi.service.jaxrs", version: "1.0.0"
-	compileOnly group: "org.osgi", name: "osgi.cmpn", version: "6.0.0"
-	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
-	compileOnly group: "javax.servlet", name: "javax.servlet-api", version: "3.0.1"
-	compileOnly group: "com.fasterxml.jackson.core", name: "jackson-core" , version: "2.9.10"
-	compileOnly group: "com.fasterxml.jackson.core", name: "jackson-databind" , version: "2.9.10.1"
-	compileOnly group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.9.10'
+	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
+	compileOnly group: 'com.liferay.portal', name: 'portal-impl', version: '6.2.0-RC5'
+	compileOnly group: 'com.liferay', name: 'com.liferay.journal.api'
+
+	compileOnly group: 'biz.aQute.bnd', name: 'biz.aQute.bnd.gradle', version: '3.4.0'
+	compileOnly group: "javax.ws.rs", name: "javax.ws.rs-api"
+	compileOnly group: "javax.servlet", name: "javax.servlet-api"
+	compileOnly group: "org.osgi", name: "org.osgi.service.jaxrs", version: "1.0.1"
+	compileOnly group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.13.4'
 	compileOnly project(":modules:common-utils")
 }
 

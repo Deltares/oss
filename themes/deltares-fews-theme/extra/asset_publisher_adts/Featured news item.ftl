@@ -1,22 +1,19 @@
 <div class="c-featured-news">
+    <#assign xmlUtils = serviceLocator.findService("nl.deltares.portal.utils.XmlContentUtils") />
     <#if entry?has_content>
-    
+
         <#assign assetRenderer = entry.getAssetRenderer() />
         <#assign entryTitle = htmlUtil.escape(assetRenderer.getTitle(locale)) />
         <#assign journalArticle = assetRenderer.getArticle() />
         <#assign assetSummary = assetRenderer.getSummary() />
-        <#assign document = saxReaderUtil.read(journalArticle.getContent())/>
-        <#assign rootElement = document.getRootElement() />
-        <#if rootElement?? && rootElement != "">
-            <#assign overviewContentSelector = saxReaderUtil.createXPath("dynamic-element[@name='ContentOfNewsItem']") />
-            <#assign ContentOfNewsItem = htmlUtil.extractText(overviewContentSelector.selectSingleNode(rootElement).getStringValue()) />
-            <#assign overviewPhotoSelector = saxReaderUtil.createXPath("dynamic-element[@name='ImageOfNewsItem']") />
-            <#assign ImageOfNewsItem = ddlUtils.getFileEntryImage(overviewPhotoSelector.selectSingleNode(rootElement).getStringValue()) />
-        </#if> 
+        <#assign document = xmlUtils.parseContent(journalArticle, locale)/>
 
+        <#assign ContentOfNewsItem = xmlUtils.getDynamicContentByName(document, "ContentOfNewsItem", false) />
+        <#assign overviewPhotoSelector = xmlUtils.getDynamicContentByName(document, "ImageOfNewsItem", false) />
+        <#assign ImageOfNewsItem = ddlUtils.getFileEntryImage(overviewPhotoSelector) />
         <#assign viewURL = htmlUtil.escapeHREF(assetPublisherHelper.getAssetViewURL(renderRequest, renderResponse, entry, true)) />
-        
-        
+
+
         <div class="data-column">
             <h1 class="c-featured-news__title"><a class="type-inherit" href="${viewURL}" title="read more about ${entryTitle}">${entryTitle}</a></h1>
             <p class="c-featured-news__date">${dateUtil.getDate(entry.getPublishDate(), "d MMMM yyyy", locale)}</p>
@@ -27,10 +24,10 @@
         </div>
         <#if ImageOfNewsItem?? && ImageOfNewsItem != "">
             <div class="media-column">
-                <a class="img-cropper c-featured-news__image display-block" 
-                    style="background-image:url(${ImageOfNewsItem})"
-                    href="${viewURL}" 
-                    title="read more about ${entryTitle}">
+                <a class="img-cropper c-featured-news__image display-block"
+                   style="background-image:url(${ImageOfNewsItem})"
+                   href="${viewURL}"
+                   title="read more about ${entryTitle}">
                     <img src="${ImageOfNewsItem}" />
                 </a>
             </div>

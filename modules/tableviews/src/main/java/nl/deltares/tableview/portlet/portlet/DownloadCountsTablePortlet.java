@@ -35,6 +35,7 @@ import java.util.*;
 @Component(
         immediate = true,
         property = {
+                "javax.portlet.version=3.0",
                 "com.liferay.portlet.display-category=OSS-table",
                 "com.liferay.portlet.header-portlet-javascript=/lib/downloadcountstableview.js",
                 "com.liferay.portlet.header-portlet-javascript=/lib/common.js",
@@ -149,7 +150,7 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
         final List<DisplayDownloadCount> displayCounts = new ArrayList<>();
         final int end = cur + deltas;
         try {
-            final List<DownloadCount> downloadCounts = DownloadCountLocalServiceUtil.getDownloadCounts(cur, end);
+            final List<DownloadCount> downloadCounts = DownloadCountLocalServiceUtil.fetchDownloadCounts(cur, end);
             downloadCounts.forEach(downloadCount -> {
 
                 final long downloadId = downloadCount.getDownloadId();
@@ -176,13 +177,13 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
                 displayCounts.add(new DisplayDownloadCount(downloadCount.getId(), fileName, topic, downloadCount.getCount()));
             });
             displayCounts.sort(DisplayDownloadCount::compareTo);
-            renderRequest.setAttribute("records", displayCounts);
-            renderRequest.setAttribute("total", displayCounts.size());
-            renderRequest.setAttribute("topics", topicMap);
-            renderRequest.setAttribute("filterId", filterId);
         } catch (Exception e) {
             SessionErrors.add(renderRequest, "filter-failed", e.getMessage());
         }
+        renderRequest.setAttribute("records", displayCounts);
+        renderRequest.setAttribute("total", displayCounts.size());
+        renderRequest.setAttribute("topics", topicMap);
+        renderRequest.setAttribute("filterId", filterId);
     }
 
     /**

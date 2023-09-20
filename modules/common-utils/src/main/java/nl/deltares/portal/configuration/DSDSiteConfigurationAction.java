@@ -50,7 +50,6 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
 
         try {
             ThemeDisplay themeDisplay = (ThemeDisplay) httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY);
-            httpServletRequest.setAttribute("templateMap", getParsedJsonParameter(themeDisplay, _configurationProvider, "templateMap"));
             httpServletRequest.setAttribute("conditionsURL", getParsedJsonParameter(themeDisplay, _configurationProvider, "conditionsURL"));
             httpServletRequest.setAttribute("contactURL", getParsedJsonParameter(themeDisplay, _configurationProvider, "contactURL"));
             httpServletRequest.setAttribute("privacyURL", getParsedJsonParameter(themeDisplay, _configurationProvider, "privacyURL"));
@@ -86,8 +85,6 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         String dsdRegistrationDateField = ParamUtil.getString(actionRequest, "dsdRegistrationDateField");
         String dsdRegistrationTypeField = ParamUtil.getString(actionRequest, "dsdRegistrationTypeField");
 
-        Map<String, String> templateMap = convertTemplatesToMap(actionRequest);
-
         Settings settings = SettingsFactoryUtil.getSettings(
                 new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), DSDSiteConfiguration.class.getName()));
 
@@ -111,7 +108,6 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         modifiableSettings.setValue("dsdRegistrationStructures", dsdRegistrationStructures);
         modifiableSettings.setValue("dsdRegistrationDateField", dsdRegistrationDateField);
         modifiableSettings.setValue("dsdRegistrationTypeField", dsdRegistrationTypeField);
-        modifiableSettings.setValue("templateMap", JsonContentUtils.formatMapToJson(templateMap));
 
         modifiableSettings.store();
 
@@ -123,22 +119,6 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
     @Reference
     protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
         _configurationProvider = configurationProvider;
-    }
-
-
-    private Map<String, String> convertTemplatesToMap(ActionRequest actionRequest) {
-
-        HashMap<String, String> map = new HashMap<>();
-        int row = 0;
-        String portletId;
-        while(!(portletId = ParamUtil.getString(actionRequest, "portletId-" + row)).isEmpty()){
-            if (!portletId.startsWith("enter")) {
-                final String type = ParamUtil.getString(actionRequest, "templateId-" + row);
-                map.put(portletId, type);
-            }
-            row++;
-        }
-        return map;
     }
 
     public static Map<String, String> getParsedJsonParameter(ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider, String parameterId) throws PortalException {
@@ -153,9 +133,6 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         }
         String json;
         switch (parameterId){
-            case "templateMap":
-                json = siteConfiguration.templateMap();
-                break;
             case "conditionsURL":
                 json = siteConfiguration.conditionsURL();
                 break;

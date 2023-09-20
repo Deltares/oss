@@ -8,8 +8,6 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
-import nl.deltares.portal.utils.XmlContentUtils;
-import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,25 +38,24 @@ public class SessionRegistration extends Registration {
     private void init() throws PortalException {
 
         try {
-            Document document = getDocument();
-            String jsonImage = XmlContentUtils.getDynamicContentByName(document, "eventImage", true);
+            String jsonImage = getFormFieldValue( "eventImage", true);
             if (jsonImage != null) {
                 imageUrl = JsonContentUtils.parseImageJson(jsonImage);
             }
-            String webinarKey = XmlContentUtils.getDynamicContentByName(document, "webinarKey", true);
+            String webinarKey = getFormFieldValue( "webinarKey", true);
             if (webinarKey != null) this.webinarKey = webinarKey;
-            String provider = XmlContentUtils.getDynamicContentByName(document, "provider", true);
+            String provider = getFormFieldValue( "provider", true);
             if (provider != null) this.provider = provider;
 
-            String joinLink = XmlContentUtils.getDynamicContentByName(document, "joinLink", true);
+            String joinLink = getFormFieldValue( "joinLink", true);
             if (joinLink != null) this.joinLink = joinLink;
 
-            String value = XmlContentUtils.getDynamicContentByName(document, "ShowMultipleDaysAsSingleDate", true);
+            String value = getFormFieldValue("ShowMultipleDaysAsSingleDate", true);
             if (value != null) {
                 this.showMultipleDaysAsSingleDate = Boolean.parseBoolean(value);
             }
 
-            initDates(document);
+            initDates(null);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -81,7 +78,7 @@ public class SessionRegistration extends Registration {
     }
 
     private void parseRoom() throws PortalException {
-        String roomJson = XmlContentUtils.getDynamicContentByName(getDocument(), "room", false);
+        String roomJson = getFormFieldValue("room", false);
         JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(roomJson);
         AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(journalArticle, getLocale());
         if (!(dsdArticle instanceof Room)){
@@ -92,7 +89,7 @@ public class SessionRegistration extends Registration {
 
     private void parsePresenter() throws PortalException {
 
-        String[] presenters = XmlContentUtils.getDynamicContentsByName(getDocument(), "presenters");
+        List<String> presenters = getFormFieldValues( "presenters", true);
         for (String presenterJson : presenters) {
             JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(presenterJson);
             this.presenters.add( dsdParserUtils.getExpert(journalArticle) );
@@ -149,7 +146,7 @@ public class SessionRegistration extends Registration {
     }
 
     private void parsePresentations() throws PortalException {
-        String[] presentations = XmlContentUtils.getDynamicContentsByName(getDocument(), "presentation");
+        List<String> presentations = getFormFieldValues( "presentation", true);
         for (String presentationJson : presentations) {
             JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(presentationJson);
             this.presentations.add((Presentation) dsdParserUtils.toDsdArticle(journalArticle, getLocale()));

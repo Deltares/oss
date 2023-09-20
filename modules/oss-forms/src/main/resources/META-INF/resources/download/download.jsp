@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
+<%@ taglib uri="http://xmlns.jcp.org/portlet_3_0" prefix="portlet" %>
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
 <%@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %>
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
@@ -180,7 +180,7 @@
 
 <aui:script use="liferay-form">
 
-    validateFirstStep = function (){
+    const validateFirstStep = function (){
         let FIRST_STEP_ERROR_MESSAGE = '<liferay-ui:message key="download.step1.error"/>'
         let isValid = DownloadFormsUtil.validateFirstStep(FIRST_STEP_ERROR_MESSAGE);
         if (! isValid ) {
@@ -189,53 +189,26 @@
         return isValid;
     }
 
-    checkSelection = function (){
-        DownloadFormsUtil.checkSelection("<portlet:namespace />");
-    }
-    preSubmitAction = function (){
+    const preSubmitAction = function (){
         shoppingCart.clearDownloadsCart();
     }
 
-    updateLockSelection = function (active) {
-        $(document.getElementById("<portlet:namespace />lock-new"))[0].checked = (active === "lock-new");
-        $(document.getElementById("<portlet:namespace />lock-existing"))[0].checked = (active === "lock-existing");
-        $(document.getElementById("<portlet:namespace />lock-mac"))[0].checked = (active === "lock-mac");
-    }
-
-    updateLicenseSelection = function (active) {
-        $(document.getElementById("<portlet:namespace />license-network"))[0].checked = (active === "license-network");
-        $(document.getElementById("<portlet:namespace />license-standalone"))[0].checked = (active === "license-standalone");
-    }
-
-    registerOther = function (){
-        let registerOther = $(document.getElementById("<portlet:namespace />registration_other"))[0].checked;
-        let firstName = $(document.getElementById("<portlet:namespace />first_name"))[0];
-        let lastName = $(document.getElementById("<portlet:namespace />last_name"))[0];
-        let email = $(document.getElementById("<portlet:namespace />email"))[0];
-        firstName.disabled = !registerOther;
-        lastName.disabled = !registerOther;
-        email.disabled = !registerOther;
-        if (registerOther){
-            firstName.classList.remove("disabled");
-            lastName.classList.remove("disabled");
-            email.classList.remove("disabled");
-        } else {
-            firstName.classList.add("disabled");
-            lastName.classList.add("disabled");
-            email.classList.add("disabled");
-
-            firstName.value = firstName.getAttribute('original_value');
-            lastName.value = lastName.getAttribute('original_value');
-            email.value = email.getAttribute('original_value');
-        }
-    }
-
     $(document).ready(function() {
-        let form = Liferay.Form.get("<portlet:namespace />fm").formValidator;
+        let namespace = "<portlet:namespace />";
+        let form = Liferay.Form.get(namespace + "fm").formValidator;
+        form.validateFirstStep = validateFirstStep;
+        form.preSubmitAction = preSubmitAction;
         $('.bs-stepper').formStepper(form);
-        checkSelection();
-        $(document.getElementById("<portlet:namespace />use_organization_address")).change(function() {
-            CommonFormsUtil.updatePaymentAddress('<portlet:namespace />', this.checked);
+        DownloadFormsUtil.checkSelection(namespace);
+        let downloads = $(document.getElementsByClassName("download"));
+        [...downloads].forEach(function (download) {
+            download.onchange = function (){ DownloadFormsUtil.checkSelection(namespace)};
+        });
+        $(document.getElementById(namespace + "registration_other")).change(function() {
+            CommonFormsUtil.registerOther(namespace);
+        });
+        $(document.getElementById(namespace + "use_organization_address")).change(function() {
+            CommonFormsUtil.updatePaymentAddress(namespace, this.checked);
         });
         <c:if test='<%= !SessionErrors.isEmpty(liferayPortletRequest) %>'>shoppingCart.clearDownloadsCart()</c:if>
     });

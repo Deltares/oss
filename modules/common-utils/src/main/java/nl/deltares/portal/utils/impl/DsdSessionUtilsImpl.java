@@ -8,7 +8,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.GroupServiceUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import nl.deltares.dsd.registration.service.RegistrationLocalService;
+import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
@@ -34,36 +34,29 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     @Reference
     DsdJournalArticleUtils dsdJournalArticleUtils;
 
-    private RegistrationLocalService registrationLocalService;
-
-    @Reference(unbind = "-")
-    private void setRepositoryLogLocalService(RegistrationLocalService registrationLocalService) {
-
-        this.registrationLocalService = registrationLocalService;
-    }
     @Override
     public void deleteRegistrationsFor(Registration registration) {
-        registrationLocalService.deleteAllRegistrationsAndChildRegistrations(registration.getGroupId(), registration.getResourceId());
+        RegistrationLocalServiceUtil.deleteAllRegistrationsAndChildRegistrations(registration.getGroupId(), registration.getResourceId());
     }
 
     @Override
     public void deleteRegistrationsFor(long groupId, long resourceId) {
-        registrationLocalService.deleteAllRegistrationsAndChildRegistrations(groupId, resourceId);
+        RegistrationLocalServiceUtil.deleteAllRegistrationsAndChildRegistrations(groupId, resourceId);
     }
 
     @Override
     public void deleteRegistrationRecord(long registrationId) throws PortalException {
-        registrationLocalService.deleteRegistration(registrationId);
+        RegistrationLocalServiceUtil.deleteRegistration(registrationId);
     }
 
     @Override
-    public int getRegistrationCount(){
-        return registrationLocalService.getRegistrationsCount();
+    public int getRegistrationCount() {
+        return RegistrationLocalServiceUtil.getRegistrationsCount();
     }
 
     @Override
-    public List<Map<String, Object>> getRegistrations(int start, int end){
-        final List<nl.deltares.dsd.registration.model.Registration> dbRegistrations = registrationLocalService.getRegistrations(start, end);
+    public List<Map<String, Object>> getRegistrations(int start, int end) {
+        final List<nl.deltares.dsd.registration.model.Registration> dbRegistrations = RegistrationLocalServiceUtil.getRegistrations(start, end);
         List<Map<String, Object>> registrations = new ArrayList<>();
         dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
         return registrations;
@@ -101,8 +94,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
-    public void registerUser(User user, Map<String, String> userAttributes, Registration registration, Map<String,
-            String> registrationProperties, User registrationUser) throws PortalException {
+    public void registerUser(User user, Map<String, String> userAttributes, Registration registration, Map<String, String> registrationProperties, User registrationUser) throws PortalException {
 
         if (user.isDefaultUser()) return;
         try {
@@ -119,10 +111,10 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
             if (registrationUser != null && registrationUser != user) {
                 registeredByUserId = registrationUser.getUserId();
             }
-            registrationLocalService.addUserRegistration(
+            RegistrationLocalServiceUtil.addUserRegistration(
                     registration.getCompanyId(), registration.getGroupId(), registration.getResourceId(), eventResourcePrimaryKey,
                     parentId, user.getUserId(),
-                    registration.getStartTime(), registration.getEndTime(), JsonContentUtils.formatMapToJson(registrationProperties),registeredByUserId);
+                    registration.getStartTime(), registration.getEndTime(), JsonContentUtils.formatMapToJson(registrationProperties), registeredByUserId);
         }
     }
 
@@ -145,7 +137,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         try {
             if (webinarUtilsFactory.isWebinarSupported(registration)) {
 
-                List<nl.deltares.dsd.registration.model.Registration> registrations = registrationLocalService.getRegistrations(registration.getGroupId(), user.getUserId(), registration.getResourceId());
+                List<nl.deltares.dsd.registration.model.Registration> registrations = RegistrationLocalServiceUtil.getRegistrations(registration.getGroupId(), user.getUserId(), registration.getResourceId());
                 if (registrations.size() > 0) {
                     Map<String, String> preferences = getUserPreferencesMap(registrations.get(0));
                     try {
@@ -159,14 +151,14 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
                 }
             }
         } finally {
-            registrationLocalService.deleteUserRegistrationAndChildRegistrations(
+            RegistrationLocalServiceUtil.deleteUserRegistrationAndChildRegistrations(
                     registration.getGroupId(), registration.getResourceId(), user.getUserId());
         }
     }
 
     private Map<String, String> getUserPreferencesMap(nl.deltares.dsd.registration.model.Registration dbRegistration) throws PortalException {
         String userPreferences = dbRegistration.getUserPreferences();
-        if (userPreferences == null){
+        if (userPreferences == null) {
             return Collections.emptyMap();
         }
         return JsonContentUtils.parseJsonToMap(userPreferences);
@@ -187,9 +179,12 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         final ArrayList<Registration> combined = new ArrayList<>(registrations);
         combined.addAll(childRegistrations);
         List<Registration> overlapping = checkIfRegistrationsOverlap(combined);
-        if (overlapping.size() > 0){
+        if (overlapping.size() > 0) {
             StringBuilder titles = new StringBuilder();
-            overlapping.forEach(registration -> {titles.append(registration.getTitle()); titles.append(", ");});
+            overlapping.forEach(registration -> {
+                titles.append(registration.getTitle());
+                titles.append(", ");
+            });
             throw new ValidationException("Overlapping periods found for registrations: " + titles);
         }
 
@@ -250,7 +245,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     @Override
     public Map<String, String> getUserPreferences(User user, Registration registration) throws PortalException {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
-                registrationLocalService.getRegistrations(registration.getGroupId(), user.getUserId(), registration.getResourceId());
+                RegistrationLocalServiceUtil.getRegistrations(registration.getGroupId(), user.getUserId(), registration.getResourceId());
 
         for (nl.deltares.dsd.registration.model.Registration dbRegistration : dbRegistrations) {
             return getUserPreferencesMap(dbRegistration);
@@ -260,10 +255,10 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     @Override
     public int getRegistrationCount(Registration registration) {
-        return registrationLocalService.getRegistrationsCount(registration.getGroupId(), registration.getResourceId());
+        return RegistrationLocalServiceUtil.getRegistrationsCount(registration.getGroupId(), registration.getResourceId());
     }
 
-    private List<Registration> checkIfRegistrationsOverlap(List<Registration> registrations){
+    private List<Registration> checkIfRegistrationsOverlap(List<Registration> registrations) {
 
         ArrayList<Registration> overlapping = new ArrayList<>();
         Registration[] list = registrations.toArray(new Registration[0]);
@@ -300,7 +295,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     private long[] getOverlappingRegistrationIds(User user, Registration registration) throws PortalException {
-        long[] registrationsWithOverlappingPeriod = registrationLocalService.getRegistrationsWithOverlappingPeriod(registration.getGroupId(), user.getUserId(),
+        long[] registrationsWithOverlappingPeriod = RegistrationLocalServiceUtil.getRegistrationsWithOverlappingPeriod(registration.getGroupId(), user.getUserId(),
                 registration.getStartTime(), registration.getEndTime());
 
         /*
@@ -313,7 +308,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
             //skip if child can overlap with parent session
             if (registrationsWithOverlappingPeriod[i] == parentId && overlapWithParent) {
                 registrationsWithOverlappingPeriod[i] = 0;
-            //skip bus transfers and other registrations that can always overlap
+                //skip bus transfers and other registrations that can always overlap
             } else if (canOverlap(registrationsWithOverlappingPeriod[i], registration.getArticleId())) {
                 registrationsWithOverlappingPeriod[i] = 0;
             }
@@ -334,14 +329,14 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     @Override
     public boolean isUserRegisteredFor(User user, Registration registration) {
-        int registrationsCount = registrationLocalService.getRegistrationsCount(registration.getGroupId(), user.getUserId(), registration.getResourceId());
+        int registrationsCount = RegistrationLocalServiceUtil.getRegistrationsCount(registration.getGroupId(), user.getUserId(), registration.getResourceId());
         return registrationsCount > 0;
     }
 
     @Override
     public List<Map<String, Object>> getUserRegistrations(User user, Event event) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
-                registrationLocalService.getUserEventRegistrations(event.getGroupId(), user.getUserId(), event.getResourceId());
+                RegistrationLocalServiceUtil.getUserEventRegistrations(event.getGroupId(), user.getUserId(), event.getResourceId());
         List<Map<String, Object>> registrations = new ArrayList<>();
         dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
         return registrations;
@@ -350,7 +345,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     @Override
     public List<Map<String, Object>> getUserRegistrationsMadeForOthers(User user, Event event) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
-                registrationLocalService.getUserEventRegistrationsMadeForOthers(event.getGroupId(), user.getUserId(), event.getResourceId());
+                RegistrationLocalServiceUtil.getUserEventRegistrationsMadeForOthers(event.getGroupId(), user.getUserId(), event.getResourceId());
         List<Map<String, Object>> registrations = new ArrayList<>();
         dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
         return registrations;
@@ -361,7 +356,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
         try {
             final JournalArticle eventArticle = dsdJournalArticleUtils.getJournalArticle(groupId, Long.toString(eventArticleId));
-            return registrationLocalService.countUserEventRegistrationsRegisteredByMe(groupId, user.getUserId(), eventArticle.getResourcePrimKey()) > 0;
+            return RegistrationLocalServiceUtil.countUserEventRegistrationsRegisteredByMe(groupId, user.getUserId(), eventArticle.getResourcePrimKey()) > 0;
         } catch (PortalException e) {
             return false;
         }
@@ -371,7 +366,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     @Override
     public List<Map<String, Object>> getRegistrations(Event event) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
-                registrationLocalService.getEventRegistrations(event.getGroupId(), event.getResourceId());
+                RegistrationLocalServiceUtil.getEventRegistrations(event.getGroupId(), event.getResourceId());
         List<Map<String, Object>> registrations = new ArrayList<>();
         dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
         return registrations;
@@ -380,7 +375,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     @Override
     public List<Map<String, Object>> getRegistrations(long groupId, long resourceId) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
-                registrationLocalService.getArticleRegistrations(groupId, resourceId);
+                RegistrationLocalServiceUtil.getArticleRegistrations(groupId, resourceId);
         List<Map<String, Object>> registrations = new ArrayList<>();
         dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
         return registrations;
@@ -389,7 +384,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     @Override
     public List<Map<String, Object>> getEventRegistrations(long groupId, long eventResourceId) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
-                registrationLocalService.getEventRegistrations(groupId, eventResourceId);
+                RegistrationLocalServiceUtil.getEventRegistrations(groupId, eventResourceId);
         List<Map<String, Object>> registrations = new ArrayList<>();
         dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
         return registrations;
@@ -397,7 +392,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     @Override
     public void deleteEventRegistrations(long groupId, long resourceId) {
-        registrationLocalService.deleteAllEventRegistrations(groupId, resourceId);
+        RegistrationLocalServiceUtil.deleteAllEventRegistrations(groupId, resourceId);
     }
 
     private static final Log LOG = LogFactoryUtil.getLog(DsdSessionUtilsImpl.class);

@@ -261,8 +261,8 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 //write short output for printing badges
                 writeLightRecord(writer, recordObjects, null, matchingUser);
             } else {
-                writeRecord(writer, recordObjects, null, null, matchingUser,
-                        null, locale);
+            writeRecord(writer, recordObjects, null, null, matchingUser,
+                    null, locale);
             }
             if (Thread.interrupted()) {
                 status = terminated;
@@ -308,7 +308,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 try {
                     matchingUser = UserLocalServiceUtil.getUser((Long) recordObjects.get("userId"));
                 } catch (PortalException e) {
-                    //User no longer exists
+                    //
                 }
                 if (downloadAction == DOWNLOAD_ACTIONS.downloadRepro) {
                     //write short output for printing badges

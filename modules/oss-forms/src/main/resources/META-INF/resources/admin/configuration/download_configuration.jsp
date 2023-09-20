@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
+<%@ taglib uri="http://xmlns.jcp.org/portlet_3_0" prefix="portlet" %>
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
 <%@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %>
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
@@ -20,9 +20,6 @@
     ConfigurationProvider configurationProvider =
             (ConfigurationProvider) request.getAttribute(ConfigurationProvider.class.getName());
     DownloadSiteConfiguration configuration = configurationProvider.getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
-
-    Map<String, String> templateMap = (Map<String,String>) renderRequest.getAttribute("templateMap");
-    if (templateMap == null) templateMap = new HashMap<>();
 
     final List<String> languageIds = (List<String>) renderRequest.getAttribute("languageIds");
 %>
@@ -108,36 +105,9 @@
                 type="checkbox"
                 value="<%= configuration.enableEmails() %>"/>
 
-        <table id="searchResultsMap" class="display" style="width:100%">
-            <thead>
-            <tr>
-                <th>Search Result Portlet ID</th>
-                <th>Result Type</th>
-            </tr>
-            </thead>
-            <tbody>
-            <% int row = 0; %>
-            <%    for (String portletId : templateMap.keySet()) { %>
-            <tr>
-                <td><aui:input type="text" name='<%="portletId-" + (row)%>' value="<%=portletId%>" label=""/></td>
-                <td><aui:input type="text" name='<%="templateId-" + (row)%>' value="<%=templateMap.get(portletId)%>" label=""/></td>
-            </tr>
-            <%
-                    row++;
-                } %>
-            <tr>
-                <td><aui:input type="text" name='<%="portletId-" + (row)%>' value="enter id of search results portlet" label=""/></td>
-                <td><aui:input type="text" name='<%="templateId-" + (row)%>' value="enter template key" label=""/></td>
-            </tr>
-            <tr>
-                <td><button class="btn btn-lg btn-primary" type="submit" >Add Row</button></td>
-            </tr>
-            </tbody>
-        </table>
-
     </aui:fieldset>
 
     <aui:button-row>
-        <aui:button type="submit"></aui:button>
+        <aui:button type="submit"/>
     </aui:button-row>
 </aui:form>

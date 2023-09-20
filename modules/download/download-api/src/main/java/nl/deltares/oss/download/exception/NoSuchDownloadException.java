@@ -13,14 +13,11 @@
  */
 package nl.deltares.oss.download.exception;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.exception.NoSuchModelException;
 
 /**
  * @author Erik de Rooij @ Deltares
  */
-@ProviderType
 public class NoSuchDownloadException extends NoSuchModelException {
 
 	public NoSuchDownloadException() {
@@ -30,12 +27,12 @@ public class NoSuchDownloadException extends NoSuchModelException {
 		super(msg);
 	}
 
-	public NoSuchDownloadException(String msg, Throwable cause) {
-		super(msg, cause);
+	public NoSuchDownloadException(String msg, Throwable throwable) {
+		super(msg, throwable);
 	}
 
-	public NoSuchDownloadException(Throwable cause) {
-		super(cause);
+	public NoSuchDownloadException(Throwable throwable) {
+		super(throwable);
 	}
 
 }

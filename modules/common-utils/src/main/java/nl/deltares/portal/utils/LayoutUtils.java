@@ -9,7 +9,7 @@ public interface LayoutUtils {
 
   Layout getLinkToPageLayout(String linkToPage);
 
-  Layout getLinkToPageLayout(long groupId, boolean privateLayout, String friendlyUrl);
+  Layout getLinkToPageLayout(long groupId, boolean privateLayout, long layoutId);
 
   Layout getLayoutFromCategory(long categoryId);
 
