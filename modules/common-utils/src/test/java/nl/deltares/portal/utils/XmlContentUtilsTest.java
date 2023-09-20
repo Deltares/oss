@@ -79,7 +79,7 @@ public class XmlContentUtilsTest {
         URL xml = this.getClass().getResource("/data/dsdevent.xml");
         Document document = XmlContentUtils.parseContent("testGetOptionalDynamicContentByName", new FileInputStream(xml.getFile()));
         String content = XmlContentUtils.getDynamicContentByName(document, "doesNotExist", true);
-        Assert.assertNull(content);
+        Assert.assertTrue(content.isEmpty());
 
     }
 

@@ -12,12 +12,8 @@ dependencies {
     compileOnly project(":modules:download:download-api")
     compileOnly project(":modules:geolocation:geolocation-api")
 
-    testImplementation group: 'com.liferay.portal', name: 'com.liferay.portal.kernel'
-    testImplementation group: 'com.liferay.portal', name: 'com.liferay.portal.impl'
-    testImplementation group: "com.liferay", name: "com.liferay.petra.string"
-    testImplementation group: 'com.liferay', name: 'com.liferay.petra.lang'
-    testImplementation group: 'com.liferay', name: 'com.liferay.journal.api'
-
+    testImplementation group: "com.liferay.portal", name: "release.dxp.api", version:'7.4.13.u77'
+    testImplementation( group: "com.liferay.portal", name: "portal-impl", version: '6.2.0-RC5')
     testImplementation group: "junit", name: "junit", version: "4.12"
     testImplementation group: 'org.jodd', name: 'jodd-json'
     testImplementation group: 'commons-io', name: 'commons-io', version: '2.11.0'

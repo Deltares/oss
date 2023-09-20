@@ -241,10 +241,6 @@ public class DownloadCountLocalServiceUtil {
 		return getService().getDownloadCountByGroupId(groupId, downloadId);
 	}
 
-	public static int getDownloadCountByGroupId(long groupId) {
-		return getService().getDownloadCountByGroupId(groupId);
-	}
-
 	/**
 	 * Returns a range of all the download counts.
 	 *

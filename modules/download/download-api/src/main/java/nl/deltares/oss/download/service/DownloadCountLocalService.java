@@ -220,9 +220,6 @@ public interface DownloadCountLocalService
 	public DownloadCount getDownloadCountByGroupId(
 		long groupId, long downloadId);
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getDownloadCountByGroupId(long groupId);
-
 	/**
 	 * Returns a range of all the download counts.
 	 *
