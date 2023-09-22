@@ -11,8 +11,8 @@ RUN chmod a+x /etc/liferay/wait-for-it.sh
 RUN chown -R liferay:liferay /opt/liferay/data/document_library
 
 COPY ["resources/keystore.jks", "/opt/liferay/data/keystore.jks"]
-COPY ["resources/Liferay Connector to SAML 2.0.lpkg", "/opt/liferay/osgi/marketplace/Liferay Connector to SAML 2.0.lpkg"]
-COPY ["resources/Liferay Plugin for OAuth 2.0.lpkg", "/opt/liferay/osgi/marketplace/Liferay Plugin for OAuth 2.0.lpkg"]
+#COPY ["resources/Liferay Connector to SAML 2.0.lpkg", "/opt/liferay/osgi/marketplace/Liferay Connector to SAML 2.0.lpkg"]
+#COPY ["resources/Liferay Plugin for OAuth 2.0.lpkg", "/opt/liferay/osgi/marketplace/Liferay Plugin for OAuth 2.0.lpkg"]
 COPY ["resources/activation-key.xml", "/opt/liferay/osgi/modules/activation-key.xml"]
 
 
