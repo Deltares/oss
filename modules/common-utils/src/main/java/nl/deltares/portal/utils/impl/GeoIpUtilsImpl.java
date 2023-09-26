@@ -60,6 +60,10 @@ public class GeoIpUtilsImpl implements GeoIpUtils {
 
     @Override
     public Map<String, String> getClientIpInfo(String ipAddress) {
+        return getClientIpInfo(ipAddress, true);
+    }
+    public Map<String, String> getClientIpInfo(String ipAddress, boolean registerIfMissing) {
+
         HashMap<String, String> info = new HashMap<>();
         if (reader == null) return info;
         try {
@@ -73,7 +77,7 @@ public class GeoIpUtilsImpl implements GeoIpUtils {
             info.put("longitude", String.valueOf(city.getLocation().getLongitude()));
             LOG.info(String.format("Parsed geolocation %s, %s from IP %s", city.getCity().getName(), city.getCountry().getName(), ipAddress));
 
-            registerGeolocationIfMissing(info);
+            if (registerIfMissing) registerGeolocationIfMissing(info);
         } catch (Exception e) {
             LOG.warn("Error creating location info response: " + e.getMessage());
         }
