@@ -1,6 +1,7 @@
 dependencies {
-	implementation( group: "com.liferay.portal", name: "release.dxp.api")
+	implementation( 'com.liferay.portal:release.dxp.api')
 	implementation( project(":modules:common-utils"))
+	implementation( project(":modules:download:download-api") )
 
-	cssBuilder( group: "org.slf4j", name: "slf4j-simple", version:"2.0.0")
+	cssBuilder( 'org.slf4j:slf4j-simple:2.0.0')
 }
