@@ -13,4 +13,7 @@ public class UserProfilePortletKeys {
 
 	public static final String PASSWORD =
 			"nl_deltares_useraccount_PasswordPortlet";
+
+	public static final String LICENSES =
+			"nl_deltares_useraccount_LicensesPortlet";
 }
