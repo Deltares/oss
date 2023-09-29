@@ -26,6 +26,7 @@ import java.util.List;
 @Component(
         immediate = true,
         property = {
+                "javax.portlet.version=3.0",
                 "com.liferay.portlet.display-category=OSS-account",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.instanceable=true",

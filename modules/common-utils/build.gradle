@@ -1,22 +1,26 @@
 dependencies {
 
-    compileOnly group: "com.liferay.portal", name: "release.dxp.api", version:'7.4.13.u77'
+    implementation('com.liferay.portal:release.dxp.api:7.4.13.u77')
 
-    compileOnly group: 'biz.aQute.bnd', name: 'biz.aQute.bnd.gradle', version: '3.4.0'
-    compileOnly group: 'javax.mail', name: 'mail', version: '1.4.7'
-    compileOnly group: 'javax.portlet', name: 'portlet-api'
-    compileOnly group: 'javax.servlet', name: 'javax.servlet-api'
-    compileInclude group: "com.maxmind.geoip2", name: "geoip2", version: "2.15.0"
+    implementation 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.4.0'
+    implementation 'javax.mail:mail:1.4.7'
+    implementation 'javax.portlet:portlet-api'
+    implementation 'javax.servlet:javax.servlet-api'
+    compileInclude 'com.maxmind.geoip2:geoip2:2.15.0'
 
-    compileOnly project(":modules:registration-service:registration-service-api")
-    compileOnly project(":modules:download:download-api")
-    compileOnly project(":modules:geolocation:geolocation-api")
+    implementation(project(":modules:registration-service:registration-service-api"))
+    implementation(project(":modules:download:download-api"))
+    implementation(project(":modules:geolocation:geolocation-api"))
 
-    testImplementation group: "com.liferay.portal", name: "release.dxp.api", version:'7.4.13.u77'
-    testImplementation( group: "com.liferay.portal", name: "portal-impl", version: '6.2.0-RC5')
-    testImplementation group: "junit", name: "junit", version: "4.12"
-    testImplementation group: 'org.jodd', name: 'jodd-json'
-    testImplementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
-    testImplementation group: "com.maxmind.geoip2", name: "geoip2", version: "2.15.0"
+    testImplementation 'com.liferay.portal:com.liferay.portal.kernel'
+    testImplementation 'com.liferay.portal:com.liferay.portal.impl'
+    testImplementation 'com.liferay:com.liferay.petra.string'
+    testImplementation 'com.liferay:com.liferay.petra.lang'
+    testImplementation 'com.liferay:com.liferay.journal.api'
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.jodd:jodd-json'
+    testImplementation 'commons-io:commons-io:2.11.0'
+    testImplementation 'com.maxmind.geoip2:geoip2:2.15.0'
 
 }
