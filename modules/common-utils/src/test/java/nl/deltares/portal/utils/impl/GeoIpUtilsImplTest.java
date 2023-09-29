@@ -1,6 +1,7 @@
 package nl.deltares.portal.utils.impl;
 
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.util.PropsValues;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import nl.deltares.mock.MockProps;

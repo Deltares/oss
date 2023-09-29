@@ -28,7 +28,7 @@ public class MockDsdJournalArticleUtils implements DsdJournalArticleUtils {
         ArrayList<JournalArticle> events = new ArrayList<>();
         for (JournalArticle journalArticle : articleList) {
             if (journalArticle.getGroupId() != groupId) continue;
-            if (!journalArticle.getDDMStructureKey().toLowerCase().startsWith("event")) continue;
+            if (!journalArticle.getDDMStructure().getStructureKey().toLowerCase().startsWith("event")) continue;
             events.add(journalArticle);
         }
         return events;
