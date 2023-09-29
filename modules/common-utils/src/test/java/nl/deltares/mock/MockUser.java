@@ -337,6 +337,11 @@ public class MockUser implements User {
     }
 
     @Override
+    public boolean isGuestUser() {
+        return false;
+    }
+
+    @Override
     public boolean isMale() throws PortalException {
         return false;
     }
@@ -348,6 +353,11 @@ public class MockUser implements User {
 
     @Override
     public boolean isReminderQueryComplete() {
+        return false;
+    }
+
+    @Override
+    public boolean isServiceAccountUser() {
         return false;
     }
 
@@ -487,18 +497,8 @@ public class MockUser implements User {
     }
 
     @Override
-    public boolean getDefaultUser() {
-        return false;
-    }
-
-    @Override
     public boolean isDefaultUser() {
         return false;
-    }
-
-    @Override
-    public void setDefaultUser(boolean defaultUser) {
-
     }
 
     @Override
@@ -510,7 +510,6 @@ public class MockUser implements User {
     public void setContactId(long contactId) {
 
     }
-
     @Override
     public String getPassword() {
         return null;
@@ -863,6 +862,16 @@ public class MockUser implements User {
 
     @Override
     public void setEmailAddressVerified(boolean emailAddressVerified) {
+
+    }
+
+    @Override
+    public int getType() {
+        return 0;
+    }
+
+    @Override
+    public void setType(int type) {
 
     }
 

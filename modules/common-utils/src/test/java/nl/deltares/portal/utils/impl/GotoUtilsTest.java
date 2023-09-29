@@ -1,7 +1,6 @@
 package nl.deltares.portal.utils.impl;
 
 import com.liferay.portal.json.JSONFactoryImpl;
-import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import nl.deltares.mock.MockUser;
 import nl.deltares.mock.MockWebinarSiteConfiguration;
