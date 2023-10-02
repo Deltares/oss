@@ -99,7 +99,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.tableview.portlet",
-    "version" : "1.0.7",
+    "version" : "1.0.8",
     "extension" : "jar"
   },
   {

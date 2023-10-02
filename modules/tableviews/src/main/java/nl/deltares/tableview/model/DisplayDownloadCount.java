@@ -1,11 +1,7 @@
 package nl.deltares.tableview.model;
 
-import com.liferay.portal.kernel.util.StringComparator;
+public class DisplayDownloadCount {
 
-
-public class DisplayDownloadCount implements Comparable<DisplayDownloadCount> {
-
-    final static StringComparator comparator = new StringComparator(true, true);
     final private int count;
     final private String fileName;
     final private String fileTopic;
@@ -21,6 +17,7 @@ public class DisplayDownloadCount implements Comparable<DisplayDownloadCount> {
     public long getId() {
         return id;
     }
+
     public int getCount() {
         return count;
     }
@@ -33,13 +30,4 @@ public class DisplayDownloadCount implements Comparable<DisplayDownloadCount> {
         return fileTopic;
     }
 
-    @Override
-    public int compareTo(DisplayDownloadCount o) {
-        final int compare = comparator.compare(fileTopic, o.fileTopic);
-        if (compare == 0){
-            return comparator.compare(fileName, o.fileName);
-        } else {
-            return compare;
-        }
-    }
 }

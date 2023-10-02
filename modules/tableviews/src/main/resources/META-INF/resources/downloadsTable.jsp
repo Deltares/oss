@@ -92,16 +92,16 @@
                     keyProperty="id"
             >
                 <liferay-ui:search-container-column-text property="id" name="Record ID" />
-                <liferay-ui:search-container-column-text property="fileName" name="File name"/>
-                <liferay-ui:search-container-column-text property="email" name="User"/>
-                <liferay-ui:search-container-column-text property="organization" name="Organization"/>
-                <liferay-ui:search-container-column-text property="city" name="City"/>
-                <liferay-ui:search-container-column-text property="countryCode" name="Country"/>
+                <liferay-ui:search-container-column-text property="fileName" name="File name" orderable="true" orderableProperty="fileName"/>
+                <liferay-ui:search-container-column-text property="email" name="User" orderable="true" orderableProperty="email"/>
+                <liferay-ui:search-container-column-text property="organization" name="Organization" orderable="true" orderableProperty="organization"/>
+                <liferay-ui:search-container-column-text property="city" name="City" orderable="true" orderableProperty="city"/>
+                <liferay-ui:search-container-column-text property="countryCode" name="Country" orderable="true" orderableProperty="countryCode"/>
                 <liferay-ui:search-container-column-text property="fileShareUrl" name="Share link"/>
                 <liferay-ui:search-container-column-text property="licenseDownloadUrl" name="License download"/>
-                <liferay-ui:search-container-column-text property="downloadId" name="Article ID"/>
-                <liferay-ui:search-container-column-date property="modifiedDate" name="Last download date"/>
-                <liferay-ui:search-container-column-date property="expirationDate" name="Expiration date"/>
+                <liferay-ui:search-container-column-text property="downloadId" name="Article ID" orderable="true" orderableProperty="downloadId"/>
+                <liferay-ui:search-container-column-date property="modifiedDate" name="Last download date" orderable="true" orderableProperty="modifiedDate"/>
+                <liferay-ui:search-container-column-date property="expirationDate" name="Expiration date" orderable="true" orderableProperty="expirationDate"/>
 
 
             </liferay-ui:search-container-row>
