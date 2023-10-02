@@ -1,12 +1,8 @@
 package nl.deltares.tableview.model;
 
-import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.CountryServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import nl.deltares.oss.download.model.Download;
-import nl.deltares.oss.geolocation.model.GeoLocation;
-import nl.deltares.oss.geolocation.service.GeoLocationLocalServiceUtil;
 
 import java.util.Date;
 
@@ -43,7 +39,7 @@ public class DisplayDownload {
     }
 
 
-    public long getId(){
+    public long getId() {
         return download.getId();
     }
 
@@ -55,14 +51,16 @@ public class DisplayDownload {
         return download.getModifiedDate();
     }
 
-    public Date getExpirationDate() {return download.getExpiryDate(); }
+    public Date getExpirationDate() {
+        return download.getExpiryDate();
+    }
 
     public String getEmail() {
         return email;
     }
 
     public String getOrganization() {
-        return  organization;
+        return organization;
     }
 
     public void setCity(String city) {
@@ -96,13 +94,4 @@ public class DisplayDownload {
         return licenseDownloadUrl;
     }
 
-    public int compareDesc(DisplayDownload o){
-        final int compare = o.getModifiedDate().compareTo(getModifiedDate());
-        if (compare == 0) {
-            return Long.compare(o.getDownloadId(), getDownloadId());
-        } else {
-            return compare;
-        }
-
-    }
 }

@@ -103,13 +103,13 @@
                     className="nl.deltares.tableview.model.DisplayRegistration"
                     modelVar="entry"
             >
-                <liferay-ui:search-container-column-text property="eventName" name="Event"/>
-                <liferay-ui:search-container-column-text property="registrationName" name="Registration"/>
-                <liferay-ui:search-container-column-text property="email" name="E-Mail"/>
-                <liferay-ui:search-container-column-text property="startTime" name="Start (GMT)"/>
-                <liferay-ui:search-container-column-text property="endTime" name="End (GMT)"/>
-                <liferay-ui:search-container-column-text property="eventResourceId" name="Event Resource ID"/>
-                <liferay-ui:search-container-column-text property="resourceId" name="Resource ID"/>
+                <liferay-ui:search-container-column-text property="eventName" name="Event" orderable="true" orderableProperty="eventName"/>
+                <liferay-ui:search-container-column-text property="registrationName" name="Registration" orderable="true" orderableProperty="registrationName"/>
+                <liferay-ui:search-container-column-text property="email" name="E-Mail" orderable="true" orderableProperty="email"/>
+                <liferay-ui:search-container-column-text property="startTime" name="Start (GMT)" orderable="true" orderableProperty="startTime"/>
+                <liferay-ui:search-container-column-text property="endTime" name="End (GMT)" orderable="true" orderableProperty="endTime"/>
+                <liferay-ui:search-container-column-text property="eventResourceId" name="Event Resource ID" orderable="true" orderableProperty="eventResourceId"/>
+                <liferay-ui:search-container-column-text property="resourceId" name="Resource ID" orderable="true" orderableProperty="resourceId"/>
                 <%--                <liferay-ui:search-container-column-text property="preferences" name="Prefferences"/>--%>
                 <liferay-ui:search-container-column-text name="Actions">
                     <aui:button-row>

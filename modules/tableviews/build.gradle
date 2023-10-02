@@ -1,24 +1,9 @@
 dependencies {
-	compileOnly group: "com.liferay", name: "com.liferay.asset.taglib"
-	compileOnly group: "com.liferay", name: "com.liferay.comment.taglib"
-	compileOnly group: "com.liferay", name: "com.liferay.frontend.taglib"
-	compileOnly group: "com.liferay", name: "com.liferay.frontend.taglib.dynamic.section"
-	compileOnly group: "com.liferay", name: "com.liferay.frontend.taglib.form.navigator"
-	compileOnly group: "com.liferay", name: "com.liferay.frontend.taglib.util"
-	compileOnly group: "com.liferay", name: "com.liferay.journal.taglib"
-	compileOnly group: "com.liferay", name: "com.liferay.layout.taglib"
-	compileOnly group: 'com.liferay', name: 'com.liferay.journal.api'
-	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
-	compileOnly group: "com.liferay.portal", name: "com.liferay.util.taglib"
-	compileOnly group: "javax.portlet", name: "portlet-api"
-	compileOnly group: "javax.servlet", name: "javax.servlet-api"
-	compileOnly group: "jstl", name: "jstl"
-	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations"
-
-	compileOnly project(":modules:common-utils")
-	compileOnly project(":modules:download:download-api")
-	compileOnly project(":modules:geolocation:geolocation-api")
-	compileOnly project(":modules:registration-service:registration-service-api")
+	implementation( 'com.liferay.portal:release.dxp.api')
+	implementation project(":modules:common-utils")
+	implementation project(":modules:download:download-api")
+	implementation project(":modules:geolocation:geolocation-api")
+	implementation project(":modules:registration-service:registration-service-api")
 
 
 	cssBuilder( group: "org.slf4j", name: "slf4j-simple", version:"2.0.0")
