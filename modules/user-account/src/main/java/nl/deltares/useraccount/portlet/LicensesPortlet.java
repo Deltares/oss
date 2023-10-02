@@ -10,11 +10,13 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
 import nl.deltares.portal.configuration.SiteMapConfiguration;
 import nl.deltares.portal.utils.DsdParserUtils;
+import nl.deltares.useraccount.comparator.DownloadFiledComparator;
 import nl.deltares.useraccount.constants.UserProfilePortletKeys;
 import nl.deltares.useraccount.model.DisplayDownload;
 import org.osgi.service.component.annotations.Component;
@@ -75,19 +77,28 @@ public class LicensesPortlet extends MVCPortlet {
 
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest
                 .getAttribute(WebKeys.THEME_DISPLAY);
-
+        String orderByCol = ParamUtil.getString(renderRequest, "orderByCol");
+        String orderByType = ParamUtil.getString(renderRequest, "orderByType");
         final long siteGroupId = getDownloadSiteGroup(themeDisplay);
         final User loggedInUser = getDownloadSiteUser(themeDisplay, siteGroupId);
         List<Download> downloads;
         try {
             downloads = DownloadLocalServiceUtil.findDownloadsByUserId(siteGroupId, loggedInUser.getUserId());
             final List<DisplayDownload> list = convertToDisplayDownloads(downloads);
+            sortDownloads(list, orderByCol, orderByType);
             renderRequest.setAttribute("records", list);
 
         } catch (Exception e) {
             renderRequest.setAttribute("records", Collections.emptyList());
         }
         super.render(renderRequest, renderResponse);
+    }
+
+    private void sortDownloads(List<DisplayDownload> displays, String orderByCol, String orderByType) {
+
+        final DownloadFiledComparator comparator = new DownloadFiledComparator(orderByCol, orderByType.equals("asc"));
+        displays.sort(comparator);
+
     }
 
     private User getDownloadSiteUser(ThemeDisplay themeDisplay, long siteGroupId) {
@@ -127,7 +138,6 @@ public class LicensesPortlet extends MVCPortlet {
             displays.add(displayDownload);
         });
 
-        displays.sort(DisplayDownload::compareDesc);
         return displays;
     }
 
