@@ -105,7 +105,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.useraccount",
-    "version" : "1.0.2",
+    "version" : "1.0.3",
     "extension" : "jar"
   },
   {
