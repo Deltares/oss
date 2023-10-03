@@ -1,4 +1,13 @@
 <nav class="flex flex-row justify-end">
+    <#if unread_announcements?? && unread_announcements gt 0 >
+    <ol class="flex flex-row">
+        <li class="px-3 account-link">
+            <a class="c-announcements block text-sm font-medium text-white" href="${user_announcements_url}">
+                <span class="c-announcements__counter"><@liferay.language key='announcements' /></span>
+            </a>
+        </li>
+    </ol>
+    </#if>
     <ol class="flex flex-row">
         <#if is_signed_in>
             <#if user_account_url??>

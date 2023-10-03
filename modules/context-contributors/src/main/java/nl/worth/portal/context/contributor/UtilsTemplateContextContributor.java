@@ -1,7 +1,11 @@
 package nl.worth.portal.context.contributor;
 
+import com.liferay.announcements.kernel.model.AnnouncementsFlag;
+import com.liferay.announcements.kernel.service.AnnouncementsFlagLocalServiceUtil;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.util.JournalContent;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -18,6 +22,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Component(
@@ -78,35 +83,68 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
         if (keycloakUtils.isActive()) {
             contextObjects.put("user_mailing_url", "/subscriptions");
             contextObjects.put("user_account_url", "/account");
+            contextObjects.put("user_announcements_url", "/announcements");
         }
-        User user = themeDisplay.getUser();
-        long portraitId = user.getPortraitId();
-        if (portraitId > 0) {
-            try {
-                contextObjects.put("user_avatar_url", user.getPortraitURL(themeDisplay));
-            } catch (PortalException e) {
-                //
-            }
-        }
-        final Object isSanctioned_from_postlogin = request.getSession().getAttribute("LIFERAY_SHARED_isSanctioned");
-        boolean isSanctioned = isSanctioned_from_postlogin != null && (boolean) isSanctioned_from_postlogin;
-        String sanctionCountry = (String) request.getSession().getAttribute("LIFERAY_SHARED_sanctionCountry");
-        if (geoIpUtils != null && isSanctioned_from_postlogin == null) {
-            final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(request.getRemoteAddr());
-            final String countryIso2Code = geoIpUtils.getCountryIso2Code(clientIpInfo);
-            isSanctioned = sanctionCheckUtils.isSanctionedByCountyCode(themeDisplay.getCompanyId(), countryIso2Code);
-            sanctionCountry = geoIpUtils.getCountryName(clientIpInfo);
-            request.getSession().setAttribute("LIFERAY_SHARED_isSanctioned", false);
-            request.getSession().setAttribute("LIFERAY_SHARED_sanctionCountry", sanctionCountry == null ? "unknown": sanctionCountry);
-        }
-        contextObjects.put("is_sanctioned", isSanctioned);
-        contextObjects.put("sanctionCountry", sanctionCountry == null ? "" : sanctionCountry);
 
         //set languages
         setLanguages(contextObjects, themeDisplay);
 
-        contextObjects.put("checkout_cart_url", urlUtils.getShoppingCartURL(themeDisplay));
-        contextObjects.put("download_cart_url", urlUtils.getDownloadCartURL(themeDisplay));
+        if (themeDisplay.isSignedIn()) {
+            User user = themeDisplay.getUser();
+            long portraitId = user.getPortraitId();
+            if (portraitId > 0) {
+                try {
+                    contextObjects.put("user_avatar_url", user.getPortraitURL(themeDisplay));
+                } catch (PortalException e) {
+                    //
+                }
+            }
+            final Object isSanctioned_from_postlogin = request.getSession().getAttribute("LIFERAY_SHARED_isSanctioned");
+            boolean isSanctioned = isSanctioned_from_postlogin != null && (boolean) isSanctioned_from_postlogin;
+            String sanctionCountry = (String) request.getSession().getAttribute("LIFERAY_SHARED_sanctionCountry");
+            if (geoIpUtils != null && isSanctioned_from_postlogin == null) {
+                final Map<String, String> clientIpInfo = geoIpUtils.getClientIpInfo(request.getRemoteAddr());
+                final String countryIso2Code = geoIpUtils.getCountryIso2Code(clientIpInfo);
+                isSanctioned = sanctionCheckUtils.isSanctionedByCountyCode(themeDisplay.getCompanyId(), countryIso2Code);
+                sanctionCountry = geoIpUtils.getCountryName(clientIpInfo);
+                request.getSession().setAttribute("LIFERAY_SHARED_isSanctioned", false);
+                request.getSession().setAttribute("LIFERAY_SHARED_sanctionCountry", sanctionCountry == null ? "unknown" : sanctionCountry);
+            }
+            contextObjects.put("is_sanctioned", isSanctioned);
+            contextObjects.put("sanctionCountry", sanctionCountry == null ? "" : sanctionCountry);
+
+            contextObjects.put("checkout_cart_url", urlUtils.getShoppingCartURL(themeDisplay));
+            contextObjects.put("download_cart_url", urlUtils.getDownloadCartURL(themeDisplay));
+
+            Integer unreadAnnouncements = (Integer) request.getSession().getAttribute("LIFERAY_SHARED_userAnnouncements");
+            if (unreadAnnouncements == null || unreadAnnouncements > 0) {
+                try {
+                    int count = getUnreadUserAnnouncementCount(user);
+                    request.getSession().setAttribute("LIFERAY_SHARED_userAnnouncements", count);
+                    contextObjects.put("unread_announcements", count);
+                } catch (Exception e) {
+                    LOG.warn(String.format("Error retrieving user announcements for user %s: %s", user.getEmailAddress(), e.getMessage()));
+                }
+            } else {
+                contextObjects.put("unread_announcements", unreadAnnouncements);
+            }
+        }
+
+    }
+
+    private int getUnreadUserAnnouncementCount(User user) {
+
+        final DynamicQuery dynamicQuery = AnnouncementsFlagLocalServiceUtil.dynamicQuery();
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", user.getCompanyId()));
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("userId", user.getUserId()));
+        final List<AnnouncementsFlag> flags = AnnouncementsFlagLocalServiceUtil.dynamicQuery(dynamicQuery);
+        int count = 0;
+        for (AnnouncementsFlag flag : flags) {
+            final int value = flag.getValue();
+            if (value == 1) count++; //unread
+            else if (value == 2) count--; //read
+        }
+        return count;
     }
 
     private void setLanguages(Map<String, Object> contextObjects, ThemeDisplay themeDisplay) {
