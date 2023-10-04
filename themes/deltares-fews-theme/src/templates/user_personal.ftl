@@ -1,4 +1,13 @@
 <div class="dropdown">
+    <#if unread_announcements?? && unread_announcements gt 0 >
+        <div class="dropbtn">
+            <a class="c-announcements fs-smallest" href="${user_announcements_url}">
+                <span class="c-announcements__counter"><@liferay.language key='announcements' /></span>
+            </a>
+        </div>
+    </#if>
+</div>
+<div class="dropdown">
     <#if is_signed_in>
         <div class="dropbtn">
             <a class="fs-smallest"  >
