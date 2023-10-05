@@ -56,7 +56,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.worth.portal.context.contributor",
-    "version" : "1.0.5",
+    "version" : "1.0.6",
     "extension" : "jar"
   },
   {
@@ -117,7 +117,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "deltares-theme",
-    "version" : "1.0.7",
+    "version" : "1.0.8",
     "extension" : "war"
   },
   {
