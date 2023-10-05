@@ -89,6 +89,8 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
         //set languages
         setLanguages(contextObjects, themeDisplay);
 
+        String checkoutCartUrl =  "";
+        String downloadCartURL = "";
         if (themeDisplay.isSignedIn()) {
             User user = themeDisplay.getUser();
             long portraitId = user.getPortraitId();
@@ -112,10 +114,8 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
             }
             contextObjects.put("is_sanctioned", isSanctioned);
             contextObjects.put("sanctionCountry", sanctionCountry == null ? "" : sanctionCountry);
-
-            contextObjects.put("checkout_cart_url", urlUtils.getShoppingCartURL(themeDisplay));
-            contextObjects.put("download_cart_url", urlUtils.getDownloadCartURL(themeDisplay));
-
+            checkoutCartUrl = urlUtils.getShoppingCartURL(themeDisplay);
+            downloadCartURL = urlUtils.getDownloadCartURL(themeDisplay);
             Integer unreadAnnouncements = (Integer) request.getSession().getAttribute("LIFERAY_SHARED_userAnnouncements");
             if (unreadAnnouncements == null || unreadAnnouncements > 0) {
                 try {
@@ -129,6 +129,9 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
                 contextObjects.put("unread_announcements", unreadAnnouncements);
             }
         }
+
+        contextObjects.put("checkout_cart_url", checkoutCartUrl);
+        contextObjects.put("download_cart_url", downloadCartURL);
 
     }
 
