@@ -48,7 +48,7 @@
             </li>
         </#if>
     </ol>
-    <#if languages?size != 0>
+    <#if languages?? && languages?size != 0>
         <ol class="flex flex-row items-center language-selector">
             <#list languages as language>
                 <li class="px-1 text-sm leading-none text-white border-right border-white">
