@@ -37,7 +37,7 @@
 
 <@liferay_util["include"] page=body_top_include />
 
-<#if is_site_admin>
+<#if is_site_admin?? && is_site_admin>
 	<@liferay.control_menu />
 </#if>
 
@@ -74,7 +74,7 @@
 
 </body>
 <script>
-	<#if is_shopping_cart >
+	<#if is_shopping_cart?? && is_shopping_cart >
 		var checkoutCartURL = '${checkout_cart_url}';
 		var downloadCartURL = '${download_cart_url}';
 		var shoppingCart = new ShoppingCart({'languageKeys': {
@@ -84,7 +84,7 @@
 		shoppingCart.refreshCart();
 	</#if>
 
-	<#if is_show_cookies >
+	<#if is_show_cookies?? && is_show_cookies >
 	window.cookieconsent.initialise({
 		palette: {
 			popup: {
