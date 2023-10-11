@@ -1,0 +1,23 @@
+.c-announcements {
+  color: $white;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  .c-announcements__counter {
+    align-items: center;
+    background-color: $yellow;
+    border-radius: 17px;
+    color: $dark-blue;
+    display: flex;
+    font-size: 12px;
+    font-weight: 600;
+    justify-content: center;
+    margin: -5px 0 0;
+    padding: 3px 5px 1px;
+    right: 0;
+    text-align: center;
+    top: -6px;
+  }
+}

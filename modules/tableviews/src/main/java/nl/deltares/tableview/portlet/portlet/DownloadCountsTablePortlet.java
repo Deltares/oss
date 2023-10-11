@@ -13,6 +13,7 @@ import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Download;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
+import nl.deltares.tableview.comparator.DownloadCountComparator;
 import nl.deltares.tableview.model.DisplayDownloadCount;
 import nl.deltares.tableview.portlet.constants.TablePortletKeys;
 import nl.deltares.tableview.tasks.impl.DeletedSelectedDownloadCountsRequest;
@@ -37,6 +38,7 @@ import java.util.*;
         property = {
                 "javax.portlet.version=3.0",
                 "com.liferay.portlet.display-category=OSS-table",
+                "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.header-portlet-javascript=/lib/downloadcountstableview.js",
                 "com.liferay.portlet.header-portlet-javascript=/lib/common.js",
                 "com.liferay.portlet.instanceable=true",
@@ -147,6 +149,9 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
 
     private void doFilterValues(String filterId, int cur, int deltas, RenderRequest renderRequest, Map<String, String> topicMap) {
 
+        String orderByCol = ParamUtil.getString(renderRequest, "orderByCol");
+        String orderByType = ParamUtil.getString(renderRequest, "orderByType");
+
         final List<DisplayDownloadCount> displayCounts = new ArrayList<>();
         final int end = cur + deltas;
         try {
@@ -176,7 +181,7 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
                 if (filterId != null && !filterId.equals(topicKey)) return;
                 displayCounts.add(new DisplayDownloadCount(downloadCount.getId(), fileName, topic, downloadCount.getCount()));
             });
-            displayCounts.sort(DisplayDownloadCount::compareTo);
+            sortDownloads(displayCounts, orderByCol, orderByType);
         } catch (Exception e) {
             SessionErrors.add(renderRequest, "filter-failed", e.getMessage());
         }
@@ -197,5 +202,12 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
 
         final String filter = ParamUtil.getString(actionRequest, "filterSelection", "none");
         actionResponse.getRenderParameters().setValue("filterId", filter);
+    }
+
+    private void sortDownloads(List<DisplayDownloadCount> displays, String orderByCol, String orderByType) {
+
+        final DownloadCountComparator comparator = new DownloadCountComparator(orderByCol, orderByType.equals("asc"));
+        displays.sort(comparator);
+
     }
 }

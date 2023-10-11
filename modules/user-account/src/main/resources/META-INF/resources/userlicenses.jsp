@@ -29,11 +29,10 @@
                         modelVar="entry"
                         keyProperty="id"
                 >
-                    <liferay-ui:search-container-column-text property="fileName" name="File name" orderable="<%= true %>" />
-                    <liferay-ui:search-container-column-date property="modifiedDate" name="Last download date"/>
-                    <liferay-ui:search-container-column-date property="expirationDate" name="Expiration date"/>
+                    <liferay-ui:search-container-column-text property="fileName" name="File name" orderable="true" orderableProperty="fileName" />
+                    <liferay-ui:search-container-column-date property="modifiedDate" name="Last download date" orderable="true" orderableProperty="modifiedDate"/>
+                    <liferay-ui:search-container-column-date property="expirationDate" name="Expiration date" orderable="true" orderableProperty="expirationDate"/>
                     <liferay-ui:search-container-column-text property="licenseDownloadUrlHTML" name="License download"/>
-
 
                 </liferay-ui:search-container-row>
                 <liferay-ui:search-iterator/>

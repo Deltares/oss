@@ -81,9 +81,9 @@
                             checked="false" />
                 </liferay-ui:search-container-column-text>
                 <% } %>
-                <liferay-ui:search-container-column-text property="fileTopic" name="Software package"/>
-                <liferay-ui:search-container-column-text property="fileName" name="File"/>
-                <liferay-ui:search-container-column-text property="count" name="Count"/>
+                <liferay-ui:search-container-column-text property="fileTopic" name="Software package" orderable="true" orderableProperty="fileTopic"/>
+                <liferay-ui:search-container-column-text property="fileName" name="File" orderable="true" orderableProperty="fileName"/>
+                <liferay-ui:search-container-column-text property="count" name="Count" orderable="true" orderableProperty="count"/>
 
             </liferay-ui:search-container-row>
             <liferay-ui:search-iterator/>
