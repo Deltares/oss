@@ -18,6 +18,7 @@ import nl.deltares.dsd.registration.model.Registration;
 import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
+import nl.deltares.tableview.comparator.RegistrationComparator;
 import nl.deltares.tableview.model.DisplayRegistration;
 import nl.deltares.tableview.portlet.constants.TablePortletKeys;
 import org.osgi.service.component.annotations.Component;
@@ -134,7 +135,7 @@ public class RegistrationTablePortlet extends MVCPortlet {
         final int end = curPage * deltas;
 
         try {
-            if (filterValue != null && filterValue.trim().length() > 0) {
+            if (filterValue != null && !filterValue.trim().isEmpty()) {
                 switch (filterSelection) {
                     case "email":
                         User user = UserLocalServiceUtil.getUserByEmailAddress(themeDisplay.getCompanyId(), filterValue);
@@ -159,9 +160,11 @@ public class RegistrationTablePortlet extends MVCPortlet {
                 registrations = RegistrationLocalServiceUtil.getRegistrations(start, end);
                 recordCount = RegistrationLocalServiceUtil.getRegistrationsCount();
             }
-
-            renderRequest.setAttribute("records", Objects.requireNonNullElse(
-                    convertToDisplayRegistrations(registrations), Collections.emptyList()));
+            String orderByCol = ParamUtil.getString(renderRequest, "orderByCol");
+            String orderByType = ParamUtil.getString(renderRequest, "orderByType");
+            final List<DisplayRegistration> displays = convertToDisplayRegistrations(registrations);
+            sortDownloads(displays, orderByCol, orderByType);
+            renderRequest.setAttribute("records", displays);
             renderRequest.setAttribute("total", recordCount);
             renderRequest.setAttribute("filterValue", filterValue);
             renderRequest.setAttribute("filterSelection", filterSelection);
@@ -284,4 +287,10 @@ public class RegistrationTablePortlet extends MVCPortlet {
 
     }
 
+    private void sortDownloads(List<DisplayRegistration> displays, String orderByCol, String orderByType) {
+
+        final RegistrationComparator comparator = new RegistrationComparator(orderByCol, orderByType.equals("asc"));
+        displays.sort(comparator);
+
+    }
 }

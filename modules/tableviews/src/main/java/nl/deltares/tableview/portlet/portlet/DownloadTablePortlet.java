@@ -18,6 +18,7 @@ import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
 import nl.deltares.oss.geolocation.model.GeoLocation;
 import nl.deltares.oss.geolocation.service.GeoLocationLocalServiceUtil;
 import nl.deltares.portal.utils.KeycloakUtils;
+import nl.deltares.tableview.comparator.DownloadComparator;
 import nl.deltares.tableview.model.DisplayDownload;
 import nl.deltares.tableview.portlet.constants.TablePortletKeys;
 import nl.deltares.tableview.tasks.impl.DeletedSelectedDownloadsRequest;
@@ -43,6 +44,7 @@ import java.util.*;
         property = {
                 "javax.portlet.version=3.0",
                 "com.liferay.portlet.display-category=OSS-table",
+                "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.header-portlet-javascript=/lib/downloadtableview.js",
                 "com.liferay.portlet.header-portlet-javascript=/lib/common.js",
                 "com.liferay.portlet.instanceable=true",
@@ -108,8 +110,11 @@ public class DownloadTablePortlet extends MVCPortlet {
                 downloads = DownloadLocalServiceUtil.findDownloads(siteGroupId, start, end);
                 downloadsCount = DownloadLocalServiceUtil.countDownloads(siteGroupId);
             }
-
-            renderRequest.setAttribute("records", convertToDisplayDownloads(downloads));
+            String orderByCol = ParamUtil.getString(renderRequest, "orderByCol");
+            String orderByType = ParamUtil.getString(renderRequest, "orderByType");
+            final List<DisplayDownload> displays = convertToDisplayDownloads(downloads);
+            sortDownloads(displays, orderByCol, orderByType);
+            renderRequest.setAttribute("records", displays);
             renderRequest.setAttribute("total", downloadsCount);
             renderRequest.setAttribute("filterValue", filterValue);
             renderRequest.setAttribute("filterSelection", filterSelection);
@@ -159,8 +164,6 @@ public class DownloadTablePortlet extends MVCPortlet {
             }
 
         });
-
-        displays.sort(DisplayDownload::compareDesc);
         return displays;
     }
 
@@ -260,4 +263,12 @@ public class DownloadTablePortlet extends MVCPortlet {
         writer.println(statusMessage);
 
     }
+
+    private void sortDownloads(List<DisplayDownload> displays, String orderByCol, String orderByType) {
+
+        final DownloadComparator comparator = new DownloadComparator(orderByCol, orderByType.equals("asc"));
+        displays.sort(comparator);
+
+    }
+
 }
