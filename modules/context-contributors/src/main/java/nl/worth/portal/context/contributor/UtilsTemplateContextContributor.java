@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component(
         immediate = true,
@@ -78,7 +79,7 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
         } catch (PortalException e) {
             LOG.warn(e);
         }
-        contextObjects.put("is_site_admin", isAdmin);
+        contextObjects.put("is_site_admin", Optional.of(isAdmin));
         contextObjects.put("user_signout_url", themeDisplay.getURLSignOut());
         if (keycloakUtils.isActive()) {
             contextObjects.put("user_mailing_url", "/subscriptions");
@@ -109,10 +110,10 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
                 final String countryIso2Code = geoIpUtils.getCountryIso2Code(clientIpInfo);
                 isSanctioned = sanctionCheckUtils.isSanctionedByCountyCode(themeDisplay.getCompanyId(), countryIso2Code);
                 sanctionCountry = geoIpUtils.getCountryName(clientIpInfo);
-                request.getSession().setAttribute("LIFERAY_SHARED_isSanctioned", false);
+                request.getSession().setAttribute("LIFERAY_SHARED_isSanctioned", Optional.of(false));
                 request.getSession().setAttribute("LIFERAY_SHARED_sanctionCountry", sanctionCountry == null ? "unknown" : sanctionCountry);
             }
-            contextObjects.put("is_sanctioned", isSanctioned);
+            contextObjects.put("is_sanctioned", Optional.of(isSanctioned));
             contextObjects.put("sanctionCountry", sanctionCountry == null ? "" : sanctionCountry);
             checkoutCartUrl = urlUtils.getShoppingCartURL(themeDisplay);
             downloadCartURL = urlUtils.getDownloadCartURL(themeDisplay);
@@ -120,8 +121,8 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
             if (unreadAnnouncements == null || unreadAnnouncements > 0) {
                 try {
                     int count = getUnreadUserAnnouncementCount(user);
-                    request.getSession().setAttribute("LIFERAY_SHARED_userAnnouncements", count);
-                    contextObjects.put("unread_announcements", count);
+                    request.getSession().setAttribute("LIFERAY_SHARED_userAnnouncements", Optional.of(count));
+                    contextObjects.put("unread_announcements", Optional.of(count));
                 } catch (Exception e) {
                     LOG.warn(String.format("Error retrieving user announcements for user %s: %s", user.getEmailAddress(), e.getMessage()));
                 }
@@ -138,8 +139,8 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
     private int getUnreadUserAnnouncementCount(User user) {
 
         final DynamicQuery dynamicQuery = AnnouncementsFlagLocalServiceUtil.dynamicQuery();
-        dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", user.getCompanyId()));
-        dynamicQuery.add(RestrictionsFactoryUtil.eq("userId", user.getUserId()));
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", Optional.of(user.getCompanyId())));
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("userId", Optional.of(user.getUserId())));
         final List<AnnouncementsFlag> flags = AnnouncementsFlagLocalServiceUtil.dynamicQuery(dynamicQuery);
         int count = 0;
         for (AnnouncementsFlag flag : flags) {
