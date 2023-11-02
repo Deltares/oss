@@ -13,7 +13,6 @@ import nl.deltares.portal.utils.EmailSubscriptionUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import org.osgi.service.component.annotations.Component;
 
-
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -22,7 +21,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import static nl.deltares.portal.utils.HttpClientUtils.*;
+import static nl.deltares.portal.utils.HttpClientUtils.getConnection;
+import static nl.deltares.portal.utils.HttpClientUtils.readAll;
 
 @Component(
         immediate = true,
@@ -43,7 +43,7 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
     @Override
     public boolean isDefault() {
         if (defaultSubscriptionsUtil != null) return defaultSubscriptionsUtil;
-        if (PropsUtil.contains(DEFAULT_KEY)){
+        if (PropsUtil.contains(DEFAULT_KEY)) {
             defaultSubscriptionsUtil = Boolean.parseBoolean(PropsUtil.get(DEFAULT_KEY));
         } else {
             defaultSubscriptionsUtil = false;
@@ -111,7 +111,11 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
         final JSONObject contactInfo = getContactInfo(user.getEmailAddress());
         JSONObject jsonUser = convertToContact(user, contactInfo);
         if (addSubscriptions(jsonUser, subscriptionIds)) {
-            updateContact(jsonUser);
+            if (contactInfo == null) {
+                addContact(jsonUser);
+            } else {
+                updateContact(jsonUser);
+            }
             LOG.info(String.format("User %s is subscribed for subscriptions %s", user.getEmailAddress(), subscriptionIds));
         }
     }
@@ -131,7 +135,7 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
         JSONObject jsonUser = convertToContact(null, contactInfo);
         if (removeSubscriptions(jsonUser, subscriptionIds)) {
             updateContact(jsonUser);
-            LOG.info(String.format("User %s is un-subscribed for subscription %s", email, subscriptionIds ));
+            LOG.info(String.format("User %s is un-subscribed for subscription %s", email, subscriptionIds));
         }
     }
 
@@ -142,11 +146,11 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
         headers.put(API_NAME, PropsUtil.get(API_KEY));
 
         //open connection
-        HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/" + URLEncoder.encode(emailAddress, StandardCharsets.UTF_8.toString()),
+        HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/" + URLEncoder.encode(emailAddress, StandardCharsets.UTF_8),
                 "DELETE", headers);
 
         final int response = checkResponse(connection);
-        if (response == 404){
+        if (response == 404) {
             LOG.info(String.format("User %s is not an existing Sendinblue contact", emailAddress));
         } else {
             LOG.info(String.format("User %s is removed from Sendinblue contacts", emailAddress));
@@ -155,25 +159,16 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
 
     @Override
     public List<SubscriptionSelection> getSubscriptions(String emailAddress) throws IOException {
-        if (!PropsUtil.contains(FOLDER_ID_KEY)){
-            LOG.error("No 'sendinblue.folderid' configured in portal-ext.properties!");
-            return Collections.emptyList();
-        }
+        final int[] folderIds = getFolderIds();
 
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put(API_NAME, PropsUtil.get(API_KEY));
 
-        final String folderId = PropsUtil.get(FOLDER_ID_KEY);
         //open connection
-
-        HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/folders/" + folderId + "/lists?limit=50&offset=0&sort=desc",
+        HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/lists",
                 "GET", headers);
-        final int response = checkResponse(connection);
-        if (response == 404){
-            LOG.info(String.format("FolderId %s is not an existing Sendinblue folder", folderId));
-            return Collections.emptyList();
-        }
+        checkResponse(connection);
 
         String jsonResponse = readAll(connection);
         List<SubscriptionSelection> subscriptions = new ArrayList<>();
@@ -182,26 +177,44 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
             final JSONArray lists = jsonObject.getJSONArray("lists");
             for (int i = 0; i < lists.length(); i++) {
                 final JSONObject list = lists.getJSONObject(i);
+                final int folderId = list.getInt("folderId");
+                if (folderIds.length > 0 && Arrays.stream(folderIds).noneMatch(id -> id == folderId)) continue;
                 subscriptions.add(new SubscriptionSelection(list.getString("id"), list.getString("name")));
             }
         } catch (JSONException e) {
-            LOG.warn(String.format("Failed to parse lists from response for folder  %s : %s", folderId, e.getMessage()));
+            LOG.warn(String.format("Failed to parse lists from response for folder  %s : %s", Arrays.toString(folderIds), e.getMessage()));
         }
 
         if (emailAddress != null) setUserSubscriptionSelection(emailAddress, subscriptions);
         return subscriptions;
     }
 
+    private int[] getFolderIds() {
+        final String configuredFolderIds;
+        if (PropsUtil.contains(FOLDER_ID_KEY)) {
+            configuredFolderIds = PropsUtil.get(FOLDER_ID_KEY);
+            if (configuredFolderIds.isEmpty()) return new int[0];
+        } else {
+            return new int[0];
+        }
+        final String[] ids = configuredFolderIds.split(";");
+        final int[] folderIds = new int[ids.length];
+        for (int i = 0; i < ids.length; i++) {
+            folderIds[i] = Integer.parseInt(ids[i]);
+        }
+        return folderIds;
+    }
+
     private void setUserSubscriptionSelection(String email, List<SubscriptionSelection> allSubscriptions) throws IOException {
 
         final JSONObject contactInfo = getContactInfo(email);
-        if ( contactInfo == null) return;
+        if (contactInfo == null) return;
 
         final JSONArray listIds = contactInfo.getJSONArray("listIds");
         if (listIds == null || listIds.length() == 0) return;
 
         allSubscriptions.forEach(subscription -> {
-            if (isSubscriptionInList(Integer.parseInt(subscription.getId()), listIds)){
+            if (isSubscriptionInList(Integer.parseInt(subscription.getId()), listIds)) {
                 subscription.setSelected(true);
             }
         });
@@ -214,6 +227,19 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
         final String email = jsonUser.getString("email");
         //open connection
         HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/" + email, "PUT", headers);
+        connection.setDoOutput(true);
+        try (Writer w = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8)) {
+            w.write(jsonUser.toJSONString());
+        }
+        checkResponse(connection);
+    }
+
+    private void addContact(JSONObject jsonUser) throws IOException {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put(API_NAME, PropsUtil.get(API_KEY));
+        //open connection
+        HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts", "POST", headers);
         connection.setDoOutput(true);
         try (Writer w = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8)) {
             w.write(jsonUser.toJSONString());
@@ -240,7 +266,7 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
         final JSONArray removeArray = JSONFactoryUtil.createJSONArray();
         for (int i = 0; i < listIds.length(); i++) {
             final String id = listIds.getString(i);
-            if (removeIds.contains(id)){
+            if (removeIds.contains(id)) {
                 removeArray.put(listIds.getInt(i));
             }
         }
@@ -248,7 +274,7 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
         return removeArray.length() > 0;
     }
 
-    private JSONObject convertToContact(User user, JSONObject contactInfo)  {
+    private JSONObject convertToContact(User user, JSONObject contactInfo) {
 
         String firstName;
         String lastName;
@@ -256,8 +282,8 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
         JSONArray listIds;
         if (contactInfo != null) {
             firstName = contactInfo.getJSONObject("attributes").getString("FIRSTNAME");
-            lastName =  contactInfo.getJSONObject("attributes").getString("LASTNAME");
-            email =  contactInfo.getString("email");
+            lastName = contactInfo.getJSONObject("attributes").getString("LASTNAME");
+            email = contactInfo.getString("email");
             listIds = contactInfo.getJSONArray("listIds");
         } else {
             firstName = user.getFirstName();
@@ -282,7 +308,7 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
         int responseCode = urlConnection.getResponseCode();
         if (responseCode > 299) {
 
-            if (responseCode == 404 && userNotFound(urlConnection.getResponseMessage())){
+            if (responseCode == 404 && userNotFound(urlConnection.getResponseMessage())) {
                 return responseCode;
             }
             throw new IOException("Error " + responseCode + ": " + urlConnection.getResponseMessage());
@@ -297,7 +323,7 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
         headers.put(API_NAME, PropsUtil.get(API_KEY));
 
         //open connection
-        HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/" + URLEncoder.encode(emailAddress, StandardCharsets.UTF_8.toString()),
+        HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/" + URLEncoder.encode(emailAddress, StandardCharsets.UTF_8),
                 "GET", headers);
 
         //get response
@@ -330,9 +356,9 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
             LOG.info(String.format("Missing property %s in portal-ext.properties file", BASEURL_KEY));
             return null;
         }
-        baseApiPath =  PropsUtil.get(BASEURL_KEY);
+        baseApiPath = PropsUtil.get(BASEURL_KEY);
 
-        if(baseApiPath.endsWith("/")){
+        if (baseApiPath.endsWith("/")) {
             return baseApiPath;
         }
         baseApiPath += '/';
