@@ -20,10 +20,12 @@
 
     String registerSuccessURL = null;
     String unregisterSuccessURL = null;
+    String updateSuccessURL = null;
     String failURL = null;
     if (Validator.isNotNull(configuration)){
         registerSuccessURL = portletPreferences.getValue("registerSuccessURL", configuration.registerSuccessURL());
         unregisterSuccessURL = portletPreferences.getValue("unregisterSuccessURL", configuration.unregisterSuccessURL());
+        updateSuccessURL = portletPreferences.getValue("updateSuccessURL", configuration.updateSuccessURL());
         failURL = portletPreferences.getValue("failURL", configuration.failureURL());
     }
 %>
@@ -62,6 +64,11 @@
                     label="registrationform.unregistersuccesspage"
                     name="unregisterSuccessURL"
                     value="<%= unregisterSuccessURL %>"/>
+
+            <aui:input
+                    label="registrationform.updatesuccesspage"
+                    name="updateSuccessURL"
+                    value="<%= updateSuccessURL %>"/>
 
             <aui:input
                     label="registrationform.failpage"

@@ -113,6 +113,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 break;
             default:
                 SessionErrors.add(actionRequest, "registration-failed", "Unsupported action " + action);
+                success = false;
         }
         if (success){
             SessionMessages.add(actionRequest, "registration-success", new String[]{action, user.getEmailAddress(), registrationRequest.getTitle()});
@@ -137,6 +138,9 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                     break;
                 case "unregister_success":
                     configuredRedirect =  configuration.unregisterSuccessURL();
+                    break;
+                case "update_success":
+                    configuredRedirect =  configuration.updateSuccessURL();
                     break;
                 case "fail":
                     configuredRedirect =  configuration.failureURL();
