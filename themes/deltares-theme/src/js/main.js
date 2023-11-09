@@ -19,10 +19,13 @@
             let element = this._getElement();
             let nextButton = element.find('.next-step');
             let prevButton = element.find('.prev-step');
+            let clearButton = element.find('.clear-cart');
 
             nextButton.on('click', {plugin: this, action: 'next'}, this._navigate);
             prevButton.on('click', {plugin: this, action: 'prev'}, this._navigate);
-
+            clearButton.on('click', {plugin: this}, function (){
+                window.shoppingCart.clearCart()
+            });
             this._getSubmitButton().on('click', function () {
                 if (plugin._isFormValid()) {
                     plugin.form.preSubmitAction();
@@ -65,6 +68,7 @@
                         plugin._showSubmitButton();
                     } else {
                         plugin._enableButton('prev');
+                        plugin._hideClearCartButton();
                     }
                     active.removeClass('icon-circle-blank');
                     active.addClass('icon-circle completed');
@@ -136,6 +140,12 @@
             nextButton.removeClass('d-none');
         },
 
+        _hideClearCartButton: function () {
+            let cartButton = this._getClearCartButton();
+            cartButton.addClass('d-none');
+            cartButton.removeClass('d-inline');
+        },
+
         _getElement: function () {
             return $(this.element);
         },
@@ -146,6 +156,10 @@
 
         _getSubmitButton: function () {
             return this._getElement().find("a.submit");
+        },
+
+        _getClearCartButton: function () {
+            return this._getElement().find(".clear-cart");
         },
 
         _getNextButton: function () {

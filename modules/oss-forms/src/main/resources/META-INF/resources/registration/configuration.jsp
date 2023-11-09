@@ -26,7 +26,7 @@
         registerSuccessURL = portletPreferences.getValue("registerSuccessURL", configuration.registerSuccessURL());
         unregisterSuccessURL = portletPreferences.getValue("unregisterSuccessURL", configuration.unregisterSuccessURL());
         updateSuccessURL = portletPreferences.getValue("updateSuccessURL", configuration.updateSuccessURL());
-        failURL = portletPreferences.getValue("failURL", configuration.failureURL());
+        failURL = portletPreferences.getValue("failURL", configuration.failURL());
     }
 %>
 
