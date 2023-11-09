@@ -111,16 +111,13 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 		}
 
 		String action = ParamUtil.getString(request, "action");
-		List<String> registrations = new ArrayList<>();
-		String ids;
-
-		if ("register".equals(action)) {
-			ids = ParamUtil.getString(request, "ids");
-			LOG.info(Arrays.toString(ids.split(",", -1)));
-			registrations = new ArrayList<>(Arrays.asList(ids.split(",", -1)));
-		} else {
-			ids = ParamUtil.getString(request, "articleId");
-			registrations.add(ids);
+		String ids = ParamUtil.getString(request, "ids");
+		List<String> registrations = getRegistrations(action, ids, ParamUtil.getString(request, "articleId"));
+		if (registrations.isEmpty()){
+			//Check if registration has failed
+			ids = request.getPreferences().getValue("ids", "");
+			registrations = getRegistrations(request.getPreferences().getValue("action", ""),
+					ids, request.getPreferences().getValue("articleId", ""));
 		}
 
 		Optional<DDMTemplate> ddmTemplateOptional = _ddmStructureUtil
@@ -138,7 +135,16 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 		super.render(request, response);
 	}
 
-
+	private List<String> getRegistrations(String action, String ids, String articleId){
+		if ("register".equals(action)) {
+			LOG.info(Arrays.toString(ids.split(",", -1)));
+			return new ArrayList<>(Arrays.asList(ids.split(",", -1)));
+		} else if (!articleId.isEmpty()) {
+			return Collections.singletonList(articleId);
+		} else {
+			return Collections.emptyList();
+		}
+	}
 
 	private List<SubscriptionSelection> getSubscriptionSelection(String email, List<String> configuredSubscriptionIds) {
 

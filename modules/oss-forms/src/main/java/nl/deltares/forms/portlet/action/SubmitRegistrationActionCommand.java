@@ -57,7 +57,9 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
     protected void doProcessAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
         String redirect = ParamUtil.getString(actionRequest, "redirect");
         String action = ParamUtil.getString(actionRequest, "action");
-
+        if (action.isEmpty()){
+            action = actionRequest.getPreferences().getValue("action", "");
+        }
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
         User user = themeDisplay.getUser();
 
@@ -120,6 +122,10 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             redirect = getRedirectURL(themeDisplay, action + "_success");
             sendRedirect(actionRequest, actionResponse, redirect);
         } else {
+            actionRequest.getPreferences().setValue("action", ParamUtil.getString(actionRequest, "action"));
+            actionRequest.getPreferences().setValue("ids", ParamUtil.getString(actionRequest, "ids"));
+            actionRequest.getPreferences().setValue("articleId", ParamUtil.getString(actionRequest, "articleId"));
+            actionRequest.getPreferences().store();
             redirect = getRedirectURL(themeDisplay, "fail");
             sendRedirect(actionRequest, actionResponse, redirect);
         }
@@ -143,7 +149,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                     configuredRedirect =  configuration.updateSuccessURL();
                     break;
                 case "fail":
-                    configuredRedirect =  configuration.failureURL();
+                    configuredRedirect =  configuration.failURL();
             }
 
             if (configuredRedirect == null || configuredRedirect.isEmpty()) {
