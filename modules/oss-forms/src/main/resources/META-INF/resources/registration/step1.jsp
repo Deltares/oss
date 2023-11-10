@@ -105,6 +105,7 @@
         button.onclick = function (event){
             let myArticleId = event.srcElement.attributes.getNamedItem('data-article-id').value;
             let myCheckBox = document.getElementById("<portlet:namespace />parent_registration_" + myArticleId);
+            myCheckBox.checked = false;
             myCheckBox.parentElement.parentElement.parentElement.parentElement.hidden = true
             event.preventDefault();
         };
