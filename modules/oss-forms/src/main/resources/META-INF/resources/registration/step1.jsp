@@ -50,13 +50,18 @@
                             articleDisplay="<%= articleDisplay %>"
                     />
                 </div>
+                <div class="float-right p-3">
+                    <a href="#" data-article-id="${registrationId}" class="btn-lg btn-primary add-to-cart" role="button"
+                       aria-pressed="true"  style="color:#fff">
+                    </a>
+                </div>
             </div>
 
             <%
                 List<Registration> children = registrationFormDisplayContext
                         .getChildRegistrations(scopeGroupId, registrationId);
             %>
-            <% if (children.size() > 0) { %>
+            <% if (!children.isEmpty()) { %>
             <h3>
                 <liferay-ui:message key="dsd.registration.step1.child.registrations"/>
 
@@ -93,3 +98,16 @@
     </c:if>
 
 </c:forEach>
+<aui:script use="event, node, aui-base, aui-progressbar">
+
+    let removeButtons = $(document.getElementsByClassName("add-to-cart"));
+    [...removeButtons].forEach(function (button) {
+        button.onclick = function (event){
+            let myArticleId = event.srcElement.attributes.getNamedItem('data-article-id').value;
+            let myCheckBox = document.getElementById("<portlet:namespace />parent_registration_" + myArticleId);
+            myCheckBox.parentElement.parentElement.parentElement.parentElement.hidden = true
+            event.preventDefault();
+        };
+    });
+
+</aui:script>
