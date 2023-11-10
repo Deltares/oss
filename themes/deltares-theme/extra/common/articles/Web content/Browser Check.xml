@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+
+<root available-locales="en_US" default-locale="en_US">
+    <dynamic-element name="content" type="text_area" index-type="text" instance-id="iqsu">
+        <dynamic-content language-id="en_US"><![CDATA[
+
+<style type="text/css">.alert {
+  padding: 20px;
+  background-color: orange;
+  color: white;
+}
+
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.closebtn:hover {
+  color: black;
+}
+</style>
+
+<div class="alert" hidden="" id="alert"><span class="closebtn" onclick="this.parentElement.style.display='none'">×</span> <strong>Warning! </strong> Internet Explorer is not supported! Please use a different browser.</div>
+<script>
+
+    /* Sample function that returns boolean in case the browser is Internet Explorer*/
+    function isIE() {
+        ua = navigator.userAgent;
+        /* MSIE used to detect old browsers and Trident used to newer ones*/
+        var is_ie = ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1;
+
+        return is_ie;
+    }
+    /* Create an alert to show if the browser is IE or not */
+    if (isIE()){
+        document.getElementById("alert").hidden=false;
+    }
+</script>
+    ]]></dynamic-content>
+    </dynamic-element>
+</root>
