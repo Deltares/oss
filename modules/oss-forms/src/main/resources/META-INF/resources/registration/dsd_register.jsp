@@ -76,9 +76,6 @@
         <a class="prev-step disabled btn-primary">
             <liferay-ui:message key="prev.step"/>
         </a>
-<%--        <a class="clear-cart enabled btn-primary">--%>
-<%--            <liferay-ui:message key="clear.cart"/>--%>
-<%--        </a>--%>
         <a class="next-step enabled btn-primary">
             <liferay-ui:message key="next.step"/>
         </a>
