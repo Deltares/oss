@@ -105,8 +105,9 @@
         button.onclick = function (event){
             let myArticleId = event.srcElement.attributes.getNamedItem('data-article-id').value;
             let myCheckBox = document.getElementById("<portlet:namespace />parent_registration_" + myArticleId);
-            myCheckBox.checked = false;
-            myCheckBox.parentElement.parentElement.parentElement.parentElement.hidden = true
+            myCheckBox.parentElement.parentElement.parentElement.parentElement.remove();
+            let url = window.location.href;
+            window.location.href = CommonFormsUtil.removeArticleFromUrl(url, "<portlet:namespace />ids", myArticleId );
             event.preventDefault();
         };
     });

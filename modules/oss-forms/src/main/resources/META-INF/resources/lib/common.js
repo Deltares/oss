@@ -275,5 +275,23 @@ CommonFormsUtil = {
             }
         });
         return selectedValue;
-    }
+    },
+
+    removeArticleFromUrl: function (url, name,  articleId) {
+        let urlParts = url.split('?');
+        if (urlParts.length < 2) return url;
+        let newUrl = [];
+        newUrl.push(urlParts[0]);
+        let queryParts = urlParts[1].split('&');
+        let newParts = [];
+        for (let queryPart of queryParts) {
+            if (queryPart.startsWith(name)) {
+                newParts.push(queryPart.replace(articleId, ''));
+            } else {
+                newParts.push(queryPart);
+            }
+        }
+        newUrl.push(newParts.join('&'));
+        return newUrl.join('?');
+    },
 }
