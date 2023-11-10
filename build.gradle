@@ -21,7 +21,7 @@ project.ext {
             file("$liferayMount")
     ]
     Properties localProperties = new Properties()
-    localProperties.load(file("${project.projectDir.toString()}/gradle-local-with-pw.properties").newDataInputStream())
+    localProperties.load(file("${project.projectDir.toString()}/gradle-local.properties").newDataInputStream())
     dbName = getLocalProperty(localProperties,'dbName', 'liferay')
     dbUser = getLocalProperty(localProperties,'dbUser', 'liferay')
     dbPassword = getLocalProperty(localProperties,'dbPassword', 'liferay')
