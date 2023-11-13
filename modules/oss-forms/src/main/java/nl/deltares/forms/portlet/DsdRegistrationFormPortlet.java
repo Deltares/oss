@@ -109,16 +109,9 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 			}
 
 		}
-
 		String action = ParamUtil.getString(request, "action");
 		String ids = ParamUtil.getString(request, "ids");
 		List<String> registrations = getRegistrations(action, ids, ParamUtil.getString(request, "articleId"));
-		if (registrations.isEmpty()){
-			//Check if registration has failed
-			ids = request.getPreferences().getValue("ids", "");
-			registrations = getRegistrations(request.getPreferences().getValue("action", ""),
-					ids, request.getPreferences().getValue("articleId", ""));
-		}
 
 		Optional<DDMTemplate> ddmTemplateOptional = _ddmStructureUtil
 				.getDDMTemplateByName(themeDisplay.getScopeGroupId(), "REGISTRATION", themeDisplay.getLocale());
@@ -136,7 +129,7 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 	}
 
 	private List<String> getRegistrations(String action, String ids, String articleId){
-		if ("register".equals(action)) {
+		if ("register".equals(action) && ids != null) {
 			LOG.info(Arrays.toString(ids.split(",", -1)));
 			return new ArrayList<>(Arrays.asList(ids.split(",", -1)));
 		} else if (!articleId.isEmpty()) {

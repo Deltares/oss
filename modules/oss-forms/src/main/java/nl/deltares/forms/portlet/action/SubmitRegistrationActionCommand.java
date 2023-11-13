@@ -42,6 +42,9 @@ import java.util.stream.Collectors;
 )
 public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
+    @Reference
+    private URLUtils urlUtils;
+
     private static final String PARENT_PREFIX = "parent_registration_";
     private static final String CHILD_PREFIX = "child_registration_";
 
@@ -122,11 +125,11 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             redirect = getRedirectURL(themeDisplay, action + "_success");
             sendRedirect(actionRequest, actionResponse, redirect);
         } else {
-            actionRequest.getPreferences().setValue("action", ParamUtil.getString(actionRequest, "action"));
-            actionRequest.getPreferences().setValue("ids", ParamUtil.getString(actionRequest, "ids"));
-            actionRequest.getPreferences().setValue("articleId", ParamUtil.getString(actionRequest, "articleId"));
-            actionRequest.getPreferences().store();
             redirect = getRedirectURL(themeDisplay, "fail");
+            final String namespace = actionResponse.getNamespace();
+            redirect = urlUtils.setUrlParameter(redirect, namespace, "action", ParamUtil.getString(actionRequest, "action"));
+            redirect = urlUtils.setUrlParameter(redirect, namespace, "ids", ParamUtil.getString(actionRequest, "ids"));
+            redirect = urlUtils.setUrlParameter(redirect, "", "p_p_id", themeDisplay.getPortletDisplay().getId());
             sendRedirect(actionRequest, actionResponse, redirect);
         }
 
