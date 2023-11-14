@@ -65,8 +65,12 @@ public class UserManagementAdminFormPortlet extends MVCPortlet {
      */
     public void update(ActionRequest actionRequest, ActionResponse actionResponse) {
 
-        String action = ParamUtil.getString(actionRequest, "action");
+        if (!actionRequest.isUserInRole("administrator")) {
+            SessionErrors.add(actionRequest, "update-failed", "Unauthorized request!");
+            return;
+        }
 
+        String action = ParamUtil.getString(actionRequest, "action");
         if (action.equals("changeUserEmail")) {
             final String currentEmail = ParamUtil.getString(actionRequest, "currentUserEmail");
             final String newEmail = ParamUtil.getString(actionRequest, "newUserEmail");
