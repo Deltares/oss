@@ -1,3 +1,5 @@
+<%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
+<%@ page import="com.liferay.portal.kernel.servlet.SessionMessages" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://xmlns.jcp.org/portlet_3_0" prefix="portlet" %>
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
@@ -8,6 +10,18 @@
 <liferay-theme:defineObjects/>
 
 <portlet:defineObjects/>
+
+<portlet:actionURL name="update" var="updateURL" />
+
+<liferay-ui:success key="update-success" message="">
+    <liferay-ui:message key="update-success"
+                        arguments='<%= SessionMessages.get(liferayPortletRequest, "update-success") %>'/>
+</liferay-ui:success>
+
+<liferay-ui:error key="update-failed">
+    <liferay-ui:message key="update-failed"
+                        arguments='<%= SessionErrors.get(liferayPortletRequest, "update-failed") %>'/>
+</liferay-ui:error>
 
 <span id="<portlet:namespace/>group-message-block"></span>
 <aui:fieldset label="oss.admin.adminPageTitle">
@@ -81,6 +95,38 @@
                 </aui:col>
                 <aui:col width="5">
                     <aui:button type="submit" name="deleteUsersButton" value="oss.admin.delete" />
+                </aui:col>
+            </aui:row>
+        </aui:fieldset>
+    </aui:form>
+    <hr>
+    <aui:form action="<%=updateURL%>" name="<portlet:namespace />ChangeUserEmail"  >
+        <aui:fieldset >
+            <aui:input name="action" type="hidden" value="changeUserEmail" />
+            <aui:row>
+                <aui:col width="50">
+                    <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.changeUserEmailTitle"/></div>
+                </aui:col>
+                <aui:col width="45">
+                    <aui:row>
+                        <div class="control-label"><liferay-ui:message key="oss.admin.currentUserEmail"/></div>
+                    </aui:row>
+                    <aui:row style="display:block">
+                        <aui:input label="" name="currentUserEmail" type="email" >
+                            <aui:validator name="email" errorMessage="oss.admin.invalidEmail"/>
+                        </aui:input>
+                    </aui:row>
+                    <aui:row>
+                        <div class="control-label"><liferay-ui:message key="oss.admin.newUserEmail"/></div>
+                    </aui:row>
+                    <aui:row style="display:block">
+                        <aui:input label="" name="newUserEmail" type="email"  >
+                            <aui:validator name="email" errorMessage="oss.admin.invalidEmail"/>
+                        </aui:input>
+                    </aui:row>
+                </aui:col>
+                <aui:col width="5">
+                    <aui:button type="submit" value="oss.admin.update" />
                 </aui:col>
             </aui:row>
         </aui:fieldset>
