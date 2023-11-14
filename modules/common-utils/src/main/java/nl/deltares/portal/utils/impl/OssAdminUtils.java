@@ -24,11 +24,9 @@ import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @Component(
         immediate = true,
@@ -43,6 +41,38 @@ public class OssAdminUtils implements AdminUtils {
         return keycloakUtils;
     }
 
+    public void changeUserEmail(String currentEmail, String newEmail) throws IOException {
+
+        final List<Company> companies = CompanyLocalServiceUtil.getCompanies();
+        if (companies.stream().anyMatch(company -> UserLocalServiceUtil.fetchUserByEmailAddress(company.getCompanyId(), newEmail) != null)){
+            throw new IOException(String.format("A user with email %s already exists in Liferay!", newEmail));
+        }
+        try {
+            final Map<String, String> userInfo = keycloakUtils.getUserInfo(newEmail);
+            if (!userInfo.isEmpty()){
+                throw new IOException(String.format("A user with email %s already exists in Keycloak!", newEmail));
+            }
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
+
+        for (Company company : companies) {
+            final User user = UserLocalServiceUtil.fetchUserByEmailAddress(company.getCompanyId(), currentEmail);
+            if (user == null) continue;
+            try {
+                user.setEmailAddress(newEmail);
+                UserLocalServiceUtil.updateUser(user);
+            } catch (Exception e){
+                throw new IOException(e.getMessage());
+            }
+        }
+
+        try {
+            keycloakUtils.updateUserProfile(currentEmail, Collections.singletonMap(KeycloakUtils.ATTRIBUTES.email.name(), newEmail));
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
+    }
     @Override
     public void deleteUserRelatedContent(long siteId, User user, PrintWriter writer) {
 
@@ -76,15 +106,15 @@ public class OssAdminUtils implements AdminUtils {
         writer.printf("********** Finished deleting content for user %s (%s, %d) in site %d, company %d   ***********\n", screenName, email, userId, siteId, user.getCompanyId());
     }
 
-    private void deleteUserGroups(PrintWriter writer,long userId) {
-        try {
-            final List<Group> userGroups = GroupLocalServiceUtil.getUserGroups(userId);
-            writer.printf("Deleting %d User Groups\n", userGroups.size());
-            GroupLocalServiceUtil.deleteUserGroups(userId, userGroups);
-        } catch (Exception e) {
-            writer.printf("Could not delete user Groups: %s\n", e.getMessage());
-        }
-    }
+//    private void deleteUserGroups(PrintWriter writer,long userId) {
+//        try {
+//            final List<Group> userGroups = GroupLocalServiceUtil.getUserGroups(userId);
+//            writer.printf("Deleting %d User Groups\n", userGroups.size());
+//            GroupLocalServiceUtil.deleteUserGroups(userId, userGroups);
+//        } catch (Exception e) {
+//            writer.printf("Could not delete user Groups: %s\n", e.getMessage());
+//        }
+//    }
 
     @Override
     public User getOrCreateRegistrationUser(long companyId, User loggedInUser, String registrationEmail,
