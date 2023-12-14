@@ -41,7 +41,7 @@
                         modelVar="entry"
                 >
 
-                    <liferay-ui:search-container-column-text>
+                    <liferay-ui:search-container-column-text cssClass="col-1" name="usersubscriptionform.subscribed">
                         <aui:input
                                 name="selected_${entry.getId()}"
                                 label=""
@@ -50,7 +50,7 @@
                                 cssClass="mailingTableRecord"
                         checked="${entry.isSelected()}"/>
                     </liferay-ui:search-container-column-text>
-                    <liferay-ui:search-container-column-text property="name" name="Subscription"/>
+                    <liferay-ui:search-container-column-text cssClass="col-3" property="name" name="usersubscriptionform.subscription" />
                 </liferay-ui:search-container-row>
                 <liferay-ui:search-iterator/>
             </liferay-ui:search-container>
