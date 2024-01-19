@@ -123,6 +123,7 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 		request.setAttribute("dsdSessionUtils", dsdSessionUtils);
 		request.setAttribute("registrationList", registrations);
 		request.setAttribute("ids", ids);
+		request.setAttribute("callerAction", action);
 
 		request.setAttribute(ConfigurationProvider.class.getName(), _configurationProvider);
 		super.render(request, response);
