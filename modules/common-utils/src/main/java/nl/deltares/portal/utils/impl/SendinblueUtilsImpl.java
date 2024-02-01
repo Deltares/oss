@@ -166,7 +166,7 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
         headers.put(API_NAME, PropsUtil.get(API_KEY));
 
         //open connection
-        HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/lists",
+        HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/lists?limit=50",
                 "GET", headers);
         checkResponse(connection);
 
