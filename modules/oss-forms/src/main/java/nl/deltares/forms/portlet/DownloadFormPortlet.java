@@ -19,7 +19,6 @@ import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
@@ -54,19 +53,9 @@ import static nl.deltares.portal.utils.LocalizationUtils.getLocalizedValue;
 )
 public class DownloadFormPortlet extends MVCPortlet {
 
+    @Reference
     private EmailSubscriptionUtils subscriptionUtils;
-    @Reference(
-            unbind = "-",
-            cardinality = ReferenceCardinality.AT_LEAST_ONE
-    )
-    protected void setSubscriptionUtilsUtils(EmailSubscriptionUtils subscriptionUtils) {
-        if (!subscriptionUtils.isActive()) return;
-        if (this.subscriptionUtils == null){
-            this.subscriptionUtils = subscriptionUtils;
-        } else if (subscriptionUtils.isDefault()){
-            this.subscriptionUtils = subscriptionUtils;
-        }
-    }
+
     @Reference
     private KeycloakUtils keycloakUtils;
 

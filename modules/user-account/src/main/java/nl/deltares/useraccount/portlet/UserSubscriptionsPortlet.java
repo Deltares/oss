@@ -12,7 +12,6 @@ import nl.deltares.portal.utils.EmailSubscriptionUtils;
 import nl.deltares.useraccount.constants.UserProfilePortletKeys;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import javax.portlet.*;
 import java.io.IOException;
@@ -29,7 +28,7 @@ import java.util.List;
                 "javax.portlet.version=3.0",
                 "com.liferay.portlet.display-category=OSS-account",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
-                "com.liferay.portlet.instanceable=true",
+                "com.liferay.portlet.instanceable=false",
                 "javax.portlet.display-name=UserSubscription",
                 "javax.portlet.init-param.template-path=/",
                 "javax.portlet.init-param.view-template=/usersubscription.jsp",
@@ -41,19 +40,8 @@ import java.util.List;
 )
 public class UserSubscriptionsPortlet extends MVCPortlet {
 
+    @Reference
     private EmailSubscriptionUtils subscriptionUtils;
-    @Reference(
-            unbind = "-",
-            cardinality = ReferenceCardinality.AT_LEAST_ONE
-    )
-    protected void setSubscriptionUtilsUtils(EmailSubscriptionUtils subscriptionUtils) {
-        if (!subscriptionUtils.isActive()) return;
-        if (this.subscriptionUtils == null){
-            this.subscriptionUtils = subscriptionUtils;
-        } else if (subscriptionUtils.isDefault()){
-            this.subscriptionUtils = subscriptionUtils;
-        }
-    }
 
     @Override
     public void render(RenderRequest request, RenderResponse response) throws IOException, PortletException {

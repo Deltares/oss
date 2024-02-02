@@ -374,19 +374,9 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         }
     }
 
+    @Reference
     private EmailSubscriptionUtils subscriptionUtils;
-    @Reference(
-            unbind = "-",
-            cardinality = ReferenceCardinality.AT_LEAST_ONE
-    )
-    protected void setSubscriptionUtilsUtils(EmailSubscriptionUtils subscriptionUtils) {
-        if (!subscriptionUtils.isActive()) return;
-        if (this.subscriptionUtils == null){
-            this.subscriptionUtils = subscriptionUtils;
-        } else if (subscriptionUtils.isDefault()){
-            this.subscriptionUtils = subscriptionUtils;
-        }
-    }
+
     @Reference
     private KeycloakUtils keycloakUtils;
 

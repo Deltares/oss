@@ -24,7 +24,6 @@ import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -461,19 +460,8 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
     @Reference
     private KeycloakUtils keycloakUtils;
 
+    @Reference
     private EmailSubscriptionUtils subscriptionUtils;
-    @Reference(
-            unbind = "-",
-            cardinality = ReferenceCardinality.AT_LEAST_ONE
-    )
-    protected void setSubscriptionUtilsUtils(EmailSubscriptionUtils subscriptionUtils) {
-        if (!subscriptionUtils.isActive()) return;
-        if (this.subscriptionUtils == null){
-            this.subscriptionUtils = subscriptionUtils;
-        } else if (subscriptionUtils.isDefault()){
-            this.subscriptionUtils = subscriptionUtils;
-        }
-    }
 
     @Reference
     private DsdParserUtils dsdParserUtils;
