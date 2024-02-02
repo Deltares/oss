@@ -6,11 +6,8 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
-import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
-import nl.deltares.portal.utils.EmailSubscriptionUtils;
 import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
@@ -27,9 +24,9 @@ import static java.time.LocalDateTime.now;
 
 @Component(
         immediate = true,
-        service = {KeycloakUtils.class,EmailSubscriptionUtils.class}
+        service = {KeycloakUtils.class}
 )
-public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils, EmailSubscriptionUtils {
+public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils {
 
     private static final Log LOG = LogFactoryUtil.getLog(KeycloakUtilsImpl.class);
 
@@ -45,11 +42,6 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
 
     public KeycloakUtilsImpl() {
         CACHE_TOKEN = Boolean.parseBoolean(PropsUtil.get("keycloak.cache.token"));
-    }
-
-    @Override
-    public boolean isDefault() {
-        return false;
     }
 
     @Override
@@ -289,9 +281,9 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getAccessToken());
         String query;
-        if (email != null){
+        if (email != null) {
             query = "?email=" + email;
-        } else if (username != null){
+        } else if (username != null) {
             query = "?username=" + username;
         } else {
             throw new IOException("Both email and username missing!");
@@ -301,11 +293,11 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
         checkResponse(connection);
         String jsonResponse = readAll(connection);
         List<Map<String, String>> userMapArray = JsonContentUtils.parseJsonArrayToMap(jsonResponse);
-        if (userMapArray.size() == 0) return new HashMap<>();
+        if (userMapArray.isEmpty()) return new HashMap<>();
         return userMapArray.get(0);
     }
 
-    private Map<String, String> getUserAttributesFromCacheOrKeycloak(String email, String[] searchKeys) throws Exception{
+    private Map<String, String> getUserAttributesFromCacheOrKeycloak(String email, String[] searchKeys) throws Exception {
 
         final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null);
         String attributesJson = userRepresentation.get("attributes");
@@ -345,7 +337,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
             if (key == ATTRIBUTES.first_name) continue;
             if (key == ATTRIBUTES.last_name) continue;
             final String value = attributes.get(key.name());
-            if (Validator.isNotNull(value)){
+            if (Validator.isNotNull(value)) {
                 jsonAttributes.put(key.name(), JSONFactoryUtil.createJSONArray().put(value));
             }
         }
@@ -356,7 +348,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
             }
         }
 
-        if (includeUserInfo){
+        if (includeUserInfo) {
             final String email = attributes.get(ATTRIBUTES.email.name());
             if (Validator.isEmailAddress(email)) jsonUser.put("email", email);
 
@@ -444,115 +436,6 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils,
         //Keycloak wraps all attributes in a json array. we need to remove this
         HttpURLConnection connection = getConnection(getKeycloakUsersPath() + "/" + id, "DELETE", headers);
         return checkResponse(connection);
-    }
-
-    @Override
-    public void subscribeAll(User user, List<String> mailingIds) throws Exception {
-        for (String mailingId : mailingIds) {
-            subscribe(user, mailingId);
-        }
-    }
-    @Override
-    public void subscribe(User user, String mailingId) throws Exception {
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Authorization", "Bearer " + getAccessToken());
-        HttpURLConnection connection = getConnection(getAdminUserMailingsPath() + "/subscriptions/" + mailingId +
-                "?email=" + user.getEmailAddress() + "&delivery=e-mail&language=en", "PUT", headers);
-        checkResponse(connection);
-    }
-
-    @Override
-    public void unsubscribeAll(String email, List<String> mailingIds) throws Exception {
-        for (String mailingId : mailingIds) {
-            unsubscribe(email, mailingId);
-        }
-    }
-    @Override
-    public void unsubscribe(String email, String mailingId) throws Exception {
-
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Authorization", "Bearer " + getAccessToken());
-        HttpURLConnection connection = getConnection(getAdminUserMailingsPath() + "/subscriptions/" + mailingId + "?email=" + email, "DELETE", headers);
-        checkResponse(connection);
-    }
-
-    @Override
-    public boolean isSubscribed(String email, List<String> mailingIds) throws Exception {
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Authorization", "Bearer " + getAccessToken());
-        HttpURLConnection connection = getConnection(getAdminUserMailingsPath() + "/subscriptions?email=" + email, "GET", headers);
-        checkResponse(connection);
-        String jsonResponse = readAll(connection);
-        //Keycloak wraps all attributes in a json array. we need to remove this
-        JSONArray subscriptions = getJsonObjects(jsonResponse);
-
-        boolean[] isSubscribed = new boolean[]{false};
-        for (int i = 0; i < subscriptions.length(); i++) {
-            if (mailingIds.contains(subscriptions.getJSONObject(i).getString("mailingId"))){
-                isSubscribed[0] = true;
-            }
-        }
-
-        return isSubscribed[0];
-    }
-
-    @Override
-    public List<SubscriptionSelection> getSubscriptions(String emailAddress) throws Exception {
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Authorization", "Bearer " + getAccessToken());
-        HttpURLConnection connection = getConnection(getAdminMailingsPath(), "GET", headers);
-        checkResponse(connection);
-        String jsonResponse = readAll(connection);
-        //Keycloak wraps all attributes in a json array. we need to remove this
-        JSONArray mailings = getJsonObjects(jsonResponse);
-
-        final ArrayList<SubscriptionSelection> allSubscriptions = new ArrayList<>();
-        for (int i = 0; i < mailings.length(); i++) {
-            final JSONObject jsonMailing = mailings.getJSONObject(i);
-            allSubscriptions.add(
-                    new SubscriptionSelection(jsonMailing.getString("id"), jsonMailing.getString("name")));
-        }
-        if (emailAddress != null) setUserSubscriptionSelection(emailAddress, allSubscriptions);
-
-        return allSubscriptions;
-    }
-
-
-    private void setUserSubscriptionSelection(String email, List<SubscriptionSelection> allSubscriptions) throws Exception {
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Authorization", "Bearer " + getAccessToken());
-        HttpURLConnection connection = getConnection(getAdminUserMailingsPath() + "/subscriptions?email=" + email, "GET", headers);
-        checkResponse(connection);
-        String jsonResponse = readAll(connection);
-        //Keycloak wraps all attributes in a json array. we need to remove this
-        JSONArray mailings = getJsonObjects(jsonResponse);
-
-        for (int i = 0; i < mailings.length(); i++) {
-            final String subscriptionId = mailings.getJSONObject(i).getString("mailingId");
-            for (SubscriptionSelection subscription : allSubscriptions) {
-                final boolean found = subscription.getId().equals(subscriptionId);
-                if (found) {
-                    subscription.setSelected(true);
-                    break;
-                }
-            }
-        }
-
-    }
-
-    @Override
-    public boolean isSubscribed(String email, String subscriptionId) throws Exception {
-        return isSubscribed(email, Collections.singletonList(subscriptionId));
-    }
-
-    @Override
-    public void deleteUser(String email) throws Exception {
-        deleteUserWithEmail(email);
     }
 
     @Override
