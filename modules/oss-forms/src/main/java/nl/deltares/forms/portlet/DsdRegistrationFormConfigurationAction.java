@@ -43,6 +43,7 @@ public class DsdRegistrationFormConfigurationAction extends DefaultConfiguration
 
         setPreference(actionRequest, "registerSuccessURL", ParamUtil.getString(actionRequest, "registerSuccessURL"));
         setPreference(actionRequest, "unregisterSuccessURL", ParamUtil.getString(actionRequest, "unregisterSuccessURL"));
+        setPreference(actionRequest, "updateSuccessURL", ParamUtil.getString(actionRequest, "updateSuccessURL"));
         setPreference(actionRequest, "failURL", ParamUtil.getString(actionRequest, "failURL"));
 
         super.processAction(portletConfig, actionRequest, actionResponse);

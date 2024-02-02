@@ -20,7 +20,10 @@ public interface DsdRegistrationFormConfiguration {
     @Meta.AD(required = false, deflt = "", description = "Configure the friendly URL of the unregister success page.")
     String unregisterSuccessURL();
 
+    @Meta.AD(required = false, deflt = "", description = "Configure the friendly URL of the update success page.")
+    String updateSuccessURL();
+
     @Meta.AD(required = false, deflt = "", description = "Configure the friendly URL of the registration failure page.")
-    String failureURL();
+    String failURL();
 
 }

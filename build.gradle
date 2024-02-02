@@ -29,7 +29,6 @@ project.ext {
     keyUrl = getLocalProperty(localProperties, 'KEYCLOAK_URL', '')
     keyClient = getLocalProperty(localProperties, 'KEYCLOAK_CLIENTID', '')
     keySecret = getLocalProperty(localProperties, 'KEYCLOAK_CLIENTSECRET', '')
-    googleKey = getLocalProperty(localProperties, 'GOOGLE_API_KEY', '')
     emailUser = getLocalProperty(localProperties, 'EMAIL_USER', '')
     emailPass = getLocalProperty(localProperties, 'EMAIL_PASSWORD','')
     downloadUrl = getEnvProperty('DOWNLOAD_URL', '')
@@ -82,7 +81,6 @@ task startLiferay(
                     'KEYCLOAK_URL'          : keyUrl,
                     'KEYCLOAK_CLIENTID'     : keyClient,
                     'KEYCLOAK_CLIENTSECRET' : keySecret,
-                    'GOOGLE_API_KEY'        : googleKey,
                     'EMAIL_USER'            : emailUser,
                     'EMAIL_PASSWORD'        : emailPass,
                     'DOWNLOAD_URL'          : downloadUrl,

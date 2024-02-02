@@ -15,6 +15,9 @@ import nl.deltares.portal.utils.URLUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 @Component(
         immediate = true,
         service = URLUtils.class
@@ -31,8 +34,7 @@ public class URLUtilsImpl implements URLUtils {
                         .getGroupConfiguration(DSDSiteConfiguration.class, groupId);
 
                 Group group = GroupLocalServiceUtil.getGroup(groupId);
-
-                if (themeDisplay != null && group != null) {
+                if (group != null) {
                     Layout registrationPage = LayoutLocalServiceUtil
                             .fetchLayoutByFriendlyURL(groupId, false, urlsConfiguration.registrationURL());
                     if (registrationPage != null) {
@@ -71,6 +73,28 @@ public class URLUtilsImpl implements URLUtils {
         return url;
     }
 
+    @Override
+    public String setUrlParameter(String url, String namespace, String key, String value) {
+        final String[] urlParts = url.split("\\?");
+        StringBuilder newUrl = new StringBuilder(urlParts[0]);
+        newUrl.append('?');
+        final String[] queryParts;
+        if (urlParts.length == 1) {
+            queryParts = new String[0];
+        } else {
+            queryParts = urlParts[1].split("&");
+        }
+
+        String namespaceKey = namespace + key;
+        for (String queryPart : queryParts) {
+            if (queryPart.startsWith(namespaceKey)) continue;
+            newUrl.append(queryPart);
+            newUrl.append('&');
+        }
+        newUrl.append(namespaceKey).append('=').append(URLEncoder.encode(value, StandardCharsets.UTF_8));
+
+        return newUrl.toString();
+    }
 
     private ConfigurationProvider _configurationProvider;
 

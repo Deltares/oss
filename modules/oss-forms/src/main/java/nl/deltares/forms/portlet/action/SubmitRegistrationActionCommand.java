@@ -42,6 +42,9 @@ import java.util.stream.Collectors;
 )
 public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
+    @Reference
+    private URLUtils urlUtils;
+
     private static final String PARENT_PREFIX = "parent_registration_";
     private static final String CHILD_PREFIX = "child_registration_";
 
@@ -57,7 +60,9 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
     protected void doProcessAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
         String redirect = ParamUtil.getString(actionRequest, "redirect");
         String action = ParamUtil.getString(actionRequest, "action");
-
+        if (action.isEmpty()){
+            action = actionRequest.getPreferences().getValue("action", "");
+        }
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
         User user = themeDisplay.getUser();
 
@@ -113,6 +118,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 break;
             default:
                 SessionErrors.add(actionRequest, "registration-failed", "Unsupported action " + action);
+                success = false;
         }
         if (success){
             SessionMessages.add(actionRequest, "registration-success", new String[]{action, user.getEmailAddress(), registrationRequest.getTitle()});
@@ -120,6 +126,10 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             sendRedirect(actionRequest, actionResponse, redirect);
         } else {
             redirect = getRedirectURL(themeDisplay, "fail");
+            final String namespace = actionResponse.getNamespace();
+            redirect = urlUtils.setUrlParameter(redirect, namespace, "action", ParamUtil.getString(actionRequest, "action"));
+            redirect = urlUtils.setUrlParameter(redirect, namespace, "ids", ParamUtil.getString(actionRequest, "ids"));
+            redirect = urlUtils.setUrlParameter(redirect, "", "p_p_id", themeDisplay.getPortletDisplay().getId());
             sendRedirect(actionRequest, actionResponse, redirect);
         }
 
@@ -138,8 +148,11 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 case "unregister_success":
                     configuredRedirect =  configuration.unregisterSuccessURL();
                     break;
+                case "update_success":
+                    configuredRedirect =  configuration.updateSuccessURL();
+                    break;
                 case "fail":
-                    configuredRedirect =  configuration.failureURL();
+                    configuredRedirect =  configuration.failURL();
             }
 
             if (configuredRedirect == null || configuredRedirect.isEmpty()) {
