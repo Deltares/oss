@@ -3,6 +3,8 @@ package nl.deltares.forms.portlet;
 import com.liferay.message.boards.model.MBBan;
 import com.liferay.message.boards.service.MBBanLocalServiceUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.upload.UploadRequest;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -19,9 +21,7 @@ import nl.deltares.tasks.impl.DownloadInvalidUsersRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.Portlet;
-import javax.portlet.ResourceRequest;
-import javax.portlet.ResourceResponse;
+import javax.portlet.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
@@ -52,11 +52,41 @@ import java.util.List;
         },
         service = Portlet.class
 )
-public class UserManagmentAdminFormPortlet extends MVCPortlet {
+public class UserManagementAdminFormPortlet extends MVCPortlet {
 
     @Reference
     AdminUtils adminUtils;
 
+    /**
+     * Pass the selected filter options to the render request
+     *
+     * @param actionRequest  Filter action
+     * @param actionResponse Filter response
+     */
+    public void update(ActionRequest actionRequest, ActionResponse actionResponse) {
+
+        if (!actionRequest.isUserInRole("administrator")) {
+            SessionErrors.add(actionRequest, "update-failed", "Unauthorized request!");
+            return;
+        }
+
+        String action = ParamUtil.getString(actionRequest, "action");
+        if (action.equals("changeUserEmail")) {
+            final String currentEmail = ParamUtil.getString(actionRequest, "currentUserEmail");
+            final String newEmail = ParamUtil.getString(actionRequest, "newUserEmail");
+            try {
+                adminUtils.changeUserEmail(currentEmail, newEmail);
+                SessionMessages.add(actionRequest, "update-success", String.format("Changed user email from %s to %s.", currentEmail, newEmail));
+            } catch (Exception e) {
+                SessionErrors.add(actionRequest, "update-failed", e.getMessage());
+
+                actionResponse.getRenderParameters().setValue("currentUserEmail", currentEmail);
+                actionResponse.getRenderParameters().setValue("newUserEmail", newEmail);
+            }
+        } else {
+            SessionErrors.add(actionRequest, "update-failed", "Unsupported action " + action);
+        }
+    }
     @Override
     public void serveResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws IOException {
         ThemeDisplay themeDisplay = (ThemeDisplay) resourceRequest
@@ -180,7 +210,7 @@ public class UserManagmentAdminFormPortlet extends MVCPortlet {
 
     private void deleteBannedUsersAction(String dataRequestId, ResourceResponse resourceResponse, ThemeDisplay themeDisplay) throws IOException {
         List<MBBan> bannedUsers = getBannedUsersAllSites();
-        if (bannedUsers.size() == 0) {
+        if (bannedUsers.isEmpty()) {
             PrintWriter writer = resourceResponse.getWriter();
             resourceResponse.setContentType("text/plain");
             resourceResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
@@ -207,7 +237,7 @@ public class UserManagmentAdminFormPortlet extends MVCPortlet {
 
         List<MBBan> bans = new ArrayList<>();
         final int totalBans = MBBanLocalServiceUtil.getMBBansCount();
-        for (int i = 0; i < totalBans; i+=50) {
+        for (int i = 0; i < totalBans; i += 50) {
             bans.addAll(MBBanLocalServiceUtil.getMBBans(i, i + 50));
         }
         return bans;

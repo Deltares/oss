@@ -38,7 +38,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.portal.common-utils",
-    "version" : "1.0.20",
+    "version" : "1.0.23",
     "extension" : "jar"
   },
   {
@@ -56,7 +56,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.worth.portal.context.contributor",
-    "version" : "1.0.6",
+    "version" : "1.0.9",
     "extension" : "jar"
   },
   {
@@ -74,7 +74,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.forms",
-    "version" : "1.0.10",
+    "version" : "1.0.18",
     "extension" : "jar"
   },
   {
@@ -92,7 +92,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.search.facet",
-    "version" : "1.0.1",
+    "version" : "1.0.2",
     "extension" : "jar"
   },
 
@@ -105,7 +105,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.useraccount",
-    "version" : "1.0.3",
+    "version" : "1.0.4",
     "extension" : "jar"
   },
   {
@@ -117,7 +117,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "deltares-theme",
-    "version" : "1.0.10",
+    "version" : "1.0.12",
     "extension" : "war"
   },
   {

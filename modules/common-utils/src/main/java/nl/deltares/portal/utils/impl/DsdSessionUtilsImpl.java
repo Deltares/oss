@@ -179,7 +179,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         final ArrayList<Registration> combined = new ArrayList<>(registrations);
         combined.addAll(childRegistrations);
         List<Registration> overlapping = checkIfRegistrationsOverlap(combined);
-        if (overlapping.size() > 0) {
+        if (!overlapping.isEmpty()) {
             StringBuilder titles = new StringBuilder();
             overlapping.forEach(registration -> {
                 titles.append(registration.getTitle());
@@ -268,6 +268,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
                 if (canOverlapWithParent(reg1, registration)) return;
                 if (canOverlapWithParent(registration, reg1)) return;
                 if (periodsOverlap(reg1, registration)){
+                    if (!overlapping.contains(registration)) overlapping.add(registration);
                     if (!overlapping.contains(reg1)) overlapping.add(reg1);
                 }
             });

@@ -1,4 +1,4 @@
 Bundle-Name: user-account
 Bundle-SymbolicName: nl.deltares.useraccount
-Bundle-Version: 1.0.3
+Bundle-Version: 1.0.4
 Export-Package: nl.deltares.useraccount.constants

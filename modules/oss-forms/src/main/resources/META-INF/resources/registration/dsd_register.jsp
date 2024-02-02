@@ -31,7 +31,6 @@
     String conditionsURL = (String) renderRequest.getAttribute("conditionsURL");
     String privacyURL = (String) renderRequest.getAttribute("privacyURL");
     String contactURL = (String) renderRequest.getAttribute("contactURL");
-
     String action = ParamUtil.getString(renderRequest, "action");
     DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
     final List<SubscriptionSelection>  subscriptionSelections = (List) request.getAttribute("subscriptionSelection");
@@ -77,9 +76,6 @@
         <a class="prev-step disabled btn-primary">
             <liferay-ui:message key="prev.step"/>
         </a>
-        <%--        <a class="clear-cart enabled btn-lg btn-primary">--%>
-        <%--            <liferay-ui:message key="clear.cart"/>--%>
-        <%--        </a>--%>
         <a class="next-step enabled btn-primary">
             <liferay-ui:message key="next.step"/>
         </a>
@@ -190,7 +186,7 @@
     }
 
     const preSubmitAction = function (){
-        shoppingCart.clearCart();
+
     }
 
     $(document).ready(function() {
@@ -225,7 +221,5 @@
         $(document.getElementById(namespace + "use_organization_address")).change(function() {
             CommonFormsUtil.updatePaymentAddress(namespace, this.checked);
         });
-
-        <c:if test='<%= !SessionErrors.isEmpty(liferayPortletRequest) %>'>shoppingCart.clearCart()</c:if>
     });
 </aui:script>

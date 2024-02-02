@@ -5,10 +5,10 @@ AUI.add(
             initializeDates: function (namespace, start, end) {
                 let url = window.location.href;
 
-                if (start && !url.includes('startDate=')) {
+                if (start) {
                     url = this.selectTerm(url, 'startDate', start);
                 }
-                if (end && !url.includes('endDate=')) {
+                if (end) {
                     url = this.selectTerm(url, 'endDate', end);
                 }
                 if (url !== window.location.href) {
