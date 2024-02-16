@@ -92,7 +92,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 
 		if (!PortletPermissionUtils.isUserSiteAdministrator(themeDisplay.getUserId(), themeDisplay.getSiteGroupId())) {
 			resourceResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			resourceResponse.getWriter().println("Unauthorized request!");
+			resourceResponse.getWriter().println("Unauthorized request: User must be site administrator!");
 			return;
 		}
 		String action = ParamUtil.getString(resourceRequest, "action");

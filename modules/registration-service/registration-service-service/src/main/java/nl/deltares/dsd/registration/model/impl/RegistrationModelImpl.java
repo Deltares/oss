@@ -1,15 +1,6 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
- *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ * SPDX-FileCopyrightText: (c) 2024 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
 package nl.deltares.dsd.registration.model.impl;
@@ -248,86 +239,107 @@ public class RegistrationModelImpl
 	public Map<String, Function<Registration, Object>>
 		getAttributeGetterFunctions() {
 
-		return _attributeGetterFunctions;
+		return AttributeGetterFunctionsHolder._attributeGetterFunctions;
 	}
 
 	public Map<String, BiConsumer<Registration, Object>>
 		getAttributeSetterBiConsumers() {
 
-		return _attributeSetterBiConsumers;
+		return AttributeSetterBiConsumersHolder._attributeSetterBiConsumers;
 	}
 
-	private static final Map<String, Function<Registration, Object>>
-		_attributeGetterFunctions;
-	private static final Map<String, BiConsumer<Registration, Object>>
-		_attributeSetterBiConsumers;
+	private static class AttributeGetterFunctionsHolder {
 
-	static {
-		Map<String, Function<Registration, Object>> attributeGetterFunctions =
-			new LinkedHashMap<String, Function<Registration, Object>>();
-		Map<String, BiConsumer<Registration, ?>> attributeSetterBiConsumers =
-			new LinkedHashMap<String, BiConsumer<Registration, ?>>();
+		private static final Map<String, Function<Registration, Object>>
+			_attributeGetterFunctions;
 
-		attributeGetterFunctions.put(
-			"registrationId", Registration::getRegistrationId);
-		attributeSetterBiConsumers.put(
-			"registrationId",
-			(BiConsumer<Registration, Long>)Registration::setRegistrationId);
-		attributeGetterFunctions.put("groupId", Registration::getGroupId);
-		attributeSetterBiConsumers.put(
-			"groupId",
-			(BiConsumer<Registration, Long>)Registration::setGroupId);
-		attributeGetterFunctions.put(
-			"eventResourcePrimaryKey",
-			Registration::getEventResourcePrimaryKey);
-		attributeSetterBiConsumers.put(
-			"eventResourcePrimaryKey",
-			(BiConsumer<Registration, Long>)
-				Registration::setEventResourcePrimaryKey);
-		attributeGetterFunctions.put("companyId", Registration::getCompanyId);
-		attributeSetterBiConsumers.put(
-			"companyId",
-			(BiConsumer<Registration, Long>)Registration::setCompanyId);
-		attributeGetterFunctions.put("userId", Registration::getUserId);
-		attributeSetterBiConsumers.put(
-			"userId", (BiConsumer<Registration, Long>)Registration::setUserId);
-		attributeGetterFunctions.put(
-			"resourcePrimaryKey", Registration::getResourcePrimaryKey);
-		attributeSetterBiConsumers.put(
-			"resourcePrimaryKey",
-			(BiConsumer<Registration, Long>)
-				Registration::setResourcePrimaryKey);
-		attributeGetterFunctions.put(
-			"userPreferences", Registration::getUserPreferences);
-		attributeSetterBiConsumers.put(
-			"userPreferences",
-			(BiConsumer<Registration, String>)Registration::setUserPreferences);
-		attributeGetterFunctions.put("startTime", Registration::getStartTime);
-		attributeSetterBiConsumers.put(
-			"startTime",
-			(BiConsumer<Registration, Date>)Registration::setStartTime);
-		attributeGetterFunctions.put("endTime", Registration::getEndTime);
-		attributeSetterBiConsumers.put(
-			"endTime",
-			(BiConsumer<Registration, Date>)Registration::setEndTime);
-		attributeGetterFunctions.put(
-			"parentResourcePrimaryKey",
-			Registration::getParentResourcePrimaryKey);
-		attributeSetterBiConsumers.put(
-			"parentResourcePrimaryKey",
-			(BiConsumer<Registration, Long>)
-				Registration::setParentResourcePrimaryKey);
-		attributeGetterFunctions.put(
-			"registeredByUserId", Registration::getRegisteredByUserId);
-		attributeSetterBiConsumers.put(
-			"registeredByUserId",
-			(BiConsumer<Registration, Long>)
-				Registration::setRegisteredByUserId);
+		static {
+			Map<String, Function<Registration, Object>>
+				attributeGetterFunctions =
+					new LinkedHashMap<String, Function<Registration, Object>>();
 
-		_attributeGetterFunctions = Collections.unmodifiableMap(
-			attributeGetterFunctions);
-		_attributeSetterBiConsumers = Collections.unmodifiableMap(
-			(Map)attributeSetterBiConsumers);
+			attributeGetterFunctions.put(
+				"registrationId", Registration::getRegistrationId);
+			attributeGetterFunctions.put("groupId", Registration::getGroupId);
+			attributeGetterFunctions.put(
+				"eventResourcePrimaryKey",
+				Registration::getEventResourcePrimaryKey);
+			attributeGetterFunctions.put(
+				"companyId", Registration::getCompanyId);
+			attributeGetterFunctions.put("userId", Registration::getUserId);
+			attributeGetterFunctions.put(
+				"resourcePrimaryKey", Registration::getResourcePrimaryKey);
+			attributeGetterFunctions.put(
+				"userPreferences", Registration::getUserPreferences);
+			attributeGetterFunctions.put(
+				"startTime", Registration::getStartTime);
+			attributeGetterFunctions.put("endTime", Registration::getEndTime);
+			attributeGetterFunctions.put(
+				"parentResourcePrimaryKey",
+				Registration::getParentResourcePrimaryKey);
+			attributeGetterFunctions.put(
+				"registeredByUserId", Registration::getRegisteredByUserId);
+
+			_attributeGetterFunctions = Collections.unmodifiableMap(
+				attributeGetterFunctions);
+		}
+
+	}
+
+	private static class AttributeSetterBiConsumersHolder {
+
+		private static final Map<String, BiConsumer<Registration, Object>>
+			_attributeSetterBiConsumers;
+
+		static {
+			Map<String, BiConsumer<Registration, ?>>
+				attributeSetterBiConsumers =
+					new LinkedHashMap<String, BiConsumer<Registration, ?>>();
+
+			attributeSetterBiConsumers.put(
+				"registrationId",
+				(BiConsumer<Registration, Long>)
+					Registration::setRegistrationId);
+			attributeSetterBiConsumers.put(
+				"groupId",
+				(BiConsumer<Registration, Long>)Registration::setGroupId);
+			attributeSetterBiConsumers.put(
+				"eventResourcePrimaryKey",
+				(BiConsumer<Registration, Long>)
+					Registration::setEventResourcePrimaryKey);
+			attributeSetterBiConsumers.put(
+				"companyId",
+				(BiConsumer<Registration, Long>)Registration::setCompanyId);
+			attributeSetterBiConsumers.put(
+				"userId",
+				(BiConsumer<Registration, Long>)Registration::setUserId);
+			attributeSetterBiConsumers.put(
+				"resourcePrimaryKey",
+				(BiConsumer<Registration, Long>)
+					Registration::setResourcePrimaryKey);
+			attributeSetterBiConsumers.put(
+				"userPreferences",
+				(BiConsumer<Registration, String>)
+					Registration::setUserPreferences);
+			attributeSetterBiConsumers.put(
+				"startTime",
+				(BiConsumer<Registration, Date>)Registration::setStartTime);
+			attributeSetterBiConsumers.put(
+				"endTime",
+				(BiConsumer<Registration, Date>)Registration::setEndTime);
+			attributeSetterBiConsumers.put(
+				"parentResourcePrimaryKey",
+				(BiConsumer<Registration, Long>)
+					Registration::setParentResourcePrimaryKey);
+			attributeSetterBiConsumers.put(
+				"registeredByUserId",
+				(BiConsumer<Registration, Long>)
+					Registration::setRegisteredByUserId);
+
+			_attributeSetterBiConsumers = Collections.unmodifiableMap(
+				(Map)attributeSetterBiConsumers);
+		}
+
 	}
 
 	@Override
@@ -874,8 +886,9 @@ public class RegistrationModelImpl
 	private long _registeredByUserId;
 
 	public <T> T getColumnValue(String columnName) {
-		Function<Registration, Object> function = _attributeGetterFunctions.get(
-			columnName);
+		Function<Registration, Object> function =
+			AttributeGetterFunctionsHolder._attributeGetterFunctions.get(
+				columnName);
 
 		if (function == null) {
 			throw new IllegalArgumentException(

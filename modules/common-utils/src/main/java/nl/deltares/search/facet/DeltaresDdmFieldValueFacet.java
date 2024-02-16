@@ -25,7 +25,9 @@ public class DeltaresDdmFieldValueFacet extends BaseFacet {
     private String[] _ddmFieldNameValues = {};
 
     private String _ddmFieldValueKeywordName = "ddmFieldValueKeyword";
-    private String _ddmFieldValueKeywordValue = null;
+//    private String _ddmFieldValueKeywordValue = null;
+
+    private String[] _ddmFieldValueKeywordValues = null;
     private boolean exclude = false;
 
     public DeltaresDdmFieldValueFacet(String name, SearchContext searchContext) {
@@ -70,9 +72,17 @@ public class DeltaresDdmFieldValueFacet extends BaseFacet {
      * @param fieldValue search value
      */
     public void setFieldValueKeywordValue(String fieldValue){
-        _ddmFieldValueKeywordValue = fieldValue;
+        _ddmFieldValueKeywordValues = new String[]{fieldValue};
     }
+    /**
+     * Search values contained by the field set in the method {@link #setFieldValueKeywordName(String)}
+     * @param fieldValues search value
+     */
+    public void setFieldValueKeywordValues(String[] fieldValues){
 
+        _ddmFieldValueKeywordValues = fieldValues;
+
+    }
     public void setPath(String path) {
         _path = path;
     }
@@ -81,7 +91,7 @@ public class DeltaresDdmFieldValueFacet extends BaseFacet {
     @Override
     protected BooleanClause<Filter> doGetFacetFilterBooleanClause() {
         //Nothing to filter
-        if (_ddmFieldValueKeywordValue == null || ArrayUtil.isEmpty(_ddmFieldNameValues)) {
+        if (_ddmFieldValueKeywordValues == null || _ddmFieldValueKeywordValues.length == 0 || ArrayUtil.isEmpty(_ddmFieldNameValues)) {
             return null;
         }
 
@@ -93,10 +103,16 @@ public class DeltaresDdmFieldValueFacet extends BaseFacet {
             booleanFilter.add(_StructureFieldNamesFilter, BooleanClauseOccur.MUST);
         }
 
-        TermFilter searchFieldValue = new TermFilter(_path + '.' + _ddmFieldValueKeywordName, _ddmFieldValueKeywordValue);
-        booleanFilter.add(
-                searchFieldValue, BooleanClauseOccur.MUST);
-
+        if (_ddmFieldValueKeywordValues.length == 1) {
+            TermFilter searchFieldValue = new TermFilter(_path + '.' + _ddmFieldValueKeywordName, _ddmFieldValueKeywordValues[0]);
+            booleanFilter.add(
+                    searchFieldValue, BooleanClauseOccur.MUST);
+        } else {
+            TermsFilter searchFieldValue = new TermsFilter(_path + '.' + _ddmFieldValueKeywordName);
+            searchFieldValue.addValues(_ddmFieldValueKeywordValues);
+            booleanFilter.add(
+                    searchFieldValue, BooleanClauseOccur.MUST);
+        }
         BooleanQuery booleanQuery = new BooleanQueryImpl();
 
         booleanQuery.setPreBooleanFilter(booleanFilter);

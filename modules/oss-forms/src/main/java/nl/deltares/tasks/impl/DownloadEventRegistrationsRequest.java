@@ -235,7 +235,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         List<Map<String, Object>> registrationRecordsToProcess = dsdSessionUtils.getRegistrations(group.getGroupId(), resourceId);
         registrationRecordsToProcess.addAll(dsdSessionUtils.getEventRegistrations(group.getGroupId(), resourceId));
 
-        if (registrationRecordsToProcess.size() == 0) {
+        if (registrationRecordsToProcess.isEmpty()) {
             status = nodata;
             setProcessCount(0);
             return;
@@ -261,7 +261,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 //write short output for printing badges
                 writeLightRecord(writer, recordObjects, null, matchingUser);
             } else {
-            writeRecord(writer, recordObjects, null, null, matchingUser,
+                writeRecord(writer, recordObjects, null, null, matchingUser,
                     null, locale);
             }
             if (Thread.interrupted()) {
@@ -285,18 +285,18 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             //Load the registrations into a cache for retrieval later, so we can access title and other stuff.
             Map<Long, Registration> registrationCache = new HashMap<>();
             Map<String, List<String>> webinarKeyCache = new HashMap<>();
+            Map<Long, DsdArticle> eventCache = new HashMap<>();
 
             List<Map<String, Object>> registrationRecordsToProcess = getRegistrationRecordsLinkedToSelectedArticle(
                     article, registrationCache);
 
-            if (registrationRecordsToProcess.size() == 0) {
+            if (registrationRecordsToProcess.isEmpty()) {
                 status = nodata;
                 setProcessCount(0);
                 return;
             }
             totalCount = registrationRecordsToProcess.size();
 
-            Event event = getEvent(article);
             registrationRecordsToProcess.forEach(recordObjects -> {
                 if (status == terminated) return;
                 incrementProcessCount(1);
@@ -310,6 +310,12 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 } catch (PortalException e) {
                     //
                 }
+                final Long eventResourcePrimaryKey = (Long) recordObjects.get("eventResourcePrimaryKey");
+                Event event = (Event) eventCache.get(eventResourcePrimaryKey);
+                if (event == null){
+                    event = (Event) getDsdArticle(eventResourcePrimaryKey, eventCache);
+                }
+
                 if (downloadAction == DOWNLOAD_ACTIONS.downloadRepro) {
                     //write short output for printing badges
                     writeReproRecord(writer, recordObjects, event, matchingRegistration, matchingUser);
@@ -410,16 +416,6 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         if (article != null) return dsdParserUtils.toDsdArticle(article);
         throw new PortalException("Could not find dsd article for id " + articleId);
 
-    }
-
-    private Event getEvent(DsdArticle dsdArticle) throws PortalException {
-
-        if (dsdArticle instanceof Event) return (Event) dsdArticle;
-        if (dsdArticle instanceof Registration){
-            return (Event) getJournalArticle(String.valueOf(((Registration) dsdArticle).getEventId()));
-        }
-        logger.warn("Could not find event for id " + articleId);
-        return null;
     }
 
     private void writeReproRecord(PrintWriter writer, Map<String, Object> record, Event event,

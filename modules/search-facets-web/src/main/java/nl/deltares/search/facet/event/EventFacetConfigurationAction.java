@@ -1,4 +1,4 @@
-package nl.deltares.search.facet.registration;
+package nl.deltares.search.facet.event;
 
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
@@ -18,21 +18,21 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @Component(
-        configurationPid = "nl.deltares.search.facet.registration.RegistrationFacetConfiguration",
+        configurationPid = "nl.deltares.search.facet.registration.EventFacetConfiguration",
         configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
         property = {
-                "javax.portlet.name=" + SearchModuleKeys.REGISTRATION_FACET_PORTLET
+                "javax.portlet.name=" + SearchModuleKeys.EVENT_FACET_PORTLET
         },
         service = ConfigurationAction.class
 )
-public class RegistrationFacetConfigurationAction extends DefaultConfigurationAction {
+public class EventFacetConfigurationAction extends DefaultConfigurationAction {
 
     @Override
     public void include(PortletConfig portletConfig, HttpServletRequest httpServletRequest,
                         HttpServletResponse httpServletResponse) throws Exception {
 
         httpServletRequest.setAttribute(
-                RegistrationFacetConfiguration.class.getName(),
+                EventFacetConfiguration.class.getName(),
                 _configuration);
         super.include(portletConfig, httpServletRequest, httpServletResponse);
     }
@@ -41,8 +41,8 @@ public class RegistrationFacetConfigurationAction extends DefaultConfigurationAc
     public void processAction(PortletConfig portletConfig, ActionRequest actionRequest, ActionResponse actionResponse)
             throws Exception {
 
-        String structureList = ParamUtil.getString(actionRequest, "structureList");
-        setPreference(actionRequest, "structureList", structureList);
+        String structureList = ParamUtil.getString(actionRequest, "eventsList");
+        setPreference(actionRequest, "eventsList", structureList);
         super.processAction(portletConfig, actionRequest, actionResponse);
     }
 
@@ -50,7 +50,7 @@ public class RegistrationFacetConfigurationAction extends DefaultConfigurationAc
      *
      * (1)If a method is annoted with @Activate then the method will be called at the time of activation of the component
      *  so that we can perform initialization task
-     *
+     * <p>
      * (2) This class is annoted with @Component where we have used configurationPid with id com.proliferay.configuration.DemoConfiguration
      * So if we modify any configuration then this method will be called.
      */
@@ -58,9 +58,9 @@ public class RegistrationFacetConfigurationAction extends DefaultConfigurationAc
     @Modified
     protected void activate(Map<Object, Object> properties) {
         _configuration = ConfigurableUtil.createConfigurable(
-                RegistrationFacetConfiguration.class, properties);
+                EventFacetConfiguration.class, properties);
     }
 
-    private volatile RegistrationFacetConfiguration _configuration;
+    private volatile EventFacetConfiguration _configuration;
 
 }
