@@ -6,6 +6,7 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
@@ -17,6 +18,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.util.Locale;
+import java.util.Optional;
 
 @Component(
         immediate = true,
@@ -33,28 +35,52 @@ public class EventFacetPortletSharedSearchContributor implements PortletSharedSe
         long groupId = scopeGroup.getGroupId();
         final Locale siteDefaultLocale = LocaleUtil.fromLanguageId(scopeGroup.getDefaultLanguageId());
 
-        String eventId = null;
         String[] structureKeys = null;
         try {
             DSDSiteConfiguration configuration = _configurationProvider.
                     getGroupConfiguration(DSDSiteConfiguration.class, groupId);
-            if (configuration.eventId() > 0) {
-                eventId = String.valueOf(configuration.eventId());
-            }
-
             structureKeys = FacetUtils.getStructureKeys(configuration);
         } catch (ConfigurationException e) {
             LOG.debug("Could not get event configuration", e);
         }
-
-        if (eventId != null) {
+        String[] eventIds = getEventIds(portletSharedSearchSettings);
+        if (eventIds.length > 0) {
             portletSharedSearchSettings.setPaginationDelta(100); //make sure to always get all event sessions otherwise sorting will not work.
-            _dsdJournalArticleUtils.queryDdmFieldValue(groupId, "eventId", eventId, structureKeys,
+            _dsdJournalArticleUtils.queryDdmFieldValues(groupId, "eventId", eventIds, structureKeys,
                     portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
         }
 
     }
 
+    private String[] getEventIds(PortletSharedSearchSettings portletSharedSearchSettings) {
+
+        Optional<String> optional = portletSharedSearchSettings.getParameterOptional("eventsList");
+        return optional.map(s -> s.split(" ")).orElseGet(() -> {
+            String structureList = getConfiguredValue(portletSharedSearchSettings);
+            if (structureList != null && !structureList.isEmpty()){
+                return StringUtil.split(structureList, ' ');
+            }
+            return new String[0];
+        });
+    }
+
+    private String getConfiguredValue(PortletSharedSearchSettings portletSharedSearchSettings){
+
+        try {
+            EventFacetConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(EventFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
+            String overrulingEvents = configuration.eventsList();
+            if (overrulingEvents.isEmpty()){
+
+                DSDSiteConfiguration siteConfiguration = _configurationProvider
+                        .getGroupConfiguration(DSDSiteConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getSiteGroupId());
+                return String.valueOf(siteConfiguration.eventId());
+            }
+            return overrulingEvents;
+        } catch (ConfigurationException e) {
+            LOG.warn("Could not find configuration for eventsList", e);
+        }
+        return null;
+    }
     @Reference
     private DsdJournalArticleUtils _dsdJournalArticleUtils;
 

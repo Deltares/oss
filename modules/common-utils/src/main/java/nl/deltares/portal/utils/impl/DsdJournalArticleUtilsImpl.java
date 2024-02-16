@@ -123,6 +123,12 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
     }
 
     @Override
+    public void queryDdmFieldValues(long groupId, String searchFieldName, String[] searchFieldValueKeywordValues,
+                                   String[] structureKeys, SearchContext searchContext, Locale locale) {
+
+        queryDdmFieldValues(groupId, searchFieldName, searchFieldValueKeywordValues, structureKeys, searchContext, locale, false);
+    }
+    @Override
     public void queryExcludeDdmFieldValue(long groupId, String searchFieldName, String searchFieldValueKeywordValue,
                                    String[] structureKeys, SearchContext searchContext, Locale locale) {
         queryDdmFieldValue(groupId, searchFieldName, searchFieldValueKeywordValue, structureKeys, searchContext, locale, true);
@@ -141,6 +147,24 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
             nestedFacetImpl.setFieldValueKeywordName("ddmFieldValueKeyword_" + languageString);
         }
         nestedFacetImpl.setFieldValueKeywordValue(searchFieldValueKeywordValue);
+        nestedFacetImpl.setExclude(excludeValue);
+        searchContext.addFacet(nestedFacetImpl);
+
+    }
+
+    private void queryDdmFieldValues(long groupId, String searchFieldName, String[] searchFieldValueKeywordValues,
+                                    String[] structureKeys, SearchContext searchContext, Locale locale, boolean excludeValue) {
+        if (searchFieldValueKeywordValues == null || searchFieldValueKeywordValues.length == 0) return;
+
+        final String languageString = locale.toString();
+        final List<String> fieldNameValues = ddmStructureUtil.getEncodedFieldNamesForStructures(groupId, searchFieldName, structureKeys, locale);
+        boolean localizeKeywordField = checkIfValuesAreLocalized(languageString, fieldNameValues);
+        DeltaresDdmFieldValueFacet nestedFacetImpl = new DeltaresDdmFieldValueFacet(searchFieldName, searchContext);
+        nestedFacetImpl.setFieldNameValues(fieldNameValues.toArray(new String[0]));
+        if (localizeKeywordField){
+            nestedFacetImpl.setFieldValueKeywordName("ddmFieldValueKeyword_" + languageString);
+        }
+        nestedFacetImpl.setFieldValueKeywordValues(searchFieldValueKeywordValues);
         nestedFacetImpl.setExclude(excludeValue);
         searchContext.addFacet(nestedFacetImpl);
 

@@ -8,12 +8,8 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
-import nl.deltares.portal.configuration.DSDSiteConfiguration;
-import nl.deltares.portal.model.impl.Event;
-import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.facet.program.builder.UserProgramFacetBuilder;
@@ -22,7 +18,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Component(
@@ -37,26 +32,19 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
         User user = themeDisplay.getUser();
         final Group scopeGroup = portletSharedSearchSettings.getThemeDisplay().getScopeGroup();
         long groupId = scopeGroup.getGroupId();
-        final Locale siteDefaultLocale = LocaleUtil.fromLanguageId(scopeGroup.getDefaultLanguageId());
 
         try {
-            DSDSiteConfiguration configuration = _configurationProvider.
-                    getGroupConfiguration(DSDSiteConfiguration.class, groupId);
-
-            String eventId = String.valueOf(configuration.eventId());
-
-            Event event = dsdParserUtils.getEvent(groupId, eventId, siteDefaultLocale);
 
             List<String> entryClassPKs;
             if (showRegistrationForOthers(portletSharedSearchSettings)){
-                entryClassPKs = dsdSessionUtils.getUserRegistrationsMadeForOthers(user, event)
+                entryClassPKs = dsdSessionUtils.getUserRegistrationsMadeForOthers(user, groupId)
                         .stream()
                         .filter(map -> map.containsKey("resourcePrimaryKey"))
                         .map(map -> map.get("resourcePrimaryKey"))
                         .map(String::valueOf)
                         .collect(Collectors.toList());
             } else {
-                entryClassPKs = dsdSessionUtils.getUserRegistrations(user, event)
+                entryClassPKs = dsdSessionUtils.getUserRegistrations(user, groupId)
                         .stream()
                         .filter(map -> map.containsKey("resourcePrimaryKey"))
                         .map(map -> map.get("resourcePrimaryKey"))
@@ -93,9 +81,6 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
 
     @Reference
     private DsdSessionUtils dsdSessionUtils;
-
-    @Reference
-    private DsdParserUtils dsdParserUtils;
 
     @Reference
     private UserProgramFacetFactory _userProgramFacetFactory;

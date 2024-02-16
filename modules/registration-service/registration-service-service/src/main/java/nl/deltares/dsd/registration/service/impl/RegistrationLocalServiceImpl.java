@@ -195,7 +195,7 @@ public class RegistrationLocalServiceImpl
 		Criterion periodsCheck = RestrictionsFactoryUtil.or(checkPeriod, checkPeriod1);
 		DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader()).add(checkGroupId).add(checkUserId).add(periodsCheck);
 		List<Registration> overlappingRegistrations = RegistrationUtil.findWithDynamicQuery(query);
-		if (overlappingRegistrations.size() == 0) return new long[0];
+		if (overlappingRegistrations.isEmpty()) return new long[0];
 
 		long[] resourceIds = new long[overlappingRegistrations.size()];
 		int i = 0;
@@ -300,6 +300,10 @@ public class RegistrationLocalServiceImpl
 		return RegistrationUtil.findByUserEventRegistrationsRegisteredByMe(groupId, registeredByUserId, eventResourceId);
 	}
 
+	public List<Registration> getUserRegistrationsMadeForOthers(
+			long groupId, long registeredByUserId){
+		return RegistrationUtil.findByUserRegistrationsRegisteredByMe(groupId, registeredByUserId);
+	}
 	public List<Registration> getUsersRegisteredByOtherUser(long groupId, long otherUserId, long registrationResourceId){
 
 		Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
