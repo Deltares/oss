@@ -20,8 +20,7 @@ import javax.portlet.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author rooij_e
@@ -67,10 +66,20 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
 		try {
 			request.setAttribute("events", getEvents(themeDisplay));
+			request.setAttribute("years", getYears());
 		} catch (PortalException e) {
 			request.setAttribute("events", Collections.emptyList());
 		}
 		super.render(request, response);
+	}
+
+	private List<Integer> getYears() {
+		final ArrayList<Integer> years = new ArrayList<>();
+		final int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+		for (int i = -5; i < 2; i++) {
+			years.add(currentYear + i);
+		}
+		return years;
 	}
 
 	private List<JournalArticle> getEvents(ThemeDisplay themeDisplay) throws PortalException {
@@ -103,16 +112,22 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		final int downloadAction = getDownloadActionIndex(action);
 		if (downloadAction > -1 || delete) {
 			String articleId = ParamUtil.getString(resourceRequest, "articleId", null);
+			int year = ParamUtil.getInteger(resourceRequest, "year", -1);
 
-			if (articleId == null) {
-				DataRequestManager.getInstance().writeError("No articleId", resourceResponse);
+			if (articleId != null) {
+				if (id == null) {
+					id = DownloadEventRegistrationsRequest.class.getName() + articleId + themeDisplay.getUserId();
+				}
+			} else if (year != -1) {
+				if (id == null) {
+					id = DownloadEventRegistrationsRequest.class.getName() + year + themeDisplay.getUserId();
+				}
+			} else {
+				DataRequestManager.getInstance().writeError("No articleId or year selected!", resourceResponse);
 				return;
 			}
-			if (id == null) {
-				id = DownloadEventRegistrationsRequest.class.getName() + articleId + themeDisplay.getUserId();
-			}
 
-			downloadEventRegistrations(id, resourceResponse, themeDisplay, articleId, "deletePrimKey".equals(action),
+			downloadEventRegistrations(id, resourceResponse, themeDisplay, articleId, year, "deletePrimKey".equals(action),
 					delete, removeMissing, downloadAction);
 		} else if ("updateStatus".equals(action)){
 			DataRequestManager.getInstance().updateStatus(id, resourceResponse);
@@ -131,21 +146,28 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 	}
 
 	private void downloadEventRegistrations(String dataRequestId, ResourceResponse resourceResponse,
-											ThemeDisplay themeDisplay, String articleId, boolean primKey, boolean delete,
+											ThemeDisplay themeDisplay, String articleId, Integer year, boolean primKey, boolean delete,
 											boolean deleteMissing, int downloadAction) throws IOException {
 		resourceResponse.setContentType("text/csv");
 		DataRequestManager instance = DataRequestManager.getInstance();
 		DataRequest dataRequest = instance.getDataRequest(dataRequestId);
 		if (dataRequest == null) {
-			dataRequest = new DownloadEventRegistrationsRequest(dataRequestId, themeDisplay.getUserId(), articleId, themeDisplay.getSiteGroup(),
-					dsdParserUtils, dsdSessionUtils, dsdJournalArticleUtils,
-					webinarUtilsFactory, primKey, delete, deleteMissing, downloadAction);
+			if (articleId != null) {
+				dataRequest = new DownloadEventRegistrationsRequest(dataRequestId, themeDisplay.getUserId(), articleId, themeDisplay.getSiteGroup(),
+						dsdParserUtils, dsdSessionUtils, dsdJournalArticleUtils,
+						webinarUtilsFactory, primKey, delete, deleteMissing, downloadAction);
+			} else if (year != null) {
+				dataRequest = new DownloadEventRegistrationsRequest(dataRequestId, themeDisplay.getUserId(), year, themeDisplay.getSiteGroup(),
+						dsdParserUtils, dsdSessionUtils, dsdJournalArticleUtils,
+						webinarUtilsFactory, primKey, delete, deleteMissing, downloadAction);
+			}
 			instance.addToQueue(dataRequest);
 		} else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata){
 			instance.removeDataRequest(dataRequest);
 		}
 		resourceResponse.setStatus(HttpServletResponse.SC_OK);
-		String statusMessage = dataRequest.getStatusMessage();
+        assert dataRequest != null;
+        String statusMessage = dataRequest.getStatusMessage();
 		resourceResponse.setContentLength(statusMessage.length());
 		PrintWriter writer = resourceResponse.getWriter();
 		writer.println(statusMessage);
