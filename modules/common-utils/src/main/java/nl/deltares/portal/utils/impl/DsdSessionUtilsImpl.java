@@ -381,6 +381,15 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
+    public List<Map<String, Object>> getRegistrations(long groupId, Date startDate, Date endDate) {
+        List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
+                RegistrationLocalServiceUtil.getRegistrations(groupId, startDate, endDate);
+        List<Map<String, Object>> registrations = new ArrayList<>();
+        dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
+        return registrations;
+    }
+
+    @Override
     public List<Map<String, Object>> getEventRegistrations(long groupId, long eventResourceId) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
                 RegistrationLocalServiceUtil.getEventRegistrations(groupId, eventResourceId);

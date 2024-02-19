@@ -4,47 +4,24 @@ DsdAdminFormsUtil = {
         return ['downloadRegistrationsButton', 'deleteRegistrationsButton', 'downloadReproButton', 'downloadLightButton'];
     },
 
-    downloadRegistrations: function(resourceUrl, namespace){
-
+    callDownload: function (namespace, resourceUrl, action) {
         CommonFormsUtil.clearError(namespace);
-        let element = document.getElementById( namespace + "eventSelection");
-        var eventArticleId = element.options[ element.selectedIndex ].value;
 
-        if (eventArticleId != null && eventArticleId!=="") {
+        let checkBox = $('input[name=' + namespace + "removeMissing" + ']');
+        let removeMissing = checkBox[0].checked
+        let downloadSelection = document.querySelector('input[name=\"' + namespace + 'downloadSelection"]:checked').value;
+        if ("event" === downloadSelection) {
+            var eventSelectionElement =  document.getElementById(namespace + "eventSelection");
+            var eventArticleId = eventSelectionElement.options[eventSelectionElement.selectedIndex].value;
             resourceUrl = resourceUrl + '&' + namespace + 'articleId=' + eventArticleId;
-            let action = "download";
-            let checkBox = $('input[name='+ namespace + "removeMissing" + ']');
-            let removeMissing = checkBox[0].checked
-            this.callDownloadRegistrations(resourceUrl, namespace, action, removeMissing);
+        } else if ("year" === downloadSelection){
+            let yearSelectionElement = document.getElementById(namespace + "yearSelection");
+            var year = yearSelectionElement.options[yearSelectionElement.selectedIndex].value;
+            resourceUrl = resourceUrl + '&' + namespace + 'year=' + year;
         }
-    },
-    downloadRepro: function(resourceUrl, namespace){
-
-        CommonFormsUtil.clearError(namespace);
-        let element = document.getElementById( namespace + "eventSelection");
-        var eventArticleId = element.options[ element.selectedIndex ].value;
-        if (eventArticleId != null && eventArticleId!=="") {
-            resourceUrl = resourceUrl + '&' + namespace + 'articleId=' + eventArticleId;
-            let action = "downloadRepro";
-            let checkBox = $('input[name='+ namespace + "removeMissing" + ']');
-            let removeMissing = checkBox[0].checked
-            this.callDownloadRegistrations(resourceUrl, namespace, action, removeMissing);
-        }
+        this.callDownloadRegistrations(resourceUrl, namespace, action, removeMissing);
     },
 
-    downloadLight: function(resourceUrl, namespace){
-
-        CommonFormsUtil.clearError(namespace);
-        let element = document.getElementById( namespace + "eventSelection");
-        var eventArticleId = element.options[ element.selectedIndex ].value;
-        if (eventArticleId != null && eventArticleId!=="") {
-            resourceUrl = resourceUrl + '&' + namespace + 'articleId=' + eventArticleId;
-            let action = "downloadLight";
-            let checkBox = $('input[name='+ namespace + "removeMissing" + ']');
-            let removeMissing = checkBox[0].checked
-            this.callDownloadRegistrations(resourceUrl, namespace, action, removeMissing);
-        }
-    },
     deleteRegistrations: function(resourceUrl, namespace){
         CommonFormsUtil.clearError(namespace);
         let eventArticleId = document.getElementById( namespace + "articleId").value;
