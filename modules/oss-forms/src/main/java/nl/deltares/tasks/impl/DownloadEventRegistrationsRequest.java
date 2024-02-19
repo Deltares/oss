@@ -34,6 +34,8 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     private enum DOWNLOAD_ACTIONS {download, downloadRepro, downloadLight}
     private static final Log logger = LogFactoryUtil.getLog(DownloadEventRegistrationsRequest.class);
     private final String articleId;
+    private final Integer year;
+
     private final DsdParserUtils dsdParserUtils;
     private final DsdSessionUtils dsdSessionUtils;
     private final Group group;
@@ -53,6 +55,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                                              boolean delete, boolean removeMissing, int downloadAction) throws IOException {
         super(id, currentUser);
         this.articleId = articleId;
+        this.year = null;
         this.group = siteGroup;
 
         this.dsdParserUtils = dsdParserUtils;
@@ -67,6 +70,27 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
     }
 
+    public DownloadEventRegistrationsRequest(String id, long currentUser, Integer year, Group siteGroup,
+                                             DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils,
+                                             DsdJournalArticleUtils dsdJournalArticleUtils,
+                                             WebinarUtilsFactory webinarUtilsFactory, boolean primKey,
+                                             boolean delete, boolean removeMissing, int downloadAction) throws IOException {
+        super(id, currentUser);
+        this.articleId = null;
+        this.year = year;
+        this.group = siteGroup;
+
+        this.dsdParserUtils = dsdParserUtils;
+        this.dsdSessionUtils = dsdSessionUtils;
+        this.dsdJournalArticleUtils = dsdJournalArticleUtils;
+        this.webinarUtilsFactory = webinarUtilsFactory;
+        this.deleteOnCompletion = delete;
+        this.removeMissing = removeMissing;
+        this.useResourcePrimKey = primKey;
+        this.downloadAction = DOWNLOAD_ACTIONS.values()[downloadAction];
+        this.locale = LocaleUtil.fromLanguageId(siteGroup.getDefaultLanguageId());
+
+    }
     @Override
     public STATUS call() {
 
@@ -82,7 +106,11 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
                 writeHeader(writer);
 
-                if (articleId.equals("all")) {
+                if (year != null){
+                    //If we are deleting then do not request webinar info
+                    disableCallWebinar = deleteOnCompletion;
+                    downloadRequestedArticleRegistrations(group.getGroupId(), year, writer);
+                } else if ("all".equals(articleId)) {
                     //we are potentially downloading a lot so no webinar requests
                     disableCallWebinar = true;
                     downloadAllRegistrations(writer);
@@ -277,6 +305,70 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
     }
 
+    private void downloadRequestedArticleRegistrations(long groupId, Integer year, PrintWriter writer) {
+        try {
+
+            //Load the registrations into a cache for retrieval later, so we can access title and other stuff.
+            Map<String, List<String>> webinarKeyCache = new HashMap<>();
+            Map<Long, DsdArticle> articleCache = new HashMap<>();
+
+            List<Map<String, Object>> registrationRecordsToProcess = getRegistrationRecordsByYear(groupId, year);
+
+            if (registrationRecordsToProcess.isEmpty()) {
+                status = nodata;
+                setProcessCount(0);
+                return;
+            }
+            totalCount = registrationRecordsToProcess.size();
+
+            registrationRecordsToProcess.forEach(recordObjects -> {
+                if (status == terminated) return;
+                incrementProcessCount(1);
+                Long resourcePrimaryKey = (Long) recordObjects.get("resourcePrimaryKey");
+                statusMessage = "procession resourcePrimaryKey=" + resourcePrimaryKey;
+                Registration matchingRegistration = (Registration) articleCache.get(resourcePrimaryKey);
+                if (matchingRegistration == null){
+                    matchingRegistration = (Registration) getDsdArticle(resourcePrimaryKey, articleCache);
+                }
+
+                User matchingUser = null;
+                try {
+                    matchingUser = UserLocalServiceUtil.getUser((Long) recordObjects.get("userId"));
+                } catch (PortalException e) {
+                    //
+                }
+                final Long eventResourcePrimaryKey = (Long) recordObjects.get("eventResourcePrimaryKey");
+                Event event = (Event) articleCache.get(eventResourcePrimaryKey);
+                if (event == null){
+                    event = (Event) getDsdArticle(eventResourcePrimaryKey, articleCache);
+                }
+
+                if (downloadAction == DOWNLOAD_ACTIONS.downloadRepro) {
+                    //write short output for printing badges
+                    writeReproRecord(writer, recordObjects, event, matchingRegistration, matchingUser);
+                } else if (downloadAction == DOWNLOAD_ACTIONS.downloadLight) {
+                    //write short output for printing badges
+                    writeLightRecord(writer, recordObjects, matchingRegistration, matchingUser);
+                } else {
+                    writeRecord(writer, recordObjects, event, matchingRegistration, matchingUser,
+                            webinarKeyCache, locale);
+                }
+                if (Thread.interrupted()) {
+                    status = terminated;
+                    errorMessage = String.format("Thread 'DownloadEventRegistrationsRequest' with id %s is interrupted!", id);
+                }
+
+
+            });
+            if (status != terminated) {
+                status = available;
+            }
+
+        } catch (PortalException e) {
+            errorMessage = e.getMessage();
+            status = terminated;
+        }
+    }
     private void downloadRequestedArticleRegistrations(String articleId, PrintWriter writer) {
         try {
 
@@ -385,6 +477,21 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         } else {
             return Collections.emptyList();
         }
+    }
+
+    private List<Map<String, Object>> getRegistrationRecordsByYear(long groupId, Integer year) throws PortalException {
+
+        final Calendar start = Calendar.getInstance();
+        start.set(Calendar.YEAR, year);
+        start.set(Calendar.MONTH, 0);
+        start.set(Calendar.DAY_OF_MONTH, 1);
+        start.set(Calendar.HOUR_OF_DAY, 0);
+        start.set(Calendar.MINUTE, 0);
+        start.set(Calendar.SECOND, 0);
+        final Date startInMillis = start.getTime();
+        start.set(Calendar.YEAR, year + 1);
+        final Date endInMillis = start.getTime();
+        return dsdSessionUtils.getRegistrations(groupId, startInMillis, endInMillis);
     }
 
     private void deleteBrokenRegistration(long registrationId){

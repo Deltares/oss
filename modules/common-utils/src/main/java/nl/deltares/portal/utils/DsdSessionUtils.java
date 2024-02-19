@@ -6,6 +6,7 @@ import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 
+import java.util.Date;
 import java.util.List;
 
 import java.util.Map;
@@ -152,6 +153,8 @@ public interface DsdSessionUtils {
      * @return List of user registration records
      */
     List<Map<String, Object>> getRegistrations(long groupId, long resourceId);
+
+    List<Map<String, Object>> getRegistrations(long groupId, Date startDate, Date endDate);
 
     /**
      * Get all registrations by event resourceId.
