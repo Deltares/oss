@@ -18,7 +18,7 @@ dependencies {
     testImplementation 'com.liferay:com.liferay.petra.lang'
     testImplementation 'com.liferay:com.liferay.journal.api'
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.jodd:jodd-json'
     testImplementation 'commons-io:commons-io:2.11.0'
     testImplementation 'com.maxmind.geoip2:geoip2:2.15.0'
