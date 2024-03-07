@@ -146,6 +146,13 @@ public class SearchResultsPortlet extends MVCPortlet {
             if (iteratorParameter != null) portletURL.getRenderParameters().setValue("endDate", iteratorParameter);
         });
 
+        final Optional<String> languageOptional = portletSharedSearchResponse.getParameter("session-Language", renderRequest);
+        languageOptional.ifPresentOrElse(s -> portletURL.getRenderParameters().setValue("session-Language", s), () ->
+        {
+            final String iteratorParameter = FacetUtils.getIteratorParameter("session-Language", renderRequest);
+            if (iteratorParameter != null) portletURL.getRenderParameters().setValue("session-Language", iteratorParameter);
+        });
+
         renderRequest.setAttribute("iteratorURL", portletURL);
     }
 
