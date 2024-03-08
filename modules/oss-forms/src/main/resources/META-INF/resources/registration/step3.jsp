@@ -21,6 +21,8 @@
             <c:set var="billingReference" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_reference.name()) %>"/>
             <c:set var="billingVat" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_vat.name()) %>"/>
             <c:set var="billingMethod" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_preference.name()) %>"/>
+            <c:set var="billingPhone" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_phone.name()) %>"/>
+
         </c:if>
         <aui:input
                 name="<%= BillingInfo.ATTRIBUTES.billing_email.name()%>"
@@ -174,6 +176,18 @@
                 }
             </aui:validator>
             <aui:validator name="maxLength">25</aui:validator>
+        </aui:input>
+
+        <aui:input
+                name="<%= BillingInfo.ATTRIBUTES.billing_phone.name() %>"
+                label="registrationform.phone"
+                value="${billingPhone}">
+            <aui:validator name="required">
+                function () {
+                return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
+                }
+            </aui:validator>
+            <aui:validator name="maxLength">15</aui:validator>
         </aui:input>
     </div>
 </div>

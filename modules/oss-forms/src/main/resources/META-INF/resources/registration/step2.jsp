@@ -11,6 +11,7 @@
             <c:set var="org_postal" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_postal.name()) %>"/>
             <c:set var="org_city" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_city.name()) %>"/>
             <c:set var="country" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_country.name()) %>"/>
+            <c:set var="org_phone" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_phone.name()) %>"/>
         </c:if>
         <span><liferay-ui:message key="registrationform.userInfo"/></span>
         <div class="row">
@@ -165,6 +166,12 @@
             <% } %>
         </aui:select>
 
+        <aui:input
+                name="<%= KeycloakUtils.ATTRIBUTES.org_phone.name() %>"
+                label="registrationform.phone"
+                value="${org_phone}">
+            <aui:validator name="maxLength">15</aui:validator>
+        </aui:input>
     </aui:col>
     <aui:col width="50">
 
