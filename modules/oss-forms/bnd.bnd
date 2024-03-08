@@ -1,6 +1,6 @@
 Bundle-Name: oss-forms
 Bundle-SymbolicName: nl.deltares.forms
-Bundle-Version: 1.0.21
+Bundle-Version: 1.0.22
 -sources: true
 -metatype: *
 Web-ContextPath: /dsd-registration
