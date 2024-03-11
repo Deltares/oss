@@ -65,7 +65,10 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
         User user = themeDisplay.getUser();
 
-        RegistrationRequest registrationRequest = getRegistrationRequest(actionRequest, themeDisplay, action);
+        DSDSiteConfiguration configuration = _configurationProvider
+                .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
+
+        RegistrationRequest registrationRequest = getRegistrationRequest(actionRequest, themeDisplay, action, configuration);
         if (registrationRequest == null) {
             if (!redirect.isEmpty()) {
                 sendRedirect(actionRequest, actionResponse, redirect);
@@ -76,7 +79,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         boolean success = true;
         switch (action){
             case "update":
-                success = removeCurrentRegistration(actionRequest, user, registrationRequest);
+                success = removeCurrentRegistration(actionRequest, user, registrationRequest, configuration);
 //                break; //skip break and continue with registering
             case "register":
                 User registrationUser = null;
@@ -110,7 +113,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 if (userId != null && !userId.isEmpty()) {
                     user = UserLocalServiceUtil.fetchUser(Long.parseLong(userId));
                 }
-                success = removeCurrentRegistration(actionRequest, user, registrationRequest);
+                success = removeCurrentRegistration(actionRequest, user, registrationRequest, configuration);
                 if (success){
                     success = sendEmail(actionRequest, user, registrationRequest, themeDisplay, action);
                 }
@@ -124,7 +127,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             redirect = getRedirectURL(themeDisplay, action + "_success");
             sendRedirect(actionRequest, actionResponse, redirect);
         } else {
-            redirect = getRedirectURL(themeDisplay, "fail");
+            redirect = getRedirectURL(themeDisplay, action + "_fail");
             final String namespace = actionResponse.getNamespace();
             redirect = urlUtils.setUrlParameter(redirect, namespace, "action", ParamUtil.getString(actionRequest, "action"));
             redirect = urlUtils.setUrlParameter(redirect, namespace, "ids", ParamUtil.getString(actionRequest, "ids"));
@@ -150,7 +153,8 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 case "update_success":
                     configuredRedirect =  configuration.updateSuccessURL();
                     break;
-                case "fail":
+                default:
+                    //todo: specify failure types
                     configuredRedirect =  configuration.failURL();
             }
 
@@ -176,18 +180,31 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         return Boolean.parseBoolean(ParamUtil.getString(actionRequest, "registration_other"));
     }
 
-    private boolean removeCurrentRegistration(ActionRequest actionRequest, User user, RegistrationRequest registrationRequest) {
+    private boolean removeCurrentRegistration(ActionRequest actionRequest, User user, RegistrationRequest registrationRequest, DSDSiteConfiguration configuration) {
 
             List<Registration> registrations = registrationRequest.getRegistrations();
+            boolean result = true;
             for (Registration registration : registrations) {
                 try {
+                    checkUnregisterAllowed(registration, configuration);
                     dsdSessionUtils.unRegisterUser(user, registration);
                 } catch (PortalException e) {
                     //Continue anyway.
                     SessionErrors.add(actionRequest, "unregister-failed",  e.getMessage());
+                    result = false;
                 }
             }
-            return true;
+            return result;
+    }
+
+    private void checkUnregisterAllowed(Registration registration, DSDSiteConfiguration configuration) throws PortalException {
+
+        if (registration.isCancellationPeriodExceeded()){
+            throw new PortalException(
+                    String.format("Cancellation period exceeded for '%s' as described in the '<a href=\"%s\">General course conditions</a>' ! Please contact %s for more information.",
+                            registration.getTitle(), configuration.conditionsURL(), configuration.replyToEmail()));
+        }
+
     }
 
     private boolean registerUser(ActionRequest actionRequest, User user, Map<String, String> userAttributes,
@@ -280,7 +297,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         return children;
     }
 
-    private RegistrationRequest getRegistrationRequest(ActionRequest actionRequest, ThemeDisplay themeDisplay, String action) {
+    private RegistrationRequest getRegistrationRequest(ActionRequest actionRequest, ThemeDisplay themeDisplay, String action, DSDSiteConfiguration configuration) {
         List<String> articleIds;
         if (action.equals("unregister")){
             //noinspection deprecation
@@ -298,9 +315,6 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         }
         try {
             long siteId = themeDisplay.getSiteGroupId();
-
-            DSDSiteConfiguration configuration = _configurationProvider
-                    .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
 
             Event event = dsdParserUtils.getEvent(siteId, String.valueOf(configuration.eventId()), themeDisplay.getLocale());
             BillingInfo billingInfo = getBillingInfo(actionRequest);

@@ -13,7 +13,7 @@
 </#if>
 <#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
 <#assign available = registration.getCapacity() - registrations />
-
+<#assign cancellationExceeded = registration.isCancellationPeriodExceeded() />
 <div class="row no-gutters">
 
     <div class="col-2">
@@ -59,13 +59,17 @@
                             <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button"
                                aria-pressed="true" style="margin-right:5px; color:#fff">
                                          ${languageUtil.get(locale, "registrationform.join")}
-                                    </a>
+                            </a>
                         </#if>
-
-                        <a href="${displayContext.getUnregisterURL(renderRequest) }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
-                            ${languageUtil.get(locale, "registrationform.unregister")}
-                        </a>
-
+                        <#if cancellationExceeded >
+                            <a href="#" class="btn-lg btn-secondary" role="button" aria-pressed="true" style="color:#fff">
+                                ${languageUtil.get(locale, "registrationform.unregister")}
+                            </a>
+                        <#else>
+                            <a href="${displayContext.getUnregisterURL(renderRequest) }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
+                                ${languageUtil.get(locale, "registrationform.unregister")}
+                            </a>
+                        </#if>
                     <#elseif available gt 0 >
                         <a href="#" data-article-id="${registration.getArticleId()}" class="btn-lg btn-primary add-to-cart" role="button"
                            aria-pressed="true"  style="color:#fff">
@@ -76,6 +80,11 @@
 
             </#if>
         </div>
-
+        <#if cancellationExceeded >
+            <div style="float: right;">
+                <#assign contactEmail = displayContext.getContactEmail() />
+                <small><i>${languageUtil.get(locale, "registrationform.cancelExpired")?replace("{0}", contactEmail)}</i></small>
+            </div>
+        </#if>
     </div>
 </div>

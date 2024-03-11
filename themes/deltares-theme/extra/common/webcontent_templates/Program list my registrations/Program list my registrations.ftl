@@ -7,7 +7,7 @@
 <#assign registration = displayContext.getRegistration() />
 <#assign timeZoneId = registration.getTimeZoneId() />
 <#assign showButtons = displayContext.canUserRegister() && themeDisplay.isSignedIn() />
-
+<#assign cancellationExceeded = registration.isCancellationPeriodExceeded() />
 <#if registration.isMultiDayEvent() >
     <#assign title = displayContext.getTitle() />
 </#if>
@@ -52,18 +52,31 @@
                     <table >
                         <#list registeredUsers as registeredUser>
                         <tr><td>
-                            <a href="${displayContext.getUnregisterURL(renderRequest, registeredUser.getUserId()) }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
-                                ${languageUtil.get(locale, "registrationform.unregister")}
-                                &nbsp;
-                                ${registeredUser.getFullName()}
-                            </a>
+
+                                <#if cancellationExceeded >
+                                    <a href="#" class="btn-lg btn-secondary" role="button" aria-pressed="true" style="color:#fff">
+                                        ${languageUtil.get(locale, "registrationform.unregister")}
+                                        &nbsp;
+                                        ${registeredUser.getFullName()}
+                                    </a>
+                                <#else>
+                                    <a href="${displayContext.getUnregisterURL(renderRequest, registeredUser.getUserId()) }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
+                                        ${languageUtil.get(locale, "registrationform.unregister")}
+                                        &nbsp;
+                                        ${registeredUser.getFullName()}
+                                    </a>
+                                </#if>
                         </td></tr>
                         </#list>
                     </table>
                 </span>
-
             </#if>
         </div>
-
+        <#if cancellationExceeded >
+            <div>
+                <#assign contactEmail = displayContext.getContactEmail() />
+                <small><i>${languageUtil.get(locale, "registrationform.cancelExpired")?replace("{0}", contactEmail)}"</i></small>
+            </div>
+        </#if>
     </div>
 </div>

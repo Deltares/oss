@@ -41,6 +41,8 @@ public abstract class Registration extends AbsDsdArticle {
     boolean daily = true;
     boolean toBeDetermined = false;
     private String timeZoneId = "CET";
+
+    private long cancellationPeriodMillis = 0;
     private float vat = 21;
 
     private final long dayMillis = TimeUnit.DAYS.toMillis(1);
@@ -76,7 +78,12 @@ public abstract class Registration extends AbsDsdArticle {
             String vatTxt = getFormFieldValue( "vat", true);
             if (vatTxt != null) this.vat = Long.parseLong(vatTxt);
             defaultUserId = UserLocalServiceUtil.getDefaultUser(getCompanyId()).getUserId();
-       } catch (Exception e) {
+
+            final String cancellationPeriodTxt = getFormFieldValue("CancellationPeriodDays", true);
+            if (cancellationPeriodTxt != null) {
+                this.cancellationPeriodMillis = TimeUnit.DAYS.toMillis(Integer.parseInt(cancellationPeriodTxt));
+            }
+        } catch (Exception e) {
             throw new PortalException(String.format("Error parsing Registration %s: %s!", getTitle(), e.getMessage()), e);
         }
     }
@@ -198,6 +205,13 @@ public abstract class Registration extends AbsDsdArticle {
         return type != null && (type.equals("course") || type.equals("onlinecourse"));
     }
 
+    public boolean isCancellationPeriodExceeded(){
+        if (cancellationPeriodMillis == 0) return false;
+
+        final long millisBeforeStart = getStartTime().getTime() - System.currentTimeMillis();
+        return millisBeforeStart < cancellationPeriodMillis;
+
+    }
     public String getTimeZoneId() {
         return timeZoneId;
     }
