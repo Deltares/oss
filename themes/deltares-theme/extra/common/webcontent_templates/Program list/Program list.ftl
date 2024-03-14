@@ -61,15 +61,9 @@
                                          ${languageUtil.get(locale, "registrationform.join")}
                             </a>
                         </#if>
-                        <#if cancellationExceeded >
-                            <a href="#" class="btn-lg btn-secondary" role="button" aria-pressed="true" style="color:#fff">
-                                ${languageUtil.get(locale, "registrationform.unregister")}
-                            </a>
-                        <#else>
-                            <a href="${displayContext.getUnregisterURL(renderRequest) }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
-                                ${languageUtil.get(locale, "registrationform.unregister")}
-                            </a>
-                        </#if>
+                        <a href="${displayContext.getUnregisterURL(renderRequest) }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
+                            ${languageUtil.get(locale, "registrationform.unregister")}
+                        </a>
                     <#elseif available gt 0 >
                         <a href="#" data-article-id="${registration.getArticleId()}" class="btn-lg btn-primary add-to-cart" role="button"
                            aria-pressed="true"  style="color:#fff">
@@ -81,9 +75,9 @@
             </#if>
         </div>
         <#if cancellationExceeded >
-            <div style="float: right;">
-                <#assign contactEmail = displayContext.getContactEmail() />
-                <small><i>${languageUtil.get(locale, "registrationform.cancelExpired")?replace("{0}", contactEmail)}</i></small>
+            <div>
+                <#assign courseConditionsUrl = displayContext.getCourseConditionsUrl() />
+                <small><i>${languageUtil.get(locale, "registrationform.cancelExpired")?replace("{0}", courseConditionsUrl)}</i></small>
             </div>
         </#if>
     </div>

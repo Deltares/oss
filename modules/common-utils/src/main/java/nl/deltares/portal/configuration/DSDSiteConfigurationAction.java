@@ -77,6 +77,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         String sendFromEmail = ParamUtil.getString(actionRequest, "sendFromEmail");
         String replyToEmail = ParamUtil.getString(actionRequest, "replyToEmail");
         String bccToEmail = ParamUtil.getString(actionRequest, "bccToEmail");
+        String cancellationReplyToEmail = ParamUtil.getString(actionRequest, "cancellationReplyToEmail");
         String mailingIds = ParamUtil.getString(actionRequest, "mailingIds");
         boolean isSendEmails = ParamUtil.getBoolean(actionRequest, "enableEmails");
         boolean isBustransfer = ParamUtil.getBoolean(actionRequest, "enableBusInfo");
@@ -101,6 +102,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         modifiableSettings.setValue("sendFromEmail", sendFromEmail);
         modifiableSettings.setValue("replyToEmail", replyToEmail);
         modifiableSettings.setValue("bccToEmail", bccToEmail);
+        modifiableSettings.setValue("cancellationReplyToEmail", cancellationReplyToEmail);
         modifiableSettings.setValue("enableEmails", String.valueOf(isSendEmails));
         modifiableSettings.setValue("enableBusInfo", String.valueOf(isBustransfer));
         modifiableSettings.setValue("dsdSite", String.valueOf(isDsdSite));

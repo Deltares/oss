@@ -165,29 +165,23 @@
                     <span class="d-block">
                         <#if registration.canUserRegister(user.getUserId()) && themeDisplay.isSignedIn()>
                             <#if isRegistered >
-				                <#if cancellationExceeded >
-                                    <a href="#" class="btn-lg btn-secondary"
-                                       role="button" aria-pressed="true">
-                                        ${languageUtil.get(locale, "registrationform.unregister")}
-                                    </a>
-                                     <div>
-                                        <#assign contactEmail = displayContext.getContactEmail() />
-                                        <small><i>${languageUtil.get(locale, "registrationform.cancelExpired")?replace("{0}", contactEmail)}</i></small>
-                                    </div>
-                                    &nbsp;
-                                <#else >
-                                    <a href="${displayContext.getUnregisterURL(renderRequest)}" class="btn-lg btn-primary"
-                                       role="button" aria-pressed="true">
-                                        ${languageUtil.get(locale, "registrationform.unregister")}
-                                    </a>
-                                    &nbsp;
-                                    <a href="${displayContext.getUpdateURL(renderRequest)}" class="btn-lg btn-primary"
-                                       role="button" aria-pressed="true">
-                                         ${languageUtil.get(locale, "registrationform.update")}
-                                    </a>
-                                    &nbsp;
-                                </#if>
 
+                                <a href="${displayContext.getUnregisterURL(renderRequest)}" class="btn-lg btn-primary"
+                                   role="button" aria-pressed="true">
+                                    ${languageUtil.get(locale, "registrationform.unregister")}
+                                </a>
+                                &nbsp;
+                                <a href="${displayContext.getUpdateURL(renderRequest)}" class="btn-lg btn-primary"
+                                   role="button" aria-pressed="true">
+                                     ${languageUtil.get(locale, "registrationform.update")}
+                                </a>
+				                <#if cancellationExceeded >
+                                     <div>
+                                        <#assign courseConditionsUrl = displayContext.getCourseConditionsUrl() />
+                                        <small><i>${languageUtil.get(locale, "registrationform.cancelExpired")?replace("{0}", courseConditionsUrl)}</i></small>
+                                    </div>
+                                </#if>
+&nbsp;
                           <#else >
                                 <a href="#" data-article-id="${articleId}" class="btn-lg btn-primary add-to-cart"
                                    role="button" aria-pressed="true">

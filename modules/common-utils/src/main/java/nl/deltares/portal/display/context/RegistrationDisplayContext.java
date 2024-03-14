@@ -35,6 +35,8 @@ import javax.portlet.PortletURL;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
+import static nl.deltares.portal.utils.LocalizationUtils.getLocalizedValue;
+
 @SuppressWarnings("unused")
 public class RegistrationDisplayContext {
 
@@ -308,6 +310,14 @@ public class RegistrationDisplayContext {
             return dsdSiteConfiguration.replyToEmail();
         }
         return "mydeltares@deltares.nl";
+    }
+
+    public String getCourseConditionsUrl(){
+        if (dsdSiteConfiguration != null){
+            final String language = themeDisplay.getLocale().getLanguage();
+            return getLocalizedValue(dsdSiteConfiguration.conditionsURL(), language);
+        }
+        return "";
     }
     @SuppressWarnings("unused")
     public String getUnregisterURL(HttpServletRequest httpServletRequest) {

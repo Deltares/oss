@@ -29,6 +29,7 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Component(
@@ -105,7 +106,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                     success = registerUser(actionRequest, user, userAttributes, registrationRequest, registrationUser);
                 }
                 if (success){
-                    success = sendEmail(actionRequest, user, registrationRequest, themeDisplay, action);
+                    success = sendEmail(actionRequest, user, registrationRequest, themeDisplay, action, configuration);
                 }
                 break;
             case "unregister":
@@ -115,7 +116,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 }
                 success = removeCurrentRegistration(actionRequest, user, registrationRequest, configuration);
                 if (success){
-                    success = sendEmail(actionRequest, user, registrationRequest, themeDisplay, action);
+                    success = sendEmail(actionRequest, user, registrationRequest, themeDisplay, action, configuration);
                 }
                 break;
             default:
@@ -186,7 +187,6 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             boolean result = true;
             for (Registration registration : registrations) {
                 try {
-                    checkUnregisterAllowed(registration, configuration);
                     dsdSessionUtils.unRegisterUser(user, registration);
                 } catch (PortalException e) {
                     //Continue anyway.
@@ -195,16 +195,6 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 }
             }
             return result;
-    }
-
-    private void checkUnregisterAllowed(Registration registration, DSDSiteConfiguration configuration) throws PortalException {
-
-        if (registration.isCancellationPeriodExceeded()){
-            throw new PortalException(
-                    String.format("Cancellation period exceeded for '%s' as described in the '<a href=\"%s\">General course conditions</a>' ! Please contact %s for more information.",
-                            registration.getTitle(), configuration.conditionsURL(), configuration.replyToEmail()));
-        }
-
     }
 
     private boolean registerUser(ActionRequest actionRequest, User user, Map<String, String> userAttributes,
@@ -431,11 +421,8 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
     }
 
     private boolean sendEmail(ActionRequest actionRequest, User user, RegistrationRequest registrationRequest,
-                              ThemeDisplay themeDisplay, String action) {
+                              ThemeDisplay themeDisplay, String action, DSDSiteConfiguration configuration) {
         try {
-
-            DSDSiteConfiguration configuration = _configurationProvider
-                    .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
 
             if (!configuration.enableEmails()) return true;
 
@@ -446,6 +433,16 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             if (user.getUserId() != themeDisplay.getUserId()){
                 //someone else is registering for this user
                 bccToEmail = bccToEmail + ';' + themeDisplay.getUser().getEmailAddress();
+            }
+
+            AtomicBoolean isCancellationPeriodExceeded = new AtomicBoolean(false);
+            registrationRequest.getRegistrations().forEach(registration -> {
+                if (registration.isCancellationPeriodExceeded()){
+                    isCancellationPeriodExceeded.set(true);
+                }
+            });
+            if (isCancellationPeriodExceeded.get() && !configuration.cancellationReplyToEmail().isEmpty()) {
+                bccToEmail += ';' + configuration.cancellationReplyToEmail();
             }
             email.setBCCToEmail(bccToEmail);
             email.setSendFromEmail(configuration.sendFromEmail());

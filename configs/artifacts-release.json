@@ -68,13 +68,13 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.oss.language",
-    "version" : "1.0.3",
+    "version" : "1.0.4",
     "extension" : "jar"
   },
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.forms",
-    "version" : "1.0.22",
+    "version" : "1.0.23",
     "extension" : "jar"
   },
   {

@@ -52,20 +52,11 @@
                     <table >
                         <#list registeredUsers as registeredUser>
                         <tr><td>
-
-                                <#if cancellationExceeded >
-                                    <a href="#" class="btn-lg btn-secondary" role="button" aria-pressed="true" style="color:#fff">
-                                        ${languageUtil.get(locale, "registrationform.unregister")}
-                                        &nbsp;
-                                        ${registeredUser.getFullName()}
-                                    </a>
-                                <#else>
-                                    <a href="${displayContext.getUnregisterURL(renderRequest, registeredUser.getUserId()) }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
-                                        ${languageUtil.get(locale, "registrationform.unregister")}
-                                        &nbsp;
-                                        ${registeredUser.getFullName()}
-                                    </a>
-                                </#if>
+                            <a href="${displayContext.getUnregisterURL(renderRequest, registeredUser.getUserId()) }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
+                                ${languageUtil.get(locale, "registrationform.unregister")}
+                                &nbsp;
+                                ${registeredUser.getFullName()}
+                            </a>
                         </td></tr>
                         </#list>
                     </table>
@@ -74,8 +65,8 @@
         </div>
         <#if cancellationExceeded >
             <div>
-                <#assign contactEmail = displayContext.getContactEmail() />
-                <small><i>${languageUtil.get(locale, "registrationform.cancelExpired")?replace("{0}", contactEmail)}"</i></small>
+                <#assign courseConditionsUrl = displayContext.getCourseConditionsUrl() />
+                <small><i>${languageUtil.get(locale, "registrationform.cancelExpired")?replace("{0}", courseConditionsUrl)}</i></small>
             </div>
         </#if>
     </div>

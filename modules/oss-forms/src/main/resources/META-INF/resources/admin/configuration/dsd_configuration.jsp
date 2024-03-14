@@ -93,6 +93,11 @@
                     value="<%= configuration.bccToEmail() %>"/>
 
             <aui:input
+                    label="dsd.email.cancellationReplyTo"
+                    name="cancellationReplyToEmail"
+                    value="<%= configuration.cancellationReplyToEmail() %>"/>
+
+            <aui:input
                     label="dsd.email.enableBusInfo"
                     name="enableBusInfo"
                     type="checkbox"

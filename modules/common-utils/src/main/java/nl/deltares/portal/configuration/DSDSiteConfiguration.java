@@ -44,6 +44,9 @@ public interface DSDSiteConfiguration {
     @Meta.AD(required = false, deflt = "dsd@deltares.nl", description = "Configure the BCC email addresses (';' separated )")
     String bccToEmail();
 
+    @Meta.AD(required = false, deflt = "dsd@deltares.nl", description = "Configure the Reply To email address for when cancellation period has expired")
+    String cancellationReplyToEmail();
+
     @Meta.AD(required = false, deflt = "", description = "Configure Mailing ids for which users can subscribe (';' separated )")
     String mailingIds();
 
