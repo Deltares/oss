@@ -8,6 +8,8 @@ import javax.mail.*;
 import javax.mail.internet.*;
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static com.liferay.mail.kernel.service.MailServiceUtil.getSession;
@@ -78,12 +80,17 @@ public class EmailUtils {
 
     }
 
-    private static Address[] toInternetAddresses(String emailList) throws AddressException {
+    private static Address[] toInternetAddresses(String emailList) {
         String[] emails = emailList.split(";");
-        InternetAddress[] addresses = new InternetAddress[emails.length];
-        for (int i = 0; i < addresses.length; i++) {
-            addresses[i] = new InternetAddress(emails[i]);
+        List<InternetAddress> addresses = new ArrayList<>();
+        for (String email : emails) {
+            try {
+                final InternetAddress internetAddress = new InternetAddress(email);
+                addresses.add(internetAddress);
+            } catch (AddressException e) {
+                LOG.warn(String.format("Failed to parse email address %s: %s", email, e.getMessage()), e);
+            }
         }
-        return addresses;
+        return addresses.toArray(new Address[0]);
     }
 }
