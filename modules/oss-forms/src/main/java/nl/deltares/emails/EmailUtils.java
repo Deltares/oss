@@ -1,6 +1,6 @@
 package nl.deltares.emails;
 
-import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.mail.kernel.service.MailServiceUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import javax.activation.*;
@@ -26,8 +26,6 @@ public class EmailUtils {
         mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
 
         final Session session = getSession();
-        String startTls = PropsUtil.get("mail.session.mail.smtp.starttls.enable");
-        session.getProperties().setProperty("mail.smtp.starttls.enable", startTls == null ? "true": startTls);
         Transport transport = session.getTransport();
         try {
             Message message = new MimeMessage(session);
@@ -66,10 +64,10 @@ public class EmailUtils {
             // put everything together
             message.setContent(multipart);
             transport.connect(
-                    PropsUtil.get("mail.session.mail.smtp.host"),
-                    Integer.parseInt(PropsUtil.get("mail.session.mail.smtp.port")),
-                    PropsUtil.get("mail.session.mail.smtp.user"),
-                    PropsUtil.get("mail.session.mail.smtp.password"));
+                    getSmtpHost(),
+                    getSmtpPort(),
+                    getSmtpUser(),
+                    getSmtpPassword());
             transport.sendMessage(message, message.getAllRecipients());
         } catch (Exception e){
             LOG.warn(String.format("Failed to send email to %s: %s", sendToEmail, e.getMessage()), e);
@@ -80,15 +78,41 @@ public class EmailUtils {
 
     }
 
+    private static String getSmtpProtocol() {
+        return MailServiceUtil.getSession().getProperties().getProperty("mail.transport.protocol", "smtp");
+    }
+    private static String getSmtpPassword() {
+        final String key = String.format("mail.%s.password", getSmtpProtocol());
+        return MailServiceUtil.getSession().getProperties().getProperty(key, "");
+    }
+
+    private static String getSmtpUser() {
+        final String key = String.format("mail.%s.user", getSmtpProtocol());
+        return MailServiceUtil.getSession().getProperties().getProperty(key, "");
+    }
+
+    private static int getSmtpPort() {
+        final String key = String.format("mail.%s.port", getSmtpProtocol());
+        return Integer.parseInt(
+                MailServiceUtil.getSession().getProperties().getProperty(key, "587")
+        );
+    }
+
+    private static String getSmtpHost() {
+        final String key = String.format("mail.%s.host", getSmtpProtocol());
+        return MailServiceUtil.getSession().getProperties().getProperty(key, "");
+    }
+
     private static Address[] toInternetAddresses(String emailList) {
         String[] emails = emailList.split(";");
         List<InternetAddress> addresses = new ArrayList<>();
         for (String email : emails) {
+            if (email.isEmpty()) continue;
             try {
                 final InternetAddress internetAddress = new InternetAddress(email);
                 addresses.add(internetAddress);
             } catch (AddressException e) {
-                LOG.warn(String.format("Failed to parse email address %s: %s", email, e.getMessage()), e);
+                LOG.warn(String.format("Failed to parse email address %s: %s", email, e.getMessage()));
             }
         }
         return addresses.toArray(new Address[0]);
