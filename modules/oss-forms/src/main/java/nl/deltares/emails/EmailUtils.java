@@ -1,12 +1,17 @@
 package nl.deltares.emails;
 
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
 import com.liferay.mail.kernel.service.MailServiceUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import javax.activation.*;
 import javax.mail.*;
 import javax.mail.internet.*;
+import javax.mail.util.ByteArrayDataSource;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +24,7 @@ public class EmailUtils {
     private static final Log LOG = LogFactoryUtil.getLog(EmailUtils.class);
 
     static void sendEmail(String body, String subject, String sendToEmail, String sendCcEmail, String sendBccEmail,
-                          String sendFromEmail, String replyToEmail,  Map<String, URL> data, Map<String, File> attachments) throws Exception {
+                          String sendFromEmail, String replyToEmail,  Map<String, Object> data, Map<String, File> attachments) throws Exception {
 
         MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
         mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
@@ -46,8 +51,7 @@ public class EmailUtils {
             for (String cid : data.keySet()) {
 
                 messageBodyPart = new MimeBodyPart();
-                DataSource fds = new URLDataSource(data.get(cid));
-                messageBodyPart.setDataHandler(new DataHandler(fds));
+                messageBodyPart.setDataHandler(new DataHandler(getDataSource(data, cid)));
                 messageBodyPart.setHeader("Content-ID", '<' + cid + '>');
                 multipart.addBodyPart(messageBodyPart);
 
@@ -75,7 +79,19 @@ public class EmailUtils {
             transport.close();
         }
 
+    }
 
+    private static DataSource getDataSource(Map<String, Object> data, String cid) throws PortalException, IOException {
+        final Object dataValue = data.get(cid);
+
+        if (dataValue instanceof Long) {
+            final DLFileEntry dlFileEntry = DLFileEntryLocalServiceUtil.getDLFileEntry((Long) dataValue);
+            return new ByteArrayDataSource(dlFileEntry.getContentStream(), dlFileEntry.getMimeType());
+        } else if (dataValue instanceof URL){
+            return new URLDataSource((URL) dataValue);
+        } else {
+            throw new UnsupportedDataTypeException(String.format("Unsupported data type for cid %s: %s", cid, dataValue.getClass().getName()));
+        }
     }
 
     private static String getSmtpProtocol() {

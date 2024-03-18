@@ -2,14 +2,12 @@ package nl.deltares.emails;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.User;
-import nl.deltares.model.BillingInfo;
-import nl.deltares.model.RegistrationRequest;
 import nl.deltares.emails.serializer.DsdRegisterEmailSerializer;
 import nl.deltares.emails.serializer.DsdRegistrationEmailSerializer;
 import nl.deltares.emails.serializer.DsdUnRegisterEmailSerializer;
+import nl.deltares.model.BillingInfo;
+import nl.deltares.model.RegistrationRequest;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -56,9 +54,9 @@ public class DsdEmail {
 
     private void loadEmailAddresses() {
         BillingInfo billingInfo = request.getBillingInfo();
-        if (billingInfo != null && billingInfo.getEmail() != null){
+        if (billingInfo != null && billingInfo.getEmail() != null) {
             sendToEmail = billingInfo.getEmail();
-            if (sendToEmail.equals(user.getEmailAddress())){
+            if (sendToEmail.equals(user.getEmailAddress())) {
                 sendCCEmail = null;
             } else {
                 sendCCEmail = user.getEmailAddress();
@@ -69,7 +67,7 @@ public class DsdEmail {
         }
     }
 
-    public void sendRegisterEmail() throws Exception{
+    public void sendRegisterEmail() throws Exception {
         StringBuilder bodyBuilder = new StringBuilder();
         DsdRegistrationEmailSerializer serializer = new DsdRegisterEmailSerializer();
         serializer.serialize(this, bodyBuilder);
@@ -81,13 +79,13 @@ public class DsdEmail {
         sendEmail(bodyBuilder.toString(), subject, sendToEmail, sendCCEmail, sendBCCEmail, sendFromEmail, replyToEmail, loadImageMap(), Collections.emptyMap());
     }
 
-    private HashMap<String, URL> loadImageMap() throws MalformedURLException {
+    private HashMap<String, Object> loadImageMap()  {
 
-        URL bannerURL = request.getBannerURL();
-        URL footerURL = request.getFooterURL();
-        HashMap<String, URL> imageMap = new HashMap<>();
-        if (bannerURL != null ) imageMap.put("banner", bannerURL);
-        if (footerURL != null ) imageMap.put("footer", footerURL);
+        long bannerFileEntryId = request.getEvent().getEmailBannerFileEntryId();
+        long footerFileEntryId = request.getEvent().getEmailFooterFileEntryId();
+        HashMap<String, Object> imageMap = new HashMap<>();
+        if (bannerFileEntryId > 0 ) imageMap.put("banner", bannerFileEntryId);
+        if (footerFileEntryId > 0 ) imageMap.put("footer", footerFileEntryId);
         return imageMap;
     }
 
