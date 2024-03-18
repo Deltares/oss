@@ -81,7 +81,6 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         String mailingIds = ParamUtil.getString(actionRequest, "mailingIds");
         boolean isSendEmails = ParamUtil.getBoolean(actionRequest, "enableEmails");
         boolean isBustransfer = ParamUtil.getBoolean(actionRequest, "enableBusInfo");
-        boolean isDsdSite = ParamUtil.getBoolean(actionRequest, "dsdSite");
         String dsdRegistrationStructures = ParamUtil.getString(actionRequest, "dsdRegistrationStructures");
         String dsdRegistrationDateField = ParamUtil.getString(actionRequest, "dsdRegistrationDateField");
         String dsdRegistrationTypeField = ParamUtil.getString(actionRequest, "dsdRegistrationTypeField");
@@ -105,7 +104,6 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         modifiableSettings.setValue("cancellationReplyToEmail", cancellationReplyToEmail);
         modifiableSettings.setValue("enableEmails", String.valueOf(isSendEmails));
         modifiableSettings.setValue("enableBusInfo", String.valueOf(isBustransfer));
-        modifiableSettings.setValue("dsdSite", String.valueOf(isDsdSite));
         modifiableSettings.setValue("mailingIds", mailingIds);
         modifiableSettings.setValue("dsdRegistrationStructures", dsdRegistrationStructures);
         modifiableSettings.setValue("dsdRegistrationDateField", dsdRegistrationDateField);

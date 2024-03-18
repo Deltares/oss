@@ -8,18 +8,14 @@ import nl.deltares.portal.model.impl.Subscription;
 import nl.deltares.portal.model.impl.Terms;
 import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 
 public class DownloadRequest {
 
     private final List<Download> downloads = new ArrayList<>();
-    private final String baseUrl;
     private final String siteUrl;
     private final HashMap<String, String> userAttributes = new HashMap<>();
     private final long groupId;
-    private String bannerUrl = null;
     private BillingInfo billingInfo;
     final private List<SubscriptionSelection> subscriptionSelections = new ArrayList<>();
     final private Map<String, Map<String, String>> shareInfo = new HashMap<>();
@@ -27,13 +23,7 @@ public class DownloadRequest {
 
     public DownloadRequest(ThemeDisplay themeDisplay) throws PortalException {
         siteUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay, themeDisplay.getSiteDefaultLocale());
-        baseUrl = themeDisplay.getCDNBaseURL();
         groupId = themeDisplay.getScopeGroupId();
-    }
-
-    public void setBannerUrl(String bannerUrl) {
-        if (bannerUrl == null || bannerUrl.isBlank()) return;
-        this.bannerUrl = bannerUrl;
     }
 
     public long getGroupId() {
@@ -67,11 +57,7 @@ public class DownloadRequest {
         return subscriptionSelections;
     }
 
-    public URL getBannerURL() throws MalformedURLException {
-        if (bannerUrl == null) return null;
-        return new URL(baseUrl + bannerUrl);
-    }
-
+    @SuppressWarnings({"unused", "Used by Freemarker"})
     public String getSiteURL() {
         return siteUrl;
     }

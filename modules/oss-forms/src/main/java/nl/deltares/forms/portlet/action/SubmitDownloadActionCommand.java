@@ -236,12 +236,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
 
         try {
             long siteId = themeDisplay.getSiteGroupId();
-
-            DownloadSiteConfiguration configuration = _configurationProvider
-                    .getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
-
             BillingInfo billingInfo = getBillingInfo(actionRequest, themeDisplay.getUser());
-
             DownloadRequest downloadRequest = new DownloadRequest(themeDisplay);
             downloadRequest.setBillingInfo(billingInfo);
             downloadRequest.setLicenseInfo(getLicenseInfo(actionRequest));
@@ -250,7 +245,6 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
                 downloadRequest.addDownload(downloadArticle);
             }
             setSubscriptionSelection(actionRequest, downloadRequest);
-            downloadRequest.setBannerUrl(configuration.bannerURL());
             return downloadRequest;
 
         } catch (PortalException e) {

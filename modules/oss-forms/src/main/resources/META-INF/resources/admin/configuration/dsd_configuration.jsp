@@ -110,12 +110,6 @@
                     value="<%= configuration.enableEmails() %>"/>
 
             <aui:input
-                    label="dsd.site"
-                    name="dsdSite"
-                    type="checkbox"
-                    value="<%= configuration.dsdSite() %>"/>
-
-            <aui:input
                     label="dsd.structure.keys"
                     name="dsdRegistrationStructures"
                     value="<%= configuration.dsdRegistrationStructures() %>"/>
