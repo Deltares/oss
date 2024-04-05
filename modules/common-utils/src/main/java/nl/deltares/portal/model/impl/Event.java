@@ -2,6 +2,7 @@ package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
@@ -19,7 +20,10 @@ public class Event extends AbsDsdArticle {
     private Date startTime = null;
     private Date endTime = null;
     private String emailBannerURL = "";
+    private long emailBannerFileEntryId = 0;
     private String emailFooterURL = "";
+
+    private long emailFooterFileEntryId = 0;
     private String timeZoneId = "CET";
 
     public Event(JournalArticle journalArticle, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
@@ -41,11 +45,15 @@ public class Event extends AbsDsdArticle {
 
         String bannerImageJson = getFormFieldValue( "bannerImage", true);
         if (bannerImageJson != null) {
-            emailBannerURL = JsonContentUtils.parseImageJson(bannerImageJson);
+            JSONObject bannerImage = JsonContentUtils.parseContent(bannerImageJson);
+            emailBannerFileEntryId = bannerImage.getLong("fileEntryId");
+            emailBannerURL = JsonContentUtils.parseImageJson(emailBannerFileEntryId);
         }
         String footerImageJson = getFormFieldValue( "footerImage", true);
         if (footerImageJson != null) {
-            emailFooterURL = JsonContentUtils.parseImageJson(footerImageJson);
+            JSONObject footerImage = JsonContentUtils.parseContent(footerImageJson);
+            emailFooterFileEntryId = footerImage.getLong("fileEntryId");
+            emailFooterURL = JsonContentUtils.parseImageJson(emailBannerFileEntryId);
         }
 
     }
@@ -74,6 +82,7 @@ public class Event extends AbsDsdArticle {
         this.eventLocation = (EventLocation) location;
     }
 
+    @SuppressWarnings({"unused", "We need this method for the template"})
     public Building findBuilding(Room room){
         if (room == null) return null;
         EventLocation eventLocation = getEventLocation();
@@ -122,8 +131,16 @@ public class Event extends AbsDsdArticle {
         return emailBannerURL;
     }
 
+    public long getEmailBannerFileEntryId() {
+        return emailBannerFileEntryId;
+    }
+
     public String getEmailFooterURL() {
         return emailFooterURL;
+    }
+
+    public long getEmailFooterFileEntryId() {
+        return emailFooterFileEntryId;
     }
 
     public List<Registration> getRegistrations(Locale locale)  {
@@ -139,10 +156,12 @@ public class Event extends AbsDsdArticle {
         return null;
     }
 
+    @SuppressWarnings({"unused", "We need this method for the template"})
     public boolean isEventInPast(){
         return System.currentTimeMillis() > endTime.getTime();
     }
 
+    @SuppressWarnings({"unused", "We need this method for the template"})
     public boolean isMultiDayEvent(){
         long duration = endTime.getTime() - startTime.getTime();
         return duration > TimeUnit.DAYS.toMillis(1);
@@ -157,7 +176,7 @@ public class Event extends AbsDsdArticle {
 
     private synchronized void loadRegistrations(Locale locale){
 
-        if (registrations.size() > 0) {
+        if (!registrations.isEmpty()) {
             return;
         }
         try {

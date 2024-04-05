@@ -42,9 +42,7 @@ public class RegistrationFacetConfigurationAction extends DefaultConfigurationAc
             throws Exception {
 
         String structureList = ParamUtil.getString(actionRequest, "structureList");
-        if (structureList != null && !structureList.isEmpty()){
-            setPreference(actionRequest, "structureList", structureList);
-        }
+        setPreference(actionRequest, "structureList", structureList);
         super.processAction(portletConfig, actionRequest, actionResponse);
     }
 

@@ -13,6 +13,7 @@
 
 <%
     List<JournalArticle> events = (List<JournalArticle>) renderRequest.getAttribute("events");
+    List<Integer> years = (List<Integer>) renderRequest.getAttribute("years");
 %>
 
 <span id="<portlet:namespace/>group-message-block"></span>
@@ -34,8 +35,24 @@
                     <div class="panel-title" > <liferay-ui:message key="dsd.admin.downloadTitle"/>  </div>
                 </aui:col>
                 <aui:col width="20">
-                    <div class="control-label" > <liferay-ui:message key="dsd.admin.selectDownload"/>  </div>
+                    <aui:row>
+                        <aui:input
+                                name="downloadSelection"
+                                label="dsd.admin.selectDownload"
+                                type="radio"
+                                value="event"
+                                checked="true"/>
+                    </aui:row>
+                    <aui:row>
+                        <aui:input
+                                name="downloadSelection"
+                                label="dsd.admin.selectYear"
+                                type="radio"
+                                value="year"
+                                checked="false"/>
+                    </aui:row>
                 </aui:col>
+
                 <aui:col width="25">
                     <aui:row>
                         <aui:select name="eventSelection" label="">
@@ -46,13 +63,19 @@
                         </aui:select>
                     </aui:row>
                     <aui:row>
+                        <aui:select name="yearSelection" label="">
+                            <% for (Integer year : years) { %>
+                            <aui:option value="<%=year %>" ><%= year %></aui:option>
+                            <% } %>
+                        </aui:select>
+                    </aui:row>
+                    <aui:row>
                         <aui:input
                                 label="dsd.admin.removeMissing"
                                 name="removeMissing"
                                 type="checkbox"
                                 helpMessage="dsd.admin.removeMissingHelp"
                                 value="false"/>
-
                     </aui:row>
                 </aui:col>
                 <aui:col width="5">
@@ -107,19 +130,19 @@
     let downloadRegistrationsButton = document.getElementById('<portlet:namespace/>downloadRegistrationsButton');
     downloadRegistrationsButton.addEventListener('click', function (ev) {
         ev.preventDefault();
-        DsdAdminFormsUtil.downloadRegistrations("<portlet:resourceURL/>", "<portlet:namespace/>")
+        DsdAdminFormsUtil.callDownload("<portlet:namespace/>", "<portlet:resourceURL/>",  "download")
     });
 
     let downloadReproButton = document.getElementById('<portlet:namespace/>downloadReproButton');
     downloadReproButton.addEventListener('click', function (ev) {
     ev.preventDefault();
-    DsdAdminFormsUtil.downloadRepro("<portlet:resourceURL/>", "<portlet:namespace/>")
+    DsdAdminFormsUtil.callDownload("<portlet:namespace/>", "<portlet:resourceURL/>",  "downloadRepro");
     });
 
     let downloadLightButton = document.getElementById('<portlet:namespace/>downloadLightButton');
     downloadLightButton.addEventListener('click', function (ev) {
     ev.preventDefault();
-    DsdAdminFormsUtil.downloadLight("<portlet:resourceURL/>", "<portlet:namespace/>")
+    DsdAdminFormsUtil.callDownload("<portlet:namespace/>", "<portlet:resourceURL/>",  "downloadLight");
     });
     let deleteRegistrationsButton = document.getElementById('<portlet:namespace/>deleteRegistrationsButton');
     deleteRegistrationsButton.addEventListener('click', function (ev) {

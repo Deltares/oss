@@ -7,7 +7,7 @@
 <#assign registration = displayContext.getRegistration() />
 <#assign timeZoneId = registration.getTimeZoneId() />
 <#assign showButtons = displayContext.canUserRegister() && themeDisplay.isSignedIn() />
-
+<#assign cancellationExceeded = registration.isCancellationPeriodExceeded() />
 <#if registration.isMultiDayEvent() >
     <#assign title = displayContext.getTitle() />
 </#if>
@@ -61,9 +61,13 @@
                         </#list>
                     </table>
                 </span>
-
             </#if>
         </div>
-
+        <#if cancellationExceeded >
+            <div>
+                <#assign courseConditionsUrl = displayContext.getCourseConditionsUrl() />
+                <small><i>${languageUtil.get(locale, "registrationform.cancelExpired")?replace("{0}", courseConditionsUrl)}</i></small>
+            </div>
+        </#if>
     </div>
 </div>

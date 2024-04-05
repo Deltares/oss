@@ -25,6 +25,8 @@ public interface DsdJournalArticleUtils {
 
     void queryDdmFieldValue(long groupId, String ddmFieldName, String ddmFieldValue, String[] structureKeys, SearchContext searchContext, Locale locale);
 
+    void queryDdmFieldValues(long groupId, String ddmFieldName, String[] ddmFieldValues, String[] structureKeys, SearchContext searchContext, Locale locale);
+
     void queryExcludeDdmFieldValue(long groupId, String ddmFieldName, String ddmFieldValue, String[] structureKeys, SearchContext searchContext, Locale locale);
 
     void queryDateRange(long groupId, Date startDate, Date endDate, String[] structureKeys, String dateFieldName, SearchContext searchContext, Locale locale);

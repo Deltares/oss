@@ -65,7 +65,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     @Override
     public String getUserJoinLink(User user, Registration registration, boolean isRegistered) throws Exception {
 
-        if (user.isDefaultUser()) return "";
+        if (user.isGuestUser()) return "";
 
         if (!webinarUtilsFactory.isWebinarSupported(registration)) {
             return "";
@@ -88,7 +88,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     @Override
     public String getUserJoinLink(User user, Registration registration) throws Exception {
-        if (user.isDefaultUser()) return "";
+        if (user.isGuestUser()) return "";
         final boolean userRegisteredFor = isUserRegisteredFor(user, registration);
         return getUserJoinLink(user, registration, userRegisteredFor);
     }
@@ -96,7 +96,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     @Override
     public void registerUser(User user, Map<String, String> userAttributes, Registration registration, Map<String, String> registrationProperties, User registrationUser) throws PortalException {
 
-        if (user.isDefaultUser()) return;
+        if (user.isGuestUser()) return;
         try {
             if (webinarUtilsFactory.isWebinarSupported(registration)) {
                 registerWebinarUser(user, userAttributes, (SessionRegistration) registration, registrationProperties);
@@ -133,12 +133,12 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     @Override
     public void unRegisterUser(User user, Registration registration) throws PortalException {
 
-        if (user.isDefaultUser()) return;
+        if (user.isGuestUser()) return;
         try {
             if (webinarUtilsFactory.isWebinarSupported(registration)) {
 
                 List<nl.deltares.dsd.registration.model.Registration> registrations = RegistrationLocalServiceUtil.getRegistrations(registration.getGroupId(), user.getUserId(), registration.getResourceId());
-                if (registrations.size() > 0) {
+                if (!registrations.isEmpty()) {
                     Map<String, String> preferences = getUserPreferencesMap(registrations.get(0));
                     try {
                         WebinarUtils webinarUtils = webinarUtilsFactory.newInstance(registration);
@@ -334,24 +334,22 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         return registrationsCount > 0;
     }
 
-    @Override
-    public List<Map<String, Object>> getUserRegistrations(User user, Event event) {
+    public List<Map<String, Object>> getUserRegistrations(User user, long groupId) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
-                RegistrationLocalServiceUtil.getUserEventRegistrations(event.getGroupId(), user.getUserId(), event.getResourceId());
+                RegistrationLocalServiceUtil.getUserRegistrations(groupId, user.getUserId(), 0, 100);
         List<Map<String, Object>> registrations = new ArrayList<>();
         dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
         return registrations;
     }
 
     @Override
-    public List<Map<String, Object>> getUserRegistrationsMadeForOthers(User user, Event event) {
+    public List<Map<String, Object>> getUserRegistrationsMadeForOthers(User user, long groupId) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
-                RegistrationLocalServiceUtil.getUserEventRegistrationsMadeForOthers(event.getGroupId(), user.getUserId(), event.getResourceId());
+                RegistrationLocalServiceUtil.getUserRegistrationsMadeForOthers(groupId, user.getUserId());
         List<Map<String, Object>> registrations = new ArrayList<>();
         dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
         return registrations;
     }
-
     @Override
     public boolean hasUserRegistrationsMadeForOthers(User user, long groupId, long eventArticleId) {
 
@@ -377,6 +375,15 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     public List<Map<String, Object>> getRegistrations(long groupId, long resourceId) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
                 RegistrationLocalServiceUtil.getArticleRegistrations(groupId, resourceId);
+        List<Map<String, Object>> registrations = new ArrayList<>();
+        dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
+        return registrations;
+    }
+
+    @Override
+    public List<Map<String, Object>> getRegistrations(long groupId, Date startDate, Date endDate) {
+        List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
+                RegistrationLocalServiceUtil.getRegistrations(groupId, startDate, endDate);
         List<Map<String, Object>> registrations = new ArrayList<>();
         dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
         return registrations;

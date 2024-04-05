@@ -6,6 +6,7 @@ import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 
+import java.util.Date;
 import java.util.List;
 
 import java.util.Map;
@@ -45,6 +46,7 @@ public interface DsdSessionUtils {
      * @param registration Webinar registration
      * @return Join link for given user if user. Checks if User is registered before returning link.
      */
+    @SuppressWarnings("unused")
     String getUserJoinLink(User user, Registration registration) throws Exception;
 
     /**
@@ -117,19 +119,17 @@ public interface DsdSessionUtils {
     /**
      * Get user's registrations records for given event.
      * @param user User Id
-     * @param event Event for which to retrieve registrations
+     * @param groupId Site id for which to retrieve registrations
      * @return List of user registration records
      */
-    List<Map<String, Object>> getUserRegistrations(User user, Event event);
+    List<Map<String, Object>> getUserRegistrations(User user, long groupId);
 
     /**
-     * Find all user registrations that this user made for other user for given event .
+     * Find all user registrations that this user made for other user .
      * @param user User Id of user that made registration
-     * @param event Event for which to retrieve registrations
      * @return List of user registration records
      */
-    List<Map<String, Object>> getUserRegistrationsMadeForOthers(User user, Event event);
-
+    List<Map<String, Object>> getUserRegistrationsMadeForOthers(User user, long groupId);
     /**
      * Has this user made registrations for others for this event .
      * @param user User Id of user that made registration
@@ -153,6 +153,8 @@ public interface DsdSessionUtils {
      * @return List of user registration records
      */
     List<Map<String, Object>> getRegistrations(long groupId, long resourceId);
+
+    List<Map<String, Object>> getRegistrations(long groupId, Date startDate, Date endDate);
 
     /**
      * Get all registrations by event resourceId.

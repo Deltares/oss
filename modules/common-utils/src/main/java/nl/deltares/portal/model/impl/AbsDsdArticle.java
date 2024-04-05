@@ -210,7 +210,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
     private String extractStringValue(DDMFormFieldValue formFieldValue){
         if (formFieldValue == null) return null;
         final String localStringValue = formFieldValue.getValue().getString(locale);
-        if (localStringValue.isEmpty() || localStringValue.equals("{}")) return null;
+        if (localStringValue == null || localStringValue.isEmpty() || localStringValue.equals("{}")) return null;
         return removeBrackets(localStringValue);
     }
 

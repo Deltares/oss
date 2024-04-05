@@ -2,16 +2,11 @@ package nl.deltares.emails;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.User;
+import nl.deltares.emails.serializer.DownloadsEmailSerializer;
 import nl.deltares.model.BillingInfo;
 import nl.deltares.model.DownloadRequest;
-import nl.deltares.emails.serializer.DownloadsEmailSerializer;
 
-
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collections;
-import java.util.HashMap;
-
 import java.util.ResourceBundle;
 
 import static nl.deltares.emails.EmailUtils.sendEmail;
@@ -67,15 +62,7 @@ public class DownloadEmail {
 
         loadEmailAddresses();
 
-        sendEmail(bodyBuilder.toString(), subject, sendToEmail, sendCCEmail, sendBCCEmail, sendFromEmail, replyToEmail, loadImageMap(), Collections.emptyMap());
-    }
-
-    private HashMap<String, URL> loadImageMap() throws MalformedURLException {
-
-        URL bannerURL = request.getBannerURL();
-        HashMap<String, URL> imageMap = new HashMap<>();
-        if (bannerURL != null) imageMap.put("banner", bannerURL);
-        return imageMap;
+        sendEmail(bodyBuilder.toString(), subject, sendToEmail, sendCCEmail, sendBCCEmail, sendFromEmail, replyToEmail, Collections.emptyMap(), Collections.emptyMap());
     }
 
     public User getUser() {

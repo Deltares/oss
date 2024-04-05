@@ -44,6 +44,9 @@ public interface DSDSiteConfiguration {
     @Meta.AD(required = false, deflt = "dsd@deltares.nl", description = "Configure the BCC email addresses (';' separated )")
     String bccToEmail();
 
+    @Meta.AD(required = false, deflt = "dsd@deltares.nl", description = "Configure the Reply To email address for when cancellation period has expired")
+    String cancellationReplyToEmail();
+
     @Meta.AD(required = false, deflt = "", description = "Configure Mailing ids for which users can subscribe (';' separated )")
     String mailingIds();
 
@@ -52,9 +55,6 @@ public interface DSDSiteConfiguration {
 
     @Meta.AD(required = false, deflt = "false", description = "Configure if registration email contains bus transfer information.")
     boolean enableBusInfo();
-
-    @Meta.AD(required = false, deflt = "false", description = "Configure if current site is a DSD site.")
-    boolean dsdSite();
 
     @Meta.AD(required = false, deflt = "session bustransfer dinner", description = "Configure the structures to filter for. (space separated")
     String dsdRegistrationStructures();

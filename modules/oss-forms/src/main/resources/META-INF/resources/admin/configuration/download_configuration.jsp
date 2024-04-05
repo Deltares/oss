@@ -95,11 +95,6 @@
                 value="<%= configuration.bccToEmail() %>"/>
 
         <aui:input
-                label="download.configuration.bannerURL"
-                name="bannerURL"
-                value="<%= configuration.bannerURL() %>"/>
-
-        <aui:input
                 label="download.email.enabled"
                 name="enableEmails"
                 type="checkbox"

@@ -192,6 +192,7 @@ CommonFormsUtil = {
         let paymentCityInput = $(document.getElementById( namespace + "billing_city"));
         let paymentCountryInput = $(document.getElementById(namespace + "billing_country"));
         let paymentEmailInput = $(document.getElementById( namespace + "billing_email"));
+        let paymentPhoneInput = $(document.getElementById( namespace + "billing_phone"));
 
         if (checked) {
 
@@ -204,6 +205,7 @@ CommonFormsUtil = {
             paymentCityInput.prop('billing_value', paymentCityInput.val());
             paymentCountryInput.prop('billing_value', paymentCountryInput.val());
             paymentEmailInput.prop('billing_value', paymentEmailInput.val());
+            paymentPhoneInput.prop('billing_value', paymentPhoneInput.val());
 
             //replace billing info with user attributes info
             let company = $(document.getElementById(namespace + "org_name")).val();
@@ -214,6 +216,7 @@ CommonFormsUtil = {
             let email = $(document.getElementById(namespace + "email")).val();
             let firstName = $(document.getElementById(namespace + "first_name")).val();
             let lastName = $(document.getElementById(namespace + "last_name")).val();
+            let phone = $(document.getElementById(namespace + "org_phone")).val();
 
             paymentFirstNameInput.val(firstName);
             paymentLastNameInput.val(lastName);
@@ -223,6 +226,7 @@ CommonFormsUtil = {
             paymentCountryInput.val(country);
             paymentEmailInput.val(email);
             paymentCompanyInput.val(company)
+            paymentPhoneInput.val(phone);
 
             paymentCompanyInput.prop('disabled', true);
             paymentFirstNameInput.prop('disabled', true);
@@ -243,6 +247,7 @@ CommonFormsUtil = {
             let city = paymentCityInput.prop('billing_value');
             let country = paymentCountryInput.prop('billing_value');
             let email = paymentEmailInput.prop('billing_value');
+            let phone = paymentPhoneInput.prop('billing_value');
 
             paymentCompanyInput.val(company);
             paymentFirstNameInput.val(firstName);
@@ -252,6 +257,7 @@ CommonFormsUtil = {
             paymentCityInput.val(city);
             paymentCountryInput.val(country);
             paymentEmailInput.val(email);
+            paymentPhoneInput.val(phone);
 
             paymentCompanyInput.prop('disabled', false);
             paymentFirstNameInput.prop('disabled', false);

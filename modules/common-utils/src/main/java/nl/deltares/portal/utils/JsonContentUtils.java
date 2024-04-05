@@ -18,11 +18,7 @@ public class JsonContentUtils {
     /**
      * Turned into variable to allow replacement in unit tests
      **/
-    private static DsdJournalArticleUtils serviceUtils = new DsdJournalArticleUtilsImpl();
-
-    public static void setServiceUtils(DsdJournalArticleUtils serviceUtils) {
-        JsonContentUtils.serviceUtils = serviceUtils;
-    }
+    private static final DsdJournalArticleUtils serviceUtils = new DsdJournalArticleUtilsImpl();
 
     public static JSONObject parseContent(String jsonContent) throws JSONException {
         if (jsonContent == null) return JSONFactoryUtil.createJSONObject();
@@ -68,18 +64,6 @@ public class JsonContentUtils {
         return mapList;
     }
 
-    public static List<String> parseJsonArrayToList(String jsonContent) throws JSONException {
-        ArrayList<String> list = new ArrayList<>();
-        if (jsonContent == null) {
-            return list;
-        }
-        if (jsonContent.startsWith("[")){
-            JSONArray jsonArray = JsonContentUtils.parseContentArray(jsonContent);
-            jsonArray.forEach(o -> list.add(String.valueOf(o)));
-        }
-        return list;
-    }
-
     public static Map<String, String> parseJsonToMap(String jsonContent) throws JSONException {
         if (jsonContent == null) return new HashMap<>();
         JSONObject jsonObject = parseContent(jsonContent);
@@ -98,21 +82,6 @@ public class JsonContentUtils {
         }
         if (empty) return null;
         return jsonObject.toJSONString();
-    }
-
-    public static String formatListToJson(List<String> properties) {
-        boolean empty = true;
-        JSONArray jsonObject = JSONFactoryUtil.createJSONArray();
-        for (String key : properties) {
-            empty = false;
-            jsonObject.put(key);
-        }
-        if (empty) return null;
-        return jsonObject.toJSONString();
-    }
-
-    public static String formatTextToJson(String field, String message) {
-        return String.format("{ \"%s\" : \"%s\" }", field, message);
     }
 
     /**
@@ -134,7 +103,15 @@ public class JsonContentUtils {
         try {
             JSONObject jsonObject = JsonContentUtils.parseContent(jsonData);
             if (jsonObject.isNull("fileEntryId")) return "";
-            FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(jsonObject.getLong("fileEntryId"));
+            return parseImageJson(jsonObject.getLong("fileEntryId"));
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    public static String parseImageJson(long fileEntryId){
+        try {
+            FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(fileEntryId);
             if (fileEntry == null) return "";
             return DLURLHelperUtil.getPreviewURL(fileEntry, fileEntry.getFileVersion(), null, "", false, true);
         } catch (Exception e) {
@@ -179,15 +156,8 @@ public class JsonContentUtils {
                 final JSONObject jsonObject = JsonContentUtils.parseContent(response);
                 return !jsonObject.keys().hasNext();
             }
-        } catch (JSONException e) {}
+        } catch (JSONException ignored) {}
         return true;
     }
 
-    public static String[] toStringArray(JSONArray languages) {
-        final String[] outputs = new String[languages.length()];
-        for (int i = 0; i < outputs.length; i++) {
-            outputs[i] = languages.getString(i);
-        }
-        return outputs;
-    }
 }
