@@ -3,7 +3,7 @@ version: '3.1'
 services:
 
   database:
-    image: mariadb:10.4.22
+    image: mariadb:11.2-rc
     container_name: oss-mariadb-74
     ports:
       - "3307:3306"
@@ -11,14 +11,13 @@ services:
       - .env
     volumes:
       - dbliferay74:/var/lib/mysql
-      - ./resources/dump-liferay.sql:/docker-entrypoint-initdb.d/dump.sql
+#      - ./resources/dump-liferay.sql:/docker-entrypoint-initdb.d/dump.sql
     restart: always
-    command: [ 'mysqld', '--character-set-server=utf8', '--collation-server=utf8_general_ci' ]
     networks:
       - liferay
 
   mariadb-keycloak:
-    image: mariadb:10.4.22
+    image: mariadb:11.2-rc
     container_name: keycloak-mariadb-74
     ports:
       - "3308:3306"
@@ -30,9 +29,8 @@ services:
       - HOSTNAME=mariadb-keycloak
     volumes:
       - dbkeycloak74:/var/lib/mysql
-      - ./resources/dump-keycloak.sql:/docker-entrypoint-initdb.d/dump.sql
+#      - ./resources/dump-keycloak.sql:/docker-entrypoint-initdb.d/dump.sql
     restart: always
-    command: [ 'mysqld', '--character-set-server=utf8', '--collation-server=utf8_general_ci' ]
     networks:
       - liferay
 
@@ -50,6 +48,7 @@ services:
       - ./liferay/lmcrypt:/opt/liferay/lmcrypt
       - ${LIFERAY_BUNDLE_DIR}/deploy:/opt/liferay/deploy
       - ${LIFERAY_BUNDLE_DIR}/osgi/modules:/opt/liferay/osgi/modules
+      - ${LIFERAY_BUNDLE_DIR}/osgi/client-extensions:/opt/liferay/osgi/client-extensions
     restart: always
     networks:
       - liferay
@@ -80,7 +79,6 @@ services:
     #    build: server
     ports:
       - 8080:8080
-      - 8443:8443
       - 8787:8787
 #      - 9990:9990
     volumes:
