@@ -1,5 +1,5 @@
 dependencies {
 	implementation('com.liferay.portal:release.dxp.api')
 
-	compileOnly project(":modules:common-utils")
+	implementation(project(":modules:common-utils"))
 }

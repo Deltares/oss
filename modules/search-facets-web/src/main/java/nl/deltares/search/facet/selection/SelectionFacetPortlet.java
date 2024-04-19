@@ -1,8 +1,8 @@
 package nl.deltares.search.facet.selection;
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -69,14 +69,14 @@ public class SelectionFacetPortlet extends MVCPortlet {
         renderRequest.setAttribute("title", FacetUtils.retrieveLanguageFieldValue(configuration.titleMap(), themeDisplay.getLanguageId()));
 
         PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
-        Optional<String> facetSelection = portletSharedSearchResponse.getParameter(name, renderRequest);
+        Optional<String> facetSelection = Optional.of(portletSharedSearchResponse.getParameter(name, renderRequest));
 
         facetSelection.ifPresentOrElse(s -> renderRequest.setAttribute("selection", s), () ->
                 {
-                  //check for parameter is in namespace of searchResultsPortlet
-                  final String selection = FacetUtils.getIteratorParameter(name, renderRequest);
-                  if (selection != null) renderRequest.setAttribute("selection", selection);
-                }
+            //check for parameter is in namespace of searchResultsPortlet
+            final String selection = FacetUtils.getIteratorParameter(name, renderRequest);
+            if (selection != null) renderRequest.setAttribute("selection", selection);
+        }
         );
 
         try {

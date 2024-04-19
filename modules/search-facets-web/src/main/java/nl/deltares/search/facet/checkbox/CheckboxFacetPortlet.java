@@ -1,7 +1,7 @@
 package nl.deltares.search.facet.checkbox;
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -67,10 +67,9 @@ public class CheckboxFacetPortlet extends MVCPortlet {
         renderRequest.setAttribute("title", FacetUtils.retrieveLanguageFieldValue(_configuration.titleMap(), themeDisplay.getLanguageId()));
 
         PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
-        Optional<String> facetSelection = portletSharedSearchResponse.getParameter(name, renderRequest);
+        Optional<String> facetSelection = Optional.of(portletSharedSearchResponse.getParameter(name, renderRequest));
         if (facetSelection.isPresent()) {
-            String selection = facetSelection.get();
-            renderRequest.setAttribute("selection", selection);
+            renderRequest.setAttribute("selection", facetSelection.get());
         }
 
         super.render(renderRequest, renderResponse);

@@ -1,4 +1,4 @@
 dependencies {
-    compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
-    compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations"
+    implementation("com.liferay.portal:com.liferay.portal.kernel")
+    implementation("org.osgi:org.osgi.service.component.annotations")
 }

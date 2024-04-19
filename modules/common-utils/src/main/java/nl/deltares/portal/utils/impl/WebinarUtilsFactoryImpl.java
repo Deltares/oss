@@ -1,9 +1,9 @@
 package nl.deltares.portal.utils.impl;
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import nl.deltares.portal.configuration.WebinarSiteConfiguration;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;

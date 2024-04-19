@@ -1,14 +1,14 @@
 package nl.deltares.portal.configuration;
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
+import com.liferay.portal.kernel.settings.FallbackKeysSettingsUtil;
 import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
 import com.liferay.portal.kernel.settings.ModifiableSettings;
 import com.liferay.portal.kernel.settings.Settings;
-import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -78,7 +78,7 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
         String bannerURL = ParamUtil.getString(actionRequest, "bannerURL");
         boolean isSendEmails = ParamUtil.getBoolean(actionRequest, "enableEmails");
 
-        Settings settings = SettingsFactoryUtil.getSettings(
+        Settings settings = FallbackKeysSettingsUtil.getSettings(
                 new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), DownloadSiteConfiguration.class.getName()));
 
         ModifiableSettings modifiableSettings =

@@ -56,8 +56,8 @@ public class DateRangeFacetPortlet extends MVCPortlet {
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
         PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
-        Optional<String> startDateOptional = portletSharedSearchResponse.getParameter("startDate", renderRequest);
-        Optional<String> endDateOptional = portletSharedSearchResponse.getParameter("endDate", renderRequest);
+        Optional<String> startDateOptional = Optional.of(portletSharedSearchResponse.getParameter("startDate", renderRequest));
+        Optional<String> endDateOptional = Optional.of(portletSharedSearchResponse.getParameter("endDate", renderRequest));
 
         startDateOptional.ifPresentOrElse(s -> renderRequest.setAttribute("startDate", FacetUtils.parseDate(s)), () ->
                 {

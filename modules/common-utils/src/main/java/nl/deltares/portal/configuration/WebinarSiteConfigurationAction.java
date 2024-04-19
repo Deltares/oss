@@ -1,12 +1,12 @@
 package nl.deltares.portal.configuration;
 
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
+import com.liferay.portal.kernel.settings.FallbackKeysSettingsUtil;
 import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
 import com.liferay.portal.kernel.settings.ModifiableSettings;
 import com.liferay.portal.kernel.settings.Settings;
-import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -60,7 +60,7 @@ public class WebinarSiteConfigurationAction extends DefaultConfigurationAction {
         String aNewSpringApiKey = ParamUtil.getString(actionRequest, "aNewSpringApiKey");
         boolean aNewSpringCacheToken = ParamUtil.getBoolean(actionRequest, "aNewSpringCacheToken");
 
-        Settings settings = SettingsFactoryUtil.getSettings(
+        Settings settings = FallbackKeysSettingsUtil.getSettings(
                 new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), WebinarSiteConfiguration.class.getName()));
 
         ModifiableSettings modifiableSettings =

@@ -1,4 +1,4 @@
 dependencies {
-	implementation( group: "com.liferay.portal", name: "release.dxp.api")
+	implementation( "com.liferay.portal:release.dxp.api")
 	implementation (project(":modules:common-utils"))
 }

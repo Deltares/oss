@@ -1,9 +1,9 @@
 dependencies {
 	implementation(project(":modules:download:download-api"))
 
-	compileOnly group: "com.liferay.portal", name: "release.dxp.api"
+	implementation("com.liferay.portal:release.dxp.api")
 
-	implementation group: "com.liferay", name: "com.liferay.portal.upgrade.api", version: "2.0.3"
+	implementation("com.liferay:com.liferay.portal.upgrade.api:2.0.3")
 }
 
 buildService {
