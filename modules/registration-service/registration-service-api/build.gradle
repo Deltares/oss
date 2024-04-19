@@ -1,6 +1,6 @@
 dependencies {
-	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
-	compileOnly group: 'com.liferay', name: 'com.liferay.petra.sql.dsl.api'
-	compileOnly group: 'org.osgi', name: 'org.osgi.annotation.versioning'
-	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations"
+	implementation("com.liferay.portal:com.liferay.portal.kernel")
+	implementation('com.liferay:com.liferay.petra.sql.dsl.api')
+	implementation('org.osgi:org.osgi.annotation.versioning')
+	implementation("org.osgi:org.osgi.service.component.annotations")
 }

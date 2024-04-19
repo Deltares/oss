@@ -1,10 +1,10 @@
 package nl.deltares.search.facet.date;
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -60,7 +60,7 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
 
     @SuppressWarnings("SameParameterValue")
     private boolean getBoolean(PortletSharedSearchSettings portletSharedSearchSettings, String booleanField){
-        Optional<String> showPastOptional = portletSharedSearchSettings.getParameterOptional(booleanField);
+        Optional<String> showPastOptional = Optional.of(portletSharedSearchSettings.getParameter(booleanField));
         if (showPastOptional.isPresent()){
             return Boolean.parseBoolean(showPastOptional.get());
         }
@@ -70,7 +70,7 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
 
     private Date getDate(PortletSharedSearchSettings portletSharedSearchSettings, String dateField) {
 
-        Optional<String> optional = portletSharedSearchSettings.getParameterOptional(dateField);
+        Optional<String> optional = Optional.of(portletSharedSearchSettings.getParameter(dateField));
         Locale locale = portletSharedSearchSettings.getThemeDisplay().getLocale();
         //check for parameter is in namespace of searchResultsPortlet
         String dateValue = optional.orElseGet(() -> FacetUtils.getIteratorParameter(dateField, portletSharedSearchSettings.getRenderRequest()));

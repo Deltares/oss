@@ -1,9 +1,9 @@
 package nl.deltares.search.facet.registration;
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -41,7 +41,7 @@ public class RegistrationFacetPortletSharedSearchContributor implements PortletS
 
     private String[] getStructureKeys(PortletSharedSearchSettings portletSharedSearchSettings) {
 
-        Optional<String> optional = portletSharedSearchSettings.getParameterOptional("structureList");
+        Optional<String> optional = Optional.of(portletSharedSearchSettings.getParameter("structureList"));
         return optional.map(s -> s.split(" ")).orElseGet(() -> {
             String structureList = getConfiguredValue( portletSharedSearchSettings);
             if (structureList != null && !structureList.isEmpty()){

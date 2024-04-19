@@ -19,10 +19,10 @@
 	},
 	"devDependencies": {
 		"compass-mixins": "0.12.12",
-		"gulp": "4.0.2",
+		"gulp": "5.0.0",
 		"liferay-frontend-css-common": "6.0.8",
-		"liferay-frontend-theme-styled": "6.0.75",
-		"liferay-frontend-theme-unstyled": "6.0.59",
+		"liferay-frontend-theme-styled": "6.0.76",
+		"liferay-frontend-theme-unstyled": "6.0.60",
 		"liferay-theme-tasks": "^11.5.3"
 	},
 	"scripts": {

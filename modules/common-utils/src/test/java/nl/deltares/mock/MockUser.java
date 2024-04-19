@@ -347,6 +347,11 @@ public class MockUser implements User {
     }
 
     @Override
+    public boolean isOnDemandUser() {
+        return false;
+    }
+
+    @Override
     public boolean isPasswordModified() {
         return false;
     }
@@ -377,12 +382,37 @@ public class MockUser implements User {
     }
 
     @Override
+    public void setGroupIds(long[] longs) {
+
+    }
+
+    @Override
+    public void setOrganizationIds(long[] longs) {
+
+    }
+
+    @Override
     public void setPasswordModified(boolean passwordModified) {
 
     }
 
     @Override
     public void setPasswordUnencrypted(String passwordUnencrypted) {
+
+    }
+
+    @Override
+    public void setRoleIds(long[] longs) {
+
+    }
+
+    @Override
+    public void setTeamIds(long[] longs) {
+
+    }
+
+    @Override
+    public void setUserGroupIds(long[] longs) {
 
     }
 

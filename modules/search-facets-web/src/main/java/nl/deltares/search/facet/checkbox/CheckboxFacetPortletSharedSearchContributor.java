@@ -1,10 +1,10 @@
 package nl.deltares.search.facet.checkbox;
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
@@ -46,7 +46,7 @@ public class CheckboxFacetPortletSharedSearchContributor implements PortletShare
         String name = structureName + '-' + fieldName; //important to use '-' because this translates to JSP id
 
         String selection = null;
-        Optional<String> facetSelection = portletSharedSearchSettings.getParameterOptional(name);
+        Optional<String> facetSelection = Optional.of(portletSharedSearchSettings.getParameter(name));
         if (facetSelection.isPresent()) {
             selection = facetSelection.get();
         } else if (!visible) {

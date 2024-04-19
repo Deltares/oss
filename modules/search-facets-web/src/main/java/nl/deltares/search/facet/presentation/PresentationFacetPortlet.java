@@ -54,7 +54,7 @@ public class PresentationFacetPortlet extends MVCPortlet {
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
         PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
-        Optional<String> hasPresentationsOptional = portletSharedSearchResponse.getParameter("hasPresentations", renderRequest);
+        Optional<String> hasPresentationsOptional = Optional.of(portletSharedSearchResponse.getParameter("hasPresentations", renderRequest));
 
         String hasPresentations;
         if (hasPresentationsOptional.isPresent()) {

@@ -1,10 +1,10 @@
 package nl.deltares.search.facet.presentation;
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
@@ -36,12 +36,13 @@ public class PresentationFacetPortletSharedSearchContributor implements PortletS
         long groupId = scopeGroup.getGroupId();
         final Locale siteDefaultLocale = LocaleUtil.fromLanguageId(scopeGroup.getDefaultLanguageId());
 
-        Optional<String> hasPresentations = portletSharedSearchSettings.getParameterOptional("hasPresentations");
+        Optional<String> hasPresentations = Optional.of(portletSharedSearchSettings.getParameter("hasPresentations"));
         boolean onlyShowPresentations;
         boolean visible = true;
         boolean defaultValue = false;
-        if (portletSharedSearchSettings.getPortletPreferencesOptional().isPresent()) {
-            final PortletPreferences portletPreferences = portletSharedSearchSettings.getPortletPreferencesOptional().get();
+        final Optional<PortletPreferences> portletPreferencesOptional = Optional.of(portletSharedSearchSettings.getPortletPreferences());
+        if (portletPreferencesOptional.isPresent()) {
+            final PortletPreferences portletPreferences = portletPreferencesOptional.get();
             final String visibleConf = portletPreferences.getValue("visible", "");
             final String defaultValueConf = portletPreferences.getValue("defaultValue", "");
 

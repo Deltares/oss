@@ -1,10 +1,10 @@
 dependencies {
-	compileOnly group: 'com.liferay.portal', name: 'com.liferay.portal.kernel'
-	compileOnly group: 'com.liferay', name: 'com.liferay.journal.api'
-	compileOnly group: 'javax.portlet', name: 'portlet-api'
-	compileOnly group: 'javax.servlet', name: 'javax.servlet-api'
-	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations"
-	compileOnly group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: '6.4.0'
+	implementation('com.liferay.portal:com.liferay.portal.kernel')
+	implementation('com.liferay:com.liferay.journal.api')
+	implementation('javax.portlet:portlet-api')
+	implementation('javax.servlet:javax.servlet-api')
+	implementation('org.osgi:org.osgi.service.component.annotations')
+	implementation('biz.aQute.bnd:biz.aQute.bndlib:6.4.0')
 
 	compileOnly project(":modules:common-utils")
 }

@@ -1,15 +1,7 @@
 dependencies {
-	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
-	compileOnly group: "com.liferay", name: "com.liferay.petra.function"
-
-	compileOnly group: "javax.portlet", name: "portlet-api"
-	compileOnly group: "javax.servlet", name: "javax.servlet-api"
-	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations"
-}
-tasks.withType(JavaCompile) {
-
-	// Generated classes using Jodd library are unable to be read when compiled against JDK 11
-
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
+	implementation "com.liferay.portal:com.liferay.portal.kernel"
+	implementation("com.liferay:com.liferay.petra.function")
+	implementation("javax.portlet:portlet-api")
+	implementation("javax.servlet:javax.servlet-api")
+	implementation("org.osgi:org.osgi.service.component.annotations")
 }

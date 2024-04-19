@@ -1,10 +1,10 @@
 package nl.deltares.search.facet.event;
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
@@ -54,7 +54,7 @@ public class EventFacetPortletSharedSearchContributor implements PortletSharedSe
 
     private String[] getEventIds(PortletSharedSearchSettings portletSharedSearchSettings) {
 
-        Optional<String> optional = portletSharedSearchSettings.getParameterOptional("eventsList");
+        Optional<String> optional = Optional.of(portletSharedSearchSettings.getParameter("eventsList"));
         return optional.map(s -> s.split(" ")).orElseGet(() -> {
             String structureList = getConfiguredValue(portletSharedSearchSettings);
             if (structureList != null && !structureList.isEmpty()){

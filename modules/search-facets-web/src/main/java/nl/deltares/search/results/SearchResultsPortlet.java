@@ -1,8 +1,8 @@
 package nl.deltares.search.results;
 
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -118,35 +118,35 @@ public class SearchResultsPortlet extends MVCPortlet {
      */
     private void passSearchParametersToResponse(PortletSharedSearchResponse portletSharedSearchResponse, RenderRequest renderRequest, RenderResponse renderResponse) {
         final RenderURL portletURL = renderResponse.createRenderURL();
-        final Optional<String> typeOptional = portletSharedSearchResponse.getParameter("session-registrationType", renderRequest);
+        final Optional<String> typeOptional = Optional.of(portletSharedSearchResponse.getParameter("session-registrationType", renderRequest));
         typeOptional.ifPresentOrElse(s ->  portletURL.getRenderParameters().setValue("session-registrationType", s), () ->
         {
             final String iteratorParameter = FacetUtils.getIteratorParameter("session-registrationType", renderRequest);
             if (iteratorParameter != null) portletURL.getRenderParameters().setValue("session-registrationType", iteratorParameter);
         });
 
-        final Optional<String> topicOptional = portletSharedSearchResponse.getParameter("session-topic", renderRequest);
+        final Optional<String> topicOptional = Optional.of(portletSharedSearchResponse.getParameter("session-topic", renderRequest));
         topicOptional.ifPresentOrElse(s -> portletURL.getRenderParameters().setValue("session-topic", s),() ->
         {
             final String iteratorParameter = FacetUtils.getIteratorParameter("session-topic", renderRequest);
             if (iteratorParameter != null) portletURL.getRenderParameters().setValue("session-topic", iteratorParameter);
         });
 
-        final Optional<String> startDateOptional = portletSharedSearchResponse.getParameter("startDate", renderRequest);
+        final Optional<String> startDateOptional = Optional.of(portletSharedSearchResponse.getParameter("startDate", renderRequest));
         startDateOptional.ifPresentOrElse(s -> portletURL.getRenderParameters().setValue("startDate", s),() ->
         {
             final String iteratorParameter = FacetUtils.getIteratorParameter("startDate", renderRequest);
             if (iteratorParameter != null) portletURL.getRenderParameters().setValue("startDate", iteratorParameter);
         });
 
-        final Optional<String> endDateOptional = portletSharedSearchResponse.getParameter("endDate", renderRequest);
+        final Optional<String> endDateOptional = Optional.of(portletSharedSearchResponse.getParameter("endDate", renderRequest));
         endDateOptional.ifPresentOrElse(s -> portletURL.getRenderParameters().setValue("endDate", s), () ->
         {
             final String iteratorParameter = FacetUtils.getIteratorParameter("endDate", renderRequest);
             if (iteratorParameter != null) portletURL.getRenderParameters().setValue("endDate", iteratorParameter);
         });
 
-        final Optional<String> languageOptional = portletSharedSearchResponse.getParameter("session-Language", renderRequest);
+        final Optional<String> languageOptional = Optional.of(portletSharedSearchResponse.getParameter("session-Language", renderRequest));
         languageOptional.ifPresentOrElse(s -> portletURL.getRenderParameters().setValue("session-Language", s), () ->
         {
             final String iteratorParameter = FacetUtils.getIteratorParameter("session-Language", renderRequest);

@@ -1,13 +1,14 @@
 dependencies {
-	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
-	compileOnly group: 'com.liferay.portal', name: 'portal-impl', version: '6.2.0-RC5'
-	compileOnly group: 'com.liferay', name: 'com.liferay.journal.api'
+	implementation('com.liferay.portal:release.dxp.api')
+	implementation("com.liferay.portal:com.liferay.portal.kernel")
+	implementation('com.liferay.portal:portal-impl:6.2.5')
+	implementation('com.liferay:com.liferay.journal.api')
 
-	compileOnly group: 'biz.aQute.bnd', name: 'biz.aQute.bnd.gradle', version: '3.4.0'
-	compileOnly group: "javax.ws.rs", name: "javax.ws.rs-api"
-	compileOnly group: "javax.servlet", name: "javax.servlet-api"
-	compileOnly group: "org.osgi", name: "org.osgi.service.jaxrs", version: "1.0.1"
-	compileOnly group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.13.4'
-	compileOnly project(":modules:common-utils")
+	implementation('biz.aQute.bnd:biz.aQute.bnd.gradle:3.4.0')
+	implementation("javax.ws.rs:javax.ws.rs-api")
+	implementation("javax.servlet:javax.servlet-api")
+	implementation('org.osgi:org.osgi.service.jaxrs:1.0.1')
+	implementation('com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.17.0')
+	implementation(project(":modules:common-utils"))
 }
 

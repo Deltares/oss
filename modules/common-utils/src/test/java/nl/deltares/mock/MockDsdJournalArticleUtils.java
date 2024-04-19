@@ -70,6 +70,11 @@ public class MockDsdJournalArticleUtils implements DsdJournalArticleUtils {
     }
 
     @Override
+    public void queryDdmFieldValues(long groupId, String ddmFieldName, String[] ddmFieldValues, String[] structureKeys, SearchContext searchContext, Locale locale) {
+
+    }
+
+    @Override
     public void queryExcludeDdmFieldValue(long groupId, String ddmFieldName, String ddmFieldValue, String[] structureKeys, SearchContext searchContext, Locale locale) {
 
     }

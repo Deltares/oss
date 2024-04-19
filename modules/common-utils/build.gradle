@@ -1,6 +1,6 @@
 dependencies {
 
-    implementation('com.liferay.portal:release.dxp.api:7.4.13.u77')
+    implementation('com.liferay.portal:release.dxp.api')
 
     implementation 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.4.0'
     implementation 'javax.mail:mail:1.4.7'

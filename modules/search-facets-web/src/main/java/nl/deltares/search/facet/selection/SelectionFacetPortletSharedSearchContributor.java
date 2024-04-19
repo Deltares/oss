@@ -1,10 +1,10 @@
 package nl.deltares.search.facet.selection;
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
@@ -42,7 +42,7 @@ public class SelectionFacetPortletSharedSearchContributor implements PortletShar
         String fieldName = configuration.fieldName();
         String name = structureName + '-' + fieldName;
 
-        Optional<String> selectionOptional = portletSharedSearchSettings.getParameterOptional(name);
+        Optional<String> selectionOptional = Optional.of(portletSharedSearchSettings.getParameter(name));
         //check for parameter is in namespace of searchResultsPortlet
         String selection = selectionOptional.orElseGet(() -> FacetUtils.getIteratorParameter(name, portletSharedSearchSettings.getRenderRequest()));
         if (selection != null) {
