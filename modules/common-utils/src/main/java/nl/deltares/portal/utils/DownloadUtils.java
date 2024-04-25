@@ -4,6 +4,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import nl.deltares.portal.model.impl.Download;
 
+import java.util.List;
 import java.util.Map;
 
 public interface DownloadUtils {
@@ -16,6 +17,15 @@ public interface DownloadUtils {
      */
     boolean isActive();
 
+    /**
+     * Check if this Download supports multiple download servers
+     * @return True if multiple servers are configured else False
+     */
+    boolean hasMultipleDownloadUrls();
+
+    List<String> getDownloadServerCountryCodes();
+
+    String getDownloadServerCountryName(String countryCode);
 
     /**
      * Create a new download link and send this to user via email
@@ -27,6 +37,19 @@ public interface DownloadUtils {
      * @throws Exception If file is already shared to user if file does not exist.
      */
     Map<String, String> createShareLink(String filePath, String email, boolean password) throws Exception;
+
+    /**
+     * Create a new download link for a specific download server and send this to user via email
+     *
+     * @param countryCode Country code of the download server for which to create a share link
+     * @param filePath File or directory to share
+     * @param email    Email to send link to
+     * @param password Option to include a password
+     * @return Share ID
+     * @throws Exception If file is already shared to user if file does not exist. Also throws exception if only single
+     * download server is configured
+     */
+    Map<String, String> createShareLink(String countryCode, String filePath, String email, boolean password) throws Exception;
 
     /**
      * Register the download request in the downloads table.

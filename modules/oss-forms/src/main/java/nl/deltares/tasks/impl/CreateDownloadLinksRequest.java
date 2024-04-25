@@ -45,6 +45,7 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
 
         final String emailAddress = user.getEmailAddress();
         final List<Download> downloads = downloadRequest.getDownloads();
+        final String downloadServerCode = downloadRequest.getDownloadServerCode();
         totalCount = downloads.size();
 
         try {
@@ -57,7 +58,11 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
                 } else {
 
                     try {
-                        shareInfo = downloadUtils.createShareLink(download.getFilePath(), emailAddress, false);
+                        if (downloadServerCode == null){
+                            shareInfo = downloadUtils.createShareLink(download.getFilePath(), emailAddress, false);
+                        } else {
+                            shareInfo = downloadUtils.createShareLink(downloadServerCode, download.getFilePath(), emailAddress, false);
+                        }
                     } catch (Exception e) {
                         errorMessage = String.format("Failed to send link for file %s : %s ", download.getFileName(), e.getMessage());
                         LOG.warn(errorMessage);

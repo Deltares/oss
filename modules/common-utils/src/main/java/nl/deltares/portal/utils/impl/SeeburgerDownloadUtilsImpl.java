@@ -103,6 +103,11 @@ public class SeeburgerDownloadUtilsImpl extends AbsDownloadUtilsImpl  {
         return shareInfo;
     }
 
+    @Override
+    public Map<String, String> createShareLink(String countryCode, String filePath, String email, boolean password) throws Exception {
+        throw new UnsupportedOperationException("Seeburger download does not support multiple download servers.");
+    }
+
     private String extractXmlTagValue(String xmlResponse, String tagName) {
 
         String startTag = String.format("<%s>", tagName);

@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.services.rest.exception.LiferayRestException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -51,7 +53,7 @@ public class Helper {
         // However, it is important to validate the case if it is null
         User user = null;
         if (userid != null) {
-            user = UserLocalServiceUtil.getUser(new Long(userid));
+            user = UserLocalServiceUtil.getUser(Long.parseLong(userid));
         }
         if (user == null) {
             throw new LiferayRestException(Response.Status.UNAUTHORIZED.getStatusCode(),
@@ -110,5 +112,18 @@ public class Helper {
         } catch (IOException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
+    }
+
+    public static Object getErrorResponseMessage(String prefix, Exception e) {
+        final HashMap<String, String> responseMap = new HashMap<>();
+
+        final String errorMessage;
+        if(prefix != null){
+            errorMessage = String.format("%s: %s", prefix, e.getMessage());
+        } else {
+            errorMessage = e.getMessage();
+        }
+        responseMap.put("errorMessage", errorMessage);
+        return JsonContentUtils.formatMapToJson(responseMap);
     }
 }

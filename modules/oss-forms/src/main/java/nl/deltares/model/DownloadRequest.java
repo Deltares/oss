@@ -20,6 +20,7 @@ public class DownloadRequest {
     final private List<SubscriptionSelection> subscriptionSelections = new ArrayList<>();
     final private Map<String, Map<String, String>> shareInfo = new HashMap<>();
     private LicenseInfo licenseInfo;
+    private String downloadServerCode;
 
     public DownloadRequest(ThemeDisplay themeDisplay) throws PortalException {
         siteUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay, themeDisplay.getSiteDefaultLocale());
@@ -121,5 +122,13 @@ public class DownloadRequest {
             if (downloadTerms != null && !terms.contains(downloadTerms)) terms.add(downloadTerms);
         }
         return terms;
+    }
+
+    public String getDownloadServerCode() {
+        return downloadServerCode;
+    }
+
+    public void setDownloadServerCode(String downloadServerCode) {
+        this.downloadServerCode = downloadServerCode;
     }
 }

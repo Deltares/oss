@@ -240,6 +240,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             DownloadRequest downloadRequest = new DownloadRequest(themeDisplay);
             downloadRequest.setBillingInfo(billingInfo);
             downloadRequest.setLicenseInfo(getLicenseInfo(actionRequest));
+            downloadRequest.setDownloadServerCode(getDownloadServerCode(actionRequest));
             for (String articleId : articleIds) {
                 Download downloadArticle = (Download) dsdParserUtils.toDsdArticle(siteId, articleId);
                 downloadRequest.addDownload(downloadArticle);
@@ -251,6 +252,10 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             SessionErrors.add(actionRequest, "send-email-failed", "Could not retrieve download for actionId: " + Arrays.toString(articleIds.toArray()));
             LOG.debug("Could not retrieve download for actionId: " + Arrays.toString(articleIds.toArray()));
         }
+        return null;
+    }
+
+    private String getDownloadServerCode(ActionRequest actionRequest) {
         return null;
     }
 

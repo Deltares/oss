@@ -3,18 +3,33 @@
 <#assign downloadUtils = serviceLocator.findService("nl.deltares.portal.utils.DownloadUtils") />
 
 <#assign baseUrl = "/o/download" />
+<#assign shareLinkUrl = baseUrl + "/createShareLink/" />
+<#assign buttonText = languageUtil.get(locale, "download.download")/>
 <#assign showButtons = themeDisplay.isSignedIn() />
+
 <#if entries?has_content>
 
+    <div id="download-alert" class="alert alert-dismissible hidden" role="alert">
+        <button aria-label="Close" class="close" data-dismiss="alert" type="button">
+            <span id="download-alert-icon">
+                <svg aria-hidden="true" class="lexicon-icon lexicon-icon-times" focusable="false" viewBox="0 0 512 512">
+                    <path class="lexicon-icon-outline" d="M301.1,256.1L502.3,54.9c30.1-30.1-16.8-73.6-45.2-45.2L255.9,210.8L54.6,9.7C24.6-20.4-19,26.5,9.4,54.9l201.2,201.2L9.3,457.3c-28.9,28.9,15.8,74.6,45.2,45.2l201.3-201.2l201.3,201.2c28.9,28.9,74.2-16.3,45.2-45.2L301.1,256.1z"></path>
+                </svg>
+            </span>
+            <span class="sr-only">Close</span>
+        </button>
+        <div id="download-alert-message" ></div>
+    </div>
+
     <#if showButtons>
-        <#if is_sanctioned?? && is_sanctioned>
+        <#if is_sanctioned?? && is_sanctioned >
             <#assign showButtons = false />
             <div class="lfr-status-alert-label" >${languageUtil.get(locale, "download.restriction.country")} ${sanctionCountry}
             </div>
         </#if>
     <#else>
         <div class="lfr-status-info-label" >
-            <b>You must log in before you can download software.</b> <a href="https://download.deltares.nl/c/portal/login">Click here to log in</a>.
+            <div id="login_link"> </div>
         </div>
     </#if>
 
@@ -24,6 +39,7 @@
             <#assign journalArticle = assetRenderer.getArticle() />
             <#assign download = parserUtils.toDsdArticle(journalArticle, locale) />
             <#assign count = downloadUtils.getDownloadCount(download) />
+            <#assign multipleDownloadUrls = downloadUtils.hasMultipleDownloadUrls() />
             <li class="list-group-item list-group-item-flex">
                 <div class="col-12 px-3">
                     <h4>
@@ -36,16 +52,31 @@
 
                                 <#assign directDownload = download.isDirectDownload() />
                                 <#if directDownload >
+                                    <#assign fileName = download.getFileName() />
+                                    <#assign filePath = download.getFilePath() />
+                                    <#assign articleId = journalArticle.getArticleId() />
                                     <span class="d-block" style="float:right">
-                                        <#assign registerUrl = baseUrl + "/register/" />
-                                        <#assign fileName = download.getFileName() />
-                                        <#assign shareLink = download.getFilePath() />
-                                        <#assign articleId = journalArticle.getArticleId() />
-                                        <#assign buttonText = languageUtil.get(locale, "download.download")/>
-                                        <a href="${shareLink}" target="_blank" id="${articleId}_download" onclick="registerClick('${registerUrl}', '${fileName}', '${shareLink}', '${articleId}', '${themeDisplay.getScopeGroupId()}')"
+									<#if multipleDownloadUrls >
+                                        <div class="dropdown">
+                                            <button class="dropbtn">${buttonText}</button>
+                                            <div class="dropdown-content">
+                                                <#assign countryCodes = downloadUtils.getDownloadServerCountryCodes() >
+                                                <#list countryCodes as countryCode >
+                                                    <#assign countryName = downloadUtils.getDownloadServerCountryName(countryCode) />
+                                                    <a href="#" onclick="createShareLink(
+                                                            '${shareLinkUrl}', '${countryCode}', '${fileName}', '${filePath}', '${articleId}', '${themeDisplay.getScopeGroupId()}')"
+                                                       class="btn-lg btn-primary" role="button" aria-pressed="true">
+                                                        ${countryName}
+                                                    </a>
+                                                </#list>
+                                            </div>
+                                        </div>
+									<#else>
+                                        <a href="#" onclick="createShareLink('${shareLinkUrl}', '', '${fileName}', '${filePath}', '${articleId}', '${themeDisplay.getScopeGroupId()}')"
                                            class="btn-lg btn-primary" role="button" aria-pressed="true">
-                                                        ${buttonText}
+                                            ${buttonText}
                                         </a>
+                                    </#if>
                                     </span>
                                 <#else>
                                     <#assign buttonText = languageUtil.get(locale, "shopping.cart.add")/>
@@ -60,19 +91,6 @@
                         </#if>
                     </div>
                 </div>
-                <div id="${download.getArticleId()}-alert" class="alert alert-dismissible hidden" role="alert">
-                    <button aria-label="Close" class="close" data-dismiss="alert" type="button">
-                            <span id="download-alert-icon">
-                                <svg aria-hidden="true" class="lexicon-icon lexicon-icon-times" focusable="false" viewBox="0 0 512 512">
-                                    <path class="lexicon-icon-outline" d="M301.1,256.1L502.3,54.9c30.1-30.1-16.8-73.6-45.2-45.2L255.9,210.8L54.6,9.7C24.6-20.4-19,26.5,9.4,54.9l201.2,201.2L9.3,457.3c-28.9,28.9,15.8,74.6,45.2,45.2l201.3-201.2l201.3,201.2c28.9,28.9,74.2-16.3,45.2-45.2L301.1,256.1z"></path>
-                                </svg>
-                            </span>
-                        <span class="sr-only">Close</span>
-                    </button>
-
-                    <div id="${download.getArticleId()}-message" />
-                </div>
-                </div>
             </li>
         </#list>
     </ul>
@@ -80,39 +98,74 @@
 
 <script>
 
-    function registerClick(registerUrl, fileName, shareLink, articleId, groupId){
+    function createShareLink(createShareLinkUrl, countryCode, fileName, filePath, articleId, groupId){
+        logStarted(fileName);
         let pAuth = Liferay.authToken;
         $.ajax({
             type: "POST",
-            url: registerUrl + '?p_auth=' + pAuth,
+            url: createShareLinkUrl + '?p_auth=' + pAuth,
             data: "{" +
                 "\"fileName\": \"" + fileName + "\"," +
-                "\"fileShare\": \"" + shareLink + "\"," +
+                "\"filePath\": \"" + filePath + "\"," +
                 "\"downloadId\": \"" + articleId + "\"," +
-                "\"groupId\": \"" + groupId + "\"" +
+                "\"groupId\": \"" + groupId + "\"," +
+                "\"countryCode\": \"" + countryCode + "\"" +
                 "}",
             contentType: "application/json",
             success : function(response, status, xhr) {
-                logSuccess(articleId, response)
+                downloadFile(response.url, fileName);
+                logSuccess(fileName)
             },
             error : function(request, status, error) {
-                logError(articleId, request.responseText)
+                let errorMessage = request.responseJSON.errorMessage;
+                logError(fileName, errorMessage);
             }
         });
+
     }
 
-    function logSuccess(id, response) {
-        let alertEl = document.getElementById(id + "-alert");
+    function logStarted(fileName) {
+
+        let alertEl = document.getElementById("download-alert");
         alertEl.classList.replace("hidden", "alert-success");
-        let messageEl = document.getElementById(id + "-message");
-        messageEl.innerHTML = "<strong class=\"lead\">Success:</strong>" + response
+        let messageEl = document.getElementById("download-alert-message");
+        messageEl.innerHTML = "<strong class=\"lead\">Started download process for file:</strong><br/>" + fileName +
+            "<br/><p>A new tab with a link to the download will open shortly.</p>"
     }
 
-    function logError(id, error) {
-        let alertEl = document.getElementById(id + "-alert");
+    function downloadFile(url, fileName){
+        const aElement = document.createElement('a');
+        aElement.href = url;
+        aElement.style.display = 'none';
+        aElement.download = fileName;
+        aElement.target = '_blank';
+        document.body.appendChild(aElement);
+        aElement.click();
+    }
+
+    function logSuccess(fileName) {
+        let alertEl = document.getElementById("download-alert");
+        alertEl.classList.replace("hidden", "alert-success");
+        let messageEl = document.getElementById("download-alert-message");
+        messageEl.innerHTML = "<strong class=\"lead\">Finished download process for file:</strong><br/>" + fileName
+    }
+
+    function logError(fileName, error) {
+        let alertEl = document.getElementById("download-alert");
         alertEl.classList.replace("hidden", "alert-warning");
-        let messageEl = document.getElementById(id + "-message");
-        messageEl.innerHTML = "<strong class=\"lead\">Warning:</strong>" + error
+        let messageEl = document.getElementById("download-alert-message");
+        messageEl.innerHTML = "<strong class=\"lead\">Error downloading file:</strong><br/>" + fileName + "<br/>Error: " + error
 
     }
+
+    if (!Liferay.ThemeDisplay.isSignedIn()){
+        var homeUrl = Liferay.ThemeDisplay.getCDNBaseURL();
+        var path = Liferay.ThemeDisplay.getLayoutRelativeURL();
+        var langPath = path.substring(0, path.lastIndexOf('/'));
+        document.getElementById('login_link').innerHTML =
+            "<b>You must log in before you can download software.</b><a href=" + homeUrl + langPath + "/c/portal/login >Click here to log in</a>"
+    }
+
+
+
 </script>

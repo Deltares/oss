@@ -100,7 +100,7 @@ public abstract class HttpClientUtils implements BaseLocalService {
                 result.write(buffer, 0, length);
             }
             // StandardCharsets.UTF_8.name() > JDK 7
-            return result.toString(StandardCharsets.UTF_8.name());
+            return result.toString(StandardCharsets.UTF_8);
         } finally {
             connection.disconnect();
         }

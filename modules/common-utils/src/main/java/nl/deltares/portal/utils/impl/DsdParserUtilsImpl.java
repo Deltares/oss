@@ -242,7 +242,7 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
         }
         final long groupId = ddmStructure.getGroupId();
         Map<String, String> groupMap = structureKeyMap.get(groupId);
-        if (groupMap == null) {
+        if (groupMap == null || groupMap.isEmpty()) {
             //Now structure keys are LONG identifiers and need to be mapped.
             StructureKeyMapConfiguration configuration = _configurationProvider.getGroupConfiguration(
                     StructureKeyMapConfiguration.class, groupId);

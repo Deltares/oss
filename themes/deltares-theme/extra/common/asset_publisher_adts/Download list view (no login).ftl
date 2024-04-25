@@ -7,6 +7,12 @@
 <#assign isLoggedIn = themeDisplay.isSignedIn() />
 <#if entries?has_content>
 
+    <#if is_sanctioned?? && is_sanctioned >
+        <#assign showButtons = false />
+        <div class="lfr-status-alert-label" >${languageUtil.get(locale, "download.restriction.country")} ${sanctionCountry}
+        </div>
+    </#if>
+
     <ul class="c-downloads-list clear-list">
         <#list entries as entry>
             <#assign assetRenderer = entry.getAssetRenderer() />

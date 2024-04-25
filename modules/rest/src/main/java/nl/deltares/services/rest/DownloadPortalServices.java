@@ -42,6 +42,7 @@ public class DownloadPortalServices extends Application {
     @Reference
     KeycloakUtils keycloakUtils;
 
+    @Reference
     private DownloadUtils downloadUtils;
 
     @Reference(

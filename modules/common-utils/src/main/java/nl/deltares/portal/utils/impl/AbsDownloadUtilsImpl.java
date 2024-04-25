@@ -1,7 +1,10 @@
 package nl.deltares.portal.utils.impl;
 
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
+import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.CountryLocalServiceUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 import nl.deltares.oss.download.model.DownloadCount;
 import nl.deltares.oss.download.service.DownloadCountLocalServiceUtil;
@@ -11,9 +14,7 @@ import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.portal.utils.HttpClientUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public abstract class AbsDownloadUtilsImpl extends HttpClientUtils implements DownloadUtils {
@@ -24,7 +25,10 @@ public abstract class AbsDownloadUtilsImpl extends HttpClientUtils implements Do
     protected static final String APP_PW_KEY = "download.app.password";
 
     protected String AUTH_TOKEN;
+    protected HashMap<String, String> AUTH_TOKEN_MAP = new HashMap<>();
     protected String API_PATH;
+    protected HashMap<String, String> API_PATH_MAP = new HashMap<>();
+
     protected boolean active;
 
     @Override
@@ -51,7 +55,7 @@ public abstract class AbsDownloadUtilsImpl extends HttpClientUtils implements Do
             return; //don't register anonymous downloads
         }
 
-        nl.deltares.oss.download.model.Download userDownload = DownloadLocalServiceUtil.fetchUserDownload(groupId, user.getUserId(), downloadId);;
+        nl.deltares.oss.download.model.Download userDownload = DownloadLocalServiceUtil.fetchUserDownload(groupId, user.getUserId(), downloadId);
         if (userDownload == null){
             userDownload = DownloadLocalServiceUtil.createDownload(CounterLocalServiceUtil.increment(
                     nl.deltares.oss.download.model.Download.class.getName()));
@@ -112,6 +116,7 @@ public abstract class AbsDownloadUtilsImpl extends HttpClientUtils implements Do
 
     @Override
     public int getDownloadCount(Download download) {
+        if (download == null) return 0;
         final DownloadCount downloadCount = DownloadCountLocalServiceUtil.getDownloadCountByGroupId(download.getGroupId(), Long.parseLong(download.getArticleId()));
         if (downloadCount == null) return 0;
 
@@ -119,10 +124,10 @@ public abstract class AbsDownloadUtilsImpl extends HttpClientUtils implements Do
     }
 
     protected String getDownloadBasePath() {
-        if (!PropsUtil.contains(BASEURL_KEY)) {
+        if (!PropsUtil.contains(AbsDownloadUtilsImpl.BASEURL_KEY)) {
             return null;
         }
-        String baseApiPath = PropsUtil.get(BASEURL_KEY);
+        String baseApiPath = PropsUtil.get(AbsDownloadUtilsImpl.BASEURL_KEY);
 
         if (baseApiPath.endsWith("/")) {
             return baseApiPath;
@@ -131,4 +136,20 @@ public abstract class AbsDownloadUtilsImpl extends HttpClientUtils implements Do
         return baseApiPath;
     }
 
+    @Override
+    public boolean hasMultipleDownloadUrls(){
+        final Properties properties = PropsUtil.getProperties(BASEURL_KEY, false);
+        return properties.size() > 1;
+    }
+
+    @Override
+    public List<String> getDownloadServerCountryCodes() {
+        return new ArrayList<>(API_PATH_MAP.keySet());
+    }
+
+    @Override
+    public String getDownloadServerCountryName(String countryCode) {
+        final Country country = CountryLocalServiceUtil.fetchCountryByA2(PortalUtil.getDefaultCompanyId(), countryCode);
+        return country != null ? country.getName() : "";
+    }
 }
