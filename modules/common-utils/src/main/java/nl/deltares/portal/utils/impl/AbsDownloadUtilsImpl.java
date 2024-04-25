@@ -23,7 +23,9 @@ public abstract class AbsDownloadUtilsImpl extends HttpClientUtils implements Do
     protected static final String APP_NAME_KEY = "download.app.name";
     protected static final String APP_USER_KEY = "download.app.user";
     protected static final String APP_PW_KEY = "download.app.password";
+    protected static final String APP_DEFAULT_KEY = "download.app.default";
 
+    protected String DEFAULT_COUNTRY_CODE;
     protected String AUTH_TOKEN;
     protected HashMap<String, String> AUTH_TOKEN_MAP = new HashMap<>();
     protected String API_PATH;
@@ -151,5 +153,10 @@ public abstract class AbsDownloadUtilsImpl extends HttpClientUtils implements Do
     public String getDownloadServerCountryName(String countryCode) {
         final Country country = CountryLocalServiceUtil.fetchCountryByA2(PortalUtil.getDefaultCompanyId(), countryCode);
         return country != null ? country.getName() : "";
+    }
+
+    @Override
+    public String getDefaultCountryCode(){
+        return DEFAULT_COUNTRY_CODE;
     }
 }

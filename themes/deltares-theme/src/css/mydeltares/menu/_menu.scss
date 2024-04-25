@@ -1,4 +1,8 @@
 /* Dropdown Button */
+.dropbtn {
+    text-transform: uppercase;
+    border-radius: 0.25rem;
+}
 .dropbtn a {
     position: relative;
     //color: #080C80;
@@ -20,6 +24,7 @@
     padding-bottom: 0.75rem;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
+    border-radius: 0.25rem;
 }
 
 /* Dropdown Content (Hidden by Default) */
@@ -28,6 +33,7 @@
     position: absolute;
     background-color: aliceblue;
     z-index: 99;
+    border-radius: 0.25rem;
 }
 
 /* Links inside the dropdown */

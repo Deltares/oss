@@ -13,6 +13,7 @@
 <%@ page import="nl.deltares.portal.model.impl.Terms" %>
 <%@ page import="nl.deltares.portal.model.impl.Download" %>
 <%@ page import="java.util.List" %>
+<%@ page import="nl.deltares.portal.utils.DownloadUtils" %>
 
 <liferay-theme:defineObjects />
 
@@ -35,7 +36,11 @@
 
     boolean showLockTypes = (boolean) renderRequest.getAttribute("showLockTypes");
     boolean showLicenseTypes = (boolean) renderRequest.getAttribute("showLicenseTypes");
-
+    boolean hasMultipleDownloadUrls = (boolean) renderRequest.getAttribute("hasMultipleDownloadUrls");
+    DownloadUtils downloadUtils = null;
+    if (hasMultipleDownloadUrls) {
+         downloadUtils = (DownloadUtils) renderRequest.getAttribute("downloadUtils");
+    }
 %>
 
 <portlet:actionURL name="/submit/download/form" var="submitDownloadForm"/>

@@ -66,7 +66,7 @@
                                                     <a href="#" onclick="createShareLink(
                                                             '${shareLinkUrl}', '${countryCode}', '${fileName}', '${filePath}', '${articleId}', '${themeDisplay.getScopeGroupId()}')"
                                                        class="btn-lg btn-primary" role="button" aria-pressed="true">
-                                                        ${countryName}
+                                                        from ${countryName}
                                                     </a>
                                                 </#list>
                                             </div>

@@ -59,15 +59,18 @@ public class NextcloudDownloadUtilsImpl extends AbsDownloadUtilsImpl {
 
     private void initMultipleUrls() {
         final Properties urlMap = PropsUtil.getProperties(BASEURL_KEY + '.', true);
+
+        DEFAULT_COUNTRY_CODE = PropsUtil.get(APP_DEFAULT_KEY);
+
         for (Object key : urlMap.keySet()) {
             String countryCode = (String) key;
-            String url = urlMap.getProperty(countryCode);
-            if (!url.endsWith("/")) {
-                url += '/';
+            String API_PATH = urlMap.getProperty(countryCode);
+            if (!API_PATH.endsWith("/")) {
+                API_PATH += '/';
             }
-            API_PATH_MAP.put(countryCode, url);
+            API_PATH_MAP.put(countryCode, API_PATH);
 
-            final String sharePath = getSharePath(url);
+            final String sharePath = getSharePath(API_PATH);
             SHARE_PATH_MAP.put(countryCode, sharePath);
 
             final String APP_NAME = PropsUtil.get(APP_NAME_KEY + '.' + countryCode);
@@ -79,9 +82,15 @@ public class NextcloudDownloadUtilsImpl extends AbsDownloadUtilsImpl {
                 LOG.info("NextcloudDownloadUtils is not configured.");
                 return;
             }
-            final String token = getBasicAuthorization(APP_USER, APP_PW);
-            AUTH_TOKEN_MAP.put(countryCode, token);
-            LOG.info(String.format("DownloadUtils has been initialized for APP_NAME '%s' and API_PATH '%s'.", APP_NAME, url));
+            active = APP_USER != null && APP_PW != null;
+            if (active){
+                final String token = getBasicAuthorization(APP_USER, APP_PW);
+                AUTH_TOKEN_MAP.put(countryCode, token);
+                LOG.info(String.format("DownloadUtils has been initialized for APP_NAME '%s' and API_PATH '%s'.", APP_NAME, API_PATH));
+            } else {
+                LOG.info("DownloadUtils has not been initialized.");
+                break;
+            }
         }
 
     }
@@ -174,7 +183,7 @@ public class NextcloudDownloadUtilsImpl extends AbsDownloadUtilsImpl {
         } else {
             final int shareId = Integer.parseInt(idNode.item(0).getTextContent());
             shareInfo.put("id", String.valueOf(shareId));
-            LOG.info(String.format("Created share for user '%s' on file '%s'.", email, filePath));
+            LOG.info(String.format("Created share for user '%s' on file '%s' and server '%s'.", email, filePath, connection.getURL().getHost()));
         }
         final NodeList expNode = document.getElementsByTagName("expiration");
         if (expNode.getLength() > 0) {

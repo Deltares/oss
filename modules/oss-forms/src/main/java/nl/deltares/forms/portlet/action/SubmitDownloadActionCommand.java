@@ -256,7 +256,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
     }
 
     private String getDownloadServerCode(ActionRequest actionRequest) {
-        return null;
+        return ParamUtil.getString(actionRequest, "download.countryCode");
     }
 
     private LicenseInfo getLicenseInfo(ActionRequest actionRequest) {

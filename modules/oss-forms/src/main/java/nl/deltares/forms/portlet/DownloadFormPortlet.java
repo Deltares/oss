@@ -65,6 +65,9 @@ public class DownloadFormPortlet extends MVCPortlet {
     @Reference
     private DDMStructureUtil _ddmStructureUtil;
 
+    @Reference
+    private DownloadUtils downloadUtils;
+
     private ConfigurationProvider _configurationProvider;
 
     @Reference
@@ -99,6 +102,12 @@ public class DownloadFormPortlet extends MVCPortlet {
                 DownloadSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
                 request.setAttribute("privacyURL", getLocalizedValue(dsdConfig.privacyURL(), language));
                 request.setAttribute("contactURL", getLocalizedValue(dsdConfig.contactURL(), language));
+
+                final boolean hasMultipleDownloadUrls = downloadUtils.hasMultipleDownloadUrls();
+                request.setAttribute("hasMultipleDownloadUrls", hasMultipleDownloadUrls);
+                if (hasMultipleDownloadUrls)
+                    request.setAttribute("downloadUtils", downloadUtils);
+
             } catch (Exception e) {
                 LOG.warn("Error getting configuration: " + e.getMessage());
             }

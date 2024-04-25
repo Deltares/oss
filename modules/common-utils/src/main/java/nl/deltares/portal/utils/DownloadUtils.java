@@ -28,6 +28,11 @@ public interface DownloadUtils {
     String getDownloadServerCountryName(String countryCode);
 
     /**
+     * Return the country code of the preferred Download server
+     * @return country code
+     */
+    String getDefaultCountryCode();
+    /**
      * Create a new download link and send this to user via email
      *
      * @param filePath File or directory to share
