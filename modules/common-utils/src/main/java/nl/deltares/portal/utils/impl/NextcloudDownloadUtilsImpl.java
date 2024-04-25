@@ -99,7 +99,7 @@ public class NextcloudDownloadUtilsImpl extends AbsDownloadUtilsImpl {
         }
 
         API_PATH = getDownloadBasePath();
-        SHARE_PATH = getSharePath(BASEURL_KEY);
+        SHARE_PATH = getSharePath(API_PATH);
         active = APP_USER != null && APP_PW != null && API_PATH != null;
         if (active) {
             AUTH_TOKEN = getBasicAuthorization(APP_USER, APP_PW);
