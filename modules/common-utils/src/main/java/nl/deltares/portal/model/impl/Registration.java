@@ -113,6 +113,8 @@ public abstract class Registration extends AbsDsdArticle {
                 Date endOfDay = parseDateTimeFields(dateValue, endTimeString, timeZone);
                 dayPeriods.add(new Period(startOfDay, endOfDay));
             }
+            //Add a sort to assure that the returned periods are ordered correctly.
+            dayPeriods.sort(Comparator.comparing(Period::getStartDate));
         }
 
         if (daily && dayPeriods.size() == 2){
@@ -121,7 +123,7 @@ public abstract class Registration extends AbsDsdArticle {
             this.dayPeriods.addAll(dayPeriods);
         }
 
-        if (dayPeriods.size() > 0){
+        if (!dayPeriods.isEmpty()){
             startTime = dayPeriods.get(0).getStartDate();
             endTime = dayPeriods.get(dayPeriods.size() - 1).getEndDate();
         }
