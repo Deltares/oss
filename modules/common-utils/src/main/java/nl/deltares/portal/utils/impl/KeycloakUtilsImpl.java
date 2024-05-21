@@ -15,10 +15,15 @@ import org.osgi.service.component.annotations.Component;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.URLConnection;
+import java.net.URI;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.time.LocalDateTime.now;
 
@@ -50,33 +55,9 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils 
     }
 
     @Override
-    public String getAdminAvatarPath() {
-        String basePath = getKeycloakBasePath();
-        return basePath + "avatar-provider/admin";
-    }
-
-    @Override
     public String getAvatarPath() {
         String basePath = getKeycloakBasePath();
         return basePath + "avatar-provider";
-    }
-
-    @Override
-    public String getUserMailingPath() {
-        String basePath = getKeycloakBasePath();
-        return basePath + "user-mailings/mailings-page";
-    }
-
-    @Override
-    public String getAdminUserMailingsPath() {
-        String basePath = getKeycloakBasePath();
-        return basePath + "user-mailings/admin";
-    }
-
-    @Override
-    public String getAdminMailingsPath() {
-        String basePath = getKeycloakBasePath();
-        return basePath + "mailing-provider/admin";
     }
 
     public String getAdminUsersPath() {
@@ -86,56 +67,27 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils 
 
     @Override
     public int callCheckUsersExist(File checkUsersInputFile, PrintWriter nonExistingUsersOutput) throws Exception {
-        String boundaryString = "----CheckUsersExist";
-        HashMap<String, String> map = new HashMap<>();
-        map.put("Content-Type", "multipart/form-data; boundary=" + boundaryString);
-        HttpURLConnection urlConnection = getConnection(getAdminUsersPath() + "/check-users-exist", "POST", map);
-        urlConnection.setDoOutput(true);
-        urlConnection.setRequestProperty("Authorization", "Bearer " + getAccessToken());
 
-        OutputStream outputStream = urlConnection.getOutputStream();
-        BufferedWriter httpRequestBodyWriter =
-                new BufferedWriter(new OutputStreamWriter(outputStream));
+        String boundary = "CheckUsersExist";
+        Map<Object, Object> data = new LinkedHashMap<>();
+        data.put("data", checkUsersInputFile.toPath());
 
-        // Include the section to describe the file
-        httpRequestBodyWriter.write("\n--" + boundaryString + "\n");
-        String fileName = checkUsersInputFile.getName();
-        httpRequestBodyWriter.write("Content-Disposition: form-data;"
-                + "name=\"data\";"
-                + "filename=\"" + fileName + "\""
-                + "\nContent-Type: application/octet-stream\n\n");
-        httpRequestBodyWriter.flush();
+        final java.net.http.HttpClient client = java.net.http.HttpClient.newBuilder().build();
 
-        // Write the actual file contents
-        FileInputStream inputStreamToLogFile = new FileInputStream(checkUsersInputFile);
+        final HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(getAdminUsersPath() + "/check-users-exist"))
+                .header("Authorization", "Bearer " + getAccessToken())
+                .header("Content-Type", "multipart/form-data;boundary=" + boundary)
+                .POST(ofMimeMultipartData(data, boundary))
+                .build();
 
-        int bytesRead;
-        byte[] dataBuffer = new byte[1024];
-        while ((bytesRead = inputStreamToLogFile.read(dataBuffer)) != -1) {
-            outputStream.write(dataBuffer, 0, bytesRead);
+        final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() > 299) {
+            throw new IOException("Error " + response.statusCode() + ": " + response.body());
         }
-
-        outputStream.flush();
-
-        // Mark the end of the multipart http request
-        httpRequestBodyWriter.write("\n--" + boundaryString + "--\n");
-        httpRequestBodyWriter.flush();
-
-        // Close the streams
-        outputStream.close();
-        httpRequestBodyWriter.close();
-
-        // Read response from web server, which will trigger the multipart HTTP request to be sent.
-        int status = checkResponse(urlConnection);
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                nonExistingUsersOutput.write(line);
-                nonExistingUsersOutput.write('\n');
-            }
+        nonExistingUsersOutput.write(response.body());
             nonExistingUsersOutput.flush();
-        }
-        return status;
+        return response.statusCode();
     }
 
     @Override
@@ -157,12 +109,6 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils 
     }
 
     @Override
-    public String getAccountPath() {
-        String basePath = getKeycloakBasePath();
-        return basePath + "account";
-    }
-
-    @Override
     public byte[] getUserAvatar(String email) throws Exception {
 
         HashMap<String, String> headers = new HashMap<>();
@@ -170,7 +116,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils 
         headers.put("Authorization", "Bearer " + getAccessToken());
 
         //open connection
-        HttpURLConnection connection = getConnection(getAdminAvatarPath() + "?email=" + email, "GET", headers);
+        HttpURLConnection connection = getConnection(getAvatarPath() + "?email=" + email, "GET", headers);
 
         //get response
         checkResponse(connection);
@@ -184,59 +130,34 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils 
 
         final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null);
         //open connection
-        HttpURLConnection connection = getConnection(getAdminAvatarPath() + '/' + userRepresentation.get("id"), "DELETE", headers);
+        HttpURLConnection connection = getConnection(getAvatarPath() + '/' + userRepresentation.get("id"), "DELETE", headers);
 
         //get response
         checkResponse(connection);
     }
 
     @Override
-    public void updateUserAvatar(String email, byte[] avatar, String fileName) throws Exception {
-        String boundaryString = "----UploadAvatar";
-
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "multipart/form-data; boundary=" + boundaryString);
-        headers.put("Authorization", "Bearer " + getAccessToken());
-
-
+    public void updateUserAvatar(String email, File avatarFile) throws Exception {
         final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null);
 
-        HttpURLConnection connection = getConnection(getAdminAvatarPath() + '/' + userRepresentation.get("id"), "POST", headers);
-        connection.setDoOutput(true);
+        String boundary = "UploadAvatarBoundary";
+        Map<Object, Object> data = new LinkedHashMap<>();
+        data.put("image", avatarFile.toPath());
 
-        OutputStream outputStream = connection.getOutputStream();
-        BufferedWriter httpRequestBodyWriter =
-                new BufferedWriter(new OutputStreamWriter(outputStream));
+        final java.net.http.HttpClient client = java.net.http.HttpClient.newBuilder().build();
 
-        // Include the section to describe the file
-        httpRequestBodyWriter.write("\n--" + boundaryString + "\n");
-        httpRequestBodyWriter.write("Content-Disposition: form-data;"
-                + "name=\"image\";"
-                + "filename=\"" + fileName + "\""
-                + "\nContent-Type: " + URLConnection.guessContentTypeFromName(fileName) + "\n\n");
-        httpRequestBodyWriter.flush();
+        final HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(getAvatarPath() + '/' + userRepresentation.get("id")))
+                .header("Authorization", "Bearer " + getAccessToken())
+                .header("Content-Type", "multipart/form-data;boundary=" + boundary)
+                .POST(ofMimeMultipartData(data, boundary))
+                .build();
 
-        // Write the actual file contents
-        InputStream inputStream = new ByteArrayInputStream(avatar);
-
-        int bytesRead;
-        byte[] dataBuffer = new byte[1024];
-        while ((bytesRead = inputStream.read(dataBuffer)) != -1) {
-            outputStream.write(dataBuffer, 0, bytesRead);
+        final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() > 299) {
+            throw new IOException("Error " + response.statusCode() + ": " + response.body());
         }
 
-        outputStream.flush();
-
-        // Mark the end of the multipart http request
-        httpRequestBodyWriter.write("\n--" + boundaryString + "--\n");
-        httpRequestBodyWriter.flush();
-
-        // Close the streams
-        outputStream.close();
-        httpRequestBodyWriter.close();
-
-        //get response
-        checkResponse(connection);
     }
 
     @Override
@@ -514,7 +435,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils 
         if (baseApiPath != null) return baseApiPath;
         String basePath = getKeycloakBasePath();
         if (basePath == null) return null;
-        baseApiPath = basePath.replace("auth/realms", "auth/admin/realms");
+        baseApiPath = basePath.replace("/realms", "/admin/realms");
         return baseApiPath;
     }
 

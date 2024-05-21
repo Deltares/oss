@@ -35,17 +35,7 @@ public interface KeycloakUtils {
 
     boolean isActive();
 
-    String getAdminUserMailingsPath();
-
-    String getUserMailingPath();
-
-    String getAccountPath();
-
     String getAvatarPath();
-
-    String getAdminAvatarPath();
-
-    String getAdminMailingsPath();
 
     int callCheckUsersExist(File checkUsersInputFile, PrintWriter nonExistingUsersOutput) throws Exception;
 
@@ -55,7 +45,7 @@ public interface KeycloakUtils {
 
     void deleteUserAvatar(String email) throws Exception;
 
-    void updateUserAvatar(String emailAddress, byte[] image, String fileName) throws Exception;
+    void updateUserAvatar(String emailAddress, File avatarFile) throws Exception;
 
     int updateUserProfile(String email, Map<String, String> attributes) throws Exception;
 

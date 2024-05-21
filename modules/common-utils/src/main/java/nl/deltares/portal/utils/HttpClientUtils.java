@@ -15,11 +15,14 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.http.HttpRequest;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public abstract class HttpClientUtils implements BaseLocalService {
@@ -100,26 +103,36 @@ public abstract class HttpClientUtils implements BaseLocalService {
                 result.write(buffer, 0, length);
             }
             // StandardCharsets.UTF_8.name() > JDK 7
-            return result.toString(StandardCharsets.UTF_8);
+            return result.toString(StandardCharsets.UTF_8.name());
         } finally {
             connection.disconnect();
         }
     }
 
-//    public static String readError(HttpURLConnection connection) throws IOException {
-//        try (InputStream is = connection.getErrorStream()) {
-//            ByteArrayOutputStream result = new ByteArrayOutputStream();
-//            byte[] buffer = new byte[1024];
-//            int length;
-//            while ((length = is.read(buffer)) != -1) {
-//                result.write(buffer, 0, length);
-//            }
-//            // StandardCharsets.UTF_8.name() > JDK 7
-//            return result.toString(StandardCharsets.UTF_8);
-//        } finally {
-//            connection.disconnect();
-//        }
-//    }
+    public static HttpRequest.BodyPublisher ofMimeMultipartData(Map<Object, Object> data,
+                                                                String boundary) throws IOException {
+        var byteArrays = new ArrayList<byte[]>();
+        byte[] separator = ("\r\n--" + boundary + "\r\nContent-Disposition: form-data; name=")
+                .getBytes(StandardCharsets.UTF_8);
+        for (Map.Entry<Object, Object> entry : data.entrySet()) {
+            byteArrays.add(separator);
+
+            if (entry.getValue() instanceof Path) {
+                var path = (Path) entry.getValue();
+                String mimeType = Files.probeContentType(path);
+                byteArrays.add(("\"" + entry.getKey() + "\"; filename=\"" + path.getFileName()
+                        + "\"\r\nContent-Type: " + mimeType + "\r\n\r\n")
+                        .getBytes(StandardCharsets.UTF_8));
+                byteArrays.add(Files.readAllBytes(path));
+            }
+            else {
+                byteArrays.add(("\"" + entry.getKey() + "\"\r\n\r\n" + entry.getValue())
+                        .getBytes(StandardCharsets.UTF_8));
+            }
+        }
+        byteArrays.add(("\r\n--" + boundary + "--\r\n").getBytes(StandardCharsets.UTF_8));
+        return HttpRequest.BodyPublishers.ofByteArrays(byteArrays);
+    }
 
     public static byte[] readAllBytes(HttpURLConnection connection) throws IOException {
         try (InputStream is = connection.getInputStream()) {

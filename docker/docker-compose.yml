@@ -75,40 +75,26 @@ services:
       - liferay
 
   keycloak:
-    image: quay.io/keycloak/keycloak:16.1.1
-    container_name: keycloak
-    #    build: server
+    image: quay.io/keycloak/keycloak:24.0.1
     ports:
       - 8080:8080
-      - 8443:8443
       - 8787:8787
-#      - 9990:9990
+    entrypoint: [ "/opt/keycloak/bin/kc.sh", "start-dev", "--import-realm", "--log-level=INFO" ]
     volumes:
-      - ./keycloak/deployments:/opt/jboss/keycloak/standalone/deployments
-      - ./resources:/opt/jboss/keycloak/resources
+      - ./keycloak/deployments:/opt/keycloak/providers
+      - ./resources/realm-export.json:/opt/keycloak/data/import/realm-export.json
+      - ./resources/keycloak.conf:/opt/keycloak/conf/keycloak.conf
     restart: always
     networks:
       - liferay
     environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=Pa55w0rd
-      - DB_VENDOR=mariadb
-      - DB_ADDR=mariadb-keycloak
-      - DB_DATABASE=keycloak
-      - DB_USER=keycloak
-      - DB_PASSWORD=password
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=Pa55w0rd
       - DEBUG=true
       - DEBUG_PORT=*:8787
-      - HOSTNAME=keycloak
-    #    depends_on:
-    #      - mariadb
-    #    These commands are required to allow remote debugging with docker
-    command: [ "-Dcom.sun.management.jmxremote", "-Dcom.sun.management.jmxremote.port=12345",
-               "-Dcom.sun.management.jmxremote.local.only=false", "-Dcom.sun.management.jmxremote.authenticate=false",
-               "-Dcom.sun.management.jmxremote.ssl=false", "-Dcom.sun.management.jmxremote.rmi.port=12345",
-               "-Djava.rmi.server.hostname=$HOSTNAME",
-               "-Dkeycloak.import=/opt/jboss/keycloak/resources/realm-lportal.json",
-               "-Dkeycloak.profile.feature.upload_scripts=enabled" ]
+      - KC_HTTP_RELATIVE_PATH=/auth
+    depends_on:
+      - mariadb-keycloak
 
 volumes:
   esdata74:

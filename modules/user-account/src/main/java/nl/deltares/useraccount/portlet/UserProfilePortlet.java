@@ -1,5 +1,6 @@
 package nl.deltares.useraccount.portlet;
 
+import com.liferay.document.library.kernel.exception.ImageSizeException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
@@ -15,9 +16,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.*;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -93,12 +93,15 @@ public class UserProfilePortlet extends MVCPortlet {
 
         UploadPortletRequest uploadRequest = PortalUtil.getUploadPortletRequest(actionRequest);
         try {
-            InputStream in = new BufferedInputStream(uploadRequest.getFileAsStream("image"));
+            final File avatarFile = uploadRequest.getFile("image");
+            InputStream in = new BufferedInputStream(new FileInputStream(avatarFile));
             final byte[] image = FileUtil.getBytes(in);
 
             final User user1 = UserLocalServiceUtil.updatePortrait(user.getUserId(), image);
             user.setPortraitId(user1.getPortraitId()); //force update so page will refresh
-            updateUserAvatar(actionRequest, user, image, uploadRequest.getFileName("image"));
+            updateUserAvatar(actionRequest, user, avatarFile);
+        } catch (ImageSizeException e){
+            SessionErrors.add(actionRequest, "update-profile-failed", "Image size too large");
         } catch (IOException | PortalException e) {
             SessionErrors.add(actionRequest, "update-profile-failed", e.getMessage());
         }
@@ -173,9 +176,9 @@ public class UserProfilePortlet extends MVCPortlet {
 
     }
 
-    private void updateUserAvatar(ActionRequest actionRequest, User user, byte[] image, String fileName) {
+    private void updateUserAvatar(ActionRequest actionRequest, User user,File avatarFile) {
         try {
-            keycloakUtils.updateUserAvatar(user.getEmailAddress(), image, fileName);
+            keycloakUtils.updateUserAvatar(user.getEmailAddress(), avatarFile);
             SessionMessages.add(actionRequest, "update-profile-success");
         } catch (Exception e) {
             SessionErrors.add(actionRequest, "update-profile-failed", e.getMessage());
