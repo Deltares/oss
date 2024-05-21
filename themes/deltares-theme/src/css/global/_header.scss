@@ -34,7 +34,7 @@
 
 @media (min-width: 1024px) {
   #header {
-    position: fixed;
+    position: unset;
     transform: translate(0, 0);
     transition: all .2s ease-out .1s;
 
