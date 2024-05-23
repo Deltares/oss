@@ -2,7 +2,6 @@
 <#assign portletName = themeDisplay.getPortletDisplay().getPortletName() >
 <#if !(portletName?ends_with("SearchResultsPortlet")) >
 
-
     <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
     <#assign dsdSessionUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdSessionUtils") />
     <#assign dsdJournalArticleUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdJournalArticleUtils") />
@@ -37,21 +36,6 @@
     </#if>
     <#assign locale = themeDisplay.getLocale() />
     <#assign cancellationExceeded = registration.isCancellationPeriodExceeded() />
-
-    <style type="text/css">
-        .text-theme-button{
-            text-weight:500;
-            padding-left: 1rem;
-            padding-right: 1rem;
-            text-decoration: none;
-        }
-        @media (min-width: 640px){
-            .d-grid-cols-2 {
-                grid-template-columns: repeat(2,minmax(0,1fr));
-            }
-        }
-    </style>
-
     <div class="c-sessions page">
         <div class="c-sessions__item ${isEventPast}">
             <div class="clearfix">
@@ -185,8 +169,9 @@
                         </#if>
                         <#else >
                             <#if registration.canUserRegister(user.getUserId()) && themeDisplay.isSignedIn() && available gt 0>
-
-                                <a href="#" data-article-id="${articleId}" class="btn-lg btn-primary add-to-cart"
+                                <#assign relatedArticles =  dsdParserUtils.getRelatedArticles(themeDisplay.getSiteGroupId(), registration.getArticleId()) />
+                                <#assign args = "[" + relatedArticles?join(",") + "]"/>
+                                <a href="#" data-article-id="${articleId}" class="btn-lg btn-primary add-to-cart" onClick="return addRelatedAssets(${args});"
                                    role="button" aria-pressed="true">
                                     ${languageUtil.get(locale, "shopping.cart.add")}
                                 </a>
@@ -205,102 +190,7 @@
                 </div>
             </div>
         </div>
-        <div class="c-sessions__item__description">
-            ${description.getData()}
-        </div>
-        <#if schedules?? && schedules.getSiblings()?has_content && validator.isNotNull(schedules.getSiblings()?first.getData())>
-            <#list schedules.getSiblings() as cur_Schedule>
-                <#if cur_Schedule.scheduleDate?has_content >
-                    <h3 class="c-sessions__item__title h1">
-                        <#assign schedules_date_Data = getterUtil.getString(cur_Schedule.scheduleDate.getData())>
-                        <#if validator.isNotNull(schedules_date_Data)>
-                            <#assign schedules_date_DateObj = dateUtil.parseDate("yyyy-MM-dd", schedules_date_Data, locale)>
-                            ${languageUtil.get(locale, "dsd.theme.session.schedule")} -
-                            ${dateUtil.getDate(schedules_date_DateObj, "dd MMM yyyy", locale, timeZone)}
-                        </#if>
-                    </h3>
-                </#if>
-                <div class="c-sessions__item__description">
-                    ${cur_Schedule.getData()}
-                </div>
-            </#list>
-        </#if>
-        <#if (registration.getPresentations()?size > 0) >
-            <div class="c-events__item__uploads">
-                <!--<p class="bold">${languageUtil.get(locale, "dsd.theme.session.presentations")}</p>-->
-                <p class="bold">Go to presentation</p>
-                <#list registration.getPresentations() as presentation>
-                    <#if presentation.isDownloadLink() >
-                        <#assign iconClass = "icon-download-alt" />
-                    <#else >
-                        <#assign iconClass = "icon-film" />
-                    </#if>
-                    <#if presentation.getThumbnailLink()?? >
-                        <#assign thumbnail = presentation.getThumbnailLink() />
-                    <#else>
-                        <#assign thumbnail = "" />
-                    </#if>
-                    <#assign viewURL = displayContext.getViewURL(presentation) />
-                    <div class="presentation">
-                        <a href="${viewURL}">
-                            <#if thumbnail?? && thumbnail != "">
-                                <img class="videoThumbnail" src="${thumbnail}" alt="${presentation.getTitle()}"/>
-                            <#else>
-                                <i class=${iconClass}></i>
-                            </#if>
-                            <div class="presentation_title">
-                                <strong>${presentation.getTitle()}</strong>
-                            </div>
-                        </a>
-                        <#if presentation.getPresenter() != "" >
-                            <div>
-                                &nbsp;&gt;&nbsp;
-                                <span>${presentation.getPresenter()}</span>
-                                <span>(${presentation.getOrganization()})</span>
-                            </div>
-                        </#if>
-                    </div>
-                </#list>
-            </div>
-        </#if>
-        <#-- This section below is need to translate Registration text based on Language selection -->
-        <#if RegistrationInfo?? && RegistrationInfo.getData()?? &&  RegistrationInfo.getData() != "">
-            <#assign cur_webContent_map = RegistrationInfo.getData()?eval />
-            <#assign cur_webContent_classPK = cur_webContent_map.classPK />
-            <#assign article = journalArticleLocalService.fetchLatestArticle(cur_webContent_classPK?number)! />
-            <#if article?has_content && article.getStatus() == 0>
-                <#if Language?? && Language.getData()?? && Language.getData() == "nl" >
-                    <#assign localeId = "nl_NL" />
-                <#else>
-                    <#assign localeId = locale.toString() />
-                </#if>
-                <div class="c-sessions__item__description">
-                    ${journalContent.getContent(article.getGroupId(), article.getArticleId(), viewMode, localeId)}
 
-                </div>
-            </#if>
-        </#if>
-        <#if ExternalLink?? && ExternalLink.getData()?has_content >
-
-            <div class="c-sessions__item__description">
-                <h3 class="font-medium text-xl lg:text-2xl text-theme-secondary mb-1 lg:mb-2"><@liferay.language key='dsd.theme.session.goto.product' /></h3>
-                <#list ExternalLink.getSiblings() as cur_ExternalLink>
-                    <div class="group flex">
-                        <div class="shrink-0 px-3 py-3 bg-theme-button group-hover:bg-theme-button--hover group-focus:bg-theme-button--hover transition duration-200 rounded-l">
-                            <a href="${cur_ExternalLink.ExternalURL.getData()}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 32 32" aria-hidden="false" role="img"><path fill="currentColor" d="M1,17.9h22.8L13.3,28.4L16,31l15-15L16,1l-2.6,2.6l10.4,10.5H1V17.9z"></path></svg>
-                            </a>
-                        </div>
-                        <div class="flex bg-white items-center font-semibold rounded-r  w-full">
-                            <h4>
-                                <a class="text-theme-button" href="${cur_ExternalLink.ExternalURL.getData()}">${cur_ExternalLink.getData()}</a>
-                            </h4>
-                        </div>
-                    </div>
-                </#list>
-            </div>
-
-        </#if>
     </div>
     <script>
         var myCalendar = createCalendar({
@@ -320,5 +210,18 @@
         });
 
         document.querySelector('.add-to-calendar').appendChild(myCalendar);
+
+        addRelatedAssets = function(relatedArticles) {
+            currentArticleId = Number(event.target.getAttribute('data-article-id'));
+            currentBeingAdded =  !shoppingCart._contains(currentArticleId, 'registration');
+
+            relatedArticles.forEach(function(relatedArticleId){
+                relationBeingAdded = !shoppingCart._contains(relatedArticleId, 'registration');
+                if (currentBeingAdded && relationBeingAdded){
+                    shoppingCart._addToCart(relatedArticleId, 'registration');
+                } else if (!currentBeingAdded && !relationBeingAdded) {
+                    shoppingCart._removeFromCart(relatedArticleId, 'registration');
+                }
+            });
     </script>
 </#if>

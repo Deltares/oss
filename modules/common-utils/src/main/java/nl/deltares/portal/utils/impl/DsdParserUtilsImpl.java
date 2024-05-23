@@ -1,5 +1,9 @@
 package nl.deltares.portal.utils.impl;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetLink;
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
+import com.liferay.asset.kernel.service.AssetLinkLocalService;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -36,6 +40,12 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
     DsdJournalArticleUtils dsdJournalArticleUtils;
 
     @Reference
+    AssetLinkLocalService assetLinkLocalServiceUtil;
+
+    @Reference
+    AssetEntryLocalService assetEntryLocalServiceUtil;
+
+    @Reference
     LayoutUtils layoutUtils;
 
     private final Map<Long, Map<String, String>> structureKeyMap = new HashMap<>();
@@ -52,6 +62,30 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
             throw new PortalException(String.format("Article %s is not a valid DSD Event", article.getTitle()));
         }
         return (Event) eventArticle;
+    }
+
+    @Override
+    public List<String> getRelatedArticles(long siteId, String articleId) throws PortalException {
+
+        final JournalArticle article = dsdJournalArticleUtils.getJournalArticle(siteId, articleId);
+
+        final List<String> relatedArticles = new ArrayList<>();
+
+        final long primaryKey = article.getResourcePrimKey();
+        final AssetEntry assetEntry = assetEntryLocalServiceUtil.fetchEntry(JournalArticle.class.getName(), primaryKey);
+        if (assetEntry == null) return Collections.emptyList();
+        final long entryId = assetEntry.getEntryId();
+        final List<AssetLink> relatedAssets = assetLinkLocalServiceUtil.getDirectLinks(entryId);
+        for (AssetLink relatedAsset : relatedAssets) {
+            final long relatedEntryId = relatedAsset.getEntryId2();
+            final AssetEntry relatedEntry = assetEntryLocalServiceUtil.fetchEntry(relatedEntryId);
+            if (relatedEntry == null) continue;
+            final long relatedClassPK = relatedEntry.getClassPK();
+            final JournalArticle journalArticle = dsdJournalArticleUtils.getLatestArticle(relatedClassPK);
+            if (journalArticle == null) continue;
+            relatedArticles.add(journalArticle.getArticleId());
+        }
+        return relatedArticles;
     }
 
     @Override

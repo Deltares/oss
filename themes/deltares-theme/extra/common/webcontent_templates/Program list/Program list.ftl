@@ -59,14 +59,16 @@
                             <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button"
                                aria-pressed="true" style="margin-right:5px; color:#fff">
                                          ${languageUtil.get(locale, "registrationform.join")}
-                            </a>
+                                    </a>
                         </#if>
-                        <a href="${displayContext.getUnregisterURL(renderRequest) }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
-                            ${languageUtil.get(locale, "registrationform.unregister")}
-                        </a>
-                    <#elseif available gt 0 >
+                            <a href="${displayContext.getUnregisterURL(renderRequest) }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
+                                ${languageUtil.get(locale, "registrationform.unregister")}
+                            </a>
+                    <#else>
+                        <#assign relatedArticles =  dsdParserUtils.getRelatedArticles(themeDisplay.getSiteGroupId(), registration.getArticleId()) />
+                        <#assign args = "[" + relatedArticles?join(",") + "]"/>
                         <a href="#" data-article-id="${registration.getArticleId()}" class="btn-lg btn-primary add-to-cart" role="button"
-                           aria-pressed="true"  style="color:#fff">
+                           aria-pressed="true"  style="color:#fff" onClick="return addRelatedAssets(${args});">
                           ${languageUtil.get(locale, "shopping.cart.add")}
                         </a>
                     </#if>
@@ -82,3 +84,21 @@
         </#if>
     </div>
 </div>
+<script>
+
+    addRelatedAssets = function(relatedArticles) {
+        currentArticleId = Number(event.target.getAttribute('data-article-id'));
+        currentBeingAdded =  !shoppingCart._contains(currentArticleId, 'registration');
+
+        relatedArticles.forEach(function(relatedArticleId){
+            relationBeingAdded = !shoppingCart._contains(relatedArticleId, 'registration');
+            if (currentBeingAdded && relationBeingAdded){
+                shoppingCart._addToCart(relatedArticleId, 'registration');
+            } else if (!currentBeingAdded && !relationBeingAdded) {
+                shoppingCart._removeFromCart(relatedArticleId, 'registration');
+            }
+        });
+
+
+    }
+</script>

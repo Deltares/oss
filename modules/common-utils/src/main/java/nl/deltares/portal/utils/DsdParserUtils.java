@@ -17,6 +17,8 @@ public interface DsdParserUtils {
 
     Event getEvent(long siteId, String eventId, Locale locale) throws PortalException;
 
+    List<String> getRelatedArticles(long siteId, String articleId) throws PortalException;
+
     @Deprecated
     Event getEvent(long siteId, String eventId) throws PortalException;
 
