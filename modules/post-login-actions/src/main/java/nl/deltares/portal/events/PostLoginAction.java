@@ -1,7 +1,13 @@
 package nl.deltares.portal.events;
 
+import com.liferay.announcements.kernel.model.AnnouncementsEntry;
+import com.liferay.announcements.kernel.service.AnnouncementsEntryLocalServiceUtil;
+import com.liferay.announcements.kernel.service.AnnouncementsFlagLocalServiceUtil;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.events.LifecycleAction;
 import com.liferay.portal.kernel.events.LifecycleEvent;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -19,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Principal;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -101,6 +109,40 @@ public class PostLoginAction implements LifecycleAction {
                 LOG.info(String.format("User '%s' logged in from not-sanctioned country '%s'", user.getFullName(), countryName));
             }
         }
+
+        try {
+            int unreadUserAnnouncements = getUnreadUserAnnouncements(user);
+            request.getSession().setAttribute("LIFERAY_SHARED_userAnnouncements", unreadUserAnnouncements);
+        } catch (Exception e) {
+            LOG.warn(String.format("Error retrieving user announcements for user %s: %s", user.getEmailAddress(), e.getMessage()));
+        }
+    }
+
+    private int getUnreadUserAnnouncements(User user) {
+        final DynamicQuery dynamicQuery = AnnouncementsEntryLocalServiceUtil.dynamicQuery();
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", user.getCompanyId()));
+        final Date timeNow = new Date(System.currentTimeMillis());
+        dynamicQuery.add(RestrictionsFactoryUtil.le("displayDate", timeNow));
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("alert", false));
+        dynamicQuery.add(RestrictionsFactoryUtil.ge("expirationDate", timeNow));
+        final List<AnnouncementsEntry> entries = AnnouncementsEntryLocalServiceUtil.dynamicQuery(dynamicQuery);
+
+        int unreadAnnouncements = 0;
+        for (AnnouncementsEntry entry : entries) {
+            try {
+                //flagValue 1 = unread, 2 = read
+                AnnouncementsFlagLocalServiceUtil.getFlag(user.getUserId(), entry.getEntryId(), 1);
+                try {
+                    AnnouncementsFlagLocalServiceUtil.getFlag(user.getUserId(), entry.getEntryId(), 2);
+                } catch (PortalException ignored) {
+                    //no read flag found, so this is an unread announcement
+                    unreadAnnouncements++;
+                }
+            } catch (PortalException ignored) {
+                unreadAnnouncements++; //new announcement not yet added to AnnouncementsFlag table.
+            }
+        }
+        return unreadAnnouncements;
     }
 
     private String getSiteId(String redirectUrl) {
