@@ -1,4 +1,5 @@
 package nl.deltares.services.rest.download;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -88,47 +89,47 @@ public class DownloadRestService {
 
     }
 
-//    @POST
-//    @Path("register")
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    public Response registerDownload(@Context HttpServletRequest request, String json) {
-//
-//        final User user;
-//        try {
-//            user = Helper.getRemoteUser(request);
-//        } catch (Exception e) {
-//            return Response.serverError().type(MediaType.APPLICATION_JSON).entity(Helper.getErrorResponseMessage("Error extracting user for 'register': ", e)).build();
-//        }
-//
-//        String fileShare;
-//        String fileName;
-//        long downloadId;
-//        long groupId;
-//        try {
-//            final Map<String, String> jsonToMap = JsonContentUtils.parseJsonToMap(json);
-//            fileName = jsonToMap.get("fileName");
-//            fileShare = jsonToMap.get("fileShare");
-//            downloadId = Long.parseLong(jsonToMap.get("downloadId"));
-//            groupId = Long.parseLong(jsonToMap.get("groupId"));
-//        } catch (Exception e) {
-//            LOG.warn(String.format("Error parsing json request '%s': %s", json, e.getMessage()));
-//            return Response.serverError().type(MediaType.TEXT_PLAIN).entity("Failed to parse request parameter: " + e.getMessage()).build();
-//        }
-//
-//        try {
-//            if (downloadUtils == null) {
-//                LOG.warn("DownloadUtils is not configured!");
-//            } else {
-//                final Map<String, String> userAttributes = getUserAttributes(user, request);
-//                downloadUtils.registerDownload(user, groupId, downloadId, fileName, fileShare, userAttributes);
-//            }
-//            return Response.ok().entity(String.format("Download registered for file '%s':  '%s'", fileName, fileShare)).build();
-//        } catch (PortalException e) {
-//            LOG.warn("Error registering direct download url: " + e.getMessage());
-//            return Response.serverError().type(MediaType.TEXT_PLAIN).entity("Failed register download: " + e.getMessage()).build();
-//        }
-//
-//    }
+    @POST
+    @Path("register")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response registerDownload(@Context HttpServletRequest request, String json) {
+
+        final User user;
+        try {
+            user = Helper.getRemoteUser(request);
+        } catch (Exception e) {
+            return Response.serverError().type(MediaType.APPLICATION_JSON).entity(Helper.getErrorResponseMessage("Error extracting user for 'register': ", e)).build();
+        }
+
+        String fileShare;
+        String fileName;
+        long downloadId;
+        long groupId;
+        try {
+            final Map<String, String> jsonToMap = JsonContentUtils.parseJsonToMap(json);
+            fileName = jsonToMap.get("fileName");
+            fileShare = jsonToMap.get("fileShare");
+            downloadId = Long.parseLong(jsonToMap.get("downloadId"));
+            groupId = Long.parseLong(jsonToMap.get("groupId"));
+        } catch (Exception e) {
+            LOG.warn(String.format("Error parsing json request '%s': %s", json, e.getMessage()));
+            return Response.serverError().type(MediaType.TEXT_PLAIN).entity("Failed to parse request parameter: " + e.getMessage()).build();
+        }
+
+        try {
+            if (downloadUtils == null) {
+                LOG.warn("DownloadUtils is not configured!");
+            } else {
+                final Map<String, String> userAttributes = getUserAttributes(user, request);
+                downloadUtils.registerDownload(user, groupId, downloadId, fileName, fileShare, userAttributes);
+            }
+            return Response.ok().entity(String.format("Download registered for file '%s':  '%s'", fileName, fileShare)).build();
+        } catch (PortalException e) {
+            LOG.warn("Error registering direct download url: " + e.getMessage());
+            return Response.serverError().type(MediaType.TEXT_PLAIN).entity("Failed register download: " + e.getMessage()).build();
+        }
+
+    }
 
     private Map<String, String> getUserAttributes(User user, HttpServletRequest request) {
 

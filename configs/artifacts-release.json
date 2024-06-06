@@ -86,7 +86,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.services.rest",
-    "version" : "1.0.4",
+    "version" : "1.0.5",
     "extension" : "jar"
   },
   {
