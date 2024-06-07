@@ -28,6 +28,8 @@ public class Download extends AbsDsdArticle {
     private boolean automaticLinkCreation = false;
     private Terms terms = null;
     private LicenseFile licenseFile = null;
+    private boolean shareLink;
+
     enum ACTION {direct, userinfo, billinginfo, locks, licenses}
 
     private final List<ACTION> requiredActions = new ArrayList<>();
@@ -43,7 +45,9 @@ public class Download extends AbsDsdArticle {
             if (fileId != null) this.fileId = Integer.parseInt(fileId);
             filePath = getFormFieldValue( "FilePath", false);
             fileName = getFormFieldValue( "FileName", false);
-
+            if (filePath != null){
+                shareLink = filePath.toLowerCase().startsWith("https://");
+            }
             final List<String> actions = getFormFieldArrayValue("RequiredActions", true);
             actions.forEach(a -> {
                 try {
@@ -120,7 +124,7 @@ public class Download extends AbsDsdArticle {
         subscriptions = new ArrayList<>();
         List<String> subscriptionsJson = getFormFieldValues("Subscription", true);
         DuplicateCheck check = new DuplicateCheck();
-        if (subscriptionsJson.size() > 0){
+        if (!subscriptionsJson.isEmpty()){
             for (String content : subscriptionsJson) {
                 JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(content);
                 AbsDsdArticle subscription = dsdParserUtils.toDsdArticle(article, super.getLocale());
@@ -198,6 +202,9 @@ public class Download extends AbsDsdArticle {
         return fileTopicName;
     }
 
+    public boolean isShareLink() {
+        return shareLink;
+    }
     public String getGroupPage(ThemeDisplay themeDisplay) throws PortalException {
         try {
             final String layoutFriendlyURL = PortalUtil.getLayoutFriendlyURL(groupPage, themeDisplay);
@@ -216,7 +223,7 @@ public class Download extends AbsDsdArticle {
     }
 
     public boolean isShowSubscription() {
-        return getSubscriptions().size() > 0;
+        return !getSubscriptions().isEmpty();
     }
 
     public boolean isUserInfoRequired() {

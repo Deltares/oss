@@ -28,6 +28,7 @@
             <#assign download = parserUtils.toDsdArticle(journalArticle, locale) />
             <#assign count = downloadUtils.getDownloadCount(download) />
             <#assign multipleDownloadUrls = downloadUtils.hasMultipleDownloadUrls() />
+            <#assign isShareLink = download.isShareLink() />
             <li class="list-group-item list-group-item-flex">
                 <div class="col-12 px-3">
                     <h4>
@@ -44,7 +45,7 @@
                                     <#assign filePath = download.getFilePath() />
                                     <#assign articleId = journalArticle.getArticleId() />
                                     <span class="d-block" style="float:right">
-									<#if multipleDownloadUrls >
+									<#if multipleDownloadUrls && !isShareLink >
                                         <div class="dropdown">
                                             <button class="dropbtn">${buttonText}</button>
                                             <div class="dropdown-content">
@@ -52,7 +53,7 @@
                                                 <#list countryCodes as countryCode >
                                                     <#assign countryName = downloadUtils.getDownloadServerCountryName(countryCode) />
                                                     <a href="#" onclick="processClickEvent(
-                                                            '${baseUrl}', '${countryCode}', '${fileName}', '${filePath}', '${articleId}', '${themeDisplay.getScopeGroupId()}')"
+                                                            '${baseUrl}', '${countryCode}', '${fileName}', '${filePath}', '${articleId}', '${themeDisplay.getScopeGroupId()}', false)"
                                                        class="btn-lg btn-primary" role="button" aria-pressed="true">
                                                         from ${countryName}
                                                     </a>
@@ -60,7 +61,7 @@
                                             </div>
                                         </div>
 									<#else>
-                                        <a href="#" onclick="processClickEvent('${baseUrl}', '', '${fileName}', '${filePath}', '${articleId}', '${themeDisplay.getScopeGroupId()}')"
+                                        <a href="#" onclick="processClickEvent('${baseUrl}', '', '${fileName}', '${filePath}', '${articleId}', '${themeDisplay.getScopeGroupId()}', ${isShareLink?c})"
                                            class="btn-lg btn-primary" role="button" aria-pressed="true">
                                             ${buttonText}
                                         </a>
@@ -85,9 +86,9 @@
 
 <script>
 
-    function processClickEvent(baseUrl, countryCode, fileName, filePath, articleId, groupId){
+    function processClickEvent(baseUrl, countryCode, fileName, filePath, articleId, groupId, isShareLink){
         logStarted(fileName);
-        if (filePath.toLowerCase().startsWith("https://")){
+        if (isShareLink){
             downloadFile(filePath, fileName)
             registerClick(baseUrl, fileName, filePath, articleId, groupId);
         } else {
