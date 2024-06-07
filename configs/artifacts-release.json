@@ -74,7 +74,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.forms",
-    "version" : "1.0.26",
+    "version" : "1.0.27",
     "extension" : "jar"
   },
   {
@@ -86,7 +86,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.services.rest",
-    "version" : "1.0.5",
+    "version" : "1.0.6",
     "extension" : "jar"
   },
   {

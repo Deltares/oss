@@ -29,7 +29,6 @@ import nl.deltares.tasks.impl.CreateDownloadLinksRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -392,9 +391,8 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
     private DownloadUtils downloadUtils;
 
     @Reference(
-            unbind = "setDownloadUtils",
-            cardinality = ReferenceCardinality.AT_LEAST_ONE,
-            policy = ReferencePolicy.DYNAMIC
+            unbind = "-",
+            cardinality = ReferenceCardinality.AT_LEAST_ONE
     )
     protected void setDownloadUtils(DownloadUtils downloadUtils){
         if (downloadUtils.isActive()) {
