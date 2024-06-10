@@ -58,7 +58,7 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
                 } else {
 
                     try {
-                        if (downloadServerCode == null){
+                        if (downloadServerCode == null && downloadServerCode.isEmpty()){
                             shareInfo = downloadUtils.createShareLink(download.getFilePath(), emailAddress, false);
                         } else {
                             shareInfo = downloadUtils.createShareLink(downloadServerCode, download.getFilePath(), emailAddress, false);
