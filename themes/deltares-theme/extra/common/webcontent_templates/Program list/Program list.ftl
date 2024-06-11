@@ -65,10 +65,17 @@
                                 ${languageUtil.get(locale, "registrationform.unregister")}
                             </a>
                     <#else>
-                        <#assign relatedArticles =  dsdParserUtils.getRelatedArticles(themeDisplay.getSiteGroupId(), registration.getArticleId()) />
-                        <#assign args = "[" + relatedArticles?join(",") + "]"/>
+                        <#assign relatedArticles = dsdSessionUtils.getChildRegistrations(registration) />
+                        <#assign args = "["/>
+                        <#list relatedArticles as relatedArticle >
+                            <#assign args = args + relatedArticle.getArticleId() />
+                            <#if relatedArticle_has_next >
+                                <#assign args = args + ","/>
+                            </#if>
+                        </#list>
+                        <#assign args = args + "]"/>
                         <a href="#" data-article-id="${registration.getArticleId()}" class="btn-lg btn-primary add-to-cart" role="button"
-                           aria-pressed="true"  style="color:#fff" onClick="return addRelatedAssets(${args});">
+                           aria-pressed="true"  style="color:#fff" onClick="return addRelatedAssets(this, ${args});">
                           ${languageUtil.get(locale, "shopping.cart.add")}
                         </a>
                     </#if>
@@ -86,8 +93,8 @@
 </div>
 <script>
 
-    addRelatedAssets = function(relatedArticles) {
-        currentArticleId = Number(event.target.getAttribute('data-article-id'));
+    addRelatedAssets = function(e, relatedArticles) {
+        currentArticleId = Number(e.getAttribute('data-article-id'));
         currentBeingAdded =  !shoppingCart._contains(currentArticleId, 'registration');
 
         relatedArticles.forEach(function(relatedArticleId){

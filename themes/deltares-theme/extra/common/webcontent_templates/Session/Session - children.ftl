@@ -2,16 +2,13 @@
 <#assign portletName = themeDisplay.getPortletDisplay().getPortletName() >
 <#if !(portletName?ends_with("SearchResultsPortlet")) >
 
-    Child items should be shown below
-
     <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
     <#assign dsdSessionUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdSessionUtils") />
     <#assign dsdJournalArticleUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdJournalArticleUtils") />
     <#assign articleId = .vars['reserved-article-id'].getData() />
     <#assign urltitle=.vars['reserved-article-url-title'].data />
     <#assign registration = dsdParserUtils.getRegistration(groupId,articleId) />
-    <#assign relatedArticleIds = dsdParserUtils.getRelatedArticles(groupId,articleId) />
-
+    <#assign childRegistrations = dsdSessionUtils.getChildRegistrations(registration) />
     <#assign displayContext = dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay) />
     <#assign timeZoneId = registration.getTimeZoneId() />
     <#assign timeZone = timeZoneUtil.getTimeZone(timeZoneId) />
@@ -30,8 +27,7 @@
 
     <#assign calDescription = "">
 
-    <#assign price = registration.getPrice() />
-    <#assign vat = registration.getVAT() />
+    <#assign price = 0 />
     <#if registration.getCapacity() == 0 >
         <#assign available = ""  />
     <#else>
@@ -40,21 +36,19 @@
     </#if>
     <#assign locale = themeDisplay.getLocale() />
     <#assign cancellationExceeded = registration.isCancellationPeriodExceeded() />
+    <#assign isRegistered = displayContext.isUserRegistered() />
+    <#list childRegistrations as child >
 
-    <#list relatedArticleIds as relatedArticleId >
-
-        <#assign child = dsdParserUtils.getRegistration(groupId,relatedArticleId) />
+        <#assign price = price + child.getPrice() />
         <#assign displayContext = dsdParserUtils.getDisplayContextInstance(child.getArticleId(), themeDisplay) />
         <#assign showButtons = displayContext.canUserRegister() && themeDisplay.isSignedIn() />
         <div class="row no-gutters">
             <div class="col-2">
-                <img class="img-fluid" src="${displayContext.getSmallImageURL()}" alt="${registration.getTitle()}"/>
+                <img class="img-fluid" src="${displayContext.getSmallImageURL()}" alt="${child.getTitle()}"/>
             </div>
             <div class="col-10 px-3">
                 <h4>
-                    <a href="${displayContext.getViewURL(child)}" >
-                        <strong>${child.getTitle()}</strong>
-                    </a>
+                    <strong>${child.getTitle()}</strong>
                 </h4>
                 <div>
                     <#assign count = displayContext.getPresenterCount()/>
@@ -73,7 +67,44 @@
                         </#list>
                     </#if>
                     <span class="c-sessions__item__time-date-place__time">
-                  ${displayContext.getStartTime()} - ${displayContext.getEndTime()} (${timeZoneId})
+
+                    <#if child.isMultiDayEvent() >
+                        <#if child.isDaily() >
+                            <#assign dateString = dateUtil.getDate(child.getStartTime(), "dd MMM yyyy", locale, timeZone)
+                            + "&nbsp;-&nbsp;" + dateUtil.getDate(child.getEndTime(), "dd MMM yyyy", locale, timeZone) />
+                            <#assign timeString = displayContext.getStartTime() + "&nbsp;-&nbsp;" +  displayContext.getEndTime() + " (" + timeZoneId + ")" />
+                            <span class="c-sessions__item__time-date-place__date">
+                                ${dateString}
+                            </span>
+                            <span class="c-sessions__item__time-date-place__time">
+                                ${timeString}
+                            </span>
+                        <#else>
+                            <#assign periods = child.getStartAndEndTimesPerDay() />
+                            <#list periods as period >
+                                <#assign dateString = dateUtil.getDate(period.getStartDate(), "dd MMM yyyy", locale, timeZone) />
+                                <#assign timeString = dateUtil.getDate(period.getStartDate(), "HH:mm", locale, timeZone)
+                                + "&nbsp;-&nbsp;" + dateUtil.getDate(period.getEndDate(), "HH:mm", locale, timeZone)
+                                + " (" + timeZoneId + ")" />
+                                <span class="c-sessions__item__time-date-place__date">
+                                    ${dateString}
+                                </span>
+                                <span class="c-sessions__item__time-date-place__time">
+                                    ${timeString}
+                                </span>
+                            </#list>
+                        </#if>
+                    <#else>
+                        <#assign dateString = dateUtil.getDate(child.getStartTime(), "dd MMM yyyy", locale, timeZone) />
+                        <#assign timeString = displayContext.getStartTime() + "&nbsp;-&nbsp;" + displayContext.getEndTime() + " (" + timeZone.getID() + ")" />
+                        <span class="c-sessions__item__time-date-place__date">
+                            ${dateString}
+                        </span>
+                        <span class="c-sessions__item__time-date-place__time">
+                            ${timeString}
+                        </span>
+                    </#if>
+
                  </span>|
                     <#if displayContext.getPrice() gt 0 >
                         ${displayContext.getCurrency()} ${displayContext.getPrice()}
@@ -94,9 +125,9 @@
                      <a href="${displayContext.getUnregisterURL(renderRequest) }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
                             ${languageUtil.get(locale, "registrationform.unregister")}
                      </a>
-                   <#elseif available gt 0 >
+                   <#elseif !isRegistered && available gt 0 >
                        <a href="#" data-article-id="${child.getArticleId()}" class="btn-lg btn-primary add-to-cart btn-child" role="button"
-                          aria-pressed="true"  style="color:#fff">
+                           aria-pressed="true"  style="color:#fff" onClick="return addParentAsset(this, ${registration.getArticleId()});">
                        ${languageUtil.get(locale, "shopping.cart.add")}
                      </a>
                    </#if>
@@ -106,4 +137,20 @@
             </div>
         </div>
     </#list>
+
+    <script>
+
+        let main_price = document.getElementById("${articleId}_price")
+        main_price.innerHTML = "${price}"
+
+        addParentAsset = function(e, parentArticleId) {
+            currentArticleId = Number(e.getAttribute('data-article-id'));
+            currentBeingAdded =  !shoppingCart._contains(currentArticleId, 'registration');
+
+            parentBeingAdded = !shoppingCart._contains(parentArticleId, 'registration');
+            if (currentBeingAdded && parentBeingAdded){
+                shoppingCart._addToCart(parentArticleId, 'registration');
+            }
+        };
+    </script>
 </#if>

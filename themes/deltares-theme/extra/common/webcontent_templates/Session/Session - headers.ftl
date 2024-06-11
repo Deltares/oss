@@ -25,8 +25,6 @@
     </#if>
 
     <#assign calDescription = "">
-
-    <#assign price = registration.getPrice() />
     <#assign vat = registration.getVAT() />
     <#if registration.getCapacity() == 0 >
         <#assign available = ""  />
@@ -42,12 +40,8 @@
 
                 <div class="data-section">
                     <div class="c-sessions__item__date">
-                        <#if registration.isToBeDetermined() >
-                            <span></span>
-                        <#else>
-                            <span>${dateUtil.getDate(registration.getStartTime(), "dd", locale, timeZone)}</span>
-                            ${dateUtil.getDate(registration.getStartTime(), "MMM", locale, timeZone)}
-                        </#if>
+                        <span>${dateUtil.getDate(registration.getStartTime(), "dd", locale, timeZone)}</span>
+                        ${dateUtil.getDate(registration.getStartTime(), "MMM", locale, timeZone)}
                     </div>
                     <h3 class="c-sessions__item__title h1">${registration.getTitle()}</h3>
 
@@ -85,10 +79,6 @@
                                 </span>
                                 </#list>
                             </#if>
-                        <#elseif registration.isToBeDetermined() >
-                            <span class="c-sessions__item__time-date-place__date">
-                            ${languageUtil.get(locale, "dsd.theme.session.tobedetermined")}
-                        </span>
                         <#else>
                             <#assign dateString = dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale, timeZone) />
                             <#assign timeString = displayContext.getStartTime() + "&nbsp;-&nbsp;" + displayContext.getEndTime() + " (" + timeZone.getID() + ")" />
@@ -101,26 +91,18 @@
                         </#if>
 
                         <span class="c-sessions__item__time-date-place__place">
-                        <dev class="items-line">
+                        <div class="items-line">
                         <img src="${themeDisplay.getPathThemeImages()}/dsd/${registration.getType()?lower_case}.png"
                              alt=""> &nbsp; ${typeDisplayName} </img>
-                         </dev>
+                         </div>
                         <#assign calDescription += typeDisplayName + "<br/>"/>
-                        <br/>
-                        <br/>
-                        ${registration.getCurrency()}
-                            <#assign calDescription += registration.getCurrency()/>
-                            <#if price == 0 >
-                                ${languageUtil.get(locale, "dsd.theme.session.free")}
-                                <#assign calDescription += (languageUtil.get(locale, "dsd.theme.session.free") + "<br/>") />
-                            <#elseif vat == 0 >
-                                ${registration.getPrice()}
-                                <#assign calDescription += (registration.getPrice() + "<br/>") />
-                            <#else>
+                        <div class="items-line">
+                            ${registration.getCurrency()} <div id='${articleId}_price'>0</div>
+                            <#if vat gt 0 >
                                 <#assign vatText = languageUtil.get(locale, "dsd.theme.session.vat")?replace("%d", vat) />
-                                ${registration.getPrice()}&nbsp;(${vatText})
-                                <#assign calDescription += (registration.getPrice() + "&nbsp;" +  vatText + "<br/>") />
+                                &nbsp;(${vatText})
                             </#if>
+						</div>
                         <br/>
                         <#if registration.getEventId() gt 0 >
                             <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string, themeDisplay.getLocale()) />
@@ -169,9 +151,16 @@
                         </#if>
                         <#else >
                             <#if registration.canUserRegister(user.getUserId()) && themeDisplay.isSignedIn() && available gt 0>
-                                <#assign relatedArticles =  dsdParserUtils.getRelatedArticles(themeDisplay.getSiteGroupId(), registration.getArticleId()) />
-                                <#assign args = "[" + relatedArticles?join(",") + "]"/>
-                                <a href="#" data-article-id="${articleId}" class="btn-lg btn-primary add-to-cart" onClick="return addRelatedAssets(${args});"
+                                <#assign relatedArticles = dsdSessionUtils.getChildRegistrations(registration) />
+                                <#assign args = "["/>
+                                <#list relatedArticles as relatedArticle >
+                                    <#assign args = args + relatedArticle.getArticleId() />
+                                    <#if relatedArticle_has_next >
+                                        <#assign args = args + ","/>
+                                    </#if>
+                                </#list>
+                                <#assign args = args + "]"/>
+                                <a href="#" data-article-id="${articleId}" class="btn-lg btn-primary add-to-cart" onClick="return addRelatedAssets(this, ${args});"
                                    role="button" aria-pressed="true">
                                     ${languageUtil.get(locale, "shopping.cart.add")}
                                 </a>
@@ -211,8 +200,8 @@
 
         document.querySelector('.add-to-calendar').appendChild(myCalendar);
 
-        addRelatedAssets = function(relatedArticles) {
-            currentArticleId = Number(event.target.getAttribute('data-article-id'));
+        addRelatedAssets = function(e, relatedArticles) {
+            currentArticleId = Number(e.getAttribute('data-article-id'));
             currentBeingAdded =  !shoppingCart._contains(currentArticleId, 'registration');
 
             relatedArticles.forEach(function(relatedArticleId){
@@ -222,6 +211,7 @@
                 } else if (!currentBeingAdded && !relationBeingAdded) {
                     shoppingCart._removeFromCart(relatedArticleId, 'registration');
                 }
-            });
+            })
+        };
     </script>
 </#if>

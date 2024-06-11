@@ -27,6 +27,7 @@ public abstract class Registration extends AbsDsdArticle {
     private int capacity;
     private float price;
     private boolean open;
+    private boolean hidden;
     private String projectNumber = null;
     private String requiredTeam;
     private String currency = "&#8364"; //euro sign
@@ -34,7 +35,7 @@ public abstract class Registration extends AbsDsdArticle {
     private String topic = "unknown";
     private Registration parentRegistration = null;
     private boolean overlapWithParent = false;
-    private boolean hasParent = true;
+    private boolean hasParent = false;
     Date startTime = new Date(0);
     Date endTime = new Date(0);
     final List<Period> dayPeriods = new ArrayList<>();
@@ -64,6 +65,7 @@ public abstract class Registration extends AbsDsdArticle {
             String currency = getFormFieldValue("currency", true);
             if (currency != null) this.currency = HtmlUtil.escape(currency);
             this.open = Boolean.parseBoolean(getFormFieldValue("open", true));
+            this.hidden = Boolean.parseBoolean(getFormFieldValue("hidden", true));
             this.type = getFormFieldValue("registrationType", false);
             this.topic = getFormFieldValue("topic", false);
             String parentJson = getFormFieldValue("parent", true);
@@ -195,6 +197,10 @@ public abstract class Registration extends AbsDsdArticle {
         return open;
     }
 
+    public boolean isHidden(){
+        return hidden;
+    }
+
     public int getCapacity() {
         return capacity;
     }
@@ -229,6 +235,10 @@ public abstract class Registration extends AbsDsdArticle {
     public Registration getParentRegistration() {
         loadParentRegistration();
         return parentRegistration;
+    }
+
+    public boolean hasParent() {
+        return hasParent;
     }
 
     private void loadParentRegistration() {
