@@ -197,9 +197,13 @@
     }
 
     if (!Liferay.ThemeDisplay.isSignedIn()){
-        var homeUrl = Liferay.ThemeDisplay.getCDNBaseURL();
+
+        var homeUrl = Liferay.ThemeDisplay.getCDNHost();
         var path = Liferay.ThemeDisplay.getLayoutRelativeURL();
         var langPath = path.substring(0, path.lastIndexOf('/'));
+        if (langPath.includes('/web')){
+            langPath = langPath.substring(0, path.lastIndexOf('/web'));
+        }
         document.getElementById('login_link').innerHTML =
             "<b>You must log in before you can download software.</b><a href=" + homeUrl + langPath + "/c/portal/login >Click here to log in</a>"
     }
