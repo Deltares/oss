@@ -7,27 +7,21 @@
 
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
 <%@ page import="nl.deltares.forms.portlet.DsdRegistrationFormConfiguration" %>
-<%@ page import="com.liferay.portal.kernel.util.Validator" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider" %>
 
 <liferay-theme:defineObjects/>
 
 <portlet:defineObjects/>
 <%
 
-    DsdRegistrationFormConfiguration configuration =
-            (DsdRegistrationFormConfiguration)
-                    renderRequest.getAttribute(DsdRegistrationFormConfiguration.class.getName());
+    ConfigurationProvider configurationProvider =
+            (ConfigurationProvider) request.getAttribute(ConfigurationProvider.class.getName());
 
-    String registerSuccessURL = null;
-    String unregisterSuccessURL = null;
-    String updateSuccessURL = null;
-    String failURL = null;
-    if (Validator.isNotNull(configuration)){
-        registerSuccessURL = portletPreferences.getValue("registerSuccessURL", configuration.registerSuccessURL());
-        unregisterSuccessURL = portletPreferences.getValue("unregisterSuccessURL", configuration.unregisterSuccessURL());
-        updateSuccessURL = portletPreferences.getValue("updateSuccessURL", configuration.updateSuccessURL());
-        failURL = portletPreferences.getValue("failURL", configuration.failURL());
-    }
+    DsdRegistrationFormConfiguration configuration = configurationProvider.getGroupConfiguration(DsdRegistrationFormConfiguration.class, themeDisplay.getScopeGroupId());
+
+    final List<String> languageIds = (List<String>) renderRequest.getAttribute("languageIds");
 %>
 
 <liferay-portlet:actionURL
@@ -58,22 +52,36 @@
             <aui:input
                     label="registrationform.successpage"
                     name="registerSuccessURL"
-                    value="<%= registerSuccessURL %>"/>
+                    value="<%= configuration.registerSuccessURL() %>"/>
 
             <aui:input
                     label="registrationform.unregistersuccesspage"
                     name="unregisterSuccessURL"
-                    value="<%= unregisterSuccessURL %>"/>
+                    value="<%= configuration.unregisterSuccessURL() %>"/>
 
             <aui:input
                     label="registrationform.updatesuccesspage"
                     name="updateSuccessURL"
-                    value="<%= updateSuccessURL %>"/>
+                    value="<%= configuration.updateSuccessURL() %>"/>
 
             <aui:input
                     label="registrationform.failpage"
                     name="failURL"
-                    value="<%= failURL %>"/>
+                    value="<%= configuration.failURL() %>"/>
+
+            <%
+                Map<String, String> childHeaderText = (Map<String,String>) renderRequest.getAttribute("childHeaderText");
+                for (String languageId : languageIds) {
+                    String name = "childHeaderText-" + languageId;
+            %>
+            <aui:input
+                    label="registrationform.childheader-text"
+                    prefix="<%=languageId%>"
+                    name="<%=name%>"
+                    value="<%= childHeaderText.get(languageId) %>"/>
+            <%
+                }
+            %>
         </aui:fieldset>
             </div>
         </div>

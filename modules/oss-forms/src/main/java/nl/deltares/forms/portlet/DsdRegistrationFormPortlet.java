@@ -82,8 +82,8 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 				SessionErrors.add(request, "update-attributes-failed", "Error reading user attributes: " + e.getMessage());
 				request.setAttribute("attributes", new HashMap<>());
 			}
+			final String language = themeDisplay.getLocale().getLanguage();
 			try {
-				final String language = themeDisplay.getLocale().getLanguage();
 				DSDSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
 				request.setAttribute("conditionsURL", getLocalizedValue(dsdConfig.conditionsURL(), language));
 				request.setAttribute("privacyURL", getLocalizedValue(dsdConfig.privacyURL(), language));
@@ -93,10 +93,16 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 				request.setAttribute("subscriptionSelection", getSubscriptionSelection(user.getEmailAddress(), mailingIdsList));
 				request.setAttribute("subscribed", subscriptionUtils.isSubscribed(user.getEmailAddress(), mailingIdsList));
 			} catch (Exception e) {
-				LOG.warn("Error getting user subscriptions: " + e.getMessage());
+				LOG.warn("Error getting DSDSiteConfiguration: " + e.getMessage());
 				request.setAttribute("subscribed", false);
 			}
-
+			try {
+				DsdRegistrationFormConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DsdRegistrationFormConfiguration.class, themeDisplay.getScopeGroupId());
+				request.setAttribute("childHeaderText", getLocalizedValue(dsdConfig.childHeaderText(), language));
+			} catch (Exception e) {
+				LOG.warn("Error getting DsdRegistrationFormConfiguration: " + e.getMessage());
+				request.setAttribute("childHeaderText", null);
+			}
 		}
 		String action = ParamUtil.getString(request, "action");
 		String ids = ParamUtil.getString(request, "ids");

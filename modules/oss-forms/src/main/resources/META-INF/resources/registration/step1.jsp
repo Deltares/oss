@@ -3,14 +3,14 @@
 
 <%
     String ddmTemplateKey = (String) request.getAttribute("ddmTemplateKey");
-    String callerAction = (String) request.getAttribute("callerAction");
     DsdSessionUtils dsdSessionUtils = (DsdSessionUtils) request.getAttribute("dsdSessionUtils");
     RegistrationFormDisplayContext registrationFormDisplayContext =
             new RegistrationFormDisplayContext(liferayPortletRequest, liferayPortletResponse,
                     dsdParserUtils, dsdSessionUtils);
 
     List<String> registrationList = (List<String>) request.getAttribute("registrationList");
-    boolean hideButton = true;
+    String childHeaderText = (String) request.getAttribute("childHeaderText");
+    boolean hideButton;
 %>
 
 <%--@elvariable id="registrationList" type="java.util.List"--%>
@@ -80,13 +80,16 @@
                 <%
                     List<Registration> children = registrationFormDisplayContext
                             .getChildRegistrations(scopeGroupId, registrationId);
+                     if (!children.isEmpty() ) {
+                        if (childHeaderText == null || childHeaderText.isEmpty()) { %>
+                            <h3>
+                                <liferay-ui:message key="dsd.registration.step1.child.registrations"/>
+                            </h3>
+                        <% } else { %>
+                            <%= childHeaderText %>
+                        <% }
+                     }
                 %>
-                <% if (!children.isEmpty()) { %>
-                <h3>
-                    <liferay-ui:message key="dsd.registration.step1.child.registrations"/>
-
-                </h3>
-                <% } %>
                 <c:forEach var="childRegistration" items="<%= children %>">
                     <%
                         Registration childRegistration = (Registration) pageContext.getAttribute("childRegistration");
