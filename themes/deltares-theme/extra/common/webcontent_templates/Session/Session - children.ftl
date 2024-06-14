@@ -140,9 +140,6 @@
 
     <script>
 
-        let main_price = document.getElementById("${articleId}_price")
-        main_price.innerHTML = "${price}"
-
         addParentAsset = function(e, parentArticleId) {
             currentArticleId = Number(e.getAttribute('data-article-id'));
             currentBeingAdded =  !shoppingCart._contains(currentArticleId, 'registration');

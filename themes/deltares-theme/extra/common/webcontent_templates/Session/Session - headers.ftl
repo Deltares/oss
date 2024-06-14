@@ -97,7 +97,7 @@
                          </div>
                         <#assign calDescription += typeDisplayName + "<br/>"/>
                         <div class="items-line">
-                            ${registration.getCurrency()} <div id='${articleId}_price'>0</div>
+                            ${registration.getCurrency()} <div id='${articleId}_price'>${registration.getPrice()}</div>
                             <#if vat gt 0 >
                                 <#assign vatText = languageUtil.get(locale, "dsd.theme.session.vat")?replace("%d", vat) />
                                 &nbsp;(${vatText})

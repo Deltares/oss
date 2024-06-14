@@ -5,15 +5,20 @@
 <#assign displayContext = dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay) />
 <#assign registration = dsdParserUtils.getRegistration(groupId,articleId) />
 <#assign timeZoneId = registration.getTimeZoneId() />
+<#assign hidden = registration.isHidden() />
 <div class="row no-gutters">
     <div class="col-2">
         <img class="img-fluid" src="${displayContext.getSmallImageURL()}"/>
     </div>
     <div class="col-10 px-3">
         <h4>
-            <a href="-/${urltitle}" target="_blank">
+            <#if hidden >
                 <strong>${title}</strong>
-            </a>
+            <#else>
+                <a href="-/${urltitle}" target="_blank">
+                    <strong>${title}</strong>
+                </a>
+            </#if>
         </h4>
         <div>
             <#if registration.isMultiDayEvent() >

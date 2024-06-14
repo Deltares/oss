@@ -7,6 +7,7 @@
 <#assign registration = displayContext.getRegistration() />
 <#assign timeZoneId = registration.getTimeZoneId() />
 <#assign showButtons = displayContext.canUserRegister() && themeDisplay.isSignedIn() />
+<#assign redirectUrl= themeDisplay.getSiteGroup().getDisplayURL(themeDisplay) + "/program" />
 
 <#if registration.isMultiDayEvent() >
     <#assign title = displayContext.getTitle() />
@@ -21,7 +22,7 @@
     </div>
     <div class="col-10 px-3">
         <h4>
-            <a href="-/${urltitle}" >
+            <a href="-/${urltitle}?redirect=${redirectUrl}" >
                 <strong>${title}</strong>
             </a>
         </h4>
@@ -32,7 +33,7 @@
                     <div class="items-line">
                         <#assign imageUrl = displayContext.getPresenterSmallImageURL(i) />
                         <#if imageUrl?has_content >
-                            <img width="32" class="expert-thumbnail" src="${imageUrl}"/>
+                            <img width="32" class="expert-thumbnail" src="${imageUrl}" alt="expert-thumbnail"/>
                         </#if>
                         <#assign name = displayContext.getPresenterName(i) />
                         <#if name?has_content>
