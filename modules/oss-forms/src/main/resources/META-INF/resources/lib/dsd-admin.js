@@ -22,6 +22,11 @@ DsdAdminFormsUtil = {
         this.callDownloadRegistrations(resourceUrl, namespace, action, removeMissing);
     },
 
+    clearCache: function (resourceUrl, namespace) {
+        CommonFormsUtil.clearError(namespace);
+        this.callClearCache(resourceUrl, namespace, "clearCache")
+    },
+
     deleteRegistrations: function(resourceUrl, namespace){
         CommonFormsUtil.clearError(namespace);
         let eventArticleId = document.getElementById( namespace + "articleId").value;
@@ -46,6 +51,24 @@ DsdAdminFormsUtil = {
         }
     },
 
+    callClearCache : function (resourceUrl, namespace, action){
+
+        let A = new AUI();
+        A.io.request(resourceUrl + '&' + namespace + 'action=' + action, {
+            on : {
+                success : function(response, status, xhr) {
+                    if (xhr.status > 299){
+                        CommonFormsUtil.writeError(namespace,xhr.status + ':' + xhr.responseText);
+                    } else if (xhr.status === 200){
+                        document.getElementById(namespace + "cacheSize").value = 0;
+                    }
+                },
+                failure : function(response, status, xhr) {
+                    CommonFormsUtil.writeError(namespace, xhr.status + ': ' + xhr.responseText);
+                }
+            }
+        });
+    },
     callDownloadRegistrations : function (resourceUrl, namespace, action, removeMissing){
 
         CommonFormsUtil.setActionButtons(this.getActionButtons());

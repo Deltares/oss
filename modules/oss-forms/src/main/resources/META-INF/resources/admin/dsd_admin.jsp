@@ -14,6 +14,7 @@
 <%
     List<JournalArticle> events = (List<JournalArticle>) renderRequest.getAttribute("events");
     List<Integer> years = (List<Integer>) renderRequest.getAttribute("years");
+    Long cacheSize = (Long) renderRequest.getAttribute("cache_size");
 %>
 
 <span id="<portlet:namespace/>group-message-block"></span>
@@ -117,6 +118,27 @@
         </aui:fieldset>
     </aui:form>
     <hr>
+    <aui:form name="dsdCacheControl" enctype="multipart/form-data" >
+        <aui:fieldset >
+            <aui:row>
+                <aui:col width="50" >
+                    <div class="panel-title" > <liferay-ui:message key="dsd.admin.clearCache"/>  </div>
+                </aui:col>
+                <aui:col width="20">
+                    <div class="control-label" > <liferay-ui:message key="dsd.admin.cacheSize"/>  </div>
+                </aui:col>
+                <aui:col width="25">
+                    <aui:row>
+                        <aui:input name="cacheSize" value="<%= cacheSize %>" label="" readOnly="readOnly" />
+                    </aui:row>
+                </aui:col>
+                <aui:col width="5">
+                    <aui:button name="clearCacheButton"  type="submit" value="dsd.admin.clear" />
+                </aui:col>
+            </aui:row>
+        </aui:fieldset>
+    </aui:form>
+    <hr>
     <aui:row>
         <aui:col width="100">
             <div id="<portlet:namespace/>progressBar" style="height:10px;display:none; "></div>
@@ -148,6 +170,11 @@
     deleteRegistrationsButton.addEventListener('click', function (ev) {
         ev.preventDefault();
         DsdAdminFormsUtil.deleteRegistrations("<portlet:resourceURL/>", "<portlet:namespace/>")
+    });
+    let clearCacheButton = document.getElementById('<portlet:namespace/>clearCacheButton');
+    clearCacheButton.addEventListener('click', function (ev) {
+    ev.preventDefault();
+    DsdAdminFormsUtil.clearCache("<portlet:resourceURL/>", "<portlet:namespace/>")
     });
 
     let eventSelection = document.getElementById('<portlet:namespace/>eventSelection');

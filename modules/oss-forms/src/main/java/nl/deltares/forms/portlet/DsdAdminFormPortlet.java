@@ -47,6 +47,9 @@ import java.util.*;
 public class DsdAdminFormPortlet extends MVCPortlet {
 
 	@Reference
+	DsdArticleCache dsdArticleCache;
+
+	@Reference
 	DsdParserUtils dsdParserUtils;
 
 	@Reference
@@ -67,6 +70,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 		try {
 			request.setAttribute("events", getEvents(themeDisplay));
 			request.setAttribute("years", getYears());
+			request.setAttribute("cache_size", dsdArticleCache.getCacheSize());
 		} catch (PortalException e) {
 			request.setAttribute("events", Collections.emptyList());
 		}
@@ -133,7 +137,9 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 			DataRequestManager.getInstance().updateStatus(id, resourceResponse);
 		} else if ("downloadLog".equals(action)){
 			DataRequestManager.getInstance().downloadDataFile(id, resourceResponse);
-		} else {
+		} else if ("clearCache".equals(action)) {
+			dsdArticleCache.clearCache();
+		}else {
 			DataRequestManager.getInstance().writeError("Unsupported Action error: " + action, resourceResponse);
 		}
 	}

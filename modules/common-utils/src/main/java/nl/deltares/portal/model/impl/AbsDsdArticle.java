@@ -176,7 +176,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
         final ArrayList<DDMFormFieldValue> foundFormFieldValues = new ArrayList<>();
         loadFormFieldValues(fieldName, searchList, foundFormFieldValues, false);
 
-        if (foundFormFieldValues.size() == 0){
+        if (foundFormFieldValues.isEmpty()){
             if (optional) return null;
             throw new PortalException(String.format("Could not find required field %s in DSD article %s!", fieldName, getTitle()));
         } else {
@@ -192,7 +192,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
         final ArrayList<DDMFormFieldValue> foundFormFieldValues = new ArrayList<>();
         loadFormFieldValues(fieldName, searchList, foundFormFieldValues, false);
 
-        if (foundFormFieldValues.size() == 0 && !optional){
+        if (foundFormFieldValues.isEmpty() && !optional){
             throw new PortalException(String.format("Could not find required field %s in DSD article %s!", fieldName, getTitle()));
         }
 
@@ -270,10 +270,10 @@ public abstract class AbsDsdArticle implements DsdArticle {
         for (DDMFormFieldValue ddmFormFieldValue : searchList) {
             if (ddmFormFieldValue.getFieldReference().equals(fieldName)){
                 foundList.add(ddmFormFieldValue);
-            } else if(ddmFormFieldValue.getNestedDDMFormFieldValues().size() > 0){
+            } else if(!ddmFormFieldValue.getNestedDDMFormFieldValues().isEmpty()){
                 loadFormFieldValues(fieldName, ddmFormFieldValue.getNestedDDMFormFieldValues(), foundList, singleValue);
             }
-            if (foundList.size() > 0 && singleValue) return;
+            if (!foundList.isEmpty() && singleValue) return;
         }
 
     }

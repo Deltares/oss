@@ -19,10 +19,7 @@ import nl.deltares.portal.configuration.StructureKeyMapConfiguration;
 import nl.deltares.portal.display.context.RegistrationDisplayContext;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.*;
-import nl.deltares.portal.utils.DsdJournalArticleUtils;
-import nl.deltares.portal.utils.DsdParserUtils;
-import nl.deltares.portal.utils.JsonContentUtils;
-import nl.deltares.portal.utils.LayoutUtils;
+import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -47,6 +44,9 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
 
     @Reference
     LayoutUtils layoutUtils;
+
+    @Reference
+    DsdArticleCache cache;
 
     private final Map<Long, Map<String, String>> structureKeyMap = new HashMap<>();
 
@@ -200,6 +200,11 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
 
     public AbsDsdArticle toDsdArticle(JournalArticle journalArticle, Locale locale) throws  PortalException{
 
+        AbsDsdArticle article;
+        if (cache != null){
+            article = cache.findArticle(journalArticle);
+            if (article != null) return article;
+        }
         if (locale == null){
             locale = LocaleUtil.getDefault();
         }
@@ -213,7 +218,6 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
             LOG.warn(String.format("Article %s has invalid structure key %s", journalArticle.getTitle(), parseStructureKey));
         }
 
-        AbsDsdArticle article;
         switch (dsd_structure_key){
             case Session:
                 article = new SessionRegistration(journalArticle, this, locale);
@@ -263,7 +267,9 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
             default:
                 article = new GenericArticle(journalArticle, this, locale);
         }
-
+        if (cache != null){
+            cache.putArticle(journalArticle, article);
+        }
         return article;
     }
 
