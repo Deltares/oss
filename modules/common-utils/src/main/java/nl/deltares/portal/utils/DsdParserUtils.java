@@ -55,6 +55,4 @@ public interface DsdParserUtils {
         return structureKey;
     }
 
-
-    void clearConfigCache(Long groupId, String configKey);
 }

@@ -1,13 +1,16 @@
 package nl.deltares.search.facet.selection;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
+import nl.deltares.portal.utils.DeltaresCacheUtils;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
@@ -19,6 +22,7 @@ import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -47,46 +51,74 @@ import java.util.Optional;
 )
 public class SelectionFacetPortlet extends MVCPortlet {
 
+    @Reference
+    private DeltaresCacheUtils deltaresCacheUtils;
 
-    @Override
-    public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
+
+    private Map<String, Object> getConfiguration(RenderRequest renderRequest) throws PortletException {
 
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+        final String id = themeDisplay.getPortletDisplay().getId();
+        Map<String, Object> portletConfig = deltaresCacheUtils.findPortletConfig(id);
+        if (portletConfig != null) {
+            return portletConfig;
+        }
+
         SelectionFacetConfiguration configuration;
         try {
             configuration = _configurationProvider.getPortletInstanceConfiguration(
-                    SelectionFacetConfiguration.class, themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
+                    SelectionFacetConfiguration.class, themeDisplay.getLayout(), id);
         } catch (ConfigurationException e) {
-            throw new PortletException(String.format("Could not get configuration for portlet '%s': %s", themeDisplay.getPortletDisplay().getId(), e.getMessage()), e);
+            throw new PortletException(String.format("Could not get configuration for portlet '%s': %s", id, e.getMessage()), e);
         }
 
         String structureName = configuration.structureName().toLowerCase();
         String fieldName = configuration.fieldName();
-        String name = structureName + '-' + fieldName; //important to use '-' because this translates to JSP id
+        final String name = structureName + '-' + fieldName;
+        portletConfig = new HashMap<>();
+        portletConfig.put("name", name); //important to use '-' because this translates to JSP id
+        portletConfig.put("fieldName", fieldName);
+        portletConfig.put("structureName", structureName);
+        portletConfig.put("title", FacetUtils.retrieveLanguageFieldValue(configuration.titleMap(), themeDisplay.getLanguageId()));
+        portletConfig.put("titleMap", configuration.titleMap());
 
-        renderRequest.setAttribute("name", name);
-        renderRequest.setAttribute("titleMap", configuration.titleMap());
-        renderRequest.setAttribute("title", FacetUtils.retrieveLanguageFieldValue(configuration.titleMap(), themeDisplay.getLanguageId()));
-
-        PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
-        Optional<String> facetSelection = portletSharedSearchResponse.getParameter(name, renderRequest);
-
-        facetSelection.ifPresentOrElse(s -> renderRequest.setAttribute("selection", s), () ->
-                {
-                  //check for parameter is in namespace of searchResultsPortlet
-                  final String selection = FacetUtils.getIteratorParameter(name, renderRequest);
-                  if (selection != null) renderRequest.setAttribute("selection", selection);
-                }
-        );
+        final Group scopeGroup = themeDisplay.getScopeGroup();
+        long groupId = scopeGroup.getGroupId();
+        portletConfig.put("groupId", groupId);
+        portletConfig.put("siteDefaultLocale", LocaleUtil.fromLanguageId(scopeGroup.getDefaultLanguageId()));
 
         try {
-            Map<String, String> selectionMap = dsdJournalArticleUtils.getStructureFieldOptions(themeDisplay.getSiteGroupId(),
+            portletConfig.put("selectionMap", dsdJournalArticleUtils.getStructureFieldOptions(themeDisplay.getSiteGroupId(),
                     structureName,
-                    fieldName, themeDisplay.getLocale());
-            renderRequest.setAttribute("selectionMap", selectionMap);
+                    fieldName, themeDisplay.getLocale()));
         } catch (PortalException e) {
             throw new PortletException(String.format("Could not get options for field '%s' in structure %s: %s", fieldName, structureName, e.getMessage()), e);
         }
+        deltaresCacheUtils.putPortletConfig(id, portletConfig);
+
+        return portletConfig;
+    }
+
+    @Override
+    public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
+
+        final Map<String, Object> configuration = getConfiguration(renderRequest);
+        final String name = (String) configuration.get("name");
+        renderRequest.setAttribute("name", name);
+        renderRequest.setAttribute("titleMap", configuration.get("titleMap"));
+        renderRequest.setAttribute("title", configuration.get("title"));
+        @SuppressWarnings("unchecked") final Map<String, String> selectionMap = (Map<String, String>) configuration.get("selectionMap");
+        if (selectionMap != null && !selectionMap.isEmpty()) renderRequest.setAttribute("selectionMap", selectionMap);
+
+        PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
+        Optional<String> facetSelection = portletSharedSearchResponse.getParameter(name, renderRequest);
+        facetSelection.ifPresentOrElse(s -> renderRequest.setAttribute("selection", s), () ->
+                {
+                    //check for parameter is in namespace of searchResultsPortlet
+                    renderRequest.setAttribute("selection", FacetUtils.getIteratorParameter(name, renderRequest));
+                }
+        );
+
         super.render(renderRequest, renderResponse);
     }
 

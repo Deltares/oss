@@ -47,7 +47,7 @@ import java.util.*;
 public class DsdAdminFormPortlet extends MVCPortlet {
 
 	@Reference
-	DsdArticleCache dsdArticleCache;
+	DeltaresCacheUtils dsdArticleCache;
 
 	@Reference
 	DsdParserUtils dsdParserUtils;

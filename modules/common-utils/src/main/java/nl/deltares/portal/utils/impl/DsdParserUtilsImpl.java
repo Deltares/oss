@@ -16,6 +16,7 @@ import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import nl.deltares.portal.configuration.StructureKeyMapConfiguration;
+import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.display.context.RegistrationDisplayContext;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.*;
@@ -46,9 +47,8 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
     LayoutUtils layoutUtils;
 
     @Reference
-    DsdArticleCache cache;
+    DeltaresCacheUtils cache;
 
-    private final Map<Long, Map<String, String>> structureKeyMap = new HashMap<>();
 
     @Override
     public Event getEvent(long siteId, String articleId, Locale locale) throws PortalException {
@@ -193,11 +193,6 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
         return toDsdArticle(journalArticle, locale);
     }
 
-    @Override
-    public void clearConfigCache(Long groupId, String configKey) {
-        structureKeyMap.clear();
-    }
-
     public AbsDsdArticle toDsdArticle(JournalArticle journalArticle, Locale locale) throws  PortalException{
 
         AbsDsdArticle article;
@@ -281,20 +276,22 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
             return DsdParserUtils.parseStructureKey(journalArticle);
         }
         final long groupId = ddmStructure.getGroupId();
-        Map<String, String> groupMap = structureKeyMap.get(groupId);
+        final String pid = OssConstants.STRUCTURE_KEY_MAP_CONFIGURATIONS_PID.concat(String.valueOf(groupId));
+        Map<String, Object> groupMap = cache.findPortletConfig(pid);
+
         if (groupMap == null || groupMap.isEmpty()) {
             //Now structure keys are LONG identifiers and need to be mapped.
             StructureKeyMapConfiguration configuration = _configurationProvider.getGroupConfiguration(
                     StructureKeyMapConfiguration.class, groupId);
             try {
-                groupMap = JsonContentUtils.parseJsonToMap(configuration.structureKeyMap());
+                groupMap = new HashMap<>(JsonContentUtils.parseJsonToMap(configuration.structureKeyMap()));
             } catch (JSONException e) {
                 LOG.warn("Error parsing the configured StructureKey map: " + e.getMessage());
                 groupMap = Collections.emptyMap();
             }
-            structureKeyMap.put(groupId, groupMap);
+            cache.putPortletConfig(pid, groupMap);
         }
-        return groupMap.get(String.valueOf(ddmStructure.getStructureId()));
+        return (String) groupMap.get(String.valueOf(ddmStructure.getStructureId()));
     }
 
 }

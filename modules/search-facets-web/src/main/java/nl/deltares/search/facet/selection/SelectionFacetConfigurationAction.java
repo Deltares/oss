@@ -4,13 +4,11 @@ import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.util.ParamUtil;
+import nl.deltares.portal.utils.DeltaresCacheUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.search.util.FacetUtils;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.ConfigurationPolicy;
-import org.osgi.service.component.annotations.Modified;
+import org.osgi.service.component.annotations.*;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -29,6 +27,9 @@ import java.util.Map;
 )
 public class SelectionFacetConfigurationAction extends DefaultConfigurationAction {
 
+    @Reference
+    private DeltaresCacheUtils dsdCache;
+
     @Override
     public void include(PortletConfig portletConfig, HttpServletRequest httpServletRequest,
                         HttpServletResponse httpServletResponse) throws Exception {
@@ -43,6 +44,9 @@ public class SelectionFacetConfigurationAction extends DefaultConfigurationActio
     public void processAction(PortletConfig portletConfig, ActionRequest actionRequest, ActionResponse actionResponse)
             throws Exception {
 
+        String portletResource = ParamUtil.getString(actionRequest, "portletResource");
+        dsdCache.putPortletConfig(portletResource, null);
+
         String structureName = ParamUtil.getString(actionRequest, "structureName");
         setPreference(actionRequest, "structureName", structureName);
         String fieldName = ParamUtil.getString(actionRequest, "fieldName");
@@ -56,10 +60,10 @@ public class SelectionFacetConfigurationAction extends DefaultConfigurationActio
 
     /**
      *
-     * (1)If a method is annoted with @Activate then the method will be called at the time of activation of the component
+     * (1)If a method is annotated with @Activate then the method will be called at the time of activation of the component
      * so that we can perform initialization task
      * <p>
-     * (2) This class is annoted with @Component where we have used configurationPid with id com.proliferay.configuration.DemoConfiguration
+     * (2) This class is annotated with @Component where we have used configurationPid with id com.proliferay.configuration.DemoConfiguration
      * So if we modify any configuration then this method will be called.
      */
     @Activate
