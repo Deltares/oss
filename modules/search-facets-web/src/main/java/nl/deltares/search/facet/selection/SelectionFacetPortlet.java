@@ -9,7 +9,6 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
-import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
 import nl.deltares.portal.utils.DeltaresCacheUtils;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
@@ -17,14 +16,10 @@ import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.Portlet;
-import javax.portlet.PortletException;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
+import javax.portlet.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * @author allan
@@ -36,6 +31,7 @@ import java.util.Optional;
     "com.liferay.portlet.css-class-wrapper=portlet-selection-facet",
     "com.liferay.portlet.display-category=OSS-search",
     "com.liferay.portlet.header-portlet-css=/css/main.css",
+    "com.liferay.portlet.header-portlet-javascript=/js/facet_util.js",
     "com.liferay.portlet.instanceable=true",
     "javax.portlet.display-name=SelectionFacet",
     "javax.portlet.expiration-cache=0",
@@ -100,6 +96,11 @@ public class SelectionFacetPortlet extends MVCPortlet {
     }
 
     @Override
+    public void serveResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws IOException, PortletException {
+        super.serveResource(resourceRequest, resourceResponse);
+    }
+
+    @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 
         final Map<String, Object> configuration = getConfiguration(renderRequest);
@@ -110,14 +111,10 @@ public class SelectionFacetPortlet extends MVCPortlet {
         @SuppressWarnings("unchecked") final Map<String, String> selectionMap = (Map<String, String>) configuration.get("selectionMap");
         if (selectionMap != null && !selectionMap.isEmpty()) renderRequest.setAttribute("selectionMap", selectionMap);
 
-        PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
-        Optional<String> facetSelection = portletSharedSearchResponse.getParameter(name, renderRequest);
-        facetSelection.ifPresentOrElse(s -> renderRequest.setAttribute("selection", s), () ->
-                {
-                    //check for parameter is in namespace of searchResultsPortlet
-                    renderRequest.setAttribute("selection", FacetUtils.getIteratorParameter(name, renderRequest));
-                }
-        );
+        final String selection = FacetUtils.getIteratorParameter(name, renderRequest);
+        if (selection != null) {
+            renderRequest.setAttribute("selection", selection);
+        }
 
         super.render(renderRequest, renderResponse);
     }

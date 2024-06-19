@@ -24,9 +24,8 @@
 
 <aui:script use="deltares-search-facet-util">
 
-	$(document).ready(function () {
-		$("#<portlet:namespace />selection-facet-<%=name%>").change(function () {
-			Liferay.Deltares.FacetUtil.updateQueryString("<portlet:namespace />", "<%=name%>");
-		});
+	let selectionFacet = document.getElementById("<portlet:namespace />selection-facet-<%=name%>");
+   	selectionFacet.addEventListener('change', function() {
+		Liferay.Deltares.FacetUtil.updateQueryString("<portlet:namespace />", "<%=name%>");
 	});
 </aui:script>

@@ -30,7 +30,8 @@
 
 <aui:script use="deltares-search-facet-util">
 
-	$("#<portlet:namespace />checkbox-facet-<%=name%>").change(function () {
+	let facet = document.getElementById("<portlet:namespace />checkbox-facet-<%=name%>");
+	facet.addEventListener('change', function() {
 	Liferay.Deltares.FacetUtil.updateQueryString("<portlet:namespace />", "<%=name%>");
 	});
 </aui:script>

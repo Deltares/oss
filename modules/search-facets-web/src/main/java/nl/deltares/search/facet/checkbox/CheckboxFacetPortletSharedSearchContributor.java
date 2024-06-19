@@ -1,14 +1,8 @@
 package nl.deltares.search.facet.checkbox;
 
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
+import nl.deltares.portal.utils.DeltaresCacheUtils;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
@@ -16,6 +10,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 @Component(
@@ -25,32 +20,32 @@ import java.util.Optional;
 )
 public class CheckboxFacetPortletSharedSearchContributor implements PortletSharedSearchContributor {
 
+    @Reference
+    private DeltaresCacheUtils deltaresCacheUtils;
+
     @Override
     public void contribute(PortletSharedSearchSettings portletSharedSearchSettings) {
-        final Group scopeGroup = portletSharedSearchSettings.getThemeDisplay().getScopeGroup();
-        long groupId = scopeGroup.getGroupId();
-        final Locale siteDefaultLocale = LocaleUtil.fromLanguageId(scopeGroup.getDefaultLanguageId());
-        ThemeDisplay themeDisplay = portletSharedSearchSettings.getThemeDisplay();
-        CheckboxFacetConfiguration _configuration;
-        try {
-            _configuration = _configurationProvider.getPortletInstanceConfiguration(
-                    CheckboxFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
-        } catch (ConfigurationException e) {
-            LOG.debug(String.format("Could not get configuration for portlet '%s': %s", themeDisplay.getPortletDisplay().getId(), e.getMessage()), e);
+
+        final Map<String, Object> portalCache = deltaresCacheUtils.findPortletConfig(portletSharedSearchSettings.getPortletId());
+
+        if (portalCache == null) {
             return;
         }
-        final boolean visible = Boolean.parseBoolean(_configuration.visible());
-        final boolean explicit = Boolean.parseBoolean(_configuration.explicitSearch());
-        String structureName = _configuration.structureName().toLowerCase();
-        String fieldName = _configuration.fieldName();
-        String name = structureName + '-' + fieldName; //important to use '-' because this translates to JSP id
+        final boolean visible = portalCache.get("visible") != null && (Boolean) portalCache.get("visible");
+        final boolean explicit = portalCache.get("explicitSearch") != null && (Boolean) portalCache.get("explicitSearch");
+        String structureName = (String) portalCache.get("structureName");
+        String fieldName = (String) portalCache.get("fieldName");
+        String name = (String) portalCache.get("name"); //important to use '-' because this translates to JSP id
+        final Long groupId = (Long) portalCache.get("groupId");
+        final Locale siteDefaultLocale = (Locale) portalCache.get("siteDefaultLocale");
 
         String selection = null;
         Optional<String> facetSelection = portletSharedSearchSettings.getParameterOptional(name);
         if (facetSelection.isPresent()) {
             selection = facetSelection.get();
         } else if (!visible) {
-            selection = FacetUtils.serializeYesNo(Boolean.parseBoolean(_configuration.defaultValue()));
+            final boolean defaultValue = portalCache.get("defaultValue") != null && (Boolean)portalCache.get("defaultValue");
+            selection = FacetUtils.serializeYesNo(defaultValue);
         }
 
         if (selection != null) {
@@ -73,13 +68,4 @@ public class CheckboxFacetPortletSharedSearchContributor implements PortletShare
 
     @Reference
     private DsdJournalArticleUtils _dsdJournalArticleUtils;
-
-    private ConfigurationProvider _configurationProvider;
-
-    @Reference
-    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
-        _configurationProvider = configurationProvider;
-    }
-
-    private static final Log LOG = LogFactoryUtil.getLog(CheckboxFacetPortletSharedSearchContributor.class);
 }

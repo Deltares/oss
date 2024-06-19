@@ -3,7 +3,6 @@ package nl.deltares.search.facet.date;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
-import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Activate;
@@ -17,7 +16,6 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * @author allan
@@ -55,23 +53,12 @@ public class DateRangeFacetPortlet extends MVCPortlet {
 
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
-        PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
-        Optional<String> startDateOptional = portletSharedSearchResponse.getParameter("startDate", renderRequest);
-        Optional<String> endDateOptional = portletSharedSearchResponse.getParameter("endDate", renderRequest);
 
-        startDateOptional.ifPresentOrElse(s -> renderRequest.setAttribute("startDate", FacetUtils.parseDate(s)), () ->
-                {
-                    //check for parameter is in namespace of searchResultsPortlet
-                    final String startDate = FacetUtils.getIteratorParameter("startDate", renderRequest);
-                    if (startDate != null) renderRequest.setAttribute("startDate", FacetUtils.parseDate(startDate));
-                }
-        );
+        final String startDate = FacetUtils.getIteratorParameter("startDate", renderRequest);
+        if (startDate != null) renderRequest.setAttribute("startDate", FacetUtils.parseDate(startDate));
 
-        endDateOptional.ifPresentOrElse(s -> renderRequest.setAttribute("endDate", FacetUtils.parseDate(s)), () ->
-        {
-            final String startDate = FacetUtils.getIteratorParameter("endDate", renderRequest);
-            if (startDate != null) renderRequest.setAttribute("endDate", FacetUtils.parseDate(startDate));
-        });
+        final String endDate = FacetUtils.getIteratorParameter("endDate", renderRequest);
+        if (endDate != null) renderRequest.setAttribute("endDate", FacetUtils.parseDate(endDate));
 
         super.render(renderRequest, renderResponse);
     }

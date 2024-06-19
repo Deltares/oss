@@ -1,12 +1,14 @@
 package nl.deltares.search.facet.checkbox;
 
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
-import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
+import nl.deltares.portal.utils.DeltaresCacheUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
@@ -17,7 +19,8 @@ import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import java.io.IOException;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author allan
@@ -29,6 +32,7 @@ import java.util.Optional;
                 "com.liferay.portlet.css-class-wrapper=portlet-checkbox-facet",
                 "com.liferay.portlet.display-category=OSS-search",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
+                "com.liferay.portlet.header-portlet-javascript=/js/facet_util.js",
                 "com.liferay.portlet.instanceable=true",
                 "javax.portlet.display-name=CheckboxFacet",
                 "javax.portlet.expiration-cache=0",
@@ -44,11 +48,37 @@ import java.util.Optional;
 )
 public class CheckboxFacetPortlet extends MVCPortlet {
 
+    @Reference
+    private DeltaresCacheUtils deltaresCacheUtils;
 
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException, IOException {
 
+        final Map<String, Object> configuration = getConfiguration(renderRequest);
+
+        final Boolean visible = (Boolean) configuration.getOrDefault("visible", true);
+        renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, visible);
+        final String name = (String) configuration.get("name");
+        renderRequest.setAttribute("name", name);
+        renderRequest.setAttribute("title", configuration.get("title"));
+
+        final String selection = FacetUtils.getIteratorParameter(name, renderRequest);
+        if (selection != null) {
+            renderRequest.setAttribute("selection", selection);
+        }
+
+        super.render(renderRequest, renderResponse);
+    }
+
+    private Map<String, Object> getConfiguration(RenderRequest renderRequest) throws PortletException {
+
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+        final String id = themeDisplay.getPortletDisplay().getId();
+        Map<String, Object> portletConfig = deltaresCacheUtils.findPortletConfig(id);
+        if (portletConfig != null) {
+            return portletConfig;
+        }
+
         CheckboxFacetConfiguration _configuration;
         try {
             _configuration = _configurationProvider.getPortletInstanceConfiguration(
@@ -56,24 +86,27 @@ public class CheckboxFacetPortlet extends MVCPortlet {
         } catch (ConfigurationException e) {
             throw new PortletException(String.format("Could not get configuration for portlet '%s': %s", themeDisplay.getPortletDisplay().getId(), e.getMessage()), e);
         }
-        final boolean visible = Boolean.parseBoolean(_configuration.visible());
-        if (!visible) renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, false);
 
         String structureName = _configuration.structureName().toLowerCase();
         String fieldName = _configuration.fieldName();
         String name = structureName + '-' + fieldName; //important to use '-' because this translates to JSP id
+        portletConfig = new HashMap<>();
+        portletConfig.put("name", name); //important to use '-' because this translates to JSP id
+        portletConfig.put("fieldName", fieldName);
+        portletConfig.put("structureName", structureName);
+        portletConfig.put("title", FacetUtils.retrieveLanguageFieldValue(_configuration.titleMap(), themeDisplay.getLanguageId()));
+        portletConfig.put("titleMap", _configuration.titleMap());
+        portletConfig.put("visible", Boolean.parseBoolean(_configuration.visible()));
+        portletConfig.put("explicitSearch", Boolean.parseBoolean(_configuration.explicitSearch()));
+        portletConfig.put("defaultValue", Boolean.parseBoolean(_configuration.defaultValue()));
 
-        renderRequest.setAttribute("name", name);
-        renderRequest.setAttribute("title", FacetUtils.retrieveLanguageFieldValue(_configuration.titleMap(), themeDisplay.getLanguageId()));
+        final Group scopeGroup = themeDisplay.getScopeGroup();
+        long groupId = scopeGroup.getGroupId();
+        portletConfig.put("groupId", groupId);
+        portletConfig.put("siteDefaultLocale", LocaleUtil.fromLanguageId(scopeGroup.getDefaultLanguageId()));
 
-        PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
-        Optional<String> facetSelection = portletSharedSearchResponse.getParameter(name, renderRequest);
-        if (facetSelection.isPresent()) {
-            String selection = facetSelection.get();
-            renderRequest.setAttribute("selection", selection);
-        }
-
-        super.render(renderRequest, renderResponse);
+        deltaresCacheUtils.putPortletConfig(id, portletConfig);
+        return portletConfig;
     }
 
     @Reference
