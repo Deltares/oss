@@ -121,35 +121,35 @@ public class SearchResultsPortlet extends MVCPortlet {
         final Optional<String> typeOptional = portletSharedSearchResponse.getParameter("session-registrationType", renderRequest);
         typeOptional.ifPresentOrElse(s ->  portletURL.getRenderParameters().setValue("session-registrationType", s), () ->
         {
-            final String iteratorParameter = FacetUtils.getIteratorParameter("session-registrationType", renderRequest);
+            final String iteratorParameter = FacetUtils.getRequestParameter("session-registrationType", renderRequest);
             if (iteratorParameter != null) portletURL.getRenderParameters().setValue("session-registrationType", iteratorParameter);
         });
 
         final Optional<String> topicOptional = portletSharedSearchResponse.getParameter("session-topic", renderRequest);
         topicOptional.ifPresentOrElse(s -> portletURL.getRenderParameters().setValue("session-topic", s),() ->
         {
-            final String iteratorParameter = FacetUtils.getIteratorParameter("session-topic", renderRequest);
+            final String iteratorParameter = FacetUtils.getRequestParameter("session-topic", renderRequest);
             if (iteratorParameter != null) portletURL.getRenderParameters().setValue("session-topic", iteratorParameter);
         });
 
         final Optional<String> startDateOptional = portletSharedSearchResponse.getParameter("startDate", renderRequest);
         startDateOptional.ifPresentOrElse(s -> portletURL.getRenderParameters().setValue("startDate", s),() ->
         {
-            final String iteratorParameter = FacetUtils.getIteratorParameter("startDate", renderRequest);
+            final String iteratorParameter = FacetUtils.getRequestParameter("startDate", renderRequest);
             if (iteratorParameter != null) portletURL.getRenderParameters().setValue("startDate", iteratorParameter);
         });
 
         final Optional<String> endDateOptional = portletSharedSearchResponse.getParameter("endDate", renderRequest);
         endDateOptional.ifPresentOrElse(s -> portletURL.getRenderParameters().setValue("endDate", s), () ->
         {
-            final String iteratorParameter = FacetUtils.getIteratorParameter("endDate", renderRequest);
+            final String iteratorParameter = FacetUtils.getRequestParameter("endDate", renderRequest);
             if (iteratorParameter != null) portletURL.getRenderParameters().setValue("endDate", iteratorParameter);
         });
 
         final Optional<String> languageOptional = portletSharedSearchResponse.getParameter("session-Language", renderRequest);
         languageOptional.ifPresentOrElse(s -> portletURL.getRenderParameters().setValue("session-Language", s), () ->
         {
-            final String iteratorParameter = FacetUtils.getIteratorParameter("session-Language", renderRequest);
+            final String iteratorParameter = FacetUtils.getRequestParameter("session-Language", renderRequest);
             if (iteratorParameter != null) portletURL.getRenderParameters().setValue("session-Language", iteratorParameter);
         });
 

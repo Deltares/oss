@@ -111,7 +111,7 @@ public class SelectionFacetPortlet extends MVCPortlet {
         @SuppressWarnings("unchecked") final Map<String, String> selectionMap = (Map<String, String>) configuration.get("selectionMap");
         if (selectionMap != null && !selectionMap.isEmpty()) renderRequest.setAttribute("selectionMap", selectionMap);
 
-        final String selection = FacetUtils.getIteratorParameter(name, renderRequest);
+        final String selection = FacetUtils.getRequestParameter(name, renderRequest);
         if (selection != null) {
             renderRequest.setAttribute("selection", selection);
         }

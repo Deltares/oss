@@ -54,10 +54,10 @@ public class DateRangeFacetPortlet extends MVCPortlet {
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 
-        final String startDate = FacetUtils.getIteratorParameter("startDate", renderRequest);
+        final String startDate = FacetUtils.getRequestParameter("startDate", renderRequest);
         if (startDate != null) renderRequest.setAttribute("startDate", FacetUtils.parseDate(startDate));
 
-        final String endDate = FacetUtils.getIteratorParameter("endDate", renderRequest);
+        final String endDate = FacetUtils.getRequestParameter("endDate", renderRequest);
         if (endDate != null) renderRequest.setAttribute("endDate", FacetUtils.parseDate(endDate));
 
         super.render(renderRequest, renderResponse);

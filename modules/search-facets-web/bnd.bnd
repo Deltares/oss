@@ -1,6 +1,6 @@
 Bundle-Name: search-facets-web
 Bundle-SymbolicName: nl.deltares.search.facet
-Bundle-Version: 1.0.6
+Bundle-Version: 1.0.7
 Export-Package: nl.deltares.search.facet
 Liferay-JS-Config: /META-INF/resources/js/config.js
 Web-ContextPath: /deltares-search-web

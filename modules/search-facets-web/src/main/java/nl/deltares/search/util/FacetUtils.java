@@ -144,7 +144,7 @@ public class FacetUtils {
      * @param request       Portlet request
      * @return parameter if found else null
      */
-    public static String getIteratorParameter(String parameterName, PortletRequest request) {
+    public static String getRequestParameter(String parameterName, PortletRequest request) {
 
         String searchParam = ((LiferayPortletRequest) request).getOriginalHttpServletRequest().getParameter(parameterName);
         if (searchParam != null) return searchParam;

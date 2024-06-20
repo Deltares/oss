@@ -73,7 +73,7 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
         Optional<String> optional = portletSharedSearchSettings.getParameterOptional(dateField);
         Locale locale = portletSharedSearchSettings.getThemeDisplay().getLocale();
         //check for parameter is in namespace of searchResultsPortlet
-        String dateValue = optional.orElseGet(() -> FacetUtils.getIteratorParameter(dateField, portletSharedSearchSettings.getRenderRequest()));
+        String dateValue = optional.orElseGet(() -> FacetUtils.getRequestParameter(dateField, portletSharedSearchSettings.getRenderRequest()));
 
         if (dateValue != null) {
             try {
