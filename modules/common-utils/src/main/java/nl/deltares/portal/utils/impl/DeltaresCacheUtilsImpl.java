@@ -149,7 +149,8 @@ public class DeltaresCacheUtilsImpl extends BaseModelListener<JournalArticle> im
                     lastCleanup = now;
                     final List<String> keys = _timeToLiveCache.getKeys();
                     for (String key : keys) {
-                        if (_timeToLiveCache.get(key) < now) {
+                        final Long time = _timeToLiveCache.get(key);
+                        if (time != null && time < now) {
                             _portalCache.remove(key);
                             _timeToLiveCache.remove(key);
                         }
