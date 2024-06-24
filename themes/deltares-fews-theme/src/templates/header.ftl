@@ -1,25 +1,13 @@
-<header class="container-fluid-1280" >
-    <div class="pull-right">
-        <#include "${full_templates_path}/user_personal.ftl" />
+<header id="banner" role="banner">
+    <div id="header" class="w-full">
+        <div class="header-container hidden relative flex-col items-center w-full bg-white">
+            <#if has_navigation && is_setup_complete>
+                <#include "${full_templates_path}/navigation.ftl" />
+            </#if>
+        </div>
+        <div class="mobile-container">
+            <#include "${full_templates_path}/mobile_menu.ftl" />
+        </div>
+        <div class="menu-overlay fixed bottom-0 left-0 w-full bg-app-blue--egyptian opacity-0 transition-all duration-200 v-navi-overlay"></div>
     </div>
 </header>
-<header id="banner" role="banner" class="container-fluid-1280">
-    <div id="heading">
-        <#if has_navigation && is_setup_complete>
-            <#include "${full_templates_path}/navigation.ftl" />
-        </#if>
-        
-        <h1 class="site-title">
-            <a class="custom-logo" href="${site_default_url}" title="<@liferay.language_format arguments="${site_name}" key="go-to-x" />">
-                <#if logo_img??>
-                    <img alt="${logo_description}" src="${logo_img}" />
-                <#else>
-                </#if>
-            </a>
-        </h1>
-    </div>
-</header>
-
-
-
-

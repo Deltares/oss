@@ -6,22 +6,31 @@
 /* This file allows you to override default styles in one central location for easier upgrade and maintenance. */
 
 
-// SETTINGS
-@import "settings/fonts/font_opensans";
-
-@import "settings/vars_mixins";
+// Settings
+@import "settings/colors";
+@import "settings/variables";
+@import "settings/fonts";
 @import "settings/type";
+@import "settings/mixins";
 
-// UTILITIES
+// Third party
+@import "lib/tailwind/tailwind-preflight";
+@import "lib/tailwind/tailwind-base";
+@import "lib/tailwind/tailwind-classes";
 
+// Utilities
 @import "utilities/general";
 @import "utilities/color_schemes";
 
-//PAGE OBJECTS
-@import "objects/menu/menu";
+// Global
+@import "global/header";
+@import "global/footer";
+@import "global/layout";
+@import "global/navigation";
+
+// Page objects
 @import "objects/forms/inputs";
 @import "objects/header/page_header";
-@import "objects/footer/footer";
 @import "objects/links/links";
 @import "objects/layouts/layouts";
 @import "objects/portlet/general";
@@ -48,6 +57,11 @@
 @import "objects/site_dir/site_dir";
 @import "objects/announcements/announcements";
 
-//MyDeltares
-@import "menu/menu";
-@import "main/main";
+// MyDeltares
+@import "mydeltares/menu/menu";
+
+// Assets
+@import "assets/bg-gradient";
+@import "assets/mobile-menu";
+@import "assets/control-menu";
+@import "assets/buttons";

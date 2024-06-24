@@ -1,0 +1,50 @@
+// Colors
+$black: #000;
+$white: #fff;
+
+$color-delft-blue: #3F7FA6;
+$color-silver: #e7e7ec;
+$color-gray: #A09E8D;
+$color-dark-gray: #9B9B9B;
+$color-orange: #FF7200;
+$color-glacier: #80A9BF;
+$color-link: #080C80;
+$color-dark-blue: #080C80;
+$color-site-black: #222222;
+$color-light-blue: #E6EEF2;
+$color-alpha-gray: rgba(151, 151, 151, 0.2);
+$color-alpha-blue: rgba(128, 169, 191, 0.2);
+
+// Deltares corporate colors
+$bright-green: #00e399;
+$mid-green: #00C68D;
+$dark-green: #00AB7F;
+$yellow: #FFD434;
+
+$dark-blue: #141e95;
+$bright-blue: #1B32E8;
+$light-blue: #00C2EB;
+$lightest-blue: #F0FCFA;
+
+// Adapted from Deltares corporate site Tailwind css styling
+$text-primary: $black;
+$text-secondary: $dark-blue;
+$text-tertiary: $white;
+$text-quaternary: $bright-green;
+$text-quinary: $dark-green;
+$text-button: $dark-blue;
+$text-button--secondary: $lightest-blue;
+$text-secondary--home: $white;
+$bg-primary: $dark-blue;
+$bg-secondary: $bright-green;
+$bg-tertiary: $lightest-blue;
+$bg-quaternary: $light-blue;
+$bg-quinary: $bright-blue;
+$bg-senary: $mid-green;
+$bg-septenary: $white;
+$bg-button: $yellow;
+$bg-button--hover: $bright-green;
+$bg-button--secondary--hover: $light-blue;
+$bg-homepage: $dark-blue;
+$border-primary: $dark-blue;
+$border-secondary: $bright-green;
