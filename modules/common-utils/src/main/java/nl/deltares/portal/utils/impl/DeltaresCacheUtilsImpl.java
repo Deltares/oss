@@ -126,7 +126,7 @@ public class DeltaresCacheUtilsImpl extends BaseModelListener<JournalArticle> im
         // Cleanup cache every hour
         private static final long CLEANUP_TIME_PERIOD = 3600000;
         private long lastCleanup = System.currentTimeMillis();
-        private boolean clearingCache;
+        private volatile boolean clearingCache;
 
         @Override
         public void notifyEntryPut(PortalCache<String, Object> portalCache, String key, Object value, int timeToLive) throws PortalCacheException {
