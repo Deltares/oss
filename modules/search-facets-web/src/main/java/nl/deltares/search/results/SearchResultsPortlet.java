@@ -6,7 +6,6 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.searcher.SearchRequest;
 import com.liferay.portal.search.searcher.SearchResponse;
@@ -49,9 +48,6 @@ public class SearchResultsPortlet extends MVCPortlet {
     protected DsdParserUtils dsdParserUtils;
 
     @Reference
-    protected Portal portal;
-
-    @Reference
     protected PortletSharedSearchRequest portletSharedSearchRequest;
 
     private ConfigurationProvider _configurationProvider;
@@ -60,7 +56,6 @@ public class SearchResultsPortlet extends MVCPortlet {
     protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
         _configurationProvider = configurationProvider;
     }
-
 
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
@@ -76,7 +71,6 @@ public class SearchResultsPortlet extends MVCPortlet {
         renderRequest.setAttribute("displayTemplate", configuration.displayTemplate());
         final String type = configuration.displayType();
         renderRequest.setAttribute("displayType", type);
-
         final boolean reverseOrder = Boolean.parseBoolean(configuration.reverseOrder());
 
         PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
@@ -102,9 +96,9 @@ public class SearchResultsPortlet extends MVCPortlet {
         Optional<String> keywordsOptional = Optional.ofNullable(searchRequest.getQueryString());
         displayContext.setKeywords(keywordsOptional.orElse(StringPool.BLANK));
         displayContext.setRenderNothing(isRenderNothing(renderRequest, searchRequest));
-
         displayContext.setDelta(deltas);
         displayContext.setPaginationStart((cur - 1) * deltas);
+        displayContext.setTotalHits(searchResponse.getTotalHits());
         displayContext.setResultsDocuments(portletSharedSearchResponse.getDocuments(), type, reverseOrder);
 
         return displayContext;
@@ -112,28 +106,31 @@ public class SearchResultsPortlet extends MVCPortlet {
 
     /**
      * Keep the original search parameters in the iterator url so the other facet portlets can retrieve them
+     *
      * @param portletSharedSearchResponse Search response containing values added by facets
-     * @param renderRequest Render request of search results portlet. Passed by iterator
-     * @param renderResponse Render response of search results portlet. Used to create the next iterator url
+     * @param renderRequest               Render request of search results portlet. Passed by iterator
+     * @param renderResponse              Render response of search results portlet. Used to create the next iterator url
      */
     private void passSearchParametersToResponse(PortletSharedSearchResponse portletSharedSearchResponse, RenderRequest renderRequest, RenderResponse renderResponse) {
         final RenderURL portletURL = renderResponse.createRenderURL();
         final Optional<String> typeOptional = portletSharedSearchResponse.getParameter("session-registrationType", renderRequest);
-        typeOptional.ifPresentOrElse(s ->  portletURL.getRenderParameters().setValue("session-registrationType", s), () ->
+        typeOptional.ifPresentOrElse(s -> portletURL.getRenderParameters().setValue("session-registrationType", s), () ->
         {
             final String iteratorParameter = FacetUtils.getRequestParameter("session-registrationType", renderRequest);
-            if (iteratorParameter != null) portletURL.getRenderParameters().setValue("session-registrationType", iteratorParameter);
+            if (iteratorParameter != null)
+                portletURL.getRenderParameters().setValue("session-registrationType", iteratorParameter);
         });
 
         final Optional<String> topicOptional = portletSharedSearchResponse.getParameter("session-topic", renderRequest);
-        topicOptional.ifPresentOrElse(s -> portletURL.getRenderParameters().setValue("session-topic", s),() ->
+        topicOptional.ifPresentOrElse(s -> portletURL.getRenderParameters().setValue("session-topic", s), () ->
         {
             final String iteratorParameter = FacetUtils.getRequestParameter("session-topic", renderRequest);
-            if (iteratorParameter != null) portletURL.getRenderParameters().setValue("session-topic", iteratorParameter);
+            if (iteratorParameter != null)
+                portletURL.getRenderParameters().setValue("session-topic", iteratorParameter);
         });
 
         final Optional<String> startDateOptional = portletSharedSearchResponse.getParameter("startDate", renderRequest);
-        startDateOptional.ifPresentOrElse(s -> portletURL.getRenderParameters().setValue("startDate", s),() ->
+        startDateOptional.ifPresentOrElse(s -> portletURL.getRenderParameters().setValue("startDate", s), () ->
         {
             final String iteratorParameter = FacetUtils.getRequestParameter("startDate", renderRequest);
             if (iteratorParameter != null) portletURL.getRenderParameters().setValue("startDate", iteratorParameter);
@@ -150,9 +147,9 @@ public class SearchResultsPortlet extends MVCPortlet {
         languageOptional.ifPresentOrElse(s -> portletURL.getRenderParameters().setValue("session-Language", s), () ->
         {
             final String iteratorParameter = FacetUtils.getRequestParameter("session-Language", renderRequest);
-            if (iteratorParameter != null) portletURL.getRenderParameters().setValue("session-Language", iteratorParameter);
+            if (iteratorParameter != null)
+                portletURL.getRenderParameters().setValue("session-Language", iteratorParameter);
         });
-
         renderRequest.setAttribute("iteratorURL", portletURL);
     }
 

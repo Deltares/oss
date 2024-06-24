@@ -96,11 +96,6 @@ public class SelectionFacetPortlet extends MVCPortlet {
     }
 
     @Override
-    public void serveResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws IOException, PortletException {
-        super.serveResource(resourceRequest, resourceResponse);
-    }
-
-    @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 
         final Map<String, Object> configuration = getConfiguration(renderRequest);

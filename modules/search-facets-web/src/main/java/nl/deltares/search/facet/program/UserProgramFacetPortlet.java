@@ -8,7 +8,6 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
@@ -56,8 +55,6 @@ public class UserProgramFacetPortlet extends MVCPortlet {
 
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
-        portletSharedSearchRequest.search(renderRequest);
-
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
         try {
@@ -75,7 +72,7 @@ public class UserProgramFacetPortlet extends MVCPortlet {
 
                 final boolean hasMadeRegistrationsForOthers = dsdSessionUtils.hasUserRegistrationsMadeForOthers(themeDisplay.getUser(),
                         themeDisplay.getSiteGroupId(), configuration.eventId());
-                final boolean hasLink = ! portletConfiguration.linkToRegistrationsPageForOthers().isEmpty();
+                final boolean hasLink = !portletConfiguration.linkToRegistrationsPageForOthers().isEmpty();
                 if (!hasMadeRegistrationsForOthers || !hasLink) {
                     //only add when false otherwise it is always invisible
                     renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, hasMadeRegistrationsForOthers);
@@ -93,8 +90,6 @@ public class UserProgramFacetPortlet extends MVCPortlet {
     @Reference
     private DsdSessionUtils dsdSessionUtils;
 
-    @Reference
-    protected PortletSharedSearchRequest portletSharedSearchRequest;
 
     @Activate
     @Modified

@@ -3,6 +3,8 @@ package nl.deltares.portal.utils;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.search.searcher.SearchRequestBuilder;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -22,6 +24,9 @@ public interface DsdJournalArticleUtils {
     List<JournalArticle> getRegistrationsForPeriod(long companyId, long groupId, Date startTime, Date endTime,
                                                    String[] structureKeys, String dateFieldName, Locale locale) throws PortalException;
     void queryMultipleFieldValues(long groupId, String[] structureKeys, SearchContext searchContext, Locale locale);
+
+    void sortByDDMFieldArrayField(long groupId, String[] structureKeys, String dateFieldName,
+                                  SearchRequestBuilder searchRequestBuilder, Locale locale, boolean ascending);
 
     void queryDdmFieldValue(long groupId, String ddmFieldName, String ddmFieldValue, String[] structureKeys, SearchContext searchContext, Locale locale);
 

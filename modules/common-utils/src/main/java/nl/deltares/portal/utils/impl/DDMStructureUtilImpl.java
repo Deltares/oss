@@ -11,6 +11,9 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.search.query.Queries;
+import com.liferay.portal.search.query.TermsQuery;
+import com.liferay.portal.search.sort.*;
 import nl.deltares.portal.utils.DDMStructureUtil;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -26,6 +29,18 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
     private static final Log LOGGER = LogFactoryUtil.getLog(DDMStructureUtil.class);
     private static final int ALL = QueryUtil.ALL_POS;
 
+    @Override
+    public Sort buildDDMFieldArraySort(String[] structureNames, SortOrder sortOrder) {
+
+        final FieldSort fieldSort = _sorts.field("ddmFieldArray.ddmFieldValueKeyword", sortOrder);
+        final NestedSort nestedSort = _sorts.nested("ddmFieldArray");
+        final TermsQuery terms = _queries.terms("ddmFieldArray.ddmFieldName");
+        terms.addValues((Object[]) structureNames);
+        nestedSort.setFilterQuery(terms);
+        fieldSort.setNestedSort(nestedSort);
+        return fieldSort;
+
+    }
     @Override
     public List<String> getEncodedFieldNamesForStructures(long groupId, String fieldReference, String[] structureNames, Locale locale) {
         List<Optional<DDMStructure>> optionalList = getDDMStructuresByName(groupId, structureNames, locale);
@@ -75,7 +90,7 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
 
     public Optional<DDMStructure> getDDMStructureByName(long groupId, String name, Locale locale) {
         List<Optional<DDMStructure>> ddmStructuresByName = getDDMStructuresByName(groupId, new String[]{name}, locale);
-        return ddmStructuresByName.size() > 0 ? ddmStructuresByName.get(0): Optional.empty() ;
+        return !ddmStructuresByName.isEmpty() ? ddmStructuresByName.get(0): Optional.empty() ;
     }
 
     @Override
@@ -95,7 +110,7 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
     @Override
     public Optional<DDMTemplate> getDDMTemplateByName(long groupId, String name, Locale locale) {
         List<Optional<DDMTemplate>> ddmTemplatesByName = getDDMTemplatesByName(groupId, new String[]{name}, locale);
-        return ddmTemplatesByName.size() > 0? ddmTemplatesByName.get(0): Optional.empty();
+        return !ddmTemplatesByName.isEmpty() ? ddmTemplatesByName.get(0): Optional.empty();
     }
 
     private boolean matchName(String source, String target) {
@@ -131,4 +146,11 @@ public class DDMStructureUtilImpl implements DDMStructureUtil {
 
     @Reference
     private DDMIndexer _ddmIndexer;
+
+    @Reference
+    private Sorts _sorts;
+
+    @Reference
+    private Queries _queries;
+
 }

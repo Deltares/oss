@@ -45,7 +45,6 @@ public class EventFacetPortletSharedSearchContributor implements PortletSharedSe
         }
         String[] eventIds = getEventIds(portletSharedSearchSettings);
         if (eventIds.length > 0) {
-            portletSharedSearchSettings.setPaginationDelta(100); //make sure to always get all event sessions otherwise sorting will not work.
             _dsdJournalArticleUtils.queryDdmFieldValues(groupId, "eventId", eventIds, structureKeys,
                     portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
         }
@@ -57,19 +56,19 @@ public class EventFacetPortletSharedSearchContributor implements PortletSharedSe
         Optional<String> optional = portletSharedSearchSettings.getParameterOptional("eventsList");
         return optional.map(s -> s.split(" ")).orElseGet(() -> {
             String structureList = getConfiguredValue(portletSharedSearchSettings);
-            if (structureList != null && !structureList.isEmpty()){
+            if (structureList != null && !structureList.isEmpty()) {
                 return StringUtil.split(structureList, ' ');
             }
             return new String[0];
         });
     }
 
-    private String getConfiguredValue(PortletSharedSearchSettings portletSharedSearchSettings){
+    private String getConfiguredValue(PortletSharedSearchSettings portletSharedSearchSettings) {
 
         try {
             EventFacetConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(EventFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
             String overrulingEvents = configuration.eventsList();
-            if (overrulingEvents.isEmpty()){
+            if (overrulingEvents.isEmpty()) {
 
                 DSDSiteConfiguration siteConfiguration = _configurationProvider
                         .getGroupConfiguration(DSDSiteConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getSiteGroupId());
@@ -81,6 +80,7 @@ public class EventFacetPortletSharedSearchContributor implements PortletSharedSe
         }
         return null;
     }
+
     @Reference
     private DsdJournalArticleUtils _dsdJournalArticleUtils;
 

@@ -9,6 +9,8 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.*;
 import com.liferay.portal.kernel.util.DateUtil;
+import com.liferay.portal.search.searcher.SearchRequestBuilder;
+import com.liferay.portal.search.sort.SortOrder;
 import nl.deltares.portal.utils.DDMStructureUtil;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DuplicateCheck;
@@ -111,10 +113,17 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
         facet.setFieldNameValues(fieldNameValues.toArray(new String[0]));
         if (startDate != null) facet.setStartSearchDate(DateUtil.getDate(startDate, "yyyy-MM-dd", locale));
         if (endDate != null) facet.setEndSearchDate(DateUtil.getDate(endDate, "yyyy-MM-dd", locale));
-        searchContext.addFacet(facet);
-
     }
 
+    @Override
+    public  void sortByDDMFieldArrayField(long groupId, String[] structureKeys, String dateFieldName,
+                                          SearchRequestBuilder searchRequestBuilder, Locale locale, boolean reverseOrder) {
+
+        final List<String> fieldNameValues = ddmStructureUtil.getEncodedFieldNamesForStructures(groupId, dateFieldName, structureKeys, locale);
+        searchRequestBuilder.sorts(ddmStructureUtil.buildDDMFieldArraySort(fieldNameValues.toArray(new String[0]),
+                reverseOrder ? SortOrder.DESC: SortOrder.ASC));
+
+    }
     @Override
     public void queryDdmFieldValue(long groupId, String searchFieldName, String searchFieldValueKeywordValue,
                                    String[] structureKeys, SearchContext searchContext, Locale locale) {

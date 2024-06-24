@@ -31,6 +31,7 @@ public class SearchResultsPortletDisplayContext implements Serializable {
     private String _keywords;
     private int delta;
     private int totalHits = 0;
+    private int totalLoadedRecords = 0;
     private int paginationStart;
     private List<RegistrationDisplayContext> registrations = Collections.emptyList();
     private List<DsdArticle> dsdArticles = Collections.emptyList();
@@ -66,7 +67,7 @@ public class SearchResultsPortletDisplayContext implements Serializable {
         } else {
             dsdArticles.sort(c);
         }
-        totalHits = dsdArticles.size();
+        totalLoadedRecords = dsdArticles.size();
 
     }
     private void loadRegistrations(List<Document> documents, boolean reverseSortOrder) {
@@ -78,15 +79,15 @@ public class SearchResultsPortletDisplayContext implements Serializable {
         } else {
             registrations.sort(c);
         }
-        totalHits = registrations.size();
+        totalLoadedRecords = registrations.size();
     }
 
     private int getEndIndex() {
-        return Math.min(paginationStart + delta, totalHits);
+        return totalLoadedRecords;
     }
 
     private int getStartIndex() {
-        return paginationStart >= totalHits ? 0 : paginationStart;
+        return 0;
     }
 
     public String getKeywords() {
@@ -118,6 +119,9 @@ public class SearchResultsPortletDisplayContext implements Serializable {
         this.delta = delta;
     }
 
+    public void setTotalHits(int totalHits) {
+        this.totalHits = totalHits;
+    }
     public void setPaginationStart(int paginationStart) {
         this.paginationStart = paginationStart;
     }
