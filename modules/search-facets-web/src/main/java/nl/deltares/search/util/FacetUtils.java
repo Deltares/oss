@@ -19,6 +19,7 @@ import nl.deltares.portal.utils.JsonContentUtils;
 import javax.portlet.ActionRequest;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -146,11 +147,15 @@ public class FacetUtils {
      */
     public static String getRequestParameter(String parameterName, PortletRequest request) {
 
-        String searchParam = ((LiferayPortletRequest) request).getOriginalHttpServletRequest().getParameter(parameterName);
+        //Does the parameter exist for current namespace
+        String searchParam = ParamUtil.getString(request, parameterName, null);
+        if (searchParam != null) return searchParam;
+        final HttpServletRequest originalHttpServletRequest = ((LiferayPortletRequest) request).getOriginalHttpServletRequest();
+        searchParam = originalHttpServletRequest.getParameter(parameterName);
         if (searchParam != null) return searchParam;
 
-        //Does the parameter exist for current namespace
-        searchParam = ParamUtil.getString(request, parameterName, null);
-        return searchParam;
+        final String pPId = originalHttpServletRequest.getParameter("p_p_id");
+        return originalHttpServletRequest.getParameter("_" + pPId + "_" + parameterName);
+
     }
 }

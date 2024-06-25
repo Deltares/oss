@@ -75,22 +75,18 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
         //check for parameter is in namespace of searchResultsPortlet
         String dateValue = optional.orElseGet(() -> FacetUtils.getRequestParameter(dateField, portletSharedSearchSettings.getRenderRequest()));
 
-        if (dateValue != null) {
-            try {
-                return DateUtil.parseDate("dd-MM-yyyy", dateValue, locale);
-            } catch (ParseException e) {
-                LOG.warn(String.format("Could not parse configured date %s: %s", dateValue, e.getMessage()), e);
-            }
+        if (dateValue == null) {
+            dateValue = getConfiguredValue(dateField, portletSharedSearchSettings);
         }
-        String dateText = getConfiguredValue(dateField, portletSharedSearchSettings);
-        if (dateText != null && !dateText.isEmpty()){
-            try {
-                return DateUtil.parseDate("dd-MM-yyyy", dateText, portletSharedSearchSettings.getThemeDisplay().getLocale());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+        if (dateValue == null || dateValue.isEmpty()) return null;
+
+        try {
+            return DateUtil.parseDate("dd-MM-yyyy", dateValue, locale);
+        } catch (ParseException e) {
+            LOG.warn(String.format("Could not parse configured date %s: %s", dateValue, e.getMessage()), e);
+            return null;
         }
-        return null;
+
     }
 
     private String getConfiguredValue(String key, PortletSharedSearchSettings portletSharedSearchSettings){

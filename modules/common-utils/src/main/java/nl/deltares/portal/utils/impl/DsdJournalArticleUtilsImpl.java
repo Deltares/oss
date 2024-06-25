@@ -113,6 +113,7 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
         facet.setFieldNameValues(fieldNameValues.toArray(new String[0]));
         if (startDate != null) facet.setStartSearchDate(DateUtil.getDate(startDate, "yyyy-MM-dd", locale));
         if (endDate != null) facet.setEndSearchDate(DateUtil.getDate(endDate, "yyyy-MM-dd", locale));
+        searchContext.addFacet(facet);
     }
 
     @Override
