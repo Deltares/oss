@@ -1,5 +1,6 @@
 package nl.deltares.search.facet.checkbox;
 
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
@@ -9,6 +10,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import nl.deltares.portal.utils.DeltaresCacheUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
@@ -54,14 +56,17 @@ public class CheckboxFacetPortlet extends MVCPortlet {
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException, IOException {
 
-        final Map<String, Object> configuration = getConfiguration(renderRequest);
+        ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+        final Map<String, Object> configuration = getConfiguration(themeDisplay);
 
         final Boolean visible = (Boolean) configuration.getOrDefault("visible", true);
         renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, visible);
         final String name = (String) configuration.get("name");
         renderRequest.setAttribute("name", name);
-        renderRequest.setAttribute("title", configuration.get("title"));
-
+        @SuppressWarnings("unchecked") final Map<String, String> titleMap = (Map<String, String>) configuration.get("titleMap");
+        if (titleMap != null) {
+            renderRequest.setAttribute("title", titleMap.getOrDefault(themeDisplay.getLanguageId(), "Checkbox Title"));
+        }
         final String selection = FacetUtils.getRequestParameter(name, renderRequest);
         if (selection != null) {
             renderRequest.setAttribute("selection", selection);
@@ -70,9 +75,8 @@ public class CheckboxFacetPortlet extends MVCPortlet {
         super.render(renderRequest, renderResponse);
     }
 
-    private Map<String, Object> getConfiguration(RenderRequest renderRequest) throws PortletException {
+    private Map<String, Object> getConfiguration(ThemeDisplay themeDisplay) throws PortletException {
 
-        ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
         final String id = themeDisplay.getPortletDisplay().getId();
         Map<String, Object> portletConfig = deltaresCacheUtils.findPortletConfig(id);
         if (portletConfig != null) {
@@ -94,8 +98,11 @@ public class CheckboxFacetPortlet extends MVCPortlet {
         portletConfig.put("name", name); //important to use '-' because this translates to JSP id
         portletConfig.put("fieldName", fieldName);
         portletConfig.put("structureName", structureName);
-        portletConfig.put("title", FacetUtils.retrieveLanguageFieldValue(_configuration.titleMap(), themeDisplay.getLanguageId()));
-        portletConfig.put("titleMap", _configuration.titleMap());
+        try {
+            portletConfig.put("titleMap", JsonContentUtils.parseJsonToMap(_configuration.titleMap()));
+        } catch (JSONException e) {
+            //ignore
+        }
         portletConfig.put("visible", Boolean.parseBoolean(_configuration.visible()));
         portletConfig.put("explicitSearch", Boolean.parseBoolean(_configuration.explicitSearch()));
         portletConfig.put("defaultValue", Boolean.parseBoolean(_configuration.defaultValue()));

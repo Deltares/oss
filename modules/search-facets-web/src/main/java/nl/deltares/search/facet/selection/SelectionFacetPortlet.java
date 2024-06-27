@@ -1,6 +1,7 @@
 package nl.deltares.search.facet.selection;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
@@ -11,6 +12,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import nl.deltares.portal.utils.DeltaresCacheUtils;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
+import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
@@ -51,9 +53,9 @@ public class SelectionFacetPortlet extends MVCPortlet {
     private DeltaresCacheUtils deltaresCacheUtils;
 
 
-    private Map<String, Object> getConfiguration(RenderRequest renderRequest) throws PortletException {
+    private Map<String, Object> getConfiguration(ThemeDisplay themeDisplay) throws PortletException {
 
-        ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
         final String id = themeDisplay.getPortletDisplay().getId();
         Map<String, Object> portletConfig = deltaresCacheUtils.findPortletConfig(id);
         if (portletConfig != null) {
@@ -75,8 +77,11 @@ public class SelectionFacetPortlet extends MVCPortlet {
         portletConfig.put("name", name); //important to use '-' because this translates to JSP id
         portletConfig.put("fieldName", fieldName);
         portletConfig.put("structureName", structureName);
-        portletConfig.put("title", FacetUtils.retrieveLanguageFieldValue(configuration.titleMap(), themeDisplay.getLanguageId()));
-        portletConfig.put("titleMap", configuration.titleMap());
+        try {
+            portletConfig.put("titleMap", JsonContentUtils.parseJsonToMap(configuration.titleMap()));
+        } catch (JSONException e) {
+            //ignore
+        }
 
         final Group scopeGroup = themeDisplay.getScopeGroup();
         long groupId = scopeGroup.getGroupId();
@@ -98,11 +103,14 @@ public class SelectionFacetPortlet extends MVCPortlet {
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 
-        final Map<String, Object> configuration = getConfiguration(renderRequest);
+        ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+        final Map<String, Object> configuration = getConfiguration(themeDisplay);
         final String name = (String) configuration.get("name");
         renderRequest.setAttribute("name", name);
-        renderRequest.setAttribute("titleMap", configuration.get("titleMap"));
-        renderRequest.setAttribute("title", configuration.get("title"));
+        @SuppressWarnings("unchecked") final Map<String, String> titleMap = (Map<String, String>) configuration.get("titleMap");
+        if (titleMap != null) {
+            renderRequest.setAttribute("title", titleMap.getOrDefault(themeDisplay.getLanguageId(), "Checkbox Title"));
+        }
         @SuppressWarnings("unchecked") final Map<String, String> selectionMap = (Map<String, String>) configuration.get("selectionMap");
         if (selectionMap != null && !selectionMap.isEmpty()) renderRequest.setAttribute("selectionMap", selectionMap);
 

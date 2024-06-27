@@ -92,7 +92,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.search.facet",
-    "version" : "1.0.10",
+    "version" : "1.0.11",
     "extension" : "jar"
   },
 
