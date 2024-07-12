@@ -1,9 +1,9 @@
 #content {
-  padding-top: 56px;
+  overflow-x: hidden;
 
   > .inner {
     overflow-x: unset;
-    padding: 2rem 0;
+    padding: 0 0 2rem;
   }
 
   #main-content {
@@ -31,11 +31,9 @@
 
 @media (min-width: 1024px) {
   #content {
-    padding-top: 129px;
-
     > .inner {
       min-height: calc(100vh - 362px - 129px);
-      padding: 4rem 0;
+      padding: 0 0 4rem;
 
       .has-control-menu & {
         min-height: 60vh;

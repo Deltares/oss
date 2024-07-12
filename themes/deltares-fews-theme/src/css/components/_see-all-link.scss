@@ -1,0 +1,7 @@
+.component-see-all-link {
+  a {
+    &:hover {
+      color: $text-secondary;
+    }
+  }
+}

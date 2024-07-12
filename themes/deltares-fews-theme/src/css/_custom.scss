@@ -17,6 +17,7 @@
 @import "lib/tailwind/tailwind-preflight";
 @import "lib/tailwind/tailwind-base";
 @import "lib/tailwind/tailwind-classes";
+@import "lib/tailwind/tailwind-responsive";
 
 // Utilities
 @import "utilities/general";
@@ -27,6 +28,17 @@
 @import "global/footer";
 @import "global/layout";
 @import "global/navigation";
+@import "global/layouttpl";
+@import "global/portlet";
+
+// Assets
+@import "assets/gradients";
+@import "assets/mobile-menu";
+@import "assets/control-menu";
+@import "assets/buttons";
+@import "assets/text-theme-button";
+@import "assets/title-text";
+@import "assets/typography";
 
 // Page objects
 @import "objects/forms/inputs";
@@ -60,8 +72,8 @@
 // MyDeltares
 @import "mydeltares/menu/menu";
 
-// Assets
-@import "assets/bg-gradient";
-@import "assets/mobile-menu";
-@import "assets/control-menu";
-@import "assets/buttons";
+// Components
+@import "components/cta";
+@import "components/page-header";
+@import "components/see-all-link";
+@import "components/spotlight-slider";

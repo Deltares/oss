@@ -1,11 +1,23 @@
 <div class="main-navbar relative flex flex-row order-2 w-full px-10">
-	<div class="site-logo pb-4">
-		<a class="custom-logo inline-block text-app-blue--egyptian" href="${site_default_url}" title="<@liferay.language_format arguments="${site_name}" key="go-to-x" />">
-			<#if logo_img??>
-				<img alt="${logo_description}" class="h-8 w-auto" src="${logo_img}" />
-			<#else>
-			</#if>
-		</a>
+	<div class="logo-desktop">
+		<div class="site-logo pb-4">
+			<a class="custom-logo inline-block text-app-blue--egyptian" href="${site_default_url}" title="<@liferay.language_format arguments="${site_name}" key="go-to-x" />">
+				<#if logo_img??>
+					<img alt="${logo_description}" class="w-auto" src="${logo_img}" />
+				<#else>
+				</#if>
+			</a>
+		</div>
+	</div>
+	<div class="logo-tablet">
+		<div class="site-logo pb-4">
+			<a class="custom-logo inline-block text-app-blue--egyptian" href="${site_default_url}" title="<@liferay.language_format arguments="${site_name}" key="go-to-x" />">
+				<#if logo_img??>
+					<img alt="${logo_description}" class="w-auto" src="${logo_tablet}" />
+				<#else>
+				</#if>
+			</a>
+		</div>
 	</div>
 	<div class="ignore-close flex flex-row items-center w-full">
 		<div class="nav-menu ml-auto">

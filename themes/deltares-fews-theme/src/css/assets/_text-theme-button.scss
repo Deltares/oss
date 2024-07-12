@@ -1,0 +1,15 @@
+.text-theme-button {
+  &:hover {
+    text-decoration: none;
+  }
+
+  .bg-theme-button {
+    padding-bottom: 1.25rem;
+    padding-top: 1.25rem;
+    width: 3.5rem;
+
+    + div {
+      padding: 0.75rem 1.25rem;
+    }
+  }
+}

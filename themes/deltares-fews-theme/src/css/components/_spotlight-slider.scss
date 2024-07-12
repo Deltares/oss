@@ -1,0 +1,197 @@
+.spotlight-slider {
+  .spotlight-gradient {
+    padding-bottom: 1.25rem;
+  }
+
+  a {
+    &:hover,
+    &:focus {
+      text-decoration: none;
+    }
+  }
+
+  picture {
+    img {
+      height: 240px;
+    }
+  }
+
+  .group {
+    &:focus,
+    &:hover {
+      .spotlight-gradient {
+        --gradient: var(--bg-quinary);
+      }
+    }
+  }
+}
+
+.tns-outer {
+  [aria-controls] {
+    background-color: #f0fcfa;
+    border: 0;
+    border-radius: 50%;
+    height: 9px;
+    margin: 0 5px;
+    padding: 0;
+    width: 9px;
+  }
+}
+
+.tns-slider {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tns-nav {
+  display: none;
+
+  button {
+    &.tns-nav-active,
+    &:hover {
+      background-color: #00c68d;
+    }
+  }
+}
+
+.tns-controls {
+  float: left;
+  margin-left: .75rem;
+  position: relative;
+  text-align: center;
+  z-index: 1;
+
+  [aria-controls] {
+    border-radius: 9999px;
+    border-style: solid;
+    border-width: 1px;
+    height: 2.75rem;
+    position: relative;
+    width: 2.75rem;
+    --tw-bg-opacity: 1;
+    background-color: #fff;
+    border-color: #00e399;
+    margin: 0 4px;
+    text-indent: -99999999999px;
+    transition-duration: .2s;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
+    transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+
+    &:after {
+      background-image: url("../images/icons/IconArrowRight--green--caribbean--light.svg");
+      background-position: 50%;
+      background-repeat: no-repeat;
+      background-size: 14px;
+      content: "";
+      height: 100%;
+      left: 0;
+      margin-right: .25rem;
+      padding-right: 1rem;
+      position: absolute;
+      top: 0;
+      transition-duration: .2s;
+      transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
+      transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+      transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
+      transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+      width: 100%;
+    }
+
+    &:hover {
+      background-color: #00e399;
+
+      &:after {
+        background-image: url("../images/icons/IconArrowRight--white.svg");
+      }
+    }
+
+    &[data-controls=prev] {
+      &:after {
+        --tw-rotate: 180deg;
+        transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(180deg) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+        transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+      }
+    }
+  }
+}
+
+@supports (color:rgb(0 0 0/0)) {
+  .tns-controls [aria-controls] {
+    background-color: rgb(255 255 255/var(--tw-bg-opacity));
+  }
+}
+
+@media screen and (min-width: 640px) {
+  .tns-nav {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 608px;
+    text-align: center;
+  }
+}
+
+@media screen and (min-width: 760px) {
+  .tns-inner {
+    margin-left: 16px !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .tns-controls {
+    [aria-controls] {
+      height: 3rem;
+      width: 3rem;
+
+      &:after {
+        background-size: 16px;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .tns-nav {
+    max-width: 736px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .tns-controls {
+    float: none;
+    margin-top: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .tns-controls {
+    [aria-controls] {
+      height: 3.5rem;
+      margin: 0 9px;
+      width: 3.5rem;
+
+      &:after {
+        background-size: 18px;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .tns-nav {
+    max-width: 992px;
+  }
+}
+
+@media screen and (min-width: 1120px) {
+  .tns-nav {
+    max-width: 1088px;
+  }
+}
+
+@media screen and (min-width: 1536px) {
+  .tns-nav {
+    max-width: 1504px;
+  }
+}

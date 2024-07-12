@@ -11,10 +11,14 @@
   }
 
   .site-logo {
-    padding-top: 1.75rem;
+    padding-top: 1.35rem;
 
     a {
       color: $dark-blue;
+    }
+
+    img {
+      height: 2.8rem;
     }
   }
 }
@@ -29,6 +33,20 @@
         transform: none;
       }
     }
+
+    .logo-tablet {
+      display: none;
+    }
+
+    .mobile-container {
+      .site-logo {
+        padding: 0.125rem 0.5rem;
+
+        img {
+          height: 2.29rem;
+        }
+      }
+    }
   }
 }
 
@@ -40,9 +58,33 @@
 
     .header-container {
       display: flex;
+
+      .site-logo {
+        height: 92.92px;
+      }
     }
 
     .mobile-container {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 1131px) {
+  #header {
+    .logo-desktop {
+      display: none;
+    }
+  }
+}
+
+@media (min-width: 1132px) {
+  #header {
+    .logo-desktop {
+      display: block;
+    }
+
+    .logo-tablet {
       display: none;
     }
   }

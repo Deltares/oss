@@ -1,10 +1,11 @@
 .portlet-title-text {
-    margin: 40px 0;
-    font-weight: 400;
+    @include title-text;
 }
 
 
-.portlet-barebone , .portlet-sans-title {
-    h2.portlet-title-text { display: none;}
+.portlet-barebone,
+.portlet-sans-title {
+    h2.portlet-title-text {
+        display: none;
+    }
 }
-

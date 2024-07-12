@@ -1,4 +1,4 @@
-<header id="banner" role="banner">
+<header id="banner" role="banner" class="z-10">
     <div id="header" class="w-full">
         <div class="header-container hidden relative flex-col items-center w-full bg-white">
             <#if has_navigation && is_setup_complete>

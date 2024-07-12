@@ -34,12 +34,12 @@
                 </div>
                 <div class="right-column">
                     <!--Blog title-->
-                    <h4 class="blog-page__item__meta-data__title h1" ><a class="type-inherit" href="${viewURL}" title="read more about ${entryTitle}">${entryTitle}</a></h4>
+                    <h4 class="blog-page__item__meta-data__title font-medium text-lg lg:text-xl text-theme-secondary mb-3 lg:mb-2"><a class="type-inherit" href="${viewURL}" title="read more about ${entryTitle}">${entryTitle}</a></h4>
+
                     <!--Blog Expert-->
                     <div class="blog-page__item__meta-data__expert">
-
                         <#assign expertExists = false />
-                        <#if cur_selectedExpert?has_content >
+                        <#if cur_selectedExpert?has_content>
                             <#assign cur_webContent_map = cur_selectedExpert?eval />
                             <#assign cur_webContent_classPK = cur_webContent_map.classPK />
                             <#assign article = journalArticleLocalService.fetchLatestArticle(cur_webContent_classPK?number)! />
@@ -49,7 +49,7 @@
                                 ${journalContentUtil.getContent(groupId, article.getArticleId(), viewMode, locale.getLanguage())}
                             </#if>
                         </#if>
-                        <#if !expertExists >
+                        <#if !expertExists>
                             <div class="expert-data">
                                 <#if cur_expertPhoto != "">
                                     <div class="expert-data__image" style="background-image:url(${cur_expertPhoto})">
@@ -65,19 +65,18 @@
                                 </div>
                             </div>
                         </#if>
-                    </div>
-                    <!--Date-->
-                    <p class="blog-page__item__meta-data__date"><span>|</span>${dateUtil.getDate(entry.getPublishDate(), "d MMMM yyyy", locale)}</p>
 
-                    <div class="blog-page__item__meta-data__content">
+                        <!--Date-->
+                        <p class="blog-page__item__meta-data__date"><#if expertExists><span>|</span></#if>${dateUtil.getDate(entry.getPublishDate(), "d MMMM yyyy", locale)}</p>
+                    </div>
+
+                    <div class="blog-page__item__meta-data__content text-sm sm:text-base">
                         <#if cur_summary??>
                             ${cur_summary}
                         <#else>
                             ${stringUtil.shorten(cur_content, 350)}
                         </#if>
                     </div>
-                    <!--Read more-->
-                    <a class="c-card__link regular-text" href="${viewURL}"><span class="link_underline">Read more</span> &gt;</a>
                 </div>
             </div>
         </#list>

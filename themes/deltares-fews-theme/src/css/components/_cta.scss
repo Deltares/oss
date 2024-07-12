@@ -1,0 +1,23 @@
+@media (min-width: 814px) {
+  .cta {
+    > ul {
+      grid-template-columns: 414px 1fr;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .cta {
+    > ul {
+      grid-template-columns: calc(480px + 4rem) 1fr;
+    }
+  }
+}
+
+@media (min-width: 1536px) {
+  .cta {
+    > ul {
+      grid-template-columns: minmax(calc(480px + 4rem), auto) 1fr 1fr;
+    }
+  }
+}
