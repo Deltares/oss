@@ -1,0 +1,444 @@
+{
+  "availableLanguageIds": [
+    "en_US"
+  ],
+  "contentType": "journal",
+  "dataDefinitionFields": [
+    {
+      "customProperties": {
+        "fieldNamespace": "",
+        "visibilityExpression": "",
+        "labelAtStructureLevel": true,
+        "dataType": "boolean",
+        "options": {},
+        "fieldReference": "bannerTypeHomepage",
+        "showAsSwitcher": true
+      },
+      "defaultValue": {},
+      "fieldType": "checkbox",
+      "indexType": "keyword",
+      "indexable": true,
+      "label": {
+        "en_US": "Is homepage banner"
+      },
+      "localizable": true,
+      "name": "Checkbox99012132",
+      "nestedDataDefinitionFields": [],
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "tip": {
+        "en_US": "Note: Homepage banners are larger than regular banners."
+      }
+    },
+    {
+      "customProperties": {
+        "labelAtStructureLevel": true,
+        "confirmationErrorMessage": {
+          "en_US": ""
+        },
+        "hideField": false,
+        "autocomplete": false,
+        "ddmDataProviderInstanceId": [],
+        "dataType": "string",
+        "tooltip": {
+          "en_US": ""
+        },
+        "requireConfirmation": false,
+        "displayStyle": "singleline",
+        "fieldNamespace": "",
+        "visibilityExpression": "",
+        "ddmDataProviderInstanceOutput": [],
+        "options": {},
+        "nativeField": false,
+        "confirmationLabel": {
+          "en_US": ""
+        },
+        "fieldReference": "bannerTitle",
+        "placeholder": {
+          "en_US": ""
+        },
+        "dataSourceType": "",
+        "direction": [
+          "vertical"
+        ]
+      },
+      "defaultValue": {},
+      "fieldType": "text",
+      "indexType": "keyword",
+      "indexable": true,
+      "label": {
+        "en_US": "Banner title"
+      },
+      "localizable": true,
+      "name": "Text00926461",
+      "nestedDataDefinitionFields": [],
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "tip": {
+        "en_US": ""
+      }
+    },
+    {
+      "customProperties": {
+        "labelAtStructureLevel": true,
+        "confirmationErrorMessage": {
+          "en_US": ""
+        },
+        "hideField": false,
+        "autocomplete": false,
+        "ddmDataProviderInstanceId": [],
+        "dataType": "string",
+        "tooltip": {
+          "en_US": ""
+        },
+        "requireConfirmation": false,
+        "displayStyle": "singleline",
+        "fieldNamespace": "",
+        "visibilityExpression": "",
+        "ddmDataProviderInstanceOutput": [],
+        "options": {},
+        "nativeField": false,
+        "confirmationLabel": {
+          "en_US": ""
+        },
+        "fieldReference": "bannerText",
+        "placeholder": {
+          "en_US": ""
+        },
+        "dataSourceType": "",
+        "direction": [
+          "vertical"
+        ]
+      },
+      "defaultValue": {},
+      "fieldType": "text",
+      "indexType": "keyword",
+      "indexable": true,
+      "label": {
+        "en_US": "Banner text"
+      },
+      "localizable": true,
+      "name": "Text02222101",
+      "nestedDataDefinitionFields": [],
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "tip": {
+        "en_US": ""
+      }
+    },
+    {
+      "customProperties": {
+        "labelAtStructureLevel": true,
+        "confirmationErrorMessage": {
+          "en_US": ""
+        },
+        "hideField": false,
+        "autocomplete": false,
+        "ddmDataProviderInstanceId": [],
+        "dataType": "string",
+        "tooltip": {
+          "en_US": ""
+        },
+        "requireConfirmation": false,
+        "displayStyle": "singleline",
+        "fieldNamespace": "",
+        "visibilityExpression": "",
+        "ddmDataProviderInstanceOutput": [],
+        "options": {},
+        "nativeField": false,
+        "confirmationLabel": {
+          "en_US": ""
+        },
+        "fieldReference": "bannerLinkText",
+        "placeholder": {
+          "en_US": ""
+        },
+        "dataSourceType": "",
+        "direction": [
+          "vertical"
+        ]
+      },
+      "defaultValue": {},
+      "fieldType": "text",
+      "indexType": "keyword",
+      "indexable": true,
+      "label": {
+        "en_US": "Banner link text"
+      },
+      "localizable": true,
+      "name": "Text72727099",
+      "nestedDataDefinitionFields": [],
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "tip": {
+        "en_US": ""
+      }
+    },
+    {
+      "customProperties": {
+        "fieldNamespace": "",
+        "visibilityExpression": "",
+        "dataType": "link-to-page",
+        "fieldReference": "bannerInternalLink"
+      },
+      "defaultValue": {},
+      "fieldType": "link_to_layout",
+      "indexType": "keyword",
+      "indexable": true,
+      "label": {
+        "en_US": "Banner internal link"
+      },
+      "localizable": true,
+      "name": "LinkToLayout33725207",
+      "nestedDataDefinitionFields": [],
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "tip": {
+        "en_US": ""
+      }
+    },
+    {
+      "customProperties": {
+        "labelAtStructureLevel": true,
+        "confirmationErrorMessage": {
+          "en_US": ""
+        },
+        "hideField": false,
+        "autocomplete": false,
+        "ddmDataProviderInstanceId": [],
+        "dataType": "string",
+        "tooltip": {
+          "en_US": ""
+        },
+        "requireConfirmation": false,
+        "displayStyle": "singleline",
+        "fieldNamespace": "",
+        "visibilityExpression": "",
+        "ddmDataProviderInstanceOutput": [],
+        "options": {},
+        "nativeField": false,
+        "confirmationLabel": {
+          "en_US": ""
+        },
+        "fieldReference": "bannerExternalLink",
+        "placeholder": {
+          "en_US": ""
+        },
+        "dataSourceType": "",
+        "direction": [
+          "vertical"
+        ]
+      },
+      "defaultValue": {},
+      "fieldType": "text",
+      "indexType": "keyword",
+      "indexable": true,
+      "label": {
+        "en_US": "Banner external link"
+      },
+      "localizable": true,
+      "name": "Text93708493",
+      "nestedDataDefinitionFields": [],
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "tip": {
+        "en_US": "Note: \"Banner internal link\" field will have priority when it's filled in."
+      }
+    },
+    {
+      "customProperties": {
+        "fieldNamespace": "",
+        "visibilityExpression": "",
+        "dataType": "image",
+        "requiredDescription": true,
+        "fieldReference": "bannerImage"
+      },
+      "defaultValue": {},
+      "fieldType": "image",
+      "indexType": "text",
+      "indexable": true,
+      "label": {
+        "en_US": "Banner image"
+      },
+      "localizable": true,
+      "name": "Image69826057",
+      "nestedDataDefinitionFields": [],
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "tip": {
+        "en_US": ""
+      }
+    },
+    {
+      "customProperties": {
+        "labelAtStructureLevel": true,
+        "confirmationErrorMessage": {
+          "en_US": ""
+        },
+        "hideField": false,
+        "autocomplete": false,
+        "ddmDataProviderInstanceId": [],
+        "dataType": "string",
+        "tooltip": {
+          "en_US": ""
+        },
+        "requireConfirmation": false,
+        "displayStyle": "singleline",
+        "fieldNamespace": "",
+        "visibilityExpression": "",
+        "ddmDataProviderInstanceOutput": [],
+        "options": {},
+        "nativeField": false,
+        "confirmationLabel": {
+          "en_US": ""
+        },
+        "fieldReference": "bannerImageCopyright",
+        "placeholder": {
+          "en_US": ""
+        },
+        "dataSourceType": "",
+        "direction": [
+          "vertical"
+        ]
+      },
+      "defaultValue": {},
+      "fieldType": "text",
+      "indexType": "keyword",
+      "indexable": true,
+      "label": {
+        "en_US": "Banner image copyright"
+      },
+      "localizable": true,
+      "name": "Text02138961",
+      "nestedDataDefinitionFields": [],
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "tip": {
+        "en_US": "Note: Label is shown at the right of the banner."
+      }
+    }
+  ],
+  "defaultDataLayout": {
+    "dataLayoutFields": {},
+    "dataLayoutPages": [
+      {
+        "dataLayoutRows": [
+          {
+            "dataLayoutColumns": [
+              {
+                "columnSize": 12,
+                "fieldNames": [
+                  "Checkbox99012132"
+                ]
+              }
+            ]
+          },
+          {
+            "dataLayoutColumns": [
+              {
+                "columnSize": 12,
+                "fieldNames": [
+                  "Text00926461"
+                ]
+              }
+            ]
+          },
+          {
+            "dataLayoutColumns": [
+              {
+                "columnSize": 12,
+                "fieldNames": [
+                  "Text02222101"
+                ]
+              }
+            ]
+          },
+          {
+            "dataLayoutColumns": [
+              {
+                "columnSize": 12,
+                "fieldNames": [
+                  "Text72727099"
+                ]
+              }
+            ]
+          },
+          {
+            "dataLayoutColumns": [
+              {
+                "columnSize": 12,
+                "fieldNames": [
+                  "LinkToLayout33725207"
+                ]
+              }
+            ]
+          },
+          {
+            "dataLayoutColumns": [
+              {
+                "columnSize": 12,
+                "fieldNames": [
+                  "Text93708493"
+                ]
+              }
+            ]
+          },
+          {
+            "dataLayoutColumns": [
+              {
+                "columnSize": 12,
+                "fieldNames": [
+                  "Image69826057"
+                ]
+              }
+            ]
+          },
+          {
+            "dataLayoutColumns": [
+              {
+                "columnSize": 12,
+                "fieldNames": [
+                  "Text02138961"
+                ]
+              }
+            ]
+          }
+        ],
+        "description": {
+          "en_US": ""
+        },
+        "title": {
+          "en_US": ""
+        }
+      }
+    ],
+    "dataRules": [],
+    "description": {},
+    "name": {
+      "en_US": "Banner"
+    },
+    "paginationMode": "single-page"
+  },
+  "defaultLanguageId": "en_US",
+  "description": {},
+  "name": {
+    "en_US": "Banner"
+  },
+  "storageType": "default"
+}

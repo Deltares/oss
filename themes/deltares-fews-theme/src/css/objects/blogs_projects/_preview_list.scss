@@ -1,4 +1,4 @@
-$break-point : 814px;
+$break-point: 814px;
 
 .blog,
 .project {
@@ -94,6 +94,8 @@ $break-point : 814px;
         vertical-align: top;
 
         span {
+            color: var(--text-quaternary);
+            font-weight: bold;
             padding-right: 12px;
         }
     }

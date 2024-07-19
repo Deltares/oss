@@ -1,4 +1,12 @@
-.page-header {
+.component-banner-container {
+  .portlet {
+    > .portlet-content {
+      max-width: inherit;
+    }
+  }
+}
+
+.component-banner {
   margin: calc(-3rem - 1px) -1px -1px;
 
   .content-container {
@@ -10,8 +18,24 @@
       margin-bottom: 1.75rem;
     }
 
+    a {
+      margin-top: -0.5rem;
+
+      &:hover {
+        color: var(--text-secondary--home);
+      }
+
+      svg {
+        margin-right: 0.75rem;
+      }
+    }
+
     p {
       @include reset-font;
+    }
+
+    div + a {
+      margin-top: 1.25rem;
     }
 
     .dash-left {
@@ -27,11 +51,16 @@
     picture {
       position: relative;
     }
+
+    figcaption {
+      padding-left: .75rem;
+      padding-right: .75rem;
+    }
   }
 }
 
 @media (min-width: 768px) {
-  .page-header {
+  .component-banner {
     .content-container {
       padding-left: 2rem;
       padding-right: 2rem;
@@ -44,16 +73,20 @@
 }
 
 @media (min-width: 1024px) {
-  .page-header {
+  .component-banner {
     .content-container {
       padding-left: 4rem;
       padding-right: 4rem;
+    }
+
+    .image-container {
+      height: 500px;
     }
   }
 }
 
 @media (min-width: 1140px) {
-  .page-header {
+  .component-banner {
     .content-container {
       h1 {
         font-size: 76px;
@@ -64,37 +97,45 @@
 }
 
 @media (max-width: 1259px) {
-  .page-header {
+  .component-banner {
     margin: calc(-3rem - 1px) -1rem 0;
   }
 }
 
 @media (min-width: 1536px) {
-  .page-header {
+  .component-banner {
+    &.banner--large {
+      .image-container {
+        height: 800px;
+      }
+    }
+
     .content-container {
       h1 {
         font-size: 76px;
         line-height: 84px;
       }
     }
-
-    .image-container {
-      height: 800px;
-    }
   }
 }
 
 @media (min-width: 2140px) {
-  .page-header {
+  .component-banner {
+    &.banner--large {
+      .image-container {
+        height: 960px;
+      }
+    }
+
     .content-container {
       h1 {
         font-size: 110px;
         line-height: 128px;
       }
+    }
 
-      .image-container {
-        height: 960px;
-      }
+    .image-container {
+      height: 632px;
     }
   }
 }

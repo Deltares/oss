@@ -44,22 +44,3 @@
     }
   }
 }
-
-// Web Content Display homepage overrides
-.portlet-journal-content {
-  .t-1-unrestricted & {
-    .portlet {
-      > .portlet-content {
-        max-width: inherit;
-
-        .journal-content-article {
-          > div {
-            &:not(.page-header) {
-              @include container-styles;
-            }
-          }
-        }
-      }
-    }
-  }
-}

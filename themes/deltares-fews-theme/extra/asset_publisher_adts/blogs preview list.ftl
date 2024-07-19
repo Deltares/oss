@@ -34,7 +34,7 @@
                 </div>
                 <div class="right-column">
                     <!--Blog title-->
-                    <h4 class="blog-page__item__meta-data__title font-medium text-lg lg:text-xl text-theme-secondary mb-3 lg:mb-2"><a class="type-inherit" href="${viewURL}" title="read more about ${entryTitle}">${entryTitle}</a></h4>
+                    <h4 class="blog-page__item__meta-data__title font-medium text-lg lg:text-xl text-theme-secondary mb-3 lg:mb-2"><a class="type-inherit hover:underline focus:underline" href="${viewURL}" title="read more about ${entryTitle}">${entryTitle}</a></h4>
 
                     <!--Blog Expert-->
                     <div class="blog-page__item__meta-data__expert">

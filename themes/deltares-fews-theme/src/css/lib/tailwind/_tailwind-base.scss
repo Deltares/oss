@@ -258,6 +258,30 @@
   font-style: italic;
 }
 
+.hover\:underline:hover {
+  text-decoration: underline;
+}
+
+.hover\:line-through:hover {
+  text-decoration: line-through;
+}
+
+.hover\:no-underline:hover {
+  text-decoration: none;
+}
+
+.focus\:underline:focus {
+  text-decoration: underline;
+}
+
+.focus\:line-through:focus {
+  text-decoration: line-through;
+}
+
+.focus\:no-underline:focus {
+  text-decoration: none;
+}
+
 .leading-tight {
   line-height: 1.25;
 }
