@@ -39,6 +39,7 @@
 @import "assets/text-theme-button";
 @import "assets/title-text";
 @import "assets/typography";
+@import "assets/pagination";
 
 // Page objects
 @import "objects/forms/inputs";
@@ -75,5 +76,6 @@
 // Components
 @import "components/banner";
 @import "components/cta";
+@import "components/news-list";
 @import "components/see-all-link";
 @import "components/spotlight-slider";

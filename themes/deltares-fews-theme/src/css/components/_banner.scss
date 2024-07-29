@@ -1,4 +1,6 @@
 .component-banner-container {
+  margin-bottom: 3rem;
+
   .portlet {
     > .portlet-content {
       max-width: inherit;
@@ -8,6 +10,12 @@
 
 .component-banner {
   margin: calc(-3rem - 1px) -1px -1px;
+
+  &.banner--large {
+    .image-container {
+      height: 632px;
+    }
+  }
 
   .content-container {
     padding-bottom: 2rem;
@@ -46,7 +54,7 @@
   }
 
   .image-container {
-    height: 632px;
+    height: 450px;
 
     picture {
       position: relative;
@@ -74,13 +82,15 @@
 
 @media (min-width: 1024px) {
   .component-banner {
+    &.banner--large {
+      .image-container {
+        min-height: 500px;
+      }
+    }
+
     .content-container {
       padding-left: 4rem;
       padding-right: 4rem;
-    }
-
-    .image-container {
-      height: 500px;
     }
   }
 }
@@ -122,20 +132,16 @@
 @media (min-width: 2140px) {
   .component-banner {
     &.banner--large {
+      .content-container {
+        h1 {
+          font-size: 110px;
+          line-height: 128px;
+        }
+      }
+
       .image-container {
         height: 960px;
       }
-    }
-
-    .content-container {
-      h1 {
-        font-size: 110px;
-        line-height: 128px;
-      }
-    }
-
-    .image-container {
-      height: 632px;
     }
   }
 }

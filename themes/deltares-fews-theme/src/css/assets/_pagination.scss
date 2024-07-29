@@ -1,0 +1,25 @@
+.pagination {
+  line-height: 25px;
+
+  li {
+    margin-left: .75rem;
+    margin-right: 0;
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    a {
+      border-radius: .375rem;
+      color: var(--text-secondary);
+      display: block;
+      padding: .125rem .5rem;
+      transition-duration: .15s;
+
+      &:hover {
+        background-color: $white;
+        text-decoration: none;
+      }
+    }
+  }
+}
