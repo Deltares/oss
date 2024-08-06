@@ -143,6 +143,10 @@
                        type="hidden"
                        value="<%= action %>" />
 
+            <aui:input name="redirect"
+                       type="hidden"
+                       value='<%= renderRequest.getAttribute("redirect") %>' />
+
             <div class="tab-content">
                 <div class="tab-pane active" role="tabpanel" id="stepper-step-1">
                     <%@ include file="step1.jsp" %>

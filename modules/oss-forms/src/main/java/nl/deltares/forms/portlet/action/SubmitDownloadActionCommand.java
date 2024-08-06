@@ -117,33 +117,34 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         }
         if (success) {
             SessionMessages.add(actionRequest, "sendlink-success", new String[]{action, user.getEmailAddress()});
-            redirect = getRedirectURL(themeDisplay, "success");
-            sendRedirect(actionRequest, actionResponse, redirect);
+            String forwardUrl = getRedirectURL(themeDisplay, "success", redirect);
+            sendRedirect(actionRequest, actionResponse, forwardUrl);
         } else {
-            redirect = getRedirectURL(themeDisplay, "fail");
-            sendRedirect(actionRequest, actionResponse, redirect);
+            String forwardUrl = getRedirectURL(themeDisplay, "fail", redirect);
+            sendRedirect(actionRequest, actionResponse, forwardUrl);
         }
 
     }
 
-    private String getRedirectURL(ThemeDisplay themeDisplay, String key) {
+    private String getRedirectURL(ThemeDisplay themeDisplay, String key, String redirectUrl) {
 
         String friendlyUrl = null;
         try {
-            String configuredRedirect = null;
+            String configuredForward = null;
             final DownloadFormConfiguration configuration =  _configurationProvider.getPortletInstanceConfiguration(DownloadFormConfiguration.class, themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
             switch (key){
                 case "success":
-                    configuredRedirect =  configuration.successURL();
+                    configuredForward =  configuration.successURL();
                     break;
                 case "fail":
-                    configuredRedirect =  configuration.failureURL();
+                    configuredForward =  configuration.failureURL();
             }
 
-            if (configuredRedirect == null || configuredRedirect.isEmpty()) {
-                friendlyUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay, themeDisplay.getLocale());
+            if (configuredForward == null || configuredForward.isEmpty()) {
+                friendlyUrl = redirectUrl;
             } else {
-                friendlyUrl = PortalUtil.getAbsoluteURL(themeDisplay.getRequest(), configuredRedirect);
+                friendlyUrl = PortalUtil.getAbsoluteURL(themeDisplay.getRequest(), configuredForward);
+                friendlyUrl += "?redirect=" + redirectUrl;
             }
             LOG.info("Redirecting download request to " + friendlyUrl);
         } catch (PortalException e) {
