@@ -25,7 +25,7 @@ public abstract class AbsDownloadUtilsImpl extends HttpClientUtils implements Do
     protected static final String APP_PW_KEY = "download.app.password";
     protected static final String APP_DEFAULT_KEY = "download.app.default";
 
-    protected String DEFAULT_COUNTRY_CODE = "de";
+    protected String DEFAULT_COUNTRY_CODE;
     protected String AUTH_TOKEN;
     protected HashMap<String, String> AUTH_TOKEN_MAP = new HashMap<>();
     protected String API_PATH;
