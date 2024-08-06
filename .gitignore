@@ -282,3 +282,4 @@ license*.xml
 /node_modules_cache/
 /.yarnrc
 /yarn.lock
+/docker/resources/example-portal-ext.properties
