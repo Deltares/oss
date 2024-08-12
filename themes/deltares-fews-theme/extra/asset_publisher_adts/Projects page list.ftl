@@ -1,3 +1,5 @@
+<#ftl output_format="XML">
+
 <#assign xmlUtils = serviceLocator.findService("nl.deltares.portal.utils.XmlContentUtils") />
 
 <div class="project-page">
@@ -7,9 +9,9 @@
                 <#assign assetRenderer = entry.getAssetRenderer() />
                 <#assign entryTitle = htmlUtil.escape(assetRenderer.getTitle(locale)) />
                 <#assign journalArticle = assetRenderer.getArticle() />
-                <#assign document = xmlUtils.parseContent(journalArticle,locale)/>
+                <#assign document = xmlUtils.parseContent(journalArticle,locale) />
                 <#assign overviewPhotoData = xmlUtils.getDynamicContentByName(document, "ProjectImage", true) />
-                <#assign ProjectImage =  ddlUtils.getFileEntryImage(overviewPhotoData)  />
+                <#assign ProjectImage = ddlUtils.getFileEntryImage(overviewPhotoData) />
                 <#assign viewURL = htmlUtil.escapeHREF(assetPublisherHelper.getAssetViewURL(renderRequest, renderResponse, entry, true)) />
 
                 <div class="left-column small-form">
@@ -28,10 +30,11 @@
                 </div>
                 <div class="right-column small-form">
                     <!--Project title-->
-                    <h4 class="project-page__item__meta-data__title h1"><a class="type-inherit" href="${viewURL}" title="read more about ${entryTitle}">${entryTitle}</a></h4>
+                    <h4 class="project-page__item__meta-data__title font-medium text-lg lg:text-xl text-theme-secondary mb-3 lg:mb-2">
+                        <a class="type-inherit hover:underline focus:underline" href="${viewURL}" title="read more about ${entryTitle}">${entryTitle?no_esc}</a>
+                    </h4>
 
-                    <div class="project-page__item__meta-data__content">
-
+                    <div class="project-page__item__meta-data__content text-sm sm:text-base">
                         <#assign fieldSets = xmlUtils.getDynamicElementsByNameAsList(document, "ProjectSectionHeaderFieldSet") />
                         <#list fieldSets as fieldSet>
                             <#assign projectSectionContent = xmlUtils.getDynamicContentByName(fieldSet, "ProjectSectionHeader", true) />
@@ -39,13 +42,9 @@
                                 <#assign projectSectionContent = projectSectionContent + ": "/>
                             </#if>
                             <#assign projectSectionContent = projectSectionContent + xmlUtils.getDynamicContentByName(fieldSet, "ProjectSectionHTML", false)/>
-
                         </#list>
-
-                        ${stringUtil.shorten(projectSectionContent, 200)}
+                        ${stringUtil.shorten(projectSectionContent, 350)?replace('<[^>]+>','','r')}
                     </div>
-                    <!--Read more-->
-                    <a class="c-card__link regular-text" href="${viewURL}"><span class="link_underline">Read more</span> &gt;</a>
                 </div>
             </div>
         </#list>

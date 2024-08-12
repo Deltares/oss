@@ -1,4 +1,7 @@
+<#ftl output_format="XML">
+
 <#assign xmlUtils = serviceLocator.findService("nl.deltares.portal.utils.XmlContentUtils") />
+
 <div class="bestpractice-page">
     <#if entries?has_content>
         <#list entries as entry>
@@ -11,10 +14,12 @@
 
             <div class="bestpractice-page__item clearfix">
                 <!--Best practice title-->
-                <h4 class="bestpractice-page__item__meta-data__title h1"><a class="type-inherit" href="${viewURL}" title="read more about ${entryTitle}">${entryTitle}</a></h4>
+                <h4 class="bestpractice-page__item__meta-data__title font-medium text-lg lg:text-xl text-theme-secondary mb-3 lg:mb-2">
+                    <a class="type-inherit hover:underline focus:underline" href="${viewURL}" title="read more about ${entryTitle}">${entryTitle?no_esc}</a>
+                </h4>
                 <!--Best practice content-->
-                <div class="bestpractice-page__item__meta-data__content">
-                    ${stringUtil.shorten(cur_content, 286)} <a class="c-card__link regular-text" href="${viewURL}"><span class="link_underline">Read more</span> &gt;</a>
+                <div class="bestpractice-page__item__meta-data__content text-sm sm:text-base">
+                    ${stringUtil.shorten(cur_content, 350)?replace('<[^>]+>','','r')}
                 </div>
             </div>
         </#list>

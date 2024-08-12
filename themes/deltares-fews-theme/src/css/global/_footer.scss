@@ -1,0 +1,158 @@
+#footer {
+  color: $white;
+  position: relative;
+
+  a {
+    color: $white;
+  }
+
+  ul {
+    @include clean-ul;
+    line-height: 25px;
+  }
+
+  .footer-top {
+    background-color: $dark-blue;
+
+    .container {
+      > .row {
+        > div {
+          border-bottom: 1px solid $white;
+          padding: 2rem 0;
+
+          &:last-of-type {
+            border-bottom: 0;
+          }
+        }
+      }
+    }
+
+    .link-list {
+      a {
+        &:hover,
+        &:focus {
+          text-decoration: underline;
+        }
+      }
+
+      svg {
+        margin-right: 0.75rem;
+      }
+    }
+
+    .media-links {
+      a {
+        &:hover {
+          background-color: $bright-green;
+        }
+      }
+    }
+  }
+
+  .footer-bottom {
+    background-color: $bright-blue;
+
+    .container {
+      padding: 0.75rem 0 5rem;
+
+      ul {
+        display: flex;
+        justify-content: flex-end;
+
+        li {
+          a {
+            font-size: inherit;
+            line-height: inherit;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 0) {
+  #footer {
+    .footer-bottom {
+      .container {
+        padding-bottom: 5rem;
+        padding-top: 0.75rem;
+
+        ul {
+          flex-direction: column;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 640px) {
+  #footer {
+    .footer-bottom {
+      .container {
+        padding-bottom: 4rem;
+        padding-top: 0;
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  #footer {
+    margin-bottom: 58px;
+
+    .footer-top {
+      .container {
+        > .row {
+          padding-bottom: 18px;
+          padding-top: 2.75rem;
+
+          > div {
+            border-bottom: 0;
+            padding-left: 1.75rem;
+            padding-right: 1.75rem;
+
+            &:first-of-type {
+              border-right: 1px solid $white;
+            }
+          }
+        }
+      }
+    }
+
+    .footer-bottom {
+      .container {
+        padding-bottom: 0px;
+
+        ul {
+          flex-direction: row;
+
+          li {
+            margin-left: 2.5rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  #footer {
+    margin-bottom: 0;
+
+    .footer-top {
+      .container {
+        > .row {
+          > div {
+            padding-left: 4rem;
+            padding-right: 4rem;
+
+            &:first-of-type,
+            &:nth-of-type(2) {
+              border-right: 1px solid $white;
+            }
+          }
+        }
+      }
+    }
+  }
+}

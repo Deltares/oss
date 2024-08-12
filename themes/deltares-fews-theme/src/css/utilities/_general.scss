@@ -1,21 +1,164 @@
+// Colors in root element
+// Note: must be browser readable values; values are equal to variables found in: settings/_colors.scss
+:root {
+    --text-primary: #000;
+    --text-secondary: #141E95;
+    --text-tertiary: #fff;
+    --text-quaternary: #00E399;
+    --text-quinary: #00AB7F;
+    --text-button: #141E95;
+    --text-button--secondary: #F0FCFA;
+    --text-secondary--home: #fff;
+    --bg-primary: #141E95;
+    --bg-primary__rgb: 20 30 149;
+    --bg-secondary: #00E399;
+    --bg-tertiary: #F0FCFA;
+    --bg-quaternary: #00C2EB;
+    --bg-quinary: #1B32E8;
+    --bg-senary: #00C68D;
+    --bg-septenary: #fff;
+    --bg-octonary: #ededf7;
+    --bg-button: #FFD434;
+    --bg-button--hover: #00E399;
+    --bg-button--secondary--hover: #00C2EB;
+    --bg-homepage: #141E95;
+    --border-primary: #141E95;
+    --border-secondary: #00E399;
+}
 
+// Tailwind variables
+*,:after,:before {
+    --tw-border-spacing-x: 0;
+    --tw-border-spacing-y: 0;
+    --tw-translate-x: 0;
+    --tw-translate-y: 0;
+    --tw-rotate: 0;
+    --tw-skew-x: 0;
+    --tw-skew-y: 0;
+    --tw-scale-x: 1;
+    --tw-scale-y: 1;
+    --tw-pan-x: ;
+    --tw-pan-y: ;
+    --tw-pinch-zoom: ;
+    --tw-scroll-snap-strictness: proximity;
+    --tw-gradient-from-position: ;
+    --tw-gradient-via-position: ;
+    --tw-gradient-to-position: ;
+    --tw-ordinal: ;
+    --tw-slashed-zero: ;
+    --tw-numeric-figure: ;
+    --tw-numeric-spacing: ;
+    --tw-numeric-fraction: ;
+    --tw-ring-inset: ;
+    --tw-ring-offset-width: 0px;
+    --tw-ring-offset-color: #fff;
+    --tw-ring-color: rgba(59,130,246,.5);
+    --tw-ring-offset-shadow: 0 0 transparent;
+    --tw-ring-shadow: 0 0 transparent;
+    --tw-shadow: 0 0 transparent;
+    --tw-shadow-colored: 0 0 transparent;
+    --tw-blur: ;
+    --tw-brightness: ;
+    --tw-contrast: ;
+    --tw-grayscale: ;
+    --tw-hue-rotate: ;
+    --tw-invert: ;
+    --tw-saturate: ;
+    --tw-sepia: ;
+    --tw-drop-shadow: ;
+    --tw-backdrop-blur: ;
+    --tw-backdrop-brightness: ;
+    --tw-backdrop-contrast: ;
+    --tw-backdrop-grayscale: ;
+    --tw-backdrop-hue-rotate: ;
+    --tw-backdrop-invert: ;
+    --tw-backdrop-opacity: ;
+    --tw-backdrop-saturate: ;
+    --tw-backdrop-sepia: ;
+}
+
+::backdrop {
+    --tw-border-spacing-x: 0;
+    --tw-border-spacing-y: 0;
+    --tw-translate-x: 0;
+    --tw-translate-y: 0;
+    --tw-rotate: 0;
+    --tw-skew-x: 0;
+    --tw-skew-y: 0;
+    --tw-scale-x: 1;
+    --tw-scale-y: 1;
+    --tw-pan-x: ;
+    --tw-pan-y: ;
+    --tw-pinch-zoom: ;
+    --tw-scroll-snap-strictness: proximity;
+    --tw-gradient-from-position: ;
+    --tw-gradient-via-position: ;
+    --tw-gradient-to-position: ;
+    --tw-ordinal: ;
+    --tw-slashed-zero: ;
+    --tw-numeric-figure: ;
+    --tw-numeric-spacing: ;
+    --tw-numeric-fraction: ;
+    --tw-ring-inset: ;
+    --tw-ring-offset-width: 0px;
+    --tw-ring-offset-color: #fff;
+    --tw-ring-color: rgba(59,130,246,.5);
+    --tw-ring-offset-shadow: 0 0 transparent;
+    --tw-ring-shadow: 0 0 transparent;
+    --tw-shadow: 0 0 transparent;
+    --tw-shadow-colored: 0 0 transparent;
+    --tw-blur: ;
+    --tw-brightness: ;
+    --tw-contrast: ;
+    --tw-grayscale: ;
+    --tw-hue-rotate: ;
+    --tw-invert: ;
+    --tw-saturate: ;
+    --tw-sepia: ;
+    --tw-drop-shadow: ;
+    --tw-backdrop-blur: ;
+    --tw-backdrop-brightness: ;
+    --tw-backdrop-contrast: ;
+    --tw-backdrop-grayscale: ;
+    --tw-backdrop-hue-rotate: ;
+    --tw-backdrop-invert: ;
+    --tw-backdrop-opacity: ;
+    --tw-backdrop-saturate: ;
+    --tw-backdrop-sepia: ;
+}
+
+// Reset
+body, h1, h2, h3, h4, h5, h6,
+p, blockquote, ul, ol, li,
+table, tr, th, td, form, fieldset,
+legend, button, div, object, img {
+    border: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    vertical-align: top;
+}
+
+*, div, table, tr, th, td, :after, :before {
+    border: 0 solid #e5e7eb;
+}
+
+strong {
+  font-weight: bold;
+}
+
+// Generic styling
 html,
 body {
-    @include font_general;
+    font-family: $default-font;
 }
 
-html {
-    font-size: 62.5%;
-}
-body{
-    font-size: 19px; font-size: 1.9rem;
+body {
     color: $color-site-black;
-    line-height: 32px;
+    font-size: $base-font-size;
 }
 
-.pull-right{
-    float: right !important;
-}
 .flex-row {
     flex-direction: row;
     display: flex;
@@ -34,12 +177,10 @@ body{
     font-weight: 700;
 }
 
-a .underline,
-a .link_underline,
-a .link-underline {
+a.link_underline,
+a.link-underline {
     border-bottom: 1px solid $color-alpha-blue;
     padding-bottom: 7px;
-    pointer-events: none;
 }
 
 .position-sticky {
@@ -52,11 +193,12 @@ a .link-underline {
 }
 
 .clear-margin {
-    @include clear_margin;
+    @include clear-margin;
 }
 
-.clearList, .clear-list {
-    @include cleanUL;
+.clearList,
+.clear-list {
+    @include clean-ul;
 }
 
 .display-block {

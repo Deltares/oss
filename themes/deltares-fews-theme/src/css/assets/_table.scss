@@ -1,0 +1,161 @@
+// Ported from Deltares web site
+table {
+  border: none;
+  margin: 0;
+  padding: 0;
+  table-layout: fixed;
+  width: 100%;
+
+  caption {
+    font-size: 16px;
+    margin: 8px 12px;
+  }
+
+  tr {
+    padding: 0;
+  }
+
+  thead th {
+    font-family: Franca, Helvetica, Arial, sans-serif;
+    --tw-text-opacity: 1;
+    color: #141e95;
+    font-size: 14px;
+    text-align: left;
+  }
+
+  thead td,
+  thead th {
+    border-bottom-color: #141e95;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    --tw-border-opacity: 1;
+    border-left-color: #f4f4f5;
+    padding: .5rem 1rem;
+  }
+
+  tbody td,
+  tbody th {
+    font-size: 14px;
+    padding: .5rem 1rem;
+    text-align: left;
+  }
+
+  td:first-child,
+  th:first-child {
+    border-left-width: 0;
+  }
+}
+
+@supports (color: rgb(0 0 0/0)) {
+  table {
+    thead th {
+      color: rgb(20 30 149/var(--tw-text-opacity));
+    }
+
+    thead td,
+    thead th {
+      border-bottom-color: rgb(20 30 149/var(--tw-border-opacity));
+      border-left-color: rgb(244 244 245/var(--tw-border-opacity))
+    }
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  table {
+    border: 0;
+
+    thead {
+      border: none;
+      clip: rect(0 0 0 0);
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      padding: 0;
+      position: absolute;
+      width: 1px;
+    }
+
+    tr {
+      border-bottom-width: 2px;
+      --tw-border-opacity: 1;
+      border-bottom-color: #e4e4e7;
+      clear: both;
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    tbody td {
+      border-bottom-width: 1px;
+      --tw-border-opacity: 1;
+      border-bottom-color: #e4e4e7;
+      display: flex;
+      flex-direction: row;
+      font-size: 14px;
+    }
+
+    tbody td span {
+      display: block;
+      min-width: 75%;
+      text-align: right;
+    }
+
+    tbody td:before {
+      content: attr(data-label);
+      display: block;
+      font-family: Franca, Helvetica, Arial, sans-serif;
+      margin-right: 8px;
+      --tw-text-opacity: 1;
+      color: #141e95;
+      font-weight: 700;
+      min-width: 25%;
+    }
+
+    tbody td:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  @supports (color: rgb(0 0 0/0)) {
+    table {
+      tr {
+        border-bottom-color: rgb(228 228 231/var(--tw-border-opacity));
+      }
+
+      tbody td {
+        border-bottom-color: rgb(228 228 231/var(--tw-border-opacity))
+      }
+
+      tbody td:before {
+        color: rgb(20 30 149/var(--tw-text-opacity))
+      }
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  table {
+    thead th {
+      font-size: 16px;
+    }
+
+    tbody td,
+    tbody th {
+      border-left-width: 1px;
+      border-top-color: #e4e4e7;
+      border-top-width: 1px;
+      --tw-border-opacity: 1;
+      border-left-color: #f4f4f5;
+      font-size: 16px;
+    }
+  }
+
+  @supports (color: rgb(0 0 0/0)) {
+    table {
+      tbody td,
+      tbody th {
+        border-left-color: rgb(244 244 245/var(--tw-border-opacity));
+        border-top-color: rgb(228 228 231/var(--tw-border-opacity));
+      }
+    }
+  }
+}

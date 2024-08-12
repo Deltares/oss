@@ -1,0 +1,17 @@
+.component-news-list {
+  .container {
+    padding: 0;
+  }
+}
+
+.c-card-image-text__image {
+  aspect-ratio: 10/12;
+  border-radius: .25rem;
+}
+
+@media (min-width:640px) {
+  .c-card-image-text__image {
+    aspect-ratio: 368/302;
+    border-radius: 0;
+  }
+}

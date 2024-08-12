@@ -1,0 +1,147 @@
+.component-banner-container {
+  margin-bottom: 3rem;
+
+  .portlet {
+    > .portlet-content {
+      max-width: inherit;
+    }
+  }
+}
+
+.component-banner {
+  margin: -1px;
+
+  &.banner--large {
+    .image-container {
+      height: 632px;
+    }
+  }
+
+  .content-container {
+    padding-bottom: 2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    h1 {
+      margin-bottom: 1.75rem;
+    }
+
+    a {
+      margin-top: -0.5rem;
+
+      &:hover {
+        color: var(--text-secondary--home);
+      }
+
+      svg {
+        margin-right: 0.75rem;
+      }
+    }
+
+    p {
+      @include reset-font;
+    }
+
+    div + a {
+      margin-top: 1.25rem;
+    }
+
+    .dash-left {
+      &:before {
+        background-color: var(--bg-secondary);
+      }
+    }
+  }
+
+  .image-container {
+    height: 450px;
+
+    picture {
+      position: relative;
+    }
+
+    figcaption {
+      padding-left: .75rem;
+      padding-right: .75rem;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .component-banner {
+    .content-container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+
+      h1 {
+        margin-bottom: 2.25rem;
+      }
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .component-banner {
+    &.banner--large {
+      .image-container {
+        min-height: 500px;
+      }
+    }
+
+    .content-container {
+      padding-left: 4rem;
+      padding-right: 4rem;
+    }
+  }
+}
+
+@media (min-width: 1140px) {
+  .component-banner {
+    .content-container {
+      h1 {
+        font-size: 76px;
+        line-height: 84px;
+      }
+    }
+  }
+}
+
+@media (max-width: 1259px) {
+  .component-banner {
+    margin-bottom: 0;
+  }
+}
+
+@media (min-width: 1536px) {
+  .component-banner {
+    &.banner--large {
+      .image-container {
+        height: 800px;
+      }
+    }
+
+    .content-container {
+      h1 {
+        font-size: 76px;
+        line-height: 84px;
+      }
+    }
+  }
+}
+
+@media (min-width: 2140px) {
+  .component-banner {
+    &.banner--large {
+      .content-container {
+        h1 {
+          font-size: 110px;
+          line-height: 128px;
+        }
+      }
+
+      .image-container {
+        height: 960px;
+      }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+.expert-list {
+  background: $white;
+  margin: 0 -15px 2rem;
+  padding: 1.5rem 1rem 3.5rem;
+
+  .content-container {
+    h2 {
+      margin-bottom: .75rem;
+    }
+
+    h4 {
+      line-height: normal;
+      margin-bottom: .5rem;
+    }
+
+    .expert-email {
+      margin-bottom: .75rem;
+    }
+  }
+
+  .image-container {
+    padding-bottom: .75rem;
+  }
+}
+
+@media (max-width: 385px) {
+  .expert-list {
+    ol {
+      gap: 0;
+
+      li {
+        grid-column: span 12 / span 12;
+      }
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .expert-list {
+    background: transparent;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}

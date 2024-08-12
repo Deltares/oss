@@ -1,0 +1,11 @@
+.dash-left {
+  &:before {
+    background-color: #fff;
+    content: "";
+    height: 2px;
+    left: 0;
+    position: absolute;
+    top: 13px;
+    width: 24px;
+  }
+}

@@ -45,5 +45,11 @@
 		<portlet-decorator id="blueContainer" name="With blue background">
 			<portlet-decorator-css-class>blue-background</portlet-decorator-css-class>
 		</portlet-decorator>
+		<portlet-decorator id="fullWidth" name="Full width">
+			<portlet-decorator-css-class>portlet-full-width</portlet-decorator-css-class>
+		</portlet-decorator>
+		<portlet-decorator id="fullWidthNoTitle" name="Full width no title">
+			<portlet-decorator-css-class>portlet-full-width-no-title</portlet-decorator-css-class>
+		</portlet-decorator>
 	</theme>
 </look-and-feel>

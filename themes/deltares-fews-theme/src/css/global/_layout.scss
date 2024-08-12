@@ -1,0 +1,43 @@
+#content {
+  overflow-x: hidden;
+
+  > .inner {
+    overflow-x: unset;
+    padding: 0 0 2rem;
+  }
+
+  #main-content {
+    > .row {
+      margin: 0;
+
+      > .portlet-column {
+        padding: 0;
+      }
+    }
+  }
+}
+
+@media (max-width: 1023px) {
+  #content {
+    > .inner {
+      min-height: calc(100vh - 114px);
+
+      .has-control-menu & {
+        min-height: 40vh;
+      }
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  #content {
+    > .inner {
+      min-height: calc(100vh - 362px - 129px);
+      padding: 0 0 4rem;
+
+      .has-control-menu & {
+        min-height: 60vh;
+      }
+    }
+  }
+}
