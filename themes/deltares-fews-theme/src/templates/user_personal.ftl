@@ -43,7 +43,7 @@
             </li>
         </#if>
         <li class="px-4">
-            <a href="search" class="flex flex-row items-center text-sm leading-none text-white hover:underline focus:underline">
+            <a href="${site_default_url}/search" class="flex flex-row items-center text-sm leading-none text-white hover:underline focus:underline">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" aria-hidden="false" role="img" class="shrink-0 w-3 h-3 mt-[2px] mr-2">
                     <path fill="currentColor" d="M12.7,4.3c-2.2,0-4.3,0.9-5.9,2.4c-1.6,1.6-2.4,3.7-2.4,5.9c0,2.2,0.9,4.3,2.4,5.9c1.6,1.6,3.7,2.4,5.9,2.4
                     c2.2,0,4.3-0.9,5.9-2.4c1.6-1.6,2.4-3.7,2.4-5.9c0-2.2-0.9-4.3-2.4-5.9S14.9,4.3,12.7,4.3z M1,12.7C1,10.8,1.4,9,2.3,7.4
