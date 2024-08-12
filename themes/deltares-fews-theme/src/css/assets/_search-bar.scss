@@ -1,0 +1,49 @@
+.portlet-search-bar {
+  .portlet-content {
+    padding-bottom: 0;
+    padding-top: 0;
+  }
+
+  .portlet-title-text {
+    &:before {
+      display: none;
+    }
+  }
+
+  .portlet-layout {
+    .portlet-header {
+      margin-bottom: 0;
+    }
+  }
+
+  .search-bar {
+    .panel-body {
+      padding: 0;
+    }
+  }
+
+  .search-bar-container {
+    margin-bottom: 2rem;
+    padding-top: 1rem;
+  }
+
+  .search-bar-input {
+    padding: 0.75rem 1.25rem;
+  }
+
+  .search-bar-submit {
+    button {
+      height: 46px;
+      padding: .75rem;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .portlet-search-bar {
+    .search-bar-container {
+      margin-bottom: 1rem;
+      padding-bottom: 1.5rem;
+    }
+  }
+}

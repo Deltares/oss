@@ -10,7 +10,9 @@
             <#assign viewURL = htmlUtil.escapeHREF(assetPublisherHelper.getAssetViewURL(renderRequest, renderResponse, entry, true)) />
 
             <div class="c-new-ideas__item c-asset-publisher-item">
-                <h4 class="c-new-ideas__item__title h1"><a class="type-inherit" href="${viewURL}" title="read more about ${entryTitle}">${entryTitle}</a></h4>
+                <h4 class="c-new-ideas__item__title font-medium text-lg lg:text-xl text-theme-secondary mb-3 lg:mb-2">
+                    <a class="type-inherit hover:underline focus:underline" href="${viewURL}" title="read more about ${entryTitle}">${entryTitle}</a>
+                </h4>
                 <div class="c-new-ideas__item__summary">${stringUtil.shorten(assetRenderer.getSummary(), 136)}</div>
                 <div class="c-new-ideas__item__rating clearfix"><@getRatings entry/></div>
                 <p class="c-new-ideas__item__phase ${cur_phase}">

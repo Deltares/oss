@@ -26,6 +26,10 @@
   }
 }
 
+.tns-inner {
+  margin-left: 0 !important;
+}
+
 .tns-outer {
   [aria-controls] {
     background-color: #f0fcfa;
@@ -129,12 +133,6 @@
     margin-right: auto;
     max-width: 608px;
     text-align: center;
-  }
-}
-
-@media screen and (min-width: 760px) {
-  .tns-inner {
-    margin-left: 16px !important;
   }
 }
 

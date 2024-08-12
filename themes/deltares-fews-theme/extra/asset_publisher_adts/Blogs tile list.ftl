@@ -1,3 +1,5 @@
+<#ftl output_format="XML">
+
 <#assign xmlUtils = serviceLocator.findService("nl.deltares.portal.utils.XmlContentUtils") />
 
 <section class="col-span-12">
@@ -34,7 +36,7 @@
                                     </div>
                                 </div>
                                 <div class="flex-auto flex flex-col sm:p-4 lg:p-6 px-4">
-                                    <h4 class="leading-snug font-semibold font-medium text-lg lg:text-xl text-theme-secondary mb-1 lg:mb-2">${entryTitle}</h4>
+                                    <h4 class="leading-snug font-semibold font-medium text-lg lg:text-xl text-theme-secondary mb-1 lg:mb-2">${entryTitle?no_esc}</h4>
                                     <p class="order-first line-clamp-3 text-sm leading-snug font-medium mb-2">${cur_expertName}</p>
                                     <#outputformat "HTML">
                                         <div class="text-sm font-medium line-clamp-3">

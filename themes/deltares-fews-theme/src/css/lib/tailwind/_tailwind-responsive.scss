@@ -769,6 +769,10 @@
       border-top-width: 1px
   }
 
+  .lg\:border-solid {
+    border-style: solid;
+  }
+
   .lg\:bg-theme-tertiary {
       background-color: theme("colors.app.white--cosmic-latte");
       background-color: #f0fcfa;

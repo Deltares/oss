@@ -46,7 +46,7 @@
                 </#if>
             </#list>
             <a class="type-inherit c-card-image-text text-theme-secondary rounded overflow-hidden h-full flex sm:flex-col sm:hover:shadow-md sm:focus:shadow-md sm:bg-white transition duration-200 hover:no-underline focus:no-underline hover:text-theme-secondary" href="${viewURL}" title="read more about ${entryTitle}">
-                <div class="c-events__item flex flex-column h-full ${isEventPast}">
+                <div class="c-events__item flex flex-column w-full h-full ${isEventPast}">
                     <div class="c-events__item__date">
                         <span>${startDayString}&nbsp;</span>
                         <span>${startMonthString}</span>

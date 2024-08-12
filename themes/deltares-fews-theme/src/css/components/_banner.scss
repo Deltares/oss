@@ -9,7 +9,7 @@
 }
 
 .component-banner {
-  margin: calc(-3rem - 1px) -1px -1px;
+  margin: -1px;
 
   &.banner--large {
     .image-container {
@@ -108,7 +108,7 @@
 
 @media (max-width: 1259px) {
   .component-banner {
-    margin: calc(-3rem - 1px) -1rem 0;
+    margin-bottom: 0;
   }
 }
 

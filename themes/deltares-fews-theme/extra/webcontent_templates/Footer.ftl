@@ -14,7 +14,7 @@
                     <h2 class="mb-3 text-base font-semibold text-white"><@liferay.language key='dsd.theme.footer.info.header' /></h2>
                     <ul class="link-list">
                         <#list FooterLinksLeftFieldSet.FooterLinksLeftFieldSetFieldSet.LinkToPage.getSiblings() as cur_FooterLinksLeft>
-                            <li>
+                            <li class="mb-1.5 leading-normal">
                                 <#assign linkData = cur_FooterLinksLeft.getData()?eval>
                                 <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, linkData.layoutId?number) />
                                 <a href="${cur_FooterLinksLeft.getFriendlyUrl()}" class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
@@ -41,7 +41,7 @@
                             <span>About Delft Fews</span>
                         </a>
                     </li>
-                    <li class="mb-1.5">
+                    <li class="mb-1.5 leading-normal">
                         <a href="#" class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
                             <div class="text-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" aria-hidden="false" role="img" class="mr-3"><path fill="currentColor" d="M1,17.9h22.8L13.3,28.4L16,31l15-15L16,1l-2.6,2.6l10.4,10.5H1V17.9z"></path></svg>

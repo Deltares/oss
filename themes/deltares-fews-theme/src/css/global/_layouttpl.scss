@@ -1,4 +1,64 @@
-.t-1-unrestricted,
 .restricted-layout {
   margin-top: 3rem;
+
+  .portlet-layout {
+    @include container-styles-large;
+    margin: 0 auto;
+
+    .portlet-borderless {
+      .portlet-content {
+        padding: 0;
+      }
+    }
+  }
+}
+
+.t-1-unrestricted {
+  .portlet-column-content {
+    > div {
+      &:first-of-type {
+        &:not(div[class*="portlet-full-width"]) {
+          margin-top: 3rem;
+        }
+      }
+    }
+  }
+
+  .portlet-boundary {
+    &:not(.portlet-full-width-no-title) {
+      .portlet {
+        > .portlet-content {
+          @include container-styles-large;
+          border: 0;
+          padding-left: 1rem;
+          padding-right: 1rem;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 640px) {
+  .t-1-unrestricted {
+    .portlet-borderless {
+      .portlet {
+        > .portlet-content {
+          padding: 1rem 0;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .t-1-unrestricted {
+    .portlet-borderless {
+      .portlet {
+        > .portlet-content {
+          padding-left: 1rem;
+          padding-right: 1rem;
+        }
+      }
+    }
+  }
 }

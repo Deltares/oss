@@ -1,3 +1,9 @@
+.portlet-layout {
+  .portlet-header {
+    margin-bottom: 1.25rem;
+  }
+}
+
 .portlet-full-width,
 .portlet-full-width-no-title {
   .portlet {
@@ -7,7 +13,8 @@
       padding-right: 0;
 
       > .portlet-header {
-        @include container-styles;
+        @include container-styles-large;
+        margin-bottom: 0;
         margin-left: auto;
         margin-right: auto;
         padding-left: 1rem;
@@ -24,38 +31,6 @@
         h2.portlet-title-text {
           display: none;
         }
-      }
-    }
-  }
-}
-
-.portlet-boundary {
-  .portlet {
-    > .portlet-content {
-      @include container-styles;
-      border: 0;
-      padding-left: 1rem;
-      padding-right: 1rem;
-    }
-  }
-}
-
-@media (min-width: 640px) {
-  .portlet-borderless {
-    .portlet {
-      > .portlet-content {
-        padding: 1rem 0;
-      }
-    }
-  }
-}
-
-@media (min-width: 768px) {
-  .portlet-borderless {
-    .portlet {
-      > .portlet-content {
-        padding-left: 1rem;
-        padding-right: 1rem;
       }
     }
   }

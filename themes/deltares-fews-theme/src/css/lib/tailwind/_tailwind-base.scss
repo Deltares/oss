@@ -394,16 +394,32 @@
 }
 
 // Transform
+.rotate-0 {
+  --tw-rotate: 0deg;
+}
+
+.rotate-45 {
+  --tw-rotate: 45deg;
+}
+
+.rotate-90 {
+  --tw-rotate: 90deg;
+}
+
 .rotate-180 {
-  transform: rotate(180deg)
+  --tw-rotate: 180deg;
 }
 
 .-rotate-180 {
-  transform: rotate(-180deg)
+  --tw-rotate: -180deg;
 }
 
-.rotate-0 {
-  transform: rotate(0deg)
+.-rotate-90 {
+  --tw-rotate: -90deg;
+}
+
+.-rotate-45 {
+  --tw-rotate: -45deg;
 }
 
 // Borders
