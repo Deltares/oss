@@ -26,7 +26,7 @@
         <#include "${full_templates_path}/mobile_navigation.ftl" />
     </li>
     <li class="pt-2 pb-1">
-        <a href="search" class="flex flex-col items-center text-app-blue--egyptian font-medium z-20 hover:no-underline focus:no-underline">
+        <a href="${site_default_url}/search" class="flex flex-col items-center text-app-blue--egyptian font-medium z-20 hover:no-underline focus:no-underline">
             <span class="block w-8 h-8 flex flex-col items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" aria-hidden="false" role="img" class="shrink-0 w-5 h-5">
                     <path fill="currentColor" d="M29.5,31c-0.4,0-0.8-0.1-1.1-0.4L24,26.1c-1,0.8-2.2,1.5-3.5,2.1c-3.4,1.4-7.4,1.4-10.8,0c-1.7-0.7-3.3-1.7-4.6-3.1
