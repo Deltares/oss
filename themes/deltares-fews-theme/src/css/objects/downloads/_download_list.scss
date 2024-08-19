@@ -1,42 +1,126 @@
-.c-downloads-list__item.not_visible {
-    overflow: hidden;
-    max-height: 0px;
-    transition: max-height 0.8s cubic-bezier(0, 1, 0, 1) -0.1s;
+.c-downloads-title {
+    margin-bottom: 10px;
+    padding-right: 20px;
 }
 
 .c-downloads-list {
-    &.expand .c-downloads-list__item.not_visible {
-        max-height: 9999px;
-        transition-timing-function: cubic-bezier(0.5, 0, 1, 0);
-        transition-delay: 0s;
+    &.expand {
+        .c-downloads-list__item.not_visible {
+            max-height: 9999px;
+            transition-delay: 0s;
+            transition-timing-function: cubic-bezier(0.5, 0, 1, 0);
+        }
+
+        .expand_list {
+            .expand {
+                display: none;
+            }
+
+            .collapse {
+                display: inline;
+            }
+        }
     }
+
     .expand_list {
         .expand {
             display: inline;
         }
+
         .collapse {
             display: none;
         }
     }
-    &.expand .expand_list {
-        .expand {
-            display: none;
+
+    .c-downloads-list__item {
+        padding-right: 20px;
+
+        &.not_visible {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.8s cubic-bezier(0, 1, 0, 1) -0.1s;
         }
-        .collapse {
-            display: inline;
+
+        &.more-link {
+            svg {
+                margin-top: 0;
+            }
+
+            .more-link-text {
+                margin-right: 0.75rem;
+            }
+        }
+
+        a {
+            align-items: baseline;
+
+            &:hover {
+                color: $text-secondary;
+            }
+        }
+
+        svg {
+            margin-top: -0.125rem;
+
+            + span {
+                margin-left: .75rem;
+            }
         }
     }
 }
 
 .c-downloads-container {
     display: grid;
-    grid-template-columns: 1fr;
     grid-row-gap: 50px;
+    grid-template-columns: 1fr;
 }
 
-@media screen and (min-width: 600px) {
+// Terms pop-up (ported from template)
+a.disabled {
+    cursor: default;
+    pointer-events: none;
+}
+
+#terms_popup_cont {
+    left: 0;
+    position: absolute;
+    top: 0;
+}
+
+#terms_popup {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    left: auto;
+    margin: auto;
+    max-width: 800px;
+    min-height: 100vh;
+
+    .modal-header .pop-close {
+        cursor: pointer;
+        display: block;
+        margin: 8px;
+        position: absolute;
+        right: 8px;
+    }
+
+    .modal-content {
+        width: calc(100% - 1rem);
+
+        a {
+            @extend %default-link;
+        }
+    }
+}
+
+@media screen and (min-width: 480px) {
     .c-downloads-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(50%, 1fr));
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .c-downloads-container {
+        grid-template-columns: repeat(auto-fill, minmax(33.3%, 1fr));
     }
 }

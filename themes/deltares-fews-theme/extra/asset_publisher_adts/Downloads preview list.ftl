@@ -1,84 +1,20 @@
-<style type="text/css">
-    a.disabled {
-        pointer-events: none;
-        cursor: default;
-    }
-
-    #terms_popup_cont{
-        position:absolute;
-        top:0px;
-        left:0px;
-        width:100vw;
-        height:100vh;
-    }
-
-    #terms_popup{
-        margin: auto;
-        display:flex;
-        flex-direction: column;
-        justify-content: center;
-        min-height: 100vh;
-        max-width:800px;
-    }
-
-    #terms_popup.modal-header {
-        padding: 2px 16px;
-    }
-
-
-    #terms_popup .modal-header .pop-close{
-        display: block;
-        position: absolute;
-        right: 8px;
-        margin: 8px;
-        cursor: pointer;
-    }
-
-    /* Modal Body */
-    #terms_popup.modal-body {
-        position:relative;
-        padding: 2px 16px;
-    }
-
-    /* Modal Footer */
-    #terms_popup.modal-footer {
-        padding: 8px 16px;
-    }
-
-    #terms_popup.modal-footer button{
-        float:right;
-        display:block;
-        margin:12px;
-    }
-
-    /* Modal Content */
-    #terms_popup.modal-content {
-        background-color: #fefefe;
-        margin: auto;
-        padding: 0;
-        border: 1px solid #888;
-        width: 80%;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-    }
-
-</style>
 <#assign xmlUtils = serviceLocator.findService("nl.deltares.portal.utils.XmlContentUtils") />
+
 <#if entries?has_content>
     <!--input type="checkbox" id="terms" name="terms" class="toggle-container">
     <label for="terms">To enable downloads please accept our <a href="terms-of-use" target="_blank">Terms of Use</a></label -->
-    </br>
-    <div class="c-downloads-container">
 
+    <div class="c-downloads-container">
         <#list entries as entry>
             <#assign assetRenderer = entry.getAssetRenderer() />
             <#assign entryTitle = htmlUtil.escape(assetRenderer.getTitle(locale)) />
             <#assign journalArticle = assetRenderer.getArticle() />
             <#assign rootElement = xmlUtils.parseContent(journalArticle,locale)/>
-
             <#assign viewURL = htmlUtil.escapeHREF(assetPublisherHelper.getAssetViewURL(renderRequest, renderResponse, entry, true)) />
-            <#assign  maxListElements = 5 />
+            <#assign maxListElements = 5 />
+
             <div class="c-downloads">
-                <h5 class="c-downloads-title">${entryTitle}</h5>
+                <h5 class="c-downloads-title font-medium text-xl lg:text-2xl text-theme-secondary mb-3 lg:mb-3">${entryTitle}</h5>
                 <ul class="c-downloads-list clearList">
                     <#assign fieldSets = xmlUtils.getDynamicElementsByNameAsList(rootElement, "FileDisplayTitleFieldSet") />
                     <#if fieldSets?size = 0>
@@ -93,100 +29,98 @@
                         <#if (fieldSet?counter gte maxListElements)>
                             <li class="c-downloads-list__item not_visible">
                         <#else>
-                            <li class="c-downloads-list__item">
+                            <li class="c-downloads-list__item mb-1.5">
                         </#if>
-                        <#if isDocument >
+                        <#if isDocument>
                             <#assign downloadItemTitle = xmlUtils.getDynamicContentByName(fieldSet, "FileDisplayTitle", false) />
-                            <#assign downloadItemURL =  xmlUtils.getDynamicContentByName(fieldSet, "UploadFile", false) />
+                            <#assign downloadItemURL = xmlUtils.getDynamicContentByName(fieldSet, "UploadFile", false) />
                             <#assign downloadItemURL = ddlUtils.getFileEntryImage(downloadItemURL)/>
                         <#else>
                             <#assign downloadItemTitle = xmlUtils.getDynamicContentByName(fieldSet, "LinkTitle", false) />
                             <#assign downloadItemURL = xmlUtils.getDynamicContentByName(fieldSet, "DownloadLinkURL", false)/>
                         </#if>
                         <#assign hasTerms = xmlUtils.getDynamicContentByName(fieldSet, "hasTerms", true) />
-
-                    <#if hasTerms?has_content && hasTerms?boolean >
-                    <#if isDocument >
-                        <a  class="download-link-termsPop c-downloads-list__item__link regular-text "
-                            data-location="${downloadItemURL}" href="#" download >
+                        <#if hasTerms?has_content && hasTerms?boolean>
+                            <#if isDocument>
+                                <a class="download-link-termsPop c-downloads-list__item__link relative inline-flex flex-row items-center text-app-blue--egyptian hover:underline v-hover--shade transition-colors duration-150 cursor-pointer font-medium" data-location="${downloadItemURL}" href="#" download>
                             <#else>
-                            <a  class="download-link-termsPop c-downloads-list__item__link regular-text "
-                                data-location="${downloadItemURL}"  href="#">
-                                </#if>
-                                <span class="link_underline">${downloadItemTitle}</span> &gt;
+                                <a class="download-link-termsPop c-downloads-list__item__link relative inline-flex flex-row items-center text-app-blue--egyptian hover:underline v-hover--shade transition-colors duration-150 cursor-pointer font-medium" data-location="${downloadItemURL}" href="#">
+                            </#if>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" aria-hidden="false" role="img" class="content-start text-theme-quaternary shrink-0 w-3 h-3"><path fill="currentColor" d="M1,17.9h22.8L13.3,28.4L16,31l15-15L16,1l-2.6,2.6l10.4,10.5H1V17.9z"></path></svg>
+                            <span class="link_underline">${downloadItemTitle}</span>
                             </a>
+                        <#else>
+                            <#if isDocument>
+                                <a class="c-downloads-list__item__link relative inline-flex flex-row items-center text-app-blue--egyptian hover:underline v-hover--shade transition-colors duration-150 cursor-pointer font-medium" href="${downloadItemURL}" download>
                             <#else>
-                            <#if isDocument >
-                            <a  class="c-downloads-list__item__link regular-text "
-                                href="${downloadItemURL}" download >
-                                <#else>
-                                <a  class="c-downloads-list__item__link regular-text "
-                                    href="${downloadItemURL}" target="_blank" >
-                                    </#if>
-                                    <span class="link_underline">${downloadItemTitle}</span> &gt;
-                                </a>
-                                </#if>
-
+                                <a class="c-downloads-list__item__link relative inline-flex flex-row items-center text-app-blue--egyptian hover:underline v-hover--shade transition-colors duration-150 cursor-pointer font-medium" href="${downloadItemURL}" target="_blank">
+                            </#if>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" aria-hidden="false" role="img" class="content-start text-theme-quaternary shrink-0 w-3 h-3"><path fill="currentColor" d="M1,17.9h22.8L13.3,28.4L16,31l15-15L16,1l-2.6,2.6l10.4,10.5H1V17.9z"></path></svg>
+                            <span class="link_underline">${downloadItemTitle}</span>
+                            </a>
+                        </#if>
                         </li>
                         <#if (fieldSet?counter gte maxListElements)>
                             <#if fieldSet?is_last>
-                                <li class="c-downloads-list__item">
-                                    <a class="c-downloads-list__item regular-text expand_list">
-                                            <span class="link_underline">
-                                                <span class="expand">All ${entryTitle}</span>
-                                                <span class="collapse">Hide ${entryTitle}</span>
-                                            </span> &gt;
+                                <li class="c-downloads-list__item more-link">
+                                    <a class="c-downloads-list__item expand_list relative inline-flex flex-row items-center text-app-blue--egyptian transition-colors duration-150 cursor-pointer font-medium">
+                                        <span class="more-link-text">
+                                            <span class="expand">All ${entryTitle}</span>
+                                            <span class="collapse">Hide ${entryTitle}</span>
+                                        </span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" aria-hidden="false" role="img" class="content-start shrink-0 w-3 h-3"><path fill="currentColor" d="M1.5,8.1c0.4-0.4,0.8-0.5,1.3-0.5c0.5,0,1,0.2,1.3,0.5L16,19.9L27.8,8.1C28,8,28.2,7.8,28.4,7.7
+        c0.2-0.1,0.5-0.1,0.7-0.2c0.2,0,0.5,0,0.7,0.1c0.2,0.1,0.4,0.2,0.6,0.4c0.2,0.2,0.3,0.4,0.4,0.6C31,9,31,9.2,31,9.4
+        c0,0.2-0.1,0.5-0.2,0.7c-0.1,0.2-0.2,0.4-0.4,0.6L17.3,23.9c-0.4,0.4-0.8,0.5-1.3,0.5c-0.5,0-1-0.2-1.3-0.5L1.5,10.8
+        C1.2,10.4,1,10,1,9.5C1,9,1.2,8.5,1.5,8.1z"></path></svg>
                                     </a>
                                 </li>
                             </#if>
                         </#if>
-
                     </#list>
                 </ul>
             </div>
         </#list>
-        <div id="terms_popup_cont"  style="display: none;">
+        <div id="terms_popup_cont" style="display: none;">
             <div id="terms_popup" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
+                        <h2 class="pop-title font-semibold text-theme-secondary">Terms and conditions</h2>
                         <span class="pop-close">&times;</span>
-                        <h1 class="pop-title" style="position: absolute; top: 4px;">Terms and conditions</h1>
                     </div>
                     <div class="modal-body">
-                        <p>
+                        <p class="mb-4">
                             These files are provided without service and support. In order to download these files you have to agree to our <a href="terms-of-use" target="_blank">Terms of Use</a>.
                         </p>
                         <input type="checkbox" id="terms" name="terms" class="toggle-container">
                         <label for="terms">I have read and accept the <a href="terms-of-use" target="_blank">Terms of Use</a></label>
-                        <br>
                     </div>
                     <div class="modal-footer">
-                        <button class="accept">Download</button>
-                        <button class="reject">Reject</button>
+                        <button class="btn btn-primary accept">Download</button>
+                        <button class="btn reject">Reject</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script>
-        AUI().ready('aui-module', function(A){
 
+    <script>
+        AUI().ready('aui-module', function(A) {
             var inputElements = $(".toggle-container");
             var modalcontainter = $("#terms_popup_cont");
             var modal = $("#terms_popup");
             var webLink="";
 
-
-            $(".c-downloads-list").on("click",".expand_list", function( event ) {
+            $(".c-downloads-list").on("click",".expand_list", function(event) {
                 event.preventDefault();
-                $( event.delegateTarget ).toggleClass("expand");
+                $(event.delegateTarget).toggleClass("expand");
+                $(event.delegateTarget).find('.not_visible').toggleClass("mb-1.5");
+                $(this).find('svg').toggleClass("rotate-180");
             });
 
-            $(".download-link-termsPop").on("click", function( event ) {
+            $(".download-link-termsPop").on("click", function(event) {
                 event.preventDefault();
                 webLink=$(this).attr("data-location");
                 console.log("clicked link", webLink);
-
                 modalcontainter.css("display", "block");
             });
 
@@ -201,13 +135,11 @@
             });
 
             $(".modal .modal-footer .accept").on("click", function() {
-
                 var checked = inputElements.is(":checked")
-                if (checked == true)
-                {
+                if (checked == true) {
                     inputElements.prop('checked', false);
-
                     var anchor = document.createElement('a');
+
                     anchor.href = webLink;
                     anchor.target = '_blank';
                     anchor.download = webLink;
@@ -219,6 +151,7 @@
 
             window.onclick = function(event) {
                 console.log("no true");
+
                 if (event.target == $("#terms_popup_cont")[0] || event.target == $("#terms_popup")[0]) {
                     console.log($(event.target), modal, modalcontainter)
                     modalcontainter.css("display", "none");
@@ -228,6 +161,7 @@
             /*
             $(".toggle-container").on("click", function( event ) {
                 links = document.getElementsByClassName("c-downloads-list__item__link");
+
                 for (let index = 0; index < links.length; ++index){
                     var link = links[index];
                     if (event.target.checked){
@@ -236,7 +170,6 @@
                         link.classList.add("disabled");
                     }
                 };
-
             });*/
         });
     </script>
