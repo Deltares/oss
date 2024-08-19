@@ -26,7 +26,8 @@
 @media (max-width: 385px) {
   .expert-list {
     ol {
-      gap: 0;
+      column-gap: 0;
+      row-gap: 3rem;
 
       li {
         grid-column: span 12 / span 12;
