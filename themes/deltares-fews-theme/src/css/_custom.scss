@@ -35,6 +35,7 @@
 
 // Pages
 @import "pages/detail";
+@import "pages/detail-page";
 @import "pages/expert-list";
 @import "pages/search-results";
 
@@ -69,7 +70,6 @@
 @import "objects/events/events_item";
 @import "objects/events/full_page_events_item";
 @import "objects/news/featured_news_item";
-@import "objects/news/full_page_news_item";
 @import "objects/news/card_news_item";
 @import "objects/blogs_projects/preview_list";
 @import "objects/best_practices/best_practices_list";
