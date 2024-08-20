@@ -12,6 +12,7 @@
 @import "settings/fonts";
 @import "settings/type";
 @import "settings/mixins";
+@import "settings/extends";
 
 // Third party
 @import "lib/tailwind/tailwind-preflight";
@@ -34,6 +35,7 @@
 
 // Pages
 @import "pages/detail";
+@import "pages/detail-page";
 @import "pages/expert-list";
 @import "pages/search-results";
 
@@ -41,15 +43,11 @@
 @import "assets/gradients";
 @import "assets/mobile-menu";
 @import "assets/control-menu";
-@import "assets/aspect-ratio";
 @import "assets/buttons";
-@import "assets/table";
 @import "assets/text-theme-button";
 @import "assets/title-text";
 @import "assets/typography";
 @import "assets/pagination";
-@import "assets/rotate";
-@import "assets/search-bar";
 
 // Page objects
 @import "objects/forms/inputs";
@@ -68,7 +66,6 @@
 @import "objects/events/events_item";
 @import "objects/events/full_page_events_item";
 @import "objects/news/featured_news_item";
-@import "objects/news/full_page_news_item";
 @import "objects/news/card_news_item";
 @import "objects/blogs_projects/preview_list";
 @import "objects/best_practices/best_practices_list";

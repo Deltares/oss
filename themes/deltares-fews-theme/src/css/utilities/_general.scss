@@ -159,6 +159,11 @@ body {
     font-size: $base-font-size;
 }
 
+a:hover,
+a.hover {
+    color: $dark-blue;
+}
+
 .flex-row {
     flex-direction: row;
     display: flex;

@@ -1,9 +1,38 @@
 .c-asset-publisher-item {
     position: relative;
 }
+
 .edit_webcontent_icon {
     position: absolute;
     right: 0px;
     top: -1em;
 }
 
+// Hide asset publisher component-titles + edit button by default
+.asset-full-content {
+    > .align-items-center {
+        display: none !important;
+        visibility: hidden;
+
+        .component-title {
+            color: var(--text-secondary);
+
+            .asset-title {
+                font-weight: 500;
+                padding-left: 0.25rem;
+            }
+        }
+    }
+}
+
+// Show asset publisher component-titles + edit button when controls visible
+.has-control-menu {
+    &.controls-visible {
+        .asset-full-content {
+            > .align-items-center {
+                display: block !important;
+                visibility: visible;
+            }
+        }
+    }
+}

@@ -35,7 +35,7 @@
         transition: max-height 0.8s cubic-bezier(0, 1, 0, 1) -0.1s;
 
         a {
-            @include default-link;
+            @extend %default-link;
         }
     }
 }

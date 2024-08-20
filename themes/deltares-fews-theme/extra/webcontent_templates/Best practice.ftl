@@ -2,15 +2,17 @@
 <#assign displaydate=displaydate?datetime("EEE, d MMM yyyy HH:mm:ss Z")>
 
 <div class="projects-page">
-    <div class="projects-page__item">
-        <div class="projects-page__item__content">
-            <h1 class="projects-page__item__content__title">${.vars['reserved-article-title'].data}</h1>
-            <p class="projects-page__item__content__date">${displaydate?string["d MMMM yyyy"]}</p>
-            <div class="projects-page__item__content__data">
-                ${MandatoryFields.BestPracticeContent.getData()}
+    <div class="projects-page__item row">
+        <div class="projects-page__item__content detail-content col col-12 col-lg-7 xl:pr-16 2xl:pr-24 mb-4">
+            <div class="prose prose--app">
+                <h2 class="projects-page__item__content__title">${.vars['reserved-article-title'].data}</h2>
+                <p class="projects-page__item__content__date text-theme-secondary font-medium text-base lg:text-lg tracking-widest pb-2">${displaydate?string["d MMMM yyyy"]}</p>
+                <div class="projects-page__item__content__data">
+                    ${MandatoryFields.BestPracticeContent.getData()}
+                </div>
             </div>
         </div>
-        <div class="projects-page__item__meta-data">
+        <div class="projects-page__item__meta-data col col-12 col-lg-5 mb-4">
             <div class="projects-page__item__meta-data__expert">
                 <#assign expertExists = false />
                 <#if OptionalFields.SelectExpert_hide?? && OptionalFields.SelectExpert_hide.getData()?? &&  OptionalFields.SelectExpert_hide.getData() != "">
@@ -23,25 +25,36 @@
                         ${journalContentUtil.getContent(groupId, article.getArticleId(), viewMode, locale.getLanguage())}
                     </#if>
                 </#if>
-                <#if !expertExists >
+                <#if !expertExists>
                     <div class="expert-data">
-                        <div class="expert-data__image" style="background-image:url(${OptionalFields.ExpertPhoto.getData()})">
-                            <#if OptionalFields.ExpertPhoto.getData()?? && OptionalFields.ExpertPhoto.getData() != "">
-                                <img alt="${OptionalFields.ExpertPhoto.getAttribute("alt")}" data-fileentryid="${OptionalFields.ExpertPhoto.getAttribute("fileEntryId")}" src="${OptionalFields.ExpertPhoto.getData()}" />
-                            <#else>
-                                ${stringUtil.shorten(MandatoryFields.ExpertName.getData(), 1)}
-                            </#if>
-                        </div>
-                        
-                        <div class="expert-data__content">
-                            <p class="bold">${MandatoryFields.ExpertName.getData()}</p>
-                            <#if OptionalFields.ExpertJobTitle.getData()?has_content>
-                            <p>${OptionalFields.ExpertJobTitle.getData()}</p>
-                            </#if>
-                            <#if OptionalFields.ExpertCompany.getData()?has_content>
-                            <p>${OptionalFields.ExpertCompany.getData()}</p>
-                            </#if>
-                            <p><a href="mailto:${MandatoryFields.ExpertEmailAddress.getData()}" >${MandatoryFields.ExpertEmailAddress.getData()}</a></p>
+                        <div class="grid grid-cols-12 gap-x-8">
+                            <div class="flex col-span-12 pt-5 md:col-span-12 lg:pt-8">
+                                <div class="expert-data__image" style="background-image:url(${OptionalFields.ExpertPhoto.getData()})">
+                                    <#if OptionalFields.ExpertPhoto.getData()?? && OptionalFields.ExpertPhoto.getData() != "">
+                                        <img alt="${OptionalFields.ExpertPhoto.getAttribute("alt")}" data-fileentryid="${OptionalFields.ExpertPhoto.getAttribute("fileEntryId")}" src="${OptionalFields.ExpertPhoto.getData()}" />
+                                    <#else>
+                                        <div class="expert-data__image block object-cover w-24 h-24 rounded-full overflow-hidden mr-4 shrink-0 placeholder">
+                                            <img src="${themeDisplay.getPathThemeImages()}/person-placeholder.svg" class="w-full aspect-[160/141] object-cover overflow-hidden" />
+                                        </div>
+                                    </#if>
+                                </div>
+
+                                <div class="expert-data__content">
+                                    <div class="block mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" aria-hidden="false" role="img" class="inline-flex items-center text-theme-quaternary w-2 h-2 mb-1 mr-1"><circle fill="currentColor" cx="16" cy="16" r="15"></circle></svg>
+                                        <span class="text-base font-semibold">${MandatoryFields.ExpertName.getData()}</span>
+                                    </div>
+                                    <#if OptionalFields.ExpertJobTitle.getData()?has_content>
+                                        <span class="text-sm block font-regular">${OptionalFields.ExpertJobTitle.getData()}</span>
+                                    </#if>
+                                    <#if OptionalFields.ExpertCompany.getData()?has_content>
+                                        <span class="text-sm block font-regular">${OptionalFields.ExpertCompany.getData()}</span>
+                                    </#if>
+                                    <span class="text-sm block font-regular">
+                                        <a href="mailto:${MandatoryFields.ExpertEmailAddress.getData()}" >${MandatoryFields.ExpertEmailAddress.getData()}</a>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </#if>
@@ -49,4 +62,3 @@
         </div>
     </div>
 </div>
-

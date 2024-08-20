@@ -1,17 +1,4 @@
-// FULL PAGE
-
-.news-page__item {
-    display: grid;
-    //grid-template-columns: repeat(auto-fit, minmax(370px, 1fr));
-    grid-template-columns: 60% auto;
-}
-
-.projects-page__item {
-    display: grid;
-    grid-template-columns: 60% auto;
-}
-
-//  GRID
+// GRID
 .c-grid.news-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;

@@ -129,36 +129,14 @@
   line-height: inherit;
 }
 
-@mixin default-link {
-  -webkit-text-decoration: underline;
-  -webkit-text-decoration-skip-ink: none;
-  color: var(--text-secondary);
-  text-decoration: underline;
-  text-decoration-skip-ink: none;
-  text-underline-offset: 2px;
-  transition-duration: .3s;
-  transition-property: all;
-  transition-timing-function: cubic-bezier(.4, 0, .2, 1);
-
-  &:focus,
-  &:hover {
-    color: var(--text-quinary);
-  }
-
-  &[target=_blank]:after {
-    background-image: url("../images/icons/IconExternal--blue--egyptian.svg");
-    background-position: 100% 100%;
-    background-repeat: no-repeat;
-    background-size: 12px;
-    content: "";
-    margin-right: .25rem;
-    padding-right: 1rem;
-    transition-duration: .3s;
-    transition-property: all;
-    transition-timing-function: cubic-bezier(.4, 0, .2, 1);
-  }
-
-  &[target=_blank]:hover:after {
-    background-image: url("../images/icons/IconExternal--green--jade.svg");
-  }
+@mixin figcaption-styles {
+  --tw-text-opacity: 1;
+  clear: both;
+  color: #141e95;
+  display: block;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  line-height: 1.375;
+  margin-top: 0;
 }

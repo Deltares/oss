@@ -16,7 +16,7 @@
                     <#assign cur_expertJobTitle = xmlUtils.getDynamicContentByName(document, "ExpertJobTitle", false)/>
                     <#assign cur_expertCompany = xmlUtils.getDynamicContentByName(document, "ExpertCompany", false) />
                     <#assign cur_expertEmail = xmlUtils.getDynamicContentByName(document, "ExpertEmailAddress", false) />
-                    <li class="col-span-6 sm:col-span-4 lg:col-span-6 xl:col-span-4">
+                    <li class="col-span-6 sm:col-span-4 lg:col-span-4 xl:col-span-4">
                         <article class="relative group flex flex-col font-medium font-sans leading-none">
                             <div class="order-2 relative w-full content-container">
                                 <h2 class="font-semibold text-theme-secondary text-base">${cur_expertName}</h2>
@@ -40,7 +40,7 @@
                                 <div class="block w-full object-cover overflow-hidden">
                                     <#if cur_expertImage != "">
                                         <div class="expert-image">
-                                            <img width="640" height="564" class="block w-full h-full object-cover" alt="${cur_expertName}" src="${cur_expertImage}" />
+                                            <img width="640" height="564" class="w-full aspect-[160/141] object-cover overflow-hidden" alt="${cur_expertName}" src="${cur_expertImage}" />
                                         </div>
                                     <#else>
                                         <div class="expert-image">

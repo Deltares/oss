@@ -46,6 +46,23 @@
   background-image: linear-gradient(135deg, rgb(var(--bg-primary__rgb) / .45), rgb(var(--bg-primary__rgb) / .95) 100%);
 }
 
+// Image link gradient
+%image-link-gradient {
+  position: relative;
+
+  &:before {
+    background-image: linear-gradient(60deg, var(--bg-primary), transparent 40%);
+    content: "";
+    height: 100%;
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    transition: opacity .25s ease-in-out;
+    width: 100%;
+  }
+}
+
 @media (min-width: 640px) {
   // Banner sphere gradient
   .sphere-banner-gradient--inner--green,
