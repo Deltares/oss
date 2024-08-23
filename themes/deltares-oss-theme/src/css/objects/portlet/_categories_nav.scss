@@ -1,0 +1,80 @@
+@use "liferay-frontend-common-css/liferay/variables";
+.portlet-asset-categories-navigation {
+    display: none;
+}
+.yui3-js-enabled .portlet-asset-categories-navigation {
+    display: block;
+}
+
+.portlet-asset-categories-navigation {
+    margin-top: 40px;
+
+    .panel {
+        box-shadow: none;
+        border: none;
+    }
+    .panel,
+    li,
+    li > div,
+    li > div > span,
+    li > div > span > span,
+    .panel-body,
+    .panel-group .panel-heading,
+    .panel-group .panel-heading div span {
+        padding: 0;
+        margin: 0!important;
+        background: transparent;
+    }
+} 
+.panel-group .panel-title {
+    margin: 0 0 14px 0;
+}
+.panel-group .panel-title > span{
+    @include title_1;
+    margin-bottom: 0;
+    color: $color-site-black;
+}
+
+.portlet-asset-categories-navigation .tree-node a {
+    padding: 0 0 0 28px;
+    color: $color-site-black;
+    position: relative;
+    max-width: 100%;
+    display: block;
+    line-height: 30px;
+    margin-bottom: 3px;
+    text-decoration: none;
+
+    &.tag-selected {
+        font-weight: 300;
+    }
+
+    &::before{
+        content: " ";
+        outline: 1px solid $color-gray;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        display: inline-block;
+        position: absolute;
+        left: 2px;
+        top: 4px;
+    }
+    &.tag-selected::before{
+        background-color: $color-glacier;
+    }
+}
+
+@media (min-width: variables.$screen-md-min) {
+    //this creates the fake background on the right column to the edge of the browser
+    .two-columns-full-height .portlet-column-first::before{
+        content: "";
+        position: absolute;
+        background: $color-alpha-blue;
+        right: 0;
+        width: 50vw;
+        height: calc(100vh - 200px);
+        //this height is just for the initial load it will be overwriten by js on the template 2_columns_full_height.tpl
+        z-index: -1;
+    }
+}

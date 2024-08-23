@@ -125,5 +125,11 @@
     "artifactId" : "deltares-fews-theme",
     "version" : "1.0.7",
     "extension" : "war"
+  },
+  {
+    "groupId" : "nl.deltares",
+    "artifactId" : "deltares-oss-theme",
+    "version" : "1.0.0",
+    "extension" : "war"
   }
 ]

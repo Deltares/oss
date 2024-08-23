@@ -1,0 +1,22 @@
+.link-list {
+    .link-list__item {
+        @include clearfix;
+        border-bottom: 1px solid rgba(151, 151, 151, 0.2);
+        padding: 8px 18px;
+        
+        a{
+            float: right;
+        }
+        span {
+            font-weight: 400
+        }
+    }
+}
+
+.c-downloads-title {
+    margin-bottom: 10px;
+}
+
+.c-downloads-list {
+    margin-bottom: 30px;
+}

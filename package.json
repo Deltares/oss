@@ -6,6 +6,7 @@
     "workspaces": {
         "packages": [
             "themes\\deltares-fews-theme",
+            "themes\\deltares-oss-theme",
             "themes\\deltares-theme"
         ]
     }

@@ -1,0 +1,38 @@
+.expert-data {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    padding: 40px 40px 30px 40px;
+    background-color: $color-alpha-blue;
+    
+    &__image {
+        @include center_cropped($width: 52px, $height: 52px);
+        line-height: 52px;
+        text-align: center;
+        color: white;
+        background-color: $color-alpha-blue;
+        border-radius: 50%;
+        position:relative;
+    }
+}
+
+.c-experts__page{
+    padding-bottom: 110px;
+}
+
+.c-experts__page .expert-data {
+    background-color: transparent;
+    grid-template-columns: 150px 1fr;
+    padding: 15px 40px 0px 40px;
+    border-bottom: 1px solid $color-alpha-gray;
+    max-width: 990px;
+    margin: 0 auto;
+    
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &__image { 
+        @include center_cropped($width: 104px, $height: 104px);
+        line-height: 104px;
+    }
+}

@@ -1,0 +1,77 @@
+@use "liferay-frontend-css-common/liferay/variables";
+#wrapper {
+    padding: 0;
+}
+
+@mixin general-container {
+    margin-left: auto;
+        margin-right: auto;
+        max-width: 1230px;
+        padding-left: 15px;
+        padding-right: 15px;
+        // @media (max-width: $screen-sm-max) {
+        //     padding-left: 15px;
+        //     padding-right: 15px;
+        // }
+        @media (min-width: 1260px) {
+            padding-left: 0;
+            padding-right: 0;
+        }
+}
+
+
+
+.t-1-unrestricted {
+    .portlet > .portlet-topper,
+    .portlet > .portlet-content {
+        @include general-container();
+    }
+}
+div#main-content.columns-max {
+    max-width: 1230px;
+    margin: 0 auto;
+}
+
+.container-fluid-1280 {
+    max-width: 1230px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+    width: 100%;
+}
+
+
+section#content {
+    border-top: 1px solid rgba(151,151,151,0.4);
+    margin-top: 7px;
+    
+    @media (max-width: variables.$screen-sm-max) {
+        padding-top: 60px;
+    }
+}
+
+#wrapper {
+    flex-flow: column;
+    display: flex;
+    height: 100vh;
+    
+    section#content {
+        width: 100%;
+        flex-grow: 1;
+    }
+    
+    header#banner {
+        width: 100%;
+        flex-grow: 0;
+    }
+    
+    footer#footer {
+        width: 100%;
+        flex-grow: 0;
+    }
+}
+
+#content > #main-content.unrestricted {
+    overflow-x: hidden ;
+}
