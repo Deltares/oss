@@ -31,7 +31,7 @@
                 <#if !expertExists>
                     <div class="expert-data">
                         <div class="grid grid-cols-12 gap-x-8">
-                            <div class="flex col-span-12 pt-5 md:col-span-12 lg:pt-8">
+                            <div class="flex col-span-12 md:col-span-12">
                                 <div class="expert-data__image block object-cover w-24 h-24 rounded-full overflow-hidden mr-4 shrink-0 placeholder">
                                     <img src="${themeDisplay.getPathThemeImages()}/person-placeholder.svg" class="w-full aspect-[160/141] object-cover overflow-hidden" />
                                 </div>

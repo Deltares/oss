@@ -53,6 +53,10 @@
     .text-theme-secondary {
       color: var(--text-secondary);
     }
+
+    .caption {
+      @include figcaption-styles;
+    }
   }
 }
 

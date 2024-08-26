@@ -1,0 +1,151 @@
+body.cke_editable {
+  background-color: $white;
+
+  &:focus {
+    background-color: $white;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 0.5rem;
+    margin-top: 0;
+  }
+
+  h1, h2, h3, h4, h5, h6,
+  .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-weight: 500;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  h1,
+  .h1 {
+    font-size: calc(1rem * 2.5);
+  }
+
+  h2,
+  .h2 {
+    font-size: calc(1rem * 2);
+  }
+
+  h3,
+  .h3 {
+    font-size: calc(1rem * 1.75);
+  }
+
+  h4,
+  .h4 {
+    font-size: calc(1rem * 1.5);
+  }
+
+  h5,
+  .h5 {
+    font-size: calc(1rem * 1.25);
+  }
+
+  h6,
+  .h6 {
+    font-size: 1rem;
+  }
+
+  ul,
+  ol {
+    list-style-position: inherit;
+    margin: revert;
+    padding: revert;
+
+    li {
+      list-style: inherit;
+      padding-left: 0.5rem;
+    }
+  }
+
+  ul {
+    list-style-type: disc;
+  }
+
+  ol {
+    list-style-type: decimal;
+  }
+
+  img {
+    height: auto;
+    max-width: 100%;
+  }
+
+  table, tr, th, td {
+    border: 1px solid gray;
+  }
+
+  // Positioned images with caption
+  .cke_widget_image {
+    // Alignment: Left
+    &[style*="float:left"],
+    &[style*="float: left"] { // Do not modify whitespace!
+      margin: 0 2rem 2rem 0;
+    }
+
+    // Alignment: Right
+    &[style*="float:right"],
+    &[style*="float: right"] { // Do not modify whitespace!
+      margin: 0 0 2rem 2rem;
+    }
+
+    figure {
+      &.image {
+        display: table;
+
+        // Alignment: Center
+        &[style*="display:inline-block"],
+        &[style*="display: inline-block"] { // Do not modify whitespace!
+          display: table !important; // Override for inline style: display as table, not inline-block
+          margin: 0 auto 2.5rem;
+        }
+
+        figcaption {
+          caption-side: bottom;
+          display: table-caption;
+          font-style: italic;
+          line-height: 1.5;
+          margin-top: 0.5rem;
+        }
+      }
+    }
+  }
+}
+
+div[class*="cke_editor__"] {
+  border: 1px solid $black;
+  border-bottom: 0;
+
+  &.cke_focus {
+    .cke_contents {
+      border-color: $black;
+      border-top-color: #e6e6e6;
+    }
+  }
+
+  .cke_contents {
+    border: 1px solid $black;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-top: 1px solid #e6e6e6;
+  }
+}
+
+@media (max-width: 767px) {
+  body.cke_editable {
+    > ul,
+    > ol {
+      margin-left: 0.25rem;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  body.cke_editable {
+    p {
+      line-height: 24px;
+      margin-bottom: 1rem;
+    }
+  }
+}

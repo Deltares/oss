@@ -86,3 +86,7 @@
 @import "components/news-list";
 @import "components/see-all-link";
 @import "components/spotlight-slider";
+
+// Reset Back-end CKEditor styles
+// Note: File needs to be last!
+@import "global/ckeditor";

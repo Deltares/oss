@@ -140,3 +140,9 @@
   line-height: 1.375;
   margin-top: 0;
 }
+
+@mixin content-image-full-width {
+  height: auto;
+  max-width: 100%;
+  width: 100%;
+}

@@ -11,7 +11,7 @@
             <#assign linkUrl = linkUrl + "#" + LinkAnchor.getData() />
         </#if>
 
-        <ul class="grid sm:grid-cols-2">
+        <ul class="grid md:grid-cols-2">
             <li></li>
             <li>
                 <a href="${linkUrl}" class="group flex text-theme-button">

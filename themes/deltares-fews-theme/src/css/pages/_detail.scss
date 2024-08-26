@@ -853,6 +853,38 @@
   }
 }
 
+.cms-content-simple {
+  p, a, label, li {
+    font-size: inherit;
+    font-weight: 500;
+  }
+
+  strong {
+    font-weight: 700;
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  a:not([class*=button]) {
+    color: var(--text-quinary);
+    font-weight: 700;
+    text-decoration-line: underline;
+    -webkit-text-decoration-skip-ink: none;
+    text-decoration-skip-ink: none;
+    text-underline-offset: 2px;
+    transition-duration: .3s;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+
+    &:focus,
+    &:hover {
+      color: var(--text-secondary);
+    }
+  }
+}
+
 @supports (color:rgb(0 0 0/0)) {
   .prose--app {
     color: rgb(0 0 0/var(--tw-text-opacity));

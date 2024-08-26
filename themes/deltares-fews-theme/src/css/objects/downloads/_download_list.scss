@@ -1,3 +1,10 @@
+.c-downloads-container {
+    display: grid;
+    grid-row-gap: 50px;
+    grid-template-columns: 1fr;
+    margin-bottom: 3rem;
+}
+
 .c-downloads-title {
     margin-bottom: 10px;
     padding-right: 20px;
@@ -67,12 +74,6 @@
             }
         }
     }
-}
-
-.c-downloads-container {
-    display: grid;
-    grid-row-gap: 50px;
-    grid-template-columns: 1fr;
 }
 
 // Terms pop-up (ported from template)
