@@ -1,7 +1,7 @@
 <#assign xmlUtils = serviceLocator.findService("nl.deltares.portal.utils.XmlContentUtils") />
 
 <#if entries?has_content>
-    <div class="blog-page">
+    <div class="blog-page blog-preview-list">
         <#list entries as entry>
             <div class="blog-page__item clearfix">
                 <#assign assetRenderer = entry.getAssetRenderer() />

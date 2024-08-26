@@ -1,14 +1,23 @@
 .link-list {
     .link-list__item {
-        @include clearfix;
-        border-bottom: 1px solid rgba(151, 151, 151, 0.2);
-        padding: 8px 18px;
-        
-        a{
-            float: right;
+        border-bottom: 1px solid var(--bg-primary);
+        padding: 2rem 0;
+
+        &:first-child {
+            padding-top: 0;
         }
-        span {
-            font-weight: 400
+
+        &:last-child {
+            border: 0;
+        }
+
+        h4 {
+            margin-bottom: .25rem;
+            padding-bottom: .75rem;
+
+            a {
+                @include reset-font;
+            }
         }
     }
 }

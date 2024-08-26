@@ -179,3 +179,78 @@ $break-point: 814px;
         }
     }
 }
+
+// Experts: display compact view in blog list
+// "!important"-overrides for HTML set classes
+.blog-preview-list {
+    .blog-page__item__meta-data__expert {
+        .expert-data {
+            > div {
+                display: block;
+
+                > div {
+                    display: block;
+                }
+            }
+
+            .expert-data__image {
+                background-size: 52px;
+                display: inline-block;
+                height: 52px;
+                line-height: 52px;
+                margin-right: 0 !important;
+                max-height: 52px;
+                width: 52px;
+
+                img {
+                    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+                    filter: alpha(opacity = 0);
+                    min-height: 100%;
+                    max-height: 100%;
+                    min-width: 100%;
+                    max-width: 100%;
+                    opacity: 0;
+                }
+            }
+
+            .expert-data__content {
+                display: inline-block;
+                line-height: 54px;
+                margin-left: 10px;
+                margin-right: 10px;
+                vertical-align: top;
+
+                > div {
+                    margin-bottom: 0 !important;
+                }
+
+                > span {
+                    display: none;
+                    visibility: hidden;
+                }
+
+                svg {
+                    display: none;
+                    visibility: hidden;
+                }
+            }
+        }
+    }
+
+    @media (max-width: ($break-point - 1)) {
+        .blog-page__item {
+            border-bottom: 1px solid var(--bg-primary);
+            margin-bottom: 1rem;
+            padding: 2rem 0;
+
+            &:first-of-type {
+                padding-top: 0;
+            }
+
+            &:last-of-type {
+                border-bottom: 0;
+                padding-bottom: 0;
+            }
+        }
+    }
+}

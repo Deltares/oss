@@ -43,7 +43,7 @@
 }
 
 section#content {
-    @media (max-width: variables.$screen-sm-max) {
+    @media (max-width: 1023px) {
         padding-top: 60px;
     }
 }
