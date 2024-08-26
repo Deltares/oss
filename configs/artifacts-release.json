@@ -68,7 +68,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.oss.language",
-    "version" : "1.0.4",
+    "version" : "1.0.5",
     "extension" : "jar"
   },
   {
@@ -123,7 +123,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "deltares-fews-theme",
-    "version" : "1.0.7",
+    "version" : "1.0.8",
     "extension" : "war"
   },
   {
