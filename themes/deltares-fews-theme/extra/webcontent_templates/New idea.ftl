@@ -50,7 +50,7 @@
                 <#if !expertExists>
                     <div class="expert-data">
                         <div class="grid grid-cols-12 gap-x-8">
-                            <div class="flex col-span-12 pt-5 md:col-span-12 lg:pt-8">
+                            <div class="flex col-span-12 md:col-span-12">
                                 <div class="expert-data__image" style="background-image:url(${OptionalFields.ExpertPhoto.getData()})">
                                     <#if OptionalFields.ExpertPhoto.getData()?? && OptionalFields.ExpertPhoto.getData() != "">
                                         <img alt="${OptionalFields.ExpertPhoto.getAttribute("alt")}" data-fileentryid="${OptionalFields.ExpertPhoto.getAttribute("fileEntryId")}" src="${OptionalFields.ExpertPhoto.getData()}" />

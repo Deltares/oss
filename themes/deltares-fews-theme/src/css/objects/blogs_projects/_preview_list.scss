@@ -137,3 +137,45 @@ $break-point: 814px;
         }
     }
 }
+
+.blog,
+.news,
+.projects {
+    &-page__item__meta-data {
+        picture + {
+            .blog,
+            .news,
+            .projects {
+                &-page__item__meta-data__expert {
+                    .expert-data {
+                        > div {
+                            > div {
+                                padding-top: 1.25rem;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @media (min-width: 1024px) {
+        &-page__item__meta-data {
+            picture + {
+                .blog,
+                .news,
+                .projects {
+                    &-page__item__meta-data__expert {
+                        .expert-data {
+                            > div {
+                                > div {
+                                    padding-top: 2rem;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
