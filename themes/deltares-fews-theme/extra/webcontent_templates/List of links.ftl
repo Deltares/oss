@@ -1,9 +1,11 @@
 <#if LinkTitle.getSiblings()?has_content>
     <ul class="link-list clearList">
         <#list LinkTitle.getSiblings() as cur_LinkTitle>
-            <li class="link-list__item"><span>${cur_LinkTitle.getData()}</span>
-                <a class="c-card__link regular-text" href="${cur_LinkTitle.LinkURL.getData()}" target="_blank"><img src="${themeDisplay.getPathThemeImages()}/chevron_right.svg">&nbsp;Read more</a>
-                <div>${cur_LinkTitle.LinkExplanatoryText.getData()}</div>
+            <li class="link-list__item">
+                <h4 class="group-hover:underline group-focus:underline decoration-1 font-medium text-lg lg:text-xl text-theme-secondary">
+                    <a href="${cur_LinkTitle.LinkURL.getData()}" target="_blank">${cur_LinkTitle.getData()}</a>
+                </h4>
+                <span class="block">${cur_LinkTitle.LinkExplanatoryText.getData()}</span>
             </li>
         </#list>
     </ul>
