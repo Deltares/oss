@@ -32,7 +32,7 @@
         </div>
         <div class="relative col-start-1 col-end-13 row-start-1 row-end-3 pointer-events-none z-10 image-container">
             <div class="w-full h-full">
-                <img width="390" height="632" class="block w-full h-full object-cover" data-fileentryid="${bannerImage.getAttribute("fileEntryId")}" alt="${bannerImage.getAttribute("alt")}" src="${bannerImage.getData()}" />
+                <img width="390" height="632" class="block w-full h-full object-cover"  src="${bannerImage.getData()}" />
                 <#if bannerImageCopyright.getData()?? && bannerImageCopyright.getData() != "">
                     <figcaption class="absolute right-0 py-2 picture-copyright-gradient opacity-80 font-normal leading-tight text-sm text-white z-10 top-0 bottom-auto md:top-auto md:bottom-0">${bannerImageCopyright.getData()}</figcaption>
                 </#if>

@@ -14,7 +14,7 @@
         </div>
         <div class="news-page__item__meta-data col col-12 col-lg-5 mb-4">
             <#if MandatoryFields.BlogImage.getData()?? && MandatoryFields.BlogImage.getData() != "">
-                <img alt="${MandatoryFields.BlogImage.getAttribute("alt")}" data-fileentryid="${MandatoryFields.BlogImage.getAttribute("fileEntryId")}" src="${MandatoryFields.BlogImage.getData()}" />
+                <img src="${MandatoryFields.BlogImage.getData()}" />
             </#if>
 
             <div class="projects-page__item__meta-data__expert">
@@ -35,7 +35,7 @@
                             <div class="flex col-span-12 md:col-span-12">
                                 <div class="expert-data__image" style="background-image:url(${OptionalFields.ExpertPhoto.getData()})">
                                     <#if OptionalFields.ExpertPhoto.getData()?? && OptionalFields.ExpertPhoto.getData() != "">
-                                        <img alt="${OptionalFields.ExpertPhoto.getAttribute("alt")}" data-fileentryid="${OptionalFields.ExpertPhoto.getAttribute("fileEntryId")}" src="${OptionalFields.ExpertPhoto.getData()}" />
+                                        <img  src="${OptionalFields.ExpertPhoto.getData()}" />
                                     <#else>
                                         <div class="expert-data__image block object-cover w-24 h-24 rounded-full overflow-hidden mr-4 shrink-0 placeholder">
                                             <img src="${themeDisplay.getPathThemeImages()}/person-placeholder.svg" class="w-full aspect-[160/141] object-cover overflow-hidden" />

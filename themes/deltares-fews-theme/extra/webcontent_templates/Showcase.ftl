@@ -19,7 +19,7 @@
         </div>
         <div class="projects-page__item__meta-data col col-12 col-lg-5 mb-4">
             <#if (parentStructureFieldSet2393206.ProjectImage.getData()?? && parentStructureFieldSet2393206.ProjectImage.getData() != "")>
-                <img class="projects-page__item__meta-data__image" alt="${parentStructureFieldSet2393206.ProjectImage.getAttribute("alt")}" data-fileentryid="${parentStructureFieldSet2393206.ProjectImage.getAttribute("fileEntryId")}" src="${parentStructureFieldSet2393206.ProjectImage.getData()}" />
+                <img class="projects-page__item__meta-data__image"  src="${parentStructureFieldSet2393206.ProjectImage.getData()}" />
             </#if>
             <div class="projects-page__item__meta-data__expert">
                 <#assign expertExists = false />

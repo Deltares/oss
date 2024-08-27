@@ -80,8 +80,6 @@
                     <#if EventImage.getData()?? && EventImage.getData() != "">
                         <img
                             class="c-events__item__image"
-                            alt="${EventImage.getAttribute("alt")}"
-                            data-fileentryid="${EventImage.getAttribute("fileEntryId")}"
                             src="${EventImage.getData()}" />
                     </#if>
                 </div>
