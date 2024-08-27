@@ -3,7 +3,7 @@
         <div class="flex col-span-12 md:col-span-12">
             <#if (ExpertNameFieldSet.ExpertNameFieldSetFieldSet.ExpertImage.getData()?? && ExpertNameFieldSet.ExpertNameFieldSetFieldSet.ExpertImage.getData() != "")>
                 <div class="expert-data__image block object-cover w-24 h-24 rounded-full overflow-hidden mr-4 shrink-0" style="background-image:url(${ExpertNameFieldSet.ExpertNameFieldSetFieldSet.ExpertImage.getData()})">
-                    <img alt="${ExpertNameFieldSet.ExpertNameFieldSetFieldSet.ExpertImage.getAttribute("alt")}" data-fileentryid="${ExpertNameFieldSet.ExpertNameFieldSetFieldSet.ExpertImage.getAttribute("fileEntryId")}" src="${ExpertNameFieldSet.ExpertNameFieldSetFieldSet.ExpertImage.getData()}" />
+                    <img  src="${ExpertNameFieldSet.ExpertNameFieldSetFieldSet.ExpertImage.getData()}" />
                 </div>
             <#else>
                 <div class="expert-data__image block object-cover w-24 h-24 rounded-full overflow-hidden mr-4 shrink-0 placeholder">

@@ -14,7 +14,7 @@
         </div>
         <div class="news-page__item__meta-data col col-12 col-lg-5 mb-4">
             <#if ImageOfNewsItem.getData()?? && ImageOfNewsItem.getData() != "">
-                <img class="news-page__item__meta-data__image" alt="${ImageOfNewsItem.getAttribute("alt")}" data-fileentryid="${ImageOfNewsItem.getAttribute("fileEntryId")}" src="${ImageOfNewsItem.getData()}" />
+                <img class="news-page__item__meta-data__image"  src="${ImageOfNewsItem.getData()}" />
             </#if>
             <div class="news-page__item__meta-data__expert">
                 <#assign expertExists = false />
