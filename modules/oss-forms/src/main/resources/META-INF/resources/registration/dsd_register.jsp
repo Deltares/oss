@@ -6,7 +6,7 @@
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <%@ taglib uri="http://liferay.com/tld/journal" prefix="liferay-journal" %>
 
-
+<%@ page import="nl.deltares.forms.internal.RegistrationFormDisplayContext" %>
 <%@ page import="com.liferay.journal.model.JournalArticleDisplay" %>
 <%@ page import="com.liferay.portal.kernel.model.Country" %>
 <%@ page import="com.liferay.portal.kernel.service.CountryServiceUtil" %>
@@ -40,6 +40,15 @@
     } catch (PortalException e) {
         SessionErrors.add(liferayPortletRequest, "registration-failed", e.getMessage());
     }
+    String ddmTemplateKey = (String) request.getAttribute("ddmTemplateKey");
+    DsdSessionUtils dsdSessionUtils = (DsdSessionUtils) request.getAttribute("dsdSessionUtils");
+    RegistrationFormDisplayContext registrationFormDisplayContext =
+            new RegistrationFormDisplayContext(liferayPortletRequest, liferayPortletResponse,
+                    dsdParserUtils, dsdSessionUtils);
+
+    List<String> registrationList = (List<String>) request.getAttribute("registrationList");
+    String childHeaderText = (String) request.getAttribute("childHeaderText");
+
 %>
 
 <portlet:actionURL name="/submit/register/form" var="submitRegisterForm"/>
@@ -172,17 +181,7 @@
 <aui:script use="liferay-form">
 
     const validateFirstStep = function() {
-
-        if (getCurrentStep("<portlet:namespace />fm") > 1) return true;
-
-        let FIRST_STEP_ERROR_MESSAGE = '<liferay-ui:message key="dsd.registration.step1.error"/>';
-        let FIRST_STEP_ERROR_MESSAGE_PARENT_MISSING = '<liferay-ui:message key="dsd.registration.step1.error.missing.parent"/>';
-        let errMessage = DsdRegistrationFormsUtil.validateFirstStep(FIRST_STEP_ERROR_MESSAGE, FIRST_STEP_ERROR_MESSAGE_PARENT_MISSING);
-        if (errMessage) {
-            alert(errMessage);
-        }
-        // registerOther();
-        return errMessage == null;
+        return true;
     }
 
     const preSubmitAction = function (){

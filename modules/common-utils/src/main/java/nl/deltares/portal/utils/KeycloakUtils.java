@@ -26,6 +26,7 @@ public interface KeycloakUtils {
         org_phone,
         first_name,
         last_name,
+        salutation,
         initials,
         email,
         academicTitle,

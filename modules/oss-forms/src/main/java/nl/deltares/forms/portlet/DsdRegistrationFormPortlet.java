@@ -80,7 +80,11 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 				if (org_vat != null) userAttributes.put("billing_vat", org_vat);
             } catch (Exception e) {
 				SessionErrors.add(request, "update-attributes-failed", "Error reading user attributes: " + e.getMessage());
-				request.setAttribute("attributes", new HashMap<>());
+				final HashMap<String, String> attributes = new HashMap<>();
+				attributes.put(KeycloakUtils.ATTRIBUTES.first_name.name(), user.getFirstName());
+				attributes.put(KeycloakUtils.ATTRIBUTES.last_name.name(), user.getLastName());
+				attributes.put(KeycloakUtils.ATTRIBUTES.email.name(), user.getEmailAddress());
+				request.setAttribute("attributes", attributes);
 			}
 			final String language = themeDisplay.getLocale().getLanguage();
 			try {

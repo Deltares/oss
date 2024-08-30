@@ -1,29 +1,20 @@
 
 DsdRegistrationFormsUtil = {
 
-    validateFirstStep: function (FIRST_STEP_ERROR_MESSAGE, FIRST_STEP_ERROR_MESSAGE_PARENT_MISSING) {
-        let isParentSelectionValid = false;
-        let isChildSelectionValid = true;
-        let registrations = document.getElementsByClassName('registration-item');
-        [...registrations].forEach(function(registration) {
-            let parentChecked = registration.getElementsByClassName("parent-registration")[0].checked;
-            if (parentChecked){
-                isParentSelectionValid = true;
-            }
-            let children = registration.getElementsByClassName('child-registration');
-            [...children].forEach(function(child) {
-                if (child.checked && !parentChecked){
-                    isChildSelectionValid = false;
-                }
-            })
-        });
-        if (!isParentSelectionValid){
-            return FIRST_STEP_ERROR_MESSAGE;
+    updateTable : function(element) {
+        let articleId = element.getAttribute('data-article-id');
+        let table = document.getElementById('users_table_' + articleId);
+
+        let userCount = parseInt(element.value);
+
+        let rows = table.rows.length - 1; // exclude the header row
+        if (userCount < rows){
+            table.deleteRow(table.rows.length - 1);
+        } else if (userCount > rows){
+            let newRow = table.insertRow(table.rows.length);
+            newRow.innerHTML = table.rows[1].innerHTML;
         }
-        if(!isChildSelectionValid){
-            return FIRST_STEP_ERROR_MESSAGE_PARENT_MISSING;
-        }
-        return null;
+
     },
 
     checkSelection : function(namespace) {
