@@ -1,15 +1,16 @@
 <%@ taglib prefix="clay" uri="http://liferay.com/tld/clay" %>
 <%@ page import="nl.deltares.portal.model.impl.Registration" %>
+<%@ page import="java.text.DecimalFormat" %>
+<%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
 
-
-<%--@elvariable id="registrationList" type="java.util.List"--%>
 <c:forEach var="registrationId" items="${registrationList}">
 
     <c:if test="${not empty registrationId}">
 
         <%
-            String registrationId = (String) pageContext.getAttribute("registrationId");
 
+            String registrationId = (String) pageContext.getAttribute("registrationId");
+            final DecimalFormat decimalFormat = new DecimalFormat("##,##0.00");
             Registration mainRegistration;
             try {
                 mainRegistration = dsdParserUtils.getRegistration(
@@ -17,6 +18,7 @@
             } catch (PortalException e) {
                 throw new RuntimeException(e);
             }
+            String price = "FREE";
             if (mainRegistration != null && !mainRegistration.isHidden()) {
                 //load the stored attributes from the database.
                 Map<String, String> userPreferences;
@@ -26,6 +28,12 @@
                     throw new RuntimeException(e);
                 }
                 if (!userPreferences.isEmpty()) attributes.putAll(userPreferences);
+
+                if (mainRegistration.getPrice() > 0)
+                    price = String.format("%s %s", mainRegistration.getCurrency(), decimalFormat.format(mainRegistration.getPrice()));
+                else
+                    price = LanguageUtil.format(locale, "dsd.theme.session.free", java.util.Optional.empty());
+
             %>
             <div class="registration-item">
 
@@ -57,7 +65,18 @@
                                         min="1"
                                         type="number"
                                         data-article-id="${registrationId}"
-                                        onChange="DsdRegistrationFormsUtil.updateTable(this)"
+                                        onChange='<%="DsdRegistrationFormsUtil.updateTable('" +  namespace  + "', this);"%>'
+                                />
+                            </div>
+                            <div class="float-right">
+                                <aui:input
+                                        name="parent_registration_price_${registrationId}"
+                                        label=""
+                                        value="<%=price%>"
+                                        article-price="<%= mainRegistration.getPrice() %>"
+                                        article-currency="<%= mainRegistration.getCurrency() %>"
+                                        disabled="true"
+
                                 />
                             </div>
                             <div class="float-right">
@@ -121,13 +140,14 @@
                 <div class="row">
                     <div class="col-md-12">
                         <br/><liferay-ui:message key="dsd.registration.step1.user.information"/><br/>
-                        <table id="users_table_${registrationId}">
+                        <table id="<portlet:namespace />users_table_${registrationId}">
                             <colgroup>
-                                <col style="width: 20%"/>
+                                <col style="width: 15%"/>
                                 <col style="width: 10%"/>
                                 <col style="width: 20%"/>
                                 <col style="width: 20%"/>
-                                <col style="width: 30%"/>
+                                <col style="width: 25%"/>
+                                <col style="width: 10%"/>
                             </colgroup>
                             <thead>
                             <tr>
@@ -143,8 +163,11 @@
                                 <th>
                                     <liferay-ui:message key="registrationform.lastname"/>
                                 </th>
-                                <th colspan="2">
+                                <th>
                                     <liferay-ui:message key="registrationform.email"/>
+                                </th>
+                                <th >
+                                    <liferay-ui:message key="registrationform.discount"/>
                                 </th>
                             </tr>
                             </thead>
@@ -192,7 +215,7 @@
                                             </aui:validator>
                                         </aui:input>
                                     </td>
-                                    <td colspan="2">
+                                    <td >
                                         <aui:input
                                                 label=""
                                                 name="email"
@@ -207,6 +230,16 @@
                                         </aui:input>
 
                                     </td>
+                                    <td>
+                                        <aui:select
+                                                name="discount"
+                                                type="select"
+                                                label=""
+                                                value="1" >
+                                            <aui:option value="1" label ="registrationform.discount.none" />
+                                            <aui:option value="0,5" label ="registrationform.discount.teacher" />
+                                        </aui:select>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -214,6 +247,43 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="d-flex">
+                            <table id="<portlet:namespace />total_price_table">
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        <aui:input
+                                                label="registrationform.price.subtotal"
+                                                name="subtotal"
+                                                value="">
+                                        </aui:input>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <aui:input
+                                                label="registrationform.price.discount"
+                                                name="discount"
+                                                value="">
+                                        </aui:input>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <aui:input
+                                                label="registrationform.price.total"
+                                                name="total"
+                                                value="">
+                                        </aui:input>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         <% } %>
     </c:if>

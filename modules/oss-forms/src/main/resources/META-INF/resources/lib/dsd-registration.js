@@ -1,9 +1,9 @@
 
 DsdRegistrationFormsUtil = {
 
-    updateTable : function(element) {
+    updateTable : function(namespace, element) {
         let articleId = element.getAttribute('data-article-id');
-        let table = document.getElementById('users_table_' + articleId);
+        let table = document.getElementById(namespace + 'users_table_' + articleId);
 
         let userCount = parseInt(element.value);
 
@@ -15,6 +15,35 @@ DsdRegistrationFormsUtil = {
             newRow.innerHTML = table.rows[1].innerHTML;
         }
 
+        DsdRegistrationFormsUtil.updateRowPrice(namespace, element);
+    },
+
+    updateRowPrice: function(namespace, element) {
+        let articleId = element.getAttribute('data-article-id');
+        let totalEl = document.getElementById(namespace + 'parent_registration_price_' + articleId);
+
+        let basePrice = parseFloat(totalEl.getAttribute('article-price'));
+        if (basePrice === 0) return;
+        let currency = totalEl.getAttribute('article-currency');
+
+        let userCount = parseInt(element.value);
+        totalEl.value = currency + ' ' + (basePrice * userCount).toFixed(2);
+
+    },
+
+    updateTotalPrice : function(namespace) {
+        let parents = document.getElementsByClassName('parent_registration');
+        [...parents].forEach( function(parent) {
+            let price = parent.attributes['data-price'].value;
+        
+        });
+
+        //subtotal
+        totalsTable.rows[1].cells[1].innerHTML = currency + ' ' + subTotal.toFixed(2);
+        //discount
+        totalsTable.rows[2].cells[1].innerHTML = currency + ' ' + discount.toFixed(2);
+        //total
+        totalsTable.rows[3].cells[1].innerHTML =  currency + ' ' + (subTotal - discount).toFixed(2);
     },
 
     checkSelection : function(namespace) {
@@ -91,6 +120,6 @@ DsdRegistrationFormsUtil = {
 
         $(document.getElementById('badge-title')).text(title);
         $(document.getElementById('job-title')).text(jobTitle);
-    }
+    },
 
 }
