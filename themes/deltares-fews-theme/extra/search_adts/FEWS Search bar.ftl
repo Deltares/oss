@@ -22,7 +22,7 @@
                 />
 
                 <div class="search-bar-submit">
-                    <button aria-label="${languageUtil.get(locale, 'search')}" type="submit" data-qa-id="searchInput" class="shrink-0 bg-theme-button group-hover:bg-theme-button--hover group-focus:bg-theme-button--hover transition duration-200 rounded-r">
+                    <button aria-label="${languageUtil.get(locale, 'search')}" type="submit" data-qa-id="searchInput" class="btn-lg shrink-0 bg-theme-button group-hover:bg-theme-button--hover group-focus:bg-theme-button--hover transition duration-200 rounded-r">
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" aria-hidden="false" role="img" class="flex w-5 h-5">
                             <path fill="currentColor" d="M1,17.9h22.8L13.3,28.4L16,31l15-15L16,1l-2.6,2.6l10.4,10.5H1V17.9z"></path>
                         </svg>
