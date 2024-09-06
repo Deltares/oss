@@ -30,7 +30,7 @@
 
                     <#if article?has_content && article.getStatus() == 0> <#-- status 0 == published-->
                         <#assign expertExists = true />
-                        ${journalContent.getContent(groupId, article.getArticleId(), viewMode, locale.getLanguage())}
+                        ${journalContent.getContent(article.getGroupId(), article.getArticleId(), viewMode, locale.getLanguage())}
                     </#if>
                 </#if>
                 <#if !expertExists>

@@ -32,8 +32,10 @@
                             <p>
                                 <strong>Related Questions:</strong></br>
                                 <#list relatedQuestions as relatedQuestion>
-                                    <#assign questionContent=relatedQuestion.getStringValue()?eval />
-                                    <a href="#${questionContent.classPK}" onClick="toggleBookMark('${questionContent.classPK}')" >${questionContent.title}</a></br>
+                                    <#if relatedQuestion.getStringValue()?has_content>
+                                        <#assign questionContent=relatedQuestion.getStringValue()?eval />
+                                        <a href="#${questionContent.classPK}" onClick="toggleBookMark('${questionContent.classPK}')" >${questionContent.title}</a></br>
+                                    </#if>
                                 </#list>
                             </p>
                         </#if>
