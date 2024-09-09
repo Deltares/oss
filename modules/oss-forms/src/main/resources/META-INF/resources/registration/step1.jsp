@@ -3,6 +3,9 @@
 <%@ page import="java.text.DecimalFormat" %>
 <%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
 
+<%
+
+%>
 <c:forEach var="registrationId" items="${registrationList}">
 
     <c:if test="${not empty registrationId}">
@@ -19,7 +22,7 @@
                 throw new RuntimeException(e);
             }
             String price = "FREE";
-            if (mainRegistration != null && !mainRegistration.isHidden()) {
+            if (!mainRegistration.isHidden()) {
                 //load the stored attributes from the database.
                 Map<String, String> userPreferences;
                 try {
@@ -73,12 +76,15 @@
                                         name="parent_registration_price_${registrationId}"
                                         label=""
                                         value="<%=price%>"
-                                        article-price="<%= mainRegistration.getPrice() %>"
-                                        article-currency="<%= mainRegistration.getCurrency() %>"
+                                        data-price="<%= mainRegistration.getPrice() %>"
+                                        data-tax="<%= mainRegistration.getVAT() %>"
+                                        data-currency="<%= mainRegistration.getCurrency() %>"
                                         disabled="true"
+                                        cssClass="parent-registration-price"
 
                                 />
                             </div>
+                            <div class="float-right col-md-2"><%=(int)mainRegistration.getVAT()%>% <liferay-ui:message key="registrationform.price.tax"/> </div>
                             <div class="float-right">
                                 <a href="#" data-article-id="${registrationId}" class="btn-lg btn-primary remove-from-cart" role="button"
                                    aria-pressed="true"  style="color:#fff" >
@@ -142,12 +148,11 @@
                         <br/><liferay-ui:message key="dsd.registration.step1.user.information"/><br/>
                         <table id="<portlet:namespace />users_table_${registrationId}">
                             <colgroup>
-                                <col style="width: 15%"/>
+                                <col style="width: 20%"/>
                                 <col style="width: 10%"/>
                                 <col style="width: 20%"/>
                                 <col style="width: 20%"/>
-                                <col style="width: 25%"/>
-                                <col style="width: 10%"/>
+                                <col style="width: 30%"/>
                             </colgroup>
                             <thead>
                             <tr>
@@ -165,9 +170,6 @@
                                 </th>
                                 <th>
                                     <liferay-ui:message key="registrationform.email"/>
-                                </th>
-                                <th >
-                                    <liferay-ui:message key="registrationform.discount"/>
                                 </th>
                             </tr>
                             </thead>
@@ -230,16 +232,6 @@
                                         </aui:input>
 
                                     </td>
-                                    <td>
-                                        <aui:select
-                                                name="discount"
-                                                type="select"
-                                                label=""
-                                                value="1" >
-                                            <aui:option value="1" label ="registrationform.discount.none" />
-                                            <aui:option value="0,5" label ="registrationform.discount.teacher" />
-                                        </aui:select>
-                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -247,59 +239,67 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="d-flex">
-                            <table id="<portlet:namespace />total_price_table">
-                                <tbody>
-                                <tr>
-                                    <td>
-                                        <aui:input
-                                                label="registrationform.price.subtotal"
-                                                name="subtotal"
-                                                value="">
-                                        </aui:input>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <aui:input
-                                                label="registrationform.price.discount"
-                                                name="discount"
-                                                value="">
-                                        </aui:input>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <aui:input
-                                                label="registrationform.price.total"
-                                                name="total"
-                                                value="">
-                                        </aui:input>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
             </div>
         <% } %>
     </c:if>
 
 </c:forEach>
+
+<div class="registration-item">
+
+    <div class="row">
+        <div class="col-md-12">
+            <table id="<portlet:namespace />total_price_table" class="float-right col-md-4">
+                <colgroup>
+                    <col style="width: 40%"/>
+                    <col style="width: 60%"/>
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td style="text-align:right">
+                        <liferay-ui:message key="registrationform.price.subtotal"/>
+                    </td>
+                    <td style="text-align:right">
+
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align:right">
+                        <liferay-ui:message key="registrationform.price.tax"/>
+                    </td>
+                    <td style="text-align:right">
+
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align:right">
+                        <liferay-ui:message key="registrationform.price.total"/>
+                    </td>
+                    <td style="text-align:right">
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
 <aui:script use="event, node, aui-base, aui-progressbar">
 
     let removeButtons = $(document.getElementsByClassName("remove-from-cart"));
     [...removeButtons].forEach(function (button) {
         button.onclick = function (event){
             let srcElement;
-            if (event.target.tagName === 'A') {
-                srcElement = event.srcElement;
-            } else {
+            if (event.target.tagName === 'use') {
+                srcElement = event.target.parentElement.parentElement;
+            } else if ('svg' === event.srcElement.tagName) {
                 srcElement = event.srcElement.parentElement;
+            } else {
+                srcElement = event.srcElement;
             }
+
             let myArticleId = srcElement.attributes.getNamedItem('data-article-id').value;
             let childCheckBoxes = $(document.getElementsByClassName('child-registration'));
             let url = window.location.href;
@@ -315,6 +315,8 @@
             window.location.href = url;
             event.preventDefault();
         };
+
+        DsdRegistrationFormsUtil.updateTotalPrice('<portlet:namespace />');
     });
 
 </aui:script>

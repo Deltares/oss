@@ -16,34 +16,43 @@ DsdRegistrationFormsUtil = {
         }
 
         DsdRegistrationFormsUtil.updateRowPrice(namespace, element);
+        DsdRegistrationFormsUtil.updateTotalPrice(namespace);
     },
 
     updateRowPrice: function(namespace, element) {
         let articleId = element.getAttribute('data-article-id');
         let totalEl = document.getElementById(namespace + 'parent_registration_price_' + articleId);
 
-        let basePrice = parseFloat(totalEl.getAttribute('article-price'));
+        let basePrice = parseFloat(totalEl.getAttribute('data-price'));
         if (basePrice === 0) return;
-        let currency = totalEl.getAttribute('article-currency');
-
+        let currency = totalEl.getAttribute('data-currency');
         let userCount = parseInt(element.value);
         totalEl.value = currency + ' ' + (basePrice * userCount).toFixed(2);
 
     },
 
     updateTotalPrice : function(namespace) {
-        let parents = document.getElementsByClassName('parent_registration');
-        [...parents].forEach( function(parent) {
-            let price = parent.attributes['data-price'].value;
-        
+        let totolPriceEl = document.getElementsByClassName('parent-registration-price');
+        let table = document.getElementById(namespace + 'total_price_table');
+        let subTotal = 0;
+        let taxTotal = 0;
+        let currency = "€";
+        [...totolPriceEl].forEach( function(parent) {
+            let valueTxt = parent.value;
+            let taxPer = parseFloat(parent.attributes['data-tax'].value);
+            currency = parent.attributes['data-currency'].value;
+            let price =  Number(valueTxt.replace(/[^0-9.-]+/g,""));
+            subTotal += price;
+            taxTotal+= price * taxPer/100;
         });
+        let total = subTotal + taxTotal;
 
         //subtotal
-        totalsTable.rows[1].cells[1].innerHTML = currency + ' ' + subTotal.toFixed(2);
+        table.rows[0].cells[1].innerHTML = currency + ' ' + subTotal.toFixed(2);
         //discount
-        totalsTable.rows[2].cells[1].innerHTML = currency + ' ' + discount.toFixed(2);
+        table.rows[1].cells[1].innerHTML = currency + ' ' + taxTotal.toFixed(2);
         //total
-        totalsTable.rows[3].cells[1].innerHTML =  currency + ' ' + (subTotal - discount).toFixed(2);
+        table.rows[2].cells[1].innerHTML =  currency + ' ' + total.toFixed(2);
     },
 
     checkSelection : function(namespace) {
