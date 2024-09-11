@@ -1,13 +1,33 @@
 
 DsdRegistrationFormsUtil = {
 
+    updateValidator : function (namespace, rows) {
+        //copy validator rules to the new row fields
+        var myFormValidator = Liferay.Form.get(namespace + 'fm').formValidator;
+        var _ruleData = myFormValidator.get('fieldStrings');
+        _ruleData[namespace + 'jobTitles' + rows] = _ruleData[namespace + 'jobTitles']
+        _ruleData[namespace + 'salutation' + rows] = _ruleData[namespace + 'salutation']
+        _ruleData[namespace + 'firstName' + rows] = _ruleData[namespace + 'firstName']
+        _ruleData[namespace + 'lastName' + rows] = _ruleData[namespace + 'lastName']
+        _ruleData[namespace + 'email' + rows] = _ruleData[namespace + 'email']
+
+        var _rules = myFormValidator.get('rules');
+        _rules[namespace + 'jobTitles' + rows] = _rules[namespace + 'jobTitles']
+        _rules[namespace + 'salutation' + rows] = _rules[namespace + 'salutation']
+        _rules[namespace + 'firstName' + rows] = _rules[namespace + 'firstName']
+        _rules[namespace + 'lastName' + rows] = _rules[namespace + 'lastName']
+        _rules[namespace + 'email' + rows] = _rules[namespace + 'email']
+
+    },
     checkEmailDomain : function (namespace, val, fldNode) {
         let domains = document.getElementById(namespace + "org_domains").value
+        if (!domains || domains.length === 0) return true; //no domains configured
         let isValid = false;
         if (val !== "" && val.includes('@')){
             let domain = val.split("@")[1];
             isValid = domains.includes(domain);
         }
+
         if (isValid) return true;
 
         var myFormValidator = Liferay.Form.get(namespace + 'fm').formValidator;
@@ -31,11 +51,30 @@ DsdRegistrationFormsUtil = {
             table.deleteRow(table.rows.length - 1);
         } else if (userCount > rows){
             let newRow = table.insertRow(table.rows.length);
-            newRow.innerHTML = table.rows[1].innerHTML;
+            this.copyTableRow(table.rows[1], newRow, rows)
+            this.updateValidator(namespace, rows)
         }
 
         DsdRegistrationFormsUtil.updateRowPrice(namespace, element);
         DsdRegistrationFormsUtil.updateTotalPrice(namespace);
+    },
+
+    copyTableRow: function (oldRow, newRow, rows){
+        newRow.innerHTML = oldRow.innerHTML;
+
+        for (let i = 0; i < newRow.cells.length; i++) {
+            let div = newRow.cells[i].children[0];
+            let input = div.children[0];
+            input.value = ""
+            input.id = input.id + rows
+            input.name = input.id
+            //remove any existing errors
+            for (let c = 1 ; c < div.children.length; c++){
+                div.removeChild(div.children[c]);
+            }
+            div.classList.remove('has-error')
+        }
+
     },
 
     updateRowPrice: function(namespace, element) {

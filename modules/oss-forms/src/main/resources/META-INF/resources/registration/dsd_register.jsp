@@ -194,6 +194,7 @@
         let form = Liferay.Form.get(namespace + "fm").formValidator;
         form.validateFirstStep = validateFirstStep;
         form.preSubmitAction = preSubmitAction;
+
         $('.bs-stepper').formStepper(form);
         DsdRegistrationFormsUtil.updateBadge(namespace);
         DsdRegistrationFormsUtil.checkSelection(namespace);

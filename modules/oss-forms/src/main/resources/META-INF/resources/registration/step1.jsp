@@ -199,7 +199,7 @@
                                                 <aui:validator name="maxLength">75</aui:validator>
                                                 <aui:validator name="required">
                                                     function () {
-                                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                                                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                                     }
                                                 </aui:validator>
                                         </aui:input>
@@ -212,7 +212,7 @@
                                             <aui:validator name="maxLength">75</aui:validator>
                                             <aui:validator name="required">
                                                 function () {
-                                                return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                                 }
                                             </aui:validator>
                                         </aui:input>
@@ -231,7 +231,7 @@
                                             </aui:validator>
                                             <aui:validator name="required">
                                                 function () {
-                                                return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                                 }
                                             </aui:validator>
                                         </aui:input>
