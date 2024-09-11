@@ -1,132 +1,65 @@
-<%@ page import="java.util.Date" %>
-<%@ page import="nl.deltares.model.BadgeInfo" %>
 <aui:row>
-    <aui:col width="50">
-        <c:if test="${not empty attributes}">
-            <c:set var="academicTitle" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.academicTitle.name()) %>"/>
-            <c:set var="initials" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.initials.name()) %>"/>
-<%--            <c:set var="jobTitle" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.jobTitle.name()) %>"/>--%>
-            <c:set var="org_name" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_name.name()) %>"/>
-            <c:set var="org_address" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_address.name()) %>"/>
-            <c:set var="org_postal" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_postal.name()) %>"/>
-            <c:set var="org_city" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_city.name()) %>"/>
-            <c:set var="country" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_country.name()) %>"/>
-            <c:set var="org_phone" value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.org_phone.name()) %>"/>
-        </c:if>
-        <span><liferay-ui:message key="registrationform.userInfo"/></span>
-        <div class="row">
-            <div class="col">
-                <aui:input
-                        name="registration_other"
-                        label="registrationform.register.other"
-                        type="checkbox"
-                        checked="false" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <aui:input
-                        name="<%= KeycloakUtils.ATTRIBUTES.academicTitle.name() %>"
-                        label="registrationform.academic.titles"
-                        value="${academicTitle}"
-                        cssClass="update-badge">
-                    <aui:validator name="maxLength">75</aui:validator>
-                </aui:input>
-            </div>
-            <div class="col">
-                <aui:input
-                        name="<%= KeycloakUtils.ATTRIBUTES.initials.name() %>"
-                        label="registrationform.initials"
-                        value="${initials}"
-                        cssClass="update-badge">
-                    <aui:validator name="maxLength">75</aui:validator>
-                </aui:input>
-            </div>
-        </div>
+    <aui:col width="100">
 
+        <aui:input name="org_domains" type="hidden" />
+        <div class="row">
+            <div class="col">
+                <aui:select
+                        name="select_organization"
+                        type="select"
+                        label=""
+                        value="">
+                    <aui:option value="-1" label ="registrationform.select.org" />
+                </aui:select>
+            </div>
+        </div>
         <div class="row">
             <div class="col">
                 <aui:input
-                        name="<%= KeycloakUtils.ATTRIBUTES.first_name.name() %>"
-                        label="registrationform.firstname"
-                        value="<%= user.getFirstName() %>"
-                        original_value="<%= user.getFirstName() %>"
-                        disabled="true">
+                        name="<%= KeycloakUtils.ATTRIBUTES.org_name.name() %>"
+                        label="registrationform.orgname"
+                        value="">
                     <aui:validator name="required">
-                                function () {
-                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                                }
+                            function () {
+                                return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 1);
+                            }
                     </aui:validator>
                     <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
             <div class="col">
                 <aui:input
-                        name="<%= KeycloakUtils.ATTRIBUTES.last_name.name() %>"
-                        label="registrationform.lastname"
-                        value="<%= user.getLastName() %>"
-                        original_value="<%= user.getLastName() %>"
-                        disabled="true">
-                    <aui:validator name="required">
-                                function () {
-                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                                }
-                    </aui:validator>
+                        name="<%= KeycloakUtils.ATTRIBUTES.org_vat.name() %>"
+                        label="registrationform.orgtaxid"
+                        value="">
                     <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
         </div>
-
-        <aui:input
-                name="<%= KeycloakUtils.ATTRIBUTES.email.name() %>"
-                label="registrationform.email"
-                value="<%= user.getEmailAddress() %>"
-                original_value="<%= user.getEmailAddress() %>"
-                disabled="true">
-            <aui:validator name="required">
-                        function () {
-                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                        }
-            </aui:validator>
-            <aui:validator name="email"/>
-            <aui:validator name="maxLength">254</aui:validator>
-        </aui:input>
-
-        <span><liferay-ui:message key="registrationform.organizationInfo"/></span>
-
-        <aui:input
-                name="<%= KeycloakUtils.ATTRIBUTES.org_name.name() %>"
-                label="registrationform.orgname"
-                value="${org_name}">
-            <aui:validator name="required">
-                        function () {
-                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                        }
-            </aui:validator>
-            <aui:validator name="maxLength">75</aui:validator>
-        </aui:input>
-        <aui:input
-                name="<%= KeycloakUtils.ATTRIBUTES.org_address.name() %>"
-                label="registrationform.orgaddress"
-                value="${org_address}">
-            <aui:validator name="required">
-                        function () {
-                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                        }
-
-            </aui:validator>
-            <aui:validator name="maxLength">255</aui:validator>
-        </aui:input>
-
+        <div class="row">
+            <div class="col">
+                <aui:input
+                        name="<%= KeycloakUtils.ATTRIBUTES.org_address.name() %>"
+                        label="registrationform.orgaddress"
+                        value="">
+                    <aui:validator name="required">
+                                function () {
+                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 1);
+                                }
+                    </aui:validator>
+                    <aui:validator name="maxLength">255</aui:validator>
+                </aui:input>
+            </div>
+        </div>
         <div class="row">
             <div class="col">
                 <aui:input
                         name="<%= KeycloakUtils.ATTRIBUTES.org_postal.name() %>"
                         label="registrationform.orgpostcode"
-                        value="${org_postal}">
+                        value="">
                     <aui:validator name="required">
                                 function () {
-                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 1);
                                 }
                     </aui:validator>
                     <aui:validator name="maxLength">10</aui:validator>
@@ -136,140 +69,141 @@
                 <aui:input
                         name="<%= KeycloakUtils.ATTRIBUTES.org_city.name() %>"
                         label="registrationform.orgcity"
-                        value="${org_city}">
+                        value="">
                     <aui:validator name="required">
                                 function () {
-                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 1);
                                 }
                     </aui:validator>
                     <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
         </div>
-        <aui:select
-                name="<%=KeycloakUtils.ATTRIBUTES.org_country.name()%>"
-                type="select"
-                label="registrationform.orgcountry"
-                value="${country}" >
-            <aui:validator name="required">
-                function () {
-                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                }
-            </aui:validator>
-            <aui:validator name="minLength">
-                2
-            </aui:validator>
-            <aui:option value="" label ="registrationform.select.country" />
-            <% List<Country> countries = CountryServiceUtil.getCompanyCountries(themeDisplay.getCompanyId(), true); %>
-            <%    for (Country country : countries) { %>
-            <aui:option value="<%=country.getName()%>" label ="<%= country.getName(locale) %>" />
-            <% } %>
-        </aui:select>
-
-        <aui:input
-                name="<%= KeycloakUtils.ATTRIBUTES.org_phone.name() %>"
-                label="registrationform.phone"
-                value="${org_phone}">
-            <aui:validator name="maxLength">15</aui:validator>
-        </aui:input>
-    </aui:col>
-    <aui:col width="50">
-
-        <p><liferay-ui:message key="dsd.registration.step2.badge.title"/></p>
-
-        <%
-            String emailBannerURL = null;
-            String eventTitle = "";
-            Date eventDate = new Date();
-            if (event != null) {
-                eventTitle = event.getTitle();
-                eventDate = event.getEndTime();
-                 emailBannerURL = event.getEmailBannerURL();
-            }
-        %>
-        <div class="card mb-3">
-            <% if (emailBannerURL != null) { %>
-                <img src="<%=emailBannerURL%>" width="100%">
-            <% } else { %>
-                <div class="card-header">
-                    <%= eventTitle %> <span
-                        class="d-block event-edition"><%= DateUtil.getDate(eventDate, "yyyy", locale)%></span>
-
-                </div>
-            <% } %>
-            <div class="card-body px-5 py-6">
-                <h1 class="card-title" id="badge-title"></h1>
-                <span class="card-text" id="job-title"></span>
+        <div class="row">
+            <div class="col">
+                <aui:select
+                        name="<%=KeycloakUtils.ATTRIBUTES.org_country.name()%>"
+                        type="select"
+                        label="registrationform.orgcountry"
+                        value="" >
+                    <aui:validator name="required">
+                        function () {
+                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 1);
+                        }
+                    </aui:validator>
+                    <aui:validator name="minLength">
+                        2
+                    </aui:validator>
+                    <aui:option value="" label ="registrationform.select.country" />
+                    <% List<Country> countries = CountryServiceUtil.getCompanyCountries(themeDisplay.getCompanyId(), true); %>
+                    <%    for (Country country : countries) { %>
+                    <aui:option value="<%=country.getA2()%>" label ="<%= country.getName(locale) %>" />
+                    <% } %>
+                </aui:select>
             </div>
         </div>
-
-
-        <span><liferay-ui:message key="dsd.registration.step2.show.title"/></span>
-        <%
-            String title_setting = attributes.get(BadgeInfo.ATTRIBUTES.badge_title_setting.name());
-            boolean yes_checked = "yes".equals(title_setting);
-            boolean no_checked = "no".equals(title_setting);
-            if (!(yes_checked || no_checked)) no_checked = true;
-        %>
-        <div class="d-flex justify-content-start">
-            <div class="pr-3">
+        <div class="row">
+            <div class="col">
                 <aui:input
-                        name="<%= BadgeInfo.ATTRIBUTES.badge_title_setting.name() %>"
-                        label="yes"
-                        cssClass="update-badge"
-                        type="radio"
-                        value="yes"
-                        checked="<%=yes_checked%>" />
+                        name="<%= KeycloakUtils.ATTRIBUTES.org_phone.name() %>"
+                        label="registrationform.phone"
+                        value="">
+                    <aui:validator name="maxLength">15</aui:validator>
+                </aui:input>
             </div>
-            <div class="pr-3">
+            <div class="col">
                 <aui:input
-                        name="<%= BadgeInfo.ATTRIBUTES.badge_title_setting.name() %>"
-                        label="no"
-                        cssClass="update-badge"
-                        type="radio"
-                        value="no"
-                        checked="<%=no_checked%>"  />
+                        name="<%= KeycloakUtils.ATTRIBUTES.org_website.name() %>"
+                        label="registrationform.orgwebsite"
+                        value="">
+                    <aui:validator name="url" />
+                </aui:input>
             </div>
         </div>
-
-        <span><liferay-ui:message key="dsd.registration.step2.badge.name"/></span>
-        <%
-            String name_setting = attributes.get(BadgeInfo.ATTRIBUTES.badge_name_setting.name());
-            boolean name_checked = "name".equals(name_setting);
-            boolean initials_checked = "initials".equals(name_setting);
-            boolean both_checked = "both".equals(name_setting);
-
-            if (!(name_checked || initials_checked || both_checked)) name_checked = true;
-        %>
-        <div class="d-flex justify-content-start">
-            <div class="pr-3">
-                <aui:input
-                        name="<%= BadgeInfo.ATTRIBUTES.badge_name_setting.name() %>"
-                        label="dsd.registration.step2.badge.name.1"
-                        cssClass="update-badge"
-                        type="radio"
-                        value="name"
-                        checked="<%=name_checked%>"/>
-            </div>
-            <div class="pr-3">
-                <aui:input
-                        name="<%= BadgeInfo.ATTRIBUTES.badge_name_setting.name() %>"
-                        label="dsd.registration.step2.badge.name.2"
-                        cssClass="update-badge"
-                        type="radio"
-                        value="initials"
-                        checked="<%=initials_checked%>" />
-            </div>
-            <div class="pr-3">
-                <aui:input
-                        name="<%= BadgeInfo.ATTRIBUTES.badge_name_setting.name() %>"
-                        label="dsd.registration.step2.badge.name.3"
-                        cssClass="update-badge"
-                        type="radio"
-                        value="both"
-                        checked="<%=both_checked%>" />
-            </div>
-        </div>
-
     </aui:col>
 </aui:row>
+<aui:script use="event, node, aui-base">
+
+    //store the account information
+    let accounts=<%=accountsJson%>;
+    let orgReference = "<%=attributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_reference.name(), "")%>";
+    let selectedIndex = 0;
+    let orgSelection = document.getElementById("<portlet:namespace />select_organization");
+    for (var i = 0; i < accounts.length; i++) {
+        var option = document.createElement("option")
+        option.label = accounts[i]["<%=KeycloakUtils.ATTRIBUTES.org_name.name()%>"];
+        option.value = i
+        orgSelection.add(option)
+
+        if (orgReference === accounts[i]["<%=KeycloakUtils.ATTRIBUTES.org_reference.name()%>"]){
+            selectedIndex = i;
+        }
+    }
+
+    const accountSelectionChanged = function (orgSelection){
+
+        let name = "";
+        let vat = "";
+        let website = "";
+        let address = "";
+        let postal = "";
+        let city = "";
+        let country = "";
+        let phone = "";
+        let domain = "";
+        let accountIndex = orgSelection.value;
+        if (accountIndex >= 0) {
+            let account = accounts[accountIndex];
+            name = account["<%=KeycloakUtils.ATTRIBUTES.org_name.name()%>"]? account["<%=KeycloakUtils.ATTRIBUTES.org_name.name()%>"]:"";
+            vat = account["<%=KeycloakUtils.ATTRIBUTES.org_vat.name()%>"] ? account["<%=KeycloakUtils.ATTRIBUTES.org_vat.name()%>"]:"";
+            website = account["<%=KeycloakUtils.ATTRIBUTES.org_website.name()%>"]? account["<%=KeycloakUtils.ATTRIBUTES.org_website.name()%>"]: "";
+            address = account["<%=KeycloakUtils.ATTRIBUTES.org_address.name()%>"]? account["<%=KeycloakUtils.ATTRIBUTES.org_address.name()%>"]: "";
+            postal = account["<%=KeycloakUtils.ATTRIBUTES.org_postal.name()%>"]? account["<%=KeycloakUtils.ATTRIBUTES.org_postal.name()%>"]:"";
+            city = account["<%=KeycloakUtils.ATTRIBUTES.org_city.name()%>"]?account["<%=KeycloakUtils.ATTRIBUTES.org_city.name()%>"]:"";
+            country = account["<%=KeycloakUtils.ATTRIBUTES.org_country.name()%>"]?account["<%=KeycloakUtils.ATTRIBUTES.org_country.name()%>"]:"";
+            phone = account["<%=KeycloakUtils.ATTRIBUTES.org_phone.name()%>"]?account["<%=KeycloakUtils.ATTRIBUTES.org_phone.name()%>"]:"";
+            domain = account["domains"];
+        }
+        document.getElementById("<portlet:namespace />org_domains").value = domain;
+        document.getElementById("<portlet:namespace />org_name").value = name;
+        document.getElementById("<portlet:namespace />org_vat").value = vat;
+        document.getElementById("<portlet:namespace />org_website").value = website;
+        document.getElementById("<portlet:namespace />org_address").value = address;
+        document.getElementById("<portlet:namespace />org_postal").value = postal;
+        document.getElementById("<portlet:namespace />org_city").value = city;
+        document.getElementById("<portlet:namespace />org_country").value = country;
+        document.getElementById("<portlet:namespace />org_phone").value = phone;
+
+        document.getElementById("<portlet:namespace />org_name").disabled = accountIndex >= 0;
+        document.getElementById("<portlet:namespace />org_vat").disabled = accountIndex >= 0;
+        document.getElementById("<portlet:namespace />org_website").disabled = accountIndex >= 0;
+        document.getElementById("<portlet:namespace />org_address").disabled = accountIndex >= 0;
+        document.getElementById("<portlet:namespace />org_postal").disabled = accountIndex >= 0;
+        document.getElementById("<portlet:namespace />org_city").disabled = accountIndex >= 0;
+        document.getElementById("<portlet:namespace />org_country").disabled = accountIndex >= 0;
+        document.getElementById("<portlet:namespace />org_phone").disabled = accountIndex >= 0;
+    }
+
+    if (accounts.length > 0 ){
+
+        if (accounts.length === 1){
+            orgSelection.selectedIndex = 1
+        } else {
+            orgSelection.selectedIndex = selectedIndex;
+        }
+        accountSelectionChanged(orgSelection.options[orgSelection.selectedIndex]);
+
+        orgSelection.onclick = function (event){
+            accountSelectionChanged(event.target)
+        }
+    } else if (<%=!attributes.isEmpty()%>) {
+        document.getElementById("<portlet:namespace />org_name").value = "<%=attributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_name.name(), "")%>"
+        document.getElementById("<portlet:namespace />org_vat").value = "<%=attributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_vat.name(), "")%>"
+        document.getElementById("<portlet:namespace />org_website").value = "<%=attributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_website.name(), "")%>"
+        document.getElementById("<portlet:namespace />org_address").value = "<%=attributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_address.name(), "")%>"
+        document.getElementById("<portlet:namespace />org_postal").value = "<%=attributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_postal.name(), "")%>"
+        document.getElementById("<portlet:namespace />org_city").value = "<%=attributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_city.name(), "")%>"
+        document.getElementById("<portlet:namespace />org_country").value = "<%=attributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_country.name(), "")%>"
+        document.getElementById("<portlet:namespace />org_phone").value = "<%=attributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_phone.name(), "")%>"
+    }
+</aui:script>

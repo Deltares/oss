@@ -27,6 +27,7 @@
 
 <%
     String remarks = "";
+    String accountsJson = (String) renderRequest.getAttribute("accounts");
     Map<String, String> attributes = (Map) renderRequest.getAttribute("attributes");
     String conditionsURL = (String) renderRequest.getAttribute("conditionsURL");
     String privacyURL = (String) renderRequest.getAttribute("privacyURL");
@@ -146,10 +147,10 @@
 
             <div class="tab-content">
                 <div class="tab-pane active" role="tabpanel" id="stepper-step-1">
-                    <%@ include file="step1.jsp" %>
+                    <%@ include file="step2.jsp" %>
                 </div>
                 <div class="tab-pane" role="tabpanel" id="stepper-step-2">
-                    <%@ include file="step2.jsp" %>
+                    <%@ include file="step1.jsp" %>
                 </div>
                 <div class="tab-pane" role="tabpanel" id="stepper-step-3">
                     <%@ include file="step3.jsp" %>
@@ -196,12 +197,7 @@
         $('.bs-stepper').formStepper(form);
         DsdRegistrationFormsUtil.updateBadge(namespace);
         DsdRegistrationFormsUtil.checkSelection(namespace);
-        let badgeListeners = $(document.getElementsByClassName("update-badge"));
-        [...badgeListeners].forEach(function (item) {
-            item.onchange = function (){
-                DsdRegistrationFormsUtil.updateBadge(namespace);
-            };
-        });
+
         let parents = $(document.getElementsByClassName("parent-registration"));
         [...parents].forEach(function (registration) {
             registration.onchange = function (){

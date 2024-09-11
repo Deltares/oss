@@ -16,6 +16,7 @@ public interface KeycloakUtils {
     }
 
     enum ATTRIBUTES {
+        org_reference,
         org_address,
         org_city,
         org_country,

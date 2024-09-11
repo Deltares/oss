@@ -1,6 +1,25 @@
 
 DsdRegistrationFormsUtil = {
 
+    checkEmailDomain : function (namespace, val, fldNode) {
+        let domains = document.getElementById(namespace + "org_domains").value
+        let isValid = false;
+        if (val !== "" && val.includes('@')){
+            let domain = val.split("@")[1];
+            isValid = domains.includes(domain);
+        }
+        if (isValid) return true;
+
+        var myFormValidator = Liferay.Form.get(namespace + 'fm').formValidator;
+        var _ruleData = myFormValidator.get('fieldStrings')[fldNode.get('name')];
+        for(var i in _ruleData){
+            if('Dummy Message' === _ruleData.email_custom){
+                _ruleData.email_custom = "Invalid email domain! Expected: " + domains;
+            }
+        }
+        return false;
+    },
+
     updateTable : function(namespace, element) {
         let articleId = element.getAttribute('data-article-id');
         let table = document.getElementById(namespace + 'users_table_' + articleId);

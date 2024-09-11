@@ -199,7 +199,7 @@
                                                 <aui:validator name="maxLength">75</aui:validator>
                                                 <aui:validator name="required">
                                                     function () {
-                                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 1);
+                                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                                     }
                                                 </aui:validator>
                                         </aui:input>
@@ -212,7 +212,7 @@
                                             <aui:validator name="maxLength">75</aui:validator>
                                             <aui:validator name="required">
                                                 function () {
-                                                return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 1);
+                                                return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                                 }
                                             </aui:validator>
                                         </aui:input>
@@ -223,14 +223,18 @@
                                                 name="email"
                                                 value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.email.name()) %>">
                                             <aui:validator name="maxLength">75</aui:validator>
-                                            <aui:validator name="required">
-                                                function () {
-                                                return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 1);
+                                            <aui:validator name="email" />
+                                            <aui:validator errorMessage="Dummy Message" name="custom">
+                                                function(val, fldNode, rule) {
+                                                    return DsdRegistrationFormsUtil.checkEmailDomain('<portlet:namespace />', val, fldNode);
                                                 }
                                             </aui:validator>
-                                            <aui:validator name="email"/>
+                                            <aui:validator name="required">
+                                                function () {
+                                                return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                                                }
+                                            </aui:validator>
                                         </aui:input>
-
                                     </td>
                                 </tr>
                             </tbody>
@@ -288,7 +292,7 @@
 
 <aui:script use="event, node, aui-base, aui-progressbar">
 
-    let removeButtons = $(document.getElementsByClassName("remove-from-cart"));
+    let removeButtons = $(document.getElementsByName("remove-from-cart"));
     [...removeButtons].forEach(function (button) {
         button.onclick = function (event){
             let srcElement;
