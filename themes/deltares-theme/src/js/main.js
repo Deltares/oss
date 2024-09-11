@@ -39,7 +39,7 @@
         _navigate: function (event) {
             let plugin = event.data.plugin;
             let action = event.data.action;
-            let isFormValid = plugin._isFormValid() && plugin.form.validateFirstStep();
+            let isFormValid = plugin._isFormValid();
 
             let element = $(plugin.element);
             let active = element.find('li.active');

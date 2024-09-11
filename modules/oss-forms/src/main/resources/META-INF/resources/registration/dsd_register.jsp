@@ -147,10 +147,10 @@
 
             <div class="tab-content">
                 <div class="tab-pane active" role="tabpanel" id="stepper-step-1">
-                    <%@ include file="step2.jsp" %>
+                    <%@ include file="step1.jsp" %>
                 </div>
                 <div class="tab-pane" role="tabpanel" id="stepper-step-2">
-                    <%@ include file="step1.jsp" %>
+                    <%@ include file="step2.jsp" %>
                 </div>
                 <div class="tab-pane" role="tabpanel" id="stepper-step-3">
                     <%@ include file="step3.jsp" %>
@@ -181,41 +181,9 @@
 
 <aui:script use="liferay-form">
 
-    const validateFirstStep = function() {
-        return true;
-    }
-
-    const preSubmitAction = function (){
-
-    }
-
     $(document).ready(function() {
         let namespace = "<portlet:namespace />";
         let form = Liferay.Form.get(namespace + "fm").formValidator;
-        form.validateFirstStep = validateFirstStep;
-        form.preSubmitAction = preSubmitAction;
-
         $('.bs-stepper').formStepper(form);
-        DsdRegistrationFormsUtil.updateBadge(namespace);
-        DsdRegistrationFormsUtil.checkSelection(namespace);
-
-        let parents = $(document.getElementsByClassName("parent-registration"));
-        [...parents].forEach(function (registration) {
-            registration.onchange = function (){
-                DsdRegistrationFormsUtil.checkSelection(namespace);
-            };
-        });
-        let children = $(document.getElementsByClassName("child-registration"));
-        [...children].forEach(function (registration) {
-            registration.onchange = function (){
-                DsdRegistrationFormsUtil.checkSelection(namespace);
-            };
-        });
-        $(document.getElementById(namespace + "registration_other")).change(function() {
-            CommonFormsUtil.registerOther(namespace);
-        });
-        $(document.getElementById(namespace + "use_organization_address")).change(function() {
-            CommonFormsUtil.updatePaymentAddress(namespace, this.checked);
-        });
     });
 </aui:script>

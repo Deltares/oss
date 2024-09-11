@@ -119,15 +119,12 @@ DsdRegistrationFormsUtil = {
         let priceEnabled = false;
         let courseTermsEnabled = false;
         [...parents].forEach( function(parent) {
-            if (parent.checked){
+            if ( parseFloat(parent.getAttribute('data-price')) > 0) {
+                priceEnabled = true;
+            }
 
-                if ( parseFloat(parent.getAttribute('data-price')) > 0) {
-                    priceEnabled = true;
-                }
-
-                if ( parent.getAttribute('course') === "true" ) {
-                    courseTermsEnabled = true;
-                }
+            if ( parent.getAttribute('course') === "true" ) {
+                courseTermsEnabled = true;
             }
 
         });
