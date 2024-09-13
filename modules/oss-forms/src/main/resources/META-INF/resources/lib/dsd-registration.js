@@ -1,6 +1,141 @@
 
 DsdRegistrationFormsUtil = {
 
+    attributes: {},
+    accounts: [],
+    selectedAccountIndex: -1,
+
+    addressSelectionChanged: function (namespace, addressSelection){
+        let street = "";
+        let postal = "";
+        let city = "";
+        let country = "";
+        let phone = "";
+        let addressIndex = addressSelection.value;
+
+        if (addressIndex !== "-1" && this.selectedAccountIndex !== "-1"){
+
+            let account = this.accounts[this.selectedAccountIndex];
+            let address = account["addresses"][addressIndex];
+            street = address["org_address"];
+            postal = address["org_postal"];
+            city = address["org_city"];
+            country = address["org_country"];
+            phone = address["org_phone"];
+        } else {
+            street = document.getElementById(namespace + "org_address").value;
+            postal = document.getElementById(namespace + "org_postal").value;
+            city = document.getElementById(namespace + "org_city").value;
+            country = document.getElementById(namespace + "org_country").value;
+            phone = document.getElementById(namespace + "org_phone").value;
+        }
+
+        document.getElementById(namespace + "billing_address").value = street;
+        document.getElementById(namespace + "billing_postal").value = postal;
+        document.getElementById(namespace + "billing_city").value = city;
+        document.getElementById(namespace + "billing_country").value = country;
+        document.getElementById(namespace + "billing_phone").value = phone;
+
+        //not allowed to update existing addresses
+        document.getElementById(namespace + "billing_address").disabled = addressSelection.selectedIndex > 0;
+        document.getElementById(namespace + "billing_postal").disabled = addressSelection.selectedIndex > 0;
+        document.getElementById(namespace + "billing_city").disabled = addressSelection.selectedIndex > 0;
+        document.getElementById(namespace + "billing_country").disabled = addressSelection.selectedIndex > 0;
+        document.getElementById(namespace + "billing_phone").disabled = addressSelection.selectedIndex > 0;
+        //additional: only allow editing of company name when writing own addressIndex
+        document.getElementById(namespace + "billing_company").disabled = addressSelection.selectedIndex > 0;
+
+    },
+
+    accountSelectionChanged: function (namespace, orgSelection){
+
+        let name = "";
+        let website = "";
+        let street = "";
+        let postal = "";
+        let city = "";
+        let country = "";
+        let phone = "";
+        let domain = "";
+        this.selectedAccountIndex = orgSelection.value;
+        if (this.selectedAccountIndex !== "-1"){
+            let account = this.accounts[this.selectedAccountIndex];
+            name = account["org_name"];
+            website = account["org_website"];
+            domain = account["domains"];
+
+            let address = DsdRegistrationFormsUtil.getDefaultBillingAddress(account);
+            street = address["org_address"];
+            postal = address["org_postal"];
+            city = address["org_city"];
+            country = address["org_country"];
+            phone = address["org_phone"];
+
+            //update addresses in step 3
+            DsdRegistrationFormsUtil.updateAddresses(namespace, account["addresses"]);
+
+        } else {
+            name = this.attributes["org_name"]?this.attributes["org_name"]:"";
+            website = this.attributes["org_website"]?this.attributes["org_website"]:"";
+            street = this.attributes["org_address"]?this.attributes["org_address"]:"";
+            postal = this.attributes["org_postal"]?this.attributes["org_postal"]:"";
+            city = this.attributes["org_city"]?this.attributes["org_city"]:"";
+            country = this.attributes["org_country"]?this.attributes["org_country"]:"";
+            phone = this.attributes["org_phone"]?this.attributes["org_phone"]:"";
+
+            //update addresses in step 3
+            DsdRegistrationFormsUtil.updateAddresses(namespace, [])
+
+        }
+
+        document.getElementById(namespace + "org_name").value = name;
+        document.getElementById(namespace + "org_website").value = website;
+        document.getElementById(namespace + "org_address").value = street;
+        document.getElementById(namespace + "org_postal").value = postal;
+        document.getElementById(namespace + "org_city").value = city;
+        document.getElementById(namespace + "org_country").value = country;
+        document.getElementById(namespace + "org_phone").value = phone;
+        document.getElementById(namespace + "org_domains").value = domain;
+
+        document.getElementById(namespace + "org_name").disabled = orgSelection.selectedIndex > 0;
+        document.getElementById(namespace + "org_website").disabled = orgSelection.selectedIndex > 0;
+        document.getElementById(namespace + "org_address").disabled = orgSelection.selectedIndex > 0;
+        document.getElementById(namespace + "org_postal").disabled = orgSelection.selectedIndex > 0;
+        document.getElementById(namespace + "org_city").disabled = orgSelection.selectedIndex > 0;
+        document.getElementById(namespace + "org_country").disabled = orgSelection.selectedIndex > 0;
+        document.getElementById(namespace + "org_phone").disabled = orgSelection.selectedIndex > 0;
+    },
+
+    getDefaultBillingAddress : function (account){
+        let defaultAddress = { };
+        if (account.addresses) {
+            account.addresses.forEach(address => {if (address.default) defaultAddress = address} );
+        }
+        return defaultAddress;
+    },
+
+    updateAddresses: function (namespace, accountAddresses) {
+
+        let address_selection = document.getElementById(namespace + "select_address")
+        let options = address_selection.options;
+        //remove address linked to old account selection
+        let removeOptions = []
+        for (let i = 1 ; i < options.length; i++) {
+            removeOptions.push(options[i]);
+        }
+        for (const removeOption of removeOptions) {
+            address_selection.removeChild(removeOption)
+        }
+        //add new addresses linked to current account selection
+        for (let i = 0; i < accountAddresses.length; i++) {
+            let option = document.createElement("option");
+            option.value = i;
+            option.label = accountAddresses[i].name
+            address_selection.add(option)
+            if (accountAddresses[i].default) address_selection.selectedIndex = i + 1
+        }
+    },
+
     updateValidator : function (namespace, rows) {
         //copy validator rules to the new row fields
         var myFormValidator = Liferay.Form.get(namespace + 'fm').formValidator;
@@ -32,11 +167,10 @@ DsdRegistrationFormsUtil = {
 
         var myFormValidator = Liferay.Form.get(namespace + 'fm').formValidator;
         var _ruleData = myFormValidator.get('fieldStrings')[fldNode.get('name')];
-        for(var i in _ruleData){
-            if('Dummy Message' === _ruleData.email_custom){
-                _ruleData.email_custom = "Invalid email domain! Expected: " + domains;
-            }
+        if (!_ruleData.original_message){
+            _ruleData.original_message = _ruleData.email_custom_1
         }
+        _ruleData.email_custom_1 = _ruleData.original_message + domains;
         return false;
     },
 
@@ -111,6 +245,42 @@ DsdRegistrationFormsUtil = {
         table.rows[1].cells[1].innerHTML = currency + ' ' + taxTotal.toFixed(2);
         //total
         table.rows[2].cells[1].innerHTML =  currency + ' ' + total.toFixed(2);
+    },
+
+    activateStep1: function(namespace){
+    },
+
+    activateStep2: function (namespace){
+        DsdRegistrationFormsUtil.checkSelection(namespace)
+        DsdRegistrationFormsUtil.updateTotalPrice(namespace);
+    },
+
+    activateStep3: function (namespace){
+
+        document.getElementById(namespace + "billing_company").value = document.getElementById(namespace + "org_name").value
+
+        let address_selection = document.getElementById(namespace + "select_address")
+        if(address_selection.selectedIndex === 0) {
+            //Copy the manually entered data from step 1
+            this.addressSelectionChanged(namespace, address_selection)
+        }
+
+    },
+    activateNextTab : function (namespace, tabIndex){
+
+        switch (tabIndex){
+            case 1:
+                DsdRegistrationFormsUtil.activateStep1(namespace);
+                break;
+            case 2:
+                DsdRegistrationFormsUtil.activateStep2(namespace);
+                break;
+            case 3:
+                DsdRegistrationFormsUtil.activateStep3(namespace);
+                break;
+            default:
+        }
+
     },
 
     checkSelection : function(namespace) {

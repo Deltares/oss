@@ -1,193 +1,207 @@
 <%@ page import="nl.deltares.model.BillingInfo" %>
-<aui:input
-        name="use_organization_address"
-        label="dsd.registration.step3.use.organization.address"
-        type="checkbox" />
-
-<span><liferay-ui:message key="dsd.registration.step3.billing.title"/></span>
-<div class="row">
-
-    <aui:col width="50">
-        <%--@elvariable id="attributes" type="java.util.Map"--%>
-        <c:if test="${not empty attributes}">
-            <c:set var="billingEmail" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_email.name()) %>"/>
-            <c:set var="billingFirstName" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_firstname.name()) %>"/>
-            <c:set var="billingLastName" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_lastname.name()) %>"/>
-            <c:set var="billingCompany" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_company.name()) %>"/>
-            <c:set var="billingAddress" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_address.name()) %>"/>
-            <c:set var="billingPostal" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_postal.name()) %>"/>
-            <c:set var="billingCity" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_city.name()) %>"/>
-            <c:set var="billingCountry" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_country.name()) %>"/>
-            <c:set var="billingReference" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_reference.name()) %>"/>
-            <c:set var="billingVat" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_vat.name()) %>"/>
-            <c:set var="billingMethod" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_preference.name()) %>"/>
-            <c:set var="billingPhone" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_phone.name()) %>"/>
-
-        </c:if>
-        <aui:input
-                name="<%= BillingInfo.ATTRIBUTES.billing_email.name()%>"
-                label="dsd.registration.step3.billing.email"
-                value="${billingEmail}" billing_value="${billingEmail}">
-            <aui:validator name="required">
-                function () {
-                    return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
-                }
-            </aui:validator>
-            <aui:validator name="email"/>
-        </aui:input>
-        <aui:input
-                name="<%= BillingInfo.ATTRIBUTES.billing_company.name() %>"
-                label="dsd.registration.step3.billing.company"
-                value="${billingCompany}" billing_value="${billingCompany}">
-            <aui:validator name="required">
-                function () {
-                return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
-                }
-            </aui:validator>
-            <aui:validator name="maxLength">75</aui:validator>
-        </aui:input>
+<h3><strong><liferay-ui:message key="download.email.billing.payment.contact"/></strong></h3>
+<aui:row>
+    <aui:col width="100">
         <div class="row">
             <div class="col">
                 <aui:input
-                        name="<%= BillingInfo.ATTRIBUTES.billing_firstname.name() %>"
-                        label="dsd.registration.step3.billing.firstname"
-                        value="${billingFirstName}" billing_value="${billingFirstName}">
+                        label="registrationform.email"
+                        name="<%=BillingInfo.ATTRIBUTES.billing_email.name()%>"
+                        value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.email.name()) %>" max="75">
+                    <aui:validator name="email" />
                     <aui:validator name="required">
                         function () {
-                            return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
+                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
                         }
                     </aui:validator>
-                    <aui:validator name="maxLength">75</aui:validator>
+                </aui:input>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <aui:input
+                        label="registrationform.firstname"
+                        name="<%=BillingInfo.ATTRIBUTES.billing_firstname.name()%>"
+                        value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.first_name.name()) %>" max="75">
+                    <aui:validator name="required">
+                        function () {
+                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'),3);
+                        }
+                    </aui:validator>
                 </aui:input>
             </div>
             <div class="col">
                 <aui:input
-                        name="<%= BillingInfo.ATTRIBUTES.billing_lastname.name() %>"
-                        label="dsd.registration.step3.billing.lastname"
-                        value="${billingFirstName}" billing_value="${billingFirstName}">
+                        label="registrationform.lastname"
+                        name="<%=BillingInfo.ATTRIBUTES.billing_lastname.name()%>"
+                        value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.last_name.name()) %>" max="75">
+                    <aui:validator name="required">
+                        function () {
+                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'),3);
+                        }
+                    </aui:validator>
+                </aui:input>
+            </div>
+        </div>
+    </aui:col>
+</aui:row>
+<h3><strong><liferay-ui:message key="download.email.billing.payment.details"/></strong></h3>
+<aui:row>
+    <aui:col width="100">
+        <div class="row">
+            <div class="col">
+                <aui:select
+                        name="<%= BillingInfo.ATTRIBUTES.billing_preference.name() %>"
+                        type="select"
+                        label="dsd.registration.step3.billing.method"
+                        value="payLink">
+                    <aui:option value="payLink" label="regostrationform.paymethod.link"/>
+                    <aui:option value="bankTransfer" label="regostrationform.paymethod.bank"/>
+                </aui:select>
+            </div>
+            <div class="col">
+                <aui:input
+                        name="<%= BillingInfo.ATTRIBUTES.billing_reference.name() %>"
+                        label="dsd.registration.step3.billing.reference"
+                        helpMessage="dsd.registration.step3.billing.reference.info"
+                        value="" max="75">
                     <aui:validator name="required">
                         function () {
                         return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
                         }
                     </aui:validator>
-                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
         </div>
-
-        <aui:input
-                name="<%= BillingInfo.ATTRIBUTES.billing_address.name() %>"
-                label="dsd.registration.step3.billing.address"
-                value="${billingAddress}" billing_value="${billingAddress}">
-            <aui:validator name="required">
-                function () {
-                    return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
-                }
-            </aui:validator>
-            <aui:validator name="maxLength">255</aui:validator>
-        </aui:input>
-
+        <div class="row">
+            <div class="col">
+                <aui:input
+                        name="<%= BillingInfo.ATTRIBUTES.billing_vat.name() %>"
+                        label="dsd.registration.step3.billing.vat"
+                        helpMessage="dsd.registration.step3.billing.vat.info"
+                        value="" max="75">
+                </aui:input>
+            </div>
+            <div class="col">
+                <aui:input
+                        name="<%= BillingInfo.ATTRIBUTES.billing_companyid.name() %>"
+                        label="dsd.registration.step3.billing.companyid"
+                        helpMessage="dsd.registration.step3.billing.companyid.info"
+                        value="" max="75">
+                </aui:input>
+            </div>
+        </div>
+    </aui:col>
+</aui:row>
+<h3><strong><liferay-ui:message key="registrationform.select.billing"/></strong></h3>
+<aui:row>
+    <aui:col width="100">
+        <div class="row">
+            <div class="col">
+                <aui:select
+                        name="select_address"
+                        type="select"
+                        label=""
+                        value="-1">
+                    <aui:option value="-1" label ="registrationform.select.custom.address" />
+                </aui:select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <aui:input
+                        name="<%= BillingInfo.ATTRIBUTES.billing_company.name() %>"
+                        label="registrationform.orgname"
+                        value="" max="75">
+                    <aui:validator name="required">
+                        function () {
+                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
+                        }
+                    </aui:validator>
+                </aui:input>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <aui:input
+                        name="<%= BillingInfo.ATTRIBUTES.billing_address.name() %>"
+                        label="registrationform.orgaddress"
+                        value="" max="255">
+                    <aui:validator name="required">
+                        function () {
+                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
+                        }
+                    </aui:validator>
+                </aui:input>
+            </div>
+        </div>
         <div class="row">
             <div class="col">
                 <aui:input
                         name="<%= BillingInfo.ATTRIBUTES.billing_postal.name() %>"
-                        label="dsd.registration.step3.billing.postal"
-                        value="${billingPostal}" billing_value="${billingPostal}">
+                        label="registrationform.orgpostcode"
+                        value="" max="10">
                     <aui:validator name="required">
                         function () {
-                            return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
+                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
                         }
                     </aui:validator>
-                    <aui:validator name="maxLength">10</aui:validator>
                 </aui:input>
             </div>
             <div class="col">
                 <aui:input
                         name="<%= BillingInfo.ATTRIBUTES.billing_city.name() %>"
-                        label="dsd.registration.step3.billing.city"
-                        value="${billingCity}" billing_value="${billingCity}">
+                        label="registrationform.orgcity"
+                        value="" max="75">
                     <aui:validator name="required">
                         function () {
-                            return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
+                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
                         }
                     </aui:validator>
-                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
         </div>
-        <aui:select
-                name="<%=BillingInfo.ATTRIBUTES.billing_country.name()%>"
-                type="select"
-                label="dsd.registration.step3.billing.country"
-                value="${billingCountry}" billing_value="${billingCountry}">
-                <aui:option value="" label ="registrationform.select.country" />
-            <% List<Country> countries = CountryServiceUtil.getCountries(true); %>
-            <% for (Country country : countries) { %>
-            <aui:option value="<%=country.getName()%>" label="<%= country.getName(locale) %>"/>
-            <% } %>
-            <aui:validator name="required">
-                    function () {
-                        return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
-                    }
-            </aui:validator>
-            <aui:validator name="minLength">
-                2
-            </aui:validator>
-        </aui:select>
+        <div class="row">
+            <div class="col">
+                <aui:select
+                        name="<%=BillingInfo.ATTRIBUTES.billing_country.name()%>"
+                        type="select"
+                        label="registrationform.orgcountry"
+                        value="" >
+                    <aui:validator name="required">
+                        function () {
+                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
+                        }
+                    </aui:validator>
+                    <aui:option value="" label ="registrationform.select.country" />
+                    <% List<Country> countries = CountryServiceUtil.getCompanyCountries(themeDisplay.getCompanyId(), true); %>
+                    <%    for (Country country : countries) { %>
+                    <aui:option value="<%=country.getA2()%>" label ="<%= country.getName(locale) %>" />
+                    <% } %>
+                </aui:select>
+            </div>
+            <div class="col">
+                <aui:input
+                        name="<%= BillingInfo.ATTRIBUTES.billing_phone.name() %>"
+                        label="registrationform.phone"
+                        value="" max="15">
+                    <aui:validator name="required">
+                        function () {
+                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
+                        }
+                    </aui:validator>
+                </aui:input>
+            </div>
+        </div>
 
     </aui:col>
+</aui:row>
+<aui:script use="event, node, aui-base">
 
-    <div class="col">
+    let addressSelection = document.getElementById("<portlet:namespace />select_address");
+    addressSelection.onchange = function (event){
+        DsdRegistrationFormsUtil.addressSelectionChanged("<portlet:namespace />", event.target)
+    }
 
-        <aui:select
-                name="<%= BillingInfo.ATTRIBUTES.billing_preference.name() %>"
-                type="select"
-                label="dsd.registration.step3.billing.method"
-                value="${billingMethod}">
-            <aui:option value="payLink" label="regostrationform.paymethod.link"/>
-            <aui:option value="bankTransfer" label="regostrationform.paymethod.bank"/>
-            <aui:validator name="required">
-                function () {
-                return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
-                }
-            </aui:validator>
-        </aui:select>
-
-        <aui:input
-                name="<%= BillingInfo.ATTRIBUTES.billing_reference.name() %>"
-                label="dsd.registration.step3.billing.reference"
-                helpMessage="dsd.registration.step3.billing.reference.info"
-                value="${billingReference}" billing_value="${billingReference}">
-            <aui:validator name="required">
-                function () {
-                return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
-                }
-            </aui:validator>
-            <aui:validator name="maxLength">75</aui:validator>
-        </aui:input>
-        <aui:input
-                name="<%= BillingInfo.ATTRIBUTES.billing_vat.name() %>"
-                label="dsd.registration.step3.billing.vat"
-                helpMessage="dsd.registration.step3.billing.vat.info"
-                value="${billingVat}" billing_value="${billingVat}">
-            <aui:validator name="required">
-                function () {
-                return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
-                }
-            </aui:validator>
-            <aui:validator name="maxLength">25</aui:validator>
-        </aui:input>
-
-        <aui:input
-                name="<%= BillingInfo.ATTRIBUTES.billing_phone.name() %>"
-                label="registrationform.phone"
-                value="${billingPhone}">
-            <aui:validator name="required">
-                function () {
-                return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
-                }
-            </aui:validator>
-            <aui:validator name="maxLength">15</aui:validator>
-        </aui:input>
-    </div>
-</div>
+</aui:script>

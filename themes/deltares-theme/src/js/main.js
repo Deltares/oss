@@ -59,7 +59,9 @@
                 if ('next' === action && next.length) {
                     plugin._hideStep(active);
                     plugin._showStep(next);
-
+                    if (typeof plugin.form.activateStep === "function"){
+                        plugin.form.activateStep();
+                    }
                     if (isLast) {
                         plugin._disableButton(action);
                         plugin._showSubmitButton();
@@ -71,7 +73,9 @@
                 } else if ('prev' === action && prev.length) {
                     plugin._hideStep(active);
                     plugin._showStep(prev);
-
+                    if (typeof plugin.form.activateStep === "function"){
+                        plugin.form.activateStep();
+                    }
                     if (isFirst) {
                         plugin._disableButton(action);
                     } else {

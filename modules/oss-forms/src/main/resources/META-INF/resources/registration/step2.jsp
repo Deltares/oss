@@ -3,15 +3,11 @@
 <%@ page import="java.text.DecimalFormat" %>
 <%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
 
-<%
-
-%>
 <c:forEach var="registrationId" items="${registrationList}">
 
     <c:if test="${not empty registrationId}">
 
         <%
-
             String registrationId = (String) pageContext.getAttribute("registrationId");
             final DecimalFormat decimalFormat = new DecimalFormat("##,##0.00");
             Registration mainRegistration;
@@ -23,21 +19,13 @@
             }
             String price = "FREE";
             if (!mainRegistration.isHidden()) {
-                //load the stored attributes from the database.
-                Map<String, String> userPreferences;
-                try {
-                    userPreferences = dsdSessionUtils.getUserPreferences(user, mainRegistration);
-                } catch (PortalException e) {
-                    throw new RuntimeException(e);
-                }
-                if (!userPreferences.isEmpty()) attributes.putAll(userPreferences);
-
                 if (mainRegistration.getPrice() > 0)
                     price = String.format("%s %s", mainRegistration.getCurrency(), decimalFormat.format(mainRegistration.getPrice()));
                 else
                     price = LanguageUtil.format(locale, "dsd.theme.session.free", java.util.Optional.empty());
 
             %>
+
             <div class="registration-item">
 
                 <div class="row">
@@ -179,24 +167,21 @@
                                         <aui:input
                                                 label=""
                                                 name="jobTitles"
-                                                value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.jobTitle.name()) %>">
-                                            <aui:validator name="maxLength">75</aui:validator>
+                                                value="" max="75">
                                         </aui:input>
                                     </td>
                                     <td>
                                         <aui:input
                                                 label=""
                                                 name="salutation"
-                                                value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.salutation.name()) %>">
-                                            <aui:validator name="maxLength">15</aui:validator>
+                                                value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.salutation.name()) %>" max="15">
                                         </aui:input>
                                     </td>
                                     <td>
                                         <aui:input
                                                 label=""
                                                 name="firstName"
-                                                value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.first_name.name()) %>">
-                                                <aui:validator name="maxLength">75</aui:validator>
+                                                value="<%=attributes.get(KeycloakUtils.ATTRIBUTES.first_name.name())%>" max="75">
                                                 <aui:validator name="required">
                                                     function () {
                                                         return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
@@ -208,8 +193,7 @@
                                         <aui:input
                                                 label=""
                                                 name="lastName"
-                                                value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.last_name.name()) %>">
-                                            <aui:validator name="maxLength">75</aui:validator>
+                                                value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.last_name.name()) %>" max="75">
                                             <aui:validator name="required">
                                                 function () {
                                                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
@@ -221,10 +205,9 @@
                                         <aui:input
                                                 label=""
                                                 name="email"
-                                                value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.email.name()) %>">
-                                            <aui:validator name="maxLength">75</aui:validator>
+                                                value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.email.name()) %>" max="75">
                                             <aui:validator name="email" />
-                                            <aui:validator errorMessage="Dummy Message" name="custom">
+                                            <aui:validator errorMessage="registrationform.validator.emaildomain" name="custom">
                                                 function(val, fldNode, rule) {
                                                     return DsdRegistrationFormsUtil.checkEmailDomain('<portlet:namespace />', val, fldNode);
                                                 }
@@ -291,11 +274,6 @@
 </div>
 
 <aui:script use="event, node, aui-base, aui-progressbar">
-
-    DsdRegistrationFormsUtil.checkSelection("<portlet:namespace />")
-    DsdRegistrationFormsUtil.updateTotalPrice('<portlet:namespace />');
-
-    DsdRegistrationFormsUtil.checkSelection('<portlet:namespace />');
 
     let children = $(document.getElementsByClassName("child-registration"));
     [...children].forEach(function (registration) {

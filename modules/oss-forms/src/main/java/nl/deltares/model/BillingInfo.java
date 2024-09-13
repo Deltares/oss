@@ -19,6 +19,7 @@ public class BillingInfo {
         billing_country,
         billing_reference,
         billing_vat,
+        billing_companyid,
         billing_preference,
         billing_phone,
         billing_website

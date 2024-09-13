@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.service.AddressLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -87,15 +88,12 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
                 request.setAttribute("accounts", convertToJson(accounts));
             } catch (Exception e) {
                 SessionErrors.add(request, "get-accounts-failed", new String[]{domain, e.getMessage()});
-				request.setAttribute("accounts", Collections.emptyList());
+				request.setAttribute("accounts", JSONFactoryUtil.createJSONArray().toJSONString());
             }
 
             try {
                 final Map<String, String> userAttributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
                 request.setAttribute("attributes", userAttributes);
-                //translate org vat code
-                final String org_vat = userAttributes.get(KeycloakUtils.ATTRIBUTES.org_vat.name());
-                if (org_vat != null) userAttributes.put("billing_vat", org_vat);
             } catch (Exception e) {
                 SessionErrors.add(request, "update-attributes-failed", "Error reading user attributes: " + e.getMessage());
                 final HashMap<String, String> attributes = new HashMap<>();
@@ -159,14 +157,24 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
             accountJson.put(KeycloakUtils.ATTRIBUTES.org_reference.name(), account.getExternalReferenceCode());
             accountJson.put(KeycloakUtils.ATTRIBUTES.org_name.name(), account.getName());
             accountJson.put(KeycloakUtils.ATTRIBUTES.org_vat.name(), account.getTaxIdNumber());
+            final List<Address> addresses = AddressLocalServiceUtil.getAddresses(account.getCompanyId(), AccountEntry.class.getName(), account.getAccountEntryId());
+            if (!addresses.isEmpty()){
+                final JSONArray addressesJson = JSONFactoryUtil.createJSONArray();
+                accountJson.put("addresses", addressesJson);
+                long defaultId = account.getDefaultBillingAddressId();
 
-            if (account.getDefaultBillingAddress() != null) {
-                final Address address = account.getDefaultBillingAddress();
-                accountJson.put(KeycloakUtils.ATTRIBUTES.org_address.name(), address.getStreet1());
-                accountJson.put(KeycloakUtils.ATTRIBUTES.org_postal.name(), address.getZip());
-                accountJson.put(KeycloakUtils.ATTRIBUTES.org_city.name(), address.getCity());
-                accountJson.put(KeycloakUtils.ATTRIBUTES.org_country.name(), address.getCountry().getA2());
-                accountJson.put(KeycloakUtils.ATTRIBUTES.org_phone.name(), address.getPhoneNumber());
+                for (Address address : addresses) {
+                    final JSONObject addressJson = JSONFactoryUtil.createJSONObject();
+                    addressJson.put("name", address.getName());
+                    addressJson.put(KeycloakUtils.ATTRIBUTES.org_address.name(), address.getStreet1());
+                    addressJson.put(KeycloakUtils.ATTRIBUTES.org_postal.name(), address.getZip());
+                    addressJson.put(KeycloakUtils.ATTRIBUTES.org_city.name(), address.getCity());
+                    addressJson.put(KeycloakUtils.ATTRIBUTES.org_country.name(), address.getCountry().getA2());
+                    addressJson.put(KeycloakUtils.ATTRIBUTES.org_phone.name(), address.getPhoneNumber());
+                    addressJson.put("default", address.getAddressId() == defaultId);
+                    addressesJson.put(addressJson);
+                }
+                accountJson.put("addresses", addressesJson);
             }
 
             //Get additional parameters

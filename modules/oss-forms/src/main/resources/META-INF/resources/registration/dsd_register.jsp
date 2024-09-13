@@ -20,6 +20,8 @@
 <%@ page import="nl.deltares.portal.model.subscriptions.SubscriptionSelection" %>
 <%@ page import="com.liferay.portal.kernel.exception.PortalException" %>
 <%@ page import="nl.deltares.portal.utils.*" %>
+<%@ page import="com.liferay.portal.kernel.json.JSONException" %>
+<%@ page import="java.util.Collections" %>
 
 <liferay-theme:defineObjects/>
 
@@ -51,7 +53,6 @@
     String childHeaderText = (String) request.getAttribute("childHeaderText");
 
 %>
-
 <portlet:actionURL name="/submit/register/form" var="submitRegisterForm"/>
 
 <liferay-ui:success key="unregister-success" message="">
@@ -180,10 +181,25 @@
 </div>
 
 <aui:script use="liferay-form">
+    DsdRegistrationFormsUtil.attributes = <%=JsonContentUtils.formatMapToJson(attributes) %>;
+
+    const activateStep = function (){
+        DsdRegistrationFormsUtil.activateNextTab("<portlet:namespace />", getCurrentStep("<portlet:namespace />fm"));
+    }
 
     $(document).ready(function() {
-        let namespace = "<portlet:namespace />";
-        let form = Liferay.Form.get(namespace + "fm").formValidator;
+        let form = Liferay.Form.get("<portlet:namespace />fm").formValidator;
+        form.activateStep = activateStep;
         $('.bs-stepper').formStepper(form);
+        //initialize the selection
+        let orgSelection = document.getElementById("<portlet:namespace />select_organization");
+
+        if (DsdRegistrationFormsUtil.accounts.length > 0){
+            orgSelection.selectedIndex = 1
+        } else {
+            orgSelection.selectedIndex = 0
+        }
+        DsdRegistrationFormsUtil.accountSelectionChanged("<portlet:namespace />", document.getElementById("<portlet:namespace />select_organization"));
     });
+
 </aui:script>
