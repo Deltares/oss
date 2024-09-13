@@ -7,12 +7,8 @@
 <%@ taglib uri="http://liferay.com/tld/journal" prefix="liferay-journal" %>
 
 <%@ page import="nl.deltares.forms.internal.RegistrationFormDisplayContext" %>
-<%@ page import="com.liferay.journal.model.JournalArticleDisplay" %>
-<%@ page import="com.liferay.portal.kernel.model.Country" %>
-<%@ page import="com.liferay.portal.kernel.service.CountryServiceUtil" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionMessages" %>
-<%@ page import="com.liferay.portal.kernel.util.DateUtil" %>
 <%@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
 <%@ page import="nl.deltares.portal.model.impl.Event" %>
 <%@ page import="java.util.List" %>
@@ -20,8 +16,6 @@
 <%@ page import="nl.deltares.portal.model.subscriptions.SubscriptionSelection" %>
 <%@ page import="com.liferay.portal.kernel.exception.PortalException" %>
 <%@ page import="nl.deltares.portal.utils.*" %>
-<%@ page import="com.liferay.portal.kernel.json.JSONException" %>
-<%@ page import="java.util.Collections" %>
 
 <liferay-theme:defineObjects/>
 
@@ -181,7 +175,9 @@
 </div>
 
 <aui:script use="liferay-form">
-    DsdRegistrationFormsUtil.attributes = <%=JsonContentUtils.formatMapToJson(attributes) %>;
+
+    DsdRegistrationFormsUtil.attributes = <%= JsonContentUtils.formatMapToJson(attributes) %>;
+    DsdRegistrationFormsUtil.accounts = <%= accountsJson %>;
 
     const activateStep = function (){
         DsdRegistrationFormsUtil.activateNextTab("<portlet:namespace />", getCurrentStep("<portlet:namespace />fm"));
@@ -191,15 +187,8 @@
         let form = Liferay.Form.get("<portlet:namespace />fm").formValidator;
         form.activateStep = activateStep;
         $('.bs-stepper').formStepper(form);
-        //initialize the selection
-        let orgSelection = document.getElementById("<portlet:namespace />select_organization");
 
-        if (DsdRegistrationFormsUtil.accounts.length > 0){
-            orgSelection.selectedIndex = 1
-        } else {
-            orgSelection.selectedIndex = 0
-        }
-        DsdRegistrationFormsUtil.accountSelectionChanged("<portlet:namespace />", document.getElementById("<portlet:namespace />select_organization"));
+        activateStep();
     });
 
 </aui:script>

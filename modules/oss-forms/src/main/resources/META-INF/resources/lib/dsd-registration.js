@@ -1,4 +1,3 @@
-
 DsdRegistrationFormsUtil = {
 
     attributes: {},
@@ -6,11 +5,11 @@ DsdRegistrationFormsUtil = {
     selectedAccountIndex: -1,
 
     addressSelectionChanged: function (namespace, addressSelection){
-        let street = "";
-        let postal = "";
-        let city = "";
-        let country = "";
-        let phone = "";
+        let street;
+        let postal;
+        let city;
+        let country;
+        let phone;
         let addressIndex = addressSelection.value;
 
         if (addressIndex !== "-1" && this.selectedAccountIndex !== "-1"){
@@ -49,14 +48,14 @@ DsdRegistrationFormsUtil = {
 
     accountSelectionChanged: function (namespace, orgSelection){
 
-        let name = "";
-        let website = "";
-        let street = "";
-        let postal = "";
-        let city = "";
-        let country = "";
-        let phone = "";
-        let domain = "";
+        let name;
+        let website;
+        let street;
+        let postal;
+        let city;
+        let country;
+        let phone;
+        let domain;
         this.selectedAccountIndex = orgSelection.value;
         if (this.selectedAccountIndex !== "-1"){
             let account = this.accounts[this.selectedAccountIndex];
@@ -174,6 +173,7 @@ DsdRegistrationFormsUtil = {
         return false;
     },
 
+    //used in step2.jsp
     updateTable : function(namespace, element) {
         let articleId = element.getAttribute('data-article-id');
         let table = document.getElementById(namespace + 'users_table_' + articleId);
@@ -248,6 +248,17 @@ DsdRegistrationFormsUtil = {
     },
 
     activateStep1: function(namespace){
+
+        let orgSelection = document.getElementById(namespace + "select_organization");
+
+        if (DsdRegistrationFormsUtil.accounts.length > 0){
+            orgSelection.selectedIndex = 1
+        } else {
+            orgSelection.selectedIndex = 0
+        }
+
+        //initialize the selection
+        DsdRegistrationFormsUtil.accountSelectionChanged(namespace, document.getElementById(namespace + "select_organization"));
     },
 
     activateStep2: function (namespace){
@@ -258,12 +269,8 @@ DsdRegistrationFormsUtil = {
     activateStep3: function (namespace){
 
         document.getElementById(namespace + "billing_company").value = document.getElementById(namespace + "org_name").value
-
         let address_selection = document.getElementById(namespace + "select_address")
-        if(address_selection.selectedIndex === 0) {
-            //Copy the manually entered data from step 1
-            this.addressSelectionChanged(namespace, address_selection)
-        }
+        this.addressSelectionChanged(namespace, address_selection)
 
     },
     activateNextTab : function (namespace, tabIndex){

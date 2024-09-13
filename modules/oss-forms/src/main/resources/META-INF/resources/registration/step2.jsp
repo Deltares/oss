@@ -2,6 +2,7 @@
 <%@ page import="nl.deltares.portal.model.impl.Registration" %>
 <%@ page import="java.text.DecimalFormat" %>
 <%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
+<%@ page import="com.liferay.journal.model.JournalArticleDisplay" %>
 
 <c:forEach var="registrationId" items="${registrationList}">
 

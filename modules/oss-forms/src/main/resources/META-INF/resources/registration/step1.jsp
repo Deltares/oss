@@ -1,3 +1,6 @@
+<%@ page import="java.util.Collections" %>
+<%@ page import="com.liferay.portal.kernel.model.Country" %>
+<%@ page import="com.liferay.portal.kernel.service.CountryServiceUtil" %>
 <h3><strong><liferay-ui:message key="registrationform.select.org"/></strong></h3>
 <aui:row>
     <aui:col width="100">
@@ -11,6 +14,18 @@
                         label=""
                         value="-1">
                     <aui:option value="-1" label ="registrationform.select.custom.org" />
+                    <%
+                        List<Map<String, String>> accounts;
+                        try {
+                            accounts = JsonContentUtils.parseJsonArrayToMap(accountsJson);
+                        } catch (Exception e) {
+                            SessionErrors.add(liferayPortletRequest, "registration-failed", e.getMessage());
+                            accounts = Collections.emptyList();
+                        }
+                        for (int i = 0; i < accounts.size(); i++) {
+                     %>
+                            <aui:option value="<%=i%>" label ="<%=accounts.get(i).get(KeycloakUtils.ATTRIBUTES.org_name.name())%>" />
+                    <%  } %>
                 </aui:select>
             </div>
         </div>
@@ -110,17 +125,8 @@
 </aui:row>
 <aui:script use="event, node, aui-base">
 
-    DsdRegistrationFormsUtil.accounts = <%=accountsJson %>;
-
     //store the account information
     let orgSelection = document.getElementById("<portlet:namespace />select_organization");
-    for (var i = 0; i < DsdRegistrationFormsUtil.accounts.length; i++) {
-        var option = document.createElement("option")
-        option.label = DsdRegistrationFormsUtil.accounts[i]["<%=KeycloakUtils.ATTRIBUTES.org_name.name()%>"];
-        option.value = i
-        orgSelection.add(option)
-    }
-
     orgSelection.onchange = function (event){
         DsdRegistrationFormsUtil.accountSelectionChanged("<portlet:namespace />", event.target)
         let form = Liferay.Form.get("<portlet:namespace />fm").formValidator;
