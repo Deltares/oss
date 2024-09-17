@@ -59,7 +59,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
     }
 
     @Override
-    public int registerUser(User user, Map<String, String> userAttributes,  String webinarKey, String callerId, Map<String, String> registrationProperties) throws Exception {
+    public int registerUser(User user, Map<String, String> registrationAttributes,  String webinarKey, String callerId, Map<String, String> responseProperties) throws Exception {
 
         String rawRegistrationPath = getBasePath() + GOTO_REGISTRANTS_PATH;
         String accessToken = getAccessToken(); //calling this method loads organization key
@@ -73,14 +73,14 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
         HttpURLConnection connection = getConnection(registrationPath, "POST", headers);
 
         //write user information
-        writePostData(connection, user, userAttributes, callerId);
+        writePostData(connection, user, organizationAttributes, callerId);
 
         //get response
         checkResponse(connection);
         String jsonResponse = readAll(connection);
         Map<String, String> parseJsonToMap = JsonContentUtils.parseJsonToMap(jsonResponse);
-        if (parseJsonToMap.containsKey("registrantKey")) registrationProperties.put("registrantKey", parseJsonToMap.get("registrantKey"));
-        if (parseJsonToMap.containsKey("joinUrl")) registrationProperties.put("joinUrl", parseJsonToMap.get("joinUrl"));
+        if (parseJsonToMap.containsKey("registrantKey")) responseProperties.put("registrantKey", parseJsonToMap.get("registrantKey"));
+        if (parseJsonToMap.containsKey("joinUrl")) responseProperties.put("joinUrl", parseJsonToMap.get("joinUrl"));
         return 0;
     }
 
@@ -224,7 +224,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
         return CACHE_TOKEN ? getCachedToken(CACHED_ORGANIZER_KEY, null) : null;
     }
 
-    private void writePostData(HttpURLConnection connection, User user, Map<String, String> userAttributes, String callerId) throws IOException {
+    private void writePostData(HttpURLConnection connection, User user, Map<String, String> organizationAttributes, String callerId) throws IOException {
         connection.setDoOutput(true);
 
         Map<String, String> parameterMap = new HashMap<>();
@@ -232,11 +232,11 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
         parameterMap.put("lastName", user.getLastName());
         parameterMap.put("email", user.getEmailAddress());
         parameterMap.put("registrantKey", user.getScreenName());
-        parameterMap.put("zipCode", userAttributes.get(KeycloakUtils.ATTRIBUTES.org_postal.name()));
-        parameterMap.put("country", userAttributes.get(KeycloakUtils.ATTRIBUTES.org_country.name()));
-        parameterMap.put("address", userAttributes.get(KeycloakUtils.ATTRIBUTES.org_address.name()));
-        parameterMap.put("city", userAttributes.get(KeycloakUtils.ATTRIBUTES.org_city.name()));
-        parameterMap.put("organization", userAttributes.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
+        parameterMap.put("zipCode", organizationAttributes.get(KeycloakUtils.ATTRIBUTES.org_postal.name()));
+        parameterMap.put("country", organizationAttributes.get(KeycloakUtils.ATTRIBUTES.org_country.name()));
+        parameterMap.put("address", organizationAttributes.get(KeycloakUtils.ATTRIBUTES.org_address.name()));
+        parameterMap.put("city", organizationAttributes.get(KeycloakUtils.ATTRIBUTES.org_city.name()));
+        parameterMap.put("organization", organizationAttributes.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
         parameterMap.put("source", callerId);
 
         String postData = JsonContentUtils.formatMapToJson(parameterMap);

@@ -17,6 +17,7 @@ import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component(
@@ -24,6 +25,8 @@ import java.util.*;
         service = DsdSessionUtils.class
 )
 public class DsdSessionUtilsImpl implements DsdSessionUtils {
+
+    private static final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
 
     @Reference
     DsdParserUtils parserUtils;
@@ -94,12 +97,13 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
-    public void registerUser(User user, Map<String, String> userAttributes, Registration registration, Map<String, String> registrationProperties, User registrationUser) throws PortalException {
+    public void registerUser(User user, Map<String, String> orgAttributes, String remarks, Registration registration, User registrationUser) throws PortalException {
 
         if (user.isGuestUser()) return;
+        final HashMap<String, String> registrationProperties = new HashMap<>();
         try {
             if (webinarUtilsFactory.isWebinarSupported(registration)) {
-                registerWebinarUser(user, userAttributes, (SessionRegistration) registration, registrationProperties);
+                registerWebinarUser(user, orgAttributes, (SessionRegistration) registration, registrationProperties);
             }
         } finally {
             long parentId = registration.getParentRegistration() == null ? 0 : registration.getParentRegistration().getResourceId();
@@ -111,6 +115,9 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
             if (registrationUser != null && registrationUser != user) {
                 registeredByUserId = registrationUser.getUserId();
             }
+
+            if (remarks != null) registrationProperties.put("remarks", remarks);
+            registrationProperties.put("registration_time", dateTimeFormatter.format(new Date()));
             RegistrationLocalServiceUtil.addUserRegistration(
                     registration.getCompanyId(), registration.getGroupId(), registration.getResourceId(), eventResourcePrimaryKey,
                     parentId, user.getUserId(),
@@ -118,12 +125,12 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         }
     }
 
-    private void registerWebinarUser(User user, Map<String, String> userAttributes, SessionRegistration registration, Map<String, String> userProperties) throws PortalException {
+    private void registerWebinarUser(User user, Map<String, String> organizationAttributes, SessionRegistration registration, Map<String, String> responseProperties) throws PortalException {
 
         try {
             WebinarUtils webinarUtils = webinarUtilsFactory.newInstance(registration);
             if (webinarUtils.isActive()) {
-                webinarUtils.registerUser(user, userAttributes, registration.getWebinarKey(), GroupServiceUtil.getGroup(registration.getGroupId()).getName(Locale.US), userProperties);
+                webinarUtils.registerUser(user, organizationAttributes, registration.getWebinarKey(), GroupServiceUtil.getGroup(registration.getGroupId()).getName(Locale.US), responseProperties);
             }
         } catch (Exception e) {
             throw new PortalException(String.format("Error registering for webinar %s: %s", registration.getTitle(), e.getMessage()));

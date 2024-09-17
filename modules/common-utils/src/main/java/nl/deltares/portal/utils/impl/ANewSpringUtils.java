@@ -33,7 +33,7 @@ public class ANewSpringUtils extends HttpClientUtils implements WebinarUtils {
     }
 
     @Override
-    public int registerUser(User user, Map<String, String> userAttributes, String courseId, String callerId, Map<String, String> properties) throws Exception {
+    public int registerUser(User user, Map<String, String> registrationAttributes, String courseId, String callerId, Map<String, String> properties) throws Exception {
 
         if (!userExists(user)){
             addUser(user, callerId);

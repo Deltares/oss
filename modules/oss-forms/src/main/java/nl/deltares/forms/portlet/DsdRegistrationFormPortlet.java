@@ -153,8 +153,9 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 
             final JSONObject accountJson = JSONFactoryUtil.createJSONObject();
             accountJson.put("companyId", String.valueOf(account.getCompanyId()));
+            accountJson.put("accountEntryId", String.valueOf(account.getAccountEntryId()));
             accountJson.put("domains", account.getDomains());
-            accountJson.put(KeycloakUtils.ATTRIBUTES.org_reference.name(), account.getExternalReferenceCode());
+            accountJson.put(KeycloakUtils.ATTRIBUTES.org_external_reference.name(), account.getExternalReferenceCode());
             accountJson.put(KeycloakUtils.ATTRIBUTES.org_name.name(), account.getName());
             accountJson.put(KeycloakUtils.ATTRIBUTES.org_vat.name(), account.getTaxIdNumber());
             final List<Address> addresses = AddressLocalServiceUtil.getAddresses(account.getCompanyId(), AccountEntry.class.getName(), account.getAccountEntryId());
@@ -166,6 +167,7 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
                 for (Address address : addresses) {
                     final JSONObject addressJson = JSONFactoryUtil.createJSONObject();
                     addressJson.put("name", address.getName());
+                    addressJson.put("addressId", address.getAddressId());
                     addressJson.put(KeycloakUtils.ATTRIBUTES.org_address.name(), address.getStreet1());
                     addressJson.put(KeycloakUtils.ATTRIBUTES.org_postal.name(), address.getZip());
                     addressJson.put(KeycloakUtils.ATTRIBUTES.org_city.name(), address.getCity());

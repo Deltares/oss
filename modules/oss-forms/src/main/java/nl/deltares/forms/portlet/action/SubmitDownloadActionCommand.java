@@ -82,8 +82,9 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
                     email = ParamUtil.getString(actionRequest, KeycloakUtils.ATTRIBUTES.email.name());
                     final String firstName = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.first_name.name());
                     final String lastName = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.last_name.name());
+                    final String jobTitle = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.jobTitle.name());
                     user = adminUtils.getOrCreateRegistrationUser(themeDisplay.getCompanyId(), registrationUser,
-                            email, firstName, lastName, themeDisplay.getLocale());
+                            email, firstName, lastName, jobTitle, themeDisplay.getLocale());
                 } catch (Exception e) {
                     success = false;
                     LOG.warn(String.format("Error getting user '%s' for registration: %s", email, e.getMessage()));

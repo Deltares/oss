@@ -1,5 +1,6 @@
 package nl.deltares.model;
 
+import com.liferay.account.model.AccountEntry;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -25,6 +26,8 @@ public class RegistrationRequest {
     private String remarks;
     private List<String> mailingIds = Collections.emptyList();
     private boolean subscribe;
+    private AccountEntry accountEntry;
+    private OrganizationInfo organizationInfo;
 
     public RegistrationRequest(ThemeDisplay themeDisplay) throws PortalException {
         siteUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay, themeDisplay.getLocale());
@@ -143,10 +146,10 @@ public class RegistrationRequest {
     }
 
     public void setSubscribableMailingIds(String mailingIds) {
-        if (mailingIds == null || mailingIds.length() == 0) return;
+        if (mailingIds == null || mailingIds.isEmpty()) return;
         this.mailingIds = new ArrayList<>();
         String[] split = mailingIds.split(";");
-        Arrays.stream(split).forEach(id -> {if (id.trim().length() > 0) this.mailingIds.add(id); });
+        Arrays.stream(split).forEach(id -> {if (!id.trim().isEmpty()) this.mailingIds.add(id); });
     }
 
     public List<String> getSubscribableMailingIds() {
@@ -159,5 +162,21 @@ public class RegistrationRequest {
 
     public boolean isSubscribe() {
         return subscribe;
+    }
+
+    public void setAccountEntry(AccountEntry accountEntry) {
+        this.accountEntry = accountEntry;
+    }
+
+    public AccountEntry getAccountEntry() {
+        return accountEntry;
+    }
+
+    public void setOrganizationInfo(OrganizationInfo organizationInfo) {
+        this.organizationInfo = organizationInfo;
+    }
+
+    public OrganizationInfo getOrganizationInfo() {
+        return organizationInfo;
     }
 }

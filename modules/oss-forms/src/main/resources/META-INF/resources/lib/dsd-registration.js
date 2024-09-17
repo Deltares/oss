@@ -2,7 +2,7 @@ DsdRegistrationFormsUtil = {
 
     attributes: {},
     accounts: [],
-    selectedAccountIndex: -1,
+    selectedEntryId: -1,
 
     addressSelectionChanged: function (namespace, addressSelection){
         let street;
@@ -10,12 +10,11 @@ DsdRegistrationFormsUtil = {
         let city;
         let country;
         let phone;
-        let addressIndex = addressSelection.value;
+        let addressId = addressSelection.value;
 
-        if (addressIndex !== "-1" && this.selectedAccountIndex !== "-1"){
-
-            let account = this.accounts[this.selectedAccountIndex];
-            let address = account["addresses"][addressIndex];
+        if (addressId !== "0" && this.selectedEntryId !== "0"){
+            let account = this.accounts.find(acc => acc['accountEntryId'] === this.selectedEntryId);
+            let address = account["addresses"].find(addr => addr['addressId'] === addressId);
             street = address["org_address"];
             postal = address["org_postal"];
             city = address["org_city"];
@@ -56,9 +55,9 @@ DsdRegistrationFormsUtil = {
         let country;
         let phone;
         let domain;
-        this.selectedAccountIndex = orgSelection.value;
-        if (this.selectedAccountIndex !== "-1"){
-            let account = this.accounts[this.selectedAccountIndex];
+        this.selectedEntryId = orgSelection.value;
+        if (this.selectedEntryId !== "0"){
+            let account = this.accounts.find(acc => acc['accountEntryId'] === this.selectedEntryId);
             name = account["org_name"];
             website = account["org_website"];
             domain = account["domains"];
@@ -128,8 +127,8 @@ DsdRegistrationFormsUtil = {
         //add new addresses linked to current account selection
         for (let i = 0; i < accountAddresses.length; i++) {
             let option = document.createElement("option");
-            option.value = i;
-            option.label = accountAddresses[i].name
+            option.value = accountAddresses[i]['addressId'];
+            option.label = accountAddresses[i]['name']
             address_selection.add(option)
             if (accountAddresses[i].default) address_selection.selectedIndex = i + 1
         }
@@ -208,12 +207,11 @@ DsdRegistrationFormsUtil = {
             }
             div.classList.remove('has-error')
         }
-
     },
 
     updateRowPrice: function(namespace, element) {
         let articleId = element.getAttribute('data-article-id');
-        let totalEl = document.getElementById(namespace + 'parent_registration_price_' + articleId);
+        let totalEl = document.getElementById(namespace + 'price_parent_registration_' + articleId);
 
         let basePrice = parseFloat(totalEl.getAttribute('data-price'));
         if (basePrice === 0) return;

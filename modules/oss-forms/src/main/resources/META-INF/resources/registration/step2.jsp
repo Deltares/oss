@@ -36,10 +36,10 @@
                                 <aui:input
                                         name="parent_registration_${registrationId}"
                                         label=""
-                                        type="hidden"
+                                        type="checkbox"
                                         data-price="<%= mainRegistration.getPrice() %>"
                                         course="<%=mainRegistration.isCourse() %>"
-                                        cssClass="parent-registration"
+                                        cssClass="parent-registration hidden"
                                         checked="true" />
                                 <%
                                     JournalArticleDisplay articleDisplay = registrationFormDisplayContext
@@ -51,7 +51,7 @@
                             </div>
                             <div class="float-right">
                                 <aui:input
-                                        name="parent_registration_count_${registrationId}"
+                                        name="count_parent_registration_${registrationId}"
                                         label=""
                                         value="1"
                                         min="1"
@@ -62,7 +62,7 @@
                             </div>
                             <div class="float-right">
                                 <aui:input
-                                        name="parent_registration_price_${registrationId}"
+                                        name="price_parent_registration_${registrationId}"
                                         label=""
                                         value="<%=price%>"
                                         data-price="<%= mainRegistration.getPrice() %>"
@@ -167,21 +167,21 @@
                                     <td>
                                         <aui:input
                                                 label=""
-                                                name="jobTitles"
+                                                name="jobTitles_${registrationId}"
                                                 value="" max="75">
                                         </aui:input>
                                     </td>
                                     <td>
                                         <aui:input
                                                 label=""
-                                                name="salutation"
+                                                name="salutation_${registrationId}"
                                                 value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.salutation.name()) %>" max="15">
                                         </aui:input>
                                     </td>
                                     <td>
                                         <aui:input
                                                 label=""
-                                                name="firstName"
+                                                name="firstName_${registrationId}"
                                                 value="<%=attributes.get(KeycloakUtils.ATTRIBUTES.first_name.name())%>" max="75">
                                                 <aui:validator name="required">
                                                     function () {
@@ -193,7 +193,7 @@
                                     <td>
                                         <aui:input
                                                 label=""
-                                                name="lastName"
+                                                name="lastName_${registrationId}"
                                                 value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.last_name.name()) %>" max="75">
                                             <aui:validator name="required">
                                                 function () {
@@ -205,7 +205,7 @@
                                     <td >
                                         <aui:input
                                                 label=""
-                                                name="email"
+                                                name="email_${registrationId}"
                                                 value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.email.name()) %>" max="75">
                                             <aui:validator name="email" />
                                             <aui:validator errorMessage="registrationform.validator.emaildomain" name="custom">

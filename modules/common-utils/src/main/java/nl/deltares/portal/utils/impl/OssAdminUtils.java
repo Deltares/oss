@@ -118,7 +118,7 @@ public class OssAdminUtils implements AdminUtils {
 
     @Override
     public User getOrCreateRegistrationUser(long companyId, User loggedInUser, String registrationEmail,
-                                            String firstName, String lastName, Locale locale) throws Exception {
+                                            String firstName, String lastName, String jobTitle, Locale locale) throws Exception {
 
         if (registrationEmail == null || registrationEmail.isEmpty()) {
             throw new IllegalArgumentException("Registration email missing");
@@ -127,13 +127,16 @@ public class OssAdminUtils implements AdminUtils {
         if (registrationUser != null) return registrationUser; //user already exists.
 
         final Map<String, String> keycloakUser = keycloakUtils.getUserInfo(registrationEmail);
-        String userName = null;
+        String userName;
         if (keycloakUser.isEmpty()) {
-            for (int i = 0; i < 3; i++) {
-                String testUserName = KeycloakUtils.extractUsernameFromEmail(registrationEmail, i);
-                if (!keycloakUtils.isExistingUsername(testUserName)) {
-                    //do not create user, instead check if username is taken.
-                    userName = testUserName;
+            String emailUserName = KeycloakUtils.extractUsernameFromEmail(registrationEmail);
+            userName = emailUserName;
+            int counter = 0;
+            while(keycloakUtils.isExistingUsername(userName)){
+                userName = emailUserName + '_' + counter;
+                counter++;
+                if (counter > 5) {
+                    userName = null;
                     break;
                 }
             }
@@ -142,7 +145,7 @@ public class OssAdminUtils implements AdminUtils {
         }
         long id = CounterLocalServiceUtil.increment(User.class.getName());
         if (userName == null) {
-            userName = String.valueOf(id); //let's assume that id is unieque
+            userName = String.valueOf(id); //let's assume that id is unique
         }
 
         final ServiceContext serviceContext = new ServiceContext();
@@ -151,7 +154,7 @@ public class OssAdminUtils implements AdminUtils {
         final User user = UserLocalServiceUtil.addUser(loggedInUser.getUserId(), companyId, true,
                 null, null, false, userName, registrationEmail,
                 locale, firstName, null, lastName, 0, 0, true,
-                1, 1, 1970, null, 1,loggedInUser.getGroupIds(),
+                1, 1, 1970, jobTitle, 1,loggedInUser.getGroupIds(),
                 loggedInUser.getOrganizationIds(), new long[]{defaultGroupRole.getRoleId()}, loggedInUser.getUserGroupIds(), false, serviceContext);
         user.setPasswordReset(false);
         UserLocalServiceUtil.updateUser(user);

@@ -9,7 +9,7 @@ public interface WebinarUtils {
 
     boolean isActive();
 
-    int registerUser(User user, Map<String, String> userAttributes, String webinarKey, String callerId, Map<String, String> registrationProperties) throws Exception;
+    int registerUser(User user, Map<String, String> registrationAttributes, String webinarKey, String callerId, Map<String, String> responseProperties) throws Exception;
 
     int unregisterUser(User user, String webinarKey, Map<String, String> registrationProperties) throws Exception;
 

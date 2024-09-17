@@ -17,5 +17,5 @@ public interface AdminUtils {
     void deleteLiferayUser(User user, PrintWriter writer);
 
     User getOrCreateRegistrationUser(long companyId, User loggedInUser, String registrationEmail,
-                                            String firstName, String lastName, Locale locale) throws Exception;
+                                            String firstName, String lastName, String jobTitles, Locale locale) throws Exception;
 }

@@ -13,7 +13,7 @@
                         type="select"
                         label=""
                         value="-1">
-                    <aui:option value="-1" label ="registrationform.select.custom.org" />
+                    <aui:option value="0" label ="registrationform.select.custom.org" />
                     <%
                         List<Map<String, String>> accounts;
                         try {
@@ -22,9 +22,9 @@
                             SessionErrors.add(liferayPortletRequest, "registration-failed", e.getMessage());
                             accounts = Collections.emptyList();
                         }
-                        for (int i = 0; i < accounts.size(); i++) {
+                        for (Map<String, String> account : accounts) {
                      %>
-                            <aui:option value="<%=i%>" label ="<%=accounts.get(i).get(KeycloakUtils.ATTRIBUTES.org_name.name())%>" />
+                            <aui:option value='<%=account.get("accountEntryId")%>' label ="<%=account.get(KeycloakUtils.ATTRIBUTES.org_name.name())%>" />
                     <%  } %>
                 </aui:select>
             </div>

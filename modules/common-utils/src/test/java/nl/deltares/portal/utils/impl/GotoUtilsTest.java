@@ -75,7 +75,7 @@ public class GotoUtilsTest {
         mockUser.setLastName("de Rooij");
         final String webinarKey = "1489648458266936589";
         final HashMap<String, String> registrationProperties = new HashMap<>();
-        gotoUtils.registerUser(mockUser, Collections.emptyMap(), webinarKey, "testRegisterUser", registrationProperties);
+        gotoUtils.registerUser(mockUser, webinarKey, "testRegisterUser", registrationProperties);
 
         final String registrantKey = registrationProperties.get("registrantKey");
         final String joinUrl = registrationProperties.get("joinUrl");

@@ -16,7 +16,7 @@ public class MSTeamsUtils extends HttpClientUtils implements WebinarUtils {
     }
 
     @Override
-    public int registerUser(User user, Map<String, String> userAttributes, String webinarKey, String callerId, Map<String, String> registrationProperties) throws Exception {
+    public int registerUser(User user, Map<String, String> registrationAttributes, String webinarKey, String callerId, Map<String, String> registrationProperties) throws Exception {
         return 0;
     }
 

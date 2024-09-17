@@ -85,7 +85,7 @@
             </div>
             <div class="col">
                 <aui:input
-                        name="<%= BillingInfo.ATTRIBUTES.billing_companyid.name() %>"
+                        name="<%= BillingInfo.ATTRIBUTES.billing_company_registration_id.name() %>"
                         label="dsd.registration.step3.billing.companyid"
                         helpMessage="dsd.registration.step3.billing.companyid.info"
                         value="" max="75">
@@ -103,8 +103,8 @@
                         name="select_address"
                         type="select"
                         label=""
-                        value="-1">
-                    <aui:option value="-1" label ="registrationform.select.custom.address" />
+                        value="0">
+                    <aui:option value="0" label ="registrationform.select.custom.address" />
                 </aui:select>
             </div>
         </div>

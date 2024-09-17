@@ -186,6 +186,7 @@
     $(document).ready(function() {
         let form = Liferay.Form.get("<portlet:namespace />fm").formValidator;
         form.activateStep = activateStep;
+        form.preSubmitAction = function (){};
         $('.bs-stepper').formStepper(form);
 
         activateStep();

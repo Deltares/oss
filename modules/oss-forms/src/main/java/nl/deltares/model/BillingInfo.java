@@ -19,12 +19,12 @@ public class BillingInfo {
         billing_country,
         billing_reference,
         billing_vat,
-        billing_companyid,
+        billing_company_registration_id,
         billing_preference,
-        billing_phone,
-        billing_website
+        billing_phone
     }
 
+    String companyRegistrationId = null;
     String companyName = null;
     String firstName = null;
     String lastName = null;
@@ -33,11 +33,10 @@ public class BillingInfo {
     String postal = null;
     String city = null;
     String country = null;
-    String vat = "";
-    String reference = "";
+    String vat = null;
+    String reference = null;
     String preference = "payLink";
-    String phone = "";
-    String website = "";
+    String phone = null;
 
     public static KeycloakUtils.ATTRIBUTES getCorrespondingUserAttributeKey(BillingInfo.ATTRIBUTES billingKey){
         switch (billingKey){
@@ -63,6 +62,8 @@ public class BillingInfo {
                 return KeycloakUtils.ATTRIBUTES.org_website;
             case billing_company:
                 return  KeycloakUtils.ATTRIBUTES.org_name;
+            case billing_company_registration_id:
+                return KeycloakUtils.ATTRIBUTES.org_registration_id;
             default:
                 return null;
         }
@@ -92,10 +93,10 @@ public class BillingInfo {
                 return preference;
             case billing_phone:
                 return phone;
-            case billing_website:
-                return website;
             case billing_company:
                 return companyName;
+            case billing_company_registration_id:
+                return companyRegistrationId;
             default:
                 throw new UnsupportedOperationException("Unsupported billing attribute: " + key);
         }
@@ -136,11 +137,11 @@ public class BillingInfo {
             case billing_phone:
                 phone = value;
                 break;
-            case billing_website:
-                website = value;
-                break;
             case billing_company:
                 companyName = value;
+                break;
+            case billing_company_registration_id:
+                companyRegistrationId = value;
                 break;
             default:
                 throw new UnsupportedOperationException("Unsupported billing attribute: " + key);
@@ -238,14 +239,6 @@ public class BillingInfo {
         this.phone = phone;
     }
 
-    public String getWebsite() {
-        return website;
-    }
-
-    public void setWebsite(String website) {
-        this.website = website;
-    }
-
     public String getFirstName() {
         return firstName;
     }
@@ -262,11 +255,4 @@ public class BillingInfo {
         this.lastName = lastName;
     }
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
 }

@@ -6,17 +6,14 @@ import java.util.Map;
 
 public interface KeycloakUtils {
 
-    static String extractUsernameFromEmail(String email, int iteration) {
+    static String extractUsernameFromEmail(String email) {
         final String[] split = email.split("@");
-        final String username = split[0];
-        if (iteration == 0) {
-            return username;
-        }
-        return username + "_" + (iteration - 1);
+        return split[0];
     }
 
     enum ATTRIBUTES {
-        org_reference,
+        org_external_reference,
+        org_registration_id,
         org_address,
         org_city,
         org_country,
