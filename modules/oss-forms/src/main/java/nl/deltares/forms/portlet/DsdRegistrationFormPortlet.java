@@ -86,7 +86,8 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
             try {
                 List<AccountEntry> accounts = commerceUtils.getAccountsByDomain(domain, themeDisplay.getCompanyId());
                 if (accounts.isEmpty()){
-                    accounts = Collections.singletonList(commerceUtils.getPersonalAccount(themeDisplay.getUser()));
+                    final AccountEntry personalAccount = commerceUtils.getPersonalAccount(themeDisplay.getUser());
+                    accounts = personalAccount == null ? Collections.emptyList(): Collections.singletonList(personalAccount);
                 }
 
                 request.setAttribute("accounts", convertToJson(accounts));
@@ -155,10 +156,15 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
             accountJson.put("companyId", String.valueOf(account.getCompanyId()));
             accountJson.put("accountEntryId", String.valueOf(account.getAccountEntryId()));
             accountJson.put("domains", account.getDomains());
+            accountJson.put("type", account.getType());
             accountJson.put(KeycloakUtils.ATTRIBUTES.org_external_reference.name(), account.getExternalReferenceCode());
             accountJson.put(KeycloakUtils.ATTRIBUTES.org_name.name(), account.getName());
             accountJson.put(KeycloakUtils.ATTRIBUTES.org_vat.name(), account.getTaxIdNumber());
-            final List<Address> addresses = AddressLocalServiceUtil.getAddresses(account.getCompanyId(), AccountEntry.class.getName(), account.getAccountEntryId());
+            List<Address> addresses = AddressLocalServiceUtil.getAddresses(account.getCompanyId(), AccountEntry.class.getName(), account.getAccountEntryId());
+            if (addresses.isEmpty() && account.getDefaultBillingAddressId() > 0){
+                final Address defaultAddress = AddressLocalServiceUtil.fetchAddress(account.getDefaultBillingAddressId());
+                if (defaultAddress != null) addresses = Collections.singletonList(defaultAddress);
+            }
             if (!addresses.isEmpty()){
                 final JSONArray addressesJson = JSONFactoryUtil.createJSONArray();
                 accountJson.put("addresses", addressesJson);

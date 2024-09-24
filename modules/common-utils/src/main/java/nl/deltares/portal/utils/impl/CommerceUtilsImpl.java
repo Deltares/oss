@@ -9,7 +9,6 @@ import com.liferay.commerce.currency.exception.NoSuchCurrencyException;
 import com.liferay.commerce.currency.model.CommerceCurrency;
 import com.liferay.commerce.currency.service.CommerceCurrencyLocalServiceUtil;
 import com.liferay.commerce.model.CommerceOrder;
-import com.liferay.commerce.product.constants.CommerceChannelAccountEntryRelConstants;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CProduct;
 import com.liferay.commerce.product.model.CommerceChannelAccountEntryRel;
@@ -20,14 +19,11 @@ import com.liferay.commerce.service.CommerceOrderLocalServiceUtil;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.*;
-import com.liferay.portal.kernel.service.AddressLocalServiceUtil;
-import com.liferay.portal.kernel.service.CountryLocalServiceUtil;
-import com.liferay.portal.kernel.service.ListTypeLocalServiceUtil;
-import com.liferay.portal.kernel.service.PhoneLocalServiceUtil;
+import com.liferay.portal.kernel.service.*;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
-import com.liferay.portal.kernel.util.PortalUtil;
 import nl.deltares.portal.constants.BillingConstants;
 import nl.deltares.portal.constants.OrganizationConstants;
 import nl.deltares.portal.model.impl.Registration;
@@ -104,6 +100,44 @@ public class CommerceUtilsImpl implements CommerceUtils {
     }
 
     @Override
+    public AccountEntry createAccountEntry(User registrationUser, String type, Map<String, String> requestParameters) throws PortalException {
+
+
+        final ServiceContext serviceContext = new ServiceContext();
+        serviceContext.setScopeGroupId(registrationUser.getGroupId());
+        serviceContext.setCompanyId(registrationUser.getCompanyId());
+
+        String[] domains;
+        if (type.equals("person")){
+            domains = null;
+        } else {
+            domains = new String[]{registrationUser.getEmailAddress().split("@")[1]};
+        }
+        final AccountEntry accountEntry = AccountEntryLocalServiceUtil.addAccountEntry(
+                registrationUser.getUserId(),
+                0, requestParameters.get(BillingConstants.ORG_NAME), "", domains,
+                registrationUser.getEmailAddress(), new byte[0],
+                requestParameters.get(BillingConstants.ORG_VAT), type, 0, serviceContext);
+
+        final String externalReference = requestParameters.get(BillingConstants.ORG_EXTERNAL_REFERENCE_CODE);
+        if(externalReference != null) accountEntry.setExternalReferenceCode(externalReference);
+
+        final String website = requestParameters.get(OrganizationConstants.ORG_WEBSITE);
+        if (!accountEntry.getExpandoBridge().hasAttribute("website")) {
+            accountEntry.getExpandoBridge().addAttribute("website", false);
+        }
+        if (website != null && !website.isEmpty()) {
+            accountEntry.getExpandoBridge().setAttribute("website", website,false);
+        }
+        final Address billingAddress = createAddress(requestParameters, true, accountEntry.getCompanyId());
+        accountEntry.setDefaultBillingAddressId(billingAddress.getAddressId());
+
+        AccountEntryLocalServiceUtil.updateAccountEntry(accountEntry);
+
+
+        return accountEntry;
+    }
+    @Override
     public CommerceOrder createCommerceOrder(AccountEntry accountEntry, long siteGroupId, User registrationUser) {
 
         final long commerceOrderId = CounterLocalServiceUtil.increment(CommerceOrder.class.getName());
@@ -163,7 +197,7 @@ public class CommerceUtilsImpl implements CommerceUtils {
     private CommerceCurrency getCommerceCurrency(AccountEntry accountEntry){
 
         final List<CommerceChannelAccountEntryRel> rels = CommerceChannelAccountEntryRelLocalServiceUtil.getCommerceChannelAccountEntryRels(accountEntry.getAccountEntryId(),
-                CommerceChannelAccountEntryRelConstants.TYPE_CURRENCY, 0, 10, channelAccountEntryRelComparator);
+                6, 0, 10, channelAccountEntryRelComparator);
         if (!rels.isEmpty()) {
             final CommerceChannelAccountEntryRel rel = rels.get(0);
             final CommerceCurrency commerceCurrency = CommerceCurrencyLocalServiceUtil.fetchCommerceCurrency(rel.getClassPK());

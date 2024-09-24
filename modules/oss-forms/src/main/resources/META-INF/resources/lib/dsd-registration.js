@@ -21,9 +21,6 @@ DsdRegistrationFormsUtil = {
             city = address["org_city"];
             country = address["org_country"];
             phone = address["org_phone"];
-
-            document.getElementById(namespace + "billing_org_vat").value = account["org_vat"];
-            document.getElementById(namespace + "billing_org_external_reference_code").value = account["org_external_reference"];
         } else {
             street = document.getElementById(namespace + "org_address").value;
             postal = document.getElementById(namespace + "org_postal").value;
@@ -47,7 +44,7 @@ DsdRegistrationFormsUtil = {
         document.getElementById(namespace + "billing_org_country").disabled = addressSelection.selectedIndex > 0;
         document.getElementById(namespace + "billing_org_phone").disabled = addressSelection.selectedIndex > 0;
         //additional: only allow editing of writing own addressIndex
-        document.getElementById(namespace + "billing_org_company").disabled = addressSelection.selectedIndex > 0;
+        document.getElementById(namespace + "billing_org_name").disabled = addressSelection.selectedIndex > 0;
 
         document.getElementById(namespace + "billing_org_vat").disabled = !accountSelected;
         document.getElementById(namespace + "billing_org_external_reference_code").disabled = !accountSelected;
@@ -63,6 +60,7 @@ DsdRegistrationFormsUtil = {
         let country = "NL";
         let phone = "";
         let domain = "";
+        let disabled = false;
         this.selectedEntryId = orgSelection.value;
         if (this.selectedEntryId !== "0"){
             let account = this.accounts.find(acc => acc['accountEntryId'] === this.selectedEntryId);
@@ -70,15 +68,13 @@ DsdRegistrationFormsUtil = {
             website = account["org_website"];
             domain = account["domains"];
 
+            disabled = account["type"] === 'business';
             let address = DsdRegistrationFormsUtil.getDefaultBillingAddress(account);
-            street = address["org_address"];
-            postal = address["org_postal"];
-            city = address["org_city"];
-            country = address["org_country"];
-            phone = address["org_phone"];
-
-            //update addresses in step 3
-            DsdRegistrationFormsUtil.updateAddresses(namespace, account["addresses"]);
+            street = address["org_address"] ? address["org_address"]: "";
+            postal = address["org_postal"] ? address["org_postal"] : "";
+            city = address["org_city"] ? address["org_city"] : "";
+            country = address["org_country"] ? address["org_country"] : "";
+            phone = address["org_phone"] ? address["org_phone"] : "";
 
         } else if (this.attributes) {
             name = this.attributes["org_name"]?this.attributes["org_name"]:"";
@@ -88,9 +84,6 @@ DsdRegistrationFormsUtil = {
             city = this.attributes["org_city"]?this.attributes["org_city"]:"";
             country = this.attributes["org_country"]?this.attributes["org_country"]:"";
             phone = this.attributes["org_phone"]?this.attributes["org_phone"]:"";
-
-            //update addresses in step 3
-            DsdRegistrationFormsUtil.updateAddresses(namespace, [])
 
         } else {
             return;
@@ -105,13 +98,13 @@ DsdRegistrationFormsUtil = {
         document.getElementById(namespace + "org_phone").value = phone;
         document.getElementById(namespace + "org_domains").value = domain;
 
-        document.getElementById(namespace + "org_name").disabled = orgSelection.selectedIndex > 0;
-        document.getElementById(namespace + "org_website").disabled = orgSelection.selectedIndex > 0;
-        document.getElementById(namespace + "org_address").disabled = orgSelection.selectedIndex > 0;
-        document.getElementById(namespace + "org_postal").disabled = orgSelection.selectedIndex > 0;
-        document.getElementById(namespace + "org_city").disabled = orgSelection.selectedIndex > 0;
-        document.getElementById(namespace + "org_country").disabled = orgSelection.selectedIndex > 0;
-        document.getElementById(namespace + "org_phone").disabled = orgSelection.selectedIndex > 0;
+        document.getElementById(namespace + "org_name").disabled = disabled;
+        document.getElementById(namespace + "org_website").disabled = disabled;
+        document.getElementById(namespace + "org_address").disabled = disabled;
+        document.getElementById(namespace + "org_postal").disabled = disabled;
+        document.getElementById(namespace + "org_city").disabled = disabled;
+        document.getElementById(namespace + "org_country").disabled = disabled;
+        document.getElementById(namespace + "org_phone").disabled = disabled;
     },
 
     getDefaultBillingAddress : function (account){
@@ -122,7 +115,7 @@ DsdRegistrationFormsUtil = {
         return defaultAddress;
     },
 
-    updateAddresses: function (namespace, accountAddresses) {
+    loadAddressList: function (namespace, accountAddresses) {
 
         let address_selection = document.getElementById(namespace + "select_address")
         let options = address_selection.options;
@@ -251,8 +244,19 @@ DsdRegistrationFormsUtil = {
         table.rows[1].cells[1].innerHTML = currency + ' ' + taxTotal.toFixed(2);
         //total
         table.rows[2].cells[1].innerHTML =  currency + ' ' + total.toFixed(2);
+
+        this.setActiveStateStep3(namespace, subTotal);
     },
 
+    setActiveStateStep3: function (namespace, price){
+
+        let step3 = document.getElementById(namespace + 'nav-stepper-step-3');
+        if (price > 0){
+            step3.classList.remove('disabled')
+        } else {
+            step3.classList.add('disabled')
+        }
+    },
     activateStep1: function(namespace){
 
         let orgSelection = document.getElementById(namespace + "select_organization");
@@ -274,21 +278,42 @@ DsdRegistrationFormsUtil = {
 
     activateStep3: function (namespace){
 
+        if (this.selectedEntryId !== "0") {
+            let account = this.accounts.find(acc => acc['accountEntryId'] === this.selectedEntryId);
+            //update addresses in step 3
+            if (account["addresses"] !== undefined) {
+                DsdRegistrationFormsUtil.loadAddressList(namespace, account["addresses"]);
+            }
+
+            if (account["type"] === 'person') {
+                //Only personal accounts may update their content
+                this.copyAddressStep1ToStep3(namespace)
+            }
+        } else {
+            this.copyAddressStep1ToStep3(namespace)
+        }
+
+    },
+
+    copyAddressStep1ToStep3: function (namespace){
         document.getElementById(namespace + "billing_org_name").value = document.getElementById(namespace + "org_name").value
-        let address_selection = document.getElementById(namespace + "select_address")
-        this.addressSelectionChanged(namespace, address_selection)
+        document.getElementById(namespace + "billing_org_address").value = document.getElementById(namespace + "org_address").value
+        document.getElementById(namespace + "billing_org_postal").value = document.getElementById(namespace + "org_postal").value
+        document.getElementById(namespace + "billing_org_city").value = document.getElementById(namespace + "org_city").value
+        document.getElementById(namespace + "billing_org_country").value = document.getElementById(namespace + "org_country").value
+        document.getElementById(namespace + "billing_org_phone").value = document.getElementById(namespace + "org_phone").value
 
     },
     activateNextTab : function (namespace, tabIndex){
 
         switch (tabIndex){
-            case 1:
+            case 0:
                 DsdRegistrationFormsUtil.activateStep1(namespace);
                 break;
-            case 2:
+            case 1:
                 DsdRegistrationFormsUtil.activateStep2(namespace);
                 break;
-            case 3:
+            case 2:
                 DsdRegistrationFormsUtil.activateStep3(namespace);
                 break;
             default:

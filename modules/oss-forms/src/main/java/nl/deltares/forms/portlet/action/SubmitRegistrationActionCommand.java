@@ -246,29 +246,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
         AccountEntry accountEntry = AccountEntryLocalServiceUtil.fetchPersonAccountEntry(billingUser.getUserId());
         if (accountEntry == null) {
-            accountEntry = AccountEntryLocalServiceUtil.createAccountEntry(CounterLocalServiceUtil.increment(AccountEntry.class.getName()));
-            accountEntry.setType("person");
-            accountEntry.setEmailAddress(billingUser.getEmailAddress());
-            accountEntry.setUserId(billingUser.getUserId());
-            accountEntry.setUserName(billingUser.getScreenName());
-            accountEntry.setRestrictMembership(true);
-            accountEntry.setName(billingUser.getFullName());
-            final String externalReference = registrationRequest.getRequestParameter(BillingConstants.ORG_EXTERNAL_REFERENCE_CODE);
-            if(externalReference != null) accountEntry.setExternalReferenceCode(externalReference);
-
-            final String website = registrationRequest.getRequestParameter(OrganizationConstants.ORG_WEBSITE);
-            if (!accountEntry.getExpandoBridge().hasAttribute("website")) {
-                accountEntry.getExpandoBridge().addAttribute("website", false);
-            }
-            if (website != null && !website.isEmpty()) {
-                accountEntry.getExpandoBridge().setAttribute("website", website,false);
-            }
-            accountEntry.setTaxIdNumber(registrationRequest.getRequestParameter(OrganizationConstants.ORG_VAT));
-
-            final Address billingAddress = commerceUtils.createAddress(registrationRequest.getRequestParameters(), true, accountEntry.getCompanyId());
-            accountEntry.setDefaultBillingAddressId(billingAddress.getAddressId());
-
-            AccountEntryLocalServiceUtil.addAccountEntry(accountEntry);
+            accountEntry = commerceUtils.createAccountEntry(billingUser, "person", registrationRequest.getRequestParameters());
         }
         return accountEntry;
     }

@@ -106,7 +106,7 @@
                     <span><liferay-ui:message key="dsd.registration.steps.step2"/></span>
                 </a>
             </li>
-            <li class="nav-item icon-circle-blank disabled" id="<portlet:namespace/>nav-stepper-step-3">
+            <li class="nav-item icon-circle-blank" id="<portlet:namespace/>nav-stepper-step-3">
                 <a href="#stepper-step-3" title="Step 3" >
                     <span><liferay-ui:message key="dsd.registration.steps.step3"/></span>
                 </a>
@@ -196,7 +196,7 @@
         form.preSubmitAction = function (){};
         $('.bs-stepper').formStepper(form);
 
-        activateStep();
+        activateStep(-1, 0);
     });
 
 </aui:script>
