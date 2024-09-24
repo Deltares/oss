@@ -68,6 +68,11 @@
                         arguments='<%= SessionErrors.get(liferayPortletRequest, "update-attributes-failed") %>'/>
 </liferay-ui:error>
 
+<liferay-ui:error key="registration-error">
+    <liferay-ui:message key="registration-error"
+                        arguments='<%= SessionErrors.get(liferayPortletRequest, "registration-error") %>'/>
+</liferay-ui:error>
+
 <liferay-ui:error key="send-email-failed">
     <liferay-ui:message key="send-email-failed"
                         arguments='<%= SessionErrors.get(liferayPortletRequest, "send-email-failed") %>'/>
@@ -179,8 +184,10 @@
     DsdRegistrationFormsUtil.attributes = <%= JsonContentUtils.formatMapToJson(attributes) %>;
     DsdRegistrationFormsUtil.accounts = <%= accountsJson %>;
 
-    const activateStep = function (){
-        DsdRegistrationFormsUtil.activateNextTab("<portlet:namespace />", getCurrentStep("<portlet:namespace />fm"));
+    const activateStep = function (current_step, new_step){
+        if (current_step < new_step){
+            DsdRegistrationFormsUtil.activateNextTab("<portlet:namespace />", new_step);
+        }
     }
 
     $(document).ready(function() {

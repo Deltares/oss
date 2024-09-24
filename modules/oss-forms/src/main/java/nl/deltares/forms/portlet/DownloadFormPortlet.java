@@ -12,6 +12,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.configuration.DownloadSiteConfiguration;
+import nl.deltares.portal.constants.OrganizationConstants;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Download;
 import nl.deltares.portal.model.impl.Terms;
@@ -92,7 +93,7 @@ public class DownloadFormPortlet extends MVCPortlet {
                 }
                 //translate org vat code
                 final String org_vat = userAttributes.get(KeycloakUtils.ATTRIBUTES.org_vat.name());
-                if (org_vat != null) userAttributes.put("billing_vat", org_vat);
+                if (org_vat != null) userAttributes.put(OrganizationConstants.ORG_VAT, org_vat);
             } catch (Exception e) {
                 SessionErrors.add(request, "retrieve-attributes-failed", "Error reading user attributes: " + e.getMessage());
                 request.setAttribute("attributes", new HashMap<>());

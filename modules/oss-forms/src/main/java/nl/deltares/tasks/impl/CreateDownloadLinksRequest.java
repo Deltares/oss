@@ -83,7 +83,7 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
                 downloadRequest.registerShareInfo(download.getArticleId(), shareInfo);
                 try {
                     downloadUtils.registerDownload(user, downloadRequest.getGroupId() , Long.parseLong(download.getArticleId()),
-                            download.getFileName(), shareInfo, downloadRequest.getUserAttributes());
+                            download.getFileName(), shareInfo, downloadRequest.getRequestParameters());
                 } catch (PortalException e) {
                     errorMessage = String.format("Failed to register link for file %s : %s ", download.getFileName(), e.getMessage());
                     LOG.warn(errorMessage);

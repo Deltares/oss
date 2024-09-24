@@ -97,13 +97,13 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
-    public void registerUser(User user, Map<String, String> orgAttributes, String remarks, Registration registration, User registrationUser) throws PortalException {
+    public void registerUser(User user, Map<String, String> registrationAttributes, Registration registration, User registrationUser) throws PortalException {
 
         if (user.isGuestUser()) return;
-        final HashMap<String, String> registrationProperties = new HashMap<>();
+        final HashMap<String, String> outputProperties = new HashMap<>();
         try {
             if (webinarUtilsFactory.isWebinarSupported(registration)) {
-                registerWebinarUser(user, orgAttributes, (SessionRegistration) registration, registrationProperties);
+                registerWebinarUser(user, registrationAttributes, (SessionRegistration) registration, outputProperties);
             }
         } finally {
             long parentId = registration.getParentRegistration() == null ? 0 : registration.getParentRegistration().getResourceId();
@@ -116,12 +116,13 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
                 registeredByUserId = registrationUser.getUserId();
             }
 
-            if (remarks != null) registrationProperties.put("remarks", remarks);
-            registrationProperties.put("registration_time", dateTimeFormatter.format(new Date()));
+            if (registrationAttributes.containsKey("remarks")) outputProperties.put("remarks", registrationAttributes.get("remarks"));
+            if (registrationAttributes.containsKey("orderId")) outputProperties.put("orderId", registrationAttributes.get("orderId"));
+            outputProperties.put("registration_time", dateTimeFormatter.format(new Date()));
             RegistrationLocalServiceUtil.addUserRegistration(
                     registration.getCompanyId(), registration.getGroupId(), registration.getResourceId(), eventResourcePrimaryKey,
                     parentId, user.getUserId(),
-                    registration.getStartTime(), registration.getEndTime(), JsonContentUtils.formatMapToJson(registrationProperties), registeredByUserId);
+                    registration.getStartTime(), registration.getEndTime(), JsonContentUtils.formatMapToJson(outputProperties), registeredByUserId);
         }
     }
 

@@ -65,5 +65,5 @@ public interface DSDSiteConfiguration {
     @Meta.AD(required = false, deflt = "registrationType", description = "Configure the field name that contains the registration type.")
     String dsdRegistrationTypeField();
     @Meta.AD(required = false, deflt = "0", description = "Configure the default companyId under which all Accounts are stored.")
-    long getDefaultCompanyIdForAccounts();
+    long defaultCompanyIdForAccounts();
 }

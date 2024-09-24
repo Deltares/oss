@@ -5,6 +5,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import nl.deltares.portal.configuration.WebinarSiteConfiguration;
+import nl.deltares.portal.constants.OrganizationConstants;
 import nl.deltares.portal.utils.*;
 
 import java.io.IOException;
@@ -59,7 +60,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
     }
 
     @Override
-    public int registerUser(User user, Map<String, String> registrationAttributes,  String webinarKey, String callerId, Map<String, String> responseProperties) throws Exception {
+    public int registerUser(User user, Map<String, String> organizationAttributes,  String webinarKey, String callerId, Map<String, String> responseProperties) throws Exception {
 
         String rawRegistrationPath = getBasePath() + GOTO_REGISTRANTS_PATH;
         String accessToken = getAccessToken(); //calling this method loads organization key
@@ -232,11 +233,11 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
         parameterMap.put("lastName", user.getLastName());
         parameterMap.put("email", user.getEmailAddress());
         parameterMap.put("registrantKey", user.getScreenName());
-        parameterMap.put("zipCode", organizationAttributes.get(KeycloakUtils.ATTRIBUTES.org_postal.name()));
-        parameterMap.put("country", organizationAttributes.get(KeycloakUtils.ATTRIBUTES.org_country.name()));
-        parameterMap.put("address", organizationAttributes.get(KeycloakUtils.ATTRIBUTES.org_address.name()));
-        parameterMap.put("city", organizationAttributes.get(KeycloakUtils.ATTRIBUTES.org_city.name()));
-        parameterMap.put("organization", organizationAttributes.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
+        parameterMap.put("zipCode", organizationAttributes.get(OrganizationConstants.ORG_POSTAL));
+        parameterMap.put("country", organizationAttributes.get(OrganizationConstants.ORG_COUNTRY_CODE));
+        parameterMap.put("address", organizationAttributes.get(OrganizationConstants.ORG_STREET));
+        parameterMap.put("city", organizationAttributes.get(OrganizationConstants.ORG_CITY));
+        parameterMap.put("organization", organizationAttributes.get(OrganizationConstants.ORG_NAME));
         parameterMap.put("source", callerId);
 
         String postData = JsonContentUtils.formatMapToJson(parameterMap);

@@ -2,15 +2,14 @@ package nl.deltares.emails.serializer;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.User;
-import nl.deltares.model.BillingInfo;
 import nl.deltares.model.DownloadRequest;
 import nl.deltares.emails.DownloadEmail;
-import nl.deltares.model.LicenseInfo;
+import nl.deltares.portal.constants.BillingConstants;
+import nl.deltares.portal.constants.LicenseConstants;
+import nl.deltares.portal.constants.OrganizationConstants;
 import nl.deltares.portal.model.impl.Download;
-import nl.deltares.portal.utils.KeycloakUtils;
 
 import java.util.List;
-import java.util.Map;
 
 public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> {
 
@@ -64,7 +63,6 @@ public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> 
     private void appendLicenseInfo(StringBuilder writer, DownloadEmail content) {
 
         final DownloadRequest downloadRequest = content.getDownloadRequest();
-        final LicenseInfo licenseInfo = downloadRequest.getLicenseInfo();
 
         writer.append("<p>");
         writer.append(LanguageUtil.format(content.getBundle(), "download.email.license.info", null));
@@ -76,11 +74,11 @@ public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> 
         writer.append("<tr>");
         writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.license.lockType", null)).append("</td>");
         writer.append("<td>");
-        writer.append(LanguageUtil.format(content.getBundle(), "download.email.license.lockType." + licenseInfo.getLockType().name(), null));
+        writer.append(LanguageUtil.format(content.getBundle(), "download.email.license.lockType." + downloadRequest.getRequestParameter(LicenseConstants.LOCK_TYPE), null));
         writer.append("</td>");
         writer.append("</tr>");
 
-        final String dongleNumber = licenseInfo.getDongleNumber();
+        final String dongleNumber = downloadRequest.getRequestParameter(LicenseConstants.DONGLE_NUMBER);
         if (dongleNumber != null && !dongleNumber.isEmpty()){
             writer.append("<tr>");
             writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.license.lockType.dongle", null)).append("</td>");
@@ -93,7 +91,7 @@ public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> 
         writer.append("<tr>");
         writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.license.licenseType", null)).append("</td>");
         writer.append("<td>");
-        writer.append(LanguageUtil.format(content.getBundle(), "download.email.license.licenseType." + licenseInfo.getLicenseType().name(), null));
+        writer.append(LanguageUtil.format(content.getBundle(), "download.email.license.licenseType." + downloadRequest.getRequestParameter(LicenseConstants.LICENSE_TYPE), null));
         writer.append("</td>");
         writer.append("</tr>");
 
@@ -130,45 +128,37 @@ public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> 
         final DownloadRequest downloadRequest = content.getDownloadRequest();
 
         if (downloadRequest.isUserInfoRequired()) {
-            final Map<String, String> userAttributes = downloadRequest.getUserAttributes();
-            writer.append("<tr>");
-            writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.user.phone", null)).append("</td>");
-            writer.append("<td>");
-            writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.phone.name(), ""));
-            writer.append("</td>");
-            writer.append("</tr>");
-
             writer.append("<tr>");
             writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.user.org_name", null)).append("</td>");
             writer.append("<td>");
-            writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_name.name(), ""));
+            writer.append(downloadRequest.getRequestParameterOrDefault(OrganizationConstants.ORG_NAME, ""));
             writer.append("</td>");
             writer.append("</tr>");
 
             writer.append("<tr>");
             writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.user.org_address", null)).append("</td>");
             writer.append("<td>");
-            writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_address.name(), ""));
+            writer.append(downloadRequest.getRequestParameterOrDefault(OrganizationConstants.ORG_STREET, ""));
             writer.append("</br>");
-            writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_postal.name(), ""));
+            writer.append(downloadRequest.getRequestParameterOrDefault(OrganizationConstants.ORG_POSTAL, ""));
             writer.append(", ");
-            writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_city.name(), ""));
+            writer.append(downloadRequest.getRequestParameterOrDefault(OrganizationConstants.ORG_CITY, ""));
             writer.append("</br>");
-            writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_country.name(), ""));
+            writer.append(downloadRequest.getRequestParameterOrDefault(OrganizationConstants.ORG_EXTERNAL_REFERENCE_CODE, ""));
             writer.append("</td>");
             writer.append("</tr>");
 
             writer.append("<tr>");
             writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.user.org_phone", null)).append("</td>");
             writer.append("<td>");
-            writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_phone.name(), ""));
+            writer.append(downloadRequest.getRequestParameterOrDefault(OrganizationConstants.ORG_PHONE, ""));
             writer.append("</td>");
             writer.append("</tr>");
 
             writer.append("<tr>");
             writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.user.org_website", null)).append("</td>");
             writer.append("<td>");
-            writer.append(userAttributes.getOrDefault(KeycloakUtils.ATTRIBUTES.org_website.name(), ""));
+            writer.append(downloadRequest.getRequestParameterOrDefault(OrganizationConstants.ORG_WEBSITE, ""));
             writer.append("</td>");
             writer.append("</tr>");
         }
@@ -178,7 +168,6 @@ public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> 
 
     public void appendBillingInfo(StringBuilder writer, DownloadEmail content){
         final DownloadRequest downloadRequest = content.getDownloadRequest();
-        final BillingInfo billingInfo = downloadRequest.getBillingInfo();
 
         writer.append("<p>");
         writer.append(LanguageUtil.format(content.getBundle(), "download.email.billing.info", null));
@@ -190,54 +179,54 @@ public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> 
         writer.append("<tr>");
         writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.billing.email", null)).append("</td>");
         writer.append("<td>");
-        writer.append(billingInfo.getEmail());
+        writer.append(downloadRequest.getRequestParameterOrDefault(BillingConstants.EMAIL, ""));
         writer.append("</td>");
         writer.append("</tr>");
 
         writer.append("<tr>");
         writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.billing.name", null)).append("</td>");
         writer.append("<td>");
-        writer.append(billingInfo.getCompanyName());
+        writer.append(downloadRequest.getRequestParameterOrDefault(BillingConstants.ORG_NAME, ""));
         writer.append("</td>");
         writer.append("</tr>");
 
         writer.append("<tr>");
         writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.billing.address", null)).append("</td>");
         writer.append("<td>");
-        writer.append(billingInfo.getAddress());
+        writer.append(downloadRequest.getRequestParameterOrDefault(BillingConstants.ORG_STREET, ""));
         writer.append("</br>");
-        writer.append(billingInfo.getPostal());
+        writer.append(downloadRequest.getRequestParameterOrDefault(BillingConstants.ORG_POSTAL, ""));
         writer.append(", ");
-        writer.append(billingInfo.getCity());
+        writer.append(downloadRequest.getRequestParameterOrDefault(BillingConstants.ORG_CITY, ""));
         writer.append("</br>");
-        writer.append(billingInfo.getCountry());
+        writer.append(downloadRequest.getRequestParameterOrDefault(BillingConstants.ORG_EXTERNAL_REFERENCE_CODE, ""));
         writer.append("</td>");
         writer.append("</tr>");
         writer.append("<tr>");
         writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.billing.phone", null)).append("</td>");
         writer.append("<td>");
-        writer.append(billingInfo.getPhoneNumber());
+        writer.append(downloadRequest.getRequestParameterOrDefault(BillingConstants.ORG_PHONE,""));
         writer.append("</td>");
         writer.append("</tr>");
 
         writer.append("<tr>");
         writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.billing.method", null)).append("</td>");
         writer.append("<td>");
-        writer.append(billingInfo.getPreference());
+        writer.append(downloadRequest.getRequestParameterOrDefault(BillingConstants.PAYMENT_METHOD, ""));
         writer.append("</td>");
         writer.append("</tr>");
 
         writer.append("<tr>");
         writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.billing.reference", null)).append("</td>");
         writer.append("<td>");
-        writer.append(billingInfo.getReference());
+        writer.append(downloadRequest.getRequestParameterOrDefault(BillingConstants.PAYMENT_REFERENCE, ""));
         writer.append("</td>");
         writer.append("</tr>");
 
         writer.append("<tr>");
         writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "download.email.billing.vat", null)).append("</td>");
         writer.append("<td>");
-        writer.append(billingInfo.getVat());
+        writer.append(downloadRequest.getRequestParameterOrDefault(BillingConstants.ORG_VAT, ""));
         writer.append("</td>");
         writer.append("</tr>");
 

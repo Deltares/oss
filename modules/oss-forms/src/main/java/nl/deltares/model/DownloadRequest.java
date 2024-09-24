@@ -14,12 +14,10 @@ public class DownloadRequest {
 
     private final List<Download> downloads = new ArrayList<>();
     private final String siteUrl;
-    private final HashMap<String, String> userAttributes = new HashMap<>();
     private final long groupId;
-    private BillingInfo billingInfo;
+    private Map<String, String> registrationParameters = new HashMap<>();
     final private List<SubscriptionSelection> subscriptionSelections = new ArrayList<>();
     final private Map<String, Map<String, String>> shareInfo = new HashMap<>();
-    private LicenseInfo licenseInfo;
     private String downloadServerCode;
 
     public DownloadRequest(ThemeDisplay themeDisplay) throws PortalException {
@@ -46,12 +44,20 @@ public class DownloadRequest {
         return Collections.unmodifiableList(downloads);
     }
 
-    public void setBillingInfo(BillingInfo billingInfo) {
-        this.billingInfo = billingInfo;
+    @SuppressWarnings("UnusedReturnValue")
+    public String setRequestParameter(String key, String value){
+        return registrationParameters.put(key,value);
     }
 
-    public BillingInfo getBillingInfo() {
-        return billingInfo;
+    public String getRequestParameterOrDefault(String key, String defaultValue){
+        return this.registrationParameters.getOrDefault(key, defaultValue);
+    }
+    public String getRequestParameter(String key){
+        return getRequestParameterOrDefault(key, null);
+    }
+
+    public Map<String, String> getRequestParameters(){
+        return Collections.unmodifiableMap(registrationParameters);
     }
 
     public List<SubscriptionSelection> getSubscriptionSelections() {
@@ -77,14 +83,6 @@ public class DownloadRequest {
         return false;
     }
 
-    public void setUserAttributes(Map<String, String> userAttributes) {
-        this.userAttributes.putAll(userAttributes);
-    }
-
-    public HashMap<String, String> getUserAttributes() {
-        return userAttributes;
-    }
-
     public void registerShareInfo(String articleId, Map<String, String> shareInfo) {
         this.shareInfo.put(articleId, shareInfo);
      }
@@ -105,14 +103,6 @@ public class DownloadRequest {
         final Map<String, String> info = shareInfo.get(articleId);
         if (info != null) return info.get("licUrl");
         return null;
-    }
-
-    public void setLicenseInfo(LicenseInfo licenseInfo) {
-        this.licenseInfo = licenseInfo;
-    }
-
-    public LicenseInfo getLicenseInfo() {
-        return licenseInfo;
     }
 
     public List<Terms> getTerms() {

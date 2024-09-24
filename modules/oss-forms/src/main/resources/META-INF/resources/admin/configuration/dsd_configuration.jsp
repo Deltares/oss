@@ -123,6 +123,11 @@
                     label="dsd.type.field"
                     name="dsdRegistrationTypeField"
                     value="<%= configuration.dsdRegistrationTypeField() %>"/>
+
+            <aui:input
+                    label="dsd.type.field"
+                    name="companyIdForAccountsTypeField"
+                    value="<%= configuration.defaultCompanyIdForAccounts() %>"/>
         </aui:fieldset>
         <aui:fieldset id="external_links" collapsible="true" label="External links">
             <%

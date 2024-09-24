@@ -11,7 +11,8 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import nl.deltares.model.BadgeInfo;
-import nl.deltares.model.BillingInfo;
+import nl.deltares.portal.constants.BillingConstants;
+import nl.deltares.portal.constants.OrganizationConstants;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Event;
@@ -442,20 +443,20 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             header = new StringBuilder("eventTitle,registrationTitle,email,badgeName,organization");
         } else if (downloadAction == DOWNLOAD_ACTIONS.downloadLight) {
             header = new StringBuilder(",projectNumber,registrationTitle,email,firstName,lastName,remarks");
-            for (BillingInfo.ATTRIBUTES value : BillingInfo.ATTRIBUTES.values()) {
-                if (value == BillingInfo.ATTRIBUTES.billing_phone) continue;
-                if (value == BillingInfo.ATTRIBUTES.billing_website) continue;
+            for (String key : OrganizationConstants.ORG_KEYS) {
+                if (OrganizationConstants.ORG_PHONE.equals(key)) continue;
+                if (OrganizationConstants.ORG_WEBSITE.equals(key)) continue;
                 header.append(',');
-                header.append(value.name());
+                header.append(key);
             }
             header.append(",registration time");
             header.append(",organization");
 
         } else {
             header = new StringBuilder("eventId, eventTitle, projectNumber, registrationId, registrationTitle,start date,topic,type,email,firstName,lastName,webinarProvider,registrationStatus,remarks");
-            for (BillingInfo.ATTRIBUTES value : BillingInfo.ATTRIBUTES.values()) {
+            for (String key : OrganizationConstants.ORG_KEYS) {
                 header.append(',');
-                header.append(value.name());
+                header.append(key);
             }
             header.append(",registration time");
             header.append(",organization");
@@ -721,11 +722,9 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
     private void writeBillingInfo(StringBuilder line, Map<String, String> billingInfo, boolean light){
 
-        //Write billing information.
-        for (BillingInfo.ATTRIBUTES key : BillingInfo.ATTRIBUTES.values()) {
-            if (light && key == BillingInfo.ATTRIBUTES.billing_phone) continue;
-            if (light && key == BillingInfo.ATTRIBUTES.billing_website) continue;
-            String billingAttribute = billingInfo.get(key.name());
+        for (String key : BillingConstants.ORG_KEYS) {
+            if (light && BillingConstants.ORG_PHONE.equals(key)) continue;
+            String billingAttribute = billingInfo.get(key);
             writeField(line, billingAttribute);
         }
     }

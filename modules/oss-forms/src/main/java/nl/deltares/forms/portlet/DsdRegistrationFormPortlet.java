@@ -1,10 +1,7 @@
 package nl.deltares.forms.portlet;
 
 import com.liferay.account.model.AccountEntry;
-import com.liferay.account.service.AccountEntryLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
-import com.liferay.portal.kernel.dao.orm.DynamicQuery;
-import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -62,6 +59,9 @@ import static nl.deltares.portal.utils.LocalizationUtils.getLocalizedValue;
 public class DsdRegistrationFormPortlet extends MVCPortlet {
 
     @Reference
+    private CommerceUtils commerceUtils;
+
+    @Reference
     private KeycloakUtils keycloakUtils;
 
     @Reference
@@ -84,10 +84,14 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 
             String domain = user.getEmailAddress().split("@")[1];
             try {
-                final List<AccountEntry> accounts = getAccountsByDomain(domain);
+                List<AccountEntry> accounts = commerceUtils.getAccountsByDomain(domain, themeDisplay.getCompanyId());
+                if (accounts.isEmpty()){
+                    accounts = Collections.singletonList(commerceUtils.getPersonalAccount(themeDisplay.getUser()));
+                }
+
                 request.setAttribute("accounts", convertToJson(accounts));
             } catch (Exception e) {
-                SessionErrors.add(request, "get-accounts-failed", new String[]{domain, e.getMessage()});
+                SessionErrors.add(request, "registration-error", String.format("Error getting accounts for domain %s: %s", domain, e.getMessage()));
 				request.setAttribute("accounts", JSONFactoryUtil.createJSONArray().toJSONString());
             }
 
@@ -96,11 +100,7 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
                 request.setAttribute("attributes", userAttributes);
             } catch (Exception e) {
                 SessionErrors.add(request, "update-attributes-failed", "Error reading user attributes: " + e.getMessage());
-                final HashMap<String, String> attributes = new HashMap<>();
-				attributes.put(KeycloakUtils.ATTRIBUTES.first_name.name(), user.getFirstName());
-				attributes.put(KeycloakUtils.ATTRIBUTES.last_name.name(), user.getLastName());
-				attributes.put(KeycloakUtils.ATTRIBUTES.email.name(), user.getEmailAddress());
-                request.setAttribute("attributes", attributes);
+                request.setAttribute("attributes", Collections.emptyMap());
             }
 
             final String language = themeDisplay.getLocale().getLanguage();
@@ -114,7 +114,7 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
                 request.setAttribute("subscriptionSelection", getSubscriptionSelection(user.getEmailAddress(), mailingIdsList));
                 request.setAttribute("subscribed", subscriptionUtils.isSubscribed(user.getEmailAddress(), mailingIdsList));
             } catch (Exception e) {
-                LOG.warn("Error getting DSDSiteConfiguration: " + e.getMessage());
+                SessionErrors.add(request, "registration-error", String.format("Error getting subscriptions for user %s: %s", user.getEmailAddress(), e.getMessage()));
                 request.setAttribute("subscribed", false);
             }
             try {
@@ -180,19 +180,11 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
             }
 
             //Get additional parameters
-            accountJson.put(KeycloakUtils.ATTRIBUTES.org_website.name(), (String) account.getExpandoBridge().getAttribute("website"));
+            accountJson.put(KeycloakUtils.ATTRIBUTES.org_website.name(), (String) account.getExpandoBridge().getAttribute("website", false));
 
             jsonArray.put(accountJson);
         }
         return jsonArray.toJSONString();
-    }
-
-    private List<AccountEntry> getAccountsByDomain(String domain) {
-
-        final DynamicQuery dq = AccountEntryLocalServiceUtil.dynamicQuery();
-        dq.add(RestrictionsFactoryUtil.like("domains", '%' + domain + '%'));
-        return AccountEntryLocalServiceUtil.dynamicQuery(dq);
-
     }
 
     private List<String> getRegistrations(String action, String ids, String articleId) {

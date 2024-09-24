@@ -8,5 +8,6 @@ Export-Package: \
     nl.deltares.forms.portlet
 Import-Package: \
     nl.deltares.portal.utils.*, \
+    nl.deltares.portal.constants.*, \
     nl.deltares.tasks.*, \
     *

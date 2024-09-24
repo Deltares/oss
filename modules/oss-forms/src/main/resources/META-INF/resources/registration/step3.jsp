@@ -1,4 +1,4 @@
-<%@ page import="nl.deltares.model.BillingInfo" %>
+<%@ page import="nl.deltares.portal.constants.BillingConstants" %>
 <h3><strong><liferay-ui:message key="download.email.billing.payment.contact"/></strong></h3>
 <aui:row>
     <aui:col width="100">
@@ -6,8 +6,8 @@
             <div class="col">
                 <aui:input
                         label="registrationform.email"
-                        name="<%=BillingInfo.ATTRIBUTES.billing_email.name()%>"
-                        value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.email.name()) %>" max="75">
+                        name='<%=BillingConstants.EMAIL%>'
+                        value="<%= user.getEmailAddress() %>" max="75">
                     <aui:validator name="email" />
                     <aui:validator name="required">
                         function () {
@@ -22,8 +22,8 @@
             <div class="col">
                 <aui:input
                         label="registrationform.firstname"
-                        name="<%=BillingInfo.ATTRIBUTES.billing_firstname.name()%>"
-                        value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.first_name.name()) %>" max="75">
+                        name='<%=BillingConstants.FIRST_NAME%>'
+                        value="<%= user.getFirstName() %>" max="75">
                     <aui:validator name="required">
                         function () {
                         return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'),3);
@@ -34,8 +34,8 @@
             <div class="col">
                 <aui:input
                         label="registrationform.lastname"
-                        name="<%=BillingInfo.ATTRIBUTES.billing_lastname.name()%>"
-                        value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.last_name.name()) %>" max="75">
+                        name='<%=BillingConstants.LAST_NAME%>'
+                        value="<%= user.getLastName() %>" max="75">
                     <aui:validator name="required">
                         function () {
                         return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'),3);
@@ -52,7 +52,7 @@
         <div class="row">
             <div class="col">
                 <aui:select
-                        name="<%= BillingInfo.ATTRIBUTES.billing_preference.name() %>"
+                        name="<%=BillingConstants.PAYMENT_METHOD%>"
                         type="select"
                         label="dsd.registration.step3.billing.method"
                         value="payLink">
@@ -62,13 +62,13 @@
             </div>
             <div class="col">
                 <aui:input
-                        name="<%= BillingInfo.ATTRIBUTES.billing_reference.name() %>"
+                        name='<%=BillingConstants.PAYMENT_REFERENCE%>'
                         label="dsd.registration.step3.billing.reference"
                         helpMessage="dsd.registration.step3.billing.reference.info"
                         value="" max="75">
                     <aui:validator name="required">
                         function () {
-                        return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
+                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
                         }
                     </aui:validator>
                 </aui:input>
@@ -77,7 +77,7 @@
         <div class="row">
             <div class="col">
                 <aui:input
-                        name="<%= BillingInfo.ATTRIBUTES.billing_vat.name() %>"
+                        name='<%=BillingConstants.ORG_VAT%>'
                         label="dsd.registration.step3.billing.vat"
                         helpMessage="dsd.registration.step3.billing.vat.info"
                         value="" max="75">
@@ -85,7 +85,7 @@
             </div>
             <div class="col">
                 <aui:input
-                        name="<%= BillingInfo.ATTRIBUTES.billing_company_registration_id.name() %>"
+                        name='<%= BillingConstants.ORG_EXTERNAL_REFERENCE_CODE %>'
                         label="dsd.registration.step3.billing.companyid"
                         helpMessage="dsd.registration.step3.billing.companyid.info"
                         value="" max="75">
@@ -111,7 +111,7 @@
         <div class="row">
             <div class="col">
                 <aui:input
-                        name="<%= BillingInfo.ATTRIBUTES.billing_company.name() %>"
+                        name="<%= BillingConstants.ORG_NAME %>"
                         label="registrationform.orgname"
                         value="" max="75">
                     <aui:validator name="required">
@@ -125,7 +125,7 @@
         <div class="row">
             <div class="col">
                 <aui:input
-                        name="<%= BillingInfo.ATTRIBUTES.billing_address.name() %>"
+                        name='<%= BillingConstants.ORG_STREET %>'
                         label="registrationform.orgaddress"
                         value="" max="255">
                     <aui:validator name="required">
@@ -139,7 +139,7 @@
         <div class="row">
             <div class="col">
                 <aui:input
-                        name="<%= BillingInfo.ATTRIBUTES.billing_postal.name() %>"
+                        name='<%= BillingConstants.ORG_POSTAL %>'
                         label="registrationform.orgpostcode"
                         value="" max="10">
                     <aui:validator name="required">
@@ -151,7 +151,7 @@
             </div>
             <div class="col">
                 <aui:input
-                        name="<%= BillingInfo.ATTRIBUTES.billing_city.name() %>"
+                        name='<%= BillingConstants.ORG_CITY %>'
                         label="registrationform.orgcity"
                         value="" max="75">
                     <aui:validator name="required">
@@ -165,7 +165,7 @@
         <div class="row">
             <div class="col">
                 <aui:select
-                        name="<%=BillingInfo.ATTRIBUTES.billing_country.name()%>"
+                        name="<%=BillingConstants.ORG_COUNTRY_CODE%>"
                         type="select"
                         label="registrationform.orgcountry"
                         value="" >
@@ -183,7 +183,7 @@
             </div>
             <div class="col">
                 <aui:input
-                        name="<%= BillingInfo.ATTRIBUTES.billing_phone.name() %>"
+                        name="<%=BillingConstants.ORG_PHONE %>"
                         label="registrationform.phone"
                         value="" max="15">
                     <aui:validator name="required">

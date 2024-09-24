@@ -84,6 +84,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         String dsdRegistrationStructures = ParamUtil.getString(actionRequest, "dsdRegistrationStructures");
         String dsdRegistrationDateField = ParamUtil.getString(actionRequest, "dsdRegistrationDateField");
         String dsdRegistrationTypeField = ParamUtil.getString(actionRequest, "dsdRegistrationTypeField");
+        long companyIdForAccountsTypeField = ParamUtil.getLong(actionRequest, "companyIdForAccountsTypeField");
 
         Settings settings = SettingsFactoryUtil.getSettings(
                 new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), DSDSiteConfiguration.class.getName()));
@@ -108,6 +109,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         modifiableSettings.setValue("dsdRegistrationStructures", dsdRegistrationStructures);
         modifiableSettings.setValue("dsdRegistrationDateField", dsdRegistrationDateField);
         modifiableSettings.setValue("dsdRegistrationTypeField", dsdRegistrationTypeField);
+        modifiableSettings.setValue("companyIdForAccountsTypeField", String.valueOf(companyIdForAccountsTypeField));
 
         modifiableSettings.store();
 

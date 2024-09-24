@@ -5,8 +5,8 @@ import com.liferay.portal.kernel.model.User;
 import nl.deltares.emails.serializer.DsdRegisterEmailSerializer;
 import nl.deltares.emails.serializer.DsdRegistrationEmailSerializer;
 import nl.deltares.emails.serializer.DsdUnRegisterEmailSerializer;
-import nl.deltares.model.BillingInfo;
 import nl.deltares.model.RegistrationRequest;
+import nl.deltares.portal.constants.BillingConstants;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,17 +53,17 @@ public class DsdEmail {
     }
 
     private void loadEmailAddresses() {
-        BillingInfo billingInfo = request.getBillingInfo();
-        if (billingInfo != null && billingInfo.getEmail() != null) {
-            sendToEmail = billingInfo.getEmail();
+        final String billingEmail = request.getRequestParameter(BillingConstants.EMAIL);
+        if (billingEmail == null) {
+            sendToEmail = user.getEmailAddress();
+            sendCCEmail = null;
+        } else {
+            sendToEmail = billingEmail;
             if (sendToEmail.equals(user.getEmailAddress())) {
                 sendCCEmail = null;
             } else {
                 sendCCEmail = user.getEmailAddress();
             }
-        } else {
-            sendToEmail = user.getEmailAddress();
-            sendCCEmail = null;
         }
     }
 

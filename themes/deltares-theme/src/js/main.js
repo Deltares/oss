@@ -60,7 +60,7 @@
                     plugin._hideStep(active);
                     plugin._showStep(next);
                     if (typeof plugin.form.activateStep === "function"){
-                        plugin.form.activateStep();
+                        plugin.form.activateStep(active, next);
                     }
                     if (isLast) {
                         plugin._disableButton(action);
@@ -74,7 +74,7 @@
                     plugin._hideStep(active);
                     plugin._showStep(prev);
                     if (typeof plugin.form.activateStep === "function"){
-                        plugin.form.activateStep();
+                        plugin.form.activateStep(active, prev);
                     }
                     if (isFirst) {
                         plugin._disableButton(action);

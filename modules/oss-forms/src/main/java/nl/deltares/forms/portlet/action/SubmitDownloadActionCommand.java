@@ -14,10 +14,11 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.*;
 import nl.deltares.emails.DownloadEmail;
 import nl.deltares.forms.portlet.DownloadFormConfiguration;
-import nl.deltares.model.BillingInfo;
 import nl.deltares.model.DownloadRequest;
-import nl.deltares.model.LicenseInfo;
 import nl.deltares.portal.configuration.DownloadSiteConfiguration;
+import nl.deltares.portal.constants.BillingConstants;
+import nl.deltares.portal.constants.LicenseConstants;
+import nl.deltares.portal.constants.OrganizationConstants;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Download;
 import nl.deltares.portal.model.impl.Terms;
@@ -98,9 +99,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
                     userAttributes.putAll(getUserAttributes(actionRequest));
                 }
                 userAttributes.putAll(parseGeoLocationFromIp(actionRequest));
-
                 registerAcceptedTerms(downloadRequest, userAttributes);
-                downloadRequest.setUserAttributes(userAttributes);
                 success = updateUserAttributes(actionRequest, user, userAttributes);
 
             }
@@ -237,10 +236,8 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
 
         try {
             long siteId = themeDisplay.getSiteGroupId();
-            BillingInfo billingInfo = getBillingInfo(actionRequest, themeDisplay.getUser());
             DownloadRequest downloadRequest = new DownloadRequest(themeDisplay);
-            downloadRequest.setBillingInfo(billingInfo);
-            downloadRequest.setLicenseInfo(getLicenseInfo(actionRequest));
+            loadRegistrationParameters(actionRequest, downloadRequest);
             downloadRequest.setDownloadServerCode(getDownloadServerCode(actionRequest));
             for (String articleId : articleIds) {
                 Download downloadArticle = (Download) dsdParserUtils.toDsdArticle(siteId, articleId);
@@ -256,25 +253,37 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         return null;
     }
 
+    private void loadRegistrationParameters(ActionRequest actionRequest, DownloadRequest downloadRequest) {
+        for (String key : OrganizationConstants.ORG_KEYS) {
+            downloadRequest.setRequestParameter(key, ParamUtil.getString(actionRequest, key));
+        }
+         //manually entered data
+        for (String key : BillingConstants.ORG_KEYS) {
+            downloadRequest.setRequestParameter(key, ParamUtil.getString(actionRequest, key));
+        }
+
+        for (String key : BillingConstants.BILLING_KEY) {
+            downloadRequest.setRequestParameter(key, ParamUtil.getString(actionRequest, key));
+        }
+
+        final String licenseType_value = ParamUtil.getString(actionRequest, LicenseConstants.LICENSE_TYPE);
+        if (!licenseType_value.isEmpty()){
+            downloadRequest.setRequestParameter(LicenseConstants.LICENSE_TYPE, licenseType_value);
+        }
+
+        final String lockType_value = ParamUtil.getString(actionRequest, LicenseConstants.LOCK_TYPE);
+        if (!lockType_value.isEmpty()) {
+            downloadRequest.setRequestParameter(LicenseConstants.LOCK_TYPE, lockType_value);
+            downloadRequest.setRequestParameter(LicenseConstants.DONGLE_NUMBER, ParamUtil.getString(actionRequest, LicenseConstants.DONGLE_NUMBER));
+        }
+
+
+    }
+
     private String getDownloadServerCode(ActionRequest actionRequest) {
         return ParamUtil.getString(actionRequest, "download.countryCode");
     }
 
-    private LicenseInfo getLicenseInfo(ActionRequest actionRequest) {
-        LicenseInfo licenseInfo = new LicenseInfo();
-
-        final String licenseTypes = ParamUtil.getString(actionRequest, "licenseinfo.licensetypes");
-        if (!licenseTypes.isEmpty()){
-            licenseInfo.setLicenseType(LicenseInfo.LICENSETYPES.valueOf(licenseTypes));
-        }
-
-        final String lockTypes = ParamUtil.getString(actionRequest, "licenseinfo.locktypes");
-        if (!lockTypes.isEmpty()) {
-            licenseInfo.setLockType(LicenseInfo.LOCKTYPES.valueOf(lockTypes));
-            licenseInfo.setDongleNumber(ParamUtil.getString(actionRequest, LicenseInfo.ATTRIBUTES.lock_address.name()));
-        }
-        return licenseInfo;
-    }
 
     /**
      * Get selection for subscriptions from request
@@ -286,27 +295,6 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             final String selected = ParamUtil.getString(actionRequest, "subscription-" + subscription.getId());
             subscription.setSelected(Boolean.parseBoolean(selected));
         }
-    }
-
-    private BillingInfo getBillingInfo(ActionRequest actionRequest, User user) {
-
-        BillingInfo billingInfo = new BillingInfo();
-        billingInfo.setEmail(user.getEmailAddress()); //Email does not get sent when billing info is empty
-
-        for (BillingInfo.ATTRIBUTES key : BillingInfo.ATTRIBUTES.values()) {
-            String value = ParamUtil.getString(actionRequest, key.name());
-            if (Validator.isNotNull(value) && !Validator.isBlank(value)) {
-                billingInfo.setAttribute(key, value);
-            } else {
-                //User selected Use Organization values option
-                final KeycloakUtils.ATTRIBUTES keycloakKey = BillingInfo.getCorrespondingUserAttributeKey(key);
-                if (keycloakKey == null) continue;
-                final String keycloakValue = ParamUtil.getString(actionRequest, keycloakKey.name());
-                if (Validator.isNull(keycloakValue) || Validator.isBlank(keycloakValue)) continue;
-                billingInfo.setAttribute(key, keycloakValue);
-            }
-        }
-        return billingInfo;
     }
 
     private boolean updateUserAttributes(ActionRequest actionRequest, User user, Map<String, String> attributes) {

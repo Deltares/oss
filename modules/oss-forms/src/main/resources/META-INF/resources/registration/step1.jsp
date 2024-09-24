@@ -1,6 +1,7 @@
 <%@ page import="java.util.Collections" %>
 <%@ page import="com.liferay.portal.kernel.model.Country" %>
 <%@ page import="com.liferay.portal.kernel.service.CountryServiceUtil" %>
+<%@ page import="nl.deltares.portal.constants.OrganizationConstants" %>
 <h3><strong><liferay-ui:message key="registrationform.select.org"/></strong></h3>
 <aui:row>
     <aui:col width="100">
@@ -13,7 +14,7 @@
                         type="select"
                         label=""
                         value="-1">
-                    <aui:option value="0" label ="registrationform.select.custom.org" />
+                    <aui:option value='<%=attributes.getOrDefault(OrganizationConstants.ORG_EXTERNAL_REFERENCE_CODE, "0")%>' label ="registrationform.select.custom.org" />
                     <%
                         List<Map<String, String>> accounts;
                         try {
@@ -24,7 +25,7 @@
                         }
                         for (Map<String, String> account : accounts) {
                      %>
-                            <aui:option value='<%=account.get("accountEntryId")%>' label ="<%=account.get(KeycloakUtils.ATTRIBUTES.org_name.name())%>" />
+                            <aui:option value='<%=account.get("accountEntryId")%>' label ="<%=account.get(OrganizationConstants.ORG_NAME)%>" />
                     <%  } %>
                 </aui:select>
             </div>
@@ -32,7 +33,7 @@
         <div class="row">
             <div class="col">
                 <aui:input
-                        name="<%= KeycloakUtils.ATTRIBUTES.org_name.name() %>"
+                        name="<%= OrganizationConstants.ORG_NAME %>"
                         label="registrationform.orgname"
                         value="" max="75">
                     <aui:validator name="required">
@@ -46,7 +47,7 @@
         <div class="row">
             <div class="col">
                 <aui:input
-                        name="<%= KeycloakUtils.ATTRIBUTES.org_address.name() %>"
+                        name="<%= OrganizationConstants.ORG_STREET %>"
                         label="registrationform.orgaddress"
                         value="" max="255">
                     <aui:validator name="required">
@@ -60,7 +61,7 @@
         <div class="row">
             <div class="col">
                 <aui:input
-                        name="<%= KeycloakUtils.ATTRIBUTES.org_postal.name() %>"
+                        name="<%= OrganizationConstants.ORG_POSTAL %>"
                         label="registrationform.orgpostcode"
                         value="">
                     <aui:validator name="required">
@@ -73,7 +74,7 @@
             </div>
             <div class="col">
                 <aui:input
-                        name="<%= KeycloakUtils.ATTRIBUTES.org_city.name() %>"
+                        name="<%= OrganizationConstants.ORG_CITY %>"
                         label="registrationform.orgcity"
                         value="" max="75">
                     <aui:validator name="required">
@@ -87,7 +88,7 @@
         <div class="row">
             <div class="col">
                 <aui:select
-                        name="<%=KeycloakUtils.ATTRIBUTES.org_country.name()%>"
+                        name="<%=OrganizationConstants.ORG_COUNTRY_CODE%>"
                         type="select"
                         label="registrationform.orgcountry"
                         value="" >
@@ -107,14 +108,14 @@
         <div class="row">
             <div class="col">
                 <aui:input
-                        name="<%= KeycloakUtils.ATTRIBUTES.org_phone.name() %>"
+                        name="<%= OrganizationConstants.ORG_PHONE %>"
                         label="registrationform.phone"
                         value="" max="15">
                 </aui:input>
             </div>
             <div class="col">
                 <aui:input
-                        name="<%= KeycloakUtils.ATTRIBUTES.org_website.name() %>"
+                        name="<%= OrganizationConstants.ORG_WEBSITE %>"
                         label="registrationform.orgwebsite"
                         value="">
                     <aui:validator name="url" />

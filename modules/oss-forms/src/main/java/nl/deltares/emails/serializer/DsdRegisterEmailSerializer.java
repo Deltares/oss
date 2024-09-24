@@ -25,7 +25,7 @@ public class DsdRegisterEmailSerializer extends DsdRegistrationEmailSerializer{
 
     @Override
     protected void appendRemarks(StringBuilder writer, DsdEmail content) {
-        String remarks = content.getRegistrationRequest().getRemarks();
+        String remarks = content.getRegistrationRequest().getRequestParameter("remarks");
         if (remarks == null) return;
         writer.append("<p>");
         writer.append(LanguageUtil.format(content.getBundle(), "dsd.email.register.remarks", null ));

@@ -168,21 +168,14 @@
                                         <aui:input
                                                 label=""
                                                 name="jobTitles_${registrationId}"
-                                                value="" max="75">
-                                        </aui:input>
-                                    </td>
-                                    <td>
-                                        <aui:input
-                                                label=""
-                                                name="salutation_${registrationId}"
-                                                value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.salutation.name()) %>" max="15">
+                                                value="<%=user.getJobTitle()%>" max="75">
                                         </aui:input>
                                     </td>
                                     <td>
                                         <aui:input
                                                 label=""
                                                 name="firstName_${registrationId}"
-                                                value="<%=attributes.get(KeycloakUtils.ATTRIBUTES.first_name.name())%>" max="75">
+                                                value="<%=user.getFirstName()%>" max="75">
                                                 <aui:validator name="required">
                                                     function () {
                                                         return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
@@ -194,7 +187,7 @@
                                         <aui:input
                                                 label=""
                                                 name="lastName_${registrationId}"
-                                                value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.last_name.name()) %>" max="75">
+                                                value="<%= user.getLastName() %>" max="75">
                                             <aui:validator name="required">
                                                 function () {
                                                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
@@ -206,7 +199,7 @@
                                         <aui:input
                                                 label=""
                                                 name="email_${registrationId}"
-                                                value="<%= attributes.get(KeycloakUtils.ATTRIBUTES.email.name()) %>" max="75">
+                                                value="<%= user.getEmailAddress() %>" max="75">
                                             <aui:validator name="email" />
                                             <aui:validator errorMessage="registrationform.validator.emaildomain" name="custom">
                                                 function(val, fldNode, rule) {

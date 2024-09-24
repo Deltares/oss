@@ -1,4 +1,4 @@
-<%@ page import="nl.deltares.model.LicenseInfo" %>
+<%@ page import="nl.deltares.portal.constants.LicenseConstants" %>
 <%
     if(showLockTypes){
 %>
@@ -15,7 +15,7 @@
                 label="download.step3b.lock.new"
                 type="radio"
                 checked="false"
-                value="<%=LicenseInfo.LOCKTYPES.new_usb_dongle.name()%>"
+                value="<%=LicenseConstants.LOCK_TYPES_NEW_USB_DONGLE%>"
         />
     </div>
 </div>
@@ -26,12 +26,12 @@
                 label="download.step3b.lock.existing"
                 type="radio"
                 checked="false"
-                value="<%=LicenseInfo.LOCKTYPES.existing_usb_dongle.name()%>"
+                value="<%=LicenseConstants.LOCK_TYPES_EXISTING_USB_DONGLE%>"
         />
     </div>
     <div class="col">
         <aui:input
-                name="<%=LicenseInfo.ATTRIBUTES.lock_address.name()%>"
+                name="<%=LicenseConstants.DONGLE_NUMBER%>"
                 label=""
                 type="text"
                 value="9- "
@@ -47,7 +47,7 @@
                 label="download.step3b.lock.mac"
                 type="radio"
                 checked="false"
-                value="<%=LicenseInfo.LOCKTYPES.mac_address.name()%>"
+                value="<%=LicenseConstants.LOCK_TYPES_MAC_ADDRESS%>"
         >
             <aui:validator name="maxLength">25</aui:validator>
         </aui:input>
@@ -72,7 +72,7 @@
                 label="download.step3b.license.network"
                 type="radio"
                 checked="false"
-                value="<%=LicenseInfo.LICENSETYPES.network.name()%>"
+                value="<%=LicenseConstants.LICENSE_TYPES_NETWORK%>"
         />
     </div>
 </div>
@@ -83,7 +83,7 @@
                 label="download.step3b.license.standalone"
                 type="radio"
                 checked="false"
-                value="<%=LicenseInfo.LICENSETYPES.standalone.name()%>"
+                value="<%=LicenseConstants.LICENSE_TYPES_STANDALONE%>"
         />
     </div>
 </div>

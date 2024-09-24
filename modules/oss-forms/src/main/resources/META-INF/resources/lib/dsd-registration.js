@@ -12,7 +12,8 @@ DsdRegistrationFormsUtil = {
         let phone;
         let addressId = addressSelection.value;
 
-        if (addressId !== "0" && this.selectedEntryId !== "0"){
+        let accountSelected = addressId !== "0" && this.selectedEntryId !== "0";
+        if (accountSelected){
             let account = this.accounts.find(acc => acc['accountEntryId'] === this.selectedEntryId);
             let address = account["addresses"].find(addr => addr['addressId'] === addressId);
             street = address["org_address"];
@@ -20,41 +21,48 @@ DsdRegistrationFormsUtil = {
             city = address["org_city"];
             country = address["org_country"];
             phone = address["org_phone"];
+
+            document.getElementById(namespace + "billing_org_vat").value = account["org_vat"];
+            document.getElementById(namespace + "billing_org_external_reference_code").value = account["org_external_reference"];
         } else {
             street = document.getElementById(namespace + "org_address").value;
             postal = document.getElementById(namespace + "org_postal").value;
             city = document.getElementById(namespace + "org_city").value;
             country = document.getElementById(namespace + "org_country").value;
             phone = document.getElementById(namespace + "org_phone").value;
+            document.getElementById(namespace  + "org_vat").value = "";
+            document.getElementById(namespace + "org_external_reference_code").value = "";
         }
 
-        document.getElementById(namespace + "billing_address").value = street;
-        document.getElementById(namespace + "billing_postal").value = postal;
-        document.getElementById(namespace + "billing_city").value = city;
-        document.getElementById(namespace + "billing_country").value = country;
-        document.getElementById(namespace + "billing_phone").value = phone;
+        document.getElementById(namespace + "billing_org_address").value = street;
+        document.getElementById(namespace + "billing_org_postal").value = postal;
+        document.getElementById(namespace + "billing_org_city").value = city;
+        document.getElementById(namespace + "billing_org_country").value = country;
+        document.getElementById(namespace + "billing_org_phone").value = phone;
 
-        //not allowed to update existing addresses
-        document.getElementById(namespace + "billing_address").disabled = addressSelection.selectedIndex > 0;
-        document.getElementById(namespace + "billing_postal").disabled = addressSelection.selectedIndex > 0;
-        document.getElementById(namespace + "billing_city").disabled = addressSelection.selectedIndex > 0;
-        document.getElementById(namespace + "billing_country").disabled = addressSelection.selectedIndex > 0;
-        document.getElementById(namespace + "billing_phone").disabled = addressSelection.selectedIndex > 0;
-        //additional: only allow editing of company name when writing own addressIndex
-        document.getElementById(namespace + "billing_company").disabled = addressSelection.selectedIndex > 0;
+        //not allowed to update existing add
+        document.getElementById(namespace + "billing_org_address").disabled = addressSelection.selectedIndex > 0;
+        document.getElementById(namespace + "billing_org_postal").disabled = addressSelection.selectedIndex > 0;
+        document.getElementById(namespace + "billing_org_city").disabled = addressSelection.selectedIndex > 0;
+        document.getElementById(namespace + "billing_org_country").disabled = addressSelection.selectedIndex > 0;
+        document.getElementById(namespace + "billing_org_phone").disabled = addressSelection.selectedIndex > 0;
+        //additional: only allow editing of writing own addressIndex
+        document.getElementById(namespace + "billing_org_company").disabled = addressSelection.selectedIndex > 0;
 
+        document.getElementById(namespace + "billing_org_vat").disabled = !accountSelected;
+        document.getElementById(namespace + "billing_org_external_reference_code").disabled = !accountSelected;
     },
 
     accountSelectionChanged: function (namespace, orgSelection){
 
-        let name;
-        let website;
-        let street;
-        let postal;
-        let city;
-        let country;
-        let phone;
-        let domain;
+        let name = "";
+        let website = "";
+        let street = "";
+        let postal = "";
+        let city = "";
+        let country = "NL";
+        let phone = "";
+        let domain = "";
         this.selectedEntryId = orgSelection.value;
         if (this.selectedEntryId !== "0"){
             let account = this.accounts.find(acc => acc['accountEntryId'] === this.selectedEntryId);
@@ -72,7 +80,7 @@ DsdRegistrationFormsUtil = {
             //update addresses in step 3
             DsdRegistrationFormsUtil.updateAddresses(namespace, account["addresses"]);
 
-        } else {
+        } else if (this.attributes) {
             name = this.attributes["org_name"]?this.attributes["org_name"]:"";
             website = this.attributes["org_website"]?this.attributes["org_website"]:"";
             street = this.attributes["org_address"]?this.attributes["org_address"]:"";
@@ -84,6 +92,8 @@ DsdRegistrationFormsUtil = {
             //update addresses in step 3
             DsdRegistrationFormsUtil.updateAddresses(namespace, [])
 
+        } else {
+            return;
         }
 
         document.getElementById(namespace + "org_name").value = name;
@@ -139,14 +149,12 @@ DsdRegistrationFormsUtil = {
         var myFormValidator = Liferay.Form.get(namespace + 'fm').formValidator;
         var _ruleData = myFormValidator.get('fieldStrings');
         _ruleData[namespace + 'jobTitles' + rows] = _ruleData[namespace + 'jobTitles']
-        _ruleData[namespace + 'salutation' + rows] = _ruleData[namespace + 'salutation']
         _ruleData[namespace + 'firstName' + rows] = _ruleData[namespace + 'firstName']
         _ruleData[namespace + 'lastName' + rows] = _ruleData[namespace + 'lastName']
         _ruleData[namespace + 'email' + rows] = _ruleData[namespace + 'email']
 
         var _rules = myFormValidator.get('rules');
         _rules[namespace + 'jobTitles' + rows] = _rules[namespace + 'jobTitles']
-        _rules[namespace + 'salutation' + rows] = _rules[namespace + 'salutation']
         _rules[namespace + 'firstName' + rows] = _rules[namespace + 'firstName']
         _rules[namespace + 'lastName' + rows] = _rules[namespace + 'lastName']
         _rules[namespace + 'email' + rows] = _rules[namespace + 'email']
@@ -266,7 +274,7 @@ DsdRegistrationFormsUtil = {
 
     activateStep3: function (namespace){
 
-        document.getElementById(namespace + "billing_company").value = document.getElementById(namespace + "org_name").value
+        document.getElementById(namespace + "billing_org_name").value = document.getElementById(namespace + "org_name").value
         let address_selection = document.getElementById(namespace + "select_address")
         this.addressSelectionChanged(namespace, address_selection)
 
@@ -331,34 +339,6 @@ DsdRegistrationFormsUtil = {
             courseCond[0].hidden = true;
             $('input[name="' + namespace + 'course_conditions"]')[0].disabled = true;
         }
-    },
-
-    updateBadge : function(namespace) {
-        let showTitle = CommonFormsUtil.getRadioButtonsSelection(namespace, "badge_title_setting");
-        let nameSetting =CommonFormsUtil.getRadioButtonsSelection(namespace, "badge_name_setting");
-        let titles = $(document.getElementById( namespace + "academicTitle")).val();
-        let firstName = $(document.getElementById(namespace + "first_name")).val();
-        let initials = $(document.getElementById( namespace + "initials")).val();
-        let lastName = $(document.getElementById( namespace + "last_name")).val();
-        let jobTitle = $(document.getElementById( namespace + "jobTitle" )).val();
-        let title = '';
-
-        if (showTitle === 'yes') {
-            title += titles + ' ';
-        }
-
-        if (nameSetting === 'name') {
-            title += firstName;
-        } else if (nameSetting === 'initials') {
-            title += initials;
-        } else if (nameSetting === 'both') {
-            title += initials + ' (' + firstName + ')';
-        }
-
-        title += ' ' + lastName;
-
-        $(document.getElementById('badge-title')).text(title);
-        $(document.getElementById('job-title')).text(jobTitle);
-    },
+    }
 
 }

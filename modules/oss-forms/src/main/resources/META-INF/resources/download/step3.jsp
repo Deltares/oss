@@ -1,4 +1,5 @@
-<%@ page import="nl.deltares.model.BillingInfo" %>
+<%@ page import="nl.deltares.portal.constants.BillingConstants" %>
+<%@ page import="com.liferay.portal.kernel.util.PortalUtil" %>
 <aui:input
         name="use_organization_address"
         label="dsd.registration.step3.use.organization.address"
@@ -9,20 +10,18 @@
 
     <aui:col width="50">
         <c:if test="${not empty attributes}">
-            <c:set var="billingFirstName" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_firstname.name()) %>"/>
-            <c:set var="billingLastName" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_lastname.name()) %>"/>
-            <c:set var="billingCompany" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_company.name()) %>"/>
-            <c:set var="billingEmail" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_email.name()) %>"/>
-            <c:set var="billingAddress" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_address.name()) %>"/>
-            <c:set var="billingPostal" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_postal.name()) %>"/>
-            <c:set var="billingCity" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_city.name()) %>"/>
-            <c:set var="billingCountry" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_country.name()) %>"/>
-            <c:set var="billingReference" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_reference.name()) %>"/>
-            <c:set var="billingVat" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_vat.name()) %>"/>
-            <c:set var="billingMethod" value="<%= attributes.get(BillingInfo.ATTRIBUTES.billing_preference.name()) %>"/>
+            <c:set var="billingFirstName" value="<%= attributes.get(OrganizationConstants.FIRST_NAME) %>"/>
+            <c:set var="billingLastName" value="<%= attributes.get(OrganizationConstants.LAST_NAME) %>"/>
+            <c:set var="billingCompany" value="<%= attributes.get(OrganizationConstants.ORG_NAME) %>"/>
+            <c:set var="billingEmail" value="<%= attributes.get(OrganizationConstants.EMAIL) %>"/>
+            <c:set var="billingAddress" value="<%= attributes.get(OrganizationConstants.ORG_STREET) %>"/>
+            <c:set var="billingPostal" value="<%= attributes.get(OrganizationConstants.ORG_POSTAL) %>"/>
+            <c:set var="billingCity" value="<%= attributes.get(OrganizationConstants.ORG_CITY) %>"/>
+            <c:set var="billingCountry" value="<%= attributes.get(OrganizationConstants.ORG_COUNTRY_CODE) %>"/>
+            <c:set var="billingVat" value="<%= attributes.get(OrganizationConstants.ORG_VAT) %>"/>
         </c:if>
         <aui:input
-                name="<%= BillingInfo.ATTRIBUTES.billing_email.name()%>"
+                name="<%= BillingConstants.EMAIL %>"
                 label="dsd.registration.step3.billing.email"
                 value="${billingEmail}" billing_value="${billingEmail}">
             <aui:validator name="required">
@@ -33,7 +32,7 @@
             <aui:validator name="email"/>
         </aui:input>
         <aui:input
-                name="<%= BillingInfo.ATTRIBUTES.billing_company.name() %>"
+                name="<%= BillingConstants.ORG_NAME %>"
                 label="dsd.registration.step3.billing.company"
                 value="${billingCompany}" billing_value="${billingCompany}">
             <aui:validator name="required">
@@ -46,7 +45,7 @@
         <div class="row">
             <div class="col">
                 <aui:input
-                        name="<%= KeycloakUtils.ATTRIBUTES.first_name.name() %>"
+                        name="<%= BillingConstants.FIRST_NAME %>"
                         label="registrationform.firstname"
                         value="<%= user.getFirstName() %>"
                         disabled="true">
@@ -60,7 +59,7 @@
             </div>
             <div class="col">
                 <aui:input
-                        name="<%= KeycloakUtils.ATTRIBUTES.last_name.name() %>"
+                        name="<%= BillingConstants.LAST_NAME %>"
                         label="registrationform.lastname"
                         value="<%= user.getLastName() %>"
                         disabled="true">
@@ -75,7 +74,7 @@
         </div>
 
         <aui:input
-                name="<%= BillingInfo.ATTRIBUTES.billing_address.name() %>"
+                name="<%= BillingConstants.ORG_STREET %>"
                 label="dsd.registration.step3.billing.address"
                 value="${billingAddress}" billing_value="${billingAddress}">
             <aui:validator name="required">
@@ -89,7 +88,7 @@
         <div class="row">
             <div class="col">
                 <aui:input
-                        name="<%= BillingInfo.ATTRIBUTES.billing_postal.name() %>"
+                        name="<%= BillingConstants.ORG_POSTAL %>"
                         label="dsd.registration.step3.billing.postal"
                         value="${billingPostal}" billing_value="${billingPostal}">
                     <aui:validator name="required">
@@ -102,7 +101,7 @@
             </div>
             <div class="col">
                 <aui:input
-                        name="<%= BillingInfo.ATTRIBUTES.billing_city.name() %>"
+                        name="<%= BillingConstants.ORG_CITY %>"
                         label="dsd.registration.step3.billing.city"
                         value="${billingCity}" billing_value="${billingCity}">
                     <aui:validator name="required">
@@ -115,14 +114,14 @@
             </div>
         </div>
         <aui:select
-                name="<%=BillingInfo.ATTRIBUTES.billing_country.name()%>"
+                name="<%=BillingConstants.ORG_COUNTRY_CODE%>"
                 type="select"
                 label="dsd.registration.step3.billing.country"
                 value="${billingCountry}" billing_value="${billingCountry}">
                 <aui:option value="" label ="registrationform.select.country" />
-            <% List<Country> countries = CountryServiceUtil.getCountries(true); %>
+            <% List<Country> countries = CountryServiceUtil.getCompanyCountries(PortalUtil.getDefaultCompanyId()); %>
             <% for (Country country : countries) { %>
-            <aui:option value="<%=country.getName()%>" label="<%= country.getName(locale) %>"/>
+            <aui:option value="<%=country.getA2()%>" label="<%= country.getName(locale) %>"/>
             <% } %>
             <aui:validator name="required">
                     function () {
@@ -139,7 +138,7 @@
     <div class="col">
 
         <aui:select
-                name="<%= BillingInfo.ATTRIBUTES.billing_preference.name() %>"
+                name="billing_preference"
                 type="select"
                 label="download.email.billing.method"
                 value="${billingMethod}">
@@ -153,13 +152,13 @@
         </aui:select>
 
         <aui:input
-                name="<%= BillingInfo.ATTRIBUTES.billing_reference.name() %>"
+                name="<%= BillingConstants.PAYMENT_REFERENCE %>"
                 label="dsd.registration.step3.billing.reference"
-                value="${billingReference}" billing_value="${billingReference}">
+                value="" billing_value="">
             <aui:validator name="maxLength">75</aui:validator>
         </aui:input>
         <aui:input
-                name="<%= BillingInfo.ATTRIBUTES.billing_vat.name() %>"
+                name="<%= OrganizationConstants.ORG_VAT %>"
                 label="dsd.registration.step3.billing.vat"
                 value="${billingVat}" billing_value="${billingVat}" helpMessage="dsd.registration.step3.billing.vat.info">
             <aui:validator name="maxLength">25</aui:validator>

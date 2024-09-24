@@ -17,17 +17,16 @@ public class RegistrationRequest {
     private final List<Registration> registrations = new ArrayList<>();
     private final String baseUrl;
     private final String siteUrl;
-    private BillingInfo billingInfo;
-    private BadgeInfo badgeInfo;
+    private final Map<String, String> registrationParameters = new HashMap<>();
     private Event event;
     private boolean enableBusInfo;
     private String busTransferUrl;
     private Map<String, String> typeTranslations = new HashMap<>();
-    private String remarks;
     private List<String> mailingIds = Collections.emptyList();
     private boolean subscribe;
     private AccountEntry accountEntry;
-    private OrganizationInfo organizationInfo;
+
+    private boolean paymentRequired = false;
 
     public RegistrationRequest(ThemeDisplay themeDisplay) throws PortalException {
         siteUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay, themeDisplay.getLocale());
@@ -36,6 +35,12 @@ public class RegistrationRequest {
 
     public void addRegistration(Registration registration){
         registrations.add(registration);
+
+        if(registration.getPrice() > 0) paymentRequired = true;
+    }
+
+    public boolean isPaymentRequired() {
+        return paymentRequired;
     }
 
     public void addChildRegistration(Registration parent, Registration child){
@@ -68,30 +73,17 @@ public class RegistrationRequest {
         return null;
     }
 
-    public void setBillingInfo(BillingInfo billingInfo) {
-        this.billingInfo = billingInfo;
+    @SuppressWarnings("UnusedReturnValue")
+    public String setRequestParameter(String key, String value){
+        return registrationParameters.put(key,value);
+    }
+    public String getRequestParameter(String key){
+        return this.registrationParameters.getOrDefault(key, null);
     }
 
-    public void setBadgeInfo(BadgeInfo badgeInfo) {
-        this.badgeInfo = badgeInfo;
+    public Map<String, String> getRequestParameters(){
+        return Collections.unmodifiableMap(registrationParameters);
     }
-
-    public void setRemarks(String remarks){
-        this.remarks = remarks;
-    }
-
-    public String getRemarks() {
-        return remarks;
-    }
-
-    public BillingInfo getBillingInfo() {
-        return billingInfo;
-    }
-
-    public BadgeInfo getBadgeInfo() {
-        return badgeInfo;
-    }
-
     public void setEvent(Event event) {
         this.event = event;
     }
@@ -172,11 +164,4 @@ public class RegistrationRequest {
         return accountEntry;
     }
 
-    public void setOrganizationInfo(OrganizationInfo organizationInfo) {
-        this.organizationInfo = organizationInfo;
-    }
-
-    public OrganizationInfo getOrganizationInfo() {
-        return organizationInfo;
-    }
 }

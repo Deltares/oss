@@ -35,7 +35,7 @@
     </span>
     <div class="float-left w-100">
             <aui:input
-                    name="remarks_registration"
+                    name="remarks"
                     label=""
                     type="textarea"
                     maxLength="255"
