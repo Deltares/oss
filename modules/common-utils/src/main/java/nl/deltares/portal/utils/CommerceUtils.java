@@ -17,13 +17,10 @@ public interface CommerceUtils {
 
     CProduct getProductByRegistration(Registration registration);
 
-    CProduct createProduct(Registration registration, User registrationUser);
-
-    Address createAddress(Map<String, String> addressInfo, boolean isBilling, long companyId);
-
-    AccountEntry createAccountEntry(User registrationUser, String type, Map<String, String> requestParameters) throws PortalException;
-
-    CommerceOrder createCommerceOrder(AccountEntry accountEntry, long siteGroupId, User registrationUser);
+    Address createAddress(Map<String, String> addressInfo, AccountEntry accountEntry) throws PortalException;
+    AccountEntry createPersonAccountEntry(User billingUser, Map<String, String> requestParameters) throws PortalException;
 
     AccountEntry getPersonalAccount(User user);
+
+    void updateAccountEntry(AccountEntry accountEntry, Map<String, String> requestParameters) throws PortalException;
 }

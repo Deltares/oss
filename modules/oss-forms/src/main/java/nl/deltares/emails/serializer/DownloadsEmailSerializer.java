@@ -143,8 +143,6 @@ public class DownloadsEmailSerializer implements EmailSerializer<DownloadEmail> 
             writer.append(downloadRequest.getRequestParameterOrDefault(OrganizationConstants.ORG_POSTAL, ""));
             writer.append(", ");
             writer.append(downloadRequest.getRequestParameterOrDefault(OrganizationConstants.ORG_CITY, ""));
-            writer.append("</br>");
-            writer.append(downloadRequest.getRequestParameterOrDefault(OrganizationConstants.ORG_EXTERNAL_REFERENCE_CODE, ""));
             writer.append("</td>");
             writer.append("</tr>");
 

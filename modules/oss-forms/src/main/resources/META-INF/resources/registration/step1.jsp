@@ -14,7 +14,7 @@
                         type="select"
                         label=""
                         value="-1">
-                    <aui:option value='<%=attributes.getOrDefault(OrganizationConstants.ORG_EXTERNAL_REFERENCE_CODE, "0")%>' label ="registrationform.select.custom.org" />
+                    <aui:option value='0' label ="registrationform.select.custom.org" />
                     <%
                         List<Map<String, String>> accounts;
                         try {

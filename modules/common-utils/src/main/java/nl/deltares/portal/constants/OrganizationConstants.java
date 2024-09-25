@@ -12,11 +12,9 @@ public class OrganizationConstants{
     public static final String ORG_COUNTRY_CODE ="org_country";
     public static final String ORG_WEBSITE="org_website";
     public static final String ORG_PHONE="org_phone";
-    public static final String ORG_EXTERNAL_REFERENCE_CODE="org_external_reference_code";
     public static final String ORG_VAT="org_vat";
 
     public static final String[] ORG_KEYS = {ORG_NAME, ORG_STREET, ORG_POSTAL, ORG_CITY, ORG_COUNTRY_CODE,
-            ORG_WEBSITE,ORG_PHONE, ORG_EXTERNAL_REFERENCE_CODE, ORG_VAT};
+            ORG_WEBSITE,ORG_PHONE, ORG_VAT};
 
-    public static final String[] USER_KEYS = {EMAIL, FIRST_NAME, LAST_NAME};
 }

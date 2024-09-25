@@ -2,17 +2,9 @@ package nl.deltares.forms.portlet.action;
 
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalServiceUtil;
-import com.liferay.account.service.AccountEntryUserRelLocalServiceUtil;
-import com.liferay.commerce.model.CommerceOrder;
-import com.liferay.commerce.model.CommerceOrderItem;
-import com.liferay.commerce.product.model.CProduct;
-import com.liferay.commerce.service.CommerceOrderItemLocalServiceUtil;
-import com.liferay.commerce.service.CommerceOrderLocalServiceUtil;
-import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
@@ -27,6 +19,7 @@ import nl.deltares.forms.portlet.DsdRegistrationFormConfiguration;
 import nl.deltares.model.RegistrationRequest;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.BillingConstants;
+import nl.deltares.portal.constants.LicenseConstants;
 import nl.deltares.portal.constants.OrganizationConstants;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Event;
@@ -37,7 +30,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -112,14 +104,16 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                     success = false;
                     break;
                 }
-                if (registrationRequest.isPaymentRequired() && registrationRequest.getAccountEntry() == null){
-                    success = false;
-                    break;
-                }
                 Map<Long, Long> registrationOrdersMap = new HashMap<>();
-                if (registrationRequest.isPaymentRequired()) {
-                    registrationOrdersMap.putAll(createOrders(registrationUsers, registrationRequest, themeDisplay.getUser()));
+                if (registrationRequest.isPaymentRequired()){
+                    AccountEntry accountEntry = getAccountEntry(actionRequest, registrationRequest, themeDisplay.getUser());
+                    registrationRequest.setAccountEntry(accountEntry);
+                    //todo: we will create orders in a later stage.
+
                 }
+
+                setUserSubscriptions(actionRequest, themeDisplay.getUser(), registrationRequest);
+
                 if(success) {
                     success = registerUsers(actionRequest, registrationUsers, registrationRequest, themeDisplay.getUser(), registrationOrdersMap);
                 }
@@ -161,80 +155,13 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
     }
 
-    private Map<Long, Long> createOrders(Map<Registration, List<User>> registrationUsers, RegistrationRequest registrationRequest, User registrationUser)  {
-
-        final AccountEntry accountEntry = registrationRequest.getAccountEntry();
-        User billingUser = UserLocalServiceUtil.fetchUser(accountEntry.getUserId());
-
-        if(billingUser == null) billingUser = registrationUser;
-        final HashMap<Long, Long> orderMap = new HashMap<>();
-        for (Registration registration : registrationUsers.keySet()) {
-            if(registration.getPrice() == 0) continue;
-            final CommerceOrder commerceOrder = commerceUtils.createCommerceOrder(accountEntry, registrationRequest.getEvent().getGroupId(), billingUser);
-
-            final double totalNetto = registrationUsers.size() * registration.getPrice();
-            final double totalTax = totalNetto * registration.getVAT() * 0.01;
-            commerceOrder.setTaxAmount(BigDecimal.valueOf(totalTax));
-            commerceOrder.setTotal(BigDecimal.valueOf(totalTax + totalNetto));
-
-            CommerceOrderLocalServiceUtil.addCommerceOrder(commerceOrder);
-            orderMap.put(Long.valueOf(registration.getArticleId()), commerceOrder.getCommerceOrderId());
-            final List<User> users = registrationUsers.get(registration);
-            //Add registration as order item to the order
-            createCommerceOrderItem(registration, users.size(), commerceOrder.getCommerceOrderId(), billingUser);
-
-            for (User user : users) {
-                //Link users to Account if not already linked
-                if (AccountEntryUserRelLocalServiceUtil.fetchAccountEntryUserRel(accountEntry.getAccountEntryId(), user.getUserId()) == null){
-                    try {
-                        AccountEntryUserRelLocalServiceUtil.addAccountEntryUserRel(accountEntry.getAccountEntryId(), user.getUserId());
-                    } catch (PortalException e) {
-                        LOG.warn(String.format("Error creating AccountEntryUserRel for accountEntry %s and user %s: %s",
-                                accountEntry.getName(), user.getEmailAddress(), e.getMessage()));
-                    }
-                }
-            }
-
-        }
-        return orderMap;
-    }
-
-    @SuppressWarnings("UnusedReturnValue")
-    private CommerceOrderItem createCommerceOrderItem(Registration registration, int orderCount, long orderId, User registrationUser){
-
-        //Create product for each registration
-        CProduct cProduct = commerceUtils.getProductByRegistration(registration);
-        if (cProduct == null){
-            cProduct = commerceUtils.createProduct(registration, registrationUser);
-        }
-
-        final CommerceOrderItem orderItem = CommerceOrderItemLocalServiceUtil.createCommerceOrderItem(CounterLocalServiceUtil.increment(CommerceOrderItem.class.getName()));
-        orderItem.setNew(true);
-        orderItem.setName(registration.getTitle());
-        orderItem.setCompanyId(registration.getCompanyId());
-        orderItem.setGroupId(registration.getGroupId());
-        orderItem.setCProductId(cProduct.getCProductId());
-        orderItem.setUserId(registrationUser.getUserId());
-        orderItem.setUserName(registrationUser.getScreenName());
-
-        orderItem.setUnitPrice(BigDecimal.valueOf(registration.getPrice()));
-        orderItem.setUnitPriceWithTaxAmount(BigDecimal.valueOf(registration.getPrice() + registration.getPrice()*registration.getVAT()*0.01));
-        orderItem.setQuantity(orderCount);
-        orderItem.setCommerceOrderId(orderId);
-        CommerceOrderItemLocalServiceUtil.addCommerceOrderItem(orderItem);
-
-        return orderItem;
-
-    }
-
-
-    private AccountEntry createAccount(RegistrationRequest registrationRequest, User registrationUser, long companyId) throws PortalException {
+    private AccountEntry createPersonAccount(RegistrationRequest registrationRequest, User registrationUser) throws PortalException {
 
         User billingUser;
         String billingEmail = null;
         try {
             billingEmail = registrationRequest.getRequestParameter(BillingConstants.EMAIL);
-            billingUser = adminUtils.getOrCreateRegistrationUser(companyId, registrationUser,
+            billingUser = adminUtils.getOrCreateRegistrationUser(registrationUser.getCompanyId(), registrationUser,
                     billingEmail,
                     registrationRequest.getRequestParameter(BillingConstants.FIRST_NAME),
                     registrationRequest.getRequestParameter(BillingConstants.LAST_NAME), null, registrationRequest.getEvent().getLocale());
@@ -246,7 +173,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
         AccountEntry accountEntry = AccountEntryLocalServiceUtil.fetchPersonAccountEntry(billingUser.getUserId());
         if (accountEntry == null) {
-            accountEntry = commerceUtils.createAccountEntry(billingUser, "person", registrationRequest.getRequestParameters());
+            accountEntry = commerceUtils.createPersonAccountEntry(billingUser, registrationRequest.getRequestParameters());
         }
         return accountEntry;
     }
@@ -318,7 +245,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
         String friendlyUrl = null;
         try {
-            String configuredRedirect = null;
+            String configuredRedirect;
             final DsdRegistrationFormConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(DsdRegistrationFormConfiguration.class, themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
             switch (key){
                 case "register_success":
@@ -363,7 +290,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             return result;
     }
 
-    private void setUserSubscriptions(ActionRequest actionRequest, User user, RegistrationRequest registrationRequest){
+    private void setUserSubscriptions(ActionRequest actionRequest, User registrationUser, RegistrationRequest registrationRequest){
         List<String> subscribableMailingIds = registrationRequest.getSubscribableMailingIds();
         if (subscribableMailingIds != null) {
             List<String> subscribeIds = new ArrayList<>();
@@ -379,16 +306,16 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
             if (!subscribeIds.isEmpty()) {
                 try {
-                    subscriptionUtils.subscribeAll(user, subscribeIds);
+                    subscriptionUtils.subscribeAll(registrationUser, subscribeIds);
                 } catch (Exception e) {
-                    LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", user.getEmailAddress(), subscribeIds, e.getMessage()));
+                    LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", registrationUser.getEmailAddress(), subscribeIds, e.getMessage()));
                 }
             }
             if (!unsubscribeIds.isEmpty()) {
                 try {
-                    subscriptionUtils.unsubscribeAll(user.getEmailAddress(), unsubscribeIds);
+                    subscriptionUtils.unsubscribeAll(registrationUser.getEmailAddress(), unsubscribeIds);
                 } catch (Exception e) {
-                    LOG.warn(String.format("Failed to unsubscribe user %s for mailing %s: %s", user.getEmailAddress(), unsubscribeIds, e.getMessage()));
+                    LOG.warn(String.format("Failed to unsubscribe user %s for mailing %s: %s", registrationUser.getEmailAddress(), unsubscribeIds, e.getMessage()));
                 }
             }
         }
@@ -445,20 +372,6 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 }
             }
 
-            if (registrationRequest.isPaymentRequired()){
-                final AccountEntry accountEntry = getAccountEntry(actionRequest);
-                if (accountEntry == null){
-                    try {
-                        registrationRequest.setAccountEntry(createAccount(registrationRequest, themeDisplay.getUser(),
-                                configuration.defaultCompanyIdForAccounts()));
-                    } catch (Exception e) {
-                        SessionErrors.add(actionRequest, "registration-failed",  "Error creating AccountEntry: " + e.getMessage());
-                    }
-                } else {
-                    registrationRequest.setAccountEntry(accountEntry);
-                }
-            }
-
             String[] structureKeys = getStructureKeys(configuration);
             String dsdRegistrationTypeField = configuration.dsdRegistrationTypeField();
             Map<String, String> typeTranslations = new HashMap<>();
@@ -486,45 +399,48 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         return new String[0];
     }
 
-    private AccountEntry getAccountEntry(ActionRequest actionRequest){
+    private AccountEntry getAccountEntry(ActionRequest actionRequest, RegistrationRequest registrationRequest, User registrationUser){
         final long selectedAccountEntryId = ParamUtil.getLong(actionRequest, "select_organization");
+        AccountEntry accountEntry = null;
         if (selectedAccountEntryId > 0){
-            return AccountEntryLocalServiceUtil.fetchAccountEntry(selectedAccountEntryId);
+            accountEntry = AccountEntryLocalServiceUtil.fetchAccountEntry(selectedAccountEntryId);
         }
-        return null;
+        if (accountEntry == null){
+            try {
+                accountEntry = createPersonAccount(registrationRequest, registrationUser);
+            } catch (Exception e) {
+                SessionErrors.add(actionRequest, "registration-failed",  "Error creating AccountEntry: " + e.getMessage());
+                return null;
+            }
+        }
+        try {
+            if ("person".equals(accountEntry.getType())) {
+                //Only personal accounts can be updated
+                commerceUtils.updateAccountEntry(accountEntry, registrationRequest.getRequestParameters());
+            }
+        } catch (Exception e) {
+            SessionErrors.add(actionRequest, "registration-failed",  "Error updating AccountEntry: " + e.getMessage());
+        }
+        return accountEntry;
     }
 
     private void loadRegistrationParameters(ActionRequest actionRequest, RegistrationRequest registrationRequest) {
 
+        //noinspection DuplicatedCode
         for (String key : OrganizationConstants.ORG_KEYS) {
             registrationRequest.setRequestParameter(key, ParamUtil.getString(actionRequest, key));
         }
-
-        final long selectedBillingAddressId = ParamUtil.getLong(actionRequest, "select_address");
-        if (selectedBillingAddressId == 0){
-            //manually entered data
-            for (String key : BillingConstants.ORG_KEYS) {
-                registrationRequest.setRequestParameter(key, ParamUtil.getString(actionRequest, key));
-            }
-        } else {
-            //get address from selected address
-            registrationRequest.setRequestParameter(BillingConstants.ORG_NAME, ParamUtil.getString(actionRequest, BillingConstants.ORG_NAME));
-            registrationRequest.setRequestParameter(BillingConstants.ORG_VAT, ParamUtil.getString(actionRequest, BillingConstants.ORG_VAT));
-            registrationRequest.setRequestParameter(BillingConstants.ORG_EXTERNAL_REFERENCE_CODE, ParamUtil.getString(actionRequest, BillingConstants.ORG_EXTERNAL_REFERENCE_CODE));
-            final Address address = AddressLocalServiceUtil.fetchAddress(selectedBillingAddressId);
-            if (address != null){
-                registrationRequest.setRequestParameter(BillingConstants.ORG_STREET, address.getStreet1());
-                registrationRequest.setRequestParameter(BillingConstants.ORG_POSTAL, address.getZip());
-                registrationRequest.setRequestParameter(BillingConstants.ORG_CITY, address.getCity());
-                registrationRequest.setRequestParameter(BillingConstants.ORG_COUNTRY_CODE,address.getCountry().getA2());
-                registrationRequest.setRequestParameter(BillingConstants.ORG_PHONE, address.getPhoneNumber());
-            }
+        for (String key : BillingConstants.ORG_KEYS) {
+            registrationRequest.setRequestParameter(key, ParamUtil.getString(actionRequest, key));
         }
 
         for (String key : BillingConstants.BILLING_KEY) {
             registrationRequest.setRequestParameter(key, ParamUtil.getString(actionRequest, key));
         }
 
+        for (String key : LicenseConstants.KEYS) {
+            registrationRequest.setRequestParameter(key, ParamUtil.getString(actionRequest, key));
+        }
         registrationRequest.setRequestParameter("remarks", ParamUtil.getString(actionRequest, "remarks"));
 
     }
@@ -533,16 +449,11 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
         boolean success = true;
         final AccountEntry accountEntry = registrationRequest.getAccountEntry();
+        if (accountEntry != null) return true; //We no longer write organization info to Keycloak if user is linked to an AccountEntry.
         HashMap<String, String> attributes = new HashMap<>();
-        if (accountEntry == null){
-            for (String key : OrganizationConstants.ORG_KEYS) {
-                attributes.put(key, registrationRequest.getRequestParameter(key));
-            }
-
-        } else {
-            attributes.put(OrganizationConstants.ORG_EXTERNAL_REFERENCE_CODE, accountEntry.getExternalReferenceCode());
+        for (String key : OrganizationConstants.ORG_KEYS) {
+            attributes.put(key, registrationRequest.getRequestParameter(key));
         }
-
         for (User user : users) {
             try {
                 return keycloakUtils.updateUserAttributes(user.getEmailAddress(), attributes) < 300;

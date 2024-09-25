@@ -28,7 +28,6 @@ DsdRegistrationFormsUtil = {
             country = document.getElementById(namespace + "org_country").value;
             phone = document.getElementById(namespace + "org_phone").value;
             document.getElementById(namespace  + "org_vat").value = "";
-            document.getElementById(namespace + "org_external_reference_code").value = "";
         }
 
         document.getElementById(namespace + "billing_org_address").value = street;
@@ -85,8 +84,6 @@ DsdRegistrationFormsUtil = {
             country = this.attributes["org_country"]?this.attributes["org_country"]:"";
             phone = this.attributes["org_phone"]?this.attributes["org_phone"]:"";
 
-        } else {
-            return;
         }
 
         document.getElementById(namespace + "org_name").value = name;
@@ -258,17 +255,6 @@ DsdRegistrationFormsUtil = {
         }
     },
     activateStep1: function(namespace){
-
-        let orgSelection = document.getElementById(namespace + "select_organization");
-
-        if (DsdRegistrationFormsUtil.accounts.length > 0){
-            orgSelection.selectedIndex = 1
-        } else {
-            orgSelection.selectedIndex = 0
-        }
-
-        //initialize the selection
-        DsdRegistrationFormsUtil.accountSelectionChanged(namespace, document.getElementById(namespace + "select_organization"));
     },
 
     activateStep2: function (namespace){

@@ -75,6 +75,7 @@ public class RegistrationRequest {
 
     @SuppressWarnings("UnusedReturnValue")
     public String setRequestParameter(String key, String value){
+        if (value == null || value.isEmpty()) return null;
         return registrationParameters.put(key,value);
     }
     public String getRequestParameter(String key){

@@ -3,20 +3,14 @@ package nl.deltares.portal.utils.impl;
 
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalServiceUtil;
-import com.liferay.commerce.constants.CommerceOrderConstants;
-import com.liferay.commerce.constants.CommerceOrderPaymentConstants;
+import com.liferay.account.service.AccountEntryUserRelLocalServiceUtil;
 import com.liferay.commerce.currency.exception.NoSuchCurrencyException;
 import com.liferay.commerce.currency.model.CommerceCurrency;
 import com.liferay.commerce.currency.service.CommerceCurrencyLocalServiceUtil;
-import com.liferay.commerce.model.CommerceOrder;
-import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CProduct;
 import com.liferay.commerce.product.model.CommerceChannelAccountEntryRel;
-import com.liferay.commerce.product.service.CPDefinitionLocalServiceUtil;
 import com.liferay.commerce.product.service.CProductLocalServiceUtil;
 import com.liferay.commerce.product.service.CommerceChannelAccountEntryRelLocalServiceUtil;
-import com.liferay.commerce.service.CommerceOrderLocalServiceUtil;
-import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -30,8 +24,6 @@ import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.CommerceUtils;
 import org.osgi.service.component.annotations.Component;
 
-
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -43,9 +35,9 @@ public class CommerceUtilsImpl implements CommerceUtils {
 
 
     final OrderByComparator<CommerceChannelAccountEntryRel> channelAccountEntryRelComparator;
-    public CommerceUtilsImpl() {
 
-        channelAccountEntryRelComparator = OrderByComparatorFactoryUtil.create("CChannelAccountEntryRel", new Object[]{"CChannelAccountEntryRelId", true} );
+    public CommerceUtilsImpl() {
+        channelAccountEntryRelComparator = OrderByComparatorFactoryUtil.create("CommerceChannelAccountEntryRel", new Object[]{"accountEntryId", true});
     }
 
     @Override
@@ -68,133 +60,96 @@ public class CommerceUtilsImpl implements CommerceUtils {
     }
 
     @Override
-    public CProduct createProduct(Registration registration, User registrationUser) {
-
-        final long cProductId = CounterLocalServiceUtil.increment(CProduct.class.getName());
-        final long cpDefinitionId = CounterLocalServiceUtil.increment(CPDefinition.class.getName());
-        final CProduct cProduct = CProductLocalServiceUtil.createCProduct(cProductId);
-        cProduct.setNew(true);
-        cProduct.setCompanyId(registration.getCompanyId());
-        cProduct.setGroupId(registration.getGroupId());
-        cProduct.setExternalReferenceCode(registration.getArticleId());
-        cProduct.setUserId(registrationUser.getUserId());
-        cProduct.setUserName(registrationUser.getScreenName());
-        cProduct.setPublishedCPDefinitionId(cpDefinitionId);
-        final Date createDate = new Date();
-        cProduct.setCreateDate(createDate);
-
-        final CPDefinition cpDefinition = CPDefinitionLocalServiceUtil.createCPDefinition(cpDefinitionId);
-        cpDefinition.setCompanyId(registration.getCompanyId());
-        cpDefinition.setGroupId(registration.getGroupId());
-        cpDefinition.setUserId(registrationUser.getUserId());
-        cpDefinition.setUserName(registrationUser.getScreenName());
-        cpDefinition.setCProductId(cProductId);
-        cpDefinition.setProductTypeName("virtual");
-        cpDefinition.setIgnoreSKUCombinations(true);
-        cpDefinition.setShippable(false);
-
-        CProductLocalServiceUtil.addCProduct(cProduct);
-        CPDefinitionLocalServiceUtil.addCPDefinition(cpDefinition);
-
-        return cProduct;
-    }
-
-    @Override
-    public AccountEntry createAccountEntry(User registrationUser, String type, Map<String, String> requestParameters) throws PortalException {
-
-
-        final ServiceContext serviceContext = new ServiceContext();
-        serviceContext.setScopeGroupId(registrationUser.getGroupId());
-        serviceContext.setCompanyId(registrationUser.getCompanyId());
-
-        String[] domains;
-        if (type.equals("person")){
-            domains = null;
-        } else {
-            domains = new String[]{registrationUser.getEmailAddress().split("@")[1]};
+    public void updateAccountEntry(AccountEntry accountEntry, Map<String, String> requestParameters) throws PortalException {
+        if (accountEntry.getType().equals("business")) {
+            throw new IllegalArgumentException("Business accounts may not be updated");
         }
-        final AccountEntry accountEntry = AccountEntryLocalServiceUtil.addAccountEntry(
-                registrationUser.getUserId(),
-                0, requestParameters.get(BillingConstants.ORG_NAME), "", domains,
-                registrationUser.getEmailAddress(), new byte[0],
-                requestParameters.get(BillingConstants.ORG_VAT), type, 0, serviceContext);
-
-        final String externalReference = requestParameters.get(BillingConstants.ORG_EXTERNAL_REFERENCE_CODE);
-        if(externalReference != null) accountEntry.setExternalReferenceCode(externalReference);
-
-        final String website = requestParameters.get(OrganizationConstants.ORG_WEBSITE);
+        final String name = requestParameters.get(BillingConstants.ORG_NAME);
+        if (!name.isEmpty()) accountEntry.setName(name);
+        final String externalReference = requestParameters.getOrDefault(BillingConstants.ORG_EXTERNAL_REFERENCE_CODE, null);
+        if (externalReference != null) accountEntry.setExternalReferenceCode(externalReference);
+        accountEntry.setTaxIdNumber(requestParameters.getOrDefault(BillingConstants.ORG_VAT, null));
         if (!accountEntry.getExpandoBridge().hasAttribute("website")) {
             accountEntry.getExpandoBridge().addAttribute("website", false);
         }
-        if (website != null && !website.isEmpty()) {
-            accountEntry.getExpandoBridge().setAttribute("website", website,false);
+        accountEntry.getExpandoBridge().setAttribute("website", requestParameters.getOrDefault(OrganizationConstants.ORG_WEBSITE, null));
+
+        Address address = AddressLocalServiceUtil.fetchAddress(accountEntry.getDefaultBillingAddressId());
+        if (address == null) {
+            address = createAddress(requestParameters, accountEntry);
+            accountEntry.setDefaultBillingAddressId(address.getAddressId());
+        } else {
+            address.setName(requestParameters.getOrDefault(BillingConstants.ORG_NAME, null));
+            address.setStreet1(requestParameters.getOrDefault(BillingConstants.ORG_STREET, null));
+            address.setZip(requestParameters.getOrDefault(BillingConstants.ORG_POSTAL, null));
+            address.setCity(requestParameters.getOrDefault(BillingConstants.ORG_CITY, null));
+            final String countryCode = requestParameters.getOrDefault(BillingConstants.ORG_COUNTRY_CODE, "NL");
+            final Country country = CountryLocalServiceUtil.fetchCountryByA2(accountEntry.getCompanyId(), countryCode);
+            address.setCountryId(country == null ? 0 : country.getCountryId());
+
+            final String phone = requestParameters.getOrDefault(BillingConstants.ORG_PHONE, null);
+            if (phone != null) {
+                final List<Phone> phones = PhoneLocalServiceUtil.getPhones(address.getCompanyId(), "com.liferay.portal.kernel.model.Address", address.getAddressId());
+                if (!phones.isEmpty()) {
+                    final Phone phone1 = phones.get(0);
+                    phone1.setNumber(phone);
+                    PhoneLocalServiceUtil.updatePhone(phone1);
+                }
+            }
+            AddressLocalServiceUtil.updateAddress(address);
         }
-        final Address billingAddress = createAddress(requestParameters, true, accountEntry.getCompanyId());
-        accountEntry.setDefaultBillingAddressId(billingAddress.getAddressId());
-
         AccountEntryLocalServiceUtil.updateAccountEntry(accountEntry);
+    }
 
+    @Override
+    public AccountEntry createPersonAccountEntry(User billingUser, Map<String, String> requestParameters) throws PortalException {
+
+        final ServiceContext serviceContext = new ServiceContext();
+        serviceContext.setScopeGroupId(billingUser.getGroupId());
+        serviceContext.setCompanyId(billingUser.getCompanyId());
+        //we can only create personal accounts through the code
+        final AccountEntry accountEntry = AccountEntryLocalServiceUtil.addAccountEntry(
+                billingUser.getUserId(),
+                0, requestParameters.get(BillingConstants.ORG_NAME), "", null,
+                billingUser.getEmailAddress(), new byte[0],
+                requestParameters.get(BillingConstants.ORG_VAT), "person", 0, serviceContext);
+
+        AccountEntryUserRelLocalServiceUtil.addAccountEntryUserRel(accountEntry.getAccountEntryId(), billingUser.getUserId());
 
         return accountEntry;
     }
-    @Override
-    public CommerceOrder createCommerceOrder(AccountEntry accountEntry, long siteGroupId, User registrationUser) {
-
-        final long commerceOrderId = CounterLocalServiceUtil.increment(CommerceOrder.class.getName());
-        final CommerceOrder commerceOrder = CommerceOrderLocalServiceUtil.createCommerceOrder(commerceOrderId);
-        commerceOrder.setGroupId(siteGroupId);
-        commerceOrder.setCompanyId(accountEntry.getCompanyId());
-        commerceOrder.setUserId(registrationUser.getUserId());
-        commerceOrder.setUserName(registrationUser.getScreenName());
-
-        commerceOrder.setCommerceAccountId(accountEntry.getAccountEntryId());
-        commerceOrder.setBillingAddressId(accountEntry.getDefaultBillingAddressId());
-        commerceOrder.setStatus(CommerceOrderConstants.ORDER_STATUS_OPEN);
-        commerceOrder.setPaymentStatus(CommerceOrderPaymentConstants.STATUS_PENDING);
-        final CommerceCurrency commerceCurrency = getCommerceCurrency(accountEntry);
-
-        if (commerceCurrency != null) commerceOrder.setCommerceCurrencyId(commerceCurrency.getCommerceCurrencyId());
-
-        CommerceOrderLocalServiceUtil.addCommerceOrder(commerceOrder);
-
-        return commerceOrder;
-    }
 
     @Override
-    public Address createAddress(Map<String, String> addressInfo, boolean billing, long companyId) {
+    public Address createAddress(Map<String, String> addressInfo, AccountEntry accountEntry) throws PortalException {
 
+        final ServiceContext serviceContext = new ServiceContext();
+        serviceContext.setScopeGroupId(accountEntry.getAccountEntryGroupId());
+        serviceContext.setCompanyId(accountEntry.getCompanyId());
+        serviceContext.setUserId(accountEntry.getUserId());
 
-        final long addressId = CounterLocalServiceUtil.increment(Address.class.getName());
-        final Address address = AddressLocalServiceUtil.createAddress(addressId);
-        address.setNew(true);
-        address.setName(addressInfo.getOrDefault(billing? BillingConstants.ORG_NAME:OrganizationConstants.ORG_NAME, ""));
-        address.setStreet1(addressInfo.getOrDefault(billing? BillingConstants.ORG_STREET:OrganizationConstants.ORG_STREET, ""));
-        address.setZip(addressInfo.getOrDefault(billing? BillingConstants.ORG_POSTAL: OrganizationConstants.ORG_POSTAL, ""));
-        address.setCity(addressInfo.getOrDefault(billing?BillingConstants.ORG_CITY:OrganizationConstants.ORG_CITY, ""));
-        final String countryCode = addressInfo.getOrDefault(billing?BillingConstants.ORG_COUNTRY_CODE:OrganizationConstants.ORG_COUNTRY_CODE, null);
+        final String street = addressInfo.getOrDefault(BillingConstants.ORG_STREET, null);
+        final String postal = addressInfo.getOrDefault(BillingConstants.ORG_POSTAL, null);
+        final String city = addressInfo.getOrDefault(BillingConstants.ORG_CITY, null);
+        final String phone = addressInfo.getOrDefault(BillingConstants.ORG_PHONE, "");
+        final String countryCode = addressInfo.getOrDefault(BillingConstants.ORG_COUNTRY_CODE, "NL");
+        long countryId = 0;
         if (countryCode != null) {
-            final Country country = CountryLocalServiceUtil.fetchCountryByA2(companyId, countryCode);
-            if (country != null) address.setCountryId(country.getCountryId());
+            final Country country = CountryLocalServiceUtil.fetchCountryByA2(accountEntry.getCompanyId(), countryCode);
+            if (country != null) countryId = country.getCountryId();
         }
-        address.setListTypeId(ListTypeLocalServiceUtil.getListType("billing", "com.liferay.account.model.AccountEntry.address").getListTypeId());
-
-        final String phoneNumber = addressInfo.getOrDefault(billing? BillingConstants.ORG_PHONE:OrganizationConstants.ORG_PHONE, null);
-        if (phoneNumber != null){
-            final Phone phone = PhoneLocalServiceUtil.createPhone(CounterLocalServiceUtil.increment(Phone.class.getName()));
-            phone.setNew(true);
-            phone.setCompanyId(address.getCompanyId());
-            phone.setNumber(phoneNumber);
-            phone.setClassPK(address.getAddressId());
-            phone.setListTypeId(ListTypeLocalServiceUtil.getListType("phone-number", "com.liferay.portal.kernel.model.Address.phone").getListTypeId());
-            PhoneLocalServiceUtil.addPhone(phone);
-        }
-
-        AddressLocalServiceUtil.addAddress(address);
+        final ListType accountType = ListTypeLocalServiceUtil.getListType("billing", "com.liferay.account.model.AccountEntry.address");
+        final ClassName className = ClassNameLocalServiceUtil.getClassName(AccountEntry.class.getName());
+        final Address address = AddressLocalServiceUtil.addAddress(null, accountEntry.getUserId(), className.getClassName(),
+                accountEntry.getAccountEntryId(), accountEntry.getName(), null, street, null, null,
+                city, postal, 0, countryId, accountType.getListTypeId(), false, false, null, serviceContext);
+        final ListType phoneType = ListTypeLocalServiceUtil.getListType("phone-number", "com.liferay.portal.kernel.model.Address.phone");
+        PhoneLocalServiceUtil.addPhone(accountEntry.getUserId(), "com.liferay.portal.kernel.model.Address",
+                address.getAddressId(), phone, null, phoneType.getListTypeId(), true, serviceContext);
 
         return address;
     }
 
-    private CommerceCurrency getCommerceCurrency(AccountEntry accountEntry){
+    private CommerceCurrency getCommerceCurrency(AccountEntry accountEntry) {
 
         final List<CommerceChannelAccountEntryRel> rels = CommerceChannelAccountEntryRelLocalServiceUtil.getCommerceChannelAccountEntryRels(accountEntry.getAccountEntryId(),
                 6, 0, 10, channelAccountEntryRelComparator);
