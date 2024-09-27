@@ -37,7 +37,7 @@ public class SelectionFacetPortletSharedSearchContributor implements PortletShar
         final Long groupId = (Long) portalCache.get("groupId");
         final Locale siteDefaultLocale = (Locale) portalCache.get("siteDefaultLocale");
 
-        Optional<String> selectionOptional = portletSharedSearchSettings.getParameterOptional(name);
+        Optional<String> selectionOptional = Optional.ofNullable(portletSharedSearchSettings.getParameter(name));
         //check for parameter is in namespace of searchResultsPortlet
         String selection = selectionOptional.orElseGet(() -> FacetUtils.getRequestParameter(name, portletSharedSearchSettings.getRenderRequest()));
         if (selection == null) {

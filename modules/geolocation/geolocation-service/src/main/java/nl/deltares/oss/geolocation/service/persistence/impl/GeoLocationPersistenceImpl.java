@@ -38,7 +38,6 @@ import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.uuid.PortalUUID;
 
 import java.io.Serializable;
 
@@ -54,6 +53,7 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
+import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import nl.deltares.oss.geolocation.exception.NoSuchGeoLocationException;
 import nl.deltares.oss.geolocation.model.GeoLocation;
 import nl.deltares.oss.geolocation.model.GeoLocationTable;
@@ -2173,6 +2173,6 @@ public class GeoLocationPersistenceImpl
 	}
 
 	@Reference
-	private PortalUUID _portalUUID;
+	private PortalUUIDUtil _portalUUID;
 
 }

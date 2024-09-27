@@ -137,12 +137,12 @@ public class CommerceUtilsImpl implements CommerceUtils {
             final Country country = CountryLocalServiceUtil.fetchCountryByA2(accountEntry.getCompanyId(), countryCode);
             if (country != null) countryId = country.getCountryId();
         }
-        final ListType accountType = ListTypeLocalServiceUtil.getListType("billing", "com.liferay.account.model.AccountEntry.address");
+        final ListType accountType = ListTypeLocalServiceUtil.getListType(accountEntry.getCompanyId(), "billing", "com.liferay.account.model.AccountEntry.address");
         final ClassName className = ClassNameLocalServiceUtil.getClassName(AccountEntry.class.getName());
         final Address address = AddressLocalServiceUtil.addAddress(null, accountEntry.getUserId(), className.getClassName(),
                 accountEntry.getAccountEntryId(), accountEntry.getName(), null, street, null, null,
                 city, postal, 0, countryId, accountType.getListTypeId(), false, false, null, serviceContext);
-        final ListType phoneType = ListTypeLocalServiceUtil.getListType("phone-number", "com.liferay.portal.kernel.model.Address.phone");
+        final ListType phoneType = ListTypeLocalServiceUtil.getListType(accountEntry.getCompanyId(), "phone-number", "com.liferay.portal.kernel.model.Address.phone");
         PhoneLocalServiceUtil.addPhone(accountEntry.getUserId(), "com.liferay.portal.kernel.model.Address",
                 address.getAddressId(), phone, null, phoneType.getListTypeId(), true, serviceContext);
 

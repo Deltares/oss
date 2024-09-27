@@ -17,20 +17,11 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class DsdTransferUtilsImpl implements DsdTransferUtils {
 
+    @Reference
     private RegistrationLocalService registrationLocalService;
 
+    @Reference
     private DsdParserUtils dsdParserUtils;
-
-    @Reference(unbind = "-")
-    private void setRepositoryLogLocalService(RegistrationLocalService registrationLocalService) {
-
-        this.registrationLocalService = registrationLocalService;
-    }
-
-    @Reference(unbind = "-")
-    private void setDsdParserUtils(DsdParserUtils dsdParserUtils) {
-        this.dsdParserUtils = dsdParserUtils;
-    }
 
     @Override
     public void registerUser(User user, Registration registration, User registrationUser) throws PortalException {

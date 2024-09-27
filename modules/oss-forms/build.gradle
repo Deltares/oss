@@ -1,10 +1,6 @@
-dependencies({
-	implementation group: "com.liferay.portal", name: "release.dxp.api"
-
-	compileOnly group: 'biz.aQute.bnd', name: 'biz.aQute.bnd.gradle', version: '3.4.0'
-	compileOnly group: "javax.portlet", name: "portlet-api"
-	compileOnly group: "javax.servlet", name: "javax.servlet-api"
-	compileOnly group: 'javax.mail', name: 'mail', version: '1.4.7'
+dependencies{
+	implementation('com.liferay.portal:release.dxp.api')
+	compileOnly 'javax.mail:mail:1.4.7'
 
 	compileOnly(project(":modules:common-utils"))
-} as Closure)
+}

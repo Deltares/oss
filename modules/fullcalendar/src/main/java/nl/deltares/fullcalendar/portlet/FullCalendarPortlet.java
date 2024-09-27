@@ -1,8 +1,8 @@
 package nl.deltares.fullcalendar.portlet;
 
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -56,7 +56,7 @@ public class FullCalendarPortlet extends MVCPortlet {
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
         PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
-        Optional<String> startDateOptional = portletSharedSearchResponse.getParameter("startDate", renderRequest);
+        Optional<String> startDateOptional = Optional.ofNullable(portletSharedSearchResponse.getParameter("startDate", renderRequest));
         startDateOptional.ifPresent(s -> {
             try {
                 renderRequest.setAttribute("startDate", dateFormat.parse(s));

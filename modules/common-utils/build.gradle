@@ -1,11 +1,8 @@
 dependencies {
 
-    implementation('com.liferay.portal:release.dxp.api:7.4.13.u77')
+    implementation('com.liferay.portal:release.dxp.api')
 
-    implementation 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.4.0'
-    implementation 'javax.mail:mail:1.4.7'
-    implementation 'javax.portlet:portlet-api'
-    implementation 'javax.servlet:javax.servlet-api'
+
     compileInclude 'com.maxmind.geoip2:geoip2:2.15.0'
 
     implementation(project(":modules:registration-service:registration-service-api"))

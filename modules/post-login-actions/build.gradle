@@ -1,7 +1,4 @@
 dependencies {
-	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
-
-	compileOnly group: "javax.servlet", name: "javax.servlet-api"
-	compileOnly group: 'biz.aQute.bnd', name: 'biz.aQute.bnd.gradle', version: '3.4.0'
+	implementation('com.liferay.portal:release.dxp.api')
 	compileOnly project(":modules:common-utils")
 }

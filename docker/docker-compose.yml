@@ -3,7 +3,7 @@ version: '3.1'
 services:
 
   database:
-    image: mariadb:10.4.22
+    image: mariadb:10.6.16
     container_name: oss-mariadb-74
     ports:
       - "3307:3306"
@@ -43,6 +43,7 @@ services:
       #      - 80:8080
       - 8081:8080
       - 8000:8000
+      - 11311:11311
     volumes:
       - ./liferay/data:/opt/liferay/data/document_library
       - ./liferay/mount/files:/mnt/liferay/files

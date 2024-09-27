@@ -1,6 +1,6 @@
 {
     "devDependencies": {
-        "liferay-npm-bundler": "^2.28.3"
+        "liferay-npm-bundler": "^2.32.0"
     },
     "private": true,
     "workspaces": {

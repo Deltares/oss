@@ -5,6 +5,5 @@ dependencies {
 	implementation project(":modules:geolocation:geolocation-api")
 	implementation project(":modules:registration-service:registration-service-api")
 
-
 	cssBuilder( group: "org.slf4j", name: "slf4j-simple", version:"2.0.0")
 }

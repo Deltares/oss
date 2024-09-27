@@ -3,7 +3,7 @@ package nl.deltares.forms.portlet;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -60,7 +60,7 @@ public class DsdBusRegistrationFormPortlet extends MVCPortlet {
         try {
             event = parserUtils.getEvent(groupId, String.valueOf(configuration.eventId()), themeDisplay.getLocale());
         } catch (PortalException e) {
-            throw new PortletException(String.format("Could not get event for %d: %s" + configuration.eventId(), e.getMessage()));
+            throw new PortletException(String.format("Could not get event for %d: %s", configuration.eventId(), e.getMessage()));
         }
         renderRequest.setAttribute("event", event);
         final List<BusTransfer> busTransfers = event.getBusTransfers(themeDisplay.getLocale());
