@@ -49,12 +49,6 @@
   },
   {
     "groupId" : "nl.deltares",
-    "artifactId" : "nl.deltares.portal.config.contributor",
-    "version" : "1.0.0",
-    "extension" : "jar"
-  },
-  {
-    "groupId" : "nl.deltares",
     "artifactId" : "nl.worth.portal.context.contributor",
     "version" : "1.0.10",
     "extension" : "jar"
