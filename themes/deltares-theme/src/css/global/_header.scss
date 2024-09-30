@@ -1,6 +1,7 @@
 #header {
   line-height: 1.5;
   z-index: 999;
+  position: relative;
 
   &.hidden-servicebar {
     transform: translateY(-38px);

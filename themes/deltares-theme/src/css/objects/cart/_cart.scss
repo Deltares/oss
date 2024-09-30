@@ -22,3 +22,36 @@
     top: -6px;
   }
 }
+.mini-cart-close {
+  color: black;
+}
+.mini-cart {
+  &:not(.is-open) {
+    position: relative !important;
+    height: 0.75rem !important;
+    width: 0.75rem !important;
+    top: -20px !important;
+    right: -20px !important;
+  }
+
+  &-opener {
+    color: var(--mini-cart-icon-color, $white) !important;
+
+    &::before {
+      background-color: $yellow  !important;
+      font-size: 12px !important;
+      color: #141e95 !important;
+    }
+  }
+}
+.mini-cart-wrapper {
+  display: flex !important;
+  color: #141e95 ;
+  height: fit-content !important;
+}
+
+.mobile-container {
+  .mini-cart-wrapper {
+    width: 100%;
+  }
+}

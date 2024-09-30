@@ -37,5 +37,9 @@ journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroup().getParentGr
 <#assign homeUrl =  (themeDisplay.getPortalURL() + themeDisplay.getPathFriendlyURLPublic()) />
 <#assign siteUrl = (homeUrl + themeDisplay.getSiteGroup().getFriendlyURL()) />
 
-<#assign is_shopping_cart = getterUtil.getBoolean(theme_settings["shopping-cart"]) />
+<#assign
+    is_shopping_cart = getterUtil.getBoolean(theme_settings["shopping-cart"])
+    mini_cart_display_total_items_count = true
+    mini_cart_keep_open = false
+/>
 <#assign is_show_cookies = getterUtil.getBoolean(theme_settings["show-cookies"]) />
