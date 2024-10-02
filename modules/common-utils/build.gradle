@@ -1,23 +1,10 @@
 dependencies {
 
-    implementation('com.liferay.portal:release.dxp.api')
-
-
+    compileOnly 'com.liferay.portal:release.dxp.api'
     compileInclude 'com.maxmind.geoip2:geoip2:2.15.0'
 
-    implementation(project(":modules:registration-service:registration-service-api"))
-    implementation(project(":modules:download:download-api"))
-    implementation(project(":modules:geolocation:geolocation-api"))
-
-    testImplementation 'com.liferay.portal:com.liferay.portal.kernel'
-    testImplementation 'com.liferay.portal:com.liferay.portal.impl'
-    testImplementation 'com.liferay:com.liferay.petra.string'
-    testImplementation 'com.liferay:com.liferay.petra.lang'
-    testImplementation 'com.liferay:com.liferay.journal.api'
-
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'org.jodd:jodd-json'
-    testImplementation 'commons-io:commons-io:2.11.0'
-    testImplementation 'com.maxmind.geoip2:geoip2:2.15.0'
+    compileOnly project(":modules:registration-service:registration-service-api")
+    compileOnly project(":modules:download:download-api")
+    compileOnly project(":modules:geolocation:geolocation-api")
 
 }

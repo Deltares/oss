@@ -1,6 +1,8 @@
 dependencies{
-	implementation('com.liferay.portal:release.dxp.api')
+	compileOnly 'com.liferay.portal:release.dxp.api'
 	compileOnly 'javax.mail:mail:1.4.7'
+
+	cssBuilder group: "com.liferay", name: "com.liferay.css.builder", version: "3.1.4"
 
 	compileOnly(project(":modules:common-utils"))
 }
