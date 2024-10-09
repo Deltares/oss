@@ -1,4 +1,4 @@
-<#if languages?size != 0>
+<#if languages?? && languages?size != 0>
     <div class="dropdown">
 
             <div class="dropbtn">

@@ -48,10 +48,21 @@
   display: flex !important;
   color: #141e95 ;
   height: fit-content !important;
+  position: relative !important;
 }
 
 .mobile-container {
   .mini-cart-wrapper {
     width: 100%;
+  }
+}
+
+//.quantity-selector {
+//  display: none !important;
+//}
+
+.add-to-cart {
+  .btn-block {
+    width: auto;
   }
 }

@@ -19,9 +19,11 @@
                 </a>
             </li>
         </#if>
-        <li class="flex flex-row items-center even:pl-10 odd:border-r odd:border-solid odd:border-white">
-            <a class="block text-sm font-medium text-white leading-none" href="${user_signout_url}">Logout</a>
-        </li>
+        <#if user_signout_url?? >
+            <li class="flex flex-row items-center even:pl-10 odd:border-r odd:border-solid odd:border-white">
+                <a class="block text-sm font-medium text-white leading-none" href="${user_signout_url}">Logout</a>
+            </li>
+        </#if>
         <#if is_signed_in && is_shopping_cart>
 <#--            <li class="flex flex-row items-center even:pl-10 odd:border-r odd:border-solid odd:border-white">-->
 <#--                <a href="#" class="c-cart__cart c-cart__checkout__cart text-white flex text-sm align-top relative">-->

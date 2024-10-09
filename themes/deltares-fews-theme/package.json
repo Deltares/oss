@@ -20,9 +20,25 @@
 		"templateLanguage": "ftl",
 		"version": "7.1"
 	},
+	"devDependencies": {
+		"compass-mixins": "0.12.12",
+		"gulp": "5.0.0",
+		"liferay-frontend-css-common": "6.0.8",
+		"liferay-frontend-theme-styled": "6.0.87",
+		"liferay-frontend-theme-unstyled": "6.0.69",
+		"liferay-theme-tasks": "^11.5.4"
+	},
 	"scripts": {
 		"init": "gulp init",
 		"build": "gulp build",
-		"deploy": "gulp deploy"
+		"deploy": "gulp deploy",
+		"extend": "gulp extend",
+		"kickstart": "gulp kickstart",
+		"status": "gulp status",
+		"upgrade": "gulp upgrade",
+		"watch": "gulp watch"
+	},
+	"dependencies": {
+		"@liferay/bs3-bs4-compat": "*"
 	}
 }
