@@ -1,0 +1,4 @@
+dependencies {
+	compileOnly('com.liferay.portal:release.dxp.api')
+	compileOnly('com.liferay:com.liferay.adaptive.media.image.api')
+}

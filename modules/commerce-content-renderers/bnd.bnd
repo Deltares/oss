@@ -1,0 +1,4 @@
+Bundle-Name: commerce-content-renderers
+Bundle-SymbolicName: nl.deltares.commerce.product.content.web
+Bundle-Version: 1.0.0
+Web-ContextPath: /commerce-content-renderers
