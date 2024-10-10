@@ -30,6 +30,11 @@
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="com.liferay.commerce.model.CommerceOrder" %>
 <%@ page import="com.liferay.commerce.constants.CommerceWebKeys" %>
+<%@ page import="nl.deltares.portal.utils.CommerceUtils" %>
+<%@ page import="nl.deltares.portal.model.DeltaresProduct" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="com.liferay.commerce.context.CommerceContext" %>
 
 <liferay-frontend:defineObjects />
 
@@ -44,6 +49,9 @@
     CommerceOrder commerceOrder = (CommerceOrder) request.getAttribute(CommerceWebKeys.COMMERCE_ORDER);
 
     boolean showButtons = themeDisplay.isSignedIn() && commerceOrder != null;
+
+    CommerceUtils commerceUtils = (CommerceUtils) renderRequest.getAttribute(CommerceUtils.class.getName());
+    final CommerceContext commerceContext = (CommerceContext) request.getAttribute(CommerceWebKeys.COMMERCE_CONTEXT);
 
 %>
 

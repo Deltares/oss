@@ -9,6 +9,11 @@
 
 	boolean hasMultipleCPSkus = cpContentHelper.hasMultipleCPSkus(cpCatalogEntry);
 
+	DeltaresProduct deltaresProduct = (DeltaresProduct) request.getAttribute("DeltaresProduct");
+	if (deltaresProduct == null){
+		deltaresProduct = commerceUtils.toDeltaresProduct(cpCatalogEntry, commerceContext, themeDisplay.getLocale());
+	}
+
 %>
 
 <div class="row no-gutters">
@@ -49,19 +54,15 @@
 		</h4>
 		<div>
 			<span class="c-sessions__item__time-date-place__time">
-                TODO: Start and end time
+                <%= deltaresProduct.getTimeString(deltaresProduct.getStartTime()) %> -
+				<%= deltaresProduct.getTimeString(deltaresProduct.getEndTime()) %>
+				( <%= deltaresProduct.getTimeZone().getID() %> )
             </span>|
-			<p class="card-text">
-				<span class="text-truncate-inline">
-					<span class="d-flex flex-row text-truncate">
-						<commerce-ui:price
-								compact="<%= true %>"
-								CPCatalogEntry="<%= cpCatalogEntry %>"
-
-						/>
-					</span>
-				</span>
-			</p>
+			<% if (deltaresProduct.getPrice() > 0) {%>
+				<%=deltaresProduct.getCurrency()%> <%= deltaresProduct.getPrice() %>
+			<% } else { %>
+				<liferay-ui:message key="dsd.theme.session.free"/>
+			<%}%>
 			<%
 				if(showButtons) {
 
@@ -82,7 +83,7 @@
 					}
 
 			%>
-			<div class="mt-2">
+			<span class="d-block" style="float: right">
 
 			<aui:form action="<%= updateCommerceOrderItemURL %>" method="post"  name='<%= randomNamespace + "Fm" %>' portletNamespace="<%= portletNamespace %>">
 					<aui:input name="action" type="hidden" value="<%= action %>" />
@@ -92,7 +93,7 @@
 					</aui:button-row>
 				</aui:form>
 
-			</div>
+			</span>
 
 			<%
 				}

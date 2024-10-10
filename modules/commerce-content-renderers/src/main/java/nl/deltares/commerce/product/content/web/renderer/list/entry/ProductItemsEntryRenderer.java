@@ -18,6 +18,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import nl.deltares.portal.utils.CommerceUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -61,6 +62,8 @@ public class ProductItemsEntryRenderer
 			HttpServletRequest httpServletRequest,
 			HttpServletResponse httpServletResponse)
 		throws Exception {
+
+		httpServletRequest.setAttribute(CommerceUtils.class.getName(), _commerceUtils);
 		_jspRenderer.renderJSP(
 			_servletContext, httpServletRequest, httpServletResponse,
 			"/product_publisher/render/list/entry/dsd-view.jsp");
@@ -72,9 +75,13 @@ public class ProductItemsEntryRenderer
 	@Reference
 	private Language _language;
 
+	@Reference
+	private CommerceUtils _commerceUtils;
+
 	@Reference(
 		target = "(osgi.web.symbolicname=nl.deltares.commerce.product.content.web)"
 	)
 	private ServletContext _servletContext;
+
 
 }

@@ -4,28 +4,30 @@ package nl.deltares.portal.utils.impl;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalServiceUtil;
 import com.liferay.account.service.AccountEntryUserRelLocalServiceUtil;
-import com.liferay.commerce.currency.exception.NoSuchCurrencyException;
-import com.liferay.commerce.currency.model.CommerceCurrency;
-import com.liferay.commerce.currency.service.CommerceCurrencyLocalServiceUtil;
-import com.liferay.commerce.product.model.CProduct;
-import com.liferay.commerce.product.model.CommerceChannelAccountEntryRel;
-import com.liferay.commerce.product.service.CProductLocalServiceUtil;
-import com.liferay.commerce.product.service.CommerceChannelAccountEntryRelLocalServiceUtil;
+import com.liferay.commerce.context.CommerceContext;
+import com.liferay.commerce.frontend.model.PriceModel;
+import com.liferay.commerce.frontend.util.ProductHelper;
+import com.liferay.commerce.product.catalog.CPCatalogEntry;
+import com.liferay.commerce.product.model.CPInstance;
+import com.liferay.commerce.product.util.CPInstanceHelper;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.*;
 import com.liferay.portal.kernel.service.*;
-import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import nl.deltares.portal.constants.BillingConstants;
 import nl.deltares.portal.constants.OrganizationConstants;
-import nl.deltares.portal.model.impl.Registration;
+import nl.deltares.portal.model.DeltaresProduct;
 import nl.deltares.portal.utils.CommerceUtils;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.*;
 
 @Component(
         immediate = true,
@@ -33,11 +35,63 @@ import java.util.Map;
 )
 public class CommerceUtilsImpl implements CommerceUtils {
 
+    @Reference
+    private CPInstanceHelper _cpInstanceHelper;
 
-    final OrderByComparator<CommerceChannelAccountEntryRel> channelAccountEntryRelComparator;
+    @Reference
+    private ProductHelper _productHelper;
 
-    public CommerceUtilsImpl() {
-        channelAccountEntryRelComparator = OrderByComparatorFactoryUtil.create("CommerceChannelAccountEntryRel", new Object[]{"accountEntryId", true});
+    @Override
+    public List<DeltaresProduct> toDeltaresProducts(List<CPCatalogEntry> cpCatalogEntries, CommerceContext context, Locale locale) {
+        final ArrayList<DeltaresProduct> deltaresProducts = new ArrayList<>(cpCatalogEntries.size());
+
+        for (CPCatalogEntry entry : cpCatalogEntries) {
+            try {
+                deltaresProducts.add(toDeltaresProduct(entry, context, locale));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return sortProductsByStartTime(deltaresProducts);
+    }
+
+    @Override
+    public DeltaresProduct toDeltaresProduct(CPCatalogEntry entry, CommerceContext context, Locale locale) throws PortalException {
+        try {
+
+            final DeltaresProduct deltaresProduct = new DeltaresProduct(entry);
+            setPrice(deltaresProduct, context, locale);
+
+            return deltaresProduct;
+        } catch (Exception e) {
+            throw new PortalException(e);
+        }
+    }
+
+    private void setPrice(DeltaresProduct deltaresProduct, CommerceContext context, Locale locale) throws PortalException, ParseException {
+
+        final CPInstance defaultCPInstance = _cpInstanceHelper.getDefaultCPInstance(deltaresProduct.getCpCatalogEntry().getCPDefinitionId());
+        final PriceModel priceModel = _productHelper.getPriceModel(
+                defaultCPInstance.getCPInstanceId(), "[]", BigDecimal.ZERO,
+                StringPool.BLANK, context, locale);
+
+        final String priceString = priceModel.getPrice();
+        final String[] split = priceString.split(" ");
+        deltaresProduct.setCommerceCurrencyCode(split[0]);
+
+        final NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
+        if(numberFormat instanceof DecimalFormat){
+            ((DecimalFormat)numberFormat).setParseBigDecimal(true);
+        }
+        final Number parse = numberFormat.parse(priceString.replaceAll("[^\\d.,]", ""));
+        deltaresProduct.setPrice(parse.floatValue());
+
+    }
+
+    @Override
+    public List<DeltaresProduct> sortProductsByStartTime(List<DeltaresProduct> products) {
+        products.sort(Comparator.comparingLong(DeltaresProduct::getStartTime));
+        return products;
     }
 
     @Override
@@ -52,11 +106,6 @@ public class CommerceUtilsImpl implements CommerceUtils {
         dq.add(RestrictionsFactoryUtil.eq("status", 0));
         dq.add(RestrictionsFactoryUtil.eq("companyId", companyId));
         return AccountEntryLocalServiceUtil.dynamicQuery(dq);
-    }
-
-    @Override
-    public CProduct getProductByRegistration(Registration registration) {
-        return CProductLocalServiceUtil.fetchCProductByExternalReferenceCode(registration.getArticleId(), registration.getCompanyId());
     }
 
     @Override
@@ -149,20 +198,4 @@ public class CommerceUtilsImpl implements CommerceUtils {
         return address;
     }
 
-    private CommerceCurrency getCommerceCurrency(AccountEntry accountEntry) {
-
-        final List<CommerceChannelAccountEntryRel> rels = CommerceChannelAccountEntryRelLocalServiceUtil.getCommerceChannelAccountEntryRels(accountEntry.getAccountEntryId(),
-                6, 0, 10, channelAccountEntryRelComparator);
-        if (!rels.isEmpty()) {
-            final CommerceChannelAccountEntryRel rel = rels.get(0);
-            final CommerceCurrency commerceCurrency = CommerceCurrencyLocalServiceUtil.fetchCommerceCurrency(rel.getClassPK());
-            if (commerceCurrency != null) return commerceCurrency;
-        }
-
-        try {
-            return CommerceCurrencyLocalServiceUtil.getCommerceCurrency(accountEntry.getCompanyId(), "EUR");
-        } catch (NoSuchCurrencyException e) {
-            return null;
-        }
-    }
 }

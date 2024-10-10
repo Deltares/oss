@@ -9,6 +9,7 @@ import com.liferay.commerce.product.content.render.list.CPContentListRenderer;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import nl.deltares.portal.utils.CommerceUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -53,7 +54,7 @@ public class ProductItemsListRenderer implements CPContentListRenderer {
         httpServletRequest.setAttribute(
                 CPContentWebKeys.CP_CONTENT_HELPER, _cpContentHelper);
 
-
+        httpServletRequest.setAttribute(CommerceUtils.class.getName(), _commerceUtils);
         httpServletRequest.setAttribute(CommerceWebKeys.COMMERCE_ORDER, _commerceOrderHttpHelper.getCurrentCommerceOrder(httpServletRequest));
 
         _jspRenderer.renderJSP(
@@ -73,6 +74,8 @@ public class ProductItemsListRenderer implements CPContentListRenderer {
     @Reference
     private Language _language;
 
+    @Reference
+    private CommerceUtils _commerceUtils;
     @Reference(
             target = "(osgi.web.symbolicname=nl.deltares.commerce.product.content.web)"
     )
