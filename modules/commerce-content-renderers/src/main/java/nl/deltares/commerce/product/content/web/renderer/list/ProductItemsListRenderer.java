@@ -1,6 +1,7 @@
 package nl.deltares.commerce.product.content.web.renderer.list;
 
 import com.liferay.commerce.constants.CommerceWebKeys;
+import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.order.CommerceOrderHttpHelper;
 import com.liferay.commerce.product.constants.CPPortletKeys;
 import com.liferay.commerce.product.content.constants.CPContentWebKeys;
@@ -54,8 +55,15 @@ public class ProductItemsListRenderer implements CPContentListRenderer {
         httpServletRequest.setAttribute(
                 CPContentWebKeys.CP_CONTENT_HELPER, _cpContentHelper);
 
+        CommerceOrder commerceOrder = _commerceOrderHttpHelper.getCurrentCommerceOrder(httpServletRequest);
+        if (commerceOrder == null) {
+            commerceOrder = _commerceOrderHttpHelper.addCommerceOrder(
+                    httpServletRequest);
+        }
+
         httpServletRequest.setAttribute(CommerceUtils.class.getName(), _commerceUtils);
-        httpServletRequest.setAttribute(CommerceWebKeys.COMMERCE_ORDER, _commerceOrderHttpHelper.getCurrentCommerceOrder(httpServletRequest));
+
+        httpServletRequest.setAttribute(CommerceWebKeys.COMMERCE_ORDER, commerceOrder);
 
         _jspRenderer.renderJSP(
                 _servletContext, httpServletRequest, httpServletResponse,
