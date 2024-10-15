@@ -10,18 +10,16 @@ import com.liferay.commerce.product.content.render.list.entry.CPContentListEntry
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
-
-import java.util.Locale;
-import java.util.ResourceBundle;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.utils.CommerceUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * @author Marco Leo
@@ -29,20 +27,19 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	property = {
-		"commerce.product.content.list.entry.renderer.key=" + ProductItemsEntryRenderer.KEY,
+		"commerce.product.content.list.entry.renderer.key=" + CheckoutItemsEntryRenderer.KEY,
 		"commerce.product.content.list.entry.renderer.order=" + Integer.MIN_VALUE,
-		"commerce.product.content.list.entry.renderer.portlet.name=" + CPPortletKeys.CP_PUBLISHER_WEB,
-		"commerce.product.content.list.entry.renderer.portlet.name=" + CPPortletKeys.CP_SEARCH_RESULTS,
+		"commerce.product.content.list.entry.renderer.portlet.name=" + OssConstants.DSD_REGISTRATIONFORM,
 		"commerce.product.content.list.entry.renderer.type=grouped",
 		"commerce.product.content.list.entry.renderer.type=simple",
 		"commerce.product.content.list.entry.renderer.type=virtual"
 	},
 	service = CPContentListEntryRenderer.class
 )
-public class ProductItemsEntryRenderer
+public class CheckoutItemsEntryRenderer
 	implements CPContentListEntryRenderer {
 
-	public static final String KEY = "list-entry-dsd";
+	public static final String KEY = "checkout-entry-dsd";
 
 	@Override
 	public String getKey() {
@@ -66,7 +63,7 @@ public class ProductItemsEntryRenderer
 		httpServletRequest.setAttribute(CommerceUtils.class.getName(), _commerceUtils);
 		_jspRenderer.renderJSP(
 			_servletContext, httpServletRequest, httpServletResponse,
-			"/product_publisher/render/list/entry/dsd-view.jsp");
+			"/product_publisher/render/list/entry/dsd-checkout-view.jsp");
 	}
 
 	@Reference

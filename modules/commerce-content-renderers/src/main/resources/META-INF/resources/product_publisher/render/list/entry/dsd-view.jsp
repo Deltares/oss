@@ -58,8 +58,8 @@
 				<%= deltaresProduct.getTimeString(deltaresProduct.getEndTime()) %>
 				( <%= deltaresProduct.getTimeZone().getID() %> )
             </span>|
-			<% if (deltaresProduct.getPrice() > 0) {%>
-				<%=deltaresProduct.getCurrency()%> <%= deltaresProduct.getPrice() %>
+			<% if (deltaresProduct.getUnitPrice() > 0) {%>
+				<%=deltaresProduct.getCurrency()%> <%= deltaresProduct.getUnitPrice() %>
 			<% } else { %>
 				<liferay-ui:message key="dsd.theme.session.free"/>
 			<%}%>

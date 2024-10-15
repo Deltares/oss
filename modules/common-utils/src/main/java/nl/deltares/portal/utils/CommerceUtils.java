@@ -2,6 +2,7 @@ package nl.deltares.portal.utils;
 
 import com.liferay.account.model.AccountEntry;
 import com.liferay.commerce.context.CommerceContext;
+import com.liferay.commerce.model.CommerceOrderItem;
 import com.liferay.commerce.product.catalog.CPCatalogEntry;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Address;
@@ -16,9 +17,15 @@ public interface CommerceUtils {
 
     List<AccountEntry> getAccountsByDomain(String domain, long companyId);
 
-    List<DeltaresProduct> toDeltaresProducts(List<CPCatalogEntry> cpCatalogEntries, CommerceContext context, Locale locale);
+    List<DeltaresProduct> commerceOrderItemsToDeltaresProducts(List<CommerceOrderItem> commerceOrderItems, CommerceContext context, Locale locale) throws PortalException;
+
+    List<DeltaresProduct> cpCategoryEntriesToDeltaresProducts(List<CPCatalogEntry> cpCatalogEntries, CommerceContext context, Locale locale) throws PortalException;
 
     DeltaresProduct toDeltaresProduct(CPCatalogEntry entry, CommerceContext context, Locale locale) throws PortalException;
+
+    List<DeltaresProduct> getRelatedChildren(DeltaresProduct deltaresProduct, CommerceContext context, Locale locale) throws PortalException;
+
+    List<DeltaresProduct> getRelatedParents(DeltaresProduct deltaresProduct, CommerceContext context, Locale locale) throws PortalException;
 
     List<DeltaresProduct> sortProductsByStartTime(List<DeltaresProduct> products);
 

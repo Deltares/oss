@@ -1,17 +1,23 @@
 package nl.deltares.portal.model;
 
-import com.liferay.commerce.frontend.model.PriceModel;
+import com.liferay.commerce.model.CommerceOrderItem;
 import com.liferay.commerce.product.catalog.CPCatalogEntry;
-import com.liferay.commerce.product.model.*;
+import com.liferay.commerce.product.model.CPDefinition;
+import com.liferay.commerce.product.model.CPDefinitionSpecificationOptionValue;
+import com.liferay.commerce.product.model.CPOptionCategory;
+import com.liferay.commerce.product.model.CProduct;
 import com.liferay.commerce.product.service.*;
-import nl.deltares.portal.constants.DeltaresProductKeys;
+import com.liferay.portal.kernel.exception.PortalException;
+import nl.deltares.portal.constants.DeltaresCommerceConstants;
 import nl.deltares.portal.utils.Period;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class DeltaresProduct {
+
     private final CProduct product;
 
     private final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -20,33 +26,39 @@ public class DeltaresProduct {
 
     private final CPCatalogEntry cpCatalogEntry;
     private final List<Period> periods = new ArrayList<>();
-    private String commerceCurrencyCode;
-    private float price;
-
     private TimeZone timeZone;
+    private boolean isCourse;
+    private final List<DeltaresProduct> relatedChildren = new ArrayList<>();
+    private boolean selected;
 
+    private CommerceOrderItem orderItem;
+    private float unitPrice;
 
-    public DeltaresProduct(CPCatalogEntry entry) throws Exception {
+    private String commerceCurrencyCode;
+
+    public DeltaresProduct(CPCatalogEntry entry) throws PortalException {
         this.cpCatalogEntry = entry;
         this.product = CProductLocalServiceUtil.getCProduct(entry.getCProductId());
         initPeriods();
+        initCustomFields();
+    }
+    public float getUnitPrice() {
+        return unitPrice;
     }
 
-    public float getPrice(){
-        return price;
-    }
-
-    public void setPrice(float price) {
-        this.price = price;
-    }
-
-    public void setCommerceCurrencyCode(String commerceCurrencyCode) {
-        this.commerceCurrencyCode = commerceCurrencyCode;
-    }
-
-    public String getCurrency(){
+    public String getCurrency() {
         return commerceCurrencyCode;
     }
+
+    public void setCommerceCurrencyCode(String currency) {
+        this.commerceCurrencyCode = currency;
+    }
+
+    public void setUnitPrice(float price) {
+        this.unitPrice = price;
+    }
+
+
     public CPCatalogEntry getCpCatalogEntry() {
         return cpCatalogEntry;
     }
@@ -77,9 +89,17 @@ public class DeltaresProduct {
         return periods.get(index);
     }
 
-    private void initPeriods() throws Exception {
+    private void initCustomFields() {
 
-        final CPOptionCategory dateCategory = CPOptionCategoryLocalServiceUtil.getCPOptionCategory(product.getCompanyId(), DeltaresProductKeys.CATEGORY_COURSE_DATES);
+        if (product.getExpandoBridge().hasAttribute(DeltaresCommerceConstants.CUSTOM_FIELD_PRODUCT_IS_COURSE)) {
+            final Serializable isCourse = product.getExpandoBridge().getAttribute(DeltaresCommerceConstants.CUSTOM_FIELD_PRODUCT_IS_COURSE, false);
+            this.isCourse = (boolean) isCourse;
+        }
+    }
+
+    private void initPeriods() throws PortalException {
+
+        final CPOptionCategory dateCategory = CPOptionCategoryLocalServiceUtil.getCPOptionCategory(product.getCompanyId(), DeltaresCommerceConstants.CATEGORY_COURSE_DATES);
         final List<CPDefinitionSpecificationOptionValue> dateValues = CPDefinitionSpecificationOptionValueLocalServiceUtil
                 .getCPDefinitionSpecificationOptionValues(product.getPublishedCPDefinitionId(), dateCategory.getCPOptionCategoryId());
 
@@ -89,13 +109,13 @@ public class DeltaresProduct {
         String timeZoneString = "GMT";
         for (CPDefinitionSpecificationOptionValue dateValue : dateValues) {
             switch (dateValue.getCPSpecificationOption().getKey()) {
-                case DeltaresProductKeys.START_TIME:
+                case DeltaresCommerceConstants.START_TIME:
                     startTimeStrings.add(dateValue.getValueCurrentValue());
                     break;
-                case DeltaresProductKeys.END_TIME:
+                case DeltaresCommerceConstants.END_TIME:
                     endTimeStrings.add(dateValue.getValueCurrentValue());
                     break;
-                case DeltaresProductKeys.TIMEZONE:
+                case DeltaresCommerceConstants.TIMEZONE:
                     timeZoneString = dateValue.getValueCurrentValue();
             }
         }
@@ -162,4 +182,75 @@ public class DeltaresProduct {
         return dateTimeFormat.parse(stringTime).getTime();
     }
 
+    public boolean isCourse() {
+        return isCourse;
+    }
+
+    public long getCProductId() {
+        return product.getCProductId();
+    }
+
+    public void setOrderItem(CommerceOrderItem orderItem) {
+        this.orderItem = orderItem;
+        this.unitPrice = orderItem.getUnitPrice().floatValue();
+        final String priceString;
+        try {
+            priceString = orderItem.getUnitPriceMoney().format(Locale.getDefault());
+        } catch (PortalException e) {
+            return;
+        }
+        final String[] split = priceString.split(" ");
+        commerceCurrencyCode = split[0];
+    }
+
+   public float getDiscount(){
+        return orderItem == null ? 0 : orderItem.getDiscountAmount().floatValue();
+   }
+
+    public float getDiscountPercentage() {
+        return orderItem == null ? 0 : orderItem.getDiscountPercentageLevel1().floatValue();
+    }
+    public CommerceOrderItem getOrderItem(){
+        return orderItem;
+    }
+    public int getQuantity() {
+        return orderItem == null? 0 :orderItem.getQuantity().intValue();
+    }
+
+    public void addRelatedChildren(List<DeltaresProduct> relatedChildren) {
+        this.relatedChildren.addAll(relatedChildren);
+    }
+
+    public List<DeltaresProduct> getRelatedChildren() {
+        return relatedChildren;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public long getOrderItemId() {
+        return orderItem == null ? 0 : orderItem.getCommerceOrderItemId();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DeltaresProduct)) return false;
+        DeltaresProduct that = (DeltaresProduct) o;
+        return Objects.equals(product, that.product);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(product);
+    }
+
+    public long getCPDefinitionId() {
+        return cpCatalogEntry.getCPDefinitionId();
+    }
 }

@@ -172,8 +172,8 @@ DsdRegistrationFormsUtil = {
 
     //used in step2.jsp
     updateTable : function(namespace, element) {
-        let articleId = element.getAttribute('data-article-id');
-        let table = document.getElementById(namespace + 'users_table_' + articleId);
+        let orderItemId = element.getAttribute('data-article-id');
+        let table = document.getElementById(namespace + 'users_table_' + orderItemId);
 
         let userCount = parseInt(element.value);
 
@@ -181,13 +181,23 @@ DsdRegistrationFormsUtil = {
         if (userCount < rows){
             table.deleteRow(table.rows.length - 1);
         } else if (userCount > rows){
-            let newRow = table.insertRow(table.rows.length);
-            this.copyTableRow(table.rows[1], newRow, rows)
-            this.updateValidator(namespace, rows)
+            let newRowsCount = userCount - rows;
+            for (let i = 0; i < newRowsCount; i++) {
+                let newRow = table.insertRow(table.rows.length);
+                this.copyTableRow(table.rows[1], newRow, rows)
+                this.updateValidator(namespace, rows)
+            }
+
         }
 
-        DsdRegistrationFormsUtil.updateRowPrice(namespace, element);
-        DsdRegistrationFormsUtil.updateTotalPrice(namespace);
+        let order = Liferay.CommerceContext.order;
+        if (order){
+            CommerceUtils.callUpdateCartItem(orderItemId, userCount, function (newOrder){});
+            CommerceUtils.callGetCartItems(order.orderId, function (completeOrder) {
+                DsdRegistrationFormsUtil.updateTotalPrice(namespace, completeOrder);
+            })
+        }
+
     },
 
     copyTableRow: function (oldRow, newRow, rows){
@@ -207,48 +217,53 @@ DsdRegistrationFormsUtil = {
         }
     },
 
-    updateRowPrice: function(namespace, element) {
-        let articleId = element.getAttribute('data-article-id');
-        let totalEl = document.getElementById(namespace + 'price_parent_registration_' + articleId);
+    updateTotalPrice : function(namespace, order) {
 
-        let basePrice = parseFloat(totalEl.getAttribute('data-price'));
-        if (basePrice === 0) return;
-        let currency = totalEl.getAttribute('data-currency');
-        let userCount = parseInt(element.value);
-        totalEl.value = currency + ' ' + (basePrice * userCount).toFixed(2);
+        for (const cartItem of order.cartItems) {
+            let priceElem = document.getElementById("parent_registration_price_" + cartItem.id);
+            priceElem.innerHTML = '';
 
-    },
+            let price = cartItem.price;
 
-    updateTotalPrice : function(namespace) {
-        let totolPriceEl = document.getElementsByClassName('parent-registration-price');
+            let priceSpan = document.createElement('span');
+            priceSpan.textContent = price.priceFormatted;
+            priceSpan.classList.add('price-value');
+
+            priceElem.appendChild(priceSpan);
+
+            if (price.discount > 0){
+                priceSpan.classList.add('price-value-inactive');
+
+                let percentSpan = document.createElement('span');
+                percentSpan.textContent = '- ' + price.discountPercentage + '%';
+                percentSpan.classList.add('price-value', 'price-value-discount');
+                priceElem.appendChild(percentSpan);
+
+                let finalPriceSpan = document.createElement('span');
+                finalPriceSpan.textContent = price.finalPriceFormatted;
+                finalPriceSpan.classList.add('price-value', 'price-value-final');
+                priceElem.appendChild(finalPriceSpan);
+            }
+        }
+
         let table = document.getElementById(namespace + 'total_price_table');
-        let subTotal = 0;
-        let taxTotal = 0;
-        let currency = "€";
-        [...totolPriceEl].forEach( function(parent) {
-            let valueTxt = parent.value;
-            let taxPer = parseFloat(parent.attributes['data-tax'].value);
-            currency = parent.attributes['data-currency'].value;
-            let price =  Number(valueTxt.replace(/[^0-9.-]+/g,""));
-            subTotal += price;
-            taxTotal+= price * taxPer/100;
-        });
-        let total = subTotal + taxTotal;
-
         //subtotal
-        table.rows[0].cells[1].innerHTML = currency + ' ' + subTotal.toFixed(2);
+        table.rows[0].cells[1].innerHTML = order.summary.subtotalFormatted;
         //discount
-        table.rows[1].cells[1].innerHTML = currency + ' ' + taxTotal.toFixed(2);
-        //total
-        table.rows[2].cells[1].innerHTML =  currency + ' ' + total.toFixed(2);
+        table.rows[1].cells[1].innerHTML = order.summary.totalDiscountValueFormatted;
+        //tax
+        table.rows[2].cells[1].innerHTML = order.summary.taxValueFormatted;
 
-        this.setActiveStateStep3(namespace, subTotal);
+        //total
+        table.rows[3].cells[1].innerHTML =  order.summary.totalFormatted;
+
+        this.setActiveStateStep3(namespace, order.summary.subtotal > 0);
     },
 
-    setActiveStateStep3: function (namespace, price){
+    setActiveStateStep3: function (namespace, priceEnabled){
 
         let step3 = document.getElementById(namespace + 'nav-stepper-step-3');
-        if (price > 0){
+        if (priceEnabled){
             step3.classList.remove('disabled')
         } else {
             step3.classList.add('disabled')
@@ -258,8 +273,15 @@ DsdRegistrationFormsUtil = {
     },
 
     activateStep2: function (namespace){
+
         DsdRegistrationFormsUtil.checkSelection(namespace)
-        DsdRegistrationFormsUtil.updateTotalPrice(namespace);
+        let order = Liferay.CommerceContext.order;
+        if (order) {
+            CommerceUtils.callGetCartItems(order.orderId, function (newOrder){
+                DsdRegistrationFormsUtil.updateTotalPrice(namespace, newOrder)
+            });
+        }
+
     },
 
     activateStep3: function (namespace){
@@ -335,12 +357,7 @@ DsdRegistrationFormsUtil = {
             }
         });
 
-        let step3 = $(document.getElementById(namespace + 'nav-stepper-step-3'));
-        if (priceEnabled){
-            step3.removeClass('disabled'); //remove
-        } else {
-            step3.addClass('disabled'); //add;
-        }
+        this.setActiveStateStep3(namespace, priceEnabled);
 
         let courseCond = $(document.getElementById(namespace + 'course-conditions-div'));
         if (courseTermsEnabled){

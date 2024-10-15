@@ -18,7 +18,7 @@
 
 	long lastDate = 0;
 
-	final List<DeltaresProduct> deltaresProducts = commerceUtils.toDeltaresProducts(cpCatalogEntries, commerceContext, themeDisplay.getLocale());
+	final List<DeltaresProduct> deltaresProducts = commerceUtils.cpCategoryEntriesToDeltaresProducts(cpCatalogEntries, commerceContext, themeDisplay.getLocale());
 	for (DeltaresProduct deltaresProduct : deltaresProducts) {
 
 		liferayPortletRequest.setAttribute("DeltaresProduct", deltaresProduct);

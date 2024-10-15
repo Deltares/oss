@@ -5,17 +5,20 @@
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <%@ taglib uri="http://liferay.com/tld/journal" prefix="liferay-journal" %>
+<%@ taglib prefix="liferay-commerce-product" uri="http://liferay.com/tld/commerce-product"%>
+<%@ taglib prefix="clay" uri="http://liferay.com/tld/clay" %>
+<%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
+<%@ page import="java.text.DecimalFormat" %>
 
-<%@ page import="nl.deltares.forms.internal.RegistrationFormDisplayContext" %>
+<%--<%@ page import="nl.deltares.forms.internal.RegistrationFormDisplayContext" %>--%>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionMessages" %>
 <%@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
-<%@ page import="nl.deltares.portal.model.impl.Event" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="nl.deltares.portal.model.subscriptions.SubscriptionSelection" %>
-<%@ page import="com.liferay.portal.kernel.exception.PortalException" %>
 <%@ page import="nl.deltares.portal.utils.*" %>
+<%@ page import="nl.deltares.portal.model.DeltaresProduct" %>
 
 <liferay-theme:defineObjects/>
 
@@ -29,21 +32,9 @@
     String privacyURL = (String) renderRequest.getAttribute("privacyURL");
     String contactURL = (String) renderRequest.getAttribute("contactURL");
     String action = ParamUtil.getString(renderRequest, "action");
-    DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
     final List<SubscriptionSelection>  subscriptionSelections = (List) request.getAttribute("subscriptionSelection");
-    Event event = null;
-    try {
-        event = dsdParserUtils.getEvent(themeDisplay.getScopeGroupId(), String.valueOf(request.getAttribute("eventId")), themeDisplay.getLocale());
-    } catch (PortalException e) {
-        SessionErrors.add(liferayPortletRequest, "registration-failed", e.getMessage());
-    }
-    String ddmTemplateKey = (String) request.getAttribute("ddmTemplateKey");
-    DsdSessionUtils dsdSessionUtils = (DsdSessionUtils) request.getAttribute("dsdSessionUtils");
-    RegistrationFormDisplayContext registrationFormDisplayContext =
-            new RegistrationFormDisplayContext(liferayPortletRequest, liferayPortletResponse,
-                    dsdParserUtils, dsdSessionUtils);
 
-    List<String> registrationList = (List<String>) request.getAttribute("registrationList");
+    List<DeltaresProduct> registrationList = (List<DeltaresProduct>) request.getAttribute("deltaresProducts");
     String childHeaderText = (String) request.getAttribute("childHeaderText");
 
 %>
@@ -196,7 +187,16 @@
         form.preSubmitAction = function (){};
         $('.bs-stepper').formStepper(form);
 
-        activateStep(-1, 0);
+        let quantityButtons = $(document.getElementsByClassName("parent-registration-quantity"));
+        [...quantityButtons].forEach(function (button) {
+            if (button.value > 1){
+                DsdRegistrationFormsUtil.updateTable("<portlet:namespace/>", button)
+            }
+        });
+
+    activateStep(-1, 0);
+
+
     });
 
 </aui:script>

@@ -7,8 +7,12 @@ import com.liferay.account.service.AccountEntryUserRelLocalServiceUtil;
 import com.liferay.commerce.context.CommerceContext;
 import com.liferay.commerce.frontend.model.PriceModel;
 import com.liferay.commerce.frontend.util.ProductHelper;
+import com.liferay.commerce.model.CommerceOrderItem;
 import com.liferay.commerce.product.catalog.CPCatalogEntry;
+import com.liferay.commerce.product.model.CPDefinitionLink;
 import com.liferay.commerce.product.model.CPInstance;
+import com.liferay.commerce.product.service.CPDefinitionLinkLocalServiceUtil;
+import com.liferay.commerce.product.util.CPDefinitionHelper;
 import com.liferay.commerce.product.util.CPInstanceHelper;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
@@ -17,6 +21,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.*;
 import com.liferay.portal.kernel.service.*;
 import nl.deltares.portal.constants.BillingConstants;
+import nl.deltares.portal.constants.DeltaresCommerceConstants;
 import nl.deltares.portal.constants.OrganizationConstants;
 import nl.deltares.portal.model.DeltaresProduct;
 import nl.deltares.portal.utils.CommerceUtils;
@@ -39,20 +44,59 @@ public class CommerceUtilsImpl implements CommerceUtils {
     private CPInstanceHelper _cpInstanceHelper;
 
     @Reference
+    private CPDefinitionHelper _cCpDefinitionHelper;
+
+    @Reference
     private ProductHelper _productHelper;
 
     @Override
-    public List<DeltaresProduct> toDeltaresProducts(List<CPCatalogEntry> cpCatalogEntries, CommerceContext context, Locale locale) {
-        final ArrayList<DeltaresProduct> deltaresProducts = new ArrayList<>(cpCatalogEntries.size());
+    public List<DeltaresProduct> commerceOrderItemsToDeltaresProducts(List<CommerceOrderItem> commerceOrderItems, CommerceContext context, Locale locale) throws PortalException {
+        final ArrayList<DeltaresProduct> deltaresProducts = new ArrayList<>(commerceOrderItems.size());
+        for (CommerceOrderItem orderItem : commerceOrderItems) {
 
-        for (CPCatalogEntry entry : cpCatalogEntries) {
             try {
-                deltaresProducts.add(toDeltaresProduct(entry, context, locale));
+                final CPCatalogEntry cpCatalogEntry = _cCpDefinitionHelper.getCPCatalogEntry(orderItem.getCommerceOrder().getCommerceAccountId(),
+                        orderItem.getGroupId(), orderItem.getCPDefinitionId(), locale);
+                final DeltaresProduct deltaresProduct = toDeltaresProduct(cpCatalogEntry, context, locale);
+                deltaresProduct.setOrderItem(orderItem);
+                deltaresProducts.add(deltaresProduct);
+
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
-        return sortProductsByStartTime(deltaresProducts);
+        return sortProductsByStartTime(extractChildRelations(deltaresProducts, context, locale));
+    }
+
+    private List<DeltaresProduct> extractChildRelations(ArrayList<DeltaresProduct> deltaresProducts, CommerceContext context, Locale locale) throws PortalException {
+
+        final DeltaresProduct[] productsArray = deltaresProducts.toArray(new DeltaresProduct[0]);
+        for (DeltaresProduct deltaresProduct : productsArray) {
+            final List<DeltaresProduct> children = getRelatedChildren(deltaresProduct, context, locale);
+            if (!children.isEmpty()) {
+                deltaresProduct.addRelatedChildren(children);
+                for (DeltaresProduct child : children) {
+                    child.setSelected(deltaresProducts.remove(child));
+                }
+            }
+        }
+        return deltaresProducts;
+    }
+
+    @Override
+    public List<DeltaresProduct> cpCategoryEntriesToDeltaresProducts(List<CPCatalogEntry> cpCatalogEntries, CommerceContext context, Locale locale) throws PortalException {
+        final ArrayList<DeltaresProduct> deltaresProducts = new ArrayList<>(cpCatalogEntries.size());
+
+        for (CPCatalogEntry entry : cpCatalogEntries) {
+            try {
+                final DeltaresProduct deltaresProduct = toDeltaresProduct(entry, context, locale);
+                setPrice(deltaresProduct, context, locale);
+                deltaresProducts.add(deltaresProduct);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return sortProductsByStartTime(extractChildRelations(deltaresProducts, context, locale));
     }
 
     @Override
@@ -68,9 +112,32 @@ public class CommerceUtilsImpl implements CommerceUtils {
         }
     }
 
-    private void setPrice(DeltaresProduct deltaresProduct, CommerceContext context, Locale locale) throws PortalException, ParseException {
+    private List<DeltaresProduct> getRelatedProducts(DeltaresProduct deltaresProduct, CommerceContext context, Locale locale, String relationId) throws PortalException {
 
-        final CPInstance defaultCPInstance = _cpInstanceHelper.getDefaultCPInstance(deltaresProduct.getCpCatalogEntry().getCPDefinitionId());
+        final List<DeltaresProduct> relatedProducts = new ArrayList<>();
+        final List<CPDefinitionLink> relationLinks = CPDefinitionLinkLocalServiceUtil.getReverseCPDefinitionLinks(deltaresProduct.getCProductId(), relationId);
+        for (CPDefinitionLink relationLink : relationLinks) {
+            final CPCatalogEntry cpCatalogEntry = _cCpDefinitionHelper.getCPCatalogEntry(
+                    context.getCommerceOrder().getCommerceAccountId(), relationLink.getGroupId(),
+                    relationLink.getCPDefinitionId(), locale);
+            relatedProducts.add(new DeltaresProduct(cpCatalogEntry));
+        }
+        return relatedProducts;
+    }
+
+    @Override
+    public List<DeltaresProduct> getRelatedChildren(DeltaresProduct deltaresProduct, CommerceContext context, Locale locale) throws PortalException {
+        //Lookup relations that have this deltaresProduct as their Parent relation
+        return getRelatedProducts(deltaresProduct, context, locale, DeltaresCommerceConstants.RELATION_TYPE_PARENT);
+    }
+
+    @Override
+    public List<DeltaresProduct> getRelatedParents(DeltaresProduct deltaresProduct, CommerceContext context, Locale locale) throws PortalException {
+        //Lookup relations that have this deltaresProduct as their Child relation
+        return getRelatedProducts(deltaresProduct, context, locale, DeltaresCommerceConstants.RELATION_TYPE_CHILD);
+    }
+    private void setPrice(DeltaresProduct deltaresProduct, CommerceContext context, Locale locale) throws PortalException, ParseException {
+        final CPInstance defaultCPInstance = _cpInstanceHelper.getDefaultCPInstance(deltaresProduct.getCPDefinitionId());
         final PriceModel priceModel = _productHelper.getPriceModel(
                 defaultCPInstance.getCPInstanceId(), "[]", BigDecimal.ZERO,
                 StringPool.BLANK, context, locale);
@@ -84,7 +151,7 @@ public class CommerceUtilsImpl implements CommerceUtils {
             ((DecimalFormat)numberFormat).setParseBigDecimal(true);
         }
         final Number parse = numberFormat.parse(priceString.replaceAll("[^\\d.,]", ""));
-        deltaresProduct.setPrice(parse.floatValue());
+        deltaresProduct.setUnitPrice(parse.floatValue());
 
     }
 
@@ -118,10 +185,10 @@ public class CommerceUtilsImpl implements CommerceUtils {
         final String externalReference = requestParameters.getOrDefault(BillingConstants.ORG_EXTERNAL_REFERENCE_CODE, null);
         if (externalReference != null) accountEntry.setExternalReferenceCode(externalReference);
         accountEntry.setTaxIdNumber(requestParameters.getOrDefault(BillingConstants.ORG_VAT, null));
-        if (!accountEntry.getExpandoBridge().hasAttribute("website")) {
-            accountEntry.getExpandoBridge().addAttribute("website", false);
+        if (!accountEntry.getExpandoBridge().hasAttribute(DeltaresCommerceConstants.CUSTOM_FIELD_ACCOUNT_ENTRY_WEBSITE)) {
+            accountEntry.getExpandoBridge().addAttribute(DeltaresCommerceConstants.CUSTOM_FIELD_ACCOUNT_ENTRY_WEBSITE, false);
         }
-        accountEntry.getExpandoBridge().setAttribute("website", requestParameters.getOrDefault(OrganizationConstants.ORG_WEBSITE, null));
+        accountEntry.getExpandoBridge().setAttribute(DeltaresCommerceConstants.CUSTOM_FIELD_ACCOUNT_ENTRY_WEBSITE, requestParameters.getOrDefault(OrganizationConstants.ORG_WEBSITE, null));
 
         Address address = AddressLocalServiceUtil.fetchAddress(accountEntry.getDefaultBillingAddressId());
         if (address == null) {

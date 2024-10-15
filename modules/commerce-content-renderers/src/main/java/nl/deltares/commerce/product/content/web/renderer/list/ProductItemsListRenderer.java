@@ -9,7 +9,9 @@ import com.liferay.commerce.product.content.helper.CPContentHelper;
 import com.liferay.commerce.product.content.render.list.CPContentListRenderer;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.CommerceUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -56,7 +58,8 @@ public class ProductItemsListRenderer implements CPContentListRenderer {
                 CPContentWebKeys.CP_CONTENT_HELPER, _cpContentHelper);
 
         CommerceOrder commerceOrder = _commerceOrderHttpHelper.getCurrentCommerceOrder(httpServletRequest);
-        if (commerceOrder == null) {
+        ThemeDisplay themeDisplay = (ThemeDisplay) httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY);
+        if (commerceOrder == null && themeDisplay.isSignedIn()) {
             commerceOrder = _commerceOrderHttpHelper.addCommerceOrder(
                     httpServletRequest);
         }
