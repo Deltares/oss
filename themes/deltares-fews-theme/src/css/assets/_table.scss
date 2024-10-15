@@ -61,8 +61,11 @@ table {
 }
 
 @media screen and (max-width: 1024px) {
+  // Table styles adjusted from Deltares web site
   table {
     border: 0;
+    table-layout: auto !important; // Override for inline table style
+    width: 100% !important; // Override for inline table style
 
     thead {
       border: none;
@@ -79,8 +82,6 @@ table {
       border-bottom-width: 2px;
       --tw-border-opacity: 1;
       border-bottom-color: #e4e4e7;
-      clear: both;
-      display: block;
       margin-bottom: 16px;
     }
 
@@ -88,8 +89,6 @@ table {
       border-bottom-width: 1px;
       --tw-border-opacity: 1;
       border-bottom-color: #e4e4e7;
-      display: flex;
-      flex-direction: row;
       font-size: 14px;
     }
 
@@ -101,17 +100,13 @@ table {
 
     tbody td:before {
       content: attr(data-label);
-      display: block;
+      display: none;
       font-family: Franca, Helvetica, Arial, sans-serif;
       margin-right: 8px;
       --tw-text-opacity: 1;
       color: #141e95;
       font-weight: 700;
       min-width: 25%;
-    }
-
-    tbody td:last-child {
-      border-bottom: 0;
     }
   }
 

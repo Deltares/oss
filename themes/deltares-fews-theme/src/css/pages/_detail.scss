@@ -713,6 +713,10 @@
     content: counter(listStyle, lower-alpha) ". ";
   }
 
+  table {
+    font-size: 14px;
+  }
+
   blockquote {
     border-color: var(--border-secondary);
     border-left-width: 4px;
@@ -964,6 +968,10 @@
       line-height: 25px;
     }
 
+    table {
+      font-size: 16px;
+    }
+
     blockquote {
       font-size: 24px;
       line-height: 36px;
@@ -1083,6 +1091,10 @@
 
     ul li {
       padding-left: 1.25rem;
+    }
+
+    table {
+      font-size: 18px;
     }
 
     figure.image-left,
