@@ -253,7 +253,7 @@
                     CommerceUtils.removeFromCart(checkBox.dataset.childorderid);
                 }
             })
-            CommerceUtils.removeFromCart(orderItem, function (success){
+            CommerceUtils.callDeleteCartItem(orderItem, function (success){
                 CommerceUtils.callGetCartItems(Liferay.CommerceContext.order.orderId, function (newOrder){
                     DsdRegistrationFormsUtil.updateTotalPrice('<portlet:namespace/>', newOrder);
                 });
