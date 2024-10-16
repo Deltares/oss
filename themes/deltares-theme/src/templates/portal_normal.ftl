@@ -22,10 +22,8 @@
         </script>
         <!-- End Google Tag Manager -->
     </#if>
-	<link rel="stylesheet" type="text/css" href="${css_folder}/lib/cookies/cookieconsent.min.css" />
 </head>
 
-<script src="${javascript_folder}/cookies/cookieconsent.min.js" data-cfasync="false"></script>
 <script src="${javascript_folder}/calendar/calendar.js" ></script>
 <body class="${css_class}">
 
@@ -73,28 +71,5 @@
 <!-- endinject -->
 
 </body>
-<script>
-	<#if is_show_cookies?? && is_show_cookies >
-	window.cookieconsent.initialise({
-		palette: {
-			popup: {
-				background: "#252e39"
-			},
-			button: {
-				background: "#0d38e0"
-			}
-		},
-		content : {
-			message: "${languageUtil.get(locale, "oss.cookies.message")}",
-			dismiss: "${languageUtil.get(locale, "oss.cookies.accept")}",
-			link: "${languageUtil.get(locale, "oss.cookies.moreinfo")}",
-			href: "${siteUrl}/cookie-policy"
-		},
-		cookie : {
-			secure : true
-		}
-	});
-	</#if>
-</script>
 
 </html>

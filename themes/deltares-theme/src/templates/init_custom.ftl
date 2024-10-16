@@ -42,4 +42,3 @@ journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroup().getParentGr
     mini_cart_display_total_items_count = true
     mini_cart_keep_open = false
 />
-<#assign is_show_cookies = getterUtil.getBoolean(theme_settings["show-cookies"]) />
