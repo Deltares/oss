@@ -2,7 +2,7 @@ DsdRegistrationFormsUtil = {
 
     attributes: {},
     accounts: [],
-    selectedEntryId: -1,
+    selectedEntryId: 0,
 
     addressSelectionChanged: function (namespace, addressSelection){
         let street;
@@ -10,10 +10,9 @@ DsdRegistrationFormsUtil = {
         let city;
         let country;
         let phone;
-        let addressId = addressSelection.value;
+        let addressId = addressSelection ? addressSelection.value : "0";
 
-        let accountSelected = addressId !== "0" && this.selectedEntryId !== "0";
-        if (accountSelected){
+        if (addressId !== "0" && this.selectedEntryId !== "0"){
             let account = this.accounts.find(acc => acc['accountEntryId'] === this.selectedEntryId);
             let address = account["addresses"].find(addr => addr['addressId'] === addressId);
             street = address["org_address"];
@@ -27,7 +26,6 @@ DsdRegistrationFormsUtil = {
             city = document.getElementById(namespace + "org_city").value;
             country = document.getElementById(namespace + "org_country").value;
             phone = document.getElementById(namespace + "org_phone").value;
-            document.getElementById(namespace  + "org_vat").value = "";
         }
 
         document.getElementById(namespace + "billing_org_address").value = street;
@@ -37,16 +35,14 @@ DsdRegistrationFormsUtil = {
         document.getElementById(namespace + "billing_org_phone").value = phone;
 
         //not allowed to update existing add
-        document.getElementById(namespace + "billing_org_address").disabled = addressSelection.selectedIndex > 0;
-        document.getElementById(namespace + "billing_org_postal").disabled = addressSelection.selectedIndex > 0;
-        document.getElementById(namespace + "billing_org_city").disabled = addressSelection.selectedIndex > 0;
-        document.getElementById(namespace + "billing_org_country").disabled = addressSelection.selectedIndex > 0;
-        document.getElementById(namespace + "billing_org_phone").disabled = addressSelection.selectedIndex > 0;
+        document.getElementById(namespace + "billing_org_address").disabled = addressId !== "0";
+        document.getElementById(namespace + "billing_org_postal").disabled = addressId !== "0";
+        document.getElementById(namespace + "billing_org_city").disabled = addressId !== "0";
+        document.getElementById(namespace + "billing_org_country").disabled = addressId !== "0";
+        document.getElementById(namespace + "billing_org_phone").disabled = addressId !== "0";
         //additional: only allow editing of writing own addressIndex
-        document.getElementById(namespace + "billing_org_name").disabled = addressSelection.selectedIndex > 0;
+        document.getElementById(namespace + "billing_org_name").disabled = addressId !== "0";
 
-        document.getElementById(namespace + "billing_org_vat").disabled = !accountSelected;
-        document.getElementById(namespace + "billing_org_external_reference_code").disabled = !accountSelected;
     },
 
     accountSelectionChanged: function (namespace, orgSelection){
@@ -286,6 +282,7 @@ DsdRegistrationFormsUtil = {
 
     activateStep3: function (namespace){
 
+        let addressSelection = undefined;
         if (this.selectedEntryId !== "0") {
             let account = this.accounts.find(acc => acc['accountEntryId'] === this.selectedEntryId);
             //update addresses in step 3
@@ -293,25 +290,17 @@ DsdRegistrationFormsUtil = {
                 DsdRegistrationFormsUtil.loadAddressList(namespace, account["addresses"]);
             }
 
-            if (account["type"] === 'person') {
-                //Only personal accounts may update their content
-                this.copyAddressStep1ToStep3(namespace)
+            if (account["type"] === 'business') {
+                let addressDropDown = document.getElementById(namespace + "select_address");
+                let selectionList = addressDropDown.selectedOptions;
+                addressSelection = selectionList.length > 0 ? selectionList[0] : undefined;
             }
-        } else {
-            this.copyAddressStep1ToStep3(namespace)
         }
-
-    },
-
-    copyAddressStep1ToStep3: function (namespace){
         document.getElementById(namespace + "billing_org_name").value = document.getElementById(namespace + "org_name").value
-        document.getElementById(namespace + "billing_org_address").value = document.getElementById(namespace + "org_address").value
-        document.getElementById(namespace + "billing_org_postal").value = document.getElementById(namespace + "org_postal").value
-        document.getElementById(namespace + "billing_org_city").value = document.getElementById(namespace + "org_city").value
-        document.getElementById(namespace + "billing_org_country").value = document.getElementById(namespace + "org_country").value
-        document.getElementById(namespace + "billing_org_phone").value = document.getElementById(namespace + "org_phone").value
+        this.addressSelectionChanged(namespace, addressSelection)
 
     },
+
     activateNextTab : function (namespace, tabIndex){
 
         switch (tabIndex){
