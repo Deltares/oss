@@ -114,6 +114,7 @@ public class CommerceUtilsImpl implements CommerceUtils {
 
     private List<DeltaresProduct> getRelatedProducts(DeltaresProduct deltaresProduct, CommerceContext context, Locale locale, String relationId) throws PortalException {
 
+        if (context.getCommerceOrder() == null) return Collections.emptyList();
         final List<DeltaresProduct> relatedProducts = new ArrayList<>();
         final List<CPDefinitionLink> relationLinks = CPDefinitionLinkLocalServiceUtil.getReverseCPDefinitionLinks(deltaresProduct.getCProductId(), relationId);
         for (CPDefinitionLink relationLink : relationLinks) {
