@@ -123,7 +123,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "deltares-fews-theme",
-    "version" : "1.0.9",
+    "version" : "1.0.10",
     "extension" : "war"
   },
   {
