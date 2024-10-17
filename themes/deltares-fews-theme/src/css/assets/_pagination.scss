@@ -47,11 +47,24 @@
     }
 
     &.disabled {
+      background-color: transparent;
+
+      a,
       .page-link {
         background-color: transparent;
         border: 0;
         color: $black;
+        cursor: not-allowed;
         opacity: 0.3;
+
+        &:hover {
+          background-color: transparent;
+          color: $black;
+        }
+      }
+
+      a {
+        pointer-events: auto;
       }
     }
 

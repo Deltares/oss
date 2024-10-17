@@ -653,6 +653,7 @@
 
   ol,
   ul {
+    counter-reset: ol-custom-counter;
     font-size: 14px;
     font-weight: 400;
     line-height: 20px;
@@ -660,6 +661,13 @@
     margin-bottom: 1.25rem;
     margin-top: 0;
     padding-left: 0;
+  }
+
+  ol ol,
+  ul ul,
+  ol ul,
+  ul ol {
+    margin-bottom: 0;
   }
 
   ul li {
@@ -670,20 +678,40 @@
     position: relative;
   }
 
-  ul li:before {
+  ul li ol li,
+  ol li ul li ol li {
+    &:before {
+      display: none;
+    }
+  }
+
+  ul li:before,
+  ol li ul li:before,
+  ul li ol li ul li:before {
     color: #00e399;
     content: "•";
+    display: block;
     left: 0;
     line-height: 1;
     position: absolute;
     top: .25rem;
   }
 
+  ol li ul li:after,
+  ul li ol li ul li:after,
+  ol li ol li ul li:after {
+    display: none;
+  }
+
   ol {
     counter-reset: ol-custom-counter 0;
   }
 
-  ol li {
+  ol li,
+  ol li ol li,
+  ul li ol li,
+  ul li ul li ol li,
+  ul li ol li ol li {
     clear: both;
     counter-increment: ol-custom-counter;
     margin-bottom: 0;
@@ -692,7 +720,11 @@
     position: relative;
   }
 
-  ol li:after {
+  ol li:after,
+  ol li ol li:after,
+  ul li ol li:after,
+  ul li ul li ol li:after,
+  ul li ol li ol li:after {
     content: counter(ol-custom-counter) ". ";
     display: block;
     left: 0;
@@ -701,7 +733,8 @@
     top: 0;
   }
 
-  ol li ol {
+  ol li ol,
+  ol li ol li ul {
     counter-reset: listStyle;
   }
 
@@ -709,8 +742,19 @@
     counter-increment: listStyle;
   }
 
-  ol li ol li:after {
+  ol li ol li:after,
+  ol li ul li ol li:after {
     content: counter(listStyle, lower-alpha) ". ";
+  }
+
+  ol ol,
+  ul li ol,
+  ul li ol li ol {
+    counter-reset: ol-custom-counter;
+  }
+
+  table {
+    font-size: 14px;
   }
 
   blockquote {
@@ -964,6 +1008,10 @@
       line-height: 25px;
     }
 
+    table {
+      font-size: 16px;
+    }
+
     blockquote {
       font-size: 24px;
       line-height: 36px;
@@ -1083,6 +1131,10 @@
 
     ul li {
       padding-left: 1.25rem;
+    }
+
+    table {
+      font-size: 18px;
     }
 
     figure.image-left,

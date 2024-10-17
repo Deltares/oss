@@ -13,6 +13,7 @@
             <#assign startDayString = "">
             <#assign startMonthString = "">
             <#assign startDateString = "">
+            <#assign startYearString = "">
             <#assign endDateString = "">
             <#assign timeString = "">
             <#assign isEventPast = "upcoming-event" />
@@ -26,6 +27,7 @@
                         <#assign startDateString=dateUtil.getDate(startDate_DateObj, "dd MMMM yyyy" , locale) />
                         <#assign startDayString=dateUtil.getDate(startDate_DateObj, "dd" , locale) />
                         <#assign startMonthString=dateUtil.getDate(startDate_DateObj, "MMM" , locale) />
+                        <#assign startYearString=dateUtil.getDate(startDate_DateObj, "yyyy" , locale) />
                         <#if .now?date &gt; startDate?date("yyyy-MM-dd")>
                             <#assign isEventPast = "past-event" />
                         </#if>
@@ -49,7 +51,8 @@
                 <div class="c-events__item flex flex-column w-full h-full ${isEventPast}">
                     <div class="c-events__item__date">
                         <span>${startDayString}&nbsp;</span>
-                        <span>${startMonthString}</span>
+                        <span>${startMonthString}&nbsp;</span>
+                        <span>${startYearString}</span>
                     </div>
                     <h4 class="c-events__item__title font-medium text-lg lg:text-xl text-theme-secondary mb-3 lg:mb-2">${entryTitle}</h4>
 
