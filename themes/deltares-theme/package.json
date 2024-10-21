@@ -39,6 +39,7 @@
 		"watch": "gulp watch"
 	},
 	"dependencies": {
-		"@liferay/bs3-bs4-compat": "*"
+		"@liferay/bs3-bs4-compat": "*",
+		"deltares-commerce-frontend-taglib": "*"
 	}
 }

@@ -39,6 +39,4 @@ journalArticleLocalService.fetchArticle(themeDisplay.getScopeGroup().getParentGr
 
 <#assign
     is_shopping_cart = getterUtil.getBoolean(theme_settings["shopping-cart"])
-    mini_cart_display_total_items_count = true
-    mini_cart_keep_open = false
 />
