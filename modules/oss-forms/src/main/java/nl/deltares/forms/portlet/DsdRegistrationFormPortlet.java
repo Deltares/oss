@@ -10,6 +10,7 @@ import com.liferay.commerce.product.content.constants.CPContentWebKeys;
 import com.liferay.commerce.product.content.helper.CPContentHelper;
 import com.liferay.commerce.tax.CommerceTaxCalculation;
 import com.liferay.commerce.tax.CommerceTaxValue;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -24,6 +25,7 @@ import com.liferay.portal.kernel.service.AddressLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
@@ -37,10 +39,7 @@ import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.Portlet;
-import javax.portlet.PortletException;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
+import javax.portlet.*;
 import java.io.IOException;
 import java.util.*;
 
@@ -67,7 +66,7 @@ import static nl.deltares.portal.utils.LocalizationUtils.getLocalizedValue;
                 "javax.portlet.name=" + OssConstants.DSD_REGISTRATIONFORM,
                 "javax.portlet.resource-bundle=content.Language",
                 "javax.portlet.supported-locale=en",
-                "javax.portlet.security-role-ref=power-user,user"
+                "javax.portlet.security-role-ref=power-user,user",
         },
         service = Portlet.class
 )
@@ -82,6 +81,8 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
     @Reference
     private CommerceOrderHttpHelper _commerceOrderHttpHelper;
 
+    @Reference
+    private Portal _portal;
     private ConfigurationProvider _configurationProvider;
 
     @Reference
@@ -241,6 +242,20 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
         } catch (Exception e) {
             return Collections.emptyList();
         }
+    }
+
+    private String _getCheckoutURL(PortletRequest portletRequest)
+            throws PortalException {
+
+        PortletURL portletURL =
+                _commerceOrderHttpHelper.getCommerceCheckoutPortletURL(
+                        _portal.getHttpServletRequest(portletRequest));
+
+        if (portletURL == null) {
+            return StringPool.BLANK;
+        }
+
+        return portletURL.toString();
     }
 
 }
