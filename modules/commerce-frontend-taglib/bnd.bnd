@@ -1,0 +1,10 @@
+Bundle-Name: Deltares Commerce Frontend Taglib
+Bundle-SymbolicName: nl.deltares.commerce.frontend.taglib
+Bundle-Version: 1.0.0
+Export-Package: nl.deltares.commerce.frontend.taglib
+Provide-Capability:\
+  osgi.extender;\
+    osgi.extender="jsp.taglib";\
+    uri="http://liferay.com/tld/deltares-commerce-ui";\
+    version:Version="${Bundle-Version}"
+Web-ContextPath: /deltares-commerce-frontend-taglib

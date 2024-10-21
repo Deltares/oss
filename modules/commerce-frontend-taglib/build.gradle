@@ -1,0 +1,6 @@
+dependencies {
+	compileOnly 'com.liferay.portal:release.dxp.api'
+	compileOnly group: "javax.servlet.jsp", name: "javax.servlet.jsp-api", version: "2.3.1"
+	compileOnly project(":modules:common-utils")
+
+}

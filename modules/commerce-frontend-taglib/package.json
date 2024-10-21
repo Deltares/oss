@@ -1,0 +1,18 @@
+{
+	"dependencies": {
+		"@clayui/icon": "^3.111.0"
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.7.5",
+		"@babel/core": "^7.7.5",
+		"@babel/preset-env": "^7.7.6",
+		"@babel/preset-react": "^7.7.4",
+		"liferay-npm-bundler": "2.30.0"
+	},
+	"main": "lib/index.js",
+	"name": "deltares-commerce-frontend-taglib",
+	"scripts": {
+		"build": "babel --source-maps -d build/resources/main/META-INF/resources src/main/resources/META-INF/resources && liferay-npm-bundler"
+	},
+	"version": "1.0.0"
+}
