@@ -1,45 +1,18 @@
 CommerceUtils = {
-    addToCart: function (actionUrl, skuId, callback) {
-        let order = Liferay.CommerceContext.order;
-        if (order) {
-            this.callAddCartItem(actionUrl, order.orderId, skuId, callback);
-        }
-    },
 
-    removeFromCart: function (cartItemId, callback) {
-        let order = Liferay.CommerceContext.order;
-        if (order) {
-            this.callDeleteCartItem(cartItemId, callback);
-        }
-    },
+    refreshShoppingCartIcon: function (itemsCount){
+        let miniCarts = document.getElementsByClassName("mini-cart");
+        [...miniCarts].forEach(function( miniCart ){
+            let badgeHolders = miniCart.querySelectorAll('.has-badge');
+            [...badgeHolders].forEach(function ( badgeHolder ){
 
-    getButtonByDataProductId: function (buttons, searchId) {
-        let foundButton;
-        [...buttons].forEach(function (button) {
-            let skuId = button.getAttribute('data-product-id')
-            if (Number(skuId) === searchId) {
-                foundButton = button;
-            }
-        });
-        return foundButton;
-    },
-
-    setButtonTexts: function (buttons, callback) {
-        let order = Liferay.CommerceContext.order;
-        if (order) {
-            var orderId = order.orderId;
-            this.callGetCartItems(orderId, function (json) {
-                let cartItems = json.cartItems;
-                if (cartItems) {
-                    for (const cartItem of cartItems) {
-                        var foundButton = CommerceUtils.getButtonByDataProductId(buttons, cartItem.skuId);
-                        if (foundButton) {
-                            callback(foundButton)
-                        }
-                    }
+                if (itemsCount === 0){
+                    badgeHolder.classList.remove('has-badge');
+                } else {
+                    badgeHolder.dataset.badgeCount = itemsCount;
                 }
-            });
-        }
+            })
+        });
     },
 
     callAddCartItem: function (actionUrl, orderId, skuId, callback) {
@@ -106,6 +79,5 @@ CommerceUtils = {
 
         }
         request.send();
-
     }
 }

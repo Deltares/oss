@@ -37,7 +37,6 @@
                         </div>
                     </div>
                 </li>
-
             </#if>
             <#if user_signout_url?? >
                 <li class="px-3 border-white border-left">

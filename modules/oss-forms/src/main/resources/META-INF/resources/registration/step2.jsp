@@ -250,12 +250,15 @@
             let childCheckBoxes = $(document.getElementsByClassName('child-registration'));
             [...childCheckBoxes].forEach(function (checkBox) {
                 if (checkBox.dataset.parentorderid === orderItem && checkBox.dataset.childorderid > 0){
-                    CommerceUtils.removeFromCart(checkBox.dataset.childorderid);
+                    CommerceUtils.callDeleteCartItem(orderItem, function (success){
+                        //don't refresh here.
+                    });
                 }
             })
             CommerceUtils.callDeleteCartItem(orderItem, function (success){
                 CommerceUtils.callGetCartItems(Liferay.CommerceContext.order.orderId, function (newOrder){
                     DsdRegistrationFormsUtil.updateTotalPrice('<portlet:namespace/>', newOrder);
+                    CommerceUtils.refreshShoppingCartIcon(newOrder.cartItems.length);
                 });
             });
 
