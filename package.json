@@ -5,6 +5,7 @@
     "private": true,
     "workspaces": {
         "packages": [
+            "modules\\commerce-frontend-taglib",
             "themes\\deltares-fews-theme",
             "themes\\deltares-theme"
         ]
