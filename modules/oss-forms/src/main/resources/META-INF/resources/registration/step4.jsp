@@ -41,11 +41,6 @@
                     maxLength="255"
                     resizable="false"
                     value="${remarks}" >
-                <aui:validator name="required">
-                    function () {
-                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 4);
-                    }
-                </aui:validator>
                 <aui:validator name="maxLength">255</aui:validator>
             </aui:input>
     </div>

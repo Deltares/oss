@@ -30,11 +30,6 @@
                         label="registrationform.academic.titles"
                         value="${academicTitle}"
                         cssClass="update-badge">
-                    <aui:validator name="required">
-                        function () {
-                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                        }
-                    </aui:validator>
                     <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
@@ -44,11 +39,6 @@
                         label="registrationform.initials"
                         value="${initials}"
                         cssClass="update-badge">
-                    <aui:validator name="required">
-                        function () {
-                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                        }
-                    </aui:validator>
                     <aui:validator name="maxLength">15</aui:validator>
                 </aui:input>
             </div>
@@ -179,11 +169,6 @@
                 name="<%= KeycloakUtils.ATTRIBUTES.org_phone.name() %>"
                 label="registrationform.phone"
                 value="${org_phone}">
-            <aui:validator name="required">
-                function () {
-                return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                }
-            </aui:validator>
             <aui:validator name="maxLength">25</aui:validator>
         </aui:input>
     </aui:col>

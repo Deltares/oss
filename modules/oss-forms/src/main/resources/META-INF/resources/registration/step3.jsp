@@ -187,7 +187,7 @@
                 return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
                 }
             </aui:validator>
-            <aui:validator name="maxLength">15</aui:validator>
+            <aui:validator name="maxLength">25</aui:validator>
         </aui:input>
     </div>
 </div>
