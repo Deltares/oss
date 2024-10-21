@@ -30,6 +30,11 @@
                         label="registrationform.academic.titles"
                         value="${academicTitle}"
                         cssClass="update-badge">
+                    <aui:validator name="required">
+                        function () {
+                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                        }
+                    </aui:validator>
                     <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
@@ -39,7 +44,12 @@
                         label="registrationform.initials"
                         value="${initials}"
                         cssClass="update-badge">
-                    <aui:validator name="maxLength">75</aui:validator>
+                    <aui:validator name="required">
+                        function () {
+                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                        }
+                    </aui:validator>
+                    <aui:validator name="maxLength">15</aui:validator>
                 </aui:input>
             </div>
         </div>
@@ -53,9 +63,9 @@
                         original_value="<%= user.getFirstName() %>"
                         disabled="true">
                     <aui:validator name="required">
-                                function () {
-                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                                }
+                        function () {
+                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                        }
                     </aui:validator>
                     <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
@@ -68,9 +78,9 @@
                         original_value="<%= user.getLastName() %>"
                         disabled="true">
                     <aui:validator name="required">
-                                function () {
-                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                                }
+                        function () {
+                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                        }
                     </aui:validator>
                     <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
@@ -84,9 +94,9 @@
                 original_value="<%= user.getEmailAddress() %>"
                 disabled="true">
             <aui:validator name="required">
-                        function () {
-                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                        }
+                function () {
+                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                }
             </aui:validator>
             <aui:validator name="email"/>
             <aui:validator name="maxLength">254</aui:validator>
@@ -99,9 +109,9 @@
                 label="registrationform.orgname"
                 value="${org_name}">
             <aui:validator name="required">
-                        function () {
-                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                        }
+                function () {
+                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                }
             </aui:validator>
             <aui:validator name="maxLength">75</aui:validator>
         </aui:input>
@@ -110,10 +120,9 @@
                 label="registrationform.orgaddress"
                 value="${org_address}">
             <aui:validator name="required">
-                        function () {
-                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                        }
-
+                function () {
+                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                }
             </aui:validator>
             <aui:validator name="maxLength">255</aui:validator>
         </aui:input>
@@ -125,9 +134,9 @@
                         label="registrationform.orgpostcode"
                         value="${org_postal}">
                     <aui:validator name="required">
-                                function () {
-                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                                }
+                        function () {
+                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                        }
                     </aui:validator>
                     <aui:validator name="maxLength">10</aui:validator>
                 </aui:input>
@@ -138,9 +147,9 @@
                         label="registrationform.orgcity"
                         value="${org_city}">
                     <aui:validator name="required">
-                                function () {
-                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
-                                }
+                        function () {
+                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                        }
                     </aui:validator>
                     <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
@@ -170,7 +179,12 @@
                 name="<%= KeycloakUtils.ATTRIBUTES.org_phone.name() %>"
                 label="registrationform.phone"
                 value="${org_phone}">
-            <aui:validator name="maxLength">15</aui:validator>
+            <aui:validator name="required">
+                function () {
+                return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                }
+            </aui:validator>
+            <aui:validator name="maxLength">25</aui:validator>
         </aui:input>
     </aui:col>
     <aui:col width="50">
