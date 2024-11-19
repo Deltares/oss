@@ -111,7 +111,7 @@
                                     data-childid="${childRegistration.articleId}"
                                     cssClass="child-registration"
                                     checked="<%=checked%>"
-                                    disabled="<%=disableSelection%>"
+                                    <%=disableSelection? "disabled": ""%>
                             />
                         </div>
                         <div class="float-left w-100">
