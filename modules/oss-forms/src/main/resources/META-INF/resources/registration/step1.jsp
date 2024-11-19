@@ -94,6 +94,10 @@
                     <%
                         Registration childRegistration = (Registration) pageContext.getAttribute("childRegistration");
                         boolean checked = registrationList.contains(childRegistration.getArticleId()) || dsdSessionUtils.isUserRegisteredFor(user, childRegistration);
+
+                        int count = dsdSessionUtils.getRegistrationCount(childRegistration);
+                        boolean full = count >= childRegistration.getCapacity();
+                        boolean disableSelection = full && !checked;
                     %>
                     <div class="d-flex">
                         <div class="float-left p-3">
@@ -107,6 +111,7 @@
                                     data-childid="${childRegistration.articleId}"
                                     cssClass="child-registration"
                                     checked="<%=checked%>"
+                                    disabled="<%=disableSelection%>"
                             />
                         </div>
                         <div class="float-left w-100">
@@ -119,6 +124,11 @@
                             <liferay-journal:journal-article-display
                                     articleDisplay="<%= childrenArticleDisplay %>"
                             />
+                            <% if(disableSelection) { %>
+                            <div>
+                                <small><i><liferay-ui:message key="registrationform.userInfo"/></i></small>
+                            </div>
+                            <%}%>
                         </div>
                     </div>
                 </c:forEach>
