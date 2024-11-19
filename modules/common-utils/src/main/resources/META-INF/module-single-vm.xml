@@ -1,0 +1,17 @@
+<ehcache
+        dynamicConfig="true"
+        monitoring="off"
+        name="common-utils-single-vm"
+        updateCheck="false"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://www.ehcache.org/ehcache.xsd"
+>
+    <cache
+            eternal="false"
+            maxEntriesLocalHeap="500"
+            name="nl.deltares.portal.utils.DeltaresCacheUtils"
+            overflowToDisk="false"
+            timeToIdleSeconds="600"
+    >
+    </cache>
+</ehcache>
