@@ -101,6 +101,7 @@
                     %>
                     <div class="d-flex">
                         <div class="float-left p-3">
+                            <% if (disableSelection) { %>
                             <aui:input
                                     name="child_registration_${childRegistration.articleId}"
                                     label=""
@@ -111,8 +112,21 @@
                                     data-childid="${childRegistration.articleId}"
                                     cssClass="child-registration"
                                     checked="<%=checked%>"
-                                    <%=disableSelection? "disabled": ""%>
+                                    disabled="true"
                             />
+                            <% } else { %>
+                            <aui:input
+                                    name="child_registration_${childRegistration.articleId}"
+                                    label=""
+                                    type="checkbox"
+                                    data-price="${childRegistration.getPrice()}"
+                                    course="${childRegistration.isCourse()}"
+                                    data-parentid="${registrationId}"
+                                    data-childid="${childRegistration.articleId}"
+                                    cssClass="child-registration"
+                                    checked="<%=checked%>"
+                            />
+                            <%}%>
                         </div>
                         <div class="float-left w-100">
                             <%
@@ -126,7 +140,7 @@
                             />
                             <% if(disableSelection) { %>
                             <div>
-                                <small><i><liferay-ui:message key="registrationform.userInfo"/></i></small>
+                                <small><i><liferay-ui:message key="registrationform.registrationFull"/></i></small>
                             </div>
                             <%}%>
                         </div>
