@@ -35,7 +35,6 @@
                                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
-                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
             <div class="col">
@@ -50,7 +49,6 @@
                                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
-                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
         </div>
@@ -69,7 +67,6 @@
                         }
                     </aui:validator>
                     <aui:validator name="email"/>
-                    <aui:validator name="maxLength">254</aui:validator>
                 </aui:input>
             </div>
             <div class="col">
@@ -77,7 +74,15 @@
                         name="<%= KeycloakUtils.ATTRIBUTES.phone.name() %>"
                         label="registrationform.phone"
                         value="${phone}">
-                    <aui:validator name="maxLength">15</aui:validator>
+                    <aui:validator name="maxLength" errorMessage="Please enter no more than 25 characters">
+                        function() {
+                            if (checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2)){
+                                return 25
+                            } else {
+                                return 1000;
+                            }
+                        }
+                    </aui:validator>
                 </aui:input>
             </div>
         </div>
@@ -95,7 +100,6 @@
                         return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
-                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
             <div class="col">
@@ -103,7 +107,6 @@
                         name="<%= KeycloakUtils.ATTRIBUTES.org_website.name() %>"
                         label="registrationform.orgwebsite"
                         value="${org_website}">
-                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
         </div>
@@ -116,9 +119,7 @@
                         function () {
                             return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
-
             </aui:validator>
-            <aui:validator name="maxLength">255</aui:validator>
         </aui:input>
 
         <div class="row">
@@ -132,7 +133,15 @@
                                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
-                    <aui:validator name="maxLength">10</aui:validator>
+                    <aui:validator name="maxLength" errorMessage="Please enter no more than 15 characters">
+                        function() {
+                            if (checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2)){
+                                return 15
+                            } else {
+                                return 1000;
+                            }
+                        }
+                    </aui:validator>
                 </aui:input>
             </div>
             <div class="col">
@@ -145,7 +154,6 @@
                                     return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
-                    <aui:validator name="maxLength">75</aui:validator>
                 </aui:input>
             </div>
         </div>
@@ -161,9 +169,6 @@
                         return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
-                    <aui:validator name="minLength">
-                        2
-                    </aui:validator>
                     <aui:option value="" label="registrationform.select.country"/>
                     <% List<Country> countries = CountryServiceUtil.getCompanyCountries(themeDisplay.getCompanyId(), true); %>
                     <% for (Country country : countries) { %>
@@ -175,17 +180,23 @@
                 <aui:input
                         name="<%= KeycloakUtils.ATTRIBUTES.org_phone.name() %>"
                         label="registrationform.phone"
-                        value="${org_phone}">
+                        value="${org_phone}" >
                     <aui:validator name="required">
                         function () {
                         return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
-                    <aui:validator name="maxLength">15</aui:validator>
+                    <aui:validator name="maxLength" errorMessage="Please enter no more than 25 characters">
+                        function() {
+                            if (checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2)){
+                                return 25
+                            } else {
+                                return 1000;
+                            }
+                        }
+                    </aui:validator>
                 </aui:input>
             </div>
         </div>
-
-
     </aui:col>
 </aui:row>
