@@ -6,6 +6,12 @@
             border-top-left-radius: 0;
             border-top-right-radius: 0;
         }
+        .dropdown-action {
+            position: absolute;
+            right: 0;
+            top: 2.5rem;
+            z-index: 2;
+        }
     }
 
     > .portlet-topper {
