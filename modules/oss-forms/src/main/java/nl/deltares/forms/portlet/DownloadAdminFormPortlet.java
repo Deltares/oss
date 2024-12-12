@@ -53,9 +53,12 @@ public class DownloadAdminFormPortlet extends MVCPortlet {
         String action = ParamUtil.getString(resourceRequest, "action");
         if ("testEmail".equals(action)) {
             String email = ParamUtil.getString(resourceRequest, "email", null);
-            String name = themeDisplay.getSiteGroup().getNameCurrentValue();
+            String virtualHost = themeDisplay.getCompany().getVirtualHostname();
+            String site = themeDisplay.getSiteGroup().getNameCurrentValue();
+
+            String source = virtualHost + ':' + site;
             try {
-                DataRequestManager.getInstance().writeInfo(EmailUtils.sendTestEmail(themeDisplay.getUser(), email, name), resourceResponse);
+                DataRequestManager.getInstance().writeInfo(EmailUtils.sendTestEmail(themeDisplay.getUser(), email, source), resourceResponse);
             } catch (Exception e) {
                 DataRequestManager.getInstance().writeError("Error sending test email: " + e.getMessage(), resourceResponse);
             }
