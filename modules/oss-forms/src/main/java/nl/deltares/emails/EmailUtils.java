@@ -6,6 +6,8 @@ import com.liferay.mail.kernel.service.MailServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.User;
+
 import javax.activation.*;
 import javax.mail.*;
 import javax.mail.internet.*;
@@ -13,15 +15,40 @@ import javax.mail.util.ByteArrayDataSource;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static com.liferay.mail.kernel.service.MailServiceUtil.getSession;
+import java.util.*;
 
 public class EmailUtils {
 
     private static final Log LOG = LogFactoryUtil.getLog(EmailUtils.class);
+
+    public static String sendTestEmail(User user, String sendToEmail, String source) throws Exception {
+
+        String body = String.format("This is a test email sent by %s at time %s", user.getEmailAddress(), new Date());
+        String subject = "Test email sent from site " + source;
+        sendEmail(body, subject, sendToEmail, null, null, user.getEmailAddress(), null,
+                Collections.emptyMap(), Collections.emptyMap());
+
+        return getConnectionString(sendToEmail);
+    }
+
+    private static String getConnectionString(String sendToEmail) {
+        StringBuilder response = new StringBuilder();
+        response.append("<p>Connection Settings:");
+        response.append("<ul>");
+        response.append("<li>Sending to: ").append(sendToEmail).append("</li>");
+        response.append("<li>SMTP Host: ").append(getSmtpHost()).append("</li>");
+        response.append("<li>SMTP Port: ").append(getSmtpPort()).append("</li>");
+        response.append("<li>SMTP User: ").append(getSmtpUser()).append("</li>");
+        String smtpPassword = getSmtpPassword();
+        if (smtpPassword !=null && smtpPassword.length() > 4) {
+            response.append("<li>SMTP Password ending with: ...").append(smtpPassword.substring(smtpPassword.length() - 4)).append("</li>");
+        } else {
+            response.append("<li>SMTP Password: ****</li>");
+        }
+        response.append("</ul>");
+        response.append("</p>");
+        return response.toString();
+    }
 
     static void sendEmail(String body, String subject, String sendToEmail, String sendCcEmail, String sendBccEmail,
                           String sendFromEmail, String replyToEmail,  Map<String, Object> data, Map<String, File> attachments) throws Exception {
@@ -30,8 +57,16 @@ public class EmailUtils {
         mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
         mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
 
-        final Session session = getSession();
-        Transport transport = session.getTransport();
+        Properties props = new Properties();
+        props.put("mail.smtp.host", getSmtpHost());
+        props.put("mail.smtp.port", getSmtpPort());
+        props.put("mail.smtp.auth", "true");
+        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(getSmtpUser(), getSmtpPassword());
+            }
+        });
+//https://medium.com/@python-javascript-php-html-css/solving-javax-mail-authenticationfailedexception-in-java-email-applications-1bfb7993889c
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(sendFromEmail)); // always send from mydeltares@deltares.nl. only email with sufficient privileges.
@@ -54,7 +89,6 @@ public class EmailUtils {
                 messageBodyPart.setDataHandler(new DataHandler(getDataSource(data, cid)));
                 messageBodyPart.setHeader("Content-ID", '<' + cid + '>');
                 multipart.addBodyPart(messageBodyPart);
-
             }
 
             for (String attachmentId : attachments.keySet()) {
@@ -64,19 +98,13 @@ public class EmailUtils {
                 attachmentPart.setFileName(attachmentId);
                 multipart.addBodyPart(attachmentPart);
             }
-
-            // put everything together
             message.setContent(multipart);
-            transport.connect(
-                    getSmtpHost(),
-                    getSmtpPort(),
-                    getSmtpUser(),
-                    getSmtpPassword());
-            transport.sendMessage(message, message.getAllRecipients());
+            Transport.send(message, message.getAllRecipients());
         } catch (Exception e){
-            LOG.warn(String.format("Failed to send email to %s: %s", sendToEmail, e.getMessage()), e);
-        }finally {
-            transport.close();
+            String connectionString = getConnectionString(sendToEmail);
+            String msg = String.format("<p>Failed to send email to %s: %s</p><p>%s</p>", sendToEmail, e.getMessage(), connectionString);
+            LOG.warn(msg, e);
+            throw new PortalException(msg);
         }
 
     }

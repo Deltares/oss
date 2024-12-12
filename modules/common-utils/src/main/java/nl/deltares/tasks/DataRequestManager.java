@@ -159,6 +159,15 @@ public class DataRequestManager {
         writer.print(msg);
     }
 
+    public void writeInfo(String msg, ResourceResponse resourceResponse) throws IOException {
+
+        resourceResponse.setContentType("text/plain");
+        resourceResponse.setStatus(HttpServletResponse.SC_OK);
+        resourceResponse.setContentLength(msg.length());
+        PrintWriter writer = resourceResponse.getWriter();
+        writer.print(msg);
+    }
+
     public void dataRequestNotExistsError(String dataRequestId, ResourceResponse resourceResponse) throws IOException {
         writeError(String.format("Data request for id does not exist: %s", dataRequestId), resourceResponse);
     }

@@ -1,5 +1,26 @@
 DownloadFormsUtil = {
 
+    sendTestEmail : function (resourceUrl, namespace, action){
+
+        let email = document.getElementById( namespace + "email").value;
+
+        let A = new AUI();
+        A.io.request(resourceUrl + '&' + namespace + 'action=' + action + '&' + namespace + 'email=' + email, {
+            on : {
+                success : function(response, status, xhr) {
+                    if (xhr.status > 299){
+                        CommonFormsUtil.writeError(namespace,xhr.status + ':' + xhr.responseText);
+                    } else if (xhr.status === 200){
+                        CommonFormsUtil.clearError(namespace)
+                        CommonFormsUtil.writeInfo(namespace, "success " + new Date().toISOString() + ": " + xhr.responseText)
+                    }
+                },
+                failure : function(response, status, xhr) {
+                    CommonFormsUtil.writeError(namespace, xhr.status + ': ' + xhr.responseText);
+                }
+            }
+        });
+    },
     validateFirstStep: function () {
         let downloads = document.getElementsByClassName('download');
         let isFirstStepValid = false;

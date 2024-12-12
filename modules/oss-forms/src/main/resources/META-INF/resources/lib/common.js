@@ -28,16 +28,14 @@ CommonFormsUtil = {
         let errorBlock = document.getElementById(namespace + "group-message-block");
         let messageNode = document.createElement("div");
         messageNode.classList.add("portlet-msg-error");
-        let messageContentNode = document.createTextNode(message);
-        messageNode.appendChild(messageContentNode);
+        messageNode.innerHTML = message;
         errorBlock.appendChild(messageNode);
     },
     writeInfo: function(namespace, message){
         let messageBlock = document.getElementById(namespace + "group-message-block");
         let messageNode = document.createElement("div");
         messageNode.classList.add("portlet-msg-info");
-        let messageContentNode = document.createTextNode(message);
-        messageNode.appendChild(messageContentNode);
+        messageNode.innerHTML = message;
         messageBlock.appendChild(messageNode);
     },
     clearError : function(namespace){
