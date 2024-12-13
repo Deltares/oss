@@ -54,7 +54,9 @@ ActivityMapUtil = {
 
                 let products = location.products;
                 if (products.length > 0) {
-                    contentString += '<table><tr><th>Download</th><th>Count</th></tr>';
+                    contentString += '<table>' +
+                        '<colgroup><col span="1" style="width: 70%"><col span="1" style="width: 30%"></colgroup>' +
+                        '<tr><th>Download</th><th>Count</th></tr>';
                     products.forEach(function (product) {
                         contentString += '<tr><td>' + product.downloadName + '</td><td>' + product.downloadCount + '</td></tr>';
                     });
@@ -65,7 +67,7 @@ ActivityMapUtil = {
                 contentString += '</div>';
 
                 const marker = L.marker(L.latLng(position.lat, position.lng, {title: label}));
-                marker.bindPopup(contentString);
+                marker.bindPopup(contentString, {'maxHeight': '350'});
                 markersLayer.addLayer(marker);
 
             });

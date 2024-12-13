@@ -46,13 +46,13 @@ public class DataRequestManager {
         dataRequests.put(dataRequest.getId(), dataRequest);
         pendingRequestsIds.add(dataRequest.getId());
         if (existingRequest != null) existingRequest.dispose();
-        if (!hasRunningRequests()) {
+        if (hasNoRunningRequests()) {
             startNextRequest();
         }
     }
 
-    private boolean hasRunningRequests() {
-        return runningRequest != null && !runningRequest.isDone();
+    private boolean hasNoRunningRequests() {
+        return runningRequest == null || runningRequest.isDone();
     }
 
     public void fireStateChanged(DataRequest changedRequest) {
@@ -66,7 +66,7 @@ public class DataRequestManager {
 
     private void startNextRequest() {
 
-        while (pendingRequestsIds.size() > 0) {
+        while (!pendingRequestsIds.isEmpty()) {
             String nextId = pendingRequestsIds.remove();
             final DataRequest request = dataRequests.get(nextId);
             if (request == null) continue;

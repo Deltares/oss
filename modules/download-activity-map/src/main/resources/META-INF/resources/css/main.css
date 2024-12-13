@@ -6,3 +6,8 @@
     color: #080C80;
 
 }
+
+.leaflet-popup-content {
+    min-width: 400px;
+    width:auto !important;
+}

@@ -25,7 +25,7 @@
 
 <style>
     #<portlet:namespace/>map {
-        height: 400px;
+        min-height: 400px;
         width: 100%;
     }
     th, td { padding: 10px; }

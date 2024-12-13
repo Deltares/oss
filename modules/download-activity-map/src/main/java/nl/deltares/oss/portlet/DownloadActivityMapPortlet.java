@@ -29,6 +29,8 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -99,7 +101,7 @@ public class DownloadActivityMapPortlet extends MVCPortlet {
                     if (dataFile != null && dataFile.exists()) {
                         final byte[] content = Files.readAllBytes(dataFile.toPath());
                         final String data = new String(content, StandardCharsets.UTF_8);
-                        //Escape charaters when writing to the cache otherwise the render request returns invalid content.
+                        //Escape characters when writing to the cache otherwise the render request returns invalid content.
                         cacheDownloads(id, escapeCharacters(data));
                         writeToResponse(resourceResponse, data);
                     }
@@ -164,7 +166,12 @@ public class DownloadActivityMapPortlet extends MVCPortlet {
                 LOG.error("Error retrieving ID for download portal from SiteMapConfiguration: " + e.getMessage());
                 downloadSiteId = themeDisplay.getSiteGroupId();
             }
-            dataRequest = new DownloadActivityMapRequest(id, themeDisplay.getUserId(), downloadSiteId, dsdParserUtils);
+            //todo: make configurable
+            HashMap<String, Object> queryParameters = new HashMap<>();
+            queryParameters.put(DownloadActivityMapRequest.QUERY_PARAMETER_STARTDATE, new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)));
+            queryParameters.put(DownloadActivityMapRequest.QUERY_PARAMETER_ENDDATE, new Date(System.currentTimeMillis()));
+            queryParameters.put(DownloadActivityMapRequest.QUERY_PARAMETER_MAXRECORDS, 1000);
+            dataRequest = new DownloadActivityMapRequest(id, themeDisplay.getUserId(), downloadSiteId, dsdParserUtils, queryParameters);
             instance.addToQueue(dataRequest);
         } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
             instance.removeDataRequest(dataRequest);

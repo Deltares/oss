@@ -48,6 +48,7 @@ services:
       - ./liferay/mount/files:/mnt/liferay/files
       - ./liferay/geoip:/opt/liferay/geoip
       - ./liferay/lmcrypt:/opt/liferay/lmcrypt
+      - ./liferay/patching:/mnt/liferay/patching
       - ${LIFERAY_BUNDLE_DIR}/deploy:/opt/liferay/deploy
       - ${LIFERAY_BUNDLE_DIR}/osgi/modules:/opt/liferay/osgi/modules
     restart: always
