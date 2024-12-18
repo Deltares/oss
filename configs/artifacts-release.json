@@ -117,7 +117,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "deltares-theme",
-    "version" : "1.0.14",
+    "version" : "1.0.15",
     "extension" : "war"
   },
   {
