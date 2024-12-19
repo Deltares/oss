@@ -1,3 +1,9 @@
+@mixin container-styles-large {
+  @media (min-width: 1024px) {
+    @include container-styles;
+  }
+}
+
 @mixin clearfix {
   &:after {
     content: "";
