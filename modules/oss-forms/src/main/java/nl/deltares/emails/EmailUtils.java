@@ -26,7 +26,7 @@ public class EmailUtils {
         String body = String.format("This is a test email sent by %s at time %s", user.getEmailAddress(), new Date());
         String subject = "Test email sent from site " + source;
         sendEmail(body, subject, sendToEmail, null, null, user.getEmailAddress(), null,
-                Collections.emptyMap(), Collections.emptyMap());
+                Collections.singletonMap("debug", true), Collections.emptyMap());
 
         return getConnectionString(sendToEmail);
     }
@@ -61,11 +61,18 @@ public class EmailUtils {
         props.put("mail.smtp.host", getSmtpHost());
         props.put("mail.smtp.port", getSmtpPort());
         props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "false");
+        props.put("mail.smtp.sasl.enable", "true");
+        props.put("mail.smtp.connectiontimeout", "10000");
+        props.put("mail.smtp.timeout", "10000");
         Session session = Session.getInstance(props, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(getSmtpUser(), getSmtpPassword());
             }
         });
+        if (data.containsKey("debug")){
+            session.setDebug(true);
+        }
 //https://medium.com/@python-javascript-php-html-css/solving-javax-mail-authenticationfailedexception-in-java-email-applications-1bfb7993889c
         try {
             Message message = new MimeMessage(session);
@@ -84,7 +91,7 @@ public class EmailUtils {
             multipart.addBodyPart(messageBodyPart);
 
             for (String cid : data.keySet()) {
-
+                if (cid.equals("debug")) continue;
                 messageBodyPart = new MimeBodyPart();
                 messageBodyPart.setDataHandler(new DataHandler(getDataSource(data, cid)));
                 messageBodyPart.setHeader("Content-ID", '<' + cid + '>');
