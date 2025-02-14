@@ -30,7 +30,7 @@
             } catch (PortalException e) {
                 throw new RuntimeException(e);
             }
-            if (mainRegistration != null && !mainRegistration.isHidden()) {
+            if (mainRegistration != null) {
                 //load the stored attributes from the database.
                 Map<String, String> userPreferences;
                 try {

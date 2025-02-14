@@ -33,20 +33,17 @@ public class EmailUtils {
 
     private static String getConnectionString(String sendToEmail) {
         StringBuilder response = new StringBuilder();
-        response.append("<p>Connection Settings:");
-        response.append("<ul>");
-        response.append("<li>Sending to: ").append(sendToEmail).append("</li>");
-        response.append("<li>SMTP Host: ").append(getSmtpHost()).append("</li>");
-        response.append("<li>SMTP Port: ").append(getSmtpPort()).append("</li>");
-        response.append("<li>SMTP User: ").append(getSmtpUser()).append("</li>");
+        response.append("Connection Settings:\n");
+        response.append("Sending to: ").append(sendToEmail).append("\n");
+        response.append("SMTP Host: ").append(getSmtpHost()).append("\n");
+        response.append("SMTP Port: ").append(getSmtpPort()).append("\n");
+        response.append("SMTP User: ").append(getSmtpUser()).append("\n");
         String smtpPassword = getSmtpPassword();
         if (smtpPassword !=null && smtpPassword.length() > 4) {
-            response.append("<li>SMTP Password ending with: ...").append(smtpPassword.substring(smtpPassword.length() - 4)).append("</li>");
+            response.append("SMTP Password ending with: ...").append(smtpPassword.substring(smtpPassword.length() - 4)).append("\n");
         } else {
-            response.append("<li>SMTP Password: ****</li>");
+            response.append("SMTP Password: ****\n");
         }
-        response.append("</ul>");
-        response.append("</p>");
         return response.toString();
     }
 
@@ -109,7 +106,7 @@ public class EmailUtils {
             Transport.send(message, message.getAllRecipients());
         } catch (Exception e){
             String connectionString = getConnectionString(sendToEmail);
-            String msg = String.format("<p>Failed to send email to %s: %s</p><p>%s</p>", sendToEmail, e.getMessage(), connectionString);
+            String msg = String.format("Failed to send email to %s: %s \n %s", sendToEmail, e.getMessage(), connectionString);
             LOG.warn(msg, e);
             throw new PortalException(msg);
         }
