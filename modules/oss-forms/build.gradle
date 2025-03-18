@@ -1,5 +1,6 @@
 dependencies({
 	implementation group: "com.liferay.portal", name: "release.dxp.api"
+	compileOnly("javax.servlet.jsp:javax.servlet.jsp-api:2.3.1")
 
 	compileOnly group: 'biz.aQute.bnd', name: 'biz.aQute.bnd.gradle', version: '3.4.0'
 	compileOnly group: "javax.portlet", name: "portlet-api"

@@ -1,9 +1,7 @@
-version: '3.1'
-
 services:
 
   database:
-    image: mariadb:10.4.22
+    image: mariadb:10.6.20
     container_name: oss-mariadb-74
     ports:
       - "3307:3306"
@@ -18,7 +16,7 @@ services:
       - liferay
 
   mariadb-keycloak:
-    image: mariadb:10.4.22
+    image: mariadb:10.6.20
     container_name: keycloak-mariadb-74
     ports:
       - "3308:3306"

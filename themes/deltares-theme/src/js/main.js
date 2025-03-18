@@ -291,7 +291,7 @@ function getCurrentStep(form) {
                         cartUrl = checkoutCartURL;
                         action = 'register';
                         ids = plugin.cart.items.join(',');
-                        portletId  = 'dsd_RegistrationFormPortlet';
+                        portletId  = 'RegistrationFormPortlet';
                     }
                     let portletURL = Liferay.PortletURL.createURL(cartUrl);
 
