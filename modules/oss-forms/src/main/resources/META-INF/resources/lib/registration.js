@@ -75,7 +75,30 @@ RegistrationFormsUtil = {
     },
 
     updatePrice : function (namespace, element) {
+        let quantityList = document.getElementsByClassName("parent-registration-quantity");
 
+        let priceSubTotal = 0;
+        let vatTotal = 0;
+        let priceTotal = 0;
+        let currency;
+        for (let i = 0; i < quantityList.length; i++){
+
+            let quantityElm = quantityList.item(i);
+            let quantity = quantityElm.value;
+            let vat = quantityElm.dataset.vat;
+            let price = quantityElm.dataset.price;
+            currency = quantityElm.dataset.currency;
+
+            let priceItem = (price * quantity)
+            let vatItem = priceItem * vat * 0.01;
+            priceSubTotal += priceItem;
+            vatTotal += vatItem;
+        }
+        priceTotal = priceSubTotal + vatTotal;
+
+        document.getElementById("registrationform.price.subtotal").innerHTML = currency + ' ' + Number(priceSubTotal).toFixed(2)
+        document.getElementById("registrationform.price.tax").innerHTML = currency + ' ' + Number(vatTotal).toFixed(2)
+        document.getElementById("registrationform.price.total").innerHTML = currency + ' ' + Number(priceTotal).toFixed(2)
 
     },
 

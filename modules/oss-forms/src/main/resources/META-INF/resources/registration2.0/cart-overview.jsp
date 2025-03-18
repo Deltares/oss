@@ -48,7 +48,7 @@
                 <div class="float-left w-100">
                     <%@ include file="registration-view.jsp" %>
                 </div>
-                <div class="float-right">
+                <div class="col-4 float-right">
                     <div class="row">
                         <div class="col"><liferay-ui:message key="registrationform.item.count"/></div>
                         <div class="col"><liferay-ui:message key="registrationform.item.price"/></div>
@@ -62,6 +62,9 @@
                                     value="<%=quantity%>"
                                     type="number"
                                     data-articleId="<%=articleId%>"
+                                    data-vat="<%=registration.getVAT()%>"
+                                    data-currency="<%=registration.getCurrency()%>"
+                                    data-price="<%=registration.getPrice()%>"
                                     cssClass="parent-registration-quantity" wrapperCssClass="form-group-item"
                             />
 
@@ -189,8 +192,8 @@
                 <td style="text-align:right">
                     <liferay-ui:message key="registrationform.price.subtotal"/>
                 </td>
-                <td style="text-align:right">
-                    <div id="registrationform.price.subtotal">
+                <td >
+                    <div id="registrationform.price.subtotal" style="text-align:right">
                     </div>
                 </td>
             </tr>
@@ -198,8 +201,8 @@
                 <td style="text-align:right">
                     <liferay-ui:message key="registrationform.price.tax"/>
                 </td>
-                <td style="text-align:right">
-                    <div id="registrationform.price.tax">
+                <td >
+                    <div id="registrationform.price.tax" style="text-align:right">
 
                     </div>
                 </td>
@@ -209,8 +212,8 @@
                 <td style="text-align:right">
                     <liferay-ui:message key="registrationform.price.total"/>
                 </td>
-                <td style="text-align:right">
-                    <div id="registrationform.price.total">
+                <td >
+                    <div id="registrationform.price.total" style="text-align:right">
 
                     </div>
                 </td>
@@ -244,5 +247,5 @@
             window.location.href = url;
         }
     });
-
+    RegistrationFormsUtil.updatePrice('<portlet:namespace/>', null)
 </aui:script>

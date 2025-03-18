@@ -93,3 +93,9 @@ table {
     height: 40px !important;
   }
 }
+
+.multi-step-indicator {
+  .multi-step-indicator-label {
+    max-width: fit-content;
+  }
+}

@@ -13,7 +13,7 @@
             <img class="img-fluid" src="<%=imageUrl%>" alt=""/>
         </a>
     </div>
-    <div class="col-10 px-3">
+    <div class="col-8 px-3">
         <h4>
             <a href="<%= viewURL %>">
                 <span class="text-truncate-inline">
