@@ -3,6 +3,7 @@ package nl.deltares.forms.util;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import nl.deltares.forms.constants.CheckoutWebKeys;
 import nl.deltares.forms.exception.RegistrationFormException;
@@ -44,6 +45,7 @@ public class CartOverviewCheckoutStep extends BaseCheckoutStep {
         HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
         UserRegistrationValidationContext validationContext = new UserRegistrationValidationContext(
                 httpServletRequest, _dsdSessionUtils, _dsdParserUtils, _userLocalService);
+
         validationContext.validateRequestData(httpServletRequest);
         httpServletRequest.getSession().setAttribute("registrationInfos", validationContext.getRegistrationInformation());
         if (SessionErrors.contains(httpServletRequest, RegistrationFormException.class)){

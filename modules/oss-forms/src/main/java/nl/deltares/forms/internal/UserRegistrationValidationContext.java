@@ -24,8 +24,10 @@ public class UserRegistrationValidationContext {
     private final UserLocalService _userLocalService;
     private final ThemeDisplay _themeDisplay;
     private final DsdParserUtils _dsdParserUtils;
+    private boolean _registrationsLoaded = false;
+    private boolean _registrationInfosLoaded = false;
     private final List<Registration> _registrations = new ArrayList<>();
-    private final List<RegistrationInfo> _registrationInformation;
+    private final List<RegistrationInfo> _registrationInformation = new ArrayList<>();
 
     public UserRegistrationValidationContext(HttpServletRequest httpServletRequest, DsdSessionUtils sessionUtils,
                                              DsdParserUtils parserUtils,
@@ -36,14 +38,13 @@ public class UserRegistrationValidationContext {
 
         CPRequestHelper cpRequestHelper = new CPRequestHelper(httpServletRequest);
         _themeDisplay = cpRequestHelper.getThemeDisplay();
-
-        String ids = ParamUtil.getString(httpServletRequest, "ids");
-        loadRegistrations(ids);
-        _registrationInformation = getRegistrationInfos(httpServletRequest);
     }
 
-    public void validateRequestData(HttpServletRequest request) {
+    public void validateRequestData(HttpServletRequest request) throws Exception {
 
+        if(!_registrationInfosLoaded){
+            loadRegistrationInfos(request);
+        }
         boolean addIfExceptions = false;
         List<RegistrationFormException> exceptions;
         if (SessionErrors.contains(request, RegistrationFormException.class)) {
@@ -76,8 +77,14 @@ public class UserRegistrationValidationContext {
         }
     }
 
-    public List<RegistrationInfo> getRegistrationInfos(HttpServletRequest request) {
-        ArrayList<RegistrationInfo> registrationInfos = new ArrayList<>();
+    public void loadRegistrationInfos(HttpServletRequest request) throws Exception {
+        if (_registrationInfosLoaded){
+            throw new IllegalStateException("Registration Infos already loaded!");
+        }
+        if (!_registrationsLoaded){
+            String ids = ParamUtil.getString(request, "ids");
+            loadRegistrations(ids);
+        }
         for (Registration registration : _registrations) {
 
             String articleId = registration.getArticleId();
@@ -96,11 +103,10 @@ public class UserRegistrationValidationContext {
                 registrationInfo.setRemarks(ParamUtil.getString(request, "remarks_" + articleId + POST_FIX));
                 String email = ParamUtil.getString(request, "email_" + articleId + POST_FIX);
                 registrationInfo.setEmail(email);
-                registrationInfos.add(registrationInfo);
+                _registrationInformation.add(registrationInfo);
             }
-
         }
-        return registrationInfos;
+        _registrationInfosLoaded = true;
     }
 
     public Registration getRegistration(String articleId){
@@ -108,16 +114,22 @@ public class UserRegistrationValidationContext {
         return first.orElse(null);
     }
 
-    private void loadRegistrations(String ids) throws Exception {
+    public void loadRegistrations(String ids) throws Exception {
+        if (_registrationsLoaded){
+            throw new IllegalStateException("Registrations already loaded!");
+        }
         String[] registrationIds = ids.split(",", -1);
         if (ids.isEmpty()) return;
         for (String registrationId : registrationIds) {
             _registrations.add(_dsdParserUtils.getRegistration(
                     _themeDisplay.getScopeGroupId(), registrationId));
         }
+        _registrationsLoaded = true;
     }
 
     public List<RegistrationInfo> getRegistrationInformation() {
+        if (!_registrationInfosLoaded)
+            throw new IllegalStateException("Registration Infos not loaded!");
         return _registrationInformation;
     }
 }

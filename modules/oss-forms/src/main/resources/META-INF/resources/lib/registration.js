@@ -1,76 +1,168 @@
 
 RegistrationFormsUtil = {
 
-    validateFirstStep: function (FIRST_STEP_ERROR_MESSAGE, FIRST_STEP_ERROR_MESSAGE_PARENT_MISSING) {
-        let isParentSelectionValid = false;
-        let isChildSelectionValid = true;
-        let registrations = document.getElementsByClassName('registration-item');
-        [...registrations].forEach(function(registration) {
-            let parentChecked = registration.getElementsByClassName("parent-registration")[0].checked;
-            if (parentChecked){
-                isParentSelectionValid = true;
-            }
-            let children = registration.getElementsByClassName('child-registration');
-            [...children].forEach(function(child) {
-                if (child.checked && !parentChecked){
-                    isChildSelectionValid = false;
+    //Load countries on page load, update regions when country changes
+    loadCountrySelection: function (namespace, selectedCountryId, selectedRegionId, companyId){
+
+        if (!companyId){
+            companyId = Liferay.ThemeDisplay.getCompanyId();
+        }
+
+        Liferay.component(
+            namespace + 'countrySelects',
+            new Liferay.DynamicSelect([
+                {
+                    select: namespace + 'org_country',
+                    selectData: function (callback) {
+                        function injectCountryPlaceholder(list) {
+                            const callbackList = [
+                                {
+                                    countryId: '0',
+                                    nameCurrentValue: '- ' + Liferay.Language.get('select-country')
+                                }
+                            ];
+                            list.forEach((listElement) => {
+                                callbackList.push(listElement);
+                            });
+                            callback(callbackList);
+                        }
+
+                        Liferay.Service(
+                            '/country/get-company-countries',
+                            {
+                                active: true,
+                                companyId:companyId
+                            },
+                            injectCountryPlaceholder
+                        );
+                    },
+                    selectDesc: 'nameCurrentValue',
+                    selectId: 'countryId',
+                    selectNullable:'false',
+                    selectSort:'true',
+                    selectVal: selectedCountryId
+                },
+                {
+                    select: namespace + 'org_region',
+                    selectData: function (callback, selectKey) {
+                        function injectRegionPlaceholder(list) {
+                            const callbackList = [
+                                {
+                                    regionId: '0',
+                                    name: '- ' + Liferay.Language.get('select-region'),
+                                    nameCurrentValue:'- ' + Liferay.Language.get('select-region'),
+                                }
+                            ];
+
+                            list.forEach((listElement) => {
+                                callbackList.push(listElement);
+                            });
+
+                            callback(callbackList);
+                        }
+
+                        Liferay.Service( '/region/get-regions',
+                            {
+                                active: true,
+                                countryId: Number(selectKey)
+                            }, injectRegionPlaceholder
+                        );
+                    },
+                    selectDesc: 'name',
+                    selectId: 'regionId',
+                    selectNullable: 'false',
+                    selectVal: selectedRegionId
                 }
-            })
-        });
-        if (!isParentSelectionValid){
-            return FIRST_STEP_ERROR_MESSAGE;
-        }
-        if(!isChildSelectionValid){
-            return FIRST_STEP_ERROR_MESSAGE_PARENT_MISSING;
-        }
-        return null;
+            ])
+        );
     },
 
-    checkSelection : function(namespace) {
-        let parents = document.getElementsByClassName('parent-registration');
+    accountSelectionChanged: function (namespace, accountSelection, paramName) {
 
-        let priceEnabled = false;
-        let courseTermsEnabled = false;
-        [...parents].forEach( function(parent) {
-            if (parent.checked){
+        const accountSelectElm = accountSelection;
+        const paramNameElem = document.getElementById(namespace + paramName);
 
-                if ( parseFloat(parent.getAttribute('data-price')) > 0) {
-                    priceEnabled = true;
-                }
-
-                if ( parent.getAttribute('course') === "true" ) {
-                    courseTermsEnabled = true;
-                }
-            }
-
-        });
-
-        let children = document.getElementsByClassName('child-registration');
-        [...children].forEach(function( child ) {
-            if (child.checked){
-                if (parseFloat(child.getAttribute('data-price')) > 0){
-                    priceEnabled = true;
-                }
-                if ( child.getAttribute('course') === "true" ) {
-                    courseTermsEnabled = true;
-                }
-            }
-        });
-
-        let step3 = $(document.getElementById(namespace + 'nav-stepper-step-3'));
-        if (priceEnabled){
-            step3.removeClass('disabled'); //remove
-        } else {
-            step3.addClass('disabled'); //add;
+        if (accountSelectElm && paramNameElem) {
+            const accountEntryId = accountSelectElm.value;
+            this.updateAddressFields(namespace, accountSelectElm);
+            paramNameElem.value = accountEntryId;
         }
+    },
 
-        let courseCond = $(document.getElementById(namespace + 'course-conditions-div'));
-        if (courseTermsEnabled){
-            courseCond[0].hidden = false;
-            $('input[name="' + namespace + 'course_conditions"]')[0].disabled = false;
-        } else {
-            courseCond[0].hidden = true;
-            $('input[name="' + namespace + 'course_conditions"]')[0].disabled = true;
+    updateAddressFields: function (namespace, selectedElement){
+
+        let selectedIndex = selectedElement.selectedIndex
+        let clearFields = !selectedIndex || selectedIndex === '0';
+
+        if (selectedElement) {
+            const city = document.getElementById(namespace + "org_city");
+            const country = document.getElementById(namespace + 'org_country');
+            const regionIdSelect = document.getElementById(namespace + 'org_region');
+            const name = document.getElementById(namespace + 'org_name');
+            const phoneNumber = document.getElementById(namespace + 'org_phone');
+            const website = document.getElementById(namespace + 'org_website');
+            const street1 = document.getElementById(namespace + 'org_address');
+            const zip = document.getElementById(namespace + 'org_postal');
+
+            if (
+                city &&
+                country &&
+                regionIdSelect &&
+                name &&
+                phoneNumber &&
+                street1 &&
+                zip
+            ) {
+                const selectedOption =
+                    selectedElement.options[selectedIndex];
+
+                let disabled = selectedOption.dataset.canedit === "false";
+
+                city.value = clearFields ? "" : selectedOption.dataset.city;
+                country.value = clearFields ? 0 : selectedOption.dataset.country;
+                name.value = clearFields ? "" : selectedOption.dataset.name;
+                phoneNumber.value = clearFields ? "" : selectedOption.dataset.phoneNumber;
+                street1.value = clearFields ? "" : selectedOption.dataset['street-1'];
+                zip.value = clearFields ? "" : selectedOption.dataset.zip;
+                regionIdSelect.value = clearFields ? "" : selectedOption.dataset.regionid;
+
+                city.disabled = disabled;
+                country.disabled = disabled;
+                name.disabled = disabled;
+                phoneNumber.disabled = disabled;
+                street1.disabled = disabled;
+                zip.disabled = disabled;
+                regionIdSelect.disabled = disabled;
+
+                if (website) {
+                    website.value = clearFields ? "" : selectedOption.dataset.website;
+                    website.disabled = disabled;
+                }
+
+                Liferay.Service(
+                    '/region/get-regions',
+                    {
+                        active: true,
+                        countryId: parseInt(selectedOption.dataset.country, 10),
+                    },
+                    function setUIOnlyInputRegionName(regions) {
+
+                        regionIdSelect.options.length = 0;
+                        regionIdSelect.append(new Option('- ' + Liferay.Language.get('select-region'), 0));
+
+                        if (regions){
+                            regions.forEach((listElement) => {
+                                regionIdSelect.append(new Option(listElement.name, listElement.regionId));
+                                if (listElement.regionId === selectedOption.dataset.region){
+                                    regionIdSelect.value = listElement.regionId
+                                }
+                            });
+                        }
+
+                    }
+                );
+
+            }
         }
     },
 
