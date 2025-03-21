@@ -78,9 +78,9 @@ public abstract class HttpClientUtils implements BaseLocalService {
         connection.setDoOutput(true);
         try (Writer w = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8)) {
             for (Map.Entry<String, String> param : parameters.entrySet()) {
-                w.append(URLEncoder.encode(param.getKey(), StandardCharsets.UTF_8.name()));
+                w.append(URLEncoder.encode(param.getKey(), StandardCharsets.UTF_8));
                 w.append('=');
-                w.append(URLEncoder.encode(String.valueOf(param.getValue()), StandardCharsets.UTF_8.name()));
+                w.append(URLEncoder.encode(String.valueOf(param.getValue()), StandardCharsets.UTF_8));
                 w.append('&');
             }
         }
@@ -103,7 +103,7 @@ public abstract class HttpClientUtils implements BaseLocalService {
                 result.write(buffer, 0, length);
             }
             // StandardCharsets.UTF_8.name() > JDK 7
-            return result.toString(StandardCharsets.UTF_8.name());
+            return result.toString(StandardCharsets.UTF_8);
         } finally {
             connection.disconnect();
         }

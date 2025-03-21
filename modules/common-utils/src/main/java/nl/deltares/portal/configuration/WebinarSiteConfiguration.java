@@ -17,6 +17,12 @@ public interface WebinarSiteConfiguration {
     @Meta.AD(required = false, deflt = "https://api.getgo.com/", description = "Base URL of GOTO website")
     String gotoURL();
 
+    @Meta.AD(required = false, deflt = "https://authentication.logmeininc.com/oauth/token", description = "Token URL of GOTO website")
+    String gotoTokenURL();
+
+    @Meta.AD(required = false, deflt = "200000000001077981", description = "Organizer key of GOTO user that configured the webinar (online-events@deltares.nl)")
+    String gotoOrganizerKey();
+
     @Meta.AD(required = false, deflt = "", description = "GOTO Client Id for this site")
     String gotoClientId();
 

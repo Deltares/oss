@@ -3,6 +3,7 @@ package nl.deltares.mock;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 
 import java.util.*;
@@ -61,6 +62,11 @@ public class MockDsdJournalArticleUtils implements DsdJournalArticleUtils {
 
     @Override
     public void queryMultipleFieldValues(long groupId, String[] structureKeys, SearchContext searchContext, Locale locale) {
+
+    }
+
+    @Override
+    public void sortByDDMFieldArrayField(long groupId, String[] structureKeys, String dateFieldName, SearchRequestBuilder searchRequestBuilder, Locale locale, boolean ascending) {
 
     }
 

@@ -4,16 +4,27 @@ import nl.deltares.portal.configuration.WebinarSiteConfiguration;
 
 public class MockWebinarSiteConfiguration implements WebinarSiteConfiguration {
 
-
+    private String gotoTokenUrl;
     private String gotoUrl;
     private String clientId;
     private String clientSecret;
     private String userName;
     private String password;
+    private String gotoOrganizerKey;
 
     @Override
     public String gotoURL() {
         return gotoUrl;
+    }
+
+    @Override
+    public String gotoTokenURL() {
+        return gotoTokenUrl;
+    }
+
+    @Override
+    public String gotoOrganizerKey() {
+        return gotoOrganizerKey;
     }
 
     @Override
@@ -34,6 +45,14 @@ public class MockWebinarSiteConfiguration implements WebinarSiteConfiguration {
     @Override
     public String gotoUserPassword() {
         return password;
+    }
+
+    public void setGotoOrganizerKey(String gotoOrganizerKey) {
+        this.gotoOrganizerKey = gotoOrganizerKey;
+    }
+
+    public void setGotoTokenUrl(String gotoTokenUrl) {
+        this.gotoTokenUrl = gotoTokenUrl;
     }
 
     public void setGotoUrl(String gotoUrl) {

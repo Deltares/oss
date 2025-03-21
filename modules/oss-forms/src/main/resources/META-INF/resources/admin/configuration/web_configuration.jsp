@@ -53,6 +53,11 @@
                 value="<%= configuration.gotoURL() %>"/>
 
         <aui:input
+                label="GOTO token URL"
+                name="gotoTokenURL"
+                value="<%= configuration.gotoTokenURL() %>"/>
+
+        <aui:input
                 label="GOTO client ID"
                 name="gotoClientId"
                 value="<%= configuration.gotoClientId() %>"/>
@@ -67,6 +72,10 @@
                 name="gotoUserName"
                 value="<%= configuration.gotoUserName() %>"/>
 
+        <aui:input
+                label="GOTO organizer key"
+                name="gotoOrganizerKey"
+                value="<%= configuration.gotoOrganizerKey() %>"/>
 
         <aui:input
                 label="GOTO user password"
