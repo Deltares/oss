@@ -1,5 +1,6 @@
 <%@ page import="java.util.Collections" %>
 <%@ page import="nl.deltares.model.RegistrationInfo" %>
+<%@ page import="nl.deltares.forms.internal.UserRegistrationDisplayContext" %>
 <%@ include file="init.jsp" %>
 
 <%
@@ -19,7 +20,7 @@
 <h3><strong><liferay-ui:message key="registrationform.user.information"/></strong></h3>
 <br/>
 <%
-    CartOverviewDisplayContext displayContext = (CartOverviewDisplayContext) request.getAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT);
+    UserRegistrationDisplayContext displayContext = (UserRegistrationDisplayContext) request.getAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT);
     List<Registration> registrations = displayContext != null ? displayContext.getRegistrations() : Collections.emptyList();
     NumberFormat currencyInstance = NumberFormat.getInstance(themeDisplay.getLocale());
     currencyInstance.setMaximumFractionDigits(2);

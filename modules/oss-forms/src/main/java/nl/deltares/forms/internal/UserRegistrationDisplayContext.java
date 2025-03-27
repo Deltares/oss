@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CartOverviewDisplayContext {
+public class UserRegistrationDisplayContext {
 
     private final List<Registration> _registrations = new ArrayList<>();
     private final DsdParserUtils _dsdParserUtils;
@@ -36,7 +36,7 @@ public class CartOverviewDisplayContext {
     private final String ids;
     private final String _displayURL;
 
-    public CartOverviewDisplayContext(HttpServletRequest request, DsdParserUtils dsdParserUtils, DDMStructureUtil ddmStructureUtil) throws Exception {
+    public UserRegistrationDisplayContext(HttpServletRequest request, DsdParserUtils dsdParserUtils, DDMStructureUtil ddmStructureUtil) throws Exception {
 
         _dsdParserUtils = dsdParserUtils;
         _httpServletRequest = request;

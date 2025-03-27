@@ -10,9 +10,9 @@ public interface CommerceUtils {
 
     List<AccountEntry> getAccountsByDomain(String domain, long companyId);
 
-    boolean userAccountExists(User user, long companyId);
+    boolean userAccountExists(User user);
 
-    AccountEntry getPersonalAccount(User user, long companyId);
+    AccountEntry getPersonalAccount(User user);
 
-    AccountEntry createPersonAccountEntry(User billingUser, long companyId) throws PortalException;
+    AccountEntry createPersonAccountEntry(User user) throws PortalException;
 }

@@ -118,6 +118,27 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         }
     }
 
+    @Override
+    public void registerUser(User user, Registration registration, Map<String, String> registrationProperties, User registrationUser) throws PortalException {
+
+        if (user.isGuestUser()) return;
+
+        long parentId = registration.getParentRegistration() == null ? 0 : registration.getParentRegistration().getResourceId();
+
+        long eventResourcePrimaryKey = 0;
+        Event event = parserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()), registration.getLocale());
+        if (event != null) eventResourcePrimaryKey = event.getResourceId();
+        long registeredByUserId = 0;
+        if (registrationUser != null && registrationUser != user) {
+            registeredByUserId = registrationUser.getUserId();
+        }
+        RegistrationLocalServiceUtil.addUserRegistration(
+                registration.getCompanyId(), registration.getGroupId(), registration.getResourceId(), eventResourcePrimaryKey,
+                parentId, user.getUserId(),
+                registration.getStartTime(), registration.getEndTime(), JsonContentUtils.formatMapToJson(registrationProperties), registeredByUserId);
+
+    }
+
     private void registerWebinarUser(User user, Map<String, String> userAttributes, SessionRegistration registration, Map<String, String> userProperties) throws PortalException {
 
         try {

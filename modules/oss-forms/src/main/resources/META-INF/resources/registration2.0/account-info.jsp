@@ -1,8 +1,3 @@
-<%@ page import="nl.deltares.forms.internal.AccountSelectionCheckoutStepDisplayContext" %>
-<%@ page import="com.liferay.account.model.AccountEntry" %>
-<%@ page import="com.liferay.portal.kernel.model.Address" %>
-<%@ page import="com.liferay.portal.kernel.util.HtmlUtil" %>
-<%@ page import="nl.deltares.forms.constants.OrganizationConstants" %>
 <%@ include file="init.jsp" %>
 
 <%
@@ -22,18 +17,23 @@
 <h3><strong><liferay-ui:message key="registrationform.select.org"/></strong></h3>
 <%
     Long selection = (Long) request.getAttribute("selectedAccountEntryId");
-    long selectedAccountEntryId = selection != null ? selection : 0;
+    long selectedAccountEntryId = selection == null ? 0 : selection;
     AccountSelectionCheckoutStepDisplayContext displayContext = (AccountSelectionCheckoutStepDisplayContext)request
             .getAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT);
     String paramName = displayContext.getParamName();
     List<AccountEntry> accountEntries = displayContext.getAccountEntries();
 
-    AccountEntry selectedAccountEntry = displayContext.getAccountEntry(selectedAccountEntryId);
-    Address selectedAddress = null;
-    if (selectedAccountEntry != null) {
-        selectedAddress = selectedAccountEntry.getDefaultBillingAddress();
+    AccountEntry selectedAccountEntry;
+    if (selectedAccountEntryId == 0 && !accountEntries.isEmpty()) {
+        selectedAccountEntry = accountEntries.get(0);
+        selectedAccountEntryId = selectedAccountEntry.getAccountEntryId();
+    } else {
+        selectedAccountEntry = displayContext.getAccountEntry(selectedAccountEntryId);
     }
-
+    Address selectedAddress = null;
+    if (selectedAccountEntry != null){
+      selectedAddress = displayContext.getAccountAddress(selectedAccountEntry);
+    }
     boolean canCreateNewAccount = displayContext.canCreateNewAccount();
 
 %>
@@ -52,17 +52,28 @@
                     label ='<%=canCreateNewAccount? "registrationform.select.custom.org" : "registrationform.select.custom.org1"%>' />
         <%
             for (AccountEntry accountEntry : accountEntries) {
-                Address address = accountEntry.getDefaultBillingAddress();
-                boolean canEdit = displayContext.canEditAccount(user, accountEntry);
+                Address address = displayContext.getAccountAddress(accountEntry);
+                String name = address == null ? "" : address.getName();
+                String city = address == null ? "" : address.getCity();
+                Long countryId = address == null ? 0 : address.getCountryId();
+                String phoneNumber = address == null ? "" : address.getPhoneNumber();
+                Long regionId = address == null ? 0 : address.getRegionId();
+                String street = address == null ? "" : address.getStreet1();
+                String zip = address == null ? "" : address.getZip();
+
+                boolean canEdit = accountEntry.isPersonalAccount();
         %>
-        <aui:option data-city="<%= HtmlUtil.escapeAttribute(address.getCity()) %>"
-                    data-country="<%= HtmlUtil.escapeAttribute(String.valueOf(address.getCountryId())) %>"
-                    data-name="<%= HtmlUtil.escapeAttribute(accountEntry.getName()) %>"
-                    data-phone-number='<%= HtmlUtil.escapeAttribute(address.getPhoneNumber() == null ? "": address.getPhoneNumber()) %>'
-                    data-region="<%= HtmlUtil.escapeAttribute(String.valueOf(address.getRegionId())) %>"
-                    data-street-1="<%= HtmlUtil.escapeAttribute(address.getStreet1()) %>"
-                    data-zip="<%= HtmlUtil.escapeAttribute(address.getZip()) %>"
-                    data-website="<%= HtmlUtil.escapeAttribute(displayContext.getAccountWebsite(accountEntry.getAccountEntryId())) %>"
+        <aui:option data-city="<%= HtmlUtil.escapeAttribute(city) %>"
+                    data-org-name="<%= HtmlUtil.escapeAttribute(accountEntry.getName()) %>"
+                    data-address-name="<%= HtmlUtil.escapeAttribute(name) %>"
+                    data-country="<%= countryId %>"
+                    data-phone-number='<%= HtmlUtil.escapeAttribute(phoneNumber) %>'
+                    data-region="<%= regionId %>"
+                    data-street-1="<%= HtmlUtil.escapeAttribute(street) %>"
+                    data-zip="<%= HtmlUtil.escapeAttribute(zip) %>"
+                    data-website="<%= HtmlUtil.escapeAttribute(displayContext.getAccountWebsite(accountEntry)) %>"
+                    data-vat="<%=HtmlUtil.escapeAttribute(accountEntry.getTaxIdNumber())%>"
+                    data-company-ref="<%=HtmlUtil.escapeAttribute(displayContext.getCompanyReferenceCode(accountEntry))%>"
                     data-canEdit="<%=canEdit%>"
                     label="<%= HtmlUtil.escape(accountEntry.getName()) %>"
                     selected="<%= accountEntry.getAccountEntryId() == selectedAccountEntryId %>"
@@ -76,6 +87,12 @@
         <aui:input
             name="<%= OrganizationConstants.ORG_NAME %>"
             label="registrationform.orgname" wrapperCssClass="form-group-item">
+            <aui:validator name="required" />
+        </aui:input>
+
+        <aui:input
+                name="<%= OrganizationConstants.ORG_ADDRESS_NAME %>"
+                label="registrationform.orgaddress.name" wrapperCssClass="form-group-item" type="hidden">
         </aui:input>
 
     </div>
@@ -86,6 +103,7 @@
         <aui:input
                 name="<%= OrganizationConstants.ORG_STREET %>"
                 label="registrationform.orgaddress" wrapperCssClass="form-group-item">
+            <aui:validator name="required" />
         </aui:input>
     </div>
 </div>
@@ -95,10 +113,12 @@
         <aui:input
                 name="<%= OrganizationConstants.ORG_POSTAL %>"
                 label="registrationform.orgpostcode" wrapperCssClass="form-group-item">
+            <aui:validator name="required" />
         </aui:input>
         <aui:input
                 name="<%= OrganizationConstants.ORG_CITY %>"
                 label="registrationform.orgcity" wrapperCssClass="form-group-item">
+            <aui:validator name="required" />
         </aui:input>
     </div>
 </div>
@@ -117,6 +137,7 @@
         <aui:input
                 name="<%= OrganizationConstants.ORG_PHONE %>"
                 label="registrationform.phone" wrapperCssClass="form-group-item">
+            <aui:validator name="required" />
         </aui:input>
         <aui:input
                 name="<%= OrganizationConstants.ORG_WEBSITE %>"
@@ -124,6 +145,21 @@
             <aui:validator name="url" />
         </aui:input>
 
+    </div>
+
+    <div class="form-group-autofit">
+        <aui:input
+                name='<%=OrganizationConstants.ORG_VAT%>'
+                label="registrationform.billing.vat"
+                helpMessage="registrationform.billing.vat.info"
+                wrapperCssClass="form-group-item"
+                />
+        <aui:input
+                name='<%= OrganizationConstants.ORG_REGISTRATION_ID %>'
+                label="registrationform.billing.companyid"
+                helpMessage="registrationform.billing.companyid.info"
+                wrapperCssClass="form-group-item"
+            />
     </div>
 </div>
 
@@ -137,7 +173,7 @@
     }
 
     RegistrationFormsUtil.loadCountrySelection("<portlet:namespace />",
-    "<%=selectedAddress == null? 0 : selectedAddress.getCountry().getCountryId()%>",
+    "<%=selectedAddress == null? 0 : selectedAddress.getCountryId()%>",
     "<%=selectedAddress == null? 0 : selectedAddress.getRegionId()%>",
     <%=displayContext.getCompanyId()%>
     );

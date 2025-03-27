@@ -8,7 +8,7 @@ public class RegistrationInfo {
     private String email = null;
     private String remarks = null;
     private String articleId = null;
-    private boolean billingRequired = false;
+    private float price = 0;
     private String title;
 
 
@@ -20,12 +20,12 @@ public class RegistrationInfo {
         this.remarks = remarks;
     }
 
-    public void setBillingInfoRequired(boolean billingInfoRequired) {
-        this.billingRequired = billingInfoRequired;
+    public void setPrice(float price) {
+        this.price = price;
     }
 
-    public boolean isBillingInfoRequired() {
-        return billingRequired;
+    public float getPrice() {
+        return price;
     }
 
     public String getSalutation() {

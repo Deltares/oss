@@ -2,68 +2,89 @@ package nl.deltares.forms.internal;
 
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
+import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
+import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.RegionCodeException;
-import com.liferay.portal.kernel.model.Address;
-import com.liferay.portal.kernel.model.Country;
-import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.AddressLocalService;
-import com.liferay.portal.kernel.service.CountryLocalService;
-import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.model.*;
+import com.liferay.portal.kernel.service.*;
+import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.forms.constants.OrganizationConstants;
 import nl.deltares.forms.exception.RegistrationFormException;
-import nl.deltares.model.RegistrationInfo;
 import nl.deltares.portal.utils.CommerceUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class AccountSelectionCheckoutStepDisplayContext {
+public class AccountSelectionCheckoutStepDisplayContext{
+
+    final HttpServletRequest _httpServletRequest;
+    final AccountEntryLocalService _accountEntryLocalService;
+    final AddressLocalService _addressLocalService;
+    final CountryLocalService _countryLocalService;
+    final PhoneLocalService  _phoneLocalService;
+    final UserLocalService _userLocalService;
+    final CommerceUtils _commerceUtils;
+
+    final ThemeDisplay _themeDisplay;
+    final User _user;
+    final User _accountUser;
 
     private boolean _accountsLoaded = false;
-    private final List<AccountEntry> accounts = new ArrayList<>();;
-    private final AccountEntryLocalService _accountEntryLocalService;
-    private final AddressLocalService _addressLocalService;
-    private final CountryLocalService _countryLocalService;
-    private final CommerceUtils _commerceUtils;
-    private final ThemeDisplay _themeDisplay;
-    private final User _user;
+    private final List<AccountEntry> accounts = new ArrayList<>();
 
     public AccountSelectionCheckoutStepDisplayContext(HttpServletRequest request, AccountEntryLocalService accountEntryLocalService,
-                                                      CommerceUtils commerceUtils,
-                                                      AddressLocalService addressLocalService, CountryLocalService countryLocalService) {
+                                                      AddressLocalService addressLocalService, CountryLocalService countryLocalService,
+                                                      PhoneLocalService phoneLocalService, UserLocalService userLocalService,
+                                                      CommerceUtils commerceUtils) {
+
+        _httpServletRequest = request;
         _accountEntryLocalService = accountEntryLocalService;
         _addressLocalService = addressLocalService;
         _countryLocalService = countryLocalService;
+        _phoneLocalService = phoneLocalService;
+        _userLocalService = userLocalService;
         _commerceUtils = commerceUtils;
-
-        _themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
+        CPRequestHelper cpRequestHelper = new CPRequestHelper(request);
+        _themeDisplay = cpRequestHelper.getThemeDisplay();
         _user = _themeDisplay.getUser();
+        _accountUser = getAccountUser();
+    }
+
+    public String getTitle() {
+        return "account-info";
+    }
+
+    public String getParamName() {
+        return "accountEntryId";
+    }
+
+    public long getCompanyId() {
+        return 10131;
     }
 
     public void loadAccounts() {
 
-        if (_accountsLoaded){
+        if (_accountsLoaded) {
             throw new IllegalStateException("Accounts already loaded!");
         }
-        if (!_user.isGuestUser()){
+        if (!_user.isGuestUser()) {
             String domain = _user.getEmailAddress().split("@")[1];
             accounts.addAll(_commerceUtils.getAccountsByDomain(domain, getCompanyId()));
-            if (_commerceUtils.userAccountExists(_user, getCompanyId())) {
-                accounts.add(_commerceUtils.getPersonalAccount(_user, getCompanyId()));
+            AccountEntry accountEntry = _commerceUtils.getPersonalAccount(_accountUser);
+            if (accountEntry != null) {
+                accounts.add(accountEntry);
             }
             _accountsLoaded = true;
         }
-
     }
 
     public boolean canCreateNewAccount() {
-        if (!_accountsLoaded){
+        if (!_accountsLoaded) {
             loadAccounts();
         }
         if (accounts.isEmpty()) return true;
@@ -75,38 +96,29 @@ public class AccountSelectionCheckoutStepDisplayContext {
         return true;
     }
 
-    public String getTitle() {
-        return "account-info";
-    }
-
-    public String getParamName() {
-        return "accountEntryId";
-    }
-
-    public long getCompanyId(){
-        return 10131;
-    }
-    public boolean canEditAccount(User user, AccountEntry accountEntry) {
-        return accountEntry.getUserId() == user.getUserId() && accountEntry.isPersonalAccount();
-    }
-
     public List<AccountEntry> getAccountEntries() {
-        if (!_accountsLoaded){
+        if (!_accountsLoaded) {
             loadAccounts();
         }
         return accounts;
     }
 
-    public String getAccountWebsite(long accountEntryId) {
-        AccountEntry accountEntry = getAccountEntry(accountEntryId);
-        if (accountEntry != null){
-            return (String) accountEntry.getExpandoBridge().getAttribute("website", false);
+    public String getCompanyReferenceCode(AccountEntry accountEntry) {
+        if (accountEntry != null) {
+            return (String) accountEntry.getExpandoBridge().getAttribute(OrganizationConstants.ORG_REGISTRATION_ID, false);
+        }
+        return "";
+    }
+
+    public String getAccountWebsite(AccountEntry accountEntry) {
+        if (accountEntry != null) {
+            return (String) accountEntry.getExpandoBridge().getAttribute(OrganizationConstants.ORG_WEBSITE, false);
         }
         return "";
     }
 
     public AccountEntry getAccountEntry(long accountEntryId) {
-        if (!_accountsLoaded){
+        if (!_accountsLoaded) {
             loadAccounts();
         }
         for (AccountEntry account : accounts) {
@@ -116,89 +128,167 @@ public class AccountSelectionCheckoutStepDisplayContext {
         return null;
     }
 
-    public long storeAccountSelection(HttpServletRequest request) throws Exception {
+    public Address addOrUpdateBillingAddress(HttpServletRequest request, AccountEntry accountEntry, long selectedAddressId) throws PortalException {
 
-        long accountEntryId = ParamUtil.getLong(request, getParamName());
-
-        if (accountEntryId == 0 && !canCreateNewAccount()) return accountEntryId;
-
-        AccountEntry accountEntry;
-        if (accountEntryId == 0) {
-             accountEntry = addCommerceAccount(request);
-        } else {
-            accountEntry = _accountEntryLocalService.fetchUserAccountEntry(accountEntryId, getCompanyId());
-        }
-
-        if (canEditAccount(_user, accountEntry)) {
-            Address address = addOrUpdateCommerceAddress(request, accountEntry);
-            accountEntry.setDefaultBillingAddressId(address.getAddressId());
-            _accountEntryLocalService.updateAccountEntry(accountEntry);
-        }
-
-    }
-
-    private AccountEntry addCommerceAccount(HttpServletRequest request) throws PortalException {
-        AccountEntry accountEntry = _commerceUtils.createPersonAccountEntry(_user, getCompanyId());
-
-        String name = ParamUtil.getString(request, OrganizationConstants.ORG_NAME);
-        String website = ParamUtil.getString(request, OrganizationConstants.ORG_WEBSITE);
-        String externalReferenceCode = ParamUtil.getString(request, OrganizationConstants.ORG_EXTERNAL_REF);
-
-        if (name == null || name.isEmpty()){
-            throw new RegistrationFormException("Account name field is required!");
-        }
-        accountEntry.setName(name);
-        if (externalReferenceCode != null && !externalReferenceCode.isEmpty()) {
-            accountEntry.setExternalReferenceCode(externalReferenceCode);
-        }
-        if (website != null && !website.isEmpty()) {
-            //Update account entry
-            accountEntry.getExpandoBridge().setAttribute("website", website, false);
-        }
-        return accountEntry;
-    }
-
-    private Address addOrUpdateCommerceAddress(HttpServletRequest request, AccountEntry accountEntry) throws PortalException {
         long countryId = ParamUtil.getLong(request, OrganizationConstants.ORG_COUNTRY_ID);
-
         Country country = _countryLocalService.fetchCountry(countryId);
-        if (country == null){
+        if (country == null) {
             throw new RegistrationFormException(String.format("Country with ID '%d' does not exist!", countryId));
         }
         if (!country.isBillingAllowed()) {
             throw new RegionCodeException(String.format("It is not allowed to do business with country '%s'", country.getName()));
         }
-
-        String name = ParamUtil.getString(request, OrganizationConstants.ORG_NAME);
-        String street1 = ParamUtil.getString(request, OrganizationConstants.ORG_STREET);
+        Address billingAddress;
+        if (selectedAddressId > 0){
+            billingAddress = _addressLocalService.fetchAddress(selectedAddressId);
+        } else if (accountEntry.isPersonalAccount()) {
+            billingAddress = _addressLocalService.fetchAddressByExternalReferenceCode("address_" +
+                    _accountUser.getScreenName(), getCompanyId());
+        } else {
+            billingAddress = null;
+        }
+        Country companyCountry = _countryLocalService.getCountryByA2(getCompanyId(), country.getA2());
+        String name = ParamUtil.getString(request, OrganizationConstants.ORG_ADDRESS_NAME);
+        String street = ParamUtil.getString(request, OrganizationConstants.ORG_STREET);
         String city = ParamUtil.getString(request, OrganizationConstants.ORG_CITY);
-        String zip = ParamUtil.getString(request, OrganizationConstants.ORG_POSTAL);
+        String postal = ParamUtil.getString(request, OrganizationConstants.ORG_POSTAL);
         long regionId = ParamUtil.getLong(request, OrganizationConstants.ORG_REGION);
         String phoneNumber = ParamUtil.getString(request, OrganizationConstants.ORG_PHONE);
 
-        long defaultBillingAddressId = accountEntry.getDefaultBillingAddressId();
-        Address billingAddress = _addressLocalService.fetchAddress(defaultBillingAddressId);
+        final ServiceContext serviceContext = new ServiceContext();
+        serviceContext.setScopeGroupId(accountEntry.getAccountEntryGroupId());
+        serviceContext.setCompanyId(accountEntry.getCompanyId());
+        serviceContext.setUserId(accountEntry.getUserId());
         if (billingAddress == null) {
-            Address address = _addressLocalService.createAddress(0);
-            address.setStreet1(street1);
-            address.setZip(zip);
-            address.setCity(city);
-            address.setCountryId(countryId);
-            address.setRegionId(regionId);
-            address.setCompanyId(getCompanyId());
+            final ListType accountType = ListTypeLocalServiceUtil.getListType("billing", "com.liferay.account.model.AccountEntry.address");
+            billingAddress = _addressLocalService.addAddress("address_" + _accountUser.getScreenName(),
+                    _accountUser.getUserId(), AccountEntry.class.getName(),
+                    accountEntry.getAccountEntryId(), name, null, street, null, null,
+                    city, postal, regionId, companyCountry.getCountryId(), accountType.getListTypeId(), true,
+                    true, null, serviceContext);
 
-            return _addressLocalService.addAddress(
-                    AccountEntry.class.getName(), accountEntry.getAccountEntryId(),
-                    name, null, street1, null, null, city, zip, regionId,
-                    countryId, phoneNumber, CommerceAddressConstants.ADDRESS_TYPE_BILLING, serviceContext);
+            billingAddress = _addressLocalService.addAddress(billingAddress);
+            accountEntry.setDefaultBillingAddressId(billingAddress.getAddressId());
+            _accountEntryLocalService.updateAccountEntry(accountEntry);
         } else {
-            return _commerceAddressService.updateCommerceAddress(billingAddress.getCommerceAddressId(),
-                    name,null, street1, null, null, city, zip, regionId,
-                    countryId, phoneNumber, CommerceAddressConstants.ADDRESS_TYPE_BILLING, serviceContext
-            );
+            billingAddress.setName(name);
+            billingAddress.setStreet1(street);
+            billingAddress.setZip(postal);
+            billingAddress.setCity(city);
+            billingAddress.setCountryId(companyCountry.getCountryId());
+            billingAddress.setRegionId(regionId);
+            billingAddress = _addressLocalService.updateAddress(billingAddress);
         }
 
+        if (phoneNumber != null) {
+            List<Phone> phones = _phoneLocalService.getPhones(getCompanyId(), "com.liferay.portal.kernel.model.Address", billingAddress.getAddressId());
+            Phone phone;
+            if (phones.isEmpty()) {
+                final ListType phoneType = ListTypeLocalServiceUtil.getListType("phone-number", "com.liferay.portal.kernel.model.Address.phone");
+                _phoneLocalService.addPhone(
+                        _accountUser.getUserId(), "com.liferay.portal.kernel.model.Address", billingAddress.getAddressId(),
+                        phoneNumber, null, phoneType.getListTypeId(), true, serviceContext);
+            } else {
+                phone = phones.get(0);
+                phone.setNumber(phoneNumber);
+                _phoneLocalService.updatePhone(phone);
+            }
+        }
+        return billingAddress;
     }
 
+    public AccountEntry storeAccountInfo() {
+
+        long accountEntryId = ParamUtil.getLong(_httpServletRequest, getParamName());
+
+        if (accountEntryId == 0 && !canCreateNewAccount()) return null;
+
+        AccountEntry accountEntry;
+        try {
+            accountEntry = addOrUpdateAccountEntry(_httpServletRequest, accountEntryId);
+        } catch (PortalException e) {
+            SessionErrors.add(_httpServletRequest, RegistrationFormException.class.getName(),
+                    Collections.singletonList(new RegistrationFormException(e.getMessage())));
+            return null;
+        }
+
+        if (accountEntry != null && accountEntry.isPersonalAccount()) {
+            try {
+                addOrUpdateBillingAddress(_httpServletRequest, accountEntry,
+                        accountEntry.getDefaultBillingAddressId());
+            } catch (Exception e) {
+                SessionErrors.add(_httpServletRequest, RegistrationFormException.class.getName(),
+                        Collections.singletonList(new RegistrationFormException(e.getMessage())));
+                return null;
+            }
+        }
+        return accountEntry;
+    }
+
+    AccountEntry addOrUpdateAccountEntry(HttpServletRequest request, long accountEntryId) throws PortalException {
+
+        String name = ParamUtil.getString(request, OrganizationConstants.ORG_NAME);
+        if (name == null || name.isEmpty()) {
+            throw new RegistrationFormException("Account name field is required!");
+        }
+
+        AccountEntry accountEntry;
+        if (accountEntryId == 0){
+            accountEntry = _commerceUtils.createPersonAccountEntry(_accountUser);
+        } else {
+            accountEntry = _accountEntryLocalService.fetchAccountEntry(accountEntryId);
+        }
+
+        if (accountEntry != null && accountEntry.isPersonalAccount()) {
+            String website = ParamUtil.getString(request, OrganizationConstants.ORG_WEBSITE);
+            String companyRegistrationId = ParamUtil.getString(request, OrganizationConstants.ORG_REGISTRATION_ID);
+            String taxIdNumber = ParamUtil.getString(request, OrganizationConstants.ORG_VAT);
+
+            accountEntry.setTaxIdNumber(taxIdNumber);
+            accountEntry.setName(name);
+            accountEntry.getExpandoBridge().setAttribute(OrganizationConstants.ORG_REGISTRATION_ID, companyRegistrationId, false);
+            accountEntry.getExpandoBridge().setAttribute(OrganizationConstants.ORG_WEBSITE, website, false);
+            return _accountEntryLocalService.updateAccountEntry(accountEntry);
+        }
+        return accountEntry;
+    }
+
+    private User getAccountUser() {
+        long accountCompanyId = getCompanyId();
+        if (accountCompanyId != _user.getCompanyId()){
+            User user = _userLocalService.fetchUserByEmailAddress(getCompanyId(), _user.getEmailAddress());
+            if (user == null) {
+                user =_userLocalService.createUser(CounterLocalServiceUtil.increment(User.class.getName()));
+                user.setCompanyId(getCompanyId());
+                user.setScreenName(_user.getScreenName());
+                user.setEmailAddress(_user.getEmailAddress());
+                user.setFirstName(_user.getFirstName());
+                user.setLastName(_user.getLastName());
+                return _userLocalService.addUser(user);
+            } else {
+                return user;
+            }
+        } else {
+            return _user;
+        }
+    }
+
+    public Address getAccountAddress(AccountEntry accountEntry) {
+        if (accountEntry == null){
+            return null;
+        }
+        if (accountEntry.getDefaultBillingAddress() != null){
+            return accountEntry.getDefaultBillingAddress();
+        }
+        if (accountEntry.isPersonalAccount()){
+            try {
+                return _addressLocalService.getAddressByExternalReferenceCode("address_"
+                        + _accountUser.getScreenName(), getCompanyId());
+            } catch (PortalException e) {
+                //
+            }
+        }
+        return null;
+    }
 
 }

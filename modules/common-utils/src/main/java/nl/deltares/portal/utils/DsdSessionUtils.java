@@ -59,6 +59,8 @@ public interface DsdSessionUtils {
      */
     void registerUser(User user, Map<String, String> userAttributes, Registration registration, Map<String, String> registrationProperties, User registeredBy) throws PortalException;
 
+    void registerUser(User user, Registration registration, Map<String, String> registrationProperties, User registrationUser) throws PortalException;
+
     /**
      * Unregister user for Registration
      * @param user User to unregister

@@ -1,5 +1,3 @@
-<%@ page import="com.liferay.portal.kernel.util.DateUtil" %>
-<%@ page import="nl.deltares.portal.utils.Period" %>
 <div class="row no-gutters">
     <%
         String viewURL = displayContext.getViewURL(registration);

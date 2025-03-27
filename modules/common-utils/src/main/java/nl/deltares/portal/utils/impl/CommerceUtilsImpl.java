@@ -6,17 +6,13 @@ import com.liferay.account.service.AccountEntryUserRelLocalService;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.AddressLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import nl.deltares.portal.utils.CommerceUtils;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.util.List;
-import java.util.Map;
 
 @Component(
         immediate = true,
@@ -34,36 +30,30 @@ public class CommerceUtilsImpl implements CommerceUtils {
     }
 
     @Override
-    public boolean userAccountExists(User user, long companyId) {
-        return null != _accountEntryLocalService.fetchUserAccountEntry(user.getUserId(), companyId);
+    public boolean userAccountExists(User user) {
+        return null != getPersonalAccount(user);
     }
 
     @Override
-    public AccountEntry getPersonalAccount(User user, long companyId) {
-        AccountEntry accountEntry = _accountEntryLocalService.fetchUserAccountEntry(user.getUserId(), companyId);
-        if (accountEntry == null) {
-            accountEntry = _accountEntryLocalService.fetchPersonAccountEntry(user.getUserId());
-            accountEntry.setExternalReferenceCode(user.getScreenName());
-            accountEntry.setCompanyId(companyId);
-            _accountEntryLocalService.updateAccountEntry(accountEntry);
-        }
-        return accountEntry;
+    public AccountEntry getPersonalAccount(User user) {
+        return _accountEntryLocalService.fetchPersonAccountEntry(user.getUserId());
     }
 
     @Override
-    public AccountEntry createPersonAccountEntry(User billingUser, long companyId) throws PortalException {
+    public AccountEntry createPersonAccountEntry(User user) throws PortalException {
 
         final ServiceContext serviceContext = new ServiceContext();
-        serviceContext.setCompanyId(companyId);
+        serviceContext.setCompanyId(user.getCompanyId());
+        serviceContext.setScopeGroupId(user.getGroupId());
         //we can only create personal accounts through the code
         final AccountEntry accountEntry = _accountEntryLocalService.addAccountEntry(
-                billingUser.getUserId(),
-                0, billingUser.getScreenName(), billingUser.getFullName(), null,
-                billingUser.getEmailAddress(), new byte[0],
+                user.getUserId(),
+                0, user.getScreenName(), user.getFullName(), null,
+                user.getEmailAddress(), new byte[0],
                 null, "person", 0, serviceContext);
 
-        accountEntry.setExternalReferenceCode(billingUser.getScreenName());
-        _accountEntryUserRelLocalService.addAccountEntryUserRel(accountEntry.getAccountEntryId(), billingUser.getUserId());
+        accountEntry.setExternalReferenceCode(user.getScreenName());
+        _accountEntryUserRelLocalService.addAccountEntryUserRel(accountEntry.getAccountEntryId(), user.getUserId());
 
         return accountEntry;
     }
@@ -74,7 +64,5 @@ public class CommerceUtilsImpl implements CommerceUtils {
     @Reference
     private AccountEntryUserRelLocalService _accountEntryUserRelLocalService;
 
-    @Reference
-    private AddressLocalService _addressLocalService;
 }
 

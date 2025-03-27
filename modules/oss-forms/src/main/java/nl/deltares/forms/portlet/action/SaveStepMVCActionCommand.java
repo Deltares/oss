@@ -18,6 +18,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Marco Leo
@@ -43,14 +44,15 @@ public class SaveStepMVCActionCommand extends BaseMVCActionCommand {
 			return redirect;
 		}
 
-		if (!SessionErrors.isEmpty(actionRequest)) {
+		HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
+		if (!SessionErrors.isEmpty(httpServletRequest)) {
 			return _getPortletURL(
 				actionRequest, actionResponse, checkoutStepName);
 		}
 
 		DeltaresCheckoutStep commerceCheckoutStep =
 			_checkoutStepRegistry.getNextCheckoutStep(
-				checkoutStepName, _portal.getHttpServletRequest(actionRequest),
+				checkoutStepName, httpServletRequest,
 				_portal.getHttpServletResponse(actionResponse));
 
 		if (commerceCheckoutStep == null) {

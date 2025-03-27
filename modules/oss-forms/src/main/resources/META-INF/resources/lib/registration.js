@@ -77,6 +77,18 @@ RegistrationFormsUtil = {
         );
     },
 
+    addressSelectionChanged: function (namespace, addressSelection, paramName) {
+
+        const addressSelectElm = addressSelection;
+        const paramNameElem = document.getElementById(namespace + paramName);
+
+        if (addressSelectElm && paramNameElem) {
+            const addressEntryId = addressSelectElm.value;
+            this.updateAddressFields(namespace, addressSelectElm);
+            paramNameElem.value = addressEntryId;
+        }
+    },
+
     accountSelectionChanged: function (namespace, accountSelection, paramName) {
 
         const accountSelectElm = accountSelection;
@@ -84,8 +96,63 @@ RegistrationFormsUtil = {
 
         if (accountSelectElm && paramNameElem) {
             const accountEntryId = accountSelectElm.value;
+            this.updateAccountFields(namespace, accountSelectElm);
             this.updateAddressFields(namespace, accountSelectElm);
             paramNameElem.value = accountEntryId;
+        }
+    },
+
+    updateAccountFields: function (namespace, selectedElement){
+
+        let selectedIndex = selectedElement.selectedIndex
+        let clearFields = !selectedIndex || selectedIndex === '0';
+
+        if (selectedElement) {
+            const vat = document.getElementById(namespace + "org_vat");
+            const externalRef = document.getElementById(namespace + 'companyRegistrationId');
+            const website = document.getElementById(namespace + 'website');
+
+            if (
+                vat &&
+                externalRef &&
+                website
+            ) {
+                const selectedOption =
+                    selectedElement.options[selectedIndex];
+
+                let disabled = selectedOption.dataset.canedit === "false";
+
+                vat.value = clearFields ? "" : selectedOption.dataset.vat;
+                externalRef.value = clearFields ? "" : selectedOption.dataset.companyRef;
+                website.value = clearFields ? "" : selectedOption.dataset.website;
+
+                vat.disabled = disabled;
+                externalRef.disabled = disabled;
+                website.disabled = disabled;
+
+                Liferay.Service(
+                    '/region/get-regions',
+                    {
+                        active: true,
+                        countryId: parseInt(selectedOption.dataset.country, 10),
+                    },
+                    function setUIOnlyInputRegionName(regions) {
+
+                        regionIdSelect.options.length = 0;
+                        regionIdSelect.append(new Option('- ' + Liferay.Language.get('select-region'), 0));
+
+                        if (regions){
+                            regions.forEach((listElement) => {
+                                regionIdSelect.append(new Option(listElement.name, listElement.regionId));
+                                if (listElement.regionId === selectedOption.dataset.region){
+                                    regionIdSelect.value = listElement.regionId
+                                }
+                            });
+                        }
+                    }
+                );
+
+            }
         }
     },
 
@@ -98,9 +165,9 @@ RegistrationFormsUtil = {
             const city = document.getElementById(namespace + "org_city");
             const country = document.getElementById(namespace + 'org_country');
             const regionIdSelect = document.getElementById(namespace + 'org_region');
-            const name = document.getElementById(namespace + 'org_name');
+            const orgName = document.getElementById(namespace + 'org_name');
+            const orgAddressName = document.getElementById(namespace + 'org_address_name');
             const phoneNumber = document.getElementById(namespace + 'org_phone');
-            const website = document.getElementById(namespace + 'org_website');
             const street1 = document.getElementById(namespace + 'org_address');
             const zip = document.getElementById(namespace + 'org_postal');
 
@@ -108,7 +175,8 @@ RegistrationFormsUtil = {
                 city &&
                 country &&
                 regionIdSelect &&
-                name &&
+                orgName &&
+                orgAddressName &&
                 phoneNumber &&
                 street1 &&
                 zip
@@ -120,24 +188,21 @@ RegistrationFormsUtil = {
 
                 city.value = clearFields ? "" : selectedOption.dataset.city;
                 country.value = clearFields ? 0 : selectedOption.dataset.country;
-                name.value = clearFields ? "" : selectedOption.dataset.name;
-                phoneNumber.value = clearFields ? "" : selectedOption.dataset.phoneNumber;
+                orgName.value = clearFields ? "" : selectedOption.dataset['orgName'];
+                orgAddressName.value = clearFields ? "" : selectedOption.dataset['addressName'];
+                phoneNumber.value = clearFields ? "" : selectedOption.dataset['phoneNumber'];
                 street1.value = clearFields ? "" : selectedOption.dataset['street-1'];
                 zip.value = clearFields ? "" : selectedOption.dataset.zip;
                 regionIdSelect.value = clearFields ? "" : selectedOption.dataset.regionid;
 
                 city.disabled = disabled;
                 country.disabled = disabled;
-                name.disabled = disabled;
+                orgName.disabled = disabled;
                 phoneNumber.disabled = disabled;
                 street1.disabled = disabled;
                 zip.disabled = disabled;
                 regionIdSelect.disabled = disabled;
-
-                if (website) {
-                    website.value = clearFields ? "" : selectedOption.dataset.website;
-                    website.disabled = disabled;
-                }
+                orgAddressName.disabled = disabled;
 
                 Liferay.Service(
                     '/region/get-regions',
@@ -214,7 +279,7 @@ RegistrationFormsUtil = {
         }
     },
 
-    //used in cart-overview.jsp
+    //used in user-registration.jsp
     copyTableRow: function (oldRow, newRow, rows){
         newRow.innerHTML = oldRow.innerHTML;
 

@@ -1,5 +1,7 @@
 package nl.deltares.forms.internal;
 
+import com.liferay.account.model.AccountEntry;
+import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -18,62 +20,72 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UserRegistrationValidationContext {
+public class UserInputValidationContext {
 
     private final DsdSessionUtils _sessionUtils;
     private final UserLocalService _userLocalService;
     private final ThemeDisplay _themeDisplay;
     private final DsdParserUtils _dsdParserUtils;
+    private final HttpServletRequest _httpServletRequest;
+    private final String _validEmailDomains;
     private boolean _registrationsLoaded = false;
     private boolean _registrationInfosLoaded = false;
     private final List<Registration> _registrations = new ArrayList<>();
     private final List<RegistrationInfo> _registrationInformation = new ArrayList<>();
 
-    public UserRegistrationValidationContext(HttpServletRequest httpServletRequest, DsdSessionUtils sessionUtils,
-                                             DsdParserUtils parserUtils,
-                                             UserLocalService userLocalService) throws Exception {
+    public UserInputValidationContext(HttpServletRequest httpServletRequest, DsdSessionUtils sessionUtils,
+                                      DsdParserUtils parserUtils, UserLocalService userLocalService,
+                                      AccountEntryLocalService accountEntryLocalService) throws Exception {
         _sessionUtils = sessionUtils;
         _dsdParserUtils = parserUtils;
         _userLocalService = userLocalService;
 
         CPRequestHelper cpRequestHelper = new CPRequestHelper(httpServletRequest);
         _themeDisplay = cpRequestHelper.getThemeDisplay();
+        _httpServletRequest = httpServletRequest;
+
+        Object selectedAccountEntryId = httpServletRequest.getSession().getAttribute("selectedAccountEntryId");
+        if (selectedAccountEntryId != null) {
+            AccountEntry _selectedAccountEntry = accountEntryLocalService.getAccountEntry((Long) selectedAccountEntryId);
+            _validEmailDomains = _selectedAccountEntry.getDomains();
+        } else {
+            _validEmailDomains = "";
+        }
     }
 
-    public void validateRequestData(HttpServletRequest request) throws Exception {
+    public void validateRequestData() throws Exception {
 
         if(!_registrationInfosLoaded){
-            loadRegistrationInfos(request);
+            loadRegistrationInfos(_httpServletRequest);
         }
         boolean addIfExceptions = false;
         List<RegistrationFormException> exceptions;
-        if (SessionErrors.contains(request, RegistrationFormException.class)) {
-            exceptions = (List<RegistrationFormException>) SessionErrors.get(request, RegistrationFormException.class);
+        if (SessionErrors.contains(_httpServletRequest, RegistrationFormException.class)) {
+            exceptions = (List<RegistrationFormException>) SessionErrors.get(_httpServletRequest, RegistrationFormException.class);
         } else {
             addIfExceptions = true;
             exceptions = new ArrayList<>();
         }
         long companyId = _themeDisplay.getCompanyId();
         for (RegistrationInfo info : _registrationInformation) {
-            boolean error = false;
-            if (!Validator.isEmailAddress(info.getEmail())) {
-                exceptions.add(new RegistrationFormException(String.format("Invalid email '%s' for registration '%s'", info.getEmail(), info.getRegistrationTitle())));
-                error = true;
-            }
-            if (Validator.isBlank(info.getFirstName()) || Validator.isBlank(info.getLastName())) {
-                exceptions.add(new RegistrationFormException(String.format("Missing First- or Last Name for registration '%s'", info.getRegistrationTitle())));
-                error = true;
-            }
-            if (error) continue;
-
             String email = info.getEmail();
+            if (!Validator.isEmailAddress(email)){
+                exceptions.add(new RegistrationFormException(String.format("Invalid email address '%s'!", email)));
+                continue;
+            }
+            String domain = email.split("@")[1];
+            if (!_validEmailDomains.isEmpty() && !_validEmailDomains.contains(domain)){
+                exceptions.add(new RegistrationFormException(String.format("Invalid email domain for user '%s'. Required one of the following email domains '%s'", email, _validEmailDomains)));
+                continue;
+            }
+
             User user = _userLocalService.fetchUserByEmailAddress(companyId, email);
             if (user == null) continue;
             _sessionUtils.isUserRegisteredFor(user, getRegistration(info.getRegistrationId()));
         }
 
         if (addIfExceptions && !exceptions.isEmpty()) {
-            SessionErrors.add(request, RegistrationFormException.class, exceptions);
+            SessionErrors.add(_httpServletRequest, RegistrationFormException.class, exceptions);
         }
     }
 
@@ -94,7 +106,7 @@ public class UserRegistrationValidationContext {
                 final RegistrationInfo registrationInfo = new RegistrationInfo();
                 registrationInfo.setRegistrationName(registration.getTitle());
                 registrationInfo.setArticleId(articleId);
-                registrationInfo.setBillingInfoRequired(registration.getPrice() > 0);
+                registrationInfo.setPrice((float) registration.getPrice());
 
                 POST_FIX = i == 0 ? "" : "_" + i;
                 registrationInfo.setSalutation(ParamUtil.getString(request, "salutation_" + articleId + POST_FIX));
@@ -132,4 +144,5 @@ public class UserRegistrationValidationContext {
             throw new IllegalStateException("Registration Infos not loaded!");
         return _registrationInformation;
     }
+
 }
