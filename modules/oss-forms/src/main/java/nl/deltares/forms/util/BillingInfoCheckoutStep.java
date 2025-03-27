@@ -2,8 +2,6 @@ package nl.deltares.forms.util;
 
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.AddressLocalService;
 import com.liferay.portal.kernel.service.CountryLocalService;
 import com.liferay.portal.kernel.service.PhoneLocalService;
@@ -13,7 +11,9 @@ import com.liferay.portal.kernel.util.Portal;
 import nl.deltares.forms.constants.CheckoutWebKeys;
 import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.forms.internal.BillingDetailsCheckoutStepDisplayContext;
+import nl.deltares.model.BillingInfo;
 import nl.deltares.portal.utils.CommerceUtils;
+import nl.deltares.portal.utils.DsdParserUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -33,9 +33,8 @@ import java.util.Collections;
 )
 public class BillingInfoCheckoutStep extends BaseCheckoutStep {
 
-    private static final Log LOG = LogFactoryUtil.getLog(BillingInfoCheckoutStep.class);
-
     public static final String NAME = "billing-info";
+    private BillingDetailsCheckoutStepDisplayContext _displayContext;
 
     @Override
     public String getName() {
@@ -47,15 +46,17 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
 
         HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
 
-        BillingDetailsCheckoutStepDisplayContext displayContext = new BillingDetailsCheckoutStepDisplayContext(
-                httpServletRequest, _addressLocalService, _accountEntryLocalService,
-                _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
-
-        displayContext.validateRequestData();
+        if (_displayContext == null) {
+            _displayContext = new BillingDetailsCheckoutStepDisplayContext(
+                    httpServletRequest, _addressLocalService, _accountEntryLocalService,
+                    _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
+        }
+        _displayContext.validateRequestData(httpServletRequest);
 
         try {
-            httpServletRequest.getSession().setAttribute("billingInfo", displayContext.storeBillingInformation());
-        } catch (Exception e){
+            BillingInfo billingInfo = _displayContext.storeBillingInformation(httpServletRequest);
+            httpServletRequest.getSession().setAttribute("billingInfo", billingInfo);
+        } catch (Exception e) {
             SessionErrors.add(httpServletRequest, RegistrationFormException.class,
                     Collections.singletonList(new RegistrationFormException(e.getMessage())));
         }
@@ -65,23 +66,39 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
     @Override
     public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 
-        BillingDetailsCheckoutStepDisplayContext displayContext = new BillingDetailsCheckoutStepDisplayContext(
-                httpServletRequest, _addressLocalService, _accountEntryLocalService,
-                _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
-
+        if (_displayContext == null) {
+            _displayContext = new BillingDetailsCheckoutStepDisplayContext(
+                    httpServletRequest, _addressLocalService, _accountEntryLocalService,
+                    _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
+        }
         HttpSession session = httpServletRequest.getSession();
         Object billingInfo = session.getAttribute("billingInfo");
         if (billingInfo != null) {
             httpServletRequest.setAttribute("billingInfo", billingInfo);
         } else {
-            httpServletRequest.setAttribute("billingInfo", displayContext.getBillingInfo());
+            httpServletRequest.setAttribute("billingInfo", _displayContext.getBillingInfo());
         }
 
-        httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, displayContext);
+        httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, _displayContext);
 
         _jspRenderer.renderJSP(
                 httpServletRequest, httpServletResponse,
                 "/registration2.0/billing-info.jsp");
+    }
+
+    @Override
+    public boolean isActive(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+
+        if (_displayContext == null) {
+            try {
+                _displayContext = new BillingDetailsCheckoutStepDisplayContext(
+                        httpServletRequest, _addressLocalService, _accountEntryLocalService,
+                        _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return _displayContext.isPaymentRequired(httpServletRequest, _dsdParserUtils);
     }
 
     @Reference
@@ -107,5 +124,8 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
 
     @Reference
     private UserLocalService _userLocalService;
+
+    @Reference
+    private DsdParserUtils _dsdParserUtils;
 
 }

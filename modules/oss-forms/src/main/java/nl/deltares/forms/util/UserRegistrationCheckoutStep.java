@@ -41,12 +41,11 @@ public class UserRegistrationCheckoutStep extends BaseCheckoutStep {
     public void processAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
 
         HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
-        UserInputValidationContext registrationContext = new UserInputValidationContext(
-                httpServletRequest, _dsdSessionUtils, _dsdParserUtils, _userLocalService, _accountEntryLocalService);
+        UserInputValidationContext _registrationContext = new UserInputValidationContext(
+                    httpServletRequest, _dsdSessionUtils, _dsdParserUtils, _userLocalService, _accountEntryLocalService);
+        _registrationContext.validateRequestData();
 
-        registrationContext.validateRequestData();
-
-        httpServletRequest.getSession().setAttribute("registrationInfos", registrationContext.getRegistrationInformation());
+        httpServletRequest.getSession().setAttribute("registrationInfos", _registrationContext.getRegistrationInformation());
     }
 
     @Override

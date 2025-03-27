@@ -5,7 +5,6 @@ import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.RegionCodeException;
 import com.liferay.portal.kernel.model.*;
 import com.liferay.portal.kernel.service.*;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -22,7 +21,6 @@ import java.util.List;
 
 public class AccountSelectionCheckoutStepDisplayContext{
 
-    final HttpServletRequest _httpServletRequest;
     final AccountEntryLocalService _accountEntryLocalService;
     final AddressLocalService _addressLocalService;
     final CountryLocalService _countryLocalService;
@@ -42,7 +40,6 @@ public class AccountSelectionCheckoutStepDisplayContext{
                                                       PhoneLocalService phoneLocalService, UserLocalService userLocalService,
                                                       CommerceUtils commerceUtils) {
 
-        _httpServletRequest = request;
         _accountEntryLocalService = accountEntryLocalService;
         _addressLocalService = addressLocalService;
         _countryLocalService = countryLocalService;
@@ -136,7 +133,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
             throw new RegistrationFormException(String.format("Country with ID '%d' does not exist!", countryId));
         }
         if (!country.isBillingAllowed()) {
-            throw new RegionCodeException(String.format("It is not allowed to do business with country '%s'", country.getName()));
+            throw new RegistrationFormException(String.format("It is not allowed to do business with country '%s'", country.getName()));
         }
         Address billingAddress;
         if (selectedAddressId > 0){
@@ -197,27 +194,27 @@ public class AccountSelectionCheckoutStepDisplayContext{
         return billingAddress;
     }
 
-    public AccountEntry storeAccountInfo() {
+    public AccountEntry storeAccountInfo(HttpServletRequest httpServletRequest) {
 
-        long accountEntryId = ParamUtil.getLong(_httpServletRequest, getParamName());
+        long accountEntryId = ParamUtil.getLong(httpServletRequest, getParamName());
 
         if (accountEntryId == 0 && !canCreateNewAccount()) return null;
 
         AccountEntry accountEntry;
         try {
-            accountEntry = addOrUpdateAccountEntry(_httpServletRequest, accountEntryId);
-        } catch (PortalException e) {
-            SessionErrors.add(_httpServletRequest, RegistrationFormException.class.getName(),
+            accountEntry = addOrUpdateAccountEntry(httpServletRequest, accountEntryId);
+        } catch (Exception e) {
+            SessionErrors.add(httpServletRequest, RegistrationFormException.class.getName(),
                     Collections.singletonList(new RegistrationFormException(e.getMessage())));
             return null;
         }
 
         if (accountEntry != null && accountEntry.isPersonalAccount()) {
             try {
-                addOrUpdateBillingAddress(_httpServletRequest, accountEntry,
+                addOrUpdateBillingAddress(httpServletRequest, accountEntry,
                         accountEntry.getDefaultBillingAddressId());
             } catch (Exception e) {
-                SessionErrors.add(_httpServletRequest, RegistrationFormException.class.getName(),
+                SessionErrors.add(httpServletRequest, RegistrationFormException.class.getName(),
                         Collections.singletonList(new RegistrationFormException(e.getMessage())));
                 return null;
             }
@@ -227,11 +224,6 @@ public class AccountSelectionCheckoutStepDisplayContext{
 
     AccountEntry addOrUpdateAccountEntry(HttpServletRequest request, long accountEntryId) throws PortalException {
 
-        String name = ParamUtil.getString(request, OrganizationConstants.ORG_NAME);
-        if (name == null || name.isEmpty()) {
-            throw new RegistrationFormException("Account name field is required!");
-        }
-
         AccountEntry accountEntry;
         if (accountEntryId == 0){
             accountEntry = _commerceUtils.createPersonAccountEntry(_accountUser);
@@ -240,6 +232,12 @@ public class AccountSelectionCheckoutStepDisplayContext{
         }
 
         if (accountEntry != null && accountEntry.isPersonalAccount()) {
+            String name = ParamUtil.getString(request, OrganizationConstants.ORG_NAME);
+
+            if (name == null || name.isEmpty()) {
+                throw new RegistrationFormException("Account name field is required!");
+            }
+
             String website = ParamUtil.getString(request, OrganizationConstants.ORG_WEBSITE);
             String companyRegistrationId = ParamUtil.getString(request, OrganizationConstants.ORG_REGISTRATION_ID);
             String taxIdNumber = ParamUtil.getString(request, OrganizationConstants.ORG_VAT);

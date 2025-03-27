@@ -33,6 +33,8 @@
 <%@ page import="nl.deltares.forms.internal.CheckoutDisplayContext" %>
 <%@ page import="nl.deltares.forms.util.DeltaresCheckoutStep" %>
 <%@ page import="nl.deltares.portal.model.impl.Registration" %>
+<%@ page import="nl.deltares.forms.internal.*" %>
+<%@ page import="nl.deltares.portal.model.subscriptions.SubscriptionSelection" %>
 
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.List" %>

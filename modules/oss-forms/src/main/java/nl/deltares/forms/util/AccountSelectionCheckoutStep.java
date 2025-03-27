@@ -43,6 +43,7 @@ import java.util.Collections;
 public class AccountSelectionCheckoutStep extends BaseCheckoutStep {
 
     public static final String NAME = "account-info";
+    private AccountSelectionCheckoutStepDisplayContext _displayContext;
 
     @Override
     public String getName() {
@@ -53,11 +54,13 @@ public class AccountSelectionCheckoutStep extends BaseCheckoutStep {
     public void processAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
 
         HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
-        AccountSelectionCheckoutStepDisplayContext displayContext =
-                new AccountSelectionCheckoutStepDisplayContext(httpServletRequest, _accountEntryLocalService,
-                        _addressLocalService, _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
+        if (_displayContext == null) {
+            _displayContext =
+                    new AccountSelectionCheckoutStepDisplayContext(httpServletRequest, _accountEntryLocalService,
+                            _addressLocalService, _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
 
-        AccountEntry accountEntry = displayContext.storeAccountInfo();
+        }
+        AccountEntry accountEntry = _displayContext.storeAccountInfo(httpServletRequest);
 
         if (accountEntry != null) {
             HttpSession session = httpServletRequest.getSession();
@@ -78,14 +81,16 @@ public class AccountSelectionCheckoutStep extends BaseCheckoutStep {
     @Override
     public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 
-        AccountSelectionCheckoutStepDisplayContext displayContext =
-                new AccountSelectionCheckoutStepDisplayContext(httpServletRequest, _accountEntryLocalService,
-                        _addressLocalService, _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
+        if (_displayContext == null) {
+            _displayContext =
+                    new AccountSelectionCheckoutStepDisplayContext(httpServletRequest, _accountEntryLocalService,
+                            _addressLocalService, _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
 
-        httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, displayContext);
+        }
+        httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, _displayContext);
 
         try {
-            displayContext.loadAccounts();
+            _displayContext.loadAccounts();
         } catch (Exception e) {
             SessionErrors.add(httpServletRequest, RegistrationFormException.class, Collections.singletonList(new RegistrationFormException(e.getMessage(), e)));
         }
