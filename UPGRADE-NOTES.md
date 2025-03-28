@@ -85,7 +85,6 @@ Actions:
 <li>google-tag-id</li>
 <li>page-footer-webcontent-id</li>
 <li>Shopping Cart</li>
-<li>show-cookies</li>
 </ul>
 </li>
 <li>Clean the Velocity templates from oss.deltares.nl site</li>
@@ -102,7 +101,6 @@ Actions:
 <li>google-tag-id</li>
 <li>page-footer-webcontent-id</li>
 <li>Shopping Cart</li>
-<li>show-cookies</li>
 </ul>
 </li>
 <li>Update Footer.ftl</li>
@@ -119,7 +117,6 @@ Actions:
 <li>google-tag-id</li>
 <li>page-footer-webcontent-id</li>
 <li>Shopping Cart</li>
-<li>show-cookies</li>
 </ul>
 </li>
 <li>Update Footer.ftl</li>
