@@ -84,6 +84,7 @@
             label="registrationform.billing.vat"
             helpMessage="registrationform.billing.vat.info"
             wrapperCssClass="form-group-item"
+            disabled="<%=!canEditAddress%>"
             value='<%= billingInfo == null ? "" : billingInfo.getVat()%>'
     />
     <aui:input
@@ -91,6 +92,7 @@
             label="registrationform.billing.companyid"
             helpMessage="registrationform.billing.companyid.info"
             wrapperCssClass="form-group-item"
+            disabled="<%=!canEditAddress%>"
             value='<%= billingInfo == null ? "" : billingInfo.getCompanyIdentifier()%>'
     />
 </div>

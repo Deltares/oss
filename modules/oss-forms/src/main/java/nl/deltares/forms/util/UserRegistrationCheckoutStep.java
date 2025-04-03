@@ -7,9 +7,9 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.Portal;
 import nl.deltares.forms.constants.CheckoutWebKeys;
 import nl.deltares.forms.exception.RegistrationFormException;
-import nl.deltares.forms.internal.UserRegistrationDisplayContext;
 import nl.deltares.forms.internal.UserInputValidationContext;
-import nl.deltares.portal.utils.DDMStructureUtil;
+import nl.deltares.forms.internal.UserRegistrationDisplayContext;
+import nl.deltares.model.RegistrationInfo;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
 import org.osgi.service.component.annotations.Component;
@@ -20,6 +20,7 @@ import javax.portlet.ActionResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
+import java.util.List;
 
 @Component(
         property = {
@@ -42,9 +43,8 @@ public class UserRegistrationCheckoutStep extends BaseCheckoutStep {
 
         HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
         UserInputValidationContext _registrationContext = new UserInputValidationContext(
-                    httpServletRequest, _dsdSessionUtils, _dsdParserUtils, _userLocalService, _accountEntryLocalService);
+                httpServletRequest, _dsdSessionUtils, _dsdParserUtils, _userLocalService, _accountEntryLocalService);
         _registrationContext.validateRequestData();
-
         httpServletRequest.getSession().setAttribute("registrationInfos", _registrationContext.getRegistrationInformation());
     }
 
@@ -53,8 +53,7 @@ public class UserRegistrationCheckoutStep extends BaseCheckoutStep {
 
         try {
             UserRegistrationDisplayContext displayContext = new UserRegistrationDisplayContext(httpServletRequest,
-                    _dsdParserUtils, _ddmStructureUtil);
-
+                    _dsdParserUtils);
             httpServletRequest.setAttribute(
                     CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT,
                     displayContext);
@@ -76,9 +75,6 @@ public class UserRegistrationCheckoutStep extends BaseCheckoutStep {
 
     @Reference
     private DsdParserUtils _dsdParserUtils;
-
-    @Reference
-    private DDMStructureUtil _ddmStructureUtil;
 
     @Reference
     private DsdSessionUtils _dsdSessionUtils;

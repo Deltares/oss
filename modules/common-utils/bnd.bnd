@@ -2,6 +2,7 @@ Bundle-Name: common-utils
 Bundle-SymbolicName: nl.deltares.portal.common-utils
 Bundle-Version: 1.0.44
 Export-Package: \
+  nl.deltares.portal.constants, \
   nl.deltares.portal.utils, \
   nl.deltares.portal.utils.impl, \
   nl.deltares.portal.model, \

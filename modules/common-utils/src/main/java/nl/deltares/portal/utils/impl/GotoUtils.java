@@ -74,11 +74,15 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
 
         //write user information
         writePostData(connection, user, userAttributes, callerId);
-
+        Map<String, String> parseJsonToMap;
         //get response
-        checkResponse(connection);
-        String jsonResponse = readAll(connection);
-        Map<String, String> parseJsonToMap = JsonContentUtils.parseJsonToMap(jsonResponse);
+        int responseCode = checkResponse(connection);
+        if (responseCode == 409){
+            parseJsonToMap = getUserInfo(user.getEmailAddress(), webinarKey, getBasePath() + GOTO_REGISTRANTS_PATH, false);
+        } else {
+            String jsonResponse = readAll(connection);
+            parseJsonToMap = JsonContentUtils.parseJsonToMap(jsonResponse);
+        }
         if (parseJsonToMap.containsKey("registrantKey")) registrationProperties.put("registrantKey", parseJsonToMap.get("registrantKey"));
         if (parseJsonToMap.containsKey("joinUrl")) registrationProperties.put("joinUrl", parseJsonToMap.get("joinUrl"));
         return 0;

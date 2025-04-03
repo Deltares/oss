@@ -368,7 +368,11 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
                 RegistrationLocalServiceUtil.getUserRegistrationsMadeForOthers(groupId, user.getUserId());
         List<Map<String, Object>> registrations = new ArrayList<>();
-        dbRegistrations.forEach(dbRegistration -> registrations.add(dbRegistration.getModelAttributes()));
+        dbRegistrations.forEach(dbRegistration -> {
+            if (dbRegistration.getUserId() != user.getUserId()) {
+                registrations.add(dbRegistration.getModelAttributes());
+            }
+        });
         return registrations;
     }
     @Override

@@ -43,4 +43,6 @@ public class OssConstants {
     public static final String WEBINAR_ADMIN_FORM =
             "WebinarAdminFormPortlet";
 
+    public static String MY_REGISTRATIONS_URL =
+            "MyRegistrationsURL";
 }

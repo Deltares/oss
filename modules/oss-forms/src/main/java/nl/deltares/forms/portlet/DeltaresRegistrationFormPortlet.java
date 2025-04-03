@@ -16,6 +16,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.*;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
@@ -50,17 +51,19 @@ public class DeltaresRegistrationFormPortlet extends MVCPortlet {
         User user = themeDisplay.getUser();
         if (!user.isGuestUser()) {
 
-            String action = ParamUtil.getString(request, "action");
             String ids = ParamUtil.getString(request, "ids");
             request.setAttribute("ids", ids);
-            request.setAttribute("callerAction", action);
+            String callerURL = ParamUtil.getString(request, "callerURL");
+            if (callerURL != null && !callerURL.isEmpty()) {
+                HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(request);
+                httpServletRequest.getSession().setAttribute("callerURL", callerURL);
+            }
 
             CheckoutDisplayContext checkoutDisplayContext = new CheckoutDisplayContext(_checkoutStepRegistry,
                     _portal.getLiferayPortletRequest(request),
                     _portal.getLiferayPortletResponse(response), _portal);
             request.setAttribute(CheckoutWebKeys.PORTLET_DISPLAY_CONTEXT, checkoutDisplayContext);
         }
-
         super.render(request, response);
     }
 

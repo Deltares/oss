@@ -5,6 +5,7 @@
 
 package nl.deltares.forms.portlet.action;
 
+import com.liferay.portal.kernel.portlet.LiferayActionRequest;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
@@ -90,15 +91,20 @@ public class SaveStepMVCActionCommand extends BaseMVCActionCommand {
 		String checkoutStepName) {
 
 		String ids = ParamUtil.getString(actionRequest, "ids");
+		String action = ParamUtil.getString(actionRequest, "action");
+		if (action.isEmpty()){
+			action = (String)((LiferayActionRequest) actionRequest).getHttpServletRequest().getAttribute("action");
+		}
 
 		return PortletURLBuilder.createRenderURL(
 			_portal.getLiferayPortletResponse(actionResponse)
 		).setParameter(
 			"checkoutStepName", checkoutStepName
 		).setParameter(
-		"ids", ids
-		)
-		.buildString();
+			"ids", ids
+		).setParameter(
+			"action", action
+		).buildString();
 	}
 
 	@Reference

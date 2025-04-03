@@ -85,6 +85,10 @@ public class CheckoutDisplayContext {
                         pageContext));
     }
 
+    public boolean showControls() {
+        return _commerceCheckoutStep.showControls(
+                _httpServletRequest, _httpServletResponse);
+    }
 
     private final DeltaresCheckoutStep _commerceCheckoutStep;
     private final DeltaresCheckoutStepRegistry _commerceCheckoutStepRegistry;

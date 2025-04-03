@@ -4,7 +4,6 @@
 <portlet:actionURL name="/submit/register/save_step" var="saveStepURL" />
 
 <div class="row">
-
    <div class="commerce-checkout container-fluid container-fluid-max-xl">
         <c:choose>
             <c:when test="<%= ids == null || ids.isEmpty() %>">
@@ -74,6 +73,8 @@
                     <c:if test="<%=error != null%>">
                         <liferay-ui:error message="<%= error %>" />
                     </c:if>
+
+                    <c:if test="<%= checkoutDisplayContext.showControls() %>">
                     <aui:button-row>
                         <c:if test="<%= Validator.isNotNull(checkoutDisplayContext.getPreviousCheckoutStepName()) %>">
                             <portlet:renderURL var="previousStepURL">
@@ -86,6 +87,7 @@
 
                         <aui:button cssClass="pull-right btn-primary" name="continue" type="submit" value="continue" />
                     </aui:button-row>
+                    </c:if>
                 </aui:form>
 
             </c:otherwise>

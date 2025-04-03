@@ -18,8 +18,11 @@
 <%@ page import="com.liferay.journal.model.JournalArticleDisplay" %>
 <%@ page import="com.liferay.portal.kernel.util.PortalUtil" %>
 <%@ page import="com.liferay.portal.kernel.util.Validator" %>
-
 <%@ page import="com.liferay.portal.kernel.util.DateUtil" %>
+<%@ page import="com.liferay.dynamic.data.mapping.expression.model.Term" %>
+
+<%@ page import="nl.deltares.model.RegistrationInfo" %>
+<%@ page import="nl.deltares.portal.model.impl.Terms" %>
 <%@ page import="nl.deltares.portal.utils.Period" %>
 <%@ page import="nl.deltares.forms.internal.AccountSelectionCheckoutStepDisplayContext" %>
 <%@ page import="nl.deltares.forms.constants.OrganizationConstants" %>
@@ -29,13 +32,14 @@
 <%@ page import="nl.deltares.model.BillingInfo" %>
 <%@ page import="nl.deltares.forms.constants.CheckoutWebKeys" %>
 <%@ page import="nl.deltares.forms.exception.RegistrationFormException" %>
-<%@ page import="nl.deltares.forms.internal.UserRegistrationDisplayContext" %>
 <%@ page import="nl.deltares.forms.internal.CheckoutDisplayContext" %>
 <%@ page import="nl.deltares.forms.util.DeltaresCheckoutStep" %>
 <%@ page import="nl.deltares.portal.model.impl.Registration" %>
 <%@ page import="nl.deltares.forms.internal.*" %>
 <%@ page import="nl.deltares.portal.model.subscriptions.SubscriptionSelection" %>
+<%@ page import="nl.deltares.portal.constants.OssConstants" %>
 
+<%@ page import="java.util.Collections" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.text.NumberFormat" %>

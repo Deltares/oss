@@ -300,7 +300,7 @@ function getCurrentStep(form) {
                     portletURL.setPortletMode('view');
                     portletURL.setParameter('action', action);
                     portletURL.setParameter('ids', ids);
-                    portletURL.setParameter('redirect', window.location.href);
+                    portletURL.setParameter('callerURL', window.location.href);
                     portletURL.setPortletId(portletId);
 
                     if (undefined !== portletURL.toString()) {

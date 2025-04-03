@@ -3,10 +3,11 @@ package nl.deltares.model;
 import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.portal.utils.KeycloakUtils;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BillingInfo {
+public class BillingInfo implements Serializable {
 
     public enum ATTRIBUTES {
         billing_company,

@@ -28,8 +28,6 @@ public class UserInputValidationContext {
     private final DsdParserUtils _dsdParserUtils;
     private final HttpServletRequest _httpServletRequest;
     private final String _validEmailDomains;
-    private boolean _registrationsLoaded = false;
-    private boolean _registrationInfosLoaded = false;
     private final List<Registration> _registrations = new ArrayList<>();
     private final List<RegistrationInfo> _registrationInformation = new ArrayList<>();
 
@@ -55,9 +53,7 @@ public class UserInputValidationContext {
 
     public void validateRequestData() throws Exception {
 
-        if(!_registrationInfosLoaded){
-            loadRegistrationInfos(_httpServletRequest);
-        }
+        loadRegistrationInfos(_httpServletRequest);
         boolean addIfExceptions = false;
         List<RegistrationFormException> exceptions;
         if (SessionErrors.contains(_httpServletRequest, RegistrationFormException.class)) {
@@ -81,7 +77,9 @@ public class UserInputValidationContext {
 
             User user = _userLocalService.fetchUserByEmailAddress(companyId, email);
             if (user == null) continue;
-            _sessionUtils.isUserRegisteredFor(user, getRegistration(info.getRegistrationId()));
+            if (_sessionUtils.isUserRegisteredFor(user, getRegistration(info.getArticleId()))){
+                exceptions.add(new RegistrationFormException(String.format("User '%s' is already registered for '%s'", user.getEmailAddress(), info.getRegistrationName())));
+            }
         }
 
         if (addIfExceptions && !exceptions.isEmpty()) {
@@ -90,13 +88,9 @@ public class UserInputValidationContext {
     }
 
     public void loadRegistrationInfos(HttpServletRequest request) throws Exception {
-        if (_registrationInfosLoaded){
-            throw new IllegalStateException("Registration Infos already loaded!");
-        }
-        if (!_registrationsLoaded){
-            String ids = ParamUtil.getString(request, "ids");
-            loadRegistrations(ids);
-        }
+        String ids = ParamUtil.getString(request, "ids");
+        loadRegistrations(ids);
+
         for (Registration registration : _registrations) {
 
             String articleId = registration.getArticleId();
@@ -118,7 +112,6 @@ public class UserInputValidationContext {
                 _registrationInformation.add(registrationInfo);
             }
         }
-        _registrationInfosLoaded = true;
     }
 
     public Registration getRegistration(String articleId){
@@ -127,21 +120,15 @@ public class UserInputValidationContext {
     }
 
     public void loadRegistrations(String ids) throws Exception {
-        if (_registrationsLoaded){
-            throw new IllegalStateException("Registrations already loaded!");
-        }
         String[] registrationIds = ids.split(",", -1);
-        if (ids.isEmpty()) return;
         for (String registrationId : registrationIds) {
+            if (registrationId.isEmpty()) continue;
             _registrations.add(_dsdParserUtils.getRegistration(
                     _themeDisplay.getScopeGroupId(), registrationId));
         }
-        _registrationsLoaded = true;
     }
 
     public List<RegistrationInfo> getRegistrationInformation() {
-        if (!_registrationInfosLoaded)
-            throw new IllegalStateException("Registration Infos not loaded!");
         return _registrationInformation;
     }
 

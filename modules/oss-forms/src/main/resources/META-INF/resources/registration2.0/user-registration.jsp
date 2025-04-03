@@ -1,6 +1,3 @@
-<%@ page import="java.util.Collections" %>
-<%@ page import="nl.deltares.model.RegistrationInfo" %>
-<%@ page import="nl.deltares.forms.internal.UserRegistrationDisplayContext" %>
 <%@ include file="init.jsp" %>
 
 <%
@@ -118,56 +115,56 @@
                 int counter = 0;
                 String postfix = "";
             %>
-            <c:forEach items="<%=registrationInfos%>" var="registrationInfo" >
-            <tr>
-                <td>
-                    <aui:input
-                            label=""
-                            name='<%="salutation" + articleId + postfix%>'
-                            data-rownumber="<%=counter%>"
-                            data-articleId="<%=articleId%>"
-                            value='${registrationInfo.salutation}'>
-                    </aui:input>
-                </td>
-                <td>
-                    <aui:input
-                            label=""
-                            name='<%="firstName_" + articleId + postfix%>'
-                            data-rownumber="<%=counter%>"
-                            data-articleId="<%=articleId%>"
-                            value='${registrationInfo.firstName}'>
-                    </aui:input>
-                </td>
-                <td>
-                    <aui:input
-                            label=""
-                            name='<%="lastName_" + articleId + postfix%>'
-                            data-rownumber="<%=counter%>"
-                            data-articleId="<%=articleId%>"
-                            value='${registrationInfo.lastName}'>
-                    </aui:input>
-                </td>
-                <td>
-                    <aui:input
-                            label=""
-                            name='<%="email_" + articleId + postfix%>'
-                            data-rownumber="<%=counter%>"
-                            data-articleId="<%=articleId%>"
-                            value='${registrationInfo.email}'>
-                    </aui:input>
-                </td>
-                <td>
-                    <aui:input
-                            name='<%="remarks_" + articleId + postfix%>'
-                            type="textarea"
-                            cssClass="remarks"
-                            data-rownumber="<%=counter%>"
-                            data-articleId="<%=articleId%>"
-                            value="${registrationInfo.remarks}"
-                            label="">
-                    </aui:input>
-                </td>
-            </tr>
+            <c:forEach items="<%=registrationInfos%>" var="registrationInfo">
+                <tr>
+                    <td>
+                        <aui:input
+                                label=""
+                                name='<%="salutation" + articleId + postfix%>'
+                                data-rownumber="<%=counter%>"
+                                data-articleId="<%=articleId%>"
+                                value='${registrationInfo.salutation}'>
+                        </aui:input>
+                    </td>
+                    <td>
+                        <aui:input
+                                label=""
+                                name='<%="firstName_" + articleId + postfix%>'
+                                data-rownumber="<%=counter%>"
+                                data-articleId="<%=articleId%>"
+                                value='${registrationInfo.firstName}'>
+                        </aui:input>
+                    </td>
+                    <td>
+                        <aui:input
+                                label=""
+                                name='<%="lastName_" + articleId + postfix%>'
+                                data-rownumber="<%=counter%>"
+                                data-articleId="<%=articleId%>"
+                                value='${registrationInfo.lastName}'>
+                        </aui:input>
+                    </td>
+                    <td>
+                        <aui:input
+                                label=""
+                                name='<%="email_" + articleId + postfix%>'
+                                data-rownumber="<%=counter%>"
+                                data-articleId="<%=articleId%>"
+                                value='${registrationInfo.email}'>
+                        </aui:input>
+                    </td>
+                    <td>
+                        <aui:input
+                                name='<%="remarks_" + articleId + postfix%>'
+                                type="textarea"
+                                cssClass="remarks"
+                                data-rownumber="<%=counter%>"
+                                data-articleId="<%=articleId%>"
+                                value="${registrationInfo.remarks}"
+                                label="">
+                        </aui:input>
+                    </td>
+                </tr>
                 <%
                     counter++;
                     postfix = "_" + counter;
@@ -193,7 +190,7 @@
                 <td style="text-align:right">
                     <liferay-ui:message key="registrationform.price.subtotal"/>
                 </td>
-                <td >
+                <td>
                     <div id="registrationform.price.subtotal" style="text-align:right">
                     </div>
                 </td>
@@ -202,7 +199,7 @@
                 <td style="text-align:right">
                     <liferay-ui:message key="registrationform.price.tax"/>
                 </td>
-                <td >
+                <td>
                     <div id="registrationform.price.tax" style="text-align:right">
 
                     </div>
@@ -213,7 +210,7 @@
                 <td style="text-align:right">
                     <liferay-ui:message key="registrationform.price.total"/>
                 </td>
-                <td >
+                <td>
                     <div id="registrationform.price.total" style="text-align:right">
 
                     </div>
@@ -228,25 +225,25 @@
 
     let quantityButtons = $(document.getElementsByClassName("parent-registration-quantity"));
     [...quantityButtons].forEach(function (button){
-        button.onchange = function (event){
-            event.constructor
-            RegistrationFormsUtil.updateTable('<portlet:namespace/>', event.target);
-            RegistrationFormsUtil.updatePrice('<portlet:namespace/>', event.target);
-        }
-        button.setAttribute('min', 1);
-        button.setAttribute('max', 10);
+    button.onchange = function (event){
+    event.constructor
+    RegistrationFormsUtil.updateTable('<portlet:namespace/>', event.target);
+    RegistrationFormsUtil.updatePrice('<portlet:namespace/>', event.target);
+    }
+    button.setAttribute('min', 1);
+    button.setAttribute('max', 10);
     });
 
     let removeButtons = $(document.getElementsByClassName("remove-from-cart"));
     [...removeButtons].forEach(function (button) {
-        button.onclick = function (event){
-            let srcElement = event.target.closest("button");
-            let removeArticleId = srcElement.dataset.articleid ;
-            shoppingCart._removeFromCart(Number(removeArticleId), 'registration');
-            let url = window.location.href;
-            url = CommonFormsUtil.removeArticleFromUrl(url, "<portlet:namespace/>ids", removeArticleId );
-            window.location.href = url;
-        }
+    button.onclick = function (event){
+    let srcElement = event.target.closest("button");
+    let removeArticleId = srcElement.dataset.articleid ;
+    shoppingCart._removeFromCart(Number(removeArticleId), 'registration');
+    let url = window.location.href;
+    url = CommonFormsUtil.removeArticleFromUrl(url, "<portlet:namespace/>ids", removeArticleId );
+    window.location.href = url;
+    }
     });
     RegistrationFormsUtil.updatePrice('<portlet:namespace/>', null)
 </aui:script>

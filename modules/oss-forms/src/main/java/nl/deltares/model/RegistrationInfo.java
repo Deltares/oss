@@ -11,7 +11,6 @@ public class RegistrationInfo {
     private float price = 0;
     private String title;
 
-
     public String getRemarks() {
         return remarks;
     }
@@ -68,11 +67,11 @@ public class RegistrationInfo {
         this.title = title;
     }
 
-    public String getRegistrationTitle() {
+    public String getRegistrationName() {
         return this.title;
     }
 
-    public String getRegistrationId() {
+    public String getArticleId() {
         return this.articleId;
     }
 }

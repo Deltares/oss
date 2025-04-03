@@ -4,7 +4,6 @@ import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.asset.kernel.service.AssetTagServiceUtil;
-import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
 import com.liferay.document.library.kernel.service.DLFolderLocalServiceUtil;
@@ -35,7 +34,22 @@ import java.util.*;
 public class OssAdminUtils implements AdminUtils {
 
     @Reference
-    KeycloakUtils keycloakUtils;
+    private KeycloakUtils keycloakUtils;
+
+    @Reference
+    private UserLocalService userLocalService;
+
+    @Reference
+    private CompanyLocalService companyLocalService;
+
+    @Reference
+    private GroupLocalService groupLocalService;
+
+    @Reference
+    private UserNotificationDeliveryLocalService userNotificationDeliveryLocalService;
+
+    @Reference
+    private PortalPreferencesLocalService portalPreferencesLocalService;
 
     public KeycloakUtils getKeycloakUtils() {
         return keycloakUtils;
@@ -43,13 +57,13 @@ public class OssAdminUtils implements AdminUtils {
 
     public void changeUserEmail(String currentEmail, String newEmail) throws IOException {
 
-        final List<Company> companies = CompanyLocalServiceUtil.getCompanies();
-        if (companies.stream().anyMatch(company -> UserLocalServiceUtil.fetchUserByEmailAddress(company.getCompanyId(), newEmail) != null)){
+        final List<Company> companies = companyLocalService.getCompanies();
+        if (companies.stream().anyMatch(company -> userLocalService.fetchUserByEmailAddress(company.getCompanyId(), newEmail) != null)) {
             throw new IOException(String.format("A user with email %s already exists in Liferay!", newEmail));
         }
         try {
             final Map<String, String> userInfo = keycloakUtils.getUserInfo(newEmail);
-            if (!userInfo.isEmpty()){
+            if (!userInfo.isEmpty()) {
                 throw new IOException(String.format("A user with email %s already exists in Keycloak!", newEmail));
             }
         } catch (Exception e) {
@@ -57,12 +71,12 @@ public class OssAdminUtils implements AdminUtils {
         }
 
         for (Company company : companies) {
-            final User user = UserLocalServiceUtil.fetchUserByEmailAddress(company.getCompanyId(), currentEmail);
+            final User user = userLocalService.fetchUserByEmailAddress(company.getCompanyId(), currentEmail);
             if (user == null) continue;
             try {
                 user.setEmailAddress(newEmail);
-                UserLocalServiceUtil.updateUser(user);
-            } catch (Exception e){
+                userLocalService.updateUser(user);
+            } catch (Exception e) {
                 throw new IOException(e.getMessage());
             }
         }
@@ -73,6 +87,7 @@ public class OssAdminUtils implements AdminUtils {
             throw new IOException(e.getMessage());
         }
     }
+
     @Override
     public void deleteUserRelatedContent(long siteId, User user, PrintWriter writer) {
 
@@ -93,7 +108,7 @@ public class OssAdminUtils implements AdminUtils {
 
         try {
             writer.printf("Deleting asset entries for groupId 'Control Panel':\n");
-            Group controlPanelGroup = GroupLocalServiceUtil.getGroup(user.getCompanyId(), "Control Panel");
+            Group controlPanelGroup = groupLocalService.getGroup(user.getCompanyId(), "Control Panel");
             deleteAssetEntries(writer, userId, controlPanelGroup.getGroupId());
         } catch (PortalException e) {
             writer.printf("Could not find group 'Control Panel': %s\n", e.getMessage());
@@ -108,9 +123,9 @@ public class OssAdminUtils implements AdminUtils {
 
 //    private void deleteUserGroups(PrintWriter writer,long userId) {
 //        try {
-//            final List<Group> userGroups = GroupLocalServiceUtil.getUserGroups(userId);
+//            final List<Group> userGroups = groupLocalService.getUserGroups(userId);
 //            writer.printf("Deleting %d User Groups\n", userGroups.size());
-//            GroupLocalServiceUtil.deleteUserGroups(userId, userGroups);
+//            groupLocalService.deleteUserGroups(userId, userGroups);
 //        } catch (Exception e) {
 //            writer.printf("Could not delete user Groups: %s\n", e.getMessage());
 //        }
@@ -118,14 +133,30 @@ public class OssAdminUtils implements AdminUtils {
 
     @Override
     public User getOrCreateRegistrationUser(long companyId, User loggedInUser, String registrationEmail,
-                                            String firstName, String lastName, Locale locale) throws Exception {
+                                            String firstName, String lastName, String salutation, Locale locale) throws Exception {
 
         if (registrationEmail == null || registrationEmail.isEmpty()) {
             throw new IllegalArgumentException("Registration email missing");
         }
-        final User registrationUser = UserLocalServiceUtil.fetchUserByEmailAddress(companyId, registrationEmail);
+        final User registrationUser = userLocalService.fetchUserByEmailAddress(companyId, registrationEmail);
         if (registrationUser != null) return registrationUser; //user already exists.
+        String userName;
+        try {
+            userName = getUserName(registrationEmail);
+        } catch (Exception e) {
+            userName = registrationEmail.split("@")[0];
+        }
+        final ServiceContext serviceContext = new ServiceContext();
+        serviceContext.setScopeGroupId(loggedInUser.getGroupId());
+        return userLocalService.addUser(loggedInUser.getUserId(), companyId, true,
+                null, null, false, userName, registrationEmail,
+                locale, firstName, null, lastName, 0, 0, true,
+                1, 1, 1970, salutation, 1, new long[0],
+                new long[0], new long[0], new long[0], false, serviceContext);
 
+    }
+
+    private String getUserName(String registrationEmail) throws Exception {
         final Map<String, String> keycloakUser = keycloakUtils.getUserInfo(registrationEmail);
         String userName = null;
         if (keycloakUser.isEmpty()) {
@@ -140,23 +171,10 @@ public class OssAdminUtils implements AdminUtils {
         } else {
             userName = keycloakUser.get("username");
         }
-        long id = CounterLocalServiceUtil.increment(User.class.getName());
-        if (userName == null) {
-            userName = String.valueOf(id); //let's assume that id is unieque
+        if (userName == null || userName.isEmpty()) {
+            userName = registrationEmail.split("@")[0];
         }
-
-        final ServiceContext serviceContext = new ServiceContext();
-        serviceContext.setScopeGroupId(loggedInUser.getGroupId());
-        final Role defaultGroupRole = RoleLocalServiceUtil.getDefaultGroupRole(loggedInUser.getGroupId());
-        final User user = UserLocalServiceUtil.addUser(loggedInUser.getUserId(), companyId, true,
-                null, null, false, userName, registrationEmail,
-                locale, firstName, null, lastName, 0, 0, true,
-                1, 1, 1970, null, 1,loggedInUser.getGroupIds(),
-                loggedInUser.getOrganizationIds(), new long[]{defaultGroupRole.getRoleId()}, loggedInUser.getUserGroupIds(), false, serviceContext);
-        user.setPasswordReset(false);
-        UserLocalServiceUtil.updateUser(user);
-        return user;
-
+        return userName;
     }
 
     public void deleteLiferayUser(User user, PrintWriter writer) {
@@ -167,7 +185,7 @@ public class OssAdminUtils implements AdminUtils {
         deleteNotificationDeliveries(writer, user.getUserId());
 
         try {
-            UserLocalServiceUtil.deleteUser(user);
+            userLocalService.deleteUser(user);
             writer.printf("Deleted user from liferay\n");
         } catch (Exception e) {
             writer.printf("Failed to delete user from Liferay: %s\n", e.getMessage());
@@ -186,11 +204,11 @@ public class OssAdminUtils implements AdminUtils {
 
     private void deleteNotificationDelivery(PrintWriter writer, long userId, int notificationType, int deliveryType) {
         try {
-            UserNotificationDelivery delivery = UserNotificationDeliveryLocalServiceUtil.fetchUserNotificationDelivery(
+            UserNotificationDelivery delivery = userNotificationDeliveryLocalService.fetchUserNotificationDelivery(
                     userId, "com_liferay_message_boards_web_portlet_MBPortlet", 0, notificationType, deliveryType);
             if (delivery != null) {
                 try {
-                    UserNotificationDeliveryLocalServiceUtil.deleteUserNotificationDelivery(delivery.getUserNotificationDeliveryId());
+                    userNotificationDeliveryLocalService.deleteUserNotificationDelivery(delivery.getUserNotificationDeliveryId());
                     writer.printf("-Deleted user notification delivery %s\n", delivery.getUserNotificationDeliveryId());
                 } catch (Exception e) {
                     writer.printf("-Failed to delete user notification delivery %d: %s\n", delivery.getUserNotificationDeliveryId(), e.getMessage());
@@ -204,10 +222,10 @@ public class OssAdminUtils implements AdminUtils {
     private void deletePortalPreferences(PrintWriter writer, long userId) {
         writer.println("Deleting portal preferences:");
         try {
-            PortalPreferences preferences = PortalPreferencesLocalServiceUtil.fetchPortalPreferences(userId, 4);
+            PortalPreferences preferences = portalPreferencesLocalService.fetchPortalPreferences(userId, 4);
             if (preferences != null) {
                 try {
-                    PortalPreferencesLocalServiceUtil.deletePortalPreferences(preferences);
+                    portalPreferencesLocalService.deletePortalPreferences(preferences);
                     writer.printf("-Deleted portal preferences %d\n", preferences.getPortalPreferencesId());
                 } catch (Exception e) {
                     writer.printf("-Failed to delete portal preferences %d: %s\n", preferences.getPortalPreferencesId(), e.getMessage());

@@ -46,11 +46,9 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
 
         HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
 
-        if (_displayContext == null) {
-            _displayContext = new BillingDetailsCheckoutStepDisplayContext(
-                    httpServletRequest, _addressLocalService, _accountEntryLocalService,
-                    _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
-        }
+        _displayContext = new BillingDetailsCheckoutStepDisplayContext(
+                httpServletRequest, _addressLocalService, _accountEntryLocalService,
+                _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
         _displayContext.validateRequestData(httpServletRequest);
 
         try {
@@ -66,11 +64,9 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
     @Override
     public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 
-        if (_displayContext == null) {
-            _displayContext = new BillingDetailsCheckoutStepDisplayContext(
-                    httpServletRequest, _addressLocalService, _accountEntryLocalService,
-                    _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
-        }
+        _displayContext = new BillingDetailsCheckoutStepDisplayContext(
+                httpServletRequest, _addressLocalService, _accountEntryLocalService,
+                _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
         HttpSession session = httpServletRequest.getSession();
         Object billingInfo = session.getAttribute("billingInfo");
         if (billingInfo != null) {
@@ -89,14 +85,12 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
     @Override
     public boolean isActive(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 
-        if (_displayContext == null) {
-            try {
-                _displayContext = new BillingDetailsCheckoutStepDisplayContext(
-                        httpServletRequest, _addressLocalService, _accountEntryLocalService,
-                        _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
-            } catch (Exception e) {
-                return false;
-            }
+        try {
+            _displayContext = new BillingDetailsCheckoutStepDisplayContext(
+                    httpServletRequest, _addressLocalService, _accountEntryLocalService,
+                    _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
+        } catch (Exception e) {
+            return false;
         }
         return _displayContext.isPaymentRequired(httpServletRequest, _dsdParserUtils);
     }

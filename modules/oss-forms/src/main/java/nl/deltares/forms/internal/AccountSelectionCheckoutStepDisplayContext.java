@@ -67,7 +67,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
     public void loadAccounts() {
 
         if (_accountsLoaded) {
-            throw new IllegalStateException("Accounts already loaded!");
+            return;
         }
         if (!_user.isGuestUser()) {
             String domain = _user.getEmailAddress().split("@")[1];
@@ -81,9 +81,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
     }
 
     public boolean canCreateNewAccount() {
-        if (!_accountsLoaded) {
-            loadAccounts();
-        }
+        loadAccounts();
         if (accounts.isEmpty()) return true;
 
         for (AccountEntry account : accounts) {
@@ -94,9 +92,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
     }
 
     public List<AccountEntry> getAccountEntries() {
-        if (!_accountsLoaded) {
-            loadAccounts();
-        }
+        loadAccounts();
         return accounts;
     }
 
@@ -251,13 +247,17 @@ public class AccountSelectionCheckoutStepDisplayContext{
         return accountEntry;
     }
 
+    /**
+     * Get the equivalent of the logged in user from the central Company where all account data is stored.
+     * @return
+     */
     private User getAccountUser() {
         long accountCompanyId = getCompanyId();
         if (accountCompanyId != _user.getCompanyId()){
-            User user = _userLocalService.fetchUserByEmailAddress(getCompanyId(), _user.getEmailAddress());
+            User user = _userLocalService.fetchUserByEmailAddress(accountCompanyId, _user.getEmailAddress());
             if (user == null) {
                 user =_userLocalService.createUser(CounterLocalServiceUtil.increment(User.class.getName()));
-                user.setCompanyId(getCompanyId());
+                user.setCompanyId(accountCompanyId);
                 user.setScreenName(_user.getScreenName());
                 user.setEmailAddress(_user.getEmailAddress());
                 user.setFirstName(_user.getFirstName());

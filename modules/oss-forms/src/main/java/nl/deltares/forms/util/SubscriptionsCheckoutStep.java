@@ -19,12 +19,12 @@ import java.util.Collections;
 
 @Component(
         property = {
-                "checkout.step.name=" + SubscriptionsStep.NAME,
+                "checkout.step.name=" + SubscriptionsCheckoutStep.NAME,
                 "checkout.step.order:Integer=20"
         },
         service = DeltaresCheckoutStep.class
 )
-public class SubscriptionsStep extends BaseCheckoutStep {
+public class SubscriptionsCheckoutStep extends BaseCheckoutStep {
 
     public static final String NAME = "subscription-info";
 
