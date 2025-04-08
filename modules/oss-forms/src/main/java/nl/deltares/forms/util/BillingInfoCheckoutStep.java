@@ -12,7 +12,7 @@ import nl.deltares.forms.constants.CheckoutWebKeys;
 import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.forms.internal.BillingDetailsCheckoutStepDisplayContext;
 import nl.deltares.model.BillingInfo;
-import nl.deltares.portal.utils.CommerceUtils;
+import nl.deltares.portal.utils.AccountUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -114,7 +114,7 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
     private PhoneLocalService _phoneLocalService;
 
     @Reference
-    private CommerceUtils _commerceUtils;
+    private AccountUtils _commerceUtils;
 
     @Reference
     private UserLocalService _userLocalService;

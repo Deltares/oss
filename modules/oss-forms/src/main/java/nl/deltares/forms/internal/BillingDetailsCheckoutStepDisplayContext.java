@@ -17,7 +17,7 @@ import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.model.BillingInfo;
 import nl.deltares.model.RegistrationInfo;
 import nl.deltares.portal.model.impl.Registration;
-import nl.deltares.portal.utils.CommerceUtils;
+import nl.deltares.portal.utils.AccountUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +42,7 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
     public BillingDetailsCheckoutStepDisplayContext(HttpServletRequest request, AddressLocalService addressLocalService,
                                                     AccountEntryLocalService accountEntryLocalService,
                                                     CountryLocalService countryLocalService, PhoneLocalService phoneLocalService,
-                                                    UserLocalService userLocalService, CommerceUtils commerceUtils) throws Exception {
+                                                    UserLocalService userLocalService, AccountUtils commerceUtils) throws Exception {
 
         super(request, accountEntryLocalService, addressLocalService, countryLocalService, phoneLocalService, userLocalService, commerceUtils);
 

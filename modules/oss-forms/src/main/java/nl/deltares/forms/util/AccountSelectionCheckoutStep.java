@@ -17,7 +17,7 @@ import com.liferay.portal.kernel.util.Portal;
 import nl.deltares.forms.constants.CheckoutWebKeys;
 import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.forms.internal.AccountSelectionCheckoutStepDisplayContext;
-import nl.deltares.portal.utils.CommerceUtils;
+import nl.deltares.portal.utils.AccountUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -128,6 +128,6 @@ public class AccountSelectionCheckoutStep extends BaseCheckoutStep {
     private UserLocalService _userLocalService;
 
     @Reference
-    private CommerceUtils _commerceUtils;
+    private AccountUtils _commerceUtils;
 
 }

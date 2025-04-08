@@ -6,7 +6,7 @@ import com.liferay.portal.kernel.model.User;
 
 import java.util.List;
 
-public interface CommerceUtils {
+public interface AccountUtils {
 
     List<AccountEntry> getAccountsByDomain(String domain, long companyId);
 

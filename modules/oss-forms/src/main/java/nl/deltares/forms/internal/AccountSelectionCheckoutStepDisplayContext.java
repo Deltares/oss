@@ -12,7 +12,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import nl.deltares.forms.constants.OrganizationConstants;
 import nl.deltares.forms.exception.RegistrationFormException;
-import nl.deltares.portal.utils.CommerceUtils;
+import nl.deltares.portal.utils.AccountUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
     final CountryLocalService _countryLocalService;
     final PhoneLocalService  _phoneLocalService;
     final UserLocalService _userLocalService;
-    final CommerceUtils _commerceUtils;
+    final AccountUtils _commerceUtils;
 
     final ThemeDisplay _themeDisplay;
     final User _user;
@@ -38,7 +38,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
     public AccountSelectionCheckoutStepDisplayContext(HttpServletRequest request, AccountEntryLocalService accountEntryLocalService,
                                                       AddressLocalService addressLocalService, CountryLocalService countryLocalService,
                                                       PhoneLocalService phoneLocalService, UserLocalService userLocalService,
-                                                      CommerceUtils commerceUtils) {
+                                                      AccountUtils commerceUtils) {
 
         _accountEntryLocalService = accountEntryLocalService;
         _addressLocalService = addressLocalService;

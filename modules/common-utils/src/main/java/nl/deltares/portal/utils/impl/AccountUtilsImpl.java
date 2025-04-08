@@ -8,7 +8,7 @@ import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
-import nl.deltares.portal.utils.CommerceUtils;
+import nl.deltares.portal.utils.AccountUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -16,9 +16,9 @@ import java.util.List;
 
 @Component(
         immediate = true,
-        service = CommerceUtils.class
+        service = AccountUtils.class
 )
-public class CommerceUtilsImpl implements CommerceUtils {
+public class AccountUtilsImpl implements AccountUtils {
     @Override
     public List<AccountEntry> getAccountsByDomain(String domain, long companyId) {
 
