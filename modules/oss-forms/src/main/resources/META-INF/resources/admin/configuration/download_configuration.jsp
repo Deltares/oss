@@ -8,7 +8,7 @@
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.HashMap" %>
-<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider" %>
+<%@ page import="com.liferay.portal.configuration.module.configuration.ConfigurationProvider" %>
 <%@ page import="nl.deltares.portal.configuration.DownloadSiteConfiguration" %>
 <%@ page import="java.util.List" %>
 

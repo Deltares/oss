@@ -56,8 +56,15 @@ public class DeltaresRegistrationFormPortletProvider extends BasePortletProvider
                 PortletRequest.RENDER_PHASE);
     }
 
+    @Override
+    public Action[] getSupportedActions() {
+        return _supportedActions;
+    }
+
     @Reference
     private Portal _portal;
 
-
+    private final Action[] _supportedActions = {
+            Action.EDIT, Action.MANAGE, Action.VIEW
+    };
 }

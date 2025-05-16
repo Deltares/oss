@@ -38,7 +38,7 @@ import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.uuid.PortalUUID;
+import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 
 import java.io.Serializable;
 
@@ -1582,7 +1582,7 @@ public class GeoLocationPersistenceImpl
 		geoLocation.setNew(true);
 		geoLocation.setPrimaryKey(locationId);
 
-		String uuid = _portalUUID.generate();
+		String uuid = PortalUUIDUtil.generate();
 
 		geoLocation.setUuid(uuid);
 
@@ -1700,7 +1700,7 @@ public class GeoLocationPersistenceImpl
 			(GeoLocationModelImpl)geoLocation;
 
 		if (Validator.isNull(geoLocation.getUuid())) {
-			String uuid = _portalUUID.generate();
+			String uuid = PortalUUIDUtil.generate();
 
 			geoLocation.setUuid(uuid);
 		}
@@ -2172,7 +2172,5 @@ public class GeoLocationPersistenceImpl
 		return finderCache;
 	}
 
-	@Reference
-	private PortalUUID _portalUUID;
 
 }

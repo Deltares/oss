@@ -1,7 +1,7 @@
 package nl.deltares.forms.util;
 
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import nl.deltares.forms.constants.CheckoutWebKeys;
 import nl.deltares.forms.internal.CheckoutStatusDisplayContext;
 import nl.deltares.portal.constants.OssConstants;

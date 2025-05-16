@@ -1,7 +1,7 @@
-<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider" %>
+<%@ page import="com.liferay.portal.configuration.module.configuration.ConfigurationProvider" %>
 <%@ page import="nl.deltares.portal.configuration.WebinarSiteConfiguration" %>
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
-<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider"  %>
+<%@ page import="com.liferay.portal.configuration.module.configuration.ConfigurationProvider"  %>
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
 <%@ page import="nl.deltares.portal.configuration.WebinarSiteConfiguration" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>

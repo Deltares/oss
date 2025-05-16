@@ -153,7 +153,8 @@ public class AccountSelectionCheckoutStepDisplayContext{
         serviceContext.setCompanyId(accountEntry.getCompanyId());
         serviceContext.setUserId(accountEntry.getUserId());
         if (billingAddress == null) {
-            final ListType accountType = ListTypeLocalServiceUtil.getListType("billing", "com.liferay.account.model.AccountEntry.address");
+            final ListType accountType = ListTypeLocalServiceUtil.getListType(accountEntry.getCompanyId(),
+                    "billing", "com.liferay.account.model.AccountEntry.address");
             billingAddress = _addressLocalService.addAddress("address_" + _accountUser.getScreenName(),
                     _accountUser.getUserId(), AccountEntry.class.getName(),
                     accountEntry.getAccountEntryId(), name, null, street, null, null,
@@ -177,8 +178,9 @@ public class AccountSelectionCheckoutStepDisplayContext{
             List<Phone> phones = _phoneLocalService.getPhones(getCompanyId(), "com.liferay.portal.kernel.model.Address", billingAddress.getAddressId());
             Phone phone;
             if (phones.isEmpty()) {
-                final ListType phoneType = ListTypeLocalServiceUtil.getListType("phone-number", "com.liferay.portal.kernel.model.Address.phone");
-                _phoneLocalService.addPhone(
+                final ListType phoneType = ListTypeLocalServiceUtil.getListType(accountEntry.getCompanyId(),
+                        "phone-number", "com.liferay.portal.kernel.model.Address.phone");
+                _phoneLocalService.addPhone(null,
                         _accountUser.getUserId(), "com.liferay.portal.kernel.model.Address", billingAddress.getAddressId(),
                         phoneNumber, null, phoneType.getListTypeId(), true, serviceContext);
             } else {

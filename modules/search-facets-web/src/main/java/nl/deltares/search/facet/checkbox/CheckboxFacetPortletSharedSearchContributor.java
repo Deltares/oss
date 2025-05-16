@@ -40,7 +40,7 @@ public class CheckboxFacetPortletSharedSearchContributor implements PortletShare
         final Locale siteDefaultLocale = (Locale) portalCache.get("siteDefaultLocale");
 
         String selection = null;
-        Optional<String> facetSelection = portletSharedSearchSettings.getParameterOptional(name);
+        Optional<String> facetSelection = Optional.ofNullable(portletSharedSearchSettings.getParameter(name));
         if (facetSelection.isPresent()) {
             selection = facetSelection.get();
         } else if (!visible) {

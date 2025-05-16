@@ -1,4 +1,4 @@
-FROM docker.elastic.co/elasticsearch/elasticsearch:7.16.1
+FROM docker.elastic.co/elasticsearch/elasticsearch:8.15.0
 
 MAINTAINER Allan Revolorio <allan@firelay.com>
 

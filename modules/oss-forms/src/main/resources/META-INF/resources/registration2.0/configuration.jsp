@@ -9,7 +9,7 @@
 <%@ page import="nl.deltares.forms.portlet.DsdRegistrationFormConfiguration" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider" %>
+<%@ page import="com.liferay.portal.configuration.module.configuration.ConfigurationProvider" %>
 
 <liferay-theme:defineObjects/>
 

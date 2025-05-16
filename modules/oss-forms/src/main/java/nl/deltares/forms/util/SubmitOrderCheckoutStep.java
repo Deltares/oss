@@ -1,7 +1,7 @@
 package nl.deltares.forms.util;
 
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.Portal;
@@ -9,8 +9,10 @@ import nl.deltares.forms.constants.CheckoutWebKeys;
 import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.forms.internal.SubmitOrderDisplayContext;
 import nl.deltares.portal.utils.*;
+import nl.deltares.portal.utils.impl.RegistrationUtilsImpl;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -88,8 +90,18 @@ public class SubmitOrderCheckoutStep extends BaseCheckoutStep {
     @Reference
     private DsdParserUtils _dsdParserUtils;
 
-    @Reference
     private DsdSessionUtils _dsdSessionUtils;
+    @Reference(
+            unbind = "-",
+            cardinality = ReferenceCardinality.MULTIPLE
+    )
+    protected void setDsdSessionUtils(DsdSessionUtils dsdSessionUtils) {
+
+        //todo: add check for preferred instance
+        if (dsdSessionUtils instanceof RegistrationUtilsImpl) {
+            _dsdSessionUtils = dsdSessionUtils;
+        }
+    }
 
     @Reference
     private WebinarUtilsFactory _webinarUtilsFactory;

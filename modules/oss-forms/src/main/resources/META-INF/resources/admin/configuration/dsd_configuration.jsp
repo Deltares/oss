@@ -6,7 +6,7 @@
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
-<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider"  %>
+<%@ page import="com.liferay.portal.configuration.module.configuration.ConfigurationProvider"  %>
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
 <%@ page import="nl.deltares.portal.configuration.DSDSiteConfiguration" %>
 <%@ page import="java.util.List" %>
