@@ -2,92 +2,100 @@ AUI.add(
     'deltares-search-facet-util',
     function () {
         Liferay.namespace('Deltares').FacetUtil = {
-            initializeDates: function (namespace, start, end) {
-                let url = window.location.href;
 
+    initializeDates: function (namespace, start, end) {
+        let sp = new URLSearchParams(location.search);
+        let updated = false;
         if (start) {
-            url = this.selectTerm(url, 'startDate', start);
+            updated = this.setTerm(sp, 'startDate', start)
         }
         if (end) {
-            url = this.selectTerm(url, 'endDate', end);
+            updated = updated || this.setTerm(sp, 'endDate', start)
         }
-        if (url !== window.location.href) {
-            window.location.href = url;
+        if (updated){
+            window.location.href = this.toUrl(location, sp);
         }
+
+    },
+    removeTerm: function (sp, term) {
+        if (sp.has(term)){
+            sp.delete(term)
+            return true
+        }
+        return false
+    },
+    setTerm: function (sp, term, value) {
+        let exist_val = sp.get(term);
+        if (exist_val && exist_val === value){
+            return false;
+        } else {
+            sp.set(term, value)
+            return true;
+        }
+    },
+    toUrl: function (location, sp) {
+        return location.origin + location.pathname + '?' + sp.toString();
+
     },
     updateQueryString: function (namespace, name) {
 
         let startDate = $('input[name$="' + namespace + 'startDate"]').val();
         let endDate = $('input[name$="' + namespace + 'endDate"]').val();
-        let url = window.location.href;
+
+        let sp = new URLSearchParams(location.search);
+        let updated = false;
 
         if (startDate !== undefined) {
             if (startDate === '') {
-                url = this.removeTerm(url, 'startDate');
+                updated = updated || this.removeTerm(sp ,'startDate')
             } else {
-                url = this.selectTerm(url, 'startDate', startDate);
+                updated = updated || this.setTerm(sp ,'startDate', startDate)
             }
         }
         if (endDate !== undefined) {
             if (endDate === '') {
-                url = this.removeTerm(url, 'endDate');
+                updated = updated || this.removeTerm(sp ,'endDate')
             } else {
-                url = this.selectTerm(url, 'endDate', endDate);
+                updated = updated || this.setTerm(sp ,'endDate', endDate)
             }
         }
         let selection = $('select[name$="' + namespace + "selection-facet-" + name + '"]').val();
         if (selection !== undefined) {
             if (selection === 'undefined') {
-                url = this.removeTerm(url, name);
+                updated = updated || this.removeTerm(sp ,name)
             } else {
-                url = this.selectTerm(url, name, selection);
+                updated = updated || this.setTerm(sp ,name, selection)
             }
         }
         let showPastElement = $('input[name$="' + namespace + 'showPast"]');
         if (showPastElement.val() !== undefined) {
             if (showPastElement[0].checked) {
-                url = this.selectTerm(url, 'showPast', showPastElement[0].checked);
+                updated = updated || this.setTerm(sp ,'showPast', showPastElement[0].checked)
             } else {
-                url = this.removeTerm(url, 'showPast');
+                updated = updated || this.removeTerm(sp ,'showPast')
             }
         }
         let presentationElement = $('input[name$="' + namespace + 'hasPresentations"]');
         if (presentationElement.val() !== undefined) {
             if (presentationElement[0].checked) {
-                url = this.selectTerm(url, 'hasPresentations', presentationElement[0].checked);
+                updated = updated || this.setTerm(sp ,'hasPresentations', presentationElement[0].checked)
             } else {
-                url = this.removeTerm(url, 'hasPresentations');
+                updated = updated || this.removeTerm(sp ,'hasPresentations')
             }
         }
         selection = $('select[name$="' + namespace + "checkbox-facet-" + name + '"]').val();
         if (selection !== undefined) {
             if (selection === 'undefined') {
-                url = this.removeTerm(url, name);
+                updated = updated || this.removeTerm(sp ,name)
             } else {
-                url = this.selectTerm(url, name, selection);
+                updated = updated || this.setTerm(sp ,name, selection)
             }
         }
-        window.location.href = url;
-        //var url = Liferay.Search.FacetUtil.setURLParameter('http://example.com/path', 'q', 'test');
-    },
-    selectTerm: function (url, name, value) {
-        return Liferay.Search.FacetUtil.setURLParameter(url, name, value);
-    },
-    removeTerm: function (url, name) {
-        let urlParts = url.split('?');
-        if (urlParts.length < 2) return url;
-        let newUrl = [];
-        newUrl.push(urlParts[0]);
-
-        let queryParts = urlParts[1].split('&');
-        let newParts = [];
-        for (let queryPart of queryParts) {
-            if (queryPart.startsWith(name)) continue;
-            newParts.push(queryPart);
+        if (updated){
+            window.location.href = this.toUrl(location, sp);
         }
-        newUrl.push(newParts.join('&'));
-        return newUrl.join('?');
-            },
+        //var url = Liferay.Search.FacetUtil.setURLParameter('http://example.com/path', 'q', 'test');
+    }
         };
     },
     '',

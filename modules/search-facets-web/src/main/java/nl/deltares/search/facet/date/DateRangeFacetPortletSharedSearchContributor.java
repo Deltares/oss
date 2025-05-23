@@ -58,7 +58,6 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
         return new String[0];
     }
 
-    @SuppressWarnings("SameParameterValue")
     private boolean getBoolean(PortletSharedSearchSettings portletSharedSearchSettings, String booleanField){
         Optional<String> showPastOptional = Optional.ofNullable(portletSharedSearchSettings.getParameter(booleanField));
         if (showPastOptional.isPresent()){

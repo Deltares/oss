@@ -5,17 +5,19 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 import nl.deltares.portal.utils.DsdSessionUtils;
+import nl.deltares.portal.utils.impl.RegistrationUtilsImpl;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.facet.program.builder.UserProgramFacetBuilder;
 import nl.deltares.search.facet.program.builder.UserProgramFacetFactory;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,14 +39,14 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
 
             List<String> entryClassPKs;
             if (showRegistrationForOthers(portletSharedSearchSettings)){
-                entryClassPKs = dsdSessionUtils.getUserRegistrationsMadeForOthers(user, groupId)
+                entryClassPKs = _dsdSessionUtils.getUserRegistrationsMadeForOthers(user, groupId)
                         .stream()
                         .filter(map -> map.containsKey("resourcePrimaryKey"))
                         .map(map -> map.get("resourcePrimaryKey"))
                         .map(String::valueOf)
                         .collect(Collectors.toList());
             } else {
-                entryClassPKs = dsdSessionUtils.getUserRegistrations(user, groupId)
+                entryClassPKs = _dsdSessionUtils.getUserRegistrations(user, groupId)
                         .stream()
                         .filter(map -> map.containsKey("resourcePrimaryKey"))
                         .map(map -> map.get("resourcePrimaryKey"))
@@ -79,8 +81,19 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
         return userProgramFacetBuilder.build();
     }
 
-    @Reference
-    private DsdSessionUtils dsdSessionUtils;
+    private DsdSessionUtils _dsdSessionUtils;
+
+    @Reference(
+            unbind = "-",
+            cardinality = ReferenceCardinality.MULTIPLE
+    )
+    protected void setDsdSessionUtils(DsdSessionUtils dsdSessionUtils) {
+
+        //todo: add check for preferred instance
+        if (dsdSessionUtils instanceof RegistrationUtilsImpl) {
+            _dsdSessionUtils = dsdSessionUtils;
+        }
+    }
 
     @Reference
     private UserProgramFacetFactory _userProgramFacetFactory;
