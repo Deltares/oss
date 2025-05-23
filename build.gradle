@@ -44,10 +44,7 @@ project.ext {
     licenseUser = getEnvProperty('LICENSE_USER', '')
     licensePass = getEnvProperty('LICENSE_PASSWORD', '')
 }
-task startContainers(
-        description: 'Start all docker containers',
-        group: 'docker'
-) {
+tasks.register('startContainers') {
     doLast {
         exec {
             executable 'docker-compose'
@@ -57,10 +54,7 @@ task startContainers(
     }
 }
 
-task startLiferay(
-        'description': 'Start Liferay stack',
-        'group': 'docker'
-) {
+tasks.register('startLiferay') {
     doLast {
         delete "$bundleDir"
         delete "$liferayMount"
@@ -127,10 +121,7 @@ task startLiferay(
     finalizedBy startContainers
 }
 
-task stopLiferay(
-        'description': 'Stop all containers',
-        'group': 'docker'
-) {
+tasks.register('stopLiferay') {
     doLast {
         exec {
             executable 'docker-compose'
@@ -140,10 +131,7 @@ task stopLiferay(
     }
 }
 
-task dumpDB(
-        description: 'Dump the database into the file system.',
-        group: 'docker'
-) {
+tasks.register('dumpDB') {
     doLast {
         exec {
             executable 'docker'
@@ -159,7 +147,7 @@ task dumpDB(
     }
 }
 
-task geoipDownload{
+tasks.register('geoipDownload') {
     group = 'Deltares'
     description = 'Downloads GeoIp2-Lite database'
 
@@ -170,11 +158,11 @@ task geoipDownload{
         def f = new File(bundlePath + geoLiteTar)
 
         if (!f.exists()) {
-            new URL('https://geolite.maxmind.com/download/geoip/database/' + geoLiteTar).withInputStream{ i -> f.withOutputStream{ it << i }}
+            new URL('https://geolite.maxmind.com/download/geoip/database/' + geoLiteTar).withInputStream { i -> f.withOutputStream { it << i } }
         }
 
         copy {
-            from (tarTree(resources.gzip(bundlePath + geoLiteTar))) {
+            from(tarTree(resources.gzip(bundlePath + geoLiteTar))) {
                 include "**/*.mmdb"
                 eachFile { fcd ->
                     fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(1))
