@@ -1,0 +1,3 @@
+dependencies {
+	compileOnly "com.liferay.portal:release.dxp.api"
+}

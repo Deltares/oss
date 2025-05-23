@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="nl.deltares.data.service.registration.model.Registration">
+		<field name="registrationId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="registrationResourceId" type="long" />
+		<field name="userId" type="long" />
+		<field name="authorId" type="long" />
+		<field name="registrationTime" type="Date" />
+	</model>
+	<model name="nl.deltares.data.service.registration.model.RegistrationAttribute">
+		<field name="registrationAttributeId" type="long" />
+		<field name="registrationId" type="long" />
+		<field name="name" type="String" />
+		<field name="value" type="String" />
+	</model>
+	<model name="nl.deltares.data.service.registration.model.RegistrationPeriod">
+		<field name="registrationPeriodId" type="long" />
+		<field name="registrationResourceId" type="long" />
+		<field name="startTime" type="Date" />
+		<field name="endTime" type="Date" />
+	</model>
+	<model name="nl.deltares.data.service.registration.model.RegistrationResource">
+		<field name="registrationResourceId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="eventResourceId" type="long" />
+		<field name="parentResourceId" type="long" />
+		<field name="resourceName" type="String" />
+		<field name="eventResourceName" type="String" />
+		<field name="eventArticleId" type="long" />
+	</model>
+</model-hints>

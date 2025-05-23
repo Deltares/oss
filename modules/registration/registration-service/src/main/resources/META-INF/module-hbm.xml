@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="false" default-lazy="false">
+	<import class="nl.deltares.data.service.registration.model.Registration" />
+	<import class="nl.deltares.data.service.registration.model.RegistrationAttribute" />
+	<import class="nl.deltares.data.service.registration.model.RegistrationPeriod" />
+	<import class="nl.deltares.data.service.registration.model.RegistrationResource" />
+	<class name="nl.deltares.data.service.registration.model.impl.RegistrationImpl" table="Service_builder_Registration">
+		<id access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="registrationId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="registrationResourceId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="userId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="authorId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="registrationTime" type="org.hibernate.type.TimestampType" />
+	</class>
+	<class name="nl.deltares.data.service.registration.model.impl.RegistrationAttributeImpl" table="Service_builder_RegistrationAttribute">
+		<id access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="registrationAttributeId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="registrationId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="name" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="value" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+	</class>
+	<class name="nl.deltares.data.service.registration.model.impl.RegistrationPeriodImpl" table="Service_builder_RegistrationPeriod">
+		<id access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="registrationPeriodId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="registrationResourceId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="startTime" type="org.hibernate.type.TimestampType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="endTime" type="org.hibernate.type.TimestampType" />
+	</class>
+	<class name="nl.deltares.data.service.registration.model.impl.RegistrationResourceImpl" table="Service_builder_RegistrationResource">
+		<id access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="registrationResourceId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="eventResourceId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="parentResourceId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="resourceName" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="eventResourceName" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="eventArticleId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+	</class>
+</hibernate-mapping>

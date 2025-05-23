@@ -1,0 +1,13 @@
+dependencies {
+	api project(":modules:registration:registration-api")
+
+	compileOnly 'com.liferay.portal:release.dxp.api'
+	implementation group: "com.liferay", name: "com.liferay.portal.upgrade.api", version: "2.0.3"
+}
+
+buildService {
+	apiDir = "../registration-api/src/main/java"
+	databaseNameMaxLength = 64
+}
+
+group = "nl.deltares.data.service.registration"

@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.4.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_4_0.dtd">
+
+<service-builder dependency-injector="ds" package-path="nl.deltares.data.service.registration">
+	<namespace>Service_builder</namespace>
+	<entity local-service="true" name="RegistrationResource" remote-service="false" uuid="false" >
+
+		<!-- PK fields -->
+		<column name="registrationResourceId" primary="true" type="long" />
+
+		<!-- Company instance -->
+		<column name="companyId" type="long" />
+
+		<!-- Group instance -->
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+		<column name="eventResourceId" type="long" />
+		<column name="parentResourceId" type="long" />
+		<column name="resourceName" type="String" />
+		<column name="eventResourceName" type="String" />
+		<column name="eventArticleId" type="long" />
+
+		<!-- Finder methods -->
+
+		<finder name="EventResources" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="eventResourceId" />
+		</finder>
+
+		<finder name="EventArticle" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="eventArticleId" />
+		</finder>
+
+		<finder name="ChildResources" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="parentResourceId" />
+		</finder>
+
+		<finder name="Resources" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="registrationResourceId" />
+		</finder>
+
+	</entity>
+
+	<entity local-service="true" name="RegistrationPeriod" remote-service="false" uuid="false">
+
+		<!-- PK fields -->
+		<column name="registrationPeriodId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+		<column name="registrationResourceId" type="long" />
+
+		<column name="startTime" type="Date" />
+		<column name="endTime" type="Date" />
+
+		<finder name="ResourcePeriods" return-type="Collection">
+			<finder-column name="registrationResourceId" />
+		</finder>
+
+		<!-- References -->
+		<reference entity="RegistrationResource" package-path="nl.deltares.data.service.registration" />
+
+	</entity>
+
+	<entity local-service="true" name="Registration" remote-service="false" uuid="false">
+
+		<!-- PK fields -->
+		<column name="registrationId" primary="true" type="long" />
+
+		<!-- Group instance -->
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+		<column name="registrationResourceId" type="long" />
+
+		<!-- Audit fields -->
+		<column name="userId" type="long" />
+		<column name="authorId" type="long" />
+		<column name="registrationTime" type="Date" />
+
+		<finder name="Registrations" return-type="Collection">
+			<finder-column name="registrationResourceId" />
+		</finder>
+
+		<finder name="UserRegistrations" return-type="Collection">
+			<finder-column name="userId" />
+		</finder>
+
+		<finder name="UserResourceRegistrations" return-type="Collection">
+			<finder-column name="userId" />
+			<finder-column name="registrationResourceId" />
+		</finder>
+
+		<finder name="UserGroupRegistrations" return-type="Collection">
+			<finder-column name="userId" />
+			<finder-column name="groupId" />
+		</finder>
+
+		<finder name="AuthorRegistrations" return-type="Collection">
+			<finder-column name="authorId" />
+		</finder>
+
+		<finder name="AuthorResourceRegistrations" return-type="Collection">
+			<finder-column name="authorId" />
+			<finder-column name="registrationResourceId" />
+		</finder>
+
+		<finder name="AuthorGroupRegistrations" return-type="Collection">
+			<finder-column name="authorId" />
+			<finder-column name="groupId" />
+		</finder>
+
+		<!-- References -->
+		<reference entity="RegistrationResource" package-path="nl.deltares.data.service.registration" />
+
+	</entity>
+
+	<entity local-service="true" name="RegistrationAttribute" remote-service="false" uuid="false">
+
+		<!-- PK fields -->
+		<column name="registrationAttributeId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+		<column name="registrationId" type="long" />
+
+		<!-- Audit fields -->
+		<column name="name" type="String" />
+		<column name="value" type="String" />
+
+		<finder name="RegistrationAttribute" return-type="Collection">
+			<finder-column name="registrationId" />
+		</finder>
+
+		<!-- References -->
+		<reference entity="Registration" package-path="nl.deltares.data.service.registration" />
+
+	</entity>
+</service-builder>

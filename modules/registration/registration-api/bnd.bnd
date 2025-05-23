@@ -1,0 +1,10 @@
+Bundle-Name: registration-api
+Bundle-SymbolicName: nl.deltares.data.service.registration.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	nl.deltares.data.service.registration.exception,\
+	nl.deltares.data.service.registration.model,\
+	nl.deltares.data.service.registration.service,\
+	nl.deltares.data.service.registration.service.persistence
+-check: EXPORTS
+-includeresource: META-INF/service.xml=../registration-service/service.xml
