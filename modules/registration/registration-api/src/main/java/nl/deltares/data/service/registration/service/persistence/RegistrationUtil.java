@@ -117,10 +117,10 @@ public class RegistrationUtil {
 	 * @param registrationResourceId the registration resource ID
 	 * @return the matching registrations
 	 */
-	public static List<Registration> findByRegistrations(
+	public static List<Registration> findByResource(
 		long registrationResourceId) {
 
-		return getPersistence().findByRegistrations(registrationResourceId);
+		return getPersistence().findByResource(registrationResourceId);
 	}
 
 	/**
@@ -135,10 +135,10 @@ public class RegistrationUtil {
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @return the range of matching registrations
 	 */
-	public static List<Registration> findByRegistrations(
+	public static List<Registration> findByResource(
 		long registrationResourceId, int start, int end) {
 
-		return getPersistence().findByRegistrations(
+		return getPersistence().findByResource(
 			registrationResourceId, start, end);
 	}
 
@@ -155,11 +155,11 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registrations
 	 */
-	public static List<Registration> findByRegistrations(
+	public static List<Registration> findByResource(
 		long registrationResourceId, int start, int end,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().findByRegistrations(
+		return getPersistence().findByResource(
 			registrationResourceId, start, end, orderByComparator);
 	}
 
@@ -177,12 +177,12 @@ public class RegistrationUtil {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
-	public static List<Registration> findByRegistrations(
+	public static List<Registration> findByResource(
 		long registrationResourceId, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
 		boolean useFinderCache) {
 
-		return getPersistence().findByRegistrations(
+		return getPersistence().findByResource(
 			registrationResourceId, start, end, orderByComparator,
 			useFinderCache);
 	}
@@ -195,13 +195,13 @@ public class RegistrationUtil {
 	 * @return the first matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public static Registration findByRegistrations_First(
+	public static Registration findByResource_First(
 			long registrationResourceId,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByRegistrations_First(
+		return getPersistence().findByResource_First(
 			registrationResourceId, orderByComparator);
 	}
 
@@ -212,11 +212,11 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public static Registration fetchByRegistrations_First(
+	public static Registration fetchByResource_First(
 		long registrationResourceId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().fetchByRegistrations_First(
+		return getPersistence().fetchByResource_First(
 			registrationResourceId, orderByComparator);
 	}
 
@@ -228,13 +228,13 @@ public class RegistrationUtil {
 	 * @return the last matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public static Registration findByRegistrations_Last(
+	public static Registration findByResource_Last(
 			long registrationResourceId,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByRegistrations_Last(
+		return getPersistence().findByResource_Last(
 			registrationResourceId, orderByComparator);
 	}
 
@@ -245,11 +245,11 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public static Registration fetchByRegistrations_Last(
+	public static Registration fetchByResource_Last(
 		long registrationResourceId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().fetchByRegistrations_Last(
+		return getPersistence().fetchByResource_Last(
 			registrationResourceId, orderByComparator);
 	}
 
@@ -262,13 +262,13 @@ public class RegistrationUtil {
 	 * @return the previous, current, and next registration
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
-	public static Registration[] findByRegistrations_PrevAndNext(
+	public static Registration[] findByResource_PrevAndNext(
 			long registrationId, long registrationResourceId,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByRegistrations_PrevAndNext(
+		return getPersistence().findByResource_PrevAndNext(
 			registrationId, registrationResourceId, orderByComparator);
 	}
 
@@ -277,8 +277,8 @@ public class RegistrationUtil {
 	 *
 	 * @param registrationResourceId the registration resource ID
 	 */
-	public static void removeByRegistrations(long registrationResourceId) {
-		getPersistence().removeByRegistrations(registrationResourceId);
+	public static void removeByResource(long registrationResourceId) {
+		getPersistence().removeByResource(registrationResourceId);
 	}
 
 	/**
@@ -287,8 +287,8 @@ public class RegistrationUtil {
 	 * @param registrationResourceId the registration resource ID
 	 * @return the number of matching registrations
 	 */
-	public static int countByRegistrations(long registrationResourceId) {
-		return getPersistence().countByRegistrations(registrationResourceId);
+	public static int countByResource(long registrationResourceId) {
+		return getPersistence().countByResource(registrationResourceId);
 	}
 
 	/**
@@ -297,8 +297,8 @@ public class RegistrationUtil {
 	 * @param userId the user ID
 	 * @return the matching registrations
 	 */
-	public static List<Registration> findByUserRegistrations(long userId) {
-		return getPersistence().findByUserRegistrations(userId);
+	public static List<Registration> findByUser(long userId) {
+		return getPersistence().findByUser(userId);
 	}
 
 	/**
@@ -313,10 +313,10 @@ public class RegistrationUtil {
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @return the range of matching registrations
 	 */
-	public static List<Registration> findByUserRegistrations(
+	public static List<Registration> findByUser(
 		long userId, int start, int end) {
 
-		return getPersistence().findByUserRegistrations(userId, start, end);
+		return getPersistence().findByUser(userId, start, end);
 	}
 
 	/**
@@ -332,11 +332,11 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registrations
 	 */
-	public static List<Registration> findByUserRegistrations(
+	public static List<Registration> findByUser(
 		long userId, int start, int end,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().findByUserRegistrations(
+		return getPersistence().findByUser(
 			userId, start, end, orderByComparator);
 	}
 
@@ -354,12 +354,12 @@ public class RegistrationUtil {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
-	public static List<Registration> findByUserRegistrations(
+	public static List<Registration> findByUser(
 		long userId, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
 		boolean useFinderCache) {
 
-		return getPersistence().findByUserRegistrations(
+		return getPersistence().findByUser(
 			userId, start, end, orderByComparator, useFinderCache);
 	}
 
@@ -371,13 +371,12 @@ public class RegistrationUtil {
 	 * @return the first matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public static Registration findByUserRegistrations_First(
+	public static Registration findByUser_First(
 			long userId, OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByUserRegistrations_First(
-			userId, orderByComparator);
+		return getPersistence().findByUser_First(userId, orderByComparator);
 	}
 
 	/**
@@ -387,11 +386,10 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public static Registration fetchByUserRegistrations_First(
+	public static Registration fetchByUser_First(
 		long userId, OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().fetchByUserRegistrations_First(
-			userId, orderByComparator);
+		return getPersistence().fetchByUser_First(userId, orderByComparator);
 	}
 
 	/**
@@ -402,13 +400,12 @@ public class RegistrationUtil {
 	 * @return the last matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public static Registration findByUserRegistrations_Last(
+	public static Registration findByUser_Last(
 			long userId, OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByUserRegistrations_Last(
-			userId, orderByComparator);
+		return getPersistence().findByUser_Last(userId, orderByComparator);
 	}
 
 	/**
@@ -418,11 +415,10 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public static Registration fetchByUserRegistrations_Last(
+	public static Registration fetchByUser_Last(
 		long userId, OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().fetchByUserRegistrations_Last(
-			userId, orderByComparator);
+		return getPersistence().fetchByUser_Last(userId, orderByComparator);
 	}
 
 	/**
@@ -434,13 +430,13 @@ public class RegistrationUtil {
 	 * @return the previous, current, and next registration
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
-	public static Registration[] findByUserRegistrations_PrevAndNext(
+	public static Registration[] findByUser_PrevAndNext(
 			long registrationId, long userId,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByUserRegistrations_PrevAndNext(
+		return getPersistence().findByUser_PrevAndNext(
 			registrationId, userId, orderByComparator);
 	}
 
@@ -449,8 +445,8 @@ public class RegistrationUtil {
 	 *
 	 * @param userId the user ID
 	 */
-	public static void removeByUserRegistrations(long userId) {
-		getPersistence().removeByUserRegistrations(userId);
+	public static void removeByUser(long userId) {
+		getPersistence().removeByUser(userId);
 	}
 
 	/**
@@ -459,8 +455,8 @@ public class RegistrationUtil {
 	 * @param userId the user ID
 	 * @return the number of matching registrations
 	 */
-	public static int countByUserRegistrations(long userId) {
-		return getPersistence().countByUserRegistrations(userId);
+	public static int countByUser(long userId) {
+		return getPersistence().countByUser(userId);
 	}
 
 	/**
@@ -470,10 +466,10 @@ public class RegistrationUtil {
 	 * @param registrationResourceId the registration resource ID
 	 * @return the matching registrations
 	 */
-	public static List<Registration> findByUserResourceRegistrations(
+	public static List<Registration> findByUserAndResource(
 		long userId, long registrationResourceId) {
 
-		return getPersistence().findByUserResourceRegistrations(
+		return getPersistence().findByUserAndResource(
 			userId, registrationResourceId);
 	}
 
@@ -490,10 +486,10 @@ public class RegistrationUtil {
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @return the range of matching registrations
 	 */
-	public static List<Registration> findByUserResourceRegistrations(
+	public static List<Registration> findByUserAndResource(
 		long userId, long registrationResourceId, int start, int end) {
 
-		return getPersistence().findByUserResourceRegistrations(
+		return getPersistence().findByUserAndResource(
 			userId, registrationResourceId, start, end);
 	}
 
@@ -511,11 +507,11 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registrations
 	 */
-	public static List<Registration> findByUserResourceRegistrations(
+	public static List<Registration> findByUserAndResource(
 		long userId, long registrationResourceId, int start, int end,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().findByUserResourceRegistrations(
+		return getPersistence().findByUserAndResource(
 			userId, registrationResourceId, start, end, orderByComparator);
 	}
 
@@ -534,12 +530,12 @@ public class RegistrationUtil {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
-	public static List<Registration> findByUserResourceRegistrations(
+	public static List<Registration> findByUserAndResource(
 		long userId, long registrationResourceId, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
 		boolean useFinderCache) {
 
-		return getPersistence().findByUserResourceRegistrations(
+		return getPersistence().findByUserAndResource(
 			userId, registrationResourceId, start, end, orderByComparator,
 			useFinderCache);
 	}
@@ -553,13 +549,13 @@ public class RegistrationUtil {
 	 * @return the first matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public static Registration findByUserResourceRegistrations_First(
+	public static Registration findByUserAndResource_First(
 			long userId, long registrationResourceId,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByUserResourceRegistrations_First(
+		return getPersistence().findByUserAndResource_First(
 			userId, registrationResourceId, orderByComparator);
 	}
 
@@ -571,11 +567,11 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public static Registration fetchByUserResourceRegistrations_First(
+	public static Registration fetchByUserAndResource_First(
 		long userId, long registrationResourceId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().fetchByUserResourceRegistrations_First(
+		return getPersistence().fetchByUserAndResource_First(
 			userId, registrationResourceId, orderByComparator);
 	}
 
@@ -588,13 +584,13 @@ public class RegistrationUtil {
 	 * @return the last matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public static Registration findByUserResourceRegistrations_Last(
+	public static Registration findByUserAndResource_Last(
 			long userId, long registrationResourceId,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByUserResourceRegistrations_Last(
+		return getPersistence().findByUserAndResource_Last(
 			userId, registrationResourceId, orderByComparator);
 	}
 
@@ -606,11 +602,11 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public static Registration fetchByUserResourceRegistrations_Last(
+	public static Registration fetchByUserAndResource_Last(
 		long userId, long registrationResourceId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().fetchByUserResourceRegistrations_Last(
+		return getPersistence().fetchByUserAndResource_Last(
 			userId, registrationResourceId, orderByComparator);
 	}
 
@@ -624,13 +620,13 @@ public class RegistrationUtil {
 	 * @return the previous, current, and next registration
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
-	public static Registration[] findByUserResourceRegistrations_PrevAndNext(
+	public static Registration[] findByUserAndResource_PrevAndNext(
 			long registrationId, long userId, long registrationResourceId,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByUserResourceRegistrations_PrevAndNext(
+		return getPersistence().findByUserAndResource_PrevAndNext(
 			registrationId, userId, registrationResourceId, orderByComparator);
 	}
 
@@ -640,10 +636,10 @@ public class RegistrationUtil {
 	 * @param userId the user ID
 	 * @param registrationResourceId the registration resource ID
 	 */
-	public static void removeByUserResourceRegistrations(
+	public static void removeByUserAndResource(
 		long userId, long registrationResourceId) {
 
-		getPersistence().removeByUserResourceRegistrations(
+		getPersistence().removeByUserAndResource(
 			userId, registrationResourceId);
 	}
 
@@ -654,10 +650,10 @@ public class RegistrationUtil {
 	 * @param registrationResourceId the registration resource ID
 	 * @return the number of matching registrations
 	 */
-	public static int countByUserResourceRegistrations(
+	public static int countByUserAndResource(
 		long userId, long registrationResourceId) {
 
-		return getPersistence().countByUserResourceRegistrations(
+		return getPersistence().countByUserAndResource(
 			userId, registrationResourceId);
 	}
 
@@ -668,10 +664,10 @@ public class RegistrationUtil {
 	 * @param groupId the group ID
 	 * @return the matching registrations
 	 */
-	public static List<Registration> findByUserGroupRegistrations(
+	public static List<Registration> findByUserAndGroup(
 		long userId, long groupId) {
 
-		return getPersistence().findByUserGroupRegistrations(userId, groupId);
+		return getPersistence().findByUserAndGroup(userId, groupId);
 	}
 
 	/**
@@ -687,11 +683,10 @@ public class RegistrationUtil {
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @return the range of matching registrations
 	 */
-	public static List<Registration> findByUserGroupRegistrations(
+	public static List<Registration> findByUserAndGroup(
 		long userId, long groupId, int start, int end) {
 
-		return getPersistence().findByUserGroupRegistrations(
-			userId, groupId, start, end);
+		return getPersistence().findByUserAndGroup(userId, groupId, start, end);
 	}
 
 	/**
@@ -708,11 +703,11 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registrations
 	 */
-	public static List<Registration> findByUserGroupRegistrations(
+	public static List<Registration> findByUserAndGroup(
 		long userId, long groupId, int start, int end,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().findByUserGroupRegistrations(
+		return getPersistence().findByUserAndGroup(
 			userId, groupId, start, end, orderByComparator);
 	}
 
@@ -731,12 +726,12 @@ public class RegistrationUtil {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
-	public static List<Registration> findByUserGroupRegistrations(
+	public static List<Registration> findByUserAndGroup(
 		long userId, long groupId, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
 		boolean useFinderCache) {
 
-		return getPersistence().findByUserGroupRegistrations(
+		return getPersistence().findByUserAndGroup(
 			userId, groupId, start, end, orderByComparator, useFinderCache);
 	}
 
@@ -749,13 +744,13 @@ public class RegistrationUtil {
 	 * @return the first matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public static Registration findByUserGroupRegistrations_First(
+	public static Registration findByUserAndGroup_First(
 			long userId, long groupId,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByUserGroupRegistrations_First(
+		return getPersistence().findByUserAndGroup_First(
 			userId, groupId, orderByComparator);
 	}
 
@@ -767,11 +762,11 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public static Registration fetchByUserGroupRegistrations_First(
+	public static Registration fetchByUserAndGroup_First(
 		long userId, long groupId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().fetchByUserGroupRegistrations_First(
+		return getPersistence().fetchByUserAndGroup_First(
 			userId, groupId, orderByComparator);
 	}
 
@@ -784,13 +779,13 @@ public class RegistrationUtil {
 	 * @return the last matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public static Registration findByUserGroupRegistrations_Last(
+	public static Registration findByUserAndGroup_Last(
 			long userId, long groupId,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByUserGroupRegistrations_Last(
+		return getPersistence().findByUserAndGroup_Last(
 			userId, groupId, orderByComparator);
 	}
 
@@ -802,11 +797,11 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public static Registration fetchByUserGroupRegistrations_Last(
+	public static Registration fetchByUserAndGroup_Last(
 		long userId, long groupId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().fetchByUserGroupRegistrations_Last(
+		return getPersistence().fetchByUserAndGroup_Last(
 			userId, groupId, orderByComparator);
 	}
 
@@ -820,13 +815,13 @@ public class RegistrationUtil {
 	 * @return the previous, current, and next registration
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
-	public static Registration[] findByUserGroupRegistrations_PrevAndNext(
+	public static Registration[] findByUserAndGroup_PrevAndNext(
 			long registrationId, long userId, long groupId,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByUserGroupRegistrations_PrevAndNext(
+		return getPersistence().findByUserAndGroup_PrevAndNext(
 			registrationId, userId, groupId, orderByComparator);
 	}
 
@@ -836,10 +831,8 @@ public class RegistrationUtil {
 	 * @param userId the user ID
 	 * @param groupId the group ID
 	 */
-	public static void removeByUserGroupRegistrations(
-		long userId, long groupId) {
-
-		getPersistence().removeByUserGroupRegistrations(userId, groupId);
+	public static void removeByUserAndGroup(long userId, long groupId) {
+		getPersistence().removeByUserAndGroup(userId, groupId);
 	}
 
 	/**
@@ -849,8 +842,8 @@ public class RegistrationUtil {
 	 * @param groupId the group ID
 	 * @return the number of matching registrations
 	 */
-	public static int countByUserGroupRegistrations(long userId, long groupId) {
-		return getPersistence().countByUserGroupRegistrations(userId, groupId);
+	public static int countByUserAndGroup(long userId, long groupId) {
+		return getPersistence().countByUserAndGroup(userId, groupId);
 	}
 
 	/**
@@ -859,8 +852,8 @@ public class RegistrationUtil {
 	 * @param authorId the author ID
 	 * @return the matching registrations
 	 */
-	public static List<Registration> findByAuthorRegistrations(long authorId) {
-		return getPersistence().findByAuthorRegistrations(authorId);
+	public static List<Registration> findByAuthor(long authorId) {
+		return getPersistence().findByAuthor(authorId);
 	}
 
 	/**
@@ -875,10 +868,10 @@ public class RegistrationUtil {
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @return the range of matching registrations
 	 */
-	public static List<Registration> findByAuthorRegistrations(
+	public static List<Registration> findByAuthor(
 		long authorId, int start, int end) {
 
-		return getPersistence().findByAuthorRegistrations(authorId, start, end);
+		return getPersistence().findByAuthor(authorId, start, end);
 	}
 
 	/**
@@ -894,11 +887,11 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registrations
 	 */
-	public static List<Registration> findByAuthorRegistrations(
+	public static List<Registration> findByAuthor(
 		long authorId, int start, int end,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().findByAuthorRegistrations(
+		return getPersistence().findByAuthor(
 			authorId, start, end, orderByComparator);
 	}
 
@@ -916,12 +909,12 @@ public class RegistrationUtil {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
-	public static List<Registration> findByAuthorRegistrations(
+	public static List<Registration> findByAuthor(
 		long authorId, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
 		boolean useFinderCache) {
 
-		return getPersistence().findByAuthorRegistrations(
+		return getPersistence().findByAuthor(
 			authorId, start, end, orderByComparator, useFinderCache);
 	}
 
@@ -933,13 +926,12 @@ public class RegistrationUtil {
 	 * @return the first matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public static Registration findByAuthorRegistrations_First(
+	public static Registration findByAuthor_First(
 			long authorId, OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByAuthorRegistrations_First(
-			authorId, orderByComparator);
+		return getPersistence().findByAuthor_First(authorId, orderByComparator);
 	}
 
 	/**
@@ -949,10 +941,10 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public static Registration fetchByAuthorRegistrations_First(
+	public static Registration fetchByAuthor_First(
 		long authorId, OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().fetchByAuthorRegistrations_First(
+		return getPersistence().fetchByAuthor_First(
 			authorId, orderByComparator);
 	}
 
@@ -964,13 +956,12 @@ public class RegistrationUtil {
 	 * @return the last matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public static Registration findByAuthorRegistrations_Last(
+	public static Registration findByAuthor_Last(
 			long authorId, OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByAuthorRegistrations_Last(
-			authorId, orderByComparator);
+		return getPersistence().findByAuthor_Last(authorId, orderByComparator);
 	}
 
 	/**
@@ -980,11 +971,10 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public static Registration fetchByAuthorRegistrations_Last(
+	public static Registration fetchByAuthor_Last(
 		long authorId, OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().fetchByAuthorRegistrations_Last(
-			authorId, orderByComparator);
+		return getPersistence().fetchByAuthor_Last(authorId, orderByComparator);
 	}
 
 	/**
@@ -996,13 +986,13 @@ public class RegistrationUtil {
 	 * @return the previous, current, and next registration
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
-	public static Registration[] findByAuthorRegistrations_PrevAndNext(
+	public static Registration[] findByAuthor_PrevAndNext(
 			long registrationId, long authorId,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByAuthorRegistrations_PrevAndNext(
+		return getPersistence().findByAuthor_PrevAndNext(
 			registrationId, authorId, orderByComparator);
 	}
 
@@ -1011,8 +1001,8 @@ public class RegistrationUtil {
 	 *
 	 * @param authorId the author ID
 	 */
-	public static void removeByAuthorRegistrations(long authorId) {
-		getPersistence().removeByAuthorRegistrations(authorId);
+	public static void removeByAuthor(long authorId) {
+		getPersistence().removeByAuthor(authorId);
 	}
 
 	/**
@@ -1021,8 +1011,8 @@ public class RegistrationUtil {
 	 * @param authorId the author ID
 	 * @return the number of matching registrations
 	 */
-	public static int countByAuthorRegistrations(long authorId) {
-		return getPersistence().countByAuthorRegistrations(authorId);
+	public static int countByAuthor(long authorId) {
+		return getPersistence().countByAuthor(authorId);
 	}
 
 	/**
@@ -1032,10 +1022,10 @@ public class RegistrationUtil {
 	 * @param registrationResourceId the registration resource ID
 	 * @return the matching registrations
 	 */
-	public static List<Registration> findByAuthorResourceRegistrations(
+	public static List<Registration> findByAuthorAndResource(
 		long authorId, long registrationResourceId) {
 
-		return getPersistence().findByAuthorResourceRegistrations(
+		return getPersistence().findByAuthorAndResource(
 			authorId, registrationResourceId);
 	}
 
@@ -1052,10 +1042,10 @@ public class RegistrationUtil {
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @return the range of matching registrations
 	 */
-	public static List<Registration> findByAuthorResourceRegistrations(
+	public static List<Registration> findByAuthorAndResource(
 		long authorId, long registrationResourceId, int start, int end) {
 
-		return getPersistence().findByAuthorResourceRegistrations(
+		return getPersistence().findByAuthorAndResource(
 			authorId, registrationResourceId, start, end);
 	}
 
@@ -1073,11 +1063,11 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registrations
 	 */
-	public static List<Registration> findByAuthorResourceRegistrations(
+	public static List<Registration> findByAuthorAndResource(
 		long authorId, long registrationResourceId, int start, int end,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().findByAuthorResourceRegistrations(
+		return getPersistence().findByAuthorAndResource(
 			authorId, registrationResourceId, start, end, orderByComparator);
 	}
 
@@ -1096,12 +1086,12 @@ public class RegistrationUtil {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
-	public static List<Registration> findByAuthorResourceRegistrations(
+	public static List<Registration> findByAuthorAndResource(
 		long authorId, long registrationResourceId, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
 		boolean useFinderCache) {
 
-		return getPersistence().findByAuthorResourceRegistrations(
+		return getPersistence().findByAuthorAndResource(
 			authorId, registrationResourceId, start, end, orderByComparator,
 			useFinderCache);
 	}
@@ -1115,13 +1105,13 @@ public class RegistrationUtil {
 	 * @return the first matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public static Registration findByAuthorResourceRegistrations_First(
+	public static Registration findByAuthorAndResource_First(
 			long authorId, long registrationResourceId,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByAuthorResourceRegistrations_First(
+		return getPersistence().findByAuthorAndResource_First(
 			authorId, registrationResourceId, orderByComparator);
 	}
 
@@ -1133,11 +1123,11 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public static Registration fetchByAuthorResourceRegistrations_First(
+	public static Registration fetchByAuthorAndResource_First(
 		long authorId, long registrationResourceId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().fetchByAuthorResourceRegistrations_First(
+		return getPersistence().fetchByAuthorAndResource_First(
 			authorId, registrationResourceId, orderByComparator);
 	}
 
@@ -1150,13 +1140,13 @@ public class RegistrationUtil {
 	 * @return the last matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public static Registration findByAuthorResourceRegistrations_Last(
+	public static Registration findByAuthorAndResource_Last(
 			long authorId, long registrationResourceId,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByAuthorResourceRegistrations_Last(
+		return getPersistence().findByAuthorAndResource_Last(
 			authorId, registrationResourceId, orderByComparator);
 	}
 
@@ -1168,11 +1158,11 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public static Registration fetchByAuthorResourceRegistrations_Last(
+	public static Registration fetchByAuthorAndResource_Last(
 		long authorId, long registrationResourceId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().fetchByAuthorResourceRegistrations_Last(
+		return getPersistence().fetchByAuthorAndResource_Last(
 			authorId, registrationResourceId, orderByComparator);
 	}
 
@@ -1186,13 +1176,13 @@ public class RegistrationUtil {
 	 * @return the previous, current, and next registration
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
-	public static Registration[] findByAuthorResourceRegistrations_PrevAndNext(
+	public static Registration[] findByAuthorAndResource_PrevAndNext(
 			long registrationId, long authorId, long registrationResourceId,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByAuthorResourceRegistrations_PrevAndNext(
+		return getPersistence().findByAuthorAndResource_PrevAndNext(
 			registrationId, authorId, registrationResourceId,
 			orderByComparator);
 	}
@@ -1203,10 +1193,10 @@ public class RegistrationUtil {
 	 * @param authorId the author ID
 	 * @param registrationResourceId the registration resource ID
 	 */
-	public static void removeByAuthorResourceRegistrations(
+	public static void removeByAuthorAndResource(
 		long authorId, long registrationResourceId) {
 
-		getPersistence().removeByAuthorResourceRegistrations(
+		getPersistence().removeByAuthorAndResource(
 			authorId, registrationResourceId);
 	}
 
@@ -1217,10 +1207,10 @@ public class RegistrationUtil {
 	 * @param registrationResourceId the registration resource ID
 	 * @return the number of matching registrations
 	 */
-	public static int countByAuthorResourceRegistrations(
+	public static int countByAuthorAndResource(
 		long authorId, long registrationResourceId) {
 
-		return getPersistence().countByAuthorResourceRegistrations(
+		return getPersistence().countByAuthorAndResource(
 			authorId, registrationResourceId);
 	}
 
@@ -1231,11 +1221,10 @@ public class RegistrationUtil {
 	 * @param groupId the group ID
 	 * @return the matching registrations
 	 */
-	public static List<Registration> findByAuthorGroupRegistrations(
+	public static List<Registration> findByAuthorAndGroup(
 		long authorId, long groupId) {
 
-		return getPersistence().findByAuthorGroupRegistrations(
-			authorId, groupId);
+		return getPersistence().findByAuthorAndGroup(authorId, groupId);
 	}
 
 	/**
@@ -1251,10 +1240,10 @@ public class RegistrationUtil {
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @return the range of matching registrations
 	 */
-	public static List<Registration> findByAuthorGroupRegistrations(
+	public static List<Registration> findByAuthorAndGroup(
 		long authorId, long groupId, int start, int end) {
 
-		return getPersistence().findByAuthorGroupRegistrations(
+		return getPersistence().findByAuthorAndGroup(
 			authorId, groupId, start, end);
 	}
 
@@ -1272,11 +1261,11 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registrations
 	 */
-	public static List<Registration> findByAuthorGroupRegistrations(
+	public static List<Registration> findByAuthorAndGroup(
 		long authorId, long groupId, int start, int end,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().findByAuthorGroupRegistrations(
+		return getPersistence().findByAuthorAndGroup(
 			authorId, groupId, start, end, orderByComparator);
 	}
 
@@ -1295,12 +1284,12 @@ public class RegistrationUtil {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
-	public static List<Registration> findByAuthorGroupRegistrations(
+	public static List<Registration> findByAuthorAndGroup(
 		long authorId, long groupId, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
 		boolean useFinderCache) {
 
-		return getPersistence().findByAuthorGroupRegistrations(
+		return getPersistence().findByAuthorAndGroup(
 			authorId, groupId, start, end, orderByComparator, useFinderCache);
 	}
 
@@ -1313,13 +1302,13 @@ public class RegistrationUtil {
 	 * @return the first matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public static Registration findByAuthorGroupRegistrations_First(
+	public static Registration findByAuthorAndGroup_First(
 			long authorId, long groupId,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByAuthorGroupRegistrations_First(
+		return getPersistence().findByAuthorAndGroup_First(
 			authorId, groupId, orderByComparator);
 	}
 
@@ -1331,11 +1320,11 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public static Registration fetchByAuthorGroupRegistrations_First(
+	public static Registration fetchByAuthorAndGroup_First(
 		long authorId, long groupId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().fetchByAuthorGroupRegistrations_First(
+		return getPersistence().fetchByAuthorAndGroup_First(
 			authorId, groupId, orderByComparator);
 	}
 
@@ -1348,13 +1337,13 @@ public class RegistrationUtil {
 	 * @return the last matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public static Registration findByAuthorGroupRegistrations_Last(
+	public static Registration findByAuthorAndGroup_Last(
 			long authorId, long groupId,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByAuthorGroupRegistrations_Last(
+		return getPersistence().findByAuthorAndGroup_Last(
 			authorId, groupId, orderByComparator);
 	}
 
@@ -1366,11 +1355,11 @@ public class RegistrationUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public static Registration fetchByAuthorGroupRegistrations_Last(
+	public static Registration fetchByAuthorAndGroup_Last(
 		long authorId, long groupId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return getPersistence().fetchByAuthorGroupRegistrations_Last(
+		return getPersistence().fetchByAuthorAndGroup_Last(
 			authorId, groupId, orderByComparator);
 	}
 
@@ -1384,13 +1373,13 @@ public class RegistrationUtil {
 	 * @return the previous, current, and next registration
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
-	public static Registration[] findByAuthorGroupRegistrations_PrevAndNext(
+	public static Registration[] findByAuthorAndGroup_PrevAndNext(
 			long registrationId, long authorId, long groupId,
 			OrderByComparator<Registration> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationException {
 
-		return getPersistence().findByAuthorGroupRegistrations_PrevAndNext(
+		return getPersistence().findByAuthorAndGroup_PrevAndNext(
 			registrationId, authorId, groupId, orderByComparator);
 	}
 
@@ -1400,10 +1389,8 @@ public class RegistrationUtil {
 	 * @param authorId the author ID
 	 * @param groupId the group ID
 	 */
-	public static void removeByAuthorGroupRegistrations(
-		long authorId, long groupId) {
-
-		getPersistence().removeByAuthorGroupRegistrations(authorId, groupId);
+	public static void removeByAuthorAndGroup(long authorId, long groupId) {
+		getPersistence().removeByAuthorAndGroup(authorId, groupId);
 	}
 
 	/**
@@ -1413,11 +1400,8 @@ public class RegistrationUtil {
 	 * @param groupId the group ID
 	 * @return the number of matching registrations
 	 */
-	public static int countByAuthorGroupRegistrations(
-		long authorId, long groupId) {
-
-		return getPersistence().countByAuthorGroupRegistrations(
-			authorId, groupId);
+	public static int countByAuthorAndGroup(long authorId, long groupId) {
+		return getPersistence().countByAuthorAndGroup(authorId, groupId);
 	}
 
 	/**

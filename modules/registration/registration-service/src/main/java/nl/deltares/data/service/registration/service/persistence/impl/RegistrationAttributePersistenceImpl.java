@@ -80,9 +80,9 @@ public class RegistrationAttributePersistenceImpl
 	private FinderPath _finderPathWithPaginationFindAll;
 	private FinderPath _finderPathWithoutPaginationFindAll;
 	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByRegistrationAttribute;
-	private FinderPath _finderPathWithoutPaginationFindByRegistrationAttribute;
-	private FinderPath _finderPathCountByRegistrationAttribute;
+	private FinderPath _finderPathWithPaginationFindByRegistration;
+	private FinderPath _finderPathWithoutPaginationFindByRegistration;
+	private FinderPath _finderPathCountByRegistration;
 
 	/**
 	 * Returns all the registration attributes where registrationId = &#63;.
@@ -91,10 +91,8 @@ public class RegistrationAttributePersistenceImpl
 	 * @return the matching registration attributes
 	 */
 	@Override
-	public List<RegistrationAttribute> findByRegistrationAttribute(
-		long registrationId) {
-
-		return findByRegistrationAttribute(
+	public List<RegistrationAttribute> findByRegistration(long registrationId) {
+		return findByRegistration(
 			registrationId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
@@ -111,10 +109,10 @@ public class RegistrationAttributePersistenceImpl
 	 * @return the range of matching registration attributes
 	 */
 	@Override
-	public List<RegistrationAttribute> findByRegistrationAttribute(
+	public List<RegistrationAttribute> findByRegistration(
 		long registrationId, int start, int end) {
 
-		return findByRegistrationAttribute(registrationId, start, end, null);
+		return findByRegistration(registrationId, start, end, null);
 	}
 
 	/**
@@ -131,11 +129,11 @@ public class RegistrationAttributePersistenceImpl
 	 * @return the ordered range of matching registration attributes
 	 */
 	@Override
-	public List<RegistrationAttribute> findByRegistrationAttribute(
+	public List<RegistrationAttribute> findByRegistration(
 		long registrationId, int start, int end,
 		OrderByComparator<RegistrationAttribute> orderByComparator) {
 
-		return findByRegistrationAttribute(
+		return findByRegistration(
 			registrationId, start, end, orderByComparator, true);
 	}
 
@@ -154,7 +152,7 @@ public class RegistrationAttributePersistenceImpl
 	 * @return the ordered range of matching registration attributes
 	 */
 	@Override
-	public List<RegistrationAttribute> findByRegistrationAttribute(
+	public List<RegistrationAttribute> findByRegistration(
 		long registrationId, int start, int end,
 		OrderByComparator<RegistrationAttribute> orderByComparator,
 		boolean useFinderCache) {
@@ -166,13 +164,12 @@ public class RegistrationAttributePersistenceImpl
 			(orderByComparator == null)) {
 
 			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByRegistrationAttribute;
+				finderPath = _finderPathWithoutPaginationFindByRegistration;
 				finderArgs = new Object[] {registrationId};
 			}
 		}
 		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByRegistrationAttribute;
+			finderPath = _finderPathWithPaginationFindByRegistration;
 			finderArgs = new Object[] {
 				registrationId, start, end, orderByComparator
 			};
@@ -210,7 +207,7 @@ public class RegistrationAttributePersistenceImpl
 
 			sb.append(_SQL_SELECT_REGISTRATIONATTRIBUTE_WHERE);
 
-			sb.append(_FINDER_COLUMN_REGISTRATIONATTRIBUTE_REGISTRATIONID_2);
+			sb.append(_FINDER_COLUMN_REGISTRATION_REGISTRATIONID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
@@ -262,14 +259,13 @@ public class RegistrationAttributePersistenceImpl
 	 * @throws NoSuchRegistrationAttributeException if a matching registration attribute could not be found
 	 */
 	@Override
-	public RegistrationAttribute findByRegistrationAttribute_First(
+	public RegistrationAttribute findByRegistration_First(
 			long registrationId,
 			OrderByComparator<RegistrationAttribute> orderByComparator)
 		throws NoSuchRegistrationAttributeException {
 
-		RegistrationAttribute registrationAttribute =
-			fetchByRegistrationAttribute_First(
-				registrationId, orderByComparator);
+		RegistrationAttribute registrationAttribute = fetchByRegistration_First(
+			registrationId, orderByComparator);
 
 		if (registrationAttribute != null) {
 			return registrationAttribute;
@@ -295,11 +291,11 @@ public class RegistrationAttributePersistenceImpl
 	 * @return the first matching registration attribute, or <code>null</code> if a matching registration attribute could not be found
 	 */
 	@Override
-	public RegistrationAttribute fetchByRegistrationAttribute_First(
+	public RegistrationAttribute fetchByRegistration_First(
 		long registrationId,
 		OrderByComparator<RegistrationAttribute> orderByComparator) {
 
-		List<RegistrationAttribute> list = findByRegistrationAttribute(
+		List<RegistrationAttribute> list = findByRegistration(
 			registrationId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -318,14 +314,13 @@ public class RegistrationAttributePersistenceImpl
 	 * @throws NoSuchRegistrationAttributeException if a matching registration attribute could not be found
 	 */
 	@Override
-	public RegistrationAttribute findByRegistrationAttribute_Last(
+	public RegistrationAttribute findByRegistration_Last(
 			long registrationId,
 			OrderByComparator<RegistrationAttribute> orderByComparator)
 		throws NoSuchRegistrationAttributeException {
 
-		RegistrationAttribute registrationAttribute =
-			fetchByRegistrationAttribute_Last(
-				registrationId, orderByComparator);
+		RegistrationAttribute registrationAttribute = fetchByRegistration_Last(
+			registrationId, orderByComparator);
 
 		if (registrationAttribute != null) {
 			return registrationAttribute;
@@ -351,17 +346,17 @@ public class RegistrationAttributePersistenceImpl
 	 * @return the last matching registration attribute, or <code>null</code> if a matching registration attribute could not be found
 	 */
 	@Override
-	public RegistrationAttribute fetchByRegistrationAttribute_Last(
+	public RegistrationAttribute fetchByRegistration_Last(
 		long registrationId,
 		OrderByComparator<RegistrationAttribute> orderByComparator) {
 
-		int count = countByRegistrationAttribute(registrationId);
+		int count = countByRegistration(registrationId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<RegistrationAttribute> list = findByRegistrationAttribute(
+		List<RegistrationAttribute> list = findByRegistration(
 			registrationId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -381,7 +376,7 @@ public class RegistrationAttributePersistenceImpl
 	 * @throws NoSuchRegistrationAttributeException if a registration attribute with the primary key could not be found
 	 */
 	@Override
-	public RegistrationAttribute[] findByRegistrationAttribute_PrevAndNext(
+	public RegistrationAttribute[] findByRegistration_PrevAndNext(
 			long registrationAttributeId, long registrationId,
 			OrderByComparator<RegistrationAttribute> orderByComparator)
 		throws NoSuchRegistrationAttributeException {
@@ -396,13 +391,13 @@ public class RegistrationAttributePersistenceImpl
 
 			RegistrationAttribute[] array = new RegistrationAttributeImpl[3];
 
-			array[0] = getByRegistrationAttribute_PrevAndNext(
+			array[0] = getByRegistration_PrevAndNext(
 				session, registrationAttribute, registrationId,
 				orderByComparator, true);
 
 			array[1] = registrationAttribute;
 
-			array[2] = getByRegistrationAttribute_PrevAndNext(
+			array[2] = getByRegistration_PrevAndNext(
 				session, registrationAttribute, registrationId,
 				orderByComparator, false);
 
@@ -416,7 +411,7 @@ public class RegistrationAttributePersistenceImpl
 		}
 	}
 
-	protected RegistrationAttribute getByRegistrationAttribute_PrevAndNext(
+	protected RegistrationAttribute getByRegistration_PrevAndNext(
 		Session session, RegistrationAttribute registrationAttribute,
 		long registrationId,
 		OrderByComparator<RegistrationAttribute> orderByComparator,
@@ -435,7 +430,7 @@ public class RegistrationAttributePersistenceImpl
 
 		sb.append(_SQL_SELECT_REGISTRATIONATTRIBUTE_WHERE);
 
-		sb.append(_FINDER_COLUMN_REGISTRATIONATTRIBUTE_REGISTRATIONID_2);
+		sb.append(_FINDER_COLUMN_REGISTRATION_REGISTRATIONID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
@@ -533,9 +528,9 @@ public class RegistrationAttributePersistenceImpl
 	 * @param registrationId the registration ID
 	 */
 	@Override
-	public void removeByRegistrationAttribute(long registrationId) {
+	public void removeByRegistration(long registrationId) {
 		for (RegistrationAttribute registrationAttribute :
-				findByRegistrationAttribute(
+				findByRegistration(
 					registrationId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
 					null)) {
 
@@ -550,8 +545,8 @@ public class RegistrationAttributePersistenceImpl
 	 * @return the number of matching registration attributes
 	 */
 	@Override
-	public int countByRegistrationAttribute(long registrationId) {
-		FinderPath finderPath = _finderPathCountByRegistrationAttribute;
+	public int countByRegistration(long registrationId) {
+		FinderPath finderPath = _finderPathCountByRegistration;
 
 		Object[] finderArgs = new Object[] {registrationId};
 
@@ -562,7 +557,7 @@ public class RegistrationAttributePersistenceImpl
 
 			sb.append(_SQL_COUNT_REGISTRATIONATTRIBUTE_WHERE);
 
-			sb.append(_FINDER_COLUMN_REGISTRATIONATTRIBUTE_REGISTRATIONID_2);
+			sb.append(_FINDER_COLUMN_REGISTRATION_REGISTRATIONID_2);
 
 			String sql = sb.toString();
 
@@ -592,9 +587,8 @@ public class RegistrationAttributePersistenceImpl
 		return count.intValue();
 	}
 
-	private static final String
-		_FINDER_COLUMN_REGISTRATIONATTRIBUTE_REGISTRATIONID_2 =
-			"registrationAttribute.registrationId = ?";
+	private static final String _FINDER_COLUMN_REGISTRATION_REGISTRATIONID_2 =
+		"registrationAttribute.registrationId = ?";
 
 	public RegistrationAttributePersistenceImpl() {
 		setModelClass(RegistrationAttribute.class);
@@ -1137,25 +1131,22 @@ public class RegistrationAttributePersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
 			new String[0], new String[0], false);
 
-		_finderPathWithPaginationFindByRegistrationAttribute = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"findByRegistrationAttribute",
+		_finderPathWithPaginationFindByRegistration = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByRegistration",
 			new String[] {
 				Long.class.getName(), Integer.class.getName(),
 				Integer.class.getName(), OrderByComparator.class.getName()
 			},
 			new String[] {"registrationId"}, true);
 
-		_finderPathWithoutPaginationFindByRegistrationAttribute =
-			new FinderPath(
-				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-				"findByRegistrationAttribute",
-				new String[] {Long.class.getName()},
-				new String[] {"registrationId"}, true);
+		_finderPathWithoutPaginationFindByRegistration = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByRegistration",
+			new String[] {Long.class.getName()},
+			new String[] {"registrationId"}, true);
 
-		_finderPathCountByRegistrationAttribute = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByRegistrationAttribute", new String[] {Long.class.getName()},
+		_finderPathCountByRegistration = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByRegistration",
+			new String[] {Long.class.getName()},
 			new String[] {"registrationId"}, false);
 
 		RegistrationAttributeUtil.setPersistence(this);

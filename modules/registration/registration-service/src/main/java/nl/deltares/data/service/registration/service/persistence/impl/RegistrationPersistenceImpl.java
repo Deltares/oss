@@ -80,9 +80,9 @@ public class RegistrationPersistenceImpl
 	private FinderPath _finderPathWithPaginationFindAll;
 	private FinderPath _finderPathWithoutPaginationFindAll;
 	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByRegistrations;
-	private FinderPath _finderPathWithoutPaginationFindByRegistrations;
-	private FinderPath _finderPathCountByRegistrations;
+	private FinderPath _finderPathWithPaginationFindByResource;
+	private FinderPath _finderPathWithoutPaginationFindByResource;
+	private FinderPath _finderPathCountByResource;
 
 	/**
 	 * Returns all the registrations where registrationResourceId = &#63;.
@@ -91,8 +91,8 @@ public class RegistrationPersistenceImpl
 	 * @return the matching registrations
 	 */
 	@Override
-	public List<Registration> findByRegistrations(long registrationResourceId) {
-		return findByRegistrations(
+	public List<Registration> findByResource(long registrationResourceId) {
+		return findByResource(
 			registrationResourceId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
@@ -109,10 +109,10 @@ public class RegistrationPersistenceImpl
 	 * @return the range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByRegistrations(
+	public List<Registration> findByResource(
 		long registrationResourceId, int start, int end) {
 
-		return findByRegistrations(registrationResourceId, start, end, null);
+		return findByResource(registrationResourceId, start, end, null);
 	}
 
 	/**
@@ -129,11 +129,11 @@ public class RegistrationPersistenceImpl
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByRegistrations(
+	public List<Registration> findByResource(
 		long registrationResourceId, int start, int end,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return findByRegistrations(
+		return findByResource(
 			registrationResourceId, start, end, orderByComparator, true);
 	}
 
@@ -152,7 +152,7 @@ public class RegistrationPersistenceImpl
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByRegistrations(
+	public List<Registration> findByResource(
 		long registrationResourceId, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
 		boolean useFinderCache) {
@@ -164,12 +164,12 @@ public class RegistrationPersistenceImpl
 			(orderByComparator == null)) {
 
 			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByRegistrations;
+				finderPath = _finderPathWithoutPaginationFindByResource;
 				finderArgs = new Object[] {registrationResourceId};
 			}
 		}
 		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByRegistrations;
+			finderPath = _finderPathWithPaginationFindByResource;
 			finderArgs = new Object[] {
 				registrationResourceId, start, end, orderByComparator
 			};
@@ -207,7 +207,7 @@ public class RegistrationPersistenceImpl
 
 			sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-			sb.append(_FINDER_COLUMN_REGISTRATIONS_REGISTRATIONRESOURCEID_2);
+			sb.append(_FINDER_COLUMN_RESOURCE_REGISTRATIONRESOURCEID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
@@ -259,12 +259,12 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	@Override
-	public Registration findByRegistrations_First(
+	public Registration findByResource_First(
 			long registrationResourceId,
 			OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
 
-		Registration registration = fetchByRegistrations_First(
+		Registration registration = fetchByResource_First(
 			registrationResourceId, orderByComparator);
 
 		if (registration != null) {
@@ -291,11 +291,11 @@ public class RegistrationPersistenceImpl
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	@Override
-	public Registration fetchByRegistrations_First(
+	public Registration fetchByResource_First(
 		long registrationResourceId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		List<Registration> list = findByRegistrations(
+		List<Registration> list = findByResource(
 			registrationResourceId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -314,12 +314,12 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	@Override
-	public Registration findByRegistrations_Last(
+	public Registration findByResource_Last(
 			long registrationResourceId,
 			OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
 
-		Registration registration = fetchByRegistrations_Last(
+		Registration registration = fetchByResource_Last(
 			registrationResourceId, orderByComparator);
 
 		if (registration != null) {
@@ -346,17 +346,17 @@ public class RegistrationPersistenceImpl
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	@Override
-	public Registration fetchByRegistrations_Last(
+	public Registration fetchByResource_Last(
 		long registrationResourceId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		int count = countByRegistrations(registrationResourceId);
+		int count = countByResource(registrationResourceId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<Registration> list = findByRegistrations(
+		List<Registration> list = findByResource(
 			registrationResourceId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -376,7 +376,7 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
 	@Override
-	public Registration[] findByRegistrations_PrevAndNext(
+	public Registration[] findByResource_PrevAndNext(
 			long registrationId, long registrationResourceId,
 			OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
@@ -390,13 +390,13 @@ public class RegistrationPersistenceImpl
 
 			Registration[] array = new RegistrationImpl[3];
 
-			array[0] = getByRegistrations_PrevAndNext(
+			array[0] = getByResource_PrevAndNext(
 				session, registration, registrationResourceId,
 				orderByComparator, true);
 
 			array[1] = registration;
 
-			array[2] = getByRegistrations_PrevAndNext(
+			array[2] = getByResource_PrevAndNext(
 				session, registration, registrationResourceId,
 				orderByComparator, false);
 
@@ -410,7 +410,7 @@ public class RegistrationPersistenceImpl
 		}
 	}
 
-	protected Registration getByRegistrations_PrevAndNext(
+	protected Registration getByResource_PrevAndNext(
 		Session session, Registration registration, long registrationResourceId,
 		OrderByComparator<Registration> orderByComparator, boolean previous) {
 
@@ -427,7 +427,7 @@ public class RegistrationPersistenceImpl
 
 		sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-		sb.append(_FINDER_COLUMN_REGISTRATIONS_REGISTRATIONRESOURCEID_2);
+		sb.append(_FINDER_COLUMN_RESOURCE_REGISTRATIONRESOURCEID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
@@ -524,9 +524,9 @@ public class RegistrationPersistenceImpl
 	 * @param registrationResourceId the registration resource ID
 	 */
 	@Override
-	public void removeByRegistrations(long registrationResourceId) {
+	public void removeByResource(long registrationResourceId) {
 		for (Registration registration :
-				findByRegistrations(
+				findByResource(
 					registrationResourceId, QueryUtil.ALL_POS,
 					QueryUtil.ALL_POS, null)) {
 
@@ -541,8 +541,8 @@ public class RegistrationPersistenceImpl
 	 * @return the number of matching registrations
 	 */
 	@Override
-	public int countByRegistrations(long registrationResourceId) {
-		FinderPath finderPath = _finderPathCountByRegistrations;
+	public int countByResource(long registrationResourceId) {
+		FinderPath finderPath = _finderPathCountByResource;
 
 		Object[] finderArgs = new Object[] {registrationResourceId};
 
@@ -553,7 +553,7 @@ public class RegistrationPersistenceImpl
 
 			sb.append(_SQL_COUNT_REGISTRATION_WHERE);
 
-			sb.append(_FINDER_COLUMN_REGISTRATIONS_REGISTRATIONRESOURCEID_2);
+			sb.append(_FINDER_COLUMN_RESOURCE_REGISTRATIONRESOURCEID_2);
 
 			String sql = sb.toString();
 
@@ -584,12 +584,12 @@ public class RegistrationPersistenceImpl
 	}
 
 	private static final String
-		_FINDER_COLUMN_REGISTRATIONS_REGISTRATIONRESOURCEID_2 =
+		_FINDER_COLUMN_RESOURCE_REGISTRATIONRESOURCEID_2 =
 			"registration.registrationResourceId = ?";
 
-	private FinderPath _finderPathWithPaginationFindByUserRegistrations;
-	private FinderPath _finderPathWithoutPaginationFindByUserRegistrations;
-	private FinderPath _finderPathCountByUserRegistrations;
+	private FinderPath _finderPathWithPaginationFindByUser;
+	private FinderPath _finderPathWithoutPaginationFindByUser;
+	private FinderPath _finderPathCountByUser;
 
 	/**
 	 * Returns all the registrations where userId = &#63;.
@@ -598,9 +598,8 @@ public class RegistrationPersistenceImpl
 	 * @return the matching registrations
 	 */
 	@Override
-	public List<Registration> findByUserRegistrations(long userId) {
-		return findByUserRegistrations(
-			userId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	public List<Registration> findByUser(long userId) {
+		return findByUser(userId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
 	/**
@@ -616,10 +615,8 @@ public class RegistrationPersistenceImpl
 	 * @return the range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByUserRegistrations(
-		long userId, int start, int end) {
-
-		return findByUserRegistrations(userId, start, end, null);
+	public List<Registration> findByUser(long userId, int start, int end) {
+		return findByUser(userId, start, end, null);
 	}
 
 	/**
@@ -636,12 +633,11 @@ public class RegistrationPersistenceImpl
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByUserRegistrations(
+	public List<Registration> findByUser(
 		long userId, int start, int end,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return findByUserRegistrations(
-			userId, start, end, orderByComparator, true);
+		return findByUser(userId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -659,7 +655,7 @@ public class RegistrationPersistenceImpl
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByUserRegistrations(
+	public List<Registration> findByUser(
 		long userId, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
 		boolean useFinderCache) {
@@ -671,13 +667,12 @@ public class RegistrationPersistenceImpl
 			(orderByComparator == null)) {
 
 			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByUserRegistrations;
+				finderPath = _finderPathWithoutPaginationFindByUser;
 				finderArgs = new Object[] {userId};
 			}
 		}
 		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUserRegistrations;
+			finderPath = _finderPathWithPaginationFindByUser;
 			finderArgs = new Object[] {userId, start, end, orderByComparator};
 		}
 
@@ -711,7 +706,7 @@ public class RegistrationPersistenceImpl
 
 			sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-			sb.append(_FINDER_COLUMN_USERREGISTRATIONS_USERID_2);
+			sb.append(_FINDER_COLUMN_USER_USERID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
@@ -763,11 +758,11 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	@Override
-	public Registration findByUserRegistrations_First(
+	public Registration findByUser_First(
 			long userId, OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
 
-		Registration registration = fetchByUserRegistrations_First(
+		Registration registration = fetchByUser_First(
 			userId, orderByComparator);
 
 		if (registration != null) {
@@ -794,11 +789,10 @@ public class RegistrationPersistenceImpl
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	@Override
-	public Registration fetchByUserRegistrations_First(
+	public Registration fetchByUser_First(
 		long userId, OrderByComparator<Registration> orderByComparator) {
 
-		List<Registration> list = findByUserRegistrations(
-			userId, 0, 1, orderByComparator);
+		List<Registration> list = findByUser(userId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -816,12 +810,11 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	@Override
-	public Registration findByUserRegistrations_Last(
+	public Registration findByUser_Last(
 			long userId, OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
 
-		Registration registration = fetchByUserRegistrations_Last(
-			userId, orderByComparator);
+		Registration registration = fetchByUser_Last(userId, orderByComparator);
 
 		if (registration != null) {
 			return registration;
@@ -847,16 +840,16 @@ public class RegistrationPersistenceImpl
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	@Override
-	public Registration fetchByUserRegistrations_Last(
+	public Registration fetchByUser_Last(
 		long userId, OrderByComparator<Registration> orderByComparator) {
 
-		int count = countByUserRegistrations(userId);
+		int count = countByUser(userId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<Registration> list = findByUserRegistrations(
+		List<Registration> list = findByUser(
 			userId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -876,7 +869,7 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
 	@Override
-	public Registration[] findByUserRegistrations_PrevAndNext(
+	public Registration[] findByUser_PrevAndNext(
 			long registrationId, long userId,
 			OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
@@ -890,12 +883,12 @@ public class RegistrationPersistenceImpl
 
 			Registration[] array = new RegistrationImpl[3];
 
-			array[0] = getByUserRegistrations_PrevAndNext(
+			array[0] = getByUser_PrevAndNext(
 				session, registration, userId, orderByComparator, true);
 
 			array[1] = registration;
 
-			array[2] = getByUserRegistrations_PrevAndNext(
+			array[2] = getByUser_PrevAndNext(
 				session, registration, userId, orderByComparator, false);
 
 			return array;
@@ -908,7 +901,7 @@ public class RegistrationPersistenceImpl
 		}
 	}
 
-	protected Registration getByUserRegistrations_PrevAndNext(
+	protected Registration getByUser_PrevAndNext(
 		Session session, Registration registration, long userId,
 		OrderByComparator<Registration> orderByComparator, boolean previous) {
 
@@ -925,7 +918,7 @@ public class RegistrationPersistenceImpl
 
 		sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-		sb.append(_FINDER_COLUMN_USERREGISTRATIONS_USERID_2);
+		sb.append(_FINDER_COLUMN_USER_USERID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
@@ -1022,9 +1015,9 @@ public class RegistrationPersistenceImpl
 	 * @param userId the user ID
 	 */
 	@Override
-	public void removeByUserRegistrations(long userId) {
+	public void removeByUser(long userId) {
 		for (Registration registration :
-				findByUserRegistrations(
+				findByUser(
 					userId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
 
 			remove(registration);
@@ -1038,8 +1031,8 @@ public class RegistrationPersistenceImpl
 	 * @return the number of matching registrations
 	 */
 	@Override
-	public int countByUserRegistrations(long userId) {
-		FinderPath finderPath = _finderPathCountByUserRegistrations;
+	public int countByUser(long userId) {
+		FinderPath finderPath = _finderPathCountByUser;
 
 		Object[] finderArgs = new Object[] {userId};
 
@@ -1050,7 +1043,7 @@ public class RegistrationPersistenceImpl
 
 			sb.append(_SQL_COUNT_REGISTRATION_WHERE);
 
-			sb.append(_FINDER_COLUMN_USERREGISTRATIONS_USERID_2);
+			sb.append(_FINDER_COLUMN_USER_USERID_2);
 
 			String sql = sb.toString();
 
@@ -1080,13 +1073,12 @@ public class RegistrationPersistenceImpl
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_USERREGISTRATIONS_USERID_2 =
+	private static final String _FINDER_COLUMN_USER_USERID_2 =
 		"registration.userId = ?";
 
-	private FinderPath _finderPathWithPaginationFindByUserResourceRegistrations;
-	private FinderPath
-		_finderPathWithoutPaginationFindByUserResourceRegistrations;
-	private FinderPath _finderPathCountByUserResourceRegistrations;
+	private FinderPath _finderPathWithPaginationFindByUserAndResource;
+	private FinderPath _finderPathWithoutPaginationFindByUserAndResource;
+	private FinderPath _finderPathCountByUserAndResource;
 
 	/**
 	 * Returns all the registrations where userId = &#63; and registrationResourceId = &#63;.
@@ -1096,10 +1088,10 @@ public class RegistrationPersistenceImpl
 	 * @return the matching registrations
 	 */
 	@Override
-	public List<Registration> findByUserResourceRegistrations(
+	public List<Registration> findByUserAndResource(
 		long userId, long registrationResourceId) {
 
-		return findByUserResourceRegistrations(
+		return findByUserAndResource(
 			userId, registrationResourceId, QueryUtil.ALL_POS,
 			QueryUtil.ALL_POS, null);
 	}
@@ -1118,10 +1110,10 @@ public class RegistrationPersistenceImpl
 	 * @return the range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByUserResourceRegistrations(
+	public List<Registration> findByUserAndResource(
 		long userId, long registrationResourceId, int start, int end) {
 
-		return findByUserResourceRegistrations(
+		return findByUserAndResource(
 			userId, registrationResourceId, start, end, null);
 	}
 
@@ -1140,11 +1132,11 @@ public class RegistrationPersistenceImpl
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByUserResourceRegistrations(
+	public List<Registration> findByUserAndResource(
 		long userId, long registrationResourceId, int start, int end,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return findByUserResourceRegistrations(
+		return findByUserAndResource(
 			userId, registrationResourceId, start, end, orderByComparator,
 			true);
 	}
@@ -1165,7 +1157,7 @@ public class RegistrationPersistenceImpl
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByUserResourceRegistrations(
+	public List<Registration> findByUserAndResource(
 		long userId, long registrationResourceId, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
 		boolean useFinderCache) {
@@ -1177,14 +1169,12 @@ public class RegistrationPersistenceImpl
 			(orderByComparator == null)) {
 
 			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByUserResourceRegistrations;
+				finderPath = _finderPathWithoutPaginationFindByUserAndResource;
 				finderArgs = new Object[] {userId, registrationResourceId};
 			}
 		}
 		else if (useFinderCache) {
-			finderPath =
-				_finderPathWithPaginationFindByUserResourceRegistrations;
+			finderPath = _finderPathWithPaginationFindByUserAndResource;
 			finderArgs = new Object[] {
 				userId, registrationResourceId, start, end, orderByComparator
 			};
@@ -1223,10 +1213,9 @@ public class RegistrationPersistenceImpl
 
 			sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-			sb.append(_FINDER_COLUMN_USERRESOURCEREGISTRATIONS_USERID_2);
+			sb.append(_FINDER_COLUMN_USERANDRESOURCE_USERID_2);
 
-			sb.append(
-				_FINDER_COLUMN_USERRESOURCEREGISTRATIONS_REGISTRATIONRESOURCEID_2);
+			sb.append(_FINDER_COLUMN_USERANDRESOURCE_REGISTRATIONRESOURCEID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
@@ -1281,12 +1270,12 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	@Override
-	public Registration findByUserResourceRegistrations_First(
+	public Registration findByUserAndResource_First(
 			long userId, long registrationResourceId,
 			OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
 
-		Registration registration = fetchByUserResourceRegistrations_First(
+		Registration registration = fetchByUserAndResource_First(
 			userId, registrationResourceId, orderByComparator);
 
 		if (registration != null) {
@@ -1317,11 +1306,11 @@ public class RegistrationPersistenceImpl
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	@Override
-	public Registration fetchByUserResourceRegistrations_First(
+	public Registration fetchByUserAndResource_First(
 		long userId, long registrationResourceId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		List<Registration> list = findByUserResourceRegistrations(
+		List<Registration> list = findByUserAndResource(
 			userId, registrationResourceId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -1341,12 +1330,12 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	@Override
-	public Registration findByUserResourceRegistrations_Last(
+	public Registration findByUserAndResource_Last(
 			long userId, long registrationResourceId,
 			OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
 
-		Registration registration = fetchByUserResourceRegistrations_Last(
+		Registration registration = fetchByUserAndResource_Last(
 			userId, registrationResourceId, orderByComparator);
 
 		if (registration != null) {
@@ -1377,18 +1366,17 @@ public class RegistrationPersistenceImpl
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	@Override
-	public Registration fetchByUserResourceRegistrations_Last(
+	public Registration fetchByUserAndResource_Last(
 		long userId, long registrationResourceId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		int count = countByUserResourceRegistrations(
-			userId, registrationResourceId);
+		int count = countByUserAndResource(userId, registrationResourceId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<Registration> list = findByUserResourceRegistrations(
+		List<Registration> list = findByUserAndResource(
 			userId, registrationResourceId, count - 1, count,
 			orderByComparator);
 
@@ -1410,7 +1398,7 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
 	@Override
-	public Registration[] findByUserResourceRegistrations_PrevAndNext(
+	public Registration[] findByUserAndResource_PrevAndNext(
 			long registrationId, long userId, long registrationResourceId,
 			OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
@@ -1424,13 +1412,13 @@ public class RegistrationPersistenceImpl
 
 			Registration[] array = new RegistrationImpl[3];
 
-			array[0] = getByUserResourceRegistrations_PrevAndNext(
+			array[0] = getByUserAndResource_PrevAndNext(
 				session, registration, userId, registrationResourceId,
 				orderByComparator, true);
 
 			array[1] = registration;
 
-			array[2] = getByUserResourceRegistrations_PrevAndNext(
+			array[2] = getByUserAndResource_PrevAndNext(
 				session, registration, userId, registrationResourceId,
 				orderByComparator, false);
 
@@ -1444,7 +1432,7 @@ public class RegistrationPersistenceImpl
 		}
 	}
 
-	protected Registration getByUserResourceRegistrations_PrevAndNext(
+	protected Registration getByUserAndResource_PrevAndNext(
 		Session session, Registration registration, long userId,
 		long registrationResourceId,
 		OrderByComparator<Registration> orderByComparator, boolean previous) {
@@ -1462,10 +1450,9 @@ public class RegistrationPersistenceImpl
 
 		sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-		sb.append(_FINDER_COLUMN_USERRESOURCEREGISTRATIONS_USERID_2);
+		sb.append(_FINDER_COLUMN_USERANDRESOURCE_USERID_2);
 
-		sb.append(
-			_FINDER_COLUMN_USERRESOURCEREGISTRATIONS_REGISTRATIONRESOURCEID_2);
+		sb.append(_FINDER_COLUMN_USERANDRESOURCE_REGISTRATIONRESOURCEID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
@@ -1565,11 +1552,11 @@ public class RegistrationPersistenceImpl
 	 * @param registrationResourceId the registration resource ID
 	 */
 	@Override
-	public void removeByUserResourceRegistrations(
+	public void removeByUserAndResource(
 		long userId, long registrationResourceId) {
 
 		for (Registration registration :
-				findByUserResourceRegistrations(
+				findByUserAndResource(
 					userId, registrationResourceId, QueryUtil.ALL_POS,
 					QueryUtil.ALL_POS, null)) {
 
@@ -1585,10 +1572,10 @@ public class RegistrationPersistenceImpl
 	 * @return the number of matching registrations
 	 */
 	@Override
-	public int countByUserResourceRegistrations(
+	public int countByUserAndResource(
 		long userId, long registrationResourceId) {
 
-		FinderPath finderPath = _finderPathCountByUserResourceRegistrations;
+		FinderPath finderPath = _finderPathCountByUserAndResource;
 
 		Object[] finderArgs = new Object[] {userId, registrationResourceId};
 
@@ -1599,10 +1586,9 @@ public class RegistrationPersistenceImpl
 
 			sb.append(_SQL_COUNT_REGISTRATION_WHERE);
 
-			sb.append(_FINDER_COLUMN_USERRESOURCEREGISTRATIONS_USERID_2);
+			sb.append(_FINDER_COLUMN_USERANDRESOURCE_USERID_2);
 
-			sb.append(
-				_FINDER_COLUMN_USERRESOURCEREGISTRATIONS_REGISTRATIONRESOURCEID_2);
+			sb.append(_FINDER_COLUMN_USERANDRESOURCE_REGISTRATIONRESOURCEID_2);
 
 			String sql = sb.toString();
 
@@ -1634,17 +1620,16 @@ public class RegistrationPersistenceImpl
 		return count.intValue();
 	}
 
-	private static final String
-		_FINDER_COLUMN_USERRESOURCEREGISTRATIONS_USERID_2 =
-			"registration.userId = ? AND ";
+	private static final String _FINDER_COLUMN_USERANDRESOURCE_USERID_2 =
+		"registration.userId = ? AND ";
 
 	private static final String
-		_FINDER_COLUMN_USERRESOURCEREGISTRATIONS_REGISTRATIONRESOURCEID_2 =
+		_FINDER_COLUMN_USERANDRESOURCE_REGISTRATIONRESOURCEID_2 =
 			"registration.registrationResourceId = ?";
 
-	private FinderPath _finderPathWithPaginationFindByUserGroupRegistrations;
-	private FinderPath _finderPathWithoutPaginationFindByUserGroupRegistrations;
-	private FinderPath _finderPathCountByUserGroupRegistrations;
+	private FinderPath _finderPathWithPaginationFindByUserAndGroup;
+	private FinderPath _finderPathWithoutPaginationFindByUserAndGroup;
+	private FinderPath _finderPathCountByUserAndGroup;
 
 	/**
 	 * Returns all the registrations where userId = &#63; and groupId = &#63;.
@@ -1654,10 +1639,8 @@ public class RegistrationPersistenceImpl
 	 * @return the matching registrations
 	 */
 	@Override
-	public List<Registration> findByUserGroupRegistrations(
-		long userId, long groupId) {
-
-		return findByUserGroupRegistrations(
+	public List<Registration> findByUserAndGroup(long userId, long groupId) {
+		return findByUserAndGroup(
 			userId, groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
@@ -1675,10 +1658,10 @@ public class RegistrationPersistenceImpl
 	 * @return the range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByUserGroupRegistrations(
+	public List<Registration> findByUserAndGroup(
 		long userId, long groupId, int start, int end) {
 
-		return findByUserGroupRegistrations(userId, groupId, start, end, null);
+		return findByUserAndGroup(userId, groupId, start, end, null);
 	}
 
 	/**
@@ -1696,11 +1679,11 @@ public class RegistrationPersistenceImpl
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByUserGroupRegistrations(
+	public List<Registration> findByUserAndGroup(
 		long userId, long groupId, int start, int end,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return findByUserGroupRegistrations(
+		return findByUserAndGroup(
 			userId, groupId, start, end, orderByComparator, true);
 	}
 
@@ -1720,7 +1703,7 @@ public class RegistrationPersistenceImpl
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByUserGroupRegistrations(
+	public List<Registration> findByUserAndGroup(
 		long userId, long groupId, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
 		boolean useFinderCache) {
@@ -1732,13 +1715,12 @@ public class RegistrationPersistenceImpl
 			(orderByComparator == null)) {
 
 			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByUserGroupRegistrations;
+				finderPath = _finderPathWithoutPaginationFindByUserAndGroup;
 				finderArgs = new Object[] {userId, groupId};
 			}
 		}
 		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByUserGroupRegistrations;
+			finderPath = _finderPathWithPaginationFindByUserAndGroup;
 			finderArgs = new Object[] {
 				userId, groupId, start, end, orderByComparator
 			};
@@ -1776,9 +1758,9 @@ public class RegistrationPersistenceImpl
 
 			sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-			sb.append(_FINDER_COLUMN_USERGROUPREGISTRATIONS_USERID_2);
+			sb.append(_FINDER_COLUMN_USERANDGROUP_USERID_2);
 
-			sb.append(_FINDER_COLUMN_USERGROUPREGISTRATIONS_GROUPID_2);
+			sb.append(_FINDER_COLUMN_USERANDGROUP_GROUPID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
@@ -1833,12 +1815,12 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	@Override
-	public Registration findByUserGroupRegistrations_First(
+	public Registration findByUserAndGroup_First(
 			long userId, long groupId,
 			OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
 
-		Registration registration = fetchByUserGroupRegistrations_First(
+		Registration registration = fetchByUserAndGroup_First(
 			userId, groupId, orderByComparator);
 
 		if (registration != null) {
@@ -1869,11 +1851,11 @@ public class RegistrationPersistenceImpl
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	@Override
-	public Registration fetchByUserGroupRegistrations_First(
+	public Registration fetchByUserAndGroup_First(
 		long userId, long groupId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		List<Registration> list = findByUserGroupRegistrations(
+		List<Registration> list = findByUserAndGroup(
 			userId, groupId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -1893,12 +1875,12 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	@Override
-	public Registration findByUserGroupRegistrations_Last(
+	public Registration findByUserAndGroup_Last(
 			long userId, long groupId,
 			OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
 
-		Registration registration = fetchByUserGroupRegistrations_Last(
+		Registration registration = fetchByUserAndGroup_Last(
 			userId, groupId, orderByComparator);
 
 		if (registration != null) {
@@ -1929,17 +1911,17 @@ public class RegistrationPersistenceImpl
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	@Override
-	public Registration fetchByUserGroupRegistrations_Last(
+	public Registration fetchByUserAndGroup_Last(
 		long userId, long groupId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		int count = countByUserGroupRegistrations(userId, groupId);
+		int count = countByUserAndGroup(userId, groupId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<Registration> list = findByUserGroupRegistrations(
+		List<Registration> list = findByUserAndGroup(
 			userId, groupId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -1960,7 +1942,7 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
 	@Override
-	public Registration[] findByUserGroupRegistrations_PrevAndNext(
+	public Registration[] findByUserAndGroup_PrevAndNext(
 			long registrationId, long userId, long groupId,
 			OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
@@ -1974,13 +1956,13 @@ public class RegistrationPersistenceImpl
 
 			Registration[] array = new RegistrationImpl[3];
 
-			array[0] = getByUserGroupRegistrations_PrevAndNext(
+			array[0] = getByUserAndGroup_PrevAndNext(
 				session, registration, userId, groupId, orderByComparator,
 				true);
 
 			array[1] = registration;
 
-			array[2] = getByUserGroupRegistrations_PrevAndNext(
+			array[2] = getByUserAndGroup_PrevAndNext(
 				session, registration, userId, groupId, orderByComparator,
 				false);
 
@@ -1994,7 +1976,7 @@ public class RegistrationPersistenceImpl
 		}
 	}
 
-	protected Registration getByUserGroupRegistrations_PrevAndNext(
+	protected Registration getByUserAndGroup_PrevAndNext(
 		Session session, Registration registration, long userId, long groupId,
 		OrderByComparator<Registration> orderByComparator, boolean previous) {
 
@@ -2011,9 +1993,9 @@ public class RegistrationPersistenceImpl
 
 		sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-		sb.append(_FINDER_COLUMN_USERGROUPREGISTRATIONS_USERID_2);
+		sb.append(_FINDER_COLUMN_USERANDGROUP_USERID_2);
 
-		sb.append(_FINDER_COLUMN_USERGROUPREGISTRATIONS_GROUPID_2);
+		sb.append(_FINDER_COLUMN_USERANDGROUP_GROUPID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
@@ -2113,9 +2095,9 @@ public class RegistrationPersistenceImpl
 	 * @param groupId the group ID
 	 */
 	@Override
-	public void removeByUserGroupRegistrations(long userId, long groupId) {
+	public void removeByUserAndGroup(long userId, long groupId) {
 		for (Registration registration :
-				findByUserGroupRegistrations(
+				findByUserAndGroup(
 					userId, groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
 					null)) {
 
@@ -2131,8 +2113,8 @@ public class RegistrationPersistenceImpl
 	 * @return the number of matching registrations
 	 */
 	@Override
-	public int countByUserGroupRegistrations(long userId, long groupId) {
-		FinderPath finderPath = _finderPathCountByUserGroupRegistrations;
+	public int countByUserAndGroup(long userId, long groupId) {
+		FinderPath finderPath = _finderPathCountByUserAndGroup;
 
 		Object[] finderArgs = new Object[] {userId, groupId};
 
@@ -2143,9 +2125,9 @@ public class RegistrationPersistenceImpl
 
 			sb.append(_SQL_COUNT_REGISTRATION_WHERE);
 
-			sb.append(_FINDER_COLUMN_USERGROUPREGISTRATIONS_USERID_2);
+			sb.append(_FINDER_COLUMN_USERANDGROUP_USERID_2);
 
-			sb.append(_FINDER_COLUMN_USERGROUPREGISTRATIONS_GROUPID_2);
+			sb.append(_FINDER_COLUMN_USERANDGROUP_GROUPID_2);
 
 			String sql = sb.toString();
 
@@ -2177,16 +2159,15 @@ public class RegistrationPersistenceImpl
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_USERGROUPREGISTRATIONS_USERID_2 =
+	private static final String _FINDER_COLUMN_USERANDGROUP_USERID_2 =
 		"registration.userId = ? AND ";
 
-	private static final String
-		_FINDER_COLUMN_USERGROUPREGISTRATIONS_GROUPID_2 =
-			"registration.groupId = ?";
+	private static final String _FINDER_COLUMN_USERANDGROUP_GROUPID_2 =
+		"registration.groupId = ?";
 
-	private FinderPath _finderPathWithPaginationFindByAuthorRegistrations;
-	private FinderPath _finderPathWithoutPaginationFindByAuthorRegistrations;
-	private FinderPath _finderPathCountByAuthorRegistrations;
+	private FinderPath _finderPathWithPaginationFindByAuthor;
+	private FinderPath _finderPathWithoutPaginationFindByAuthor;
+	private FinderPath _finderPathCountByAuthor;
 
 	/**
 	 * Returns all the registrations where authorId = &#63;.
@@ -2195,8 +2176,8 @@ public class RegistrationPersistenceImpl
 	 * @return the matching registrations
 	 */
 	@Override
-	public List<Registration> findByAuthorRegistrations(long authorId) {
-		return findByAuthorRegistrations(
+	public List<Registration> findByAuthor(long authorId) {
+		return findByAuthor(
 			authorId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
@@ -2213,10 +2194,8 @@ public class RegistrationPersistenceImpl
 	 * @return the range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByAuthorRegistrations(
-		long authorId, int start, int end) {
-
-		return findByAuthorRegistrations(authorId, start, end, null);
+	public List<Registration> findByAuthor(long authorId, int start, int end) {
+		return findByAuthor(authorId, start, end, null);
 	}
 
 	/**
@@ -2233,12 +2212,11 @@ public class RegistrationPersistenceImpl
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByAuthorRegistrations(
+	public List<Registration> findByAuthor(
 		long authorId, int start, int end,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return findByAuthorRegistrations(
-			authorId, start, end, orderByComparator, true);
+		return findByAuthor(authorId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -2256,7 +2234,7 @@ public class RegistrationPersistenceImpl
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByAuthorRegistrations(
+	public List<Registration> findByAuthor(
 		long authorId, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
 		boolean useFinderCache) {
@@ -2268,13 +2246,12 @@ public class RegistrationPersistenceImpl
 			(orderByComparator == null)) {
 
 			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByAuthorRegistrations;
+				finderPath = _finderPathWithoutPaginationFindByAuthor;
 				finderArgs = new Object[] {authorId};
 			}
 		}
 		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByAuthorRegistrations;
+			finderPath = _finderPathWithPaginationFindByAuthor;
 			finderArgs = new Object[] {authorId, start, end, orderByComparator};
 		}
 
@@ -2308,7 +2285,7 @@ public class RegistrationPersistenceImpl
 
 			sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-			sb.append(_FINDER_COLUMN_AUTHORREGISTRATIONS_AUTHORID_2);
+			sb.append(_FINDER_COLUMN_AUTHOR_AUTHORID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
@@ -2360,11 +2337,11 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	@Override
-	public Registration findByAuthorRegistrations_First(
+	public Registration findByAuthor_First(
 			long authorId, OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
 
-		Registration registration = fetchByAuthorRegistrations_First(
+		Registration registration = fetchByAuthor_First(
 			authorId, orderByComparator);
 
 		if (registration != null) {
@@ -2391,10 +2368,10 @@ public class RegistrationPersistenceImpl
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	@Override
-	public Registration fetchByAuthorRegistrations_First(
+	public Registration fetchByAuthor_First(
 		long authorId, OrderByComparator<Registration> orderByComparator) {
 
-		List<Registration> list = findByAuthorRegistrations(
+		List<Registration> list = findByAuthor(
 			authorId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -2413,11 +2390,11 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	@Override
-	public Registration findByAuthorRegistrations_Last(
+	public Registration findByAuthor_Last(
 			long authorId, OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
 
-		Registration registration = fetchByAuthorRegistrations_Last(
+		Registration registration = fetchByAuthor_Last(
 			authorId, orderByComparator);
 
 		if (registration != null) {
@@ -2444,16 +2421,16 @@ public class RegistrationPersistenceImpl
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	@Override
-	public Registration fetchByAuthorRegistrations_Last(
+	public Registration fetchByAuthor_Last(
 		long authorId, OrderByComparator<Registration> orderByComparator) {
 
-		int count = countByAuthorRegistrations(authorId);
+		int count = countByAuthor(authorId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<Registration> list = findByAuthorRegistrations(
+		List<Registration> list = findByAuthor(
 			authorId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -2473,7 +2450,7 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
 	@Override
-	public Registration[] findByAuthorRegistrations_PrevAndNext(
+	public Registration[] findByAuthor_PrevAndNext(
 			long registrationId, long authorId,
 			OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
@@ -2487,12 +2464,12 @@ public class RegistrationPersistenceImpl
 
 			Registration[] array = new RegistrationImpl[3];
 
-			array[0] = getByAuthorRegistrations_PrevAndNext(
+			array[0] = getByAuthor_PrevAndNext(
 				session, registration, authorId, orderByComparator, true);
 
 			array[1] = registration;
 
-			array[2] = getByAuthorRegistrations_PrevAndNext(
+			array[2] = getByAuthor_PrevAndNext(
 				session, registration, authorId, orderByComparator, false);
 
 			return array;
@@ -2505,7 +2482,7 @@ public class RegistrationPersistenceImpl
 		}
 	}
 
-	protected Registration getByAuthorRegistrations_PrevAndNext(
+	protected Registration getByAuthor_PrevAndNext(
 		Session session, Registration registration, long authorId,
 		OrderByComparator<Registration> orderByComparator, boolean previous) {
 
@@ -2522,7 +2499,7 @@ public class RegistrationPersistenceImpl
 
 		sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-		sb.append(_FINDER_COLUMN_AUTHORREGISTRATIONS_AUTHORID_2);
+		sb.append(_FINDER_COLUMN_AUTHOR_AUTHORID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
@@ -2619,9 +2596,9 @@ public class RegistrationPersistenceImpl
 	 * @param authorId the author ID
 	 */
 	@Override
-	public void removeByAuthorRegistrations(long authorId) {
+	public void removeByAuthor(long authorId) {
 		for (Registration registration :
-				findByAuthorRegistrations(
+				findByAuthor(
 					authorId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
 
 			remove(registration);
@@ -2635,8 +2612,8 @@ public class RegistrationPersistenceImpl
 	 * @return the number of matching registrations
 	 */
 	@Override
-	public int countByAuthorRegistrations(long authorId) {
-		FinderPath finderPath = _finderPathCountByAuthorRegistrations;
+	public int countByAuthor(long authorId) {
+		FinderPath finderPath = _finderPathCountByAuthor;
 
 		Object[] finderArgs = new Object[] {authorId};
 
@@ -2647,7 +2624,7 @@ public class RegistrationPersistenceImpl
 
 			sb.append(_SQL_COUNT_REGISTRATION_WHERE);
 
-			sb.append(_FINDER_COLUMN_AUTHORREGISTRATIONS_AUTHORID_2);
+			sb.append(_FINDER_COLUMN_AUTHOR_AUTHORID_2);
 
 			String sql = sb.toString();
 
@@ -2677,14 +2654,12 @@ public class RegistrationPersistenceImpl
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_AUTHORREGISTRATIONS_AUTHORID_2 =
+	private static final String _FINDER_COLUMN_AUTHOR_AUTHORID_2 =
 		"registration.authorId = ?";
 
-	private FinderPath
-		_finderPathWithPaginationFindByAuthorResourceRegistrations;
-	private FinderPath
-		_finderPathWithoutPaginationFindByAuthorResourceRegistrations;
-	private FinderPath _finderPathCountByAuthorResourceRegistrations;
+	private FinderPath _finderPathWithPaginationFindByAuthorAndResource;
+	private FinderPath _finderPathWithoutPaginationFindByAuthorAndResource;
+	private FinderPath _finderPathCountByAuthorAndResource;
 
 	/**
 	 * Returns all the registrations where authorId = &#63; and registrationResourceId = &#63;.
@@ -2694,10 +2669,10 @@ public class RegistrationPersistenceImpl
 	 * @return the matching registrations
 	 */
 	@Override
-	public List<Registration> findByAuthorResourceRegistrations(
+	public List<Registration> findByAuthorAndResource(
 		long authorId, long registrationResourceId) {
 
-		return findByAuthorResourceRegistrations(
+		return findByAuthorAndResource(
 			authorId, registrationResourceId, QueryUtil.ALL_POS,
 			QueryUtil.ALL_POS, null);
 	}
@@ -2716,10 +2691,10 @@ public class RegistrationPersistenceImpl
 	 * @return the range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByAuthorResourceRegistrations(
+	public List<Registration> findByAuthorAndResource(
 		long authorId, long registrationResourceId, int start, int end) {
 
-		return findByAuthorResourceRegistrations(
+		return findByAuthorAndResource(
 			authorId, registrationResourceId, start, end, null);
 	}
 
@@ -2738,11 +2713,11 @@ public class RegistrationPersistenceImpl
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByAuthorResourceRegistrations(
+	public List<Registration> findByAuthorAndResource(
 		long authorId, long registrationResourceId, int start, int end,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return findByAuthorResourceRegistrations(
+		return findByAuthorAndResource(
 			authorId, registrationResourceId, start, end, orderByComparator,
 			true);
 	}
@@ -2763,7 +2738,7 @@ public class RegistrationPersistenceImpl
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByAuthorResourceRegistrations(
+	public List<Registration> findByAuthorAndResource(
 		long authorId, long registrationResourceId, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
 		boolean useFinderCache) {
@@ -2776,13 +2751,12 @@ public class RegistrationPersistenceImpl
 
 			if (useFinderCache) {
 				finderPath =
-					_finderPathWithoutPaginationFindByAuthorResourceRegistrations;
+					_finderPathWithoutPaginationFindByAuthorAndResource;
 				finderArgs = new Object[] {authorId, registrationResourceId};
 			}
 		}
 		else if (useFinderCache) {
-			finderPath =
-				_finderPathWithPaginationFindByAuthorResourceRegistrations;
+			finderPath = _finderPathWithPaginationFindByAuthorAndResource;
 			finderArgs = new Object[] {
 				authorId, registrationResourceId, start, end, orderByComparator
 			};
@@ -2821,10 +2795,10 @@ public class RegistrationPersistenceImpl
 
 			sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-			sb.append(_FINDER_COLUMN_AUTHORRESOURCEREGISTRATIONS_AUTHORID_2);
+			sb.append(_FINDER_COLUMN_AUTHORANDRESOURCE_AUTHORID_2);
 
 			sb.append(
-				_FINDER_COLUMN_AUTHORRESOURCEREGISTRATIONS_REGISTRATIONRESOURCEID_2);
+				_FINDER_COLUMN_AUTHORANDRESOURCE_REGISTRATIONRESOURCEID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
@@ -2879,12 +2853,12 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	@Override
-	public Registration findByAuthorResourceRegistrations_First(
+	public Registration findByAuthorAndResource_First(
 			long authorId, long registrationResourceId,
 			OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
 
-		Registration registration = fetchByAuthorResourceRegistrations_First(
+		Registration registration = fetchByAuthorAndResource_First(
 			authorId, registrationResourceId, orderByComparator);
 
 		if (registration != null) {
@@ -2915,11 +2889,11 @@ public class RegistrationPersistenceImpl
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	@Override
-	public Registration fetchByAuthorResourceRegistrations_First(
+	public Registration fetchByAuthorAndResource_First(
 		long authorId, long registrationResourceId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		List<Registration> list = findByAuthorResourceRegistrations(
+		List<Registration> list = findByAuthorAndResource(
 			authorId, registrationResourceId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -2939,12 +2913,12 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	@Override
-	public Registration findByAuthorResourceRegistrations_Last(
+	public Registration findByAuthorAndResource_Last(
 			long authorId, long registrationResourceId,
 			OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
 
-		Registration registration = fetchByAuthorResourceRegistrations_Last(
+		Registration registration = fetchByAuthorAndResource_Last(
 			authorId, registrationResourceId, orderByComparator);
 
 		if (registration != null) {
@@ -2975,18 +2949,17 @@ public class RegistrationPersistenceImpl
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	@Override
-	public Registration fetchByAuthorResourceRegistrations_Last(
+	public Registration fetchByAuthorAndResource_Last(
 		long authorId, long registrationResourceId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		int count = countByAuthorResourceRegistrations(
-			authorId, registrationResourceId);
+		int count = countByAuthorAndResource(authorId, registrationResourceId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<Registration> list = findByAuthorResourceRegistrations(
+		List<Registration> list = findByAuthorAndResource(
 			authorId, registrationResourceId, count - 1, count,
 			orderByComparator);
 
@@ -3008,7 +2981,7 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
 	@Override
-	public Registration[] findByAuthorResourceRegistrations_PrevAndNext(
+	public Registration[] findByAuthorAndResource_PrevAndNext(
 			long registrationId, long authorId, long registrationResourceId,
 			OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
@@ -3022,13 +2995,13 @@ public class RegistrationPersistenceImpl
 
 			Registration[] array = new RegistrationImpl[3];
 
-			array[0] = getByAuthorResourceRegistrations_PrevAndNext(
+			array[0] = getByAuthorAndResource_PrevAndNext(
 				session, registration, authorId, registrationResourceId,
 				orderByComparator, true);
 
 			array[1] = registration;
 
-			array[2] = getByAuthorResourceRegistrations_PrevAndNext(
+			array[2] = getByAuthorAndResource_PrevAndNext(
 				session, registration, authorId, registrationResourceId,
 				orderByComparator, false);
 
@@ -3042,7 +3015,7 @@ public class RegistrationPersistenceImpl
 		}
 	}
 
-	protected Registration getByAuthorResourceRegistrations_PrevAndNext(
+	protected Registration getByAuthorAndResource_PrevAndNext(
 		Session session, Registration registration, long authorId,
 		long registrationResourceId,
 		OrderByComparator<Registration> orderByComparator, boolean previous) {
@@ -3060,10 +3033,9 @@ public class RegistrationPersistenceImpl
 
 		sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-		sb.append(_FINDER_COLUMN_AUTHORRESOURCEREGISTRATIONS_AUTHORID_2);
+		sb.append(_FINDER_COLUMN_AUTHORANDRESOURCE_AUTHORID_2);
 
-		sb.append(
-			_FINDER_COLUMN_AUTHORRESOURCEREGISTRATIONS_REGISTRATIONRESOURCEID_2);
+		sb.append(_FINDER_COLUMN_AUTHORANDRESOURCE_REGISTRATIONRESOURCEID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
@@ -3163,11 +3135,11 @@ public class RegistrationPersistenceImpl
 	 * @param registrationResourceId the registration resource ID
 	 */
 	@Override
-	public void removeByAuthorResourceRegistrations(
+	public void removeByAuthorAndResource(
 		long authorId, long registrationResourceId) {
 
 		for (Registration registration :
-				findByAuthorResourceRegistrations(
+				findByAuthorAndResource(
 					authorId, registrationResourceId, QueryUtil.ALL_POS,
 					QueryUtil.ALL_POS, null)) {
 
@@ -3183,10 +3155,10 @@ public class RegistrationPersistenceImpl
 	 * @return the number of matching registrations
 	 */
 	@Override
-	public int countByAuthorResourceRegistrations(
+	public int countByAuthorAndResource(
 		long authorId, long registrationResourceId) {
 
-		FinderPath finderPath = _finderPathCountByAuthorResourceRegistrations;
+		FinderPath finderPath = _finderPathCountByAuthorAndResource;
 
 		Object[] finderArgs = new Object[] {authorId, registrationResourceId};
 
@@ -3197,10 +3169,10 @@ public class RegistrationPersistenceImpl
 
 			sb.append(_SQL_COUNT_REGISTRATION_WHERE);
 
-			sb.append(_FINDER_COLUMN_AUTHORRESOURCEREGISTRATIONS_AUTHORID_2);
+			sb.append(_FINDER_COLUMN_AUTHORANDRESOURCE_AUTHORID_2);
 
 			sb.append(
-				_FINDER_COLUMN_AUTHORRESOURCEREGISTRATIONS_REGISTRATIONRESOURCEID_2);
+				_FINDER_COLUMN_AUTHORANDRESOURCE_REGISTRATIONRESOURCEID_2);
 
 			String sql = sb.toString();
 
@@ -3232,18 +3204,16 @@ public class RegistrationPersistenceImpl
 		return count.intValue();
 	}
 
-	private static final String
-		_FINDER_COLUMN_AUTHORRESOURCEREGISTRATIONS_AUTHORID_2 =
-			"registration.authorId = ? AND ";
+	private static final String _FINDER_COLUMN_AUTHORANDRESOURCE_AUTHORID_2 =
+		"registration.authorId = ? AND ";
 
 	private static final String
-		_FINDER_COLUMN_AUTHORRESOURCEREGISTRATIONS_REGISTRATIONRESOURCEID_2 =
+		_FINDER_COLUMN_AUTHORANDRESOURCE_REGISTRATIONRESOURCEID_2 =
 			"registration.registrationResourceId = ?";
 
-	private FinderPath _finderPathWithPaginationFindByAuthorGroupRegistrations;
-	private FinderPath
-		_finderPathWithoutPaginationFindByAuthorGroupRegistrations;
-	private FinderPath _finderPathCountByAuthorGroupRegistrations;
+	private FinderPath _finderPathWithPaginationFindByAuthorAndGroup;
+	private FinderPath _finderPathWithoutPaginationFindByAuthorAndGroup;
+	private FinderPath _finderPathCountByAuthorAndGroup;
 
 	/**
 	 * Returns all the registrations where authorId = &#63; and groupId = &#63;.
@@ -3253,10 +3223,10 @@ public class RegistrationPersistenceImpl
 	 * @return the matching registrations
 	 */
 	@Override
-	public List<Registration> findByAuthorGroupRegistrations(
+	public List<Registration> findByAuthorAndGroup(
 		long authorId, long groupId) {
 
-		return findByAuthorGroupRegistrations(
+		return findByAuthorAndGroup(
 			authorId, groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
@@ -3274,11 +3244,10 @@ public class RegistrationPersistenceImpl
 	 * @return the range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByAuthorGroupRegistrations(
+	public List<Registration> findByAuthorAndGroup(
 		long authorId, long groupId, int start, int end) {
 
-		return findByAuthorGroupRegistrations(
-			authorId, groupId, start, end, null);
+		return findByAuthorAndGroup(authorId, groupId, start, end, null);
 	}
 
 	/**
@@ -3296,11 +3265,11 @@ public class RegistrationPersistenceImpl
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByAuthorGroupRegistrations(
+	public List<Registration> findByAuthorAndGroup(
 		long authorId, long groupId, int start, int end,
 		OrderByComparator<Registration> orderByComparator) {
 
-		return findByAuthorGroupRegistrations(
+		return findByAuthorAndGroup(
 			authorId, groupId, start, end, orderByComparator, true);
 	}
 
@@ -3320,7 +3289,7 @@ public class RegistrationPersistenceImpl
 	 * @return the ordered range of matching registrations
 	 */
 	@Override
-	public List<Registration> findByAuthorGroupRegistrations(
+	public List<Registration> findByAuthorAndGroup(
 		long authorId, long groupId, int start, int end,
 		OrderByComparator<Registration> orderByComparator,
 		boolean useFinderCache) {
@@ -3332,14 +3301,12 @@ public class RegistrationPersistenceImpl
 			(orderByComparator == null)) {
 
 			if (useFinderCache) {
-				finderPath =
-					_finderPathWithoutPaginationFindByAuthorGroupRegistrations;
+				finderPath = _finderPathWithoutPaginationFindByAuthorAndGroup;
 				finderArgs = new Object[] {authorId, groupId};
 			}
 		}
 		else if (useFinderCache) {
-			finderPath =
-				_finderPathWithPaginationFindByAuthorGroupRegistrations;
+			finderPath = _finderPathWithPaginationFindByAuthorAndGroup;
 			finderArgs = new Object[] {
 				authorId, groupId, start, end, orderByComparator
 			};
@@ -3377,9 +3344,9 @@ public class RegistrationPersistenceImpl
 
 			sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-			sb.append(_FINDER_COLUMN_AUTHORGROUPREGISTRATIONS_AUTHORID_2);
+			sb.append(_FINDER_COLUMN_AUTHORANDGROUP_AUTHORID_2);
 
-			sb.append(_FINDER_COLUMN_AUTHORGROUPREGISTRATIONS_GROUPID_2);
+			sb.append(_FINDER_COLUMN_AUTHORANDGROUP_GROUPID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
@@ -3434,12 +3401,12 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	@Override
-	public Registration findByAuthorGroupRegistrations_First(
+	public Registration findByAuthorAndGroup_First(
 			long authorId, long groupId,
 			OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
 
-		Registration registration = fetchByAuthorGroupRegistrations_First(
+		Registration registration = fetchByAuthorAndGroup_First(
 			authorId, groupId, orderByComparator);
 
 		if (registration != null) {
@@ -3470,11 +3437,11 @@ public class RegistrationPersistenceImpl
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	@Override
-	public Registration fetchByAuthorGroupRegistrations_First(
+	public Registration fetchByAuthorAndGroup_First(
 		long authorId, long groupId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		List<Registration> list = findByAuthorGroupRegistrations(
+		List<Registration> list = findByAuthorAndGroup(
 			authorId, groupId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -3494,12 +3461,12 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
 	@Override
-	public Registration findByAuthorGroupRegistrations_Last(
+	public Registration findByAuthorAndGroup_Last(
 			long authorId, long groupId,
 			OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
 
-		Registration registration = fetchByAuthorGroupRegistrations_Last(
+		Registration registration = fetchByAuthorAndGroup_Last(
 			authorId, groupId, orderByComparator);
 
 		if (registration != null) {
@@ -3530,17 +3497,17 @@ public class RegistrationPersistenceImpl
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
 	@Override
-	public Registration fetchByAuthorGroupRegistrations_Last(
+	public Registration fetchByAuthorAndGroup_Last(
 		long authorId, long groupId,
 		OrderByComparator<Registration> orderByComparator) {
 
-		int count = countByAuthorGroupRegistrations(authorId, groupId);
+		int count = countByAuthorAndGroup(authorId, groupId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<Registration> list = findByAuthorGroupRegistrations(
+		List<Registration> list = findByAuthorAndGroup(
 			authorId, groupId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -3561,7 +3528,7 @@ public class RegistrationPersistenceImpl
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
 	@Override
-	public Registration[] findByAuthorGroupRegistrations_PrevAndNext(
+	public Registration[] findByAuthorAndGroup_PrevAndNext(
 			long registrationId, long authorId, long groupId,
 			OrderByComparator<Registration> orderByComparator)
 		throws NoSuchRegistrationException {
@@ -3575,13 +3542,13 @@ public class RegistrationPersistenceImpl
 
 			Registration[] array = new RegistrationImpl[3];
 
-			array[0] = getByAuthorGroupRegistrations_PrevAndNext(
+			array[0] = getByAuthorAndGroup_PrevAndNext(
 				session, registration, authorId, groupId, orderByComparator,
 				true);
 
 			array[1] = registration;
 
-			array[2] = getByAuthorGroupRegistrations_PrevAndNext(
+			array[2] = getByAuthorAndGroup_PrevAndNext(
 				session, registration, authorId, groupId, orderByComparator,
 				false);
 
@@ -3595,7 +3562,7 @@ public class RegistrationPersistenceImpl
 		}
 	}
 
-	protected Registration getByAuthorGroupRegistrations_PrevAndNext(
+	protected Registration getByAuthorAndGroup_PrevAndNext(
 		Session session, Registration registration, long authorId, long groupId,
 		OrderByComparator<Registration> orderByComparator, boolean previous) {
 
@@ -3612,9 +3579,9 @@ public class RegistrationPersistenceImpl
 
 		sb.append(_SQL_SELECT_REGISTRATION_WHERE);
 
-		sb.append(_FINDER_COLUMN_AUTHORGROUPREGISTRATIONS_AUTHORID_2);
+		sb.append(_FINDER_COLUMN_AUTHORANDGROUP_AUTHORID_2);
 
-		sb.append(_FINDER_COLUMN_AUTHORGROUPREGISTRATIONS_GROUPID_2);
+		sb.append(_FINDER_COLUMN_AUTHORANDGROUP_GROUPID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
@@ -3714,9 +3681,9 @@ public class RegistrationPersistenceImpl
 	 * @param groupId the group ID
 	 */
 	@Override
-	public void removeByAuthorGroupRegistrations(long authorId, long groupId) {
+	public void removeByAuthorAndGroup(long authorId, long groupId) {
 		for (Registration registration :
-				findByAuthorGroupRegistrations(
+				findByAuthorAndGroup(
 					authorId, groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
 					null)) {
 
@@ -3732,8 +3699,8 @@ public class RegistrationPersistenceImpl
 	 * @return the number of matching registrations
 	 */
 	@Override
-	public int countByAuthorGroupRegistrations(long authorId, long groupId) {
-		FinderPath finderPath = _finderPathCountByAuthorGroupRegistrations;
+	public int countByAuthorAndGroup(long authorId, long groupId) {
+		FinderPath finderPath = _finderPathCountByAuthorAndGroup;
 
 		Object[] finderArgs = new Object[] {authorId, groupId};
 
@@ -3744,9 +3711,9 @@ public class RegistrationPersistenceImpl
 
 			sb.append(_SQL_COUNT_REGISTRATION_WHERE);
 
-			sb.append(_FINDER_COLUMN_AUTHORGROUPREGISTRATIONS_AUTHORID_2);
+			sb.append(_FINDER_COLUMN_AUTHORANDGROUP_AUTHORID_2);
 
-			sb.append(_FINDER_COLUMN_AUTHORGROUPREGISTRATIONS_GROUPID_2);
+			sb.append(_FINDER_COLUMN_AUTHORANDGROUP_GROUPID_2);
 
 			String sql = sb.toString();
 
@@ -3778,13 +3745,11 @@ public class RegistrationPersistenceImpl
 		return count.intValue();
 	}
 
-	private static final String
-		_FINDER_COLUMN_AUTHORGROUPREGISTRATIONS_AUTHORID_2 =
-			"registration.authorId = ? AND ";
+	private static final String _FINDER_COLUMN_AUTHORANDGROUP_AUTHORID_2 =
+		"registration.authorId = ? AND ";
 
-	private static final String
-		_FINDER_COLUMN_AUTHORGROUPREGISTRATIONS_GROUPID_2 =
-			"registration.groupId = ?";
+	private static final String _FINDER_COLUMN_AUTHORANDGROUP_GROUPID_2 =
+		"registration.groupId = ?";
 
 	public RegistrationPersistenceImpl() {
 		setModelClass(Registration.class);
@@ -4299,69 +4264,62 @@ public class RegistrationPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
 			new String[0], new String[0], false);
 
-		_finderPathWithPaginationFindByRegistrations = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByRegistrations",
+		_finderPathWithPaginationFindByResource = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByResource",
 			new String[] {
 				Long.class.getName(), Integer.class.getName(),
 				Integer.class.getName(), OrderByComparator.class.getName()
 			},
 			new String[] {"registrationResourceId"}, true);
 
-		_finderPathWithoutPaginationFindByRegistrations = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByRegistrations",
+		_finderPathWithoutPaginationFindByResource = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByResource",
 			new String[] {Long.class.getName()},
 			new String[] {"registrationResourceId"}, true);
 
-		_finderPathCountByRegistrations = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByRegistrations",
+		_finderPathCountByResource = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByResource",
 			new String[] {Long.class.getName()},
 			new String[] {"registrationResourceId"}, false);
 
-		_finderPathWithPaginationFindByUserRegistrations = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUserRegistrations",
+		_finderPathWithPaginationFindByUser = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUser",
 			new String[] {
 				Long.class.getName(), Integer.class.getName(),
 				Integer.class.getName(), OrderByComparator.class.getName()
 			},
 			new String[] {"userId"}, true);
 
-		_finderPathWithoutPaginationFindByUserRegistrations = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findByUserRegistrations", new String[] {Long.class.getName()},
-			new String[] {"userId"}, true);
+		_finderPathWithoutPaginationFindByUser = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUser",
+			new String[] {Long.class.getName()}, new String[] {"userId"}, true);
 
-		_finderPathCountByUserRegistrations = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByUserRegistrations", new String[] {Long.class.getName()},
-			new String[] {"userId"}, false);
+		_finderPathCountByUser = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUser",
+			new String[] {Long.class.getName()}, new String[] {"userId"},
+			false);
 
-		_finderPathWithPaginationFindByUserResourceRegistrations =
-			new FinderPath(
-				FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-				"findByUserResourceRegistrations",
-				new String[] {
-					Long.class.getName(), Long.class.getName(),
-					Integer.class.getName(), Integer.class.getName(),
-					OrderByComparator.class.getName()
-				},
-				new String[] {"userId", "registrationResourceId"}, true);
+		_finderPathWithPaginationFindByUserAndResource = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUserAndResource",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			},
+			new String[] {"userId", "registrationResourceId"}, true);
 
-		_finderPathWithoutPaginationFindByUserResourceRegistrations =
-			new FinderPath(
-				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-				"findByUserResourceRegistrations",
-				new String[] {Long.class.getName(), Long.class.getName()},
-				new String[] {"userId", "registrationResourceId"}, true);
+		_finderPathWithoutPaginationFindByUserAndResource = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUserAndResource",
+			new String[] {Long.class.getName(), Long.class.getName()},
+			new String[] {"userId", "registrationResourceId"}, true);
 
-		_finderPathCountByUserResourceRegistrations = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByUserResourceRegistrations",
+		_finderPathCountByUserAndResource = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUserAndResource",
 			new String[] {Long.class.getName(), Long.class.getName()},
 			new String[] {"userId", "registrationResourceId"}, false);
 
-		_finderPathWithPaginationFindByUserGroupRegistrations = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"findByUserGroupRegistrations",
+		_finderPathWithPaginationFindByUserAndGroup = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUserAndGroup",
 			new String[] {
 				Long.class.getName(), Long.class.getName(),
 				Integer.class.getName(), Integer.class.getName(),
@@ -4369,82 +4327,71 @@ public class RegistrationPersistenceImpl
 			},
 			new String[] {"userId", "groupId"}, true);
 
-		_finderPathWithoutPaginationFindByUserGroupRegistrations =
-			new FinderPath(
-				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-				"findByUserGroupRegistrations",
-				new String[] {Long.class.getName(), Long.class.getName()},
-				new String[] {"userId", "groupId"}, true);
+		_finderPathWithoutPaginationFindByUserAndGroup = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUserAndGroup",
+			new String[] {Long.class.getName(), Long.class.getName()},
+			new String[] {"userId", "groupId"}, true);
 
-		_finderPathCountByUserGroupRegistrations = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByUserGroupRegistrations",
+		_finderPathCountByUserAndGroup = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUserAndGroup",
 			new String[] {Long.class.getName(), Long.class.getName()},
 			new String[] {"userId", "groupId"}, false);
 
-		_finderPathWithPaginationFindByAuthorRegistrations = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByAuthorRegistrations",
+		_finderPathWithPaginationFindByAuthor = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByAuthor",
 			new String[] {
 				Long.class.getName(), Integer.class.getName(),
 				Integer.class.getName(), OrderByComparator.class.getName()
 			},
 			new String[] {"authorId"}, true);
 
-		_finderPathWithoutPaginationFindByAuthorRegistrations = new FinderPath(
+		_finderPathWithoutPaginationFindByAuthor = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByAuthor",
+			new String[] {Long.class.getName()}, new String[] {"authorId"},
+			true);
+
+		_finderPathCountByAuthor = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByAuthor",
+			new String[] {Long.class.getName()}, new String[] {"authorId"},
+			false);
+
+		_finderPathWithPaginationFindByAuthorAndResource = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByAuthorAndResource",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			},
+			new String[] {"authorId", "registrationResourceId"}, true);
+
+		_finderPathWithoutPaginationFindByAuthorAndResource = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findByAuthorRegistrations", new String[] {Long.class.getName()},
-			new String[] {"authorId"}, true);
+			"findByAuthorAndResource",
+			new String[] {Long.class.getName(), Long.class.getName()},
+			new String[] {"authorId", "registrationResourceId"}, true);
 
-		_finderPathCountByAuthorRegistrations = new FinderPath(
+		_finderPathCountByAuthorAndResource = new FinderPath(
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByAuthorRegistrations", new String[] {Long.class.getName()},
-			new String[] {"authorId"}, false);
-
-		_finderPathWithPaginationFindByAuthorResourceRegistrations =
-			new FinderPath(
-				FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-				"findByAuthorResourceRegistrations",
-				new String[] {
-					Long.class.getName(), Long.class.getName(),
-					Integer.class.getName(), Integer.class.getName(),
-					OrderByComparator.class.getName()
-				},
-				new String[] {"authorId", "registrationResourceId"}, true);
-
-		_finderPathWithoutPaginationFindByAuthorResourceRegistrations =
-			new FinderPath(
-				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-				"findByAuthorResourceRegistrations",
-				new String[] {Long.class.getName(), Long.class.getName()},
-				new String[] {"authorId", "registrationResourceId"}, true);
-
-		_finderPathCountByAuthorResourceRegistrations = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByAuthorResourceRegistrations",
+			"countByAuthorAndResource",
 			new String[] {Long.class.getName(), Long.class.getName()},
 			new String[] {"authorId", "registrationResourceId"}, false);
 
-		_finderPathWithPaginationFindByAuthorGroupRegistrations =
-			new FinderPath(
-				FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-				"findByAuthorGroupRegistrations",
-				new String[] {
-					Long.class.getName(), Long.class.getName(),
-					Integer.class.getName(), Integer.class.getName(),
-					OrderByComparator.class.getName()
-				},
-				new String[] {"authorId", "groupId"}, true);
+		_finderPathWithPaginationFindByAuthorAndGroup = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByAuthorAndGroup",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			},
+			new String[] {"authorId", "groupId"}, true);
 
-		_finderPathWithoutPaginationFindByAuthorGroupRegistrations =
-			new FinderPath(
-				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-				"findByAuthorGroupRegistrations",
-				new String[] {Long.class.getName(), Long.class.getName()},
-				new String[] {"authorId", "groupId"}, true);
+		_finderPathWithoutPaginationFindByAuthorAndGroup = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByAuthorAndGroup",
+			new String[] {Long.class.getName(), Long.class.getName()},
+			new String[] {"authorId", "groupId"}, true);
 
-		_finderPathCountByAuthorGroupRegistrations = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByAuthorGroupRegistrations",
+		_finderPathCountByAuthorAndGroup = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByAuthorAndGroup",
 			new String[] {Long.class.getName(), Long.class.getName()},
 			new String[] {"authorId", "groupId"}, false);
 

@@ -40,7 +40,7 @@ public interface RegistrationResourcePersistence
 	 * @param eventResourceId the event resource ID
 	 * @return the matching registration resources
 	 */
-	public java.util.List<RegistrationResource> findByEventResources(
+	public java.util.List<RegistrationResource> findByGroupAndEventResource(
 		long groupId, long eventResourceId);
 
 	/**
@@ -56,7 +56,7 @@ public interface RegistrationResourcePersistence
 	 * @param end the upper bound of the range of registration resources (not inclusive)
 	 * @return the range of matching registration resources
 	 */
-	public java.util.List<RegistrationResource> findByEventResources(
+	public java.util.List<RegistrationResource> findByGroupAndEventResource(
 		long groupId, long eventResourceId, int start, int end);
 
 	/**
@@ -73,7 +73,7 @@ public interface RegistrationResourcePersistence
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registration resources
 	 */
-	public java.util.List<RegistrationResource> findByEventResources(
+	public java.util.List<RegistrationResource> findByGroupAndEventResource(
 		long groupId, long eventResourceId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationResource>
 			orderByComparator);
@@ -93,7 +93,7 @@ public interface RegistrationResourcePersistence
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registration resources
 	 */
-	public java.util.List<RegistrationResource> findByEventResources(
+	public java.util.List<RegistrationResource> findByGroupAndEventResource(
 		long groupId, long eventResourceId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationResource>
 			orderByComparator,
@@ -108,7 +108,7 @@ public interface RegistrationResourcePersistence
 	 * @return the first matching registration resource
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
-	public RegistrationResource findByEventResources_First(
+	public RegistrationResource findByGroupAndEventResource_First(
 			long groupId, long eventResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator
 				<RegistrationResource> orderByComparator)
@@ -122,7 +122,7 @@ public interface RegistrationResourcePersistence
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
-	public RegistrationResource fetchByEventResources_First(
+	public RegistrationResource fetchByGroupAndEventResource_First(
 		long groupId, long eventResourceId,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationResource>
 			orderByComparator);
@@ -136,7 +136,7 @@ public interface RegistrationResourcePersistence
 	 * @return the last matching registration resource
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
-	public RegistrationResource findByEventResources_Last(
+	public RegistrationResource findByGroupAndEventResource_Last(
 			long groupId, long eventResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator
 				<RegistrationResource> orderByComparator)
@@ -150,7 +150,7 @@ public interface RegistrationResourcePersistence
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
-	public RegistrationResource fetchByEventResources_Last(
+	public RegistrationResource fetchByGroupAndEventResource_Last(
 		long groupId, long eventResourceId,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationResource>
 			orderByComparator);
@@ -165,7 +165,7 @@ public interface RegistrationResourcePersistence
 	 * @return the previous, current, and next registration resource
 	 * @throws NoSuchRegistrationResourceException if a registration resource with the primary key could not be found
 	 */
-	public RegistrationResource[] findByEventResources_PrevAndNext(
+	public RegistrationResource[] findByGroupAndEventResource_PrevAndNext(
 			long registrationResourceId, long groupId, long eventResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator
 				<RegistrationResource> orderByComparator)
@@ -177,7 +177,8 @@ public interface RegistrationResourcePersistence
 	 * @param groupId the group ID
 	 * @param eventResourceId the event resource ID
 	 */
-	public void removeByEventResources(long groupId, long eventResourceId);
+	public void removeByGroupAndEventResource(
+		long groupId, long eventResourceId);
 
 	/**
 	 * Returns the number of registration resources where groupId = &#63; and eventResourceId = &#63;.
@@ -186,7 +187,7 @@ public interface RegistrationResourcePersistence
 	 * @param eventResourceId the event resource ID
 	 * @return the number of matching registration resources
 	 */
-	public int countByEventResources(long groupId, long eventResourceId);
+	public int countByGroupAndEventResource(long groupId, long eventResourceId);
 
 	/**
 	 * Returns all the registration resources where groupId = &#63; and eventArticleId = &#63;.
@@ -195,7 +196,7 @@ public interface RegistrationResourcePersistence
 	 * @param eventArticleId the event article ID
 	 * @return the matching registration resources
 	 */
-	public java.util.List<RegistrationResource> findByEventArticle(
+	public java.util.List<RegistrationResource> findByGroupAndEventArticle(
 		long groupId, long eventArticleId);
 
 	/**
@@ -211,7 +212,7 @@ public interface RegistrationResourcePersistence
 	 * @param end the upper bound of the range of registration resources (not inclusive)
 	 * @return the range of matching registration resources
 	 */
-	public java.util.List<RegistrationResource> findByEventArticle(
+	public java.util.List<RegistrationResource> findByGroupAndEventArticle(
 		long groupId, long eventArticleId, int start, int end);
 
 	/**
@@ -228,7 +229,7 @@ public interface RegistrationResourcePersistence
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registration resources
 	 */
-	public java.util.List<RegistrationResource> findByEventArticle(
+	public java.util.List<RegistrationResource> findByGroupAndEventArticle(
 		long groupId, long eventArticleId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationResource>
 			orderByComparator);
@@ -248,7 +249,7 @@ public interface RegistrationResourcePersistence
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registration resources
 	 */
-	public java.util.List<RegistrationResource> findByEventArticle(
+	public java.util.List<RegistrationResource> findByGroupAndEventArticle(
 		long groupId, long eventArticleId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationResource>
 			orderByComparator,
@@ -263,7 +264,7 @@ public interface RegistrationResourcePersistence
 	 * @return the first matching registration resource
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
-	public RegistrationResource findByEventArticle_First(
+	public RegistrationResource findByGroupAndEventArticle_First(
 			long groupId, long eventArticleId,
 			com.liferay.portal.kernel.util.OrderByComparator
 				<RegistrationResource> orderByComparator)
@@ -277,7 +278,7 @@ public interface RegistrationResourcePersistence
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
-	public RegistrationResource fetchByEventArticle_First(
+	public RegistrationResource fetchByGroupAndEventArticle_First(
 		long groupId, long eventArticleId,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationResource>
 			orderByComparator);
@@ -291,7 +292,7 @@ public interface RegistrationResourcePersistence
 	 * @return the last matching registration resource
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
-	public RegistrationResource findByEventArticle_Last(
+	public RegistrationResource findByGroupAndEventArticle_Last(
 			long groupId, long eventArticleId,
 			com.liferay.portal.kernel.util.OrderByComparator
 				<RegistrationResource> orderByComparator)
@@ -305,7 +306,7 @@ public interface RegistrationResourcePersistence
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
-	public RegistrationResource fetchByEventArticle_Last(
+	public RegistrationResource fetchByGroupAndEventArticle_Last(
 		long groupId, long eventArticleId,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationResource>
 			orderByComparator);
@@ -320,7 +321,7 @@ public interface RegistrationResourcePersistence
 	 * @return the previous, current, and next registration resource
 	 * @throws NoSuchRegistrationResourceException if a registration resource with the primary key could not be found
 	 */
-	public RegistrationResource[] findByEventArticle_PrevAndNext(
+	public RegistrationResource[] findByGroupAndEventArticle_PrevAndNext(
 			long registrationResourceId, long groupId, long eventArticleId,
 			com.liferay.portal.kernel.util.OrderByComparator
 				<RegistrationResource> orderByComparator)
@@ -332,7 +333,7 @@ public interface RegistrationResourcePersistence
 	 * @param groupId the group ID
 	 * @param eventArticleId the event article ID
 	 */
-	public void removeByEventArticle(long groupId, long eventArticleId);
+	public void removeByGroupAndEventArticle(long groupId, long eventArticleId);
 
 	/**
 	 * Returns the number of registration resources where groupId = &#63; and eventArticleId = &#63;.
@@ -341,7 +342,7 @@ public interface RegistrationResourcePersistence
 	 * @param eventArticleId the event article ID
 	 * @return the number of matching registration resources
 	 */
-	public int countByEventArticle(long groupId, long eventArticleId);
+	public int countByGroupAndEventArticle(long groupId, long eventArticleId);
 
 	/**
 	 * Returns all the registration resources where groupId = &#63; and parentResourceId = &#63;.
@@ -350,7 +351,7 @@ public interface RegistrationResourcePersistence
 	 * @param parentResourceId the parent resource ID
 	 * @return the matching registration resources
 	 */
-	public java.util.List<RegistrationResource> findByChildResources(
+	public java.util.List<RegistrationResource> findByGroupAndParentResource(
 		long groupId, long parentResourceId);
 
 	/**
@@ -366,7 +367,7 @@ public interface RegistrationResourcePersistence
 	 * @param end the upper bound of the range of registration resources (not inclusive)
 	 * @return the range of matching registration resources
 	 */
-	public java.util.List<RegistrationResource> findByChildResources(
+	public java.util.List<RegistrationResource> findByGroupAndParentResource(
 		long groupId, long parentResourceId, int start, int end);
 
 	/**
@@ -383,7 +384,7 @@ public interface RegistrationResourcePersistence
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registration resources
 	 */
-	public java.util.List<RegistrationResource> findByChildResources(
+	public java.util.List<RegistrationResource> findByGroupAndParentResource(
 		long groupId, long parentResourceId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationResource>
 			orderByComparator);
@@ -403,7 +404,7 @@ public interface RegistrationResourcePersistence
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registration resources
 	 */
-	public java.util.List<RegistrationResource> findByChildResources(
+	public java.util.List<RegistrationResource> findByGroupAndParentResource(
 		long groupId, long parentResourceId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationResource>
 			orderByComparator,
@@ -418,7 +419,7 @@ public interface RegistrationResourcePersistence
 	 * @return the first matching registration resource
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
-	public RegistrationResource findByChildResources_First(
+	public RegistrationResource findByGroupAndParentResource_First(
 			long groupId, long parentResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator
 				<RegistrationResource> orderByComparator)
@@ -432,7 +433,7 @@ public interface RegistrationResourcePersistence
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
-	public RegistrationResource fetchByChildResources_First(
+	public RegistrationResource fetchByGroupAndParentResource_First(
 		long groupId, long parentResourceId,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationResource>
 			orderByComparator);
@@ -446,7 +447,7 @@ public interface RegistrationResourcePersistence
 	 * @return the last matching registration resource
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
-	public RegistrationResource findByChildResources_Last(
+	public RegistrationResource findByGroupAndParentResource_Last(
 			long groupId, long parentResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator
 				<RegistrationResource> orderByComparator)
@@ -460,7 +461,7 @@ public interface RegistrationResourcePersistence
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
-	public RegistrationResource fetchByChildResources_Last(
+	public RegistrationResource fetchByGroupAndParentResource_Last(
 		long groupId, long parentResourceId,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationResource>
 			orderByComparator);
@@ -475,7 +476,7 @@ public interface RegistrationResourcePersistence
 	 * @return the previous, current, and next registration resource
 	 * @throws NoSuchRegistrationResourceException if a registration resource with the primary key could not be found
 	 */
-	public RegistrationResource[] findByChildResources_PrevAndNext(
+	public RegistrationResource[] findByGroupAndParentResource_PrevAndNext(
 			long registrationResourceId, long groupId, long parentResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator
 				<RegistrationResource> orderByComparator)
@@ -487,7 +488,8 @@ public interface RegistrationResourcePersistence
 	 * @param groupId the group ID
 	 * @param parentResourceId the parent resource ID
 	 */
-	public void removeByChildResources(long groupId, long parentResourceId);
+	public void removeByGroupAndParentResource(
+		long groupId, long parentResourceId);
 
 	/**
 	 * Returns the number of registration resources where groupId = &#63; and parentResourceId = &#63;.
@@ -496,7 +498,8 @@ public interface RegistrationResourcePersistence
 	 * @param parentResourceId the parent resource ID
 	 * @return the number of matching registration resources
 	 */
-	public int countByChildResources(long groupId, long parentResourceId);
+	public int countByGroupAndParentResource(
+		long groupId, long parentResourceId);
 
 	/**
 	 * Returns all the registration resources where groupId = &#63; and registrationResourceId = &#63;.
@@ -505,7 +508,7 @@ public interface RegistrationResourcePersistence
 	 * @param registrationResourceId the registration resource ID
 	 * @return the matching registration resources
 	 */
-	public java.util.List<RegistrationResource> findByResources(
+	public java.util.List<RegistrationResource> findByGroupAndResource(
 		long groupId, long registrationResourceId);
 
 	/**
@@ -521,7 +524,7 @@ public interface RegistrationResourcePersistence
 	 * @param end the upper bound of the range of registration resources (not inclusive)
 	 * @return the range of matching registration resources
 	 */
-	public java.util.List<RegistrationResource> findByResources(
+	public java.util.List<RegistrationResource> findByGroupAndResource(
 		long groupId, long registrationResourceId, int start, int end);
 
 	/**
@@ -538,7 +541,7 @@ public interface RegistrationResourcePersistence
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registration resources
 	 */
-	public java.util.List<RegistrationResource> findByResources(
+	public java.util.List<RegistrationResource> findByGroupAndResource(
 		long groupId, long registrationResourceId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationResource>
 			orderByComparator);
@@ -558,7 +561,7 @@ public interface RegistrationResourcePersistence
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registration resources
 	 */
-	public java.util.List<RegistrationResource> findByResources(
+	public java.util.List<RegistrationResource> findByGroupAndResource(
 		long groupId, long registrationResourceId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationResource>
 			orderByComparator,
@@ -573,7 +576,7 @@ public interface RegistrationResourcePersistence
 	 * @return the first matching registration resource
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
-	public RegistrationResource findByResources_First(
+	public RegistrationResource findByGroupAndResource_First(
 			long groupId, long registrationResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator
 				<RegistrationResource> orderByComparator)
@@ -587,7 +590,7 @@ public interface RegistrationResourcePersistence
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
-	public RegistrationResource fetchByResources_First(
+	public RegistrationResource fetchByGroupAndResource_First(
 		long groupId, long registrationResourceId,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationResource>
 			orderByComparator);
@@ -601,7 +604,7 @@ public interface RegistrationResourcePersistence
 	 * @return the last matching registration resource
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
-	public RegistrationResource findByResources_Last(
+	public RegistrationResource findByGroupAndResource_Last(
 			long groupId, long registrationResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator
 				<RegistrationResource> orderByComparator)
@@ -615,7 +618,7 @@ public interface RegistrationResourcePersistence
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
-	public RegistrationResource fetchByResources_Last(
+	public RegistrationResource fetchByGroupAndResource_Last(
 		long groupId, long registrationResourceId,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationResource>
 			orderByComparator);
@@ -626,7 +629,8 @@ public interface RegistrationResourcePersistence
 	 * @param groupId the group ID
 	 * @param registrationResourceId the registration resource ID
 	 */
-	public void removeByResources(long groupId, long registrationResourceId);
+	public void removeByGroupAndResource(
+		long groupId, long registrationResourceId);
 
 	/**
 	 * Returns the number of registration resources where groupId = &#63; and registrationResourceId = &#63;.
@@ -635,7 +639,8 @@ public interface RegistrationResourcePersistence
 	 * @param registrationResourceId the registration resource ID
 	 * @return the number of matching registration resources
 	 */
-	public int countByResources(long groupId, long registrationResourceId);
+	public int countByGroupAndResource(
+		long groupId, long registrationResourceId);
 
 	/**
 	 * Caches the registration resource in the entity cache if it is enabled.

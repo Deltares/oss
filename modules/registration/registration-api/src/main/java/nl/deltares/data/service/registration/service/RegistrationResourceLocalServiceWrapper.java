@@ -240,6 +240,42 @@ public class RegistrationResourceLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List
+		<nl.deltares.data.service.registration.model.RegistrationResource>
+			findByGroupAndEventArticle(long groupId, long eventResourceId) {
+
+		return _registrationResourceLocalService.findByGroupAndEventArticle(
+			groupId, eventResourceId);
+	}
+
+	@Override
+	public java.util.List
+		<nl.deltares.data.service.registration.model.RegistrationResource>
+			findByGroupAndEventResource(long groupId, long eventResourceId) {
+
+		return _registrationResourceLocalService.findByGroupAndEventResource(
+			groupId, eventResourceId);
+	}
+
+	@Override
+	public java.util.List
+		<nl.deltares.data.service.registration.model.RegistrationResource>
+			findByGroupAndParentResource(long groupId, long parentResourceId) {
+
+		return _registrationResourceLocalService.findByGroupAndParentResource(
+			groupId, parentResourceId);
+	}
+
+	@Override
+	public java.util.List
+		<nl.deltares.data.service.registration.model.RegistrationResource>
+			findByGroupAndResource(long groupId, long resourceId) {
+
+		return _registrationResourceLocalService.findByGroupAndResource(
+			groupId, resourceId);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 

@@ -80,9 +80,9 @@ public class RegistrationPeriodPersistenceImpl
 	private FinderPath _finderPathWithPaginationFindAll;
 	private FinderPath _finderPathWithoutPaginationFindAll;
 	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByResourcePeriods;
-	private FinderPath _finderPathWithoutPaginationFindByResourcePeriods;
-	private FinderPath _finderPathCountByResourcePeriods;
+	private FinderPath _finderPathWithPaginationFindByResource;
+	private FinderPath _finderPathWithoutPaginationFindByResource;
+	private FinderPath _finderPathCountByResource;
 
 	/**
 	 * Returns all the registration periods where registrationResourceId = &#63;.
@@ -91,10 +91,10 @@ public class RegistrationPeriodPersistenceImpl
 	 * @return the matching registration periods
 	 */
 	@Override
-	public List<RegistrationPeriod> findByResourcePeriods(
+	public List<RegistrationPeriod> findByResource(
 		long registrationResourceId) {
 
-		return findByResourcePeriods(
+		return findByResource(
 			registrationResourceId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
@@ -111,10 +111,10 @@ public class RegistrationPeriodPersistenceImpl
 	 * @return the range of matching registration periods
 	 */
 	@Override
-	public List<RegistrationPeriod> findByResourcePeriods(
+	public List<RegistrationPeriod> findByResource(
 		long registrationResourceId, int start, int end) {
 
-		return findByResourcePeriods(registrationResourceId, start, end, null);
+		return findByResource(registrationResourceId, start, end, null);
 	}
 
 	/**
@@ -131,11 +131,11 @@ public class RegistrationPeriodPersistenceImpl
 	 * @return the ordered range of matching registration periods
 	 */
 	@Override
-	public List<RegistrationPeriod> findByResourcePeriods(
+	public List<RegistrationPeriod> findByResource(
 		long registrationResourceId, int start, int end,
 		OrderByComparator<RegistrationPeriod> orderByComparator) {
 
-		return findByResourcePeriods(
+		return findByResource(
 			registrationResourceId, start, end, orderByComparator, true);
 	}
 
@@ -154,7 +154,7 @@ public class RegistrationPeriodPersistenceImpl
 	 * @return the ordered range of matching registration periods
 	 */
 	@Override
-	public List<RegistrationPeriod> findByResourcePeriods(
+	public List<RegistrationPeriod> findByResource(
 		long registrationResourceId, int start, int end,
 		OrderByComparator<RegistrationPeriod> orderByComparator,
 		boolean useFinderCache) {
@@ -166,12 +166,12 @@ public class RegistrationPeriodPersistenceImpl
 			(orderByComparator == null)) {
 
 			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByResourcePeriods;
+				finderPath = _finderPathWithoutPaginationFindByResource;
 				finderArgs = new Object[] {registrationResourceId};
 			}
 		}
 		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByResourcePeriods;
+			finderPath = _finderPathWithPaginationFindByResource;
 			finderArgs = new Object[] {
 				registrationResourceId, start, end, orderByComparator
 			};
@@ -209,7 +209,7 @@ public class RegistrationPeriodPersistenceImpl
 
 			sb.append(_SQL_SELECT_REGISTRATIONPERIOD_WHERE);
 
-			sb.append(_FINDER_COLUMN_RESOURCEPERIODS_REGISTRATIONRESOURCEID_2);
+			sb.append(_FINDER_COLUMN_RESOURCE_REGISTRATIONRESOURCEID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
@@ -261,12 +261,12 @@ public class RegistrationPeriodPersistenceImpl
 	 * @throws NoSuchRegistrationPeriodException if a matching registration period could not be found
 	 */
 	@Override
-	public RegistrationPeriod findByResourcePeriods_First(
+	public RegistrationPeriod findByResource_First(
 			long registrationResourceId,
 			OrderByComparator<RegistrationPeriod> orderByComparator)
 		throws NoSuchRegistrationPeriodException {
 
-		RegistrationPeriod registrationPeriod = fetchByResourcePeriods_First(
+		RegistrationPeriod registrationPeriod = fetchByResource_First(
 			registrationResourceId, orderByComparator);
 
 		if (registrationPeriod != null) {
@@ -293,11 +293,11 @@ public class RegistrationPeriodPersistenceImpl
 	 * @return the first matching registration period, or <code>null</code> if a matching registration period could not be found
 	 */
 	@Override
-	public RegistrationPeriod fetchByResourcePeriods_First(
+	public RegistrationPeriod fetchByResource_First(
 		long registrationResourceId,
 		OrderByComparator<RegistrationPeriod> orderByComparator) {
 
-		List<RegistrationPeriod> list = findByResourcePeriods(
+		List<RegistrationPeriod> list = findByResource(
 			registrationResourceId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -316,12 +316,12 @@ public class RegistrationPeriodPersistenceImpl
 	 * @throws NoSuchRegistrationPeriodException if a matching registration period could not be found
 	 */
 	@Override
-	public RegistrationPeriod findByResourcePeriods_Last(
+	public RegistrationPeriod findByResource_Last(
 			long registrationResourceId,
 			OrderByComparator<RegistrationPeriod> orderByComparator)
 		throws NoSuchRegistrationPeriodException {
 
-		RegistrationPeriod registrationPeriod = fetchByResourcePeriods_Last(
+		RegistrationPeriod registrationPeriod = fetchByResource_Last(
 			registrationResourceId, orderByComparator);
 
 		if (registrationPeriod != null) {
@@ -348,17 +348,17 @@ public class RegistrationPeriodPersistenceImpl
 	 * @return the last matching registration period, or <code>null</code> if a matching registration period could not be found
 	 */
 	@Override
-	public RegistrationPeriod fetchByResourcePeriods_Last(
+	public RegistrationPeriod fetchByResource_Last(
 		long registrationResourceId,
 		OrderByComparator<RegistrationPeriod> orderByComparator) {
 
-		int count = countByResourcePeriods(registrationResourceId);
+		int count = countByResource(registrationResourceId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<RegistrationPeriod> list = findByResourcePeriods(
+		List<RegistrationPeriod> list = findByResource(
 			registrationResourceId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -378,7 +378,7 @@ public class RegistrationPeriodPersistenceImpl
 	 * @throws NoSuchRegistrationPeriodException if a registration period with the primary key could not be found
 	 */
 	@Override
-	public RegistrationPeriod[] findByResourcePeriods_PrevAndNext(
+	public RegistrationPeriod[] findByResource_PrevAndNext(
 			long registrationPeriodId, long registrationResourceId,
 			OrderByComparator<RegistrationPeriod> orderByComparator)
 		throws NoSuchRegistrationPeriodException {
@@ -393,13 +393,13 @@ public class RegistrationPeriodPersistenceImpl
 
 			RegistrationPeriod[] array = new RegistrationPeriodImpl[3];
 
-			array[0] = getByResourcePeriods_PrevAndNext(
+			array[0] = getByResource_PrevAndNext(
 				session, registrationPeriod, registrationResourceId,
 				orderByComparator, true);
 
 			array[1] = registrationPeriod;
 
-			array[2] = getByResourcePeriods_PrevAndNext(
+			array[2] = getByResource_PrevAndNext(
 				session, registrationPeriod, registrationResourceId,
 				orderByComparator, false);
 
@@ -413,7 +413,7 @@ public class RegistrationPeriodPersistenceImpl
 		}
 	}
 
-	protected RegistrationPeriod getByResourcePeriods_PrevAndNext(
+	protected RegistrationPeriod getByResource_PrevAndNext(
 		Session session, RegistrationPeriod registrationPeriod,
 		long registrationResourceId,
 		OrderByComparator<RegistrationPeriod> orderByComparator,
@@ -432,7 +432,7 @@ public class RegistrationPeriodPersistenceImpl
 
 		sb.append(_SQL_SELECT_REGISTRATIONPERIOD_WHERE);
 
-		sb.append(_FINDER_COLUMN_RESOURCEPERIODS_REGISTRATIONRESOURCEID_2);
+		sb.append(_FINDER_COLUMN_RESOURCE_REGISTRATIONRESOURCEID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
@@ -530,9 +530,9 @@ public class RegistrationPeriodPersistenceImpl
 	 * @param registrationResourceId the registration resource ID
 	 */
 	@Override
-	public void removeByResourcePeriods(long registrationResourceId) {
+	public void removeByResource(long registrationResourceId) {
 		for (RegistrationPeriod registrationPeriod :
-				findByResourcePeriods(
+				findByResource(
 					registrationResourceId, QueryUtil.ALL_POS,
 					QueryUtil.ALL_POS, null)) {
 
@@ -547,8 +547,8 @@ public class RegistrationPeriodPersistenceImpl
 	 * @return the number of matching registration periods
 	 */
 	@Override
-	public int countByResourcePeriods(long registrationResourceId) {
-		FinderPath finderPath = _finderPathCountByResourcePeriods;
+	public int countByResource(long registrationResourceId) {
+		FinderPath finderPath = _finderPathCountByResource;
 
 		Object[] finderArgs = new Object[] {registrationResourceId};
 
@@ -559,7 +559,7 @@ public class RegistrationPeriodPersistenceImpl
 
 			sb.append(_SQL_COUNT_REGISTRATIONPERIOD_WHERE);
 
-			sb.append(_FINDER_COLUMN_RESOURCEPERIODS_REGISTRATIONRESOURCEID_2);
+			sb.append(_FINDER_COLUMN_RESOURCE_REGISTRATIONRESOURCEID_2);
 
 			String sql = sb.toString();
 
@@ -590,7 +590,7 @@ public class RegistrationPeriodPersistenceImpl
 	}
 
 	private static final String
-		_FINDER_COLUMN_RESOURCEPERIODS_REGISTRATIONRESOURCEID_2 =
+		_FINDER_COLUMN_RESOURCE_REGISTRATIONRESOURCEID_2 =
 			"registrationPeriod.registrationResourceId = ?";
 
 	public RegistrationPeriodPersistenceImpl() {
@@ -1121,21 +1121,21 @@ public class RegistrationPeriodPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
 			new String[0], new String[0], false);
 
-		_finderPathWithPaginationFindByResourcePeriods = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByResourcePeriods",
+		_finderPathWithPaginationFindByResource = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByResource",
 			new String[] {
 				Long.class.getName(), Integer.class.getName(),
 				Integer.class.getName(), OrderByComparator.class.getName()
 			},
 			new String[] {"registrationResourceId"}, true);
 
-		_finderPathWithoutPaginationFindByResourcePeriods = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByResourcePeriods",
+		_finderPathWithoutPaginationFindByResource = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByResource",
 			new String[] {Long.class.getName()},
 			new String[] {"registrationResourceId"}, true);
 
-		_finderPathCountByResourcePeriods = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByResourcePeriods",
+		_finderPathCountByResource = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByResource",
 			new String[] {Long.class.getName()},
 			new String[] {"registrationResourceId"}, false);
 

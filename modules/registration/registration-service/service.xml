@@ -23,22 +23,22 @@
 
 		<!-- Finder methods -->
 
-		<finder name="EventResources" return-type="Collection">
+		<finder name="GroupAndEventResource" return-type="Collection">
 			<finder-column name="groupId" />
 			<finder-column name="eventResourceId" />
 		</finder>
 
-		<finder name="EventArticle" return-type="Collection">
+		<finder name="GroupAndEventArticle" return-type="Collection">
 			<finder-column name="groupId" />
 			<finder-column name="eventArticleId" />
 		</finder>
 
-		<finder name="ChildResources" return-type="Collection">
+		<finder name="GroupAndParentResource" return-type="Collection">
 			<finder-column name="groupId" />
 			<finder-column name="parentResourceId" />
 		</finder>
 
-		<finder name="Resources" return-type="Collection">
+		<finder name="GroupAndResource" return-type="Collection">
 			<finder-column name="groupId" />
 			<finder-column name="registrationResourceId" />
 		</finder>
@@ -56,7 +56,7 @@
 		<column name="startTime" type="Date" />
 		<column name="endTime" type="Date" />
 
-		<finder name="ResourcePeriods" return-type="Collection">
+		<finder name="Resource" return-type="Collection">
 			<finder-column name="registrationResourceId" />
 		</finder>
 
@@ -81,34 +81,34 @@
 		<column name="authorId" type="long" />
 		<column name="registrationTime" type="Date" />
 
-		<finder name="Registrations" return-type="Collection">
+		<finder name="Resource" return-type="Collection">
 			<finder-column name="registrationResourceId" />
 		</finder>
 
-		<finder name="UserRegistrations" return-type="Collection">
+		<finder name="User" return-type="Collection">
 			<finder-column name="userId" />
 		</finder>
 
-		<finder name="UserResourceRegistrations" return-type="Collection">
+		<finder name="UserAndResource" return-type="Collection">
 			<finder-column name="userId" />
 			<finder-column name="registrationResourceId" />
 		</finder>
 
-		<finder name="UserGroupRegistrations" return-type="Collection">
+		<finder name="UserAndGroup" return-type="Collection">
 			<finder-column name="userId" />
 			<finder-column name="groupId" />
 		</finder>
 
-		<finder name="AuthorRegistrations" return-type="Collection">
+		<finder name="Author" return-type="Collection">
 			<finder-column name="authorId" />
 		</finder>
 
-		<finder name="AuthorResourceRegistrations" return-type="Collection">
+		<finder name="AuthorAndResource" return-type="Collection">
 			<finder-column name="authorId" />
 			<finder-column name="registrationResourceId" />
 		</finder>
 
-		<finder name="AuthorGroupRegistrations" return-type="Collection">
+		<finder name="AuthorAndGroup" return-type="Collection">
 			<finder-column name="authorId" />
 			<finder-column name="groupId" />
 		</finder>
@@ -130,7 +130,7 @@
 		<column name="name" type="String" />
 		<column name="value" type="String" />
 
-		<finder name="RegistrationAttribute" return-type="Collection">
+		<finder name="Registration" return-type="Collection">
 			<finder-column name="registrationId" />
 		</finder>
 

@@ -213,6 +213,12 @@ public class RegistrationAttributeLocalServiceUtil {
 		return getService().fetchRegistrationAttribute(registrationAttributeId);
 	}
 
+	public static List<RegistrationAttribute> findByRegistration(
+		long registrationId) {
+
+		return getService().findByRegistration(registrationId);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 
@@ -282,6 +288,10 @@ public class RegistrationAttributeLocalServiceUtil {
 	 */
 	public static int getRegistrationAttributesCount() {
 		return getService().getRegistrationAttributesCount();
+	}
+
+	public static void removeByRegistration(long registrationId) {
+		getService().removeByRegistration(registrationId);
 	}
 
 	/**

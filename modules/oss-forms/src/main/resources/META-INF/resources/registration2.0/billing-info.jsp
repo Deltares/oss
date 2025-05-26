@@ -16,16 +16,15 @@
 
 <h3><strong><liferay-ui:message key="registrationform.billing.select.address"/></strong></h3>
 <%
-    BillingInfo billingInfo = (BillingInfo) request.getAttribute("billingInfo");
     BillingDetailsCheckoutStepDisplayContext displayContext = (BillingDetailsCheckoutStepDisplayContext) request.getAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT);
     List<Address> availableAddresses = displayContext.getBillingAddresses();
     String paramName = displayContext.getParamName();
 
-    Long selectedAddressId = billingInfo == null ? 0 : billingInfo.getBillingAddressId();
+    BillingInfo billingInfo = displayContext.getBillingInfo();
+    long selectedAddressId = billingInfo.getBillingAddressId();
     Address selectedAddress = null;
-    if (selectedAddressId == 0 && !availableAddresses.isEmpty()) {
-        selectedAddress = availableAddresses.get(0);
-        selectedAddressId = selectedAddress.getAddressId();
+    if ( selectedAddressId > 0) {
+        selectedAddress = availableAddresses.stream().filter(address -> address.getAddressId() == billingInfo.getBillingAddressId()).findFirst().orElse(null);
     }
     boolean canEditAddress = displayContext.canEditAddress();
 %>
@@ -35,7 +34,7 @@
     <aui:input
             label="registrationform.email"
             name='<%=BillingConstants.EMAIL%>'
-            value="<%= billingInfo == null ? user.getEmailAddress() : billingInfo.getEmail() %>" wrapperCssClass="form-group-item" >
+            value="<%= billingInfo.getEmail() %>" wrapperCssClass="form-group-item" >
         <aui:validator name="email" />
         <aui:validator name="required" />
     </aui:input>
@@ -45,14 +44,14 @@
     <aui:input
             label="registrationform.firstname"
             name='<%=BillingConstants.FIRST_NAME%>'
-            value="<%= billingInfo == null ? user.getFirstName() : billingInfo.getFirstName() %>" wrapperCssClass="form-group-item">
+            value="<%= billingInfo.getFirstName() %>" wrapperCssClass="form-group-item">
         <aui:validator name="required" />
     </aui:input>
 
     <aui:input
             label="registrationform.lastname"
             name='<%=BillingConstants.LAST_NAME%>'
-            value="<%= billingInfo == null ? user.getLastName() : billingInfo.getLastName() %>" wrapperCssClass="form-group-item">
+            value="<%= billingInfo.getLastName() %>" wrapperCssClass="form-group-item">
         <aui:validator name="required" />
     </aui:input>
 </div>
@@ -62,7 +61,7 @@
             name="<%=BillingConstants.PAYMENT_METHOD%>"
             type="select"
             label="registrationform.billing.payment.method"
-            value='<%= billingInfo == null ? "paylink" : billingInfo.getPreference() %>' wrapperCssClass="commerce-form-group-item-row form-group-item">
+            value='<%= billingInfo.getPreference() %>' wrapperCssClass="commerce-form-group-item-row form-group-item">
         <aui:option value="payLink" label="registrationform.billing.paymethod.link"/>
         <aui:option value="bankTransfer" label="registrationform.billing.paymethod.bank"/>
     </aui:select>
@@ -72,7 +71,7 @@
             label="registrationform.billing.reference"
             helpMessage="registrationform.billing.reference.info"
             wrapperCssClass="form-group-item"
-            value='<%= billingInfo == null ? "" : billingInfo.getReference()%>' >
+            value='<%= billingInfo.getReference() %>' >
         <aui:validator name="required" />
     </aui:input>
 
@@ -85,7 +84,7 @@
             helpMessage="registrationform.billing.vat.info"
             wrapperCssClass="form-group-item"
             disabled="<%=!canEditAddress%>"
-            value='<%= billingInfo == null ? "" : billingInfo.getVat()%>'
+            value='<%= billingInfo.getVat()%>'
     />
     <aui:input
             name='<%= OrganizationConstants.ORG_REGISTRATION_ID %>'
@@ -93,7 +92,7 @@
             helpMessage="registrationform.billing.companyid.info"
             wrapperCssClass="form-group-item"
             disabled="<%=!canEditAddress%>"
-            value='<%= billingInfo == null ? "" : billingInfo.getCompanyIdentifier()%>'
+            value='<%= billingInfo.getCompanyIdentifier()%>'
     />
 </div>
 

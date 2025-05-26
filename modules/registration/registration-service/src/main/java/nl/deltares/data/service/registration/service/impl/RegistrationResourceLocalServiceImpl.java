@@ -7,9 +7,13 @@ package nl.deltares.data.service.registration.service.impl;
 
 import com.liferay.portal.aop.AopService;
 
+import nl.deltares.data.service.registration.model.RegistrationResource;
 import nl.deltares.data.service.registration.service.base.RegistrationResourceLocalServiceBaseImpl;
 
+import nl.deltares.data.service.registration.service.persistence.RegistrationResourceUtil;
 import org.osgi.service.component.annotations.Component;
+
+import java.util.List;
 
 /**
  * @author Brian Wing Shun Chan
@@ -20,4 +24,20 @@ import org.osgi.service.component.annotations.Component;
 )
 public class RegistrationResourceLocalServiceImpl
 	extends RegistrationResourceLocalServiceBaseImpl {
+
+	public List<RegistrationResource> findByGroupAndResource(long groupId, long resourceId){
+		return RegistrationResourceUtil.findByGroupAndResource(groupId, resourceId);
+	}
+
+	public List<RegistrationResource> findByGroupAndEventResource(long groupId, long eventResourceId){
+		return RegistrationResourceUtil.findByGroupAndEventResource(groupId, eventResourceId);
+	}
+
+	public List<RegistrationResource> findByGroupAndEventArticle(long groupId, long eventResourceId){
+		return RegistrationResourceUtil.findByGroupAndEventArticle(groupId, eventResourceId);
+	}
+
+	public List<RegistrationResource> findByGroupAndParentResource(long groupId, long parentResourceId){
+		return RegistrationResourceUtil.findByGroupAndParentResource(groupId, parentResourceId);
+	}
 }

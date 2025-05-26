@@ -52,6 +52,14 @@ public class RegistrationLocalServiceUtil {
 		return getService().addRegistration(registration);
 	}
 
+	public static int countByResource(long resourceId) {
+		return getService().countByResource(resourceId);
+	}
+
+	public static int countByUserAndResource(long userId, long resourceId) {
+		return getService().countByUserAndResource(userId, resourceId);
+	}
+
 	/**
 	 * @throws PortalException
 	 */
@@ -202,6 +210,28 @@ public class RegistrationLocalServiceUtil {
 		return getService().fetchRegistration(registrationId);
 	}
 
+	public static List<Registration> findByAuthorAndResource(
+		long authorId, long resourceId) {
+
+		return getService().findByAuthorAndResource(authorId, resourceId);
+	}
+
+	public static List<Registration> findByResource(long resourceId) {
+		return getService().findByResource(resourceId);
+	}
+
+	public static List<Registration> findByUserAndGroup(
+		long userId, long groupId) {
+
+		return getService().findByUserAndGroup(userId, groupId);
+	}
+
+	public static List<Registration> findByUserAndResource(
+		long userId, long resourceId) {
+
+		return getService().findByUserAndResource(userId, resourceId);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 
@@ -268,6 +298,14 @@ public class RegistrationLocalServiceUtil {
 	 */
 	public static int getRegistrationsCount() {
 		return getService().getRegistrationsCount();
+	}
+
+	public static void removeByResource(long resourceId) {
+		getService().removeByResource(resourceId);
+	}
+
+	public static void removeByUserAndResource(long userId, long resourceId) {
+		getService().removeByUserAndResource(userId, resourceId);
 	}
 
 	/**

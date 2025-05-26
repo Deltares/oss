@@ -239,6 +239,14 @@ public class RegistrationPeriodLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List
+		<nl.deltares.data.service.registration.model.RegistrationPeriod>
+			findByResource(long resourceId) {
+
+		return _registrationPeriodLocalService.findByResource(resourceId);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 
@@ -337,6 +345,11 @@ public class RegistrationPeriodLocalServiceWrapper
 
 		return _registrationPeriodLocalService.getWithinPeriod(
 			startTime, endTime);
+	}
+
+	@Override
+	public void removeByResource(long resourceId) {
+		_registrationPeriodLocalService.removeByResource(resourceId);
 	}
 
 	/**

@@ -242,8 +242,18 @@ public class AccountSelectionCheckoutStepDisplayContext{
 
             accountEntry.setTaxIdNumber(taxIdNumber);
             accountEntry.setName(name);
-            accountEntry.getExpandoBridge().setAttribute(OrganizationConstants.ORG_REGISTRATION_ID, companyRegistrationId, false);
-            accountEntry.getExpandoBridge().setAttribute(OrganizationConstants.ORG_WEBSITE, website, false);
+            if (accountEntry.getExpandoBridge().hasAttribute(OrganizationConstants.ORG_REGISTRATION_ID)) {
+                accountEntry.getExpandoBridge().setAttribute(OrganizationConstants.ORG_REGISTRATION_ID, companyRegistrationId, false);
+            } else {
+                accountEntry.getExpandoBridge().addAttribute(OrganizationConstants.ORG_REGISTRATION_ID, companyRegistrationId, false);
+            }
+
+            if (accountEntry.getExpandoBridge().hasAttribute(OrganizationConstants.ORG_WEBSITE)) {
+                accountEntry.getExpandoBridge().setAttribute(OrganizationConstants.ORG_WEBSITE, website, false);
+            } else {
+                accountEntry.getExpandoBridge().addAttribute(OrganizationConstants.ORG_WEBSITE, website, false);
+            }
+
             return _accountEntryLocalService.updateAccountEntry(accountEntry);
         }
         return accountEntry;

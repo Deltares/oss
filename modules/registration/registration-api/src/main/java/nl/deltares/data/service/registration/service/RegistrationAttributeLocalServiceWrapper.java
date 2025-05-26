@@ -240,6 +240,15 @@ public class RegistrationAttributeLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List
+		<nl.deltares.data.service.registration.model.RegistrationAttribute>
+			findByRegistration(long registrationId) {
+
+		return _registrationAttributeLocalService.findByRegistration(
+			registrationId);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 
@@ -321,6 +330,11 @@ public class RegistrationAttributeLocalServiceWrapper
 	public int getRegistrationAttributesCount() {
 		return _registrationAttributeLocalService.
 			getRegistrationAttributesCount();
+	}
+
+	@Override
+	public void removeByRegistration(long registrationId) {
+		_registrationAttributeLocalService.removeByRegistration(registrationId);
 	}
 
 	/**

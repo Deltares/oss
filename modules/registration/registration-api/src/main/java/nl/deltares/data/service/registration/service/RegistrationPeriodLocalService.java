@@ -199,6 +199,8 @@ public interface RegistrationPeriodLocalService
 	public RegistrationPeriod fetchRegistrationPeriod(
 		long registrationPeriodId);
 
+	public List<RegistrationPeriod> findByResource(long resourceId);
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
@@ -260,6 +262,8 @@ public interface RegistrationPeriodLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<RegistrationPeriod> getWithinPeriod(
 		Date startTime, Date endTime);
+
+	public void removeByResource(long resourceId);
 
 	/**
 	 * Updates the registration period in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

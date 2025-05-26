@@ -39,7 +39,7 @@ public interface RegistrationAttributePersistence
 	 * @param registrationId the registration ID
 	 * @return the matching registration attributes
 	 */
-	public java.util.List<RegistrationAttribute> findByRegistrationAttribute(
+	public java.util.List<RegistrationAttribute> findByRegistration(
 		long registrationId);
 
 	/**
@@ -54,7 +54,7 @@ public interface RegistrationAttributePersistence
 	 * @param end the upper bound of the range of registration attributes (not inclusive)
 	 * @return the range of matching registration attributes
 	 */
-	public java.util.List<RegistrationAttribute> findByRegistrationAttribute(
+	public java.util.List<RegistrationAttribute> findByRegistration(
 		long registrationId, int start, int end);
 
 	/**
@@ -70,7 +70,7 @@ public interface RegistrationAttributePersistence
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registration attributes
 	 */
-	public java.util.List<RegistrationAttribute> findByRegistrationAttribute(
+	public java.util.List<RegistrationAttribute> findByRegistration(
 		long registrationId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationAttribute>
 			orderByComparator);
@@ -89,7 +89,7 @@ public interface RegistrationAttributePersistence
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registration attributes
 	 */
-	public java.util.List<RegistrationAttribute> findByRegistrationAttribute(
+	public java.util.List<RegistrationAttribute> findByRegistration(
 		long registrationId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationAttribute>
 			orderByComparator,
@@ -103,7 +103,7 @@ public interface RegistrationAttributePersistence
 	 * @return the first matching registration attribute
 	 * @throws NoSuchRegistrationAttributeException if a matching registration attribute could not be found
 	 */
-	public RegistrationAttribute findByRegistrationAttribute_First(
+	public RegistrationAttribute findByRegistration_First(
 			long registrationId,
 			com.liferay.portal.kernel.util.OrderByComparator
 				<RegistrationAttribute> orderByComparator)
@@ -116,7 +116,7 @@ public interface RegistrationAttributePersistence
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration attribute, or <code>null</code> if a matching registration attribute could not be found
 	 */
-	public RegistrationAttribute fetchByRegistrationAttribute_First(
+	public RegistrationAttribute fetchByRegistration_First(
 		long registrationId,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationAttribute>
 			orderByComparator);
@@ -129,7 +129,7 @@ public interface RegistrationAttributePersistence
 	 * @return the last matching registration attribute
 	 * @throws NoSuchRegistrationAttributeException if a matching registration attribute could not be found
 	 */
-	public RegistrationAttribute findByRegistrationAttribute_Last(
+	public RegistrationAttribute findByRegistration_Last(
 			long registrationId,
 			com.liferay.portal.kernel.util.OrderByComparator
 				<RegistrationAttribute> orderByComparator)
@@ -142,7 +142,7 @@ public interface RegistrationAttributePersistence
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration attribute, or <code>null</code> if a matching registration attribute could not be found
 	 */
-	public RegistrationAttribute fetchByRegistrationAttribute_Last(
+	public RegistrationAttribute fetchByRegistration_Last(
 		long registrationId,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationAttribute>
 			orderByComparator);
@@ -156,7 +156,7 @@ public interface RegistrationAttributePersistence
 	 * @return the previous, current, and next registration attribute
 	 * @throws NoSuchRegistrationAttributeException if a registration attribute with the primary key could not be found
 	 */
-	public RegistrationAttribute[] findByRegistrationAttribute_PrevAndNext(
+	public RegistrationAttribute[] findByRegistration_PrevAndNext(
 			long registrationAttributeId, long registrationId,
 			com.liferay.portal.kernel.util.OrderByComparator
 				<RegistrationAttribute> orderByComparator)
@@ -167,7 +167,7 @@ public interface RegistrationAttributePersistence
 	 *
 	 * @param registrationId the registration ID
 	 */
-	public void removeByRegistrationAttribute(long registrationId);
+	public void removeByRegistration(long registrationId);
 
 	/**
 	 * Returns the number of registration attributes where registrationId = &#63;.
@@ -175,7 +175,7 @@ public interface RegistrationAttributePersistence
 	 * @param registrationId the registration ID
 	 * @return the number of matching registration attributes
 	 */
-	public int countByRegistrationAttribute(long registrationId);
+	public int countByRegistration(long registrationId);
 
 	/**
 	 * Caches the registration attribute in the entity cache if it is enabled.

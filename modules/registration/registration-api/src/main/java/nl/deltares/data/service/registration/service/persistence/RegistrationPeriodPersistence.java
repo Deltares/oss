@@ -39,7 +39,7 @@ public interface RegistrationPeriodPersistence
 	 * @param registrationResourceId the registration resource ID
 	 * @return the matching registration periods
 	 */
-	public java.util.List<RegistrationPeriod> findByResourcePeriods(
+	public java.util.List<RegistrationPeriod> findByResource(
 		long registrationResourceId);
 
 	/**
@@ -54,7 +54,7 @@ public interface RegistrationPeriodPersistence
 	 * @param end the upper bound of the range of registration periods (not inclusive)
 	 * @return the range of matching registration periods
 	 */
-	public java.util.List<RegistrationPeriod> findByResourcePeriods(
+	public java.util.List<RegistrationPeriod> findByResource(
 		long registrationResourceId, int start, int end);
 
 	/**
@@ -70,7 +70,7 @@ public interface RegistrationPeriodPersistence
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registration periods
 	 */
-	public java.util.List<RegistrationPeriod> findByResourcePeriods(
+	public java.util.List<RegistrationPeriod> findByResource(
 		long registrationResourceId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationPeriod>
 			orderByComparator);
@@ -89,7 +89,7 @@ public interface RegistrationPeriodPersistence
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registration periods
 	 */
-	public java.util.List<RegistrationPeriod> findByResourcePeriods(
+	public java.util.List<RegistrationPeriod> findByResource(
 		long registrationResourceId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationPeriod>
 			orderByComparator,
@@ -103,7 +103,7 @@ public interface RegistrationPeriodPersistence
 	 * @return the first matching registration period
 	 * @throws NoSuchRegistrationPeriodException if a matching registration period could not be found
 	 */
-	public RegistrationPeriod findByResourcePeriods_First(
+	public RegistrationPeriod findByResource_First(
 			long registrationResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator<RegistrationPeriod>
 				orderByComparator)
@@ -116,7 +116,7 @@ public interface RegistrationPeriodPersistence
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration period, or <code>null</code> if a matching registration period could not be found
 	 */
-	public RegistrationPeriod fetchByResourcePeriods_First(
+	public RegistrationPeriod fetchByResource_First(
 		long registrationResourceId,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationPeriod>
 			orderByComparator);
@@ -129,7 +129,7 @@ public interface RegistrationPeriodPersistence
 	 * @return the last matching registration period
 	 * @throws NoSuchRegistrationPeriodException if a matching registration period could not be found
 	 */
-	public RegistrationPeriod findByResourcePeriods_Last(
+	public RegistrationPeriod findByResource_Last(
 			long registrationResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator<RegistrationPeriod>
 				orderByComparator)
@@ -142,7 +142,7 @@ public interface RegistrationPeriodPersistence
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration period, or <code>null</code> if a matching registration period could not be found
 	 */
-	public RegistrationPeriod fetchByResourcePeriods_Last(
+	public RegistrationPeriod fetchByResource_Last(
 		long registrationResourceId,
 		com.liferay.portal.kernel.util.OrderByComparator<RegistrationPeriod>
 			orderByComparator);
@@ -156,7 +156,7 @@ public interface RegistrationPeriodPersistence
 	 * @return the previous, current, and next registration period
 	 * @throws NoSuchRegistrationPeriodException if a registration period with the primary key could not be found
 	 */
-	public RegistrationPeriod[] findByResourcePeriods_PrevAndNext(
+	public RegistrationPeriod[] findByResource_PrevAndNext(
 			long registrationPeriodId, long registrationResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator<RegistrationPeriod>
 				orderByComparator)
@@ -167,7 +167,7 @@ public interface RegistrationPeriodPersistence
 	 *
 	 * @param registrationResourceId the registration resource ID
 	 */
-	public void removeByResourcePeriods(long registrationResourceId);
+	public void removeByResource(long registrationResourceId);
 
 	/**
 	 * Returns the number of registration periods where registrationResourceId = &#63;.
@@ -175,7 +175,7 @@ public interface RegistrationPeriodPersistence
 	 * @param registrationResourceId the registration resource ID
 	 * @return the number of matching registration periods
 	 */
-	public int countByResourcePeriods(long registrationResourceId);
+	public int countByResource(long registrationResourceId);
 
 	/**
 	 * Caches the registration period in the entity cache if it is enabled.

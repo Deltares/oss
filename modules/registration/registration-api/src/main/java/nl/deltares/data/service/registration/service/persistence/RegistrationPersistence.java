@@ -38,7 +38,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param registrationResourceId the registration resource ID
 	 * @return the matching registrations
 	 */
-	public java.util.List<Registration> findByRegistrations(
+	public java.util.List<Registration> findByResource(
 		long registrationResourceId);
 
 	/**
@@ -53,7 +53,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @return the range of matching registrations
 	 */
-	public java.util.List<Registration> findByRegistrations(
+	public java.util.List<Registration> findByResource(
 		long registrationResourceId, int start, int end);
 
 	/**
@@ -69,7 +69,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registrations
 	 */
-	public java.util.List<Registration> findByRegistrations(
+	public java.util.List<Registration> findByResource(
 		long registrationResourceId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -88,7 +88,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
-	public java.util.List<Registration> findByRegistrations(
+	public java.util.List<Registration> findByResource(
 		long registrationResourceId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator,
@@ -102,7 +102,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the first matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public Registration findByRegistrations_First(
+	public Registration findByResource_First(
 			long registrationResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -115,7 +115,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public Registration fetchByRegistrations_First(
+	public Registration fetchByResource_First(
 		long registrationResourceId,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -128,7 +128,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the last matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public Registration findByRegistrations_Last(
+	public Registration findByResource_Last(
 			long registrationResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -141,7 +141,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public Registration fetchByRegistrations_Last(
+	public Registration fetchByResource_Last(
 		long registrationResourceId,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -155,7 +155,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the previous, current, and next registration
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
-	public Registration[] findByRegistrations_PrevAndNext(
+	public Registration[] findByResource_PrevAndNext(
 			long registrationId, long registrationResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -166,7 +166,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 *
 	 * @param registrationResourceId the registration resource ID
 	 */
-	public void removeByRegistrations(long registrationResourceId);
+	public void removeByResource(long registrationResourceId);
 
 	/**
 	 * Returns the number of registrations where registrationResourceId = &#63;.
@@ -174,7 +174,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param registrationResourceId the registration resource ID
 	 * @return the number of matching registrations
 	 */
-	public int countByRegistrations(long registrationResourceId);
+	public int countByResource(long registrationResourceId);
 
 	/**
 	 * Returns all the registrations where userId = &#63;.
@@ -182,7 +182,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param userId the user ID
 	 * @return the matching registrations
 	 */
-	public java.util.List<Registration> findByUserRegistrations(long userId);
+	public java.util.List<Registration> findByUser(long userId);
 
 	/**
 	 * Returns a range of all the registrations where userId = &#63;.
@@ -196,7 +196,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @return the range of matching registrations
 	 */
-	public java.util.List<Registration> findByUserRegistrations(
+	public java.util.List<Registration> findByUser(
 		long userId, int start, int end);
 
 	/**
@@ -212,7 +212,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registrations
 	 */
-	public java.util.List<Registration> findByUserRegistrations(
+	public java.util.List<Registration> findByUser(
 		long userId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -231,7 +231,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
-	public java.util.List<Registration> findByUserRegistrations(
+	public java.util.List<Registration> findByUser(
 		long userId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator,
@@ -245,7 +245,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the first matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public Registration findByUserRegistrations_First(
+	public Registration findByUser_First(
 			long userId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -258,7 +258,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public Registration fetchByUserRegistrations_First(
+	public Registration fetchByUser_First(
 		long userId,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -271,7 +271,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the last matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public Registration findByUserRegistrations_Last(
+	public Registration findByUser_Last(
 			long userId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -284,7 +284,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public Registration fetchByUserRegistrations_Last(
+	public Registration fetchByUser_Last(
 		long userId,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -298,7 +298,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the previous, current, and next registration
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
-	public Registration[] findByUserRegistrations_PrevAndNext(
+	public Registration[] findByUser_PrevAndNext(
 			long registrationId, long userId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -309,7 +309,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 *
 	 * @param userId the user ID
 	 */
-	public void removeByUserRegistrations(long userId);
+	public void removeByUser(long userId);
 
 	/**
 	 * Returns the number of registrations where userId = &#63;.
@@ -317,7 +317,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param userId the user ID
 	 * @return the number of matching registrations
 	 */
-	public int countByUserRegistrations(long userId);
+	public int countByUser(long userId);
 
 	/**
 	 * Returns all the registrations where userId = &#63; and registrationResourceId = &#63;.
@@ -326,7 +326,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param registrationResourceId the registration resource ID
 	 * @return the matching registrations
 	 */
-	public java.util.List<Registration> findByUserResourceRegistrations(
+	public java.util.List<Registration> findByUserAndResource(
 		long userId, long registrationResourceId);
 
 	/**
@@ -342,7 +342,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @return the range of matching registrations
 	 */
-	public java.util.List<Registration> findByUserResourceRegistrations(
+	public java.util.List<Registration> findByUserAndResource(
 		long userId, long registrationResourceId, int start, int end);
 
 	/**
@@ -359,7 +359,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registrations
 	 */
-	public java.util.List<Registration> findByUserResourceRegistrations(
+	public java.util.List<Registration> findByUserAndResource(
 		long userId, long registrationResourceId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -379,7 +379,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
-	public java.util.List<Registration> findByUserResourceRegistrations(
+	public java.util.List<Registration> findByUserAndResource(
 		long userId, long registrationResourceId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator,
@@ -394,7 +394,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the first matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public Registration findByUserResourceRegistrations_First(
+	public Registration findByUserAndResource_First(
 			long userId, long registrationResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -408,7 +408,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public Registration fetchByUserResourceRegistrations_First(
+	public Registration fetchByUserAndResource_First(
 		long userId, long registrationResourceId,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -422,7 +422,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the last matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public Registration findByUserResourceRegistrations_Last(
+	public Registration findByUserAndResource_Last(
 			long userId, long registrationResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -436,7 +436,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public Registration fetchByUserResourceRegistrations_Last(
+	public Registration fetchByUserAndResource_Last(
 		long userId, long registrationResourceId,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -451,7 +451,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the previous, current, and next registration
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
-	public Registration[] findByUserResourceRegistrations_PrevAndNext(
+	public Registration[] findByUserAndResource_PrevAndNext(
 			long registrationId, long userId, long registrationResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -463,7 +463,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param userId the user ID
 	 * @param registrationResourceId the registration resource ID
 	 */
-	public void removeByUserResourceRegistrations(
+	public void removeByUserAndResource(
 		long userId, long registrationResourceId);
 
 	/**
@@ -473,8 +473,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param registrationResourceId the registration resource ID
 	 * @return the number of matching registrations
 	 */
-	public int countByUserResourceRegistrations(
-		long userId, long registrationResourceId);
+	public int countByUserAndResource(long userId, long registrationResourceId);
 
 	/**
 	 * Returns all the registrations where userId = &#63; and groupId = &#63;.
@@ -483,7 +482,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param groupId the group ID
 	 * @return the matching registrations
 	 */
-	public java.util.List<Registration> findByUserGroupRegistrations(
+	public java.util.List<Registration> findByUserAndGroup(
 		long userId, long groupId);
 
 	/**
@@ -499,7 +498,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @return the range of matching registrations
 	 */
-	public java.util.List<Registration> findByUserGroupRegistrations(
+	public java.util.List<Registration> findByUserAndGroup(
 		long userId, long groupId, int start, int end);
 
 	/**
@@ -516,7 +515,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registrations
 	 */
-	public java.util.List<Registration> findByUserGroupRegistrations(
+	public java.util.List<Registration> findByUserAndGroup(
 		long userId, long groupId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -536,7 +535,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
-	public java.util.List<Registration> findByUserGroupRegistrations(
+	public java.util.List<Registration> findByUserAndGroup(
 		long userId, long groupId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator,
@@ -551,7 +550,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the first matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public Registration findByUserGroupRegistrations_First(
+	public Registration findByUserAndGroup_First(
 			long userId, long groupId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -565,7 +564,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public Registration fetchByUserGroupRegistrations_First(
+	public Registration fetchByUserAndGroup_First(
 		long userId, long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -579,7 +578,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the last matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public Registration findByUserGroupRegistrations_Last(
+	public Registration findByUserAndGroup_Last(
 			long userId, long groupId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -593,7 +592,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public Registration fetchByUserGroupRegistrations_Last(
+	public Registration fetchByUserAndGroup_Last(
 		long userId, long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -608,7 +607,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the previous, current, and next registration
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
-	public Registration[] findByUserGroupRegistrations_PrevAndNext(
+	public Registration[] findByUserAndGroup_PrevAndNext(
 			long registrationId, long userId, long groupId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -620,7 +619,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param userId the user ID
 	 * @param groupId the group ID
 	 */
-	public void removeByUserGroupRegistrations(long userId, long groupId);
+	public void removeByUserAndGroup(long userId, long groupId);
 
 	/**
 	 * Returns the number of registrations where userId = &#63; and groupId = &#63;.
@@ -629,7 +628,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param groupId the group ID
 	 * @return the number of matching registrations
 	 */
-	public int countByUserGroupRegistrations(long userId, long groupId);
+	public int countByUserAndGroup(long userId, long groupId);
 
 	/**
 	 * Returns all the registrations where authorId = &#63;.
@@ -637,8 +636,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param authorId the author ID
 	 * @return the matching registrations
 	 */
-	public java.util.List<Registration> findByAuthorRegistrations(
-		long authorId);
+	public java.util.List<Registration> findByAuthor(long authorId);
 
 	/**
 	 * Returns a range of all the registrations where authorId = &#63;.
@@ -652,7 +650,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @return the range of matching registrations
 	 */
-	public java.util.List<Registration> findByAuthorRegistrations(
+	public java.util.List<Registration> findByAuthor(
 		long authorId, int start, int end);
 
 	/**
@@ -668,7 +666,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registrations
 	 */
-	public java.util.List<Registration> findByAuthorRegistrations(
+	public java.util.List<Registration> findByAuthor(
 		long authorId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -687,7 +685,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
-	public java.util.List<Registration> findByAuthorRegistrations(
+	public java.util.List<Registration> findByAuthor(
 		long authorId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator,
@@ -701,7 +699,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the first matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public Registration findByAuthorRegistrations_First(
+	public Registration findByAuthor_First(
 			long authorId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -714,7 +712,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public Registration fetchByAuthorRegistrations_First(
+	public Registration fetchByAuthor_First(
 		long authorId,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -727,7 +725,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the last matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public Registration findByAuthorRegistrations_Last(
+	public Registration findByAuthor_Last(
 			long authorId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -740,7 +738,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public Registration fetchByAuthorRegistrations_Last(
+	public Registration fetchByAuthor_Last(
 		long authorId,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -754,7 +752,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the previous, current, and next registration
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
-	public Registration[] findByAuthorRegistrations_PrevAndNext(
+	public Registration[] findByAuthor_PrevAndNext(
 			long registrationId, long authorId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -765,7 +763,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 *
 	 * @param authorId the author ID
 	 */
-	public void removeByAuthorRegistrations(long authorId);
+	public void removeByAuthor(long authorId);
 
 	/**
 	 * Returns the number of registrations where authorId = &#63;.
@@ -773,7 +771,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param authorId the author ID
 	 * @return the number of matching registrations
 	 */
-	public int countByAuthorRegistrations(long authorId);
+	public int countByAuthor(long authorId);
 
 	/**
 	 * Returns all the registrations where authorId = &#63; and registrationResourceId = &#63;.
@@ -782,7 +780,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param registrationResourceId the registration resource ID
 	 * @return the matching registrations
 	 */
-	public java.util.List<Registration> findByAuthorResourceRegistrations(
+	public java.util.List<Registration> findByAuthorAndResource(
 		long authorId, long registrationResourceId);
 
 	/**
@@ -798,7 +796,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @return the range of matching registrations
 	 */
-	public java.util.List<Registration> findByAuthorResourceRegistrations(
+	public java.util.List<Registration> findByAuthorAndResource(
 		long authorId, long registrationResourceId, int start, int end);
 
 	/**
@@ -815,7 +813,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registrations
 	 */
-	public java.util.List<Registration> findByAuthorResourceRegistrations(
+	public java.util.List<Registration> findByAuthorAndResource(
 		long authorId, long registrationResourceId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -835,7 +833,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
-	public java.util.List<Registration> findByAuthorResourceRegistrations(
+	public java.util.List<Registration> findByAuthorAndResource(
 		long authorId, long registrationResourceId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator,
@@ -850,7 +848,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the first matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public Registration findByAuthorResourceRegistrations_First(
+	public Registration findByAuthorAndResource_First(
 			long authorId, long registrationResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -864,7 +862,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public Registration fetchByAuthorResourceRegistrations_First(
+	public Registration fetchByAuthorAndResource_First(
 		long authorId, long registrationResourceId,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -878,7 +876,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the last matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public Registration findByAuthorResourceRegistrations_Last(
+	public Registration findByAuthorAndResource_Last(
 			long authorId, long registrationResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -892,7 +890,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public Registration fetchByAuthorResourceRegistrations_Last(
+	public Registration fetchByAuthorAndResource_Last(
 		long authorId, long registrationResourceId,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -907,7 +905,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the previous, current, and next registration
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
-	public Registration[] findByAuthorResourceRegistrations_PrevAndNext(
+	public Registration[] findByAuthorAndResource_PrevAndNext(
 			long registrationId, long authorId, long registrationResourceId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -919,7 +917,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param authorId the author ID
 	 * @param registrationResourceId the registration resource ID
 	 */
-	public void removeByAuthorResourceRegistrations(
+	public void removeByAuthorAndResource(
 		long authorId, long registrationResourceId);
 
 	/**
@@ -929,7 +927,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param registrationResourceId the registration resource ID
 	 * @return the number of matching registrations
 	 */
-	public int countByAuthorResourceRegistrations(
+	public int countByAuthorAndResource(
 		long authorId, long registrationResourceId);
 
 	/**
@@ -939,7 +937,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param groupId the group ID
 	 * @return the matching registrations
 	 */
-	public java.util.List<Registration> findByAuthorGroupRegistrations(
+	public java.util.List<Registration> findByAuthorAndGroup(
 		long authorId, long groupId);
 
 	/**
@@ -955,7 +953,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param end the upper bound of the range of registrations (not inclusive)
 	 * @return the range of matching registrations
 	 */
-	public java.util.List<Registration> findByAuthorGroupRegistrations(
+	public java.util.List<Registration> findByAuthorAndGroup(
 		long authorId, long groupId, int start, int end);
 
 	/**
@@ -972,7 +970,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registrations
 	 */
-	public java.util.List<Registration> findByAuthorGroupRegistrations(
+	public java.util.List<Registration> findByAuthorAndGroup(
 		long authorId, long groupId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -992,7 +990,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registrations
 	 */
-	public java.util.List<Registration> findByAuthorGroupRegistrations(
+	public java.util.List<Registration> findByAuthorAndGroup(
 		long authorId, long groupId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator,
@@ -1007,7 +1005,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the first matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public Registration findByAuthorGroupRegistrations_First(
+	public Registration findByAuthorAndGroup_First(
 			long authorId, long groupId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -1021,7 +1019,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public Registration fetchByAuthorGroupRegistrations_First(
+	public Registration fetchByAuthorAndGroup_First(
 		long authorId, long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -1035,7 +1033,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the last matching registration
 	 * @throws NoSuchRegistrationException if a matching registration could not be found
 	 */
-	public Registration findByAuthorGroupRegistrations_Last(
+	public Registration findByAuthorAndGroup_Last(
 			long authorId, long groupId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -1049,7 +1047,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
 	 */
-	public Registration fetchByAuthorGroupRegistrations_Last(
+	public Registration fetchByAuthorAndGroup_Last(
 		long authorId, long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<Registration>
 			orderByComparator);
@@ -1064,7 +1062,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @return the previous, current, and next registration
 	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
 	 */
-	public Registration[] findByAuthorGroupRegistrations_PrevAndNext(
+	public Registration[] findByAuthorAndGroup_PrevAndNext(
 			long registrationId, long authorId, long groupId,
 			com.liferay.portal.kernel.util.OrderByComparator<Registration>
 				orderByComparator)
@@ -1076,7 +1074,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param authorId the author ID
 	 * @param groupId the group ID
 	 */
-	public void removeByAuthorGroupRegistrations(long authorId, long groupId);
+	public void removeByAuthorAndGroup(long authorId, long groupId);
 
 	/**
 	 * Returns the number of registrations where authorId = &#63; and groupId = &#63;.
@@ -1085,7 +1083,7 @@ public interface RegistrationPersistence extends BasePersistence<Registration> {
 	 * @param groupId the group ID
 	 * @return the number of matching registrations
 	 */
-	public int countByAuthorGroupRegistrations(long authorId, long groupId);
+	public int countByAuthorAndGroup(long authorId, long groupId);
 
 	/**
 	 * Caches the registration in the entity cache if it is enabled.

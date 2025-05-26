@@ -197,6 +197,8 @@ public interface RegistrationAttributeLocalService
 	public RegistrationAttribute fetchRegistrationAttribute(
 		long registrationAttributeId);
 
+	public List<RegistrationAttribute> findByRegistration(long registrationId);
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
@@ -252,6 +254,8 @@ public interface RegistrationAttributeLocalService
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getRegistrationAttributesCount();
+
+	public void removeByRegistration(long registrationId);
 
 	/**
 	 * Updates the registration attribute in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

@@ -43,4 +43,12 @@ public class RegistrationPeriodLocalServiceImpl
 				getClass().getClassLoader()).add(checkStart).add(checkEnd);
 		return RegistrationPeriodUtil.findWithDynamicQuery(query);
 	}
+
+	public void removeByResource(long resourceId){
+		RegistrationPeriodUtil.removeByResource(resourceId);
+	}
+
+	public List<RegistrationPeriod> findByResource(long resourceId){
+		return RegistrationPeriodUtil.findByResource(resourceId);
+	}
 }

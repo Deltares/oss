@@ -67,16 +67,7 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
         _displayContext = new BillingDetailsCheckoutStepDisplayContext(
                 httpServletRequest, _addressLocalService, _accountEntryLocalService,
                 _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
-        HttpSession session = httpServletRequest.getSession();
-        Object billingInfo = session.getAttribute("billingInfo");
-        if (billingInfo != null) {
-            httpServletRequest.setAttribute("billingInfo", billingInfo);
-        } else {
-            httpServletRequest.setAttribute("billingInfo", _displayContext.getBillingInfo());
-        }
-
         httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, _displayContext);
-
         _jspRenderer.renderJSP(
                 httpServletRequest, httpServletResponse,
                 "/registration2.0/billing-info.jsp");
@@ -85,6 +76,7 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
     @Override
     public boolean isActive(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 
+        if (_displayContext != null) return _displayContext.isPaymentRequired(httpServletRequest, _dsdParserUtils);
         try {
             _displayContext = new BillingDetailsCheckoutStepDisplayContext(
                     httpServletRequest, _addressLocalService, _accountEntryLocalService,

@@ -211,6 +211,10 @@ public class RegistrationPeriodLocalServiceUtil {
 		return getService().fetchRegistrationPeriod(registrationPeriodId);
 	}
 
+	public static List<RegistrationPeriod> findByResource(long resourceId) {
+		return getService().findByResource(resourceId);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 
@@ -292,6 +296,10 @@ public class RegistrationPeriodLocalServiceUtil {
 		java.util.Date startTime, java.util.Date endTime) {
 
 		return getService().getWithinPeriod(startTime, endTime);
+	}
+
+	public static void removeByResource(long resourceId) {
+		getService().removeByResource(resourceId);
 	}
 
 	/**

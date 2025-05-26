@@ -119,10 +119,10 @@ public class RegistrationPeriodUtil {
 	 * @param registrationResourceId the registration resource ID
 	 * @return the matching registration periods
 	 */
-	public static List<RegistrationPeriod> findByResourcePeriods(
+	public static List<RegistrationPeriod> findByResource(
 		long registrationResourceId) {
 
-		return getPersistence().findByResourcePeriods(registrationResourceId);
+		return getPersistence().findByResource(registrationResourceId);
 	}
 
 	/**
@@ -137,10 +137,10 @@ public class RegistrationPeriodUtil {
 	 * @param end the upper bound of the range of registration periods (not inclusive)
 	 * @return the range of matching registration periods
 	 */
-	public static List<RegistrationPeriod> findByResourcePeriods(
+	public static List<RegistrationPeriod> findByResource(
 		long registrationResourceId, int start, int end) {
 
-		return getPersistence().findByResourcePeriods(
+		return getPersistence().findByResource(
 			registrationResourceId, start, end);
 	}
 
@@ -157,11 +157,11 @@ public class RegistrationPeriodUtil {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registration periods
 	 */
-	public static List<RegistrationPeriod> findByResourcePeriods(
+	public static List<RegistrationPeriod> findByResource(
 		long registrationResourceId, int start, int end,
 		OrderByComparator<RegistrationPeriod> orderByComparator) {
 
-		return getPersistence().findByResourcePeriods(
+		return getPersistence().findByResource(
 			registrationResourceId, start, end, orderByComparator);
 	}
 
@@ -179,12 +179,12 @@ public class RegistrationPeriodUtil {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registration periods
 	 */
-	public static List<RegistrationPeriod> findByResourcePeriods(
+	public static List<RegistrationPeriod> findByResource(
 		long registrationResourceId, int start, int end,
 		OrderByComparator<RegistrationPeriod> orderByComparator,
 		boolean useFinderCache) {
 
-		return getPersistence().findByResourcePeriods(
+		return getPersistence().findByResource(
 			registrationResourceId, start, end, orderByComparator,
 			useFinderCache);
 	}
@@ -197,13 +197,13 @@ public class RegistrationPeriodUtil {
 	 * @return the first matching registration period
 	 * @throws NoSuchRegistrationPeriodException if a matching registration period could not be found
 	 */
-	public static RegistrationPeriod findByResourcePeriods_First(
+	public static RegistrationPeriod findByResource_First(
 			long registrationResourceId,
 			OrderByComparator<RegistrationPeriod> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationPeriodException {
 
-		return getPersistence().findByResourcePeriods_First(
+		return getPersistence().findByResource_First(
 			registrationResourceId, orderByComparator);
 	}
 
@@ -214,11 +214,11 @@ public class RegistrationPeriodUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration period, or <code>null</code> if a matching registration period could not be found
 	 */
-	public static RegistrationPeriod fetchByResourcePeriods_First(
+	public static RegistrationPeriod fetchByResource_First(
 		long registrationResourceId,
 		OrderByComparator<RegistrationPeriod> orderByComparator) {
 
-		return getPersistence().fetchByResourcePeriods_First(
+		return getPersistence().fetchByResource_First(
 			registrationResourceId, orderByComparator);
 	}
 
@@ -230,13 +230,13 @@ public class RegistrationPeriodUtil {
 	 * @return the last matching registration period
 	 * @throws NoSuchRegistrationPeriodException if a matching registration period could not be found
 	 */
-	public static RegistrationPeriod findByResourcePeriods_Last(
+	public static RegistrationPeriod findByResource_Last(
 			long registrationResourceId,
 			OrderByComparator<RegistrationPeriod> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationPeriodException {
 
-		return getPersistence().findByResourcePeriods_Last(
+		return getPersistence().findByResource_Last(
 			registrationResourceId, orderByComparator);
 	}
 
@@ -247,11 +247,11 @@ public class RegistrationPeriodUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration period, or <code>null</code> if a matching registration period could not be found
 	 */
-	public static RegistrationPeriod fetchByResourcePeriods_Last(
+	public static RegistrationPeriod fetchByResource_Last(
 		long registrationResourceId,
 		OrderByComparator<RegistrationPeriod> orderByComparator) {
 
-		return getPersistence().fetchByResourcePeriods_Last(
+		return getPersistence().fetchByResource_Last(
 			registrationResourceId, orderByComparator);
 	}
 
@@ -264,13 +264,13 @@ public class RegistrationPeriodUtil {
 	 * @return the previous, current, and next registration period
 	 * @throws NoSuchRegistrationPeriodException if a registration period with the primary key could not be found
 	 */
-	public static RegistrationPeriod[] findByResourcePeriods_PrevAndNext(
+	public static RegistrationPeriod[] findByResource_PrevAndNext(
 			long registrationPeriodId, long registrationResourceId,
 			OrderByComparator<RegistrationPeriod> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationPeriodException {
 
-		return getPersistence().findByResourcePeriods_PrevAndNext(
+		return getPersistence().findByResource_PrevAndNext(
 			registrationPeriodId, registrationResourceId, orderByComparator);
 	}
 
@@ -279,8 +279,8 @@ public class RegistrationPeriodUtil {
 	 *
 	 * @param registrationResourceId the registration resource ID
 	 */
-	public static void removeByResourcePeriods(long registrationResourceId) {
-		getPersistence().removeByResourcePeriods(registrationResourceId);
+	public static void removeByResource(long registrationResourceId) {
+		getPersistence().removeByResource(registrationResourceId);
 	}
 
 	/**
@@ -289,8 +289,8 @@ public class RegistrationPeriodUtil {
 	 * @param registrationResourceId the registration resource ID
 	 * @return the number of matching registration periods
 	 */
-	public static int countByResourcePeriods(long registrationResourceId) {
-		return getPersistence().countByResourcePeriods(registrationResourceId);
+	public static int countByResource(long registrationResourceId) {
+		return getPersistence().countByResource(registrationResourceId);
 	}
 
 	/**

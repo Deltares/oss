@@ -120,10 +120,10 @@ public class RegistrationAttributeUtil {
 	 * @param registrationId the registration ID
 	 * @return the matching registration attributes
 	 */
-	public static List<RegistrationAttribute> findByRegistrationAttribute(
+	public static List<RegistrationAttribute> findByRegistration(
 		long registrationId) {
 
-		return getPersistence().findByRegistrationAttribute(registrationId);
+		return getPersistence().findByRegistration(registrationId);
 	}
 
 	/**
@@ -138,11 +138,10 @@ public class RegistrationAttributeUtil {
 	 * @param end the upper bound of the range of registration attributes (not inclusive)
 	 * @return the range of matching registration attributes
 	 */
-	public static List<RegistrationAttribute> findByRegistrationAttribute(
+	public static List<RegistrationAttribute> findByRegistration(
 		long registrationId, int start, int end) {
 
-		return getPersistence().findByRegistrationAttribute(
-			registrationId, start, end);
+		return getPersistence().findByRegistration(registrationId, start, end);
 	}
 
 	/**
@@ -158,11 +157,11 @@ public class RegistrationAttributeUtil {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registration attributes
 	 */
-	public static List<RegistrationAttribute> findByRegistrationAttribute(
+	public static List<RegistrationAttribute> findByRegistration(
 		long registrationId, int start, int end,
 		OrderByComparator<RegistrationAttribute> orderByComparator) {
 
-		return getPersistence().findByRegistrationAttribute(
+		return getPersistence().findByRegistration(
 			registrationId, start, end, orderByComparator);
 	}
 
@@ -180,12 +179,12 @@ public class RegistrationAttributeUtil {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registration attributes
 	 */
-	public static List<RegistrationAttribute> findByRegistrationAttribute(
+	public static List<RegistrationAttribute> findByRegistration(
 		long registrationId, int start, int end,
 		OrderByComparator<RegistrationAttribute> orderByComparator,
 		boolean useFinderCache) {
 
-		return getPersistence().findByRegistrationAttribute(
+		return getPersistence().findByRegistration(
 			registrationId, start, end, orderByComparator, useFinderCache);
 	}
 
@@ -197,13 +196,13 @@ public class RegistrationAttributeUtil {
 	 * @return the first matching registration attribute
 	 * @throws NoSuchRegistrationAttributeException if a matching registration attribute could not be found
 	 */
-	public static RegistrationAttribute findByRegistrationAttribute_First(
+	public static RegistrationAttribute findByRegistration_First(
 			long registrationId,
 			OrderByComparator<RegistrationAttribute> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationAttributeException {
 
-		return getPersistence().findByRegistrationAttribute_First(
+		return getPersistence().findByRegistration_First(
 			registrationId, orderByComparator);
 	}
 
@@ -214,11 +213,11 @@ public class RegistrationAttributeUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration attribute, or <code>null</code> if a matching registration attribute could not be found
 	 */
-	public static RegistrationAttribute fetchByRegistrationAttribute_First(
+	public static RegistrationAttribute fetchByRegistration_First(
 		long registrationId,
 		OrderByComparator<RegistrationAttribute> orderByComparator) {
 
-		return getPersistence().fetchByRegistrationAttribute_First(
+		return getPersistence().fetchByRegistration_First(
 			registrationId, orderByComparator);
 	}
 
@@ -230,13 +229,13 @@ public class RegistrationAttributeUtil {
 	 * @return the last matching registration attribute
 	 * @throws NoSuchRegistrationAttributeException if a matching registration attribute could not be found
 	 */
-	public static RegistrationAttribute findByRegistrationAttribute_Last(
+	public static RegistrationAttribute findByRegistration_Last(
 			long registrationId,
 			OrderByComparator<RegistrationAttribute> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationAttributeException {
 
-		return getPersistence().findByRegistrationAttribute_Last(
+		return getPersistence().findByRegistration_Last(
 			registrationId, orderByComparator);
 	}
 
@@ -247,11 +246,11 @@ public class RegistrationAttributeUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration attribute, or <code>null</code> if a matching registration attribute could not be found
 	 */
-	public static RegistrationAttribute fetchByRegistrationAttribute_Last(
+	public static RegistrationAttribute fetchByRegistration_Last(
 		long registrationId,
 		OrderByComparator<RegistrationAttribute> orderByComparator) {
 
-		return getPersistence().fetchByRegistrationAttribute_Last(
+		return getPersistence().fetchByRegistration_Last(
 			registrationId, orderByComparator);
 	}
 
@@ -264,14 +263,13 @@ public class RegistrationAttributeUtil {
 	 * @return the previous, current, and next registration attribute
 	 * @throws NoSuchRegistrationAttributeException if a registration attribute with the primary key could not be found
 	 */
-	public static RegistrationAttribute[]
-			findByRegistrationAttribute_PrevAndNext(
-				long registrationAttributeId, long registrationId,
-				OrderByComparator<RegistrationAttribute> orderByComparator)
+	public static RegistrationAttribute[] findByRegistration_PrevAndNext(
+			long registrationAttributeId, long registrationId,
+			OrderByComparator<RegistrationAttribute> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationAttributeException {
 
-		return getPersistence().findByRegistrationAttribute_PrevAndNext(
+		return getPersistence().findByRegistration_PrevAndNext(
 			registrationAttributeId, registrationId, orderByComparator);
 	}
 
@@ -280,8 +278,8 @@ public class RegistrationAttributeUtil {
 	 *
 	 * @param registrationId the registration ID
 	 */
-	public static void removeByRegistrationAttribute(long registrationId) {
-		getPersistence().removeByRegistrationAttribute(registrationId);
+	public static void removeByRegistration(long registrationId) {
+		getPersistence().removeByRegistration(registrationId);
 	}
 
 	/**
@@ -290,8 +288,8 @@ public class RegistrationAttributeUtil {
 	 * @param registrationId the registration ID
 	 * @return the number of matching registration attributes
 	 */
-	public static int countByRegistrationAttribute(long registrationId) {
-		return getPersistence().countByRegistrationAttribute(registrationId);
+	public static int countByRegistration(long registrationId) {
+		return getPersistence().countByRegistration(registrationId);
 	}
 
 	/**

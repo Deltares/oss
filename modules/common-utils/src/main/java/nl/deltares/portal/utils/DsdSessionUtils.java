@@ -3,6 +3,7 @@ package nl.deltares.portal.utils;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import nl.deltares.portal.exception.ValidationException;
+import nl.deltares.portal.model.database.RegistrationData;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 
@@ -27,7 +28,7 @@ public interface DsdSessionUtils {
      * @param end end index
      * @return list of record values
      */
-    List<Map<String, Object>> getRegistrations(int start, int end);
+    List<RegistrationData> getRegistrations(int start, int end);
 
     /**
      * Retrieves the webinar join link for user.
@@ -124,14 +125,14 @@ public interface DsdSessionUtils {
      * @param groupId Site id for which to retrieve registrations
      * @return List of user registration records
      */
-    List<Map<String, Object>> getUserRegistrations(User user, long groupId);
+    List<Long> getUserRegistrationResourceIds(User user, long groupId);
 
     /**
      * Find all user registrations that this user made for other user .
      * @param user User Id of user that made registration
      * @return List of user registration records
      */
-    List<Map<String, Object>> getUserRegistrationsMadeForOthers(User user, long groupId);
+    List<Long> getUserRegistrationResourceIdsMadeForOthers(User user, long groupId);
     /**
      * Has this user made registrations for others for this event .
      * @param user User Id of user that made registration
@@ -146,7 +147,7 @@ public interface DsdSessionUtils {
      * @param event Event for which to retrieve registrations
      * @return List of user registration records
      */
-    List<Map<String, Object>> getRegistrations(Event event);
+    List<RegistrationData> getRegistrations(Event event);
 
     /**
      * Get all registrations by registration resourceId.
@@ -154,9 +155,9 @@ public interface DsdSessionUtils {
      * @param resourceId Registration resourceid
      * @return List of user registration records
      */
-    List<Map<String, Object>> getRegistrations(long groupId, long resourceId);
+    List<RegistrationData> getRegistrations(long groupId, long resourceId);
 
-    List<Map<String, Object>> getRegistrations(long groupId, Date startDate, Date endDate);
+    List<RegistrationData> getRegistrations(long groupId, Date startDate, Date endDate);
 
     /**
      * Get all registrations by event resourceId.
@@ -164,7 +165,7 @@ public interface DsdSessionUtils {
      * @param eventResourceId Event resourceid
      * @return List of user registration records
      */
-    List<Map<String, Object>> getEventRegistrations(long groupId, long eventResourceId);
+    List<RegistrationData> getEventRegistrations(long groupId, long eventResourceId);
 
     void deleteEventRegistrations(long groupId, long resourceId);
 }

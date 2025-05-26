@@ -197,6 +197,18 @@ public interface RegistrationResourceLocalService
 	public RegistrationResource fetchRegistrationResource(
 		long registrationResourceId);
 
+	public List<RegistrationResource> findByGroupAndEventArticle(
+		long groupId, long eventResourceId);
+
+	public List<RegistrationResource> findByGroupAndEventResource(
+		long groupId, long eventResourceId);
+
+	public List<RegistrationResource> findByGroupAndParentResource(
+		long groupId, long parentResourceId);
+
+	public List<RegistrationResource> findByGroupAndResource(
+		long groupId, long resourceId);
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
 

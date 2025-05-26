@@ -121,10 +121,11 @@ public class RegistrationResourceUtil {
 	 * @param eventResourceId the event resource ID
 	 * @return the matching registration resources
 	 */
-	public static List<RegistrationResource> findByEventResources(
+	public static List<RegistrationResource> findByGroupAndEventResource(
 		long groupId, long eventResourceId) {
 
-		return getPersistence().findByEventResources(groupId, eventResourceId);
+		return getPersistence().findByGroupAndEventResource(
+			groupId, eventResourceId);
 	}
 
 	/**
@@ -140,10 +141,10 @@ public class RegistrationResourceUtil {
 	 * @param end the upper bound of the range of registration resources (not inclusive)
 	 * @return the range of matching registration resources
 	 */
-	public static List<RegistrationResource> findByEventResources(
+	public static List<RegistrationResource> findByGroupAndEventResource(
 		long groupId, long eventResourceId, int start, int end) {
 
-		return getPersistence().findByEventResources(
+		return getPersistence().findByGroupAndEventResource(
 			groupId, eventResourceId, start, end);
 	}
 
@@ -161,11 +162,11 @@ public class RegistrationResourceUtil {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registration resources
 	 */
-	public static List<RegistrationResource> findByEventResources(
+	public static List<RegistrationResource> findByGroupAndEventResource(
 		long groupId, long eventResourceId, int start, int end,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		return getPersistence().findByEventResources(
+		return getPersistence().findByGroupAndEventResource(
 			groupId, eventResourceId, start, end, orderByComparator);
 	}
 
@@ -184,12 +185,12 @@ public class RegistrationResourceUtil {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registration resources
 	 */
-	public static List<RegistrationResource> findByEventResources(
+	public static List<RegistrationResource> findByGroupAndEventResource(
 		long groupId, long eventResourceId, int start, int end,
 		OrderByComparator<RegistrationResource> orderByComparator,
 		boolean useFinderCache) {
 
-		return getPersistence().findByEventResources(
+		return getPersistence().findByGroupAndEventResource(
 			groupId, eventResourceId, start, end, orderByComparator,
 			useFinderCache);
 	}
@@ -203,13 +204,13 @@ public class RegistrationResourceUtil {
 	 * @return the first matching registration resource
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
-	public static RegistrationResource findByEventResources_First(
+	public static RegistrationResource findByGroupAndEventResource_First(
 			long groupId, long eventResourceId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationResourceException {
 
-		return getPersistence().findByEventResources_First(
+		return getPersistence().findByGroupAndEventResource_First(
 			groupId, eventResourceId, orderByComparator);
 	}
 
@@ -221,11 +222,11 @@ public class RegistrationResourceUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
-	public static RegistrationResource fetchByEventResources_First(
+	public static RegistrationResource fetchByGroupAndEventResource_First(
 		long groupId, long eventResourceId,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		return getPersistence().fetchByEventResources_First(
+		return getPersistence().fetchByGroupAndEventResource_First(
 			groupId, eventResourceId, orderByComparator);
 	}
 
@@ -238,13 +239,13 @@ public class RegistrationResourceUtil {
 	 * @return the last matching registration resource
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
-	public static RegistrationResource findByEventResources_Last(
+	public static RegistrationResource findByGroupAndEventResource_Last(
 			long groupId, long eventResourceId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationResourceException {
 
-		return getPersistence().findByEventResources_Last(
+		return getPersistence().findByGroupAndEventResource_Last(
 			groupId, eventResourceId, orderByComparator);
 	}
 
@@ -256,11 +257,11 @@ public class RegistrationResourceUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
-	public static RegistrationResource fetchByEventResources_Last(
+	public static RegistrationResource fetchByGroupAndEventResource_Last(
 		long groupId, long eventResourceId,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		return getPersistence().fetchByEventResources_Last(
+		return getPersistence().fetchByGroupAndEventResource_Last(
 			groupId, eventResourceId, orderByComparator);
 	}
 
@@ -274,13 +275,14 @@ public class RegistrationResourceUtil {
 	 * @return the previous, current, and next registration resource
 	 * @throws NoSuchRegistrationResourceException if a registration resource with the primary key could not be found
 	 */
-	public static RegistrationResource[] findByEventResources_PrevAndNext(
-			long registrationResourceId, long groupId, long eventResourceId,
-			OrderByComparator<RegistrationResource> orderByComparator)
+	public static RegistrationResource[]
+			findByGroupAndEventResource_PrevAndNext(
+				long registrationResourceId, long groupId, long eventResourceId,
+				OrderByComparator<RegistrationResource> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationResourceException {
 
-		return getPersistence().findByEventResources_PrevAndNext(
+		return getPersistence().findByGroupAndEventResource_PrevAndNext(
 			registrationResourceId, groupId, eventResourceId,
 			orderByComparator);
 	}
@@ -291,10 +293,11 @@ public class RegistrationResourceUtil {
 	 * @param groupId the group ID
 	 * @param eventResourceId the event resource ID
 	 */
-	public static void removeByEventResources(
+	public static void removeByGroupAndEventResource(
 		long groupId, long eventResourceId) {
 
-		getPersistence().removeByEventResources(groupId, eventResourceId);
+		getPersistence().removeByGroupAndEventResource(
+			groupId, eventResourceId);
 	}
 
 	/**
@@ -304,10 +307,11 @@ public class RegistrationResourceUtil {
 	 * @param eventResourceId the event resource ID
 	 * @return the number of matching registration resources
 	 */
-	public static int countByEventResources(
+	public static int countByGroupAndEventResource(
 		long groupId, long eventResourceId) {
 
-		return getPersistence().countByEventResources(groupId, eventResourceId);
+		return getPersistence().countByGroupAndEventResource(
+			groupId, eventResourceId);
 	}
 
 	/**
@@ -317,10 +321,11 @@ public class RegistrationResourceUtil {
 	 * @param eventArticleId the event article ID
 	 * @return the matching registration resources
 	 */
-	public static List<RegistrationResource> findByEventArticle(
+	public static List<RegistrationResource> findByGroupAndEventArticle(
 		long groupId, long eventArticleId) {
 
-		return getPersistence().findByEventArticle(groupId, eventArticleId);
+		return getPersistence().findByGroupAndEventArticle(
+			groupId, eventArticleId);
 	}
 
 	/**
@@ -336,10 +341,10 @@ public class RegistrationResourceUtil {
 	 * @param end the upper bound of the range of registration resources (not inclusive)
 	 * @return the range of matching registration resources
 	 */
-	public static List<RegistrationResource> findByEventArticle(
+	public static List<RegistrationResource> findByGroupAndEventArticle(
 		long groupId, long eventArticleId, int start, int end) {
 
-		return getPersistence().findByEventArticle(
+		return getPersistence().findByGroupAndEventArticle(
 			groupId, eventArticleId, start, end);
 	}
 
@@ -357,11 +362,11 @@ public class RegistrationResourceUtil {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registration resources
 	 */
-	public static List<RegistrationResource> findByEventArticle(
+	public static List<RegistrationResource> findByGroupAndEventArticle(
 		long groupId, long eventArticleId, int start, int end,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		return getPersistence().findByEventArticle(
+		return getPersistence().findByGroupAndEventArticle(
 			groupId, eventArticleId, start, end, orderByComparator);
 	}
 
@@ -380,12 +385,12 @@ public class RegistrationResourceUtil {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registration resources
 	 */
-	public static List<RegistrationResource> findByEventArticle(
+	public static List<RegistrationResource> findByGroupAndEventArticle(
 		long groupId, long eventArticleId, int start, int end,
 		OrderByComparator<RegistrationResource> orderByComparator,
 		boolean useFinderCache) {
 
-		return getPersistence().findByEventArticle(
+		return getPersistence().findByGroupAndEventArticle(
 			groupId, eventArticleId, start, end, orderByComparator,
 			useFinderCache);
 	}
@@ -399,13 +404,13 @@ public class RegistrationResourceUtil {
 	 * @return the first matching registration resource
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
-	public static RegistrationResource findByEventArticle_First(
+	public static RegistrationResource findByGroupAndEventArticle_First(
 			long groupId, long eventArticleId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationResourceException {
 
-		return getPersistence().findByEventArticle_First(
+		return getPersistence().findByGroupAndEventArticle_First(
 			groupId, eventArticleId, orderByComparator);
 	}
 
@@ -417,11 +422,11 @@ public class RegistrationResourceUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
-	public static RegistrationResource fetchByEventArticle_First(
+	public static RegistrationResource fetchByGroupAndEventArticle_First(
 		long groupId, long eventArticleId,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		return getPersistence().fetchByEventArticle_First(
+		return getPersistence().fetchByGroupAndEventArticle_First(
 			groupId, eventArticleId, orderByComparator);
 	}
 
@@ -434,13 +439,13 @@ public class RegistrationResourceUtil {
 	 * @return the last matching registration resource
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
-	public static RegistrationResource findByEventArticle_Last(
+	public static RegistrationResource findByGroupAndEventArticle_Last(
 			long groupId, long eventArticleId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationResourceException {
 
-		return getPersistence().findByEventArticle_Last(
+		return getPersistence().findByGroupAndEventArticle_Last(
 			groupId, eventArticleId, orderByComparator);
 	}
 
@@ -452,11 +457,11 @@ public class RegistrationResourceUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
-	public static RegistrationResource fetchByEventArticle_Last(
+	public static RegistrationResource fetchByGroupAndEventArticle_Last(
 		long groupId, long eventArticleId,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		return getPersistence().fetchByEventArticle_Last(
+		return getPersistence().fetchByGroupAndEventArticle_Last(
 			groupId, eventArticleId, orderByComparator);
 	}
 
@@ -470,13 +475,13 @@ public class RegistrationResourceUtil {
 	 * @return the previous, current, and next registration resource
 	 * @throws NoSuchRegistrationResourceException if a registration resource with the primary key could not be found
 	 */
-	public static RegistrationResource[] findByEventArticle_PrevAndNext(
+	public static RegistrationResource[] findByGroupAndEventArticle_PrevAndNext(
 			long registrationResourceId, long groupId, long eventArticleId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationResourceException {
 
-		return getPersistence().findByEventArticle_PrevAndNext(
+		return getPersistence().findByGroupAndEventArticle_PrevAndNext(
 			registrationResourceId, groupId, eventArticleId, orderByComparator);
 	}
 
@@ -486,8 +491,10 @@ public class RegistrationResourceUtil {
 	 * @param groupId the group ID
 	 * @param eventArticleId the event article ID
 	 */
-	public static void removeByEventArticle(long groupId, long eventArticleId) {
-		getPersistence().removeByEventArticle(groupId, eventArticleId);
+	public static void removeByGroupAndEventArticle(
+		long groupId, long eventArticleId) {
+
+		getPersistence().removeByGroupAndEventArticle(groupId, eventArticleId);
 	}
 
 	/**
@@ -497,8 +504,11 @@ public class RegistrationResourceUtil {
 	 * @param eventArticleId the event article ID
 	 * @return the number of matching registration resources
 	 */
-	public static int countByEventArticle(long groupId, long eventArticleId) {
-		return getPersistence().countByEventArticle(groupId, eventArticleId);
+	public static int countByGroupAndEventArticle(
+		long groupId, long eventArticleId) {
+
+		return getPersistence().countByGroupAndEventArticle(
+			groupId, eventArticleId);
 	}
 
 	/**
@@ -508,10 +518,11 @@ public class RegistrationResourceUtil {
 	 * @param parentResourceId the parent resource ID
 	 * @return the matching registration resources
 	 */
-	public static List<RegistrationResource> findByChildResources(
+	public static List<RegistrationResource> findByGroupAndParentResource(
 		long groupId, long parentResourceId) {
 
-		return getPersistence().findByChildResources(groupId, parentResourceId);
+		return getPersistence().findByGroupAndParentResource(
+			groupId, parentResourceId);
 	}
 
 	/**
@@ -527,10 +538,10 @@ public class RegistrationResourceUtil {
 	 * @param end the upper bound of the range of registration resources (not inclusive)
 	 * @return the range of matching registration resources
 	 */
-	public static List<RegistrationResource> findByChildResources(
+	public static List<RegistrationResource> findByGroupAndParentResource(
 		long groupId, long parentResourceId, int start, int end) {
 
-		return getPersistence().findByChildResources(
+		return getPersistence().findByGroupAndParentResource(
 			groupId, parentResourceId, start, end);
 	}
 
@@ -548,11 +559,11 @@ public class RegistrationResourceUtil {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registration resources
 	 */
-	public static List<RegistrationResource> findByChildResources(
+	public static List<RegistrationResource> findByGroupAndParentResource(
 		long groupId, long parentResourceId, int start, int end,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		return getPersistence().findByChildResources(
+		return getPersistence().findByGroupAndParentResource(
 			groupId, parentResourceId, start, end, orderByComparator);
 	}
 
@@ -571,12 +582,12 @@ public class RegistrationResourceUtil {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registration resources
 	 */
-	public static List<RegistrationResource> findByChildResources(
+	public static List<RegistrationResource> findByGroupAndParentResource(
 		long groupId, long parentResourceId, int start, int end,
 		OrderByComparator<RegistrationResource> orderByComparator,
 		boolean useFinderCache) {
 
-		return getPersistence().findByChildResources(
+		return getPersistence().findByGroupAndParentResource(
 			groupId, parentResourceId, start, end, orderByComparator,
 			useFinderCache);
 	}
@@ -590,13 +601,13 @@ public class RegistrationResourceUtil {
 	 * @return the first matching registration resource
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
-	public static RegistrationResource findByChildResources_First(
+	public static RegistrationResource findByGroupAndParentResource_First(
 			long groupId, long parentResourceId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationResourceException {
 
-		return getPersistence().findByChildResources_First(
+		return getPersistence().findByGroupAndParentResource_First(
 			groupId, parentResourceId, orderByComparator);
 	}
 
@@ -608,11 +619,11 @@ public class RegistrationResourceUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
-	public static RegistrationResource fetchByChildResources_First(
+	public static RegistrationResource fetchByGroupAndParentResource_First(
 		long groupId, long parentResourceId,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		return getPersistence().fetchByChildResources_First(
+		return getPersistence().fetchByGroupAndParentResource_First(
 			groupId, parentResourceId, orderByComparator);
 	}
 
@@ -625,13 +636,13 @@ public class RegistrationResourceUtil {
 	 * @return the last matching registration resource
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
-	public static RegistrationResource findByChildResources_Last(
+	public static RegistrationResource findByGroupAndParentResource_Last(
 			long groupId, long parentResourceId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationResourceException {
 
-		return getPersistence().findByChildResources_Last(
+		return getPersistence().findByGroupAndParentResource_Last(
 			groupId, parentResourceId, orderByComparator);
 	}
 
@@ -643,11 +654,11 @@ public class RegistrationResourceUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
-	public static RegistrationResource fetchByChildResources_Last(
+	public static RegistrationResource fetchByGroupAndParentResource_Last(
 		long groupId, long parentResourceId,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		return getPersistence().fetchByChildResources_Last(
+		return getPersistence().fetchByGroupAndParentResource_Last(
 			groupId, parentResourceId, orderByComparator);
 	}
 
@@ -661,13 +672,15 @@ public class RegistrationResourceUtil {
 	 * @return the previous, current, and next registration resource
 	 * @throws NoSuchRegistrationResourceException if a registration resource with the primary key could not be found
 	 */
-	public static RegistrationResource[] findByChildResources_PrevAndNext(
-			long registrationResourceId, long groupId, long parentResourceId,
-			OrderByComparator<RegistrationResource> orderByComparator)
+	public static RegistrationResource[]
+			findByGroupAndParentResource_PrevAndNext(
+				long registrationResourceId, long groupId,
+				long parentResourceId,
+				OrderByComparator<RegistrationResource> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationResourceException {
 
-		return getPersistence().findByChildResources_PrevAndNext(
+		return getPersistence().findByGroupAndParentResource_PrevAndNext(
 			registrationResourceId, groupId, parentResourceId,
 			orderByComparator);
 	}
@@ -678,10 +691,11 @@ public class RegistrationResourceUtil {
 	 * @param groupId the group ID
 	 * @param parentResourceId the parent resource ID
 	 */
-	public static void removeByChildResources(
+	public static void removeByGroupAndParentResource(
 		long groupId, long parentResourceId) {
 
-		getPersistence().removeByChildResources(groupId, parentResourceId);
+		getPersistence().removeByGroupAndParentResource(
+			groupId, parentResourceId);
 	}
 
 	/**
@@ -691,10 +705,10 @@ public class RegistrationResourceUtil {
 	 * @param parentResourceId the parent resource ID
 	 * @return the number of matching registration resources
 	 */
-	public static int countByChildResources(
+	public static int countByGroupAndParentResource(
 		long groupId, long parentResourceId) {
 
-		return getPersistence().countByChildResources(
+		return getPersistence().countByGroupAndParentResource(
 			groupId, parentResourceId);
 	}
 
@@ -705,10 +719,10 @@ public class RegistrationResourceUtil {
 	 * @param registrationResourceId the registration resource ID
 	 * @return the matching registration resources
 	 */
-	public static List<RegistrationResource> findByResources(
+	public static List<RegistrationResource> findByGroupAndResource(
 		long groupId, long registrationResourceId) {
 
-		return getPersistence().findByResources(
+		return getPersistence().findByGroupAndResource(
 			groupId, registrationResourceId);
 	}
 
@@ -725,10 +739,10 @@ public class RegistrationResourceUtil {
 	 * @param end the upper bound of the range of registration resources (not inclusive)
 	 * @return the range of matching registration resources
 	 */
-	public static List<RegistrationResource> findByResources(
+	public static List<RegistrationResource> findByGroupAndResource(
 		long groupId, long registrationResourceId, int start, int end) {
 
-		return getPersistence().findByResources(
+		return getPersistence().findByGroupAndResource(
 			groupId, registrationResourceId, start, end);
 	}
 
@@ -746,11 +760,11 @@ public class RegistrationResourceUtil {
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching registration resources
 	 */
-	public static List<RegistrationResource> findByResources(
+	public static List<RegistrationResource> findByGroupAndResource(
 		long groupId, long registrationResourceId, int start, int end,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		return getPersistence().findByResources(
+		return getPersistence().findByGroupAndResource(
 			groupId, registrationResourceId, start, end, orderByComparator);
 	}
 
@@ -769,12 +783,12 @@ public class RegistrationResourceUtil {
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching registration resources
 	 */
-	public static List<RegistrationResource> findByResources(
+	public static List<RegistrationResource> findByGroupAndResource(
 		long groupId, long registrationResourceId, int start, int end,
 		OrderByComparator<RegistrationResource> orderByComparator,
 		boolean useFinderCache) {
 
-		return getPersistence().findByResources(
+		return getPersistence().findByGroupAndResource(
 			groupId, registrationResourceId, start, end, orderByComparator,
 			useFinderCache);
 	}
@@ -788,13 +802,13 @@ public class RegistrationResourceUtil {
 	 * @return the first matching registration resource
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
-	public static RegistrationResource findByResources_First(
+	public static RegistrationResource findByGroupAndResource_First(
 			long groupId, long registrationResourceId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationResourceException {
 
-		return getPersistence().findByResources_First(
+		return getPersistence().findByGroupAndResource_First(
 			groupId, registrationResourceId, orderByComparator);
 	}
 
@@ -806,11 +820,11 @@ public class RegistrationResourceUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
-	public static RegistrationResource fetchByResources_First(
+	public static RegistrationResource fetchByGroupAndResource_First(
 		long groupId, long registrationResourceId,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		return getPersistence().fetchByResources_First(
+		return getPersistence().fetchByGroupAndResource_First(
 			groupId, registrationResourceId, orderByComparator);
 	}
 
@@ -823,13 +837,13 @@ public class RegistrationResourceUtil {
 	 * @return the last matching registration resource
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
-	public static RegistrationResource findByResources_Last(
+	public static RegistrationResource findByGroupAndResource_Last(
 			long groupId, long registrationResourceId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws nl.deltares.data.service.registration.exception.
 			NoSuchRegistrationResourceException {
 
-		return getPersistence().findByResources_Last(
+		return getPersistence().findByGroupAndResource_Last(
 			groupId, registrationResourceId, orderByComparator);
 	}
 
@@ -841,11 +855,11 @@ public class RegistrationResourceUtil {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
-	public static RegistrationResource fetchByResources_Last(
+	public static RegistrationResource fetchByGroupAndResource_Last(
 		long groupId, long registrationResourceId,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		return getPersistence().fetchByResources_Last(
+		return getPersistence().fetchByGroupAndResource_Last(
 			groupId, registrationResourceId, orderByComparator);
 	}
 
@@ -855,10 +869,11 @@ public class RegistrationResourceUtil {
 	 * @param groupId the group ID
 	 * @param registrationResourceId the registration resource ID
 	 */
-	public static void removeByResources(
+	public static void removeByGroupAndResource(
 		long groupId, long registrationResourceId) {
 
-		getPersistence().removeByResources(groupId, registrationResourceId);
+		getPersistence().removeByGroupAndResource(
+			groupId, registrationResourceId);
 	}
 
 	/**
@@ -868,10 +883,10 @@ public class RegistrationResourceUtil {
 	 * @param registrationResourceId the registration resource ID
 	 * @return the number of matching registration resources
 	 */
-	public static int countByResources(
+	public static int countByGroupAndResource(
 		long groupId, long registrationResourceId) {
 
-		return getPersistence().countByResources(
+		return getPersistence().countByGroupAndResource(
 			groupId, registrationResourceId);
 	}
 

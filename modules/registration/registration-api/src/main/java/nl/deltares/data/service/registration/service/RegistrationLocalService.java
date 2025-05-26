@@ -67,6 +67,10 @@ public interface RegistrationLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public Registration addRegistration(Registration registration);
 
+	public int countByResource(long resourceId);
+
+	public int countByUserAndResource(long userId, long resourceId);
+
 	/**
 	 * @throws PortalException
 	 */
@@ -192,6 +196,16 @@ public interface RegistrationLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Registration fetchRegistration(long registrationId);
 
+	public List<Registration> findByAuthorAndResource(
+		long authorId, long resourceId);
+
+	public List<Registration> findByResource(long resourceId);
+
+	public List<Registration> findByUserAndGroup(long userId, long groupId);
+
+	public List<Registration> findByUserAndResource(
+		long userId, long resourceId);
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
@@ -245,6 +259,10 @@ public interface RegistrationLocalService
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getRegistrationsCount();
+
+	public void removeByResource(long resourceId);
+
+	public void removeByUserAndResource(long userId, long resourceId);
 
 	/**
 	 * Updates the registration in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

@@ -1,3 +1,4 @@
+#FROM liferay/dxp:7.4.13-u77
 FROM liferay/dxp:2024.q4.2
 
 MAINTAINER Erik de Rooij <erik.derooij@deltares.nl>

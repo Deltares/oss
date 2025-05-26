@@ -3,8 +3,9 @@ dependencies {
     compileOnly('com.liferay.portal:release.dxp.api')
     compileInclude 'com.maxmind.geoip2:geoip2:2.17.0'
 
-    compileOnly(project(":modules:registration-service:registration-service-api"))
-    compileOnly(project(":modules:download:download-api"))
-    compileOnly(project(":modules:geolocation:geolocation-api"))
+    compileOnly(project(':modules:registration:registration-api'))
+    compileOnly(project(':modules:registration-service:registration-service-api'))
+    compileOnly(project(':modules:download:download-api'))
+    compileOnly(project(':modules:geolocation:geolocation-api'))
 
 }

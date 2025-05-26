@@ -9,18 +9,18 @@ import nl.deltares.forms.constants.CheckoutWebKeys;
 import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.forms.internal.UserInputValidationContext;
 import nl.deltares.forms.internal.UserRegistrationDisplayContext;
-import nl.deltares.model.RegistrationInfo;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
+import nl.deltares.portal.utils.impl.RegistrationUtilsImpl;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
-import java.util.List;
 
 @Component(
         property = {
@@ -76,8 +76,19 @@ public class UserRegistrationCheckoutStep extends BaseCheckoutStep {
     @Reference
     private DsdParserUtils _dsdParserUtils;
 
-    @Reference
     private DsdSessionUtils _dsdSessionUtils;
+
+    @Reference(
+            unbind = "-",
+            cardinality = ReferenceCardinality.MULTIPLE
+    )
+    protected void setDsdSessionUtils(DsdSessionUtils dsdSessionUtils) {
+
+        //todo: add check for preferred instance
+        if (dsdSessionUtils instanceof RegistrationUtilsImpl) {
+            _dsdSessionUtils = dsdSessionUtils;
+        }
+    }
 
     @Reference
     private UserLocalService _userLocalService;

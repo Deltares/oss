@@ -27,8 +27,8 @@ import java.util.Optional;
 
 public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCheckoutStepDisplayContext {
 
-    private final BillingInfo _billingInfo;
-    private final AccountEntry _selectedAccountEntry;
+    private BillingInfo _billingInfo;
+    private AccountEntry _selectedAccountEntry = null;
     private Boolean _paymentRequired = null;
 
     public String getTitle() {
@@ -46,19 +46,25 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
 
         super(request, accountEntryLocalService, addressLocalService, countryLocalService, phoneLocalService, userLocalService, commerceUtils);
 
-        _billingInfo = new BillingInfo();
-        Object selectedAccountEntryId = request.getSession().getAttribute("selectedAccountEntryId");
-        if (selectedAccountEntryId != null) {
-            _selectedAccountEntry = getAccountEntry((Long) selectedAccountEntryId);
+        _billingInfo = (BillingInfo) request.getSession().getAttribute("billingInfo");
+        if (_billingInfo == null) {
+            _billingInfo = new BillingInfo();
             _billingInfo.setEmail(_user.getEmailAddress());
             _billingInfo.setFirstName(_user.getFirstName());
             _billingInfo.setLastName(_user.getLastName());
+        }
+        Object selectedAccountEntryId = request.getSession().getAttribute("selectedAccountEntryId");
+        if (selectedAccountEntryId != null) {
+            _selectedAccountEntry = getAccountEntry((Long) selectedAccountEntryId);
+        }
+        if (_selectedAccountEntry != null) {
             _billingInfo.setCompanyIdentifier(getCompanyReferenceCode(_selectedAccountEntry));
             _billingInfo.setVat(_selectedAccountEntry.getTaxIdNumber());
-        } else {
-            _selectedAccountEntry = null;
+            Address billingAddress = getAccountAddress(_selectedAccountEntry);
+            if (billingAddress != null) {
+                _billingInfo.setBillingAddressId(billingAddress.getAddressId());
+            }
         }
-
     }
 
     public boolean canEditAddress() {

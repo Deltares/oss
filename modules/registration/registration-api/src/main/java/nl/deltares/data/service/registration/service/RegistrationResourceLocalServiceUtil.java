@@ -211,6 +211,33 @@ public class RegistrationResourceLocalServiceUtil {
 		return getService().fetchRegistrationResource(registrationResourceId);
 	}
 
+	public static List<RegistrationResource> findByGroupAndEventArticle(
+		long groupId, long eventResourceId) {
+
+		return getService().findByGroupAndEventArticle(
+			groupId, eventResourceId);
+	}
+
+	public static List<RegistrationResource> findByGroupAndEventResource(
+		long groupId, long eventResourceId) {
+
+		return getService().findByGroupAndEventResource(
+			groupId, eventResourceId);
+	}
+
+	public static List<RegistrationResource> findByGroupAndParentResource(
+		long groupId, long parentResourceId) {
+
+		return getService().findByGroupAndParentResource(
+			groupId, parentResourceId);
+	}
+
+	public static List<RegistrationResource> findByGroupAndResource(
+		long groupId, long resourceId) {
+
+		return getService().findByGroupAndResource(groupId, resourceId);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 

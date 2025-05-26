@@ -81,9 +81,9 @@ public class RegistrationResourcePersistenceImpl
 	private FinderPath _finderPathWithPaginationFindAll;
 	private FinderPath _finderPathWithoutPaginationFindAll;
 	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByEventResources;
-	private FinderPath _finderPathWithoutPaginationFindByEventResources;
-	private FinderPath _finderPathCountByEventResources;
+	private FinderPath _finderPathWithPaginationFindByGroupAndEventResource;
+	private FinderPath _finderPathWithoutPaginationFindByGroupAndEventResource;
+	private FinderPath _finderPathCountByGroupAndEventResource;
 
 	/**
 	 * Returns all the registration resources where groupId = &#63; and eventResourceId = &#63;.
@@ -93,10 +93,10 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the matching registration resources
 	 */
 	@Override
-	public List<RegistrationResource> findByEventResources(
+	public List<RegistrationResource> findByGroupAndEventResource(
 		long groupId, long eventResourceId) {
 
-		return findByEventResources(
+		return findByGroupAndEventResource(
 			groupId, eventResourceId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
 			null);
 	}
@@ -115,10 +115,11 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the range of matching registration resources
 	 */
 	@Override
-	public List<RegistrationResource> findByEventResources(
+	public List<RegistrationResource> findByGroupAndEventResource(
 		long groupId, long eventResourceId, int start, int end) {
 
-		return findByEventResources(groupId, eventResourceId, start, end, null);
+		return findByGroupAndEventResource(
+			groupId, eventResourceId, start, end, null);
 	}
 
 	/**
@@ -136,11 +137,11 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the ordered range of matching registration resources
 	 */
 	@Override
-	public List<RegistrationResource> findByEventResources(
+	public List<RegistrationResource> findByGroupAndEventResource(
 		long groupId, long eventResourceId, int start, int end,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		return findByEventResources(
+		return findByGroupAndEventResource(
 			groupId, eventResourceId, start, end, orderByComparator, true);
 	}
 
@@ -160,7 +161,7 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the ordered range of matching registration resources
 	 */
 	@Override
-	public List<RegistrationResource> findByEventResources(
+	public List<RegistrationResource> findByGroupAndEventResource(
 		long groupId, long eventResourceId, int start, int end,
 		OrderByComparator<RegistrationResource> orderByComparator,
 		boolean useFinderCache) {
@@ -172,12 +173,13 @@ public class RegistrationResourcePersistenceImpl
 			(orderByComparator == null)) {
 
 			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByEventResources;
+				finderPath =
+					_finderPathWithoutPaginationFindByGroupAndEventResource;
 				finderArgs = new Object[] {groupId, eventResourceId};
 			}
 		}
 		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByEventResources;
+			finderPath = _finderPathWithPaginationFindByGroupAndEventResource;
 			finderArgs = new Object[] {
 				groupId, eventResourceId, start, end, orderByComparator
 			};
@@ -216,9 +218,9 @@ public class RegistrationResourcePersistenceImpl
 
 			sb.append(_SQL_SELECT_REGISTRATIONRESOURCE_WHERE);
 
-			sb.append(_FINDER_COLUMN_EVENTRESOURCES_GROUPID_2);
+			sb.append(_FINDER_COLUMN_GROUPANDEVENTRESOURCE_GROUPID_2);
 
-			sb.append(_FINDER_COLUMN_EVENTRESOURCES_EVENTRESOURCEID_2);
+			sb.append(_FINDER_COLUMN_GROUPANDEVENTRESOURCE_EVENTRESOURCEID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
@@ -273,13 +275,14 @@ public class RegistrationResourcePersistenceImpl
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
 	@Override
-	public RegistrationResource findByEventResources_First(
+	public RegistrationResource findByGroupAndEventResource_First(
 			long groupId, long eventResourceId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws NoSuchRegistrationResourceException {
 
-		RegistrationResource registrationResource = fetchByEventResources_First(
-			groupId, eventResourceId, orderByComparator);
+		RegistrationResource registrationResource =
+			fetchByGroupAndEventResource_First(
+				groupId, eventResourceId, orderByComparator);
 
 		if (registrationResource != null) {
 			return registrationResource;
@@ -309,11 +312,11 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the first matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
 	@Override
-	public RegistrationResource fetchByEventResources_First(
+	public RegistrationResource fetchByGroupAndEventResource_First(
 		long groupId, long eventResourceId,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		List<RegistrationResource> list = findByEventResources(
+		List<RegistrationResource> list = findByGroupAndEventResource(
 			groupId, eventResourceId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -333,13 +336,14 @@ public class RegistrationResourcePersistenceImpl
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
 	@Override
-	public RegistrationResource findByEventResources_Last(
+	public RegistrationResource findByGroupAndEventResource_Last(
 			long groupId, long eventResourceId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws NoSuchRegistrationResourceException {
 
-		RegistrationResource registrationResource = fetchByEventResources_Last(
-			groupId, eventResourceId, orderByComparator);
+		RegistrationResource registrationResource =
+			fetchByGroupAndEventResource_Last(
+				groupId, eventResourceId, orderByComparator);
 
 		if (registrationResource != null) {
 			return registrationResource;
@@ -369,17 +373,17 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the last matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
 	@Override
-	public RegistrationResource fetchByEventResources_Last(
+	public RegistrationResource fetchByGroupAndEventResource_Last(
 		long groupId, long eventResourceId,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		int count = countByEventResources(groupId, eventResourceId);
+		int count = countByGroupAndEventResource(groupId, eventResourceId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<RegistrationResource> list = findByEventResources(
+		List<RegistrationResource> list = findByGroupAndEventResource(
 			groupId, eventResourceId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -400,7 +404,7 @@ public class RegistrationResourcePersistenceImpl
 	 * @throws NoSuchRegistrationResourceException if a registration resource with the primary key could not be found
 	 */
 	@Override
-	public RegistrationResource[] findByEventResources_PrevAndNext(
+	public RegistrationResource[] findByGroupAndEventResource_PrevAndNext(
 			long registrationResourceId, long groupId, long eventResourceId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws NoSuchRegistrationResourceException {
@@ -415,13 +419,13 @@ public class RegistrationResourcePersistenceImpl
 
 			RegistrationResource[] array = new RegistrationResourceImpl[3];
 
-			array[0] = getByEventResources_PrevAndNext(
+			array[0] = getByGroupAndEventResource_PrevAndNext(
 				session, registrationResource, groupId, eventResourceId,
 				orderByComparator, true);
 
 			array[1] = registrationResource;
 
-			array[2] = getByEventResources_PrevAndNext(
+			array[2] = getByGroupAndEventResource_PrevAndNext(
 				session, registrationResource, groupId, eventResourceId,
 				orderByComparator, false);
 
@@ -435,7 +439,7 @@ public class RegistrationResourcePersistenceImpl
 		}
 	}
 
-	protected RegistrationResource getByEventResources_PrevAndNext(
+	protected RegistrationResource getByGroupAndEventResource_PrevAndNext(
 		Session session, RegistrationResource registrationResource,
 		long groupId, long eventResourceId,
 		OrderByComparator<RegistrationResource> orderByComparator,
@@ -454,9 +458,9 @@ public class RegistrationResourcePersistenceImpl
 
 		sb.append(_SQL_SELECT_REGISTRATIONRESOURCE_WHERE);
 
-		sb.append(_FINDER_COLUMN_EVENTRESOURCES_GROUPID_2);
+		sb.append(_FINDER_COLUMN_GROUPANDEVENTRESOURCE_GROUPID_2);
 
-		sb.append(_FINDER_COLUMN_EVENTRESOURCES_EVENTRESOURCEID_2);
+		sb.append(_FINDER_COLUMN_GROUPANDEVENTRESOURCE_EVENTRESOURCEID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
@@ -557,9 +561,11 @@ public class RegistrationResourcePersistenceImpl
 	 * @param eventResourceId the event resource ID
 	 */
 	@Override
-	public void removeByEventResources(long groupId, long eventResourceId) {
+	public void removeByGroupAndEventResource(
+		long groupId, long eventResourceId) {
+
 		for (RegistrationResource registrationResource :
-				findByEventResources(
+				findByGroupAndEventResource(
 					groupId, eventResourceId, QueryUtil.ALL_POS,
 					QueryUtil.ALL_POS, null)) {
 
@@ -575,8 +581,10 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the number of matching registration resources
 	 */
 	@Override
-	public int countByEventResources(long groupId, long eventResourceId) {
-		FinderPath finderPath = _finderPathCountByEventResources;
+	public int countByGroupAndEventResource(
+		long groupId, long eventResourceId) {
+
+		FinderPath finderPath = _finderPathCountByGroupAndEventResource;
 
 		Object[] finderArgs = new Object[] {groupId, eventResourceId};
 
@@ -587,9 +595,9 @@ public class RegistrationResourcePersistenceImpl
 
 			sb.append(_SQL_COUNT_REGISTRATIONRESOURCE_WHERE);
 
-			sb.append(_FINDER_COLUMN_EVENTRESOURCES_GROUPID_2);
+			sb.append(_FINDER_COLUMN_GROUPANDEVENTRESOURCE_GROUPID_2);
 
-			sb.append(_FINDER_COLUMN_EVENTRESOURCES_EVENTRESOURCEID_2);
+			sb.append(_FINDER_COLUMN_GROUPANDEVENTRESOURCE_EVENTRESOURCEID_2);
 
 			String sql = sb.toString();
 
@@ -621,16 +629,16 @@ public class RegistrationResourcePersistenceImpl
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_EVENTRESOURCES_GROUPID_2 =
+	private static final String _FINDER_COLUMN_GROUPANDEVENTRESOURCE_GROUPID_2 =
 		"registrationResource.groupId = ? AND ";
 
 	private static final String
-		_FINDER_COLUMN_EVENTRESOURCES_EVENTRESOURCEID_2 =
+		_FINDER_COLUMN_GROUPANDEVENTRESOURCE_EVENTRESOURCEID_2 =
 			"registrationResource.eventResourceId = ?";
 
-	private FinderPath _finderPathWithPaginationFindByEventArticle;
-	private FinderPath _finderPathWithoutPaginationFindByEventArticle;
-	private FinderPath _finderPathCountByEventArticle;
+	private FinderPath _finderPathWithPaginationFindByGroupAndEventArticle;
+	private FinderPath _finderPathWithoutPaginationFindByGroupAndEventArticle;
+	private FinderPath _finderPathCountByGroupAndEventArticle;
 
 	/**
 	 * Returns all the registration resources where groupId = &#63; and eventArticleId = &#63;.
@@ -640,10 +648,10 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the matching registration resources
 	 */
 	@Override
-	public List<RegistrationResource> findByEventArticle(
+	public List<RegistrationResource> findByGroupAndEventArticle(
 		long groupId, long eventArticleId) {
 
-		return findByEventArticle(
+		return findByGroupAndEventArticle(
 			groupId, eventArticleId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
 			null);
 	}
@@ -662,10 +670,11 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the range of matching registration resources
 	 */
 	@Override
-	public List<RegistrationResource> findByEventArticle(
+	public List<RegistrationResource> findByGroupAndEventArticle(
 		long groupId, long eventArticleId, int start, int end) {
 
-		return findByEventArticle(groupId, eventArticleId, start, end, null);
+		return findByGroupAndEventArticle(
+			groupId, eventArticleId, start, end, null);
 	}
 
 	/**
@@ -683,11 +692,11 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the ordered range of matching registration resources
 	 */
 	@Override
-	public List<RegistrationResource> findByEventArticle(
+	public List<RegistrationResource> findByGroupAndEventArticle(
 		long groupId, long eventArticleId, int start, int end,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		return findByEventArticle(
+		return findByGroupAndEventArticle(
 			groupId, eventArticleId, start, end, orderByComparator, true);
 	}
 
@@ -707,7 +716,7 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the ordered range of matching registration resources
 	 */
 	@Override
-	public List<RegistrationResource> findByEventArticle(
+	public List<RegistrationResource> findByGroupAndEventArticle(
 		long groupId, long eventArticleId, int start, int end,
 		OrderByComparator<RegistrationResource> orderByComparator,
 		boolean useFinderCache) {
@@ -719,12 +728,13 @@ public class RegistrationResourcePersistenceImpl
 			(orderByComparator == null)) {
 
 			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByEventArticle;
+				finderPath =
+					_finderPathWithoutPaginationFindByGroupAndEventArticle;
 				finderArgs = new Object[] {groupId, eventArticleId};
 			}
 		}
 		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByEventArticle;
+			finderPath = _finderPathWithPaginationFindByGroupAndEventArticle;
 			finderArgs = new Object[] {
 				groupId, eventArticleId, start, end, orderByComparator
 			};
@@ -763,9 +773,9 @@ public class RegistrationResourcePersistenceImpl
 
 			sb.append(_SQL_SELECT_REGISTRATIONRESOURCE_WHERE);
 
-			sb.append(_FINDER_COLUMN_EVENTARTICLE_GROUPID_2);
+			sb.append(_FINDER_COLUMN_GROUPANDEVENTARTICLE_GROUPID_2);
 
-			sb.append(_FINDER_COLUMN_EVENTARTICLE_EVENTARTICLEID_2);
+			sb.append(_FINDER_COLUMN_GROUPANDEVENTARTICLE_EVENTARTICLEID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
@@ -820,13 +830,14 @@ public class RegistrationResourcePersistenceImpl
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
 	@Override
-	public RegistrationResource findByEventArticle_First(
+	public RegistrationResource findByGroupAndEventArticle_First(
 			long groupId, long eventArticleId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws NoSuchRegistrationResourceException {
 
-		RegistrationResource registrationResource = fetchByEventArticle_First(
-			groupId, eventArticleId, orderByComparator);
+		RegistrationResource registrationResource =
+			fetchByGroupAndEventArticle_First(
+				groupId, eventArticleId, orderByComparator);
 
 		if (registrationResource != null) {
 			return registrationResource;
@@ -856,11 +867,11 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the first matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
 	@Override
-	public RegistrationResource fetchByEventArticle_First(
+	public RegistrationResource fetchByGroupAndEventArticle_First(
 		long groupId, long eventArticleId,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		List<RegistrationResource> list = findByEventArticle(
+		List<RegistrationResource> list = findByGroupAndEventArticle(
 			groupId, eventArticleId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -880,13 +891,14 @@ public class RegistrationResourcePersistenceImpl
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
 	@Override
-	public RegistrationResource findByEventArticle_Last(
+	public RegistrationResource findByGroupAndEventArticle_Last(
 			long groupId, long eventArticleId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws NoSuchRegistrationResourceException {
 
-		RegistrationResource registrationResource = fetchByEventArticle_Last(
-			groupId, eventArticleId, orderByComparator);
+		RegistrationResource registrationResource =
+			fetchByGroupAndEventArticle_Last(
+				groupId, eventArticleId, orderByComparator);
 
 		if (registrationResource != null) {
 			return registrationResource;
@@ -916,17 +928,17 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the last matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
 	@Override
-	public RegistrationResource fetchByEventArticle_Last(
+	public RegistrationResource fetchByGroupAndEventArticle_Last(
 		long groupId, long eventArticleId,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		int count = countByEventArticle(groupId, eventArticleId);
+		int count = countByGroupAndEventArticle(groupId, eventArticleId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<RegistrationResource> list = findByEventArticle(
+		List<RegistrationResource> list = findByGroupAndEventArticle(
 			groupId, eventArticleId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -947,7 +959,7 @@ public class RegistrationResourcePersistenceImpl
 	 * @throws NoSuchRegistrationResourceException if a registration resource with the primary key could not be found
 	 */
 	@Override
-	public RegistrationResource[] findByEventArticle_PrevAndNext(
+	public RegistrationResource[] findByGroupAndEventArticle_PrevAndNext(
 			long registrationResourceId, long groupId, long eventArticleId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws NoSuchRegistrationResourceException {
@@ -962,13 +974,13 @@ public class RegistrationResourcePersistenceImpl
 
 			RegistrationResource[] array = new RegistrationResourceImpl[3];
 
-			array[0] = getByEventArticle_PrevAndNext(
+			array[0] = getByGroupAndEventArticle_PrevAndNext(
 				session, registrationResource, groupId, eventArticleId,
 				orderByComparator, true);
 
 			array[1] = registrationResource;
 
-			array[2] = getByEventArticle_PrevAndNext(
+			array[2] = getByGroupAndEventArticle_PrevAndNext(
 				session, registrationResource, groupId, eventArticleId,
 				orderByComparator, false);
 
@@ -982,7 +994,7 @@ public class RegistrationResourcePersistenceImpl
 		}
 	}
 
-	protected RegistrationResource getByEventArticle_PrevAndNext(
+	protected RegistrationResource getByGroupAndEventArticle_PrevAndNext(
 		Session session, RegistrationResource registrationResource,
 		long groupId, long eventArticleId,
 		OrderByComparator<RegistrationResource> orderByComparator,
@@ -1001,9 +1013,9 @@ public class RegistrationResourcePersistenceImpl
 
 		sb.append(_SQL_SELECT_REGISTRATIONRESOURCE_WHERE);
 
-		sb.append(_FINDER_COLUMN_EVENTARTICLE_GROUPID_2);
+		sb.append(_FINDER_COLUMN_GROUPANDEVENTARTICLE_GROUPID_2);
 
-		sb.append(_FINDER_COLUMN_EVENTARTICLE_EVENTARTICLEID_2);
+		sb.append(_FINDER_COLUMN_GROUPANDEVENTARTICLE_EVENTARTICLEID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
@@ -1104,9 +1116,11 @@ public class RegistrationResourcePersistenceImpl
 	 * @param eventArticleId the event article ID
 	 */
 	@Override
-	public void removeByEventArticle(long groupId, long eventArticleId) {
+	public void removeByGroupAndEventArticle(
+		long groupId, long eventArticleId) {
+
 		for (RegistrationResource registrationResource :
-				findByEventArticle(
+				findByGroupAndEventArticle(
 					groupId, eventArticleId, QueryUtil.ALL_POS,
 					QueryUtil.ALL_POS, null)) {
 
@@ -1122,8 +1136,8 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the number of matching registration resources
 	 */
 	@Override
-	public int countByEventArticle(long groupId, long eventArticleId) {
-		FinderPath finderPath = _finderPathCountByEventArticle;
+	public int countByGroupAndEventArticle(long groupId, long eventArticleId) {
+		FinderPath finderPath = _finderPathCountByGroupAndEventArticle;
 
 		Object[] finderArgs = new Object[] {groupId, eventArticleId};
 
@@ -1134,9 +1148,9 @@ public class RegistrationResourcePersistenceImpl
 
 			sb.append(_SQL_COUNT_REGISTRATIONRESOURCE_WHERE);
 
-			sb.append(_FINDER_COLUMN_EVENTARTICLE_GROUPID_2);
+			sb.append(_FINDER_COLUMN_GROUPANDEVENTARTICLE_GROUPID_2);
 
-			sb.append(_FINDER_COLUMN_EVENTARTICLE_EVENTARTICLEID_2);
+			sb.append(_FINDER_COLUMN_GROUPANDEVENTARTICLE_EVENTARTICLEID_2);
 
 			String sql = sb.toString();
 
@@ -1168,15 +1182,16 @@ public class RegistrationResourcePersistenceImpl
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_EVENTARTICLE_GROUPID_2 =
+	private static final String _FINDER_COLUMN_GROUPANDEVENTARTICLE_GROUPID_2 =
 		"registrationResource.groupId = ? AND ";
 
-	private static final String _FINDER_COLUMN_EVENTARTICLE_EVENTARTICLEID_2 =
-		"registrationResource.eventArticleId = ?";
+	private static final String
+		_FINDER_COLUMN_GROUPANDEVENTARTICLE_EVENTARTICLEID_2 =
+			"registrationResource.eventArticleId = ?";
 
-	private FinderPath _finderPathWithPaginationFindByChildResources;
-	private FinderPath _finderPathWithoutPaginationFindByChildResources;
-	private FinderPath _finderPathCountByChildResources;
+	private FinderPath _finderPathWithPaginationFindByGroupAndParentResource;
+	private FinderPath _finderPathWithoutPaginationFindByGroupAndParentResource;
+	private FinderPath _finderPathCountByGroupAndParentResource;
 
 	/**
 	 * Returns all the registration resources where groupId = &#63; and parentResourceId = &#63;.
@@ -1186,10 +1201,10 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the matching registration resources
 	 */
 	@Override
-	public List<RegistrationResource> findByChildResources(
+	public List<RegistrationResource> findByGroupAndParentResource(
 		long groupId, long parentResourceId) {
 
-		return findByChildResources(
+		return findByGroupAndParentResource(
 			groupId, parentResourceId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
 			null);
 	}
@@ -1208,10 +1223,10 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the range of matching registration resources
 	 */
 	@Override
-	public List<RegistrationResource> findByChildResources(
+	public List<RegistrationResource> findByGroupAndParentResource(
 		long groupId, long parentResourceId, int start, int end) {
 
-		return findByChildResources(
+		return findByGroupAndParentResource(
 			groupId, parentResourceId, start, end, null);
 	}
 
@@ -1230,11 +1245,11 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the ordered range of matching registration resources
 	 */
 	@Override
-	public List<RegistrationResource> findByChildResources(
+	public List<RegistrationResource> findByGroupAndParentResource(
 		long groupId, long parentResourceId, int start, int end,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		return findByChildResources(
+		return findByGroupAndParentResource(
 			groupId, parentResourceId, start, end, orderByComparator, true);
 	}
 
@@ -1254,7 +1269,7 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the ordered range of matching registration resources
 	 */
 	@Override
-	public List<RegistrationResource> findByChildResources(
+	public List<RegistrationResource> findByGroupAndParentResource(
 		long groupId, long parentResourceId, int start, int end,
 		OrderByComparator<RegistrationResource> orderByComparator,
 		boolean useFinderCache) {
@@ -1266,12 +1281,13 @@ public class RegistrationResourcePersistenceImpl
 			(orderByComparator == null)) {
 
 			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByChildResources;
+				finderPath =
+					_finderPathWithoutPaginationFindByGroupAndParentResource;
 				finderArgs = new Object[] {groupId, parentResourceId};
 			}
 		}
 		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByChildResources;
+			finderPath = _finderPathWithPaginationFindByGroupAndParentResource;
 			finderArgs = new Object[] {
 				groupId, parentResourceId, start, end, orderByComparator
 			};
@@ -1310,9 +1326,9 @@ public class RegistrationResourcePersistenceImpl
 
 			sb.append(_SQL_SELECT_REGISTRATIONRESOURCE_WHERE);
 
-			sb.append(_FINDER_COLUMN_CHILDRESOURCES_GROUPID_2);
+			sb.append(_FINDER_COLUMN_GROUPANDPARENTRESOURCE_GROUPID_2);
 
-			sb.append(_FINDER_COLUMN_CHILDRESOURCES_PARENTRESOURCEID_2);
+			sb.append(_FINDER_COLUMN_GROUPANDPARENTRESOURCE_PARENTRESOURCEID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
@@ -1367,13 +1383,14 @@ public class RegistrationResourcePersistenceImpl
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
 	@Override
-	public RegistrationResource findByChildResources_First(
+	public RegistrationResource findByGroupAndParentResource_First(
 			long groupId, long parentResourceId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws NoSuchRegistrationResourceException {
 
-		RegistrationResource registrationResource = fetchByChildResources_First(
-			groupId, parentResourceId, orderByComparator);
+		RegistrationResource registrationResource =
+			fetchByGroupAndParentResource_First(
+				groupId, parentResourceId, orderByComparator);
 
 		if (registrationResource != null) {
 			return registrationResource;
@@ -1403,11 +1420,11 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the first matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
 	@Override
-	public RegistrationResource fetchByChildResources_First(
+	public RegistrationResource fetchByGroupAndParentResource_First(
 		long groupId, long parentResourceId,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		List<RegistrationResource> list = findByChildResources(
+		List<RegistrationResource> list = findByGroupAndParentResource(
 			groupId, parentResourceId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -1427,13 +1444,14 @@ public class RegistrationResourcePersistenceImpl
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
 	@Override
-	public RegistrationResource findByChildResources_Last(
+	public RegistrationResource findByGroupAndParentResource_Last(
 			long groupId, long parentResourceId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws NoSuchRegistrationResourceException {
 
-		RegistrationResource registrationResource = fetchByChildResources_Last(
-			groupId, parentResourceId, orderByComparator);
+		RegistrationResource registrationResource =
+			fetchByGroupAndParentResource_Last(
+				groupId, parentResourceId, orderByComparator);
 
 		if (registrationResource != null) {
 			return registrationResource;
@@ -1463,17 +1481,17 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the last matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
 	@Override
-	public RegistrationResource fetchByChildResources_Last(
+	public RegistrationResource fetchByGroupAndParentResource_Last(
 		long groupId, long parentResourceId,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		int count = countByChildResources(groupId, parentResourceId);
+		int count = countByGroupAndParentResource(groupId, parentResourceId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<RegistrationResource> list = findByChildResources(
+		List<RegistrationResource> list = findByGroupAndParentResource(
 			groupId, parentResourceId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -1494,7 +1512,7 @@ public class RegistrationResourcePersistenceImpl
 	 * @throws NoSuchRegistrationResourceException if a registration resource with the primary key could not be found
 	 */
 	@Override
-	public RegistrationResource[] findByChildResources_PrevAndNext(
+	public RegistrationResource[] findByGroupAndParentResource_PrevAndNext(
 			long registrationResourceId, long groupId, long parentResourceId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws NoSuchRegistrationResourceException {
@@ -1509,13 +1527,13 @@ public class RegistrationResourcePersistenceImpl
 
 			RegistrationResource[] array = new RegistrationResourceImpl[3];
 
-			array[0] = getByChildResources_PrevAndNext(
+			array[0] = getByGroupAndParentResource_PrevAndNext(
 				session, registrationResource, groupId, parentResourceId,
 				orderByComparator, true);
 
 			array[1] = registrationResource;
 
-			array[2] = getByChildResources_PrevAndNext(
+			array[2] = getByGroupAndParentResource_PrevAndNext(
 				session, registrationResource, groupId, parentResourceId,
 				orderByComparator, false);
 
@@ -1529,7 +1547,7 @@ public class RegistrationResourcePersistenceImpl
 		}
 	}
 
-	protected RegistrationResource getByChildResources_PrevAndNext(
+	protected RegistrationResource getByGroupAndParentResource_PrevAndNext(
 		Session session, RegistrationResource registrationResource,
 		long groupId, long parentResourceId,
 		OrderByComparator<RegistrationResource> orderByComparator,
@@ -1548,9 +1566,9 @@ public class RegistrationResourcePersistenceImpl
 
 		sb.append(_SQL_SELECT_REGISTRATIONRESOURCE_WHERE);
 
-		sb.append(_FINDER_COLUMN_CHILDRESOURCES_GROUPID_2);
+		sb.append(_FINDER_COLUMN_GROUPANDPARENTRESOURCE_GROUPID_2);
 
-		sb.append(_FINDER_COLUMN_CHILDRESOURCES_PARENTRESOURCEID_2);
+		sb.append(_FINDER_COLUMN_GROUPANDPARENTRESOURCE_PARENTRESOURCEID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
@@ -1651,9 +1669,11 @@ public class RegistrationResourcePersistenceImpl
 	 * @param parentResourceId the parent resource ID
 	 */
 	@Override
-	public void removeByChildResources(long groupId, long parentResourceId) {
+	public void removeByGroupAndParentResource(
+		long groupId, long parentResourceId) {
+
 		for (RegistrationResource registrationResource :
-				findByChildResources(
+				findByGroupAndParentResource(
 					groupId, parentResourceId, QueryUtil.ALL_POS,
 					QueryUtil.ALL_POS, null)) {
 
@@ -1669,8 +1689,10 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the number of matching registration resources
 	 */
 	@Override
-	public int countByChildResources(long groupId, long parentResourceId) {
-		FinderPath finderPath = _finderPathCountByChildResources;
+	public int countByGroupAndParentResource(
+		long groupId, long parentResourceId) {
+
+		FinderPath finderPath = _finderPathCountByGroupAndParentResource;
 
 		Object[] finderArgs = new Object[] {groupId, parentResourceId};
 
@@ -1681,9 +1703,9 @@ public class RegistrationResourcePersistenceImpl
 
 			sb.append(_SQL_COUNT_REGISTRATIONRESOURCE_WHERE);
 
-			sb.append(_FINDER_COLUMN_CHILDRESOURCES_GROUPID_2);
+			sb.append(_FINDER_COLUMN_GROUPANDPARENTRESOURCE_GROUPID_2);
 
-			sb.append(_FINDER_COLUMN_CHILDRESOURCES_PARENTRESOURCEID_2);
+			sb.append(_FINDER_COLUMN_GROUPANDPARENTRESOURCE_PARENTRESOURCEID_2);
 
 			String sql = sb.toString();
 
@@ -1715,16 +1737,17 @@ public class RegistrationResourcePersistenceImpl
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_CHILDRESOURCES_GROUPID_2 =
-		"registrationResource.groupId = ? AND ";
+	private static final String
+		_FINDER_COLUMN_GROUPANDPARENTRESOURCE_GROUPID_2 =
+			"registrationResource.groupId = ? AND ";
 
 	private static final String
-		_FINDER_COLUMN_CHILDRESOURCES_PARENTRESOURCEID_2 =
+		_FINDER_COLUMN_GROUPANDPARENTRESOURCE_PARENTRESOURCEID_2 =
 			"registrationResource.parentResourceId = ?";
 
-	private FinderPath _finderPathWithPaginationFindByResources;
-	private FinderPath _finderPathWithoutPaginationFindByResources;
-	private FinderPath _finderPathCountByResources;
+	private FinderPath _finderPathWithPaginationFindByGroupAndResource;
+	private FinderPath _finderPathWithoutPaginationFindByGroupAndResource;
+	private FinderPath _finderPathCountByGroupAndResource;
 
 	/**
 	 * Returns all the registration resources where groupId = &#63; and registrationResourceId = &#63;.
@@ -1734,10 +1757,10 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the matching registration resources
 	 */
 	@Override
-	public List<RegistrationResource> findByResources(
+	public List<RegistrationResource> findByGroupAndResource(
 		long groupId, long registrationResourceId) {
 
-		return findByResources(
+		return findByGroupAndResource(
 			groupId, registrationResourceId, QueryUtil.ALL_POS,
 			QueryUtil.ALL_POS, null);
 	}
@@ -1756,10 +1779,10 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the range of matching registration resources
 	 */
 	@Override
-	public List<RegistrationResource> findByResources(
+	public List<RegistrationResource> findByGroupAndResource(
 		long groupId, long registrationResourceId, int start, int end) {
 
-		return findByResources(
+		return findByGroupAndResource(
 			groupId, registrationResourceId, start, end, null);
 	}
 
@@ -1778,11 +1801,11 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the ordered range of matching registration resources
 	 */
 	@Override
-	public List<RegistrationResource> findByResources(
+	public List<RegistrationResource> findByGroupAndResource(
 		long groupId, long registrationResourceId, int start, int end,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		return findByResources(
+		return findByGroupAndResource(
 			groupId, registrationResourceId, start, end, orderByComparator,
 			true);
 	}
@@ -1803,7 +1826,7 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the ordered range of matching registration resources
 	 */
 	@Override
-	public List<RegistrationResource> findByResources(
+	public List<RegistrationResource> findByGroupAndResource(
 		long groupId, long registrationResourceId, int start, int end,
 		OrderByComparator<RegistrationResource> orderByComparator,
 		boolean useFinderCache) {
@@ -1815,12 +1838,12 @@ public class RegistrationResourcePersistenceImpl
 			(orderByComparator == null)) {
 
 			if (useFinderCache) {
-				finderPath = _finderPathWithoutPaginationFindByResources;
+				finderPath = _finderPathWithoutPaginationFindByGroupAndResource;
 				finderArgs = new Object[] {groupId, registrationResourceId};
 			}
 		}
 		else if (useFinderCache) {
-			finderPath = _finderPathWithPaginationFindByResources;
+			finderPath = _finderPathWithPaginationFindByGroupAndResource;
 			finderArgs = new Object[] {
 				groupId, registrationResourceId, start, end, orderByComparator
 			};
@@ -1859,9 +1882,9 @@ public class RegistrationResourcePersistenceImpl
 
 			sb.append(_SQL_SELECT_REGISTRATIONRESOURCE_WHERE);
 
-			sb.append(_FINDER_COLUMN_RESOURCES_GROUPID_2);
+			sb.append(_FINDER_COLUMN_GROUPANDRESOURCE_GROUPID_2);
 
-			sb.append(_FINDER_COLUMN_RESOURCES_REGISTRATIONRESOURCEID_2);
+			sb.append(_FINDER_COLUMN_GROUPANDRESOURCE_REGISTRATIONRESOURCEID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
@@ -1916,13 +1939,14 @@ public class RegistrationResourcePersistenceImpl
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
 	@Override
-	public RegistrationResource findByResources_First(
+	public RegistrationResource findByGroupAndResource_First(
 			long groupId, long registrationResourceId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws NoSuchRegistrationResourceException {
 
-		RegistrationResource registrationResource = fetchByResources_First(
-			groupId, registrationResourceId, orderByComparator);
+		RegistrationResource registrationResource =
+			fetchByGroupAndResource_First(
+				groupId, registrationResourceId, orderByComparator);
 
 		if (registrationResource != null) {
 			return registrationResource;
@@ -1952,11 +1976,11 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the first matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
 	@Override
-	public RegistrationResource fetchByResources_First(
+	public RegistrationResource fetchByGroupAndResource_First(
 		long groupId, long registrationResourceId,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		List<RegistrationResource> list = findByResources(
+		List<RegistrationResource> list = findByGroupAndResource(
 			groupId, registrationResourceId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -1976,13 +2000,14 @@ public class RegistrationResourcePersistenceImpl
 	 * @throws NoSuchRegistrationResourceException if a matching registration resource could not be found
 	 */
 	@Override
-	public RegistrationResource findByResources_Last(
+	public RegistrationResource findByGroupAndResource_Last(
 			long groupId, long registrationResourceId,
 			OrderByComparator<RegistrationResource> orderByComparator)
 		throws NoSuchRegistrationResourceException {
 
-		RegistrationResource registrationResource = fetchByResources_Last(
-			groupId, registrationResourceId, orderByComparator);
+		RegistrationResource registrationResource =
+			fetchByGroupAndResource_Last(
+				groupId, registrationResourceId, orderByComparator);
 
 		if (registrationResource != null) {
 			return registrationResource;
@@ -2012,17 +2037,17 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the last matching registration resource, or <code>null</code> if a matching registration resource could not be found
 	 */
 	@Override
-	public RegistrationResource fetchByResources_Last(
+	public RegistrationResource fetchByGroupAndResource_Last(
 		long groupId, long registrationResourceId,
 		OrderByComparator<RegistrationResource> orderByComparator) {
 
-		int count = countByResources(groupId, registrationResourceId);
+		int count = countByGroupAndResource(groupId, registrationResourceId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<RegistrationResource> list = findByResources(
+		List<RegistrationResource> list = findByGroupAndResource(
 			groupId, registrationResourceId, count - 1, count,
 			orderByComparator);
 
@@ -2040,9 +2065,11 @@ public class RegistrationResourcePersistenceImpl
 	 * @param registrationResourceId the registration resource ID
 	 */
 	@Override
-	public void removeByResources(long groupId, long registrationResourceId) {
+	public void removeByGroupAndResource(
+		long groupId, long registrationResourceId) {
+
 		for (RegistrationResource registrationResource :
-				findByResources(
+				findByGroupAndResource(
 					groupId, registrationResourceId, QueryUtil.ALL_POS,
 					QueryUtil.ALL_POS, null)) {
 
@@ -2058,8 +2085,10 @@ public class RegistrationResourcePersistenceImpl
 	 * @return the number of matching registration resources
 	 */
 	@Override
-	public int countByResources(long groupId, long registrationResourceId) {
-		FinderPath finderPath = _finderPathCountByResources;
+	public int countByGroupAndResource(
+		long groupId, long registrationResourceId) {
+
+		FinderPath finderPath = _finderPathCountByGroupAndResource;
 
 		Object[] finderArgs = new Object[] {groupId, registrationResourceId};
 
@@ -2070,9 +2099,9 @@ public class RegistrationResourcePersistenceImpl
 
 			sb.append(_SQL_COUNT_REGISTRATIONRESOURCE_WHERE);
 
-			sb.append(_FINDER_COLUMN_RESOURCES_GROUPID_2);
+			sb.append(_FINDER_COLUMN_GROUPANDRESOURCE_GROUPID_2);
 
-			sb.append(_FINDER_COLUMN_RESOURCES_REGISTRATIONRESOURCEID_2);
+			sb.append(_FINDER_COLUMN_GROUPANDRESOURCE_REGISTRATIONRESOURCEID_2);
 
 			String sql = sb.toString();
 
@@ -2104,11 +2133,11 @@ public class RegistrationResourcePersistenceImpl
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_RESOURCES_GROUPID_2 =
+	private static final String _FINDER_COLUMN_GROUPANDRESOURCE_GROUPID_2 =
 		"registrationResource.groupId = ? AND ";
 
 	private static final String
-		_FINDER_COLUMN_RESOURCES_REGISTRATIONRESOURCEID_2 =
+		_FINDER_COLUMN_GROUPANDRESOURCE_REGISTRATIONRESOURCEID_2 =
 			"registrationResource.registrationResourceId = ?";
 
 	public RegistrationResourcePersistenceImpl() {
@@ -2648,8 +2677,9 @@ public class RegistrationResourcePersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
 			new String[0], new String[0], false);
 
-		_finderPathWithPaginationFindByEventResources = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByEventResources",
+		_finderPathWithPaginationFindByGroupAndEventResource = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByGroupAndEventResource",
 			new String[] {
 				Long.class.getName(), Long.class.getName(),
 				Integer.class.getName(), Integer.class.getName(),
@@ -2657,18 +2687,22 @@ public class RegistrationResourcePersistenceImpl
 			},
 			new String[] {"groupId", "eventResourceId"}, true);
 
-		_finderPathWithoutPaginationFindByEventResources = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByEventResources",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"groupId", "eventResourceId"}, true);
+		_finderPathWithoutPaginationFindByGroupAndEventResource =
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+				"findByGroupAndEventResource",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				new String[] {"groupId", "eventResourceId"}, true);
 
-		_finderPathCountByEventResources = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByEventResources",
+		_finderPathCountByGroupAndEventResource = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByGroupAndEventResource",
 			new String[] {Long.class.getName(), Long.class.getName()},
 			new String[] {"groupId", "eventResourceId"}, false);
 
-		_finderPathWithPaginationFindByEventArticle = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByEventArticle",
+		_finderPathWithPaginationFindByGroupAndEventArticle = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByGroupAndEventArticle",
 			new String[] {
 				Long.class.getName(), Long.class.getName(),
 				Integer.class.getName(), Integer.class.getName(),
@@ -2676,18 +2710,21 @@ public class RegistrationResourcePersistenceImpl
 			},
 			new String[] {"groupId", "eventArticleId"}, true);
 
-		_finderPathWithoutPaginationFindByEventArticle = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByEventArticle",
+		_finderPathWithoutPaginationFindByGroupAndEventArticle = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByGroupAndEventArticle",
 			new String[] {Long.class.getName(), Long.class.getName()},
 			new String[] {"groupId", "eventArticleId"}, true);
 
-		_finderPathCountByEventArticle = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByEventArticle",
+		_finderPathCountByGroupAndEventArticle = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByGroupAndEventArticle",
 			new String[] {Long.class.getName(), Long.class.getName()},
 			new String[] {"groupId", "eventArticleId"}, false);
 
-		_finderPathWithPaginationFindByChildResources = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByChildResources",
+		_finderPathWithPaginationFindByGroupAndParentResource = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByGroupAndParentResource",
 			new String[] {
 				Long.class.getName(), Long.class.getName(),
 				Integer.class.getName(), Integer.class.getName(),
@@ -2695,18 +2732,21 @@ public class RegistrationResourcePersistenceImpl
 			},
 			new String[] {"groupId", "parentResourceId"}, true);
 
-		_finderPathWithoutPaginationFindByChildResources = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByChildResources",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"groupId", "parentResourceId"}, true);
+		_finderPathWithoutPaginationFindByGroupAndParentResource =
+			new FinderPath(
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+				"findByGroupAndParentResource",
+				new String[] {Long.class.getName(), Long.class.getName()},
+				new String[] {"groupId", "parentResourceId"}, true);
 
-		_finderPathCountByChildResources = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByChildResources",
+		_finderPathCountByGroupAndParentResource = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByGroupAndParentResource",
 			new String[] {Long.class.getName(), Long.class.getName()},
 			new String[] {"groupId", "parentResourceId"}, false);
 
-		_finderPathWithPaginationFindByResources = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByResources",
+		_finderPathWithPaginationFindByGroupAndResource = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByGroupAndResource",
 			new String[] {
 				Long.class.getName(), Long.class.getName(),
 				Integer.class.getName(), Integer.class.getName(),
@@ -2714,13 +2754,14 @@ public class RegistrationResourcePersistenceImpl
 			},
 			new String[] {"groupId", "registrationResourceId"}, true);
 
-		_finderPathWithoutPaginationFindByResources = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByResources",
+		_finderPathWithoutPaginationFindByGroupAndResource = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByGroupAndResource",
 			new String[] {Long.class.getName(), Long.class.getName()},
 			new String[] {"groupId", "registrationResourceId"}, true);
 
-		_finderPathCountByResources = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByResources",
+		_finderPathCountByGroupAndResource = new FinderPath(
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByGroupAndResource",
 			new String[] {Long.class.getName(), Long.class.getName()},
 			new String[] {"groupId", "registrationResourceId"}, false);
 

@@ -48,6 +48,17 @@ public class RegistrationLocalServiceWrapper
 		return _registrationLocalService.addRegistration(registration);
 	}
 
+	@Override
+	public int countByResource(long resourceId) {
+		return _registrationLocalService.countByResource(resourceId);
+	}
+
+	@Override
+	public int countByUserAndResource(long userId, long resourceId) {
+		return _registrationLocalService.countByUserAndResource(
+			userId, resourceId);
+	}
+
 	/**
 	 * @throws PortalException
 	 */
@@ -231,6 +242,40 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List
+		<nl.deltares.data.service.registration.model.Registration>
+			findByAuthorAndResource(long authorId, long resourceId) {
+
+		return _registrationLocalService.findByAuthorAndResource(
+			authorId, resourceId);
+	}
+
+	@Override
+	public java.util.List
+		<nl.deltares.data.service.registration.model.Registration>
+			findByResource(long resourceId) {
+
+		return _registrationLocalService.findByResource(resourceId);
+	}
+
+	@Override
+	public java.util.List
+		<nl.deltares.data.service.registration.model.Registration>
+			findByUserAndGroup(long userId, long groupId) {
+
+		return _registrationLocalService.findByUserAndGroup(userId, groupId);
+	}
+
+	@Override
+	public java.util.List
+		<nl.deltares.data.service.registration.model.Registration>
+			findByUserAndResource(long userId, long resourceId) {
+
+		return _registrationLocalService.findByUserAndResource(
+			userId, resourceId);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 
@@ -307,6 +352,16 @@ public class RegistrationLocalServiceWrapper
 	@Override
 	public int getRegistrationsCount() {
 		return _registrationLocalService.getRegistrationsCount();
+	}
+
+	@Override
+	public void removeByResource(long resourceId) {
+		_registrationLocalService.removeByResource(resourceId);
+	}
+
+	@Override
+	public void removeByUserAndResource(long userId, long resourceId) {
+		_registrationLocalService.removeByUserAndResource(userId, resourceId);
 	}
 
 	/**
