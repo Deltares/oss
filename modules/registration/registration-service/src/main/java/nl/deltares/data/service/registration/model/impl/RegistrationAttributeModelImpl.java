@@ -76,7 +76,7 @@ public class RegistrationAttributeModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table Service_builder_RegistrationAttribute (registrationAttributeId LONG not null primary key,registrationId LONG,name VARCHAR(75) null,value VARCHAR(75) null)";
+		"create table Service_builder_RegistrationAttribute (registrationAttributeId LONG not null primary key,registrationId LONG,name VARCHAR(75) null,value STRING null)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table Service_builder_RegistrationAttribute";
