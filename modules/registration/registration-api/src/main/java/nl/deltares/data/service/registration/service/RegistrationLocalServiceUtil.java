@@ -210,6 +210,12 @@ public class RegistrationLocalServiceUtil {
 		return getService().fetchRegistration(registrationId);
 	}
 
+	public static List<Registration> findByAuthorAndGroup(
+		long authorId, long groupId) {
+
+		return getService().findByAuthorAndGroup(authorId, groupId);
+	}
+
 	public static List<Registration> findByAuthorAndResource(
 		long authorId, long resourceId) {
 

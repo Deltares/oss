@@ -103,7 +103,7 @@ public class RegistrationLocalServiceUtil {
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId         Site Identifier
 	 * @param eventResourceId Article Identifier of Event being removed.
 	 */
 	public static void deleteAllEventRegistrations(
@@ -116,7 +116,7 @@ public class RegistrationLocalServiceUtil {
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
 	 */
 	public static void deleteAllRegistrationsAndChildRegistrations(
@@ -130,8 +130,8 @@ public class RegistrationLocalServiceUtil {
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
-	 * @param userId User id
+	 * @param groupId         Site Identifier
+	 * @param userId          User id
 	 * @param eventResourceId Article Identifier of Event being removed.
 	 */
 	public static void deleteAllUserEventRegistrations(
@@ -186,10 +186,10 @@ public class RegistrationLocalServiceUtil {
 	 * Delete user registrations for 'resourceId' and a start date equal to 'startDate'
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
-	 * @param userId User for which to remove registration
-	 * @param startDate Start date for which to remove registration
+	 * @param userId     User for which to remove registration
+	 * @param startDate  Start date for which to remove registration
 	 */
 	public static void deleteUserRegistration(
 			long groupId, long resourceId, long userId,
@@ -205,9 +205,9 @@ public class RegistrationLocalServiceUtil {
 	 * Delete user registrations for 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
-	 * @param userId User for which to remove registration
+	 * @param userId     User for which to remove registration
 	 */
 	public static void deleteUserRegistrationAndChildRegistrations(
 		long groupId, long resourceId, long userId) {
@@ -382,6 +382,20 @@ public class RegistrationLocalServiceUtil {
 		return getService().getRegistration(registrationId);
 	}
 
+	public static List<Registration> getRegistrationDataByAuthorAndResourceId(
+		long authorId, long resourceId) {
+
+		return getService().getRegistrationDataByAuthorAndResourceId(
+			authorId, resourceId);
+	}
+
+	public static List<Registration> getRegistrationDataByUserAndResourceId(
+		long userId, long resourceId) {
+
+		return getService().getRegistrationDataByUserAndResourceId(
+			userId, resourceId);
+	}
+
 	public static List<java.util.Date> getRegistrationDates(
 		long groupId, long userId, long resourceId) {
 
@@ -448,7 +462,7 @@ public class RegistrationLocalServiceUtil {
 			groupId, userId, resourceId, startDate);
 	}
 
-	public static long[] getRegistrationsWithOverlappingPeriod(
+	public static List<Registration> getRegistrationsWithOverlappingPeriod(
 		long groupId, long userId, java.util.Date startTime,
 		java.util.Date endTime) {
 

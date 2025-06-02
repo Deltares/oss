@@ -196,6 +196,8 @@ public interface RegistrationLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Registration fetchRegistration(long registrationId);
 
+	public List<Registration> findByAuthorAndGroup(long authorId, long groupId);
+
 	public List<Registration> findByAuthorAndResource(
 		long authorId, long resourceId);
 

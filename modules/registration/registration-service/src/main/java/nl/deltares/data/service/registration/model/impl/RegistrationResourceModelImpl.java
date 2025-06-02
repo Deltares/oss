@@ -81,7 +81,7 @@ public class RegistrationResourceModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table Service_builder_RegistrationResource (registrationResourceId LONG not null primary key,companyId LONG,groupId LONG,eventResourceId LONG,parentResourceId LONG,resourceName VARCHAR(75) null,eventResourceName VARCHAR(75) null,eventArticleId LONG)";
+		"create table Service_builder_RegistrationResource (registrationResourceId LONG not null primary key,companyId LONG,groupId LONG,eventResourceId LONG,parentResourceId LONG,resourceName VARCHAR(255) null,eventResourceName VARCHAR(255) null,eventArticleId LONG)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table Service_builder_RegistrationResource";

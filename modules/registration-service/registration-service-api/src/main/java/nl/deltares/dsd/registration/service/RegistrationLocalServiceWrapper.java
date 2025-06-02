@@ -105,7 +105,7 @@ public class RegistrationLocalServiceWrapper
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId         Site Identifier
 	 * @param eventResourceId Article Identifier of Event being removed.
 	 */
 	@Override
@@ -120,7 +120,7 @@ public class RegistrationLocalServiceWrapper
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
 	 */
 	@Override
@@ -135,8 +135,8 @@ public class RegistrationLocalServiceWrapper
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
-	 * @param userId User id
+	 * @param groupId         Site Identifier
+	 * @param userId          User id
 	 * @param eventResourceId Article Identifier of Event being removed.
 	 */
 	@Override
@@ -198,10 +198,10 @@ public class RegistrationLocalServiceWrapper
 	 * Delete user registrations for 'resourceId' and a start date equal to 'startDate'
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
-	 * @param userId User for which to remove registration
-	 * @param startDate Start date for which to remove registration
+	 * @param userId     User for which to remove registration
+	 * @param startDate  Start date for which to remove registration
 	 */
 	@Override
 	public void deleteUserRegistration(
@@ -218,9 +218,9 @@ public class RegistrationLocalServiceWrapper
 	 * Delete user registrations for 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
-	 * @param userId User for which to remove registration
+	 * @param userId     User for which to remove registration
 	 */
 	@Override
 	public void deleteUserRegistrationAndChildRegistrations(
@@ -430,6 +430,23 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List<nl.deltares.dsd.registration.model.Registration>
+		getRegistrationDataByAuthorAndResourceId(
+			long authorId, long resourceId) {
+
+		return _registrationLocalService.
+			getRegistrationDataByAuthorAndResourceId(authorId, resourceId);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.dsd.registration.model.Registration>
+		getRegistrationDataByUserAndResourceId(long userId, long resourceId) {
+
+		return _registrationLocalService.getRegistrationDataByUserAndResourceId(
+			userId, resourceId);
+	}
+
+	@Override
 	public java.util.List<java.util.Date> getRegistrationDates(
 		long groupId, long userId, long resourceId) {
 
@@ -512,9 +529,10 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	@Override
-	public long[] getRegistrationsWithOverlappingPeriod(
-		long groupId, long userId, java.util.Date startTime,
-		java.util.Date endTime) {
+	public java.util.List<nl.deltares.dsd.registration.model.Registration>
+		getRegistrationsWithOverlappingPeriod(
+			long groupId, long userId, java.util.Date startTime,
+			java.util.Date endTime) {
 
 		return _registrationLocalService.getRegistrationsWithOverlappingPeriod(
 			groupId, userId, startTime, endTime);

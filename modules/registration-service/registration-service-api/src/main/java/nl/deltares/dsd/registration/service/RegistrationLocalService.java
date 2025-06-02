@@ -102,7 +102,7 @@ public interface RegistrationLocalService
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId         Site Identifier
 	 * @param eventResourceId Article Identifier of Event being removed.
 	 */
 	public void deleteAllEventRegistrations(long groupId, long eventResourceId);
@@ -111,7 +111,7 @@ public interface RegistrationLocalService
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
 	 */
 	public void deleteAllRegistrationsAndChildRegistrations(
@@ -121,8 +121,8 @@ public interface RegistrationLocalService
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
-	 * @param userId User id
+	 * @param groupId         Site Identifier
+	 * @param userId          User id
 	 * @param eventResourceId Article Identifier of Event being removed.
 	 */
 	public void deleteAllUserEventRegistrations(
@@ -167,10 +167,10 @@ public interface RegistrationLocalService
 	 * Delete user registrations for 'resourceId' and a start date equal to 'startDate'
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
-	 * @param userId User for which to remove registration
-	 * @param startDate Start date for which to remove registration
+	 * @param userId     User for which to remove registration
+	 * @param startDate  Start date for which to remove registration
 	 */
 	public void deleteUserRegistration(
 			long groupId, long resourceId, long userId, Date startDate)
@@ -180,9 +180,9 @@ public interface RegistrationLocalService
 	 * Delete user registrations for 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
-	 * @param userId User for which to remove registration
+	 * @param userId     User for which to remove registration
 	 */
 	public void deleteUserRegistrationAndChildRegistrations(
 		long groupId, long resourceId, long userId);
@@ -314,6 +314,14 @@ public interface RegistrationLocalService
 		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getRegistrationDataByAuthorAndResourceId(
+		long authorId, long resourceId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getRegistrationDataByUserAndResourceId(
+		long userId, long resourceId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Date> getRegistrationDates(
 		long groupId, long userId, long resourceId);
 
@@ -363,7 +371,7 @@ public interface RegistrationLocalService
 		long groupId, long userId, long resourceId, Date startDate);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public long[] getRegistrationsWithOverlappingPeriod(
+	public List<Registration> getRegistrationsWithOverlappingPeriod(
 		long groupId, long userId, Date startTime, Date endTime);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)

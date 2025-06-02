@@ -41,6 +41,10 @@ public class RegistrationLocalServiceImpl
 		return RegistrationUtil.findByUserAndGroup(userId, groupId);
 	}
 
+	public List<Registration> findByAuthorAndGroup(long authorId, long groupId){
+		return RegistrationUtil.findByAuthorAndGroup(authorId, groupId);
+	}
+
 	public List<Registration> findByAuthorAndResource(long authorId, long resourceId){
 		return RegistrationUtil.findByAuthorAndResource(authorId, resourceId);
 	}

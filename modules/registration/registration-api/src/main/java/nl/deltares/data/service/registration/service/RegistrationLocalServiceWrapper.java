@@ -244,6 +244,15 @@ public class RegistrationLocalServiceWrapper
 	@Override
 	public java.util.List
 		<nl.deltares.data.service.registration.model.Registration>
+			findByAuthorAndGroup(long authorId, long groupId) {
+
+		return _registrationLocalService.findByAuthorAndGroup(
+			authorId, groupId);
+	}
+
+	@Override
+	public java.util.List
+		<nl.deltares.data.service.registration.model.Registration>
 			findByAuthorAndResource(long authorId, long resourceId) {
 
 		return _registrationLocalService.findByAuthorAndResource(
