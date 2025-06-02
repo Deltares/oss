@@ -4,7 +4,6 @@
 
 
     <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
-    <#assign dsdSessionUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdSessionUtils") />
     <#assign dsdJournalArticleUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdJournalArticleUtils") />
     <#assign articleId = .vars['reserved-article-id'].getData() />
     <#assign urltitle=.vars['reserved-article-url-title'].data />

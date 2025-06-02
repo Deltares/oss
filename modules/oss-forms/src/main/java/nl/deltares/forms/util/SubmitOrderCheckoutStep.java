@@ -90,18 +90,8 @@ public class SubmitOrderCheckoutStep extends BaseCheckoutStep {
     @Reference
     private DsdParserUtils _dsdParserUtils;
 
+    @Reference
     private DsdSessionUtils _dsdSessionUtils;
-    @Reference(
-            unbind = "-",
-            cardinality = ReferenceCardinality.MULTIPLE
-    )
-    protected void setDsdSessionUtils(DsdSessionUtils dsdSessionUtils) {
-
-        //todo: add check for preferred instance
-        if (dsdSessionUtils instanceof RegistrationUtilsImpl) {
-            _dsdSessionUtils = dsdSessionUtils;
-        }
-    }
 
     @Reference
     private WebinarUtilsFactory _webinarUtilsFactory;

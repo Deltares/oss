@@ -12,10 +12,8 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.*;
 import nl.deltares.portal.utils.impl.LanguageImpl;
-import nl.deltares.portal.utils.impl.RegistrationUtilsImpl;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -54,22 +52,8 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
     @Reference
     private SanctionCheckUtils sanctionCheckUtils;
 
-    private DsdSessionUtils oldSessionUtils;
-    private DsdSessionUtils newSessionUtils;
-
-    @Reference(
-            unbind = "-",
-            cardinality = ReferenceCardinality.MULTIPLE
-    )
-    protected void setDsdSessionUtils(DsdSessionUtils dsdSessionUtils) {
-
-        if (dsdSessionUtils instanceof RegistrationUtilsImpl){
-            newSessionUtils = dsdSessionUtils;
-        } else {
-            oldSessionUtils = dsdSessionUtils;
-        }
-
-    }
+    @Reference
+    private DsdSessionUtils sessionUtils;
 
     @Override
     public void prepare(Map<String, Object> contextObjects, HttpServletRequest request) {
@@ -77,8 +61,7 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
         contextObjects.put("journalContentUtil", journalContent);
         contextObjects.put("layoutUtils", layoutUtils);
         contextObjects.put("ddlUtils", ddlUtils);
-        contextObjects.put("oldDsdSessionUtils", oldSessionUtils);
-        contextObjects.put("dsdSessionUtils", newSessionUtils);
+        contextObjects.put("dsdSessionUtils", sessionUtils);
         /*
           Section below is used in user_personal.ftl
          */

@@ -1,5 +1,4 @@
 <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
-<#--<#assign dsdSessionUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdSessionUtils") />-->
 <#assign userUtils = staticUtil["com.liferay.portal.kernel.service.UserLocalServiceUtil"] />
 <#assign title=.vars['reserved-article-title'].data />
 <#assign urltitle=.vars['reserved-article-url-title'].data />
@@ -9,6 +8,7 @@
 <#assign timeZoneId = registration.getTimeZoneId() />
 <#assign showButtons = displayContext.canUserRegister() && themeDisplay.isSignedIn() />
 <#assign cancellationExceeded = registration.isCancellationPeriodExceeded() />
+<#assign redirectUrl= themeDisplay.getSiteGroup().getDisplayURL(themeDisplay) + "/program" />
 <#if registration.isMultiDayEvent() >
     <#assign title = displayContext.getTitle() />
 </#if>
@@ -54,11 +54,10 @@
                 <span class="d-block" style="float:right">
                     <table >
                         <#list registrationDatas as registrationData>
-
-                        <#assign registeredUser = userUtils.fetchUser(registrationData.getUserId()) />
-                        <#if validator.isNotNull(registeredUser)>
+                        <#if  userUtils.fetchUser(registrationData.getUserId())?? >
+                            <#assign registeredUser =  userUtils.fetchUser(registrationData.getUserId())/>
                         <tr><td>
-                            <a href="${displayContext.getUnregisterURL(renderRequest, registeredUser.getUserId()) }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
+                            <a href="${displayContext.getUnregisterURL(renderRequest, registeredUser.getUserId(), "RegistrationFormPortlet",  "/submit/unregister/form") }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
                                 ${languageUtil.get(locale, "registrationform.unregister")}
                                 &nbsp;
                                 ${registeredUser.getFullName()}

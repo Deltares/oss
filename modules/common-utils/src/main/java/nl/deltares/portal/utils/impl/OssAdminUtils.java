@@ -139,20 +139,29 @@ public class OssAdminUtils implements AdminUtils {
             throw new IllegalArgumentException("Registration email missing");
         }
         final User registrationUser = userLocalService.fetchUserByEmailAddress(companyId, registrationEmail);
-        if (registrationUser != null) return registrationUser; //user already exists.
-        String userName;
-        try {
-            userName = getUserName(registrationEmail);
-        } catch (Exception e) {
-            userName = registrationEmail.split("@")[0];
+        if (registrationUser == null){
+            String userName;
+            try {
+                userName = getUserName(registrationEmail);
+            } catch (Exception e) {
+                userName = registrationEmail.split("@")[0];
+            }
+            final ServiceContext serviceContext = new ServiceContext();
+            serviceContext.setScopeGroupId(loggedInUser.getGroupId());
+            return userLocalService.addUser(loggedInUser.getUserId(), companyId, true,
+                    null, null, false, userName, registrationEmail,
+                    locale, firstName, null, lastName, 0, 0, true,
+                    1, 1, 1970, salutation, 1, new long[0],
+                    new long[0], new long[0], new long[0], false, serviceContext);
+
+        } else {
+
+            if (salutation != null && !salutation.equals(registrationUser.getJobTitle())) {
+                registrationUser.setJobTitle(salutation);
+                userLocalService.updateUser(registrationUser);
+            }
+            return registrationUser; //user already exists.
         }
-        final ServiceContext serviceContext = new ServiceContext();
-        serviceContext.setScopeGroupId(loggedInUser.getGroupId());
-        return userLocalService.addUser(loggedInUser.getUserId(), companyId, true,
-                null, null, false, userName, registrationEmail,
-                locale, firstName, null, lastName, 0, 0, true,
-                1, 1, 1970, salutation, 1, new long[0],
-                new long[0], new long[0], new long[0], false, serviceContext);
 
     }
 

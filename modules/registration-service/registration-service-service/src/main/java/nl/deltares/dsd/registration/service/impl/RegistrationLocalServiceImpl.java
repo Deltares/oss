@@ -282,13 +282,22 @@ public class RegistrationLocalServiceImpl
 
     }
 
-    public int countUserEventRegistrationsRegisteredByMe(long groupId, long registeredByUserId, long eventResourceId) {
-        return RegistrationUtil.countByUserEventRegistrationsRegisteredByMe(groupId, registeredByUserId, eventResourceId);
+    public List<Registration> getRegistrationDataByUserAndGroupId(long userId, long groupId) {
+
+        Criterion checkRegisteredByUserId = PropertyFactoryUtil.forName("userId").eq(userId);
+        Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
+        DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class,
+                getClass().getClassLoader()).add(checkRegisteredByUserId).add(checkGroupId);
+        return RegistrationUtil.findWithDynamicQuery(query);
     }
 
-    public List<Registration> getUserEventRegistrationsMadeForOthers(
-            long groupId, long registeredByUserId, long eventResourceId) {
-        return RegistrationUtil.findByUserEventRegistrationsRegisteredByMe(groupId, registeredByUserId, eventResourceId);
+    public List<Registration> getRegistrationDataByAuthorAndGroupId(long authorId, long groupId) {
+
+        Criterion checkRegisteredByUserId = PropertyFactoryUtil.forName("registeredByUserId").eq(authorId);
+        Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
+        DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class,
+                getClass().getClassLoader()).add(checkRegisteredByUserId).add(checkGroupId);
+        return RegistrationUtil.findWithDynamicQuery(query);
     }
 
     public List<Registration> getRegistrationDataByAuthorAndResourceId(long authorId, long resourceId) {

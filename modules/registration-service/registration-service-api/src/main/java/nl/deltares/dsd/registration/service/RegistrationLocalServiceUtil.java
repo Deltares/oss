@@ -72,13 +72,6 @@ public class RegistrationLocalServiceUtil {
 			userId, transferDate, registeredByUserId);
 	}
 
-	public static int countUserEventRegistrationsRegisteredByMe(
-		long groupId, long registeredByUserId, long eventResourceId) {
-
-		return getService().countUserEventRegistrationsRegisteredByMe(
-			groupId, registeredByUserId, eventResourceId);
-	}
-
 	/**
 	 * @throws PortalException
 	 */
@@ -382,11 +375,25 @@ public class RegistrationLocalServiceUtil {
 		return getService().getRegistration(registrationId);
 	}
 
+	public static List<Registration> getRegistrationDataByAuthorAndGroupId(
+		long authorId, long groupId) {
+
+		return getService().getRegistrationDataByAuthorAndGroupId(
+			authorId, groupId);
+	}
+
 	public static List<Registration> getRegistrationDataByAuthorAndResourceId(
 		long authorId, long resourceId) {
 
 		return getService().getRegistrationDataByAuthorAndResourceId(
 			authorId, resourceId);
+	}
+
+	public static List<Registration> getRegistrationDataByUserAndGroupId(
+		long userId, long groupId) {
+
+		return getService().getRegistrationDataByUserAndGroupId(
+			userId, groupId);
 	}
 
 	public static List<Registration> getRegistrationDataByUserAndResourceId(
@@ -475,13 +482,6 @@ public class RegistrationLocalServiceUtil {
 
 		return getService().getUserEventRegistrations(
 			groupId, userId, eventResourceId);
-	}
-
-	public static List<Registration> getUserEventRegistrationsMadeForOthers(
-		long groupId, long registeredByUserId, long eventResourceId) {
-
-		return getService().getUserEventRegistrationsMadeForOthers(
-			groupId, registeredByUserId, eventResourceId);
 	}
 
 	public static List<Registration> getUserRegistrations(

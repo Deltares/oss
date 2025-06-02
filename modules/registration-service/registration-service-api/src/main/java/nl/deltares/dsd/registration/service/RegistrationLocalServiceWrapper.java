@@ -68,15 +68,6 @@ public class RegistrationLocalServiceWrapper
 			userId, transferDate, registeredByUserId);
 	}
 
-	@Override
-	public int countUserEventRegistrationsRegisteredByMe(
-		long groupId, long registeredByUserId, long eventResourceId) {
-
-		return _registrationLocalService.
-			countUserEventRegistrationsRegisteredByMe(
-				groupId, registeredByUserId, eventResourceId);
-	}
-
 	/**
 	 * @throws PortalException
 	 */
@@ -431,11 +422,27 @@ public class RegistrationLocalServiceWrapper
 
 	@Override
 	public java.util.List<nl.deltares.dsd.registration.model.Registration>
+		getRegistrationDataByAuthorAndGroupId(long authorId, long groupId) {
+
+		return _registrationLocalService.getRegistrationDataByAuthorAndGroupId(
+			authorId, groupId);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.dsd.registration.model.Registration>
 		getRegistrationDataByAuthorAndResourceId(
 			long authorId, long resourceId) {
 
 		return _registrationLocalService.
 			getRegistrationDataByAuthorAndResourceId(authorId, resourceId);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.dsd.registration.model.Registration>
+		getRegistrationDataByUserAndGroupId(long userId, long groupId) {
+
+		return _registrationLocalService.getRegistrationDataByUserAndGroupId(
+			userId, groupId);
 	}
 
 	@Override
@@ -545,15 +552,6 @@ public class RegistrationLocalServiceWrapper
 
 		return _registrationLocalService.getUserEventRegistrations(
 			groupId, userId, eventResourceId);
-	}
-
-	@Override
-	public java.util.List<nl.deltares.dsd.registration.model.Registration>
-		getUserEventRegistrationsMadeForOthers(
-			long groupId, long registeredByUserId, long eventResourceId) {
-
-		return _registrationLocalService.getUserEventRegistrationsMadeForOthers(
-			groupId, registeredByUserId, eventResourceId);
 	}
 
 	@Override

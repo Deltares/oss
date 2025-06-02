@@ -1,5 +1,4 @@
 <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
-<#--<#assign dsdSessionUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdSessionUtils") />-->
 <#assign title=.vars['reserved-article-title'].data />
 <#assign urltitle=.vars['reserved-article-url-title'].data />
 <#assign articleId = .vars['reserved-article-id'].getData() />
@@ -56,7 +55,7 @@
                         <#list registrationDatas as registrationData>
 
                         <tr><td>
-                            <a href="${displayContext.getUnregisterURL(renderRequest, registeredUser.getUserId()) }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
+                            <a href="${displayContext.getUnregisterURL(renderRequest, themeDisplay.getUserId(), "RegistrationFormPortlet",  "/submit/unregister/form") }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
                                 ${languageUtil.get(locale, "registrationform.unregister")}
                             </a>
                         </td></tr>

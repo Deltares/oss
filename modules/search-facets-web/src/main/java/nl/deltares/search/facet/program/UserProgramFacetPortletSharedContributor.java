@@ -11,13 +11,11 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 import nl.deltares.portal.utils.DsdSessionUtils;
-import nl.deltares.portal.utils.impl.RegistrationUtilsImpl;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.facet.program.builder.UserProgramFacetBuilder;
 import nl.deltares.search.facet.program.builder.UserProgramFacetFactory;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,19 +75,8 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
         return userProgramFacetBuilder.build();
     }
 
+    @Reference
     private DsdSessionUtils _dsdSessionUtils;
-
-    @Reference(
-            unbind = "-",
-            cardinality = ReferenceCardinality.MULTIPLE
-    )
-    protected void setDsdSessionUtils(DsdSessionUtils dsdSessionUtils) {
-
-        //todo: add check for preferred instance
-        if (dsdSessionUtils instanceof RegistrationUtilsImpl) {
-            _dsdSessionUtils = dsdSessionUtils;
-        }
-    }
 
     @Reference
     private UserProgramFacetFactory _userProgramFacetFactory;

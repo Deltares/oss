@@ -12,10 +12,8 @@ import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.deltares.portal.utils.URLUtils;
-import nl.deltares.portal.utils.impl.RegistrationUtilsImpl;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -66,18 +64,8 @@ public class SubmitUnregisterActionCommand extends BaseMVCActionCommand {
     @Reference
     private DsdParserUtils _dsdParserUtils;
 
+    @Reference
     private DsdSessionUtils _dsdSessionUtils;
-
-    @Reference(
-            unbind = "-",
-            cardinality = ReferenceCardinality.MULTIPLE
-    )
-    protected void setDsdSessionUtils(DsdSessionUtils dsdSessionUtils) {
-
-        if (dsdSessionUtils instanceof RegistrationUtilsImpl){
-            _dsdSessionUtils = dsdSessionUtils;
-        }
-    }
 
     @Reference
     private ConfigurationProvider _configurationProvider;

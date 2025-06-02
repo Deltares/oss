@@ -120,7 +120,7 @@
                     <td>
                         <aui:input
                                 label=""
-                                name='<%="salutation" + articleId + postfix%>'
+                                name='<%="salutation_" + articleId + postfix%>'
                                 data-rownumber="<%=counter%>"
                                 data-articleId="<%=articleId%>"
                                 value='${registrationInfo.salutation}'>
