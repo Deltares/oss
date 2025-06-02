@@ -5,7 +5,6 @@ import com.liferay.journal.util.JournalContent;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.template.TemplateContextContributor;
@@ -13,8 +12,10 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.*;
 import nl.deltares.portal.utils.impl.LanguageImpl;
+import nl.deltares.portal.utils.impl.RegistrationUtilsImpl;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -53,13 +54,31 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
     @Reference
     private SanctionCheckUtils sanctionCheckUtils;
 
+    private DsdSessionUtils oldSessionUtils;
+    private DsdSessionUtils newSessionUtils;
+
+    @Reference(
+            unbind = "-",
+            cardinality = ReferenceCardinality.MULTIPLE
+    )
+    protected void setDsdSessionUtils(DsdSessionUtils dsdSessionUtils) {
+
+        if (dsdSessionUtils instanceof RegistrationUtilsImpl){
+            newSessionUtils = dsdSessionUtils;
+        } else {
+            oldSessionUtils = dsdSessionUtils;
+        }
+
+    }
+
     @Override
     public void prepare(Map<String, Object> contextObjects, HttpServletRequest request) {
         contextObjects.put("journalArticleLocalService", journalArticleLocalService);
         contextObjects.put("journalContentUtil", journalContent);
         contextObjects.put("layoutUtils", layoutUtils);
         contextObjects.put("ddlUtils", ddlUtils);
-
+        contextObjects.put("oldDsdSessionUtils", oldSessionUtils);
+        contextObjects.put("dsdSessionUtils", newSessionUtils);
         /*
           Section below is used in user_personal.ftl
          */
