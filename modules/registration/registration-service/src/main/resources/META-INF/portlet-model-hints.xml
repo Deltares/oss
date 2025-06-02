@@ -13,7 +13,9 @@
 		<field name="registrationAttributeId" type="long" />
 		<field name="registrationId" type="long" />
 		<field name="name" type="String" />
-		<field name="value" type="String" />
+		<field name="value" type="String">
+			<hint-collection name="TEXTAREA" />
+		</field>
 	</model>
 	<model name="nl.deltares.data.service.registration.model.RegistrationPeriod">
 		<field name="registrationPeriodId" type="long" />
@@ -27,8 +29,12 @@
 		<field name="groupId" type="long" />
 		<field name="eventResourceId" type="long" />
 		<field name="parentResourceId" type="long" />
-		<field name="resourceName" type="String" />
-		<field name="eventResourceName" type="String" />
+		<field name="resourceName" type="String">
+			<hint name="max-length">255</hint>
+		</field>
+		<field name="eventResourceName" type="String">
+			<hint name="max-length">255</hint>
+		</field>
 		<field name="eventArticleId" type="long" />
 	</model>
 </model-hints>
