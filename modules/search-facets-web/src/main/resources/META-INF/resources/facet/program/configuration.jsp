@@ -9,10 +9,8 @@
                     renderRequest.getAttribute(UserProgramFacetConfiguration.class.getName());
 
     String showRegistrationsMadeForOthers = null;
-    String linkToRegistrationsPageForOthers = null;
     if (Validator.isNotNull(configuration)){
         showRegistrationsMadeForOthers = portletPreferences.getValue("showRegistrationsMadeForOthers", configuration.showRegistrationsMadeForOthers());
-        linkToRegistrationsPageForOthers = portletPreferences.getValue("linkToRegistrationsPageForOthers", configuration.linkToRegistrationsPageForOthers());
     }
 %>
 
@@ -46,13 +44,6 @@
                 label="Show My Programs list made for other users"
                 type="checkbox"
                 value='<%= showRegistrationsMadeForOthers %>'
-        >
-        </aui:input>
-
-        <aui:input
-                name="linkToRegistrationsPageForOthers"
-                label="Link to MY PROGRAM page with registrations made for others"
-                value='<%= linkToRegistrationsPageForOthers %>'
         >
         </aui:input>
 

@@ -1,5 +1,6 @@
 <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
-<#assign dsdSessionUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdSessionUtils") />
+<#--<#assign dsdSessionUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdSessionUtils") />-->
+<#assign userUtils = staticUtil["com.liferay.portal.kernel.service.UserLocalServiceUtil"] />
 <#assign title=.vars['reserved-article-title'].data />
 <#assign urltitle=.vars['reserved-article-url-title'].data />
 <#assign articleId = .vars['reserved-article-id'].getData() />
@@ -15,11 +16,11 @@
 <div class="row no-gutters">
 
     <div class="col-2">
-        <img class="img-fluid" src="${displayContext.getSmallImageURL()}" alt="${registration.getTitle()}"/>
+        <img class="img-fluid" src="${displayContext.getSmallImageURL()}" alt=""/>
     </div>
     <div class="col-10 px-3">
         <h4>
-            <a href="-/${urltitle}" target="_blank">
+            <a href="-/${urltitle}?redirect=${redirectUrl}" >
                 <strong>${title}</strong>
             </a>
         </h4>
@@ -27,14 +28,16 @@
             <#assign count = displayContext.getPresenterCount()/>
             <#if count gt 0>
                 <#list 0..(count-1) as i >
-                    <#assign imageUrl = displayContext.getPresenterSmallImageURL(i) />
-                    <#if imageUrl?has_content >
-                        <img width="32" class="expert-thumbnail" src="${imageUrl}"/>
-                    </#if>
-                    <#assign name = displayContext.getPresenterName(i) />
-                    <#if name?has_content>
-                        <span class="expert-name px-2">${name}</span> |
-                    </#if>
+                    <div class="items-line">
+                        <#assign imageUrl = displayContext.getPresenterSmallImageURL(i) />
+                        <#if imageUrl?has_content >
+                            <img width="32" class="expert-thumbnail" src="${imageUrl}" alt=""/>
+                        </#if>
+                        <#assign name = displayContext.getPresenterName(i) />
+                        <#if name?has_content>
+                            <span class="expert-name px-2">${name}</span> |
+                        </#if>
+                    </div>
                 </#list>
             </#if>
             <span class="c-sessions__item__time-date-place__time">
@@ -47,10 +50,13 @@
             </#if>
             <#if showButtons >
                 <#assign userId = themeDisplay.getUserId() />
-                <#assign registeredUsers = displayContext.getUsersRegisteredByLoggedInUser() />
+                <#assign registrationDatas = dsdSessionUtils.getRegistrationDataByAuthorAndResourceId(themeDisplay.getUser(), registration.getResourceId()) />
                 <span class="d-block" style="float:right">
                     <table >
-                        <#list registeredUsers as registeredUser>
+                        <#list registrationDatas as registrationData>
+
+                        <#assign registeredUser = userUtils.fetchUser(registrationData.getUserId()) />
+                        <#if validator.isNotNull(registeredUser)>
                         <tr><td>
                             <a href="${displayContext.getUnregisterURL(renderRequest, registeredUser.getUserId()) }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
                                 ${languageUtil.get(locale, "registrationform.unregister")}
@@ -58,6 +64,7 @@
                                 ${registeredUser.getFullName()}
                             </a>
                         </td></tr>
+                        </#if>
                         </#list>
                     </table>
                 </span>

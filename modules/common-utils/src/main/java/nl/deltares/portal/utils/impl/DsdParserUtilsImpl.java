@@ -6,6 +6,7 @@ import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.asset.link.service.AssetLinkLocalService;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
@@ -169,7 +170,20 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
         if (articleId.equals(sessionArticleId) && day instanceof Integer){
             dayIndex = (Integer) day;
         }
-        return new RegistrationDisplayContext(articleId, dayIndex, themeDisplay, _configurationProvider, this);
+        Registration registration = null;
+        try {
+            long groupId = themeDisplay.getScopeGroupId();
+            JournalArticle registrationArticle = JournalArticleLocalServiceUtil
+                    .fetchArticle(groupId, articleId);
+            AbsDsdArticle parentInstance = toDsdArticle(registrationArticle);
+            if (parentInstance instanceof Registration) {
+                registration = (Registration) parentInstance;
+            }
+        } catch (Exception e) {
+            LOG.error("Error getting Registration instance [" + articleId + "]", e);
+        }
+
+        return new RegistrationDisplayContext(registration, dayIndex, themeDisplay);
     }
 
     private ConfigurationProvider _configurationProvider;

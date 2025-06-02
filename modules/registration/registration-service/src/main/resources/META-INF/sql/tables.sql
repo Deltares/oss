@@ -11,7 +11,7 @@ create table Service_builder_RegistrationAttribute (
 	registrationAttributeId LONG not null primary key,
 	registrationId LONG,
 	name VARCHAR(75) null,
-	value VARCHAR(75) null
+	value STRING null
 );
 
 create table Service_builder_RegistrationPeriod (
@@ -27,7 +27,7 @@ create table Service_builder_RegistrationResource (
 	groupId LONG,
 	eventResourceId LONG,
 	parentResourceId LONG,
-	resourceName VARCHAR(75) null,
-	eventResourceName VARCHAR(75) null,
+	resourceName VARCHAR(255) null,
+	eventResourceName VARCHAR(255) null,
 	eventArticleId LONG
 );

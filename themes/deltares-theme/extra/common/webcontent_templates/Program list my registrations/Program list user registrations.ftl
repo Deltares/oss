@@ -7,16 +7,11 @@
 <#assign registration = displayContext.getRegistration() />
 <#assign timeZoneId = registration.getTimeZoneId() />
 <#assign showButtons = displayContext.canUserRegister() && themeDisplay.isSignedIn() />
+<#assign cancellationExceeded = registration.isCancellationPeriodExceeded() />
 <#assign redirectUrl= themeDisplay.getSiteGroup().getDisplayURL(themeDisplay) + "/program" />
-
 <#if registration.isMultiDayEvent() >
     <#assign title = displayContext.getTitle() />
 </#if>
-<#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
-<#assign available = registration.getCapacity() - registrations />
-<#assign cancellationExceeded = registration.isCancellationPeriodExceeded() />
-<#assign event = dsdParserUtils.getEvent(themeDisplay.getSiteGroupId(), registration.getEventId()?c) />
-<#assign eventRegistrations = event.getRegistrations(locale) />
 
 <div class="row no-gutters">
 
@@ -55,28 +50,19 @@
             </#if>
             <#if showButtons >
                 <#assign userId = themeDisplay.getUserId() />
+                <#assign registrationDatas = dsdSessionUtils.getRegistrationDataByUserAndResourceId(themeDisplay.getUser(), registration.getResourceId()) />
                 <span class="d-block" style="float:right">
-                    <#if available gt 0>
-                        <a href="#" data-article-id="${registration.getArticleId()}" class="btn-lg btn-primary add-to-cart" role="button"
-                           aria-pressed="true"  style="color:#fff">
-                          ${languageUtil.get(locale, "shopping.cart.add")}
-                        </a>
-                    </#if>
-                    <#if dsdSessionUtils.isUserRegisteredFor(themeDisplay.getUser(), registration)>
+                    <table >
+                        <#list registrationDatas as registrationData>
 
-                        <#assign joinLink = dsdSessionUtils.getUserJoinLink(themeDisplay.getUser(), registration) />
-                        <#if joinLink?? && joinLink != "">
-                            <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button"
-                               aria-pressed="true" style="margin-right:5px; color:#fff">
-                                         ${languageUtil.get(locale, "registrationform.join")}
-                                    </a>
-                        </#if>
-                            <a href="${displayContext.getUnregisterURL(renderRequest, themeDisplay.getUserId(), "RegistrationFormPortlet",  "/submit/unregister/form") }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
+                        <tr><td>
+                            <a href="${displayContext.getUnregisterURL(renderRequest, registeredUser.getUserId()) }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
                                 ${languageUtil.get(locale, "registrationform.unregister")}
                             </a>
-                    </#if>
+                        </td></tr>
+                        </#list>
+                    </table>
                 </span>
-
             </#if>
         </div>
         <#if cancellationExceeded >

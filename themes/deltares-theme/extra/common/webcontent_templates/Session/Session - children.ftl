@@ -36,7 +36,7 @@
     </#if>
     <#assign locale = themeDisplay.getLocale() />
     <#assign cancellationExceeded = registration.isCancellationPeriodExceeded() />
-    <#assign isRegistered = displayContext.isUserRegistered() />
+    <#assign isRegistered = dsdSessionUtils.isUserRegisteredFor(themeDisplay.getUser(), registration) />
     <#list childRegistrations as child >
 
         <#assign price = price + child.getPrice() />
@@ -114,7 +114,7 @@
                     <#if showButtons >
                         <#assign userId = themeDisplay.getUserId() />
                         <span class="d-block" style="float:right">
-                   <#if displayContext.isUserRegistered()>
+                   <#if dsdSessionUtils.isUserRegisteredFor(themeDisplay.getUser(), child)>
                        <#assign joinLink = dsdSessionUtils.getUserJoinLink(themeDisplay.getUser(), child) />
                        <#if joinLink?? && joinLink != "">
                            <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button"

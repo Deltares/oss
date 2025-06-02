@@ -55,7 +55,7 @@
             <#if showButtons >
                 <#assign userId = themeDisplay.getUserId() />
                 <span class="d-block" style="float:right">
-                    <#if displayContext.isUserRegistered()>
+                    <#if dsdSessionUtils.isUserRegistered(themeDisplay.getUser(), registration)>
 
                         <#assign joinLink = dsdSessionUtils.getUserJoinLink(themeDisplay.getUser(), registration) />
                         <#if joinLink?? && joinLink != "">

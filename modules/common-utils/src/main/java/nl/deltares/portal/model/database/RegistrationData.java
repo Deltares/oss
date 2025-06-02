@@ -16,6 +16,7 @@ public class RegistrationData {
     long parentResourceId;
     long eventResourceId;
     long userId;
+    long authorId;
     long registrationTime;
     List<Period> periods = new ArrayList<Period>();
     Map<String, String> attributes = new HashMap<String, String>();
@@ -74,6 +75,14 @@ public class RegistrationData {
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    public long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(long authorId) {
+        this.authorId = authorId;
     }
 
     public long getRegistrationTime() {

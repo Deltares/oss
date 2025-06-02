@@ -249,6 +249,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         if (badgeInfo.isShowTitle()) badgeInfo.setTitle(userAttributes.get(KeycloakUtils.ATTRIBUTES.academicTitle.name()));
         if (badgeInfo.isShowInitials()) badgeInfo.setInitials(userAttributes.get(KeycloakUtils.ATTRIBUTES.initials.name()));
         final Map<String, String> badge = badgeInfo.toMap();
+        Event event = registrationRequest.getEvent();
         for (Registration registration : registrationRequest.getRegistrations()) {
             preferences = new HashMap<>(userPreferences);
 // Always add billing info
@@ -259,7 +260,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 preferences.put(KeycloakUtils.ATTRIBUTES.org_name.name(), userAttributes.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
 //            }
             try {
-                dsdSessionUtils.registerUser(user, userAttributes, registration, preferences, registrationUser);
+                dsdSessionUtils.registerUser(user, userAttributes, registration, preferences, registrationUser, event);
             } catch (PortalException e) {
                 SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
                 success = false;
@@ -270,7 +271,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                     preferences.putAll(billing);
                 }
                 try {
-                    dsdSessionUtils.registerUser(user, userAttributes, childRegistration, new HashMap<>(), registrationUser);
+                    dsdSessionUtils.registerUser(user, userAttributes, childRegistration, new HashMap<>(), registrationUser, event);
                 } catch (PortalException e) {
                     SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
                     success = false;
@@ -322,11 +323,12 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             registrationRequest.setSubscribe(ParamUtil.getBoolean(actionRequest, "subscribe_newsletter", false));
             registrationRequest.setBusInfo(configuration.enableBusInfo());
             registrationRequest.setBusTransferUrl(configuration.busTransferURL());
+
+            List<Registration> eventRegistrations = event.getRegistrations(event.getLocale());
             for (String articleId : articleIds) {
                 Registration parentRegistration = dsdParserUtils.getRegistration(siteId, articleId);
                 registrationRequest.addRegistration(parentRegistration);
-
-                List<Registration> childRegistrations = dsdSessionUtils.getChildRegistrations(parentRegistration);
+                List<Registration> childRegistrations = dsdSessionUtils.getChildRegistrations(parentRegistration, eventRegistrations);
                 for (Registration childRegistration : childRegistrations) {
                     if (ParamUtil.getString(actionRequest, CHILD_PREFIX + childRegistration.getArticleId()).equals("true")) {
                         registrationRequest.addChildRegistration(parentRegistration, childRegistration);

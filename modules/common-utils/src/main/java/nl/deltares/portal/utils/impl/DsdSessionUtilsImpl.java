@@ -1,14 +1,12 @@
 package nl.deltares.portal.utils.impl;
 
 import com.liferay.journal.model.JournalArticle;
-import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.GroupServiceUtil;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.database.RegistrationData;
@@ -29,26 +27,23 @@ import java.util.stream.Collectors;
 public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     @Reference
-    DsdParserUtils parserUtils;
-
-    @Reference
     WebinarUtilsFactory webinarUtilsFactory;
 
     @Reference
     DsdJournalArticleUtils dsdJournalArticleUtils;
 
     @Override
-    public void deleteRegistrationsFor(Registration registration) {
+    public void deleteRegistrations(Registration registration) {
         RegistrationLocalServiceUtil.deleteAllRegistrationsAndChildRegistrations(registration.getGroupId(), registration.getResourceId());
     }
 
     @Override
-    public void deleteRegistrationsFor(long groupId, long resourceId) {
+    public void deleteRegistrations(long groupId, long resourceId) {
         RegistrationLocalServiceUtil.deleteAllRegistrationsAndChildRegistrations(groupId, resourceId);
     }
 
     @Override
-    public void deleteRegistrationRecord(long registrationId) throws PortalException {
+    public void deleteRegistration(long registrationId) throws PortalException {
         RegistrationLocalServiceUtil.deleteRegistration(registrationId);
     }
 
@@ -97,7 +92,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
-    public void registerUser(User user, Map<String, String> userAttributes, Registration registration, Map<String, String> registrationProperties, User registrationUser) throws PortalException {
+    public void registerUser(User user, Map<String, String> userAttributes, Registration registration, Map<String, String> registrationProperties, User registrationUser, Event event) throws PortalException {
 
         if (user.isGuestUser()) return;
         try {
@@ -108,7 +103,6 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
             long parentId = registration.getParentRegistration() == null ? 0 : registration.getParentRegistration().getResourceId();
 
             long eventResourcePrimaryKey = 0;
-            Event event = parserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()), registration.getLocale());
             if (event != null) eventResourcePrimaryKey = event.getResourceId();
             long registeredByUserId = 0;
             if (registrationUser != null && registrationUser != user) {
@@ -122,14 +116,13 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
-    public void registerUser(User user, Registration registration, Map<String, String> registrationProperties, User registrationUser) throws PortalException {
+    public void registerUser(User user, Registration registration, Map<String, String> registrationProperties, User registrationUser, Event event) throws PortalException {
 
         if (user.isGuestUser()) return;
 
         long parentId = registration.getParentRegistration() == null ? 0 : registration.getParentRegistration().getResourceId();
 
         long eventResourcePrimaryKey = 0;
-        Event event = parserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()), registration.getLocale());
         if (event != null) eventResourcePrimaryKey = event.getResourceId();
         long registeredByUserId = 0;
         if (registrationUser != null && registrationUser != user) {
@@ -227,8 +220,8 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
             throw new ValidationException(String.format("Registration %s is full!", registration.getTitle()));
         }
 
-        long[] overlappingRegistrationIds = getOverlappingRegistrationIds(user, registration);
-        if (overlappingRegistrationIds.length > 0) {
+        List<Long> overlappingRegistrationIds = getOverlappingRegistrationIds(user, registration);
+        if (!overlappingRegistrationIds.isEmpty()) {
             throw new ValidationException(String.format("Registration period for %s overlaps with other existing registrations: %s",
                     registration.getTitle(), Arrays.toString(getTitles(overlappingRegistrationIds))));
         }
@@ -238,25 +231,22 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         }
     }
 
-    private String[] getTitles(long[] articleIds) {
-        String[] titles = new String[articleIds.length];
-        for (int i = 0; i < articleIds.length; i++) {
+    private String[] getTitles(List<Long> articleIds) {
+        ArrayList<String> titles = new ArrayList<>(articleIds.size());
+        for (Long articleId : articleIds) {
             try {
-                JournalArticle journalArticle = dsdJournalArticleUtils.getLatestArticle(articleIds[i]);
-                titles[i] = journalArticle == null ? String.valueOf(articleIds[i]) : journalArticle.getTitle();
+                JournalArticle journalArticle = dsdJournalArticleUtils.getLatestArticle(articleId);
+                titles.add(journalArticle == null ? String.valueOf(articleId) : journalArticle.getTitle());
             } catch (PortalException e) {
-                titles[i] = String.valueOf(articleIds[i]);
+                titles.add(String.valueOf(articleId));
             }
         }
-        return titles;
+        return titles.toArray(new String[0]);
     }
 
-    public List<Registration> getChildRegistrations(Registration registration) throws PortalException {
-        Event event = parserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()), registration.getLocale());
-        if (event == null) return Collections.emptyList();
-        List<Registration> registrations = event.getRegistrations(event.getLocale());
+    public List<Registration> getChildRegistrations(Registration registration, List<Registration> eventRegistrations) {
         ArrayList<Registration> children = new ArrayList<>();
-        for (Registration eventRegistration : registrations) {
+        for (Registration eventRegistration : eventRegistrations) {
             if (eventRegistration.getParentRegistration() != null && eventRegistration.getParentRegistration().getResourceId() == registration.getResourceId()) {
                 children.add(eventRegistration);
             }
@@ -291,7 +281,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
                 if (registration == reg1) return;
                 if (canOverlapWithParent(reg1, registration)) return;
                 if (canOverlapWithParent(registration, reg1)) return;
-                if (periodsOverlap(reg1, registration)){
+                if (periodsOverlap(reg1, registration)) {
                     if (!overlapping.contains(registration)) overlapping.add(registration);
                     if (!overlapping.contains(reg1)) overlapping.add(reg1);
                 }
@@ -319,9 +309,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         return false;
     }
 
-    private long[] getOverlappingRegistrationIds(User user, Registration registration) throws PortalException {
-        long[] registrationsWithOverlappingPeriod = RegistrationLocalServiceUtil.getRegistrationsWithOverlappingPeriod(registration.getGroupId(), user.getUserId(),
-                registration.getStartTime(), registration.getEndTime());
+    private List<Long> getOverlappingRegistrationIds(User user, Registration registration) {
 
         /*
          * Some parallel sessions can overlap with their parent session. These need to be removed.
@@ -329,27 +317,21 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         long parentId = registration.getParentRegistration() == null ? -1 : registration.getParentRegistration().getResourceId();
         boolean overlapWithParent = registration.isOverlapWithParent();
 
-        for (int i = 0; i < registrationsWithOverlappingPeriod.length; i++) {
-            //skip if child can overlap with parent session
-            if (registrationsWithOverlappingPeriod[i] == parentId && overlapWithParent) {
-                registrationsWithOverlappingPeriod[i] = 0;
-                //skip bus transfers and other registrations that can always overlap
-            } else if (canOverlap(registrationsWithOverlappingPeriod[i], registration.getArticleId())) {
-                registrationsWithOverlappingPeriod[i] = 0;
+        long searchResourceId = registration.getResourceId();
+        List<Long> resourcesWithOverlappingPeriod = new ArrayList<>();
+        registration.getStartAndEndTimesPerDay().forEach(startAndEndTimesPerDay -> {
+            List<nl.deltares.dsd.registration.model.Registration> overlappingRegistrations = RegistrationLocalServiceUtil.getRegistrationsWithOverlappingPeriod(registration.getGroupId(), user.getUserId(),
+                    registration.getStartTime(), registration.getEndTime());
+            for (nl.deltares.dsd.registration.model.Registration overlappingRegistration : overlappingRegistrations) {
+                long registrationResourceId = overlappingRegistration.getResourcePrimaryKey();
+                if (searchResourceId == registrationResourceId) continue;
+                if (parentId == registrationResourceId && overlapWithParent) continue;
+                if (resourcesWithOverlappingPeriod.contains(registrationResourceId)) continue;
+                resourcesWithOverlappingPeriod.add(registrationResourceId);
             }
-        }
-        return ArrayUtil.remove(registrationsWithOverlappingPeriod, 0);
-    }
 
-    private boolean canOverlap(long overlappingResourcePrimaryKey, String validatingArticleId) throws PortalException {
-        JournalArticle overlappingDbRegistration = JournalArticleLocalServiceUtil.fetchLatestArticle(overlappingResourcePrimaryKey);
-        if (overlappingDbRegistration == null) {
-            LOG.warn(String.format("Registration with resourcePrimaryKey %d no longer exists.", overlappingResourcePrimaryKey));
-            return true;
-        }
-        Registration overlappingRegistration = parserUtils.getRegistration(overlappingDbRegistration);
-        return overlappingRegistration.isOverlapWithParent() &&
-                (overlappingRegistration.getParentRegistration() != null && overlappingRegistration.getParentRegistration().getArticleId().equals(validatingArticleId));
+        });
+        return resourcesWithOverlappingPeriod;
     }
 
     @Override
@@ -358,28 +340,30 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         return registrationsCount > 0;
     }
 
-    public List<Long> getUserRegistrationResourceIds(User user, long groupId) {
+    public List<Long> getResourceIdsByUserAndGroup(User user, long groupId) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
                 RegistrationLocalServiceUtil.getUserRegistrations(groupId, user.getUserId(), 0, 100);
         return dbRegistrations.stream().map(nl.deltares.dsd.registration.model.Registration::getResourcePrimaryKey).collect(Collectors.toList());
     }
 
     @Override
-    public List<Long> getUserRegistrationResourceIdsMadeForOthers(User user, long groupId) {
+    public List<Long> getResourceIdsByAuthorAndGroup(User user, long groupId) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
                 RegistrationLocalServiceUtil.getUserRegistrationsMadeForOthers(groupId, user.getUserId());
         return dbRegistrations.stream().map(nl.deltares.dsd.registration.model.Registration::getResourcePrimaryKey).collect(Collectors.toList());
     }
     @Override
-    public boolean hasUserRegistrationsMadeForOthers(User user, long groupId, long eventArticleId) {
+    public List<RegistrationData> getRegistrationDataByAuthorAndResourceId(User author, long resourceId) {
+        List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
+                RegistrationLocalServiceUtil.getRegistrationDataByAuthorAndResourceId(author.getUserId(), resourceId);
+        return dbRegistrations.stream().map(DsdSessionUtilsImpl::getRegistrationData).collect(Collectors.toList());
+    }
 
-        try {
-            final JournalArticle eventArticle = dsdJournalArticleUtils.getJournalArticle(groupId, Long.toString(eventArticleId));
-            return RegistrationLocalServiceUtil.countUserEventRegistrationsRegisteredByMe(groupId, user.getUserId(), eventArticle.getResourcePrimKey()) > 0;
-        } catch (PortalException e) {
-            return false;
-        }
-
+    @Override
+    public List<RegistrationData> getRegistrationDataByUserAndResourceId(User user, long resourceId) {
+        List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
+                RegistrationLocalServiceUtil.getRegistrationDataByAuthorAndResourceId(user.getUserId(), resourceId);
+        return dbRegistrations.stream().map(DsdSessionUtilsImpl::getRegistrationData).collect(Collectors.toList());
     }
 
     @Override
@@ -388,9 +372,9 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
                 RegistrationLocalServiceUtil.getEventRegistrations(event.getGroupId(), event.getResourceId());
         List<RegistrationData> registrations = new ArrayList<>();
         dbRegistrations.forEach(dbRegistration ->
-                {
-                    registrations.add(getRegistrationData(dbRegistration));
-                });
+        {
+            registrations.add(getRegistrationData(dbRegistration));
+        });
         return registrations;
     }
 

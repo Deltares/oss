@@ -165,7 +165,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
         try {
             logger.info(String.format("Deleting registration records for groupId %d and resourcePrimKey %d", group.getGroupId(), resourceId) );
-            dsdSessionUtils.deleteRegistrationsFor(group.getGroupId(), resourceId);
+            dsdSessionUtils.deleteRegistrations(group.getGroupId(), resourceId);
         } catch (PortalException e) {
             logger.warn(String.format("Error deleting registrations for groupId %d and resourcePrimKey %d: %s", group.getGroupId(), resourceId, e.getMessage()));
         }
@@ -180,7 +180,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             dsdSessionUtils.deleteEventRegistrations(dsdArticle.getGroupId(), dsdArticle.getResourceId());
         } else if (dsdArticle instanceof Registration){
             logger.info(String.format("Deleting registration records for Registration %s (%s)", dsdArticle.getTitle(), dsdArticle.getArticleId()) );
-            dsdSessionUtils.deleteRegistrationsFor((Registration) dsdArticle);
+            dsdSessionUtils.deleteRegistrations((Registration) dsdArticle);
         }
     }
 
@@ -498,7 +498,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
         logger.info(String.format("Deleting registration record %d", registrationId) );
         try {
-            dsdSessionUtils.deleteRegistrationRecord(registrationId);
+            dsdSessionUtils.deleteRegistration(registrationId);
         } catch (PortalException e) {
             logger.warn(String.format("Could not find registration record for deletion: %d", registrationId));
         }

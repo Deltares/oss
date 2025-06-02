@@ -118,7 +118,7 @@ public class SubmitOrderDisplayContext {
             registerWebinar(registrationUser, (SessionRegistration) registration, billingInfo, registrationAttributes);
         }
 
-        _dsdSessionUtils.registerUser(registrationUser, registration, registrationAttributes, _themeDisplay.getUser());
+        _dsdSessionUtils.registerUser(registrationUser, registration, registrationAttributes, _themeDisplay.getUser(), _event);
     }
 
     private void addBillingAttributes(BillingInfo billingInfo, Map<String, String> registrationAttributes) {
