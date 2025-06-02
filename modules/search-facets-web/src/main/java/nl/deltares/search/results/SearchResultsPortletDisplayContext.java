@@ -32,7 +32,6 @@ public class SearchResultsPortletDisplayContext implements Serializable {
     private int delta;
     private int totalHits = 0;
     private int totalLoadedRecords = 0;
-    private int paginationStart;
     private List<RegistrationDisplayContext> registrations = Collections.emptyList();
     private List<DsdArticle> dsdArticles = Collections.emptyList();
 
@@ -123,7 +122,7 @@ public class SearchResultsPortletDisplayContext implements Serializable {
         this.totalHits = totalHits;
     }
     public void setPaginationStart(int paginationStart) {
-        this.paginationStart = paginationStart;
+        //does nothing
     }
 
     private List<DsdArticle> loadDsdArticles(List<Document> results) {
