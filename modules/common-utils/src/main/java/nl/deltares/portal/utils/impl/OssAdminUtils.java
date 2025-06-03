@@ -121,16 +121,6 @@ public class OssAdminUtils implements AdminUtils {
         writer.printf("********** Finished deleting content for user %s (%s, %d) in site %d, company %d   ***********\n", screenName, email, userId, siteId, user.getCompanyId());
     }
 
-//    private void deleteUserGroups(PrintWriter writer,long userId) {
-//        try {
-//            final List<Group> userGroups = groupLocalService.getUserGroups(userId);
-//            writer.printf("Deleting %d User Groups\n", userGroups.size());
-//            groupLocalService.deleteUserGroups(userId, userGroups);
-//        } catch (Exception e) {
-//            writer.printf("Could not delete user Groups: %s\n", e.getMessage());
-//        }
-//    }
-
     @Override
     public User getOrCreateRegistrationUser(long companyId, User loggedInUser, String registrationEmail,
                                             String firstName, String lastName, String salutation, Locale locale) throws Exception {
@@ -138,7 +128,13 @@ public class OssAdminUtils implements AdminUtils {
         if (registrationEmail == null || registrationEmail.isEmpty()) {
             throw new IllegalArgumentException("Registration email missing");
         }
-        final User registrationUser = userLocalService.fetchUserByEmailAddress(companyId, registrationEmail);
+        final User registrationUser;
+        if (loggedInUser.getEmailAddress().equals(registrationEmail)) {
+            registrationUser = loggedInUser;
+        } else {
+            registrationUser = userLocalService.fetchUserByEmailAddress(companyId, registrationEmail);
+        }
+
         if (registrationUser == null){
             String userName;
             try {

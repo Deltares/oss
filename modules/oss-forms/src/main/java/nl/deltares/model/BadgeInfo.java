@@ -19,6 +19,8 @@ public class BadgeInfo {
     String title_setting = "no";
     String title = null;
     String initials = null;
+    String firstName = null;
+    String lastName = null;
 
     public void setAttribute(ATTRIBUTES key, String value){
         switch (key){
@@ -108,6 +110,30 @@ public class BadgeInfo {
 
     public void setInitials(String initials){
         this.initials = initials;
+    }
+
+    public void setFirstName(String firstName){
+        this.firstName = firstName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getInitials() {
+        return initials;
     }
 
     public String formatBadgeName(String firstName, String lastName){

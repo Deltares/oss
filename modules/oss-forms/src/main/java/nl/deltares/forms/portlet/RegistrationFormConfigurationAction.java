@@ -4,10 +4,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
-import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
-import com.liferay.portal.kernel.settings.ModifiableSettings;
-import com.liferay.portal.kernel.settings.Settings;
-import com.liferay.portal.kernel.settings.FallbackKeysSettingsUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -50,13 +46,14 @@ public class RegistrationFormConfigurationAction extends DefaultConfigurationAct
         try {
             ThemeDisplay themeDisplay = (ThemeDisplay) httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY);
             RegistrationFormConfiguration siteConfiguration = _configurationProvider
-                    .getGroupConfiguration(RegistrationFormConfiguration.class, themeDisplay.getSiteGroupId());
+                    .getPortletInstanceConfiguration(RegistrationFormConfiguration.class, themeDisplay);
 
             httpServletRequest.setAttribute("childHeaderText", getParsedJsonParameter(siteConfiguration, "childHeaderText"));
             httpServletRequest.setAttribute("registerSuccessURL", siteConfiguration.registerSuccessURL());
             httpServletRequest.setAttribute("unregisterSuccessURL", siteConfiguration.unregisterSuccessURL());
             httpServletRequest.setAttribute("updateSuccessURL", siteConfiguration.updateSuccessURL());
             httpServletRequest.setAttribute("failURL", siteConfiguration.failURL());
+            httpServletRequest.setAttribute("showBadgeInfo", siteConfiguration.showBadgeInfo());
         } catch (PortalException e) {
             throw new PortalException("Could not get options for field 'registrationType' in structure SESSIONS: " + e.getMessage(), e);
         }
@@ -67,20 +64,14 @@ public class RegistrationFormConfigurationAction extends DefaultConfigurationAct
     public void processAction(PortletConfig portletConfig, ActionRequest actionRequest, ActionResponse actionResponse)
             throws Exception {
 
-        ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
         Map<String, String> childHeaderText = convertToLocalizedMap(actionRequest, "childHeaderText");
+        setPreference(actionRequest, "registerSuccessURL", ParamUtil.getString(actionRequest, "registerSuccessURL"));
+        setPreference(actionRequest, "unregisterSuccessURL", ParamUtil.getString(actionRequest, "unregisterSuccessURL"));
+        setPreference(actionRequest, "updateSuccessURL", ParamUtil.getString(actionRequest, "updateSuccessURL"));
+        setPreference(actionRequest, "failURL", ParamUtil.getString(actionRequest, "failURL"));
+        setPreference(actionRequest, "showBadgeInfo", String.valueOf(ParamUtil.getBoolean(actionRequest, "showBadgeInfo")));
+        setPreference(actionRequest, "childHeaderText", JsonContentUtils.formatMapToJson(childHeaderText));
 
-        Settings settings = FallbackKeysSettingsUtil.getSettings(
-                new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), DsdRegistrationFormConfiguration.class.getName()));
-
-        ModifiableSettings modifiableSettings =
-                settings.getModifiableSettings();
-        modifiableSettings.setValue("registerSuccessURL", ParamUtil.getString(actionRequest, "registerSuccessURL"));
-        modifiableSettings.setValue("unregisterSuccessURL", ParamUtil.getString(actionRequest, "unregisterSuccessURL"));
-        modifiableSettings.setValue("updateSuccessURL", ParamUtil.getString(actionRequest, "updateSuccessURL"));
-        modifiableSettings.setValue("failURL", ParamUtil.getString(actionRequest, "failURL"));
-        modifiableSettings.setValue("childHeaderText", JsonContentUtils.formatMapToJson(childHeaderText));
-        modifiableSettings.store();
         super.processAction(portletConfig, actionRequest, actionResponse);
     }
 

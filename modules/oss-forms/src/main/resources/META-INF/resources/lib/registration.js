@@ -296,6 +296,35 @@ RegistrationFormsUtil = {
             div.classList.remove('has-error')
         }
 
+    },
+
+    updateBadge : function(namespace) {
+        let showTitle = CommonFormsUtil.getRadioButtonsSelection(namespace, "badge_title_setting");
+        let nameSetting =CommonFormsUtil.getRadioButtonsSelection(namespace, "badge_name_setting");
+        let badgeInfo = document.getElementById( namespace + "badge-info");
+
+
+        let firstName = badgeInfo.dataset.firstname;
+        let lastName = badgeInfo.dataset.lastname;
+        let initials = badgeInfo.dataset.initials;
+        let salutation = badgeInfo.dataset.salutation;
+        let title = '';
+
+        if (showTitle === 'yes') {
+            title += salutation + ' ';
+        }
+
+        if (nameSetting === 'name') {
+            title += firstName;
+        } else if (nameSetting === 'initials') {
+            title += initials;
+        } else if (nameSetting === 'both') {
+            title += initials + ' (' + firstName + ')';
+        }
+
+        title += ' ' + lastName;
+
+        $(document.getElementById('badge-title')).text(title);
     }
 
 }

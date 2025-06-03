@@ -1,6 +1,7 @@
 package nl.deltares.forms.internal;
 
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
+import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.User;
@@ -12,6 +13,7 @@ import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import nl.deltares.emails.RegistrationEmail;
 import nl.deltares.emails.serializer.RegisterEmailSerializer;
 import nl.deltares.forms.exception.RegistrationFormException;
+import nl.deltares.model.BadgeInfo;
 import nl.deltares.model.BillingInfo;
 import nl.deltares.model.RegistrationInfo;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
@@ -21,6 +23,7 @@ import nl.deltares.portal.model.impl.SessionRegistration;
 import nl.deltares.portal.utils.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -101,9 +104,13 @@ public class SubmitOrderDisplayContext {
 
         Registration registration = _dsdParserUtils.getRegistration(_themeDisplay.getSiteGroupId(), registrationInfo.getArticleId());
 
-        User registrationUser = _adminUtils.getOrCreateRegistrationUser(_themeDisplay.getCompanyId(), _themeDisplay.getUser(),
+        User loggedInUser = _themeDisplay.getUser();
+        User registrationUser = _adminUtils.getOrCreateRegistrationUser(_themeDisplay.getCompanyId(), loggedInUser,
                 registrationInfo.getEmail(), registrationInfo.getFirstName(), registrationInfo.getLastName(), registrationInfo.getSalutation(),
                 _themeDisplay.getLocale());
+
+
+        storeBadgeSettings(registrationUser, loggedInUser);
 
         Map<String, String> registrationAttributes = new HashMap<>();
         if (!registrationInfo.getRemarks().isEmpty()) {
@@ -118,7 +125,31 @@ public class SubmitOrderDisplayContext {
             registerWebinar(registrationUser, (SessionRegistration) registration, billingInfo, registrationAttributes);
         }
 
-        _dsdSessionUtils.registerUser(registrationUser, registration, registrationAttributes, _themeDisplay.getUser(), _event);
+        _dsdSessionUtils.registerUser(registrationUser, registration, registrationAttributes, loggedInUser, _event);
+    }
+
+    private static void storeBadgeSettings(User registrationUser, User loggedInUser) throws PortalException {
+
+        if (registrationUser.equals(loggedInUser)) {return;}
+
+        ExpandoBridge expandoBridge = loggedInUser.getExpandoBridge();
+        String nameSettingKey = BadgeInfo.ATTRIBUTES.badge_name_setting.toString();
+        if (expandoBridge.hasAttribute(nameSettingKey)) {
+            Serializable nameSetting = expandoBridge.getAttribute(nameSettingKey, false);
+            if (!registrationUser.getExpandoBridge().hasAttribute(nameSettingKey)){
+                registrationUser.getExpandoBridge().addAttribute(nameSettingKey);
+            }
+            registrationUser.getExpandoBridge().setAttribute(nameSettingKey, nameSetting, false);
+        }
+        String titleSettingKey = BadgeInfo.ATTRIBUTES.badge_title_setting.toString();
+        if (expandoBridge.hasAttribute(titleSettingKey)){
+            Serializable titleSetting = expandoBridge.getAttribute(titleSettingKey, false);
+            if (!registrationUser.getExpandoBridge().hasAttribute(titleSettingKey)){
+                registrationUser.getExpandoBridge().addAttribute(titleSettingKey);
+            }
+            registrationUser.getExpandoBridge().setAttribute(nameSettingKey, titleSetting, false);
+        }
+
     }
 
     private void addBillingAttributes(BillingInfo billingInfo, Map<String, String> registrationAttributes) {

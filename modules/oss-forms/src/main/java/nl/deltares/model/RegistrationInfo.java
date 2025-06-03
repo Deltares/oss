@@ -8,6 +8,7 @@ public class RegistrationInfo {
     private String email = null;
     private String remarks = null;
     private String articleId = null;
+    private String initials = null;
     private float price = 0;
     private String title;
 
@@ -73,5 +74,13 @@ public class RegistrationInfo {
 
     public String getArticleId() {
         return this.articleId;
+    }
+
+    public void setInitials(String initials) {
+        this.initials = initials;
+    }
+
+    public String getInitials() {
+        return initials;
     }
 }

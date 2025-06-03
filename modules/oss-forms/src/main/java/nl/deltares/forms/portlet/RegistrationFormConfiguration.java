@@ -29,5 +29,9 @@ public interface RegistrationFormConfiguration {
     @Meta.AD(required = false, deflt = "{}", description = "Configure the text to display above the child headers.")
     String childHeaderText();
 
+    @Meta.AD(required = false, deflt = "true", description = "Configure visibility of Badge info page.")
+    boolean showBadgeInfo();
+
+
 
 }

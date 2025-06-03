@@ -6,21 +6,13 @@
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
-<%@ page import="nl.deltares.forms.portlet.DsdRegistrationFormConfiguration" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.liferay.portal.configuration.module.configuration.ConfigurationProvider" %>
 
 <liferay-theme:defineObjects/>
 
 <portlet:defineObjects/>
 <%
-
-    ConfigurationProvider configurationProvider =
-            (ConfigurationProvider) request.getAttribute(ConfigurationProvider.class.getName());
-
-    DsdRegistrationFormConfiguration configuration = configurationProvider.getGroupConfiguration(DsdRegistrationFormConfiguration.class, themeDisplay.getScopeGroupId());
-
     final List<String> languageIds = (List<String>) renderRequest.getAttribute("languageIds");
 %>
 
@@ -52,22 +44,28 @@
             <aui:input
                     label="registrationform.successpage"
                     name="registerSuccessURL"
-                    value="<%= configuration.registerSuccessURL() %>"/>
+                    value='<%= renderRequest.getAttribute("registerSuccessURL") %>'/>
 
             <aui:input
                     label="registrationform.unregistersuccesspage"
                     name="unregisterSuccessURL"
-                    value="<%= configuration.unregisterSuccessURL() %>"/>
+                    value='<%= renderRequest.getAttribute("unregisterSuccessURL") %>'/>
 
             <aui:input
                     label="registrationform.updatesuccesspage"
                     name="updateSuccessURL"
-                    value="<%= configuration.updateSuccessURL() %>"/>
+                    value='<%= renderRequest.getAttribute("updateSuccessURL") %>'/>
 
             <aui:input
                     label="registrationform.failpage"
                     name="failURL"
-                    value="<%= configuration.failURL() %>"/>
+                    value='<%= renderRequest.getAttribute("failURL") %>'/>
+
+            <aui:input
+                    label="registrationform.showBadgeInfo"
+                    name="showBadgeInfo"
+                    type="toggle-switch"
+                    value='<%= renderRequest.getAttribute("showBadgeInfo")%>'/>
 
             <%
                 Map<String, String> childHeaderText = (Map<String,String>) renderRequest.getAttribute("childHeaderText");
