@@ -1,6 +1,5 @@
 <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
-<#assign userUtils = staticUtil["com.liferay.portal.kernel.service.UserLocalServiceUtil"] />
-<#assign title=.vars['reserved-article-title'].data />
+<#assign userLocalService = serviceLocator.findService("com.liferay.portal.kernel.service.UserLocalService")>
 <#assign urltitle=.vars['reserved-article-url-title'].data />
 <#assign articleId = .vars['reserved-article-id'].getData() />
 <#assign displayContext = dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay) />
@@ -54,8 +53,8 @@
                 <span class="d-block" style="float:right">
                     <table >
                         <#list registrationDatas as registrationData>
-                        <#if  userUtils.fetchUser(registrationData.getUserId())?? >
-                            <#assign registeredUser =  userUtils.fetchUser(registrationData.getUserId())/>
+                        <#if  userLocalService.fetchUser(registrationData.getUserId())?? >
+                            <#assign registeredUser =  userLocalService.fetchUser(registrationData.getUserId()) />
                         <tr><td>
                             <a href="${displayContext.getUnregisterURL(renderRequest, registeredUser.getUserId(), "RegistrationFormPortlet",  "/submit/unregister/form") }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
                                 ${languageUtil.get(locale, "registrationform.unregister")}
