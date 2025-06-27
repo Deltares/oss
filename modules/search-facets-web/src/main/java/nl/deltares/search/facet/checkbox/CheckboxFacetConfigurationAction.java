@@ -3,7 +3,9 @@ package nl.deltares.search.facet.checkbox;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.DeltaresCacheUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
@@ -45,7 +47,9 @@ public class CheckboxFacetConfigurationAction extends DefaultConfigurationAction
             throws Exception {
 
         String portletResource = ParamUtil.getString(actionRequest, "portletResource");
-        dsdCache.putPortletConfig(portletResource, null);
+        ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
+        dsdCache.putPortletConfig(portletResource + themeDisplay.getSiteGroupId() , null);
 
         setPreference(actionRequest, "structureName", ParamUtil.getString(actionRequest, "structureName"));
         setPreference(actionRequest, "fieldName", ParamUtil.getString(actionRequest, "fieldName"));

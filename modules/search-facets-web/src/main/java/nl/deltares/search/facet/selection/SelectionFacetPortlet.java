@@ -57,7 +57,8 @@ public class SelectionFacetPortlet extends MVCPortlet {
 
 
         final String id = themeDisplay.getPortletDisplay().getId();
-        Map<String, Object> portletConfig = deltaresCacheUtils.findPortletConfig(id);
+        long siteGroupId = themeDisplay.getSiteGroupId();
+        Map<String, Object> portletConfig = deltaresCacheUtils.findPortletConfig(id + siteGroupId);
         if (portletConfig != null) {
             return portletConfig;
         }
@@ -89,13 +90,13 @@ public class SelectionFacetPortlet extends MVCPortlet {
         portletConfig.put("siteDefaultLocale", LocaleUtil.fromLanguageId(scopeGroup.getDefaultLanguageId()));
 
         try {
-            portletConfig.put("selectionMap", dsdJournalArticleUtils.getStructureFieldOptions(themeDisplay.getSiteGroupId(),
+            portletConfig.put("selectionMap", dsdJournalArticleUtils.getStructureFieldOptions(siteGroupId,
                     structureName,
                     fieldName, themeDisplay.getLocale()));
         } catch (PortalException e) {
             throw new PortletException(String.format("Could not get options for field '%s' in structure %s: %s", fieldName, structureName, e.getMessage()), e);
         }
-        deltaresCacheUtils.putPortletConfig(id, portletConfig);
+        deltaresCacheUtils.putPortletConfig(id + siteGroupId, portletConfig);
 
         return portletConfig;
     }
