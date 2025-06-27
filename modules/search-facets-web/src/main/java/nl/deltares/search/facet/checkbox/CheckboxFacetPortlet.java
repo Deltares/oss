@@ -78,7 +78,7 @@ public class CheckboxFacetPortlet extends MVCPortlet {
     private Map<String, Object> getConfiguration(ThemeDisplay themeDisplay) throws PortletException {
 
         final String id = themeDisplay.getPortletDisplay().getId();
-        Map<String, Object> portletConfig = deltaresCacheUtils.findPortletConfig(id);
+        Map<String, Object> portletConfig = deltaresCacheUtils.findPortletConfig(id  + themeDisplay.getSiteGroupId());
         if (portletConfig != null) {
             return portletConfig;
         }
@@ -112,7 +112,7 @@ public class CheckboxFacetPortlet extends MVCPortlet {
         portletConfig.put("groupId", groupId);
         portletConfig.put("siteDefaultLocale", LocaleUtil.fromLanguageId(scopeGroup.getDefaultLanguageId()));
 
-        deltaresCacheUtils.putPortletConfig(id, portletConfig);
+        deltaresCacheUtils.putPortletConfig(id + themeDisplay.getSiteGroupId(), portletConfig);
         return portletConfig;
     }
 
