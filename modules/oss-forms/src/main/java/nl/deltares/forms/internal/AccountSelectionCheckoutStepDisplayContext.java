@@ -155,11 +155,11 @@ public class AccountSelectionCheckoutStepDisplayContext{
         if (billingAddress == null) {
             final ListType accountType = ListTypeLocalServiceUtil.getListType(accountEntry.getCompanyId(),
                     "billing", "com.liferay.account.model.AccountEntry.address");
-            billingAddress = _addressLocalService.addAddress(
-                    "address_" + _accountUser.getScreenName(), _accountUser.getUserId(), AccountEntry.class.getName(),
-                    accountEntry.getAccountEntryId(), companyCountry.getCountryId(), accountType.getListTypeId(),
-                    regionId, city, null, true, name, true, street, null, null, null, postal,
-                    phoneNumber, serviceContext);
+            billingAddress = _addressLocalService.addAddress("address_" + _accountUser.getScreenName(),
+                    _accountUser.getUserId(), AccountEntry.class.getName(),
+                    accountEntry.getAccountEntryId(), name, null, street, null, null,
+                    city, postal, regionId, companyCountry.getCountryId(), accountType.getListTypeId(), true,
+                    true, null, serviceContext);
 
             billingAddress = _addressLocalService.addAddress(billingAddress);
             accountEntry.setDefaultBillingAddressId(billingAddress.getAddressId());
