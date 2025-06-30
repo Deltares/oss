@@ -45,8 +45,9 @@ public class AccountUtilsImpl implements AccountUtils {
         final ServiceContext serviceContext = new ServiceContext();
         serviceContext.setCompanyId(user.getCompanyId());
         serviceContext.setScopeGroupId(user.getGroupId());
+        String externalReference = user.getUserId() + '_' + user.getEmailAddress();
         //we can only create personal accounts through the code
-        final AccountEntry accountEntry = _accountEntryLocalService.addAccountEntry(
+        final AccountEntry accountEntry = _accountEntryLocalService.addAccountEntry(externalReference,
                 user.getUserId(),
                 0, user.getScreenName(), user.getFullName(), null,
                 user.getEmailAddress(), new byte[0],
