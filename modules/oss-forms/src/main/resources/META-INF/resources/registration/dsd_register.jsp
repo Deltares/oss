@@ -194,31 +194,33 @@
         let form = Liferay.Form.get(namespace + "fm").formValidator;
         form.validateFirstStep = validateFirstStep;
         form.preSubmitAction = preSubmitAction;
-        $('.bs-stepper').formStepper(form);
+        let stepper = document.querySelector('.bs-stepper')
+        let formStepper = FormStepper.init(stepper, form)
+
         DsdRegistrationFormsUtil.updateBadge(namespace);
         DsdRegistrationFormsUtil.checkSelection(namespace);
-        let badgeListeners = $(document.getElementsByClassName("update-badge"));
-        [...badgeListeners].forEach(function (item) {
+        let badgeListeners = document.getElementsByClassName("update-badge");
+        Array.from(badgeListeners).forEach(function (item) {
             item.onchange = function (){
                 DsdRegistrationFormsUtil.updateBadge(namespace);
             };
         });
-        let parents = $(document.getElementsByClassName("parent-registration"));
-        [...parents].forEach(function (registration) {
+        let parents = document.getElementsByClassName("parent-registration");
+        Array.from(parents).forEach(function (registration) {
             registration.onchange = function (){
                 DsdRegistrationFormsUtil.checkSelection(namespace);
             };
         });
-        let children = $(document.getElementsByClassName("child-registration"));
-        [...children].forEach(function (registration) {
+        let children = document.getElementsByClassName("child-registration");
+        Array.from(children).forEach(function (registration) {
             registration.onchange = function (){
                 DsdRegistrationFormsUtil.checkSelection(namespace);
             };
         });
-        $(document.getElementById(namespace + "registration_other")).change(function() {
+        document.getElementById(namespace + "registration_other").addEventListener('change', function() {
             CommonFormsUtil.registerOther(namespace);
         });
-        $(document.getElementById(namespace + "use_organization_address")).change(function() {
+        document.getElementById(namespace + "use_organization_address").addEventListener('change', function() {
             CommonFormsUtil.updatePaymentAddress(namespace, this.checked);
         });
     });

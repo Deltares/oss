@@ -74,7 +74,8 @@
 	<#if is_shopping_cart?? && is_shopping_cart >
 		var checkoutCartURL = '${checkout_cart_url}';
 		var downloadCartURL = '${download_cart_url}';
-		var shoppingCart = new ShoppingCart({'languageKeys': {
+
+		var shoppingCart = ShoppingCart.init({'languageKeys': {
 				'add-to-cart': '${languageUtil.get(locale, "shopping.cart.add")}',
 				'remove-from-cart': '${languageUtil.get(locale, "shopping.cart.remove")}'
 			}});
