@@ -39,8 +39,13 @@ AUI.add(
     },
     updateQueryString: function (namespace, name) {
 
-        let startDate = $('input[name$="' + namespace + 'startDate"]').val();
-        let endDate = $('input[name$="' + namespace + 'endDate"]').val();
+        let selector = 'input[name$="' + namespace + 'startDate"]';
+        let input = document.querySelector(selector);
+        let startDate = input ? input.value : '';
+
+        selector = 'input[name$="' + namespace + 'endDate"]';
+        input = document.querySelector(selector);
+        let endDate = input ? input.value : '';
 
         let sp = new URLSearchParams(location.search);
         let updated = false;
@@ -59,7 +64,9 @@ AUI.add(
                 updated = updated || this.setTerm(sp ,'endDate', endDate)
             }
         }
-        let selection = $('select[name$="' + namespace + "selection-facet-" + name + '"]').val();
+        selector = 'select[name$="' + namespace + "selection-facet-" + name + '"]';
+        input = document.querySelector(selector);
+        let selection = input ? input.value : '';
         if (selection !== undefined) {
             if (selection === 'undefined') {
                 updated = updated || this.removeTerm(sp ,name)
@@ -67,23 +74,29 @@ AUI.add(
                 updated = updated || this.setTerm(sp ,name, selection)
             }
         }
-        let showPastElement = $('input[name$="' + namespace + 'showPast"]');
-        if (showPastElement.val() !== undefined) {
-            if (showPastElement[0].checked) {
-                updated = updated || this.setTerm(sp ,'showPast', showPastElement[0].checked)
+        selector = 'input[name$="' + namespace + 'showPast"]';
+        input = document.querySelector(selector);
+        let showPastElement = input ? input.value : undefined;
+        if (showPastElement !== undefined){
+            if (showPastElement) {
+                updated = updated || this.setTerm(sp ,'showPast', showPastElement)
             } else {
                 updated = updated || this.removeTerm(sp ,'showPast')
             }
         }
-        let presentationElement = $('input[name$="' + namespace + 'hasPresentations"]');
-        if (presentationElement.val() !== undefined) {
-            if (presentationElement[0].checked) {
-                updated = updated || this.setTerm(sp ,'hasPresentations', presentationElement[0].checked)
+        selector = 'input[name$="' + namespace + 'hasPresentations"]';
+        input = document.querySelector(selector);
+        let presentationElement = input ? input.value : undefined;
+        if (presentationElement !== undefined){
+            if (presentationElement) {
+                updated = updated || this.setTerm(sp ,'hasPresentations', presentationElement)
             } else {
                 updated = updated || this.removeTerm(sp ,'hasPresentations')
             }
         }
-        selection = $('select[name$="' + namespace + "checkbox-facet-" + name + '"]').val();
+        selector = 'select[name$="' + namespace + "checkbox-facet-" + name + '"]';
+        input = document.querySelector(selector);
+        selection = input ? input.value : undefined;
         if (selection !== undefined) {
             if (selection === 'undefined') {
                 updated = updated || this.removeTerm(sp ,name)
