@@ -56,9 +56,11 @@ public class SelectionFacetPortlet extends MVCPortlet {
     private Map<String, Object> getConfiguration(ThemeDisplay themeDisplay) throws PortletException {
 
 
-        final String id = themeDisplay.getPortletDisplay().getId();
+        final String portletId = themeDisplay.getPortletDisplay().getId();
+        final long layoutId = themeDisplay.getLayout().getLayoutId();
         long siteGroupId = themeDisplay.getSiteGroupId();
-        Map<String, Object> portletConfig = deltaresCacheUtils.findPortletConfig(id + siteGroupId);
+        String cacheId = portletId + layoutId + siteGroupId;
+        Map<String, Object> portletConfig = deltaresCacheUtils.findPortletConfig(cacheId);
         if (portletConfig != null) {
             return portletConfig;
         }
@@ -66,9 +68,9 @@ public class SelectionFacetPortlet extends MVCPortlet {
         SelectionFacetConfiguration configuration;
         try {
             configuration = _configurationProvider.getPortletInstanceConfiguration(
-                    SelectionFacetConfiguration.class, themeDisplay.getLayout(), id);
+                    SelectionFacetConfiguration.class, themeDisplay.getLayout(), portletId);
         } catch (ConfigurationException e) {
-            throw new PortletException(String.format("Could not get configuration for portlet '%s': %s", id, e.getMessage()), e);
+            throw new PortletException(String.format("Could not get configuration for portlet '%s': %s", portletId, e.getMessage()), e);
         }
 
         String structureName = configuration.structureName().toLowerCase();
@@ -96,7 +98,7 @@ public class SelectionFacetPortlet extends MVCPortlet {
         } catch (PortalException e) {
             throw new PortletException(String.format("Could not get options for field '%s' in structure %s: %s", fieldName, structureName, e.getMessage()), e);
         }
-        deltaresCacheUtils.putPortletConfig(id + siteGroupId, portletConfig);
+        deltaresCacheUtils.putPortletConfig(cacheId, portletConfig);
 
         return portletConfig;
     }
