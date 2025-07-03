@@ -3,7 +3,7 @@ package nl.deltares.search.facet.checkbox;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -78,7 +78,8 @@ public class CheckboxFacetPortlet extends MVCPortlet {
     private Map<String, Object> getConfiguration(ThemeDisplay themeDisplay) throws PortletException {
 
         final String id = themeDisplay.getPortletDisplay().getId();
-        Map<String, Object> portletConfig = deltaresCacheUtils.findPortletConfig(id  + themeDisplay.getSiteGroupId());
+        final String cacheId = id + themeDisplay.getLayout().getLayoutId() + themeDisplay.getSiteGroupId();
+        Map<String, Object> portletConfig = deltaresCacheUtils.findPortletConfig(cacheId);
         if (portletConfig != null) {
             return portletConfig;
         }
@@ -112,12 +113,9 @@ public class CheckboxFacetPortlet extends MVCPortlet {
         portletConfig.put("groupId", groupId);
         portletConfig.put("siteDefaultLocale", LocaleUtil.fromLanguageId(scopeGroup.getDefaultLanguageId()));
 
-        deltaresCacheUtils.putPortletConfig(id + themeDisplay.getSiteGroupId(), portletConfig);
+        deltaresCacheUtils.putPortletConfig(cacheId, portletConfig);
         return portletConfig;
     }
-
-    @Reference
-    protected PortletSharedSearchRequest portletSharedSearchRequest;
 
     private ConfigurationProvider _configurationProvider;
 
