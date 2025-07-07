@@ -6,6 +6,7 @@ import com.liferay.portal.kernel.cache.SingleVMPool;
 import com.liferay.portal.kernel.exception.ModelListenerException;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.ModelListener;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.utils.DeltaresCacheUtils;
 import org.osgi.service.component.annotations.Activate;
@@ -42,6 +43,15 @@ public class DeltaresCacheUtilsImpl extends BaseModelListener<JournalArticle> im
     @Override
     public AbsDsdArticle findArticle(JournalArticle article) {
         return (AbsDsdArticle) _portalCache.get(String.valueOf(article.getResourcePrimKey()));
+    }
+
+    @Override
+    public String getPortletConfigCacheId(ThemeDisplay themeDisplay) {
+
+        String portletId = themeDisplay.getPortletDisplay().getId();
+        long layoutId = themeDisplay.getLayout().getLayoutId();
+        long siteGroupId = themeDisplay.getSiteGroupId();
+        return portletId + layoutId + siteGroupId;
     }
 
     @Override
