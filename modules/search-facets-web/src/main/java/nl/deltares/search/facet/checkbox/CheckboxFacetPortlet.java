@@ -76,19 +76,19 @@ public class CheckboxFacetPortlet extends MVCPortlet {
 
     private Map<String, Object> getConfiguration(ThemeDisplay themeDisplay) throws PortletException {
 
-        final String id = themeDisplay.getPortletDisplay().getId();
-        final String cacheId = id + themeDisplay.getLayout().getLayoutId() + themeDisplay.getSiteGroupId();
+        final String cacheId = deltaresCacheUtils.getPortletConfigCacheId(themeDisplay);
         Map<String, Object> portletConfig = deltaresCacheUtils.findPortletConfig(cacheId);
         if (portletConfig != null) {
             return portletConfig;
         }
 
         CheckboxFacetConfiguration _configuration;
+        String portletId = themeDisplay.getPortletDisplay().getId();
         try {
             _configuration = _configurationProvider.getPortletInstanceConfiguration(
-                    CheckboxFacetConfiguration.class, themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
+                    CheckboxFacetConfiguration.class, themeDisplay.getLayout(), portletId);
         } catch (ConfigurationException e) {
-            throw new PortletException(String.format("Could not get configuration for portlet '%s': %s", themeDisplay.getPortletDisplay().getId(), e.getMessage()), e);
+            throw new PortletException(String.format("Could not get configuration for portlet '%s': %s", portletId, e.getMessage()), e);
         }
 
         String structureName = _configuration.structureName().toLowerCase();

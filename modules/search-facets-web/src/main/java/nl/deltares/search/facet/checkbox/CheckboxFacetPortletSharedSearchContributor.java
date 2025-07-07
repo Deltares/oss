@@ -26,7 +26,9 @@ public class CheckboxFacetPortletSharedSearchContributor implements PortletShare
     @Override
     public void contribute(PortletSharedSearchSettings portletSharedSearchSettings) {
 
-        final Map<String, Object> portalCache = deltaresCacheUtils.findPortletConfig(portletSharedSearchSettings.getPortletId());
+
+        String portletConfigCacheId = deltaresCacheUtils.getPortletConfigCacheId(portletSharedSearchSettings.getThemeDisplay());
+        final Map<String, Object> portalCache = deltaresCacheUtils.findPortletConfig(portletConfigCacheId);
 
         if (portalCache == null) {
             return;

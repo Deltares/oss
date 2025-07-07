@@ -55,11 +55,9 @@ public class SelectionFacetPortlet extends MVCPortlet {
 
     private Map<String, Object> getConfiguration(ThemeDisplay themeDisplay) throws PortletException {
 
-
         final String portletId = themeDisplay.getPortletDisplay().getId();
-        final long layoutId = themeDisplay.getLayout().getLayoutId();
         long siteGroupId = themeDisplay.getSiteGroupId();
-        String cacheId = portletId + layoutId + siteGroupId;
+        String cacheId = deltaresCacheUtils.getPortletConfigCacheId(themeDisplay);
         Map<String, Object> portletConfig = deltaresCacheUtils.findPortletConfig(cacheId);
         if (portletConfig != null) {
             return portletConfig;
