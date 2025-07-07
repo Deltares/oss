@@ -1,13 +1,14 @@
 package nl.deltares.search.facet.date;
 
-import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.Portlet;
@@ -15,7 +16,8 @@ import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import java.io.IOException;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author allan
@@ -44,34 +46,47 @@ public class DateRangeFacetPortlet extends MVCPortlet {
 
     @Override
     public void doView(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
-
-        renderRequest.setAttribute(
-                DateRangeFacetConfiguration.class.getName(),
-                _configuration);
         super.doView(renderRequest, renderResponse);
     }
 
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 
-        final String startDate = FacetUtils.getRequestParameter("startDate", renderRequest);
-        if (startDate != null) renderRequest.setAttribute("startDate", FacetUtils.parseDate(startDate));
-
-        final String endDate = FacetUtils.getRequestParameter("endDate", renderRequest);
-        if (endDate != null) renderRequest.setAttribute("endDate", FacetUtils.parseDate(endDate));
-
+        ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+        String startDate = FacetUtils.getRequestParameter("startDate", renderRequest);
+        String endDate = FacetUtils.getRequestParameter("endDate", renderRequest);
+        DateRangeFacetConfiguration _configuration = null;
+        try {
+            _configuration = _configurationProvider.getPortletInstanceConfiguration(DateRangeFacetConfiguration.class, themeDisplay);
+            if (startDate == null) {
+                if (_configuration.startDate() != null) {
+                    startDate = _configuration.startDate();
+                } else if (Boolean.parseBoolean(_configuration.setStartNow())) {
+                    startDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
+                }
+            }
+            if (endDate == null) {
+                if (_configuration.endDate() != null) {
+                    endDate = _configuration.endDate();
+                }
+            }
+        } catch (ConfigurationException e) {
+            //
+        }
+        if (startDate != null && !startDate.isEmpty()) {
+            renderRequest.setAttribute("startDate", startDate);
+        }
+        if (endDate != null && !endDate.isEmpty()) {
+            renderRequest.setAttribute("endDate", endDate);
+        }
         super.render(renderRequest, renderResponse);
     }
 
+
+    private ConfigurationProvider _configurationProvider;
+
     @Reference
-    protected PortletSharedSearchRequest portletSharedSearchRequest;
-
-    @Activate
-    @Modified
-    protected void activate(Map<Object, Object> properties) {
-        _configuration = ConfigurableUtil.createConfigurable(
-                DateRangeFacetConfiguration.class, properties);
+    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
+        _configurationProvider = configurationProvider;
     }
-
-    private volatile DateRangeFacetConfiguration _configuration;
 }

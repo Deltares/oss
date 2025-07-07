@@ -80,7 +80,7 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
         if (dateValue == null || dateValue.isEmpty()) return null;
 
         try {
-            return DateUtil.parseDate("dd-MM-yyyy", dateValue, locale);
+            return DateUtil.parseDate("yyyy-MM-dd", dateValue, locale);
         } catch (ParseException e) {
             LOG.warn(String.format("Could not parse configured date %s: %s", dateValue, e.getMessage()), e);
             return null;

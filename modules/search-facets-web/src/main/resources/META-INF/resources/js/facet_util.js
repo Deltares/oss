@@ -8,14 +8,19 @@ AUI.add(
         let updated = false;
         if (start) {
             updated = this.setTerm(sp, 'startDate', start)
+            let selector = 'input[name$="' + namespace + 'startDate"]';
+            let input = document.querySelector(selector);
+            input.value = start;
         }
         if (end) {
-            updated = updated || this.setTerm(sp, 'endDate', start)
+            updated = this.setTerm(sp, 'endDate', end) || updated //order is important. setTerm must be called.
+            let selector = 'input[name$="' + namespace + 'endDate"]';
+            let input = document.querySelector(selector);
+            input.value = end;
         }
         if (updated){
-            window.location.href = this.toUrl(location, sp);
+            // window.location.href = this.toUrl(location, sp);
         }
-
     },
     removeTerm: function (sp, term) {
         if (sp.has(term)){
@@ -37,79 +42,97 @@ AUI.add(
         return location.origin + location.pathname + '?' + sp.toString();
 
     },
+    validateDateField: function(namespace) {
+        let start = document.querySelector('input[name$="' + namespace + 'startDate"]');
+        let startTime = 0;
+        if (start.value){
+            startTime = Date.parse(start.value).valueOf();
+        }
+        let end = document.querySelector('input[name$="' + namespace + 'endDate"]');
+        let endTime = Number.MAX_SAFE_INTEGER
+        if ( end.value ){
+            endTime = Date.parse(end.value).valueOf()
+        }
+        return startTime < endTime;
+
+    },
     updateQueryString: function (namespace, name) {
 
-        let selector = 'input[name$="' + namespace + 'startDate"]';
-        let input = document.querySelector(selector);
-        let startDate = input ? input.value : '';
-
-        selector = 'input[name$="' + namespace + 'endDate"]';
-        input = document.querySelector(selector);
-        let endDate = input ? input.value : '';
-
         let sp = new URLSearchParams(location.search);
-        let updated = false;
 
-        if (startDate !== undefined) {
-            if (startDate === '') {
-                updated = updated || this.removeTerm(sp ,'startDate')
-            } else {
-                updated = updated || this.setTerm(sp ,'startDate', startDate)
+        if (name === 'startDate' || name === 'endDate') {
+            let selector = 'input[name$="' + namespace + 'startDate"]';
+            let input = document.querySelector(selector);
+            let updated = false;
+            if (input != null) {
+                let value = input ? input.value : '';
+                if (value === '') {
+                    updated = this.removeTerm(sp, 'startDate')
+                } else {
+                    updated = this.setTerm(sp, 'startDate', value)
+                }
+
             }
-        }
-        if (endDate !== undefined) {
-            if (endDate === '') {
-                updated = updated || this.removeTerm(sp ,'endDate')
-            } else {
-                updated = updated || this.setTerm(sp ,'endDate', endDate)
+            selector = 'input[name$="' + namespace + 'endDate"]';
+            input = document.querySelector(selector);
+            if (input != null) {
+                let value = input ? input.value : '';
+                if (value === '') {
+                    updated = this.removeTerm(sp, 'endDate') || updated
+                } else {
+                    updated = this.setTerm(sp, 'endDate', value) || updated
+                }
+
             }
+            if (updated) {
+                window.location.href = this.toUrl(location, sp);
+            }
+            return;
         }
-        selector = 'select[name$="' + namespace + "selection-facet-" + name + '"]';
-        input = document.querySelector(selector);
-        let selection = input ? input.value : '';
-        if (selection !== undefined) {
+
+        let selector = 'select[name$="' + namespace + "selection-facet-" + name + '"]';
+        let input = document.querySelector(selector);
+        if (input !== null){
+            let selection = input ? input.value : '';
             if (selection === 'undefined') {
-                updated = updated || this.removeTerm(sp ,name)
+                updated = this.removeTerm(sp ,name) || updated
             } else {
-                updated = updated || this.setTerm(sp ,name, selection)
+                updated = this.setTerm(sp ,name, selection) || updated
             }
-        }
-        selector = 'input[name$="' + namespace + 'showPast"]';
-        input = document.querySelector(selector);
-        let showPastElement = input ? input.value : undefined;
-        if (showPastElement !== undefined){
-            if (showPastElement) {
-                updated = updated || this.setTerm(sp ,'showPast', showPastElement)
-            } else {
-                updated = updated || this.removeTerm(sp ,'showPast')
+            if (updated){
+                window.location.href = this.toUrl(location, sp);
             }
+            return;
         }
-        selector = 'input[name$="' + namespace + 'hasPresentations"]';
-        input = document.querySelector(selector);
-        let presentationElement = input ? input.value : undefined;
-        if (presentationElement !== undefined){
-            if (presentationElement) {
-                updated = updated || this.setTerm(sp ,'hasPresentations', presentationElement)
-            } else {
-                updated = updated || this.removeTerm(sp ,'hasPresentations')
-            }
-        }
+
         selector = 'select[name$="' + namespace + "checkbox-facet-" + name + '"]';
         input = document.querySelector(selector);
-        selection = input ? input.value : undefined;
-        if (selection !== undefined) {
+        if (input !== null){
+            let selection = input ? input.value : undefined;
             if (selection === 'undefined') {
-                updated = updated || this.removeTerm(sp ,name)
+                updated = this.removeTerm(sp ,name) || updated
             } else {
-                updated = updated || this.setTerm(sp ,name, selection)
+                updated = this.setTerm(sp ,name, selection) || updated
+            }
+            if (updated){
+                window.location.href = this.toUrl(location, sp);
             }
         }
-        if (updated){
-            window.location.href = this.toUrl(location, sp);
-        }
-        //var url = Liferay.Search.FacetUtil.setURLParameter('http://example.com/path', 'q', 'test');
-    }
-        };
+
+    },
+    clearError : function(namespace, name){
+        let errorBlock = document.getElementById(namespace + name + '-message-block');
+        errorBlock.innerHTML = '';
+    },
+    writeError: function(namespace, name, message){
+        let errorBlock = document.getElementById(namespace + name + "-message-block");
+        let messageNode = document.createElement("div");
+        messageNode.classList.add("portlet-msg-error");
+        messageNode.innerHTML = message;
+        errorBlock.appendChild(messageNode);
+    },
+
+};
     },
     '',
     {
