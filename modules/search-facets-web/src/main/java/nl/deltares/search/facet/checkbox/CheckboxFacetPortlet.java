@@ -76,7 +76,8 @@ public class CheckboxFacetPortlet extends MVCPortlet {
 
     private Map<String, Object> getConfiguration(ThemeDisplay themeDisplay) throws PortletException {
 
-        final String cacheId = deltaresCacheUtils.getPortletConfigCacheId(themeDisplay);
+        final String cacheId = deltaresCacheUtils.getPortletConfigCacheId(
+                themeDisplay.getPortletDisplay().getId(), themeDisplay);
         Map<String, Object> portletConfig = deltaresCacheUtils.findPortletConfig(cacheId);
         if (portletConfig != null) {
             return portletConfig;

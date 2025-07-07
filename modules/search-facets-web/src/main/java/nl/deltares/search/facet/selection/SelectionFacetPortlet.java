@@ -57,7 +57,7 @@ public class SelectionFacetPortlet extends MVCPortlet {
 
         final String portletId = themeDisplay.getPortletDisplay().getId();
         long siteGroupId = themeDisplay.getSiteGroupId();
-        String cacheId = deltaresCacheUtils.getPortletConfigCacheId(themeDisplay);
+        String cacheId = deltaresCacheUtils.getPortletConfigCacheId(portletId, themeDisplay);
         Map<String, Object> portletConfig = deltaresCacheUtils.findPortletConfig(cacheId);
         if (portletConfig != null) {
             return portletConfig;

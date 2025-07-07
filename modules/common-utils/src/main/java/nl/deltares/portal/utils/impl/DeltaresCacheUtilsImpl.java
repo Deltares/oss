@@ -46,9 +46,7 @@ public class DeltaresCacheUtilsImpl extends BaseModelListener<JournalArticle> im
     }
 
     @Override
-    public String getPortletConfigCacheId(ThemeDisplay themeDisplay) {
-
-        String portletId = themeDisplay.getPortletDisplay().getId();
+    public String getPortletConfigCacheId(String portletId, ThemeDisplay themeDisplay) {
         long layoutId = themeDisplay.getLayout().getLayoutId();
         long siteGroupId = themeDisplay.getSiteGroupId();
         return portletId + layoutId + siteGroupId;
