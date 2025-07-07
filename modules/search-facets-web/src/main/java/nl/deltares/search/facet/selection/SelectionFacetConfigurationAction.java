@@ -49,8 +49,7 @@ public class SelectionFacetConfigurationAction extends DefaultConfigurationActio
         String portletResource = ParamUtil.getString(actionRequest, "portletResource");
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
-        String cacheId = portletResource + themeDisplay.getLayout().getLayoutId() + themeDisplay.getSiteGroupId();
-        dsdCache.putPortletConfig(cacheId , null);
+        dsdCache.putPortletConfig(dsdCache.getPortletConfigCacheId(portletResource, themeDisplay) , null);
 
         String structureName = ParamUtil.getString(actionRequest, "structureName");
         setPreference(actionRequest, "structureName", structureName);

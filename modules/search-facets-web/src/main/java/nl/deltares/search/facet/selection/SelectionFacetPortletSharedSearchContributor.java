@@ -26,7 +26,9 @@ public class SelectionFacetPortletSharedSearchContributor implements PortletShar
     @Override
     public void contribute(PortletSharedSearchSettings portletSharedSearchSettings) {
 
-        String portletConfigCacheId = deltaresCacheUtils.getPortletConfigCacheId(portletSharedSearchSettings.getThemeDisplay());
+        String portletConfigCacheId = deltaresCacheUtils.getPortletConfigCacheId(
+                portletSharedSearchSettings.getPortletId(),
+                portletSharedSearchSettings.getThemeDisplay());
         final Map<String, Object> portalCache = deltaresCacheUtils.findPortletConfig(portletConfigCacheId);
 
         if (portalCache == null) {

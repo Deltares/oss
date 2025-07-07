@@ -9,7 +9,7 @@ import java.util.Map;
 public interface DeltaresCacheUtils {
     AbsDsdArticle findArticle(JournalArticle article);
 
-    String getPortletConfigCacheId(ThemeDisplay themeDisplay);
+    String getPortletConfigCacheId(String portletId, ThemeDisplay themeDisplay);
     Map<String, Object> findPortletConfig(String portletId);
 
     long getCacheSize();
