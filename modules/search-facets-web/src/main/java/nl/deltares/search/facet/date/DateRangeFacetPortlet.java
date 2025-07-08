@@ -4,7 +4,6 @@ import com.liferay.portal.configuration.module.configuration.ConfigurationProvid
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
@@ -44,13 +43,11 @@ import java.time.format.DateTimeFormatter;
 )
 public class DateRangeFacetPortlet extends MVCPortlet {
 
-    @Override
-    public void doView(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
-        super.doView(renderRequest, renderResponse);
-    }
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
+
 
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
         String startDate = FacetUtils.getRequestParameter("startDate", renderRequest);
@@ -59,24 +56,24 @@ public class DateRangeFacetPortlet extends MVCPortlet {
         try {
             _configuration = _configurationProvider.getPortletInstanceConfiguration(DateRangeFacetConfiguration.class, themeDisplay);
             if (startDate == null) {
-                if (_configuration.startDate() != null) {
+                if (!_configuration.startDate().isEmpty()) {
                     startDate = _configuration.startDate();
                 } else if (Boolean.parseBoolean(_configuration.setStartNow())) {
-                    startDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
+                    startDate = DATE_TIME_FORMATTER.format(LocalDate.now());
                 }
             }
             if (endDate == null) {
-                if (_configuration.endDate() != null) {
+                if (!_configuration.endDate().isEmpty()) {
                     endDate = _configuration.endDate();
                 }
             }
         } catch (ConfigurationException e) {
             //
         }
-        if (startDate != null && !startDate.isEmpty()) {
+        if (startDate != null) {
             renderRequest.setAttribute("startDate", startDate);
         }
-        if (endDate != null && !endDate.isEmpty()) {
+        if (endDate != null) {
             renderRequest.setAttribute("endDate", endDate);
         }
         super.render(renderRequest, renderResponse);

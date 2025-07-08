@@ -3,25 +3,25 @@ AUI.add(
     function () {
         Liferay.namespace('Deltares').FacetUtil = {
 
-    initializeDates: function (namespace, start, end) {
-        let sp = new URLSearchParams(location.search);
-        let updated = false;
-        if (start) {
-            updated = this.setTerm(sp, 'startDate', start)
-            let selector = 'input[name$="' + namespace + 'startDate"]';
-            let input = document.querySelector(selector);
-            input.value = start;
-        }
-        if (end) {
-            updated = this.setTerm(sp, 'endDate', end) || updated //order is important. setTerm must be called.
-            let selector = 'input[name$="' + namespace + 'endDate"]';
-            let input = document.querySelector(selector);
-            input.value = end;
-        }
-        if (updated){
-            // window.location.href = this.toUrl(location, sp);
-        }
-    },
+    // initializeDates: function (namespace, start, end) {
+    //     let sp = new URLSearchParams(location.search);
+    //     let updated = false;
+    //     if (start) {
+    //         updated = this.setTerm(sp, 'startDate', start)
+    //         let selector = 'input[name$="' + namespace + 'startDate"]';
+    //         let input = document.querySelector(selector);
+    //         input.value = start;
+    //     }
+    //     if (end) {
+    //         updated = this.setTerm(sp, 'endDate', end) || updated //order is important. setTerm must be called.
+    //         let selector = 'input[name$="' + namespace + 'endDate"]';
+    //         let input = document.querySelector(selector);
+    //         input.value = end;
+    //     }
+    //     if (updated){
+    //         // window.location.href = this.toUrl(location, sp);
+    //     }
+    // },
     removeTerm: function (sp, term) {
         if (sp.has(term)){
             sp.delete(term)
@@ -46,15 +46,26 @@ AUI.add(
         let start = document.querySelector('input[name$="' + namespace + 'startDate"]');
         let startTime = 0;
         if (start.value){
-            startTime = Date.parse(start.value).valueOf();
+            startTime = this.parseDate(start.value, "dd-MM-yyyy", "-").valueOf();
         }
         let end = document.querySelector('input[name$="' + namespace + 'endDate"]');
         let endTime = Number.MAX_SAFE_INTEGER
         if ( end.value ){
-            endTime = Date.parse(end.value).valueOf()
+            endTime = this.parseDate(end.value,"dd-MM-yyyy", "-").valueOf()
         }
         return startTime < endTime;
 
+    },
+    parseDate: function (date, format, delimiter){
+          var formatLower = format.toLowerCase();
+          var formatItems = formatLower.split(delimiter);
+          var dateItems = date.split(delimiter);
+          var monthIndex = formatItems.indexOf("mm");
+          var dayIndex = formatItems.indexOf("dd");
+          var yearIndex = formatItems.indexOf("yyyy");
+          var month = parseInt(dateItems[monthIndex]);
+          month -= 1;
+          return  new Date(dateItems[yearIndex], month, dateItems[dayIndex]);
     },
     updateQueryString: function (namespace, name) {
 
@@ -66,22 +77,13 @@ AUI.add(
             let updated = false;
             if (input != null) {
                 let value = input ? input.value : '';
-                if (value === '') {
-                    updated = this.removeTerm(sp, 'startDate')
-                } else {
-                    updated = this.setTerm(sp, 'startDate', value)
-                }
-
+                updated = this.setTerm(sp, 'startDate', value)
             }
             selector = 'input[name$="' + namespace + 'endDate"]';
             input = document.querySelector(selector);
             if (input != null) {
                 let value = input ? input.value : '';
-                if (value === '') {
-                    updated = this.removeTerm(sp, 'endDate') || updated
-                } else {
-                    updated = this.setTerm(sp, 'endDate', value) || updated
-                }
+                updated = this.setTerm(sp, 'endDate', value) || updated
 
             }
             if (updated) {

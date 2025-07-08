@@ -45,12 +45,12 @@
 
         <aui:input
                 name="startDate"
-                label="Start search period (yyyy-mm-dd)"
+                label="Start search period (dd-mm-yyyy)"
                 value="<%= startDateConfig %>">
         </aui:input>
         <aui:input
                 name="endDate"
-                label="End search period (yyyy-mm-dd)"
+                label="End search period (dd-mm-yyyy)"
                 value="<%= endDateConfig %>">
         </aui:input>
         <aui:input
