@@ -1,6 +1,6 @@
 Bundle-Name: registration-api
 Bundle-SymbolicName: nl.deltares.data.service.registration.api
-Bundle-Version: 1.0.0
+Bundle-Version: 2.0.0
 Export-Package:\
 	nl.deltares.data.service.registration.exception,\
 	nl.deltares.data.service.registration.model,\

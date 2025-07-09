@@ -1,9 +1,9 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.codehaus.groovy.runtime.GStringImpl
 
-plugins {
-  id "org.sonarqube" version "2.7.1"
-}
+//plugins {
+//  id "org.sonarqube" version "2.7.1"
+//}
 
 project.ext {
     environment = getEnvProperty('env', 'docker') as Object

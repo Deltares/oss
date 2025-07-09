@@ -460,18 +460,21 @@ ShoppingCart = {
 
     menuOverlay.addEventListener('click', function() {
         // When opened, reset mobile menu
-        if (mobileButton.classList.contains('opened')) {
-            mobileButton.setAttribute('aria-expanded', 'false');
-            mobileButton.classList.remove('opened');
-            mobileContainer.querySelector('.mobile-icon').classList.remove('hidden');
-            mobileContainer.querySelector('.mobile-icon-close').classList.add('hidden');
-        }
-
+        mobileButtons.forEach(function (mobileButton) {
+            if (mobileButton.classList.contains('opened')) {
+                mobileButton.setAttribute('aria-expanded', 'false');
+                mobileButton.classList.remove('opened');
+                mobileContainer.querySelector('.mobile-icon').classList.remove('hidden');
+                mobileContainer.querySelector('.mobile-icon-close').classList.add('hidden');
+            }
+        })
         this.classList.remove('is-open');
         mobileContainer.querySelector('.mobile-navpanel').classList.remove('is-open');
         mobileContainer.querySelector('.language-panel').classList.remove('is-open');
-        htmlButtonElement.setAttribute('aria-expanded', 'false');
-        htmlButtonElement.classList.remove('opened');
+        navMenu.querySelectorAll('button').forEach(button => {
+            button.setAttribute('aria-expanded', false);
+            button.classList.remove('opened');
+        });
         navMenu.querySelector('.nav-subpanel').classList.remove('is-open');
         document.querySelector('body').classList.remove('overflow-hidden');
     });
