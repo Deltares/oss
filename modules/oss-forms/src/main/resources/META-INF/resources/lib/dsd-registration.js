@@ -5,13 +5,13 @@ DsdRegistrationFormsUtil = {
         let isParentSelectionValid = false;
         let isChildSelectionValid = true;
         let registrations = document.getElementsByClassName('registration-item');
-        [...registrations].forEach(function(registration) {
+        Array.from(registrations).forEach(function(registration) {
             let parentChecked = registration.getElementsByClassName("parent-registration")[0].checked;
             if (parentChecked){
                 isParentSelectionValid = true;
             }
             let children = registration.getElementsByClassName('child-registration');
-            [...children].forEach(function(child) {
+            Array.from(children).forEach(function(child) {
                 if (child.checked && !parentChecked){
                     isChildSelectionValid = false;
                 }
@@ -31,7 +31,7 @@ DsdRegistrationFormsUtil = {
 
         let priceEnabled = false;
         let courseTermsEnabled = false;
-        [...parents].forEach( function(parent) {
+        Array.from(parents).forEach( function(parent) {
             if (parent.checked){
 
                 if ( parseFloat(parent.getAttribute('data-price')) > 0) {
@@ -46,7 +46,7 @@ DsdRegistrationFormsUtil = {
         });
 
         let children = document.getElementsByClassName('child-registration');
-        [...children].forEach(function( child ) {
+        Array.from(children).forEach(function( child ) {
             if (child.checked){
                 if (parseFloat(child.getAttribute('data-price')) > 0){
                     priceEnabled = true;
@@ -57,31 +57,31 @@ DsdRegistrationFormsUtil = {
             }
         });
 
-        let step3 = $(document.getElementById(namespace + 'nav-stepper-step-3'));
+        let step3 = document.getElementById(namespace + 'nav-stepper-step-3');
         if (priceEnabled){
-            step3.removeClass('disabled'); //remove
+            step3.classList.remove('disabled'); //remove
         } else {
-            step3.addClass('disabled'); //add;
+            step3.classList.add('disabled'); //add;
         }
 
-        let courseCond = $(document.getElementById(namespace + 'course-conditions-div'));
+        let courseCond = document.getElementById(namespace + 'course-conditions-div');
         if (courseTermsEnabled){
-            courseCond[0].hidden = false;
-            $('input[name="' + namespace + 'course_conditions"]')[0].disabled = false;
+            courseCond.hidden = false;
+            document.querySelector('input[name="' + namespace + 'course_conditions"]').disabled = false;
         } else {
-            courseCond[0].hidden = true;
-            $('input[name="' + namespace + 'course_conditions"]')[0].disabled = true;
+            courseCond.hidden = true;
+            document.querySelector('input[name="' + namespace + 'course_conditions"]').disabled = true;
         }
     },
 
     updateBadge : function(namespace) {
         let showTitle = CommonFormsUtil.getRadioButtonsSelection(namespace, "badge_title_setting");
         let nameSetting =CommonFormsUtil.getRadioButtonsSelection(namespace, "badge_name_setting");
-        let titles = $(document.getElementById( namespace + "academicTitle")).val();
-        let firstName = $(document.getElementById(namespace + "first_name")).val();
-        let initials = $(document.getElementById( namespace + "initials")).val();
-        let lastName = $(document.getElementById( namespace + "last_name")).val();
-        let jobTitle = $(document.getElementById( namespace + "jobTitle" )).val();
+        let titles = document.getElementById( namespace + "academicTitle").value;
+        let firstName = document.getElementById(namespace + "first_name").value;
+        let initials = document.getElementById( namespace + "initials").value;
+        let lastName = document.getElementById( namespace + "last_name").value;
+        // let jobTitle = document.getElementById( namespace + "jobTitle" ).value;
         let title = '';
 
         if (showTitle === 'yes') {
@@ -98,8 +98,8 @@ DsdRegistrationFormsUtil = {
 
         title += ' ' + lastName;
 
-        $(document.getElementById('badge-title')).text(title);
-        $(document.getElementById('job-title')).text(jobTitle);
+        document.getElementById('badge-title').innerText = title;
+        // document.getElementById('job-title').innerText = jobTitle;
     }
 
 }

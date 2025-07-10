@@ -154,13 +154,13 @@
 </c:forEach>
 <aui:script use="event, node, aui-base, aui-progressbar">
 
-    let removeButtons = $(document.getElementsByClassName("add-to-cart"));
-    [...removeButtons].forEach(function (button) {
+    let removeButtons = document.getElementsByClassName("add-to-cart");
+    Array.from(removeButtons).forEach(function (button) {
         button.onclick = function (event){
             let myArticleId = event.srcElement.attributes.getNamedItem('data-article-id').value;
-            let childCheckBoxes = $(document.getElementsByClassName('child-registration'));
+            let childCheckBoxes = document.getElementsByClassName('child-registration');
             let url = window.location.href;
-            [...childCheckBoxes].forEach(function (checkBox) {
+            Array.from(childCheckBoxes).forEach(function (checkBox) {
                 if (checkBox.dataset.parentid === myArticleId){
                     let childId = checkBox.dataset.childid;
                     shoppingCart._removeFromCart(Number(childId), 'registration');

@@ -223,27 +223,27 @@
 
 <aui:script use="event, node, aui-base">
 
-    let quantityButtons = $(document.getElementsByClassName("parent-registration-quantity"));
-    [...quantityButtons].forEach(function (button){
-    button.onchange = function (event){
-    event.constructor
-    RegistrationFormsUtil.updateTable('<portlet:namespace/>', event.target);
-    RegistrationFormsUtil.updatePrice('<portlet:namespace/>', event.target);
-    }
-    button.setAttribute('min', 1);
-    button.setAttribute('max', 10);
+    let quantityButtons = document.getElementsByClassName("parent-registration-quantity");
+    Array.from(quantityButtons).forEach(function (button){
+        button.onchange = function (event){
+            event.constructor
+            RegistrationFormsUtil.updateTable('<portlet:namespace/>', event.target);
+            RegistrationFormsUtil.updatePrice('<portlet:namespace/>', event.target);
+        }
+        button.setAttribute('min', 1);
+        button.setAttribute('max', 10);
     });
 
-    let removeButtons = $(document.getElementsByClassName("remove-from-cart"));
-    [...removeButtons].forEach(function (button) {
-    button.onclick = function (event){
-    let srcElement = event.target.closest("button");
-    let removeArticleId = srcElement.dataset.articleid ;
-    shoppingCart._removeFromCart(Number(removeArticleId), 'registration');
-    let url = window.location.href;
-    url = CommonFormsUtil.removeArticleFromUrl(url, "<portlet:namespace/>ids", removeArticleId );
-    window.location.href = url;
-    }
+    let removeButtons = document.getElementsByClassName("remove-from-cart");
+    Array.from(removeButtons).forEach(function (button) {
+        button.onclick = function (event){
+            let srcElement = event.target.closest("button");
+            let removeArticleId = srcElement.dataset.articleid ;
+            shoppingCart._removeFromCart(Number(removeArticleId), 'registration');
+            let url = window.location.href;
+            url = CommonFormsUtil.removeArticleFromUrl(url, "<portlet:namespace/>ids", removeArticleId );
+            window.location.href = url;
+        }
     });
     RegistrationFormsUtil.updatePrice('<portlet:namespace/>', null)
 </aui:script>

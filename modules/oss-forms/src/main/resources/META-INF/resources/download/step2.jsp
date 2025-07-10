@@ -32,7 +32,7 @@
                         disabled="true">
                     <aui:validator name="required">
                                 function () {
-                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                                    return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
                 </aui:input>
@@ -46,7 +46,7 @@
                         disabled="true">
                     <aui:validator name="required">
                                 function () {
-                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                                    return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
                 </aui:input>
@@ -63,7 +63,7 @@
                         disabled="true">
                     <aui:validator name="required">
                         function () {
-                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                        return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
                     <aui:validator name="email"/>
@@ -76,7 +76,7 @@
                         value="${phone}">
                     <aui:validator name="maxLength" errorMessage="Please enter no more than 25 characters">
                         function() {
-                            if (checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2)){
+                            if (CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2)){
                                 return 25
                             } else {
                                 return 1000;
@@ -97,7 +97,7 @@
                         value="${org_name}">
                     <aui:validator name="required">
                         function () {
-                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                        return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
                 </aui:input>
@@ -117,7 +117,7 @@
                 value="${org_address}">
             <aui:validator name="required">
                         function () {
-                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                            return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
             </aui:validator>
         </aui:input>
@@ -130,12 +130,12 @@
                         value="${org_postal}">
                     <aui:validator name="required">
                                 function () {
-                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                                    return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
                     <aui:validator name="maxLength" errorMessage="Please enter no more than 15 characters">
                         function() {
-                            if (checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2)){
+                            if (CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2)){
                                 return 15
                             } else {
                                 return 1000;
@@ -151,7 +151,7 @@
                         value="${org_city}">
                     <aui:validator name="required">
                                 function () {
-                                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                                    return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                                 }
                     </aui:validator>
                 </aui:input>
@@ -166,7 +166,7 @@
                         value="${org_country}">
                     <aui:validator name="required">
                         function () {
-                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                        return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
                     <aui:option value="" label="registrationform.select.country"/>
@@ -183,12 +183,12 @@
                         value="${org_phone}" >
                     <aui:validator name="required">
                         function () {
-                        return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                        return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
                     <aui:validator name="maxLength" errorMessage="Please enter no more than 25 characters">
                         function() {
-                            if (checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2)){
+                            if (CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2)){
                                 return 25
                             } else {
                                 return 1000;

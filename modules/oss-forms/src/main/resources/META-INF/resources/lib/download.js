@@ -41,7 +41,7 @@ DownloadFormsUtil = {
         let billingInfoEnabled = false;
         let termsEnabled = false;
         let licensesEnabled = false;
-        [...downloads].forEach(function(download) {
+        Array.from(downloads).forEach(function(download) {
 
             if (download.checked){
 
@@ -66,40 +66,40 @@ DownloadFormsUtil = {
             }
 
         });
-        let step2 = $(document.getElementById(namespace + 'nav-stepper-step-2'));
+        let step2 = document.getElementById(namespace + 'nav-stepper-step-2');
         if (userInfoEnabled){
-            step2.removeClass('disabled'); //remove
+            step2.classList.remove('disabled'); //remove
         } else {
-            step2.addClass('disabled'); //add;
+            step2.classList.add('disabled'); //add;
         }
 
-        let step3 = $(document.getElementById(namespace + 'nav-stepper-step-3'));
+        let step3 = document.getElementById(namespace + 'nav-stepper-step-3');
         if (billingInfoEnabled){
-            step3.removeClass('disabled'); //remove
+            step3.classList.remove('disabled'); //remove
         } else {
-            step3.addClass('disabled'); //add;
+            step3.classList.add('disabled'); //add;
         }
 
-        let step3b = $(document.getElementById(namespace + 'nav-stepper-step-3b'));
+        let step3b = document.getElementById(namespace + 'nav-stepper-step-3b');
         if (licensesEnabled){
-            step3b.removeClass('disabled'); //remove
+            step3b.classList.remove('disabled'); //remove
         } else {
-            step3b.addClass('disabled'); //add;
+            step3b.classList.add('disabled'); //add;
         }
 
-        let step4 = $(document.getElementById(namespace + 'nav-stepper-step-4'));
+        let step4 = document.getElementById(namespace + 'nav-stepper-step-4');
         if (subscriptionEnabled){
-            step4.removeClass('disabled'); //remove
+            step4.classList.remove('disabled'); //remove
         } else {
-            step4.addClass('disabled'); //add;
+            step4.classList.add('disabled'); //add;
         }
 
         // let courseCond = $(document.getElementById(namespace + 'course-conditions-div'));
-        let step5 = $(document.getElementById(namespace + 'nav-stepper-step-5'));
+        let step5 = document.getElementById(namespace + 'nav-stepper-step-5');
         if (termsEnabled){
-            step5.removeClass('disabled'); //remove
+            step5.classList.remove('disabled'); //remove
         } else {
-            step5.addClass('disabled'); //add
+            step5.classList.add('disabled'); //add
         }
     },
 

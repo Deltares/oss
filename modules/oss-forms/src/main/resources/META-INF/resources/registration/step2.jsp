@@ -54,7 +54,7 @@
                         disabled="true">
                     <aui:validator name="required">
                         function () {
-                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                            return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
                     <aui:validator name="maxLength">75</aui:validator>
@@ -69,7 +69,7 @@
                         disabled="true">
                     <aui:validator name="required">
                         function () {
-                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                            return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
                     <aui:validator name="maxLength">75</aui:validator>
@@ -85,7 +85,7 @@
                 disabled="true">
             <aui:validator name="required">
                 function () {
-                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                    return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                 }
             </aui:validator>
             <aui:validator name="email"/>
@@ -100,7 +100,7 @@
                 value="${org_name}">
             <aui:validator name="required">
                 function () {
-                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                    return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                 }
             </aui:validator>
             <aui:validator name="maxLength">75</aui:validator>
@@ -111,7 +111,7 @@
                 value="${org_address}">
             <aui:validator name="required">
                 function () {
-                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                    return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                 }
             </aui:validator>
             <aui:validator name="maxLength">255</aui:validator>
@@ -125,7 +125,7 @@
                         value="${org_postal}">
                     <aui:validator name="required">
                         function () {
-                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                            return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
                     <aui:validator name="maxLength">10</aui:validator>
@@ -138,7 +138,7 @@
                         value="${org_city}">
                     <aui:validator name="required">
                         function () {
-                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                            return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
                     <aui:validator name="maxLength">75</aui:validator>
@@ -152,7 +152,7 @@
                 value="${country}" >
             <aui:validator name="required">
                 function () {
-                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                    return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                 }
             </aui:validator>
             <aui:validator name="minLength">

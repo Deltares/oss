@@ -14,23 +14,33 @@ FormStepper = {
 
     registerEvents: function () {
 
-        let nextButton = this.element.querySelector('.next-step');
-        let prevButton = this.element.querySelector('.prev-step');
+        let nextButtons = this.element.querySelectorAll('.next-step');
+        let prevButtons = this.element.querySelectorAll('.prev-step');
 
-        nextButton.addEventListener('click', {plugin: this, action: 'next'}, this._navigate);
-        prevButton.addEventListener('click', {plugin: this, action: 'prev'}, this._navigate);
-
-        this._getSubmitButton().addEventListener('click', function () {
-            if (this._isFormValid()) {
-                this.form.preSubmitAction();
-                this.form.submit();
-            }
+        nextButtons.forEach(function (nextButton) {
+            nextButton.addEventListener('click',function () {
+                FormStepper._navigate({data: {plugin: FormStepper, action: 'next'}});
+            });
         });
+        prevButtons.forEach(function (prevButton) {
+            prevButton.addEventListener('click',function () {
+                FormStepper._navigate({data: {plugin: FormStepper, action: 'prev'}})
+            });
+        })
+
+        this._getSubmitButton().forEach(function (submitbutton) {
+            submitbutton.addEventListener('click', function () {
+                if (FormStepper._isFormValid()) {
+                    FormStepper.form.preSubmitAction();
+                    FormStepper.form.form.submit();
+                }
+            });
+        })
     },
 
     _isFormValid: function () {
-        this.form.validate();
-        return !this.form.hasErrors();
+        this.form.formValidator.validate();
+        return !this.form.formValidator.hasErrors();
     },
 
     _navigate: function (event) {
@@ -40,48 +50,59 @@ FormStepper = {
 
         let element = plugin.element;
         let active = element.querySelector('li.active');
-        let next = active.nextElementSibling();
-        while (next.classList.contains('disabled') && next.nextElementSibling().length > 0) {
-            next = next.nextElementSibling();
+        let next;
+        if (active.nextElementSibling) {
+            next = active.nextElementSibling;
+        } else {
+            next = active;
         }
-        let prev = active.previousElementSibling();
-        while (prev.classList.contains('disabled') && prev.previousElementSibling.length > 0) {
-            prev = prev.previousElementSibling();
+        while (next.classList.contains('disabled') && next.nextElementSibling != null) {
+            next = next.nextElementSibling;
         }
 
-        let isLast = (next.nextElementSibling().length === 0);
-        let isFirst = (prev.previousElementSibling().length === 0);
+        let prev;
+        if( active.previousElementSibling){
+            prev = active.previousElementSibling;
+        } else {
+            prev = active;
+        }
 
-        if (isFormValid || 'prev' === action) {
-            if ('next' === action && next.length) {
-                plugin._hideStep(active);
-                plugin._showStep(next);
+        while (prev.classList.contains('disabled') && prev.previousElementSibling != null) {
+            prev = prev.previousElementSibling;
+        }
 
-                if (isLast) {
-                    plugin._disableButton(action);
-                    plugin._showSubmitButton();
-                } else {
-                    plugin._enableButton('prev');
-                }
-                active.removeClass('icon-circle-blank');
-                active.addClass('icon-circle completed');
-            } else if ('prev' === action && prev.length) {
-                plugin._hideStep(active);
-                plugin._showStep(prev);
+        let isLast = next.nextElementSibling === null;
+        let isFirst = prev.previousElementSibling === null;
 
-                if (isFirst) {
-                    plugin._disableButton(action);
-                } else {
-                    plugin._enableButton('next');
-                    plugin._hideSubmitButton();
-                }
+        if (isFormValid && 'next' === action && next) {
+            plugin._hideStep(active);
+            plugin._showStep(next);
+
+            if (isLast) {
+                plugin._disableButton(action);
+                plugin._showSubmitButton();
+            } else {
+                plugin._enableButton('prev');
+            }
+            active.classList.remove('icon-circle-blank');
+            active.classList.add('icon-circle');
+            active.classList.add('completed');
+        } else if ('prev' === action && prev) {
+            plugin._hideStep(active);
+            plugin._showStep(prev);
+
+            if (isFirst) {
+                plugin._disableButton(action);
+            } else {
+                plugin._enableButton('next');
+                plugin._hideSubmitButton();
             }
         }
     },
 
     _showStep: function (element) {
         let anchor = element.querySelector('a');
-        let pane = anchor.getAttribute('href');
+        let pane = document.querySelector(anchor.getAttribute('href'));
         this._activateElement(element);
         this._activateElement(anchor);
         this._activateElement(pane);
@@ -89,56 +110,71 @@ FormStepper = {
 
     _hideStep: function (element) {
         let anchor = element.querySelector('a');
-        let pane = anchor.getAttribute('href');
+        let pane = document.querySelector(anchor.getAttribute('href'));
         this._deactivateElement(element);
         this._deactivateElement(anchor);
         this._deactivateElement(pane);
     },
 
     _enableButton: function (button) {
-        let selector = document.querySelector('.' + button + '-step');
-        selector.removeClass('disabled');
-        selector.addClass('enabled');
+        let buttons = document.querySelectorAll('.' + button + '-step');
+        buttons.forEach(function (selector) {
+            selector.classList.remove('disabled');
+            selector.classList.add('enabled');
+        })
     },
 
     _disableButton: function (button) {
-        let selector = document.querySelector('.' + button + '-step');
-        selector.removeClass('enabled');
-        selector.addClass('disabled');
+        let buttons = document.querySelectorAll('.' + button + '-step');
+        buttons.forEach(function (selector) {
+            selector.classList.remove('enabled');
+            selector.classList.add('disabled');
+        })
     },
 
     _activateElement: function (element) {
-        element.addClass('active');
+        element.classList.add('active');
     },
 
     _deactivateElement: function (element) {
-        element.removeClass('active');
+        element.classList.remove('active');
     },
 
     _showSubmitButton: function () {
-        let submitButton = this._getSubmitButton();
-        let nextButton = this._getNextButton();
-        submitButton.removeClass('d-none');
-        submitButton.addClass('d-inline');
-        nextButton.addClass('d-none');
-        nextButton.removeClass('d-inline');
+        let submitButtons = this._getSubmitButton();
+        let nextButtons = this._getNextButton();
+        submitButtons.forEach(function (submitButton) {
+            submitButton.classList.remove('d-none');
+            submitButton.classList.add('d-inline');
+
+        })
+        nextButtons.forEach(function (nextButton) {
+            nextButton.classList.remove('d-inline');
+            nextButton.classList.add('d-none');
+
+        })
     },
 
     _hideSubmitButton: function () {
-        let submitButton = this._getSubmitButton();
-        let nextButton = this._getNextButton();
-        submitButton.addClass('d-none');
-        submitButton.removeClass('d-inline');
-        nextButton.addClass('d-inline');
-        nextButton.removeClass('d-none');
+        let submitButtons = this._getSubmitButton();
+        let nextButtons = this._getNextButton();
+        submitButtons.forEach(function (submitButton) {
+            submitButton.classList.add('d-none');
+            submitButton.classList.remove('d-inline');
+
+        })
+        nextButtons.forEach(function (nextButton) {
+            nextButton.classList.add('d-inline');
+            nextButton.classList.remove('d-none');
+        })
     },
 
     _getSubmitButton: function () {
-        return this.element.querySelector("a.submit");
+        return this.element.querySelectorAll("a.submit");
     },
 
     _getNextButton: function () {
-        return this.element.querySelector('.next-step');
+        return this.element.querySelectorAll('.next-step');
     }
 }
 
@@ -149,13 +185,14 @@ ShoppingCart = {
             'languageKeys': {
                 'add-to-cart': 'Add to cart',
                 'remove-from-cart': 'Remove from cart'
-            }
+            },
+            'registrationFormId' : 'dsd_RegistrationFormPortlet'
         },
     options : {},
     cart : {},
 
     init: function (options){
-        this.options = options
+        this.config = Object.assign({}, this.defaults, options);
         this.initCart();
         this.registerEvents();
 
@@ -187,45 +224,57 @@ ShoppingCart = {
         registerClick('.add-to-cart', 'registration');
         registerClick('.add-download-to-cart', 'download');
 
-        let element = document.querySelector('.c-cart__checkout__cart');
-        if (element) {
-            element.addEventListener('click', function (e) {
-                e.preventDefault();
-                buildCheckoutURL();
-            });
+        let elements = document.querySelectorAll('.c-cart__checkout__cart');
+        if (elements) {
+            elements.forEach(function (element) {
+                element.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    buildCheckoutURL();
+                });
+            })
+
         }
 
         function registerClick(clazz, type) {
-            let clazzElm = document.querySelector(clazz);
-            if (clazzElm){
-                clazzElm.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    let id = this.dataset.articleId;
+            let clazzElms = document.querySelectorAll(clazz);
+            if (clazzElms){
 
-                    if (this._contains(id, type)) {
-                        this._removeFromCart(id, type);
-                    } else {
-                        this._addToCart(id, type);
-                    }
-                    this._updateLabel(this, type);
-                    this.refreshCart();
-                });
+                clazzElms.forEach(function (clazzElm) {
+
+                    clazzElm.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        let id = this.dataset.articleId;
+
+                        if (shoppingCart._contains(id, type)) {
+                            shoppingCart._removeFromCart(id, type);
+                        } else {
+                            shoppingCart._addToCart(id, type);
+                        }
+                        shoppingCart._updateLabel(this, type);
+                        shoppingCart.refreshCart();
+                    });
+                })
             }
 
         }
     },
 
     refreshCart: function () {
-        let element = document.querySelector('.c-cart__item__counter');
-        if (element){
-            element.textContent = (this.cart.items.length + this.cart.downloads.length);
+        let elements = document.querySelectorAll('.c-cart__item__counter');
+        if (elements) {
+            elements.forEach(function (element) {
+                if (element) {
+                    element.textContent = (ShoppingCart.cart.items.length + ShoppingCart.cart.downloads.length);
+                }
+            })
         }
 
-        document.querySelectorAll('.add-to-cart').forEach(value => function (){
-            this._updateLabel(value, 'registration');
+
+        document.querySelectorAll('.add-to-cart').forEach( function (value){
+            ShoppingCart._updateLabel(value, 'registration');
         });
-        document.querySelectorAll('.add-download-to-cart').forEach(value => function (){
-            this._updateLabel(value, 'download');
+        document.querySelectorAll('.add-download-to-cart').forEach(function (value){
+            ShoppingCart._updateLabel(value, 'download');
         });
     },
 
@@ -260,7 +309,7 @@ ShoppingCart = {
                     cartUrl = checkoutCartURL;
                     action = 'register';
                     ids = plugin.cart.items.join(',');
-                    portletId  = 'RegistrationFormPortlet';
+                    portletId  = ShoppingCart.config.registrationFormId ;
                 }
                 let portletURL = Liferay.Util.PortletURL.createPortletURL(cartUrl,
                     {
@@ -283,7 +332,7 @@ ShoppingCart = {
 
     _updateLabel: function (element, type) {
         let plugin = this;
-        let id = element.data('articleId');
+        let id = element.dataset.articleId;
         if (plugin._contains(id, type)) {
             element.textContent = (plugin._getLanguageKey('remove-from-cart'));
         } else {
@@ -478,3 +527,13 @@ ShoppingCart = {
         navMenu.querySelector('.nav-subpanel').classList.remove('is-open');
         document.querySelector('body').classList.remove('overflow-hidden');
     });
+
+function checkStep(form, requiredStep) {
+    return (getCurrentStep(form) === requiredStep);
+}
+
+function getCurrentStep(form) {
+    var activePane = $('form[name=' + form + ']').closest('.bs-stepper').find('.tab-pane.active').attr('id');
+    var currentStep = activePane.charAt(activePane.length - 1);
+    return Number(currentStep);
+}

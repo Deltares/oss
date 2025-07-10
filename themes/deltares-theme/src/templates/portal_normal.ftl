@@ -78,7 +78,9 @@
 		var shoppingCart = ShoppingCart.init({'languageKeys': {
 				'add-to-cart': '${languageUtil.get(locale, "shopping.cart.add")}',
 				'remove-from-cart': '${languageUtil.get(locale, "shopping.cart.remove")}'
-			}});
+			},
+			'registrationFormId' : '${registration_form_id}'
+		});
 		shoppingCart.refreshCart();
 	</#if>
 

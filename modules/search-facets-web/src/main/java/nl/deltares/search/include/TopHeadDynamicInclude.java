@@ -19,7 +19,7 @@ public class TopHeadDynamicInclude extends BaseDynamicInclude {
         PrintWriter printWriter = response.getWriter();
 
         printWriter.println("<link rel=\"stylesheet\" href=\"/o/deltares-search-web/css/the-datepicker.css\">");
-        printWriter.println("<link rel=\"stylesheet\" href=\"/o/deltares-search-web/css/the-datepicker.d.ts\">");
+//        printWriter.println("<link rel=\"stylesheet\" href=\"/o/deltares-search-web/css/the-datepicker.d.ts\">");
     }
 
     @Override

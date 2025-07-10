@@ -20,7 +20,7 @@
                 type="checkbox">
             <aui:validator name="required">
                 function () {
-                return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 5);
+                return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 5);
                 }
             </aui:validator>
         </aui:input>

@@ -130,7 +130,7 @@
 
     RegistrationFormsUtil.updateBadge("<portlet:namespace />");
     let badgeListeners = $(document.getElementsByClassName("update-badge"));
-    [...badgeListeners].forEach(function (item) {
+    Array.from(badgeListeners).forEach(function (item) {
         item.onchange = function (){
             RegistrationFormsUtil.updateBadge("<portlet:namespace />");
         };

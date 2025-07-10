@@ -71,7 +71,7 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
 		User user = themeDisplay.getUser();
-		if (!user.isDefaultUser()) {
+		if (!user.isGuestUser()) {
             try {
 				final Map<String, String> userAttributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
 				request.setAttribute("attributes", userAttributes);

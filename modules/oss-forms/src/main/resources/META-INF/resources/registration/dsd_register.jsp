@@ -2,6 +2,7 @@
 <%@ taglib uri="http://xmlns.jcp.org/portlet_3_0" prefix="portlet" %>
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
 <%@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %>
+<%@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %>
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <%@ taglib uri="http://liferay.com/tld/journal" prefix="liferay-journal" %>
@@ -173,7 +174,7 @@
 
     const validateFirstStep = function() {
 
-        if (getCurrentStep("<portlet:namespace />fm") > 1) return true;
+        if (CommonFormsUtil.getCurrentStep("<portlet:namespace />fm") > 1) return true;
 
         let FIRST_STEP_ERROR_MESSAGE = '<liferay-ui:message key="dsd.registration.step1.error"/>';
         let FIRST_STEP_ERROR_MESSAGE_PARENT_MISSING = '<liferay-ui:message key="dsd.registration.step1.error.missing.parent"/>';
@@ -189,39 +190,38 @@
 
     }
 
-    $(document).ready(function() {
-        let namespace = "<portlet:namespace />";
-        let form = Liferay.Form.get(namespace + "fm").formValidator;
-        form.validateFirstStep = validateFirstStep;
-        form.preSubmitAction = preSubmitAction;
-        let stepper = document.querySelector('.bs-stepper')
-        let formStepper = FormStepper.init(stepper, form)
+    let namespace = "<portlet:namespace />";
+    let form = Liferay.Form.get(namespace + "fm");
+    form.validateFirstStep = validateFirstStep;
+    form.preSubmitAction = preSubmitAction;
+    let stepper = document.querySelector('.bs-stepper')
+    let formStepper = FormStepper.init(stepper, form)
 
-        DsdRegistrationFormsUtil.updateBadge(namespace);
-        DsdRegistrationFormsUtil.checkSelection(namespace);
-        let badgeListeners = document.getElementsByClassName("update-badge");
-        Array.from(badgeListeners).forEach(function (item) {
-            item.onchange = function (){
-                DsdRegistrationFormsUtil.updateBadge(namespace);
-            };
-        });
-        let parents = document.getElementsByClassName("parent-registration");
-        Array.from(parents).forEach(function (registration) {
-            registration.onchange = function (){
-                DsdRegistrationFormsUtil.checkSelection(namespace);
-            };
-        });
-        let children = document.getElementsByClassName("child-registration");
-        Array.from(children).forEach(function (registration) {
-            registration.onchange = function (){
-                DsdRegistrationFormsUtil.checkSelection(namespace);
-            };
-        });
-        document.getElementById(namespace + "registration_other").addEventListener('change', function() {
-            CommonFormsUtil.registerOther(namespace);
-        });
-        document.getElementById(namespace + "use_organization_address").addEventListener('change', function() {
-            CommonFormsUtil.updatePaymentAddress(namespace, this.checked);
+    DsdRegistrationFormsUtil.updateBadge(namespace);
+    DsdRegistrationFormsUtil.checkSelection(namespace);
+    let badgeListeners = document.getElementsByClassName("update-badge");
+    Array.from(badgeListeners).forEach(function (item) {
+        item.addEventListener('change', function (){
+            DsdRegistrationFormsUtil.updateBadge(namespace);
         });
     });
+    let parents = document.getElementsByClassName("parent-registration");
+    Array.from(parents).forEach(function (registration) {
+        registration.addEventListener('change', function (){
+            DsdRegistrationFormsUtil.checkSelection(namespace);
+        });
+    });
+    let children = document.getElementsByClassName("child-registration");
+    Array.from(children).forEach(function (registration) {
+        registration.addEventListener('change', function (){
+            DsdRegistrationFormsUtil.checkSelection(namespace);
+        });
+    });
+    document.getElementById(namespace + "registration_other").addEventListener('change', function() {
+        CommonFormsUtil.registerOther(namespace);
+    });
+    document.getElementById(namespace + "use_organization_address").addEventListener('change', function() {
+        CommonFormsUtil.updatePaymentAddress(namespace, this.checked);
+    });
+
 </aui:script>

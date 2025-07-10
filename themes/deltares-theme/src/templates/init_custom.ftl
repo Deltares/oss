@@ -18,6 +18,7 @@ company_logo = htmlUtil.escape(themeDisplay.getCompanyLogo())
 <#assign footerWC = "" />
 
 <#assign footerContentID = getterUtil.getString(theme_settings["page-footer-webcontent-id"]) >
+<#assign registration_form_id = getterUtil.getString(theme_settings["registration-form-id"]) >
 
 <#-- If this page has an open day colour scheme, drop the banner on -->
 
