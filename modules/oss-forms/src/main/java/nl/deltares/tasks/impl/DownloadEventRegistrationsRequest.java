@@ -65,7 +65,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         this.deleteOnCompletion = delete;
         this.removeMissing = removeMissing;
         this.useResourcePrimKey = primKey;
-        this.downloadAction = DOWNLOAD_ACTIONS.values()[downloadAction];
+        this.downloadAction = DOWNLOAD_ACTIONS.values()[Math.max(downloadAction, 0)];
         this.locale = LocaleUtil.fromLanguageId(siteGroup.getDefaultLanguageId());
 
     }

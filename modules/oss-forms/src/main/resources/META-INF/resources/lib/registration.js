@@ -324,7 +324,7 @@ RegistrationFormsUtil = {
 
         title += ' ' + lastName;
 
-        $(document.getElementById('badge-title')).text(title);
+        document.getElementById('badge-title').textContent = title;
     }
 
 }

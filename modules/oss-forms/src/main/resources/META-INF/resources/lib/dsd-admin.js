@@ -7,8 +7,8 @@ DsdAdminFormsUtil = {
     callDownload: function (namespace, resourceUrl, action) {
         CommonFormsUtil.clearError(namespace);
 
-        let checkBox = $('input[name=' + namespace + "removeMissing" + ']');
-        let removeMissing = checkBox[0].checked
+        let checkBox = document.querySelector('input[name=' + namespace + "removeMissing" + ']');
+        let removeMissing = checkBox.checked
         let downloadSelection = document.querySelector('input[name=\"' + namespace + 'downloadSelection"]:checked').value;
         if ("event" === downloadSelection) {
             var eventSelectionElement =  document.getElementById(namespace + "eventSelection");
@@ -30,7 +30,7 @@ DsdAdminFormsUtil = {
     deleteRegistrations: function(resourceUrl, namespace){
         CommonFormsUtil.clearError(namespace);
         let eventArticleId = document.getElementById( namespace + "articleId").value;
-        let checkBox = $('input[name='+ namespace + "isResourcePrimKey" + ']');
+        let checkBox = document.querySelector('input[name='+ namespace + "isResourcePrimKey" + ']');
 
         if (confirm("You are about to delete all registrations for event: " + eventArticleId + "\nDo you want to continue?") === false) {
             eventArticleId = null;
@@ -38,7 +38,7 @@ DsdAdminFormsUtil = {
         }
 
         let action;
-        if (checkBox[0].checked){
+        if (checkBox.checked){
             action = "deletePrimKey"
         } else {
             action = "delete"
@@ -87,14 +87,16 @@ DsdAdminFormsUtil = {
                         CommonFormsUtil.writeInfo(namespace, "204: No event found!");
                         return true;
                     } else if (xhr.status === 200){
-                        let jsonResponse = JSON.parse(xhr.responseText);
-                        if (jsonResponse.status === 'nodata'){
-                            CommonFormsUtil.writeInfo("No data found for request");
-                        } else {
-                            CommonFormsUtil.startProgressMonitor(namespace);
-                            CommonFormsUtil.setRunningProcess(namespace, setInterval(function () {
-                                CommonFormsUtil.callUpdateProgressRequest(resourceUrl, namespace, jsonResponse.id, 'downloadRegistrations.csv')
-                            }, 1000));
+                        if (xhr.responseText !== "") {
+                            let jsonResponse = JSON.parse(xhr.responseText);
+                            if (jsonResponse.status === 'nodata') {
+                                CommonFormsUtil.writeInfo("No data found for request");
+                            } else {
+                                CommonFormsUtil.startProgressMonitor(namespace);
+                                CommonFormsUtil.setRunningProcess(namespace, setInterval(function () {
+                                    CommonFormsUtil.callUpdateProgressRequest(resourceUrl, namespace, jsonResponse.id, 'downloadRegistrations.csv')
+                                }, 1000));
+                            }
                         }
                     } else {
                         CommonFormsUtil.stopProgressMonitor(namespace)
