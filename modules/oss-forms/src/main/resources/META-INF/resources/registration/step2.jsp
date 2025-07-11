@@ -123,7 +123,7 @@
                         name="<%= KeycloakUtils.ATTRIBUTES.org_postal.name() %>"
                         label="registrationform.orgpostcode"
                         value="${org_postal}">
-                    <aui:validator name="required">
+                    <aui:validator name="required" >
                         function () {
                             return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }

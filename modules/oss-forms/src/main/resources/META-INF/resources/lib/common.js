@@ -29,6 +29,19 @@ CommonFormsUtil = {
         let messageNode = document.createElement("div");
         messageNode.classList.add("portlet-msg-error");
         messageNode.innerHTML = message;
+        messageNode.style = "display: flex; justify-content: space-between";
+
+        let closeButton = document.createElement("button");
+        let span = document.createElement("span");
+        span.innerText = "X";
+        closeButton.appendChild(span)
+        closeButton.addEventListener('click', function (evt){
+            const alert = evt.target.closest('.portlet-msg-error');
+            if (alert) {
+                alert.remove();
+            }
+        });
+        messageNode.appendChild(closeButton);
         errorBlock.appendChild(messageNode);
     },
     writeInfo: function(namespace, message){

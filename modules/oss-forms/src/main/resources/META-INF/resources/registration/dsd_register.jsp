@@ -21,6 +21,8 @@
 <%@ page import="nl.deltares.portal.model.subscriptions.SubscriptionSelection" %>
 <%@ page import="com.liferay.portal.kernel.exception.PortalException" %>
 <%@ page import="nl.deltares.portal.utils.*" %>
+<%@ page import="java.util.Iterator" %>
+<%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
 
 <liferay-theme:defineObjects/>
 
@@ -43,6 +45,21 @@
     }
 %>
 
+<span id="<portlet:namespace/>group-message-block"></span>
+
+<aui:script>
+<%
+    Iterator<String> iterator = SessionErrors.iterator(liferayPortletRequest);
+    for (Iterator<String> it = iterator; it.hasNext(); ) {
+        String messageKey = it.next();
+        String arguments = (String) SessionErrors.get(liferayPortletRequest, messageKey);
+        if (arguments == null) arguments = "";
+%>
+    CommonFormsUtil.writeError("<portlet:namespace />", "<liferay-ui:message key="<%=messageKey%>" arguments="<%=arguments%>" />");
+<%
+    }
+%>
+</aui:script>
 <portlet:actionURL name="/submit/register/form" var="submitRegisterForm"/>
 
 <liferay-ui:success key="unregister-success" message="">
@@ -54,20 +71,20 @@
                         arguments='<%= SessionMessages.get(liferayPortletRequest, "registration-success") %>'/>
 </liferay-ui:success>
 
-<liferay-ui:error key="registration-failed">
-    <liferay-ui:message key="registration-failed"
-                        arguments='<%= SessionErrors.get(liferayPortletRequest, "registration-failed") %>'/>
-</liferay-ui:error>
+<%--<liferay-ui:error key="registration-failed">--%>
+<%--    <liferay-ui:message key="registration-failed"--%>
+<%--                        arguments='<%= SessionErrors.get(liferayPortletRequest, "registration-failed") %>'/>--%>
+<%--</liferay-ui:error>--%>
 
-<liferay-ui:error key="update-attributes-failed">
-    <liferay-ui:message key="update-attributes-failed"
-                        arguments='<%= SessionErrors.get(liferayPortletRequest, "update-attributes-failed") %>'/>
-</liferay-ui:error>
+<%--<liferay-ui:error key="update-attributes-failed">--%>
+<%--    <liferay-ui:message key="update-attributes-failed"--%>
+<%--                        arguments='<%= SessionErrors.get(liferayPortletRequest, "update-attributes-failed") %>'/>--%>
+<%--</liferay-ui:error>--%>
 
-<liferay-ui:error key="send-email-failed">
-    <liferay-ui:message key="send-email-failed"
-                        arguments='<%= SessionErrors.get(liferayPortletRequest, "send-email-failed") %>'/>
-</liferay-ui:error>
+<%--<liferay-ui:error key="send-email-failed">--%>
+<%--    <liferay-ui:message key="send-email-failed"--%>
+<%--                        arguments='<%= SessionErrors.get(liferayPortletRequest, "send-email-failed") %>'/>--%>
+<%--</liferay-ui:error>--%>
 
 
 <div class="bs-stepper">
