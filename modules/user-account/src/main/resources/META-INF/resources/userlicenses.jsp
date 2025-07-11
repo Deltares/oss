@@ -18,7 +18,7 @@
     <aui:col width="100">
         <span><liferay-ui:message key="userprofileform.licenseInfo"/></span>
         <aui:form>
-            <jsp:useBean id="records" class="java.util.List" scope="request"/>
+            <jsp:useBean id="records" type="java.util.List" scope="request"/>
 
             <liferay-ui:search-container id="tableResults"
                                          emptyResultsMessage='<%=LanguageUtil.get(locale, "no-download-records")%>'>

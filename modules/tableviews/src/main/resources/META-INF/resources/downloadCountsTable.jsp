@@ -19,7 +19,7 @@
 %>
 <span id="<portlet:namespace/>group-message-block"></span>
 <aui:input name="runningProcess" type="hidden"/>
-<aui:fieldset label="table.downloads.count.title">
+<aui:fieldset label="table.downloads.count.title" collapsible="true">
 
     <portlet:renderURL var="viewURL">
         <portlet:param name="mvcPath" value="/downloadCountsTable.jsp" />
@@ -60,7 +60,7 @@
         </aui:fieldset>
     </aui:form>
     <aui:form >
-        <jsp:useBean id="records" class="java.util.List" scope="request"/>
+        <jsp:useBean id="records" type="java.util.List" scope="request"/>
 
         <liferay-ui:search-container id="tableResults" delta="50" emptyResultsMessage='<%=LanguageUtil.get(locale, "no-download-count-records")%>'
                                      total="<%=count%>">
