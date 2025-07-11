@@ -65,7 +65,7 @@
             />
             <div class="pr-3">
                 <aui:input
-                        name="<%= BadgeInfo.ATTRIBUTES.badge_title_setting.name() %>"
+                        name="<%= BadgeInfo.badge_title_setting %>"
                         label="yes"
                         cssClass="update-badge"
                         type="radio"
@@ -74,7 +74,7 @@
             </div>
             <div class="pr-3">
                 <aui:input
-                        name="<%= BadgeInfo.ATTRIBUTES.badge_title_setting.name() %>"
+                        name="<%= BadgeInfo.badge_title_setting %>"
                         label="no"
                         cssClass="update-badge"
                         type="radio"
@@ -95,7 +95,7 @@
         <div class="d-flex justify-content-start">
             <div class="pr-3">
                 <aui:input
-                        name="<%= BadgeInfo.ATTRIBUTES.badge_name_setting.name() %>"
+                        name="<%= BadgeInfo.badge_name_setting %>"
                         label="dsd.registration.step2.badge.name.1"
                         cssClass="update-badge"
                         type="radio"
@@ -104,7 +104,7 @@
             </div>
             <div class="pr-3">
                 <aui:input
-                        name="<%= BadgeInfo.ATTRIBUTES.badge_name_setting.name() %>"
+                        name="<%= BadgeInfo.badge_name_setting %>"
                         label="dsd.registration.step2.badge.name.2"
                         cssClass="update-badge"
                         type="radio"
@@ -113,7 +113,7 @@
             </div>
             <div class="pr-3">
                 <aui:input
-                        name="<%= BadgeInfo.ATTRIBUTES.badge_name_setting.name() %>"
+                        name="<%= BadgeInfo.badge_name_setting %>"
                         label="dsd.registration.step2.badge.name.3"
                         cssClass="update-badge"
                         type="radio"
@@ -129,7 +129,7 @@
 <aui:script use="event, node, aui-base">
 
     RegistrationFormsUtil.updateBadge("<portlet:namespace />");
-    let badgeListeners = $(document.getElementsByClassName("update-badge"));
+    let badgeListeners = document.getElementsByClassName("update-badge");
     Array.from(badgeListeners).forEach(function (item) {
         item.onchange = function (){
             RegistrationFormsUtil.updateBadge("<portlet:namespace />");

@@ -142,6 +142,10 @@ public class AccountSelectionCheckoutStepDisplayContext{
         }
         Country companyCountry = _countryLocalService.getCountryByA2(getCompanyId(), country.getA2());
         String name = ParamUtil.getString(request, OrganizationConstants.ORG_ADDRESS_NAME);
+        if (name.isEmpty()){
+            name = accountEntry.getName();
+        }
+
         String street = ParamUtil.getString(request, OrganizationConstants.ORG_STREET);
         String city = ParamUtil.getString(request, OrganizationConstants.ORG_CITY);
         String postal = ParamUtil.getString(request, OrganizationConstants.ORG_POSTAL);
@@ -161,7 +165,6 @@ public class AccountSelectionCheckoutStepDisplayContext{
                     regionId, city, null, true, name, true, street, null, null, null, postal,
                     phoneNumber, serviceContext);
 
-            billingAddress = _addressLocalService.addAddress(billingAddress);
             accountEntry.setDefaultBillingAddressId(billingAddress.getAddressId());
             _accountEntryLocalService.updateAccountEntry(accountEntry);
         } else {
@@ -184,7 +187,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
                         _accountUser.getUserId(), "com.liferay.portal.kernel.model.Address", billingAddress.getAddressId(),
                         phoneNumber, null, phoneType.getListTypeId(), true, serviceContext);
             } else {
-                phone = phones.get(0);
+                phone = phones.getFirst();
                 phone.setNumber(phoneNumber);
                 _phoneLocalService.updatePhone(phone);
             }
@@ -242,17 +245,15 @@ public class AccountSelectionCheckoutStepDisplayContext{
 
             accountEntry.setTaxIdNumber(taxIdNumber);
             accountEntry.setName(name);
-            if (accountEntry.getExpandoBridge().hasAttribute(OrganizationConstants.ORG_REGISTRATION_ID)) {
-                accountEntry.getExpandoBridge().setAttribute(OrganizationConstants.ORG_REGISTRATION_ID, companyRegistrationId, false);
-            } else {
-                accountEntry.getExpandoBridge().addAttribute(OrganizationConstants.ORG_REGISTRATION_ID, companyRegistrationId, false);
+            if (!accountEntry.getExpandoBridge().hasAttribute(OrganizationConstants.ORG_REGISTRATION_ID)) {
+                accountEntry.getExpandoBridge().addAttribute(OrganizationConstants.ORG_REGISTRATION_ID);
             }
+            accountEntry.getExpandoBridge().setAttribute(OrganizationConstants.ORG_REGISTRATION_ID, companyRegistrationId, false);
 
-            if (accountEntry.getExpandoBridge().hasAttribute(OrganizationConstants.ORG_WEBSITE)) {
-                accountEntry.getExpandoBridge().setAttribute(OrganizationConstants.ORG_WEBSITE, website, false);
-            } else {
-                accountEntry.getExpandoBridge().addAttribute(OrganizationConstants.ORG_WEBSITE, website, false);
+            if (!accountEntry.getExpandoBridge().hasAttribute(OrganizationConstants.ORG_WEBSITE)) {
+                accountEntry.getExpandoBridge().addAttribute(OrganizationConstants.ORG_WEBSITE);
             }
+            accountEntry.getExpandoBridge().setAttribute(OrganizationConstants.ORG_WEBSITE, website, false);
 
             return _accountEntryLocalService.updateAccountEntry(accountEntry);
         }

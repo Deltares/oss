@@ -37,10 +37,9 @@ public class UserRegistrationDisplayContext {
 
         List<RegistrationInfo> list = (List<RegistrationInfo>) request.getSession().getAttribute("registrationInfos");
 
-
         for (Registration registration : _registrations) {
             if (list != null) {
-                List<RegistrationInfo> infos = getRegistrationInfos(registration);
+                List<RegistrationInfo> infos = getRegistrationInfos(list, registration);
                 if (!infos.isEmpty()) {
                     _registrationInfos.addAll(infos);
                     continue;
@@ -86,7 +85,10 @@ public class UserRegistrationDisplayContext {
     }
 
     public List<RegistrationInfo> getRegistrationInfos(Registration registration) {
-        return _registrationInfos.stream().filter(
+        return getRegistrationInfos(_registrationInfos, registration);
+    }
+    public List<RegistrationInfo> getRegistrationInfos(List<RegistrationInfo> infos, Registration registration) {
+        return infos.stream().filter(
                 info -> info.getArticleId().equals(registration.getArticleId())).collect(Collectors.toList());
     }
 }

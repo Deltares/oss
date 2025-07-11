@@ -370,8 +370,8 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         final BadgeInfo badgeInfo = new BadgeInfo();
 
         //Get local attributes
-        for (BadgeInfo.ATTRIBUTES key : BadgeInfo.ATTRIBUTES.values()) {
-            String value = ParamUtil.getString(actionRequest, key.name());
+        for (String key : BadgeInfo.ATTRIBUTES) {
+            String value = ParamUtil.getString(actionRequest, key);
             if (Validator.isNotNull(value) && ! Validator.isBlank(value)) {
                 badgeInfo.setAttribute(key, value);
             }

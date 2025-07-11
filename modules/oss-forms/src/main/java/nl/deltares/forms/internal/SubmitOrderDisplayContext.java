@@ -133,7 +133,7 @@ public class SubmitOrderDisplayContext {
         if (registrationUser.equals(loggedInUser)) {return;}
 
         ExpandoBridge expandoBridge = loggedInUser.getExpandoBridge();
-        String nameSettingKey = BadgeInfo.ATTRIBUTES.badge_name_setting.toString();
+        String nameSettingKey = BadgeInfo.badge_name_setting;
         if (expandoBridge.hasAttribute(nameSettingKey)) {
             Serializable nameSetting = expandoBridge.getAttribute(nameSettingKey, false);
             if (!registrationUser.getExpandoBridge().hasAttribute(nameSettingKey)){
@@ -141,7 +141,7 @@ public class SubmitOrderDisplayContext {
             }
             registrationUser.getExpandoBridge().setAttribute(nameSettingKey, nameSetting, false);
         }
-        String titleSettingKey = BadgeInfo.ATTRIBUTES.badge_title_setting.toString();
+        String titleSettingKey = BadgeInfo.badge_title_setting;
         if (expandoBridge.hasAttribute(titleSettingKey)){
             Serializable titleSetting = expandoBridge.getAttribute(titleSettingKey, false);
             if (!registrationUser.getExpandoBridge().hasAttribute(titleSettingKey)){

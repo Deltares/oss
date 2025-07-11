@@ -11,11 +11,13 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.model.BadgeInfo;
+import nl.deltares.model.RegistrationInfo;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.utils.DsdParserUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public class BadgeConfigCheckoutStepDisplayContext {
 
@@ -40,28 +42,36 @@ public class BadgeConfigCheckoutStepDisplayContext {
 
         _badgeInfo = (BadgeInfo) request.getSession().getAttribute("badgeInfo");
         if (_badgeInfo == null) {
-
             _badgeInfo = new BadgeInfo();
-            _badgeInfo.setTitle(_user.getJobTitle());
-            _badgeInfo.setInitials(StringUtil.shorten(_user.getFirstName(), 1));
-            _badgeInfo.setFirstName(_user.getFirstName());
-            _badgeInfo.setLastName(_user.getLastName());
-            ExpandoBridge expandoBridge = _user.getExpandoBridge();
-            if (expandoBridge.hasAttribute(BadgeInfo.ATTRIBUTES.badge_name_setting.toString())) {
-                _badgeInfo.setNameSetting((String) expandoBridge.getAttribute(BadgeInfo.ATTRIBUTES.badge_name_setting.toString()));
-            }
-            if (expandoBridge.hasAttribute(BadgeInfo.ATTRIBUTES.badge_title_setting.toString())) {
-                _badgeInfo.setTitleSetting((String) expandoBridge.getAttribute(BadgeInfo.ATTRIBUTES.badge_title_setting.toString()));
-            }
-
         }
+        String[] salutation = {_user.getJobTitle()};
+        List<RegistrationInfo> registrationInfos = (List<RegistrationInfo>) request.getSession().getAttribute("registrationInfos");
+        if (registrationInfos != null) {
+            registrationInfos.forEach(registrationInfo -> {
+                if (registrationInfo.getEmail().equals(_user.getEmailAddress())) {
+                    salutation[0] = registrationInfo.getSalutation();
+                }
+            });
+        }
+        _badgeInfo.setTitle(salutation[0]);
+        _badgeInfo.setInitials(StringUtil.shorten(_user.getFirstName(), 1));
+        _badgeInfo.setFirstName(_user.getFirstName());
+        _badgeInfo.setLastName(_user.getLastName());
+        ExpandoBridge expandoBridge = _user.getExpandoBridge();
+        if (expandoBridge.hasAttribute(BadgeInfo.badge_name_setting)) {
+            _badgeInfo.setNameSetting((String) expandoBridge.getAttribute(BadgeInfo.badge_name_setting));
+        }
+        if (expandoBridge.hasAttribute(BadgeInfo.badge_title_setting)) {
+            _badgeInfo.setTitleSetting((String) expandoBridge.getAttribute(BadgeInfo.badge_title_setting));
+        }
+
     }
 
     public BadgeInfo storeBadgeSettings(HttpServletRequest httpServletRequest) throws PortalException {
 
         //Get local attributes
-        for (BadgeInfo.ATTRIBUTES key : BadgeInfo.ATTRIBUTES.values()) {
-            String value = ParamUtil.getString(httpServletRequest, key.name());
+        for (String key : BadgeInfo.ATTRIBUTES) {
+            String value = ParamUtil.getString(httpServletRequest, key);
             if (Validator.isNotNull(value) && !Validator.isBlank(value)) {
                 _badgeInfo.setAttribute(key, value);
             }
@@ -69,16 +79,16 @@ public class BadgeConfigCheckoutStepDisplayContext {
 
         User user = _themeDisplay.getUser();
         ExpandoBridge expandoBridge = user.getExpandoBridge();
-        if (!expandoBridge.hasAttribute(BadgeInfo.ATTRIBUTES.badge_name_setting.toString())) {
-            expandoBridge.addAttribute(BadgeInfo.ATTRIBUTES.badge_name_setting.toString());
+        if (!expandoBridge.hasAttribute(BadgeInfo.badge_name_setting)) {
+            expandoBridge.addAttribute(BadgeInfo.badge_name_setting);
         }
-        expandoBridge.setAttribute(BadgeInfo.ATTRIBUTES.badge_name_setting.toString(), _badgeInfo.getNameSetting(), false);
+        expandoBridge.setAttribute(BadgeInfo.badge_name_setting, _badgeInfo.getNameSetting(), false);
 
-        if (!expandoBridge.hasAttribute(BadgeInfo.ATTRIBUTES.badge_title_setting.toString())) {
-            expandoBridge.addAttribute(BadgeInfo.ATTRIBUTES.badge_title_setting.toString());
+        if (!expandoBridge.hasAttribute(BadgeInfo.badge_title_setting)) {
+            expandoBridge.addAttribute(BadgeInfo.badge_title_setting);
 
         }
-        expandoBridge.setAttribute(BadgeInfo.ATTRIBUTES.badge_title_setting.toString(), _badgeInfo.getTitleSetting(), false);
+        expandoBridge.setAttribute(BadgeInfo.badge_title_setting, _badgeInfo.getTitleSetting(), false);
 
         return _badgeInfo;
     }

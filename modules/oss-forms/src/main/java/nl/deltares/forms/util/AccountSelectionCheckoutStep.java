@@ -54,12 +54,10 @@ public class AccountSelectionCheckoutStep extends BaseCheckoutStep {
     public void processAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
 
         HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
-        if (_displayContext == null) {
-            _displayContext =
-                    new AccountSelectionCheckoutStepDisplayContext(httpServletRequest, _accountEntryLocalService,
-                            _addressLocalService, _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
+        _displayContext =
+                new AccountSelectionCheckoutStepDisplayContext(httpServletRequest, _accountEntryLocalService,
+                        _addressLocalService, _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
 
-        }
         AccountEntry accountEntry = _displayContext.storeAccountInfo(httpServletRequest);
 
         if (accountEntry != null) {
@@ -81,12 +79,10 @@ public class AccountSelectionCheckoutStep extends BaseCheckoutStep {
     @Override
     public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 
-        if (_displayContext == null) {
-            _displayContext =
-                    new AccountSelectionCheckoutStepDisplayContext(httpServletRequest, _accountEntryLocalService,
-                            _addressLocalService, _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
+        _displayContext =
+                new AccountSelectionCheckoutStepDisplayContext(httpServletRequest, _accountEntryLocalService,
+                        _addressLocalService, _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
 
-        }
         httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, _displayContext);
 
         try {
