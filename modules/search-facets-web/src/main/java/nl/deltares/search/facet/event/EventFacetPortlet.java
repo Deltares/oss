@@ -48,6 +48,7 @@ public class EventFacetPortlet extends MVCPortlet {
                 _configuration);
         super.doView(renderRequest, renderResponse);
     }
+
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
         renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, false);

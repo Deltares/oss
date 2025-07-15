@@ -35,7 +35,6 @@ public class CheckboxFacetPortletSharedSearchContributor implements PortletShare
         if (portalCache == null) {
             return;
         }
-        final boolean visible = portalCache.get("visible") != null && (Boolean) portalCache.get("visible");
         final boolean explicit = portalCache.get("explicitSearch") != null && (Boolean) portalCache.get("explicitSearch");
         String structureName = (String) portalCache.get("structureName");
         String fieldName = (String) portalCache.get("fieldName");
@@ -43,29 +42,27 @@ public class CheckboxFacetPortletSharedSearchContributor implements PortletShare
         final Long groupId = (Long) portalCache.get("groupId");
         final Locale siteDefaultLocale = (Locale) portalCache.get("siteDefaultLocale");
 
-        String selection = null;
-        Optional<String> facetSelection = Optional.ofNullable(portletSharedSearchSettings.getParameter(name));
-        if (facetSelection.isPresent()) {
-            selection = facetSelection.get();
-        } else if (!visible) {
-            final boolean defaultValue = portalCache.get("defaultValue") != null && (Boolean)portalCache.get("defaultValue");
-            selection = FacetUtils.serializeYesNo(defaultValue);
+        Optional<String> selectionOptional = Optional.ofNullable(portletSharedSearchSettings.getParameter(name));
+        //check for parameter is in namespace of searchResultsPortlet
+
+        String selection = selectionOptional.orElseGet(() -> FacetUtils.getFromSession(
+                portletSharedSearchSettings.getPortletId(),
+                name, portletSharedSearchSettings.getRenderRequest()));
+        if (selection == null) {
+            return;
         }
-
-        if (selection != null) {
-            final Boolean option = FacetUtils.parseYesNo(selection);
-            if (option != null) {
-                if (explicit) {
-                    //look only for article containing the search field
-                    _dsdJournalArticleUtils.queryDdmFieldValue(groupId, fieldName, option.toString(), new String[]{structureName},
-                            portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
-                } else {
-                    //exclude all articles containing the opposite value, allowing all articles without value to pass through
-                    _dsdJournalArticleUtils.queryExcludeDdmFieldValue(groupId, fieldName, Boolean.toString(!option), new String[]{structureName},
-                            portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
-                }
-
+        final Boolean option = FacetUtils.parseYesNo(selection);
+        if (option != null) {
+            if (explicit) {
+                //look only for article containing the search field
+                _dsdJournalArticleUtils.queryDdmFieldValue(groupId, fieldName, Boolean.toString(option), new String[]{structureName},
+                        portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
+            } else {
+                //exclude all articles containing the opposite value, allowing all articles without value to pass through
+                _dsdJournalArticleUtils.queryExcludeDdmFieldValue(groupId, fieldName, Boolean.toString(!option), new String[]{structureName},
+                        portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
             }
+
         }
 
     }

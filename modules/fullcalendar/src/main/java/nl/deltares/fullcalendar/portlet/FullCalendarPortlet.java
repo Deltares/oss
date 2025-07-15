@@ -1,30 +1,25 @@
 package nl.deltares.fullcalendar.portlet;
 
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
-import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
 import nl.deltares.fullcalendar.constants.FullcalendarPortletKeys;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
-import nl.deltares.portal.utils.DsdParserUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.Portlet;
-import javax.portlet.PortletException;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
+import javax.portlet.*;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
-import java.util.Optional;
+import java.util.TimeZone;
 
 import static nl.deltares.fullcalendar.portlet.FullCalendarUtils.getTypeMap;
 
@@ -55,18 +50,25 @@ public class FullCalendarPortlet extends MVCPortlet {
 
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
-        PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
-        Optional<String> startDateOptional = Optional.ofNullable(portletSharedSearchResponse.getParameter("startDate", renderRequest));
-        startDateOptional.ifPresent(s -> {
+
+        String startDate = getFromSession("startDate", renderRequest);
+        if (startDate != null) {
             try {
-                renderRequest.setAttribute("startDate", dateFormat.parse(s));
+                renderRequest.setAttribute("startDate", dateFormat.parse(startDate));
             } catch (ParseException e) {
-                //
+                // Log the error and set the start date to the current date
+                renderRequest.setAttribute("startDate", new Date());
             }
-        });
+        } else {
+            renderRequest.setAttribute("startDate", new Date());
+        }
+
+        String eventIds = getFromSession("eventIds", renderRequest);
+        if (eventIds != null) {
+            renderRequest.setAttribute("eventIds", eventIds);
+        }
 
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
-
         try {
             Map<String, String> typeMap = getTypeMap(themeDisplay, dsdJournalArticleUtils, _configurationProvider);
             renderRequest.setAttribute("typeMap", typeMap);
@@ -83,13 +85,7 @@ public class FullCalendarPortlet extends MVCPortlet {
             RenderRequest renderRequest, RenderResponse renderResponse)
             throws IOException, PortletException {
 
-        renderRequest.setAttribute(
-                FullCalendarConfiguration.class.getName(),
-                _configuration);
-
-        renderRequest.setAttribute(DsdParserUtils.class.getName(), dsdParserUtils);
-
-        renderRequest.setAttribute(ConfigurationProvider.class.getName(), _configurationProvider);
+        renderRequest.setAttribute(FullCalendarConfiguration.class.getName(), _configuration);
 
         super.doView(renderRequest, renderResponse);
     }
@@ -101,15 +97,10 @@ public class FullCalendarPortlet extends MVCPortlet {
                 FullCalendarConfiguration.class, properties);
     }
 
-
-    @Reference
-    protected PortletSharedSearchRequest portletSharedSearchRequest;
-
-//    @Reference
-//    private NPMResolver _npmResolver;
-
-    @Reference
-    private DsdParserUtils dsdParserUtils;
+    private String getFromSession(String fieldName, RenderRequest renderRequest) {
+        PortletSession portletSession = renderRequest.getPortletSession(true);
+        return (String) portletSession.getAttribute("LIFERAY_SHARED_callendar" + fieldName, PortletSession.APPLICATION_SCOPE);
+    }
 
     @Reference
     DsdJournalArticleUtils dsdJournalArticleUtils;
@@ -119,6 +110,11 @@ public class FullCalendarPortlet extends MVCPortlet {
     private ConfigurationProvider _configurationProvider;
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+    {
+        this.dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
+
     @Reference
     protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
         _configurationProvider = configurationProvider;

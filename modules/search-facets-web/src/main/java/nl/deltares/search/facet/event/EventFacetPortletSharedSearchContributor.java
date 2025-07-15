@@ -1,14 +1,12 @@
 package nl.deltares.search.facet.event;
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
-import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
@@ -18,7 +16,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.util.Locale;
-import java.util.Optional;
 
 @Component(
         immediate = true,
@@ -36,14 +33,31 @@ public class EventFacetPortletSharedSearchContributor implements PortletSharedSe
         final Locale siteDefaultLocale = LocaleUtil.fromLanguageId(scopeGroup.getDefaultLanguageId());
 
         String[] structureKeys = null;
+        String eventsList = null;
+
         try {
-            DSDSiteConfiguration configuration = _configurationProvider.
+            EventFacetConfiguration eventPortletConfiguration = _configurationProvider.getPortletInstanceConfiguration(EventFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
+            eventsList = eventPortletConfiguration.eventsList();
+        } catch (ConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            DSDSiteConfiguration siteConfiguration = _configurationProvider.
                     getGroupConfiguration(DSDSiteConfiguration.class, groupId);
-            structureKeys = FacetUtils.getStructureKeys(configuration);
+            structureKeys = FacetUtils.getStructureKeys(siteConfiguration);
+            if (eventsList == null || eventsList.isEmpty()) {
+                eventsList = String.valueOf(siteConfiguration.eventId());
+            }
         } catch (ConfigurationException e) {
             LOG.debug("Could not get event configuration", e);
         }
-        String[] eventIds = getEventIds(portletSharedSearchSettings);
+
+        if (eventsList == null || eventsList.isEmpty()) {
+            return;
+        }
+        String[] eventIds = eventsList.split(" ");
+        //Store the eventIds in the session so they can be picked up by the calendar.
+        FacetUtils.storeInSession("callendar", "eventIds", eventsList.replace(' ', ','), portletSharedSearchSettings.getRenderRequest());
         if (eventIds.length > 0) {
             _dsdJournalArticleUtils.queryDdmFieldValues(groupId, "eventId", eventIds, structureKeys,
                     portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
@@ -51,41 +65,9 @@ public class EventFacetPortletSharedSearchContributor implements PortletSharedSe
 
     }
 
-    private String[] getEventIds(PortletSharedSearchSettings portletSharedSearchSettings) {
-
-        Optional<String> optional = Optional.ofNullable(portletSharedSearchSettings.getParameter("eventsList"));
-        return optional.map(s -> s.split(" ")).orElseGet(() -> {
-            String structureList = getConfiguredValue(portletSharedSearchSettings);
-            if (structureList != null && !structureList.isEmpty()) {
-                return StringUtil.split(structureList, ' ');
-            }
-            return new String[0];
-        });
-    }
-
-    private String getConfiguredValue(PortletSharedSearchSettings portletSharedSearchSettings) {
-
-        try {
-            EventFacetConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(EventFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
-            String overrulingEvents = configuration.eventsList();
-            if (overrulingEvents.isEmpty()) {
-
-                DSDSiteConfiguration siteConfiguration = _configurationProvider
-                        .getGroupConfiguration(DSDSiteConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getSiteGroupId());
-                return String.valueOf(siteConfiguration.eventId());
-            }
-            return overrulingEvents;
-        } catch (ConfigurationException e) {
-            LOG.warn("Could not find configuration for eventsList", e);
-        }
-        return null;
-    }
 
     @Reference
     private DsdJournalArticleUtils _dsdJournalArticleUtils;
-
-    @Reference
-    protected PortletSharedSearchRequest portletSharedSearchRequest;
 
     private ConfigurationProvider _configurationProvider;
 

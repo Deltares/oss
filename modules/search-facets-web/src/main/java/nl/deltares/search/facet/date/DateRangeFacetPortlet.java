@@ -4,16 +4,14 @@ import com.liferay.portal.configuration.module.configuration.ConfigurationProvid
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.Portlet;
-import javax.portlet.PortletException;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
+import javax.portlet.*;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -45,14 +43,40 @@ public class DateRangeFacetPortlet extends MVCPortlet {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
+    public void submitForm(ActionRequest actionRequest, ActionResponse actionResponse) {
+        ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+        String startDate = ParamUtil.getString(actionRequest, "startDate");
+        if (startDate == null || startDate.isEmpty()) {
+            FacetUtils.removeFromSession(themeDisplay.getPortletDisplay().getId(),"startDate", actionRequest);
+        } else {
+            FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(),"startDate", startDate, actionRequest);
+        }
+
+        String endDate = ParamUtil.getString(actionRequest, "endDate");
+        if (endDate == null || endDate.isEmpty()) {
+            FacetUtils.removeFromSession(themeDisplay.getPortletDisplay().getId(),"endDate", actionRequest);
+        } else {
+            FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(),"endDate", endDate, actionRequest);
+        }
+
+    }
+
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 
-
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+        // Try to get the start date from the session
         String startDate = FacetUtils.getRequestParameter("startDate", renderRequest);
+        if (startDate == null) {
+            startDate = FacetUtils.getFromSession(themeDisplay.getPortletDisplay().getId(), "startDate", renderRequest);
+        }
+        // Try to get the end date from the session
         String endDate = FacetUtils.getRequestParameter("endDate", renderRequest);
-        DateRangeFacetConfiguration _configuration = null;
+        if (endDate == null) {
+            endDate = FacetUtils.getFromSession(themeDisplay.getPortletDisplay().getId(), "endDate", renderRequest);
+        }
+
+        DateRangeFacetConfiguration _configuration;
         try {
             _configuration = _configurationProvider.getPortletInstanceConfiguration(DateRangeFacetConfiguration.class, themeDisplay);
             if (startDate == null) {
@@ -61,10 +85,16 @@ public class DateRangeFacetPortlet extends MVCPortlet {
                 } else if (Boolean.parseBoolean(_configuration.setStartNow())) {
                     startDate = DATE_TIME_FORMATTER.format(LocalDate.now());
                 }
+                if (startDate != null){
+                    FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(),"startDate", startDate, renderRequest);
+                }
             }
             if (endDate == null) {
                 if (!_configuration.endDate().isEmpty()) {
                     endDate = _configuration.endDate();
+                    if (endDate != null){
+                        FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(),"endDate", startDate, renderRequest);
+                    }
                 }
             }
         } catch (ConfigurationException e) {

@@ -17,6 +17,7 @@ import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import javax.portlet.RenderRequest;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
@@ -37,13 +38,13 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
 
         Date startDate = getDate(portletSharedSearchSettings, "startDate");
         Date endDate = getDate(portletSharedSearchSettings, "endDate");
-        boolean setStartNow = getBoolean(portletSharedSearchSettings, "setStartNow");
-        if (setStartNow && startDate == null){
-            startDate = new Date();
-        }
-
         String[] structureKeys = getStructureKeys(portletSharedSearchSettings);
         String dateFieldName = getDsdConfiguredValue("dsdRegistrationDateField", portletSharedSearchSettings);
+
+        if (startDate == null && endDate == null){
+            return;
+        }
+
         _dsDsdJournalArticleUtils.queryDateRange(
                 groupId, startDate, endDate, structureKeys, dateFieldName, portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
 
@@ -58,28 +59,25 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
         return new String[0];
     }
 
-    private boolean getBoolean(PortletSharedSearchSettings portletSharedSearchSettings, String booleanField){
-        Optional<String> showPastOptional = Optional.ofNullable(portletSharedSearchSettings.getParameter(booleanField));
-        if (showPastOptional.isPresent()){
-            return Boolean.parseBoolean(showPastOptional.get());
-        }
-        String configuredValue = getConfiguredValue(booleanField, portletSharedSearchSettings);
-        return Boolean.parseBoolean(configuredValue);
-    }
-
     private Date getDate(PortletSharedSearchSettings portletSharedSearchSettings, String dateField) {
 
         Optional<String> optional = Optional.ofNullable(portletSharedSearchSettings.getParameter(dateField));
-        Locale locale = portletSharedSearchSettings.getThemeDisplay().getLocale();
         //check for parameter is in namespace of searchResultsPortlet
-        String dateValue = optional.orElseGet(() -> FacetUtils.getRequestParameter(dateField, portletSharedSearchSettings.getRenderRequest()));
+        RenderRequest renderRequest = portletSharedSearchSettings.getRenderRequest();
+        String dateValue = optional.orElseGet(() -> FacetUtils.getFromSession(
+                portletSharedSearchSettings.getPortletId(), dateField, renderRequest));
 
         if (dateValue == null) {
-            dateValue = getConfiguredValue(dateField, portletSharedSearchSettings);
+            //Update value in session for callendar
+            FacetUtils.removeFromSession("callendar", dateField, renderRequest);
+            return null;
+        } else {
+            //Update value in session for callendar
+            FacetUtils.storeInSession("callendar", dateField, dateValue, renderRequest);
         }
-        if (dateValue == null || dateValue.isEmpty()) return null;
 
         try {
+            Locale locale = portletSharedSearchSettings.getThemeDisplay().getLocale();
             return DateUtil.parseDate("dd-MM-yyyy", dateValue, locale);
         } catch (ParseException e) {
             LOG.warn(String.format("Could not parse configured date %s: %s", dateValue, e.getMessage()), e);

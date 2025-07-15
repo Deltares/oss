@@ -8,8 +8,8 @@ import com.liferay.portal.configuration.module.configuration.ConfigurationProvid
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import nl.deltares.portal.utils.DeltaresCacheUtils;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
@@ -101,6 +101,19 @@ public class SelectionFacetPortlet extends MVCPortlet {
         return portletConfig;
     }
 
+    public void submitForm(ActionRequest actionRequest, ActionResponse actionResponse) throws PortletException {
+        ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+        final Map<String, Object> configuration = getConfiguration(themeDisplay);
+        final String name = (String) configuration.get("name");
+
+        String selection = ParamUtil.getString(actionRequest, "selection-facet-" + name);
+        if ("undefined".equals(selection)) {
+            FacetUtils.removeFromSession(themeDisplay.getPortletDisplay().getId(), name, actionRequest);
+        } else {
+            FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(), name, selection, actionRequest);
+        }
+    }
+
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 
@@ -115,16 +128,17 @@ public class SelectionFacetPortlet extends MVCPortlet {
         @SuppressWarnings("unchecked") final Map<String, String> selectionMap = (Map<String, String>) configuration.get("selectionMap");
         if (selectionMap != null && !selectionMap.isEmpty()) renderRequest.setAttribute("selectionMap", selectionMap);
 
-        final String selection = FacetUtils.getRequestParameter(name, renderRequest);
+        //First retrieve from request URL then try from session.
+        String selection = FacetUtils.getRequestParameter(name, renderRequest);
+        if (selection == null) {
+            selection = FacetUtils.getFromSession(themeDisplay.getPortletDisplay().getId(), name, renderRequest);
+        }
         if (selection != null) {
             renderRequest.setAttribute("selection", selection);
         }
 
         super.render(renderRequest, renderResponse);
     }
-
-    @Reference
-    protected PortletSharedSearchRequest portletSharedSearchRequest;
 
     private ConfigurationProvider _configurationProvider;
 

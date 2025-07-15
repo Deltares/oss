@@ -14,10 +14,9 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
+import javax.portlet.*;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -104,5 +103,20 @@ public class FacetUtils {
         final String pPId = originalHttpServletRequest.getParameter("p_p_id");
         return originalHttpServletRequest.getParameter("_" + pPId + "_" + parameterName);
 
+    }
+
+    public static void storeInSession(String portletId, String fieldName, String fieldValue, PortletRequest request) {
+        PortletSession portletSession = request.getPortletSession(true);
+        portletSession.setAttribute("LIFERAY_SHARED_" + portletId + fieldName, fieldValue, PortletSession.APPLICATION_SCOPE);
+    }
+
+    public static String getFromSession(String portletId, String fieldName, PortletRequest request) {
+        PortletSession portletSession = request.getPortletSession(true);
+        return (String) portletSession.getAttribute("LIFERAY_SHARED_" + portletId + fieldName, PortletSession.APPLICATION_SCOPE);
+    }
+
+    public static void removeFromSession(String portletId, String fieldName, PortletRequest request) {
+        PortletSession portletSession = request.getPortletSession();
+        portletSession.removeAttribute("LIFERAY_SHARED_" + portletId + fieldName, PortletSession.APPLICATION_SCOPE);
     }
 }

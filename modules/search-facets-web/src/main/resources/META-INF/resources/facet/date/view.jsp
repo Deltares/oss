@@ -4,8 +4,14 @@
     String endDate = (String)renderRequest.getAttribute("endDate");
 
 %>
+
+<liferay-portlet:actionURL
+        var="submitURL"
+        name="submitForm"
+/>
+
 <span id="<portlet:namespace/>dateRange-message-block"></span>
-<aui:form method="post" name="dateRangeFacetForm">
+<aui:form method="post" name="dateRangeFacetForm" action="<%=submitURL%>">
     <label ><liferay-ui:message key="facet.date-range.label"/></label>
     <div class="form-group-autofit">
         <aui:input name="startDate" label="" type="text" wrapperCssClass="form-group-item"
@@ -25,7 +31,9 @@
             val = newFieldValue.getInputFormatted()
         }
         if (val !== startFieldValue){
-            Liferay.Deltares.FacetUtil.updateQueryString("<portlet:namespace/>", fieldName);
+            var form = document.querySelector('form[name="<portlet:namespace />dateRangeFacetForm"]')
+            form.submit();
+            // Liferay.Deltares.FacetUtil.updateQueryString("<portlet:namespace/>", fieldName);
         }
     }
 

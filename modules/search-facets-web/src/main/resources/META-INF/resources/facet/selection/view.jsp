@@ -7,7 +7,12 @@
 	String selection = (String) renderRequest.getAttribute("selection");
 	Map<String, String> selectionMap = (Map) renderRequest.getAttribute("selectionMap");
 %>
-<aui:form method="post" name="selectionFacetForm">
+
+<liferay-portlet:actionURL
+		var="submitURL"
+		name="submitForm"
+/>
+<aui:form method="post" name="selectionFacetForm" action="<%=submitURL%>" cssClass="selection-facet-form">
 
 	<aui:select
 			name='<%="selection-facet-" + (name)%>'
@@ -26,6 +31,9 @@
 
 	let selectionFacet = document.getElementById("<portlet:namespace />selection-facet-<%=name%>");
    	selectionFacet.addEventListener('change', function() {
-		Liferay.Deltares.FacetUtil.updateQueryString("<portlet:namespace />", "<%=name%>");
+
+           var form = document.querySelector('form[name="<portlet:namespace />selectionFacetForm"]')
+           form.submit();
+		// Liferay.Deltares.FacetUtil.updateQueryString("<portlet:namespace />", "<%=name%>");
 	});
 </aui:script>
