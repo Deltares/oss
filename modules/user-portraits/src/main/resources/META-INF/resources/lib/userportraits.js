@@ -82,7 +82,7 @@ UserPortraitUtil = {
                         //Data not loaded yet so start download process
                         UserPortraitUtil.setRunningProcess(namespace, setInterval(function () {
                             UserPortraitUtil.statusUserPortraits(resourceUrl, namespace);
-                        }, 1000));
+                        }, 5000));
 
                     }
                 }

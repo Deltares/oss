@@ -108,8 +108,8 @@ ActivityMapUtil = {
                     } else if (xhr.status === 204){
                         //Data not loaded yet so start download process
                         ActivityMapUtil.setRunningProcess(namespace, setInterval(function () {
-                            ActivityMapUtil.statusDownloadActivityMap(resourceUrl, namespace);
-                        }, 1000));
+                            ActivityMapUtil.statusDownloadActivityMap(resourceUrl, namespace, titleControl);
+                        }, 5000));
 
                     }
                 }
@@ -137,7 +137,7 @@ ActivityMapUtil = {
         });
     },
 
-    statusDownloadActivityMap : function (resourceUrl, namespace){
+    statusDownloadActivityMap : function (resourceUrl, namespace, titleControl){
 
         let A = new AUI();
         A.io.request(resourceUrl + '&' + namespace + 'action=updateStatus', {
