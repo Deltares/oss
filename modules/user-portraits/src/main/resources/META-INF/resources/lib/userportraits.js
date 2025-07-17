@@ -124,8 +124,13 @@ UserPortraitUtil = {
                         let statusMsg = JSON.parse(responseData);
                         if (statusMsg.status === 'available') {
                             UserPortraitUtil.downloadUserPortraits(resourceUrl, namespace);
-                        } else if (statusMsg.status === 'running') {
-                            let percent = 100 * statusMsg.progress / statusMsg.total;
+                        } else if (statusMsg.status === 'running' || statusMsg.status === 'pending') {
+                            let percent;
+                            if (statusMsg.total === 0){
+                                percent = 0;
+                            } else {
+                                percent = 100 * statusMsg.progress / statusMsg.total
+                            }
                             UserPortraitUtil.updateTitle(namespace, 'Loading user portraits... Progress ' + Math.round(percent) + ' %');
                         } else {
                             UserPortraitUtil.stopRunningProcess(namespace);
