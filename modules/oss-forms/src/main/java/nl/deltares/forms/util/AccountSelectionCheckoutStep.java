@@ -64,15 +64,6 @@ public class AccountSelectionCheckoutStep extends BaseCheckoutStep {
             HttpSession session = httpServletRequest.getSession();
             session.setAttribute("selectedAccountEntryId", accountEntry.getAccountEntryId());
 
-
-//            List<RegistrationInfo> registrationInfos = (List<RegistrationInfo>) session.getAttribute("registrationInfos");
-//            BillingInfo billingInfo = (BillingInfo) session.getAttribute("billingInfo");
-//            if (registrationInfos != null) {
-//                UserRegistrationContext registrationContext = new UserRegistrationContext(httpServletRequest,
-//                        _dsdSessionUtils, _dsdParserUtils, _webinarUtilsFactory, _userLocalService, _keycloakUtils);
-//
-//                registrationContext.storeUserInformation(registrationInfos, billingInfo, accountEntry);
-//            }
         }
     }
 

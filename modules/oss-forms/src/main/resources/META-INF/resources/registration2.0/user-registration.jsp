@@ -63,7 +63,7 @@
                                     data-vat="<%=registration.getVAT()%>"
                                     data-currency="<%=registration.getCurrency()%>"
                                     data-price="<%=registration.getPrice()%>"
-                                    cssClass="parent-registration-quantity" wrapperCssClass="form-group-item"
+                                    cssClass="registration-quantity" wrapperCssClass="form-group-item"
                             />
 
                         </div>
@@ -223,7 +223,7 @@
 
 <aui:script use="event, node, aui-base">
 
-    let quantityButtons = document.getElementsByClassName("parent-registration-quantity");
+    let quantityButtons = document.getElementsByClassName("registration-quantity");
     Array.from(quantityButtons).forEach(function (button){
         button.onchange = function (event){
             event.constructor
@@ -239,7 +239,7 @@
         button.onclick = function (event){
             let srcElement = event.target.closest("button");
             let removeArticleId = srcElement.dataset.articleid ;
-            shoppingCart._removeFromCart(Number(removeArticleId), 'registration');
+            shoppingCart._removeFromCart(removeArticleId, 'registration');
             let url = window.location.href;
             url = CommonFormsUtil.removeArticleFromUrl(url, "<portlet:namespace/>ids", removeArticleId );
             window.location.href = url;

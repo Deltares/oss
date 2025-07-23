@@ -110,6 +110,7 @@ RegistrationFormsUtil = {
         if (selectedElement) {
             const vat = document.getElementById(namespace + "org_vat");
             const externalRef = document.getElementById(namespace + 'companyRegistrationId');
+            const regionIdSelect = document.getElementById(namespace + 'org_region');
             const website = document.getElementById(namespace + 'website');
 
             if (
@@ -232,7 +233,7 @@ RegistrationFormsUtil = {
     },
 
     updatePrice : function (namespace, element) {
-        let quantityList = document.getElementsByClassName("parent-registration-quantity");
+        let quantityList = document.getElementsByClassName("registration-quantity");
 
         let priceSubTotal = 0;
         let vatTotal = 0;
