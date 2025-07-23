@@ -12,9 +12,9 @@ import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.configuration.DownloadSiteConfiguration;
-import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.utils.URLUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -32,9 +32,11 @@ public class URLUtilsImpl implements URLUtils {
 
     @Override
     public String getRegistrationFormSuccessUrl(PortletRequest portletRequest, String action, String redirect) throws Exception {
+
+        ThemeDisplay themeDisplay = (ThemeDisplay) portletRequest.getAttribute(WebKeys.THEME_DISPLAY);
         long groupId = _portal.getScopeGroupId(portletRequest);
         LiferayPortletURL portletURL = (LiferayPortletURL) _getPortletURL(groupId,
-                portletRequest, OssConstants.REGISTRATIONFORM, PortletRequest.RENDER_PHASE);
+                portletRequest, themeDisplay.getThemeSetting("registration-form-id"), PortletRequest.RENDER_PHASE);
 
         portletURL.setWindowState(LiferayWindowState.NORMAL);
         portletURL.setPortletMode(LiferayPortletMode.VIEW);
@@ -49,9 +51,10 @@ public class URLUtilsImpl implements URLUtils {
     @Override
     public String getRegistrationFormFailUrl(PortletRequest portletRequest, String action, String redirect) throws Exception {
 
+        ThemeDisplay themeDisplay = (ThemeDisplay) portletRequest.getAttribute(WebKeys.THEME_DISPLAY);
         long groupId = _portal.getScopeGroupId(portletRequest);
         LiferayPortletURL portletURL = (LiferayPortletURL) _getPortletURL(groupId,
-                portletRequest, OssConstants.REGISTRATIONFORM, PortletRequest.RENDER_PHASE);
+                portletRequest, themeDisplay.getThemeSetting("registration-form-id"), PortletRequest.RENDER_PHASE);
 
         portletURL.setWindowState(LiferayWindowState.NORMAL);
         portletURL.setPortletMode(LiferayPortletMode.VIEW);
@@ -66,9 +69,10 @@ public class URLUtilsImpl implements URLUtils {
     @Override
     public String getUnregisterURL(PortletRequest portletRequest, String articleId, Long userId, String redirect) throws Exception {
 
+        ThemeDisplay themeDisplay = (ThemeDisplay) portletRequest.getAttribute(WebKeys.THEME_DISPLAY);
         long groupId = _portal.getScopeGroupId(portletRequest);
         LiferayPortletURL portletURL = (LiferayPortletURL) _getPortletURL(groupId,
-                portletRequest, OssConstants.REGISTRATIONFORM, PortletRequest.ACTION_PHASE);
+                portletRequest, themeDisplay.getThemeSetting("registration-form-id"), PortletRequest.ACTION_PHASE);
 
         portletURL.setWindowState(LiferayWindowState.NORMAL);
         portletURL.setPortletMode(LiferayPortletMode.VIEW);

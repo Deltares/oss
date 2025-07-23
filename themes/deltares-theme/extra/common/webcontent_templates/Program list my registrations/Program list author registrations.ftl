@@ -56,7 +56,8 @@
                         <#if  userLocalService.fetchUser(registrationData.getUserId())?? >
                             <#assign registeredUser =  userLocalService.fetchUser(registrationData.getUserId()) />
                         <tr><td>
-                            <a href="${displayContext.getUnregisterURL(renderRequest, registeredUser.getUserId(), "RegistrationFormPortlet",  "/submit/unregister/form") }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
+                            <a href="${displayContext.getUnregisterURL(renderRequest, registeredUser.getUserId(),
+                            displayContext.getConfiguredRegistrationFormId(),  "/submit/unregister/form") }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
                                 ${languageUtil.get(locale, "registrationform.unregister")}
                                 &nbsp;
                                 ${registeredUser.getFullName()}

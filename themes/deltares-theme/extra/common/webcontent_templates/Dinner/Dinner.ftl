@@ -70,9 +70,6 @@
                                 <a href="${displayContext.getUnregisterURL(renderRequest)}" class="btn btn-primary" role="button" aria-pressed="true">
                                     ${languageUtil.get(locale, "registrationform.unregister")}
                                 </a>
-                                <a href="${displayContext.getRegisterURL(renderRequest)}" class="btn btn-primary" role="button" aria-pressed="true">
-                                     ${languageUtil.get(locale, "registrationform.update")}
-                                </a>
                             <#else>
                                 <a href="${displayContext.getRegisterURL(renderRequest)}" class="btn btn-primary" role="button" aria-pressed="true">
                                      ${languageUtil.get(locale, "registrationform.register")}

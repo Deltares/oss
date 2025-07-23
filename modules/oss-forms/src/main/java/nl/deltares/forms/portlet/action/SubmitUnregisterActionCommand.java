@@ -24,6 +24,7 @@ import java.util.Collections;
         immediate = true,
         property = {
                 "javax.portlet.name=" + OssConstants.REGISTRATIONFORM,
+                "javax.portlet.name=" + OssConstants.DSD_REGISTRATIONFORM,
                 "mvc.command.name=/submit/unregister/form"
         },
         service = MVCActionCommand.class

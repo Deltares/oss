@@ -55,7 +55,8 @@
                         <#list registrationDatas as registrationData>
 
                         <tr><td>
-                            <a href="${displayContext.getUnregisterURL(renderRequest, themeDisplay.getUserId(), "RegistrationFormPortlet",  "/submit/unregister/form") }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
+                            <a href="${displayContext.getUnregisterURL(renderRequest, themeDisplay.getUserId(),
+                            displayContext.getConfiguredRegistrationFormId(),  "/submit/unregister/form") }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
                                 ${languageUtil.get(locale, "registrationform.unregister")}
                             </a>
                         </td></tr>

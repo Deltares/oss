@@ -19,7 +19,6 @@ import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
-import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.Period;
@@ -267,11 +266,11 @@ public class RegistrationDisplayContext {
 
     @SuppressWarnings("unused")
     public String getUnregisterURL(PortletRequest portletRequest, long userId) {
-        return getPortletRequest(portletRequest, "unregister", userId, OssConstants.DSD_REGISTRATIONFORM, "/submit/register/form");
+        return getPortletRequest(portletRequest, "unregister", userId, getConfiguredRegistrationFormId(), "/submit/register/form");
     }
 
     public String getUnregisterURL(PortletRequest portletRequest) {
-        return getPortletRequest(portletRequest, "unregister", null, OssConstants.DSD_REGISTRATIONFORM, "/submit/register/form");
+        return getPortletRequest(portletRequest, "unregister", null, getConfiguredRegistrationFormId(), "/submit/register/form");
     }
 
     @SuppressWarnings("unused")
@@ -280,13 +279,8 @@ public class RegistrationDisplayContext {
     }
 
     @SuppressWarnings("unused")
-    public String getUpdateURL(PortletRequest portletRequest) {
-        return getPortletRequest(portletRequest, "update", null, OssConstants.DSD_REGISTRATIONFORM, "/submit/register/form");
-    }
-
-    @SuppressWarnings("unused")
     public String getRegisterURL(PortletRequest portletRequest) {
-        return getPortletRequest(portletRequest, "register", null, OssConstants.DSD_REGISTRATIONFORM, "/submit/register/form");
+        return getPortletRequest(portletRequest, "register", null, getConfiguredRegistrationFormId(), "/submit/register/form");
     }
 
     public String getViewURL(DsdArticle article) {
@@ -305,7 +299,7 @@ public class RegistrationDisplayContext {
                 if (registrationPage != null) {
                     PortletURL portletURL = PortletURLFactoryUtil
                             .create(httpServletRequest,
-                                    OssConstants.DSD_REGISTRATIONFORM,
+                                    themeDisplay.getThemeSetting("registration-form-id"),
                                     registrationPage.getPlid(),
                                     action.equals("unregister") ? PortletRequest.ACTION_PHASE : PortletRequest.RENDER_PHASE);
                     portletURL.setWindowState(LiferayWindowState.NORMAL);
@@ -322,6 +316,10 @@ public class RegistrationDisplayContext {
             }
         }
         return "";
+    }
+
+    public String getConfiguredRegistrationFormId(){
+        return themeDisplay.getThemeSetting("registration-form-id");
     }
 
     public boolean hasPresentations() {
