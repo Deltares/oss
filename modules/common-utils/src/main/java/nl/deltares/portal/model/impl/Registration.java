@@ -10,10 +10,10 @@ import com.liferay.portal.kernel.service.TeamLocalServiceUtil;
 import com.liferay.portal.kernel.service.TeamServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.Period;
-import org.w3c.dom.Document;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,7 +33,7 @@ public abstract class Registration extends AbsDsdArticle {
     private String currency = "&#8364"; //euro sign
     private String type = "unknown";
     private String topic = "unknown";
-    private Registration parentRegistration = null;
+    private final List<Registration> relatedRegistrations = new ArrayList<>();
     private boolean overlapWithParent = false;
     private boolean hasParent = false;
     Date startTime = new Date(0);
@@ -51,8 +51,8 @@ public abstract class Registration extends AbsDsdArticle {
     final SimpleDateFormat timef = new SimpleDateFormat("HH:mm");
     private final Calendar calendar = Calendar.getInstance();
 
-    public Registration(JournalArticle article, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
-        super(article, dsdParserUtils, locale);
+    public Registration(JournalArticle article, DsdParserUtils dsdParserUtils, DsdJournalArticleUtils dsdJournalArticleUtils, Locale locale) throws PortalException {
+        super(article, dsdParserUtils, dsdJournalArticleUtils, locale);
         init();
     }
 
@@ -69,9 +69,13 @@ public abstract class Registration extends AbsDsdArticle {
             this.type = getFormFieldValue("registrationType", false);
             this.topic = getFormFieldValue("topic", false);
             String parentJson = getFormFieldValue("parent", true);
+            String relationType = getFormFieldValue("relationType", true);
             if (parentJson != null) {
                 overlapWithParent = Boolean.parseBoolean(getFormFieldValue( "overlaps", true));
                 hasParent = true;
+            } else if (relationType != null) {
+                overlapWithParent = true;
+                hasParent = relationType.equals("child");
             }
             requiredTeam = getFormFieldValue( "requiredTeam", true);
             projectNumber = getFormFieldValue("ProjectNumber", true);
@@ -79,7 +83,7 @@ public abstract class Registration extends AbsDsdArticle {
             timeZoneId = correctTimeZone(timeZoneId);
             String vatTxt = getFormFieldValue( "vat", true);
             if (vatTxt != null) this.vat = Long.parseLong(vatTxt);
-            defaultUserId = UserLocalServiceUtil.getDefaultUser(getCompanyId()).getUserId();
+            defaultUserId = UserLocalServiceUtil.getGuestUserId(getCompanyId());
 
             final String cancellationPeriodTxt = getFormFieldValue("CancellationPeriodDays", true);
             if (cancellationPeriodTxt != null) {
@@ -97,7 +101,7 @@ public abstract class Registration extends AbsDsdArticle {
         return timeZoneId;
     }
 
-    void initDates(Document document) throws PortalException, ParseException {
+    void initDates() throws PortalException, ParseException {
 
         String datesOption = getFormFieldValue( "multipleDatesOption", true);
         daily = "daily".equals(datesOption);
@@ -126,8 +130,8 @@ public abstract class Registration extends AbsDsdArticle {
         }
 
         if (!dayPeriods.isEmpty()){
-            startTime = dayPeriods.get(0).getStartDate();
-            endTime = dayPeriods.get(dayPeriods.size() - 1).getEndDate();
+            startTime = dayPeriods.getFirst().getStartDate();
+            endTime = dayPeriods.getLast().getEndDate();
         }
 
 
@@ -166,11 +170,23 @@ public abstract class Registration extends AbsDsdArticle {
     private void parseParentRegistration() throws PortalException {
         String parentJson = getFormFieldValue( "parent", true);
         if (parentJson == null){
+            parseRelatedAssets();
             return;
         }
         JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(parentJson);
-        parentRegistration = dsdParserUtils.getRegistration(journalArticle);
+        relatedRegistrations.add(dsdParserUtils.getRegistration(journalArticle));
 
+    }
+
+    private void parseRelatedAssets() throws PortalException {
+        List<JournalArticle> relatedArticles = dsdJournalArticleUtils.getRelatedArticles(getGroupId(), new String[]{getJournalArticle().getArticleId()});
+
+        for (JournalArticle relatedArticle : relatedArticles) {
+            Registration registration = dsdParserUtils.getRegistration(relatedArticle);
+            if (registration.canUserRegister(getGroupId())) {
+                relatedRegistrations.add(registration);
+            }
+        }
     }
 
     public boolean canUserRegister(long userId){
@@ -234,7 +250,10 @@ public abstract class Registration extends AbsDsdArticle {
 
     public Registration getParentRegistration() {
         loadParentRegistration();
-        return parentRegistration;
+        if (!relatedRegistrations.isEmpty()) {
+            return relatedRegistrations.getFirst();
+        }
+        return null;
     }
 
     public boolean hasParent() {
@@ -242,10 +261,10 @@ public abstract class Registration extends AbsDsdArticle {
     }
 
     private void loadParentRegistration() {
-        if (!hasParent || parentRegistration != null) return;
+        if (!hasParent || relatedRegistrations != null) return;
         try {
             parseParentRegistration();
-            hasParent = parentRegistration != null;
+            hasParent = relatedRegistrations != null;
         } catch (PortalException e) {
             LOG.error(String.format("Error parsing parent registration for registration %s: %s", getTitle(), e.getMessage()));
             hasParent = false;

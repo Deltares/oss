@@ -6,6 +6,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.exception.ValidationException;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 
@@ -25,8 +26,9 @@ public class SessionRegistration extends Registration {
     private String joinLink = "";
     private boolean showMultipleDaysAsSingleDate = false;
 
-    public SessionRegistration(JournalArticle article, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
-        super(article, dsdParserUtils, locale);
+    public SessionRegistration(JournalArticle article, DsdParserUtils dsdParserUtils, DsdJournalArticleUtils dsdJournalArticleUtils,
+                               Locale locale) throws PortalException {
+        super(article, dsdParserUtils, dsdJournalArticleUtils, locale);
         init();
     }
 
@@ -55,7 +57,7 @@ public class SessionRegistration extends Registration {
                 this.showMultipleDaysAsSingleDate = Boolean.parseBoolean(value);
             }
 
-            initDates(null);
+            initDates();
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
@@ -116,7 +118,7 @@ public class SessionRegistration extends Registration {
     }
 
     private void loadPresenter() {
-        if (presenters.size() > 0) return;
+        if (!presenters.isEmpty()) return;
         try {
             parsePresenter();
         } catch (PortalException e) {
@@ -137,7 +139,7 @@ public class SessionRegistration extends Registration {
     }
 
     private void loadPresentations() {
-        if (presentations.size() > 0) return;
+        if (!presentations.isEmpty()) return;
         try {
             parsePresentations();
         } catch (PortalException e) {

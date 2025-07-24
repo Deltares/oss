@@ -5,6 +5,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 
@@ -26,8 +27,8 @@ public class Event extends AbsDsdArticle {
     private long emailFooterFileEntryId = 0;
     private String timeZoneId = "CET";
 
-    public Event(JournalArticle journalArticle, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
-        super(journalArticle, dsdParserUtils, locale);
+    public Event(JournalArticle journalArticle, DsdParserUtils dsdParserUtils, DsdJournalArticleUtils dsdJournalArticleUtils, Locale locale) throws PortalException {
+        super(journalArticle, dsdParserUtils, dsdJournalArticleUtils, locale);
         init();
     }
 

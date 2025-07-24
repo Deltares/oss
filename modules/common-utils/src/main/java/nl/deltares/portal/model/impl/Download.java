@@ -35,7 +35,7 @@ public class Download extends AbsDsdArticle {
     private final List<ACTION> requiredActions = new ArrayList<>();
 
     public Download(JournalArticle journalArticle, DsdParserUtils articleParserUtils, DsdJournalArticleUtils dsdJournalArticleUtils, LayoutUtils layoutUtils, Locale locale) throws PortalException {
-        super(journalArticle, articleParserUtils, locale);
+        super(journalArticle, articleParserUtils, dsdJournalArticleUtils, locale);
         init(dsdJournalArticleUtils, layoutUtils);
     }
 

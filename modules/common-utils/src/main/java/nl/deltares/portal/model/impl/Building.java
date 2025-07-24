@@ -4,6 +4,7 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 
@@ -16,8 +17,8 @@ public class Building extends AbsDsdArticle {
     private double longitude;
     private double latitude;
 
-    public Building(JournalArticle dsdArticle, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
-        super(dsdArticle, dsdParserUtils, locale);
+    public Building(JournalArticle dsdArticle, DsdParserUtils dsdParserUtils, DsdJournalArticleUtils dsdJournalArticleUtils, Locale locale) throws PortalException {
+        super(dsdArticle, dsdParserUtils, dsdJournalArticleUtils, locale);
         init();
     }
 

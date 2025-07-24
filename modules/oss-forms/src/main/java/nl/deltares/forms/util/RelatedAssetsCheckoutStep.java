@@ -1,12 +1,11 @@
 package nl.deltares.forms.util;
 
-import com.liferay.asset.kernel.service.AssetEntryService;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
 import com.liferay.portal.kernel.servlet.SessionErrors;
-import com.liferay.portal.kernel.util.ParamUtil;
 import nl.deltares.forms.constants.CheckoutWebKeys;
 import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.forms.internal.RelatedAssetsDisplayContext;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -50,7 +49,7 @@ public class RelatedAssetsCheckoutStep extends BaseCheckoutStep {
 
         try {
             RelatedAssetsDisplayContext displayContext = new RelatedAssetsDisplayContext(httpServletRequest,
-                    _assAssetEntryService,
+                    _dsdJournalArticleUtils,
                     _dsdParserUtils);
             httpServletRequest.setAttribute(
                     CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT,
@@ -71,6 +70,6 @@ public class RelatedAssetsCheckoutStep extends BaseCheckoutStep {
     private DsdParserUtils _dsdParserUtils;
 
     @Reference
-    private AssetEntryService _assAssetEntryService;
+    private DsdJournalArticleUtils _dsdJournalArticleUtils;
 
 }
