@@ -20,5 +20,10 @@
 			<template-path>/layouttpl/custom/restricted-1-2__2-1-layouttpl/restricted_1_2_2_1.tpl</template-path>
 			<thumbnail-path>/layouttpl/custom/restricted-1-2__2-1-layouttpl/restricted_1_2_2_1.png</thumbnail-path>
 		</layout-template>
+		<layout-template id="restricted-1__1-2-2" name="2-1 Columns (30/70)">
+			<template-path>/layouttpl/custom/restricted-1__1-2-2-layouttpl/restricted_1_1_2_2.tpl</template-path>
+			<thumbnail-path>/layouttpl/custom/restricted-1__1-2-2-layouttpl/restricted_1_1_2_2.png</thumbnail-path>
+		</layout-template>
+
 	</custom>
 </layout-templates>
