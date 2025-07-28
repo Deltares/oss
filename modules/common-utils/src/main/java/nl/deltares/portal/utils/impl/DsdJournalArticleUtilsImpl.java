@@ -146,7 +146,6 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
 
             DDMStructure ddmStructure = ddmStructureByName.get();
             try {
-//                DDMFormField ddmFormField = ddmStructure.getDDMFormField(optionsField); //Field name is not editable after creation
                 DDMFormField ddmFormField = ddmStructure.getDDMFormFieldByFieldReference(optionsField);
                 DDMFormFieldOptions ddmFormFieldOptions = ddmFormField.getDDMFormFieldOptions();
                 if (ddmFormFieldOptions == null) return Collections.emptyMap();
@@ -207,20 +206,7 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
 
     private void queryDdmFieldValue(long groupId, String searchFieldName, String searchFieldValueKeywordValue,
                                     String[] structureKeys, SearchContext searchContext, Locale locale, boolean excludeValue) {
-        if (searchFieldValueKeywordValue == null || searchFieldValueKeywordValue.isEmpty()) return;
-
-        final String languageString = locale.toString();
-        final List<String> fieldNameValues = ddmStructureUtil.getEncodedFieldNamesForStructures(groupId, searchFieldName, structureKeys, locale);
-        boolean localizeKeywordField = checkIfValuesAreLocalized(languageString, fieldNameValues);
-        DeltaresDdmFieldValueFacet nestedFacetImpl = new DeltaresDdmFieldValueFacet(searchFieldName, searchContext);
-        nestedFacetImpl.setFieldNameValues(fieldNameValues.toArray(new String[0]));
-        if (localizeKeywordField) {
-            nestedFacetImpl.setFieldValueKeywordName("ddmFieldValueKeyword_" + languageString);
-        }
-        nestedFacetImpl.setFieldValueKeywordValue(searchFieldValueKeywordValue);
-        nestedFacetImpl.setExclude(excludeValue);
-        searchContext.addFacet(nestedFacetImpl);
-
+        queryDdmFieldValues(groupId, searchFieldName, new String[]{searchFieldValueKeywordValue}, structureKeys, searchContext, locale, excludeValue);
     }
 
     private void queryDdmFieldValues(long groupId, String searchFieldName, String[] searchFieldValueKeywordValues,
@@ -229,23 +215,12 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
 
         final String languageString = locale.toString();
         final List<String> fieldNameValues = ddmStructureUtil.getEncodedFieldNamesForStructures(groupId, searchFieldName, structureKeys, locale);
-        boolean localizeKeywordField = checkIfValuesAreLocalized(languageString, fieldNameValues);
-        DeltaresDdmFieldValueFacet nestedFacetImpl = new DeltaresDdmFieldValueFacet(searchFieldName, searchContext);
+        DeltaresDdmFieldValueFacet nestedFacetImpl = new DeltaresDdmFieldValueFacet(searchFieldName, languageString, searchContext);
         nestedFacetImpl.setFieldNameValues(fieldNameValues.toArray(new String[0]));
-        if (localizeKeywordField) {
-            nestedFacetImpl.setFieldValueKeywordName("ddmFieldValueKeyword_" + languageString);
-        }
+        nestedFacetImpl.setFieldValueKeywordName("ddmFieldValueKeyword");
         nestedFacetImpl.setFieldValueKeywordValues(searchFieldValueKeywordValues);
         nestedFacetImpl.setExclude(excludeValue);
         searchContext.addFacet(nestedFacetImpl);
-
-    }
-
-    private boolean checkIfValuesAreLocalized(String languageString, List<String> fieldNameValues) {
-        for (String value : fieldNameValues) {
-            if (value.endsWith(languageString)) return true;
-        }
-        return false;
     }
 
     @Override
@@ -286,24 +261,4 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
     public JournalArticle getJournalArticle(long groupId, String articleId) throws PortalException {
         return JournalArticleLocalServiceUtil.getLatestArticle(groupId, articleId);
     }
-
-//    @Override
-//    public String getJournalArticleDisplayContent(PortletRequest portletRequest, PortletResponse portletResponse,
-//                                                  String articleId, ThemeDisplay themeDisplay) throws PortalException {
-//
-//
-//        if (JournalArticleLocalServiceUtil.fetchArticle(themeDisplay.getScopeGroupId(), articleId) != null) {
-//            final JournalArticleDisplay articleDisplay = JournalArticleLocalServiceUtil.getArticleDisplay(themeDisplay.getScopeGroupId(), articleId, "VIEW",
-//                    themeDisplay.getLanguageId(), themeDisplay);
-//            return articleDisplay.getContent();
-//        }
-//        if (JournalArticleLocalServiceUtil.fetchArticle(themeDisplay.getScopeGroupId(), articleId) != null) {
-//            final JournalArticleDisplay articleDisplay = JournalArticleLocalServiceUtil.getArticleDisplay(themeDisplay.getScopeGroupId(), articleId, "VIEW",
-//                    themeDisplay.getLanguageId(), themeDisplay);
-//
-//            return articleDisplay.getContent();
-//        }
-//        return "";
-//
-//    }
 }

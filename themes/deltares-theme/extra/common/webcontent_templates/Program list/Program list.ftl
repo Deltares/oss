@@ -1,5 +1,4 @@
 <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
-<#--<#assign dsdSessionUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdSessionUtils") />-->
 <#assign title=.vars['reserved-article-title'].data />
 <#assign urltitle=.vars['reserved-article-url-title'].data />
 <#assign articleId = .vars['reserved-article-id'].getData() />
@@ -62,30 +61,9 @@
                           ${languageUtil.get(locale, "shopping.cart.add")}
                         </a>
                     </#if>
-                    <#if dsdSessionUtils.isUserRegisteredFor(themeDisplay.getUser(), registration)>
-
-                        <#assign joinLink = dsdSessionUtils.getUserJoinLink(themeDisplay.getUser(), registration) />
-                        <#if joinLink?? && joinLink != "">
-                            <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button"
-                               aria-pressed="true" style="margin-right:5px; color:#fff">
-                                         ${languageUtil.get(locale, "registrationform.join")}
-                                    </a>
-                        </#if>
-                            <a href="${displayContext.getUnregisterURL(renderRequest, themeDisplay.getUserId(),
-                                        displayContext.getConfiguredRegistrationFormId(), "/submit/unregister/form") }"
-                               class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
-                                ${languageUtil.get(locale, "registrationform.unregister")}
-                            </a>
-                    </#if>
                 </span>
 
             </#if>
         </div>
-        <#if cancellationExceeded >
-            <div>
-                <#assign courseConditionsUrl = displayContext.getCourseConditionsUrl() />
-                <small><i>${languageUtil.get(locale, "registrationform.cancelExpired")?replace("{0}", courseConditionsUrl)}</i></small>
-            </div>
-        </#if>
     </div>
 </div>

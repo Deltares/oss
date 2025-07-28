@@ -177,15 +177,6 @@
                                     <small><i>${languageUtil.get(locale, "registrationform.cancelExpired")?replace("{0}", courseConditionsUrl)}</i></small>
                                 </div>
                         </#if>
-                        <#else >
-                            <#if registration.canUserRegister(user.getUserId()) && themeDisplay.isSignedIn() && available gt 0>
-
-                                <a href="#" data-article-id="${articleId}" class="btn-lg btn-primary add-to-cart"
-                                   role="button" aria-pressed="true">
-                                    ${languageUtil.get(locale, "shopping.cart.add")}
-                                </a>
-                            </#if>
-                        </#if>
                             <#assign joinLink = dsdSessionUtils.getUserJoinLink(user, registration) />
                             <#if joinLink?? && joinLink != "">
                                 <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button"
@@ -193,6 +184,12 @@
                                 ${languageUtil.get(locale, "registrationform.join")}
                             </a>
                                 <#assign calDescription += (languageUtil.get(locale, "registrationform.join") + ": " + joinLink )/>
+                            </#if>
+                            <#if registration.canUserRegister(user.getUserId()) && themeDisplay.isSignedIn() && available gt 0>
+                                <a href="#" data-article-id="${articleId}" class="btn-lg btn-primary add-to-cart"
+                                   role="button" aria-pressed="true">
+                                    ${languageUtil.get(locale, "shopping.cart.add")}
+                                </a>
                             </#if>
                         <div class="add-to-calendar c-session__item__calendar"></div>
                     </span>

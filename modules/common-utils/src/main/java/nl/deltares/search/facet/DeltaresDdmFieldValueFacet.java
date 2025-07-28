@@ -14,7 +14,6 @@ import com.liferay.portal.kernel.util.Validator;
 
 /**
  * Search for articles with an exact ddmfieldvalue. Ddmfield value is passed using the fieldvaluekeywordvalue
- *
  * Use te fieldnamevalues to search over multiple structure types; session, dinner, bustransfer
  */
 public class DeltaresDdmFieldValueFacet extends BaseFacet {
@@ -23,6 +22,7 @@ public class DeltaresDdmFieldValueFacet extends BaseFacet {
     @SuppressWarnings("FieldCanBeLocal")
     private final String _ddmFieldName = "ddmFieldName";
     private String[] _ddmFieldNameValues = {};
+    private final String languageString;
 
     private String _ddmFieldValueKeywordName = "ddmFieldValueKeyword";
 //    private String _ddmFieldValueKeywordValue = null;
@@ -30,9 +30,10 @@ public class DeltaresDdmFieldValueFacet extends BaseFacet {
     private String[] _ddmFieldValueKeywordValues = null;
     private boolean exclude = false;
 
-    public DeltaresDdmFieldValueFacet(String name, SearchContext searchContext) {
+    public DeltaresDdmFieldValueFacet(String name, String languageString, SearchContext searchContext) {
         super(searchContext);
         setFieldName(name);
+        this.languageString = languageString;
     }
 
     /**
@@ -102,23 +103,42 @@ public class DeltaresDdmFieldValueFacet extends BaseFacet {
             _StructureFieldNamesFilter.addValues(_ddmFieldNameValues);
             booleanFilter.add(_StructureFieldNamesFilter, BooleanClauseOccur.MUST);
         }
-
-        if (_ddmFieldValueKeywordValues.length == 1) {
-            TermFilter searchFieldValue = new TermFilter(_path + '.' + _ddmFieldValueKeywordName, _ddmFieldValueKeywordValues[0]);
-            booleanFilter.add(
-                    searchFieldValue, BooleanClauseOccur.MUST);
-        } else {
-            TermsFilter searchFieldValue = new TermsFilter(_path + '.' + _ddmFieldValueKeywordName);
-            searchFieldValue.addValues(_ddmFieldValueKeywordValues);
-            booleanFilter.add(
-                    searchFieldValue, BooleanClauseOccur.MUST);
+        boolean hasLocalizedFieldNameValues = false;
+        boolean hasNoneLocalizedFieldNameValues = false;
+        for (String ddmFieldNameValue : _ddmFieldNameValues) {
+            if (ddmFieldNameValue.endsWith(languageString)) {
+                hasLocalizedFieldNameValues = true;
+            } else {
+                hasNoneLocalizedFieldNameValues = true;
+            }
         }
+        BooleanClauseOccur booleanClauseOccur;
+        BooleanFilter valueKeywordBooleanFilter ;
+        // If both localized and non-localized field names are present, we need to add two sub-filters each with a SHOULD clause.
+        if (hasNoneLocalizedFieldNameValues && hasLocalizedFieldNameValues) {
+            booleanClauseOccur = BooleanClauseOccur.SHOULD;
+            valueKeywordBooleanFilter = new BooleanFilter();
+            //on of the two sub-filters MUST be true
+            booleanFilter.add(valueKeywordBooleanFilter, BooleanClauseOccur.MUST);
+        } else {
+            //no sub-filters required
+            booleanClauseOccur = BooleanClauseOccur.MUST;
+            valueKeywordBooleanFilter = booleanFilter;
+        }
+        if (hasLocalizedFieldNameValues){
+            valueKeywordBooleanFilter.add(
+                    getTermsFilter(_ddmFieldValueKeywordName + '_' + languageString, _ddmFieldValueKeywordValues),
+                    booleanClauseOccur);
+        }
+        if (hasNoneLocalizedFieldNameValues){
+            valueKeywordBooleanFilter.add(
+                    getTermsFilter(_ddmFieldValueKeywordName, _ddmFieldValueKeywordValues),
+                    booleanClauseOccur);
+        }
+
         BooleanQuery booleanQuery = new BooleanQueryImpl();
-
         booleanQuery.setPreBooleanFilter(booleanFilter);
-
         NestedQuery nestedQuery = new NestedQuery(_path, booleanQuery);
-
         QueryFilter queryFilter = new QueryFilter(nestedQuery);
 
         if (exclude){
@@ -129,6 +149,15 @@ public class DeltaresDdmFieldValueFacet extends BaseFacet {
 
     }
 
+    private BaseFilter getTermsFilter(String fieldValueKeywordName, String[] fieldValueKeywordValues) {
+        if (fieldValueKeywordValues.length == 1) {
+            return new TermFilter(_path + '.' + fieldValueKeywordName, fieldValueKeywordValues[0]);
+        } else {
+            TermsFilter searchFieldValue = new TermsFilter(_path + '.' + fieldValueKeywordName);
+            searchFieldValue.addValues(fieldValueKeywordValues);
+            return searchFieldValue;
+        }
+    }
 
 
 }

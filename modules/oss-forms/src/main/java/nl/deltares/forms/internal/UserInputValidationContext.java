@@ -77,8 +77,21 @@ public class UserInputValidationContext {
 
             User user = _userLocalService.fetchUserByEmailAddress(companyId, email);
             if (user == null) continue;
-            if (_sessionUtils.isUserRegisteredFor(user, getRegistration(info.getArticleId()))){
+            Registration registration = getRegistration(info.getArticleId());
+            if (_sessionUtils.isUserRegisteredFor(user, registration)){
                 exceptions.add(new RegistrationFormException(String.format("User '%s' is already registered for '%s'", user.getEmailAddress(), info.getRegistrationName())));
+            }
+            if (registration.hasParent()){
+                Registration parentRegistration = registration.getParentRegistration();
+                if (parentRegistration != null) {
+                    if (_registrationInformation.stream()
+                            .anyMatch(registrationInfo ->
+                                    registrationInfo.getArticleId().equals(parentRegistration.getArticleId()))) continue;
+                    if (_sessionUtils.isUserRegisteredFor(user, parentRegistration)) continue;
+                    exceptions.add(new RegistrationFormException(
+                            String.format("User '%s' wishes to register for '%s' but has not selected required parent registration '%s'",
+                                    user.getEmailAddress(), info.getRegistrationName(), parentRegistration.getTitle())));
+                }
             }
         }
 

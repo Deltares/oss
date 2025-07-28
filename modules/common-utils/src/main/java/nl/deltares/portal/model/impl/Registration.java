@@ -261,10 +261,10 @@ public abstract class Registration extends AbsDsdArticle {
     }
 
     private void loadParentRegistration() {
-        if (!hasParent || relatedRegistrations != null) return;
+        if (!hasParent || !relatedRegistrations.isEmpty()) return;
         try {
             parseParentRegistration();
-            hasParent = relatedRegistrations != null;
+            hasParent = !relatedRegistrations.isEmpty();
         } catch (PortalException e) {
             LOG.error(String.format("Error parsing parent registration for registration %s: %s", getTitle(), e.getMessage()));
             hasParent = false;
