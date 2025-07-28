@@ -273,23 +273,43 @@ RegistrationFormsUtil = {
             let newRowsCount = userCount - rows;
             for (let i = 0; i < newRowsCount; i++) {
                 let newRow = table.insertRow(table.rows.length);
-                this.copyTableRow(table.rows[1], newRow, rows)
+                this.copyTableRow(table.rows[1], newRow, rows, false)
                 // this.updateValidator(namespace, rows, orderItemId)
             }
 
         }
     },
 
+    copyTable : function(namespace, srcArticleId, destArticleId) {
+        let srcQuantity = document.getElementById(namespace + 'count_registration_' + srcArticleId).value;
+        document.getElementById(namespace + 'count_registration_' + destArticleId).value = srcQuantity;
+
+        let srcTable = document.getElementById(namespace + 'users_table_' + srcArticleId);
+        let destTable = document.getElementById(namespace + 'users_table_' + destArticleId);
+        for (i = 1; i < srcTable.rows.length; i++) {
+            let destRow;
+            if (i >= destTable.rows.length) {
+                destRow = destTable.insertRow(destTable.rows.length);
+            } else {
+                destRow = destTable.rows[i];
+            }
+            this.copyTableRow(srcTable.rows[i], destRow, i - 1, true);
+        }
+    },
+
     //used in user-registration.jsp
-    copyTableRow: function (oldRow, newRow, rows){
+    copyTableRow: function (oldRow, newRow, rows, copyValues) {
         newRow.innerHTML = oldRow.innerHTML;
 
         for (let i = 0; i < newRow.cells.length; i++) {
             let div = newRow.cells[i].children[0];
-            let input = div.children[0];
-            input.value = ""
+            let oldDiv = oldRow.cells[i].children[0];
+            let input = div.querySelector('input, textarea');
+            let oldInput = oldDiv.querySelector('input, textarea');
+            input.value = copyValues ? oldInput.value : "";
             input.id = input.id + '_' + rows
             input.name = input.id
+            input.dataset.rownumber = rows
             //remove any existing errors
             for (let c = 1 ; c < div.children.length; c++){
                 div.removeChild(div.children[c]);
