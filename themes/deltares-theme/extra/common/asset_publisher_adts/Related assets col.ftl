@@ -18,7 +18,7 @@
             <#assign available = registration.getCapacity() - registrations />
             <!--repeatable element-->
             <div class="flex">
-                <div class="flex flex-col pt-10" >
+                <div class="flex flex-col pt-2" >
                     <a href="${viewURL}" class="group flex flex-col relative h-full font-medium font-sans transition duration-200 items-start leading-none cursor-pointer text-white z-0" title="read more about ${entryTitle}">
                         <div class="flex flex-col justify-start self-stretch grow order-2 relative w-full -mt-20 pt-20 px-3 z-20 spotlight-gradient">
                             <h3 class="order-2 text-lg leading-tight text-white font-semibold">${entryTitle}</h3>

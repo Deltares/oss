@@ -172,17 +172,18 @@
                                 ${languageUtil.get(locale, "registrationform.unregister")}
                             </a>
                             <#if cancellationExceeded >
-                            <div>
+                                <div>
                                     <#assign courseConditionsUrl = displayContext.getCourseConditionsUrl() />
                                     <small><i>${languageUtil.get(locale, "registrationform.cancelExpired")?replace("{0}", courseConditionsUrl)}</i></small>
                                 </div>
+                            </#if>
                         </#if>
                         <#assign joinLink = dsdSessionUtils.getUserJoinLink(user, registration) />
                         <#if joinLink?? && joinLink != "">
                             <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button"
                                aria-pressed="true">
-                            ${languageUtil.get(locale, "registrationform.join")}
-                        </a>
+                                ${languageUtil.get(locale, "registrationform.join")}
+                            </a>
                             <#assign calDescription += (languageUtil.get(locale, "registrationform.join") + ": " + joinLink )/>
                         </#if>
                         <#if registration.canUserRegister(user.getUserId()) && themeDisplay.isSignedIn() && available gt 0>
@@ -290,7 +291,6 @@
                     </div>
                 </#list>
             </div>
-
         </#if>
     </div>
     <script>
