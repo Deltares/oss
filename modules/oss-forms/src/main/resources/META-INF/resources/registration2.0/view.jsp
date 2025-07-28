@@ -58,6 +58,8 @@
                     %>
                 </ul>
 
+                <span id="<portlet:namespace/>group-message-block"></span>
+
                 <aui:form action="<%= saveStepURL %>" data-senna-off="<%= checkoutDisplayContext.isSennaDisabled() %>" name="fm" >
                     <aui:input name="checkoutStepName" type="hidden" value="<%= currentCheckoutStepName %>" />
                     <aui:input name="ids" type="hidden" value="<%= ids %>" />
@@ -75,13 +77,13 @@
                     </c:if>
 
                     <c:if test="<%= checkoutDisplayContext.showControls() %>">
+                        <hr style="margin-bottom: 1rem; margin-top: 1rem"/>
                     <aui:button-row>
                         <c:if test="<%= Validator.isNotNull(checkoutDisplayContext.getPreviousCheckoutStepName()) %>">
                             <portlet:renderURL var="previousStepURL">
                                 <portlet:param name="checkoutStepName" value="<%= checkoutDisplayContext.getPreviousCheckoutStepName() %>" />
                                 <portlet:param name="ids" value="<%= ids %>" />
                             </portlet:renderURL>
-
                             <aui:button cssClass="pull-left btn-primary" href="<%= previousStepURL %>" value="previous" />
                         </c:if>
 
@@ -94,3 +96,17 @@
         </c:choose>
     </div>
 </div>
+<aui:script>
+
+    <c:if test='<%= SessionErrors.contains(request, RegistrationFormException.class) %>'>
+        <%
+            List<RegistrationFormException> errors = (List<RegistrationFormException>) SessionErrors.get(request, RegistrationFormException.class);
+            for (RegistrationFormException error : errors) {
+        %>
+            CommonFormsUtil.writeError("<portlet:namespace />", "<%=error.getMessage()%>");
+        <%
+            }
+        %>
+    </c:if>
+
+</aui:script>

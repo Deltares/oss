@@ -1,19 +1,4 @@
 <%@ include file="init.jsp" %>
-
-<%
-    if (SessionErrors.contains(request, RegistrationFormException.class)) {
-        List<RegistrationFormException> errors = (List<RegistrationFormException>) SessionErrors.get(request, RegistrationFormException.class);
-
-        for (RegistrationFormException error : errors) {
-%>
-<liferay-ui:error exception="<%=RegistrationFormException.class%>">
-    <%= error.getMessage() %>
-</liferay-ui:error>
-<%
-        }
-    }
-%>
-
 <h3><strong><liferay-ui:message key="registrationform.user.information"/></strong></h3>
 <br/>
 <%
@@ -23,7 +8,8 @@
     currencyInstance.setMaximumFractionDigits(2);
     currencyInstance.setMinimumFractionDigits(2);
     String currency = "€";
-
+    boolean first = true;
+    String srcArticleId= "";
 %>
 <c:forEach var="registration" items="<%=registrations%>">
     <%
@@ -38,7 +24,11 @@
         }
         List<RegistrationInfo> registrationInfos = displayContext.getRegistrationInfos(registration);
         int quantity = registrationInfos.size();
-
+        String removeFromCartText = LanguageUtil.get(request, "registrationform.item.remove");
+        String copyFormPreviousText = LanguageUtil.get(request, "registrationform.item.copy");
+        if (first) {
+            srcArticleId = articleId;
+        }
     %>
     <div class="row">
         <div class="col-md-12">
@@ -72,8 +62,12 @@
                                 <%=price%>
                             </div>
                         </div>
-                        <div class="col"><clay:button href="#" cssClass="remove-from-cart"
+                        <div class="col"><clay:button href="#" cssClass="remove-from-cart" title="<%= removeFromCartText %>"
                                                       data-articleId="<%=articleId%>" icon="times-circle"/></div>
+                        <% if (!first) { %>
+                        <div class="col"><clay:button href="#" cssClass="copy-from-previous" title="<%= copyFormPreviousText %>"
+                                                      data-srcArticleId="<%=srcArticleId%>" data-destArticleId="<%=articleId%>" icon="copy"/></div>
+                        <% } %>
                     </div>
                 </div>
             </div>
@@ -175,7 +169,7 @@
         </table>
 
     </div>
-
+    <% first = false; %>
 </c:forEach>
 
 <div class="form-group-autofit">
@@ -245,5 +239,17 @@
             window.location.href = url;
         }
     });
+
+    let copyButtons = document.getElementsByClassName("copy-from-previous");
+    Array.from(copyButtons).forEach(function (button) {
+        button.onclick = function (event){
+            let srcElement = event.target.closest("button");
+            let srcArticleId = srcElement.dataset.srcarticleid ;
+            let destArticleId = srcElement.dataset.destarticleid ;
+            RegistrationFormsUtil.copyTable('<portlet:namespace/>', srcArticleId, destArticleId);
+        }
+    });
+
+
     RegistrationFormsUtil.updatePrice('<portlet:namespace/>', null)
 </aui:script>

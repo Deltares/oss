@@ -1,19 +1,4 @@
 <%@ include file="init.jsp" %>
-
-<%
-    if (SessionErrors.contains(request, RegistrationFormException.class)) {
-        List<RegistrationFormException> errors = (List<RegistrationFormException>) SessionErrors.get(request, RegistrationFormException.class);
-
-        for (RegistrationFormException error : errors) {
-%>
-<liferay-ui:error exception="<%=RegistrationFormException.class%>">
-    <%= error.getMessage() %>
-</liferay-ui:error>
-<%
-        }
-    }
-%>
-
 <h3><strong><liferay-ui:message key="registrationform.billing.select.address"/></strong></h3>
 <%
     BillingDetailsCheckoutStepDisplayContext displayContext = (BillingDetailsCheckoutStepDisplayContext) request.getAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT);

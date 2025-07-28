@@ -1,20 +1,5 @@
 <%@ page import="nl.deltares.model.BadgeInfo" %>
 <%@ include file="init.jsp" %>
-
-<%
-    if (SessionErrors.contains(request, RegistrationFormException.class)) {
-        List<RegistrationFormException> errors = (List<RegistrationFormException>) SessionErrors.get(request, RegistrationFormException.class);
-
-        for (RegistrationFormException error : errors) {
-%>
-<liferay-ui:error exception="<%=RegistrationFormException.class%>">
-    <%= error.getMessage() %>
-</liferay-ui:error>
-<%
-        }
-    }
-%>
-
 <h3><strong><liferay-ui:message key="registrationform.badge.information"/></strong></h3>
 <br/>
 <%

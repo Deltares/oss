@@ -1,19 +1,5 @@
 <%@ include file="init.jsp" %>
 <%
-    if (SessionErrors.contains(request, RegistrationFormException.class)) {
-        List<RegistrationFormException> errors = (List<RegistrationFormException>) SessionErrors.get(request, RegistrationFormException.class);
-
-        for (RegistrationFormException error : errors) {
-%>
-<liferay-ui:error exception="<%=RegistrationFormException.class%>">
-    <%= error.getMessage() %>
-</liferay-ui:error>
-<%
-        }
-    }
-%>
-
-<%
     SubmitOrderDisplayContext displayContext = (SubmitOrderDisplayContext) request.getAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT);
 
     if (displayContext.showTerms()) {
