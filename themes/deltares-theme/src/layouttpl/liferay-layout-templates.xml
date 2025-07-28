@@ -16,6 +16,10 @@
 			<template-path>/layouttpl/custom/2-columns-full-height-layouttpl/2_columns_full_height.tpl</template-path>
 			<thumbnail-path>/layouttpl/custom/2-columns-full-height-layouttpl/2_columns_full_height.png</thumbnail-path>
 		</layout-template>
+		<layout-template id="2-columns-70-30" name="2 Columns (70/30)">
+			<template-path>/layouttpl/custom/2-columns-70-30-layouttpl/2_columns_70_30.tpl</template-path>
+			<thumbnail-path>/layouttpl/custom/2-columns-70-30-layouttpl/2_columns_70_30.png</thumbnail-path>
+		</layout-template>
 		<layout-template id="restricted-1-2__2-1" name="restricted 1-2 Columns (2/1-sticky)">
 			<template-path>/layouttpl/custom/restricted-1-2__2-1-layouttpl/restricted_1_2_2_1.tpl</template-path>
 			<thumbnail-path>/layouttpl/custom/restricted-1-2__2-1-layouttpl/restricted_1_2_2_1.png</thumbnail-path>
@@ -24,6 +28,5 @@
 			<template-path>/layouttpl/custom/restricted-1__1-2-2-layouttpl/restricted_1_1_2_2.tpl</template-path>
 			<thumbnail-path>/layouttpl/custom/restricted-1__1-2-2-layouttpl/restricted_1_1_2_2.png</thumbnail-path>
 		</layout-template>
-
 	</custom>
 </layout-templates>
