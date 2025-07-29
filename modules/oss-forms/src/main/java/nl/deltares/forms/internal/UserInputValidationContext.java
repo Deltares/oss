@@ -75,11 +75,13 @@ public class UserInputValidationContext {
                 continue;
             }
 
-            User user = _userLocalService.fetchUserByEmailAddress(companyId, email);
-            if (user == null) continue;
             Registration registration = getRegistration(info.getArticleId());
-            if (_sessionUtils.isUserRegisteredFor(user, registration)){
-                exceptions.add(new RegistrationFormException(String.format("User '%s' is already registered for '%s'", user.getEmailAddress(), info.getRegistrationName())));
+
+            User user = _userLocalService.fetchUserByEmailAddress(companyId, email);
+            if (user != null) {
+                if (_sessionUtils.isUserRegisteredFor(user, registration)){
+                    exceptions.add(new RegistrationFormException(String.format("User '%s' is already registered for '%s'", user.getEmailAddress(), info.getRegistrationName())));
+                }
             }
             if (registration.hasParent()){
                 Registration parentRegistration = registration.getParentRegistration();
@@ -87,10 +89,12 @@ public class UserInputValidationContext {
                     if (_registrationInformation.stream()
                             .anyMatch(registrationInfo ->
                                     registrationInfo.getArticleId().equals(parentRegistration.getArticleId()))) continue;
-                    if (_sessionUtils.isUserRegisteredFor(user, parentRegistration)) continue;
-                    exceptions.add(new RegistrationFormException(
-                            String.format("User '%s' wishes to register for '%s' but has not selected required parent registration '%s'",
-                                    user.getEmailAddress(), info.getRegistrationName(), parentRegistration.getTitle())));
+
+                    if (user != null && !_sessionUtils.isUserRegisteredFor(user, parentRegistration)) {
+                        exceptions.add(new RegistrationFormException(
+                                String.format("User '%s' wishes to register for '%s' but has not selected required parent registration '%s'",
+                                        user.getEmailAddress(), info.getRegistrationName(), parentRegistration.getTitle())));
+                    }
                 }
             }
         }

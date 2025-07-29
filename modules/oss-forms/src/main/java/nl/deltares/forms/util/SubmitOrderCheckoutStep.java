@@ -63,6 +63,8 @@ public class SubmitOrderCheckoutStep extends BaseCheckoutStep {
 
         if (SessionErrors.isEmpty(httpServletRequest)) {
             httpServletRequest.setAttribute("action", "register-success");
+        } else {
+            httpServletRequest.setAttribute("action", "register-error");
         }
     }
 

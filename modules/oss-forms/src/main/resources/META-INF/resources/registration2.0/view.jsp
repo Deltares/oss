@@ -1,3 +1,4 @@
+<%@ page import="com.liferay.portal.kernel.util.*" %>
 <%@ include file="init.jsp"%>
 
 <portlet:actionURL name="/submit/register/form" var="submitRegisterForm"/>
@@ -102,8 +103,10 @@
         <%
             List<RegistrationFormException> errors = (List<RegistrationFormException>) SessionErrors.get(request, RegistrationFormException.class);
             for (RegistrationFormException error : errors) {
+                String message = error.getMessage();
+                String replace = message.replace("\"", "'");
         %>
-            CommonFormsUtil.writeError("<portlet:namespace />", "<%=error.getMessage()%>");
+            CommonFormsUtil.writeError("<portlet:namespace />", "<%= replace %>");
         <%
             }
         %>

@@ -55,23 +55,25 @@
                                     data-price="<%=registration.getPrice()%>"
                                     cssClass="registration-quantity" wrapperCssClass="form-group-item"
                             />
-
                         </div>
                         <div class="col">
                             <div id="registration_price_<%=articleId%>" style="display: grid; text-align: right">
                                 <%=price%>
                             </div>
                         </div>
-                        <div class="col"><clay:button href="#" cssClass="remove-from-cart" title="<%= removeFromCartText %>"
-                                                      data-articleId="<%=articleId%>" icon="times-circle"/></div>
-                        <% if (!first) { %>
-                        <div class="col"><clay:button href="#" cssClass="copy-from-previous" title="<%= copyFormPreviousText %>"
-                                                      data-srcArticleId="<%=srcArticleId%>" data-destArticleId="<%=articleId%>" icon="copy"/></div>
-                        <% } %>
-                    </div>
+                        <div class="col">
+                            <aui:button-row cssClass="button-row-button">
+                                <clay:button href="#" cssClass="remove-from-cart" title="<%= removeFromCartText %>"
+                                             data-articleId="<%=articleId%>" icon="times-circle"/>
+                                <% if (!first) { %>
+                                    <clay:button href="#" cssClass="copy-from-previous" title="<%= copyFormPreviousText %>"
+                                                              data-srcArticleId="<%=srcArticleId%>" data-destArticleId="<%=articleId%>" icon="copy"/>
+                                <% } %>
+                            </aui:button-row>
+                        </div>
+            </div>
                 </div>
             </div>
-
         </div>
     </div>
 
