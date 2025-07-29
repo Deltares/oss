@@ -2,7 +2,7 @@
 <#assign dsdSessionUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdSessionUtils") />
 <div class="flex flex-col pb-10 lg:pb-0 spotlight-slider">
     <#if entries?has_content>
-        <h2 class="portlet-title-text" style="font-size:28px; display:block" >
+        <h2 class="portlet-title-text" style="font-size:24px; display:block" >
             Related Sessions
         </h2>
         <#list entries as entry>
