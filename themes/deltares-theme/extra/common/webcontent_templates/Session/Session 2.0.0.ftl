@@ -167,8 +167,9 @@
                         <#assign isRegistered = dsdSessionUtils.isUserRegisteredFor(user, registration) />
                         <span class="d-block">
                         <#if isRegistered >
-                            <a href="${displayContext.getUnregisterURL(renderRequest)}" class="btn-lg btn-primary"
-                               role="button" aria-pressed="true">
+                            <a href="${displayContext.getUnregisterURL(renderRequest, user.getUserId(),
+                            displayContext.getConfiguredRegistrationFormId(),  "/submit/unregister/form")}"
+                               class="btn-lg btn-primary" role="button" aria-pressed="true">
                                 ${languageUtil.get(locale, "registrationform.unregister")}
                             </a>
                             <#if cancellationExceeded >

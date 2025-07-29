@@ -35,7 +35,6 @@ public class BadgeConfigCheckoutStep extends BaseCheckoutStep {
     private static final Log LOG = LogFactoryUtil.getLog(BadgeConfigCheckoutStep.class);
 
     public static final String NAME = "badge-info";
-    private BadgeConfigCheckoutStepDisplayContext _displayContext;
 
     @Override
     public String getName() {
@@ -47,7 +46,7 @@ public class BadgeConfigCheckoutStep extends BaseCheckoutStep {
 
         HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
 
-        _displayContext = new BadgeConfigCheckoutStepDisplayContext(
+        BadgeConfigCheckoutStepDisplayContext _displayContext = new BadgeConfigCheckoutStepDisplayContext(
                 httpServletRequest, _configurationProvider, _dsdParserUtils);
 
         try {
@@ -63,7 +62,7 @@ public class BadgeConfigCheckoutStep extends BaseCheckoutStep {
     @Override
     public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 
-        _displayContext = new BadgeConfigCheckoutStepDisplayContext(
+        BadgeConfigCheckoutStepDisplayContext _displayContext = new BadgeConfigCheckoutStepDisplayContext(
                 httpServletRequest, _configurationProvider, _dsdParserUtils);
         httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, _displayContext);
         _jspRenderer.renderJSP(

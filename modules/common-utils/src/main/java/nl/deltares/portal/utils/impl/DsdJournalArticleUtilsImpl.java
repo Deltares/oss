@@ -47,15 +47,17 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
 
         AssetEntryQuery assetEntryQuery = _getAssetEntryQuery();
 
-        long[] assetIds = new long[articleIds.length];
+        List<Long> assetIds = new ArrayList<>();
         for (int i = 0; i < articleIds.length; i++) {
             String registrationId = articleIds[i];
             if (registrationId.isEmpty()) continue;
-            JournalArticle latestArticle = JournalArticleLocalServiceUtil.getLatestArticle(groupId, registrationId);
+            JournalArticle latestArticle = JournalArticleLocalServiceUtil.fetchArticle(groupId, registrationId);
+            if (latestArticle == null) continue;
             AssetEntry entry = AssetEntryLocalServiceUtil.getEntry(latestArticle.getModelClassName(), latestArticle.getResourcePrimKey());
-            assetIds[i] = entry.getEntryId();
+            assetIds.add(entry.getEntryId());
         }
-        assetEntryQuery.setLinkedAssetEntryIds(assetIds);
+        assetEntryQuery.setLinkedAssetEntryIds(assetIds.stream().mapToLong(Long::longValue).toArray());
+        if (assetIds.isEmpty()) return Collections.emptyList();
 
         List<AssetEntry> entries = _assetEntryService.getEntries(assetEntryQuery);
         List<JournalArticle> relatedArticles = new ArrayList<>();

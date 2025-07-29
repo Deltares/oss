@@ -43,7 +43,6 @@ import java.util.Collections;
 public class AccountSelectionCheckoutStep extends BaseCheckoutStep {
 
     public static final String NAME = "account-info";
-    private AccountSelectionCheckoutStepDisplayContext _displayContext;
 
     @Override
     public String getName() {
@@ -54,7 +53,7 @@ public class AccountSelectionCheckoutStep extends BaseCheckoutStep {
     public void processAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
 
         HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
-        _displayContext =
+        AccountSelectionCheckoutStepDisplayContext _displayContext =
                 new AccountSelectionCheckoutStepDisplayContext(httpServletRequest, _accountEntryLocalService,
                         _addressLocalService, _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
 
@@ -70,7 +69,7 @@ public class AccountSelectionCheckoutStep extends BaseCheckoutStep {
     @Override
     public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 
-        _displayContext =
+        AccountSelectionCheckoutStepDisplayContext _displayContext =
                 new AccountSelectionCheckoutStepDisplayContext(httpServletRequest, _accountEntryLocalService,
                         _addressLocalService, _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
 

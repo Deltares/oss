@@ -72,7 +72,9 @@ public class EmailUtils {
             for (String cid : data.keySet()) {
                 if (cid.equals("debug")) continue;
                 messageBodyPart = new MimeBodyPart();
-                messageBodyPart.setDataHandler(new DataHandler(getDataSource(data, cid)));
+                DataSource dataSource = getDataSource(data, cid);
+                if (dataSource == null) continue;
+                messageBodyPart.setDataHandler(new DataHandler(dataSource));
                 messageBodyPart.setHeader("Content-ID", '<' + cid + '>');
                 multipart.addBodyPart(messageBodyPart);
             }
@@ -177,13 +179,18 @@ public class EmailUtils {
     private static DataSource getDataSource(Map<String, Object> data, String cid) throws PortalException, IOException {
         final Object dataValue = data.get(cid);
 
-        if (dataValue instanceof Long) {
-            final DLFileEntry dlFileEntry = DLFileEntryLocalServiceUtil.getDLFileEntry((Long) dataValue);
-            return new ByteArrayDataSource(dlFileEntry.getContentStream(), dlFileEntry.getMimeType());
-        } else if (dataValue instanceof URL){
-            return new URLDataSource((URL) dataValue);
-        } else {
-            throw new UnsupportedDataTypeException(String.format("Unsupported data type for cid %s: %s", cid, dataValue.getClass().getName()));
+        try {
+            if (dataValue instanceof Long) {
+                final DLFileEntry dlFileEntry = DLFileEntryLocalServiceUtil.getDLFileEntry((Long) dataValue);
+                return new ByteArrayDataSource(dlFileEntry.getContentStream(), dlFileEntry.getMimeType());
+            } else if (dataValue instanceof URL){
+                return new URLDataSource((URL) dataValue);
+            } else {
+                throw new UnsupportedDataTypeException(String.format("Unsupported data type for cid %s: %s", cid, dataValue.getClass().getSimpleName()));
+            }
+        } catch (Exception e){
+            LOG.warn(String.format("Unable to load datasource %s for email: %s", cid, e.getMessage()));
+            return null;
         }
     }
 

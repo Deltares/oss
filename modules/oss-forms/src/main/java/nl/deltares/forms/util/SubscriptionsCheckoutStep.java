@@ -28,8 +28,6 @@ public class SubscriptionsCheckoutStep extends BaseCheckoutStep {
 
     public static final String NAME = "subscription-info";
 
-    private SubscriptionsDisplayContext _subscriptionsDisplayContext;
-
     @Override
     public String getName() {
         return NAME;
@@ -39,9 +37,7 @@ public class SubscriptionsCheckoutStep extends BaseCheckoutStep {
     public void processAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
 
         HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
-        if (_subscriptionsDisplayContext == null) {
-            _subscriptionsDisplayContext = new SubscriptionsDisplayContext(httpServletRequest, _configurationProvider, _subscriptionUtil);
-        }
+        SubscriptionsDisplayContext _subscriptionsDisplayContext = new SubscriptionsDisplayContext(httpServletRequest, _configurationProvider, _subscriptionUtil);
         try {
             _subscriptionsDisplayContext.storeSubscriptionInfo(httpServletRequest);
         } catch (Exception e) {
@@ -54,9 +50,7 @@ public class SubscriptionsCheckoutStep extends BaseCheckoutStep {
     @Override
     public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 
-        if (_subscriptionsDisplayContext == null) {
-            _subscriptionsDisplayContext = new SubscriptionsDisplayContext(httpServletRequest, _configurationProvider, _subscriptionUtil);
-        }
+        SubscriptionsDisplayContext _subscriptionsDisplayContext = new SubscriptionsDisplayContext(httpServletRequest, _configurationProvider, _subscriptionUtil);
         httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, _subscriptionsDisplayContext);
 
         _jspRenderer.renderJSP(
@@ -67,14 +61,13 @@ public class SubscriptionsCheckoutStep extends BaseCheckoutStep {
     @Override
     public boolean isActive(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 
-        if (_subscriptionsDisplayContext == null) {
-            try {
-                _subscriptionsDisplayContext = new SubscriptionsDisplayContext(httpServletRequest, _configurationProvider, _subscriptionUtil);
-            } catch (Exception e) {
-                return false;
-            }
+        try {
+            SubscriptionsDisplayContext _subscriptionsDisplayContext = new SubscriptionsDisplayContext(httpServletRequest, _configurationProvider, _subscriptionUtil);
+            return _subscriptionsDisplayContext.hasSubscriptions();
+        } catch (Exception e) {
+            return false;
         }
-        return _subscriptionsDisplayContext.hasSubscriptions();
+
     }
 
     @Reference

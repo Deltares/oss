@@ -32,8 +32,6 @@ public class SubmitOrderCheckoutStep extends BaseCheckoutStep {
 
     public static final String NAME = "submit-order";
 
-    private SubmitOrderDisplayContext _submitOrderDisplayContext;
-
     @Override
     public String getName() {
         return NAME;
@@ -43,7 +41,7 @@ public class SubmitOrderCheckoutStep extends BaseCheckoutStep {
     public void processAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
 
         HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
-        _submitOrderDisplayContext = new SubmitOrderDisplayContext(httpServletRequest, _configurationProvider,
+        SubmitOrderDisplayContext _submitOrderDisplayContext = new SubmitOrderDisplayContext(httpServletRequest, _configurationProvider,
                 _dsdParserUtils, _dsdSessionUtils, _webinarUtilsFactory, _adminUtils, _userLocalService);
 
         List<Exception> exceptions = _submitOrderDisplayContext.storeUserInformation();
@@ -71,7 +69,7 @@ public class SubmitOrderCheckoutStep extends BaseCheckoutStep {
     @Override
     public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 
-        _submitOrderDisplayContext = new SubmitOrderDisplayContext(httpServletRequest, _configurationProvider,
+        SubmitOrderDisplayContext _submitOrderDisplayContext = new SubmitOrderDisplayContext(httpServletRequest, _configurationProvider,
                 _dsdParserUtils, _dsdSessionUtils, _webinarUtilsFactory, _adminUtils, _userLocalService);
         httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, _submitOrderDisplayContext);
 
