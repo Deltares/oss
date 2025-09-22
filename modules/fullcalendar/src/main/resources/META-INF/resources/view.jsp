@@ -58,34 +58,42 @@
 				method: 'GET'
 			},
 			events: function (fetchInfo, successCallback, failureCallback) {
-				$.ajax({
-					url: eventUrl,
-					type: 'GET',
-					dataType: 'json',
-					data: {
-					start: fetchInfo.start.toISOString(),
-					end: fetchInfo.end.toISOString()
+
+                fetch(eventUrl, {
+                    method: 'GET',
+					data : {
+						start: fetchInfo.start.toISOString(),
+						end: fetchInfo.end.toISOString()
 					},
-					success: function (doc) {
-					let events = [];
-					$(doc).each(function () {
-					events.push(
-					{
-					resourceId: $(this).attr('resourceId'),
-					id: $(this).attr('id'),
-					start: $(this).attr('start'),
-					end: $(this).attr('end'),
-					url: $(this).attr('url'),
-					title: $(this).attr('title'),
-					color: colorMap[$(this).attr('type')]
-					});
+					headers: {
+                    	'Accept' : 'application/json'
+				  	}
+				})
+				.then( response => {
+					if (!response.ok) failureCallback(response.statusText);
+					const contentType = response.headers.get('content-type');
+					if (contentType && contentType.includes('application/json')) {
+						return response.json();
+					} else {
+						return []
+					}
+				})
+				.then(data => {
+                    let events = [];
+                    data.forEach(function (event){
+						events.push(
+						{
+							resourceId: event.resourceId,
+							id: event.id,
+							start: event.start,
+							end: event.end,
+							url: event.url,
+							title: event.title,
+							color: colorMap[event.type]
+						});
 					});
 					successCallback(events);
-					},
-					error: function (xhr, ajaxOptions, thrownError) {
-						failureCallback(thrownError)
-					}
-				});
+				})
 			},
 			eventTimeFormat: {
 				hour: 'numeric',
