@@ -1,167 +1,532 @@
-(function ($) {
-    var pluginName = "formStepper";
+FormStepper = {
 
-    function Plugin(element, form) {
+    pluginName : "formStepper",
+    form : {},
+    element: {},
+
+    init: function (element, form){
         this.element = element;
         this.form = form;
-        this._name = pluginName;
+        this.registerEvents();
 
-        this.init();
-    }
+        return this;
+    },
 
-    Plugin.prototype = {
-        init: function () {
-            this.registerEvents();
-        },
+    registerEvents: function () {
 
-        registerEvents: function () {
-            let plugin = this;
-            let element = this._getElement();
-            let nextButton = element.find('.next-step');
-            let prevButton = element.find('.prev-step');
+        let nextButtons = this.element.querySelectorAll('.next-step');
+        let prevButtons = this.element.querySelectorAll('.prev-step');
 
-            nextButton.on('click', {plugin: this, action: 'next'}, this._navigate);
-            prevButton.on('click', {plugin: this, action: 'prev'}, this._navigate);
+        nextButtons.forEach(function (nextButton) {
+            nextButton.addEventListener('click',function () {
+                FormStepper._navigate({data: {plugin: FormStepper, action: 'next'}});
+            });
+        });
+        prevButtons.forEach(function (prevButton) {
+            prevButton.addEventListener('click',function () {
+                FormStepper._navigate({data: {plugin: FormStepper, action: 'prev'}})
+            });
+        })
 
-            this._getSubmitButton().on('click', function () {
-                if (plugin._isFormValid()) {
-                    plugin.form.preSubmitAction();
-                    plugin._getForm().submit();
+        this._getSubmitButton().forEach(function (submitbutton) {
+            submitbutton.addEventListener('click', function () {
+                if (FormStepper._isFormValid()) {
+                    FormStepper.form.preSubmitAction();
+                    FormStepper.form.form.submit();
                 }
             });
-        },
+        })
+    },
 
-        _isFormValid: function () {
-            this.form.validate();
-            return !this.form.hasErrors();
-        },
+    _isFormValid: function () {
+        this.form.formValidator.validate();
+        return !this.form.formValidator.hasErrors();
+    },
 
-        _navigate: function (event) {
-            let plugin = event.data.plugin;
-            let action = event.data.action;
-            let isFormValid = plugin._isFormValid() && plugin.form.validateFirstStep();
+    _navigate: function (event) {
+        let plugin = event.data.plugin;
+        let action = event.data.action;
+        let isFormValid = plugin._isFormValid() && plugin.form.validateFirstStep();
 
-            let element = $(plugin.element);
-            let active = element.find('li.active');
-            let next = active.next();
-            while (next.hasClass('disabled') && next.next().length > 0) {
-                next = next.next();
+        let element = plugin.element;
+        let active = element.querySelector('li.active');
+        let next;
+        if (active.nextElementSibling) {
+            next = active.nextElementSibling;
+        } else {
+            next = active;
+        }
+        while (next.classList.contains('disabled') && next.nextElementSibling != null) {
+            next = next.nextElementSibling;
+        }
+
+        let prev;
+        if( active.previousElementSibling){
+            prev = active.previousElementSibling;
+        } else {
+            prev = active;
+        }
+
+        while (prev.classList.contains('disabled') && prev.previousElementSibling != null) {
+            prev = prev.previousElementSibling;
+        }
+
+        let isLast = next.nextElementSibling === null;
+        let isFirst = prev.previousElementSibling === null;
+
+        if (isFormValid && 'next' === action && next) {
+            plugin._hideStep(active);
+            plugin._showStep(next);
+
+            if (isLast) {
+                plugin._disableButton(action);
+                plugin._showSubmitButton();
+            } else {
+                plugin._enableButton('prev');
             }
-            let prev = active.prev();
-            while (prev.hasClass('disabled') && prev.prev().length > 0) {
-                prev = prev.prev();
+            active.classList.remove('icon-circle-blank');
+            active.classList.add('icon-circle');
+            active.classList.add('completed');
+        } else if ('prev' === action && prev) {
+            plugin._hideStep(active);
+            plugin._showStep(prev);
+
+            if (isFirst) {
+                plugin._disableButton(action);
+            } else {
+                plugin._enableButton('next');
+                plugin._hideSubmitButton();
+            }
+        }
+    },
+
+    _showStep: function (element) {
+        let anchor = element.querySelector('a');
+        let pane = document.querySelector(anchor.getAttribute('href'));
+        this._activateElement(element);
+        this._activateElement(anchor);
+        this._activateElement(pane);
+    },
+
+    _hideStep: function (element) {
+        let anchor = element.querySelector('a');
+        let pane = document.querySelector(anchor.getAttribute('href'));
+        this._deactivateElement(element);
+        this._deactivateElement(anchor);
+        this._deactivateElement(pane);
+    },
+
+    _enableButton: function (button) {
+        let buttons = document.querySelectorAll('.' + button + '-step');
+        buttons.forEach(function (selector) {
+            selector.classList.remove('disabled');
+            selector.classList.add('enabled');
+        })
+    },
+
+    _disableButton: function (button) {
+        let buttons = document.querySelectorAll('.' + button + '-step');
+        buttons.forEach(function (selector) {
+            selector.classList.remove('enabled');
+            selector.classList.add('disabled');
+        })
+    },
+
+    _activateElement: function (element) {
+        element.classList.add('active');
+    },
+
+    _deactivateElement: function (element) {
+        element.classList.remove('active');
+    },
+
+    _showSubmitButton: function () {
+        let submitButtons = this._getSubmitButton();
+        let nextButtons = this._getNextButton();
+        submitButtons.forEach(function (submitButton) {
+            submitButton.classList.remove('d-none');
+            submitButton.classList.add('d-inline');
+
+        })
+        nextButtons.forEach(function (nextButton) {
+            nextButton.classList.remove('d-inline');
+            nextButton.classList.add('d-none');
+
+        })
+    },
+
+    _hideSubmitButton: function () {
+        let submitButtons = this._getSubmitButton();
+        let nextButtons = this._getNextButton();
+        submitButtons.forEach(function (submitButton) {
+            submitButton.classList.add('d-none');
+            submitButton.classList.remove('d-inline');
+
+        })
+        nextButtons.forEach(function (nextButton) {
+            nextButton.classList.add('d-inline');
+            nextButton.classList.remove('d-none');
+        })
+    },
+
+    _getSubmitButton: function () {
+        return this.element.querySelectorAll("a.submit");
+    },
+
+    _getNextButton: function () {
+        return this.element.querySelectorAll('.next-step');
+    }
+}
+
+ShoppingCart = {
+
+    pluginName : "shoppingCart",
+    defaults: {
+            'languageKeys': {
+                'add-to-cart': 'Add to cart',
+                'remove-from-cart': 'Remove from cart'
+            },
+            'registrationFormId' : 'dsd_RegistrationFormPortlet'
+        },
+    options : {},
+    cart : {},
+
+    init: function (options){
+        this.config = Object.assign({}, this.defaults, options);
+        this.initCart();
+        this.registerEvents();
+
+        return this;
+    },
+    initCart: function () {
+        this._loadCart();
+
+        if (this.cart === null) {
+            this.cart = {
+                'userId': this._getUserId(),
+                'siteId' : this._getSiteId(),
+                'items': [],
+                'downloads': []
+            };
+
+            this._saveCart();
+        } else if (! this.cart.hasOwnProperty('downloads') ){
+            this.cart['downloads'] = []
+            this._saveCart();
+        }
+
+        this.refreshCart();
+
+        this._registerCheckoutURLBuilder();
+    },
+
+    registerEvents: function () {
+        registerClick('.add-to-cart', 'registration');
+        registerClick('.add-download-to-cart', 'download');
+
+        let elements = document.querySelectorAll('.c-cart__checkout__cart');
+        if (elements) {
+            elements.forEach(function (element) {
+                element.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    buildCheckoutURL();
+                });
+            })
+
+        }
+
+        function registerClick(clazz, type) {
+            let clazzElms = document.querySelectorAll(clazz);
+            if (clazzElms){
+
+                clazzElms.forEach(function (clazzElm) {
+
+                    clazzElm.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        let id = this.dataset.articleId;
+
+                        if (shoppingCart._contains(id, type)) {
+                            shoppingCart._removeFromCart(id, type);
+                        } else {
+                            shoppingCart._addToCart(id, type);
+                        }
+                        shoppingCart._updateLabel(this, type);
+                        shoppingCart.refreshCart();
+                    });
+                })
             }
 
-            let isLast = (next.next().length === 0);
-            let isFirst = (prev.prev().length === 0);
+        }
+    },
 
-            if (isFormValid || 'prev' === action) {
-                if ('next' === action && next.length) {
-                    plugin._hideStep(active);
-                    plugin._showStep(next);
+    refreshCart: function () {
+        let elements = document.querySelectorAll('.c-cart__item__counter');
+        if (elements) {
+            elements.forEach(function (element) {
+                if (element) {
+                    element.textContent = (ShoppingCart.cart.items.length + ShoppingCart.cart.downloads.length);
+                }
+            })
+        }
 
-                    if (isLast) {
-                        plugin._disableButton(action);
-                        plugin._showSubmitButton();
-                    } else {
-                        plugin._enableButton('prev');
-                    }
-                    active.removeClass('icon-circle-blank');
-                    active.addClass('icon-circle completed');
-                } else if ('prev' === action && prev.length) {
-                    plugin._hideStep(active);
-                    plugin._showStep(prev);
 
-                    if (isFirst) {
-                        plugin._disableButton(action);
-                    } else {
-                        plugin._enableButton('next');
-                        plugin._hideSubmitButton();
-                    }
+        document.querySelectorAll('.add-to-cart').forEach( function (value){
+            ShoppingCart._updateLabel(value, 'registration');
+        });
+        document.querySelectorAll('.add-download-to-cart').forEach(function (value){
+            ShoppingCart._updateLabel(value, 'download');
+        });
+    },
+
+    clearCart: function () {
+        this.cart.items = [];
+        this._saveCart();
+        this.refreshCart();
+    },
+
+    clearDownloadsCart: function (){
+        this.cart.downloads = [];
+        this._saveCart();
+        this.refreshCart();
+    },
+
+    _registerCheckoutURLBuilder: function () {
+        let plugin = this;
+        Liferay.provide(
+            window,
+            'buildCheckoutURL',
+            function () {
+                let cartUrl;
+                let action;
+                let ids;
+                let portletId;
+                if (plugin.cart.downloads.length > 0){
+                    cartUrl = downloadCartURL;
+                    action = 'download';
+                    ids = plugin.cart.downloads.join(',');
+                    portletId = 'DownloadFormPortlet';
+                } else {
+                    cartUrl = checkoutCartURL;
+                    action = 'register';
+                    ids = plugin.cart.items.join(',');
+                    portletId  = ShoppingCart.config.registrationFormId ;
+                }
+                let portletURL = Liferay.Util.PortletURL.createPortletURL(cartUrl,
+                    {
+                        'p_p_id' : portletId,
+                        'p_p_mode' : 'view',
+                        'p_p_state' : 'normal',
+                        'p_p_Lifecycle' : 0,
+                        'action' : action,
+                        'ids' : ids,
+                        'callerURL' : window.location.href
+                    });
+
+                if (undefined !== portletURL) {
+                    window.location = portletURL.toString();
+                }
+            },
+            ['liferay-portlet-url']
+        );
+    },
+
+    _updateLabel: function (element, type) {
+        let plugin = this;
+        let id = element.dataset.articleId;
+        if (plugin._contains(id, type)) {
+            element.textContent = (plugin._getLanguageKey('remove-from-cart'));
+        } else {
+            element.textContent = (plugin._getLanguageKey('add-to-cart'));
+        }
+    },
+
+    _getLanguageKey: function (key) {
+        return this.config.languageKeys[key];
+    },
+
+    _getUserId: function () {
+        return Liferay.ThemeDisplay.getUserId();
+    },
+
+    _getSiteId: function () {
+        return Liferay.ThemeDisplay.getSiteGroupId();
+    },
+
+    _addToCart: function (id, type) {
+
+        if (!this._contains(id, type)) {
+            if (type === 'registration'){
+                this.cart.items.push(id);
+            } else if (type === 'download'){
+                this.cart.downloads.push(id)
+            }
+            this._saveCart();
+        }
+    },
+
+    _removeFromCart: function (id, type) {
+        if (this._contains(id, type)) {
+            if (type === 'registration'){
+                this.cart.items = this.cart.items.filter(item => item !== id);
+            } else if (type === 'download' ) {
+                this.cart.downloads = this.cart.downloads.filter(item => item !== id);
+            }
+            this._saveCart();
+        }
+    },
+
+    _contains: function (id, type) {
+
+        const contains = (newItem, list) => list.some(item => newItem === item);
+        if ( type === 'registration'){
+            return contains(id, this.cart.items);
+        } else if(type === 'download'){
+            return contains(id, this.cart.downloads);
+        } else {
+            return false;
+        }
+    },
+
+    _loadCart: function () {
+        this.cart = JSON.parse(localStorage.getItem(this._getSiteId() + '/shoppingCart'));
+    },
+
+    _saveCart: function () {
+        localStorage.setItem(this._getSiteId() + '/shoppingCart', JSON.stringify(this.cart));
+    }
+}
+
+    // Mobile menu
+    var mobileContainer = document.querySelector('.mobile-container');
+    var mobileButtons = mobileContainer.querySelectorAll('.mobile-btn');
+    var mobileMenuButton = mobileContainer.querySelector('.mobile-menu-btn');
+    var mobileLangButton = mobileContainer.querySelector('.mobile-lang-btn');
+    var mobileMainnav = mobileContainer.querySelector('.mobile-mainnav');
+
+    mobileButtons.forEach(function (mobileButton){
+        mobileButton.addEventListener('click', function() {
+            if (this.classList.contains('opened')) {
+                menuOverlay.classList.remove('is-open');
+                mobileContainer.querySelector('.mobile-navpanel').classList.remove('is-open');
+                mobileContainer.querySelector('.language-panel').classList.remove('is-open');
+                navMenu.querySelector('button').setAttribute('aria-expanded', 'false');
+                navMenu.querySelector('button').classList.remove('opened'); // Reset all nav-menu buttons
+                navMenu.querySelector('.nav-subpanel').classList.remove('is-open'); // Reset open nav-subpanels
+                document.querySelector('body').classList.remove('overflow-hidden');
+            } else {
+                mobileContainer.querySelector('.mobile-icon').classList.remove('hidden');
+                mobileContainer.querySelector('.mobile-icon-close').classList.add('hidden');
+                mobileButton.setAttribute('aria-expanded', 'false');
+                mobileButton.classList.remove('opened');
+                menuOverlay.classList.add('is-open');
+                document.querySelector('body').classList.add('overflow-hidden');
+            }
+        });
+    });
+
+    mobileMenuButton.addEventListener('click', function() {
+        if (this.classList.contains('opened')) {
+            this.setAttribute('aria-expanded', 'false');
+            this.classList.remove('opened');
+            this.querySelector('.mobile-icon-menu').classList.remove('hidden');
+            this.querySelector('.mobile-icon-close').classList.add('hidden');
+        } else {
+            this.setAttribute('aria-expanded', 'true');
+            this.classList.add('opened');
+            this.querySelector('.mobile-icon-menu').classList.add('hidden');
+            this.querySelector('.mobile-icon-close').classList.remove('hidden');
+            mobileContainer.querySelector('.mobile-navpanel').classList.add('is-open');
+            mobileContainer.querySelector('.language-panel').classList.remove('is-open');
+        }
+    });
+
+    mobileLangButton.addEventListener('click', function() {
+        if (this.classList.contains('opened')) {
+            this.setAttribute('aria-expanded', 'false');
+            this.classList.remove('opened');
+            this.querySelector('.mobile-icon-lang').classList.remove('hidden');
+            this.querySelector('.mobile-icon-close').classList.add('hidden');
+        } else {
+            this.setAttribute('aria-expanded', 'true');
+            this.classList.add('opened');
+            this.querySelector('.mobile-icon-lang').classList.add('hidden');
+            this.querySelector('.mobile-icon-close').classList.remove('hidden');
+            mobileContainer.querySelector('.mobile-navpanel').classList.remove('is-open');
+            mobileContainer.querySelector('.language-panel').classList.add('is-open');
+        }
+    });
+
+    var mobileMainnavs = mobileMainnav.querySelectorAll('button');
+    mobileMainnavs.forEach(function (mobileMainnavButton) {
+
+        mobileMainnavButton.addEventListener('click', function () {
+            let mobileMainnavSubpanel = this.nextElementSibling;
+            let svgElement = this.querySelector('svg');
+            if (this.classList.contains('opened')) {
+                this.setAttribute('aria-expanded', 'false');
+                this.classList.remove('opened');
+                svgElement.classList.remove('-rotate-180');
+                svgElement.classList.add('rotate-0');
+                if (mobileMainnavSubpanel) {
+                    mobileMainnavSubpanel.classList.remove('is-open');
+                }
+            } else {
+                this.setAttribute('aria-expanded', 'true');
+                this.classList.add('opened');
+                svgElement.classList.remove('rotate-0')
+                svgElement.classList.add('-rotate-180');
+                if (mobileMainnavSubpanel) {
+                    mobileMainnavSubpanel.classList.add('is-open');
                 }
             }
-        },
+        });
+    });
+    // Main navigation (desktop)
+    var navMenu = document.querySelector('.main-navbar .nav-menu');
+    var menuOverlay = document.querySelector('.menu-overlay');
+    var navMenuButtons = navMenu.querySelectorAll('button');
 
-        _showStep: function (element) {
-            let anchor = element.find('a');
-            let pane = $(anchor.attr('href'));
-            this._activateElement(element);
-            this._activateElement(anchor);
-            this._activateElement(pane);
-        },
+    navMenuButtons.forEach(function (navMenuButton){
+        navMenuButton.addEventListener('click', function() {
+            if (this.classList.contains('opened')) {
+                this.setAttribute('aria-expanded', 'false');
+                this.classList.remove('opened');
+                menuOverlay.classList.remove('is-open');
+                this.nextElementSibling.classList.remove('is-open');
+                document.querySelector('body').classList.remove('overflow-hidden');
+            } else {
+                navMenu.querySelector('button').setAttribute('aria-expanded', 'false')
+                navMenu.querySelector('button').classList.remove('opened'); // Reset open nav-subpanels
+                this.setAttribute('aria-expanded', 'true');
+                this.classList.add('opened');
+                navMenu.querySelector('.nav-subpanel').classList.remove('is-open'); // Reset open nav-subpanels
+                this.nextElementSibling.classList.add('is-open');
+                menuOverlay.classList.add('is-open');
+                document.querySelector('body').classList.add('overflow-hidden');
+            }
+        });
+    });
 
-        _hideStep: function (element) {
-            let anchor = element.find('a');
-            let pane = $(anchor.attr('href'));
-            this._deactivateElement(element);
-            this._deactivateElement(anchor);
-            this._deactivateElement(pane);
-        },
-
-        _enableButton: function (button) {
-            let selector = $('.' + button + '-step');
-            selector.removeClass('disabled');
-            selector.addClass('enabled');
-        },
-
-        _disableButton: function (button) {
-            let selector = $('.' + button + '-step');
-            selector.removeClass('enabled');
-            selector.addClass('disabled');
-        },
-
-        _activateElement: function (element) {
-            element.addClass('active');
-        },
-
-        _deactivateElement: function (element) {
-            element.removeClass('active');
-        },
-
-        _showSubmitButton: function () {
-            let submitButton = this._getSubmitButton();
-            let nextButton = this._getNextButton();
-            submitButton.removeClass('d-none');
-            submitButton.addClass('d-inline');
-            nextButton.addClass('d-none');
-            nextButton.removeClass('d-inline');
-        },
-
-        _hideSubmitButton: function () {
-            let submitButton = this._getSubmitButton();
-            let nextButton = this._getNextButton();
-            submitButton.addClass('d-none');
-            submitButton.removeClass('d-inline');
-            nextButton.addClass('d-inline');
-            nextButton.removeClass('d-none');
-        },
-
-        _getElement: function () {
-            return $(this.element);
-        },
-
-        _getForm: function () {
-            return this._getElement().find('form');
-        },
-
-        _getSubmitButton: function () {
-            return this._getElement().find("a.submit");
-        },
-
-        _getNextButton: function () {
-            return this._getElement().find('.next-step');
-        }
-    };
-
-    $.fn[pluginName] = function (form) {
-        return this.each(function () {
-            if (!$.data(this, "plugin_" + pluginName)) {
-                $.data(this, "plugin_" + pluginName,
-                    new Plugin(this, form));
+    menuOverlay.addEventListener('click', function() {
+        // When opened, reset mobile menu
+        mobileButtons.forEach(function (mobileButton) {
+            if (mobileButton.classList.contains('opened')) {
+                mobileButton.setAttribute('aria-expanded', 'false');
+                mobileButton.classList.remove('opened');
+                mobileContainer.querySelector('.mobile-icon').classList.remove('hidden');
+                mobileContainer.querySelector('.mobile-icon-close').classList.add('hidden');
             }
         })
-    }
-})(jQuery);
+        this.classList.remove('is-open');
+        mobileContainer.querySelector('.mobile-navpanel').classList.remove('is-open');
+        mobileContainer.querySelector('.language-panel').classList.remove('is-open');
+        navMenu.querySelectorAll('button').forEach(button => {
+            button.setAttribute('aria-expanded', false);
+            button.classList.remove('opened');
+        });
+        navMenu.querySelector('.nav-subpanel').classList.remove('is-open');
+        document.querySelector('body').classList.remove('overflow-hidden');
+    });
 
 function checkStep(form, requiredStep) {
     return (getCurrentStep(form) === requiredStep);
@@ -172,343 +537,3 @@ function getCurrentStep(form) {
     var currentStep = activePane.charAt(activePane.length - 1);
     return Number(currentStep);
 }
-
-(function ($) {
-
-    var pluginName = "shoppingCart";
-
-    var Plugin = function Plugin(options) {
-        this.element = this;
-        this.options = options;
-        this._name = pluginName;
-
-        this.init();
-    }
-
-    Plugin.prototype = {
-        defaults: {
-            'languageKeys': {
-                'add-to-cart': 'Add to cart',
-                'remove-from-cart': 'Remove from cart'
-            }
-        },
-        init: function () {
-            this.config = $.extend({}, this.defaults, this.options);
-
-            this.initCart();
-            this.registerEvents();
-        },
-
-        initCart: function () {
-            this._loadCart();
-
-            if (this.cart === null) {
-                this.cart = {
-                    'userId': this._getUserId(),
-                    'siteId' : this._getSiteId(),
-                    'items': [],
-                    'downloads': []
-                };
-
-                this._saveCart();
-            } else if (! this.cart.hasOwnProperty('downloads') ){
-                this.cart['downloads'] = []
-                this._saveCart();
-            }
-
-            this.refreshCart();
-
-            this._registerCheckoutURLBuilder();
-        },
-
-        registerEvents: function () {
-            let plugin = this;
-
-            registerClick('.add-to-cart', 'registration');
-            registerClick('.add-download-to-cart', 'download');
-
-            $('.c-cart__checkout__cart').on('click', function (e) {
-                e.preventDefault();
-                buildCheckoutURL();
-            });
-
-            function registerClick(clazz, type) {
-                $(clazz).on('click', function (e) {
-                    e.preventDefault();
-                    let id = $(this).data('articleId');
-
-                    if (plugin._contains(id, type)) {
-                        plugin._removeFromCart(id, type);
-                    } else {
-                        plugin._addToCart(id, type);
-                    }
-                    plugin._updateLabel($(this), type);
-                    plugin.refreshCart();
-                });
-            }
-        },
-
-        refreshCart: function () {
-            let plugin = this;
-            $('.c-cart__item__counter').text(plugin.cart.items.length + plugin.cart.downloads.length);
-            $('.add-to-cart').each(function (){
-                plugin._updateLabel($(this), 'registration');
-            });
-            $('.add-download-to-cart').each(function (){
-                plugin._updateLabel($(this), 'download');
-            });
-        },
-
-        clearCart: function () {
-            this.cart.items = [];
-            this._saveCart();
-            this.refreshCart();
-        },
-
-        clearDownloadsCart: function (){
-            this.cart.downloads = [];
-            this._saveCart();
-            this.refreshCart();
-        },
-
-        _registerCheckoutURLBuilder: function () {
-            let plugin = this;
-            Liferay.provide(
-                window,
-                'buildCheckoutURL',
-                function () {
-
-                    let cartUrl;
-                    let action;
-                    let ids;
-                    let portletId;
-                    if (plugin.cart.downloads.length > 0){
-                        cartUrl = downloadCartURL;
-                        action = 'download';
-                        ids = plugin.cart.downloads.join(',');
-                        portletId = 'DownloadFormPortlet';
-                    } else {
-                        cartUrl = checkoutCartURL;
-                        action = 'register';
-                        ids = plugin.cart.items.join(',');
-                        portletId  = 'dsd_RegistrationFormPortlet';
-                    }
-                    let portletURL = Liferay.PortletURL.createURL(cartUrl);
-
-                    portletURL.setLifecycle(Liferay.PortletURL.RENDER_PHASE);
-                    portletURL.setWindowState('normal');
-                    portletURL.setPortletMode('view');
-                    portletURL.setParameter('action', action);
-                    portletURL.setParameter('ids', ids);
-                    portletURL.setParameter('redirect', window.location.href);
-                    portletURL.setPortletId(portletId);
-
-                    if (undefined !== portletURL.toString()) {
-                        window.location = portletURL.toString();
-                    }
-                },
-                ['liferay-portlet-url']
-            );
-        },
-
-        _updateLabel: function (element, type) {
-            let plugin = this;
-            let id = element.data('articleId');
-            if (plugin._contains(id, type)) {
-                element.text(plugin._getLanguageKey('remove-from-cart'));
-            } else {
-                element.text(plugin._getLanguageKey('add-to-cart'));
-            }
-        },
-
-        _getLanguageKey: function (key) {
-            return this.config.languageKeys[key];
-        },
-
-        _getUserId: function () {
-            return Liferay.ThemeDisplay.getUserId();
-        },
-
-        _getSiteId: function () {
-            return Liferay.ThemeDisplay.getSiteGroupId();
-        },
-
-        _addToCart: function (id, type) {
-
-            if (!this._contains(id, type)) {
-                if (type === 'registration'){
-                    this.cart.items.push(id);
-                } else if (type === 'download'){
-                    this.cart.downloads.push(id)
-                }
-                this._saveCart();
-            }
-        },
-
-        _removeFromCart: function (id, type) {
-            if (this._contains(id, type)) {
-                if (type === 'registration'){
-                    this.cart.items = this.cart.items.filter(item => item !== id);
-                } else if (type === 'download' ) {
-                    this.cart.downloads = this.cart.downloads.filter(item => item !== id);
-                }
-                this._saveCart();
-            }
-        },
-
-        _contains: function (id, type) {
-
-            const contains = (newItem, list) => list.some(item => newItem === item);
-            if ( type === 'registration'){
-                return contains(id, this.cart.items);
-            } else if(type === 'download'){
-                return contains(id, this.cart.downloads);
-            } else {
-                return false;
-            }
-        },
-
-        _loadCart: function () {
-            this.cart = JSON.parse(localStorage.getItem(this._getSiteId() + '/shoppingCart'));
-        },
-
-        _saveCart: function () {
-            localStorage.setItem(this._getSiteId() + '/shoppingCart', JSON.stringify(this.cart));
-        }
-    };
-
-    Plugin.defaults = Plugin.prototype.defaults;
-
-    $.fn[pluginName] = function (options) {
-        return this.each(function () {
-            if (!$.data(this, "plugin_" + pluginName)) {
-                $.data(this, "plugin_" + pluginName,
-                    new Plugin(options));
-            }
-        })
-    };
-
-    window.ShoppingCart = Plugin;
-
-}(jQuery));
-
-(function ($) {
-    // Scroll service bar (desktop)
-    var header = $('#header');
-
-    // window.addEventListener('scroll', function() {
-    //     if ($('body').hasClass('signed-in')) {
-    //         if (document.documentElement.scrollTop > 94) {
-    //             header.addClass('hidden-servicebar logged-in');
-    //         } else {
-    //             header.removeClass('hidden-servicebar logged-in');
-    //         }
-    //     } else {
-    //         if (document.documentElement.scrollTop > 38) {
-    //             header.addClass('hidden-servicebar');
-    //         } else {
-    //             header.removeClass('hidden-servicebar');
-    //         }
-    //     }
-    // });
-
-    // Mobile menu
-    var mobileContainer = $('.mobile-container');
-    var mobileButton = mobileContainer.find('.mobile-btn');
-    var mobileMenuButton = mobileContainer.find('.mobile-menu-btn');
-    var mobileLangButton = mobileContainer.find('.mobile-lang-btn');
-    var mobileMainnav = mobileContainer.find('.mobile-mainnav');
-
-    mobileButton.on('click', function() {
-        if ($(this).hasClass('opened')) {
-            menuOverlay.removeClass('is-open');
-            mobileContainer.find('.mobile-navpanel').removeClass('is-open');
-            mobileContainer.find('.language-panel').removeClass('is-open');
-            navMenu.find('button').attr('aria-expanded', false).removeClass('opened'); // Reset all nav-menu buttons
-            navMenu.find('.nav-subpanel').removeClass('is-open'); // Reset open nav-subpanels
-            $('body').removeClass('overflow-hidden');
-        } else {
-            mobileContainer.find('.mobile-icon').removeClass('hidden');
-            mobileContainer.find('.mobile-icon-close').addClass('hidden');
-            mobileButton.attr('aria-expanded', false).removeClass('opened');
-            menuOverlay.addClass('is-open');
-            $('body').addClass('overflow-hidden');
-        }
-    });
-
-    mobileMenuButton.on('click', function() {
-        if ($(this).hasClass('opened')) {
-            $(this).attr('aria-expanded', false).removeClass('opened');
-            $(this).find('.mobile-icon-menu').removeClass('hidden');
-            $(this).find('.mobile-icon-close').addClass('hidden');
-        } else {
-            $(this).attr('aria-expanded', true).addClass('opened');
-            $(this).find('.mobile-icon-menu').addClass('hidden');
-            $(this).find('.mobile-icon-close').removeClass('hidden');
-            mobileContainer.find('.mobile-navpanel').addClass('is-open');
-            mobileContainer.find('.language-panel').removeClass('is-open');
-        }
-    });
-
-    mobileLangButton.on('click', function() {
-        if ($(this).hasClass('opened')) {
-            $(this).attr('aria-expanded', false).removeClass('opened');
-            $(this).find('.mobile-icon-lang').removeClass('hidden');
-            $(this).find('.mobile-icon-close').addClass('hidden');
-        } else {
-            $(this).attr('aria-expanded', true).addClass('opened');
-            $(this).find('.mobile-icon-lang').addClass('hidden');
-            $(this).find('.mobile-icon-close').removeClass('hidden');
-            mobileContainer.find('.mobile-navpanel').removeClass('is-open');
-            mobileContainer.find('.language-panel').addClass('is-open');
-        }
-    });
-
-    mobileMainnav.find('button').on('click', function() {
-        if ($(this).hasClass('opened')) {
-            $(this).attr('aria-expanded', false).removeClass('opened');
-            $(this).find('svg').removeClass('-rotate-180').addClass('rotate-0');
-            $(this).next('.v-mainnav_subpanel--mobile').removeClass('is-open');
-        } else {
-            $(this).attr('aria-expanded', true).addClass('opened');
-            $(this).find('svg').removeClass('rotate-0').addClass('-rotate-180');
-            $(this).next('.v-mainnav_subpanel--mobile').addClass('is-open');
-        }
-    });
-
-    // Main navigation (desktop)
-    var navMenu = $('.main-navbar .nav-menu');
-    var menuOverlay = $('.menu-overlay');
-
-    navMenu.find('button').on('click', function() {
-        if ($(this).hasClass('opened')) {
-            $(this).attr('aria-expanded', false).removeClass('opened');
-            menuOverlay.removeClass('is-open');
-            navMenu.find('.nav-subpanel').removeClass('is-open');
-            $('body').removeClass('overflow-hidden');
-        } else {
-            navMenu.find('button').attr('aria-expanded', false).removeClass('opened'); // Reset all nav-menu buttons
-            $(this).attr('aria-expanded', true).addClass('opened');
-            navMenu.find('.nav-subpanel').removeClass('is-open'); // Reset open nav-subpanels
-            $(this).next('.nav-subpanel').addClass('is-open');
-            menuOverlay.addClass('is-open');
-            $('body').addClass('overflow-hidden');
-        }
-    });
-
-    menuOverlay.on('click', function() {
-        // When opened, reset mobile menu
-        if (mobileButton.hasClass('opened')) {
-            mobileButton.attr('aria-expanded', false).removeClass('opened');
-            mobileContainer.find('.mobile-icon').removeClass('hidden');
-            mobileContainer.find('.mobile-icon-close').addClass('hidden');
-        }
-
-        $(this).removeClass('is-open');
-        mobileContainer.find('.mobile-navpanel').removeClass('is-open');
-        mobileContainer.find('.language-panel').removeClass('is-open');
-        navMenu.find('button').attr('aria-expanded', false).removeClass('opened');
-        navMenu.find('.nav-subpanel').removeClass('is-open');
-        $('body').removeClass('overflow-hidden');
-    });
-}(jQuery));
