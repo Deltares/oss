@@ -28,25 +28,25 @@ UserPortraitUtil = {
 
     addCarouselSlider: function (){
 
-        $('#user-portraits-carousel').on('slide.bs.carousel', function(e) {
-            var $e = $(e.relatedTarget);
-            let idx = $e.index();
-            let itemsPerSide = 5;
-            let totalItems = $('.carousel-item').length;
-            if (idx >= itemsPerSide - (totalItems - idx) ){
-                let it = itemsPerSide - (totalItems - idx);
-                for (let i=0; i < it; i++){
-                    // append slides to end
+        const carousel = document.getElementById('user-portraits-carousel');
+        carousel.addEventListener('slide.bs.carousel', function(e) {
+            const items = carousel.querySelectorAll('.carousel-item');
+            const relatedTarget = e.relatedTarget;
+            const idx = Array.prototype.indexOf.call(items, relatedTarget);
+            const itemsPerSide = 5;
+            const totalItems = items.length;
+            if (idx >= itemsPerSide - (totalItems - idx)) {
+                const it = itemsPerSide - (totalItems - idx);
+                for (let i = 0; i < it; i++) {
                     if (e.direction === "left") {
-                        $('.carousel-item').eq(i).appendTo('.carousel-inner');
-                    }
-                    else {
-                        $('.carousel-item').eq(0).appendTo('.carousel-inner');
+                        carousel.querySelector('.carousel-inner').appendChild(items[i]);
+                    } else {
+                        carousel.querySelector('.carousel-inner').appendChild(items[0]);
                     }
                 }
             }
-
         });
+
 
     },
     getRunningProcess: function (namespace){
@@ -77,12 +77,12 @@ UserPortraitUtil = {
                     if (xhr.status === 200){
                         let responseData = this.get('responseData');
                         UserPortraitUtil.updatePortraits(namespace, responseData);
-                        UserPortraitUtil.updateTitle("");
+                        UserPortraitUtil.updateTitle(namespace,"");
                     } else if (xhr.status === 204){
                         //Data not loaded yet so start download process
                         UserPortraitUtil.setRunningProcess(namespace, setInterval(function () {
                             UserPortraitUtil.statusUserPortraits(resourceUrl, namespace);
-                        }, 1000));
+                        }, 5000));
 
                     }
                 }
@@ -124,8 +124,13 @@ UserPortraitUtil = {
                         let statusMsg = JSON.parse(responseData);
                         if (statusMsg.status === 'available') {
                             UserPortraitUtil.downloadUserPortraits(resourceUrl, namespace);
-                        } else if (statusMsg.status === 'running') {
-                            let percent = 100 * statusMsg.progress / statusMsg.total;
+                        } else if (statusMsg.status === 'running' || statusMsg.status === 'pending') {
+                            let percent;
+                            if (statusMsg.total === 0){
+                                percent = 0;
+                            } else {
+                                percent = 100 * statusMsg.progress / statusMsg.total
+                            }
                             UserPortraitUtil.updateTitle(namespace, 'Loading user portraits... Progress ' + Math.round(percent) + ' %');
                         } else {
                             UserPortraitUtil.stopRunningProcess(namespace);
