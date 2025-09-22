@@ -29,7 +29,7 @@
 </liferay-ui:error>
 
         <aui:form name="saveUserSubscriptions" action="<%=saveURL%>">
-            <jsp:useBean id="subscriptions" class="java.util.List" scope="request"/>
+            <jsp:useBean id="subscriptions" type="java.util.List" scope="request"/>
 
             <liferay-ui:search-container id="tableResults"
                                          emptyResultsMessage='<%=LanguageUtil.get(locale, "no-subscriptions-records")%>'
