@@ -18,15 +18,21 @@
 	//creates the blue background from the left column to the left side of the page.
 	var doit;
 	function createBlueBg(){
-		var sectionHeight = $('#wrapper > section#content').outerHeight();
-		$(".fake-background").remove();
-		$('<style class="fake-background">.two-columns-full-height .portlet-column-first::before { height: ' + sectionHeight + 'px!important;}</style>').appendTo('head');
+		var section = document.querySelector('#wrapper > section#content');
+                var sectionHeight = section ? section.offsetHeight : 0;
+        		document.querySelectorAll('.fake-background').forEach(function(el) {
+                  el.remove();
+                });
+                var style = document.createElement('style');
+                style.className = 'fake-background';
+                style.textContent = '.two-columns-full-height .portlet-column-first::before { height: ' + sectionHeight + 'px!important; }';
+                document.head.appendChild(style);
 	}
 	AUI().ready('aui-module', function(A){
 		createBlueBg();
 	});
 
-	$(window).on("resize",function(e){
+	window.addEventListener('resize',function(e){
 		clearTimeout(doit);
 		doit = setTimeout(function() {
 			createBlueBg();

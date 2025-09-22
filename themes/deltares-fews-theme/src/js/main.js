@@ -1,101 +1,115 @@
-(function ($) {
-    // Mobile menu
-    var mobileContainer = $('.mobile-container');
-    var mobileButton = mobileContainer.find('.mobile-btn');
-    var mobileMenuButton = mobileContainer.find('.mobile-menu-btn');
-    var mobileLangButton = mobileContainer.find('.mobile-lang-btn');
-    var mobileMainnav = mobileContainer.find('.mobile-mainnav');
+// Mobile menu
+var mobileContainer = document.querySelector('.mobile-container');
+var mobileButtons = mobileContainer.querySelectorAll('.mobile-btn');
+var mobileMenuButton = mobileContainer.querySelector('.mobile-menu-btn');
+var mobileMainnav = mobileContainer.querySelector('.mobile-mainnav');
 
-    mobileButton.on('click', function() {
-        if ($(this).hasClass('opened')) {
-            menuOverlay.removeClass('is-open');
-            mobileContainer.find('.mobile-navpanel').removeClass('is-open');
-            mobileContainer.find('.language-panel').removeClass('is-open');
-            navMenu.find('button').attr('aria-expanded', false).removeClass('opened'); // Reset all nav-menu buttons
-            navMenu.find('.nav-subpanel').removeClass('is-open'); // Reset open nav-subpanels
-            $('body').removeClass('overflow-hidden');
+mobileButtons.forEach(function (mobileButton){
+    mobileButton.addEventListener('click', function() {
+        if (this.classList.contains('opened')) {
+            menuOverlay.classList.remove('is-open');
+            mobileContainer.querySelector('.mobile-navpanel').classList.remove('is-open');
+            mobileContainer.querySelector('.language-panel').classList.remove('is-open');
+            navMenu.querySelector('button').setAttribute('aria-expanded', 'false');
+            navMenu.querySelector('button').classList.remove('opened'); // Reset all nav-menu buttons
+            navMenu.querySelector('.nav-subpanel').classList.remove('is-open'); // Reset open nav-subpanels
+            document.querySelector('body').classList.remove('overflow-hidden');
         } else {
-            mobileContainer.find('.mobile-icon').removeClass('hidden');
-            mobileContainer.find('.mobile-icon-close').addClass('hidden');
-            mobileButton.attr('aria-expanded', false).removeClass('opened');
-            menuOverlay.addClass('is-open');
-            $('body').addClass('overflow-hidden');
+            mobileContainer.querySelector('.mobile-icon').classList.remove('hidden');
+            mobileContainer.querySelector('.mobile-icon-close').classList.add('hidden');
+            this.setAttribute('aria-expanded', 'false');
+            this.classList.remove('opened');
+            menuOverlay.classList.add('is-open');
+            document.querySelector('body').classList.add('overflow-hidden');
         }
     });
+});
 
-    mobileMenuButton.on('click', function() {
-        if ($(this).hasClass('opened')) {
-            $(this).attr('aria-expanded', false).removeClass('opened');
-            $(this).find('.mobile-icon-menu').removeClass('hidden');
-            $(this).find('.mobile-icon-close').addClass('hidden');
+mobileMenuButton.addEventListener('click', function() {
+    if (this.classList.contains('opened')) {
+        this.setAttribute('aria-expanded', false);
+        this.classList.remove('opened');
+        this.querySelector('.mobile-icon-menu').classList.remove('hidden');
+        this.querySelector('.mobile-icon-close').classList.add('hidden');
+    } else {
+        this.setAttribute('aria-expanded', true);
+        this.classList.add('opened');
+        this.querySelector('.mobile-icon-menu').classList.add('hidden');
+        this.querySelector('.mobile-icon-close').classList.remove('hidden');
+        mobileContainer.querySelector('.mobile-navpanel').classList.add('is-open');
+        mobileContainer.querySelector('.language-panel').classList.remove('is-open');
+    }
+});
+
+
+var mobileMainnavs = mobileMainnav.querySelectorAll('button');
+mobileMainnavs.forEach(function (mobileMainnavButton) {
+
+    mobileMainnavButton.addEventListener('click', function () {
+        let mobileMainnavSubpanel = this.nextElementSibling;
+        let svgElement = this.querySelector('svg');
+        if (this.classList.contains('opened')) {
+            this.setAttribute('aria-expanded', 'false');
+            this.classList.remove('opened');
+            svgElement.classList.remove('-rotate-180');
+            svgElement.classList.add('rotate-0');
+            if (mobileMainnavSubpanel) {
+                mobileMainnavSubpanel.classList.remove('is-open');
+            }
         } else {
-            $(this).attr('aria-expanded', true).addClass('opened');
-            $(this).find('.mobile-icon-menu').addClass('hidden');
-            $(this).find('.mobile-icon-close').removeClass('hidden');
-            mobileContainer.find('.mobile-navpanel').addClass('is-open');
-            mobileContainer.find('.language-panel').removeClass('is-open');
+            this.setAttribute('aria-expanded', 'true');
+            this.classList.add('opened');
+            svgElement.classList.remove('rotate-0')
+            svgElement.classList.add('-rotate-180');
+            if (mobileMainnavSubpanel) {
+                mobileMainnavSubpanel.classList.add('is-open');
+            }
         }
     });
+});
 
-    mobileLangButton.on('click', function() {
-        if ($(this).hasClass('opened')) {
-            $(this).attr('aria-expanded', false).removeClass('opened');
-            $(this).find('.mobile-icon-lang').removeClass('hidden');
-            $(this).find('.mobile-icon-close').addClass('hidden');
+// Main navigation (desktop)
+var navMenu = document.querySelector('.main-navbar .nav-menu');
+var menuOverlay = document.querySelector('.menu-overlay');
+var navMenuButtons = navMenu.querySelectorAll('button');
+
+navMenuButtons.forEach(function (navMenuButton){
+    navMenuButton.addEventListener('click', function() {
+        if (this.classList.contains('opened')) {
+            this.setAttribute('aria-expanded', 'false');
+            this.classList.remove('opened');
+            menuOverlay.classList.remove('is-open');
+            this.nextElementSibling.classList.remove('is-open');
+            document.querySelector('body').classList.remove('overflow-hidden');
         } else {
-            $(this).attr('aria-expanded', true).addClass('opened');
-            $(this).find('.mobile-icon-lang').addClass('hidden');
-            $(this).find('.mobile-icon-close').removeClass('hidden');
-            mobileContainer.find('.mobile-navpanel').removeClass('is-open');
-            mobileContainer.find('.language-panel').addClass('is-open');
+            navMenu.querySelector('button').setAttribute('aria-expanded', 'false')
+            navMenu.querySelector('button').classList.remove('opened'); // Reset open nav-subpanels
+            this.setAttribute('aria-expanded', 'true');
+            this.classList.add('opened');
+            navMenu.querySelector('.nav-subpanel').classList.remove('is-open'); // Reset open nav-subpanels
+            this.nextElementSibling.classList.add('is-open');
+            menuOverlay.classList.add('is-open');
+            document.querySelector('body').classList.add('overflow-hidden');
         }
     });
+});
 
-    mobileMainnav.find('button').on('click', function() {
-        if ($(this).hasClass('opened')) {
-            $(this).attr('aria-expanded', false).removeClass('opened');
-            $(this).find('svg').removeClass('-rotate-180').addClass('rotate-0');
-            $(this).next('.v-mainnav_subpanel--mobile').removeClass('is-open');
-        } else {
-            $(this).attr('aria-expanded', true).addClass('opened');
-            $(this).find('svg').removeClass('rotate-0').addClass('-rotate-180');
-            $(this).next('.v-mainnav_subpanel--mobile').addClass('is-open');
-        }
+menuOverlay.addEventListener('click', function() {
+    // When opened, reset mobile menu
+    if (mobileButton.classList.contains('opened')) {
+        mobileButton.setAttribute('aria-expanded', false);
+        mobileButton.classList.remove('opened');
+        mobileContainer.querySelector('.mobile-icon').classList.remove('hidden');
+        mobileContainer.querySelector('.mobile-icon-close').classList.add('hidden');
+    }
+
+    this.classList.remove('is-open');
+    mobileContainer.querySelector('.mobile-navpanel').classList.remove('is-open');
+    mobileContainer.querySelector('.language-panel').classList.remove('is-open');
+    navMenu.querySelectorAll('button').forEach(button => {
+        button.setAttribute('aria-expanded', false);
+        button.classList.remove('opened');
     });
-
-    // Main navigation (desktop)
-    var navMenu = $('.main-navbar .nav-menu');
-    var menuOverlay = $('.menu-overlay');
-
-    navMenu.find('button').on('click', function() {
-        if ($(this).hasClass('opened')) {
-            $(this).attr('aria-expanded', false).removeClass('opened');
-            menuOverlay.removeClass('is-open');
-            navMenu.find('.nav-subpanel').removeClass('is-open');
-            $('body').removeClass('overflow-hidden');
-        } else {
-            navMenu.find('button').attr('aria-expanded', false).removeClass('opened'); // Reset all nav-menu buttons
-            $(this).attr('aria-expanded', true).addClass('opened');
-            navMenu.find('.nav-subpanel').removeClass('is-open'); // Reset open nav-subpanels
-            $(this).next('.nav-subpanel').addClass('is-open');
-            menuOverlay.addClass('is-open');
-            $('body').addClass('overflow-hidden');
-        }
-    });
-
-    menuOverlay.on('click', function() {
-        // When opened, reset mobile menu
-        if (mobileButton.hasClass('opened')) {
-            mobileButton.attr('aria-expanded', false).removeClass('opened');
-            mobileContainer.find('.mobile-icon').removeClass('hidden');
-            mobileContainer.find('.mobile-icon-close').addClass('hidden');
-        }
-
-        $(this).removeClass('is-open');
-        mobileContainer.find('.mobile-navpanel').removeClass('is-open');
-        mobileContainer.find('.language-panel').removeClass('is-open');
-        navMenu.find('button').attr('aria-expanded', false).removeClass('opened');
-        navMenu.find('.nav-subpanel').removeClass('is-open');
-        $('body').removeClass('overflow-hidden');
-    });
-}(jQuery));
+    navMenu.querySelector('.nav-subpanel').forEach(subpanel => subpanel.classList.remove('is-open'));
+    document.body.classList.remove('overflow-hidden');
+});
