@@ -19,8 +19,8 @@ public class TopJsDynamicInclude extends BaseDynamicInclude {
     public void include(HttpServletRequest request, HttpServletResponse response, String key) throws IOException {
         PrintWriter printWriter = response.getWriter();
 
-        String content = "<script charset=\"utf-8\" src=\"/o/deltares-search-web/js/bootstrap-datepicker.js\"></script>" +
-                "<script charset=\"utf-8\" src=\"/o/deltares-search-web/js/bootstrap-datepicker.nl.min.js\"></script>";
+        String content = "<script charset=\"utf-8\" src=\"/o/deltares-search-web/js/the-datepicker.js\"></script>" +
+                "<script charset=\"utf-8\" src=\"/o/deltares-search-web/js/the-datepicker.min.js\"></script>";
         printWriter.println(content);
     }
 

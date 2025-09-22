@@ -49,7 +49,8 @@ public class CheckboxFacetConfigurationAction extends DefaultConfigurationAction
         String portletResource = ParamUtil.getString(actionRequest, "portletResource");
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
-        dsdCache.putPortletConfig(dsdCache.getPortletConfigCacheId(portletResource, themeDisplay) , null);
+        String cacheId = portletResource + themeDisplay.getLayout().getLayoutId() + themeDisplay.getSiteGroupId();
+        dsdCache.putPortletConfig(cacheId , null);
 
         setPreference(actionRequest, "structureName", ParamUtil.getString(actionRequest, "structureName"));
         setPreference(actionRequest, "fieldName", ParamUtil.getString(actionRequest, "fieldName"));

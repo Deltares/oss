@@ -7,14 +7,14 @@
 	var props = {};
 	props.baseUrl="<%= baseUrl %>";
 	props.siteId="<%= siteId %>";
-	props.eventId="<%= eventId %>";
+	props.eventIds="<%= eventIds %>";
 	props.startDate="<%= startDate %>";
 	props.defaultView="<%= defaultView %>";
 	props.p_auth =  Liferay.authToken;
 
 
 	construct = function(props){
-		let eventUrl = props.baseUrl + '/events/' + props.siteId + '/' + props.eventId + '?p_auth=' + props.p_auth;
+		let eventUrl = props.baseUrl + '/events/' + props.siteId + '?eventIds=' + props.eventIds + '&start=' + props.startDate + '&p_auth=' + props.p_auth;
 		var colorMap = JSON.parse('<%=colorMap%>');
 		return {
 			schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -54,7 +54,7 @@
 			aspectRatio : 1.8,
 			resourceGroupField : 'building',
 			resources: {
-				url: props.baseUrl + '/resources/' + props.siteId + '/' + props.eventId+ '?p_auth=' + props.p_auth,
+				url: props.baseUrl + '/resources/' + props.siteId + '?eventIds=' + props.eventIds + '?p_auth=' + props.p_auth,
 				method: 'GET'
 			},
 			events: function (fetchInfo, successCallback, failureCallback) {

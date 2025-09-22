@@ -18,7 +18,8 @@ public class TopHeadDynamicInclude extends BaseDynamicInclude {
     public void include(HttpServletRequest request, HttpServletResponse response, String key) throws IOException {
         PrintWriter printWriter = response.getWriter();
 
-        printWriter.println("<link rel=\"stylesheet\" href=\"/o/deltares-search-web/css/bootstrap-datepicker.css\">");
+        printWriter.println("<link rel=\"stylesheet\" href=\"/o/deltares-search-web/css/the-datepicker.css\">");
+//        printWriter.println("<link rel=\"stylesheet\" href=\"/o/deltares-search-web/css/the-datepicker.d.ts\">");
     }
 
     @Override

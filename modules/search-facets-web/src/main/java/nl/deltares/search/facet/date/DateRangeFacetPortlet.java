@@ -1,19 +1,20 @@
 package nl.deltares.search.facet.date;
 
-import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Modified;
+import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.Portlet;
-import javax.portlet.PortletException;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
+import javax.portlet.*;
 import java.io.IOException;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author allan
@@ -40,33 +41,80 @@ import java.util.Map;
 )
 public class DateRangeFacetPortlet extends MVCPortlet {
 
-    @Override
-    public void doView(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-        renderRequest.setAttribute(
-                DateRangeFacetConfiguration.class.getName(),
-                _configuration);
-        super.doView(renderRequest, renderResponse);
+    public void submitForm(ActionRequest actionRequest, ActionResponse actionResponse) {
+        ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+        String startDate = ParamUtil.getString(actionRequest, "startDate");
+        if (startDate == null || startDate.isEmpty()) {
+            FacetUtils.removeFromSession(themeDisplay.getPortletDisplay().getId(),"startDate", actionRequest);
+        } else {
+            FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(),"startDate", startDate, actionRequest);
+        }
+
+        String endDate = ParamUtil.getString(actionRequest, "endDate");
+        if (endDate == null || endDate.isEmpty()) {
+            FacetUtils.removeFromSession(themeDisplay.getPortletDisplay().getId(),"endDate", actionRequest);
+        } else {
+            FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(),"endDate", endDate, actionRequest);
+        }
+
     }
 
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 
-        final String startDate = FacetUtils.getRequestParameter("startDate", renderRequest);
-        if (startDate != null) renderRequest.setAttribute("startDate", FacetUtils.parseDate(startDate));
+        ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+        // Try to get the start date from the session
+        String startDate = FacetUtils.getRequestParameter("startDate", renderRequest);
+        if (startDate == null) {
+            startDate = FacetUtils.getFromSession(themeDisplay.getPortletDisplay().getId(), "startDate", renderRequest);
+        }
+        // Try to get the end date from the session
+        String endDate = FacetUtils.getRequestParameter("endDate", renderRequest);
+        if (endDate == null) {
+            endDate = FacetUtils.getFromSession(themeDisplay.getPortletDisplay().getId(), "endDate", renderRequest);
+        }
+        final String portletId = themeDisplay.getPortletDisplay().getId();
 
-        final String endDate = FacetUtils.getRequestParameter("endDate", renderRequest);
-        if (endDate != null) renderRequest.setAttribute("endDate", FacetUtils.parseDate(endDate));
-
+        DateRangeFacetConfiguration _configuration;
+        try {
+            _configuration = _configurationProvider.getPortletInstanceConfiguration(DateRangeFacetConfiguration.class, themeDisplay.getLayout(), portletId);
+            if (startDate == null) {
+                if (!_configuration.startDate().isEmpty()) {
+                    startDate = _configuration.startDate();
+                } else if (Boolean.parseBoolean(_configuration.setStartNow())) {
+                    startDate = DATE_TIME_FORMATTER.format(LocalDate.now());
+                }
+                if (startDate != null){
+                    FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(),"startDate", startDate, renderRequest);
+                }
+            }
+            if (endDate == null) {
+                if (!_configuration.endDate().isEmpty()) {
+                    endDate = _configuration.endDate();
+                    if (endDate != null){
+                        FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(),"endDate", startDate, renderRequest);
+                    }
+                }
+            }
+        } catch (ConfigurationException e) {
+            //
+        }
+        if (startDate != null) {
+            renderRequest.setAttribute("startDate", startDate);
+        }
+        if (endDate != null) {
+            renderRequest.setAttribute("endDate", endDate);
+        }
         super.render(renderRequest, renderResponse);
     }
 
-    @Activate
-    @Modified
-    protected void activate(Map<Object, Object> properties) {
-        _configuration = ConfigurableUtil.createConfigurable(
-                DateRangeFacetConfiguration.class, properties);
-    }
 
-    private volatile DateRangeFacetConfiguration _configuration;
+    private ConfigurationProvider _configurationProvider;
+
+    @Reference
+    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
+        _configurationProvider = configurationProvider;
+    }
 }

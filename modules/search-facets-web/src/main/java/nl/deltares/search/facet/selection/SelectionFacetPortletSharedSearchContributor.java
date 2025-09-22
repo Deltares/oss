@@ -42,7 +42,8 @@ public class SelectionFacetPortletSharedSearchContributor implements PortletShar
 
         Optional<String> selectionOptional = portletSharedSearchSettings.getParameterOptional(name);
         //check for parameter is in namespace of searchResultsPortlet
-        String selection = selectionOptional.orElseGet(() -> FacetUtils.getRequestParameter(name, portletSharedSearchSettings.getRenderRequest()));
+        String selection = selectionOptional.orElseGet(() -> FacetUtils.getFromSession(
+                portletSharedSearchSettings.getPortletId(), name, portletSharedSearchSettings.getRenderRequest()));
         if (selection == null) {
             return;
         }

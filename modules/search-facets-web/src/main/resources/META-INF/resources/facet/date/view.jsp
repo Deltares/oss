@@ -1,84 +1,78 @@
-<%@ page import="nl.deltares.search.util.FacetUtils" %>
-<%@ page import="java.time.LocalDate" %>
-<%@ page import="nl.deltares.search.facet.date.DateRangeFacetConfiguration" %>
 <%@ include file="/META-INF/resources/init.jsp" %>
 <%
-	DateRangeFacetConfiguration configuration =
-			(DateRangeFacetConfiguration)
-					renderRequest.getAttribute(DateRangeFacetConfiguration.class.getName());
-	String startDateConfig = null;
-	String endDateConfig = null;
-	String setStartNowConfig = null;
-
-	if (Validator.isNotNull(configuration)) {
-		startDateConfig = portletPreferences.getValue("startDate", configuration.startDate());
-		endDateConfig = portletPreferences.getValue("endDate", configuration.endDate());
-		setStartNowConfig = portletPreferences.getValue("setStartNow", configuration.setStartNow());
-	}
-
-	LocalDate startDate = (LocalDate) renderRequest.getAttribute("startDate");
-	LocalDate endDate = (LocalDate) renderRequest.getAttribute("endDate");
-
-	if (startDate == null){
-		if (startDateConfig != null && !startDateConfig.isEmpty()){
-			startDate = FacetUtils.getStartDate(startDateConfig);
-		} else if (Boolean.parseBoolean(setStartNowConfig)){
-			startDate = LocalDate.now();
-		}
-	}
-	String formattedStartDate = "";
-	if (startDate != null){
-		formattedStartDate = startDate.format(FacetUtils.DATE_TIME_FORMATTER);
-	}
-	if (endDate == null){
-		if (endDateConfig != null && !endDateConfig.isEmpty()){
-			endDate = FacetUtils.getEndDate(endDateConfig);
-		}
-	}
-	String formattedEndDate = "";
-	if (endDate != null){
-		formattedEndDate = endDate.format(FacetUtils.DATE_TIME_FORMATTER);
-	}
+    String startDate = (String)renderRequest.getAttribute("startDate") ;
+    String endDate = (String)renderRequest.getAttribute("endDate");
 
 %>
 
-<aui:form method="post" name="dateRangeFacetForm">
-	<label for="dates"><liferay-ui:message key="facet.date-range.label"/></label>
-	<div class="row" id="dates">
-		<div class="col pr-2">
-			<aui:input
-					name="startDate"
-					label=""
-					cssClass="date-picker input-date"
-					placeholder="dd-mm-yyyy"
-					value="<%= formattedStartDate %>">
-<%--				<aui:validator name="required"/>--%>
-			</aui:input>
-		</div>
-		<div class="col pl-2">
-			<aui:input
-					name="endDate"
-					label=""
-					cssClass="date-picker input-date"
-					placeholder="dd-mm-yyyy"
-					value="<%= formattedEndDate %>">
-<%--				<aui:validator name="required"/>--%>
-			</aui:input>
-		</div>
-	</div>
+<liferay-portlet:actionURL
+        var="submitURL"
+        name="submitForm"
+/>
+
+<span id="<portlet:namespace/>dateRange-message-block"></span>
+<aui:form method="post" name="dateRangeFacetForm" action="<%=submitURL%>">
+    <label ><liferay-ui:message key="facet.date-range.label"/></label>
+    <div class="form-group-autofit">
+        <aui:input name="startDate" label="" type="text" wrapperCssClass="form-group-item"
+                   value='<%=startDate == null ? "" : startDate%>'/>
+        <aui:input name="endDate" label="" type="text" wrapperCssClass="form-group-item"
+                   value='<%=endDate == null ? "" : endDate%>'/>
+    </div>
 </aui:form>
 
 
 <aui:script use="deltares-search-facet-util">
-	$('.form-group .date-picker').datepicker({
-		language: 'nl',
-		format: 'dd-mm-yyyy'
-	});
-	Liferay.Deltares.FacetUtil.initializeDates("<portlet:namespace />", "<%=formattedStartDate%>", "<%=formattedEndDate%>");
 
-	$(document).ready(function () {
-		$(".portlet-date-range-facet .date-picker").change(function () {
-			Liferay.Deltares.FacetUtil.updateQueryString("<portlet:namespace />");
-		});
-	});
+    const updateValue = function (fieldName, startFieldValue, newFieldValue) {
+        if (!validateSelection()) return
+        let val = '';
+        if (newFieldValue != null){
+            val = newFieldValue.getInputFormatted()
+        }
+        if (val !== startFieldValue){
+            var form = document.querySelector('form[name="<portlet:namespace />dateRangeFacetForm"]')
+            form.submit();
+            // Liferay.Deltares.FacetUtil.updateQueryString("<portlet:namespace/>", fieldName);
+        }
+    }
+
+    const validateSelection = function (){
+        let valid = Liferay.Deltares.FacetUtil.validateDateField("<portlet:namespace/>");
+        Liferay.Deltares.FacetUtil.clearError("<portlet:namespace/>", "dateRange" );
+        if (!valid){
+           Liferay.Deltares.FacetUtil.writeError("<portlet:namespace/>", "dateRange", "Invalid date range! Start date must be before end date." );
+        }
+        return valid;
+    }
+
+    let startDateInput = document.getElementById('<portlet:namespace/>startDate');
+    const startDatePicker = new TheDatepicker.Datepicker(startDateInput);
+    startDatePicker.options.setInputFormat('d-m-Y');
+    startDatePicker.options.setShowDeselectButton(true)
+    startDatePicker.options.setShowResetButton(true)
+    startDatePicker.options.setShowCloseButton(true)
+    startDatePicker.options.setTitle("Select start date:")
+    startDatePicker.options.onSelect(function (event, day, previousDay){
+        if (day !== previousDay){
+            updateValue("startDate", "<%=startDate%>", day);
+        }
+    })
+    startDatePicker.render();
+
+    let endDateInput = document.getElementById('<portlet:namespace/>endDate');
+    const endDatePicker = new TheDatepicker.Datepicker(endDateInput);
+    endDatePicker.options.setInputFormat('d-m-Y');
+    endDatePicker.options.setShowDeselectButton(true)
+    endDatePicker.options.setShowResetButton(true)
+    endDatePicker.options.setShowCloseButton(true)
+    endDatePicker.options.setTitle("Select end date:")
+    endDatePicker.options.onSelect(function (event, day, previousDay){
+        if (day !== previousDay){
+            updateValue("endDate", "<%=endDate%>", day);
+        }
+    })
+    endDatePicker.render();
+
+
 </aui:script>

@@ -42,8 +42,6 @@ public class UserProgramFacetConfigurationAction extends DefaultConfigurationAct
             throws Exception {
 
         setPreference(actionRequest, "showRegistrationsMadeForOthers", ParamUtil.getString(actionRequest, "showRegistrationsMadeForOthers"));
-        setPreference(actionRequest, "linkToRegistrationsPageForOthers", ParamUtil.getString(actionRequest, "linkToRegistrationsPageForOthers"));
-
         super.processAction(portletConfig, actionRequest, actionResponse);
     }
 
@@ -51,7 +49,7 @@ public class UserProgramFacetConfigurationAction extends DefaultConfigurationAct
      *
      * (1)If a method is annoted with @Activate then the method will be called at the time of activation of the component
      *  so that we can perform initialization task
-     *
+     * <p>
      * (2) This class is annoted with @Component where we have used configurationPid with id com.proliferay.configuration.DemoConfiguration
      * So if we modify any configuration then this method will be called.
      */

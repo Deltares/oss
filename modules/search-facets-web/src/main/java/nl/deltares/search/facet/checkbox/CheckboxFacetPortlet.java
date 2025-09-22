@@ -7,6 +7,7 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.DeltaresCacheUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
@@ -15,10 +16,7 @@ import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.Portlet;
-import javax.portlet.PortletException;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
+import javax.portlet.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +50,19 @@ public class CheckboxFacetPortlet extends MVCPortlet {
     @Reference
     private DeltaresCacheUtils deltaresCacheUtils;
 
+    public void submitForm(ActionRequest actionRequest, ActionResponse actionResponse) throws PortletException {
+        ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+        final Map<String, Object> configuration = getConfiguration(themeDisplay);
+        final String name = (String) configuration.get("name");
+
+        String selection = ParamUtil.getString(actionRequest, "checkbox-facet-" + name);
+        if ("undefined".equals(selection)) {
+            FacetUtils.removeFromSession(themeDisplay.getPortletDisplay().getId(), name, actionRequest);
+        } else {
+            FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(), name, selection, actionRequest);
+        }
+    }
+
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException, IOException {
 
@@ -66,7 +77,19 @@ public class CheckboxFacetPortlet extends MVCPortlet {
         if (titleMap != null) {
             renderRequest.setAttribute("title", titleMap.getOrDefault(themeDisplay.getLanguageId(), "Checkbox Title"));
         }
-        final String selection = FacetUtils.getRequestParameter(name, renderRequest);
+
+        String selection = FacetUtils.getRequestParameter(name, renderRequest);
+        if (selection == null) {
+            selection = FacetUtils.getFromSession(themeDisplay.getPortletDisplay().getId(), name, renderRequest);
+        }
+
+        if (selection == null && !visible) {
+            Object defaultValueRaw = configuration.get("defaultValue");
+            final boolean defaultValue = defaultValueRaw != null && (Boolean) defaultValueRaw;
+            selection = FacetUtils.serializeYesNo(defaultValue);
+            FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(), name, selection, renderRequest);
+        }
+
         if (selection != null) {
             renderRequest.setAttribute("selection", selection);
         }
@@ -76,7 +99,8 @@ public class CheckboxFacetPortlet extends MVCPortlet {
 
     private Map<String, Object> getConfiguration(ThemeDisplay themeDisplay) throws PortletException {
 
-        final String cacheId = deltaresCacheUtils.getPortletConfigCacheId(themeDisplay.getPortletDisplay().getId(), themeDisplay);
+        final String cacheId = deltaresCacheUtils.getPortletConfigCacheId(
+                themeDisplay.getPortletDisplay().getId(), themeDisplay);
         Map<String, Object> portletConfig = deltaresCacheUtils.findPortletConfig(cacheId);
         if (portletConfig != null) {
             return portletConfig;

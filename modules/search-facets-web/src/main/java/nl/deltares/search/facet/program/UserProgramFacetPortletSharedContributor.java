@@ -37,17 +37,13 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
 
             List<String> entryClassPKs;
             if (showRegistrationForOthers(portletSharedSearchSettings)){
-                entryClassPKs = dsdSessionUtils.getUserRegistrationsMadeForOthers(user, groupId)
+                entryClassPKs = _dsdSessionUtils.getUserRegistrations(user, groupId)
                         .stream()
-                        .filter(map -> map.containsKey("resourcePrimaryKey"))
-                        .map(map -> map.get("resourcePrimaryKey"))
                         .map(String::valueOf)
                         .collect(Collectors.toList());
             } else {
-                entryClassPKs = dsdSessionUtils.getUserRegistrations(user, groupId)
+                entryClassPKs = _dsdSessionUtils.getUserRegistrations(user, groupId)
                         .stream()
-                        .filter(map -> map.containsKey("resourcePrimaryKey"))
-                        .map(map -> map.get("resourcePrimaryKey"))
                         .map(String::valueOf)
                         .collect(Collectors.toList());
             }
@@ -80,7 +76,7 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
     }
 
     @Reference
-    private DsdSessionUtils dsdSessionUtils;
+    private DsdSessionUtils _dsdSessionUtils;
 
     @Reference
     private UserProgramFacetFactory _userProgramFacetFactory;
