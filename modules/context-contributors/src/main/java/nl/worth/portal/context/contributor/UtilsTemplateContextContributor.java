@@ -5,7 +5,6 @@ import com.liferay.journal.util.JournalContent;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.template.TemplateContextContributor;
@@ -53,13 +52,16 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
     @Reference
     private SanctionCheckUtils sanctionCheckUtils;
 
+    @Reference
+    private DsdSessionUtils sessionUtils;
+
     @Override
     public void prepare(Map<String, Object> contextObjects, HttpServletRequest request) {
         contextObjects.put("journalArticleLocalService", journalArticleLocalService);
         contextObjects.put("journalContentUtil", journalContent);
         contextObjects.put("layoutUtils", layoutUtils);
         contextObjects.put("ddlUtils", ddlUtils);
-
+        contextObjects.put("dsdSessionUtils", sessionUtils);
         /*
           Section below is used in user_personal.ftl
          */
