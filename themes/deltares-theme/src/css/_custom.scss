@@ -13,6 +13,15 @@
 @import "settings/type";
 @import "settings/mixins";
 
+// Assets
+@import "assets/gradients";
+@import "assets/bg-gradient";
+@import "assets/mobile-menu";
+@import "assets/control-menu";
+@import "assets/buttons";
+@import "assets/search-bar";
+@import "assets/title-text";
+
 // Third party
 @import "lib/tailwind/tailwind-preflight";
 @import "lib/tailwind/tailwind-base";
@@ -27,6 +36,7 @@
 @import "global/footer";
 @import "global/layout";
 @import "global/navigation";
+@import "global/portlet";
 @import "global/layouttpl";
 
 // Page objects
@@ -61,8 +71,4 @@
 @import "mydeltares/menu/menu";
 @import "mydeltares/main/main";
 
-// Assets
-@import "assets/bg-gradient";
-@import "assets/mobile-menu";
-@import "assets/control-menu";
-@import "assets/buttons";
+@import "components/spotlight-slider";

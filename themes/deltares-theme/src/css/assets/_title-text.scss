@@ -1,0 +1,46 @@
+@mixin title-text {
+  color: var(--text-secondary);
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 38px;
+  margin: 0 0 1rem;
+
+  &:before {
+    background-color: var(--text-quaternary);
+    border-radius: 100%;
+    content: "";
+    display: inline-block;
+    height: 8px;
+    margin-right: .75rem;
+    margin-top: -0.5rem;
+    vertical-align: middle;
+    width: 8px;
+  }
+
+  @media (min-width: 768px) {
+    font-size: 40px;
+    line-height: 44px;
+  }
+
+  @media (min-width: 1024px) {
+    font-size: 48px;
+    line-height: 1.15;
+
+    &:before {
+      height: 10px;
+      margin-right: 1rem;
+      width: 10px;
+    }
+  }
+
+  @media (min-width: 1536px) {
+    font-size: 56px;
+    line-height: 1.15;
+
+    &:before {
+      height: 12px;
+      margin-right: 1.25rem;
+      width: 12px;
+    }
+  }
+}
