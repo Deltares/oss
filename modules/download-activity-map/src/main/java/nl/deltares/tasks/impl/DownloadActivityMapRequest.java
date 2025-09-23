@@ -3,7 +3,6 @@ package nl.deltares.tasks.impl;
 import com.liferay.portal.kernel.dao.orm.*;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
-import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
@@ -15,7 +14,6 @@ import nl.deltares.oss.geolocation.service.GeoLocationLocalServiceUtil;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.tasks.AbstractDataRequest;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -54,8 +52,14 @@ public class DownloadActivityMapRequest extends AbstractDataRequest {
         status = running;
         statusMessage = "Start DownloadActivityMapRequest";
         init();
-
-        try {
+        if (dataFile.exists()) {
+            try {
+                Files.deleteIfExists(dataFile.toPath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        try (PrintWriter writer = new PrintWriter(new FileWriter(dataFile))) {
             DynamicQuery query = DownloadLocalServiceUtil.dynamicQuery();
             Object startDate = queryProperties.get(QUERY_PARAMETER_STARTDATE);
             Date start;
@@ -81,45 +85,55 @@ public class DownloadActivityMapRequest extends AbstractDataRequest {
             query.add(RestrictionsFactoryUtil.between("createDate", start, end));
             query.addOrder(OrderFactoryUtil.desc("createDate"));
 
-            List<Download> downloads = DownloadLocalServiceUtil.dynamicQuery(query, 0, totalCount);
 
-            JSONArray downloadLocations = JSONFactoryUtil.createJSONArray();
-            HashMap<Long, JSONObject> downloadLocationsMap = new HashMap<>();
-            for (Download download : downloads) {
-                long geoLocationId = download.getGeoLocationId();
-                JSONObject downloadLocation = downloadLocationsMap.get(geoLocationId);
-                if (downloadLocation == null) {
-                    GeoLocation geoLocation = GeoLocationLocalServiceUtil.fetchGeoLocation(geoLocationId);
-                    if (geoLocation == null) {
-                        geoLocation = getDummyGeoLocation(geoLocationId);
+            int iterations = (totalCount / 100);
+            writer.append("[");
+            boolean first = true;
+            for (int i = 0; i < iterations; i++) {
+                int startIndex = i * 100;
+                int endIndex = startIndex + 100;
+                List<Download> downloads = DownloadLocalServiceUtil.dynamicQuery(query, startIndex, endIndex);
+                HashMap<Long, JSONObject> downloadLocationsMap = new HashMap<>();
+                for (Download download : downloads) {
+                    long geoLocationId = download.getGeoLocationId();
+                    JSONObject downloadLocation = downloadLocationsMap.get(geoLocationId);
+                    if (downloadLocation == null) {
+                        GeoLocation geoLocation = GeoLocationLocalServiceUtil.fetchGeoLocation(geoLocationId);
+                        if (geoLocation == null) {
+                            geoLocation = getDummyGeoLocation(geoLocationId);
+                        }
+                        downloadLocation = JSONFactoryUtil.createJSONObject();
+                        downloadLocation.put("city", geoLocation.getCityName());
+                        final JSONObject position = JSONFactoryUtil.createJSONObject();
+                        position.put("lat", geoLocation.getLatitude());
+                        position.put("lng", geoLocation.getLongitude());
+                        downloadLocation.put("position", position);
+                        final JSONArray products = JSONFactoryUtil.createJSONArray();
+                        downloadLocation.put("products", products);
+                        downloadLocation.put("totalDownloadCount", 0);
+                        downloadLocationsMap.put(geoLocationId, downloadLocation);
                     }
-                    downloadLocation = JSONFactoryUtil.createJSONObject();
-                    downloadLocation.put("city", geoLocation.getCityName());
-                    final JSONObject position = JSONFactoryUtil.createJSONObject();
-                    position.put("lat", geoLocation.getLatitude());
-                    position.put("lng", geoLocation.getLongitude());
-                    downloadLocation.put("position", position);
-                    final JSONArray products = JSONFactoryUtil.createJSONArray();
-                    downloadLocation.put("products", products);
-                    downloadLocation.put("totalDownloadCount", 0);
-                    downloadLocations.put(downloadLocation);
-                    downloadLocationsMap.put(geoLocationId, downloadLocation);
-                }
-                JSONArray products = downloadLocation.getJSONArray("products");
-                downloadLocation.put("products", addToProductsArray(download, products));
-                downloadLocation.put("totalDownloadCount", downloadLocation.getInt("totalDownloadCount") + 1);
-                incrementProcessCount(1);
+                    JSONArray products = downloadLocation.getJSONArray("products");
+                    downloadLocation.put("products", addToProductsArray(download, products));
+                    downloadLocation.put("totalDownloadCount", downloadLocation.getInt("totalDownloadCount") + 1);
 
-                if (Thread.interrupted()) {
-                    status = terminated;
-                    errorMessage = String.format("Thread 'DownloadActivityMapRequest' with id %s is interrupted!", id);
-                    break;
+                    if (first){
+                        first = false;
+                    } else {
+                        writer.append(",");
+                    }
+                    writer.append(downloadLocation.toJSONString());
+
+                    incrementProcessCount(1);
+
+                    if (Thread.interrupted()) {
+                        status = terminated;
+                        errorMessage = String.format("Thread 'DownloadActivityMapRequest' with id %s is interrupted!", id);
+                        break;
+                    }
                 }
             }
-
-            if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
-            writeResultsToFile(downloadLocations, dataFile);
-
+            writer.append("]");
             status = available;
 
             statusMessage = String.format("%d download locations have been processed.", getProcessedCount());
@@ -167,13 +181,6 @@ public class DownloadActivityMapRequest extends AbstractDataRequest {
             existing.put("downloadCount", existing.getInt("downloadCount") + 1);
         }
         return jsonArray;
-    }
-
-    private void writeResultsToFile(JSONArray downloadLocations, File tempFile) throws IOException, JSONException {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
-            downloadLocations.write(writer);
-            writer.flush();
-        }
     }
 
     private Map<Long, Integer> convertToDistinctCounts(List<Long> downloadsByGeoLocations) {

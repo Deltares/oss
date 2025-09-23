@@ -108,8 +108,8 @@ ActivityMapUtil = {
                     } else if (xhr.status === 204){
                         //Data not loaded yet so start download process
                         ActivityMapUtil.setRunningProcess(namespace, setInterval(function () {
-                            ActivityMapUtil.statusDownloadActivityMap(resourceUrl, namespace);
-                        }, 1000));
+                            ActivityMapUtil.statusDownloadActivityMap(resourceUrl, namespace, titleControl);
+                        }, 5000));
 
                     }
                 }
@@ -137,7 +137,7 @@ ActivityMapUtil = {
         });
     },
 
-    statusDownloadActivityMap : function (resourceUrl, namespace){
+    statusDownloadActivityMap : function (resourceUrl, namespace, titleControl){
 
         let A = new AUI();
         A.io.request(resourceUrl + '&' + namespace + 'action=updateStatus', {
@@ -151,8 +151,14 @@ ActivityMapUtil = {
                         let statusMsg = JSON.parse(responseData);
                         if (statusMsg.status === 'available') {
                             ActivityMapUtil.downloadDownloadActivityMap(resourceUrl, namespace);
-                        } else if (statusMsg.status === 'running') {
-                            let percent = 100 * statusMsg.progress / statusMsg.total;
+                        } else if (statusMsg.status === 'running' || statusMsg.status === 'pending') {
+                            let percent;
+                            if (statusMsg.total === 0){
+                                percent = 0;
+                            } else {
+                                percent = 100 * statusMsg.progress / statusMsg.total
+                            }
+
                             titleControl.setTitle('Loading map data... Progress ' + Math.round(percent) + ' %');
                         } else {
                             ActivityMapUtil.stopRunningProcess(namespace);
