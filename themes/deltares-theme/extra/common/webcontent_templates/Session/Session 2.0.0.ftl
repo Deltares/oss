@@ -167,30 +167,32 @@
                         <#assign isRegistered = dsdSessionUtils.isUserRegisteredFor(user, registration) />
                         <span class="d-block">
                         <#if isRegistered >
-                            <a href="${displayContext.getUnregisterURL(renderRequest)}" class="btn-lg btn-primary"
-                               role="button" aria-pressed="true">
+                            <a href="${displayContext.getUnregisterURL(renderRequest, user.getUserId(),
+                            displayContext.getConfiguredRegistrationFormId(),  "/submit/unregister/form")}"
+                               class="btn-lg btn-primary" role="button" aria-pressed="true">
                                 ${languageUtil.get(locale, "registrationform.unregister")}
                             </a>
                             <#if cancellationExceeded >
-                            <div>
+                                <div>
                                     <#assign courseConditionsUrl = displayContext.getCourseConditionsUrl() />
                                     <small><i>${languageUtil.get(locale, "registrationform.cancelExpired")?replace("{0}", courseConditionsUrl)}</i></small>
                                 </div>
+                            </#if>
                         </#if>
-                            <#assign joinLink = dsdSessionUtils.getUserJoinLink(user, registration) />
-                            <#if joinLink?? && joinLink != "">
-                                <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button"
-                                   aria-pressed="true">
+                        <#assign joinLink = dsdSessionUtils.getUserJoinLink(user, registration) />
+                        <#if joinLink?? && joinLink != "">
+                            <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button"
+                               aria-pressed="true">
                                 ${languageUtil.get(locale, "registrationform.join")}
                             </a>
-                                <#assign calDescription += (languageUtil.get(locale, "registrationform.join") + ": " + joinLink )/>
-                            </#if>
-                            <#if registration.canUserRegister(user.getUserId()) && themeDisplay.isSignedIn() && available gt 0>
-                                <a href="#" data-article-id="${articleId}" class="btn-lg btn-primary add-to-cart"
-                                   role="button" aria-pressed="true">
-                                    ${languageUtil.get(locale, "shopping.cart.add")}
-                                </a>
-                            </#if>
+                            <#assign calDescription += (languageUtil.get(locale, "registrationform.join") + ": " + joinLink )/>
+                        </#if>
+                        <#if registration.canUserRegister(user.getUserId()) && themeDisplay.isSignedIn() && available gt 0>
+                            <a href="#" data-article-id="${articleId}" class="btn-lg btn-primary add-to-cart"
+                               role="button" aria-pressed="true">
+                                ${languageUtil.get(locale, "shopping.cart.add")}
+                            </a>
+                        </#if>
                         <div class="add-to-calendar c-session__item__calendar"></div>
                     </span>
                 </div>
@@ -290,7 +292,6 @@
                     </div>
                 </#list>
             </div>
-
         </#if>
     </div>
     <script>

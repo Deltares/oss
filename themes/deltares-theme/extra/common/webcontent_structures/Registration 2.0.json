@@ -1,0 +1,709 @@
+{
+    "availableLanguageIds": [
+        "en_US"
+    ],
+    "contentType": "journal",
+    "dataDefinitionFields": [
+        {
+            "customProperties": {
+                "labelAtStructureLevel": false,
+                "confirmationErrorMessage": {
+                    "en_US": ""
+                },
+                "hideField": false,
+                "dataType": "double",
+                "tooltip": {
+                    "en_US": ""
+                },
+                "requireConfirmation": false,
+                "inputMask": false,
+                "characterOptions": false,
+                "fieldNamespace": "",
+                "visibilityExpression": "",
+                "inputMaskFormat": {
+                    "en_US": ""
+                },
+                "nativeField": false,
+                "confirmationLabel": {
+                    "en_US": ""
+                },
+                "fieldReference": "eventId",
+                "numericInputMask": {
+                    "en_US": ""
+                },
+                "placeholder": {
+                    "en_US": ""
+                },
+                "htmlAutocompleteAttribute": "null",
+                "direction": []
+            },
+            "defaultValue": {
+                "en_US": ""
+            },
+            "fieldType": "numeric",
+            "indexType": "keyword",
+            "indexable": true,
+            "label": {
+                "en_US": "Event ID"
+            },
+            "localizable": false,
+            "name": "eventId",
+            "nestedDataDefinitionFields": [],
+            "readOnly": false,
+            "repeatable": false,
+            "required": true,
+            "showLabel": true,
+            "tip": {
+                "en_US": ""
+            }
+        },
+        {
+            "customProperties": {
+                "normalizedStructure": false,
+                "labelAtStructureLevel": true,
+                "ddmStructureLayoutId": "",
+                "ddmStructureKey": "null",
+                "ddmStructureId": "",
+                "upgradedStructure": false,
+                "fieldReference": "priceFieldSet",
+                "rows": [
+                    {
+                        "columns": [
+                            {
+                                "size": 12,
+                                "fields": [
+                                    "price"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "columns": [
+                            {
+                                "size": 12,
+                                "fields": [
+                                    "priceFieldSetFieldSet"
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "collapsible": false,
+                "externalReferenceCode": "null"
+            },
+            "defaultValue": {
+                "en_US": ""
+            },
+            "fieldType": "fieldset",
+            "indexable": false,
+            "label": {
+                "en_US": "Fields Group"
+            },
+            "localizable": false,
+            "name": "priceFieldSet",
+            "nestedDataDefinitionFields": [
+                {
+                    "customProperties": {
+                        "labelAtStructureLevel": false,
+                        "confirmationErrorMessage": {
+                            "en_US": ""
+                        },
+                        "hideField": false,
+                        "dataType": "double",
+                        "tooltip": {
+                            "en_US": ""
+                        },
+                        "requireConfirmation": false,
+                        "inputMask": false,
+                        "characterOptions": false,
+                        "fieldNamespace": "",
+                        "visibilityExpression": "",
+                        "inputMaskFormat": {
+                            "en_US": ""
+                        },
+                        "nativeField": false,
+                        "confirmationLabel": {
+                            "en_US": ""
+                        },
+                        "fieldReference": "price",
+                        "numericInputMask": {
+                            "en_US": ""
+                        },
+                        "placeholder": {
+                            "en_US": ""
+                        },
+                        "htmlAutocompleteAttribute": "null",
+                        "direction": []
+                    },
+                    "defaultValue": {
+                        "en_US": ""
+                    },
+                    "fieldType": "numeric",
+                    "indexType": "keyword",
+                    "indexable": true,
+                    "label": {
+                        "en_US": "Price"
+                    },
+                    "localizable": false,
+                    "name": "price",
+                    "nestedDataDefinitionFields": [],
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": true,
+                    "showLabel": true,
+                    "tip": {
+                        "en_US": ""
+                    }
+                },
+                {
+                    "customProperties": {
+                        "normalizedStructure": false,
+                        "labelAtStructureLevel": true,
+                        "ddmStructureLayoutId": "",
+                        "ddmStructureKey": "null",
+                        "ddmStructureId": "",
+                        "upgradedStructure": false,
+                        "fieldReference": "priceFieldSetFieldSet",
+                        "rows": [
+                            {
+                                "columns": [
+                                    {
+                                        "size": 12,
+                                        "fields": [
+                                            "currency"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "columns": [
+                                    {
+                                        "size": 12,
+                                        "fields": [
+                                            "vat"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        "collapsible": false,
+                        "externalReferenceCode": "null"
+                    },
+                    "defaultValue": {
+                        "en_US": ""
+                    },
+                    "fieldType": "fieldset",
+                    "indexable": false,
+                    "label": {
+                        "en_US": "Fields Group"
+                    },
+                    "localizable": false,
+                    "name": "priceFieldSetFieldSet",
+                    "nestedDataDefinitionFields": [
+                        {
+                            "customProperties": {
+                                "labelAtStructureLevel": false,
+                                "confirmationErrorMessage": {
+                                    "en_US": ""
+                                },
+                                "hideField": false,
+                                "dataType": "string",
+                                "tooltip": {
+                                    "en_US": ""
+                                },
+                                "requireConfirmation": false,
+                                "displayStyle": "singleline",
+                                "fieldNamespace": "",
+                                "visibilityExpression": "",
+                                "options": {},
+                                "nativeField": false,
+                                "confirmationLabel": {
+                                    "en_US": ""
+                                },
+                                "fieldReference": "currency",
+                                "placeholder": {
+                                    "en_US": ""
+                                },
+                                "htmlAutocompleteAttribute": "null",
+                                "direction": []
+                            },
+                            "defaultValue": {
+                                "en_US": ""
+                            },
+                            "fieldType": "text",
+                            "indexType": "keyword",
+                            "indexable": true,
+                            "label": {
+                                "en_US": "Currency"
+                            },
+                            "localizable": false,
+                            "name": "currency",
+                            "nestedDataDefinitionFields": [],
+                            "readOnly": false,
+                            "repeatable": false,
+                            "required": false,
+                            "showLabel": true,
+                            "tip": {
+                                "en_US": ""
+                            }
+                        },
+                        {
+                            "customProperties": {
+                                "labelAtStructureLevel": false,
+                                "confirmationErrorMessage": {
+                                    "en_US": ""
+                                },
+                                "hideField": false,
+                                "dataType": "double",
+                                "tooltip": {
+                                    "en_US": ""
+                                },
+                                "requireConfirmation": false,
+                                "inputMask": false,
+                                "characterOptions": false,
+                                "fieldNamespace": "",
+                                "visibilityExpression": "",
+                                "inputMaskFormat": {
+                                    "en_US": ""
+                                },
+                                "nativeField": false,
+                                "confirmationLabel": {
+                                    "en_US": ""
+                                },
+                                "fieldReference": "vat",
+                                "numericInputMask": {
+                                    "en_US": ""
+                                },
+                                "placeholder": {
+                                    "en_US": ""
+                                },
+                                "htmlAutocompleteAttribute": "null",
+                                "direction": []
+                            },
+                            "defaultValue": {
+                                "en_US": ""
+                            },
+                            "fieldType": "numeric",
+                            "indexType": "keyword",
+                            "indexable": true,
+                            "label": {
+                                "en_US": "vat"
+                            },
+                            "localizable": false,
+                            "name": "vat",
+                            "nestedDataDefinitionFields": [],
+                            "readOnly": false,
+                            "repeatable": false,
+                            "required": false,
+                            "showLabel": true,
+                            "tip": {
+                                "en_US": "Value Added Tax (%)"
+                            }
+                        }
+                    ],
+                    "readOnly": false,
+                    "repeatable": false,
+                    "required": false,
+                    "showLabel": true,
+                    "tip": {
+                        "en_US": ""
+                    }
+                }
+            ],
+            "readOnly": false,
+            "repeatable": false,
+            "required": false,
+            "showLabel": true,
+            "tip": {
+                "en_US": ""
+            }
+        },
+        {
+            "customProperties": {
+                "labelAtStructureLevel": false,
+                "confirmationErrorMessage": {
+                    "en_US": ""
+                },
+                "hideField": false,
+                "dataType": "integer",
+                "tooltip": {
+                    "en_US": ""
+                },
+                "requireConfirmation": false,
+                "inputMask": false,
+                "characterOptions": false,
+                "fieldNamespace": "",
+                "visibilityExpression": "",
+                "inputMaskFormat": {
+                    "en_US": ""
+                },
+                "nativeField": false,
+                "confirmationLabel": {
+                    "en_US": ""
+                },
+                "fieldReference": "capacity",
+                "numericInputMask": {
+                    "en_US": ""
+                },
+                "placeholder": {
+                    "en_US": ""
+                },
+                "htmlAutocompleteAttribute": "null",
+                "direction": []
+            },
+            "defaultValue": {
+                "en_US": ""
+            },
+            "fieldType": "numeric",
+            "indexType": "keyword",
+            "indexable": true,
+            "label": {
+                "en_US": "Capacity"
+            },
+            "localizable": false,
+            "name": "capacity",
+            "nestedDataDefinitionFields": [],
+            "readOnly": false,
+            "repeatable": false,
+            "required": true,
+            "showLabel": true,
+            "tip": {
+                "en_US": ""
+            }
+        },
+        {
+            "customProperties": {
+                "fieldNamespace": "",
+                "visibilityExpression": "",
+                "labelAtStructureLevel": true,
+                "ddmDataProviderInstanceOutput": [],
+                "alphabeticalOrder": false,
+                "ddmDataProviderInstanceId": [],
+                "dataType": "string",
+                "options": {
+                    "en_US": [
+                        {
+                            "reference": "parent",
+                            "label": "Parent of related assets",
+                            "value": "parent"
+                        },
+                        {
+                            "reference": "child",
+                            "label": "Child of related assets",
+                            "value": "child"
+                        },
+                        {
+                            "reference": "interest",
+                            "label": "Of interest to related assets",
+                            "value": "interest"
+                        }
+                    ]
+                },
+                "multiple": false,
+                "nativeField": false,
+                "fieldReference": "relationType",
+                "dataSourceType": [
+                    "manual"
+                ]
+            },
+            "defaultValue": {
+                "en_US": []
+            },
+            "fieldType": "select",
+            "indexType": "keyword",
+            "indexable": true,
+            "label": {
+                "en_US": "Relation Type"
+            },
+            "localizable": false,
+            "name": "relationType",
+            "nestedDataDefinitionFields": [],
+            "readOnly": false,
+            "repeatable": false,
+            "required": false,
+            "showLabel": true,
+            "tip": {
+                "en_US": "How this registration relates to it's related assets."
+            }
+        },
+        {
+            "customProperties": {
+                "fieldNamespace": "null",
+                "visibilityExpression": "null",
+                "labelAtStructureLevel": false,
+                "dataType": "boolean",
+                "options": {},
+                "fieldReference": "open",
+                "showAsSwitcher": false
+            },
+            "defaultValue": {
+                "en_US": ""
+            },
+            "fieldType": "checkbox",
+            "indexType": "keyword",
+            "indexable": true,
+            "label": {
+                "en_US": "Open"
+            },
+            "localizable": false,
+            "name": "open",
+            "nestedDataDefinitionFields": [],
+            "readOnly": false,
+            "repeatable": false,
+            "required": false,
+            "showLabel": true,
+            "tip": {
+                "en_US": ""
+            }
+        },
+        {
+            "customProperties": {
+                "fieldNamespace": "null",
+                "visibilityExpression": "null",
+                "labelAtStructureLevel": false,
+                "dataType": "boolean",
+                "options": {},
+                "fieldReference": "highlight",
+                "showAsSwitcher": false
+            },
+            "defaultValue": {
+                "en_US": ""
+            },
+            "fieldType": "checkbox",
+            "indexType": "keyword",
+            "indexable": true,
+            "label": {
+                "en_US": "Highlight"
+            },
+            "localizable": false,
+            "name": "highlight",
+            "nestedDataDefinitionFields": [],
+            "readOnly": false,
+            "repeatable": false,
+            "required": false,
+            "showLabel": true,
+            "tip": {
+                "en_US": ""
+            }
+        },
+        {
+            "customProperties": {
+                "labelAtStructureLevel": true,
+                "confirmationErrorMessage": {
+                    "en_US": ""
+                },
+                "hideField": false,
+                "dataType": "integer",
+                "tooltip": {
+                    "en_US": ""
+                },
+                "requireConfirmation": false,
+                "inputMask": false,
+                "characterOptions": false,
+                "fieldNamespace": "",
+                "visibilityExpression": "",
+                "inputMaskFormat": {
+                    "en_US": ""
+                },
+                "nativeField": false,
+                "confirmationLabel": {
+                    "en_US": ""
+                },
+                "fieldReference": "cancellationPeriodDays",
+                "numericInputMask": {
+                    "en_US": {
+                        "decimalPlaces": 2,
+                        "append": "",
+                        "symbols": {
+                            "decimalSymbol": ".",
+                            "thousandsSeparator": "none"
+                        },
+                        "appendType": "prefix"
+                    }
+                },
+                "placeholder": {
+                    "en_US": ""
+                },
+                "htmlAutocompleteAttribute": "null",
+                "direction": [
+                    "vertical"
+                ]
+            },
+            "defaultValue": {
+                "en_US": ""
+            },
+            "fieldType": "numeric",
+            "indexType": "keyword",
+            "indexable": true,
+            "label": {
+                "en_US": "Cancellation period days"
+            },
+            "localizable": false,
+            "name": "cancellationPeriodDays",
+            "nestedDataDefinitionFields": [],
+            "readOnly": false,
+            "repeatable": false,
+            "required": false,
+            "showLabel": true,
+            "tip": {
+                "en_US": "Days before session after which cancellation is no longer free of charge."
+            }
+        },
+        {
+            "customProperties": {
+                "labelAtStructureLevel": false,
+                "confirmationErrorMessage": {
+                    "en_US": ""
+                },
+                "hideField": false,
+                "dataType": "string",
+                "tooltip": {
+                    "en_US": ""
+                },
+                "requireConfirmation": false,
+                "displayStyle": "singleline",
+                "fieldNamespace": "",
+                "visibilityExpression": "",
+                "options": {},
+                "nativeField": false,
+                "confirmationLabel": {
+                    "en_US": ""
+                },
+                "fieldReference": "requiredTeam",
+                "placeholder": {
+                    "en_US": ""
+                },
+                "htmlAutocompleteAttribute": "null",
+                "direction": []
+            },
+            "defaultValue": {
+                "en_US": ""
+            },
+            "fieldType": "text",
+            "indexType": "keyword",
+            "indexable": true,
+            "label": {
+                "en_US": "Required Team"
+            },
+            "localizable": false,
+            "name": "requiredTeam",
+            "nestedDataDefinitionFields": [],
+            "readOnly": false,
+            "repeatable": false,
+            "required": false,
+            "showLabel": true,
+            "tip": {
+                "en_US": ""
+            }
+        }
+    ],
+    "dataDefinitionKey": "REGISTRATION-2.0.0",
+    "defaultDataLayout": {
+        "dataLayoutFields": {},
+        "dataLayoutPages": [
+            {
+                "dataLayoutRows": [
+                    {
+                        "dataLayoutColumns": [
+                            {
+                                "columnSize": 12,
+                                "fieldNames": [
+                                    "eventId"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "dataLayoutColumns": [
+                            {
+                                "columnSize": 12,
+                                "fieldNames": [
+                                    "priceFieldSet"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "dataLayoutColumns": [
+                            {
+                                "columnSize": 12,
+                                "fieldNames": [
+                                    "capacity"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "dataLayoutColumns": [
+                            {
+                                "columnSize": 12,
+                                "fieldNames": [
+                                    "relationType"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "dataLayoutColumns": [
+                            {
+                                "columnSize": 12,
+                                "fieldNames": [
+                                    "open"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "dataLayoutColumns": [
+                            {
+                                "columnSize": 12,
+                                "fieldNames": [
+                                    "highlight"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "dataLayoutColumns": [
+                            {
+                                "columnSize": 12,
+                                "fieldNames": [
+                                    "cancellationPeriodDays"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "dataLayoutColumns": [
+                            {
+                                "columnSize": 12,
+                                "fieldNames": [
+                                    "requiredTeam"
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "description": {
+                    "en_US": "Description"
+                },
+                "title": {
+                    "en_US": "Page"
+                }
+            }
+        ],
+        "dataRules": [],
+        "description": {},
+        "name": {
+            "en_US": "Registration - 2.0.0"
+        },
+        "paginationMode": "single-page"
+    },
+    "defaultLanguageId": "en_US",
+    "description": {},
+    "externalReferenceCode": "6a4f8398-5a92-ec95-cc12-1999130d670a",
+    "name": {
+        "en_US": "Registration - 2.0.0"
+    },
+    "storageType": "default"
+}

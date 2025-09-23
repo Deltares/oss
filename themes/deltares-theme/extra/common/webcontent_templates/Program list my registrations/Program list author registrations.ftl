@@ -1,4 +1,5 @@
 <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
+<#assign userLocalService = serviceLocator.findService("com.liferay.portal.kernel.service.UserLocalService")>
 <#assign title=.vars['reserved-article-title'].data />
 <#assign urltitle=.vars['reserved-article-url-title'].data />
 <#assign articleId = .vars['reserved-article-id'].getData() />
@@ -49,17 +50,21 @@
             </#if>
             <#if showButtons >
                 <#assign userId = themeDisplay.getUserId() />
-                <#assign registrationDatas = dsdSessionUtils.getRegistrationDataByUserAndResourceId(themeDisplay.getUser(), registration.getResourceId()) />
+                <#assign registrationDatas = dsdSessionUtils.getRegistrationDataByAuthorAndResourceId(themeDisplay.getUser(), registration.getResourceId()) />
                 <span class="d-block" style="float:right">
                     <table >
                         <#list registrationDatas as registrationData>
-
+                        <#if  userLocalService.fetchUser(registrationData.getUserId())?? >
+                            <#assign registeredUser =  userLocalService.fetchUser(registrationData.getUserId()) />
                         <tr><td>
-                            <a href="${displayContext.getUnregisterURL(renderRequest, themeDisplay.getUserId(),
+                            <a href="${displayContext.getUnregisterURL(renderRequest, registeredUser.getUserId(),
                             displayContext.getConfiguredRegistrationFormId(),  "/submit/unregister/form") }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
                                 ${languageUtil.get(locale, "registrationform.unregister")}
+                                &nbsp;
+                                ${registeredUser.getFullName()}
                             </a>
                         </td></tr>
+                        </#if>
                         </#list>
                     </table>
                 </span>

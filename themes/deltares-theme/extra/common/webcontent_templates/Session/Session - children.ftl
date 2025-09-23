@@ -3,7 +3,6 @@
 <#if !(portletName?ends_with("SearchResultsPortlet")) >
 
     <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
-    <#assign dsdSessionUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdSessionUtils") />
     <#assign dsdJournalArticleUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdJournalArticleUtils") />
     <#assign articleId = .vars['reserved-article-id'].getData() />
     <#assign urltitle=.vars['reserved-article-url-title'].data />
@@ -36,7 +35,7 @@
     </#if>
     <#assign locale = themeDisplay.getLocale() />
     <#assign cancellationExceeded = registration.isCancellationPeriodExceeded() />
-    <#assign isRegistered = displayContext.isUserRegistered() />
+    <#assign isRegistered = dsdSessionUtils.isUserRegisteredFor(themeDisplay.getUser(), registration) />
     <#list childRegistrations as child >
 
         <#assign price = price + child.getPrice() />
@@ -114,7 +113,7 @@
                     <#if showButtons >
                         <#assign userId = themeDisplay.getUserId() />
                         <span class="d-block" style="float:right">
-                   <#if displayContext.isUserRegistered()>
+                   <#if dsdSessionUtils.isUserRegisteredFor(themeDisplay.getUser(), child)>
                        <#assign joinLink = dsdSessionUtils.getUserJoinLink(themeDisplay.getUser(), child) />
                        <#if joinLink?? && joinLink != "">
                            <a href="${joinLink}" target="-_blank" class="btn-lg btn-primary" role="button"

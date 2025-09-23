@@ -3,7 +3,6 @@
 <#if !(portletName?ends_with("SearchResultsPortlet")) >
 
     <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
-    <#assign dsdSessionUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdSessionUtils") />
     <#assign dsdJournalArticleUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdJournalArticleUtils") />
     <#assign articleId = .vars['reserved-article-id'].getData() />
     <#assign urltitle=.vars['reserved-article-url-title'].data />
@@ -138,13 +137,8 @@
                                role="button" aria-pressed="true">
                                 ${languageUtil.get(locale, "registrationform.unregister")}
                             </a>
-                            &nbsp;
-                            <a href="${displayContext.getUpdateURL(renderRequest)}" class="btn-lg btn-primary"
-                               role="button" aria-pressed="true">
-                                ${languageUtil.get(locale, "registrationform.update")}
-                            </a>
-				                    <#if cancellationExceeded >
-                            <div>
+				            <#if cancellationExceeded >
+                                <div>
                                     <#assign courseConditionsUrl = displayContext.getCourseConditionsUrl() />
                                     <small><i>${languageUtil.get(locale, "registrationform.cancelExpired")?replace("{0}", courseConditionsUrl)}</i></small>
                                 </div>

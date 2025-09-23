@@ -71,9 +71,13 @@
                                     ${languageUtil.get(locale, "registrationform.unregister")}
                                 </a>
                             <#else>
-                                <a href="${displayContext.getRegisterURL(renderRequest)}" class="btn btn-primary" role="button" aria-pressed="true">
-                                     ${languageUtil.get(locale, "registrationform.register")}
-                                </a>
+                                <#if registration.canUserRegister(user.getUserId()) && themeDisplay.isSignedIn() && available gt 0>
+
+                                    <a href="#" data-article-id="${articleId}" class="btn-lg btn-primary add-to-cart"
+                                       role="button" aria-pressed="true">
+                                        ${languageUtil.get(locale, "shopping.cart.add")}
+                                    </a>
+                                </#if>
                             </#if>
                         </span>
                     </#if>
