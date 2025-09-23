@@ -80,9 +80,6 @@ public interface RegistrationLocalService
 		long parentResourceId, long userId, Date transferDate,
 		long registeredByUserId);
 
-	public int countUserEventRegistrationsRegisteredByMe(
-		long groupId, long registeredByUserId, long eventResourceId);
-
 	/**
 	 * @throws PortalException
 	 */
@@ -314,6 +311,22 @@ public interface RegistrationLocalService
 		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getRegistrationDataByAuthorAndGroupId(
+		long authorId, long groupId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getRegistrationDataByAuthorAndResourceId(
+		long authorId, long resourceId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getRegistrationDataByUserAndGroupId(
+		long userId, long groupId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Registration> getRegistrationDataByUserAndResourceId(
+		long userId, long resourceId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Date> getRegistrationDates(
 		long groupId, long userId, long resourceId);
 
@@ -363,16 +376,12 @@ public interface RegistrationLocalService
 		long groupId, long userId, long resourceId, Date startDate);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public long[] getRegistrationsWithOverlappingPeriod(
+	public List<Registration> getRegistrationsWithOverlappingPeriod(
 		long groupId, long userId, Date startTime, Date endTime);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Registration> getUserEventRegistrations(
 		long groupId, long userId, long eventResourceId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<Registration> getUserEventRegistrationsMadeForOthers(
-		long groupId, long registeredByUserId, long eventResourceId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Registration> getUserRegistrations(
