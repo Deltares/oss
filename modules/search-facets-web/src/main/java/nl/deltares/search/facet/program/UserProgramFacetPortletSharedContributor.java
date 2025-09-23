@@ -37,12 +37,12 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
 
             List<String> entryClassPKs;
             if (showRegistrationForOthers(portletSharedSearchSettings)){
-                entryClassPKs = _dsdSessionUtils.getUserRegistrations(user, groupId)
+                entryClassPKs = _dsdSessionUtils.getResourceIdsByAuthorAndGroup(user, groupId)
                         .stream()
                         .map(String::valueOf)
                         .collect(Collectors.toList());
             } else {
-                entryClassPKs = _dsdSessionUtils.getUserRegistrations(user, groupId)
+                entryClassPKs = _dsdSessionUtils.getResourceIdsByUserAndGroup(user, groupId)
                         .stream()
                         .map(String::valueOf)
                         .collect(Collectors.toList());
