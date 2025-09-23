@@ -234,16 +234,15 @@ public class AccountSelectionCheckoutStepDisplayContext{
         if (accountEntry != null && accountEntry.isPersonalAccount()) {
             String name = ParamUtil.getString(request, OrganizationConstants.ORG_NAME);
 
-            if (name == null || name.isEmpty()) {
-                throw new RegistrationFormException("Account name field is required!");
+            if (name != null && !name.isEmpty()) {
+                accountEntry.setName(name);
             }
-
             String website = ParamUtil.getString(request, OrganizationConstants.ORG_WEBSITE);
             String companyRegistrationId = ParamUtil.getString(request, OrganizationConstants.ORG_REGISTRATION_ID);
             String taxIdNumber = ParamUtil.getString(request, OrganizationConstants.ORG_VAT);
 
             accountEntry.setTaxIdNumber(taxIdNumber);
-            accountEntry.setName(name);
+
             if (!accountEntry.getExpandoBridge().hasAttribute(OrganizationConstants.ORG_REGISTRATION_ID)) {
                 accountEntry.getExpandoBridge().addAttribute(OrganizationConstants.ORG_REGISTRATION_ID);
             }

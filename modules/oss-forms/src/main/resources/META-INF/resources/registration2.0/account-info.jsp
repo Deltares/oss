@@ -72,7 +72,6 @@
         <aui:input
             name="<%= OrganizationConstants.ORG_NAME %>"
             label="registrationform.orgname" wrapperCssClass="form-group-item">
-            <aui:validator name="required" />
         </aui:input>
 
         <aui:input
