@@ -2,10 +2,12 @@ Bundle-Name: common-utils
 Bundle-SymbolicName: nl.deltares.portal.common-utils
 Bundle-Version: 1.0.47
 Export-Package: \
+  nl.deltares.portal.constants, \
   nl.deltares.portal.utils, \
   nl.deltares.portal.utils.impl, \
   nl.deltares.portal.model, \
   nl.deltares.portal.model.subscriptions, \
+  nl.deltares.portal.model.database, \
   nl.deltares.portal.model.impl, \
   nl.deltares.portal.exception, \
   nl.deltares.portal.display.context, \
@@ -16,6 +18,7 @@ Export-Package: \
 Import-Package: \
   nl.deltares.dsd.registration.service.*,\
   nl.deltares.oss.download.service.*,\
+  nl.deltares.data.service.registration.service.*,\
   !org.apache.avalon.framework.logger, \
   !org.apache.log, \
   !org.apache.log4j, \

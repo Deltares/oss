@@ -29,6 +29,19 @@ CommonFormsUtil = {
         let messageNode = document.createElement("div");
         messageNode.classList.add("portlet-msg-error");
         messageNode.innerHTML = message;
+        messageNode.style = "display: flex; justify-content: space-between";
+
+        let closeButton = document.createElement("button");
+        let span = document.createElement("span");
+        span.innerText = "X";
+        closeButton.appendChild(span)
+        closeButton.addEventListener('click', function (evt){
+            const alert = evt.target.closest('.portlet-msg-error');
+            if (alert) {
+                alert.remove();
+            }
+        });
+        messageNode.appendChild(closeButton);
         errorBlock.appendChild(messageNode);
     },
     writeInfo: function(namespace, message){
@@ -182,88 +195,88 @@ CommonFormsUtil = {
     },
 
     updatePaymentAddress : function(namespace, checked) {
-        let paymentFirstNameInput = $(document.getElementById(namespace + "billing_firstname"));
-        let paymentLastNameInput = $(document.getElementById(namespace + "billing_lastname"));
-        let paymentCompanyInput = $(document.getElementById(namespace + "billing_company"));
-        let paymentAddressInput = $(document.getElementById(namespace + "billing_address"));
-        let paymentPostCodeInput = $(document.getElementById( namespace + "billing_postal"));
-        let paymentCityInput = $(document.getElementById( namespace + "billing_city"));
-        let paymentCountryInput = $(document.getElementById(namespace + "billing_country"));
-        let paymentEmailInput = $(document.getElementById( namespace + "billing_email"));
-        let paymentPhoneInput = $(document.getElementById( namespace + "billing_phone"));
+        let paymentFirstNameInput = document.getElementById(namespace + "billing_firstname");
+        let paymentLastNameInput = document.getElementById(namespace + "billing_lastname");
+        let paymentCompanyInput = document.getElementById(namespace + "billing_company");
+        let paymentAddressInput = document.getElementById(namespace + "billing_address");
+        let paymentPostCodeInput = document.getElementById( namespace + "billing_postal");
+        let paymentCityInput = document.getElementById( namespace + "billing_city");
+        let paymentCountryInput = document.getElementById(namespace + "billing_country");
+        let paymentEmailInput = document.getElementById( namespace + "billing_email");
+        let paymentPhoneInput = document.getElementById( namespace + "billing_phone");
 
         if (checked) {
 
             //cache billing info
-            paymentFirstNameInput.prop('billing_value', paymentFirstNameInput.val());
-            paymentLastNameInput.prop('billing_value', paymentLastNameInput.val());
-            paymentCompanyInput.prop('billing_value', paymentCompanyInput.val());
-            paymentAddressInput.prop('billing_value', paymentAddressInput.val());
-            paymentPostCodeInput.prop('billing_value', paymentPostCodeInput.val());
-            paymentCityInput.prop('billing_value', paymentCityInput.val());
-            paymentCountryInput.prop('billing_value', paymentCountryInput.val());
-            paymentEmailInput.prop('billing_value', paymentEmailInput.val());
-            paymentPhoneInput.prop('billing_value', paymentPhoneInput.val());
+            paymentFirstNameInput.billing_value = paymentFirstNameInput.value;
+            paymentLastNameInput.billing_value  = paymentLastNameInput.value;
+            paymentCompanyInput.billing_value = paymentCompanyInput.value;
+            paymentAddressInput.billing_value = paymentAddressInput.value;
+            paymentPostCodeInput.billing_value = paymentPostCodeInput.value;
+            paymentCityInput.billing_value = paymentCityInput.value;
+            paymentCountryInput.billing_value = paymentCountryInput.value;
+            paymentEmailInput.billing_value = paymentEmailInput.value;
+            paymentPhoneInput.billing_value = paymentPhoneInput.value;
 
             //replace billing info with user attributes info
-            let company = $(document.getElementById(namespace + "org_name")).val();
-            let address = $(document.getElementById(namespace + "org_address")).val();
-            let postCode = $(document.getElementById(namespace + "org_postal")).val();
-            let city = $(document.getElementById(namespace + "org_city")).val();
-            let country = $(document.getElementById(namespace + "org_country")).val();
-            let email = $(document.getElementById(namespace + "email")).val();
-            let firstName = $(document.getElementById(namespace + "first_name")).val();
-            let lastName = $(document.getElementById(namespace + "last_name")).val();
-            let phone = $(document.getElementById(namespace + "org_phone")).val();
+            let company = document.getElementById(namespace + "org_name").value;
+            let address = document.getElementById(namespace + "org_address").value;
+            let postCode = document.getElementById(namespace + "org_postal").value;
+            let city = document.getElementById(namespace + "org_city").value;
+            let country = document.getElementById(namespace + "org_country").value;
+            let email = document.getElementById(namespace + "email").value;
+            let firstName = document.getElementById(namespace + "first_name").value;
+            let lastName = document.getElementById(namespace + "last_name").value;
+            let phone = document.getElementById(namespace + "org_phone").value;
 
-            paymentFirstNameInput.val(firstName);
-            paymentLastNameInput.val(lastName);
-            paymentAddressInput.val(address);
-            paymentPostCodeInput.val(postCode);
-            paymentCityInput.val(city);
-            paymentCountryInput.val(country);
-            paymentEmailInput.val(email);
-            paymentCompanyInput.val(company)
-            paymentPhoneInput.val(phone);
+            paymentFirstNameInput.value = firstName;
+            paymentLastNameInput.value = lastName;
+            paymentAddressInput.value = address;
+            paymentPostCodeInput.value = postCode;
+            paymentCityInput.value = city
+            paymentCountryInput.value = country;
+            paymentEmailInput.value = email;
+            paymentCompanyInput.value = company
+            paymentPhoneInput.value = phone;
 
-            paymentCompanyInput.prop('disabled', true);
-            paymentFirstNameInput.prop('disabled', true);
-            paymentLastNameInput.prop('disabled', true);
-            paymentAddressInput.prop('disabled', true);
-            paymentPostCodeInput.prop('disabled', true);
-            paymentCityInput.prop('disabled', true);
-            paymentCountryInput.prop('disabled', true);
+            paymentCompanyInput.disabled = true;
+            paymentFirstNameInput.disabled = true;
+            paymentLastNameInput.disabled = true;
+            paymentAddressInput.disabled  = true;
+            paymentPostCodeInput.disabled = true;
+            paymentCityInput.disabled = true;
+            paymentCountryInput.disabled = true;
             // paymentEmailInput.prop('disabled', true);
 
         } else {
             //restore billing info
-            let firstName = paymentFirstNameInput.prop('billing_value');
-            let lastName = paymentLastNameInput.prop('billing_value');
-            let company = paymentCompanyInput.prop('billing_value');
-            let address = paymentAddressInput.prop('billing_value');
-            let postCode = paymentPostCodeInput.prop('billing_value');
-            let city = paymentCityInput.prop('billing_value');
-            let country = paymentCountryInput.prop('billing_value');
-            let email = paymentEmailInput.prop('billing_value');
-            let phone = paymentPhoneInput.prop('billing_value');
+            let firstName = paymentFirstNameInput.billing_value;
+            let lastName = paymentLastNameInput.billing_value
+            let company = paymentCompanyInput.billing_value
+            let address = paymentAddressInput.billing_value
+            let postCode = paymentPostCodeInput.billing_value
+            let city = paymentCityInput.billing_value
+            let country = paymentCountryInput.billing_value
+            let email = paymentEmailInput.billing_value
+            let phone = paymentPhoneInput.billing_value
 
-            paymentCompanyInput.val(company);
-            paymentFirstNameInput.val(firstName);
-            paymentLastNameInput.val(lastName);
-            paymentAddressInput.val(address);
-            paymentPostCodeInput.val(postCode);
-            paymentCityInput.val(city);
-            paymentCountryInput.val(country);
-            paymentEmailInput.val(email);
-            paymentPhoneInput.val(phone);
+            paymentCompanyInput.value = company;
+            paymentFirstNameInput.value = firstName;
+            paymentLastNameInput.value = lastName;
+            paymentAddressInput.value = address;
+            paymentPostCodeInput.value = postCode;
+            paymentCityInput.value = city;
+            paymentCountryInput.value = country;
+            paymentEmailInput.value = email;
+            paymentPhoneInput.value = phone;
 
-            paymentCompanyInput.prop('disabled', false);
-            paymentFirstNameInput.prop('disabled', false);
-            paymentLastNameInput.prop('disabled', false);
-            paymentAddressInput.prop('disabled', false);
-            paymentPostCodeInput.prop('disabled', false);
-            paymentCityInput.prop('disabled', false);
-            paymentCountryInput.prop('disabled', false);
+            paymentCompanyInput.disabled = false;
+            paymentFirstNameInput.disabled = false;
+            paymentLastNameInput.disabled = false;
+            paymentAddressInput.disabled  = false;
+            paymentPostCodeInput.disabled = false;
+            paymentCityInput.disabled = false;
+            paymentCountryInput.disabled = false;
             // paymentEmailInput.prop('disabled', false);
 
         }
@@ -273,7 +286,7 @@ CommonFormsUtil = {
         let radioButtons = document.getElementsByName(namespace + name );
 
         let selectedValue;
-        [...radioButtons].forEach(function( radioButton ){
+        Array.from(radioButtons).forEach(function( radioButton ){
             if  (radioButton.checked){
                 selectedValue = radioButton.value;
             }
@@ -298,4 +311,26 @@ CommonFormsUtil = {
         newUrl.push(newParts.join('&'));
         return newUrl.join('?');
     },
+
+    checkStep: function(form, requiredStep) {
+        return (this.getCurrentStep(form) === requiredStep);
+    },
+
+    getCurrentStep: function (form) {
+        // Find the form by name
+        var formElement = document.querySelector('form[name="' + form + '"]');
+        if (formElement) {
+            // Find the closest ancestor with class 'bs-stepper'
+            var stepper = formElement.closest('.bs-stepper');
+            if (stepper) {
+                // Find the child with classes 'tab-pane active'
+                var activePane = stepper.querySelector('.tab-pane.active');
+                if (activePane) {
+                    var currentStep = activePane.id.charAt(activePane.id.length - 1);
+                    return Number(currentStep);
+                }
+            }
+        }
+
+    }
 }

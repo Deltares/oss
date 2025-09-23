@@ -30,7 +30,7 @@
                 value="${billingEmail}" billing_value="${billingEmail}">
             <aui:validator name="required">
                 function () {
-                    return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
+                    return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
                 }
             </aui:validator>
             <aui:validator name="email"/>
@@ -41,7 +41,7 @@
                 value="${billingCompany}" billing_value="${billingCompany}">
             <aui:validator name="required">
                 function () {
-                return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
+                return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
                 }
             </aui:validator>
             <aui:validator name="maxLength">75</aui:validator>
@@ -54,7 +54,7 @@
                         value="${billingFirstName}" billing_value="${billingFirstName}">
                     <aui:validator name="required">
                         function () {
-                            return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
+                            return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
                         }
                     </aui:validator>
                     <aui:validator name="maxLength">75</aui:validator>
@@ -67,7 +67,7 @@
                         value="${billingFirstName}" billing_value="${billingFirstName}">
                     <aui:validator name="required">
                         function () {
-                        return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
+                        return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
                         }
                     </aui:validator>
                     <aui:validator name="maxLength">75</aui:validator>
@@ -81,7 +81,7 @@
                 value="${billingAddress}" billing_value="${billingAddress}">
             <aui:validator name="required">
                 function () {
-                    return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
+                    return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
                 }
             </aui:validator>
             <aui:validator name="maxLength">255</aui:validator>
@@ -95,7 +95,7 @@
                         value="${billingPostal}" billing_value="${billingPostal}">
                     <aui:validator name="required">
                         function () {
-                            return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
+                            return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
                         }
                     </aui:validator>
                     <aui:validator name="maxLength">10</aui:validator>
@@ -108,7 +108,7 @@
                         value="${billingCity}" billing_value="${billingCity}">
                     <aui:validator name="required">
                         function () {
-                            return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
+                            return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
                         }
                     </aui:validator>
                     <aui:validator name="maxLength">75</aui:validator>
@@ -127,7 +127,7 @@
             <% } %>
             <aui:validator name="required">
                     function () {
-                        return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
+                        return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
                     }
             </aui:validator>
             <aui:validator name="minLength">
@@ -148,7 +148,7 @@
             <aui:option value="bankTransfer" label="regostrationform.paymethod.bank"/>
             <aui:validator name="required">
                 function () {
-                return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
+                return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
                 }
             </aui:validator>
         </aui:select>
@@ -160,7 +160,7 @@
                 value="${billingReference}" billing_value="${billingReference}">
             <aui:validator name="required">
                 function () {
-                return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
+                return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
                 }
             </aui:validator>
             <aui:validator name="maxLength">75</aui:validator>
@@ -172,7 +172,7 @@
                 value="${billingVat}" billing_value="${billingVat}">
             <aui:validator name="required">
                 function () {
-                return checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
+                return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName("<portlet:namespace/>"), 3);
                 }
             </aui:validator>
             <aui:validator name="maxLength">25</aui:validator>
@@ -184,7 +184,7 @@
                 value="${billingPhone}">
             <aui:validator name="required">
                 function () {
-                return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
+                return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 3);
                 }
             </aui:validator>
             <aui:validator name="maxLength">25</aui:validator>

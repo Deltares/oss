@@ -2,7 +2,6 @@ package nl.deltares.tasks.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
@@ -13,6 +12,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import nl.deltares.model.BadgeInfo;
 import nl.deltares.model.BillingInfo;
 import nl.deltares.portal.model.DsdArticle;
+import nl.deltares.portal.model.database.RegistrationData;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
@@ -65,7 +65,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         this.deleteOnCompletion = delete;
         this.removeMissing = removeMissing;
         this.useResourcePrimKey = primKey;
-        this.downloadAction = DOWNLOAD_ACTIONS.values()[downloadAction];
+        this.downloadAction = DOWNLOAD_ACTIONS.values()[Math.max(downloadAction, 0)];
         this.locale = LocaleUtil.fromLanguageId(siteGroup.getDefaultLanguageId());
 
     }
@@ -165,7 +165,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
         try {
             logger.info(String.format("Deleting registration records for groupId %d and resourcePrimKey %d", group.getGroupId(), resourceId) );
-            dsdSessionUtils.deleteRegistrationsFor(group.getGroupId(), resourceId);
+            dsdSessionUtils.deleteRegistrations(group.getGroupId(), resourceId);
         } catch (PortalException e) {
             logger.warn(String.format("Error deleting registrations for groupId %d and resourcePrimKey %d: %s", group.getGroupId(), resourceId, e.getMessage()));
         }
@@ -180,7 +180,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             dsdSessionUtils.deleteEventRegistrations(dsdArticle.getGroupId(), dsdArticle.getResourceId());
         } else if (dsdArticle instanceof Registration){
             logger.info(String.format("Deleting registration records for Registration %s (%s)", dsdArticle.getTitle(), dsdArticle.getArticleId()) );
-            dsdSessionUtils.deleteRegistrationsFor((Registration) dsdArticle);
+            dsdSessionUtils.deleteRegistrations((Registration) dsdArticle);
         }
     }
 
@@ -215,13 +215,13 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         for (int i = 0; i < totalCount; ) {
             int start = i;
             int end = i + 500;
-            final List<Map<String, Object>> registrationRecordsToProcess = dsdSessionUtils.getRegistrations(start, end);
+            final List<RegistrationData> registrationRecordsToProcess = dsdSessionUtils.getRegistrations(start, end);
             registrationRecordsToProcess.forEach(recordObjects -> {
                 if (status == terminated) return;
                 incrementProcessCount(1);
-                Long eventResourcePrimaryKey = (Long) recordObjects.get("eventResourcePrimaryKey");
+                Long eventResourcePrimaryKey = recordObjects.getEventResourceId();
                 Event event = (Event) getDsdArticle(eventResourcePrimaryKey, cache);
-                Long resourcePrimaryKey = (Long) recordObjects.get("resourcePrimaryKey");
+                Long resourcePrimaryKey = recordObjects.getResourceId();
                 Registration registration = (Registration) getDsdArticle(resourcePrimaryKey, cache);
 
                 statusMessage = String.format("procession eventResourcePrimaryKey=%d and resourcePrimaryKey=%d",
@@ -229,7 +229,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
                 User matchingUser = null;
                 try {
-                    matchingUser = UserLocalServiceUtil.getUser((Long) recordObjects.get("userId"));
+                    matchingUser = UserLocalServiceUtil.getUser(recordObjects.getUserId());
                 } catch (PortalException e) {
                     //
                 }
@@ -260,7 +260,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
     private void downloadRequestedResourceIdRegistrations(long resourceId, PrintWriter writer) {
 
-        List<Map<String, Object>> registrationRecordsToProcess = dsdSessionUtils.getRegistrations(group.getGroupId(), resourceId);
+        List<RegistrationData> registrationRecordsToProcess = dsdSessionUtils.getRegistrations(group.getGroupId(), resourceId);
         registrationRecordsToProcess.addAll(dsdSessionUtils.getEventRegistrations(group.getGroupId(), resourceId));
 
         if (registrationRecordsToProcess.isEmpty()) {
@@ -273,12 +273,12 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         registrationRecordsToProcess.forEach(recordObjects -> {
             if (status == terminated) return;
             incrementProcessCount(1);
-            Long resourcePrimaryKey = (Long) recordObjects.get("resourcePrimaryKey");
+            long resourcePrimaryKey = recordObjects.getResourceId();
             statusMessage = "procession resourcePrimaryKey=" + resourcePrimaryKey;
 
             User matchingUser = null;
             try {
-                matchingUser = UserLocalServiceUtil.getUser((Long) recordObjects.get("userId"));
+                matchingUser = UserLocalServiceUtil.getUser(recordObjects.getUserId());
             } catch (PortalException e) {
                 //
             }
@@ -312,7 +312,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             Map<String, List<String>> webinarKeyCache = new HashMap<>();
             Map<Long, DsdArticle> articleCache = new HashMap<>();
 
-            List<Map<String, Object>> registrationRecordsToProcess = getRegistrationRecordsByYear(groupId, year);
+            List<RegistrationData> registrationRecordsToProcess = getRegistrationRecordsByYear(groupId, year);
 
             if (registrationRecordsToProcess.isEmpty()) {
                 status = nodata;
@@ -324,7 +324,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             registrationRecordsToProcess.forEach(recordObjects -> {
                 if (status == terminated) return;
                 incrementProcessCount(1);
-                Long resourcePrimaryKey = (Long) recordObjects.get("resourcePrimaryKey");
+                Long resourcePrimaryKey = recordObjects.getResourceId();
                 statusMessage = "procession resourcePrimaryKey=" + resourcePrimaryKey;
                 Registration matchingRegistration = (Registration) articleCache.get(resourcePrimaryKey);
                 if (matchingRegistration == null){
@@ -333,11 +333,11 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
                 User matchingUser = null;
                 try {
-                    matchingUser = UserLocalServiceUtil.getUser((Long) recordObjects.get("userId"));
+                    matchingUser = UserLocalServiceUtil.getUser(recordObjects.getUserId());
                 } catch (PortalException e) {
                     //
                 }
-                final Long eventResourcePrimaryKey = (Long) recordObjects.get("eventResourcePrimaryKey");
+                final Long eventResourcePrimaryKey = recordObjects.getEventResourceId();
                 Event event = (Event) articleCache.get(eventResourcePrimaryKey);
                 if (event == null){
                     event = (Event) getDsdArticle(eventResourcePrimaryKey, articleCache);
@@ -379,7 +379,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             Map<String, List<String>> webinarKeyCache = new HashMap<>();
             Map<Long, DsdArticle> eventCache = new HashMap<>();
 
-            List<Map<String, Object>> registrationRecordsToProcess = getRegistrationRecordsLinkedToSelectedArticle(
+            List<RegistrationData> registrationRecordsToProcess = getRegistrationRecordsLinkedToSelectedArticle(
                     article, registrationCache);
 
             if (registrationRecordsToProcess.isEmpty()) {
@@ -392,17 +392,17 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             registrationRecordsToProcess.forEach(recordObjects -> {
                 if (status == terminated) return;
                 incrementProcessCount(1);
-                Long resourcePrimaryKey = (Long) recordObjects.get("resourcePrimaryKey");
+                Long resourcePrimaryKey = recordObjects.getResourceId();
                 statusMessage = "procession resourcePrimaryKey=" + resourcePrimaryKey;
                 Registration matchingRegistration = registrationCache.get(resourcePrimaryKey);
 
                 User matchingUser = null;
                 try {
-                    matchingUser = UserLocalServiceUtil.getUser((Long) recordObjects.get("userId"));
+                    matchingUser = UserLocalServiceUtil.getUser(recordObjects.getUserId());
                 } catch (PortalException e) {
                     //
                 }
-                final Long eventResourcePrimaryKey = (Long) recordObjects.get("eventResourcePrimaryKey");
+                final Long eventResourcePrimaryKey = recordObjects.getEventResourceId();
                 Event event = (Event) eventCache.get(eventResourcePrimaryKey);
                 if (event == null){
                     event = (Event) getDsdArticle(eventResourcePrimaryKey, eventCache);
@@ -463,15 +463,15 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         writer.println(header);
     }
 
-    private List<Map<String, Object>> getRegistrationRecordsLinkedToSelectedArticle(DsdArticle selectedArticle,
-                                                                                    Map<Long, Registration> registrationCache) throws PortalException {
+    private List<RegistrationData> getRegistrationRecordsLinkedToSelectedArticle(DsdArticle selectedArticle,
+                                                                                 Map<Long, Registration> registrationCache) throws PortalException {
 
         if (selectedArticle instanceof Event){
             List<Registration> eventRegistrations = ((Event)selectedArticle).getRegistrations(locale);
             eventRegistrations.forEach(registration -> registrationCache.put(registration.getResourceId(), registration));
             return dsdSessionUtils.getRegistrations((Event) selectedArticle);
         } else if (selectedArticle instanceof Registration) {
-            final Registration registration = (Registration) selectedArticle;
+            Registration registration = (Registration) selectedArticle;
             registrationCache.put(selectedArticle.getResourceId(), registration);
             return dsdSessionUtils.getRegistrations(registration.getGroupId(), registration.getResourceId());
         } else {
@@ -479,7 +479,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         }
     }
 
-    private List<Map<String, Object>> getRegistrationRecordsByYear(long groupId, Integer year) throws PortalException {
+    private List<RegistrationData> getRegistrationRecordsByYear(long groupId, Integer year) throws PortalException {
 
         final Calendar start = Calendar.getInstance();
         start.set(Calendar.YEAR, year);
@@ -498,7 +498,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
         logger.info(String.format("Deleting registration record %d", registrationId) );
         try {
-            dsdSessionUtils.deleteRegistrationRecord(registrationId);
+            dsdSessionUtils.deleteRegistration(registrationId);
         } catch (PortalException e) {
             logger.warn(String.format("Could not find registration record for deletion: %d", registrationId));
         }
@@ -525,7 +525,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
     }
 
-    private void writeReproRecord(PrintWriter writer, Map<String, Object> record, Event event,
+    private void writeReproRecord(PrintWriter writer, RegistrationData record, Event event,
                              Registration dsdRegistration, User user) {
 
         StringBuilder line = new StringBuilder();
@@ -544,52 +544,40 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         } else {
             writeField(line, user.getEmailAddress());
         }
-        String userPreferencesValue = (String) record.get("userPreferences");
-        Map<String, String> userPreferences = Collections.emptyMap();
-        try {
-            userPreferences = JsonContentUtils.parseJsonToMap(userPreferencesValue);
-        } catch (JSONException e) {
-            logger.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
-        }
+        Map<String, String> userPreferences = record.getAttributes();
         writeBadgeInfo(line, userPreferences, user);
         writeField(line, userPreferences.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
         writer.println(line);
     }
 
-    private void writeLightRecord(PrintWriter writer, Map<String, Object> record,
+    private void writeLightRecord(PrintWriter writer, RegistrationData record,
                              Registration dsdRegistration, User user) {
 
         StringBuilder line = new StringBuilder();
         if (dsdRegistration == null) {
             writeField(line, null);
-            writeField(line, record.get("resourcePrimaryKey").toString());
+            writeField(line, String.valueOf(record.getResourceId()));
         } else {
             writeField(line, dsdRegistration.getProjectNumber());
             writeField(line, dsdRegistration.getTitle());
         }
         writeUserInfo(record, user, line);
-        String userPreferencesValue = (String) record.get("userPreferences");
-        Map<String, String> userPreferences = Collections.emptyMap();
-        try {
-            userPreferences = JsonContentUtils.parseJsonToMap(userPreferencesValue);
-        } catch (JSONException e) {
-            logger.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
-        }
+        Map<String, String> userPreferences = record.getAttributes();
         writeField(line, userPreferences.get("remarks"));
         writeBillingInfo(line, userPreferences, true);
         writeField(line, userPreferences.get("registration_time"));
         writeField(line, userPreferences.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
         if (removeMissing && dsdRegistration == null){
-            deleteBrokenRegistration((Long)record.get("registrationId"));
+            deleteBrokenRegistration(record.getResourceId());
             writeField(line, "deleted record");
         }
 
         writer.println(line);
     }
 
-    private void writeUserInfo(Map<String, Object> record, User user, StringBuilder line) {
+    private void writeUserInfo(RegistrationData record, User user, StringBuilder line) {
         if (user == null){
-            writeField(line, record.get("userId").toString());
+            writeField(line, String.valueOf(record.getUserId()));
             writeField(line,null);
             writeField(line,null);
         } else {
@@ -600,12 +588,12 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
     }
 
-    private void writeRecord(PrintWriter writer, Map<String, Object> record, Event event,
+    private void writeRecord(PrintWriter writer, RegistrationData record, Event event,
                              Registration dsdRegistration, User user, Map<String, List<String>> courseRegistrationsCache, Locale locale) {
 
         StringBuilder line = new StringBuilder();
         if (event == null) {
-            writeField(line, record.get("eventResourcePrimaryKey").toString());
+            writeField(line, String.valueOf(record.getEventResourceId()));
             writeField(line, null);
         } else {
             writeField(line, String.valueOf(event.getArticleId()));
@@ -613,14 +601,15 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         }
         if (dsdRegistration == null) {
             writeField(line, null);
-            writeField(line, record.get("resourcePrimaryKey").toString());
+            writeField(line, String.valueOf(record.getResourceId()));
             writeField(line, null);
         } else {
             writeField(line, dsdRegistration.getProjectNumber());
             writeField(line, dsdRegistration.getArticleId());
             writeField(line, dsdRegistration.getTitle());
         }
-        writeField(line, DateUtil.getDate((Date) record.get("startTime"),"yyyy-MM-dd", locale));
+        Date startDate = record.getPeriods().get(0).getStartDate();
+        writeField(line, DateUtil.getDate(startDate,"yyyy-MM-dd", locale));
         if (dsdRegistration == null){
             writeField(line, null);
             writeField(line, null);
@@ -629,13 +618,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             writeField(line, dsdRegistration.getType());
         }
         writeUserInfo(record, user, line);
-        String userPreferencesValue = (String) record.get("userPreferences");
-        Map<String, String> userPreferences = Collections.emptyMap();
-        try {
-            userPreferences = JsonContentUtils.parseJsonToMap(userPreferencesValue);
-        } catch (JSONException e) {
-            logger.error(String.format("Invalid userPreferences '%s': %s", record.get("userPreferences"), e.getMessage()));
-        }
+        Map<String, String> userPreferences = record.getAttributes();
         if (user != null) {
             writeWebinarInfo(line, user, dsdRegistration, courseRegistrationsCache, userPreferences);
         }
@@ -644,7 +627,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         writeField(line, userPreferences.get("registration_time"));
         writeField(line, userPreferences.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
         if (removeMissing && dsdRegistration == null){
-            deleteBrokenRegistration((Long)record.get("registrationId"));
+            deleteBrokenRegistration(record.getRegistrationRecordId());
             writeField(line, "deleted record");
         }
 

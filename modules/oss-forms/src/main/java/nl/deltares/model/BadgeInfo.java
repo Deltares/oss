@@ -3,24 +3,27 @@ package nl.deltares.model;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BadgeInfo {
+public class BadgeInfo implements Serializable {
 
-    public enum ATTRIBUTES {
-        badge_name_setting,
-        badge_title_setting,
-        badge_title,
-        badge_initials
-    }
+    public final static String badge_name_setting = "badge_name_setting";
+    public final static String badge_title_setting = "badge_title_setting";
+    public final static String badge_title = "badge_title";
+    public final static String badge_initials = "badge_initials";
+    public final static String[] ATTRIBUTES = new String[]{badge_name_setting, badge_title_setting,badge_title, badge_initials};
 
     String name_setting = "name";
     String title_setting = "no";
     String title = null;
     String initials = null;
+    String firstName = null;
+    String lastName = null;
 
-    public void setAttribute(ATTRIBUTES key, String value){
+
+    public void setAttribute(String key, String value){
         switch (key){
             case badge_name_setting:
                 name_setting = value;
@@ -39,18 +42,13 @@ public class BadgeInfo {
         }
     }
 
-    public String getAttribute(ATTRIBUTES key){
-        switch (key){
-            case badge_name_setting:
-                return name_setting;
-            case badge_title_setting:
-                return title_setting;
-            case badge_title:
-                return title;
-            case badge_initials:
-                return initials;
-            default:
-                throw new UnsupportedOperationException("Unsupported billing attribute: " + key);
+    public String getAttribute(String  key){
+        switch (key) {
+            case badge_name_setting : return name_setting;
+            case badge_title_setting : return title_setting;
+            case badge_title : return title;
+            case badge_initials : return initials;
+            default : throw new UnsupportedOperationException("Unsupported billing attribute: " + key);
         }
     }
 
@@ -65,9 +63,9 @@ public class BadgeInfo {
 
     public Map<String, String> toMap(){
         final HashMap<String, String> map = new HashMap<>();
-        for (ATTRIBUTES key : ATTRIBUTES.values()) {
+        for (String key : ATTRIBUTES) {
             final String value = getAttribute(key);
-            if (Validator.isNotNull(value)) map.put(key.name(), value);
+            if (Validator.isNotNull(value)) map.put(key, value);
 
         }
         return map;
@@ -77,8 +75,7 @@ public class BadgeInfo {
         final BadgeInfo badgeInfo = new BadgeInfo();
         for (String key : preferences.keySet()) {
             try {
-                final ATTRIBUTES attribute = ATTRIBUTES.valueOf(key);
-                badgeInfo.setAttribute(attribute, preferences.get(key));
+                badgeInfo.setAttribute(key, preferences.get(key));
             } catch (IllegalArgumentException e) {
                 // continue;
             }
@@ -108,6 +105,30 @@ public class BadgeInfo {
 
     public void setInitials(String initials){
         this.initials = initials;
+    }
+
+    public void setFirstName(String firstName){
+        this.firstName = firstName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getInitials() {
+        return initials;
     }
 
     public String formatBadgeName(String firstName, String lastName){

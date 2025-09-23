@@ -4,6 +4,7 @@ import com.liferay.journal.model.JournalArticleDisplay;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
@@ -11,6 +12,7 @@ import nl.deltares.portal.utils.DsdSessionUtils;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class RegistrationFormDisplayContext {
@@ -26,8 +28,11 @@ public class RegistrationFormDisplayContext {
     public List<Registration> getChildRegistrations(long siteId, String articleId) {
         List<Registration> children = new ArrayList<>();
         try {
-            children = dsdSessionUtils.getChildRegistrations(
-                    dsdParserUtils.getRegistration(siteId, articleId));
+            Registration registration = dsdParserUtils.getRegistration(siteId, articleId);
+            Event event = dsdParserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()), registration.getLocale());
+            if (event == null) return Collections.emptyList();
+            List<Registration> eventRegistrations = event.getRegistrations(event.getLocale());
+            children = dsdSessionUtils.getChildRegistrations(registration, eventRegistrations);
         } catch (Exception e) {
             LOG.debug("Error retrieving children for registration [" + articleId + "]", e);
         }

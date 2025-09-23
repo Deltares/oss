@@ -12,6 +12,12 @@ $default-font: $font-sans !default;
   background-color: #007bff;
   border-color: #007bff;
 }
+.button-row-button {
+
+  button {
+    margin: 2px;
+  }
+}
 .bs-stepper {
   h2 {
     text-transform: uppercase;
@@ -88,6 +94,14 @@ $default-font: $font-sans !default;
   }
 }
 
-.registration-controls {
-  
+table {
+  .remarks {
+    height: 40px !important;
+  }
+}
+
+.multi-step-indicator {
+  .multi-step-indicator-label {
+    max-width: fit-content;
+  }
 }

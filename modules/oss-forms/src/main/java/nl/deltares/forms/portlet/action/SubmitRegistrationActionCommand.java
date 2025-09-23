@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 @Component(
         immediate = true,
         property = {
+                "javax.portlet.name=" + OssConstants.REGISTRATIONFORM,
                 "javax.portlet.name=" + OssConstants.DSD_REGISTRATIONFORM,
                 "mvc.command.name=/submit/register/form"
         },
@@ -90,8 +91,9 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                         final String email = ParamUtil.getString(actionRequest, KeycloakUtils.ATTRIBUTES.email.name());
                         final String firstName = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.first_name.name());
                         final String lastName = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.last_name.name());
+                        final String jobTitle = ParamUtil.getString(actionRequest,  KeycloakUtils.ATTRIBUTES.jobTitle.name());
                         user = adminUtils.getOrCreateRegistrationUser(themeDisplay.getCompanyId(), registrationUser,
-                                email, firstName, lastName, themeDisplay.getLocale());
+                                email, firstName, lastName, jobTitle, themeDisplay.getLocale());
                     } catch (Exception e) {
                         success = false;
                         SessionErrors.add(actionRequest, "registration-failed", e.getMessage() );
@@ -248,6 +250,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         if (badgeInfo.isShowTitle()) badgeInfo.setTitle(userAttributes.get(KeycloakUtils.ATTRIBUTES.academicTitle.name()));
         if (badgeInfo.isShowInitials()) badgeInfo.setInitials(userAttributes.get(KeycloakUtils.ATTRIBUTES.initials.name()));
         final Map<String, String> badge = badgeInfo.toMap();
+        Event event = registrationRequest.getEvent();
         for (Registration registration : registrationRequest.getRegistrations()) {
             preferences = new HashMap<>(userPreferences);
 // Always add billing info
@@ -258,7 +261,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 preferences.put(KeycloakUtils.ATTRIBUTES.org_name.name(), userAttributes.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
 //            }
             try {
-                dsdSessionUtils.registerUser(user, userAttributes, registration, preferences, registrationUser);
+                dsdSessionUtils.registerUser(user, userAttributes, registration, preferences, registrationUser, event);
             } catch (PortalException e) {
                 SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
                 success = false;
@@ -269,7 +272,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                     preferences.putAll(billing);
                 }
                 try {
-                    dsdSessionUtils.registerUser(user, userAttributes, childRegistration, new HashMap<>(), registrationUser);
+                    dsdSessionUtils.registerUser(user, userAttributes, childRegistration, new HashMap<>(), registrationUser, event);
                 } catch (PortalException e) {
                     SessionErrors.add(actionRequest, "registration-failed",  e.getMessage());
                     success = false;
@@ -321,11 +324,12 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             registrationRequest.setSubscribe(ParamUtil.getBoolean(actionRequest, "subscribe_newsletter", false));
             registrationRequest.setBusInfo(configuration.enableBusInfo());
             registrationRequest.setBusTransferUrl(configuration.busTransferURL());
+
+            List<Registration> eventRegistrations = event.getRegistrations(event.getLocale());
             for (String articleId : articleIds) {
                 Registration parentRegistration = dsdParserUtils.getRegistration(siteId, articleId);
                 registrationRequest.addRegistration(parentRegistration);
-
-                List<Registration> childRegistrations = dsdSessionUtils.getChildRegistrations(parentRegistration);
+                List<Registration> childRegistrations = dsdSessionUtils.getChildRegistrations(parentRegistration, eventRegistrations);
                 for (Registration childRegistration : childRegistrations) {
                     if (ParamUtil.getString(actionRequest, CHILD_PREFIX + childRegistration.getArticleId()).equals("true")) {
                         registrationRequest.addChildRegistration(parentRegistration, childRegistration);
@@ -367,8 +371,8 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         final BadgeInfo badgeInfo = new BadgeInfo();
 
         //Get local attributes
-        for (BadgeInfo.ATTRIBUTES key : BadgeInfo.ATTRIBUTES.values()) {
-            String value = ParamUtil.getString(actionRequest, key.name());
+        for (String key : BadgeInfo.ATTRIBUTES) {
+            String value = ParamUtil.getString(actionRequest, key);
             if (Validator.isNotNull(value) && ! Validator.isBlank(value)) {
                 badgeInfo.setAttribute(key, value);
             }

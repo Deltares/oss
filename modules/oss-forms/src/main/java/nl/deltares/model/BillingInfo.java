@@ -3,10 +3,11 @@ package nl.deltares.model;
 import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.portal.utils.KeycloakUtils;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BillingInfo {
+public class BillingInfo implements Serializable {
 
     public enum ATTRIBUTES {
         billing_company,
@@ -21,7 +22,8 @@ public class BillingInfo {
         billing_vat,
         billing_preference,
         billing_phone,
-        billing_website
+        billing_website,
+        billing_addressid
     }
 
     String companyName = null;
@@ -37,6 +39,11 @@ public class BillingInfo {
     String preference = "payLink";
     String phone = "";
     String website = "";
+    String companyIdentifier = "";
+
+
+    long billingAddressId = 0;
+    boolean isDefaultBillingAddress = true;
 
     public static KeycloakUtils.ATTRIBUTES getCorrespondingUserAttributeKey(BillingInfo.ATTRIBUTES billingKey){
         switch (billingKey){
@@ -69,6 +76,8 @@ public class BillingInfo {
 
     public String getAttribute(ATTRIBUTES key){
         switch (key){
+            case billing_addressid:
+                return String.valueOf(billingAddressId);
             case billing_city:
                 return city;
             case billing_firstname:
@@ -102,6 +111,9 @@ public class BillingInfo {
 
     public void setAttribute(ATTRIBUTES key, String value){
         switch (key){
+            case billing_addressid:
+                billingAddressId = Long.parseLong(value);
+                break;
             case billing_city:
                 city = value;
                 break;
@@ -155,6 +167,31 @@ public class BillingInfo {
 
         }
         return map;
+    }
+
+
+    public void setCompanyIdentifier(String companyIdentifier) {
+        this.companyIdentifier = companyIdentifier;
+    }
+
+    public String getCompanyIdentifier() {
+        return companyIdentifier;
+    }
+
+    public long getBillingAddressId() {
+        return billingAddressId;
+    }
+
+    public void setBillingAddressId(long addressId) {
+        this.billingAddressId = addressId;
+    }
+
+    public boolean isDefaultBillingAddress() {
+        return isDefaultBillingAddress;
+    }
+
+    public void setDefaultBillingAddress(boolean defaultBillingAddress) {
+        isDefaultBillingAddress = defaultBillingAddress;
     }
 
     public String getCompanyName() {
@@ -217,7 +254,7 @@ public class BillingInfo {
         return reference;
     }
 
-    public void setReference(String reference) {
+    public void setPaymentReference(String reference) {
         this.reference = reference;
     }
 
@@ -225,7 +262,7 @@ public class BillingInfo {
         return preference;
     }
 
-    public void setPreference(String preference) {
+    public void setPaymentyPreference(String preference) {
         this.preference = preference;
     }
 
@@ -261,11 +298,4 @@ public class BillingInfo {
         this.lastName = lastName;
     }
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
 }

@@ -2,6 +2,7 @@
 <%@ taglib uri="http://xmlns.jcp.org/portlet_3_0" prefix="portlet" %>
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
 <%@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %>
+<%@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %>
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <%@ taglib uri="http://liferay.com/tld/journal" prefix="liferay-journal" %>
@@ -20,6 +21,8 @@
 <%@ page import="nl.deltares.portal.model.subscriptions.SubscriptionSelection" %>
 <%@ page import="com.liferay.portal.kernel.exception.PortalException" %>
 <%@ page import="nl.deltares.portal.utils.*" %>
+<%@ page import="java.util.Iterator" %>
+<%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
 
 <liferay-theme:defineObjects/>
 
@@ -42,6 +45,21 @@
     }
 %>
 
+<span id="<portlet:namespace/>group-message-block"></span>
+
+<aui:script>
+<%
+    Iterator<String> iterator = SessionErrors.iterator(liferayPortletRequest);
+    for (Iterator<String> it = iterator; it.hasNext(); ) {
+        String messageKey = it.next();
+        String arguments = (String) SessionErrors.get(liferayPortletRequest, messageKey);
+        if (arguments == null) arguments = "";
+%>
+    CommonFormsUtil.writeError("<portlet:namespace />", "<liferay-ui:message key="<%=messageKey%>" arguments="<%=arguments%>" />");
+<%
+    }
+%>
+</aui:script>
 <portlet:actionURL name="/submit/register/form" var="submitRegisterForm"/>
 
 <liferay-ui:success key="unregister-success" message="">
@@ -53,20 +71,20 @@
                         arguments='<%= SessionMessages.get(liferayPortletRequest, "registration-success") %>'/>
 </liferay-ui:success>
 
-<liferay-ui:error key="registration-failed">
-    <liferay-ui:message key="registration-failed"
-                        arguments='<%= SessionErrors.get(liferayPortletRequest, "registration-failed") %>'/>
-</liferay-ui:error>
+<%--<liferay-ui:error key="registration-failed">--%>
+<%--    <liferay-ui:message key="registration-failed"--%>
+<%--                        arguments='<%= SessionErrors.get(liferayPortletRequest, "registration-failed") %>'/>--%>
+<%--</liferay-ui:error>--%>
 
-<liferay-ui:error key="update-attributes-failed">
-    <liferay-ui:message key="update-attributes-failed"
-                        arguments='<%= SessionErrors.get(liferayPortletRequest, "update-attributes-failed") %>'/>
-</liferay-ui:error>
+<%--<liferay-ui:error key="update-attributes-failed">--%>
+<%--    <liferay-ui:message key="update-attributes-failed"--%>
+<%--                        arguments='<%= SessionErrors.get(liferayPortletRequest, "update-attributes-failed") %>'/>--%>
+<%--</liferay-ui:error>--%>
 
-<liferay-ui:error key="send-email-failed">
-    <liferay-ui:message key="send-email-failed"
-                        arguments='<%= SessionErrors.get(liferayPortletRequest, "send-email-failed") %>'/>
-</liferay-ui:error>
+<%--<liferay-ui:error key="send-email-failed">--%>
+<%--    <liferay-ui:message key="send-email-failed"--%>
+<%--                        arguments='<%= SessionErrors.get(liferayPortletRequest, "send-email-failed") %>'/>--%>
+<%--</liferay-ui:error>--%>
 
 
 <div class="bs-stepper">
@@ -173,7 +191,7 @@
 
     const validateFirstStep = function() {
 
-        if (getCurrentStep("<portlet:namespace />fm") > 1) return true;
+        if (CommonFormsUtil.getCurrentStep("<portlet:namespace />fm") > 1) return true;
 
         let FIRST_STEP_ERROR_MESSAGE = '<liferay-ui:message key="dsd.registration.step1.error"/>';
         let FIRST_STEP_ERROR_MESSAGE_PARENT_MISSING = '<liferay-ui:message key="dsd.registration.step1.error.missing.parent"/>';
@@ -189,37 +207,38 @@
 
     }
 
-    $(document).ready(function() {
-        let namespace = "<portlet:namespace />";
-        let form = Liferay.Form.get(namespace + "fm").formValidator;
-        form.validateFirstStep = validateFirstStep;
-        form.preSubmitAction = preSubmitAction;
-        $('.bs-stepper').formStepper(form);
-        DsdRegistrationFormsUtil.updateBadge(namespace);
-        DsdRegistrationFormsUtil.checkSelection(namespace);
-        let badgeListeners = $(document.getElementsByClassName("update-badge"));
-        [...badgeListeners].forEach(function (item) {
-            item.onchange = function (){
-                DsdRegistrationFormsUtil.updateBadge(namespace);
-            };
-        });
-        let parents = $(document.getElementsByClassName("parent-registration"));
-        [...parents].forEach(function (registration) {
-            registration.onchange = function (){
-                DsdRegistrationFormsUtil.checkSelection(namespace);
-            };
-        });
-        let children = $(document.getElementsByClassName("child-registration"));
-        [...children].forEach(function (registration) {
-            registration.onchange = function (){
-                DsdRegistrationFormsUtil.checkSelection(namespace);
-            };
-        });
-        $(document.getElementById(namespace + "registration_other")).change(function() {
-            CommonFormsUtil.registerOther(namespace);
-        });
-        $(document.getElementById(namespace + "use_organization_address")).change(function() {
-            CommonFormsUtil.updatePaymentAddress(namespace, this.checked);
+    let namespace = "<portlet:namespace />";
+    let form = Liferay.Form.get(namespace + "fm");
+    form.validateFirstStep = validateFirstStep;
+    form.preSubmitAction = preSubmitAction;
+    let stepper = document.querySelector('.bs-stepper')
+    let formStepper = FormStepper.init(stepper, form)
+
+    DsdRegistrationFormsUtil.updateBadge(namespace);
+    DsdRegistrationFormsUtil.checkSelection(namespace);
+    let badgeListeners = document.getElementsByClassName("update-badge");
+    Array.from(badgeListeners).forEach(function (item) {
+        item.addEventListener('change', function (){
+            DsdRegistrationFormsUtil.updateBadge(namespace);
         });
     });
+    let parents = document.getElementsByClassName("parent-registration");
+    Array.from(parents).forEach(function (registration) {
+        registration.addEventListener('change', function (){
+            DsdRegistrationFormsUtil.checkSelection(namespace);
+        });
+    });
+    let children = document.getElementsByClassName("child-registration");
+    Array.from(children).forEach(function (registration) {
+        registration.addEventListener('change', function (){
+            DsdRegistrationFormsUtil.checkSelection(namespace);
+        });
+    });
+    document.getElementById(namespace + "registration_other").addEventListener('change', function() {
+        CommonFormsUtil.registerOther(namespace);
+    });
+    document.getElementById(namespace + "use_organization_address").addEventListener('change', function() {
+        CommonFormsUtil.updatePaymentAddress(namespace, this.checked);
+    });
+
 </aui:script>

@@ -54,7 +54,7 @@
                         disabled="true">
                     <aui:validator name="required">
                         function () {
-                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                            return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
                     <aui:validator name="maxLength">75</aui:validator>
@@ -69,7 +69,7 @@
                         disabled="true">
                     <aui:validator name="required">
                         function () {
-                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                            return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
                     <aui:validator name="maxLength">75</aui:validator>
@@ -85,7 +85,7 @@
                 disabled="true">
             <aui:validator name="required">
                 function () {
-                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                    return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                 }
             </aui:validator>
             <aui:validator name="email"/>
@@ -100,7 +100,7 @@
                 value="${org_name}">
             <aui:validator name="required">
                 function () {
-                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                    return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                 }
             </aui:validator>
             <aui:validator name="maxLength">75</aui:validator>
@@ -111,7 +111,7 @@
                 value="${org_address}">
             <aui:validator name="required">
                 function () {
-                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                    return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                 }
             </aui:validator>
             <aui:validator name="maxLength">255</aui:validator>
@@ -123,9 +123,9 @@
                         name="<%= KeycloakUtils.ATTRIBUTES.org_postal.name() %>"
                         label="registrationform.orgpostcode"
                         value="${org_postal}">
-                    <aui:validator name="required">
+                    <aui:validator name="required" >
                         function () {
-                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                            return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
                     <aui:validator name="maxLength">10</aui:validator>
@@ -138,7 +138,7 @@
                         value="${org_city}">
                     <aui:validator name="required">
                         function () {
-                            return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                            return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                         }
                     </aui:validator>
                     <aui:validator name="maxLength">75</aui:validator>
@@ -152,7 +152,7 @@
                 value="${country}" >
             <aui:validator name="required">
                 function () {
-                    return checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
+                    return CommonFormsUtil.checkStep(CommonFormsUtil.getFormName('<portlet:namespace />'), 2);
                 }
             </aui:validator>
             <aui:validator name="minLength">
@@ -205,7 +205,7 @@
 
         <span><liferay-ui:message key="dsd.registration.step2.show.title"/></span>
         <%
-            String title_setting = attributes.get(BadgeInfo.ATTRIBUTES.badge_title_setting.name());
+            String title_setting = attributes.get(BadgeInfo.badge_title_setting);
             boolean yes_checked = "yes".equals(title_setting);
             boolean no_checked = "no".equals(title_setting);
             if (!(yes_checked || no_checked)) no_checked = true;
@@ -213,7 +213,7 @@
         <div class="d-flex justify-content-start">
             <div class="pr-3">
                 <aui:input
-                        name="<%= BadgeInfo.ATTRIBUTES.badge_title_setting.name() %>"
+                        name="<%= BadgeInfo.badge_title_setting %>"
                         label="yes"
                         cssClass="update-badge"
                         type="radio"
@@ -222,7 +222,7 @@
             </div>
             <div class="pr-3">
                 <aui:input
-                        name="<%= BadgeInfo.ATTRIBUTES.badge_title_setting.name() %>"
+                        name="<%= BadgeInfo.badge_title_setting %>"
                         label="no"
                         cssClass="update-badge"
                         type="radio"
@@ -233,7 +233,7 @@
 
         <span><liferay-ui:message key="dsd.registration.step2.badge.name"/></span>
         <%
-            String name_setting = attributes.get(BadgeInfo.ATTRIBUTES.badge_name_setting.name());
+            String name_setting = attributes.get(BadgeInfo.badge_name_setting);
             boolean name_checked = "name".equals(name_setting);
             boolean initials_checked = "initials".equals(name_setting);
             boolean both_checked = "both".equals(name_setting);
@@ -243,7 +243,7 @@
         <div class="d-flex justify-content-start">
             <div class="pr-3">
                 <aui:input
-                        name="<%= BadgeInfo.ATTRIBUTES.badge_name_setting.name() %>"
+                        name="<%= BadgeInfo.badge_name_setting %>"
                         label="dsd.registration.step2.badge.name.1"
                         cssClass="update-badge"
                         type="radio"
@@ -252,7 +252,7 @@
             </div>
             <div class="pr-3">
                 <aui:input
-                        name="<%= BadgeInfo.ATTRIBUTES.badge_name_setting.name() %>"
+                        name="<%= BadgeInfo.badge_name_setting %>"
                         label="dsd.registration.step2.badge.name.2"
                         cssClass="update-badge"
                         type="radio"
@@ -261,7 +261,7 @@
             </div>
             <div class="pr-3">
                 <aui:input
-                        name="<%= BadgeInfo.ATTRIBUTES.badge_name_setting.name() %>"
+                        name="<%= BadgeInfo.badge_name_setting %>"
                         label="dsd.registration.step2.badge.name.3"
                         cssClass="update-badge"
                         type="radio"

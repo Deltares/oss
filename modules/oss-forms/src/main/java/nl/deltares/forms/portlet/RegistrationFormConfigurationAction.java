@@ -1,0 +1,101 @@
+package nl.deltares.forms.portlet;
+
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.portlet.ConfigurationAction;
+import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.WebKeys;
+import nl.deltares.portal.constants.OssConstants;
+import nl.deltares.portal.utils.JsonContentUtils;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
+import org.osgi.service.component.annotations.Reference;
+
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
+import javax.portlet.PortletConfig;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
+import java.util.Map;
+
+import static nl.deltares.portal.utils.LocalizationUtils.convertToLocalizedMap;
+import static nl.deltares.portal.utils.LocalizationUtils.getAvailableLanguageIds;
+
+@Component(
+        configurationPid = OssConstants.REGISTRATIONFORM_CONFIGURATIONS_PID,
+        configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
+        property = {
+                "javax.portlet.name=" + OssConstants.REGISTRATIONFORM
+        },
+        service = ConfigurationAction.class
+)
+public class RegistrationFormConfigurationAction extends DefaultConfigurationAction {
+
+    @Override
+    public void include(PortletConfig portletConfig, HttpServletRequest httpServletRequest,
+                        HttpServletResponse httpServletResponse) throws Exception {
+
+        httpServletRequest.setAttribute(
+                ConfigurationProvider.class.getName(),
+                _configurationProvider);
+
+        httpServletRequest.setAttribute("languageIds", getAvailableLanguageIds(httpServletRequest));
+        try {
+            ThemeDisplay themeDisplay = (ThemeDisplay) httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY);
+            RegistrationFormConfiguration siteConfiguration = _configurationProvider
+                    .getPortletInstanceConfiguration(RegistrationFormConfiguration.class, themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
+
+            httpServletRequest.setAttribute("childHeaderText", getParsedJsonParameter(siteConfiguration, "childHeaderText"));
+            httpServletRequest.setAttribute("registerSuccessURL", siteConfiguration.registerSuccessURL());
+            httpServletRequest.setAttribute("unregisterSuccessURL", siteConfiguration.unregisterSuccessURL());
+            httpServletRequest.setAttribute("updateSuccessURL", siteConfiguration.updateSuccessURL());
+            httpServletRequest.setAttribute("failURL", siteConfiguration.failURL());
+            httpServletRequest.setAttribute("showBadgeInfo", siteConfiguration.showBadgeInfo());
+        } catch (PortalException e) {
+            throw new PortalException("Could not get options for field 'registrationType' in structure SESSIONS: " + e.getMessage(), e);
+        }
+        super.include(portletConfig, httpServletRequest, httpServletResponse);
+    }
+
+    @Override
+    public void processAction(PortletConfig portletConfig, ActionRequest actionRequest, ActionResponse actionResponse)
+            throws Exception {
+
+        Map<String, String> childHeaderText = convertToLocalizedMap(actionRequest, "childHeaderText");
+        setPreference(actionRequest, "registerSuccessURL", ParamUtil.getString(actionRequest, "registerSuccessURL"));
+        setPreference(actionRequest, "unregisterSuccessURL", ParamUtil.getString(actionRequest, "unregisterSuccessURL"));
+        setPreference(actionRequest, "updateSuccessURL", ParamUtil.getString(actionRequest, "updateSuccessURL"));
+        setPreference(actionRequest, "failURL", ParamUtil.getString(actionRequest, "failURL"));
+        setPreference(actionRequest, "showBadgeInfo", String.valueOf(ParamUtil.getBoolean(actionRequest, "showBadgeInfo")));
+        setPreference(actionRequest, "childHeaderText", JsonContentUtils.formatMapToJson(childHeaderText));
+
+        super.processAction(portletConfig, actionRequest, actionResponse);
+    }
+
+    private ConfigurationProvider _configurationProvider;
+
+    @Reference
+    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
+        _configurationProvider = configurationProvider;
+    }
+
+
+    public static Map<String, String> getParsedJsonParameter(RegistrationFormConfiguration configuration, String parameterId) throws PortalException {
+
+        String json;
+        if (parameterId.equals("childHeaderText")) {
+            json = configuration.childHeaderText();
+        } else {
+            json = null;
+        }
+        try {
+            return JsonContentUtils.parseJsonToMap(json);
+        } catch (Exception e) {
+            return Collections.emptyMap();
+        }
+
+    }
+}
