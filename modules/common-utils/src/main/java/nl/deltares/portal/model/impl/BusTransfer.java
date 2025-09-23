@@ -4,9 +4,9 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
-import org.w3c.dom.Document;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,8 +21,9 @@ public class BusTransfer extends Registration {
     private String transferDay;
     private String name;
 
-    public BusTransfer(JournalArticle article, DsdParserUtils parserUtils, Locale locale) throws PortalException {
-        super(article, parserUtils, locale);
+    public BusTransfer(JournalArticle article, DsdParserUtils parserUtils,
+                       DsdJournalArticleUtils dsdJournalArticleUtils, Locale locale) throws PortalException {
+        super(article, parserUtils, dsdJournalArticleUtils, locale);
         init();
     }
 
@@ -33,20 +34,20 @@ public class BusTransfer extends Registration {
         try {
             final String name = getFormFieldValue("Name", true);
             this.name = name == null ? getTitle() : name;
-            initDates(null);
+            initDates();
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }
     }
 
     @Override
-    void initDates(Document document) throws PortalException, ParseException {
+    void initDates() throws PortalException, ParseException {
 
         List<String> times = getTimes();
 
         String startTimevalue = "00:00";
         String endTimevalue = "00:00";
-        if (times.size() > 0) {
+        if (!times.isEmpty()) {
             startTimevalue = times.get(0);
             endTimevalue = times.get(times.size() - 1);
         }

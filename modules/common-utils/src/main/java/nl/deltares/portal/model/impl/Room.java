@@ -2,6 +2,7 @@ package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 
 import java.util.Locale;
@@ -9,8 +10,8 @@ import java.util.Locale;
 public class Room extends AbsDsdArticle {
     private int capacity;
 
-    public Room(JournalArticle dsdArticle, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
-        super(dsdArticle, dsdParserUtils, locale);
+    public Room(JournalArticle dsdArticle, DsdParserUtils dsdParserUtils, DsdJournalArticleUtils dsdJournalArticleUtils, Locale locale) throws PortalException {
+        super(dsdArticle, dsdParserUtils, dsdJournalArticleUtils, locale);
         init();
     }
 

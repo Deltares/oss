@@ -88,6 +88,9 @@ public abstract class HttpClientUtils implements BaseLocalService {
 
     public static int checkResponse(HttpURLConnection urlConnection) throws IOException {
         int responseCode = urlConnection.getResponseCode();
+        if (responseCode == 409){
+            return 409; //already registered
+        }
         if (responseCode > 299) {
             throw new IOException("Error " + responseCode + ": " + urlConnection.getResponseMessage());
         }

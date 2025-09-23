@@ -4,6 +4,7 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DuplicateCheck;
 import nl.deltares.portal.utils.JsonContentUtils;
@@ -19,8 +20,8 @@ public class EventLocation extends Location {
     private List<Room> rooms = null;
     private List<Building> buildings = null;
 
-    public EventLocation(JournalArticle article, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
-        super(article, dsdParserUtils, locale);
+    public EventLocation(JournalArticle article, DsdParserUtils dsdParserUtils, DsdJournalArticleUtils dsdJournalArticleUtils, Locale locale) throws PortalException {
+        super(article, dsdParserUtils, dsdJournalArticleUtils, locale);
     }
 
     @Override

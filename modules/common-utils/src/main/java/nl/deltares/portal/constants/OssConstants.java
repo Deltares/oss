@@ -5,6 +5,7 @@ public class OssConstants {
     public static final String WEBINAR_SITE_CONFIGURATIONS_PID = "nl.deltares.portal.configuration.WebinarSiteConfiguration";
     public static final String DSD_SITE_CONFIGURATIONS_PID = "nl.deltares.portal.configuration.DSDSiteConfiguration";
     public static final String DSD_REGISTRATIONFORM_CONFIGURATIONS_PID = "nl.deltares.forms.portlet.DsdRegistrationFormConfiguration";
+    public static final String REGISTRATIONFORM_CONFIGURATIONS_PID = "nl.deltares.forms.portlet.RegistrationFormConfiguration";
     public static final String DOWNLOADFORM_CONFIGURATIONS_PID = "nl.deltares.forms.portlet.DownloadFormConfiguration";
     public static final String Download_SITE_CONFIGURATIONS_PID = "nl.deltares.portal.configuration.DownloadSiteConfiguration";
     public static final String OSS_SITE_CONFIGURATIONS_PID = "nl.deltares.portal.configuration.OSSSiteConfiguration";
@@ -17,6 +18,9 @@ public class OssConstants {
 
     public static final String DSD_REGISTRATIONFORM =
             "dsd_RegistrationFormPortlet";
+
+    public static final String REGISTRATIONFORM =
+            "RegistrationFormPortlet";
 
     public static final String DSD_ADMIN_FORM =
             "DsdAdminFormPortlet";
@@ -39,4 +43,6 @@ public class OssConstants {
     public static final String WEBINAR_ADMIN_FORM =
             "WebinarAdminFormPortlet";
 
+    public static String MY_REGISTRATIONS_URL =
+            "MyRegistrationsURL";
 }

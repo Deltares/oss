@@ -12,6 +12,7 @@ import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.portal.model.DsdArticle;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DuplicateCheck;
 import nl.deltares.portal.utils.JsonContentUtils;
@@ -25,6 +26,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
     private final JournalArticle article;
     public final long instantiationTime;
     protected final DsdParserUtils dsdParserUtils;
+    protected final DsdJournalArticleUtils dsdJournalArticleUtils;
     private final Locale locale;
     private List<DDMFormFieldValue> ddmFormFieldValues;
     final private SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
@@ -78,13 +80,15 @@ public abstract class AbsDsdArticle implements DsdArticle {
         this.article = null;
         this.instantiationTime = System.currentTimeMillis();
         this.dsdParserUtils = null;
+        this.dsdJournalArticleUtils = null;
         this.locale = null;
     }
 
-    AbsDsdArticle(JournalArticle article, DsdParserUtils dsdParserUtils, Locale locale) throws PortalException {
+    AbsDsdArticle(JournalArticle article, DsdParserUtils dsdParserUtils, DsdJournalArticleUtils dsdJournalArticleUtils, Locale locale) throws PortalException {
         this.article = article;
         this.instantiationTime = System.currentTimeMillis();
         this.dsdParserUtils = dsdParserUtils;
+        this.dsdJournalArticleUtils = dsdJournalArticleUtils;
         this.locale = locale;
         init();
     }

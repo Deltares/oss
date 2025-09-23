@@ -2,6 +2,7 @@ package nl.deltares.portal.model.impl;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import org.w3c.dom.Document;
 
@@ -12,8 +13,8 @@ public class Terms extends AbsDsdArticle {
     private String name;
     private String termsURL;
 
-    public Terms(JournalArticle journalArticle, DsdParserUtils articleParserUtils, Locale locale) throws PortalException {
-        super(journalArticle, articleParserUtils, locale);
+    public Terms(JournalArticle journalArticle, DsdParserUtils articleParserUtils, DsdJournalArticleUtils dsdJournalArticleUtils, Locale locale) throws PortalException {
+        super(journalArticle, articleParserUtils, dsdJournalArticleUtils, locale);
         init();
     }
 

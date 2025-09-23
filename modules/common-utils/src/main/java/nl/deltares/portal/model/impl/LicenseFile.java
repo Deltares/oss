@@ -3,6 +3,7 @@ package nl.deltares.portal.model.impl;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.DateUtil;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 
 import java.text.ParseException;
@@ -18,8 +19,8 @@ public class LicenseFile extends AbsDsdArticle {
     private Date expirationDate = null;
     private long expirationTimeInMillis = 0;
 
-    public LicenseFile(JournalArticle journalArticle, DsdParserUtils articleParserUtils, Locale locale) throws PortalException {
-        super(journalArticle, articleParserUtils, locale);
+    public LicenseFile(JournalArticle journalArticle, DsdParserUtils articleParserUtils, DsdJournalArticleUtils dsdJournalArticleUtils, Locale locale) throws PortalException {
+        super(journalArticle, articleParserUtils, dsdJournalArticleUtils, locale);
         init();
     }
 

@@ -11,6 +11,9 @@ import java.util.Locale;
 import java.util.Map;
 
 public interface DsdJournalArticleUtils {
+
+    List<JournalArticle> getRelatedArticles(long groupId, String[] articleIds) throws PortalException;
+
     JournalArticle getLatestArticle(long classPK) throws PortalException;
 
     List<JournalArticle> getEvents(long groupId, Locale locale) throws PortalException;

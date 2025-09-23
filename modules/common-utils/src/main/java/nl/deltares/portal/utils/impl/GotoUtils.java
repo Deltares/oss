@@ -19,6 +19,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
 
     private final String CACHED_REFRESH_EXPIRY_KEY;
     private final String CACHED_REFRESH_TOKEN_KEY;
+    private final String CACHED_ORGANIZER_KEY;
     private final String CACHED_TOKEN_PREFIX;
     private final String CACHED_EXPIRY_KEY;
     private final String CACHED_TOKEN_KEY;
@@ -32,6 +33,8 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
     private static final String GOTO_COORGANIZERS_PATH = "G2W/rest/v2/organizers/%s/webinars/%s/coorganizers";
     private static final String GOTO_PANELISTS_PATH = "G2W/rest/v2/organizers/%s/webinars/%s/panelists";
 
+    private String organizer_key;
+
     public GotoUtils(WebinarSiteConfiguration siteConfiguration) throws IOException {
         if (siteConfiguration == null) throw new NullPointerException("siteConfiguration == null");
         this.configuration = siteConfiguration;
@@ -43,6 +46,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
         CACHED_TOKEN_PREFIX = clientId;
         CACHED_REFRESH_TOKEN_KEY = CACHED_TOKEN_PREFIX + ".refresh.token";
         CACHED_REFRESH_EXPIRY_KEY = CACHED_TOKEN_PREFIX + ".refresh.expirytime";
+        CACHED_ORGANIZER_KEY = CACHED_TOKEN_PREFIX + ".organizer";
         CACHED_TOKEN_KEY = CACHED_TOKEN_PREFIX + ".token";
         CACHED_EXPIRY_KEY = CACHED_TOKEN_PREFIX + ".expirytime";
         CACHE_TOKEN = configuration.gotoCacheToken();
@@ -70,11 +74,15 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
 
         //write user information
         writePostData(connection, user, userAttributes, callerId);
-
+        Map<String, String> parseJsonToMap;
         //get response
-        checkResponse(connection);
-        String jsonResponse = readAll(connection);
-        Map<String, String> parseJsonToMap = JsonContentUtils.parseJsonToMap(jsonResponse);
+        int responseCode = checkResponse(connection);
+        if (responseCode == 409){
+            parseJsonToMap = getUserInfo(user.getEmailAddress(), webinarKey, getBasePath() + GOTO_REGISTRANTS_PATH, false);
+        } else {
+            String jsonResponse = readAll(connection);
+            parseJsonToMap = JsonContentUtils.parseJsonToMap(jsonResponse);
+        }
         if (parseJsonToMap.containsKey("registrantKey")) registrationProperties.put("registrantKey", parseJsonToMap.get("registrantKey"));
         if (parseJsonToMap.containsKey("joinUrl")) registrationProperties.put("joinUrl", parseJsonToMap.get("joinUrl"));
         return 0;
@@ -216,7 +224,8 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
     }
 
     private String getOrganizerKey() {
-        return configuration.gotoOrganizerKey();
+        if (organizer_key != null) return organizer_key;
+        return CACHE_TOKEN ? getCachedToken(CACHED_ORGANIZER_KEY, null) : null;
     }
 
     private void writePostData(HttpURLConnection connection, User user, Map<String, String> userAttributes, String callerId) throws IOException {
@@ -226,13 +235,13 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
         parameterMap.put("firstName", user.getFirstName());
         parameterMap.put("lastName", user.getLastName());
         parameterMap.put("email", user.getEmailAddress());
-//        parameterMap.put("registrantKey", user.getScreenName());
+        parameterMap.put("registrantKey", user.getScreenName());
         parameterMap.put("zipCode", userAttributes.get(KeycloakUtils.ATTRIBUTES.org_postal.name()));
         parameterMap.put("country", userAttributes.get(KeycloakUtils.ATTRIBUTES.org_country.name()));
         parameterMap.put("address", userAttributes.get(KeycloakUtils.ATTRIBUTES.org_address.name()));
         parameterMap.put("city", userAttributes.get(KeycloakUtils.ATTRIBUTES.org_city.name()));
         parameterMap.put("organization", userAttributes.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
-//        parameterMap.put("source", callerId);
+        parameterMap.put("source", callerId);
 
         String postData = JsonContentUtils.formatMapToJson(parameterMap);
         try (Writer w = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8)) {
@@ -255,9 +264,12 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
             String jsonResponse = readAll(connection);
             Map<String, String> parsedToken = JsonContentUtils.parseJsonToMap(jsonResponse);
 
+            String organizer_key = parsedToken.get("organizer_key");
             if (CACHE_TOKEN){
+                setCachedToken(CACHED_ORGANIZER_KEY, null, organizer_key, 0);
                 cacheAccessTokens(CACHED_TOKEN_PREFIX, parsedToken);
             }
+            this.organizer_key = organizer_key; //for if cache is disabled
 
             return parsedToken.get("access_token");
         } catch (IOException | JSONException e){
@@ -293,7 +305,8 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
     }
 
     protected String getTokenPath(){
-        return configuration.gotoTokenURL();
+        String basePath = getBasePath();
+        return basePath + "oauth/v2/token";
     }
 
 }

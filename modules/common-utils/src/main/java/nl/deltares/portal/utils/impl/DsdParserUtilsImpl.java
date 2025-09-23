@@ -6,6 +6,7 @@ import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.asset.kernel.service.AssetLinkLocalService;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
@@ -169,7 +170,20 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
         if (articleId.equals(sessionArticleId) && day instanceof Integer){
             dayIndex = (Integer) day;
         }
-        return new RegistrationDisplayContext(articleId, dayIndex, themeDisplay, _configurationProvider, this);
+        Registration registration = null;
+        try {
+            long groupId = themeDisplay.getScopeGroupId();
+            JournalArticle registrationArticle = JournalArticleLocalServiceUtil
+                    .fetchArticle(groupId, articleId);
+            AbsDsdArticle parentInstance = toDsdArticle(registrationArticle);
+            if (parentInstance instanceof Registration) {
+                registration = (Registration) parentInstance;
+            }
+        } catch (Exception e) {
+            LOG.error("Error getting Registration instance [" + articleId + "]", e);
+        }
+
+        return new RegistrationDisplayContext(registration, dayIndex, themeDisplay);
     }
 
     private ConfigurationProvider _configurationProvider;
@@ -215,52 +229,52 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
 
         switch (dsd_structure_key){
             case Session:
-                article = new SessionRegistration(journalArticle, this, locale);
+                article = new SessionRegistration(journalArticle, this, dsdJournalArticleUtils, locale);
                 break;
             case Bustransfer:
-                article = new BusTransfer(journalArticle, this, locale);
+                article = new BusTransfer(journalArticle, this, dsdJournalArticleUtils, locale);
                 break;
             case Dinner:
-                article = new DinnerRegistration(journalArticle, this, locale);
+                article = new DinnerRegistration(journalArticle, this, dsdJournalArticleUtils, locale);
                 break;
             case Licensefile:
-                article = new LicenseFile(journalArticle, this, locale);
+                article = new LicenseFile(journalArticle, this, dsdJournalArticleUtils, locale);
                 break;
             case Location:
-                article = new Location(journalArticle, this, locale);
+                article = new Location(journalArticle, this, dsdJournalArticleUtils, locale);
                 break;
             case Eventlocation:
-                article = new EventLocation(journalArticle, this, locale);
+                article = new EventLocation(journalArticle, this, dsdJournalArticleUtils, locale);
                 break;
             case Building:
-                article = new Building(journalArticle, this, locale);
+                article = new Building(journalArticle, this, dsdJournalArticleUtils, locale);
                 break;
             case Room:
-                article = new Room(journalArticle, this, locale);
+                article = new Room(journalArticle, this, dsdJournalArticleUtils, locale);
                 break;
             case Expert:
-                article = new Expert(journalArticle, this, locale);
+                article = new Expert(journalArticle, this, dsdJournalArticleUtils, locale);
                 break;
             case Event:
-                article = new Event(journalArticle, this, locale);
+                article = new Event(journalArticle, this, dsdJournalArticleUtils, locale);
                 break;
             case Presentation:
-                article = new Presentation(journalArticle, this, locale);
+                article = new Presentation(journalArticle, this, dsdJournalArticleUtils, locale);
                 return article;
             case Download:
                 article = new Download(journalArticle, this, dsdJournalArticleUtils, layoutUtils, locale);
                 return article;
             case Downloadgroup:
-                article = new DownloadGroup(journalArticle, this, layoutUtils, locale);
+                article = new DownloadGroup(journalArticle, this, dsdJournalArticleUtils, layoutUtils, locale);
                 return article;
             case Subscription:
-                article = new Subscription(journalArticle, this, locale);
+                article = new Subscription(journalArticle, this, dsdJournalArticleUtils, locale);
                 return article;
             case Terms:
-                article = new Terms(journalArticle, this, locale);
+                article = new Terms(journalArticle, this, dsdJournalArticleUtils, locale);
                 return article;
             default:
-                article = new GenericArticle(journalArticle, this, locale);
+                article = new GenericArticle(journalArticle, this, dsdJournalArticleUtils, locale);
         }
         if (cache != null){
             cache.putArticle(journalArticle, article);

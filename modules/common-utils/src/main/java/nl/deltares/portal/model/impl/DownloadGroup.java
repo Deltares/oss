@@ -7,6 +7,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.LayoutUtils;
 import nl.deltares.portal.utils.impl.DsdParserUtilsImpl;
@@ -23,8 +24,9 @@ public class DownloadGroup extends AbsDsdArticle {
     private Layout groupPage;
     private String description = "";
 
-    public DownloadGroup(JournalArticle journalArticle, DsdParserUtilsImpl dsdParserUtils, LayoutUtils layoutUtils, Locale locale) throws PortalException {
-        super(journalArticle, dsdParserUtils, locale);
+    public DownloadGroup(JournalArticle journalArticle, DsdParserUtilsImpl dsdParserUtils,
+                         DsdJournalArticleUtils dsdJournalArticleUtils, LayoutUtils layoutUtils, Locale locale) throws PortalException {
+        super(journalArticle, dsdParserUtils, dsdJournalArticleUtils, locale);
         init(layoutUtils);
     }
 
