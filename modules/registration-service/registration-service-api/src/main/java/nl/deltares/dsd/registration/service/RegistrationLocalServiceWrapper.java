@@ -96,7 +96,7 @@ public class RegistrationLocalServiceWrapper
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId         Site Identifier
 	 * @param eventResourceId Article Identifier of Event being removed.
 	 */
 	@Override
@@ -111,7 +111,7 @@ public class RegistrationLocalServiceWrapper
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
 	 */
 	@Override
@@ -126,8 +126,8 @@ public class RegistrationLocalServiceWrapper
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
-	 * @param userId User id
+	 * @param groupId         Site Identifier
+	 * @param userId          User id
 	 * @param eventResourceId Article Identifier of Event being removed.
 	 */
 	@Override
@@ -189,10 +189,10 @@ public class RegistrationLocalServiceWrapper
 	 * Delete user registrations for 'resourceId' and a start date equal to 'startDate'
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
-	 * @param userId User for which to remove registration
-	 * @param startDate Start date for which to remove registration
+	 * @param userId     User for which to remove registration
+	 * @param startDate  Start date for which to remove registration
 	 */
 	@Override
 	public void deleteUserRegistration(
@@ -209,9 +209,9 @@ public class RegistrationLocalServiceWrapper
 	 * Delete user registrations for 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
-	 * @param userId User for which to remove registration
+	 * @param userId     User for which to remove registration
 	 */
 	@Override
 	public void deleteUserRegistrationAndChildRegistrations(

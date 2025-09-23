@@ -95,7 +95,7 @@ public class RegistrationLocalServiceUtil {
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId         Site Identifier
 	 * @param eventResourceId Article Identifier of Event being removed.
 	 */
 	public static void deleteAllEventRegistrations(
@@ -108,7 +108,7 @@ public class RegistrationLocalServiceUtil {
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
 	 */
 	public static void deleteAllRegistrationsAndChildRegistrations(
@@ -122,8 +122,8 @@ public class RegistrationLocalServiceUtil {
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
-	 * @param userId User id
+	 * @param groupId         Site Identifier
+	 * @param userId          User id
 	 * @param eventResourceId Article Identifier of Event being removed.
 	 */
 	public static void deleteAllUserEventRegistrations(
@@ -178,10 +178,10 @@ public class RegistrationLocalServiceUtil {
 	 * Delete user registrations for 'resourceId' and a start date equal to 'startDate'
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
-	 * @param userId User for which to remove registration
-	 * @param startDate Start date for which to remove registration
+	 * @param userId     User for which to remove registration
+	 * @param startDate  Start date for which to remove registration
 	 */
 	public static void deleteUserRegistration(
 			long groupId, long resourceId, long userId,
@@ -197,9 +197,9 @@ public class RegistrationLocalServiceUtil {
 	 * Delete user registrations for 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
-	 * @param groupId Site Identifier
+	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
-	 * @param userId User for which to remove registration
+	 * @param userId     User for which to remove registration
 	 */
 	public static void deleteUserRegistrationAndChildRegistrations(
 		long groupId, long resourceId, long userId) {

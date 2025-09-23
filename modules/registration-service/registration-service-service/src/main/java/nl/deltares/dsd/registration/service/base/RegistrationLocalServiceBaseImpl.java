@@ -40,6 +40,7 @@ import javax.sql.DataSource;
 
 import nl.deltares.dsd.registration.model.Registration;
 import nl.deltares.dsd.registration.service.RegistrationLocalService;
+import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.dsd.registration.service.persistence.RegistrationPersistence;
 
 import org.osgi.service.component.annotations.Deactivate;
@@ -63,7 +64,7 @@ public abstract class RegistrationLocalServiceBaseImpl
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. Use <code>RegistrationLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil</code>.
+	 * Never modify or reference this class directly. Use <code>RegistrationLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>RegistrationLocalServiceUtil</code>.
 	 */
 
 	/**
@@ -377,6 +378,7 @@ public abstract class RegistrationLocalServiceBaseImpl
 
 	@Deactivate
 	protected void deactivate() {
+		RegistrationLocalServiceUtil.setService(null);
 	}
 
 	@Override
@@ -390,6 +392,8 @@ public abstract class RegistrationLocalServiceBaseImpl
 	@Override
 	public void setAopProxy(Object aopProxy) {
 		registrationLocalService = (RegistrationLocalService)aopProxy;
+
+		RegistrationLocalServiceUtil.setService(registrationLocalService);
 	}
 
 	/**
