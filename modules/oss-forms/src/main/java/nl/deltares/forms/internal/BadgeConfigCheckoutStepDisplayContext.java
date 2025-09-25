@@ -44,19 +44,19 @@ public class BadgeConfigCheckoutStepDisplayContext {
         if (_badgeInfo == null) {
             _badgeInfo = new BadgeInfo();
         }
-        String[] salutation = {_user.getJobTitle()};
         List<RegistrationInfo> registrationInfos = (List<RegistrationInfo>) request.getSession().getAttribute("registrationInfos");
         if (registrationInfos != null) {
-            registrationInfos.forEach(registrationInfo -> {
-                if (registrationInfo.getEmail().equals(_user.getEmailAddress())) {
-                    salutation[0] = registrationInfo.getSalutation();
-                }
-            });
+            RegistrationInfo registrationInfo = registrationInfos.get(0);
+            _badgeInfo.setTitle(registrationInfo.getSalutation());
+            _badgeInfo.setInitials(StringUtil.shorten(registrationInfo.getFirstName(), 1));
+            _badgeInfo.setFirstName(registrationInfo.getFirstName());
+            _badgeInfo.setLastName(registrationInfo.getLastName());
+        } else {
+            _badgeInfo.setTitle(_user.getJobTitle());
+            _badgeInfo.setInitials(StringUtil.shorten(_user.getFirstName(), 1));
+            _badgeInfo.setFirstName(_user.getFirstName());
+            _badgeInfo.setLastName(_user.getLastName());
         }
-        _badgeInfo.setTitle(salutation[0]);
-        _badgeInfo.setInitials(StringUtil.shorten(_user.getFirstName(), 1));
-        _badgeInfo.setFirstName(_user.getFirstName());
-        _badgeInfo.setLastName(_user.getLastName());
         ExpandoBridge expandoBridge = _user.getExpandoBridge();
         if (expandoBridge.hasAttribute(BadgeInfo.badge_name_setting)) {
             _badgeInfo.setNameSetting((String) expandoBridge.getAttribute(BadgeInfo.badge_name_setting));

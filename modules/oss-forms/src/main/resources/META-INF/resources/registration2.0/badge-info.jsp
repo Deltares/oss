@@ -27,6 +27,7 @@
             <div class="registration-container">
                 <div class="card-body px-5 py-6">
                     <h1 class="card-title" id="badge-title"></h1>
+                    <i><liferay-ui:message key="dsd.registration.step2.show.example"/></i>
                 </div>
             </div>
         </div>
