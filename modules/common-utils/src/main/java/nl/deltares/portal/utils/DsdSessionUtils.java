@@ -96,6 +96,7 @@ public interface DsdSessionUtils {
      */
     boolean isUserRegisteredFor(User user, Registration registration);
 
+    boolean isUserRegisteredFor(long groupId, long userId, long resourceId);
     /**
      * Validates if user can register for all registrations in list.
      * @param user User wanting to register

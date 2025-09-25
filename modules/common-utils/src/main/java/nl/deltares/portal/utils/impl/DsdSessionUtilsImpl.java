@@ -340,6 +340,12 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         return registrationsCount > 0;
     }
 
+    @Override
+    public boolean isUserRegisteredFor(long groupId, long userId, long resourceId) {
+        int registrationsCount = RegistrationLocalServiceUtil.getRegistrationsCount(groupId, userId, resourceId);
+        return registrationsCount > 0;
+    }
+
     public List<Long> getResourceIdsByUserAndGroup(User user, long groupId) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
                 RegistrationLocalServiceUtil.getRegistrationDataByUserAndGroupId(user.getUserId(), groupId);

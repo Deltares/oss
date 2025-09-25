@@ -18,7 +18,6 @@ import nl.deltares.portal.utils.DsdSessionUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class UserInputValidationContext {
 
@@ -75,26 +74,23 @@ public class UserInputValidationContext {
                 continue;
             }
 
-            Registration registration = getRegistration(info.getArticleId());
-
             User user = _userLocalService.fetchUserByEmailAddress(companyId, email);
             if (user != null) {
-                if (_sessionUtils.isUserRegisteredFor(user, registration)){
-                    exceptions.add(new RegistrationFormException(String.format("User '%s' is already registered for '%s'", user.getEmailAddress(), info.getRegistrationName())));
+                if (_sessionUtils.isUserRegisteredFor(_themeDisplay.getSiteGroupId(), user.getUserId(), info.getResourceId())){
+                    exceptions.add(new RegistrationFormException(String.format("User '%s' is already registered for '%s'", user.getEmailAddress(), info.getTitle())));
+                    continue;
                 }
             }
-            if (registration.hasParent()){
-                Registration parentRegistration = registration.getParentRegistration();
-                if (parentRegistration != null) {
-                    if (_registrationInformation.stream()
-                            .anyMatch(registrationInfo ->
-                                    registrationInfo.getArticleId().equals(parentRegistration.getArticleId()))) continue;
+            if (info.isChildRelation()){
+                if (_registrationInformation.stream()
+                        .anyMatch(registrationInfo ->
+                                registrationInfo.getResourceId() == info.getParentResourceId() &&
+                                registrationInfo.getEmail().equals(email))) continue;
 
-                    if (user != null && !_sessionUtils.isUserRegisteredFor(user, parentRegistration)) {
-                        exceptions.add(new RegistrationFormException(
-                                String.format("User '%s' wishes to register for '%s' but has not selected required parent registration '%s'",
-                                        user.getEmailAddress(), info.getRegistrationName(), parentRegistration.getTitle())));
-                    }
+                if (user == null || !_sessionUtils.isUserRegisteredFor(_themeDisplay.getSiteGroupId(), user.getUserId(), info.getParentResourceId())){
+                    exceptions.add(new RegistrationFormException(
+                            String.format("User '%s' wishes to register for '%s' but has not selected required parent registration '%s'",
+                                    email, info.getTitle(), info.getParentTitle())));
                 }
             }
         }
@@ -111,13 +107,24 @@ public class UserInputValidationContext {
         for (Registration registration : _registrations) {
 
             String articleId = registration.getArticleId();
+            long parentResourceId = 0;
+            String parentTitle = null;
+            if (registration.hasParent()){
+                Registration parentRegistration = registration.getParentRegistration();
+                parentResourceId = parentRegistration.getResourceId();
+                parentTitle = parentRegistration.getTitle();
+            }
+
             int rowCount = ParamUtil.getNumber(request, "count_registration_" + articleId).intValue();
             String POST_FIX;
             for (int i = 0; i < rowCount; i++) {
                 final RegistrationInfo registrationInfo = new RegistrationInfo();
-                registrationInfo.setRegistrationName(registration.getTitle());
+                registrationInfo.setTitle(registration.getTitle());
                 registrationInfo.setArticleId(articleId);
+                registrationInfo.setResourceId(registration.getResourceId());
                 registrationInfo.setPrice((float) registration.getPrice());
+                registrationInfo.setParentResourceId(parentResourceId);
+                registrationInfo.setParentTitle(parentTitle);
 
                 POST_FIX = i == 0 ? "" : "_" + i;
                 registrationInfo.setSalutation(ParamUtil.getString(request, "salutation_" + articleId + POST_FIX));
@@ -129,11 +136,6 @@ public class UserInputValidationContext {
                 _registrationInformation.add(registrationInfo);
             }
         }
-    }
-
-    public Registration getRegistration(String articleId){
-        Optional<Registration> first = _registrations.stream().filter(registration -> registration.getArticleId().equals(articleId)).findFirst();
-        return first.orElse(null);
     }
 
     public void loadRegistrations(String ids) throws Exception {

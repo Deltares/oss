@@ -47,7 +47,7 @@ public class UserRegistrationDisplayContext {
                 }
             }
             RegistrationInfo registrationInfo = new RegistrationInfo();
-            registrationInfo.setRegistrationName(registration.getTitle());
+            registrationInfo.setTitle(registration.getTitle());
             registrationInfo.setArticleId(registration.getArticleId());
             registrationInfo.setPrice((float) registration.getPrice());
             registrationInfo.setFirstName(user.getFirstName());

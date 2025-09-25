@@ -48,8 +48,7 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
         AssetEntryQuery assetEntryQuery = _getAssetEntryQuery();
 
         List<Long> assetIds = new ArrayList<>();
-        for (int i = 0; i < articleIds.length; i++) {
-            String registrationId = articleIds[i];
+        for (String registrationId : articleIds) {
             if (registrationId.isEmpty()) continue;
             JournalArticle latestArticle = JournalArticleLocalServiceUtil.fetchArticle(groupId, registrationId);
             if (latestArticle == null) continue;

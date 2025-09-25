@@ -8,9 +8,11 @@ public class RegistrationInfo {
     private String email = null;
     private String remarks = null;
     private String articleId = null;
-    private String initials = null;
+    private long resourceId = 0;
     private float price = 0;
     private String title;
+    private long parentResourceId = 0;
+    private String parentTitle = null;
 
     public String getRemarks() {
         return remarks;
@@ -64,23 +66,43 @@ public class RegistrationInfo {
         this.articleId = articleId;
     }
 
-    public void setRegistrationName(String title) {
+    public long getResourceId() {
+        return resourceId;
+    }
+
+    public void setResourceId(long resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    public long getParentResourceId() {
+        return parentResourceId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public String getRegistrationName() {
-        return this.title;
+    public String getParentTitle() {
+        return parentTitle;
+    }
+
+    public void setParentTitle(String parentTitle) {
+        this.parentTitle = parentTitle;
+    }
+
+    public void setParentResourceId(long parentResourceId) {
+        this.parentResourceId = parentResourceId;
+    }
+
+    public boolean isChildRelation(){
+        return this.parentResourceId > 0;
     }
 
     public String getArticleId() {
         return this.articleId;
-    }
-
-    public void setInitials(String initials) {
-        this.initials = initials;
-    }
-
-    public String getInitials() {
-        return initials;
     }
 }
