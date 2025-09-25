@@ -1,9 +1,12 @@
 package nl.deltares.forms.internal;
 
+import com.liferay.account.model.AccountEntry;
+import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.GroupServiceUtil;
@@ -38,12 +41,14 @@ public class SubmitOrderDisplayContext {
     private final WebinarUtilsFactory _webinarUtilsFactory;
     private final DsdSessionUtils _dsdSessionUtils;
     private final AdminUtils _adminUtils;
+    private final AccountEntryLocalService _accountEntryLocalService;
     private final Event _event;
     private final UserLocalService _userLocalService;
 
     public SubmitOrderDisplayContext(HttpServletRequest httpServletRequest, ConfigurationProvider configurationProvider,
                                      DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils,
-                                     WebinarUtilsFactory webinarUtilsFactory, AdminUtils adminUtils, UserLocalService userLocalService) throws Exception {
+                                     WebinarUtilsFactory webinarUtilsFactory, AdminUtils adminUtils, UserLocalService userLocalService,
+                                     AccountEntryLocalService accountEntryLocalService) throws Exception {
 
         CPRequestHelper cpRequestHelper = new CPRequestHelper(httpServletRequest);
         _themeDisplay = cpRequestHelper.getThemeDisplay();
@@ -54,6 +59,7 @@ public class SubmitOrderDisplayContext {
         _webinarUtilsFactory = webinarUtilsFactory;
         _adminUtils = adminUtils;
         _userLocalService = userLocalService;
+        _accountEntryLocalService = accountEntryLocalService;
 
         _registrationInfos = (List<RegistrationInfo>) httpServletRequest.getSession().getAttribute("registrationInfos");
         if (_registrationInfos == null || _registrationInfos.isEmpty()) {
@@ -90,9 +96,10 @@ public class SubmitOrderDisplayContext {
 
         List<Exception> exceptions = new ArrayList<>();
         BillingInfo billingInfo = (BillingInfo) _httpServletRequest.getSession().getAttribute("billingInfo");
+        Long accountEntryId = (Long) _httpServletRequest.getSession().getAttribute("selectedAccountEntryId");
         for (RegistrationInfo registrationInfo : _registrationInfos) {
             try {
-                storeUserInformation(registrationInfo, billingInfo);
+                storeUserInformation(registrationInfo, billingInfo, accountEntryId);
             } catch (Exception e) {
                 exceptions.add(new RegistrationFormException(e.getMessage()));
             }
@@ -100,7 +107,7 @@ public class SubmitOrderDisplayContext {
         return exceptions;
     }
 
-    private void storeUserInformation(RegistrationInfo registrationInfo, BillingInfo billingInfo) throws Exception {
+    private void storeUserInformation(RegistrationInfo registrationInfo, BillingInfo billingInfo, Long accountEntryId) throws Exception {
 
         Registration registration = _dsdParserUtils.getRegistration(_themeDisplay.getSiteGroupId(), registrationInfo.getArticleId());
 
@@ -120,9 +127,12 @@ public class SubmitOrderDisplayContext {
         if (billingInfo != null) {
             addBillingAttributes(billingInfo, registrationAttributes);
         }
-
+        AccountEntry accountEntry = null;
+        if (accountEntryId != null){
+            accountEntry = _accountEntryLocalService.fetchAccountEntry(accountEntryId);
+        }
         if (_webinarUtilsFactory.isWebinarSupported(registration)) {
-            registerWebinar(registrationUser, (SessionRegistration) registration, billingInfo, registrationAttributes);
+            registerWebinar(registrationUser, (SessionRegistration) registration, accountEntry, registrationAttributes);
         }
 
         _dsdSessionUtils.registerUser(registrationUser, registration, registrationAttributes, loggedInUser, _event);
@@ -181,19 +191,23 @@ public class SubmitOrderDisplayContext {
     }
 
     private void registerWebinar(User registrationUser, SessionRegistration registration,
-                                 BillingInfo billingInfo, Map<String, String> registrationAttributes) throws Exception {
+                                 AccountEntry accountEntry, Map<String, String> registrationAttributes) throws Exception {
 
         try {
             WebinarUtils webinarUtils = _webinarUtilsFactory.newInstance(registration);
             if (webinarUtils.isActive()) {
                 HashMap<String, String> orgAttributes = new HashMap<>();
 
-                orgAttributes.put(KeycloakUtils.ATTRIBUTES.org_address.name(), billingInfo.getAddress());
-                orgAttributes.put(KeycloakUtils.ATTRIBUTES.org_postal.name(), billingInfo.getPostal());
-                orgAttributes.put(KeycloakUtils.ATTRIBUTES.org_city.name(), billingInfo.getCity());
-                orgAttributes.put(KeycloakUtils.ATTRIBUTES.org_country.name(), billingInfo.getCountry());
-                orgAttributes.put(KeycloakUtils.ATTRIBUTES.org_name.name(), billingInfo.getCompanyName());
-
+                if (accountEntry != null) {
+                    Address billingAddress = accountEntry.getDefaultBillingAddress();
+                    if (billingAddress != null) {
+                        orgAttributes.put(KeycloakUtils.ATTRIBUTES.org_address.name(), billingAddress.getStreet1());
+                        orgAttributes.put(KeycloakUtils.ATTRIBUTES.org_postal.name(), billingAddress.getZip());
+                        orgAttributes.put(KeycloakUtils.ATTRIBUTES.org_city.name(), billingAddress.getCity());
+                        orgAttributes.put(KeycloakUtils.ATTRIBUTES.org_country.name(), billingAddress.getCountry().getName());
+                    }
+                    orgAttributes.put(KeycloakUtils.ATTRIBUTES.org_name.name(), accountEntry.getName());
+                }
                 String source = GroupServiceUtil.getGroup(registration.getGroupId()).getName(Locale.US);
                 webinarUtils.registerUser(registrationUser, orgAttributes, registration.getWebinarKey(), source, registrationAttributes);
             }

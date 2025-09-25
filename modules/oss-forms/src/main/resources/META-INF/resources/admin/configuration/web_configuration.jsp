@@ -73,11 +73,6 @@
                 value="<%= configuration.gotoUserName() %>"/>
 
         <aui:input
-                label="GOTO organizer key"
-                name="gotoOrganizerKey"
-                value="<%= configuration.gotoOrganizerKey() %>"/>
-
-        <aui:input
                 label="GOTO user password"
                 name="gotoUserPassword"
                 type="password"

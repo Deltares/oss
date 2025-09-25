@@ -33,8 +33,6 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
     private static final String GOTO_COORGANIZERS_PATH = "G2W/rest/v2/organizers/%s/webinars/%s/coorganizers";
     private static final String GOTO_PANELISTS_PATH = "G2W/rest/v2/organizers/%s/webinars/%s/panelists";
 
-    private String organizer_key;
-
     public GotoUtils(WebinarSiteConfiguration siteConfiguration) throws IOException {
         if (siteConfiguration == null) throw new NullPointerException("siteConfiguration == null");
         this.configuration = siteConfiguration;
@@ -63,7 +61,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
 
         String rawRegistrationPath = getBasePath() + GOTO_REGISTRANTS_PATH;
         String accessToken = getAccessToken(); //calling this method loads organization key
-        String registrationPath = String.format(rawRegistrationPath, getOrganizerKey(), webinarKey);
+        String registrationPath = String.format(rawRegistrationPath, getOrganizerKey(accessToken), webinarKey);
 
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
@@ -102,7 +100,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
 
         String rawRegistrationPath = getBasePath() + GOTO_REGISTRANTS_PATH;
         String accessToken = getAccessToken(); //calling this method loads organization key
-        String registrationPath = String.format(rawRegistrationPath, getOrganizerKey(), webinarKey);
+        String registrationPath = String.format(rawRegistrationPath, getOrganizerKey(accessToken), webinarKey);
         String unregisterPath = registrationPath + '/' + registrantKey;
 
         HashMap<String, String> headers = new HashMap<>();
@@ -179,7 +177,7 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
     private String callGotoApi(String webinarKey, String apiPathTemplate, boolean cacheResponse) throws Exception {
         //open connection
         String accessToken = getAccessToken(); //calling this method loads organization key
-        String apiPath = String.format(apiPathTemplate, getOrganizerKey(), webinarKey);
+        String apiPath = String.format(apiPathTemplate, getOrganizerKey(accessToken), webinarKey);
         String apiPathExpiry = apiPath + ".expirytime";
         if (cacheResponse) {
             final String cachedResponse = getCachedToken(apiPath, apiPathExpiry);
@@ -223,9 +221,30 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
         return courseRegistrations.contains(user.getEmailAddress().toLowerCase());
     }
 
-    private String getOrganizerKey() {
+    private String getOrganizerKey(String accessToken) {
+        String organizer_key = CACHE_TOKEN ? getCachedToken(CACHED_ORGANIZER_KEY, null) : null;
         if (organizer_key != null) return organizer_key;
-        return CACHE_TOKEN ? getCachedToken(CACHED_ORGANIZER_KEY, null) : null;
+
+        Map<String,String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/x-www-form-urlencoded");
+        headers.put("Authorization", "Bearer " + accessToken);
+
+        try {
+            HttpURLConnection connection = getConnection(getOrganizerPath(), "GET", headers);
+            String jsonResponse = readAll(connection);
+            Map<String, String> parsedResponse = JsonContentUtils.parseJsonToMap(jsonResponse);
+
+            organizer_key = parsedResponse.get("id");
+            if (CACHE_TOKEN){
+                setCachedToken(CACHED_ORGANIZER_KEY, null, organizer_key, 0);
+            }
+            return organizer_key;
+        } catch (IOException | JSONException e){
+            clearAccessTokens(CACHED_TOKEN_PREFIX);
+            LOG.error("Failed to get organizer key: " + e.getMessage());
+        }
+
+        return null;
     }
 
     private void writePostData(HttpURLConnection connection, User user, Map<String, String> userAttributes, String callerId) throws IOException {
@@ -264,13 +283,9 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
             String jsonResponse = readAll(connection);
             Map<String, String> parsedToken = JsonContentUtils.parseJsonToMap(jsonResponse);
 
-            String organizer_key = parsedToken.get("organizer_key");
             if (CACHE_TOKEN){
-                setCachedToken(CACHED_ORGANIZER_KEY, null, organizer_key, 0);
                 cacheAccessTokens(CACHED_TOKEN_PREFIX, parsedToken);
             }
-            this.organizer_key = organizer_key; //for if cache is disabled
-
             return parsedToken.get("access_token");
         } catch (IOException | JSONException e){
             clearAccessTokens(CACHED_TOKEN_PREFIX);
@@ -305,8 +320,9 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
     }
 
     protected String getTokenPath(){
-        String basePath = getBasePath();
-        return basePath + "oauth/v2/token";
+        return configuration.gotoTokenURL();
     }
-
+    protected String getOrganizerPath(){
+        return getBasePath() + "identity/v1/Users/me";
+    }
 }
