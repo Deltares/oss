@@ -38,18 +38,12 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.portal.common-utils",
-    "version" : "1.1.1",
+    "version" : "1.1.2",
     "extension" : "jar"
   },
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.oss.portlet.download-activity-map",
-    "version" : "1.1.0",
-    "extension" : "jar"
-  },
-  {
-    "groupId" : "nl.deltares",
-    "artifactId" : "nl.deltares.portal.config.contributor",
     "version" : "1.1.0",
     "extension" : "jar"
   },
@@ -74,7 +68,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.forms",
-    "version" : "1.1.1",
+    "version" : "1.1.2",
     "extension" : "jar"
   },
   {
