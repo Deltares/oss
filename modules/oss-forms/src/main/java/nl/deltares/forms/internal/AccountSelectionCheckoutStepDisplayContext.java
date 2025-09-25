@@ -98,7 +98,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
 
     public String getCompanyReferenceCode(AccountEntry accountEntry) {
         if (accountEntry != null) {
-            return (String) accountEntry.getExpandoBridge().getAttribute(OrganizationConstants.ORG_REGISTRATION_ID, false);
+            return accountEntry.getExternalReferenceCode();
         }
         return "";
     }
@@ -246,7 +246,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
             if (!accountEntry.getExpandoBridge().hasAttribute(OrganizationConstants.ORG_REGISTRATION_ID)) {
                 accountEntry.getExpandoBridge().addAttribute(OrganizationConstants.ORG_REGISTRATION_ID);
             }
-            accountEntry.getExpandoBridge().setAttribute(OrganizationConstants.ORG_REGISTRATION_ID, companyRegistrationId, false);
+            accountEntry.setExternalReferenceCode(companyRegistrationId);
 
             if (!accountEntry.getExpandoBridge().hasAttribute(OrganizationConstants.ORG_WEBSITE)) {
                 accountEntry.getExpandoBridge().addAttribute(OrganizationConstants.ORG_WEBSITE);
