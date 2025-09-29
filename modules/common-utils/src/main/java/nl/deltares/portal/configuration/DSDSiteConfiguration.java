@@ -14,6 +14,9 @@ import nl.deltares.portal.constants.OssConstants;
 )
 public interface DSDSiteConfiguration {
 
+    @Meta.AD(required = false, deflt = "10131", description = "Organization ID where all accounts are stored.")
+    long organizationIdForStoringAccounts();
+
     @Meta.AD(required = false, deflt = "0")
     long eventId();
 
