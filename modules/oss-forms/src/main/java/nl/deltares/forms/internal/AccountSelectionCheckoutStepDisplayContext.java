@@ -6,12 +6,15 @@ import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.*;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.*;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import nl.deltares.forms.constants.OrganizationConstants;
 import nl.deltares.forms.exception.RegistrationFormException;
+import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.utils.AccountUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +34,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
     final ThemeDisplay _themeDisplay;
     final User _user;
     final User _accountUser;
+    private final long organizationId;
 
     private boolean _accountsLoaded = false;
     private final List<AccountEntry> accounts = new ArrayList<>();
@@ -38,7 +42,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
     public AccountSelectionCheckoutStepDisplayContext(HttpServletRequest request, AccountEntryLocalService accountEntryLocalService,
                                                       AddressLocalService addressLocalService, CountryLocalService countryLocalService,
                                                       PhoneLocalService phoneLocalService, UserLocalService userLocalService,
-                                                      AccountUtils commerceUtils) {
+                                                      AccountUtils commerceUtils, ConfigurationProvider configurationProvider) throws ConfigurationException {
 
         _accountEntryLocalService = accountEntryLocalService;
         _addressLocalService = addressLocalService;
@@ -50,6 +54,9 @@ public class AccountSelectionCheckoutStepDisplayContext{
         _themeDisplay = cpRequestHelper.getThemeDisplay();
         _user = _themeDisplay.getUser();
         _accountUser = getAccountUser();
+
+        DSDSiteConfiguration _configuration = configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, _themeDisplay.getScopeGroupId());
+        organizationId = _configuration.organizationIdForStoringAccounts();
     }
 
     public String getTitle() {
@@ -61,7 +68,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
     }
 
     public long getCompanyId() {
-        return 10131;
+        return organizationId;
     }
 
     public void loadAccounts() {

@@ -8,6 +8,7 @@ package nl.deltares.forms.util;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.AddressLocalService;
 import com.liferay.portal.kernel.service.CountryLocalService;
 import com.liferay.portal.kernel.service.PhoneLocalService;
@@ -55,7 +56,8 @@ public class AccountSelectionCheckoutStep extends BaseCheckoutStep {
         HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
         AccountSelectionCheckoutStepDisplayContext _displayContext =
                 new AccountSelectionCheckoutStepDisplayContext(httpServletRequest, _accountEntryLocalService,
-                        _addressLocalService, _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
+                        _addressLocalService, _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils,
+                        _configurationProvider);
 
         AccountEntry accountEntry = _displayContext.storeAccountInfo(httpServletRequest);
 
@@ -71,7 +73,8 @@ public class AccountSelectionCheckoutStep extends BaseCheckoutStep {
 
         AccountSelectionCheckoutStepDisplayContext _displayContext =
                 new AccountSelectionCheckoutStepDisplayContext(httpServletRequest, _accountEntryLocalService,
-                        _addressLocalService, _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
+                        _addressLocalService, _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils,
+                        _configurationProvider);
 
         httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, _displayContext);
 
@@ -116,4 +119,6 @@ public class AccountSelectionCheckoutStep extends BaseCheckoutStep {
     @Reference
     private AccountUtils _commerceUtils;
 
+    @Reference
+    private ConfigurationProvider _configurationProvider;
 }
