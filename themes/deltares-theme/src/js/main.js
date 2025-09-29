@@ -397,14 +397,15 @@ ShoppingCart = {
 }
 
     // Mobile menu
-    var mobileContainer = document.querySelector('.mobile-container');
+var mobileContainer = document.querySelector('.mobile-container');
+if ( mobileContainer ) {
     var mobileButtons = mobileContainer.querySelectorAll('.mobile-btn');
     var mobileMenuButton = mobileContainer.querySelector('.mobile-menu-btn');
     var mobileLangButton = mobileContainer.querySelector('.mobile-lang-btn');
     var mobileMainnav = mobileContainer.querySelector('.mobile-mainnav');
 
-    mobileButtons.forEach(function (mobileButton){
-        mobileButton.addEventListener('click', function() {
+    mobileButtons.forEach(function (mobileButton) {
+        mobileButton.addEventListener('click', function () {
             if (this.classList.contains('opened')) {
                 menuOverlay.classList.remove('is-open');
                 mobileContainer.querySelector('.mobile-navpanel').classList.remove('is-open');
@@ -424,7 +425,7 @@ ShoppingCart = {
         });
     });
 
-    mobileMenuButton.addEventListener('click', function() {
+    mobileMenuButton.addEventListener('click', function () {
         if (this.classList.contains('opened')) {
             this.setAttribute('aria-expanded', 'false');
             this.classList.remove('opened');
@@ -440,7 +441,7 @@ ShoppingCart = {
         }
     });
 
-    mobileLangButton.addEventListener('click', function() {
+    mobileLangButton.addEventListener('click', function () {
         if (this.classList.contains('opened')) {
             this.setAttribute('aria-expanded', 'false');
             this.classList.remove('opened');
@@ -481,13 +482,16 @@ ShoppingCart = {
             }
         });
     });
+
+}
     // Main navigation (desktop)
     var navMenu = document.querySelector('.main-navbar .nav-menu');
+if ( navMenu ) {
     var menuOverlay = document.querySelector('.menu-overlay');
     var navMenuButtons = navMenu.querySelectorAll('button');
 
-    navMenuButtons.forEach(function (navMenuButton){
-        navMenuButton.addEventListener('click', function() {
+    navMenuButtons.forEach(function (navMenuButton) {
+        navMenuButton.addEventListener('click', function () {
             if (this.classList.contains('opened')) {
                 this.setAttribute('aria-expanded', 'false');
                 this.classList.remove('opened');
@@ -507,7 +511,7 @@ ShoppingCart = {
         });
     });
 
-    menuOverlay.addEventListener('click', function() {
+    menuOverlay.addEventListener('click', function () {
         // When opened, reset mobile menu
         mobileButtons.forEach(function (mobileButton) {
             if (mobileButton.classList.contains('opened')) {
@@ -527,6 +531,7 @@ ShoppingCart = {
         navMenu.querySelector('.nav-subpanel').classList.remove('is-open');
         document.querySelector('body').classList.remove('overflow-hidden');
     });
+}
 
 function checkStep(form, requiredStep) {
     return (getCurrentStep(form) === requiredStep);
