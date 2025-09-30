@@ -67,6 +67,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
 
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
+        long organizationIdForStoringAccounts = ParamUtil.getLong(actionRequest, "organizationIdForStoringAccounts");
         long eventId = ParamUtil.getLong(actionRequest, "eventId");
         String registrationURL = ParamUtil.getString(actionRequest, "registrationURL");
         String busTransferURL = ParamUtil.getString(actionRequest, "busTransferURL");
@@ -91,6 +92,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         ModifiableSettings modifiableSettings =
                 settings.getModifiableSettings();
 
+        modifiableSettings.setValue("organizationIdForStoringAccounts", String.valueOf(organizationIdForStoringAccounts) );
         modifiableSettings.setValue("eventId", String.valueOf(eventId));
         modifiableSettings.setValue("registrationURL", registrationURL);
         modifiableSettings.setValue("busTransferURL", busTransferURL);
