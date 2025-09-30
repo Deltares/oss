@@ -5,6 +5,7 @@ import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.Country;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.AddressLocalService;
 import com.liferay.portal.kernel.service.CountryLocalService;
 import com.liferay.portal.kernel.service.PhoneLocalService;
@@ -42,9 +43,11 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
     public BillingDetailsCheckoutStepDisplayContext(HttpServletRequest request, AddressLocalService addressLocalService,
                                                     AccountEntryLocalService accountEntryLocalService,
                                                     CountryLocalService countryLocalService, PhoneLocalService phoneLocalService,
-                                                    UserLocalService userLocalService, AccountUtils commerceUtils) throws Exception {
+                                                    UserLocalService userLocalService, AccountUtils commerceUtils,
+                                                    ConfigurationProvider configurationProvider) throws Exception {
 
-        super(request, accountEntryLocalService, addressLocalService, countryLocalService, phoneLocalService, userLocalService, commerceUtils);
+        super(request, accountEntryLocalService, addressLocalService, countryLocalService, phoneLocalService, userLocalService,
+                commerceUtils, configurationProvider);
 
         _billingInfo = (BillingInfo) request.getSession().getAttribute("billingInfo");
         if (_billingInfo == null) {

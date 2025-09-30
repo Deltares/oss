@@ -2,6 +2,7 @@ package nl.deltares.forms.util;
 
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.AddressLocalService;
 import com.liferay.portal.kernel.service.CountryLocalService;
 import com.liferay.portal.kernel.service.PhoneLocalService;
@@ -21,7 +22,6 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.Collections;
 
 @Component(
@@ -47,7 +47,7 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
 
         BillingDetailsCheckoutStepDisplayContext _displayContext = new BillingDetailsCheckoutStepDisplayContext(
                 httpServletRequest, _addressLocalService, _accountEntryLocalService,
-                _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
+                _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils, _configurationProvider);
         _displayContext.validateRequestData(httpServletRequest);
 
         try {
@@ -65,7 +65,7 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
 
         BillingDetailsCheckoutStepDisplayContext _displayContext = new BillingDetailsCheckoutStepDisplayContext(
                 httpServletRequest, _addressLocalService, _accountEntryLocalService,
-                _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
+                _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils, _configurationProvider);
         httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, _displayContext);
         _jspRenderer.renderJSP(
                 httpServletRequest, httpServletResponse,
@@ -78,7 +78,7 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
         try {
             BillingDetailsCheckoutStepDisplayContext _displayContext = new BillingDetailsCheckoutStepDisplayContext(
                     httpServletRequest, _addressLocalService, _accountEntryLocalService,
-                    _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils);
+                    _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils, _configurationProvider);
             return _displayContext.isPaymentRequired(httpServletRequest, _dsdParserUtils);
         } catch (Exception e) {
             return false;
@@ -111,5 +111,8 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
 
     @Reference
     private DsdParserUtils _dsdParserUtils;
+
+    @Reference
+    private ConfigurationProvider _configurationProvider;
 
 }
