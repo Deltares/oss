@@ -11,7 +11,8 @@
                         <#list FooterLinksLeft.LinkToPage.getSiblings() as cur_FooterLinksLeft>
                             <li>
                                 <#assign linkData = cur_FooterLinksLeft.getData()?eval >
-                                <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, linkData.layoutId?number) />
+                                <p>linkData</p>
+                                <#assign linkLayout=layoutUtils.getLinkToPageLayout(linkData.groupId?number, false, linkData.layoutId?number) />
                                 <a href="${cur_FooterLinksLeft.getFriendlyUrl()}" class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
                                     <div class="text-white">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" aria-hidden="false" role="img">
@@ -30,7 +31,7 @@
                 <h2 class="mb-3 text-base font-semibold text-white"><@liferay.language key='dsd.theme.footer.watch.header' /></h2>
                 <ul class="link-list">
                     <li class="mb-1.5 leading-normal">
-                        <a href="/deltares-podcasts-${localePostfix}" class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
+                        <a href="/web/dsd-home/deltares-podcasts-${localePostfix}" class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
                             <div class="text-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" aria-hidden="false" role="img" class="mr-3"><path fill="currentColor" d="M1,17.9h22.8L13.3,28.4L16,31l15-15L16,1l-2.6,2.6l10.4,10.5H1V17.9z"></path></svg>
                             </div>
@@ -38,7 +39,7 @@
                         </a>
                     </li>
                     <li class="mb-1.5">
-                        <a href="/deltares-webinars-${localePostfix}"  class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
+                        <a href="/web/dsd-home/deltares-webinars-${localePostfix}"  class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
                             <div class="text-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" aria-hidden="false" role="img" class="mr-3"><path fill="currentColor" d="M1,17.9h22.8L13.3,28.4L16,31l15-15L16,1l-2.6,2.6l10.4,10.5H1V17.9z"></path></svg>
                             </div>
@@ -50,7 +51,7 @@
                 <h2 class="mb-3 text-base font-semibold text-white"><@liferay.language key='dsd.theme.footer.contact.header' /></h2>
                 <ul class="link-list">
                     <li class="mb-1.5 leading-normal">
-                        <a href="/deltares-contact-${localePostfix}" class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
+                        <a href="/web/dsd-home/deltares-contact-${localePostfix}" class="underline-offset-2 font-semibold inline-flex items-center transition duration-200 items-start leading-none cursor-pointer text-white text-base tracking-wider">
                             <div class="text-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32" aria-hidden="false" role="img">
                                     <path fill="currentColor" d="M1,17.9h22.8L13.3,28.4L16,31l15-15L16,1l-2.6,2.6l10.4,10.5H1V17.9z"></path>
@@ -112,7 +113,7 @@
                 <#list FooterLinksRight.LinkToPage1.getSiblings() as cur_FooterLinksRight>
                     <li class="my-2 my-md-3 text-sm">
                         <#assign linkData = cur_FooterLinksRight.getData()?eval >
-                        <#assign linkLayout=layoutUtils.getLinkToPageLayout(groupId, false, linkData.layoutId?number) />
+                        <#assign linkLayout=layoutUtils.getLinkToPageLayout(linkData.groupId?number, false, linkData.layoutId?number) />
                         <a href="${cur_FooterLinksRight.getFriendlyUrl()}">${linkLayout.getName(themeDisplay.getLocale())}</a>
                     </li>
                 </#list>
