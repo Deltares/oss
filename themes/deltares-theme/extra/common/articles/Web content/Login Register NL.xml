@@ -1,0 +1,67 @@
+<style type="text/css">
+    .registration-info {
+    background-color:#e5eef2;
+    padding: 10px;
+    }
+    a.right {
+    float: right;
+    }
+</style>
+<fieldset >
+
+    <a aria-controls="site_configContent" aria-expanded="false"
+       class="collapse-icon collapse-icon-middle sheet-subtitle collapsed" data-toggle="liferay-collapse"
+       href="#registration-info" role="button">
+        <span class="c-inner" tabindex="-1">
+            <span>Login / Register</span>
+            <span class="collapse-icon-closed" >&gt;</span>
+            <span class="collapse-icon-open" >X</span>
+        </span>
+    </a>
+    <div id="login_button"></div>
+    <div class="panel-collapse collapse" id="registration-info" >
+        <div class="registration-info"> 
+            <h3>REGISTRATIE</h3>
+            <ol>
+                <li>Log in (rechtsboven) met uw MyDeltares-account of registreer u eerst als u nog geen account heeft.
+                    <br />
+                    <em>Let op: als u al een DSD- of OSS-account heeft, maar nog geen MyDeltares-account, klik dan op
+                        <a href="http://accounts.deltares.nl/auth/realms/liferay-portal/login-actions/reset-credentials">Wachtwoord vergeten?</a>
+                        om uw MyDeltares-account in te stellen. Nadat u het proces voor het opnieuw instellen van uw wachtwoord hebt voltooid, kunt u inloggen.
+                    </em>
+                </li>
+
+                <li>Klik op de knop &lt;IN WINKELWAGEN&gt; voor de gewenste sessie.
+                </li>
+
+                <li>Ga naar uw “Winkelwagen” (rechterbovenhoek) om uw registratie af te ronden.
+                </li>
+
+                <li>Mocht u problemen ondervinden bij de registratie, neem dan contact op met ons team via <a href="mailto:mydeltares@deltares.nl?subject=DSD-NL%202025">mydeltares@deltares.nl</a>.
+                </li>
+            </ol>
+        </div>
+    </div>
+</fieldset>
+<script>
+    if (typeof login_ref === 'undefined' || login_ref === null ){
+        let login_ref;
+        let login_text;
+    }
+    var homeUrl = Liferay.ThemeDisplay.getCDNHost();
+    var path = Liferay.ThemeDisplay.getLayoutRelativeURL();
+    var langPath = path.substr(0, path.lastIndexOf('/'));
+    if (langPath.includes('/web')){
+        langPath = langPath.substr(0, path.lastIndexOf('/web'));
+    }
+    if (Liferay.ThemeDisplay.isSignedIn()){
+        login_ref = homeUrl + langPath + "/c/portal/logout";
+        login_text = "Logout";
+    } else {
+        login_ref = homeUrl + langPath + "/c/portal/login"
+        login_text = "Login / Register";
+    }
+    document.getElementById('login_button').innerHTML =
+    "<a aria-pressed='true' class='btn-lg btn-primary right' href=" + login_ref + " role='button'>" + login_text + "</a>"
+
+</script>
