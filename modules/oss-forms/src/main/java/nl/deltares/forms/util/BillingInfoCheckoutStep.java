@@ -2,6 +2,8 @@ package nl.deltares.forms.util;
 
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.AddressLocalService;
 import com.liferay.portal.kernel.service.CountryLocalService;
@@ -15,6 +17,7 @@ import nl.deltares.forms.internal.BillingDetailsCheckoutStepDisplayContext;
 import nl.deltares.model.BillingInfo;
 import nl.deltares.portal.utils.AccountUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
+import nl.deltares.tasks.impl.ImportAccountsRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -33,6 +36,7 @@ import java.util.Collections;
 )
 public class BillingInfoCheckoutStep extends BaseCheckoutStep {
 
+    private static final Log logger = LogFactoryUtil.getLog(BillingInfoCheckoutStep.class);
     public static final String NAME = "billing-info";
 
     @Override
@@ -81,6 +85,7 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
                     _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils, _configurationProvider);
             return _displayContext.isPaymentRequired(httpServletRequest, _dsdParserUtils);
         } catch (Exception e) {
+            logger.warn("Error checking 'isActive': " + e.getMessage());
             return false;
         }
     }

@@ -53,10 +53,15 @@ public class AccountSelectionCheckoutStepDisplayContext{
         CPRequestHelper cpRequestHelper = new CPRequestHelper(request);
         _themeDisplay = cpRequestHelper.getThemeDisplay();
         _user = _themeDisplay.getUser();
-        _accountUser = getAccountUser();
 
         DSDSiteConfiguration _configuration = configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, _themeDisplay.getScopeGroupId());
-        organizationId = _configuration.organizationIdForStoringAccounts();
+        long companyId = _configuration.organizationIdForStoringAccounts();
+        if (companyId == 0) {
+            organizationId = _user.getCompanyId();
+        } else {
+            organizationId = companyId;
+        }
+        _accountUser = getAccountUser();
     }
 
     public String getTitle() {
@@ -270,6 +275,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
      */
     private User getAccountUser() {
         long accountCompanyId = getCompanyId();
+        if (accountCompanyId == 0) return _user;
         if (accountCompanyId != _user.getCompanyId()){
             User user = _userLocalService.fetchUserByEmailAddress(accountCompanyId, _user.getEmailAddress());
             if (user == null) {
