@@ -10,8 +10,12 @@ import com.liferay.portal.kernel.events.LifecycleEvent;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
+import com.liferay.portal.kernel.service.RoleServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import nl.deltares.portal.utils.GeoIpUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.portal.utils.SanctionCheckUtils;
@@ -28,6 +32,7 @@ import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author rooij_e
@@ -110,6 +115,14 @@ public class PostLoginAction implements LifecycleAction {
             }
         }
 
+        //Add user to the site role 'MB Contributor' once user account is more than a day old. This to prevent spam.
+        Role mbContributor = RoleLocalServiceUtil.fetchRole(user.getCompanyId(), "MB Contributor");
+        if (mbContributor != null && !UserLocalServiceUtil.hasRoleUser(mbContributor.getRoleId(), user.getUserId())) {
+            boolean before = user.getCreateDate().before(new Date(System.currentTimeMillis() - TimeUnit.HOURS.toMillis(24)));
+            if (before){
+                UserLocalServiceUtil.addRoleUser(mbContributor.getRoleId(), user);
+            }
+        }
         try {
             int unreadUserAnnouncements = getUnreadUserAnnouncements(user);
             request.getSession().setAttribute("LIFERAY_SHARED_userAnnouncements", unreadUserAnnouncements);
