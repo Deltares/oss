@@ -1,7 +1,3 @@
-import com.liferay.portal.util.PropsUtil;
-import nl.deltares.portal.utils.impl.KeycloakUtilsImpl;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
