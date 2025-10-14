@@ -13,7 +13,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
-import com.liferay.portal.kernel.service.RoleServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import nl.deltares.portal.utils.GeoIpUtils;
@@ -120,7 +119,12 @@ public class PostLoginAction implements LifecycleAction {
         if (mbContributor != null && !UserLocalServiceUtil.hasRoleUser(mbContributor.getRoleId(), user.getUserId())) {
             boolean before = user.getCreateDate().before(new Date(System.currentTimeMillis() - TimeUnit.HOURS.toMillis(24)));
             if (before){
-                UserLocalServiceUtil.addRoleUser(mbContributor.getRoleId(), user);
+                try {
+                    RoleLocalServiceUtil.addUserRole(user.getUserId(), mbContributor);
+                    UserLocalServiceUtil.updateUser(user);
+                } catch (Exception e){
+                    LOG.warn(String.format("Error adding user ' %s' to 'MB Contributor' role: %s", user.getEmailAddress(), e.getMessage()));
+                }
             }
         }
         try {
