@@ -94,25 +94,36 @@
         shareLinkUrl = baseUrl + "/createShareLink/"
 
         let pAuth = Liferay.authToken;
-        $.ajax({
-            type: "POST",
-            url: shareLinkUrl + '?p_auth=' + pAuth,
-            data: "{" +
-                "\"fileName\": \"" + fileName + "\"," +
-                "\"filePath\": \"" + filePath + "\"," +
-                "\"downloadId\": \"" + articleId + "\"," +
-                "\"groupId\": \"" + groupId + "\"," +
-                "\"countryCode\": \"" + countryCode + "\"" +
-                "}",
-            contentType: "application/json",
-            success : function(response, status, xhr) {
-                downloadFile(response.url, fileName);
-                logSuccess(fileName)
-            },
-            error : function(request, status, error) {
-                let errorMessage = request.responseJSON.errorMessage;
-                logError(fileName, errorMessage);
-            }
+        fetch(shareLinkUrl + '?p_auth=' + pAuth,
+            {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    fileName : fileName,
+                    filePath : filePath,
+                    downloadId: articleId,
+                    groupId: groupId,
+                    countryCode: countryCode
+                })
+            }).then( response => {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json();
+                } else {
+                    throw new Error(response.status + ':' + response.statusText)
+                }
+            })
+            .then(data => {
+                if (data.errorMessage){
+                    logError(fileName, data.errorMessage)
+                } else {
+                    downloadFile(data.url, fileName);
+                    logSuccess(fileName)
+                }
+            }).catch(error => {
+            logError(fileName, error);
         });
 
     }
@@ -121,22 +132,21 @@
         let pAuth = Liferay.authToken;
 
         registerUrl = baseUrl + "/register/"
-        $.ajax({
-            type: "POST",
-            url: registerUrl + '?p_auth=' + pAuth,
-            data: "{" +
-                "\"fileName\": \"" + fileName + "\"," +
-                "\"fileShare\": \"" + shareLink + "\"," +
-                "\"downloadId\": \"" + articleId + "\"," +
-                "\"groupId\": \"" + groupId + "\"" +
-                "}",
-            contentType: "application/json",
-            success : function(response, status, xhr) {;
-                logSuccess(fileName)
+        fetch(registerUrl + '?p_auth=' + pAuth, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
             },
-            error : function(request, status, error) {
-                logError(articleId, request.responseText)
-            }
+            data: JSON.stringify({
+                fileName: fileName,
+                fileShare: shareLink,
+                downloadId: articleId,
+                groupId: groupId
+            })
+        }).then( response => {
+            if (!response.ok) logError(fileName);
+        }).catch(error => {
+            logError(fileName, error);
         });
     }
 
@@ -177,14 +187,18 @@
 
     function logSuccess(fileName) {
         let alertEl = document.getElementById("download-alert");
-        alertEl.classList.replace("hidden", "alert-success");
+        alertEl.classList.remove("hidden");
+        alertEl.classList.remove("alert-warning")
+        alertEl.classList.add("alert-success");
         let messageEl = document.getElementById("download-alert-message");
         messageEl.innerHTML = "<strong class=\"lead\">Finished download process for file:</strong><br/>" + fileName
     }
 
     function logError(fileName, error) {
         let alertEl = document.getElementById("download-alert");
-        alertEl.classList.replace("hidden", "alert-warning");
+        alertEl.classList.remove("hidden");
+        alertEl.classList.remove("alert-success")
+        alertEl.classList.add("alert-warning");
         let messageEl = document.getElementById("download-alert-message");
         messageEl.innerHTML = "<strong class=\"lead\">Error downloading file:</strong><br/>" + fileName + "<br/>Error: " + error
 
