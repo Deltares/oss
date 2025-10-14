@@ -70,7 +70,7 @@ public class DownloadRestService {
                 shareInfo = downloadUtils.createShareLink(filePath, user.getEmailAddress(), false);
             }
         } catch (Exception e) {
-            return Response.serverError().type(MediaType.APPLICATION_JSON).entity(Helper.getErrorResponseMessage("Error creating share link: ", e)).build();
+            return Response.serverError().type(MediaType.APPLICATION_JSON).entity(Helper.getErrorResponseMessage("Error creating share link", e)).build();
         }
         Map<String, String> userAttributes;
         try {
