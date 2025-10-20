@@ -97,7 +97,7 @@ public class ImportAccountsRequest extends AbstractDataRequest {
                             continue;
                         }
                         try {
-                            _accountUtils.createOrUpdateBusinessAccountEntry(accountInfo, _companyId);
+                            _accountUtils.createOrUpdateBusinessAccountEntry(accountInfo, _companyId, currentUserId);
                             logger.info(String.format("Imported account '%s' with address '%s'",
                                     accountInfo.getCompanyName(), accountInfo.getAddressInfo().getAddressName()));
                         } catch (Exception e){

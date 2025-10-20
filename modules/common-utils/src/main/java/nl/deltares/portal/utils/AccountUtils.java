@@ -20,7 +20,7 @@ public interface AccountUtils {
     AccountEntry createPersonAccountEntry(User user) throws PortalException;
 
     @SuppressWarnings("UnusedReturnValue")
-    AccountEntry createOrUpdateBusinessAccountEntry(AccountInfo accountInfo, long companyId) throws PortalException;
+    AccountEntry createOrUpdateBusinessAccountEntry(AccountInfo accountInfo, long companyId, long currentUserId) throws PortalException;
 
-    Address createOrUpdateAddress(AddressInfo addressInfo, long companyId) throws PortalException;
+    Address createOrUpdateAddress(AddressInfo addressInfo, long companyId, long currentUserId, AccountEntry accountEntry) throws PortalException;
 }
