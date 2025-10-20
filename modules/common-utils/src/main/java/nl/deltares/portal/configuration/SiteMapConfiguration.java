@@ -15,5 +15,9 @@ import nl.deltares.portal.constants.OssConstants;
 public interface SiteMapConfiguration {
 
     @Meta.AD(required = false, deflt = "", description = "Site ID of download portal")
-    String downloadPortalSiteId();
+    Long downloadPortalSiteId();
+
+    @Meta.AD(required = false, deflt = "10131", description = "Company ID for storing accounts")
+    Long accountsCompanyId();
+
 }

@@ -161,7 +161,7 @@ public class DownloadActivityMapPortlet extends MVCPortlet {
             try {
                 SiteMapConfiguration configuration = _configurationProvider.getSystemConfiguration(
                         SiteMapConfiguration.class);
-                downloadSiteId = Long.parseLong(configuration.downloadPortalSiteId());
+                downloadSiteId = configuration.downloadPortalSiteId();
             } catch (Exception e) {
                 LOG.error("Error retrieving ID for download portal from SiteMapConfiguration: " + e.getMessage());
                 downloadSiteId = themeDisplay.getSiteGroupId();

@@ -5,6 +5,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import nl.deltares.portal.model.AccountInfo;
 import nl.deltares.portal.model.AddressInfo;
 import nl.deltares.portal.utils.AccountUtils;
+import nl.deltares.portal.utils.CsvParser;
 import nl.deltares.tasks.AbstractDataRequest;
 
 import java.io.*;
@@ -13,6 +14,20 @@ import java.nio.file.Files;
 import static nl.deltares.tasks.DataRequest.STATUS.*;
 
 public class ImportAccountsRequest extends AbstractDataRequest {
+
+    public final String MaconomyId = "maconomy_id";
+    public final String CompanyName = "company_name";
+    public final String Domain = "domain";
+    public final String VAT = "vat";
+    public final String Phone = "phone";
+    public final String Website = "website";
+    public final String Address = "address";
+    public final String PostalCode = "postal_code";
+    public final String City = "city";
+    public final String State = "state";
+    public final String CountryCode = "country_code";
+
+    private final String[] CsvHeaderNames = {MaconomyId, CompanyName, Domain, VAT, Phone, Website, Address, PostalCode, City, State, CountryCode};
 
     private static final Log logger = LogFactoryUtil.getLog(ImportAccountsRequest.class);
     private final String _accountFilePath;
@@ -63,23 +78,26 @@ public class ImportAccountsRequest extends AbstractDataRequest {
                 logger.info(message);
                 writer.println(message);
 
-                String line;
+                String[] lineItems;
                 try (BufferedReader reader = new BufferedReader(new FileReader(accountsFile))) {
+
+                    CsvParser csvParser = new CsvParser(reader, ';');
+                    csvParser.setHeaders(CsvHeaderNames);
                     int lineCounter = 0;
-                    while ((line = reader.readLine()) != null) {
+
+                    while ((lineItems = csvParser.readLine()) != null) {
                         lineCounter++;
-                        incrementProcessCount(line.length());
-                        final String[] split = line.split(";");
-                        if (split.length == 0) continue;
+                        incrementProcessCount(getSummedStringLength(lineItems));
+                        if (lineItems.length == 0) continue;
                         AccountInfo accountInfo;
                         try {
-                            accountInfo = parseLine(line);
+                            accountInfo = toAccountInfo(lineItems, csvParser);
                         } catch (Exception e){
                             logger.error(String.format("Error parsing line %d: %s", lineCounter, e.getMessage()));
                             continue;
                         }
                         try {
-                            _accountUtils.createBusinessAccountEntry(accountInfo, _companyId);
+                            _accountUtils.createOrUpdateBusinessAccountEntry(accountInfo, _companyId);
                             logger.info(String.format("Imported account '%s' with address '%s'",
                                     accountInfo.getCompanyName(), accountInfo.getAddressInfo().getAddressName()));
                         } catch (Exception e){
@@ -111,11 +129,45 @@ public class ImportAccountsRequest extends AbstractDataRequest {
 
     }
 
+    int getSummedStringLength(String[] arr) {
+        int sum = 0;
+        for (String s : arr) {
+            if (s != null) {
+                sum += s.length();
+            }
+        }
+        return sum;
+    }
     //todo
-    private AccountInfo parseLine(String line) {
+    private AccountInfo toAccountInfo(String[] line, CsvParser csvParser) {
         AccountInfo accountInfo = new AccountInfo();
+        int columnIndex = csvParser.getColumnIndex(MaconomyId);
+        if (columnIndex != -1) accountInfo.setCompanyIdentifier(line[columnIndex]);
+        columnIndex = csvParser.getColumnIndex(CompanyName);
+        if (columnIndex != -1) accountInfo.setCompanyName(line[columnIndex]);
+        columnIndex = csvParser.getColumnIndex(Domain);
+        if (columnIndex != -1) accountInfo.setEmailDomain(line[columnIndex]);
+        columnIndex = csvParser.getColumnIndex(Website);
+        if (columnIndex != -1) accountInfo.setWebsite(line[columnIndex]);
+        columnIndex = csvParser.getColumnIndex(VAT);
+        if (columnIndex != -1) accountInfo.setVat(line[columnIndex]);
 
         AddressInfo addressInfo = new AddressInfo();
+        addressInfo.setDefaultBillingAddress(true);
+        addressInfo.setAddressIdentifier("address_" + accountInfo.getCompanyIdentifier());
+        addressInfo.setAddressName("Billing address");
+        columnIndex = csvParser.getColumnIndex(Address);
+        if (columnIndex != -1) addressInfo.setStreet(line[columnIndex]);
+        columnIndex = csvParser.getColumnIndex(PostalCode);
+        if (columnIndex != -1) addressInfo.setPostal(line[columnIndex]);
+        columnIndex = csvParser.getColumnIndex(City);
+        if (columnIndex != -1) addressInfo.setCity(line[columnIndex]);
+        columnIndex = csvParser.getColumnIndex(CountryCode);
+        if (columnIndex != -1) addressInfo.setCountryA2Code(line[columnIndex]);
+        columnIndex = csvParser.getColumnIndex(Phone);
+        if (columnIndex != -1) addressInfo.setPhone(line[columnIndex]);
+        addressInfo.setPhone(line[columnIndex]);
+
         accountInfo.setAddressInfo(addressInfo);
 
         return accountInfo;

@@ -14,7 +14,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import nl.deltares.forms.constants.OrganizationConstants;
 import nl.deltares.forms.exception.RegistrationFormException;
-import nl.deltares.portal.configuration.DSDSiteConfiguration;
+import nl.deltares.portal.configuration.SiteMapConfiguration;
 import nl.deltares.portal.utils.AccountUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,8 +54,8 @@ public class AccountSelectionCheckoutStepDisplayContext{
         _themeDisplay = cpRequestHelper.getThemeDisplay();
         _user = _themeDisplay.getUser();
 
-        DSDSiteConfiguration _configuration = configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, _themeDisplay.getScopeGroupId());
-        long companyId = _configuration.organizationIdForStoringAccounts();
+        SiteMapConfiguration _configuration = configurationProvider.getSystemConfiguration(SiteMapConfiguration.class);
+        long companyId = _configuration.accountsCompanyId();
         if (companyId == 0) {
             organizationId = _user.getCompanyId();
         } else {

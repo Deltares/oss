@@ -54,10 +54,6 @@
             <div aria-multiselectable="true" class>
         <aui:fieldset id="site_config" collapsible="true" label="Site config">
             <aui:input
-                    label="organization-id"
-                    name="organizationIdForStoringAccounts"
-                    value="<%= configuration.organizationIdForStoringAccounts() %>"/>
-            <aui:input
                     label="event-id"
                     name="eventId"
                     value="<%= configuration.eventId() %>"/>

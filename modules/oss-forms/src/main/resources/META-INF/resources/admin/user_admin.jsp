@@ -100,6 +100,27 @@
         </aui:fieldset>
     </aui:form>
     <hr>
+    <aui:form name="importAccounts" enctype="multipart/form-data" >
+        <aui:fieldset >
+            <aui:row>
+                <aui:col width="50">
+                    <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.importAccountsTitle"/></div>
+                </aui:col>
+                <aui:col width="45">
+                    <aui:row>
+                        <div class="control-label"><liferay-ui:message key="oss.admin.accountsFile"/></div>
+                    </aui:row>
+                    <aui:row >
+                        <aui:input label="" name="importAccountsFile" type="file"  />
+                    </aui:row>
+                </aui:col>
+                <aui:col width="5">
+                    <aui:button type="submit" name="importAccountsButton" value="oss.admin.import" />
+                </aui:col>
+            </aui:row>
+        </aui:fieldset>
+    </aui:form>
+    <hr>
     <aui:form action="<%=updateURL%>" name="<portlet:namespace />ChangeUserEmail"  >
         <aui:fieldset >
             <aui:input name="action" type="hidden" value="changeUserEmail" />
@@ -160,6 +181,11 @@
     deleteUsersButton.onclick = function(event){
         event.preventDefault();
         OssFormsUtil.deleteUsers("<portlet:resourceURL/>", "<portlet:namespace/>")
+    };
+    let importAccountsButton = document.getElementById('<portlet:namespace/>importAccountsButton');
+        importAccountsButton.onclick = function(event){
+        event.preventDefault();
+        OssFormsUtil.importAccounts("<portlet:resourceURL/>", "<portlet:namespace/>")
     };
 
 </aui:script>

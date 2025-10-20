@@ -146,7 +146,7 @@ public class LicensesPortlet extends MVCPortlet {
         try {
             SiteMapConfiguration configuration = _configurationProvider.getSystemConfiguration(
                     SiteMapConfiguration.class);
-            return  Long.parseLong(configuration.downloadPortalSiteId());
+            return  configuration.downloadPortalSiteId();
         } catch (Exception e) {
             logger.error("Error retrieving ID for download portal from SiteMapConfiguration: " + e.getMessage());
             return themeDisplay.getSiteGroupId();

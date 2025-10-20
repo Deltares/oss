@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class AddressInfo implements Serializable {
 
-    String companyIdentifier = null;
+    String addressIdentifier = null;
     String addressName = null;
     String street = null;
     String postal = null;
@@ -14,12 +14,12 @@ public class AddressInfo implements Serializable {
     String website = null;
     boolean isDefaultBillingAddress = true;
 
-    public String getCompanyIdentifier() {
-        return companyIdentifier;
+    public String getAddressIdentifier() {
+        return addressIdentifier;
     }
 
-    public void setCompanyIdentifier(String companyIdentifier) {
-        this.companyIdentifier = companyIdentifier;
+    public void setAddressIdentifier(String addressIdentifier) {
+        this.addressIdentifier = addressIdentifier;
     }
 
     public String getAddressName() {

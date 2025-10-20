@@ -61,10 +61,6 @@ public class AccountInfo implements Serializable {
     }
 
     public AddressInfo getAddressInfo() {
-
-        if (addressInfo != null){
-            addressInfo.setCompanyIdentifier(companyIdentifier == null ? companyName : companyIdentifier);
-        }
         return addressInfo;
     }
 

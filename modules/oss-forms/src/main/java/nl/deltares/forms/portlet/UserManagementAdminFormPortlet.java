@@ -2,6 +2,8 @@ package nl.deltares.forms.portlet;
 
 import com.liferay.message.boards.model.MBBan;
 import com.liferay.message.boards.service.MBBanLocalServiceUtil;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
@@ -10,14 +12,13 @@ import com.liferay.portal.kernel.upload.UploadRequest;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import nl.deltares.portal.configuration.SiteMapConfiguration;
 import nl.deltares.portal.constants.OssConstants;
+import nl.deltares.portal.utils.AccountUtils;
 import nl.deltares.portal.utils.AdminUtils;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
-import nl.deltares.tasks.impl.CheckNonKeycloakUsersRequest;
-import nl.deltares.tasks.impl.DeleteBannedUsersRequest;
-import nl.deltares.tasks.impl.DeleteUsersRequest;
-import nl.deltares.tasks.impl.DownloadInvalidUsersRequest;
+import nl.deltares.tasks.impl.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -56,6 +57,12 @@ public class UserManagementAdminFormPortlet extends MVCPortlet {
 
     @Reference
     AdminUtils adminUtils;
+
+    @Reference
+    AccountUtils accountsUtils;
+
+    @Reference
+    ConfigurationProvider configurationProvider;
 
     /**
      * Pass the selected filter options to the render request
@@ -112,6 +119,14 @@ public class UserManagementAdminFormPortlet extends MVCPortlet {
             checkUsersExistAction(id, resourceRequest, resourceResponse, themeDisplay);
         } else if ("deleteUsers".equals(action)) {
             deleteUsersAction(id, resourceRequest, resourceResponse, themeDisplay);
+        } else if ("importAccounts".equals(action)) {
+            SiteMapConfiguration systemConfiguration = null;
+            try {
+                systemConfiguration = configurationProvider.getSystemConfiguration(SiteMapConfiguration.class);
+            } catch (ConfigurationException e) {
+                throw new IOException(e.getMessage());
+            }
+            importAccountsAction(id, systemConfiguration.accountsCompanyId(), resourceRequest, resourceResponse, themeDisplay);
         } else {
             DataRequestManager.getInstance().writeError("Unsupported action error: " + action, resourceResponse);
         }
@@ -167,6 +182,27 @@ public class UserManagementAdminFormPortlet extends MVCPortlet {
             DataRequest dataRequest = instance.getDataRequest(dataRequestId);
             if (dataRequest == null) {
                 dataRequest = new DeleteUsersRequest(dataRequestId, themeDisplay.getUserId(), usersFilePath, adminUtils);
+                instance.addToQueue(dataRequest);
+            } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
+                instance.removeDataRequest(dataRequest);
+            }
+            resourceResponse.setStatus(HttpServletResponse.SC_OK);
+            String statusMessage = dataRequest.getStatusMessage();
+            resourceResponse.setContentLength(statusMessage.length());
+            PrintWriter writer = resourceResponse.getWriter();
+            writer.println(statusMessage);
+        }
+    }
+
+    private void importAccountsAction(String dataRequestId,Long companyId, ResourceRequest resourceRequest, ResourceResponse resourceResponse, ThemeDisplay themeDisplay) throws IOException {
+        String accountsFilePath = getUploadedFile(dataRequestId, "importAccountsFile", resourceRequest, resourceResponse);
+        if (accountsFilePath != null) {
+            resourceResponse.setContentType("application/json");
+            DataRequestManager instance = DataRequestManager.getInstance();
+            DataRequest dataRequest = instance.getDataRequest(dataRequestId);
+            if (dataRequest == null) {
+                dataRequest = new ImportAccountsRequest(dataRequestId, themeDisplay.getUserId(),
+                        companyId == null ? themeDisplay.getCompanyId(): companyId, accountsFilePath, accountsUtils);
                 instance.addToQueue(dataRequest);
             } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
                 instance.removeDataRequest(dataRequest);

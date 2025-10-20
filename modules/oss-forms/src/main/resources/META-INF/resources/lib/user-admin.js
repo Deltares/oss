@@ -44,7 +44,21 @@ OssFormsUtil = {
         this.callOssAdminPostResource(resourceUrl, namespace, "deleteUsers", "deleteUsers", "deleteUsers.log");
 
     },
+    importAccounts: function(resourceUrl, namespace){
+        CommonFormsUtil.clearError(namespace);
+        let accountsFile = document.getElementById(namespace + "importAccountsFile").files[0];
+        if (!accountsFile){
+            alert("Please select file to imort!");
+            return;
+        }
+        if (confirm("You are about to import accounts from file: " + accountsFile.name + "\nDo you want to continue?") === false) {
+            accountsFile = null;
+            return;
+        }
 
+        this.callOssAdminPostResource(resourceUrl, namespace, "importAccounts", "importAccounts", "importAccounts.log");
+
+    },
     callOssAdminPostResource: function (resourceUrl, namespace, action, form, downloadFileName){
         CommonFormsUtil.setActionButtons(this.getActionButtons());
         CommonFormsUtil.initProgressBar(namespace);

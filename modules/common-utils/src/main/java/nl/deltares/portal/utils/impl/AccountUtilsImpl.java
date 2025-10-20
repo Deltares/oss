@@ -61,7 +61,7 @@ public class AccountUtilsImpl implements AccountUtils {
     }
 
     @Override
-    public AccountEntry createBusinessAccountEntry(AccountInfo accountInfo, long companyId) throws PortalException {
+    public AccountEntry createOrUpdateBusinessAccountEntry(AccountInfo accountInfo, long companyId) throws PortalException {
 
         //todo: make this field required
         String companyIdentifier = accountInfo.getCompanyIdentifier();
@@ -69,22 +69,22 @@ public class AccountUtilsImpl implements AccountUtils {
         if (accountEntry == null) {
             accountEntry = _accountEntryLocalService.createAccountEntry(CounterLocalServiceUtil.increment(AccountEntry.class.getName()));
             accountEntry.setCompanyId(companyId);
-            accountEntry.setName(accountInfo.getCompanyName());
             accountEntry.setExternalReferenceCode(companyIdentifier);
-            accountEntry.setTaxIdNumber(accountInfo.getVat());
             accountEntry.setType(accountInfo.getType());
-            accountEntry.setDomains(accountInfo.getEmailDomain());
-            String website = accountInfo.getWebsite();
-            if(website != null) {
-                if (!accountEntry.getExpandoBridge().hasAttribute("website")) {
-                    accountEntry.getExpandoBridge().addAttribute("website");
-                }
-                accountEntry.getExpandoBridge().setAttribute("website", website, false);
+        }
+        accountEntry.setName(accountInfo.getCompanyName());
+        accountEntry.setTaxIdNumber(accountInfo.getVat());
+        accountEntry.setDomains(accountInfo.getEmailDomain());
+        String website = accountInfo.getWebsite();
+        if(website != null) {
+            if (!accountEntry.getExpandoBridge().hasAttribute("website")) {
+                accountEntry.getExpandoBridge().addAttribute("website");
             }
+            accountEntry.getExpandoBridge().setAttribute("website", website, false);
         }
 
         AddressInfo addressInfo = accountInfo.getAddressInfo();
-        Address address = createAddress(addressInfo, companyId);
+        Address address = createOrUpdateAddress(addressInfo, companyId);
         if (address != null) {
 
             if (addressInfo.isDefaultBillingAddress()) {
@@ -100,21 +100,18 @@ public class AccountUtilsImpl implements AccountUtils {
     }
 
     @Override
-    public Address createAddress(AddressInfo addressInfo, long companyId) throws PortalException {
+    public Address createOrUpdateAddress(AddressInfo addressInfo, long companyId) throws PortalException {
 
         if (addressInfo == null) {return null;}
 
-        String externalReferenceCode = addressInfo.getCompanyIdentifier() + '_' + addressInfo.getAddressName();
-        Address address = _addressLocalService.fetchAddressByExternalReferenceCode(externalReferenceCode, companyId);
-        if (address != null) {
+        Address address = _addressLocalService.fetchAddressByExternalReferenceCode(addressInfo.getAddressIdentifier(), companyId);
+        if (address == null) {
             //we are not going to update existing entries
-            return address;
+            address = _addressLocalService.createAddress(CounterLocalServiceUtil.increment(Address.class.getName()));
+            address.setCompanyId(companyId);
+            address.setExternalReferenceCode(addressInfo.getAddressIdentifier());
         }
-
-        address = _addressLocalService.createAddress(CounterLocalServiceUtil.increment(Address.class.getName()));
-        address.setCompanyId(companyId);
         address.setName(addressInfo.getAddressName());
-        address.setExternalReferenceCode(externalReferenceCode);
         address.setStreet1(addressInfo.getStreet());
         address.setZip(addressInfo.getPostal());
         address.setCity(addressInfo.getCity());
@@ -126,16 +123,21 @@ public class AccountUtilsImpl implements AccountUtils {
         String phoneNumber = addressInfo.getPhone();
         if (phoneNumber != null) {
 
-            ListType _phoneType = ListTypeLocalServiceUtil.getListType(
-                    "phone-number", "com.liferay.portal.kernel.model.Address.phone");
-
-            Phone phone = _phoneLocalService.createPhone(CounterLocalServiceUtil.increment(PhoneLocalService.class.getName()));
-            phone.setCompanyId(companyId);
-            phone.setClassName("com.liferay.portal.kernel.model.Address");
-            phone.setClassPK(address.getAddressId());
+            List<Phone> phones = _phoneLocalService.getPhones(companyId, "com.liferay.portal.kernel.model.Address", address.getAddressId());
+            Phone phone;
+            if (phones.isEmpty() ) {
+                ListType _phoneType = ListTypeLocalServiceUtil.getListType(
+                        "phone-number", "com.liferay.portal.kernel.model.Address.phone");
+                phone = _phoneLocalService.createPhone(CounterLocalServiceUtil.increment(PhoneLocalService.class.getName()));
+                phone.setCompanyId(companyId);
+                phone.setClassName("com.liferay.portal.kernel.model.Address");
+                phone.setClassPK(address.getAddressId());
+                phone.setListTypeId(_phoneType.getListTypeId());
+                phone.setPrimary(true);
+            } else {
+                phone = phones.get(0);
+            }
             phone.setNumber(phoneNumber);
-            phone.setListTypeId(_phoneType.getListTypeId());
-            phone.setPrimary(true);
             _phoneLocalService.updatePhone(phone);
         }
         return address;
