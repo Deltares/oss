@@ -17,7 +17,6 @@ import nl.deltares.forms.internal.BillingDetailsCheckoutStepDisplayContext;
 import nl.deltares.model.BillingInfo;
 import nl.deltares.portal.utils.AccountUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
-import nl.deltares.tasks.impl.ImportAccountsRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -53,6 +52,10 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
                 httpServletRequest, _addressLocalService, _accountEntryLocalService,
                 _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils, _configurationProvider);
         _displayContext.validateRequestData(httpServletRequest);
+
+        if (SessionErrors.contains(httpServletRequest, RegistrationFormException.class)) {
+            return;
+        }
 
         try {
             BillingInfo billingInfo = _displayContext.storeBillingInformation(httpServletRequest);

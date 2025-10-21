@@ -176,8 +176,11 @@ public class AccountSelectionCheckoutStepDisplayContext{
                     accountEntry.getAccountEntryId(), name, null, street, null, null, city, postal, regionId, companyCountry.getCountryId(),
                     accountType.getListTypeId(), true, true, phoneNumber, serviceContext);
 
-            accountEntry.setDefaultBillingAddressId(billingAddress.getAddressId());
-            _accountEntryLocalService.updateAccountEntry(accountEntry);
+            if (accountEntry.getDefaultBillingAddress() == null) {
+                accountEntry.setDefaultBillingAddressId(billingAddress.getAddressId());
+                _accountEntryLocalService.updateAccountEntry(accountEntry);
+            }
+
         } else {
             billingAddress.setName(name);
             billingAddress.setStreet1(street);

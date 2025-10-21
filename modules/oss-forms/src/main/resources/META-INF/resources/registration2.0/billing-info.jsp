@@ -11,7 +11,7 @@
     if ( selectedAddressId > 0) {
         selectedAddress = availableAddresses.stream().filter(address -> address.getAddressId() == billingInfo.getBillingAddressId()).findFirst().orElse(null);
     }
-    boolean canEditAddress = displayContext.canEditAddress();
+    boolean canEditAccount = displayContext.canEditAccount();
 %>
 <aui:input disabled="<%=availableAddresses.isEmpty() %>" name="<%= paramName %>" type="hidden" value="<%= selectedAddressId %>" />
 
@@ -68,7 +68,7 @@
             label="registrationform.billing.vat"
             helpMessage="registrationform.billing.vat.info"
             wrapperCssClass="form-group-item"
-            disabled="<%=!canEditAddress%>"
+            disabled="<%=!canEditAccount%>"
             value='<%= billingInfo.getVat()%>'
     />
     <aui:input
@@ -76,7 +76,7 @@
             label="registrationform.billing.companyid"
             helpMessage="registrationform.billing.companyid.info"
             wrapperCssClass="form-group-item"
-            disabled="<%=!canEditAddress%>"
+            disabled="<%=!canEditAccount%>"
             value='<%= billingInfo.getCompanyIdentifier()%>'
     />
 </div>
@@ -91,8 +91,8 @@
             wrapperCssClass="commerce-form-group-item-row form-group-item">
 
         <aui:option value='0'
-                    data-canEdit="<%=canEditAddress%>"
-                    label ='<%=canEditAddress? "registrationform.billing.address.new" : "registrationform.billing.address.select"%>' />
+                    data-canEdit="true"
+                    label ="registrationform.billing.address.new" />
         <%
             for (Address address : availableAddresses) {
         %>
@@ -104,7 +104,7 @@
                     data-region="<%= address.getRegionId() %>"
                     data-street-1="<%= HtmlUtil.escapeAttribute(address.getStreet1()) %>"
                     data-zip="<%= HtmlUtil.escapeAttribute(address.getZip()) %>"
-                    data-canEdit="<%=canEditAddress%>"
+                    data-canEdit="<%=displayContext.canEditAddress(address.getAddressId())%>"
                     label="<%= HtmlUtil.escape(address.getName()) %>"
                     selected="<%= address.getAddressId() == selectedAddressId %>"
                     value="<%= address.getAddressId() %>" />
@@ -133,6 +133,7 @@
                 name="<%= OrganizationConstants.ORG_STREET %>"
                 label="registrationform.orgaddress"
                 wrapperCssClass="form-group-item">
+            <aui:validator name="required" />
         </aui:input>
     </div>
 </div>
@@ -143,11 +144,13 @@
                 name="<%= OrganizationConstants.ORG_POSTAL %>"
                 label="registrationform.orgpostcode"
                 wrapperCssClass="form-group-item">
+            <aui:validator name="required" />
         </aui:input>
         <aui:input
                 name="<%= OrganizationConstants.ORG_CITY %>"
                 label="registrationform.orgcity"
                 wrapperCssClass="form-group-item">
+            <aui:validator name="required" />
         </aui:input>
     </div>
 </div>
@@ -156,6 +159,7 @@
         <aui:select label="registrationform.orgcountry"
                     name="<%=OrganizationConstants.ORG_COUNTRY_ID%>" placeholder="country" title="country" wrapperCssClass="form-group-item">
             <aui:validator errorMessage='<%= LanguageUtil.get(request, "please-enter-a-valid-country") %>' name="min">1</aui:validator>
+            <aui:validator name="required" />
         </aui:select>
         <aui:select label="registrationform.orgregion"
                     name="<%=OrganizationConstants.ORG_REGION%>" placeholder="region" title="region" wrapperCssClass="form-group-item" />
@@ -166,6 +170,7 @@
         <aui:input
                 name="<%= OrganizationConstants.ORG_PHONE %>"
                 label="registrationform.phone" wrapperCssClass="form-group-item">
+            <aui:validator name="required" />
         </aui:input>
 
     </div>

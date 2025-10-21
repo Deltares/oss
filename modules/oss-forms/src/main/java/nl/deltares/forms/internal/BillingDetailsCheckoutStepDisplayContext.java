@@ -2,6 +2,7 @@ package nl.deltares.forms.internal;
 
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
+import com.liferay.headless.commerce.admin.order.dto.v1_0.BillingAddress;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.Country;
@@ -70,8 +71,15 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
         }
     }
 
-    public boolean canEditAddress() {
+    public boolean canEditAccount() {
         return _selectedAccountEntry != null && _selectedAccountEntry.isPersonalAccount();
+    }
+
+    public boolean canEditAddress(long addressId) {
+        if (_selectedAccountEntry == null) return false;
+        Address defaultBillingAddress = _selectedAccountEntry.getDefaultBillingAddress();
+        if (defaultBillingAddress == null) return true;
+        return defaultBillingAddress.getAddressId() != addressId;
     }
 
     public List<Address> getBillingAddresses() {
@@ -89,31 +97,34 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
 
     public BillingInfo storeBillingInformation(HttpServletRequest httpServletRequest) throws Exception {
 
-        long selectedBillingAddressId = ParamUtil.getLong(httpServletRequest, getParamName());
-        Address billingAddress;
-        if (canEditAddress()) {
-            if (_selectedAccountEntry.isPersonalAccount()) {
-                boolean updated = false;
-                String companyRegistrationId = ParamUtil.getString(httpServletRequest, OrganizationConstants.ORG_REGISTRATION_ID);
-                String taxIdNumber = ParamUtil.getString(httpServletRequest, OrganizationConstants.ORG_VAT);
-                if (taxIdNumber != null && !taxIdNumber.equals(_selectedAccountEntry.getTaxIdNumber())){
-                    updated = true;
-                    _selectedAccountEntry.setTaxIdNumber(taxIdNumber);
-                }
-                if (companyRegistrationId != null && !companyRegistrationId.equals(getCompanyReferenceCode(_selectedAccountEntry))){
-                    updated = true;
-                    _selectedAccountEntry.getExpandoBridge()
-                            .setAttribute(OrganizationConstants.ORG_REGISTRATION_ID, companyRegistrationId, false);
-                }
-                if (updated) {
-                    _accountEntryLocalService.updateAccountEntry(_selectedAccountEntry);
-                }
+        if (_selectedAccountEntry.isPersonalAccount()) {
+            boolean updated = false;
+            String companyRegistrationId = ParamUtil.getString(httpServletRequest, OrganizationConstants.ORG_REGISTRATION_ID);
+            String taxIdNumber = ParamUtil.getString(httpServletRequest, OrganizationConstants.ORG_VAT);
+            if (taxIdNumber != null && !taxIdNumber.equals(_selectedAccountEntry.getTaxIdNumber())){
+                updated = true;
+                _selectedAccountEntry.setTaxIdNumber(taxIdNumber);
             }
-            billingAddress = addOrUpdateBillingAddress(httpServletRequest, _selectedAccountEntry, selectedBillingAddressId);
-        } else {
-            billingAddress = _addressLocalService.fetchAddress(selectedBillingAddressId);
+            if (companyRegistrationId != null && !companyRegistrationId.equals(getCompanyReferenceCode(_selectedAccountEntry))){
+                updated = true;
+                _selectedAccountEntry.getExpandoBridge()
+                        .setAttribute(OrganizationConstants.ORG_REGISTRATION_ID, companyRegistrationId, false);
+            }
+            if (updated) {
+                _accountEntryLocalService.updateAccountEntry(_selectedAccountEntry);
+            }
         }
-        _billingInfo.setDefaultBillingAddress(billingAddress.getAddressId() == _selectedAccountEntry.getDefaultBillingAddressId());
+        long selectedBillingAddressId = ParamUtil.getLong(httpServletRequest, getParamName());
+        if (canEditAccount() || selectedBillingAddressId == 0){
+            Address billingAddress = addOrUpdateBillingAddress(httpServletRequest, _selectedAccountEntry, selectedBillingAddressId);
+            _billingInfo.setDefaultBillingAddress(billingAddress.getAddressId() == _selectedAccountEntry.getDefaultBillingAddressId());
+            _billingInfo.setBillingAddressId(billingAddress.getAddressId());
+            _billingInfo.setAddress(billingAddress.getStreet1());
+            _billingInfo.setCity(billingAddress.getCity());
+            _billingInfo.setPostal(billingAddress.getZip());
+            _billingInfo.setCountry(billingAddress.getCountry().getName());
+        }
+
         _billingInfo.setVat(_selectedAccountEntry.getTaxIdNumber());
         _billingInfo.setCompanyIdentifier((String) _selectedAccountEntry.getExpandoBridge()
                 .getAttribute(OrganizationConstants.ORG_REGISTRATION_ID, false));
@@ -126,11 +137,6 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
         _billingInfo.setPaymentyPreference(ParamUtil.getString(httpServletRequest, BillingConstants.PAYMENT_METHOD));
         _billingInfo.setPaymentReference(ParamUtil.getString(httpServletRequest, BillingConstants.PAYMENT_REFERENCE));
 
-        _billingInfo.setBillingAddressId(billingAddress.getAddressId());
-        _billingInfo.setAddress(billingAddress.getStreet1());
-        _billingInfo.setCity(billingAddress.getCity());
-        _billingInfo.setPostal(billingAddress.getZip());
-        _billingInfo.setCountry(billingAddress.getCountry().getName());
 
         return _billingInfo;
     }
@@ -155,12 +161,12 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
             return;
         }
 
-        long selectedBillingAddressId = ParamUtil.getLong(httpServletRequest, getParamName());
-        if (selectedBillingAddressId == 0 && !canEditAddress()) {
-            SessionErrors.add(httpServletRequest, RegistrationFormException.class, Collections.singletonList(
-                    new RegistrationFormException("No billing address selected!")));
-            return;
-        }
+//        long selectedBillingAddressId = ParamUtil.getLong(httpServletRequest, getParamName());
+//        if (selectedBillingAddressId == 0 && !canEditAccount()) {
+//            SessionErrors.add(httpServletRequest, RegistrationFormException.class, Collections.singletonList(
+//                    new RegistrationFormException("No billing address selected!")));
+//            return;
+//        }
 
         String vatId = ParamUtil.getString(httpServletRequest, OrganizationConstants.ORG_VAT);
         if (_selectedAccountEntry.isPersonalAccount() && vatId.isEmpty()){
