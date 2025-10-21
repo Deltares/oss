@@ -1,5 +1,11 @@
 package nl.deltares.model;
 
+import nl.deltares.portal.utils.Period;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class RegistrationInfo {
 
     private String salutation = null;
@@ -13,7 +19,24 @@ public class RegistrationInfo {
     private String title;
     private long parentResourceId = 0;
     private String parentTitle = null;
+    private final List<Period> periods = new ArrayList<Period>();
 
+    public void addPeriod(Period period) {
+        periods.add(period);
+    }
+    public boolean isAnyTimeCommon(List<Period> periods) {
+        for (Period period : periods) {
+            if(isAnyTimeCommon(period)) return true;
+        }
+        return false;
+    }
+
+    public boolean isAnyTimeCommon(Period period) {
+        return periods.stream().anyMatch(period1 -> period1.isAnyTimeCommon(period, true));
+    }
+    public List<Period> getPeriods(){
+        return Collections.unmodifiableList(periods);
+    }
     public String getRemarks() {
         return remarks;
     }

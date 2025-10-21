@@ -17,7 +17,9 @@ import nl.deltares.portal.utils.DsdSessionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserInputValidationContext {
 
@@ -61,6 +63,7 @@ public class UserInputValidationContext {
             addIfExceptions = true;
             exceptions = new ArrayList<>();
         }
+        HashMap<User, List<String>> overlappingRegistrations = new HashMap<>();
         long companyId = _themeDisplay.getCompanyId();
         for (RegistrationInfo info : _registrationInformation) {
             String email = info.getEmail();
@@ -76,11 +79,39 @@ public class UserInputValidationContext {
 
             User user = _userLocalService.fetchUserByEmailAddress(companyId, email);
             if (user != null) {
+                //Check if user is already registered for this registration
                 if (_sessionUtils.isUserRegisteredFor(_themeDisplay.getSiteGroupId(), user.getUserId(), info.getResourceId())){
                     exceptions.add(new RegistrationFormException(String.format("User '%s' is already registered for '%s'", user.getEmailAddress(), info.getTitle())));
                     continue;
                 }
+                //Check for registrations with overlapping periods
+                List<String> overlapping = overlappingRegistrations.putIfAbsent(user, new ArrayList<>());
+                if (overlapping == null)
+                    overlapping = overlappingRegistrations.get(user);
+                if (!overlapping.contains(info.getTitle())) {
+                    //Check for overlapping registrations in the current submission.
+                    List<String> collect = _registrationInformation.stream()
+                            .filter(registrationInfo ->
+                                    registrationInfo.getEmail().equals(email) &&
+                                            registrationInfo.getResourceId() != info.getResourceId()
+                                            && registrationInfo.isAnyTimeCommon(info.getPeriods()))
+                            .map(RegistrationInfo::getTitle)
+                            .collect(Collectors.toList());
+                    overlapping.addAll(collect);
+
+                    //Check for overlapping registrations in the database.
+                    List<String> overlappingRegistrationTitles = _sessionUtils.getOverlappingRegistrationTitles(
+                            _themeDisplay.getSiteGroupId(), user.getUserId(), info.getResourceId(), info.getPeriods());
+                    overlapping.addAll(overlappingRegistrationTitles);
+                    if (!overlapping.isEmpty()){
+                        overlapping.add(info.getTitle());
+                        exceptions.add(new RegistrationFormException(
+                                String.format("User '%s' has registered for overlapping sessions: '%s'.", email, String.join(", ", overlapping))));
+                    }
+                }
+
             }
+            //Check if required parent registration is selected for this child registration
             if (info.isChildRelation()){
                 if (_registrationInformation.stream()
                         .anyMatch(registrationInfo ->
@@ -133,6 +164,9 @@ public class UserInputValidationContext {
                 registrationInfo.setRemarks(ParamUtil.getString(request, "remarks_" + articleId + POST_FIX));
                 String email = ParamUtil.getString(request, "email_" + articleId + POST_FIX);
                 registrationInfo.setEmail(email);
+
+                registration.getStartAndEndTimesPerDay().forEach(registrationInfo::addPeriod);
+
                 _registrationInformation.add(registrationInfo);
             }
         }

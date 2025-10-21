@@ -88,6 +88,8 @@ public interface DsdSessionUtils {
      */
     Map<String, String> getUserPreferences(User user, Registration registration) throws PortalException;
 
+    List<String> getOverlappingRegistrationTitles(long groupId, long userId, long resourceId, List<Period> periods);
+
     /**
      * Check if user is already registerd for this registration.
      * @param user User to check for registration

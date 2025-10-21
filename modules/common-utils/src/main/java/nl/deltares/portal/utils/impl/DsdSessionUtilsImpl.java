@@ -309,6 +309,24 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         return false;
     }
 
+    @Override
+    public List<String> getOverlappingRegistrationTitles(long groupId, long userId, long resourceId, List<Period> periods) {
+
+        List<Long> overlappingRegistrationIds = new ArrayList<>();
+        periods.forEach(period -> {
+            List<nl.deltares.dsd.registration.model.Registration> overlappingRegistrations =
+                    RegistrationLocalServiceUtil.getRegistrationsWithOverlappingPeriod(groupId, userId,
+                     period.getStartDate(), period.getEndDate());
+            for (nl.deltares.dsd.registration.model.Registration overlappingRegistration : overlappingRegistrations) {
+                long registrationResourceId = overlappingRegistration.getResourcePrimaryKey();
+                if (resourceId == registrationResourceId) continue;
+                if (overlappingRegistrationIds.contains(registrationResourceId)) continue;
+                overlappingRegistrationIds.add(registrationResourceId);
+            }
+        });
+        return Arrays.asList(getTitles(overlappingRegistrationIds));
+    }
+
     private List<Long> getOverlappingRegistrationIds(User user, Registration registration) {
 
         /*
