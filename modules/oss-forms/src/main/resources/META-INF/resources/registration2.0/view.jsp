@@ -46,7 +46,7 @@
                     <li class="<%= cssClass %>">
                         <div class="multi-step-divider"></div>
                         <div class="multi-step-indicator">
-                            <div class="multi-step-indicator-label" id="<portlet:namespace/>nav-stepper-step-1">>
+                            <div class="multi-step-indicator-label" id="<portlet:namespace/>nav-stepper-step-1">
                                 <span><liferay-ui:message key="<%= checkoutStep.getName() %>"/></span>
                             </div>
                             <span class="multi-step-icon" data-multi-step-icon="<%= step %>"></span>
