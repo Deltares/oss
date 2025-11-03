@@ -71,7 +71,7 @@ public class AccountUtilsImpl implements AccountUtils {
         AccountEntry accountEntry = _accountEntryLocalService.addOrUpdateAccountEntry(
                 accountInfo.getCompanyIdentifier(),
                 currentUserId, 0, accountInfo.getCompanyName(), null,
-                new String[]{accountInfo.getEmailDomain()}, null, null, accountInfo.getVat(),
+                accountInfo.getEmailDomains(), null, null, accountInfo.getVat(),
                 accountInfo.getType(), 0, serviceContext
         );
 
@@ -135,7 +135,7 @@ public class AccountUtilsImpl implements AccountUtils {
                 _phoneLocalService.updatePhone(phone);
             }
 
-            if (addressInfo.isDefaultBillingAddress()) {
+            if (addressInfo.isDefaultBillingAddress() || accountEntry.getDefaultBillingAddress() == null) {
                 accountEntry.setDefaultBillingAddressId(address.getAddressId());
                 _accountEntryLocalService.updateAccountEntry(accountEntry);
             }

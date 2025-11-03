@@ -27,21 +27,18 @@ public class CsvParser {
         this._headers = Arrays.stream(headers).map(String::toLowerCase).toArray(String[]::new);
     }
 
-    public String[] readLine() {
-        try {
-            String line = _reader.readLine();
-            String[] parsedLines = cleanValues(line.split(_separator + "(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)"));
-            while (isHeader(parsedLines) || isInvalidLine(parsedLines)) {
-                line = _reader.readLine();
-                if (line == null) {
-                    return null;
-                }
-                parsedLines = cleanValues(line.split(_separator + "(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)"));
+    public String[] readLine() throws IOException {
+        String line = _reader.readLine();
+        if (line == null) return null;
+        String[] parsedLines = cleanValues(line.split(_separator + "(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)"));
+        while (isHeader(parsedLines) || isInvalidLine(parsedLines)) {
+            line = _reader.readLine();
+            if (line == null) {
+                return null;
             }
-            return sortColumns(parsedLines);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            parsedLines = cleanValues(line.split(_separator + "(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)"));
         }
+        return sortColumns(parsedLines);
     }
 
     public int getColumnIndex(String header) {

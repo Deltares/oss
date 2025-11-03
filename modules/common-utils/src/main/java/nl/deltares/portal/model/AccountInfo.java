@@ -1,12 +1,15 @@
 package nl.deltares.portal.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class AccountInfo implements Serializable {
 
     String companyName = null;
     String companyIdentifier = null;
-    String emailDomain = null;
+    List<String> emailDomains = new ArrayList<>();
     String vat = null;
     String type = "business";
     String website = null;
@@ -28,12 +31,12 @@ public class AccountInfo implements Serializable {
         this.companyIdentifier = companyIdentifier;
     }
 
-    public String getEmailDomain() {
-        return emailDomain;
+    public String[] getEmailDomains() {
+        return emailDomains.toArray(new String[0]);
     }
 
-    public void setEmailDomain(String emailDomain) {
-        this.emailDomain = emailDomain;
+    public void setEmailDomains(String[] emailDomains) {
+        this.emailDomains.addAll(Arrays.asList(emailDomains));
     }
 
     public String getVat() {

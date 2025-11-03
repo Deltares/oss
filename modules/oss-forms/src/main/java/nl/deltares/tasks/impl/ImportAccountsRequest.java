@@ -27,7 +27,7 @@ public class ImportAccountsRequest extends AbstractDataRequest {
     public final String State = "state";
     public final String CountryCode = "country_code";
 
-    private final String[] CsvHeaderNames = {MaconomyId, CompanyName, Domain, VAT, Phone, Website, Address, PostalCode, City, State, CountryCode};
+    private final String[] CsvHeaderNames = {MaconomyId, CompanyName, Domain, VAT, Phone, Website, Address, PostalCode, City, CountryCode};
 
     private static final Log logger = LogFactoryUtil.getLog(ImportAccountsRequest.class);
     private final String _accountFilePath;
@@ -85,7 +85,12 @@ public class ImportAccountsRequest extends AbstractDataRequest {
                     csvParser.setHeaders(CsvHeaderNames);
                     int lineCounter = 0;
 
-                    while ((lineItems = csvParser.readLine()) != null) {
+                    while (true) {
+
+                        lineItems = csvParser.readLine();
+                        if (lineItems == null){
+                            break;
+                        }
                         lineCounter++;
                         incrementProcessCount(getSummedStringLength(lineItems));
                         if (lineItems.length == 0) continue;
@@ -93,15 +98,21 @@ public class ImportAccountsRequest extends AbstractDataRequest {
                         try {
                             accountInfo = toAccountInfo(lineItems, csvParser);
                         } catch (Exception e){
-                            logger.error(String.format("Error parsing line %d: %s", lineCounter, e.getMessage()));
+                            String msg = String.format("Error parsing line %d: %s", lineCounter, e.getMessage());
+                            logger.error(msg);
+                            writer.println(msg);
                             continue;
                         }
                         try {
                             _accountUtils.createOrUpdateBusinessAccountEntry(accountInfo, _companyId, currentUserId);
-                            logger.info(String.format("Imported account '%s' with address '%s'",
-                                    accountInfo.getCompanyName(), accountInfo.getAddressInfo().getAddressName()));
+                            String msg = String.format("Imported account '%s' with address '%s'",
+                                    accountInfo.getCompanyName(), accountInfo.getAddressInfo().getAddressName());
+                            logger.info(msg);
+                            writer.println(msg);
                         } catch (Exception e){
-                            logger.error(String.format("Error importing account for line %d: %s", lineCounter, e.getMessage()));
+                            String msg = String.format("Error importing account %s: %s", accountInfo.getCompanyName(), e.getClass().getSimpleName());
+                            logger.error(msg);
+                            writer.println(msg);
                         }
                     }
                 }
@@ -146,7 +157,7 @@ public class ImportAccountsRequest extends AbstractDataRequest {
         columnIndex = csvParser.getColumnIndex(CompanyName);
         if (columnIndex != -1) accountInfo.setCompanyName(line[columnIndex]);
         columnIndex = csvParser.getColumnIndex(Domain);
-        if (columnIndex != -1) accountInfo.setEmailDomain(line[columnIndex]);
+        if (columnIndex != -1) accountInfo.setEmailDomains(parseDomains(line[columnIndex]));
         columnIndex = csvParser.getColumnIndex(Website);
         if (columnIndex != -1) accountInfo.setWebsite(line[columnIndex]);
         columnIndex = csvParser.getColumnIndex(VAT);
@@ -171,6 +182,11 @@ public class ImportAccountsRequest extends AbstractDataRequest {
         accountInfo.setAddressInfo(addressInfo);
 
         return accountInfo;
+    }
+
+    private static String[] parseDomains(String line) {
+        if (line == null) return new String[0];
+        return line.split(";");
     }
 
 
