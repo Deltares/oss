@@ -3,9 +3,9 @@ if (typeof mapControl === 'undefined' || mapControl === null ){
     let mapControl;
     let markersLayer;
 }
-ActivityMapUtil = {
+let ActivityMapUtil = {
 
-    initMap : function(namespace) {
+    initMap: function (namespace) {
 
         const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 20,
@@ -13,35 +13,40 @@ ActivityMapUtil = {
             }),
             latlng = L.latLng(22.5, 20);
 
-        mapControl = L.map(namespace + 'map', {center: latlng, zoom: 2, layers: [tiles]});
-        markersLayer = L.markerClusterGroup({ chunkedLoading: true, maxClusterRadius: 20, singleMarkerMode: true , showCoverageOnHover: true });
+        let mapControl = L.map(namespace + 'map', {center: latlng, zoom: 2, layers: [tiles]});
+        let markersLayer = L.markerClusterGroup({
+            chunkedLoading: true,
+            maxClusterRadius: 20,
+            singleMarkerMode: true,
+            showCoverageOnHover: true
+        });
         mapControl.addLayer(markersLayer);
 
         return mapControl;
     },
 
-    initTitleControl : function(map){
+    initTitleControl: function (map) {
 
         let TitleControl = L.Control.extend({
             options: {
                 // Default control position
                 position: 'topleft'
             },
-            setPosition: function(position){
+            setPosition: function (position) {
                 this.options.position = position;
             },
-            onAdd: function(map) {
+            onAdd: function (map) {
                 return L.DomUtil.create('div', 'map-title-control');
             },
-            setTitle: function(title){
+            setTitle: function (title) {
                 this.getContainer().innerHTML = '<strong>' + title + '</strong>'
             }
         });
-        titleControl = new TitleControl().addTo(map);
+        let titleControl = new TitleControl().addTo(map);
         return titleControl;
     },
 
-    updateMarkers: function (map, jsonData){
+    updateMarkers: function (map, jsonData) {
 
 
         if (jsonData != null && jsonData !== "") {
@@ -74,38 +79,38 @@ ActivityMapUtil = {
         }
     },
 
-    getRunningProcess: function (namespace){
+    getRunningProcess: function (namespace) {
         let runningProcess = document.getElementById(namespace + "runningProcess");
         return runningProcess.value;
     },
 
-    setRunningProcess: function (namespace, processId){
+    setRunningProcess: function (namespace, processId) {
         let runningProcess = document.getElementById(namespace + "runningProcess");
         runningProcess.value = processId;
     },
 
-    stopRunningProcess : function (namespace){
+    stopRunningProcess: function (namespace) {
         clearInterval(this.getRunningProcess(namespace));
         this.setRunningProcess(namespace, undefined);
     },
 
-    startDownloadActivityMap :  function (resourceUrl, namespace){
+    startDownloadActivityMap: function (resourceUrl, namespace) {
 
-        let map  = ActivityMapUtil.initMap(namespace);
+        let map = ActivityMapUtil.initMap(namespace);
         let titleControl = ActivityMapUtil.initTitleControl(map);
         titleControl.setTitle("Loading map data... Progress 0 %");
 
         let A = new AUI();
         A.io.request(resourceUrl + '&' + namespace + 'action=start', {
-            sync : 'true',
-            cache : 'false',
-            on : {
-                success : function(response, status, xhr) {
-                    if (xhr.status === 200){
+            sync: 'true',
+            cache: 'false',
+            on: {
+                success: function (response, status, xhr) {
+                    if (xhr.status === 200) {
                         let responseData = this.get('responseData');
                         ActivityMapUtil.updateMarkers(namespace, responseData);
                         titleControl.setTitle("");
-                    } else if (xhr.status === 204){
+                    } else if (xhr.status === 204) {
                         //Data not loaded yet so start download process
                         ActivityMapUtil.setRunningProcess(namespace, setInterval(function () {
                             ActivityMapUtil.statusDownloadActivityMap(resourceUrl, namespace, titleControl);
@@ -117,17 +122,17 @@ ActivityMapUtil = {
         });
     },
 
-    downloadDownloadActivityMap :  function (resourceUrl, namespace){
+    downloadDownloadActivityMap: function (resourceUrl, namespace) {
 
         ActivityMapUtil.stopRunningProcess(namespace);
 
         let A = new AUI();
         A.io.request(resourceUrl + '&' + namespace + 'action=download', {
-            sync : 'true',
-            cache : 'false',
-            on : {
-                success : function(response, status, xhr) {
-                    if (xhr.status === 200){
+            sync: 'true',
+            cache: 'false',
+            on: {
+                success: function (response, status, xhr) {
+                    if (xhr.status === 200) {
                         let responseData = this.get('responseData');
                         ActivityMapUtil.updateMarkers(namespace, responseData);
                         titleControl.setTitle("");
@@ -137,15 +142,15 @@ ActivityMapUtil = {
         });
     },
 
-    statusDownloadActivityMap : function (resourceUrl, namespace, titleControl){
+    statusDownloadActivityMap: function (resourceUrl, namespace, titleControl) {
 
         let A = new AUI();
         A.io.request(resourceUrl + '&' + namespace + 'action=updateStatus', {
-            sync : 'true',
-            cache : 'false',
-            on : {
-                success : function(response, status, xhr) {
-                     if (xhr.status === 200){
+            sync: 'true',
+            cache: 'false',
+            on: {
+                success: function (response, status, xhr) {
+                    if (xhr.status === 200) {
                         let responseData = this.get('responseData');
 
                         let statusMsg = JSON.parse(responseData);
@@ -153,7 +158,7 @@ ActivityMapUtil = {
                             ActivityMapUtil.downloadDownloadActivityMap(resourceUrl, namespace);
                         } else if (statusMsg.status === 'running' || statusMsg.status === 'pending') {
                             let percent;
-                            if (statusMsg.total === 0){
+                            if (statusMsg.total === 0) {
                                 percent = 0;
                             } else {
                                 percent = 100 * statusMsg.progress / statusMsg.total
@@ -165,13 +170,13 @@ ActivityMapUtil = {
                         }
 
                     } else {
-                         ActivityMapUtil.stopRunningProcess(namespace);
+                        ActivityMapUtil.stopRunningProcess(namespace);
                     }
                 },
-                error : function (){
+                error: function () {
                     ActivityMapUtil.stopRunningProcess(namespace);
                 },
-                failure : function(response, status, xhr) {
+                failure: function (response, status, xhr) {
                     ActivityMapUtil.stopRunningProcess(namespace);
                 }
             }
@@ -179,4 +184,4 @@ ActivityMapUtil = {
 
     }
 
-}
+};
