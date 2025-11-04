@@ -1,6 +1,6 @@
 var actionButtons = [];
 
-var CommonFormsUtil = {
+let CommonFormsUtil = {
 
     registerOther: function (namespace) {
         let registerOther = document.getElementById(namespace + "registration_other").checked;

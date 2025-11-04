@@ -1,6 +1,6 @@
 var actionButtons = [];
 
-var CommonFormsUtil = {
+let CommonFormsUtil = {
 
     writeError: function(namespace,  message){
         let errorBlock = document.getElementById(namespace + "group-message-block");

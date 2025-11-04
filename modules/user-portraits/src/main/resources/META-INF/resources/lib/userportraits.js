@@ -1,4 +1,4 @@
-var UserPortraitUtil = {
+let UserPortraitUtil = {
 
     updateTitle: function (namespace, title){
         let userPortraits = document.getElementById(namespace + "title");

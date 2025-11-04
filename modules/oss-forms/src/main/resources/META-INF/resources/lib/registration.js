@@ -1,5 +1,5 @@
 
-var RegistrationFormsUtil = {
+let RegistrationFormsUtil = {
 
     //Load countries on page load, update regions when country changes
     loadCountrySelection: function (namespace, selectedCountryId, selectedRegionId, companyId){

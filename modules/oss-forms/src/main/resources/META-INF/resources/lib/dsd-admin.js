@@ -1,4 +1,4 @@
-var DsdAdminFormsUtil = {
+let DsdAdminFormsUtil = {
 
     getActionButtons: function (){
         return ['downloadRegistrationsButton', 'deleteRegistrationsButton', 'downloadReproButton', 'downloadLightButton'];

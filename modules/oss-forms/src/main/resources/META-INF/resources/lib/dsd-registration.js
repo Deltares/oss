@@ -1,5 +1,5 @@
 
-var DsdRegistrationFormsUtil = {
+let DsdRegistrationFormsUtil = {
 
     validateFirstStep: function (FIRST_STEP_ERROR_MESSAGE, FIRST_STEP_ERROR_MESSAGE_PARENT_MISSING) {
         let isParentSelectionValid = false;
