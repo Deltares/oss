@@ -1,5 +1,5 @@
 
-RegistrationFormsUtil = {
+var RegistrationFormsUtil = {
 
     //Load countries on page load, update regions when country changes
     loadCountrySelection: function (namespace, selectedCountryId, selectedRegionId, companyId){
@@ -286,7 +286,7 @@ RegistrationFormsUtil = {
 
         let srcTable = document.getElementById(namespace + 'users_table_' + srcArticleId);
         let destTable = document.getElementById(namespace + 'users_table_' + destArticleId);
-        for (i = 1; i < srcTable.rows.length; i++) {
+        for (let i = 1; i < srcTable.rows.length; i++) {
             let destRow;
             let postfix;
             if (i >= destTable.rows.length) {

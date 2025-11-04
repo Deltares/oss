@@ -1,4 +1,4 @@
-DownloadFormsUtil = {
+var DownloadFormsUtil = {
 
     sendTestEmail : function (resourceUrl, namespace, action){
 

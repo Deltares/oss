@@ -1,4 +1,4 @@
-OssFormsUtil = {
+let OssFormsUtil = {
 
     getActionButtons: function (){
         return ['deleteBannedUsersButton', 'downloadInvalidButton', 'deleteUsersButton', 'checkUsersButton'];
