@@ -1,4 +1,4 @@
-FormStepper = {
+let FormStepper = {
 
     pluginName : "formStepper",
     form : {},
@@ -178,7 +178,7 @@ FormStepper = {
     }
 }
 
-ShoppingCart = {
+let ShoppingCart = {
 
     pluginName : "shoppingCart",
     defaults: {

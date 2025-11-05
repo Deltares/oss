@@ -1,5 +1,7 @@
 <%@ include file="init.jsp" %>
-<h3><strong><liferay-ui:message key="registrationform.user.information"/></strong></h3>
+<div class="prose prose--app">
+<h3><liferay-ui:message key="registrationform.user.information"/></h3>
+</div>
 <br/>
 <%
     UserRegistrationDisplayContext displayContext = (UserRegistrationDisplayContext) request.getAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT);
@@ -216,6 +218,8 @@
         </table>
     </div>
 </div>
+
+
 
 <aui:script use="event, node, aui-base">
 

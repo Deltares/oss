@@ -4,8 +4,9 @@
 
     if (displayContext.showTerms()) {
 %>
-<h3><strong><liferay-ui:message key="registrationform.terms.header"/></strong></h3>
-
+<div class="prose prose--app">
+<h3><liferay-ui:message key="registrationform.terms.header"/></h3>
+</div>
 <div class="form-group-autofit">
     <aui:input
             name ="course_conditions"
@@ -24,8 +25,9 @@
 <%
     }
 %>
-<h3><strong><liferay-ui:message key="registrationform.privacy.header"/></strong></h3>
-
+<div class="prose prose--app">
+<h3><liferay-ui:message key="registrationform.privacy.header"/></h3>
+</div>
 <div class="form-group-autofit">
     <p><liferay-ui:message key="registrationform.privacy.text"/></p>
 </div>

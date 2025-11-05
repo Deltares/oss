@@ -12,16 +12,19 @@ $default-font: $font-sans !default;
   background-color: #007bff;
   border-color: #007bff;
 }
+
 .button-row-button {
 
   button {
     margin: 2px;
   }
 }
+
 .bs-stepper {
   h2 {
     text-transform: uppercase;
   }
+
   ul li {
     font-family: $default-font;
     font-size: $base-font-size;

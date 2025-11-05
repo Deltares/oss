@@ -1,0 +1,83 @@
+.portlet-search-results {
+  .search-result-list {
+    background: $white;
+
+    > .display-list {
+      background: $white;
+      margin: 0 -1rem;
+      padding: 1.5rem 1rem 3.5rem;
+    }
+
+    ol {
+      li {
+        margin-bottom: 1.75rem;
+
+        > a {
+          padding: 1rem 1.25rem;
+
+          &:hover {
+            color: $black;
+          }
+        }
+
+        h4 {
+          margin-bottom: 0.5rem;
+        }
+
+        .mark {
+          background-color: transparent;
+          box-shadow: none;
+        }
+      }
+    }
+  }
+
+  .search-result-list-pagination {
+    .pagination-bar {
+      justify-content: center;
+
+      .pagination-items-per-page,
+      .pagination-results {
+        display: none;
+        speak: none;
+        visibility: hidden;
+      }
+
+      .pagination {
+        li {
+          margin: 0;
+
+          a {
+            margin-left: .75rem;
+            margin-right: .75rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .portlet-search-results {
+    .search-result-list {
+      background: transparent;
+
+      > .display-list {
+        background: transparent;
+      }
+
+      ol {
+        li {
+          > a {
+            padding-left: 1.25rem;
+            padding-right: 1.25rem;
+          }
+
+          h4 {
+            margin-bottom: .25rem;
+          }
+        }
+      }
+    }
+  }
+}

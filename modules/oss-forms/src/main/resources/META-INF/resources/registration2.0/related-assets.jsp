@@ -1,22 +1,51 @@
 <%@ include file="init.jsp" %>
-<h3><strong><liferay-ui:message key="registrationform.related.assets"/></strong></h3>
-<br/>
 <%
     RelatedAssetsDisplayContext displayContext = (RelatedAssetsDisplayContext) request.getAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT);
+    String relatedAssetsTemplate = (String) request.getAttribute("relatedAssetsTemplate");
+    String selectedAssetsTemplate = (String) request.getAttribute("selectedAssetsTemplate");
+
+    List<String> selectedArticleIds = displayContext != null ? displayContext.getSelectedArticleIds() : Collections.emptyList();
     List<Registration> relatedArticles = displayContext != null ? displayContext.getRelatedArticles() : Collections.emptyList();
 
-    for (Registration relatedArticle : relatedArticles) {
-        JournalArticleDisplay articleDisplay = displayContext
-                .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, "PROGRAM-LIST-1.0.1",
-                        relatedArticle.getJournalArticle(), themeDisplay);
+%>
+    <div class="prose prose--app">
+        <h3><liferay-ui:message key="registrationform.selected.assets"/></h3>
+    </div>
+<br />
+    <%
+        for (String selectedArticleId : selectedArticleIds) {
+            JournalArticleDisplay articleDisplay = displayContext
+                    .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, selectedAssetsTemplate, themeDisplay.getSiteGroupId(),
+                            selectedArticleId, themeDisplay);
 
-%>
-<liferay-journal:journal-article-display
-        articleDisplay="<%= articleDisplay %>"
-/>
-<%
-    }
-%>
+    %>
+    <liferay-journal:journal-article-display
+            articleDisplay="<%= articleDisplay %>"
+    />
+    <%
+        }
+    %>
+<br />
+    <div class="prose prose--app">
+        <h4><liferay-ui:message key="registrationform.related.assets"/></h4>
+    </div>
+
+    <div class="flex flex-row pb-2 lg:pb-0 spotlight-slider">
+    <%
+        for (Registration relatedArticle : relatedArticles) {
+            JournalArticleDisplay articleDisplay = displayContext
+                    .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, relatedAssetsTemplate, relatedArticle.getGroupId(),
+                            relatedArticle.getJournalArticle().getArticleId(), themeDisplay);
+
+    %>
+    <liferay-journal:journal-article-display
+            articleDisplay="<%= articleDisplay %>"
+    />
+    <%
+        }
+    %>
+    </div>
+</p>
 <aui:script >
 
     let addToCartButtons = document.getElementsByClassName('add-to-cart')
@@ -43,5 +72,30 @@
 
     })
 
-
+    var slider = tns({
+        container: '.spotlight-slider',
+        arrowKeys: true,
+        autoWidth: false,
+        controls: true,
+        controlsPosition: 'bottom',
+        edgePadding: 16,
+        gutter: 10,
+        items: 2,
+        lazyload: true,
+        loop: false,
+        mouseDrag: true,
+        navPosition: 'bottom',
+        preventScrollOnTouch: 'auto',
+        fixedWidth: 254,
+        responsive: {
+            760: {
+                edgePadding: 50
+            },
+            1024: {
+                edgePadding: 80
+            }
+        },
+        speed: 400,
+        swipeAngle: false
+    });
 </aui:script>

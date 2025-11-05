@@ -1,10 +1,14 @@
 package nl.deltares.forms.util;
 
+import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.forms.constants.CheckoutWebKeys;
 import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.forms.internal.RelatedAssetsDisplayContext;
+import nl.deltares.forms.portlet.RegistrationFormConfiguration;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import org.osgi.service.component.annotations.Component;
@@ -39,6 +43,14 @@ public class RelatedAssetsCheckoutStep extends BaseCheckoutStep {
     @Override
     public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 
+        CPRequestHelper cpRequestHelper = new CPRequestHelper(httpServletRequest);
+        ThemeDisplay themeDisplay = cpRequestHelper.getThemeDisplay();
+        RegistrationFormConfiguration portletInstanceConfiguration = _configurationProvider.getPortletInstanceConfiguration(RegistrationFormConfiguration.class,
+                themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
+
+        httpServletRequest.setAttribute("relatedAssetsTemplate", portletInstanceConfiguration.relatedAssetsTemplate());
+        httpServletRequest.setAttribute("selectedAssetsTemplate",portletInstanceConfiguration.selectedAssetsTemplate());
+
         _jspRenderer.renderJSP(
                 httpServletRequest, httpServletResponse,
                 "/registration2.0/related-assets.jsp");
@@ -71,5 +83,8 @@ public class RelatedAssetsCheckoutStep extends BaseCheckoutStep {
 
     @Reference
     private DsdJournalArticleUtils _dsdJournalArticleUtils;
+
+    @Reference
+    private ConfigurationProvider _configurationProvider;
 
 }

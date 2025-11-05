@@ -1,5 +1,7 @@
 <%@ include file="init.jsp" %>
-<h3><strong><liferay-ui:message key="registrationform.billing.select.address"/></strong></h3>
+<div class="prose prose--app">
+<h3><liferay-ui:message key="registrationform.billing.select.address"/></h3>
+</div>
 <%
     BillingDetailsCheckoutStepDisplayContext displayContext = (BillingDetailsCheckoutStepDisplayContext) request.getAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT);
     List<Address> availableAddresses = displayContext.getBillingAddresses();

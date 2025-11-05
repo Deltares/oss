@@ -1,5 +1,7 @@
 <%@ include file="init.jsp" %>
-<h3><strong><liferay-ui:message key="registrationform.select.org"/></strong></h3>
+<div class="prose prose--app">
+<h3><liferay-ui:message key="registrationform.select.org"/></h3>
+</div>
 <%
     Long selection = (Long) request.getAttribute("selectedAccountEntryId");
     long selectedAccountEntryId = selection == null ? 0 : selection;

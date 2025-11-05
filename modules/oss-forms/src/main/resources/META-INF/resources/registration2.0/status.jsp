@@ -7,7 +7,9 @@
 		<img src="<%=displayContext.getImageURL()%>" alt="">
 	</div>
 	<div class="col">
-		<h3><strong><liferay-ui:message key="<%=displayContext.getHeaderKey()%>" /></strong></h3>
+		<div class="prose prose--app">
+		<h3><liferay-ui:message key="<%=displayContext.getHeaderKey()%>" /></h3>
+		</div>
 
 		<div class="form-group-autofit">
 			<liferay-ui:message key="<%=displayContext.getEmailMessageKey()%>" />
@@ -16,7 +18,7 @@
 		<div class="">
 			<liferay-ui:message key="<%=displayContext.getPaymentMessageKey()%>" arguments="<%=displayContext.getPaymentMessageArguments()%>" />
 		</div>
-
+		<br />
 		<div class="form-group-autofit">
 			<aui:button-row>
 				<aui:button href="<%= (String)request.getAttribute(OssConstants.MY_REGISTRATIONS_URL) %>"

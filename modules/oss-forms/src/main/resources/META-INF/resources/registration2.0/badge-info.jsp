@@ -1,6 +1,8 @@
 <%@ page import="nl.deltares.model.BadgeInfo" %>
 <%@ include file="init.jsp" %>
-<h3><strong><liferay-ui:message key="registrationform.badge.information"/></strong></h3>
+<div class="prose prose--app">
+<h3><liferay-ui:message key="registrationform.badge.information"/></h3>
+</div>
 <br/>
 <%
     BadgeConfigCheckoutStepDisplayContext displayContext = (BadgeConfigCheckoutStepDisplayContext) request.getAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT);

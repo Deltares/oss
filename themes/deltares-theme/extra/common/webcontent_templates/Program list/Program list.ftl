@@ -28,7 +28,7 @@
                 <strong>${title}</strong>
             </a>
         </h4>
-        <div>
+        <p>
             <#assign count = displayContext.getPresenterCount()/>
             <#if count gt 0>
                 <#list 0..(count-1) as i >
@@ -64,6 +64,6 @@
                 </span>
 
             </#if>
-        </div>
+        </p>
     </div>
 </div>

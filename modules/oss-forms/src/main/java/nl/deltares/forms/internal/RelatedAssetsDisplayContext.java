@@ -9,6 +9,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletRequestModel;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
@@ -26,8 +27,8 @@ public class RelatedAssetsDisplayContext {
     private final DsdJournalArticleUtils _dsdJournalArticleUtils;
     private final DsdParserUtils _dsdParserUtils;
     private final List<Registration> _relatedRegistrations = new ArrayList<>();
+    private final List<String> _selectedRegistrations = new ArrayList<>();
     private final ThemeDisplay _themeDisplay;
-    private final String ids;
 
     public RelatedAssetsDisplayContext(HttpServletRequest request, DsdJournalArticleUtils dsdJournalArticleUtils, DsdParserUtils dsdParserUtils) throws Exception {
 
@@ -35,24 +36,33 @@ public class RelatedAssetsDisplayContext {
         _dsdParserUtils = dsdParserUtils;
         CPRequestHelper cpRequestHelper = new CPRequestHelper(request);
         _themeDisplay = cpRequestHelper.getThemeDisplay();
-        ids = ParamUtil.getString(request, "ids");
-        loadRelatedAssets(ids);
+        String ids = ParamUtil.getString(request, "ids");
+
+        if (ids.isEmpty()) return;
+        String[] registrationIds = ids.split(",", -1);
+        List<String> list = Arrays.asList(registrationIds);
+        list.forEach(s -> {if (!Validator.isBlank(s)){ _selectedRegistrations.add(s);}});
+        loadRelatedAssets();
     }
 
     public JournalArticleDisplay getArticleDisplay(PortletRequest portletRequest, PortletResponse portletResponse,
-                                                   String ddmTemplateKey, JournalArticle journalArticle, ThemeDisplay themeDisplay) {
+                                                   String ddmTemplateKey, long groupId, String articleId, ThemeDisplay themeDisplay) {
         JournalArticleDisplay articleDisplay = null;
         try {
-            articleDisplay = JournalArticleLocalServiceUtil.getArticleDisplay(
-                    journalArticle, ddmTemplateKey, "VIEW",
+            articleDisplay = JournalArticleLocalServiceUtil.getArticleDisplay(groupId,
+                    articleId, ddmTemplateKey, "VIEW",
                     themeDisplay.getLanguageId(), 1, new PortletRequestModel(portletRequest, portletResponse),
                     themeDisplay);
         } catch (Exception e) {
             String message = String.format("Error getting article display object for article [%s] with template ID [%s]",
-                    journalArticle.getArticleId(), ddmTemplateKey);
+                    articleId, ddmTemplateKey);
             LOG.debug(message, e);
         }
         return articleDisplay;
+    }
+
+    public List<String> getSelectedArticleIds(){
+        return _selectedRegistrations;
     }
 
     public List<Registration> getRelatedArticles() {
@@ -63,16 +73,15 @@ public class RelatedAssetsDisplayContext {
         return _themeDisplay;
     }
 
-    private void loadRelatedAssets(String ids) throws Exception {
-        if (ids.isEmpty()) return;
-        String[] registrationIds = ids.split(",", -1);
+    private void loadRelatedAssets() throws Exception {
 
-        List<JournalArticle> relatedArticles = _dsdJournalArticleUtils.getRelatedArticles(_themeDisplay.getScopeGroupId(), registrationIds);
+        String[] selectedRegistrations = _selectedRegistrations.toArray(new String[0]);
+        List<JournalArticle> relatedArticles = _dsdJournalArticleUtils.getRelatedArticles(_themeDisplay.getScopeGroupId(), selectedRegistrations);
         for (JournalArticle relatedArticle : relatedArticles) {
             if (relatedArticle == null) {
                 continue;
             }
-            if (Arrays.stream(registrationIds).anyMatch(registrationId -> relatedArticle.getArticleId().equals(registrationId))) {
+            if (Arrays.stream(selectedRegistrations).anyMatch(registrationId -> relatedArticle.getArticleId().equals(registrationId))) {
                 continue;
             }
 

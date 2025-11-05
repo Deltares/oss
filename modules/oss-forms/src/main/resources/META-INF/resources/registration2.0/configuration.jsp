@@ -6,16 +6,26 @@
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="java.util.List" %>
+<%@ page import="nl.deltares.forms.portlet.RegistrationFormConfiguration" %>
+<%@ page import="com.liferay.portal.kernel.util.Validator" %>
 
 <liferay-theme:defineObjects/>
 
 <portlet:defineObjects/>
-<%
-    final List<String> languageIds = (List<String>) renderRequest.getAttribute("languageIds");
-%>
 
+<%
+    RegistrationFormConfiguration configuration =
+            (RegistrationFormConfiguration) renderRequest.getAttribute(RegistrationFormConfiguration.class.getName());
+
+    String selectedAssetsTemplate= "";
+    String relatedAssetsTemplate="";
+    boolean showBadge = true;
+    if (Validator.isNotNull(configuration)){
+        showBadge = Boolean.parseBoolean(portletPreferences.getValue("showBadgeInfo", String.valueOf(configuration.showBadgeInfo())));
+        selectedAssetsTemplate = portletPreferences.getValue("selectedAssetsTemplate", configuration.selectedAssetsTemplate());
+        relatedAssetsTemplate = portletPreferences.getValue("relatedAssetsTemplate", configuration.relatedAssetsTemplate());
+    }
+%>
 <liferay-portlet:actionURL
         portletConfiguration="<%= true %>"
         var="configurationActionURL"
@@ -41,45 +51,23 @@
         <div class="sheet sheet-lg">
             <div aria-multiselectable="true" class>
         <aui:fieldset id="site_config" collapsible="true" label="Site config">
-            <aui:input
-                    label="registrationform.successpage"
-                    name="registerSuccessURL"
-                    value='<%= renderRequest.getAttribute("registerSuccessURL") %>'/>
 
             <aui:input
-                    label="registrationform.unregistersuccesspage"
-                    name="unregisterSuccessURL"
-                    value='<%= renderRequest.getAttribute("unregisterSuccessURL") %>'/>
+                    label="registrationform.selectedAssetsTemplate"
+                    name="selectedAssetsTemplate"
+                    value='<%= selectedAssetsTemplate %>'/>
 
             <aui:input
-                    label="registrationform.updatesuccesspage"
-                    name="updateSuccessURL"
-                    value='<%= renderRequest.getAttribute("updateSuccessURL") %>'/>
-
-            <aui:input
-                    label="registrationform.failpage"
-                    name="failURL"
-                    value='<%= renderRequest.getAttribute("failURL") %>'/>
+                    label="registrationform.relatedAssetsTemplate"
+                    name="relatedAssetsTemplate"
+                    value='<%= relatedAssetsTemplate %>'/>
 
             <aui:input
                     label="registrationform.showBadgeInfo"
                     name="showBadgeInfo"
                     type="toggle-switch"
-                    value='<%= renderRequest.getAttribute("showBadgeInfo")%>'/>
+                    value='<%= showBadge %>'/>
 
-            <%
-                Map<String, String> childHeaderText = (Map<String,String>) renderRequest.getAttribute("childHeaderText");
-                for (String languageId : languageIds) {
-                    String name = "childHeaderText-" + languageId;
-            %>
-            <aui:input
-                    label="registrationform.childheader-text"
-                    prefix="<%=languageId%>"
-                    name="<%=name%>"
-                    value="<%= childHeaderText.get(languageId) %>"/>
-            <%
-                }
-            %>
         </aui:fieldset>
             </div>
         </div>

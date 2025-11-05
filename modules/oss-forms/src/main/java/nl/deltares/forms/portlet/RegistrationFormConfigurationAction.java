@@ -1,28 +1,27 @@
 package nl.deltares.forms.portlet;
 
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
+import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
+import com.liferay.portal.kernel.settings.ModifiableSettings;
+import com.liferay.portal.kernel.settings.Settings;
+import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.utils.JsonContentUtils;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.ConfigurationPolicy;
-import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.*;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
 import java.util.Map;
-
-import static nl.deltares.portal.utils.LocalizationUtils.convertToLocalizedMap;
-import static nl.deltares.portal.utils.LocalizationUtils.getAvailableLanguageIds;
 
 @Component(
         configurationPid = OssConstants.REGISTRATIONFORM_CONFIGURATIONS_PID,
@@ -39,24 +38,8 @@ public class RegistrationFormConfigurationAction extends DefaultConfigurationAct
                         HttpServletResponse httpServletResponse) throws Exception {
 
         httpServletRequest.setAttribute(
-                ConfigurationProvider.class.getName(),
-                _configurationProvider);
-
-        httpServletRequest.setAttribute("languageIds", getAvailableLanguageIds(httpServletRequest));
-        try {
-            ThemeDisplay themeDisplay = (ThemeDisplay) httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY);
-            RegistrationFormConfiguration siteConfiguration = _configurationProvider
-                    .getPortletInstanceConfiguration(RegistrationFormConfiguration.class, themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
-
-            httpServletRequest.setAttribute("childHeaderText", getParsedJsonParameter(siteConfiguration, "childHeaderText"));
-            httpServletRequest.setAttribute("registerSuccessURL", siteConfiguration.registerSuccessURL());
-            httpServletRequest.setAttribute("unregisterSuccessURL", siteConfiguration.unregisterSuccessURL());
-            httpServletRequest.setAttribute("updateSuccessURL", siteConfiguration.updateSuccessURL());
-            httpServletRequest.setAttribute("failURL", siteConfiguration.failURL());
-            httpServletRequest.setAttribute("showBadgeInfo", siteConfiguration.showBadgeInfo());
-        } catch (PortalException e) {
-            throw new PortalException("Could not get options for field 'registrationType' in structure SESSIONS: " + e.getMessage(), e);
-        }
+                RegistrationFormConfiguration.class.getName(),
+                _configuration);
         super.include(portletConfig, httpServletRequest, httpServletResponse);
     }
 
@@ -64,38 +47,26 @@ public class RegistrationFormConfigurationAction extends DefaultConfigurationAct
     public void processAction(PortletConfig portletConfig, ActionRequest actionRequest, ActionResponse actionResponse)
             throws Exception {
 
-        Map<String, String> childHeaderText = convertToLocalizedMap(actionRequest, "childHeaderText");
-        setPreference(actionRequest, "registerSuccessURL", ParamUtil.getString(actionRequest, "registerSuccessURL"));
-        setPreference(actionRequest, "unregisterSuccessURL", ParamUtil.getString(actionRequest, "unregisterSuccessURL"));
-        setPreference(actionRequest, "updateSuccessURL", ParamUtil.getString(actionRequest, "updateSuccessURL"));
-        setPreference(actionRequest, "failURL", ParamUtil.getString(actionRequest, "failURL"));
         setPreference(actionRequest, "showBadgeInfo", String.valueOf(ParamUtil.getBoolean(actionRequest, "showBadgeInfo")));
-        setPreference(actionRequest, "childHeaderText", JsonContentUtils.formatMapToJson(childHeaderText));
-
+        setPreference(actionRequest, "relatedAssetsTemplate", ParamUtil.getString(actionRequest, "relatedAssetsTemplate"));
+        setPreference(actionRequest, "selectedAssetsTemplate", ParamUtil.getString(actionRequest, "selectedAssetsTemplate"));
         super.processAction(portletConfig, actionRequest, actionResponse);
     }
 
-    private ConfigurationProvider _configurationProvider;
-
-    @Reference
-    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
-        _configurationProvider = configurationProvider;
+    /**
+     * (1)If a method is annoted with @Activate then the method will be called at the time of activation of the component
+     * so that we can perform initialization task
+     * <p>
+     * (2) This class is annoted with @Component where we have used configurationPid with id com.proliferay.configuration.DemoConfiguration
+     * So if we modify any configuration then this method will be called.
+     */
+    @Activate
+    @Modified
+    protected void activate(Map<Object, Object> properties) {
+        _configuration = ConfigurableUtil.createConfigurable(
+                RegistrationFormConfiguration.class, properties);
     }
 
+    private volatile RegistrationFormConfiguration _configuration;
 
-    public static Map<String, String> getParsedJsonParameter(RegistrationFormConfiguration configuration, String parameterId) throws PortalException {
-
-        String json;
-        if (parameterId.equals("childHeaderText")) {
-            json = configuration.childHeaderText();
-        } else {
-            json = null;
-        }
-        try {
-            return JsonContentUtils.parseJsonToMap(json);
-        } catch (Exception e) {
-            return Collections.emptyMap();
-        }
-
-    }
 }

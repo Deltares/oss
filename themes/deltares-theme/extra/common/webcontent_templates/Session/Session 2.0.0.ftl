@@ -294,6 +294,7 @@
             </div>
         </#if>
     </div>
+</#if>
     <script>
         var myCalendar = createCalendar({
             options: {
@@ -313,4 +314,3 @@
 
         document.querySelector('.add-to-calendar').appendChild(myCalendar);
     </script>
-</#if>

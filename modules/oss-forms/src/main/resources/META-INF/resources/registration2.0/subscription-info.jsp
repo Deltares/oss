@@ -1,6 +1,8 @@
 <%@ include file="init.jsp" %>
-<h3><strong><liferay-ui:message key="registrationform.subscription.information"/></strong></h3>
-<strong><liferay-ui:message key="registrationform.subscription.information.sub"/></strong>
+<div class="prose prose--app">
+<h3><liferay-ui:message key="registrationform.subscription.information"/></h3>
+<h4><liferay-ui:message key="registrationform.subscription.information.sub"/></h4>
+</div>
 <br/>
 <%
     SubscriptionsDisplayContext displayContext = (SubscriptionsDisplayContext) request.getAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT);

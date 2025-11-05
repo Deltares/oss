@@ -39,6 +39,12 @@
 @import "global/portlet";
 @import "global/layouttpl";
 
+// Pages
+@import "pages/detail";
+@import "pages/detail-page";
+@import "pages/expert-list";
+@import "pages/search-results";
+
 // Page objects
 @import "objects/forms/inputs";
 @import "objects/header/page_header";
