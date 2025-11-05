@@ -84,7 +84,7 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
         }
 
         //set languages
-        setLanguages(contextObjects, themeDisplay);
+//        setLanguages(contextObjects, themeDisplay);
 
         String checkoutCartUrl = "";
         String downloadCartURL = "";
@@ -115,25 +115,25 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
     }
 
 
-    private void setLanguages(Map<String, Object> contextObjects, ThemeDisplay themeDisplay) {
-        ArrayList<LanguageImpl> languages = new ArrayList<>();
-        String urlCurrent = themeDisplay.getURLCurrent();
-        final String noLanguagePath;
-        final String currLanguage;
-        if (urlCurrent.startsWith("/en") || urlCurrent.startsWith("/nl")) {
-            noLanguagePath = urlCurrent.substring(3);
-            currLanguage = urlCurrent.substring(1, 3);
-        } else {
-            noLanguagePath = urlCurrent;
-            currLanguage = themeDisplay.getLocale().getLanguage();
-        }
-        languages.add(new LanguageImpl("nl", "NL", themeDisplay.getURLPortal() + "/nl" + noLanguagePath, themeDisplay));
-        languages.add(new LanguageImpl("en", "EN", themeDisplay.getURLPortal() + "/en" + noLanguagePath, themeDisplay));
-        contextObjects.put("languages", languages);
-
-        contextObjects.put("curr_language", new LanguageImpl(currLanguage, currLanguage.toUpperCase(), themeDisplay.getURLPortal() + "/" + currLanguage + noLanguagePath, themeDisplay));
-
-
-    }
+//    private void setLanguages(Map<String, Object> contextObjects, ThemeDisplay themeDisplay) {
+//        ArrayList<LanguageImpl> languages = new ArrayList<>();
+//        String urlCurrent = themeDisplay.getURLCurrent();
+//        final String noLanguagePath;
+//        final String currLanguage;
+//        if (urlCurrent.startsWith("/en") || urlCurrent.startsWith("/nl")) {
+//            noLanguagePath = urlCurrent.substring(3);
+//            currLanguage = urlCurrent.substring(1, 3);
+//        } else {
+//            noLanguagePath = urlCurrent;
+//            currLanguage = themeDisplay.getLocale().getLanguage();
+//        }
+//        languages.add(new LanguageImpl("nl", "NL", themeDisplay.getURLPortal() + "/nl" + noLanguagePath, themeDisplay));
+//        languages.add(new LanguageImpl("en", "EN", themeDisplay.getURLPortal() + "/en" + noLanguagePath, themeDisplay));
+//        contextObjects.put("languages", languages);
+//
+//        contextObjects.put("curr_language", new LanguageImpl(currLanguage, currLanguage.toUpperCase(), themeDisplay.getURLPortal() + "/" + currLanguage + noLanguagePath, themeDisplay));
+//
+//
+//    }
 
 }
