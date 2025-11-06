@@ -22,7 +22,11 @@ public class Expert extends AbsDsdArticle {
         init();
     }
 
-    private void init() throws PortalException {
+    @Override
+    void init() throws PortalException {
+
+        super.init();
+
         try {
             this.email = getFormFieldValue( "expertEmailAddress", false);
             this.name =  getFormFieldValue( "expertName", true);

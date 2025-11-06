@@ -21,7 +21,10 @@ public class DinnerRegistration extends Registration {
         init();
     }
 
-    private void init() throws PortalException {
+    @Override
+    void init() throws PortalException {
+
+        super.init();
 
         try {
             initDates();

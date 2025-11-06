@@ -90,10 +90,9 @@ public abstract class AbsDsdArticle implements DsdArticle {
         this._dsdParserUtils = dsdParserUtils;
         this._dsdJournalArticleUtils = dsdJournalArticleUtils;
         this._locale = _locale;
-        init();
     }
 
-    private void init() {
+    void init() throws PortalException{
         final DDMStructure ddmStructure = _article.getDDMStructure();
         final DDMForm ddmForm = ddmStructure.getDDMForm();
         final DDMFormValues ddmFormValues = DDMFieldLocalServiceUtil.getDDMFormValues(ddmForm, _article.getId());

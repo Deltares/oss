@@ -22,8 +22,10 @@ public class Building extends AbsDsdArticle {
         init();
     }
 
-    private void init() throws PortalException {
+    @Override
+    void init() throws PortalException {
         try {
+            super.init();
             Map<String, String> coords = JsonContentUtils.parseJsonToMap(getFormFieldValue("location", false));
             this.longitude = Double.parseDouble(coords.getOrDefault("longitude", coords.get("lng")));
             this.latitude =  Double.parseDouble(coords.getOrDefault("latitude", coords.get("lat")));

@@ -22,7 +22,10 @@ public class Presentation  extends AbsDsdArticle{
         init();
     }
 
-    private void init() throws PortalException {
+    void init() throws PortalException {
+
+        super.init();
+
         try {
             String presenterName = getFormFieldValue("presenterName", true);
             if (presenterName != null) this.presenterName = presenterName;

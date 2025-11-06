@@ -24,7 +24,11 @@ public class Subscription extends AbsDsdArticle {
         this.name = name;
     }
 
-    private void init() throws PortalException {
+    @Override
+    void init() throws PortalException {
+
+        super.init();
+
         try {
             Document document = getDocument();
             id = getFormFieldValue("Id", false);

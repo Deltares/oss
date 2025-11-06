@@ -24,7 +24,11 @@ public class LicenseFile extends AbsDsdArticle {
         init();
     }
 
-    private void init() throws PortalException {
+    @Override
+    void init() throws PortalException {
+
+        super.init();
+
         try {
             content = getFormFieldValue( "TemplateContent", false);
             name = getFormFieldValue("Name", false);

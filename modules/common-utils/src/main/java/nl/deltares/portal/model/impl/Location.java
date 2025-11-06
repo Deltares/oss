@@ -24,7 +24,11 @@ public class Location extends AbsDsdArticle {
         init();
     }
 
-    private void init() throws PortalException {
+    @Override
+    void init() throws PortalException {
+
+        super.init();
+
         try {
             this.city = getFormFieldValue( "city", false);
             this.country = getFormFieldValue( "country", false);

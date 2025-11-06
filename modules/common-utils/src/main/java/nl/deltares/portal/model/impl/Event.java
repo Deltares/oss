@@ -32,7 +32,10 @@ public class Event extends AbsDsdArticle {
         init();
     }
 
-    private void init() throws PortalException {
+    @Override
+    void init() throws PortalException {
+
+        super.init();
 
         timeZoneId = getFormFieldValue("timeZone", true);
 

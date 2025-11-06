@@ -37,7 +37,10 @@ public class SessionRegistration extends Registration {
         return DSD_STRUCTURE_KEYS.Session.name();
     }
 
-    private void init() throws PortalException {
+    @Override
+    void init() throws PortalException {
+
+        super.init();
 
         try {
             String jsonImage = getFormFieldValue( "eventImage", true);

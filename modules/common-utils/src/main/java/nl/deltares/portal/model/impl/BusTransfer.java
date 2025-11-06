@@ -27,7 +27,10 @@ public class BusTransfer extends Registration {
         init();
     }
 
-    private void init() throws PortalException {
+    @Override
+    void init() throws PortalException {
+
+        super.init();
 
         dateTimeFormatter.setTimeZone(TimeZone.getTimeZone(getTimeZoneId()));
 

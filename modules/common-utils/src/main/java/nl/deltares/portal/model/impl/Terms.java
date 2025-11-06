@@ -4,7 +4,6 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
-import org.w3c.dom.Document;
 
 import java.util.Locale;
 
@@ -18,9 +17,12 @@ public class Terms extends AbsDsdArticle {
         init();
     }
 
-    private void init() throws PortalException {
+    @Override
+    void init() throws PortalException {
+
+        super.init();
+
         try {
-            Document document = getDocument();
             termsURL = getFormFieldValue("TermsURL", false);
             name = getFormFieldValue("Name", false);
         } catch (Exception e) {

@@ -20,10 +20,13 @@ public class Room extends AbsDsdArticle {
         return DSD_STRUCTURE_KEYS.Room.name();
     }
 
-    private void init() throws PortalException {
+    @Override
+    void init() throws PortalException {
+
+        super.init();
+
         try {
             this.capacity = Integer.parseInt(getFormFieldValue( "capacity", false));
-
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing content for article %s: %s!", getTitle(), e.getMessage()), e);
         }

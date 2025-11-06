@@ -53,10 +53,12 @@ public abstract class Registration extends AbsDsdArticle {
 
     public Registration(JournalArticle article, DsdParserUtils dsdParserUtils, DsdJournalArticleUtils dsdJournalArticleUtils, Locale locale) throws PortalException {
         super(article, dsdParserUtils, dsdJournalArticleUtils, locale);
-        init();
     }
 
-    private void init() throws PortalException {
+    @Override
+    void init() throws PortalException {
+
+        super.init();
 
         try {
             this.eventId =  Long.parseLong(getFormFieldValue("eventId", false));
