@@ -82,7 +82,7 @@ public class SessionRegistration extends Registration {
     private void parseRoom() throws PortalException {
         String roomJson = getFormFieldValue("room", false);
         JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(roomJson);
-        AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(journalArticle, getLocale());
+        AbsDsdArticle dsdArticle = _dsdParserUtils.toDsdArticle(journalArticle, getLocale());
         if (!(dsdArticle instanceof Room)){
             throw new PortalException("Unsupported registration type! Expected Room but found: " + dsdArticle.getClass().getName());
         }
@@ -94,7 +94,7 @@ public class SessionRegistration extends Registration {
         List<String> presenters = getFormFieldValues( "presenters", true);
         for (String presenterJson : presenters) {
             JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(presenterJson);
-            this.presenters.add( dsdParserUtils.getExpert(journalArticle) );
+            this.presenters.add( _dsdParserUtils.getExpert(journalArticle) );
         }
     }
 
@@ -151,7 +151,7 @@ public class SessionRegistration extends Registration {
         List<String> presentations = getFormFieldValues( "presentation", true);
         for (String presentationJson : presentations) {
             JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(presentationJson);
-            this.presentations.add((Presentation) dsdParserUtils.toDsdArticle(journalArticle, getLocale()));
+            this.presentations.add((Presentation) _dsdParserUtils.toDsdArticle(journalArticle, getLocale()));
         }
 
     }

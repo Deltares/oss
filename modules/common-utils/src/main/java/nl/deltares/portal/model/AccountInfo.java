@@ -7,13 +7,13 @@ import java.util.List;
 
 public class AccountInfo implements Serializable {
 
-    String companyName = null;
-    String companyIdentifier = null;
-    List<String> emailDomains = new ArrayList<>();
-    String vat = null;
-    String type = "business";
-    String website = null;
-    AddressInfo addressInfo = null;
+    private String companyName = null;
+    private String companyIdentifier = null;
+    private final List<String> emailDomains = new ArrayList<>();
+    private String vat = null;
+    private String type = "business";
+    private String website = null;
+    private AddressInfo addressInfo = null;
 
     public String getCompanyName() {
         return companyName;

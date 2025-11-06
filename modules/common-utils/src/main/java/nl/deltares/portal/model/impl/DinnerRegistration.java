@@ -55,7 +55,7 @@ public class DinnerRegistration extends Registration {
     private void parserRestaurant() throws PortalException {
         String json = getFormFieldValue( "restaurant", false);
         JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(json);
-        AbsDsdArticle location = dsdParserUtils.toDsdArticle(article, getLocale());
+        AbsDsdArticle location = _dsdParserUtils.toDsdArticle(article, getLocale());
         if (!(location instanceof Location)) throw new PortalException(String.format("Article %s not instance of Location", article.getTitle()));
         restaurant = (Location) location;
     }

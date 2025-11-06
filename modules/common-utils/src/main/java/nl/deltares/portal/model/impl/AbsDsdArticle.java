@@ -23,13 +23,13 @@ import java.util.*;
 
 public abstract class AbsDsdArticle implements DsdArticle {
 
-    private final JournalArticle article;
-    public final long instantiationTime;
-    protected final DsdParserUtils dsdParserUtils;
-    protected final DsdJournalArticleUtils dsdJournalArticleUtils;
-    private final Locale locale;
-    private List<DDMFormFieldValue> ddmFormFieldValues;
-    final private SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+    private final JournalArticle _article;
+    public final long _instantiationTime;
+    protected final DsdParserUtils _dsdParserUtils;
+    protected final DsdJournalArticleUtils _dsdJournalArticleUtils;
+    private final Locale _locale;
+    private List<DDMFormFieldValue> _ddmFormFieldValues;
+    private final SimpleDateFormat _dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
 
     @Override
     public void validate() throws PortalException {
@@ -43,32 +43,32 @@ public abstract class AbsDsdArticle implements DsdArticle {
 
     @Override
     public long getResourceId() {
-        if (article == null) return 0;
-        return article.getResourcePrimKey();
+        if (_article == null) return 0;
+        return _article.getResourcePrimKey();
     }
 
     @Override
     public String getArticleId() {
-        if (article == null) return "0";
-        return article.getArticleId();
+        if (_article == null) return "0";
+        return _article.getArticleId();
     }
 
     @Override
     public String getTitle() {
-        if (article == null) return "";
-        return article.getTitle();
+        if (_article == null) return "";
+        return _article.getTitle();
     }
 
     @Override
     public long getGroupId(){
-        if (article == null) return 0;
-        return article.getGroupId();
+        if (_article == null) return 0;
+        return _article.getGroupId();
     }
 
     @Override
     public long getCompanyId(){
-        if (article == null) return 0;
-        return article.getCompanyId();
+        if (_article == null) return 0;
+        return _article.getCompanyId();
     }
 
     @Override
@@ -77,34 +77,34 @@ public abstract class AbsDsdArticle implements DsdArticle {
     }
 
     AbsDsdArticle(){
-        this.article = null;
-        this.instantiationTime = System.currentTimeMillis();
-        this.dsdParserUtils = null;
-        this.dsdJournalArticleUtils = null;
-        this.locale = null;
+        this._article = null;
+        this._instantiationTime = System.currentTimeMillis();
+        this._dsdParserUtils = null;
+        this._dsdJournalArticleUtils = null;
+        this._locale = null;
     }
 
-    AbsDsdArticle(JournalArticle article, DsdParserUtils dsdParserUtils, DsdJournalArticleUtils dsdJournalArticleUtils, Locale locale) throws PortalException {
-        this.article = article;
-        this.instantiationTime = System.currentTimeMillis();
-        this.dsdParserUtils = dsdParserUtils;
-        this.dsdJournalArticleUtils = dsdJournalArticleUtils;
-        this.locale = locale;
+    AbsDsdArticle(JournalArticle article, DsdParserUtils dsdParserUtils, DsdJournalArticleUtils dsdJournalArticleUtils, Locale _locale) throws PortalException {
+        this._article = article;
+        this._instantiationTime = System.currentTimeMillis();
+        this._dsdParserUtils = dsdParserUtils;
+        this._dsdJournalArticleUtils = dsdJournalArticleUtils;
+        this._locale = _locale;
         init();
     }
 
     private void init() {
-        final DDMStructure ddmStructure = article.getDDMStructure();
+        final DDMStructure ddmStructure = _article.getDDMStructure();
         final DDMForm ddmForm = ddmStructure.getDDMForm();
-        final DDMFormValues ddmFormValues = DDMFieldLocalServiceUtil.getDDMFormValues(ddmForm, article.getId());
-        this.ddmFormFieldValues = ddmFormValues.getDDMFormFieldValues();
+        final DDMFormValues ddmFormValues = DDMFieldLocalServiceUtil.getDDMFormValues(ddmForm, _article.getId());
+        this._ddmFormFieldValues = ddmFormValues.getDDMFormFieldValues();
     }
 
     public String getSmallImageURL(ThemeDisplay themeDisplay) {
-        if (article == null) return "";
-        String url = article.getSmallImageURL();
+        if (_article == null) return "";
+        String url = _article.getSmallImageURL();
         if (Validator.isNull(url)) {
-            url = article.getArticleImageURL(themeDisplay);
+            url = _article.getArticleImageURL(themeDisplay);
         }
         if (url == null) return "";
         return url;
@@ -116,7 +116,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
         ArrayList<Room> rooms = new ArrayList<>();
         for (String json : roomReferences) {
             JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(json);
-            AbsDsdArticle room = dsdParserUtils.toDsdArticle(article, this.locale);
+            AbsDsdArticle room = _dsdParserUtils.toDsdArticle(article, this._locale);
             if (!(room instanceof Room)) throw new PortalException(String.format("Article %s not instance of Room", article.getTitle()));
             if (check.checkDuplicates(room)) rooms.add((Room) room);
         }
@@ -124,7 +124,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
     }
 
     public JournalArticle getJournalArticle(){
-        return article;
+        return _article;
     }
 
     @Override
@@ -132,17 +132,17 @@ public abstract class AbsDsdArticle implements DsdArticle {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AbsDsdArticle that = (AbsDsdArticle) o;
-        return article != null && article.getPrimaryKey() == that.article.getPrimaryKey();
+        return _article != null && _article.getPrimaryKey() == that._article.getPrimaryKey();
     }
 
     @Override
     public int hashCode() {
-        if (article == null) return 0;
-        return Objects.hash(article.getPrimaryKey());
+        if (_article == null) return 0;
+        return Objects.hash(_article.getPrimaryKey());
     }
 
     public Locale getLocale() {
-        return locale;
+        return _locale;
     }
 
     public List<String> getFormFieldValues(List<DDMFormFieldValue> searchList, String fieldName, boolean optional) throws PortalException {
@@ -154,18 +154,18 @@ public abstract class AbsDsdArticle implements DsdArticle {
     }
 
     public List<String> getFormFieldArrayValue(String fieldName, boolean optional) throws PortalException {
-        return extractStringArray(getDdmFormFieldValue(ddmFormFieldValues, fieldName, optional));
+        return extractStringArray(getDdmFormFieldValue(_ddmFormFieldValues, fieldName, optional));
     }
     public String getFormFieldValue(List<DDMFormFieldValue> searchList, String fieldName, boolean optional) throws PortalException {
         return extractStringValue(getDdmFormFieldValue(searchList, fieldName, optional));
     }
 
     public List<String> getFormFieldValues(String fieldName, boolean optional) throws PortalException {
-        return getFormFieldValues(ddmFormFieldValues, fieldName, optional);
+        return getFormFieldValues(_ddmFormFieldValues, fieldName, optional);
     }
 
     public String getFormFieldValue(String fieldName, boolean optional) throws PortalException {
-        return getFormFieldValue(ddmFormFieldValues, fieldName, optional);
+        return getFormFieldValue(_ddmFormFieldValues, fieldName, optional);
     }
 
     public float getFormFieldFloatValue(String fieldName, boolean optional) throws PortalException {
@@ -188,7 +188,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
         }
     }
     public List<DDMFormFieldValue> getDdmFormFieldValues(String fieldName, boolean optional) throws PortalException {
-        return getDdmFormFieldValues(ddmFormFieldValues, fieldName, optional);
+        return getDdmFormFieldValues(_ddmFormFieldValues, fieldName, optional);
     }
 
     public List<DDMFormFieldValue> getDdmFormFieldValues(List<DDMFormFieldValue> searchList, String fieldName, boolean optional) throws PortalException {
@@ -204,7 +204,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
     }
 
     private List<String> extractStringArray(DDMFormFieldValue formFieldValue){
-        final String localStringValue = formFieldValue.getValue().getString(locale);
+        final String localStringValue = formFieldValue.getValue().getString(_locale);
         if (!localStringValue.isEmpty() && !localStringValue.equals("{}")) {
             return parseToArray(localStringValue);
         }
@@ -213,7 +213,7 @@ public abstract class AbsDsdArticle implements DsdArticle {
 
     private String extractStringValue(DDMFormFieldValue formFieldValue){
         if (formFieldValue == null) return null;
-        final String localStringValue = formFieldValue.getValue().getString(locale);
+        final String localStringValue = formFieldValue.getValue().getString(_locale);
         if (localStringValue == null || localStringValue.isEmpty() || localStringValue.equals("{}")) return null;
         return removeBrackets(localStringValue);
     }
@@ -261,9 +261,9 @@ public abstract class AbsDsdArticle implements DsdArticle {
         }
         String dateTimeValue = dateValue + 'T' + timeValue;
 
-        dateTimeFormatter.setTimeZone(timeZone);
+        _dateTimeFormatter.setTimeZone(timeZone);
         try {
-            return dateTimeFormatter.parse(dateTimeValue);
+            return _dateTimeFormatter.parse(dateTimeValue);
         } catch (Exception e) {
             throw new PortalException(String.format("Error parsing dateTime %s: %s", dateTimeValue, e.getMessage()));
         }

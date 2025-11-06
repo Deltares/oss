@@ -174,15 +174,15 @@ public abstract class Registration extends AbsDsdArticle {
             return;
         }
         JournalArticle journalArticle = JsonContentUtils.jsonReferenceToJournalArticle(parentJson);
-        relatedRegistrations.add(dsdParserUtils.getRegistration(journalArticle));
+        relatedRegistrations.add(_dsdParserUtils.getRegistration(journalArticle));
 
     }
 
     private void parseRelatedAssets() throws PortalException {
-        List<JournalArticle> relatedArticles = dsdJournalArticleUtils.getRelatedArticles(getGroupId(), new String[]{getJournalArticle().getArticleId()});
+        List<JournalArticle> relatedArticles = _dsdJournalArticleUtils.getRelatedArticles(getGroupId(), new String[]{getJournalArticle().getArticleId()});
 
         for (JournalArticle relatedArticle : relatedArticles) {
-            Registration registration = dsdParserUtils.getRegistration(relatedArticle);
+            Registration registration = _dsdParserUtils.getRegistration(relatedArticle);
             if (registration.canUserRegister(getGroupId())) {
                 relatedRegistrations.add(registration);
             }

@@ -76,7 +76,7 @@ public class Event extends AbsDsdArticle {
     private void parseEventLocation() throws PortalException {
         String eventLocationJson = getFormFieldValue( "eventLocation", false);
         JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(eventLocationJson);
-        AbsDsdArticle location = dsdParserUtils.toDsdArticle(article, getLocale());
+        AbsDsdArticle location = _dsdParserUtils.toDsdArticle(article, getLocale());
         if (! (location instanceof EventLocation)){
             throw new PortalException("Location not instance of EventLocation: " + location.getTitle());
         }
@@ -188,7 +188,7 @@ public class Event extends AbsDsdArticle {
     }
 
     private void parseRegistrations(Locale locale) throws PortalException {
-        this.registrations = dsdParserUtils.getRegistrations(getCompanyId(), getGroupId(), getArticleId(), getRegistrationsStructureKey(),locale);
+        this.registrations = _dsdParserUtils.getRegistrations(getCompanyId(), getGroupId(), getArticleId(), getRegistrationsStructureKey(),locale);
     }
 
 }

@@ -1,7 +1,7 @@
 <%@ page import="com.liferay.portal.kernel.util.*" %>
 <%@ include file="init.jsp"%>
 
-<portlet:actionURL name="/submit/register/form" var="submitRegisterForm"/>
+<portlet:actionURL name="<%= OssConstants.SUBMIT_REGISTER_FORM_URL %>" var="submitRegisterForm"/>
 <portlet:actionURL name="/submit/register/save_step" var="saveStepURL" />
 
 <div class="row">

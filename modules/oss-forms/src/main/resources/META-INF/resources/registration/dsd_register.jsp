@@ -23,6 +23,8 @@
 <%@ page import="nl.deltares.portal.utils.*" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
+<%@ page import="nl.deltares.portal.constants.OssConfigurationConstants" %>
+<%@ page import="nl.deltares.portal.constants.OssConstants" %>
 
 <liferay-theme:defineObjects/>
 
@@ -31,9 +33,9 @@
 <%
     String remarks = "";
     Map<String, String> attributes = (Map) renderRequest.getAttribute("attributes");
-    String conditionsURL = (String) renderRequest.getAttribute("conditionsURL");
-    String privacyURL = (String) renderRequest.getAttribute("privacyURL");
-    String contactURL = (String) renderRequest.getAttribute("contactURL");
+    String conditionsURL = (String) renderRequest.getAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL);
+    String privacyURL = (String) renderRequest.getAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL);
+    String contactURL = (String) renderRequest.getAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL);
     String action = ParamUtil.getString(renderRequest, "action");
     DsdParserUtils dsdParserUtils = (DsdParserUtils) request.getAttribute("dsdParserUtils");
     final List<SubscriptionSelection>  subscriptionSelections = (List) request.getAttribute("subscriptionSelection");
@@ -60,7 +62,7 @@
     }
 %>
 </aui:script>
-<portlet:actionURL name="/submit/register/form" var="submitRegisterForm"/>
+<portlet:actionURL name="<%= OssConstants.SUBMIT_REGISTER_FORM_URL %>" var="submitRegisterForm"/>
 
 <liferay-ui:success key="unregister-success" message="">
     <liferay-ui:message key="unregister-success" arguments="name of registration"/>

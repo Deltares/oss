@@ -1,6 +1,10 @@
 package nl.deltares.portal.constants;
 
 public class OssConstants {
+
+    private OssConstants() {
+    }
+
     public static final String USER_ACCOUNT_SYSTEM_CONFIGURATIONS_PID = "nl.deltares.portal.configuration.UserAccountSystemConfiguration";
     public static final String WEBINAR_SITE_CONFIGURATIONS_PID = "nl.deltares.portal.configuration.WebinarSiteConfiguration";
     public static final String DSD_SITE_CONFIGURATIONS_PID = "nl.deltares.portal.configuration.DSDSiteConfiguration";
@@ -43,6 +47,8 @@ public class OssConstants {
     public static final String WEBINAR_ADMIN_FORM =
             "WebinarAdminFormPortlet";
 
-    public static String MY_REGISTRATIONS_URL =
+    public static final String MY_REGISTRATIONS_URL =
             "MyRegistrationsURL";
+
+    public static final String SUBMIT_REGISTER_FORM_URL = "/submit/register/form";
 }

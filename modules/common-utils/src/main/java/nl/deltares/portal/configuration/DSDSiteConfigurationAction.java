@@ -12,6 +12,7 @@ import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import nl.deltares.portal.constants.OssConfigurationConstants;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.utils.JsonContentUtils;
 import org.osgi.service.component.annotations.Component;
@@ -50,9 +51,9 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
 
         try {
             ThemeDisplay themeDisplay = (ThemeDisplay) httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY);
-            httpServletRequest.setAttribute("conditionsURL", getParsedJsonParameter(themeDisplay, _configurationProvider, "conditionsURL"));
-            httpServletRequest.setAttribute("contactURL", getParsedJsonParameter(themeDisplay, _configurationProvider, "contactURL"));
-            httpServletRequest.setAttribute("privacyURL", getParsedJsonParameter(themeDisplay, _configurationProvider, "privacyURL"));
+            httpServletRequest.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL, getParsedJsonParameter(themeDisplay, _configurationProvider, OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL));
+            httpServletRequest.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL, getParsedJsonParameter(themeDisplay, _configurationProvider, OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL));
+            httpServletRequest.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL, getParsedJsonParameter(themeDisplay, _configurationProvider, OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL));
             httpServletRequest.setAttribute("languageIds", getAvailableLanguageIds(httpServletRequest));
         } catch (PortalException e) {
             throw new PortletException("Could not get options for field 'registrationType' in structure SESSIONS: " + e.getMessage(), e);
@@ -72,9 +73,9 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         String registrationURL = ParamUtil.getString(actionRequest, "registrationURL");
         String busTransferURL = ParamUtil.getString(actionRequest, "busTransferURL");
         String travelStayURL = ParamUtil.getString(actionRequest, "travelStayURL");
-        Map<String,String> conditionsURL = convertToLocalizedMap(actionRequest, "conditionsURL");
-        Map<String,String> privacyURL = convertToLocalizedMap(actionRequest, "privacyURL");
-        Map<String,String> contactURL = convertToLocalizedMap(actionRequest, "contactURL");
+        Map<String,String> conditionsURL = convertToLocalizedMap(actionRequest, OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL);
+        Map<String,String> privacyURL = convertToLocalizedMap(actionRequest, OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL);
+        Map<String,String> contactURL = convertToLocalizedMap(actionRequest, OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL);
         String sendFromEmail = ParamUtil.getString(actionRequest, "sendFromEmail");
         String replyToEmail = ParamUtil.getString(actionRequest, "replyToEmail");
         String bccToEmail = ParamUtil.getString(actionRequest, "bccToEmail");
@@ -97,9 +98,9 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         modifiableSettings.setValue("registrationURL", registrationURL);
         modifiableSettings.setValue("busTransferURL", busTransferURL);
         modifiableSettings.setValue("travelStayURL", travelStayURL);
-        modifiableSettings.setValue("conditionsURL", JsonContentUtils.formatMapToJson(conditionsURL));
-        modifiableSettings.setValue("privacyURL", JsonContentUtils.formatMapToJson(privacyURL));
-        modifiableSettings.setValue("contactURL", JsonContentUtils.formatMapToJson(contactURL));
+        modifiableSettings.setValue(OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL, JsonContentUtils.formatMapToJson(conditionsURL));
+        modifiableSettings.setValue(OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL, JsonContentUtils.formatMapToJson(privacyURL));
+        modifiableSettings.setValue(OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL, JsonContentUtils.formatMapToJson(contactURL));
         modifiableSettings.setValue("sendFromEmail", sendFromEmail);
         modifiableSettings.setValue("replyToEmail", replyToEmail);
         modifiableSettings.setValue("bccToEmail", bccToEmail);
@@ -135,13 +136,13 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         }
         String json;
         switch (parameterId){
-            case "conditionsURL":
+            case OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL:
                 json = siteConfiguration.conditionsURL();
                 break;
-            case "contactURL":
+            case OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL:
                 json = siteConfiguration.contactURL();
                 break;
-            case "privacyURL":
+            case OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL:
                 json = siteConfiguration.privacyURL();
                 break;
             default:

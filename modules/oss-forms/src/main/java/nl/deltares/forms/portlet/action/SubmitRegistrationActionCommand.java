@@ -18,6 +18,7 @@ import nl.deltares.model.BadgeInfo;
 import nl.deltares.model.BillingInfo;
 import nl.deltares.model.RegistrationRequest;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
+import nl.deltares.portal.constants.OssConfigurationConstants;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
@@ -111,7 +112,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                     success = sendEmail(actionRequest, user, registrationRequest, themeDisplay, action, configuration);
                 }
                 break;
-            case "unregister":
+            case OssConfigurationConstants.REGISTRATION_UNREGISTER:
                 String userId = ParamUtil.getString(actionRequest, "userId");
                 if (userId != null && !userId.isEmpty()) {
                     user = UserLocalServiceUtil.fetchUser(Long.parseLong(userId));
@@ -292,7 +293,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
     private RegistrationRequest getRegistrationRequest(ActionRequest actionRequest, ThemeDisplay themeDisplay, String action, DSDSiteConfiguration configuration) {
         List<String> articleIds;
-        if (action.equals("unregister")){
+        if (action.equals(OssConfigurationConstants.REGISTRATION_UNREGISTER)){
             //noinspection deprecation
             articleIds = Collections.singletonList(actionRequest.getParameter("articleId"));
         } else {
@@ -333,7 +334,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 for (Registration childRegistration : childRegistrations) {
                     if (ParamUtil.getString(actionRequest, CHILD_PREFIX + childRegistration.getArticleId()).equals("true")) {
                         registrationRequest.addChildRegistration(parentRegistration, childRegistration);
-                    } else if ("unregister".equals(action) && dsdSessionUtils.isUserRegisteredFor(themeDisplay.getUser(), childRegistration)){
+                    } else if (OssConfigurationConstants.REGISTRATION_UNREGISTER.equals(action) && dsdSessionUtils.isUserRegisteredFor(themeDisplay.getUser(), childRegistration)){
                         registrationRequest.addChildRegistration(parentRegistration, childRegistration);
                     }
                 }
@@ -455,7 +456,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
                 case "update":
                     email.sendRegisterEmail();
                     return true;
-                case "unregister":
+                case OssConfigurationConstants.REGISTRATION_UNREGISTER:
                     email.sendUnregisterEmail();
                     return true;
                 default:

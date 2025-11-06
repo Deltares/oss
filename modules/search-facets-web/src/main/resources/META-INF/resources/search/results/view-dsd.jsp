@@ -52,7 +52,7 @@
             boolean writeDateHeader = !date.isEmpty() && !lastDate.equals(date);
             lastDate = date;
             String dateHeader;
-            if (context.getRegistration().isToBeDetermined()) {
+            if (context.get_registration().isToBeDetermined()) {
                 dateHeader = LanguageUtil.format(locale, "dsd.theme.session.tobedetermined", java.util.Optional.empty());
             } else {
                 dateHeader = date;
@@ -64,7 +64,7 @@
                 colorClass = "upcoming-event";
             }
             try {
-                portletSession.setAttribute("program-list-registration-articleId", context.getRegistration().getArticleId());
+                portletSession.setAttribute("program-list-registration-articleId", context.get_registration().getArticleId());
                 portletSession.setAttribute("program-list-registration-day", context.getDayCount());
             } catch (Exception e){
                 SessionErrors.add(renderRequest, "session error " + e.getMessage());
@@ -82,7 +82,7 @@
             </c:if>
             <%
                 JournalArticleDisplay articleDisplay = FacetUtils
-                        .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, templateKey, context.getRegistration().getArticleId(), themeDisplay);
+                        .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, templateKey, context.get_registration().getArticleId(), themeDisplay);
             %>
             <liferay-journal:journal-article-display
                     articleDisplay="<%= articleDisplay %>"

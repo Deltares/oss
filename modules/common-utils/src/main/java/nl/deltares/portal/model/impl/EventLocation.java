@@ -85,7 +85,7 @@ public class EventLocation extends Location {
         ArrayList<Building> buildings = new ArrayList<>();
         for (String json : buildingReferences) {
             JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(json);
-            Building building = (Building) dsdParserUtils.toDsdArticle(article, getLocale());
+            Building building = (Building) _dsdParserUtils.toDsdArticle(article, getLocale());
             if (check.checkDuplicates(building)) buildings.add(building);
         }
         return buildings;

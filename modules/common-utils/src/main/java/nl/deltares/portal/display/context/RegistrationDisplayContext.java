@@ -19,6 +19,8 @@ import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
+import nl.deltares.portal.constants.OssConfigurationConstants;
+import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.Period;
@@ -38,14 +40,14 @@ public class RegistrationDisplayContext {
 
 
     public RegistrationDisplayContext(Registration registration, int dayIndex, ThemeDisplay themeDisplay) {
-        this.themeDisplay = themeDisplay;
-        this.registration = registration;
-        this.dayIndex = dayIndex;
+        this._themeDisplay = themeDisplay;
+        this._registration = registration;
+        this._dayIndex = dayIndex;
 
         ConfigurationProvider configurationProvider = ConfigurationProviderUtil.getConfigurationProvider();
         if (configurationProvider != null) {
             try {
-                dsdSiteConfiguration = configurationProvider
+                _dsdSiteConfiguration = configurationProvider
                         .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
             } catch (ConfigurationException e) {
                 LOG.error("Error retrieving DsdSiteConfiguration: ", e);
@@ -55,21 +57,21 @@ public class RegistrationDisplayContext {
     }
 
     public double getPrice() {
-        return registration == null ? 0 : registration.getPrice();
+        return _registration == null ? 0 : _registration.getPrice();
     }
 
     public String getCurrency() {
-        return registration == null ? "€" : registration.getCurrency();
+        return _registration == null ? "€" : _registration.getCurrency();
     }
 
     public String getSmallImageURL() {
         String url = "";
-        Registration registration = getRegistration();
+        Registration registration = get_registration();
         if (registration != null) {
-            url = registration.getSmallImageURL(themeDisplay);
+            url = registration.getSmallImageURL(_themeDisplay);
 
             if ((url == null || url.isEmpty()) && registration instanceof DinnerRegistration) {
-                url = ((DinnerRegistration) registration).getRestaurant().getSmallImageURL(themeDisplay);
+                url = ((DinnerRegistration) registration).getRestaurant().getSmallImageURL(_themeDisplay);
             }
         }
         return url;
@@ -85,7 +87,7 @@ public class RegistrationDisplayContext {
     public String getPresenterSmallImageURL(int i) {
         String url = "";
         if (getSession() != null) {
-            url = getSession().getPresenters().get(i).getSmallImageURL(themeDisplay);
+            url = getSession().getPresenters().get(i).getSmallImageURL(_themeDisplay);
         }
         return url;
     }
@@ -105,24 +107,24 @@ public class RegistrationDisplayContext {
         return name;
     }
 
-    public Registration getRegistration() {
-        return registration;
+    public Registration get_registration() {
+        return _registration;
     }
 
     private SessionRegistration getSession() {
         SessionRegistration sessionRegistration = null;
 
-        if (registration instanceof SessionRegistration) {
-            sessionRegistration = (SessionRegistration) registration;
+        if (_registration instanceof SessionRegistration) {
+            sessionRegistration = (SessionRegistration) _registration;
         }
 
         return sessionRegistration;
     }
 
     public String getStartDate() {
-        final Registration registration = getRegistration();
+        final Registration registration = get_registration();
         if (registration != null) {
-            return DateUtil.getDate(getStartDate(registration), "dd MMMM yyyy", themeDisplay.getLocale(),
+            return DateUtil.getDate(getStartDate(registration), "dd MMMM yyyy", _themeDisplay.getLocale(),
                     TimeZone.getTimeZone(registration.getTimeZoneId()));
         }
         return "";
@@ -130,7 +132,7 @@ public class RegistrationDisplayContext {
     }
 
     public long getStartDateMillis() {
-        final Registration registration = getRegistration();
+        final Registration registration = get_registration();
         if (registration != null) {
             return getStartDate(registration).getTime();
         }
@@ -138,9 +140,9 @@ public class RegistrationDisplayContext {
     }
 
     private Date getStartDate(Registration registration) {
-        if (dayIndex > 0 && registration.isMultiDayEvent()) {
+        if (_dayIndex > 0 && registration.isMultiDayEvent()) {
             final List<Period> startAndEndTimesPerDay = registration.getStartAndEndTimesPerDay();
-            final Period period = startAndEndTimesPerDay.get(dayIndex);
+            final Period period = startAndEndTimesPerDay.get(_dayIndex);
             return period.getStartDate();
         } else {
             return registration.getStartTime();
@@ -151,7 +153,7 @@ public class RegistrationDisplayContext {
         if (registration.isMultiDayEvent()) {
             final List<Period> startAndEndTimesPerDay = registration.getStartAndEndTimesPerDay();
             if (startAndEndTimesPerDay.isEmpty()) return registration.getEndTime();
-            final Period period = startAndEndTimesPerDay.get(dayIndex);
+            final Period period = startAndEndTimesPerDay.get(_dayIndex);
             return period.getEndDate();
         } else {
             return registration.getEndTime();
@@ -159,16 +161,16 @@ public class RegistrationDisplayContext {
     }
 
     public String getEndDate() {
-        final Registration registration = getRegistration();
+        final Registration registration = get_registration();
         if (registration != null) {
-            return DateUtil.getDate(getEndDate(registration), "dd MMMM yyyy", themeDisplay.getLocale(),
+            return DateUtil.getDate(getEndDate(registration), "dd MMMM yyyy", _themeDisplay.getLocale(),
                     TimeZone.getTimeZone(registration.getTimeZoneId()));
         }
         return "";
     }
 
     public long getEndDateMillis() {
-        final Registration registration = getRegistration();
+        final Registration registration = get_registration();
         if (registration != null) {
             return getEndDate(registration).getTime();
         }
@@ -176,56 +178,56 @@ public class RegistrationDisplayContext {
     }
 
     public String getTitle() {
-        final String title = registration.getTitle();
-        if (registration.isShowMultipleDaysAsSingleDate()) return title;
-        final String postFix = LanguageUtil.format(themeDisplay.getLocale(),
+        final String title = _registration.getTitle();
+        if (_registration.isShowMultipleDaysAsSingleDate()) return title;
+        final String postFix = LanguageUtil.format(_themeDisplay.getLocale(),
                 "program-list.day.count", new String[]{String.valueOf((getDayCount() + 1)), String.valueOf(getNumberOfDays())});
         return (title + " (" + postFix + ")");
     }
 
     public int getDayCount() {
-        return dayIndex;
+        return _dayIndex;
     }
 
     public int getNumberOfDays() {
-        if (!registration.isMultiDayEvent()) return 0;
-        return registration.getStartAndEndTimesPerDay().size();
+        if (!_registration.isMultiDayEvent()) return 0;
+        return _registration.getStartAndEndTimesPerDay().size();
     }
 
     public boolean isPastEvent() {
-        final Registration registration = getRegistration();
+        final Registration registration = get_registration();
         if (registration != null) {
 
             if (registration.isToBeDetermined()) return false;
-            return getEndDate(this.registration).getTime() < System.currentTimeMillis();
+            return getEndDate(_registration).getTime() < System.currentTimeMillis();
         }
         return true;
     }
 
     public boolean isOpen() {
-        if (getRegistration() != null) {
-            return getRegistration().isOpen();
+        if (get_registration() != null) {
+            return get_registration().isOpen();
         }
         return false;
     }
 
     public boolean canUserRegister() {
-        return getRegistration() != null && getRegistration().canUserRegister(themeDisplay.getUserId());
+        return get_registration() != null && get_registration().canUserRegister(_themeDisplay.getUserId());
     }
 
     public String getStartTime() {
-        final Registration registration = getRegistration();
+        final Registration registration = get_registration();
         if (registration != null) {
-            return DateUtil.getDate(getStartDate(registration), "HH:mm", themeDisplay.getLocale(),
+            return DateUtil.getDate(getStartDate(registration), "HH:mm", _themeDisplay.getLocale(),
                     TimeZone.getTimeZone(registration.getTimeZoneId()));
         }
         return "";
     }
 
     public String getEndTime() {
-        final Registration registration = getRegistration();
+        final Registration registration = get_registration();
         if (registration != null) {
-            return DateUtil.getDate(getEndDate(registration), "HH:mm", themeDisplay.getLocale(),
+            return DateUtil.getDate(getEndDate(registration), "HH:mm", _themeDisplay.getLocale(),
                     TimeZone.getTimeZone(registration.getTimeZoneId()));
         }
         return "";
@@ -233,79 +235,79 @@ public class RegistrationDisplayContext {
 
     public String getSummary() {
         String summary = "";
-        if (registration == null) return summary;
+        if (_registration == null) return summary;
         try {
             AssetEntry assetEntry = AssetEntryLocalServiceUtil
-                    .getEntry(JournalArticle.class.getName(), registration.getJournalArticle().getResourcePrimKey());
-            summary = StringUtil.shorten(HtmlUtil.stripHtml(assetEntry.getSummary(themeDisplay.getLocale())), 150);
+                    .getEntry(JournalArticle.class.getName(), _registration.getJournalArticle().getResourcePrimKey());
+            summary = StringUtil.shorten(HtmlUtil.stripHtml(assetEntry.getSummary(_themeDisplay.getLocale())), 150);
         } catch (Exception e) {
-            LOG.debug("Could not get the AssetEntry for article [" + registration.getArticleId() + "]");
+            LOG.debug("Could not get the AssetEntry for article [" + _registration.getArticleId() + "]");
         }
         return summary;
     }
 
     public String getContactEmail() {
-        if (dsdSiteConfiguration != null) {
-            return dsdSiteConfiguration.replyToEmail();
+        if (_dsdSiteConfiguration != null) {
+            return _dsdSiteConfiguration.replyToEmail();
         }
         return "mydeltares@deltares.nl";
     }
 
     public String getCourseConditionsUrl() {
-        if (dsdSiteConfiguration != null) {
-            final String language = themeDisplay.getLocale().getLanguage();
-            return getLocalizedValue(dsdSiteConfiguration.conditionsURL(), language);
+        if (_dsdSiteConfiguration != null) {
+            final String language = _themeDisplay.getLocale().getLanguage();
+            return getLocalizedValue(_dsdSiteConfiguration.conditionsURL(), language);
         }
         return "";
     }
 
     @SuppressWarnings("unused")
     public String getUnregisterURL(HttpServletRequest httpServletRequest) {
-        return getPortletRequest(httpServletRequest, "unregister", null, themeDisplay.getURLCurrent());
+        return getPortletRequest(httpServletRequest, OssConfigurationConstants.REGISTRATION_UNREGISTER, null, _themeDisplay.getURLCurrent());
     }
 
     @SuppressWarnings("unused")
     public String getUnregisterURL(PortletRequest portletRequest, long userId) {
-        return getPortletRequest(portletRequest, "unregister", userId, getConfiguredRegistrationFormId(), "/submit/register/form");
+        return getPortletRequest(portletRequest, OssConfigurationConstants.REGISTRATION_UNREGISTER, userId, getConfiguredRegistrationFormId(), OssConstants.SUBMIT_REGISTER_FORM_URL);
     }
 
     public String getUnregisterURL(PortletRequest portletRequest) {
-        return getPortletRequest(portletRequest, "unregister", null, getConfiguredRegistrationFormId(), "/submit/register/form");
+        return getPortletRequest(portletRequest, OssConfigurationConstants.REGISTRATION_UNREGISTER, null, getConfiguredRegistrationFormId(), OssConstants.SUBMIT_REGISTER_FORM_URL);
     }
 
     @SuppressWarnings("unused")
     public String getUnregisterURL(PortletRequest portletRequest, long userId, String registrationFormName, String actionCommand) {
-        return getPortletRequest(portletRequest, "unregister", userId, registrationFormName, actionCommand);
+        return getPortletRequest(portletRequest, OssConfigurationConstants.REGISTRATION_UNREGISTER, userId, registrationFormName, actionCommand);
     }
 
     @SuppressWarnings("unused")
     public String getRegisterURL(PortletRequest portletRequest) {
-        return getPortletRequest(portletRequest, "register", null, getConfiguredRegistrationFormId(), "/submit/register/form");
+        return getPortletRequest(portletRequest, "register", null, getConfiguredRegistrationFormId(), OssConstants.SUBMIT_REGISTER_FORM_URL);
     }
 
     public String getViewURL(DsdArticle article) {
-        return themeDisplay.getSiteGroup().getDisplayURL(themeDisplay) + "/-/" + article.getJournalArticle().getUrlTitle();
+        return _themeDisplay.getSiteGroup().getDisplayURL(_themeDisplay) + "/-/" + article.getJournalArticle().getUrlTitle();
     }
 
     private String getPortletRequest(HttpServletRequest httpServletRequest, String action, Long userId, String redirect) {
 
-        if (dsdSiteConfiguration != null) {
-            long groupId = themeDisplay.getScopeGroupId();
+        if (_dsdSiteConfiguration != null) {
+            long groupId = _themeDisplay.getScopeGroupId();
 
             try {
                 Layout registrationPage = LayoutLocalServiceUtil
-                        .fetchLayoutByFriendlyURL(groupId, false, dsdSiteConfiguration.registrationURL());
+                        .fetchLayoutByFriendlyURL(groupId, false, _dsdSiteConfiguration.registrationURL());
 
                 if (registrationPage != null) {
                     PortletURL portletURL = PortletURLFactoryUtil
                             .create(httpServletRequest,
-                                    themeDisplay.getThemeSetting("registration-form-id"),
+                                    _themeDisplay.getThemeSetting("registration-form-id"),
                                     registrationPage.getPlid(),
-                                    action.equals("unregister") ? PortletRequest.ACTION_PHASE : PortletRequest.RENDER_PHASE);
+                                    action.equals(OssConfigurationConstants.REGISTRATION_UNREGISTER) ? PortletRequest.ACTION_PHASE : PortletRequest.RENDER_PHASE);
                     portletURL.setWindowState(LiferayWindowState.NORMAL);
                     portletURL.setPortletMode(LiferayPortletMode.VIEW);
-                    portletURL.getRenderParameters().setValue("javax.portlet.action", "/submit/register/form");
-                    portletURL.getRenderParameters().setValue("articleId", getRegistration().getArticleId());
+                    portletURL.getRenderParameters().setValue("javax.portlet.action", OssConstants.SUBMIT_REGISTER_FORM_URL);
+                    portletURL.getRenderParameters().setValue("articleId", get_registration().getArticleId());
                     portletURL.getRenderParameters().setValue("action", action);
                     if (userId != null) portletURL.getRenderParameters().setValue("userId", userId.toString());
                     portletURL.getRenderParameters().setValue("redirect", redirect);
@@ -319,7 +321,7 @@ public class RegistrationDisplayContext {
     }
 
     public String getConfiguredRegistrationFormId(){
-        return themeDisplay.getThemeSetting("registration-form-id");
+        return _themeDisplay.getThemeSetting("registration-form-id");
     }
 
     public boolean hasPresentations() {
@@ -337,12 +339,12 @@ public class RegistrationDisplayContext {
 
     public String getPortletRequest(PortletRequest portletRequest, String action, Long userId, String formName, String actionCommand) {
 
-        if (dsdSiteConfiguration != null) {
-            long groupId = themeDisplay.getScopeGroupId();
+        if (_dsdSiteConfiguration != null) {
+            long groupId = _themeDisplay.getScopeGroupId();
 
             try {
                 Layout registrationPage = LayoutLocalServiceUtil
-                        .fetchLayoutByFriendlyURL(groupId, false, dsdSiteConfiguration.registrationURL());
+                        .fetchLayoutByFriendlyURL(groupId, false, _dsdSiteConfiguration.registrationURL());
 
                 if (registrationPage != null) {
                     PortletURL portletURL = PortletURLFactoryUtil
@@ -353,7 +355,7 @@ public class RegistrationDisplayContext {
                     portletURL.setWindowState(LiferayWindowState.NORMAL);
                     portletURL.setPortletMode(LiferayPortletMode.VIEW);
                     portletURL.setParameter("javax.portlet.action", actionCommand);
-                    portletURL.setParameter("articleId", getRegistration().getArticleId());
+                    portletURL.setParameter("articleId", get_registration().getArticleId());
                     portletURL.setParameter("action", action);
                     if (userId != null) portletURL.setParameter("userId", userId.toString());
                     return portletURL.toString();
@@ -365,10 +367,10 @@ public class RegistrationDisplayContext {
         return "";
     }
 
-    private DSDSiteConfiguration dsdSiteConfiguration = null;
-    private final ThemeDisplay themeDisplay;
-    private final Registration registration;
-    private final int dayIndex;
+    private DSDSiteConfiguration _dsdSiteConfiguration = null;
+    private final ThemeDisplay _themeDisplay;
+    private final Registration _registration;
+    private final int _dayIndex;
 
     private static final Log LOG = LogFactoryUtil.getLog(RegistrationDisplayContext.class);
 }

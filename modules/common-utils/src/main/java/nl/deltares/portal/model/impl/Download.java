@@ -100,7 +100,7 @@ public class Download extends AbsDsdArticle {
         String content = getFormFieldValue( "Terms", true);
         if (content != null){
             JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(content);
-            AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(article, super.getLocale());
+            AbsDsdArticle dsdArticle = _dsdParserUtils.toDsdArticle(article, super.getLocale());
             if (!(dsdArticle instanceof Terms)) throw new PortalException(String.format("Article %s not instance of Terms", article.getTitle()));
             terms = (Terms) dsdArticle;
         }
@@ -127,7 +127,7 @@ public class Download extends AbsDsdArticle {
         if (!subscriptionsJson.isEmpty()){
             for (String content : subscriptionsJson) {
                 JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(content);
-                AbsDsdArticle subscription = dsdParserUtils.toDsdArticle(article, super.getLocale());
+                AbsDsdArticle subscription = _dsdParserUtils.toDsdArticle(article, super.getLocale());
                 if (!(subscription instanceof Subscription)) throw new PortalException(String.format("Article %s not instance of Subscription", article.getTitle()));
                 if (check.checkDuplicates(subscription)) subscriptions.add((Subscription) subscription);
             }
@@ -152,7 +152,7 @@ public class Download extends AbsDsdArticle {
         String content = getFormFieldValue( "LicenseFile", true);
         if (!JsonContentUtils.isEmpty(content)){
             JournalArticle article = JsonContentUtils.jsonReferenceToJournalArticle(content);
-            AbsDsdArticle dsdArticle = dsdParserUtils.toDsdArticle(article, super.getLocale());
+            AbsDsdArticle dsdArticle = _dsdParserUtils.toDsdArticle(article, super.getLocale());
             if (!(dsdArticle instanceof LicenseFile)) throw new PortalException(String.format("Article %s not instance of LicenseFile", article.getTitle()));
             licenseFile = (LicenseFile) dsdArticle;
         }

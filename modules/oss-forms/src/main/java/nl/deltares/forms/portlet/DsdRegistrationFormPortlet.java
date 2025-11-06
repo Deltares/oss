@@ -11,6 +11,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
+import nl.deltares.portal.constants.OssConfigurationConstants;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 import nl.deltares.portal.utils.*;
@@ -85,9 +86,9 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 			final String language = themeDisplay.getLocale().getLanguage();
 			try {
 				DSDSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
-				request.setAttribute("conditionsURL", getLocalizedValue(dsdConfig.conditionsURL(), language));
-				request.setAttribute("privacyURL", getLocalizedValue(dsdConfig.privacyURL(), language));
-				request.setAttribute("contactURL", getLocalizedValue(dsdConfig.contactURL(), language));
+				request.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL, getLocalizedValue(dsdConfig.conditionsURL(), language));
+				request.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL, getLocalizedValue(dsdConfig.privacyURL(), language));
+				request.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL, getLocalizedValue(dsdConfig.contactURL(), language));
 				request.setAttribute("eventId", dsdConfig.eventId());
 				List<String> mailingIdsList = Arrays.asList(dsdConfig.mailingIds().split(";"));
 				request.setAttribute("subscriptionSelection", getSubscriptionSelection(user.getEmailAddress(), mailingIdsList));
