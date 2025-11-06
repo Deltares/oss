@@ -22,6 +22,7 @@ public class Presentation  extends AbsDsdArticle{
         init();
     }
 
+    @Override
     void init() throws PortalException {
 
         super.init();

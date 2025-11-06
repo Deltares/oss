@@ -66,7 +66,7 @@ public class RegistrationDisplayContext {
 
     public String getSmallImageURL() {
         String url = "";
-        Registration registration = get_registration();
+        Registration registration = getRegistration();
         if (registration != null) {
             url = registration.getSmallImageURL(_themeDisplay);
 
@@ -107,7 +107,7 @@ public class RegistrationDisplayContext {
         return name;
     }
 
-    public Registration get_registration() {
+    public Registration getRegistration() {
         return _registration;
     }
 
@@ -122,7 +122,7 @@ public class RegistrationDisplayContext {
     }
 
     public String getStartDate() {
-        final Registration registration = get_registration();
+        final Registration registration = getRegistration();
         if (registration != null) {
             return DateUtil.getDate(getStartDate(registration), "dd MMMM yyyy", _themeDisplay.getLocale(),
                     TimeZone.getTimeZone(registration.getTimeZoneId()));
@@ -132,7 +132,7 @@ public class RegistrationDisplayContext {
     }
 
     public long getStartDateMillis() {
-        final Registration registration = get_registration();
+        final Registration registration = getRegistration();
         if (registration != null) {
             return getStartDate(registration).getTime();
         }
@@ -161,7 +161,7 @@ public class RegistrationDisplayContext {
     }
 
     public String getEndDate() {
-        final Registration registration = get_registration();
+        final Registration registration = getRegistration();
         if (registration != null) {
             return DateUtil.getDate(getEndDate(registration), "dd MMMM yyyy", _themeDisplay.getLocale(),
                     TimeZone.getTimeZone(registration.getTimeZoneId()));
@@ -170,7 +170,7 @@ public class RegistrationDisplayContext {
     }
 
     public long getEndDateMillis() {
-        final Registration registration = get_registration();
+        final Registration registration = getRegistration();
         if (registration != null) {
             return getEndDate(registration).getTime();
         }
@@ -195,7 +195,7 @@ public class RegistrationDisplayContext {
     }
 
     public boolean isPastEvent() {
-        final Registration registration = get_registration();
+        final Registration registration = getRegistration();
         if (registration != null) {
 
             if (registration.isToBeDetermined()) return false;
@@ -205,18 +205,18 @@ public class RegistrationDisplayContext {
     }
 
     public boolean isOpen() {
-        if (get_registration() != null) {
-            return get_registration().isOpen();
+        if (getRegistration() != null) {
+            return getRegistration().isOpen();
         }
         return false;
     }
 
     public boolean canUserRegister() {
-        return get_registration() != null && get_registration().canUserRegister(_themeDisplay.getUserId());
+        return getRegistration() != null && getRegistration().canUserRegister(_themeDisplay.getUserId());
     }
 
     public String getStartTime() {
-        final Registration registration = get_registration();
+        final Registration registration = getRegistration();
         if (registration != null) {
             return DateUtil.getDate(getStartDate(registration), "HH:mm", _themeDisplay.getLocale(),
                     TimeZone.getTimeZone(registration.getTimeZoneId()));
@@ -225,7 +225,7 @@ public class RegistrationDisplayContext {
     }
 
     public String getEndTime() {
-        final Registration registration = get_registration();
+        final Registration registration = getRegistration();
         if (registration != null) {
             return DateUtil.getDate(getEndDate(registration), "HH:mm", _themeDisplay.getLocale(),
                     TimeZone.getTimeZone(registration.getTimeZoneId()));
@@ -307,7 +307,7 @@ public class RegistrationDisplayContext {
                     portletURL.setWindowState(LiferayWindowState.NORMAL);
                     portletURL.setPortletMode(LiferayPortletMode.VIEW);
                     portletURL.getRenderParameters().setValue("javax.portlet.action", OssConstants.SUBMIT_REGISTER_FORM_URL);
-                    portletURL.getRenderParameters().setValue("articleId", get_registration().getArticleId());
+                    portletURL.getRenderParameters().setValue("articleId", getRegistration().getArticleId());
                     portletURL.getRenderParameters().setValue("action", action);
                     if (userId != null) portletURL.getRenderParameters().setValue("userId", userId.toString());
                     portletURL.getRenderParameters().setValue("redirect", redirect);
@@ -355,7 +355,7 @@ public class RegistrationDisplayContext {
                     portletURL.setWindowState(LiferayWindowState.NORMAL);
                     portletURL.setPortletMode(LiferayPortletMode.VIEW);
                     portletURL.setParameter("javax.portlet.action", actionCommand);
-                    portletURL.setParameter("articleId", get_registration().getArticleId());
+                    portletURL.setParameter("articleId", getRegistration().getArticleId());
                     portletURL.setParameter("action", action);
                     if (userId != null) portletURL.setParameter("userId", userId.toString());
                     return portletURL.toString();
