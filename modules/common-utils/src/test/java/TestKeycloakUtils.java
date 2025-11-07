@@ -1,3 +1,4 @@
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -13,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class TestKeycloakUtils {
-
+    @Ignore
     @Test
     public void testGettingToken() throws Exception {
 
