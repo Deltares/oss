@@ -1,0 +1,176 @@
+{
+  "availableLanguageIds": [
+    "en_US"
+  ],
+  "contentType": "journal",
+  "dataDefinitionFields": [
+    {
+      "customProperties": {
+        "labelAtStructureLevel": true,
+        "confirmationErrorMessage": {
+          "en_US": ""
+        },
+        "hideField": false,
+        "dataType": "string",
+        "tooltip": {
+          "en_US": ""
+        },
+        "requireConfirmation": false,
+        "displayStyle": "singleline",
+        "requiredErrorMessage": {
+          "en_US": ""
+        },
+        "fieldNamespace": "",
+        "visibilityExpression": "",
+        "objectFieldName": "",
+        "options": {},
+        "nativeField": false,
+        "confirmationLabel": {
+          "en_US": ""
+        },
+        "fieldReference": "Title",
+        "placeholder": {
+          "en_US": ""
+        },
+        "direction": [
+          "vertical"
+        ]
+      },
+      "defaultValue": {
+        "en_US": ""
+      },
+      "fieldType": "text",
+      "indexType": "none",
+      "indexable": true,
+      "label": {
+        "en_US": "Title"
+      },
+      "localizable": true,
+      "name": "MenuItemTitle",
+      "nestedDataDefinitionFields": [],
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "tip": {
+        "en_US": ""
+      }
+    },
+    {
+      "customProperties": {
+        "requiredErrorMessage": {
+          "en_US": ""
+        },
+        "fieldNamespace": "",
+        "visibilityExpression": "",
+        "objectFieldName": "",
+        "dataType": "image",
+        "requiredDescription": true,
+        "fieldReference": "Image"
+      },
+      "defaultValue": {
+        "en_US": {}
+      },
+      "fieldType": "image",
+      "indexType": "none",
+      "indexable": true,
+      "label": {
+        "en_US": "Icon"
+      },
+      "localizable": false,
+      "name": "MenuItemImage",
+      "nestedDataDefinitionFields": [],
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "tip": {
+        "en_US": "Small icon to display in menu"
+      }
+    },
+    {
+      "customProperties": {
+        "fieldNamespace": "",
+        "visibilityExpression": "",
+        "dataType": "link-to-page",
+        "fieldReference": "Link"
+      },
+      "defaultValue": {
+        "en_US": ""
+      },
+      "fieldType": "link_to_layout",
+      "indexType": "none",
+      "indexable": true,
+      "label": {
+        "en_US": "Link to Page"
+      },
+      "localizable": false,
+      "name": "MenuItemLink",
+      "nestedDataDefinitionFields": [],
+      "readOnly": false,
+      "repeatable": false,
+      "required": true,
+      "showLabel": true,
+      "tip": {
+        "en_US": ""
+      }
+    },
+    {
+      "customProperties": {
+        "labelAtStructureLevel": true,
+        "confirmationErrorMessage": {
+          "en_US": ""
+        },
+        "hideField": false,
+        "dataType": "string",
+        "tooltip": {
+          "en_US": ""
+        },
+        "requireConfirmation": false,
+        "displayStyle": "multiline",
+        "requiredErrorMessage": {
+          "en_US": ""
+        },
+        "fieldNamespace": "",
+        "visibilityExpression": "",
+        "objectFieldName": "",
+        "options": {},
+        "nativeField": false,
+        "confirmationLabel": {
+          "en_US": ""
+        },
+        "fieldReference": "Description",
+        "placeholder": {
+          "en_US": ""
+        },
+        "direction": [
+          "vertical"
+        ]
+      },
+      "defaultValue": {
+        "en_US": ""
+      },
+      "fieldType": "text",
+      "indexType": "none",
+      "indexable": true,
+      "label": {
+        "en_US": "Description"
+      },
+      "localizable": true,
+      "name": "MenuItemDescription",
+      "nestedDataDefinitionFields": [],
+      "readOnly": false,
+      "repeatable": false,
+      "required": false,
+      "showLabel": true,
+      "tip": {
+        "en_US": ""
+      }
+    }
+  ],
+  "defaultLanguageId": "en_US",
+  "name": {
+    "en_US": "MenuItem"
+  },
+  "storageType": "default"
+}
