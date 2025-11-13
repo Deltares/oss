@@ -14,9 +14,6 @@
 <#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
 <#assign available = registration.getCapacity() - registrations />
 <#assign cancellationExceeded = registration.isCancellationPeriodExceeded() />
-<#assign event = dsdParserUtils.getEvent(themeDisplay.getSiteGroupId(), registration.getEventId()?c) />
-<#assign eventRegistrations = event.getRegistrations(locale) />
-
 <div class="row no-gutters">
 
     <div class="col-2">
@@ -45,10 +42,14 @@
                 </#list>
             </#if>
             <span class="c-sessions__item__time-date-place__time">
-                ${displayContext.getStartTime()} - ${displayContext.getEndTime()} (${timeZoneId})
+						    <#if registration.isToBeDetermined() >
+                                ${languageUtil.get(locale, "dsd.theme.session.tobedetermined")}
+                            <#else>
+                                ${displayContext.getStartTime()} - ${displayContext.getEndTime()} (${timeZoneId})
+                            </#if>
             </span>|
             <#if displayContext.getPrice() gt 0 >
-                ${displayContext.getCurrency()} ${displayContext.getPrice()}
+                ${displayContext.getCurrency()} ${displayContext.getPrice()?string(",#00")}
             <#else>
                 ${languageUtil.get(locale, "dsd.theme.session.free")}
             </#if>

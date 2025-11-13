@@ -41,6 +41,10 @@
                         </span>
                     </#list>
                 </#if>
+            <#elseif registration.isToBeDetermined() >
+                <span class="c-sessions__item__time-date-place__date">
+                    ${languageUtil.get(locale, "dsd.theme.session.tobedetermined")}
+                </span>
             <#else>
                 <span class="c-sessions__item__time-date-place__date">
                     ${dateUtil.getDate(registration.getStartTime(), "dd MMM yyyy", locale)}
@@ -64,7 +68,7 @@
                 </#list>
             </#if>
             <#if displayContext.getPrice() gt 0 >
-                ${displayContext.getCurrency()} ${displayContext.getPrice()}
+                ${displayContext.getCurrency()} ${displayContext.getPrice()?string(",##0")}
             <#else>
                 ${languageUtil.get(locale, "dsd.theme.session.free")}
             </#if>

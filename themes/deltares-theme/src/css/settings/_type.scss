@@ -99,11 +99,13 @@ html {
 h1, .h1,
 h1 p, .h1 p {
     @include title_1;
+    color: $color-link;
 }
 
 h2, .h2,
 h2 p, .h2 p {
     @include title_2;
+    color: $color-link;
 }
 
 h3, .h3,

@@ -27,6 +27,7 @@
     <#assign calDescription = "">
 
     <#assign price = registration.getPrice() />
+    <#assign priceFormatted = price?string(",##0") />
     <#assign vat = registration.getVAT() />
     <#if registration.getCapacity() == 0 >
         <#assign available = ""  />
@@ -129,12 +130,12 @@
                                 ${languageUtil.get(locale, "dsd.theme.session.free")}
                                 <#assign calDescription += (languageUtil.get(locale, "dsd.theme.session.free") + "<br/>") />
                             <#elseif vat == 0 >
-                                ${registration.getPrice()}
-                                <#assign calDescription += (registration.getPrice() + "<br/>") />
+                                ${price}
+                                <#assign calDescription += (priceFormatted + "<br/>") />
                             <#else>
                                 <#assign vatText = languageUtil.get(locale, "dsd.theme.session.vat")?replace("%d", vat) />
-                                ${registration.getPrice()}&nbsp;(${vatText})
-                                <#assign calDescription += (registration.getPrice() + "&nbsp;" +  vatText + "<br/>") />
+                                ${priceFormatted}&nbsp;(${vatText})
+                                <#assign calDescription += (priceFormatted + "&nbsp;" +  vatText + "<br/>") />
                             </#if>
                         <br/>
                         <#if registration.getEventId() gt 0 >
