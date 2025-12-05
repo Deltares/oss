@@ -144,7 +144,7 @@ public class ClmLicensesPortlet extends MVCPortlet {
 
     private CustomerContact convertToContact(JSONObject contactObject) {
         CustomerContact contact = new CustomerContact();
-
+        contact.setContactId(contactObject.getInt("customerContactId", 0));
         contact.setContactName(contactObject.getString("customerContactName", null));
         contact.setContactSalutation(contactObject.getString("customerContactSalutation", null));
         contact.setContactEmail(contactObject.getString("customerContactEmail", null));
