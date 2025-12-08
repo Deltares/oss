@@ -17,21 +17,27 @@
 
 %>
 <span id="<portlet:namespace/>group-message-block"></span>
-
 <%
     for (SoftwareSuite softwareSuite : suiteList) {
 %>
 
     <aui:fieldset>
-        <div class="h3">
-            <a href="#softwareSuite-<%=softwareSuite.getSuiteCode()%>" aria-controls="site_configContent" aria-expanded="false" class="collapse-icon collapse-icon-middle sheet-subtitle collapsed" data-toggle="liferay-collapse"  role="button">
-                <span class="c-inner" tabindex="-1">
-                    <span class="collapse-icon-closed">+</span>
-                    <span class="collapse-icon-open">-</span>
-                    <span><%=softwareSuite.getSuiteName()%></span>
+        <a href="#softwareSuite-<%=softwareSuite.getSuiteCode()%>" aria-controls="site_configContent" aria-expanded="false" class="collapse-icon collapse-icon-middle sheet-subtitle collapsed" data-toggle="liferay-collapse"  role="button">
+            <span class="c-inner" tabindex="-1">
+                <span class="collapse-icon-closed">
+                    <svg aria-hidden="true" class="lexicon-icon lexicon-icon-plus">
+                        <use xlink:href="<%=themeDisplay.getPathThemeImages()%>/clay/icons.svg#plus"></use>
+                    </svg>
                 </span>
-            </a>
-        </div>
+                <span class="collapse-icon-open">
+                    <svg aria-hidden="true" class="lexicon-icon lexicon-icon-hr">
+                        <use xlink:href="<%=themeDisplay.getPathThemeImages()%>/clay/icons.svg#hr"></use>
+                    </svg>
+                </span>
+                &nbsp;
+                <span class="h1"><%=softwareSuite.getSuiteName()%></span>
+            </span>
+        </a>
 
         <div class="panel-collapse collapse" id="softwareSuite-<%=softwareSuite.getSuiteCode()%>">
             <%@ include file="softwareSuiteSubscriptions.jsp" %>

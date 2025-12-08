@@ -124,7 +124,7 @@ public class ClmLicensesPortlet extends MVCPortlet {
              subscription.addAsset(convertToAsset(assetsArray.getJSONObject(i)));
         }
 
-        JSONArray contactsArray = subscriptionObject.getJSONArray("subscriptionContact");
+        JSONArray contactsArray = subscriptionObject.getJSONArray("subscriptionCustomerContacts");
         for (int i = 0; i < contactsArray.length(); i++) {
             subscription.addCustomerContact(convertToContact(contactsArray.getJSONObject(i)));
         }

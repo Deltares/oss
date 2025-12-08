@@ -1,4 +1,5 @@
 .c-subscription-container {
+  padding: 5px;
   &:hover {
     /*box-shadow: 3px 3px 10px 0 rgba(117,117,117,1);*/
     border: #00E399 3px solid;
@@ -45,7 +46,7 @@
 
 .collapse-icon.collapse-icon-middle .collapse-icon-closed, .collapse-icon.collapse-icon-middle .collapse-icon-open {
   transform: translateY(0%);
-  font-size: xx-large;
+  font-size: large;
   color: #FFD434;
   position: inherit;
 

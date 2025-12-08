@@ -9,6 +9,8 @@
 <%@ page import="java.util.Date" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
+<%@ page import="nl.deltares.useraccount.model.CustomerContact" %>
+<%@ page import="nl.deltares.useraccount.model.Asset" %>
 
 <liferay-theme:defineObjects/>
 <portlet:defineObjects/>
@@ -61,12 +63,10 @@
         </aui:col>
 
     </aui:row>
-
-<br/>
+    <br/>
     <%
         if (entry.getSupportLevelName() != null){
     %>
-
     <aui:row>
         <aui:col width="33">
             <div>Support level:</div>
@@ -81,10 +81,85 @@
             <strong><span><%=entry.getLicenseUsed()%> / <%=entry.getLicenseCount()%></span></strong>
         </aui:col>
     </aui:row>
-    <br/>
     <%
         }
     %>
+
+    <%
+        if (!entry.getCustomerContactList().isEmpty()){
+    %>
+    <div class="lfr-form-content">
+        <div aria-multiselectable="true" class>
+            <aui:fieldset id='<%="customer_contact" + (entry.getSubscriptionId())%>' collapsible="true"
+                          label="Contact person:">
+                <% for (CustomerContact customerContact : entry.getCustomerContactList()) {%>
+                <aui:row>
+                    <aui:col width="66">
+                        <div>
+                            <strong><%=customerContact.getContactSalutation()%>&nbsp;<%=customerContact.getContactName()%>
+                            </strong>
+                        </div>
+                    </aui:col>
+                    <aui:col width="33">
+
+                    </aui:col>
+                </aui:row>
+                <%}%>
+
+            </aui:fieldset>
+        </div>
+    </div>
+    <%
+        }
+    %>
+
+    <%
+        if (!entry.getAssetList().isEmpty()){
+    %>
+    <div class="lfr-form-content">
+        <div aria-multiselectable="true" class>
+            <aui:fieldset id='<%="asset" + (entry.getSubscriptionId())%>' collapsible="true"
+                          label="Assets:">
+                <aui:row>
+                    <aui:col width="33">
+                        <div>
+                            Asset type:
+                        </div>
+                    </aui:col>
+                    <aui:col width="33">
+                        <div>Mac address / Server name:</div>
+                    </aui:col>
+                    <aui:col width="33">
+                        <div>Number of users:</div>
+                    </aui:col>
+                </aui:row>
+                <% for (Asset asset : entry.getAssetList()) {
+                %>
+                <aui:row>
+                    <aui:col width="33">
+                        <strong><%="StandAlone".equals(asset.getType()) ? "Local" : asset.getType() %></strong>
+                    </aui:col>
+                    <aui:col width="33">
+                        <div>
+                            <strong><%=asset.getFormattedHardwareId()%></strong>
+                        </div>
+                        <div>
+                            <h4><%=asset.getServerName() == null ? "" : asset.getServerName()%></h4>
+                        </div>
+                    </aui:col>
+                    <aui:col width="33">
+                        <div><strong><%=asset.getUserCount()%></strong></div>
+                    </aui:col>
+                </aui:row>
+                <%}%>
+
+            </aui:fieldset>
+        </div>
+    </div>
+    <%
+        }
+    %>
+
 </aui:fieldset>
 
 <hr/>
@@ -92,3 +167,16 @@
 <%
     }
 %>
+
+<aui:script >
+
+    const strToMacAddress = function (value){
+        if (/[0-9a-f]{12}/i.test(value)) {
+            var str = value.replace(/([0-9a-f]{2})/gi, '$1\:');
+            str = str.toUpperCase();
+            return str.substring(0, str.length - 1);
+        } else {
+            return value;
+        }
+    }
+</aui:script>
