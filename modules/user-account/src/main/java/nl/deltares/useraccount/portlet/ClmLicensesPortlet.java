@@ -5,22 +5,23 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import nl.deltares.portal.utils.LicenseManagerUtils;
 import nl.deltares.useraccount.constants.UserProfilePortletKeys;
 import nl.deltares.useraccount.model.Asset;
 import nl.deltares.useraccount.model.CustomerContact;
 import nl.deltares.useraccount.model.SoftwareSuite;
 import nl.deltares.useraccount.model.SoftwareSuiteSubscription;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.Portlet;
-import javax.portlet.PortletException;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
+import javax.portlet.*;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -48,6 +49,9 @@ public class ClmLicensesPortlet extends MVCPortlet {
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
+    @Reference
+    private LicenseManagerUtils licenseManagerUtils;
+
     public ClmLicensesPortlet() {
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
@@ -59,19 +63,39 @@ public class ClmLicensesPortlet extends MVCPortlet {
                 .getAttribute(WebKeys.THEME_DISPLAY);
 
         try {
-            List<SoftwareSuite> suites = convertToModel(getExampleData());
-            renderRequest.setAttribute("records", suites);
+            String selectedState = ParamUtil.getString(renderRequest, "filterSelection", "Active");
+            JSONArray customerLicenses = licenseManagerUtils.getCustomerLicenses(themeDisplay.getUser(), selectedState);
+            if (customerLicenses != null && customerLicenses.length() > 0) {
+                List<SoftwareSuite> suites = convertToModel(customerLicenses);
+                renderRequest.setAttribute("records", suites);
+            } else {
+                renderRequest.setAttribute("records", Collections.emptyList());
+            }
+            renderRequest.setAttribute("filterSelection", selectedState);
         } catch (JSONException | ParseException e) {
             throw new PortletException(e);
         }
         super.render(renderRequest, renderResponse);
     }
 
-    private List<SoftwareSuite> convertToModel(JSONArray exampleData) throws ParseException {
+    /**
+     * Pass the selected filter options to the render request
+     *
+     * @param actionRequest  Filter action
+     * @param actionResponse Filter response
+     */
+    @SuppressWarnings("unused")
+    public void filter(ActionRequest actionRequest, ActionResponse actionResponse) {
+
+        final String filter = ParamUtil.getString(actionRequest, "filterSelection", "Active");
+        actionResponse.getRenderParameters().setValue("filterSelection", filter);
+    }
+
+    private List<SoftwareSuite> convertToModel(JSONArray customerData) throws ParseException {
 
         ArrayList<SoftwareSuite> suites = new ArrayList<>();
-        for (int i = 0; i < exampleData.length(); i++) {
-            JSONObject suiteObject = exampleData.getJSONObject(i);
+        for (int i = 0; i < customerData.length(); i++) {
+            JSONObject suiteObject = customerData.getJSONObject(i);
             suites.add(convertToSuit(suiteObject));
         }
         return suites;

@@ -81,6 +81,7 @@
             <strong><span><%=entry.getLicenseUsed()%> / <%=entry.getLicenseCount()%></span></strong>
         </aui:col>
     </aui:row>
+    <br/>
     <%
         }
     %>
@@ -167,16 +168,3 @@
 <%
     }
 %>
-
-<aui:script >
-
-    const strToMacAddress = function (value){
-        if (/[0-9a-f]{12}/i.test(value)) {
-            var str = value.replace(/([0-9a-f]{2})/gi, '$1\:');
-            str = str.toUpperCase();
-            return str.substring(0, str.length - 1);
-        } else {
-            return value;
-        }
-    }
-</aui:script>

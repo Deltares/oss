@@ -12,12 +12,38 @@
 <portlet:defineObjects/>
 
 <%
-
     List<SoftwareSuite> suiteList = (List<SoftwareSuite>) renderRequest.getAttribute("records");
 
+    final String filterSelection = (String) request.getAttribute("filterSelection");
 %>
+
+<portlet:actionURL name="filter" var="filterCustomerLicensesURL" />
+
 <span id="<portlet:namespace/>group-message-block"></span>
+
+<aui:form action="<%=filterCustomerLicensesURL%>" name="<portlet:namespace />filterForm" >
+    <aui:fieldset>
+        <aui:row>
+            <aui:col width="50">
+                <div class="d-flex justify-content-start">
+                    <aui:select name="filterSelection" label="softwaresuites.filter.label" value="<%=filterSelection%>" onChange="submit()">
+                        <aui:option value="Active" label="Running" selected="true"/>
+                        <aui:option value="Expired" label="Expired"/>
+                        <aui:option value="Terminated" label="Terminated"/>
+                    </aui:select>
+                </div>
+            </aui:col>
+        </aui:row>
+    </aui:fieldset>
+</aui:form>
+
 <%
+    if (suiteList.isEmpty()){
+%>
+<div><strong>There a no licenses with state '<%=filterSelection%>' registered under e-mail address '<%=themeDisplay.getUser().getEmailAddress()%>'.</strong></div>
+<%
+    }
+
     for (SoftwareSuite softwareSuite : suiteList) {
 %>
 

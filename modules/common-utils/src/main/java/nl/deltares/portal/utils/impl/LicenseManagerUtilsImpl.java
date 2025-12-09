@@ -1,6 +1,8 @@
 package nl.deltares.portal.utils.impl;
 
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -19,9 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component(
         immediate = true,
@@ -122,6 +122,58 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
         final String response = readAll(connection);
         return JsonContentUtils.parseJsonToMap(response);
 
+    }
+
+    @Override
+    public JSONArray getCustomerLicenses(User user, String state) throws IOException, JSONException {
+
+        if (!isActive()) {
+            LOG.warn("Unable to retrieve license files as the LicenseManager is not active!");
+            return null;
+        }
+        if (user == null || user.isGuestUser()) return null;
+
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + getAccessToken());
+
+        String queryParameters = String.format("?email=%s",URLEncoder.encode(user.getEmailAddress(), StandardCharsets.UTF_8));
+        HttpURLConnection connection = getConnection(getBasePath() + "clm/customers/contact/search" + queryParameters, "GET", headers);
+        checkResponse(connection);
+
+        String customerContactsViewResponse = readAll(connection);
+        JSONArray customerContactsArray = JsonContentUtils.parseContentArray(customerContactsViewResponse);
+        Long[] customerIds = parseCustomerIds(customerContactsArray);
+
+        if (customerIds.length == 0){
+            LOG.warn(String.format("Found no customer ID for CLM user %s!", user.getEmailAddress()));
+            return null;
+        }
+        if (customerIds.length > 1){
+            LOG.warn(String.format("Found more than one customer ID for CLM user %s!", user.getEmailAddress()));
+        }
+
+        if (state==null) {
+            state = "Active";
+        }
+        queryParameters = String.format("?state=%s", state);
+
+        connection = getConnection(getBasePath() + "clm/customers/" + customerIds[0] + "/subscriptions/suites" + queryParameters, "GET", headers);
+        checkResponse(connection);
+
+        return JsonContentUtils.parseContentArray(readAll(connection));
+
+    }
+
+    private Long[] parseCustomerIds(JSONArray customerContactsArray) {
+
+        List<Long> ids = new ArrayList<>(customerContactsArray.length());
+        for (int i = 0; i < customerContactsArray.length(); i++) {
+            JSONObject customerContactView = customerContactsArray.getJSONObject(i);
+            long customerContactCustomerId = customerContactView.getLong("customerContactCustomerId");
+            if (!ids.contains(customerContactCustomerId)) {ids.add(customerContactCustomerId);}
+        }
+        return ids.toArray(new Long[0]);
     }
 
     private String replaceTags(LicenseFile licenseFile, User user) {
