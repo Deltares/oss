@@ -106,7 +106,7 @@ public class AccountUtilsImpl implements AccountUtils {
                     "com.liferay.account.model.AccountEntry", accountEntry.getAccountEntryId(),
                     "Billing address", null, addressInfo.getStreet(), null, null,
                     addressInfo.getCity(), addressInfo.getPostal(), 0, companyCountry.getCountryId(), type.getListTypeId(),
-                    false, true, addressInfo.getPhone(), serviceContext);
+                    true, true, addressInfo.getPhone(), serviceContext);
         } else {
             address.setStreet1(addressInfo.getStreet());
             address.setCity(addressInfo.getCity());
@@ -135,10 +135,10 @@ public class AccountUtilsImpl implements AccountUtils {
                 _phoneLocalService.updatePhone(phone);
             }
 
-            if (addressInfo.isDefaultBillingAddress() || accountEntry.getDefaultBillingAddress() == null) {
-                accountEntry.setDefaultBillingAddressId(address.getAddressId());
-                _accountEntryLocalService.updateAccountEntry(accountEntry);
-            }
+        }
+        if (addressInfo.isDefaultBillingAddress() || accountEntry.getDefaultBillingAddress() == null) {
+            accountEntry.setDefaultBillingAddressId(address.getAddressId());
+            _accountEntryLocalService.updateAccountEntry(accountEntry);
         }
         return address;
     }
