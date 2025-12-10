@@ -1,6 +1,6 @@
 Bundle-Name: common-utils
 Bundle-SymbolicName: nl.deltares.portal.common-utils
-Bundle-Version: 1.1.7
+Bundle-Version: 1.1.8
 Export-Package: \
   nl.deltares.portal.constants, \
   nl.deltares.portal.utils, \
@@ -18,7 +18,6 @@ Export-Package: \
 Import-Package: \
   nl.deltares.dsd.registration.service.*,\
   nl.deltares.oss.download.service.*,\
-  nl.deltares.data.service.registration.service.*,\
   !org.apache.avalon.framework.logger, \
   !org.apache.log, \
   !org.apache.log4j, \
