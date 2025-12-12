@@ -85,6 +85,13 @@ public class AccountUtilsImpl implements AccountUtils {
 
         AddressInfo addressInfo = accountInfo.getAddressInfo();
         Address address = createOrUpdateAddress(addressInfo, companyId, currentUserId, accountEntry);
+
+        //Set address as default if no address yet exists.
+        if (address != null && accountEntry.getDefaultBillingAddress() == null) {
+            accountEntry.setDefaultBillingAddressId(address.getAddressId());
+            _accountEntryLocalService.updateAccountEntry(accountEntry);
+        }
+
         return accountEntry;
     }
 
@@ -106,7 +113,7 @@ public class AccountUtilsImpl implements AccountUtils {
                     "com.liferay.account.model.AccountEntry", accountEntry.getAccountEntryId(),
                     "Billing address", null, addressInfo.getStreet(), null, null,
                     addressInfo.getCity(), addressInfo.getPostal(), 0, companyCountry.getCountryId(), type.getListTypeId(),
-                    true, true, addressInfo.getPhone(), serviceContext);
+                    false, false, addressInfo.getPhone(), serviceContext);
         } else {
             address.setStreet1(addressInfo.getStreet());
             address.setCity(addressInfo.getCity());
@@ -135,10 +142,6 @@ public class AccountUtilsImpl implements AccountUtils {
                 _phoneLocalService.updatePhone(phone);
             }
 
-        }
-        if (addressInfo.isDefaultBillingAddress() || accountEntry.getDefaultBillingAddress() == null) {
-            accountEntry.setDefaultBillingAddressId(address.getAddressId());
-            _accountEntryLocalService.updateAccountEntry(accountEntry);
         }
         return address;
     }
