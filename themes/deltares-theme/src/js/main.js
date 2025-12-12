@@ -1,5 +1,4 @@
-if (!window.FormStepper) {
-    window.FormStepper = {
+var FormStepper = {
 
         pluginName : "formStepper",
         form : {},
@@ -178,10 +177,8 @@ if (!window.FormStepper) {
             return this.element.querySelectorAll('.next-step');
         }
     }
-}
 
-if (!window.ShoppingCart) {
-    window.ShoppingCart = {
+var ShoppingCart = {
 
         pluginName : "shoppingCart",
         defaults: {
@@ -398,7 +395,7 @@ if (!window.ShoppingCart) {
             localStorage.setItem(this._getSiteId() + '/shoppingCart', JSON.stringify(this.cart));
         }
     }
-}
+
 
     // Mobile menu
 var mobileContainer = document.querySelector('.mobile-container');

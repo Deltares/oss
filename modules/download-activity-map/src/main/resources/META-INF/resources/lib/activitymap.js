@@ -3,7 +3,7 @@ if (typeof mapControl === 'undefined' || mapControl === null ){
     let mapControl;
     let markersLayer;
 }
-let ActivityMapUtil = {
+var ActivityMapUtil = {
 
     initMap: function (namespace) {
 

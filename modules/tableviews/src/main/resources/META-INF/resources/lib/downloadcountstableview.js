@@ -1,6 +1,4 @@
-
-
-let CountsTableFormsUtil = {
+var CountsTableFormsUtil = {
 
     loadSelection: function(selected) {
         let rowElements = document.getElementsByClassName("downloadCountsTableRecord");

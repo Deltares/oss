@@ -1,6 +1,4 @@
-
-
-let TableFormsUtil = {
+var TableFormsUtil = {
 
     loadSelection: function(namespace, selected) {
         let rowElements = document.getElementsByName(namespace + "rowIds");
