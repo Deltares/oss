@@ -291,7 +291,7 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
         }
         final long groupId = ddmStructure.getGroupId();
         final String pid = OssConstants.STRUCTURE_KEY_MAP_CONFIGURATIONS_PID.concat(String.valueOf(groupId));
-        Map<String, Object> groupMap = cache.findPortletConfig(pid);
+        Map<String, Object> groupMap = cache == null ? null : cache.findPortletConfig(pid);
 
         if (groupMap == null || groupMap.isEmpty()) {
             //Now structure keys are LONG identifiers and need to be mapped.
