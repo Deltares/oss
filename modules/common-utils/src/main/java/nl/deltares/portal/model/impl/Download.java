@@ -41,6 +41,8 @@ public class Download extends AbsDsdArticle {
 
     private void init(DsdJournalArticleUtils articleUtils, LayoutUtils layoutUtils) throws PortalException {
         try {
+            super.init();
+
             String fileId = getFormFieldValue( "FileId", true);
             if (fileId != null) this.fileId = Integer.parseInt(fileId);
             filePath = getFormFieldValue( "FilePath", false);
