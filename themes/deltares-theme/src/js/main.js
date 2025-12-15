@@ -39,8 +39,12 @@ var FormStepper = {
         },
 
         _isFormValid: function () {
-            this.form.formValidator.validate();
-            return !this.form.formValidator.hasErrors();
+            if (this.form.formValidator) {
+                this.form.formValidator.validate();
+                return !this.form.formValidator.hasErrors();
+            } else {
+                return true;
+            }
         },
 
         _navigate: function (event) {

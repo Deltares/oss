@@ -24,11 +24,11 @@ var DownloadFormsUtil = {
     validateFirstStep: function () {
         let downloads = document.getElementsByClassName('download');
         let isFirstStepValid = false;
-        [...downloads].forEach(function(download) {
+        Array.from(downloads).forEach(function (download){
             if (download.checked) {
                 isFirstStepValid = true;
             }
-        });
+        })
         return isFirstStepValid;
     },
 

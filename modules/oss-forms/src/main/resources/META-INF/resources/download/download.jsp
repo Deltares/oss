@@ -202,25 +202,23 @@
         shoppingCart.clearDownloadsCart();
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        let namespace = "<portlet:namespace />";
-        let form = Liferay.Form.get(namespace + "fm").formValidator;
-        form.validateFirstStep = validateFirstStep;
-        form.preSubmitAction = preSubmitAction;
-        let stepper = document.querySelector('.bs-stepper')
-        let formStepper = FormStepper.init(stepper, form)
+    let namespace = "<portlet:namespace />";
+    let form = Liferay.Form.get(namespace + "fm");
+    form.validateFirstStep = validateFirstStep;
+    form.preSubmitAction = preSubmitAction;
+    let stepper = document.querySelector('.bs-stepper')
+    let formStepper = FormStepper.init(stepper, form)
 
-        DownloadFormsUtil.checkSelection(namespace);
-        let downloads = document.getElementsByClassName("download");
-        Array.from(downloads).forEach(function (download) {
-            download.onchange = function (){ DownloadFormsUtil.checkSelection(namespace)};
-        });
-        document.getElementById(namespace + "registration_other").addEventListener('change', function() {
-            CommonFormsUtil.registerOther(namespace);
-        });
-        document.getElementById(namespace + "use_organization_address").addEventListener('change', function() {
-            CommonFormsUtil.updatePaymentAddress(namespace, this.checked);
-        });
-        <c:if test='<%= !SessionErrors.isEmpty(liferayPortletRequest) %>'>shoppingCart.clearDownloadsCart()</c:if>
+    DownloadFormsUtil.checkSelection(namespace);
+    let downloads = document.getElementsByClassName("download");
+    Array.from(downloads).forEach(function (download) {
+    download.onchange = function (){ DownloadFormsUtil.checkSelection(namespace)};
     });
+    document.getElementById(namespace + "registration_other").addEventListener('change', function() {
+    CommonFormsUtil.registerOther(namespace);
+    });
+    document.getElementById(namespace + "use_organization_address").addEventListener('change', function() {
+    CommonFormsUtil.updatePaymentAddress(namespace, this.checked);
+    });
+    <c:if test='<%= !SessionErrors.isEmpty(liferayPortletRequest) %>'>shoppingCart.clearDownloadsCart()</c:if>
 </aui:script>
