@@ -91,6 +91,6 @@ public class Location extends AbsDsdArticle {
     }
 
     public boolean isOnline() {
-        return locationType.equals("online");
+        return "online".equals(locationType);
     }
 }

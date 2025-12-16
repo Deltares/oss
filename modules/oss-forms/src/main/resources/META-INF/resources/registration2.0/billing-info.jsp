@@ -1,6 +1,6 @@
 <%@ include file="init.jsp" %>
 <div class="prose prose--app">
-<h3><liferay-ui:message key="registrationform.billing.select.address"/></h3>
+<h3><liferay-ui:message key="registrationform.billing.payment.details"/></h3>
 </div>
 <%
     BillingDetailsCheckoutStepDisplayContext displayContext = (BillingDetailsCheckoutStepDisplayContext) request.getAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT);
@@ -73,17 +73,9 @@
             disabled="<%=!canEditAccount%>"
             value='<%= billingInfo.getVat()%>'
     />
-    <aui:input
-            name='<%= OrganizationConstants.ORG_REGISTRATION_ID %>'
-            label="registrationform.billing.companyid"
-            helpMessage="registrationform.billing.companyid.info"
-            wrapperCssClass="form-group-item"
-            disabled="<%=!canEditAccount%>"
-            value='<%= billingInfo.getCompanyIdentifier()%>'
-    />
 </div>
 
-<h3><strong><liferay-ui:message key="registrationform.billing.payment.details"/></strong></h3>
+<h3><strong><liferay-ui:message key="registrationform.billing.address.select"/></strong></h3>
 
 <div class="form-group-autofit">
     <aui:select

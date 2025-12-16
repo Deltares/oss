@@ -108,13 +108,6 @@ public class AccountSelectionCheckoutStepDisplayContext{
         return accounts;
     }
 
-    public String getCompanyReferenceCode(AccountEntry accountEntry) {
-        if (accountEntry != null) {
-            return accountEntry.getExternalReferenceCode();
-        }
-        return "";
-    }
-
     public String getAccountWebsite(AccountEntry accountEntry) {
         if (accountEntry != null) {
             return (String) accountEntry.getExpandoBridge().getAttribute(OrganizationConstants.ORG_WEBSITE, false);
@@ -253,15 +246,14 @@ public class AccountSelectionCheckoutStepDisplayContext{
                 accountEntry.setName(name);
             }
             String website = ParamUtil.getString(request, OrganizationConstants.ORG_WEBSITE);
-            String companyRegistrationId = ParamUtil.getString(request, OrganizationConstants.ORG_REGISTRATION_ID);
+//            String companyRegistrationId = ParamUtil.getString(request, OrganizationConstants.ORG_REGISTRATION_ID);
             String taxIdNumber = ParamUtil.getString(request, OrganizationConstants.ORG_VAT);
-
             accountEntry.setTaxIdNumber(taxIdNumber);
 
             if (!accountEntry.getExpandoBridge().hasAttribute(OrganizationConstants.ORG_REGISTRATION_ID)) {
                 accountEntry.getExpandoBridge().addAttribute(OrganizationConstants.ORG_REGISTRATION_ID);
             }
-            accountEntry.setExternalReferenceCode(companyRegistrationId);
+//            accountEntry.setExternalReferenceCode(companyRegistrationId);
 
             if (!accountEntry.getExpandoBridge().hasAttribute(OrganizationConstants.ORG_WEBSITE)) {
                 accountEntry.getExpandoBridge().addAttribute(OrganizationConstants.ORG_WEBSITE);

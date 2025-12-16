@@ -1,7 +1,5 @@
 package nl.deltares.forms.portlet;
 
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -73,5 +71,4 @@ public class DeltaresRegistrationFormPortlet extends MVCPortlet {
     @Reference
     private DeltaresCheckoutStepRegistry _checkoutStepRegistry;
 
-    private static final Log LOG = LogFactoryUtil.getLog(DeltaresRegistrationFormPortlet.class);
 }

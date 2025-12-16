@@ -109,13 +109,12 @@ var RegistrationFormsUtil = {
 
         if (selectedElement) {
             const vat = document.getElementById(namespace + "org_vat");
-            const externalRef = document.getElementById(namespace + 'companyRegistrationId');
+
             const regionIdSelect = document.getElementById(namespace + 'org_region');
             const website = document.getElementById(namespace + 'website');
 
             if (
                 vat &&
-                externalRef &&
                 website
             ) {
                 const selectedOption =
@@ -124,11 +123,9 @@ var RegistrationFormsUtil = {
                 let disabled = selectedOption.dataset.canedit === "false";
 
                 vat.value = clearFields ? "" : selectedOption.dataset.vat;
-                externalRef.value = clearFields ? "" : selectedOption.dataset.companyRef;
                 website.value = clearFields ? "" : selectedOption.dataset.website;
 
                 vat.disabled = disabled;
-                externalRef.disabled = disabled;
                 website.disabled = disabled;
 
                 Liferay.Service(

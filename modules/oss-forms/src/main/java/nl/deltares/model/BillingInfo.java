@@ -22,7 +22,6 @@ public class BillingInfo implements Serializable {
         billing_vat,
         billing_preference,
         billing_phone,
-        billing_website,
         billing_addressid
     }
 
@@ -38,8 +37,6 @@ public class BillingInfo implements Serializable {
     String reference = "";
     String preference = "payLink";
     String phone = "";
-    String website = "";
-    String companyIdentifier = "";
 
 
     long billingAddressId = 0;
@@ -65,8 +62,6 @@ public class BillingInfo implements Serializable {
                 return KeycloakUtils.ATTRIBUTES.org_vat;
             case billing_phone:
                 return KeycloakUtils.ATTRIBUTES.org_phone;
-            case billing_website:
-                return KeycloakUtils.ATTRIBUTES.org_website;
             case billing_company:
                 return  KeycloakUtils.ATTRIBUTES.org_name;
             default:
@@ -100,8 +95,6 @@ public class BillingInfo implements Serializable {
                 return preference;
             case billing_phone:
                 return phone;
-            case billing_website:
-                return website;
             case billing_company:
                 return companyName;
             default:
@@ -147,9 +140,6 @@ public class BillingInfo implements Serializable {
             case billing_phone:
                 phone = value;
                 break;
-            case billing_website:
-                website = value;
-                break;
             case billing_company:
                 companyName = value;
                 break;
@@ -167,15 +157,6 @@ public class BillingInfo implements Serializable {
 
         }
         return map;
-    }
-
-
-    public void setCompanyIdentifier(String companyIdentifier) {
-        this.companyIdentifier = companyIdentifier;
-    }
-
-    public String getCompanyIdentifier() {
-        return companyIdentifier;
     }
 
     public long getBillingAddressId() {
@@ -272,14 +253,6 @@ public class BillingInfo implements Serializable {
 
     public void setPhoneNumber(String phone) {
         this.phone = phone;
-    }
-
-    public String getWebsite() {
-        return website;
-    }
-
-    public void setWebsite(String website) {
-        this.website = website;
     }
 
     public String getFirstName() {

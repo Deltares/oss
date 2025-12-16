@@ -444,7 +444,6 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             header = new StringBuilder(",projectNumber,registrationTitle,email,firstName,lastName,remarks");
             for (BillingInfo.ATTRIBUTES value : BillingInfo.ATTRIBUTES.values()) {
                 if (value == BillingInfo.ATTRIBUTES.billing_phone) continue;
-                if (value == BillingInfo.ATTRIBUTES.billing_website) continue;
                 header.append(',');
                 header.append(value.name());
             }
@@ -707,7 +706,6 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         //Write billing information.
         for (BillingInfo.ATTRIBUTES key : BillingInfo.ATTRIBUTES.values()) {
             if (light && key == BillingInfo.ATTRIBUTES.billing_phone) continue;
-            if (light && key == BillingInfo.ATTRIBUTES.billing_website) continue;
             String billingAttribute = billingInfo.get(key.name());
             writeField(line, billingAttribute);
         }

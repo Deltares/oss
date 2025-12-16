@@ -2,7 +2,6 @@ package nl.deltares.forms.internal;
 
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
-import com.liferay.headless.commerce.admin.order.dto.v1_0.BillingAddress;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.Country;
@@ -62,7 +61,6 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
             _selectedAccountEntry = getAccountEntry((Long) selectedAccountEntryId);
         }
         if (_selectedAccountEntry != null) {
-            _billingInfo.setCompanyIdentifier(getCompanyReferenceCode(_selectedAccountEntry));
             _billingInfo.setVat(_selectedAccountEntry.getTaxIdNumber());
             Address billingAddress = getAccountAddress(_selectedAccountEntry);
             if (billingAddress != null) {
@@ -99,16 +97,10 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
 
         if (_selectedAccountEntry.isPersonalAccount()) {
             boolean updated = false;
-            String companyRegistrationId = ParamUtil.getString(httpServletRequest, OrganizationConstants.ORG_REGISTRATION_ID);
             String taxIdNumber = ParamUtil.getString(httpServletRequest, OrganizationConstants.ORG_VAT);
             if (taxIdNumber != null && !taxIdNumber.equals(_selectedAccountEntry.getTaxIdNumber())){
                 updated = true;
                 _selectedAccountEntry.setTaxIdNumber(taxIdNumber);
-            }
-            if (companyRegistrationId != null && !companyRegistrationId.equals(getCompanyReferenceCode(_selectedAccountEntry))){
-                updated = true;
-                _selectedAccountEntry.getExpandoBridge()
-                        .setAttribute(OrganizationConstants.ORG_REGISTRATION_ID, companyRegistrationId, false);
             }
             if (updated) {
                 _accountEntryLocalService.updateAccountEntry(_selectedAccountEntry);
@@ -126,8 +118,6 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
         }
 
         _billingInfo.setVat(_selectedAccountEntry.getTaxIdNumber());
-        _billingInfo.setCompanyIdentifier((String) _selectedAccountEntry.getExpandoBridge()
-                .getAttribute(OrganizationConstants.ORG_REGISTRATION_ID, false));
         _billingInfo.setCompanyName(_selectedAccountEntry.getName());
 
         _billingInfo.setEmail(ParamUtil.getString(httpServletRequest, BillingConstants.EMAIL));
@@ -160,13 +150,6 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
                     new RegistrationFormException(String.format("It is not allowed to do business with country '%s'", country.getName()))));
             return;
         }
-
-//        long selectedBillingAddressId = ParamUtil.getLong(httpServletRequest, getParamName());
-//        if (selectedBillingAddressId == 0 && !canEditAccount()) {
-//            SessionErrors.add(httpServletRequest, RegistrationFormException.class, Collections.singletonList(
-//                    new RegistrationFormException("No billing address selected!")));
-//            return;
-//        }
 
         String vatId = ParamUtil.getString(httpServletRequest, OrganizationConstants.ORG_VAT);
         if (_selectedAccountEntry.isPersonalAccount() && vatId.isEmpty()){

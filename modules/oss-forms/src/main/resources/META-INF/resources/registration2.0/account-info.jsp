@@ -60,7 +60,6 @@
                     data-zip="<%= HtmlUtil.escapeAttribute(zip) %>"
                     data-website="<%= HtmlUtil.escapeAttribute(displayContext.getAccountWebsite(accountEntry)) %>"
                     data-vat="<%=HtmlUtil.escapeAttribute(accountEntry.getTaxIdNumber())%>"
-                    data-company-ref="<%=HtmlUtil.escapeAttribute(displayContext.getCompanyReferenceCode(accountEntry))%>"
                     data-canEdit="<%=canEdit%>"
                     label="<%= HtmlUtil.escape(accountEntry.getName()) %>"
                     selected="<%= accountEntry.getAccountEntryId() == selectedAccountEntryId %>"
@@ -140,12 +139,6 @@
                 helpMessage="registrationform.billing.vat.info"
                 wrapperCssClass="form-group-item"
                 />
-        <aui:input
-                name='<%= OrganizationConstants.ORG_REGISTRATION_ID %>'
-                label="registrationform.billing.companyid"
-                helpMessage="registrationform.billing.companyid.info"
-                wrapperCssClass="form-group-item"
-            />
     </div>
 </div>
 
