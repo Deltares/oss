@@ -56,9 +56,6 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 	DsdSessionUtils dsdSessionUtils;
 
 	@Reference
-	KeycloakUtils keycloakUtils;
-
-	@Reference
 	DsdJournalArticleUtils dsdJournalArticleUtils;
 
 	@Reference

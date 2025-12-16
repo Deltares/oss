@@ -26,7 +26,7 @@ public interface DsdRegistrationFormConfiguration {
     @Meta.AD(required = false, deflt = "", description = "Configure the friendly URL of the registration failure page.")
     String failURL();
 
-    @Meta.AD(required = false, deflt = "{}", description = "Configure the text to display above the child headers.")
+    @Meta.AD(required = false, deflt = "", description = "Configure the text to display above the child headers.")
     String childHeaderText();
 
 

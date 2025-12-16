@@ -25,8 +25,6 @@ import javax.portlet.RenderResponse;
 import java.io.IOException;
 import java.util.*;
 
-import static nl.deltares.portal.utils.LocalizationUtils.getLocalizedValue;
-
 /**
  * @author rooij_e
  */
@@ -83,12 +81,12 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 				SessionErrors.add(request, "update-attributes-failed", "Error reading user attributes: " + e.getMessage());
 				request.setAttribute("attributes", new HashMap<>());
 			}
-			final String language = themeDisplay.getLocale().getLanguage();
+
 			try {
 				DSDSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
-				request.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL, getLocalizedValue(dsdConfig.conditionsURL(), language));
-				request.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL, getLocalizedValue(dsdConfig.privacyURL(), language));
-				request.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL, getLocalizedValue(dsdConfig.contactURL(), language));
+				request.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL, dsdConfig.conditionsURL());
+				request.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL, dsdConfig.privacyURL());
+				request.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL, dsdConfig.contactURL());
 				request.setAttribute("eventId", dsdConfig.eventId());
 				List<String> mailingIdsList = Arrays.asList(dsdConfig.mailingIds().split(";"));
 				request.setAttribute("subscriptionSelection", getSubscriptionSelection(user.getEmailAddress(), mailingIdsList));
@@ -99,7 +97,7 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 			}
 			try {
 				DsdRegistrationFormConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DsdRegistrationFormConfiguration.class, themeDisplay.getScopeGroupId());
-				request.setAttribute("childHeaderText", getLocalizedValue(dsdConfig.childHeaderText(), language));
+				request.setAttribute("childHeaderText", dsdConfig.childHeaderText());
 			} catch (Exception e) {
 				LOG.warn("Error getting DsdRegistrationFormConfiguration: " + e.getMessage());
 				request.setAttribute("childHeaderText", null);

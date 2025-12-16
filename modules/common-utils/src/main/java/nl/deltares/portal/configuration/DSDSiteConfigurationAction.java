@@ -14,7 +14,6 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.constants.OssConfigurationConstants;
 import nl.deltares.portal.constants.OssConstants;
-import nl.deltares.portal.utils.JsonContentUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
@@ -25,10 +24,6 @@ import javax.portlet.PortletConfig;
 import javax.portlet.PortletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
-
-import static nl.deltares.portal.utils.LocalizationUtils.convertToLocalizedMap;
-import static nl.deltares.portal.utils.LocalizationUtils.getAvailableLanguageIds;
 
 @Component(
         configurationPid = OssConstants.DSD_SITE_CONFIGURATIONS_PID,
@@ -51,10 +46,9 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
 
         try {
             ThemeDisplay themeDisplay = (ThemeDisplay) httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY);
-            httpServletRequest.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL, getParsedJsonParameter(themeDisplay, _configurationProvider, OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL));
-            httpServletRequest.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL, getParsedJsonParameter(themeDisplay, _configurationProvider, OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL));
-            httpServletRequest.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL, getParsedJsonParameter(themeDisplay, _configurationProvider, OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL));
-            httpServletRequest.setAttribute("languageIds", getAvailableLanguageIds(httpServletRequest));
+            httpServletRequest.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL, getParameter(themeDisplay, _configurationProvider, OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL));
+            httpServletRequest.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL, getParameter(themeDisplay, _configurationProvider, OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL));
+            httpServletRequest.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL, getParameter(themeDisplay, _configurationProvider, OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL));
         } catch (PortalException e) {
             throw new PortletException("Could not get options for field 'registrationType' in structure SESSIONS: " + e.getMessage(), e);
         }
@@ -73,9 +67,9 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         String registrationURL = ParamUtil.getString(actionRequest, "registrationURL");
         String busTransferURL = ParamUtil.getString(actionRequest, "busTransferURL");
         String travelStayURL = ParamUtil.getString(actionRequest, "travelStayURL");
-        Map<String,String> conditionsURL = convertToLocalizedMap(actionRequest, OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL);
-        Map<String,String> privacyURL = convertToLocalizedMap(actionRequest, OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL);
-        Map<String,String> contactURL = convertToLocalizedMap(actionRequest, OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL);
+        String conditionsURL = ParamUtil.getString(actionRequest, OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL);
+        String privacyURL = ParamUtil.getString(actionRequest, OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL);
+        String contactURL = ParamUtil.getString(actionRequest, OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL);
         String sendFromEmail = ParamUtil.getString(actionRequest, "sendFromEmail");
         String replyToEmail = ParamUtil.getString(actionRequest, "replyToEmail");
         String bccToEmail = ParamUtil.getString(actionRequest, "bccToEmail");
@@ -98,9 +92,9 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         modifiableSettings.setValue("registrationURL", registrationURL);
         modifiableSettings.setValue("busTransferURL", busTransferURL);
         modifiableSettings.setValue("travelStayURL", travelStayURL);
-        modifiableSettings.setValue(OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL, JsonContentUtils.formatMapToJson(conditionsURL));
-        modifiableSettings.setValue(OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL, JsonContentUtils.formatMapToJson(privacyURL));
-        modifiableSettings.setValue(OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL, JsonContentUtils.formatMapToJson(contactURL));
+        modifiableSettings.setValue(OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL, conditionsURL);
+        modifiableSettings.setValue(OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL, privacyURL);
+        modifiableSettings.setValue(OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL, contactURL);
         modifiableSettings.setValue("sendFromEmail", sendFromEmail);
         modifiableSettings.setValue("replyToEmail", replyToEmail);
         modifiableSettings.setValue("bccToEmail", bccToEmail);
@@ -124,7 +118,7 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         _configurationProvider = configurationProvider;
     }
 
-    public static Map<String, String> getParsedJsonParameter(ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider, String parameterId) throws PortalException {
+    public static String getParameter(ThemeDisplay themeDisplay, ConfigurationProvider configurationProvider, String parameterId) throws PortalException {
 
         DSDSiteConfiguration siteConfiguration;
         try {
@@ -134,24 +128,15 @@ public class DSDSiteConfigurationAction extends DefaultConfigurationAction {
         } catch (ConfigurationException e) {
             throw new PortalException(String.format("Error getting DSD siteConfiguration: %s", e.getMessage()));
         }
-        String json;
         switch (parameterId){
             case OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL:
-                json = siteConfiguration.conditionsURL();
-                break;
+                return siteConfiguration.conditionsURL();
             case OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL:
-                json = siteConfiguration.contactURL();
-                break;
+                return siteConfiguration.contactURL();
             case OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL:
-                json = siteConfiguration.privacyURL();
-                break;
+                return siteConfiguration.privacyURL();
             default:
-                json = null ;
-        }
-        try {
-            return JsonContentUtils.parseJsonToMap(json);
-        } catch (Exception e){
-            return Collections.emptyMap();
+                return null ;
         }
 
     }

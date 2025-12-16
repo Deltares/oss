@@ -33,11 +33,6 @@
         portletConfiguration="<%= true %>"
         var="configurationRenderURL"
 />
-<%
-
-    final List<String> languageIds = (List<String>) renderRequest.getAttribute("languageIds");
-
-%>
 <aui:form action="<%= configurationActionURL %>" method="post" name="fm">
     <aui:input
             name="<%= Constants.CMD %>"
@@ -126,45 +121,18 @@
                     value="<%= configuration.dsdRegistrationTypeField() %>"/>
         </aui:fieldset>
         <aui:fieldset id="external_links" collapsible="true" label="External links">
-            <%
-                Map<String, String> conditionsURL = (Map<String,String>) renderRequest.getAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL);
-                for (String languageId : languageIds) {
-                    String name = OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL + "-" + languageId;
-            %>
             <aui:input
                     label="conditions-url"
-                    prefix="<%=languageId%>"
-                    name="<%=name%>"
-                    value="<%= conditionsURL.get(languageId) %>"/>
-            <%
-                }
-            %>
-            <%
-                Map<String, String> privacyURL = (Map<String,String>) renderRequest.getAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL);
-                for (String languageId : languageIds) {
-                    String name = OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL + "-" + languageId;
-            %>
+                    name="conditionsURL"
+                    value="<%= configuration.conditionsURL() %>"/>
             <aui:input
                     label="privacy-url"
-                    prefix="<%=languageId%>"
-                    name="<%=name%>"
-                    value="<%= privacyURL.get(languageId) %>"/>
-            <%
-                }
-            %>
-            <%
-                Map<String, String> contactURL = (Map<String,String>) renderRequest.getAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL);
-                for (String languageId : languageIds) {
-                    String name = OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL + "-" + languageId;
-            %>
+                    name="privacyURL"
+                    value="<%= configuration.privacyURL() %>"/>
             <aui:input
                     label="contact-url"
-                    prefix="<%=languageId%>"
-                    name="<%=name%>"
-                    value="<%= contactURL.get(languageId) %>"/>
-            <%
-                }
-            %>
+                    name="contactURL"
+                    value="<%= configuration.contactURL() %>"/>
 
         </aui:fieldset>
             </div>

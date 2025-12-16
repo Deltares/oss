@@ -7,8 +7,6 @@
 
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
 <%@ page import="nl.deltares.forms.portlet.DsdRegistrationFormConfiguration" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="java.util.List" %>
 <%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider" %>
 
 <liferay-theme:defineObjects/>
@@ -21,7 +19,6 @@
 
     DsdRegistrationFormConfiguration configuration = configurationProvider.getGroupConfiguration(DsdRegistrationFormConfiguration.class, themeDisplay.getScopeGroupId());
 
-    final List<String> languageIds = (List<String>) renderRequest.getAttribute("languageIds");
 %>
 
 <liferay-portlet:actionURL
@@ -69,19 +66,10 @@
                     name="failURL"
                     value="<%= configuration.failURL() %>"/>
 
-            <%
-                Map<String, String> childHeaderText = (Map<String,String>) renderRequest.getAttribute("childHeaderText");
-                for (String languageId : languageIds) {
-                    String name = "childHeaderText-" + languageId;
-            %>
             <aui:input
                     label="registrationform.childheader-text"
-                    prefix="<%=languageId%>"
-                    name="<%=name%>"
-                    value="<%= childHeaderText.get(languageId) %>"/>
-            <%
-                }
-            %>
+                    name="childHeaderText"
+                    value="<%= configuration.childHeaderText() %>"/>
         </aui:fieldset>
             </div>
         </div>

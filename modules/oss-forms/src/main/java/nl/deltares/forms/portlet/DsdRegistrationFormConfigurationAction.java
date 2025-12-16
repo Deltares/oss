@@ -11,9 +11,7 @@ import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
-import nl.deltares.portal.utils.JsonContentUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
@@ -23,11 +21,7 @@ import javax.portlet.ActionResponse;
 import javax.portlet.PortletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
-import java.util.Map;
 
-import static nl.deltares.portal.utils.LocalizationUtils.convertToLocalizedMap;
-import static nl.deltares.portal.utils.LocalizationUtils.getAvailableLanguageIds;
 
 @Component(
         configurationPid = OssConstants.DSD_REGISTRATIONFORM_CONFIGURATIONS_PID,
@@ -47,17 +41,17 @@ public class DsdRegistrationFormConfigurationAction extends DefaultConfiguration
                 ConfigurationProvider.class.getName(),
                 _configurationProvider);
 
-        httpServletRequest.setAttribute("languageIds", getAvailableLanguageIds(httpServletRequest));
         try {
             ThemeDisplay themeDisplay = (ThemeDisplay) httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY);
             DsdRegistrationFormConfiguration siteConfiguration = _configurationProvider
                     .getGroupConfiguration(DsdRegistrationFormConfiguration.class, themeDisplay.getSiteGroupId());
 
-            httpServletRequest.setAttribute("childHeaderText", getParsedJsonParameter(siteConfiguration, "childHeaderText"));
+            httpServletRequest.setAttribute("childHeaderText", siteConfiguration.childHeaderText());
             httpServletRequest.setAttribute("registerSuccessURL", siteConfiguration.registerSuccessURL());
             httpServletRequest.setAttribute("unregisterSuccessURL", siteConfiguration.unregisterSuccessURL());
             httpServletRequest.setAttribute("updateSuccessURL", siteConfiguration.updateSuccessURL());
             httpServletRequest.setAttribute("failURL", siteConfiguration.failURL());
+
         } catch (PortalException e) {
             throw new PortalException("Could not get options for field 'registrationType' in structure SESSIONS: " + e.getMessage(), e);
         }
@@ -69,7 +63,6 @@ public class DsdRegistrationFormConfigurationAction extends DefaultConfiguration
             throws Exception {
 
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
-        Map<String, String> childHeaderText = convertToLocalizedMap(actionRequest, "childHeaderText");
 
         Settings settings = SettingsFactoryUtil.getSettings(
                 new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), DsdRegistrationFormConfiguration.class.getName()));
@@ -80,7 +73,10 @@ public class DsdRegistrationFormConfigurationAction extends DefaultConfiguration
         modifiableSettings.setValue("unregisterSuccessURL", ParamUtil.getString(actionRequest, "unregisterSuccessURL"));
         modifiableSettings.setValue("updateSuccessURL", ParamUtil.getString(actionRequest, "updateSuccessURL"));
         modifiableSettings.setValue("failURL", ParamUtil.getString(actionRequest, "failURL"));
-        modifiableSettings.setValue("childHeaderText", JsonContentUtils.formatMapToJson(childHeaderText));
+        modifiableSettings.setValue("childHeaderText", ParamUtil.getString(actionRequest, "childHeaderText"));
+        modifiableSettings.setValue("contactURL", ParamUtil.getString(actionRequest, "contactURL"));
+        modifiableSettings.setValue("privacyURL", ParamUtil.getString(actionRequest, "privacyURL"));
+        modifiableSettings.setValue("conditionsURL", ParamUtil.getString(actionRequest, "conditionsURL"));
         modifiableSettings.store();
         super.processAction(portletConfig, actionRequest, actionResponse);
     }
@@ -93,19 +89,4 @@ public class DsdRegistrationFormConfigurationAction extends DefaultConfiguration
     }
 
 
-    public static Map<String, String> getParsedJsonParameter(DsdRegistrationFormConfiguration configuration, String parameterId) throws PortalException {
-
-        String json;
-        if (parameterId.equals("childHeaderText")) {
-            json = configuration.childHeaderText();
-        } else {
-            json = null;
-        }
-        try {
-            return JsonContentUtils.parseJsonToMap(json);
-        } catch (Exception e) {
-            return Collections.emptyMap();
-        }
-
-    }
 }
