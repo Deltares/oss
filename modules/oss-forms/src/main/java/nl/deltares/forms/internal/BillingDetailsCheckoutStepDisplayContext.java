@@ -75,6 +75,7 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
 
     public boolean canEditAddress(long addressId) {
         if (_selectedAccountEntry == null) return false;
+        if (_selectedAccountEntry.isPersonalAccount()) return true;
         Address defaultBillingAddress = _selectedAccountEntry.getDefaultBillingAddress();
         if (defaultBillingAddress == null) return true;
         return defaultBillingAddress.getAddressId() != addressId;
@@ -107,7 +108,7 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
             }
         }
         long selectedBillingAddressId = ParamUtil.getLong(httpServletRequest, getParamName());
-        if (canEditAccount() || selectedBillingAddressId == 0){
+        if (canEditAddress(selectedBillingAddressId)){
             Address billingAddress = addOrUpdateBillingAddress(httpServletRequest, _selectedAccountEntry, selectedBillingAddressId);
             _billingInfo.setDefaultBillingAddress(billingAddress.getAddressId() == _selectedAccountEntry.getDefaultBillingAddressId());
             _billingInfo.setBillingAddressId(billingAddress.getAddressId());
@@ -144,6 +145,13 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
         }
 
         long countryId = ParamUtil.getLong(httpServletRequest, OrganizationConstants.ORG_COUNTRY_ID);
+        if (countryId == 0) {
+            long selectedBillingAddressId = ParamUtil.getLong(httpServletRequest, getParamName());
+            Address address = _addressLocalService.fetchAddress(selectedBillingAddressId);
+            if (address != null) {
+                countryId = address.getCountryId();
+            }
+        }
         Country country = _countryLocalService.fetchCountry(countryId);
         if (country != null && !country.isBillingAllowed()) {
             SessionErrors.add(httpServletRequest, RegistrationFormException.class, Collections.singletonList(

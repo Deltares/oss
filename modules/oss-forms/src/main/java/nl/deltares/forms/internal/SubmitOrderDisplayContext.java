@@ -184,8 +184,8 @@ public class SubmitOrderDisplayContext {
         if (preference != null && !preference.isEmpty()) {
             registrationAttributes.put(BillingInfo.ATTRIBUTES.billing_preference.name(), preference);
         }
-        if (!billingInfo.isDefaultBillingAddress()) {
-            long billingAddressId = billingInfo.getBillingAddressId();
+        long billingAddressId = billingInfo.getBillingAddressId();
+        if (billingAddressId > 0) {
             registrationAttributes.put(BillingInfo.ATTRIBUTES.billing_addressid.name(), String.valueOf(billingAddressId));
         }
     }

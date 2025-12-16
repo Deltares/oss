@@ -139,9 +139,6 @@ public class AccountSelectionCheckoutStepDisplayContext{
         Address billingAddress;
         if (selectedAddressId > 0){
             billingAddress = _addressLocalService.fetchAddress(selectedAddressId);
-        } else if (accountEntry.isPersonalAccount()) {
-            billingAddress = _addressLocalService.fetchAddressByExternalReferenceCode("address_" +
-                    _accountUser.getScreenName(), getCompanyId());
         } else {
             billingAddress = null;
         }
@@ -165,7 +162,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
             final ListType accountType = ListTypeLocalServiceUtil.getListType(
                     "billing", "com.liferay.account.model.AccountEntry.address");
             billingAddress = _addressLocalService.addAddress(
-                    "address_" + _accountUser.getScreenName(), _accountUser.getUserId(), AccountEntry.class.getName(),
+                    null, _accountUser.getUserId(), AccountEntry.class.getName(),
                     accountEntry.getAccountEntryId(), name, null, street, null, null, city, postal, regionId, companyCountry.getCountryId(),
                     accountType.getListTypeId(), true, true, phoneNumber, serviceContext);
 
@@ -246,14 +243,12 @@ public class AccountSelectionCheckoutStepDisplayContext{
                 accountEntry.setName(name);
             }
             String website = ParamUtil.getString(request, OrganizationConstants.ORG_WEBSITE);
-//            String companyRegistrationId = ParamUtil.getString(request, OrganizationConstants.ORG_REGISTRATION_ID);
             String taxIdNumber = ParamUtil.getString(request, OrganizationConstants.ORG_VAT);
             accountEntry.setTaxIdNumber(taxIdNumber);
 
             if (!accountEntry.getExpandoBridge().hasAttribute(OrganizationConstants.ORG_REGISTRATION_ID)) {
                 accountEntry.getExpandoBridge().addAttribute(OrganizationConstants.ORG_REGISTRATION_ID);
             }
-//            accountEntry.setExternalReferenceCode(companyRegistrationId);
 
             if (!accountEntry.getExpandoBridge().hasAttribute(OrganizationConstants.ORG_WEBSITE)) {
                 accountEntry.getExpandoBridge().addAttribute(OrganizationConstants.ORG_WEBSITE);
@@ -297,14 +292,20 @@ public class AccountSelectionCheckoutStepDisplayContext{
             return accountEntry.getDefaultBillingAddress();
         }
         if (accountEntry.isPersonalAccount()){
-            try {
-                return _addressLocalService.getAddressByExternalReferenceCode("address_"
-                        + _accountUser.getScreenName(), getCompanyId());
-            } catch (PortalException e) {
-                //
+            List<Address> accountAddresses = getAccountAddresses(accountEntry);
+            if (!accountAddresses.isEmpty()){
+                return accountAddresses.get(0);
             }
         }
         return null;
+    }
+
+    public List<Address> getAccountAddresses(AccountEntry _selectedAccountEntry) {
+
+        if (_selectedAccountEntry == null) return Collections.emptyList();
+        return  _addressLocalService.getAddresses(getCompanyId(), AccountEntry.class.getName(),
+                _selectedAccountEntry.getAccountEntryId());
+
     }
 
 }
