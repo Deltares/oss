@@ -27,8 +27,6 @@ import javax.portlet.RenderResponse;
 import java.io.IOException;
 import java.util.*;
 
-import static nl.deltares.portal.utils.LocalizationUtils.getLocalizedValue;
-
 /**
  * @author rooij_e
  */
@@ -81,11 +79,11 @@ public class DownloadFormPortlet extends MVCPortlet {
     public void render(RenderRequest request, RenderResponse response) throws IOException, PortletException {
         ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
         User user = themeDisplay.getUser();
-        if (!user.isDefaultUser()) {
+        if (!user.isGuestUser()) {
             try {
                 final Map<String, String> userAttributes;
                 if (keycloakUtils.isActive()) {
-                     userAttributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
+                    userAttributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
                     request.setAttribute("attributes", userAttributes);
                 } else {
                     userAttributes = new HashMap<>();
@@ -98,10 +96,9 @@ public class DownloadFormPortlet extends MVCPortlet {
                 request.setAttribute("attributes", new HashMap<>());
             }
             try {
-                final String language = themeDisplay.getLocale().getLanguage();
                 DownloadSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
-                request.setAttribute("privacyURL", getLocalizedValue(dsdConfig.privacyURL(), language));
-                request.setAttribute("contactURL", getLocalizedValue(dsdConfig.contactURL(), language));
+                request.setAttribute("privacyURL", dsdConfig.privacyURL());
+                request.setAttribute("contactURL", dsdConfig.contactURL());
 
                 final boolean hasMultipleDownloadUrls = downloadUtils.hasMultipleDownloadUrls();
                 request.setAttribute("hasMultipleDownloadUrls", hasMultipleDownloadUrls);
