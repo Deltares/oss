@@ -40,7 +40,7 @@ public class CheckoutStatusCheckoutStep extends BaseCheckoutStep {
         Object redirect = httpServletRequest.getSession().getAttribute("callerURL");
         CheckoutStatusDisplayContext displayContext = new CheckoutStatusDisplayContext(httpServletRequest, action, _configurationProvider);
         httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, displayContext);
-        httpServletRequest.setAttribute(OssConstants.MY_REGISTRATIONS_URL, "/my-program");
+        httpServletRequest.setAttribute(OssConstants.MY_REGISTRATIONS_URL, "/my-registrations");
         if (redirect == null || redirect.toString().isEmpty()) {
             httpServletRequest.setAttribute("redirect", "/program");
         } else {
