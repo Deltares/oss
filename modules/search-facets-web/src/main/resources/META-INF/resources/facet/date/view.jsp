@@ -22,7 +22,7 @@
 </aui:form>
 
 
-<aui:script use="deltares-search-facet-util">
+<aui:script use="event, node, aui-base">
 
     const updateValue = function (fieldName, startFieldValue, newFieldValue) {
         if (!validateSelection()) return
@@ -33,15 +33,14 @@
         if (val !== startFieldValue){
             var form = document.querySelector('form[name="<portlet:namespace />dateRangeFacetForm"]')
             form.submit();
-            // Liferay.Deltares.FacetUtil.updateQueryString("<portlet:namespace/>", fieldName);
         }
     }
 
     const validateSelection = function (){
-        let valid = Liferay.Deltares.FacetUtil.validateDateField("<portlet:namespace/>");
-        Liferay.Deltares.FacetUtil.clearError("<portlet:namespace/>", "dateRange" );
+        let valid = DeltaresFacetUtil.validateDateField("<portlet:namespace/>");
+        DeltaresFacetUtil.clearError("<portlet:namespace/>", "dateRange" );
         if (!valid){
-           Liferay.Deltares.FacetUtil.writeError("<portlet:namespace/>", "dateRange", "Invalid date range! Start date must be before end date." );
+           DeltaresFacetUtil.writeError("<portlet:namespace/>", "dateRange", "Invalid date range! Start date must be before end date." );
         }
         return valid;
     }

@@ -1,7 +1,4 @@
-AUI.add(
-    'deltares-search-facet-util',
-    function () {
-        Liferay.namespace('Deltares').FacetUtil = {
+var DeltaresFacetUtil = {
 
     validateDateField: function(namespace) {
         let start = document.querySelector('input[name$="' + namespace + 'startDate"]');
@@ -41,9 +38,3 @@ AUI.add(
     },
 
 };
-    },
-    '',
-    {
-        requires: ['liferay-search-facet-util']
-    }
-);

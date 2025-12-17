@@ -36,7 +36,6 @@
 		facet.addEventListener('change', function() {
 			var form = document.querySelector('form[name="<portlet:namespace />checkboxFacetForm"]')
 			form.submit();
-			// Liferay.Deltares.FacetUtil.updateQueryString("<portlet:namespace />", "<%=name%>");
 		});
 		Array.from(facet.options).forEach(function(item){
 			item.selected = item.value === '<%=selection%>';

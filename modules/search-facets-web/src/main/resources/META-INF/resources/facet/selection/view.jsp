@@ -34,6 +34,5 @@
 
            var form = document.querySelector('form[name="<portlet:namespace />selectionFacetForm"]')
            form.submit();
-		// Liferay.Deltares.FacetUtil.updateQueryString("<portlet:namespace />", "<%=name%>");
 	});
 </aui:script>

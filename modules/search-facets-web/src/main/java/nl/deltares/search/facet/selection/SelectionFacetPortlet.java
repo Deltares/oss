@@ -33,7 +33,6 @@ import java.util.Map;
     "com.liferay.portlet.css-class-wrapper=portlet-selection-facet",
     "com.liferay.portlet.display-category=OSS-search",
     "com.liferay.portlet.header-portlet-css=/css/main.css",
-    "com.liferay.portlet.header-portlet-javascript=/js/facet_util.js",
     "com.liferay.portlet.instanceable=true",
     "javax.portlet.display-name=SelectionFacet",
     "javax.portlet.expiration-cache=0",
