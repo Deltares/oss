@@ -1,11 +1,12 @@
-if (typeof mapControl === 'undefined' || mapControl === null ){
-    let titleControl;
-    let mapControl;
-    let markersLayer;
-}
+var titleControl;
+var markerLayer;
+var mapControl;
+
 var ActivityMapUtil = {
 
-    initMap: function (namespace) {
+    initMap: function (namespace, title, subtitle) {
+
+        if(mapControl) return mapControl;
 
         const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 20,
@@ -13,21 +14,29 @@ var ActivityMapUtil = {
             }),
             latlng = L.latLng(22.5, 20);
 
-        let mapControl = L.map(namespace + 'map', {center: latlng, zoom: 2, layers: [tiles]});
-        let markersLayer = L.markerClusterGroup({
+        mapControl = L.map(namespace + 'map', {center: latlng, zoom: 2, layers: [tiles]});
+
+        titleControl = this.initTitleControl(title, subtitle);
+        mapControl.addControl(titleControl);
+        titleControl.updateTitle();
+
+        markerLayer = L.markerClusterGroup({
             chunkedLoading: true,
             maxClusterRadius: 20,
             singleMarkerMode: true,
             showCoverageOnHover: true
         });
-        mapControl.addLayer(markersLayer);
+        mapControl.addLayer(markerLayer);
 
         return mapControl;
     },
 
-    initTitleControl: function (map) {
+    initTitleControl: function (title, subtitle) {
 
         let TitleControl = L.Control.extend({
+            title : title,
+            subtitle : subtitle,
+
             options: {
                 // Default control position
                 position: 'topleft'
@@ -39,15 +48,24 @@ var ActivityMapUtil = {
                 return L.DomUtil.create('div', 'map-title-control');
             },
             setTitle: function (title) {
-                this.getContainer().innerHTML = '<strong>' + title + '</strong>'
+                this.title = title;
+                this.updateTitle();
+            },
+            setSubTitle: function (subTitle) {
+                this.subtitle = subTitle
+                this.updateTitle();
+            },
+            updateTitle(){
+                this.getContainer().innerHTML = '<strong>' + this.title + '</strong><br />' + this.subtitle
             }
         });
-        let titleControl = new TitleControl().addTo(map);
-        return titleControl;
+        return new TitleControl()
     },
 
-    updateMarkers: function (map, jsonData) {
-
+    updateMarkers: function (jsonData) {
+        if (!mapControl){
+            throw new Error("MapControl not initialized");
+        }
 
         if (jsonData != null && jsonData !== "") {
             const locations = JSON.parse(jsonData);
@@ -73,7 +91,7 @@ var ActivityMapUtil = {
 
                 const marker = L.marker(L.latLng(position.lat, position.lng, {title: label}));
                 marker.bindPopup(contentString, {'maxHeight': '350'});
-                markersLayer.addLayer(marker);
+                markerLayer.addLayer(marker);
 
             });
         }
@@ -95,10 +113,10 @@ var ActivityMapUtil = {
     },
 
     startDownloadActivityMap: function (resourceUrl, namespace) {
-
-        let map = ActivityMapUtil.initMap(namespace);
-        let titleControl = ActivityMapUtil.initTitleControl(map);
-        titleControl.setTitle("Loading map data... Progress 0 %");
+        if(!mapControl){
+            this.initMap(namespace, "", "")
+        }
+        titleControl.setSubTitle("Loading map data... Progress 0 %");
 
         let A = new AUI();
         A.io.request(resourceUrl + '&' + namespace + 'action=start', {
@@ -108,13 +126,13 @@ var ActivityMapUtil = {
                 success: function (response, status, xhr) {
                     if (xhr.status === 200) {
                         let responseData = this.get('responseData');
-                        ActivityMapUtil.updateMarkers(namespace, responseData);
-                        titleControl.setTitle("");
+                        ActivityMapUtil.updateMarkers(responseData);
+                        ActivityMapUtil.setSubTitle("");
                     } else if (xhr.status === 204) {
                         //Data not loaded yet so start download process
                         ActivityMapUtil.setRunningProcess(namespace, setInterval(function () {
-                            ActivityMapUtil.statusDownloadActivityMap(resourceUrl, namespace, titleControl);
-                        }, 5000));
+                            ActivityMapUtil.statusDownloadActivityMap(resourceUrl, namespace);
+                        }, 1000));
 
                     }
                 }
@@ -134,15 +152,15 @@ var ActivityMapUtil = {
                 success: function (response, status, xhr) {
                     if (xhr.status === 200) {
                         let responseData = this.get('responseData');
-                        ActivityMapUtil.updateMarkers(namespace, responseData);
-                        titleControl.setTitle("");
+                        ActivityMapUtil.updateMarkers(responseData);
+                        titleControl.setSubTitle("")
                     }
                 }
             }
         });
     },
 
-    statusDownloadActivityMap: function (resourceUrl, namespace, titleControl) {
+    statusDownloadActivityMap: function (resourceUrl, namespace) {
 
         let A = new AUI();
         A.io.request(resourceUrl + '&' + namespace + 'action=updateStatus', {
@@ -155,6 +173,7 @@ var ActivityMapUtil = {
 
                         let statusMsg = JSON.parse(responseData);
                         if (statusMsg.status === 'available') {
+                            titleControl.setSubTitle(statusMsg);
                             ActivityMapUtil.downloadDownloadActivityMap(resourceUrl, namespace);
                         } else if (statusMsg.status === 'running' || statusMsg.status === 'pending') {
                             let percent;
@@ -164,7 +183,7 @@ var ActivityMapUtil = {
                                 percent = 100 * statusMsg.progress / statusMsg.total
                             }
 
-                            titleControl.setTitle('Loading map data... Progress ' + Math.round(percent) + ' %');
+                            titleControl.setSubTitle('Loading map data... Progress ' + Math.round(percent) + ' %');
                         } else {
                             ActivityMapUtil.stopRunningProcess(namespace);
                         }

@@ -34,10 +34,11 @@
 <aui:input name="runningProcess" type="hidden" />
 <aui:script use="event, io, aui-io-request, node, aui-base">
 
+    ActivityMapUtil.initMap("<portlet:namespace/>", "", "")
+
     <% if (mapdata == null ) {%>
         ActivityMapUtil.startDownloadActivityMap("<portlet:resourceURL/>", "<portlet:namespace/>");
     <% } else { %>
-        let map  = ActivityMapUtil.initMap("<portlet:namespace/>");
-        ActivityMapUtil.updateMarkers(map, '<%=mapdata%>');
+        ActivityMapUtil.updateMarkers('<%=mapdata%>');
     <% }%>
 </aui:script>
