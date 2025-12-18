@@ -1,15 +1,6 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
- *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ * SPDX-FileCopyrightText: (c) 2025 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
 package nl.deltares.oss.download.service.persistence.impl;
@@ -33,7 +24,13 @@ import org.osgi.service.component.annotations.Component;
  * @author Erik de Rooij @ Deltares
  * @generated
  */
-@Component(service = ArgumentsResolver.class)
+@Component(
+	property = {
+		"class.name=nl.deltares.oss.download.model.impl.DownloadImpl",
+		"table.name=Downloads_Download"
+	},
+	service = ArgumentsResolver.class
+)
 public class DownloadModelArgumentsResolver implements ArgumentsResolver {
 
 	@Override
@@ -68,6 +65,14 @@ public class DownloadModelArgumentsResolver implements ArgumentsResolver {
 			for (String columnName : columnNames) {
 				finderPathColumnBitmask |= downloadModelImpl.getColumnBitmask(
 					columnName);
+			}
+
+			if (finderPath.isBaseModelResult() &&
+				(DownloadPersistenceImpl.
+					FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION ==
+						finderPath.getCacheName())) {
+
+				finderPathColumnBitmask |= _ORDER_BY_COLUMNS_BITMASK;
 			}
 
 			_finderPathColumnBitmasksCache.put(
@@ -114,5 +119,16 @@ public class DownloadModelArgumentsResolver implements ArgumentsResolver {
 
 	private static final Map<FinderPath, Long> _finderPathColumnBitmasksCache =
 		new ConcurrentHashMap<>();
+
+	private static final long _ORDER_BY_COLUMNS_BITMASK;
+
+	static {
+		long orderByColumnsBitmask = 0;
+
+		orderByColumnsBitmask |= DownloadModelImpl.getColumnBitmask(
+			"createDate");
+
+		_ORDER_BY_COLUMNS_BITMASK = orderByColumnsBitmask;
+	}
 
 }

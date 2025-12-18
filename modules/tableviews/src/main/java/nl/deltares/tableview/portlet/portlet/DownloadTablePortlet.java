@@ -77,13 +77,16 @@ public class DownloadTablePortlet extends MVCPortlet {
         final int deltas = ParamUtil.getInteger(renderRequest, "delta", 25);
         final String filterValue = ParamUtil.getString(renderRequest, "filterValue", null);
         final String filterSelection = ParamUtil.getString(renderRequest, "filterSelection", null);
+        final String orderByCol = ParamUtil.getString(renderRequest, "orderByCol", "modifiedDate");
+        final String orderByType = ParamUtil.getString(renderRequest, "orderByType", "desc");
 
-        doFilterValues(filterValue, filterSelection, curPage, deltas, renderRequest);
+        doFilterValues(filterValue, filterSelection, curPage, deltas, orderByCol, orderByType, renderRequest);
 
         super.render(renderRequest, renderResponse);
     }
 
-    private void doFilterValues(String filterValue, String filterSelection, int curPage, int deltas, RenderRequest renderRequest) {
+    private void doFilterValues(String filterValue, String filterSelection, int curPage, int deltas,
+                                String orderByCol, String orderByType, RenderRequest renderRequest) {
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest
                 .getAttribute(WebKeys.THEME_DISPLAY);
 
@@ -110,8 +113,7 @@ public class DownloadTablePortlet extends MVCPortlet {
                 downloads = DownloadLocalServiceUtil.findDownloads(siteGroupId, start, end);
                 downloadsCount = DownloadLocalServiceUtil.countDownloads(siteGroupId);
             }
-            String orderByCol = ParamUtil.getString(renderRequest, "orderByCol");
-            String orderByType = ParamUtil.getString(renderRequest, "orderByType");
+
             final List<DisplayDownload> displays = convertToDisplayDownloads(downloads);
             sortDownloads(displays, orderByCol, orderByType);
             renderRequest.setAttribute("records", displays);

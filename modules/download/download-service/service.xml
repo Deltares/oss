@@ -29,10 +29,9 @@
 		<column name="licenseDownloadUrl" type="String" />
 
 		<!-- Order -->
-
-<!--		<order by="asc">-->
-<!--			<order-column name="field1" />-->
-<!--		</order>-->
+		<order by="desc">
+			<order-column name="createDate" />
+		</order>
 
 		<!-- Finder methods -->
 		<finder name="Downloads" return-type="Collection">

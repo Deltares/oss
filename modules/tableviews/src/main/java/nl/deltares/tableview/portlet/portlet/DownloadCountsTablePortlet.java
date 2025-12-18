@@ -72,9 +72,12 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
         final int cur = ParamUtil.getInteger(renderRequest, "cur", 0);
         final int deltas = ParamUtil.getInteger(renderRequest, "delta", 50);
         String filterId = ParamUtil.getString(renderRequest, "filterId", "none");
+        final String orderByCol = ParamUtil.getString(renderRequest, "orderByCol", "fileTopic");
+        final String orderByType = ParamUtil.getString(renderRequest, "orderByType", "asc");
+
         if ("none".equals(filterId)) filterId = null;
         Map<String, String> topicMap = getTopicsFromStructure(renderRequest);
-        doFilterValues(filterId, cur, deltas, renderRequest, topicMap);
+        doFilterValues(filterId, cur, deltas, orderByCol, orderByType,renderRequest, topicMap);
 
         super.render(renderRequest, renderResponse);
     }
@@ -147,10 +150,8 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
         return topicMap;
     }
 
-    private void doFilterValues(String filterId, int cur, int deltas, RenderRequest renderRequest, Map<String, String> topicMap) {
-
-        String orderByCol = ParamUtil.getString(renderRequest, "orderByCol");
-        String orderByType = ParamUtil.getString(renderRequest, "orderByType");
+    private void doFilterValues(String filterId, int cur, int deltas, String orderByCol, String orderByType,
+                                RenderRequest renderRequest, Map<String, String> topicMap) {
 
         final List<DisplayDownloadCount> displayCounts = new ArrayList<>();
         final int end = cur + deltas;

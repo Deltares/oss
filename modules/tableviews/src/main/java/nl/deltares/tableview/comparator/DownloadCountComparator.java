@@ -30,10 +30,8 @@ public class DownloadCountComparator extends OrderByComparator<DisplayDownloadCo
                 fieldValue2 = o2.getFileName();
                 break;
             case "count":
-
                 fieldValue1 = String.valueOf(o1.getCount());
                 fieldValue2 = String.valueOf(o2.getCount());
-
                 break;
             default:
                 fieldValue1 = "";

@@ -1,15 +1,6 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
- *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ * SPDX-FileCopyrightText: (c) 2025 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
 package nl.deltares.oss.download.model.impl;
@@ -209,51 +200,69 @@ public class DownloadCountModelImpl
 	public Map<String, Function<DownloadCount, Object>>
 		getAttributeGetterFunctions() {
 
-		return _attributeGetterFunctions;
+		return AttributeGetterFunctionsHolder._attributeGetterFunctions;
 	}
 
 	public Map<String, BiConsumer<DownloadCount, Object>>
 		getAttributeSetterBiConsumers() {
 
-		return _attributeSetterBiConsumers;
+		return AttributeSetterBiConsumersHolder._attributeSetterBiConsumers;
 	}
 
-	private static final Map<String, Function<DownloadCount, Object>>
-		_attributeGetterFunctions;
-	private static final Map<String, BiConsumer<DownloadCount, Object>>
-		_attributeSetterBiConsumers;
+	private static class AttributeGetterFunctionsHolder {
 
-	static {
-		Map<String, Function<DownloadCount, Object>> attributeGetterFunctions =
-			new LinkedHashMap<String, Function<DownloadCount, Object>>();
-		Map<String, BiConsumer<DownloadCount, ?>> attributeSetterBiConsumers =
-			new LinkedHashMap<String, BiConsumer<DownloadCount, ?>>();
+		private static final Map<String, Function<DownloadCount, Object>>
+			_attributeGetterFunctions;
 
-		attributeGetterFunctions.put("id", DownloadCount::getId);
-		attributeSetterBiConsumers.put(
-			"id", (BiConsumer<DownloadCount, Long>)DownloadCount::setId);
-		attributeGetterFunctions.put("companyId", DownloadCount::getCompanyId);
-		attributeSetterBiConsumers.put(
-			"companyId",
-			(BiConsumer<DownloadCount, Long>)DownloadCount::setCompanyId);
-		attributeGetterFunctions.put("groupId", DownloadCount::getGroupId);
-		attributeSetterBiConsumers.put(
-			"groupId",
-			(BiConsumer<DownloadCount, Long>)DownloadCount::setGroupId);
-		attributeGetterFunctions.put(
-			"downloadId", DownloadCount::getDownloadId);
-		attributeSetterBiConsumers.put(
-			"downloadId",
-			(BiConsumer<DownloadCount, Long>)DownloadCount::setDownloadId);
-		attributeGetterFunctions.put("count", DownloadCount::getCount);
-		attributeSetterBiConsumers.put(
-			"count",
-			(BiConsumer<DownloadCount, Integer>)DownloadCount::setCount);
+		static {
+			Map<String, Function<DownloadCount, Object>>
+				attributeGetterFunctions =
+					new LinkedHashMap
+						<String, Function<DownloadCount, Object>>();
 
-		_attributeGetterFunctions = Collections.unmodifiableMap(
-			attributeGetterFunctions);
-		_attributeSetterBiConsumers = Collections.unmodifiableMap(
-			(Map)attributeSetterBiConsumers);
+			attributeGetterFunctions.put("id", DownloadCount::getId);
+			attributeGetterFunctions.put(
+				"companyId", DownloadCount::getCompanyId);
+			attributeGetterFunctions.put("groupId", DownloadCount::getGroupId);
+			attributeGetterFunctions.put(
+				"downloadId", DownloadCount::getDownloadId);
+			attributeGetterFunctions.put("count", DownloadCount::getCount);
+
+			_attributeGetterFunctions = Collections.unmodifiableMap(
+				attributeGetterFunctions);
+		}
+
+	}
+
+	private static class AttributeSetterBiConsumersHolder {
+
+		private static final Map<String, BiConsumer<DownloadCount, Object>>
+			_attributeSetterBiConsumers;
+
+		static {
+			Map<String, BiConsumer<DownloadCount, ?>>
+				attributeSetterBiConsumers =
+					new LinkedHashMap<String, BiConsumer<DownloadCount, ?>>();
+
+			attributeSetterBiConsumers.put(
+				"id", (BiConsumer<DownloadCount, Long>)DownloadCount::setId);
+			attributeSetterBiConsumers.put(
+				"companyId",
+				(BiConsumer<DownloadCount, Long>)DownloadCount::setCompanyId);
+			attributeSetterBiConsumers.put(
+				"groupId",
+				(BiConsumer<DownloadCount, Long>)DownloadCount::setGroupId);
+			attributeSetterBiConsumers.put(
+				"downloadId",
+				(BiConsumer<DownloadCount, Long>)DownloadCount::setDownloadId);
+			attributeSetterBiConsumers.put(
+				"count",
+				(BiConsumer<DownloadCount, Integer>)DownloadCount::setCount);
+
+			_attributeSetterBiConsumers = Collections.unmodifiableMap(
+				(Map)attributeSetterBiConsumers);
+		}
+
 	}
 
 	@Override
@@ -582,7 +591,8 @@ public class DownloadCountModelImpl
 		columnName = _attributeNames.getOrDefault(columnName, columnName);
 
 		Function<DownloadCount, Object> function =
-			_attributeGetterFunctions.get(columnName);
+			AttributeGetterFunctionsHolder._attributeGetterFunctions.get(
+				columnName);
 
 		if (function == null) {
 			throw new IllegalArgumentException(

@@ -1,15 +1,6 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
- *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ * SPDX-FileCopyrightText: (c) 2025 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
 package nl.deltares.oss.download.model.impl;
@@ -25,6 +16,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -103,10 +95,11 @@ public class DownloadModelImpl
 
 	public static final String TABLE_SQL_DROP = "drop table Downloads_Download";
 
-	public static final String ORDER_BY_JPQL = " ORDER BY download.id ASC";
+	public static final String ORDER_BY_JPQL =
+		" ORDER BY download.createDate DESC";
 
 	public static final String ORDER_BY_SQL =
-		" ORDER BY Downloads_Download.id_ ASC";
+		" ORDER BY Downloads_Download.createDate DESC";
 
 	public static final String DATA_SOURCE = "liferayDataSource";
 
@@ -137,7 +130,7 @@ public class DownloadModelImpl
 	 *		#getColumnBitmask(String)}
 	 */
 	@Deprecated
-	public static final long ID_COLUMN_BITMASK = 8L;
+	public static final long CREATEDATE_COLUMN_BITMASK = 8L;
 
 	/**
 	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
@@ -228,77 +221,99 @@ public class DownloadModelImpl
 	public Map<String, Function<Download, Object>>
 		getAttributeGetterFunctions() {
 
-		return _attributeGetterFunctions;
+		return AttributeGetterFunctionsHolder._attributeGetterFunctions;
 	}
 
 	public Map<String, BiConsumer<Download, Object>>
 		getAttributeSetterBiConsumers() {
 
-		return _attributeSetterBiConsumers;
+		return AttributeSetterBiConsumersHolder._attributeSetterBiConsumers;
 	}
 
-	private static final Map<String, Function<Download, Object>>
-		_attributeGetterFunctions;
-	private static final Map<String, BiConsumer<Download, Object>>
-		_attributeSetterBiConsumers;
+	private static class AttributeGetterFunctionsHolder {
 
-	static {
-		Map<String, Function<Download, Object>> attributeGetterFunctions =
-			new LinkedHashMap<String, Function<Download, Object>>();
-		Map<String, BiConsumer<Download, ?>> attributeSetterBiConsumers =
-			new LinkedHashMap<String, BiConsumer<Download, ?>>();
+		private static final Map<String, Function<Download, Object>>
+			_attributeGetterFunctions;
 
-		attributeGetterFunctions.put("id", Download::getId);
-		attributeSetterBiConsumers.put(
-			"id", (BiConsumer<Download, Long>)Download::setId);
-		attributeGetterFunctions.put("groupId", Download::getGroupId);
-		attributeSetterBiConsumers.put(
-			"groupId", (BiConsumer<Download, Long>)Download::setGroupId);
-		attributeGetterFunctions.put("companyId", Download::getCompanyId);
-		attributeSetterBiConsumers.put(
-			"companyId", (BiConsumer<Download, Long>)Download::setCompanyId);
-		attributeGetterFunctions.put("userId", Download::getUserId);
-		attributeSetterBiConsumers.put(
-			"userId", (BiConsumer<Download, Long>)Download::setUserId);
-		attributeGetterFunctions.put("createDate", Download::getCreateDate);
-		attributeSetterBiConsumers.put(
-			"createDate", (BiConsumer<Download, Date>)Download::setCreateDate);
-		attributeGetterFunctions.put("modifiedDate", Download::getModifiedDate);
-		attributeSetterBiConsumers.put(
-			"modifiedDate",
-			(BiConsumer<Download, Date>)Download::setModifiedDate);
-		attributeGetterFunctions.put("downloadId", Download::getDownloadId);
-		attributeSetterBiConsumers.put(
-			"downloadId", (BiConsumer<Download, Long>)Download::setDownloadId);
-		attributeGetterFunctions.put("fileName", Download::getFileName);
-		attributeSetterBiConsumers.put(
-			"fileName", (BiConsumer<Download, String>)Download::setFileName);
-		attributeGetterFunctions.put("expiryDate", Download::getExpiryDate);
-		attributeSetterBiConsumers.put(
-			"expiryDate", (BiConsumer<Download, Date>)Download::setExpiryDate);
-		attributeGetterFunctions.put("organization", Download::getOrganization);
-		attributeSetterBiConsumers.put(
-			"organization",
-			(BiConsumer<Download, String>)Download::setOrganization);
-		attributeGetterFunctions.put(
-			"geoLocationId", Download::getGeoLocationId);
-		attributeSetterBiConsumers.put(
-			"geoLocationId",
-			(BiConsumer<Download, Long>)Download::setGeoLocationId);
-		attributeGetterFunctions.put("fileShareUrl", Download::getFileShareUrl);
-		attributeSetterBiConsumers.put(
-			"fileShareUrl",
-			(BiConsumer<Download, String>)Download::setFileShareUrl);
-		attributeGetterFunctions.put(
-			"licenseDownloadUrl", Download::getLicenseDownloadUrl);
-		attributeSetterBiConsumers.put(
-			"licenseDownloadUrl",
-			(BiConsumer<Download, String>)Download::setLicenseDownloadUrl);
+		static {
+			Map<String, Function<Download, Object>> attributeGetterFunctions =
+				new LinkedHashMap<String, Function<Download, Object>>();
 
-		_attributeGetterFunctions = Collections.unmodifiableMap(
-			attributeGetterFunctions);
-		_attributeSetterBiConsumers = Collections.unmodifiableMap(
-			(Map)attributeSetterBiConsumers);
+			attributeGetterFunctions.put("id", Download::getId);
+			attributeGetterFunctions.put("groupId", Download::getGroupId);
+			attributeGetterFunctions.put("companyId", Download::getCompanyId);
+			attributeGetterFunctions.put("userId", Download::getUserId);
+			attributeGetterFunctions.put("createDate", Download::getCreateDate);
+			attributeGetterFunctions.put(
+				"modifiedDate", Download::getModifiedDate);
+			attributeGetterFunctions.put("downloadId", Download::getDownloadId);
+			attributeGetterFunctions.put("fileName", Download::getFileName);
+			attributeGetterFunctions.put("expiryDate", Download::getExpiryDate);
+			attributeGetterFunctions.put(
+				"organization", Download::getOrganization);
+			attributeGetterFunctions.put(
+				"geoLocationId", Download::getGeoLocationId);
+			attributeGetterFunctions.put(
+				"fileShareUrl", Download::getFileShareUrl);
+			attributeGetterFunctions.put(
+				"licenseDownloadUrl", Download::getLicenseDownloadUrl);
+
+			_attributeGetterFunctions = Collections.unmodifiableMap(
+				attributeGetterFunctions);
+		}
+
+	}
+
+	private static class AttributeSetterBiConsumersHolder {
+
+		private static final Map<String, BiConsumer<Download, Object>>
+			_attributeSetterBiConsumers;
+
+		static {
+			Map<String, BiConsumer<Download, ?>> attributeSetterBiConsumers =
+				new LinkedHashMap<String, BiConsumer<Download, ?>>();
+
+			attributeSetterBiConsumers.put(
+				"id", (BiConsumer<Download, Long>)Download::setId);
+			attributeSetterBiConsumers.put(
+				"groupId", (BiConsumer<Download, Long>)Download::setGroupId);
+			attributeSetterBiConsumers.put(
+				"companyId",
+				(BiConsumer<Download, Long>)Download::setCompanyId);
+			attributeSetterBiConsumers.put(
+				"userId", (BiConsumer<Download, Long>)Download::setUserId);
+			attributeSetterBiConsumers.put(
+				"createDate",
+				(BiConsumer<Download, Date>)Download::setCreateDate);
+			attributeSetterBiConsumers.put(
+				"modifiedDate",
+				(BiConsumer<Download, Date>)Download::setModifiedDate);
+			attributeSetterBiConsumers.put(
+				"downloadId",
+				(BiConsumer<Download, Long>)Download::setDownloadId);
+			attributeSetterBiConsumers.put(
+				"fileName",
+				(BiConsumer<Download, String>)Download::setFileName);
+			attributeSetterBiConsumers.put(
+				"expiryDate",
+				(BiConsumer<Download, Date>)Download::setExpiryDate);
+			attributeSetterBiConsumers.put(
+				"organization",
+				(BiConsumer<Download, String>)Download::setOrganization);
+			attributeSetterBiConsumers.put(
+				"geoLocationId",
+				(BiConsumer<Download, Long>)Download::setGeoLocationId);
+			attributeSetterBiConsumers.put(
+				"fileShareUrl",
+				(BiConsumer<Download, String>)Download::setFileShareUrl);
+			attributeSetterBiConsumers.put(
+				"licenseDownloadUrl",
+				(BiConsumer<Download, String>)Download::setLicenseDownloadUrl);
+
+			_attributeSetterBiConsumers = Collections.unmodifiableMap(
+				(Map)attributeSetterBiConsumers);
+		}
+
 	}
 
 	@Override
@@ -661,17 +676,17 @@ public class DownloadModelImpl
 
 	@Override
 	public int compareTo(Download download) {
-		long primaryKey = download.getPrimaryKey();
+		int value = 0;
 
-		if (getPrimaryKey() < primaryKey) {
-			return -1;
+		value = DateUtil.compareTo(getCreateDate(), download.getCreateDate());
+
+		value = value * -1;
+
+		if (value != 0) {
+			return value;
 		}
-		else if (getPrimaryKey() > primaryKey) {
-			return 1;
-		}
-		else {
-			return 0;
-		}
+
+		return 0;
 	}
 
 	@Override
@@ -884,8 +899,9 @@ public class DownloadModelImpl
 	public <T> T getColumnValue(String columnName) {
 		columnName = _attributeNames.getOrDefault(columnName, columnName);
 
-		Function<Download, Object> function = _attributeGetterFunctions.get(
-			columnName);
+		Function<Download, Object> function =
+			AttributeGetterFunctionsHolder._attributeGetterFunctions.get(
+				columnName);
 
 		if (function == null) {
 			throw new IllegalArgumentException(
