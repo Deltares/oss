@@ -1,5 +1,5 @@
 Bundle-Name: search-facets-web
 Bundle-SymbolicName: nl.deltares.search.facet
-Bundle-Version: 1.1.1
+Bundle-Version: 1.1.2
 Export-Package: nl.deltares.search.facet
 Web-ContextPath: /deltares-search-web
