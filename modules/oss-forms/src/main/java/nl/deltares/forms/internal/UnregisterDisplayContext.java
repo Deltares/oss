@@ -51,6 +51,13 @@ public class UnregisterDisplayContext {
         registrationEmail.setReplyToEmail(_configuration.replyToEmail());
         registrationEmail.setSendFromEmail(_configuration.sendFromEmail());
 
+        String bccToEmail = _configuration.bccToEmail();
+        String[] emails = bccToEmail.split(";");
+        for (String email : emails) {
+            if (email.isEmpty()) continue;
+            registrationEmail.addBCCEmail(email);
+        }
+
         Event _event = _dsdParserUtils.getEvent(_themeDisplay.getSiteGroupId(), String.valueOf(registration.getEventId()),
                 _themeDisplay.getLocale());
 

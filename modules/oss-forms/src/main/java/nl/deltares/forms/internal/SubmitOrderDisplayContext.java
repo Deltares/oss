@@ -225,6 +225,12 @@ public class SubmitOrderDisplayContext {
         RegistrationEmail registrationEmail = new RegistrationEmail(resourceBundle);
         registrationEmail.setReplyToEmail(_configuration.replyToEmail());
         registrationEmail.setSendFromEmail(_configuration.sendFromEmail());
+        String bccToEmails = _configuration.bccToEmail();
+        String[] emails = bccToEmails.split(";");
+        for (String email : emails) {
+            if (email.isEmpty()) continue;
+            registrationEmail.addBCCEmail(email);
+        }
 
         String subject = LanguageUtil.format(resourceBundle, "dsd.register.subject", _event.getTitle());
         registrationEmail.setSubject(subject);
@@ -236,7 +242,8 @@ public class SubmitOrderDisplayContext {
 
         Map<User, List<Registration>> mappedInfos = mapRegistrationsByUser(_registrationInfos);
         for (Map.Entry<User, List<Registration>> entry : mappedInfos.entrySet()) {
-            registrationEmail.sendRegisterEmail(serializer, entry.getKey(), entry.getValue(), getRegistrationInfosForUser(_registrationInfos, entry.getKey()));
+            registrationEmail.sendRegisterEmail(serializer, entry.getKey(), entry.getValue(),
+                    getRegistrationInfosForUser(_registrationInfos, entry.getKey()));
         }
     }
 
