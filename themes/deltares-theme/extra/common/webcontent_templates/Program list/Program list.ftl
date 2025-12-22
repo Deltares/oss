@@ -6,14 +6,17 @@
 <#assign registration = displayContext.getRegistration() />
 <#assign timeZoneId = registration.getTimeZoneId() />
 <#assign showButtons = displayContext.canUserRegister() && themeDisplay.isSignedIn() />
-<#assign redirectUrl= themeDisplay.getSiteGroup().getDisplayURL(themeDisplay) + "/program" />
-
+<!-- <#assign redirectUrl= themeDisplay.getSiteGroup().getDisplayURL(themeDisplay) + "/program" /> -->
+<#assign redirectUrl = themeDisplay.getURLCurrent() />
 <#if registration.isMultiDayEvent() >
     <#assign title = displayContext.getTitle() />
 </#if>
 <#assign registrations = dsdSessionUtils.getRegistrationCount(registration) />
 <#assign available = registration.getCapacity() - registrations />
 <#assign cancellationExceeded = registration.isCancellationPeriodExceeded() />
+<#assign event = dsdParserUtils.getEvent(themeDisplay.getSiteGroupId(), registration.getEventId()?c) />
+<#assign eventRegistrations = event.getRegistrations(locale) />
+
 <div class="row no-gutters">
 
     <div class="col-2">
@@ -25,7 +28,7 @@
                 <strong>${title}</strong>
             </a>
         </h4>
-        <p>
+        <div>
             <#assign count = displayContext.getPresenterCount()/>
             <#if count gt 0>
                 <#list 0..(count-1) as i >
@@ -42,14 +45,10 @@
                 </#list>
             </#if>
             <span class="c-sessions__item__time-date-place__time">
-						    <#if registration.isToBeDetermined() >
-                                ${languageUtil.get(locale, "dsd.theme.session.tobedetermined")}
-                            <#else>
-                                ${displayContext.getStartTime()} - ${displayContext.getEndTime()} (${timeZoneId})
-                            </#if>
+                ${displayContext.getStartTime()} - ${displayContext.getEndTime()} (${timeZoneId})
             </span>|
             <#if displayContext.getPrice() gt 0 >
-                ${displayContext.getCurrency()} ${displayContext.getPrice()?string(",#00")}
+                ${displayContext.getCurrency()} ${displayContext.getPrice()}
             <#else>
                 ${languageUtil.get(locale, "dsd.theme.session.free")}
             </#if>
@@ -65,6 +64,24 @@
                 </span>
 
             </#if>
-        </p>
+        </div>
     </div>
 </div>
+<script>
+
+    var urlParams = new URLSearchParams(window.location.search);
+    var redirect = urlParams.get('redirect');
+    if(redirect){
+        items = redirect.split('?');
+        if (items.length > 1){
+            let ppid = new URLSearchParams(items[1]);
+            let namespace = ppid.get('p_p_id');
+            let ids_key = '_' + namespace + '_ids';
+            let backLink = document.querySelector('.header-back-to');
+            if (backLink){
+                backLink.href=redirect +
+                    '&' + ids_key + '=' + urlParams.get(ids_key);
+            }
+        }
+    }
+</script>

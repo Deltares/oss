@@ -6,7 +6,8 @@
 <#assign articleId = .vars['reserved-article-id'].getData() />
 <#assign displayContext = dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay) />
 <#assign registration = displayContext.getRegistration() />
-<#assign redirectUrl= themeDisplay.getSiteGroup().getDisplayURL(themeDisplay) + "/program" />
+<!-- <#assign redirectUrl= themeDisplay.getSiteGroup().getDisplayURL(themeDisplay) + "/program" /> -->
+<#assign redirectUrl = themeDisplay.getURLCurrent() />
 
 <#assign imageUrl = displayContext.getSmallImageURL() />
 <#assign showButtons = displayContext.canUserRegister() && themeDisplay.isSignedIn() />

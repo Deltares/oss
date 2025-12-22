@@ -48,7 +48,7 @@
 </p>
 <aui:script >
 
-    let addToCartButtons = document.getElementsByClassName('add-to-cart')
+    var addToCartButtons = document.getElementsByClassName('add-to-cart')
 
     Array.from(addToCartButtons).forEach(function (button) {
         button.addEventListener('click', function (event){

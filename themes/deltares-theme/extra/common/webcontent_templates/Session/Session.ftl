@@ -2,7 +2,6 @@
 <#assign portletName = themeDisplay.getPortletDisplay().getPortletName() >
 <#if !(portletName?ends_with("SearchResultsPortlet")) >
 
-
     <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
     <#assign dsdJournalArticleUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdJournalArticleUtils") />
     <#assign articleId = .vars['reserved-article-id'].getData() />
@@ -27,7 +26,6 @@
     <#assign calDescription = "">
 
     <#assign price = registration.getPrice() />
-    <#assign priceFormatted = price?string(",##0") />
     <#assign vat = registration.getVAT() />
     <#if registration.getCapacity() == 0 >
         <#assign available = ""  />
@@ -38,24 +36,9 @@
     <#assign locale = themeDisplay.getLocale() />
     <#assign cancellationExceeded = registration.isCancellationPeriodExceeded() />
 
-    <style type="text/css">
-        .text-theme-button{
-            text-weight:500;
-            padding-left: 1rem;
-            padding-right: 1rem;
-            text-decoration: none;
-        }
-        @media (min-width: 640px){
-            .d-grid-cols-2 {
-                grid-template-columns: repeat(2,minmax(0,1fr));
-            }
-        }
-    </style>
-
     <div class="c-sessions page">
         <div class="c-sessions__item ${isEventPast}">
             <div class="clearfix">
-
                 <div class="data-section">
                     <div class="c-sessions__item__date">
                         <#if registration.isToBeDetermined() >
@@ -130,12 +113,12 @@
                                 ${languageUtil.get(locale, "dsd.theme.session.free")}
                                 <#assign calDescription += (languageUtil.get(locale, "dsd.theme.session.free") + "<br/>") />
                             <#elseif vat == 0 >
-                                ${price}
-                                <#assign calDescription += (priceFormatted + "<br/>") />
+                                ${registration.getPrice()}
+                                <#assign calDescription += (registration.getPrice() + "<br/>") />
                             <#else>
                                 <#assign vatText = languageUtil.get(locale, "dsd.theme.session.vat")?replace("%d", vat) />
-                                ${priceFormatted}&nbsp;(${vatText})
-                                <#assign calDescription += (priceFormatted + "&nbsp;" +  vatText + "<br/>") />
+                                ${registration.getPrice()}&nbsp;(${vatText})
+                                <#assign calDescription += (registration.getPrice() + "&nbsp;" +  vatText + "<br/>") />
                             </#if>
                         <br/>
                         <#if registration.getEventId() gt 0 >
@@ -168,8 +151,9 @@
                         <#assign isRegistered = dsdSessionUtils.isUserRegisteredFor(user, registration) />
                         <span class="d-block">
                         <#if isRegistered >
-                            <a href="${displayContext.getUnregisterURL(renderRequest)}" class="btn-lg btn-primary"
-                               role="button" aria-pressed="true">
+                            <a href="${displayContext.getUnregisterURL(renderRequest, user.getUserId(),
+                            displayContext.getConfiguredRegistrationFormId(),  "/submit/unregister/form")}"
+                               class="btn-lg btn-primary" role="button" aria-pressed="true">
                                 ${languageUtil.get(locale, "registrationform.unregister")}
                             </a>
                             <#if cancellationExceeded >
@@ -177,6 +161,7 @@
                                     <#assign courseConditionsUrl = displayContext.getCourseConditionsUrl() />
                                     <small><i>${languageUtil.get(locale, "registrationform.cancelExpired")?replace("{0}", courseConditionsUrl)}</i></small>
                                 </div>
+                        </#if>
                         </#if>
                             <#assign joinLink = dsdSessionUtils.getUserJoinLink(user, registration) />
                             <#if joinLink?? && joinLink != "">
@@ -189,8 +174,8 @@
                             <#if registration.canUserRegister(user.getUserId()) && themeDisplay.isSignedIn() && available gt 0>
                                 <a href="#" data-article-id="${articleId}" class="btn-lg btn-primary add-to-cart"
                                    role="button" aria-pressed="true">
-                                    ${languageUtil.get(locale, "shopping.cart.add")}
-                                </a>
+                                ${languageUtil.get(locale, "shopping.cart.add")}
+                            </a>
                             </#if>
                         <div class="add-to-calendar c-session__item__calendar"></div>
                     </span>
@@ -291,26 +276,40 @@
                     </div>
                 </#list>
             </div>
-
         </#if>
     </div>
-    <script>
-        var myCalendar = createCalendar({
-            options: {
-                class: '',
-                id: '${articleId}' // You need to pass an ID. If you don't, one will be generated for you.
-            },
-            data: {
-                title: '${registration.getTitle()}',     // Event title
-                start: new Date(${registration.getStartTime()?long}),
-                end: new Date(${registration.getEndTime()?long}),
-                // If an end time is set, this will take precedence over duration
-                address: '${registration.getRoom().getTitle()}',
-
-                description: '${calDescription}'
-            }
-        });
-
-        document.querySelector('.add-to-calendar').appendChild(myCalendar);
-    </script>
 </#if>
+<script>
+    var myCalendar = createCalendar({
+        options: {
+            class: '',
+            id: '${articleId}' // You need to pass an ID. If you don't, one will be generated for you.
+        },
+        data: {
+            title: '${registration.getTitle()}',     // Event title
+            start: new Date(${registration.getStartTime()?long}),
+            end: new Date(${registration.getEndTime()?long}),
+            // If an end time is set, this will take precedence over duration
+            address: '${registration.getRoom().getTitle()}',
+
+            description: '${calDescription}'
+        }
+    });
+    document.querySelector('.add-to-calendar').appendChild(myCalendar);
+    var urlParams = new URLSearchParams(window.location.search);
+    var redirect = urlParams.get('redirect');
+    if(redirect){
+        items = redirect.split('?');
+        if (items.length > 1){
+            let ppid = new URLSearchParams(items[1]);
+            let namespace = ppid.get('p_p_id');
+            let ids_key = '_' + namespace + '_ids';
+            let backLink = document.querySelector('.header-back-to');
+            if (backLink){
+                backLink.href=redirect +
+                    '&' + ids_key + '=' + urlParams.get(ids_key);
+            }
+        }
+    }
+
+</script>
