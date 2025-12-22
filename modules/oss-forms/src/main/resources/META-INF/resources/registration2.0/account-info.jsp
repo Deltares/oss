@@ -47,7 +47,9 @@
                 Long regionId = address == null ? 0 : address.getRegionId();
                 String street = address == null ? "" : address.getStreet1();
                 String zip = address == null ? "" : address.getZip();
-
+                if (phoneNumber == null) {
+                    phoneNumber = "";
+                }
                 boolean canEdit = accountEntry.isPersonalAccount();
         %>
         <aui:option data-city="<%= HtmlUtil.escapeAttribute(city) %>"

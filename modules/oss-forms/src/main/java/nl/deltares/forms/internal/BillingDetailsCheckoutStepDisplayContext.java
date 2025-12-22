@@ -3,6 +3,7 @@ package nl.deltares.forms.internal;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
@@ -155,7 +156,8 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
         Country country = _countryLocalService.fetchCountry(countryId);
         if (country != null && !country.isBillingAllowed()) {
             SessionErrors.add(httpServletRequest, RegistrationFormException.class, Collections.singletonList(
-                    new RegistrationFormException(String.format("It is not allowed to do business with country '%s'", country.getName()))));
+                    new RegistrationFormException(String.format(
+                            LanguageUtil.get(_themeDisplay.getLocale(), "sanctioned-country-notification"), country.getName()))));
             return;
         }
 
@@ -166,7 +168,8 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
                 Optional<RegistrationInfo> payedEvent = registrationInfos.stream().filter(registrationInfo -> registrationInfo.getPrice() > 0).findFirst();
                 if (payedEvent.isPresent()){
                     SessionErrors.add(httpServletRequest, RegistrationFormException.class, Collections.singletonList(
-                            new RegistrationFormException("Tax identification number required for payed events! If not applicable please enter 'n/a'.")));
+                            new RegistrationFormException(LanguageUtil.get(_themeDisplay.getLocale(),
+                                    "vat-number-required-for-paid-registrations"))));
 
                 }
             }

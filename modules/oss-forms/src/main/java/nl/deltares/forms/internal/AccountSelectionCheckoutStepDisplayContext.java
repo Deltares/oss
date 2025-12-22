@@ -2,8 +2,8 @@ package nl.deltares.forms.internal;
 
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
+import com.liferay.account.service.AccountEntryLocalServiceUtil;
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
-import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.*;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
@@ -18,6 +18,7 @@ import nl.deltares.portal.configuration.SiteMapConfiguration;
 import nl.deltares.portal.utils.AccountUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +34,6 @@ public class AccountSelectionCheckoutStepDisplayContext{
 
     final ThemeDisplay _themeDisplay;
     final User _user;
-    final User _accountUser;
     private final long organizationId;
 
     private boolean _accountsLoaded = false;
@@ -61,7 +61,6 @@ public class AccountSelectionCheckoutStepDisplayContext{
         } else {
             organizationId = companyId;
         }
-        _accountUser = getAccountUser();
     }
 
     public String getTitle() {
@@ -84,7 +83,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
         if (!_user.isGuestUser()) {
             String domain = _user.getEmailAddress().split("@")[1];
             accounts.addAll(_commerceUtils.getAccountsByDomain(domain, getCompanyId()));
-            AccountEntry accountEntry = _commerceUtils.getPersonalAccount(_accountUser);
+            AccountEntry accountEntry = getPersonalAccount();
             if (accountEntry != null) {
                 accounts.add(accountEntry);
             }
@@ -110,7 +109,8 @@ public class AccountSelectionCheckoutStepDisplayContext{
 
     public String getAccountWebsite(AccountEntry accountEntry) {
         if (accountEntry != null) {
-            return (String) accountEntry.getExpandoBridge().getAttribute(OrganizationConstants.ORG_WEBSITE, false);
+            Serializable attribute = accountEntry.getExpandoBridge().getAttribute(OrganizationConstants.ORG_WEBSITE, false);
+            return attribute == null ? "" : (String) attribute;
         }
         return "";
     }
@@ -162,7 +162,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
             final ListType accountType = ListTypeLocalServiceUtil.getListType(
                     "billing", "com.liferay.account.model.AccountEntry.address");
             billingAddress = _addressLocalService.addAddress(
-                    null, _accountUser.getUserId(), AccountEntry.class.getName(),
+                    null, accountEntry.getUserId(), AccountEntry.class.getName(),
                     accountEntry.getAccountEntryId(), name, null, street, null, null, city, postal, regionId, companyCountry.getCountryId(),
                     accountType.getListTypeId(), true, true, phoneNumber, serviceContext);
 
@@ -188,7 +188,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
                 final ListType phoneType = ListTypeLocalServiceUtil.getListType(
                         "phone-number", "com.liferay.portal.kernel.model.Address.phone");
                 _phoneLocalService.addPhone(
-                        _accountUser.getUserId(), "com.liferay.portal.kernel.model.Address", billingAddress.getAddressId(),
+                        accountEntry.getUserId(), "com.liferay.portal.kernel.model.Address", billingAddress.getAddressId(),
                         phoneNumber, null, phoneType.getListTypeId(), true, serviceContext);
             } else {
                 phone = phones.get(0);
@@ -231,7 +231,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
 
         AccountEntry accountEntry;
         if (accountEntryId == 0){
-            accountEntry = _commerceUtils.createPersonAccountEntry(_accountUser);
+            accountEntry = _commerceUtils.createPersonAccountEntry(_user);
         } else {
             accountEntry = _accountEntryLocalService.fetchAccountEntry(accountEntryId);
         }
@@ -246,13 +246,10 @@ public class AccountSelectionCheckoutStepDisplayContext{
             String taxIdNumber = ParamUtil.getString(request, OrganizationConstants.ORG_VAT);
             accountEntry.setTaxIdNumber(taxIdNumber);
 
-            if (!accountEntry.getExpandoBridge().hasAttribute(OrganizationConstants.ORG_REGISTRATION_ID)) {
-                accountEntry.getExpandoBridge().addAttribute(OrganizationConstants.ORG_REGISTRATION_ID);
-            }
-
             if (!accountEntry.getExpandoBridge().hasAttribute(OrganizationConstants.ORG_WEBSITE)) {
-                accountEntry.getExpandoBridge().addAttribute(OrganizationConstants.ORG_WEBSITE);
+                accountEntry.getExpandoBridge().addAttribute(OrganizationConstants.ORG_WEBSITE, false);
             }
+            if ("".equals(website)) {website = null;}
             accountEntry.getExpandoBridge().setAttribute(OrganizationConstants.ORG_WEBSITE, website, false);
 
             return _accountEntryLocalService.updateAccountEntry(accountEntry);
@@ -263,25 +260,28 @@ public class AccountSelectionCheckoutStepDisplayContext{
     /**
      * Get the equivalent of the logged in user from the central Company where all account data is stored.
      */
-    private User getAccountUser() {
+    private AccountEntry getPersonalAccount() {
+
+        AccountEntry personalAccount = _commerceUtils.getPersonalAccount(_user);
+        AccountEntry preferredAccount = null;
         long accountCompanyId = getCompanyId();
-        if (accountCompanyId == 0) return _user;
-        if (accountCompanyId != _user.getCompanyId()){
+        if (accountCompanyId > 0 && accountCompanyId != _user.getCompanyId()){
             User user = _userLocalService.fetchUserByEmailAddress(accountCompanyId, _user.getEmailAddress());
-            if (user == null) {
-                user =_userLocalService.createUser(CounterLocalServiceUtil.increment(User.class.getName()));
-                user.setCompanyId(accountCompanyId);
-                user.setScreenName(_user.getScreenName());
-                user.setEmailAddress(_user.getEmailAddress());
-                user.setFirstName(_user.getFirstName());
-                user.setLastName(_user.getLastName());
-                return _userLocalService.addUser(user);
-            } else {
-                return user;
+            if (user != null) {
+                preferredAccount = _commerceUtils.getPersonalAccount(user);
             }
-        } else {
-            return _user;
         }
+        if (personalAccount != null && preferredAccount != null){
+            try {
+                AccountEntryLocalServiceUtil.deleteAccountEntry(personalAccount);
+            } catch (PortalException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if (preferredAccount != null){
+            personalAccount = preferredAccount;
+        }
+        return personalAccount;
     }
 
     public Address getAccountAddress(AccountEntry accountEntry) {
