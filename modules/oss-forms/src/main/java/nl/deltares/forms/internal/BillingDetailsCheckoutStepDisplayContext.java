@@ -2,6 +2,7 @@ package nl.deltares.forms.internal;
 
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
+import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Address;
@@ -12,6 +13,7 @@ import com.liferay.portal.kernel.service.CountryLocalService;
 import com.liferay.portal.kernel.service.PhoneLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import nl.deltares.forms.constants.BillingConstants;
 import nl.deltares.forms.constants.OrganizationConstants;
@@ -29,9 +31,7 @@ import java.util.Optional;
 
 public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCheckoutStepDisplayContext {
 
-    private BillingInfo _billingInfo;
     private AccountEntry _selectedAccountEntry = null;
-    private Boolean _paymentRequired = null;
 
     public String getTitle() {
         return "billing-info";
@@ -50,24 +50,21 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
         super(request, accountEntryLocalService, addressLocalService, countryLocalService, phoneLocalService, userLocalService,
                 commerceUtils, configurationProvider);
 
-        _billingInfo = (BillingInfo) request.getSession().getAttribute("billingInfo");
-        if (_billingInfo == null) {
-            _billingInfo = new BillingInfo();
-            _billingInfo.setEmail(_user.getEmailAddress());
-            _billingInfo.setFirstName(_user.getFirstName());
-            _billingInfo.setLastName(_user.getLastName());
-        }
         Object selectedAccountEntryId = request.getSession().getAttribute("selectedAccountEntryId");
         if (selectedAccountEntryId != null) {
             _selectedAccountEntry = getAccountEntry((Long) selectedAccountEntryId);
         }
-        if (_selectedAccountEntry != null) {
-            _billingInfo.setVat(_selectedAccountEntry.getTaxIdNumber());
-            Address billingAddress = getAccountAddress(_selectedAccountEntry);
-            if (billingAddress != null) {
-                _billingInfo.setBillingAddressId(billingAddress.getAddressId());
+    }
+
+    public boolean canAddAddress(){
+        boolean hasEditableAddress = false;
+        List<Address> billingAddresses = getBillingAddresses();
+        for (Address billingAddress : billingAddresses) {
+            if (canEditAddress(billingAddress.getAddressId())){
+                hasEditableAddress = true;
             }
         }
+        return !hasEditableAddress;
     }
 
     public boolean canEditAccount() {
@@ -97,6 +94,9 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
 
     public BillingInfo storeBillingInformation(HttpServletRequest httpServletRequest) throws Exception {
 
+        if (_selectedAccountEntry == null){
+            throw new IllegalStateException("No account entry selected");
+        }
         if (_selectedAccountEntry.isPersonalAccount()) {
             boolean updated = false;
             String taxIdNumber = ParamUtil.getString(httpServletRequest, OrganizationConstants.ORG_VAT);
@@ -108,32 +108,47 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
                 _accountEntryLocalService.updateAccountEntry(_selectedAccountEntry);
             }
         }
+        BillingInfo billingInfo = getBillingInfo(httpServletRequest);
         long selectedBillingAddressId = ParamUtil.getLong(httpServletRequest, getParamName());
         if (canEditAddress(selectedBillingAddressId)){
             Address billingAddress = addOrUpdateBillingAddress(httpServletRequest, _selectedAccountEntry, selectedBillingAddressId);
-            _billingInfo.setDefaultBillingAddress(billingAddress.getAddressId() == _selectedAccountEntry.getDefaultBillingAddressId());
-            _billingInfo.setBillingAddressId(billingAddress.getAddressId());
-            _billingInfo.setAddress(billingAddress.getStreet1());
-            _billingInfo.setCity(billingAddress.getCity());
-            _billingInfo.setPostal(billingAddress.getZip());
-            _billingInfo.setCountry(billingAddress.getCountry().getName());
+            billingInfo.setBillingAddressId(billingAddress.getAddressId());
+            billingInfo.setDefaultBillingAddress(billingInfo.getBillingAddressId() == _selectedAccountEntry.getDefaultBillingAddressId());
+            billingInfo.setAddress(billingAddress.getStreet1());
+            billingInfo.setCity(billingAddress.getCity());
+            billingInfo.setPostal(billingAddress.getZip());
+            billingInfo.setCountry(billingAddress.getCountry().getName());
+        } else {
+            billingInfo.setBillingAddressId(selectedBillingAddressId);
         }
 
-        _billingInfo.setVat(_selectedAccountEntry.getTaxIdNumber());
-        _billingInfo.setCompanyName(_selectedAccountEntry.getName());
+        billingInfo.setVat(_selectedAccountEntry.getTaxIdNumber());
+        billingInfo.setCompanyName(_selectedAccountEntry.getName());
 
-        _billingInfo.setEmail(ParamUtil.getString(httpServletRequest, BillingConstants.EMAIL));
-        _billingInfo.setFirstName(ParamUtil.getString(httpServletRequest, BillingConstants.FIRST_NAME));
-        _billingInfo.setLastName(ParamUtil.getString(httpServletRequest, BillingConstants.LAST_NAME));
-        _billingInfo.setPhoneNumber(ParamUtil.getString(httpServletRequest, BillingConstants.ORG_PHONE));
-        _billingInfo.setPaymentyPreference(ParamUtil.getString(httpServletRequest, BillingConstants.PAYMENT_METHOD));
-        _billingInfo.setPaymentReference(ParamUtil.getString(httpServletRequest, BillingConstants.PAYMENT_REFERENCE));
+        billingInfo.setEmail(ParamUtil.getString(httpServletRequest, BillingConstants.EMAIL));
+        billingInfo.setFirstName(ParamUtil.getString(httpServletRequest, BillingConstants.FIRST_NAME));
+        billingInfo.setLastName(ParamUtil.getString(httpServletRequest, BillingConstants.LAST_NAME));
+        billingInfo.setPhoneNumber(ParamUtil.getString(httpServletRequest, BillingConstants.ORG_PHONE));
+        billingInfo.setPaymentyPreference(ParamUtil.getString(httpServletRequest, BillingConstants.PAYMENT_METHOD));
+        billingInfo.setPaymentReference(ParamUtil.getString(httpServletRequest, BillingConstants.PAYMENT_REFERENCE));
 
-
-        return _billingInfo;
+        return billingInfo;
     }
 
-    public BillingInfo getBillingInfo() {
+    public BillingInfo getBillingInfo(HttpServletRequest request) {
+
+        BillingInfo _billingInfo = (BillingInfo) request.getSession().getAttribute("billingInfo");
+        if (_billingInfo == null) {
+            _billingInfo = new BillingInfo();
+            _billingInfo.setEmail(_user.getEmailAddress());
+            _billingInfo.setFirstName(_user.getFirstName());
+            _billingInfo.setLastName(_user.getLastName());
+            if (_selectedAccountEntry != null) {
+                _billingInfo.setVat(_selectedAccountEntry.getTaxIdNumber());
+                _billingInfo.setBillingAddressId(_selectedAccountEntry.getDefaultBillingAddressId());
+                _billingInfo.setDefaultBillingAddress(true);
+            }
+        }
         return _billingInfo;
     }
 
@@ -178,10 +193,11 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
 
     }
 
-    public boolean isPaymentRequired(HttpServletRequest httpServletRequest, DsdParserUtils dsdParserUtils) {
+    public static boolean isPaymentRequired(HttpServletRequest httpServletRequest, DsdParserUtils dsdParserUtils) {
 
-        if (_paymentRequired != null) return _paymentRequired;
-        _paymentRequired = false;
+        CPRequestHelper cpRequestHelper = new CPRequestHelper(httpServletRequest);
+        ThemeDisplay _themeDisplay = cpRequestHelper.getThemeDisplay();
+
         String ids = ParamUtil.getString(httpServletRequest, "ids");
         String[] registrationIds = ids.split(",", -1);
         for (String registrationId : registrationIds) {
@@ -194,11 +210,10 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
                 continue;
             }
             if (registration.getPrice() > 0) {
-                _paymentRequired = true;
-                break;
+                return true;
             }
         }
-        return _paymentRequired;
+        return false;
     }
 
 }

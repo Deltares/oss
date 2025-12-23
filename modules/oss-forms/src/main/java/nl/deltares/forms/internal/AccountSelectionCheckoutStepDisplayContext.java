@@ -2,7 +2,6 @@ package nl.deltares.forms.internal;
 
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
-import com.liferay.account.service.AccountEntryLocalServiceUtil;
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.*;
@@ -231,7 +230,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
 
         AccountEntry accountEntry;
         if (accountEntryId == 0){
-            accountEntry = _commerceUtils.createPersonAccountEntry(_user);
+            accountEntry = _commerceUtils.createPersonAccountEntry(_user, getCompanyId());
         } else {
             accountEntry = _accountEntryLocalService.fetchAccountEntry(accountEntryId);
         }
@@ -261,27 +260,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
      * Get the equivalent of the logged in user from the central Company where all account data is stored.
      */
     private AccountEntry getPersonalAccount() {
-
-        AccountEntry personalAccount = _commerceUtils.getPersonalAccount(_user);
-        AccountEntry preferredAccount = null;
-        long accountCompanyId = getCompanyId();
-        if (accountCompanyId > 0 && accountCompanyId != _user.getCompanyId()){
-            User user = _userLocalService.fetchUserByEmailAddress(accountCompanyId, _user.getEmailAddress());
-            if (user != null) {
-                preferredAccount = _commerceUtils.getPersonalAccount(user);
-            }
-        }
-        if (personalAccount != null && preferredAccount != null){
-            try {
-                AccountEntryLocalServiceUtil.deleteAccountEntry(personalAccount);
-            } catch (PortalException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        if (preferredAccount != null){
-            personalAccount = preferredAccount;
-        }
-        return personalAccount;
+        return _commerceUtils.getPersonalAccount(_user, getCompanyId());
     }
 
     public Address getAccountAddress(AccountEntry accountEntry) {

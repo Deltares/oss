@@ -130,6 +130,9 @@ public class SubmitOrderDisplayContext {
         AccountEntry accountEntry = null;
         if (accountEntryId != null){
             accountEntry = _accountEntryLocalService.fetchAccountEntry(accountEntryId);
+            if (accountEntry != null) {
+                registrationAttributes.put("accountEntryId", String.valueOf(accountEntry.getAccountEntryId()));
+            }
         }
         if (_webinarUtilsFactory.isWebinarSupported(registration)) {
             registerWebinar(registrationUser, (SessionRegistration) registration, accountEntry, registrationAttributes);

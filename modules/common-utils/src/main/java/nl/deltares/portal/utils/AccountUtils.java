@@ -13,11 +13,9 @@ public interface AccountUtils {
 
     List<AccountEntry> getAccountsByDomain(String domain, long companyId);
 
-    boolean userAccountExists(User user);
+    AccountEntry getPersonalAccount(User user, long accountCompanyId);
 
-    AccountEntry getPersonalAccount(User user);
-
-    AccountEntry createPersonAccountEntry(User user) throws PortalException;
+    AccountEntry createPersonAccountEntry(User user, long companyId) throws PortalException;
 
     @SuppressWarnings("UnusedReturnValue")
     AccountEntry createOrUpdateBusinessAccountEntry(AccountInfo accountInfo, long companyId, long currentUserId) throws PortalException;

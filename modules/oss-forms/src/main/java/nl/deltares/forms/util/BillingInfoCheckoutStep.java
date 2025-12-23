@@ -83,10 +83,7 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
     public boolean isActive(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 
         try {
-            BillingDetailsCheckoutStepDisplayContext _displayContext = new BillingDetailsCheckoutStepDisplayContext(
-                    httpServletRequest, _addressLocalService, _accountEntryLocalService,
-                    _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils, _configurationProvider);
-            return _displayContext.isPaymentRequired(httpServletRequest, _dsdParserUtils);
+            return BillingDetailsCheckoutStepDisplayContext.isPaymentRequired(httpServletRequest, _dsdParserUtils);
         } catch (Exception e) {
             logger.warn("Error checking 'isActive': " + e.getMessage());
             return false;

@@ -22,6 +22,8 @@ import java.util.List;
         service = AccountUtils.class
 )
 public class AccountUtilsImpl implements AccountUtils {
+
+    final static String PERSONAL_ACCOUNT_PREFIX = "Personal_account_";
     @Override
     public List<AccountEntry> getAccountsByDomain(String domain, long companyId) {
 
@@ -33,29 +35,35 @@ public class AccountUtilsImpl implements AccountUtils {
     }
 
     @Override
-    public boolean userAccountExists(User user) {
-        return null != getPersonalAccount(user);
+    public AccountEntry getPersonalAccount(User user, long accountCompanyId) {
+
+        String externalReferenceCode = PERSONAL_ACCOUNT_PREFIX + user.getScreenName();
+        AccountEntry accountEntry = _accountEntryLocalService.fetchAccountEntryByExternalReferenceCode(externalReferenceCode, accountCompanyId);
+        if (accountEntry != null && accountEntry.isPersonalAccount()) return accountEntry;
+        return null;
     }
 
     @Override
-    public AccountEntry getPersonalAccount(User user) {
-        return _accountEntryLocalService.fetchPersonAccountEntry(user.getUserId());
-    }
+    public AccountEntry createPersonAccountEntry(User localUser, long accountCompanyId) throws PortalException {
 
-    @Override
-    public AccountEntry createPersonAccountEntry(User user) throws PortalException {
-
+        User centralLiferayUser = _userLocalService.fetchUserByScreenName(accountCompanyId, "liferay");
+        if (centralLiferayUser == null){
+            throw new PortalException("Liferay user does not exist for company with ID " + accountCompanyId);
+        }
         final ServiceContext serviceContext = new ServiceContext();
-        serviceContext.setCompanyId(user.getCompanyId());
-        serviceContext.setScopeGroupId(user.getGroupId());
+        serviceContext.setCompanyId(accountCompanyId);
+        serviceContext.setScopeGroupId(centralLiferayUser.getGroupId());
+        serviceContext.setUserId(centralLiferayUser.getUserId());
+        String externalReferenceCode = PERSONAL_ACCOUNT_PREFIX + localUser.getScreenName();
+
         //we can only create personal accounts through the code
-        final AccountEntry accountEntry = _accountEntryLocalService.addAccountEntry(
-                user.getUserId(),
-                0, user.getScreenName(), user.getFullName(), null,
-                user.getEmailAddress(), new byte[0],
+        final AccountEntry accountEntry = _accountEntryLocalService.addOrUpdateAccountEntry(
+                externalReferenceCode, centralLiferayUser.getUserId(),
+                0, localUser.getScreenName(), "Personal account for user '" + localUser.getFullName() + "' with email '" + localUser.getEmailAddress() + "'",
+                null, localUser.getEmailAddress(), new byte[0],
                 null, "person", 0, serviceContext);
 
-        _accountEntryUserRelLocalService.addAccountEntryUserRel(accountEntry.getAccountEntryId(), user.getUserId());
+        _accountEntryUserRelLocalService.addAccountEntryUserRel(accountEntry.getAccountEntryId(), centralLiferayUser.getUserId());
 
         return accountEntry;
     }
@@ -160,5 +168,8 @@ public class AccountUtilsImpl implements AccountUtils {
 
     @Reference
     private PhoneLocalService _phoneLocalService;
+
+    @Reference
+    private UserLocalService _userLocalService;
 }
 

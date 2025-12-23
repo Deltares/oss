@@ -7,13 +7,14 @@
     List<Address> availableAddresses = displayContext.getBillingAddresses();
     String paramName = displayContext.getParamName();
 
-    BillingInfo billingInfo = displayContext.getBillingInfo();
+    BillingInfo billingInfo = displayContext.getBillingInfo(request);
     long selectedAddressId = billingInfo.getBillingAddressId();
     Address selectedAddress = null;
     if ( selectedAddressId > 0) {
         selectedAddress = availableAddresses.stream().filter(address -> address.getAddressId() == billingInfo.getBillingAddressId()).findFirst().orElse(null);
     }
     boolean canEditAccount = displayContext.canEditAccount();
+    boolean canAddAddress = displayContext.canAddAddress();
 %>
 <aui:input disabled="<%=availableAddresses.isEmpty() %>" name="<%= paramName %>" type="hidden" value="<%= selectedAddressId %>" />
 
@@ -85,8 +86,8 @@
             wrapperCssClass="commerce-form-group-item-row form-group-item">
 
         <aui:option value='0'
-                    data-canEdit="true"
-                    label ="registrationform.billing.address.new" />
+                    data-canEdit="<%=canAddAddress%>"
+                    label ='<%=canAddAddress? "registrationform.billing.address.new" : "registrationform.billing.address.select"%>' />
         <%
             for (Address address : availableAddresses) {
         %>
