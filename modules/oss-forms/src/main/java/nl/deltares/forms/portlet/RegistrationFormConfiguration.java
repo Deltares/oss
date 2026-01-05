@@ -23,6 +23,8 @@ public interface RegistrationFormConfiguration {
     @Meta.AD(required = false, deflt = "true", description = "Configure visibility of Badge info page.")
     Boolean showBadgeInfo();
 
+    @Meta.AD(required = false, deflt = "false", description = "Configure visibility of Related info page. If 'true' then always show page. If 'false' only show page when there is related info to be shown.")
+    Boolean alwaysShowRelatedInfo();
 
 
 }

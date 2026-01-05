@@ -20,8 +20,10 @@
     String selectedAssetsTemplate= "";
     String relatedAssetsTemplate="";
     boolean showBadge = true;
+    boolean alwaysShowRelatedInfo = false;
     if (Validator.isNotNull(configuration)){
         showBadge = Boolean.parseBoolean(portletPreferences.getValue("showBadgeInfo", String.valueOf(configuration.showBadgeInfo())));
+        alwaysShowRelatedInfo = Boolean.parseBoolean(portletPreferences.getValue("alwaysShowRelatedInfo", String.valueOf(configuration.alwaysShowRelatedInfo())));
         selectedAssetsTemplate = portletPreferences.getValue("selectedAssetsTemplate", configuration.selectedAssetsTemplate());
         relatedAssetsTemplate = portletPreferences.getValue("relatedAssetsTemplate", configuration.relatedAssetsTemplate());
     }
@@ -67,6 +69,12 @@
                     name="showBadgeInfo"
                     type="toggle-switch"
                     value='<%= showBadge %>'/>
+
+            <aui:input
+                    label="registrationform.alwaysShowRelatedInfo"
+                    name="alwaysShowRelatedInfo"
+                    type="toggle-switch"
+                    value='<%= alwaysShowRelatedInfo %>'/>
 
         </aui:fieldset>
             </div>

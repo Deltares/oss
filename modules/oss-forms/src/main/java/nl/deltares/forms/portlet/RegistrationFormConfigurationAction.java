@@ -48,6 +48,7 @@ public class RegistrationFormConfigurationAction extends DefaultConfigurationAct
             throws Exception {
 
         setPreference(actionRequest, "showBadgeInfo", String.valueOf(ParamUtil.getBoolean(actionRequest, "showBadgeInfo")));
+        setPreference(actionRequest, "alwaysShowRelatedInfo", String.valueOf(ParamUtil.getBoolean(actionRequest, "alwaysShowRelatedInfo")));
         setPreference(actionRequest, "relatedAssetsTemplate", ParamUtil.getString(actionRequest, "relatedAssetsTemplate"));
         setPreference(actionRequest, "selectedAssetsTemplate", ParamUtil.getString(actionRequest, "selectedAssetsTemplate"));
         super.processAction(portletConfig, actionRequest, actionResponse);
