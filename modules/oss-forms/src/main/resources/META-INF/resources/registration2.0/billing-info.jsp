@@ -1,18 +1,20 @@
+<%@ page import="java.util.Optional" %>
 <%@ include file="init.jsp" %>
 <div class="prose prose--app">
 <h3><liferay-ui:message key="registrationform.billing.payment.details"/></h3>
 </div>
 <%
     BillingDetailsCheckoutStepDisplayContext displayContext = (BillingDetailsCheckoutStepDisplayContext) request.getAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT);
-    List<Address> availableAddresses = displayContext.getBillingAddresses();
     String paramName = displayContext.getParamName();
 
-    BillingInfo billingInfo = displayContext.getBillingInfo(request);
-    long selectedAddressId = billingInfo.getBillingAddressId();
-    Address selectedAddress = null;
-    if ( selectedAddressId > 0) {
-        selectedAddress = availableAddresses.stream().filter(address -> address.getAddressId() == billingInfo.getBillingAddressId()).findFirst().orElse(null);
-    }
+    BillingInfo billingInfo = displayContext.getBillingInfo();
+    List<Address> availableAddresses = displayContext.getBillingAddresses();
+
+    Optional<Address> optionalAddress = availableAddresses.stream().filter(address ->
+            address.getAddressId() == billingInfo.getBillingAddressId()).findFirst();
+    Address selectedAddress = optionalAddress.orElse(availableAddresses.stream().findFirst().orElse(null));
+    long selectedAddressId = selectedAddress == null ? 0 : selectedAddress.getAddressId();
+
     boolean canEditAccount = displayContext.canEditAccount();
     boolean canAddAddress = displayContext.canAddAddress();
 %>

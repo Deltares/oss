@@ -5,7 +5,6 @@
 
 package nl.deltares.forms.util;
 
-import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
@@ -13,10 +12,8 @@ import com.liferay.portal.kernel.service.AddressLocalService;
 import com.liferay.portal.kernel.service.CountryLocalService;
 import com.liferay.portal.kernel.service.PhoneLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
-import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.Portal;
 import nl.deltares.forms.constants.CheckoutWebKeys;
-import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.forms.internal.AccountSelectionCheckoutStepDisplayContext;
 import nl.deltares.portal.utils.AccountUtils;
 import org.osgi.service.component.annotations.Component;
@@ -26,8 +23,6 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.util.Collections;
 
 /**
  * @author Andrea Di Giorgi
@@ -54,40 +49,22 @@ public class AccountSelectionCheckoutStep extends BaseCheckoutStep {
     public void processAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
 
         HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
-        AccountSelectionCheckoutStepDisplayContext _displayContext =
-                new AccountSelectionCheckoutStepDisplayContext(httpServletRequest, _accountEntryLocalService,
-                        _addressLocalService, _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils,
-                        _configurationProvider);
+        AccountSelectionCheckoutStepDisplayContext _displayContext = new AccountSelectionCheckoutStepDisplayContext(httpServletRequest, _accountEntryLocalService,
+                _addressLocalService, _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils,
+                _configurationProvider);
 
-        AccountEntry accountEntry = _displayContext.storeAccountInfo(httpServletRequest);
+        _displayContext.storeAccountInfo(httpServletRequest);
 
-        if (accountEntry != null) {
-            HttpSession session = httpServletRequest.getSession();
-            session.setAttribute("selectedAccountEntryId", accountEntry.getAccountEntryId());
-
-        }
     }
 
     @Override
     public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 
-        AccountSelectionCheckoutStepDisplayContext _displayContext =
-                new AccountSelectionCheckoutStepDisplayContext(httpServletRequest, _accountEntryLocalService,
-                        _addressLocalService, _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils,
-                        _configurationProvider);
+        AccountSelectionCheckoutStepDisplayContext _displayContext = new AccountSelectionCheckoutStepDisplayContext(httpServletRequest, _accountEntryLocalService,
+                _addressLocalService, _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils,
+                _configurationProvider);
 
         httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, _displayContext);
-
-        try {
-            _displayContext.loadAccounts();
-        } catch (Exception e) {
-            SessionErrors.add(httpServletRequest, RegistrationFormException.class, Collections.singletonList(new RegistrationFormException(e.getMessage(), e)));
-        }
-
-        Object value = httpServletRequest.getSession().getAttribute("selectedAccountEntryId");
-        if (value != null) {
-            httpServletRequest.setAttribute("selectedAccountEntryId", value);
-        }
 
         _jspRenderer.renderJSP(
                 httpServletRequest, httpServletResponse,

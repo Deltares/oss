@@ -49,7 +49,7 @@ public class RelatedAssetsCheckoutStep extends BaseCheckoutStep {
                 themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
 
         httpServletRequest.setAttribute("relatedAssetsTemplate", portletInstanceConfiguration.relatedAssetsTemplate());
-        httpServletRequest.setAttribute("selectedAssetsTemplate",portletInstanceConfiguration.selectedAssetsTemplate());
+        httpServletRequest.setAttribute("selectedAssetsTemplate", portletInstanceConfiguration.selectedAssetsTemplate());
 
         _jspRenderer.renderJSP(
                 httpServletRequest, httpServletResponse,
@@ -67,7 +67,13 @@ public class RelatedAssetsCheckoutStep extends BaseCheckoutStep {
                     CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT,
                     displayContext);
 
-            return !displayContext.getRelatedArticles().isEmpty();
+
+            CPRequestHelper cpRequestHelper = new CPRequestHelper(httpServletRequest);
+            ThemeDisplay themeDisplay = cpRequestHelper.getThemeDisplay();
+            Boolean showAlways = _configurationProvider.getPortletInstanceConfiguration(RegistrationFormConfiguration.class,
+                    themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId()).alwaysShowRelatedInfo();
+
+            return showAlways || !displayContext.getRelatedArticles().isEmpty();
         } catch (Exception e) {
             SessionErrors.add(httpServletRequest, RegistrationFormException.class, Collections.singletonList(
                     new RegistrationFormException(e.getMessage(), e)));

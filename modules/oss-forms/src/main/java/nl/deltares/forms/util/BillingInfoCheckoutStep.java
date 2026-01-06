@@ -14,7 +14,6 @@ import com.liferay.portal.kernel.util.Portal;
 import nl.deltares.forms.constants.CheckoutWebKeys;
 import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.forms.internal.BillingDetailsCheckoutStepDisplayContext;
-import nl.deltares.model.BillingInfo;
 import nl.deltares.portal.utils.AccountUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import org.osgi.service.component.annotations.Component;
@@ -50,7 +49,8 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
 
         BillingDetailsCheckoutStepDisplayContext _displayContext = new BillingDetailsCheckoutStepDisplayContext(
                 httpServletRequest, _addressLocalService, _accountEntryLocalService,
-                _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils, _configurationProvider);
+                _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils, _configurationProvider,
+                _dsdParserUtils);
         _displayContext.validateRequestData(httpServletRequest);
 
         if (SessionErrors.contains(httpServletRequest, RegistrationFormException.class)) {
@@ -58,8 +58,7 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
         }
 
         try {
-            BillingInfo billingInfo = _displayContext.storeBillingInformation(httpServletRequest);
-            httpServletRequest.getSession().setAttribute("billingInfo", billingInfo);
+            _displayContext.storeBillingInformation(httpServletRequest);
         } catch (Exception e) {
             SessionErrors.add(httpServletRequest, RegistrationFormException.class,
                     Collections.singletonList(new RegistrationFormException(e.getMessage())));
@@ -72,7 +71,7 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
 
         BillingDetailsCheckoutStepDisplayContext _displayContext = new BillingDetailsCheckoutStepDisplayContext(
                 httpServletRequest, _addressLocalService, _accountEntryLocalService,
-                _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils, _configurationProvider);
+                _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils, _configurationProvider, _dsdParserUtils);
         httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, _displayContext);
         _jspRenderer.renderJSP(
                 httpServletRequest, httpServletResponse,
@@ -83,7 +82,10 @@ public class BillingInfoCheckoutStep extends BaseCheckoutStep {
     public boolean isActive(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 
         try {
-            return BillingDetailsCheckoutStepDisplayContext.isPaymentRequired(httpServletRequest, _dsdParserUtils);
+            BillingDetailsCheckoutStepDisplayContext _displayContext = new BillingDetailsCheckoutStepDisplayContext(
+                    httpServletRequest, _addressLocalService, _accountEntryLocalService,
+                    _countryLocalService, _phoneLocalService, _userLocalService, _commerceUtils, _configurationProvider, _dsdParserUtils);
+            return _displayContext.isPaymentRequired();
         } catch (Exception e) {
             logger.warn("Error checking 'isActive': " + e.getMessage());
             return false;

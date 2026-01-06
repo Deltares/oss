@@ -13,12 +13,12 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import nl.deltares.forms.constants.OrganizationConstants;
 import nl.deltares.forms.exception.RegistrationFormException;
+import nl.deltares.model.AccountInfo;
 import nl.deltares.portal.configuration.SiteMapConfiguration;
 import nl.deltares.portal.utils.AccountUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,12 +31,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
     final UserLocalService _userLocalService;
     final AccountUtils _commerceUtils;
 
-    final ThemeDisplay _themeDisplay;
-    final User _user;
-    private final long organizationId;
-
-    private boolean _accountsLoaded = false;
-    private final List<AccountEntry> accounts = new ArrayList<>();
+    private final AccountInfo _accountInfo;
 
     public AccountSelectionCheckoutStepDisplayContext(HttpServletRequest request, AccountEntryLocalService accountEntryLocalService,
                                                       AddressLocalService addressLocalService, CountryLocalService countryLocalService,
@@ -49,19 +44,30 @@ public class AccountSelectionCheckoutStepDisplayContext{
         _phoneLocalService = phoneLocalService;
         _userLocalService = userLocalService;
         _commerceUtils = commerceUtils;
-        CPRequestHelper cpRequestHelper = new CPRequestHelper(request);
-        _themeDisplay = cpRequestHelper.getThemeDisplay();
-        _user = _themeDisplay.getUser();
 
-        SiteMapConfiguration _configuration = configurationProvider.getSystemConfiguration(SiteMapConfiguration.class);
-        long companyId = _configuration.accountsCompanyId();
-        if (companyId == 0) {
-            organizationId = _user.getCompanyId();
+        Object accountInfo = request.getSession().getAttribute("account-info");
+        if (accountInfo == null){
+            CPRequestHelper cpRequestHelper = new CPRequestHelper(request);
+            ThemeDisplay themeDisplay = cpRequestHelper.getThemeDisplay();
+
+            SiteMapConfiguration _configuration = configurationProvider.getSystemConfiguration(SiteMapConfiguration.class);
+            _accountInfo = new AccountInfo();
+            _accountInfo.setCurrentUser(themeDisplay.getUser());
+            _accountInfo.setCompanyId(_configuration.accountsCompanyId());
+            loadAccounts(_accountInfo);
+            request.getSession().setAttribute("account-info", _accountInfo);
         } else {
-            organizationId = companyId;
+            _accountInfo = (AccountInfo) accountInfo;
         }
     }
 
+    AccountInfo getAccountInfo(){
+        return _accountInfo;
+    }
+
+    public AccountEntry getSelectedAccountEntry(){
+        return  _accountInfo.getSelectedAccountEntry();
+    }
     public String getTitle() {
         return "account-info";
     }
@@ -71,39 +77,28 @@ public class AccountSelectionCheckoutStepDisplayContext{
     }
 
     public long getCompanyId() {
-        return organizationId;
+        return _accountInfo.getCompanyId();
     }
 
-    public void loadAccounts() {
+    private void loadAccounts(AccountInfo accountInfo) {
 
-        if (_accountsLoaded) {
-            return;
-        }
-        if (!_user.isGuestUser()) {
-            String domain = _user.getEmailAddress().split("@")[1];
-            accounts.addAll(_commerceUtils.getAccountsByDomain(domain, getCompanyId()));
+        User user = accountInfo.getCurrentUser();
+        if (user != null && !user.isGuestUser()) {
+            String domain = user.getEmailAddress().split("@")[1];
+            accountInfo.addAccounts(_commerceUtils.getAccountsByDomain(domain, getCompanyId()));
             AccountEntry accountEntry = getPersonalAccount();
             if (accountEntry != null) {
-                accounts.add(accountEntry);
+                accountInfo.addAccount(accountEntry);
             }
-            _accountsLoaded = true;
         }
     }
 
     public boolean canCreateNewAccount() {
-        loadAccounts();
-        if (accounts.isEmpty()) return true;
-
-        for (AccountEntry account : accounts) {
-            //Already a personal account created, cannot create new
-            if (account.isPersonalAccount()) return false;
-        }
-        return true;
+        return !_accountInfo.hasPersonalAccount();
     }
 
     public List<AccountEntry> getAccountEntries() {
-        loadAccounts();
-        return accounts;
+        return _accountInfo.getAccountEntries();
     }
 
     public String getAccountWebsite(AccountEntry accountEntry) {
@@ -115,14 +110,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
     }
 
     public AccountEntry getAccountEntry(long accountEntryId) {
-        if (!_accountsLoaded) {
-            loadAccounts();
-        }
-        for (AccountEntry account : accounts) {
-            if (account.getAccountEntryId() != accountEntryId) continue;
-            return account;
-        }
-        return null;
+        return  _accountInfo.getAccountEntry(accountEntryId);
     }
 
     public Address addOrUpdateBillingAddress(HttpServletRequest request, AccountEntry accountEntry, long selectedAddressId) throws PortalException {
@@ -198,39 +186,41 @@ public class AccountSelectionCheckoutStepDisplayContext{
         return billingAddress;
     }
 
-    public AccountEntry storeAccountInfo(HttpServletRequest httpServletRequest) {
+    public void storeAccountInfo(HttpServletRequest httpServletRequest) {
 
         long accountEntryId = ParamUtil.getLong(httpServletRequest, getParamName());
 
-        if (accountEntryId == 0 && !canCreateNewAccount()) return null;
+        if (accountEntryId == 0 && !canCreateNewAccount()) {
+            _accountInfo.setSelectedAccount(null);
+            return;
+        }
 
-        AccountEntry accountEntry;
+        AccountEntry selectedAccountEntry;
         try {
-            accountEntry = addOrUpdateAccountEntry(httpServletRequest, accountEntryId);
+            selectedAccountEntry = addOrUpdateAccountEntry(httpServletRequest, accountEntryId);
+            _accountInfo.setSelectedAccount(selectedAccountEntry);
         } catch (Exception e) {
             SessionErrors.add(httpServletRequest, RegistrationFormException.class.getName(),
                     Collections.singletonList(new RegistrationFormException(e.getMessage())));
-            return null;
+            return;
         }
 
-        if (accountEntry != null && accountEntry.isPersonalAccount()) {
+        if (selectedAccountEntry != null && selectedAccountEntry.isPersonalAccount()) {
             try {
-                addOrUpdateBillingAddress(httpServletRequest, accountEntry,
-                        accountEntry.getDefaultBillingAddressId());
+                addOrUpdateBillingAddress(httpServletRequest, selectedAccountEntry,
+                        selectedAccountEntry.getDefaultBillingAddressId());
             } catch (Exception e) {
                 SessionErrors.add(httpServletRequest, RegistrationFormException.class.getName(),
                         Collections.singletonList(new RegistrationFormException(e.getMessage())));
-                return null;
             }
         }
-        return accountEntry;
     }
 
     AccountEntry addOrUpdateAccountEntry(HttpServletRequest request, long accountEntryId) throws PortalException {
 
         AccountEntry accountEntry;
         if (accountEntryId == 0){
-            accountEntry = _commerceUtils.createPersonAccountEntry(_user, getCompanyId());
+            accountEntry = _commerceUtils.createPersonAccountEntry(_accountInfo.getCurrentUser(), getCompanyId());
         } else {
             accountEntry = _accountEntryLocalService.fetchAccountEntry(accountEntryId);
         }
@@ -260,7 +250,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
      * Get the equivalent of the logged in user from the central Company where all account data is stored.
      */
     private AccountEntry getPersonalAccount() {
-        return _commerceUtils.getPersonalAccount(_user, getCompanyId());
+        return _commerceUtils.getPersonalAccount(_accountInfo.getCurrentUser(), getCompanyId());
     }
 
     public Address getAccountAddress(AccountEntry accountEntry) {
@@ -287,4 +277,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
 
     }
 
+    public User getCurrentUser(){
+        return _accountInfo.getCurrentUser();
+    }
 }

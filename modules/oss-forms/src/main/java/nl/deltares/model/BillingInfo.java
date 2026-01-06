@@ -1,13 +1,17 @@
 package nl.deltares.model;
 
 import com.liferay.portal.kernel.util.Validator;
+import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.KeycloakUtils;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class BillingInfo implements Serializable {
+
+    private final Map<String, Registration> currentRegistrations = new HashMap<>();
 
     public enum ATTRIBUTES {
         billing_company,
@@ -271,4 +275,21 @@ public class BillingInfo implements Serializable {
         this.lastName = lastName;
     }
 
+    public Registration getRegistration(String registrationId){
+        return currentRegistrations.get(registrationId);
+    }
+
+    public void setRegistrations(List<Registration> registrations){
+        currentRegistrations.clear();
+        for (Registration registration : registrations) {
+            currentRegistrations.put(registration.getArticleId(), registration);
+        }
+    }
+
+    public boolean isPaymentRequired() {
+        for (Registration value : currentRegistrations.values()) {
+            if (value.getPrice() > 0) return true;
+        }
+        return false;
+    }
 }

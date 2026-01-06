@@ -1,24 +1,24 @@
+<%@ page import="java.util.Optional" %>
 <%@ include file="init.jsp" %>
 <div class="prose prose--app">
 <h3><liferay-ui:message key="registrationform.select.org"/></h3>
 </div>
 <%
-    Long selection = (Long) request.getAttribute("selectedAccountEntryId");
-    long selectedAccountEntryId = selection == null ? 0 : selection;
     AccountSelectionCheckoutStepDisplayContext displayContext = (AccountSelectionCheckoutStepDisplayContext)request
             .getAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT);
-    String paramName = displayContext.getParamName();
-    List<AccountEntry> accountEntries = displayContext.getAccountEntries();
 
-    AccountEntry selectedAccountEntry;
-    if (selectedAccountEntryId == 0 && !accountEntries.isEmpty()) {
-        selectedAccountEntry = accountEntries.get(0);
-        selectedAccountEntryId = selectedAccountEntry.getAccountEntryId();
-    } else {
-        selectedAccountEntry = displayContext.getAccountEntry(selectedAccountEntryId);
+    String paramName = displayContext.getParamName();
+
+    AccountEntry selectedAccountEntry = displayContext.getSelectedAccountEntry();
+    List<AccountEntry> accountEntries = displayContext.getAccountEntries();
+    if (selectedAccountEntry == null){
+        Optional<AccountEntry> first = accountEntries.stream().findFirst();
+        selectedAccountEntry = first.orElse(null);
     }
+    long selectedAccountEntryId = 0;
     Address selectedAddress = null;
     if (selectedAccountEntry != null){
+        selectedAccountEntryId = selectedAccountEntry.getAccountEntryId();
       selectedAddress = displayContext.getAccountAddress(selectedAccountEntry);
     }
     boolean canCreateNewAccount = displayContext.canCreateNewAccount();

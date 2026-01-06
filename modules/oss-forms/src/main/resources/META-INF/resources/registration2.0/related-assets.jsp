@@ -24,6 +24,8 @@
     />
     <%
         }
+
+        if (relatedArticles.size() > 0) {
     %>
 <br />
     <div class="prose prose--app">
@@ -45,7 +47,9 @@
         }
     %>
     </div>
-</p>
+<%
+    }
+%>
 <aui:script >
 
     var addToCartButtons = document.getElementsByClassName('add-to-cart')
