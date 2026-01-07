@@ -1,0 +1,15 @@
+name: Sync Repository to GitLab
+
+on:
+  push
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync to GitLab
+        uses: keninkujovic/gitlab-sync@2.1.0
+        with:
+          gitlab_url: ${{ secrets.GITLAB_OSS_URL }}
+          username: ${{ secrets.GITLAB_USERNAME }}
+          gitlab_pat: ${{ secrets.GITLAB_PAT }}
