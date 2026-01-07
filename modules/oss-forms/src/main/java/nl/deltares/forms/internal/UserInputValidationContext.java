@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.model.AccountInfo;
+import nl.deltares.model.RegistrationFormContext;
 import nl.deltares.model.RegistrationInfo;
 import nl.deltares.model.RegistrationsInfo;
 import nl.deltares.portal.model.impl.Registration;
@@ -34,19 +35,24 @@ public class UserInputValidationContext {
         _sessionUtils = sessionUtils;
         _userLocalService = userLocalService;
 
-        Object registrationsInfo = request.getSession().getAttribute("registrations-info");
+        RegistrationFormContext context = (RegistrationFormContext) request.getSession().getAttribute("registration-context");
+        if (context == null) {
+            context = new RegistrationFormContext();
+            request.getSession().setAttribute("registration-context", context);
+        }
+        RegistrationsInfo registrationsInfo = context.getRegistrationsInfo();
         if (registrationsInfo == null) {
             _registrationsInfo = new RegistrationsInfo();
-            request.getSession().setAttribute("registrations-info", _registrationsInfo);
+            context.setRegistrationsInfo(_registrationsInfo);
         } else {
-            _registrationsInfo = (RegistrationsInfo) registrationsInfo;
+            _registrationsInfo = registrationsInfo;
         }
 
         CPRequestHelper cpRequestHelper = new CPRequestHelper(request);
         ThemeDisplay themeDisplay = cpRequestHelper.getThemeDisplay();
         RegistrationsInfo.loadRegistrations(request, _registrationsInfo, dsdParserUtils, themeDisplay);
 
-        AccountInfo accountInfo = (AccountInfo) request.getSession().getAttribute("account-info");
+        AccountInfo accountInfo = context.getAccountInfo();
         if (accountInfo != null) {
             AccountEntry selectedAccountEntry = accountInfo.getSelectedAccountEntry();
             _validEmailDomains = selectedAccountEntry == null ? "" : selectedAccountEntry.getDomains();

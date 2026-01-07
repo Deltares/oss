@@ -2,6 +2,7 @@ package nl.deltares.forms.internal;
 
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import nl.deltares.model.RegistrationFormContext;
 import nl.deltares.model.RegistrationsInfo;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.DsdParserUtils;
@@ -13,18 +14,23 @@ public class UserRegistrationDisplayContext {
     private final RegistrationsInfo _registrationsInfo;
     private final String _displayURL;
 
-    public UserRegistrationDisplayContext(HttpServletRequest request, DsdParserUtils dsdParserUtils) throws Exception {
+    public UserRegistrationDisplayContext(HttpServletRequest request, DsdParserUtils dsdParserUtils) {
 
         CPRequestHelper cpRequestHelper = new CPRequestHelper(request);
         ThemeDisplay themeDisplay = cpRequestHelper.getThemeDisplay();
         _displayURL = themeDisplay.getSiteGroup().getDisplayURL(themeDisplay);
 
-        Object registrationsInfo = request.getSession().getAttribute("registrations-info");
+        RegistrationFormContext context = (RegistrationFormContext) request.getSession().getAttribute("registration-context");
+        if (context == null) {
+            context = new RegistrationFormContext();
+            request.getSession().setAttribute("registration-context", context);
+        }
+        RegistrationsInfo registrationsInfo = context.getRegistrationsInfo();
         if (registrationsInfo == null) {
             _registrationsInfo = new RegistrationsInfo();
-            request.getSession().setAttribute("registrations-info", _registrationsInfo);
+            context.setRegistrationsInfo(_registrationsInfo);
         } else {
-            _registrationsInfo = (RegistrationsInfo) registrationsInfo;
+            _registrationsInfo = registrationsInfo;
         }
         RegistrationsInfo.loadRegistrations(request, _registrationsInfo, dsdParserUtils, themeDisplay);
         RegistrationsInfo.loadUserRegistrations(_registrationsInfo, themeDisplay.getUser());
