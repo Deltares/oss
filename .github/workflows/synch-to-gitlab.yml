@@ -7,10 +7,6 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout respository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Sync to GitLab
         uses: keninkujovic/gitlab-sync@2.1.0
         with:
