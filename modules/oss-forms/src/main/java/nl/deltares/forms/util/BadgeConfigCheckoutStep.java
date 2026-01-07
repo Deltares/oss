@@ -51,8 +51,7 @@ public class BadgeConfigCheckoutStep extends BaseCheckoutStep {
                 httpServletRequest, _configurationProvider, _dsdParserUtils);
 
         try {
-            BadgeInfo badgeInfo = _displayContext.storeBadgeSettings(httpServletRequest);
-            httpServletRequest.getSession().setAttribute("badgeInfo", badgeInfo);
+            _displayContext.storeBadgeSettings(httpServletRequest);
         } catch (Exception e) {
             SessionErrors.add(httpServletRequest, RegistrationFormException.class,
                     Collections.singletonList(new RegistrationFormException(e.getMessage())));

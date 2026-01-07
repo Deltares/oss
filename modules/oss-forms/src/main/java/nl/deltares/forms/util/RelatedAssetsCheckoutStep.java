@@ -1,14 +1,11 @@
 package nl.deltares.forms.util;
 
-import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.servlet.SessionErrors;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.forms.constants.CheckoutWebKeys;
 import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.forms.internal.RelatedAssetsDisplayContext;
-import nl.deltares.forms.portlet.RegistrationFormConfiguration;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import org.osgi.service.component.annotations.Component;
@@ -43,13 +40,9 @@ public class RelatedAssetsCheckoutStep extends BaseCheckoutStep {
     @Override
     public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 
-        CPRequestHelper cpRequestHelper = new CPRequestHelper(httpServletRequest);
-        ThemeDisplay themeDisplay = cpRequestHelper.getThemeDisplay();
-        RegistrationFormConfiguration portletInstanceConfiguration = _configurationProvider.getPortletInstanceConfiguration(RegistrationFormConfiguration.class,
-                themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
-
-        httpServletRequest.setAttribute("relatedAssetsTemplate", portletInstanceConfiguration.relatedAssetsTemplate());
-        httpServletRequest.setAttribute("selectedAssetsTemplate", portletInstanceConfiguration.selectedAssetsTemplate());
+        RelatedAssetsDisplayContext displayContext = new RelatedAssetsDisplayContext(httpServletRequest,
+                _configurationProvider, _dsdJournalArticleUtils, _dsdParserUtils);
+        httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, displayContext);
 
         _jspRenderer.renderJSP(
                 httpServletRequest, httpServletResponse,
@@ -61,19 +54,8 @@ public class RelatedAssetsCheckoutStep extends BaseCheckoutStep {
 
         try {
             RelatedAssetsDisplayContext displayContext = new RelatedAssetsDisplayContext(httpServletRequest,
-                    _dsdJournalArticleUtils,
-                    _dsdParserUtils);
-            httpServletRequest.setAttribute(
-                    CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT,
-                    displayContext);
-
-
-            CPRequestHelper cpRequestHelper = new CPRequestHelper(httpServletRequest);
-            ThemeDisplay themeDisplay = cpRequestHelper.getThemeDisplay();
-            Boolean showAlways = _configurationProvider.getPortletInstanceConfiguration(RegistrationFormConfiguration.class,
-                    themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId()).alwaysShowRelatedInfo();
-
-            return showAlways || !displayContext.getRelatedArticles().isEmpty();
+                    _configurationProvider, _dsdJournalArticleUtils, _dsdParserUtils);
+            return displayContext.isActive();
         } catch (Exception e) {
             SessionErrors.add(httpServletRequest, RegistrationFormException.class, Collections.singletonList(
                     new RegistrationFormException(e.getMessage(), e)));

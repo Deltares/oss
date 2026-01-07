@@ -20,7 +20,6 @@ public class SubscriptionsDisplayContext {
 
     private final List<String> _subscriptionIds = new ArrayList<>();
     private final List<SubscriptionSelection> _subscriptions = new ArrayList<>();
-    private boolean loaded = false;
     private final EmailSubscriptionUtils _subscriptionUtil;
     private final User _user;
 
@@ -42,21 +41,18 @@ public class SubscriptionsDisplayContext {
 
     public List<SubscriptionSelection> getSubscriptions() {
 
-        if (!loaded) {
-            String emailAddress = _user.getEmailAddress();
-            List<SubscriptionSelection> subscriptions;
-            try {
-                subscriptions = _subscriptionUtil.getSubscriptions(emailAddress);
-            } catch (Exception e) {
-                LOG.warn("Error retrieving subscriptions: " + e.getMessage());
-                return Collections.emptyList();
+        String emailAddress = _user.getEmailAddress();
+        List<SubscriptionSelection> subscriptions;
+        try {
+            subscriptions = _subscriptionUtil.getSubscriptions(emailAddress);
+        } catch (Exception e) {
+            LOG.warn("Error retrieving subscriptions: " + e.getMessage());
+            return Collections.emptyList();
+        }
+        for (SubscriptionSelection subscription : subscriptions) {
+            if (_subscriptionIds.contains(subscription.getId())) {
+                _subscriptions.add(subscription);
             }
-            for (SubscriptionSelection subscription : subscriptions) {
-                if (_subscriptionIds.contains(subscription.getId())) {
-                    _subscriptions.add(subscription);
-                }
-            }
-            loaded = true;
         }
         return _subscriptions;
     }

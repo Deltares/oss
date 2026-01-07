@@ -1,7 +1,6 @@
 package nl.deltares.forms.internal;
 
 import com.liferay.account.model.AccountEntry;
-import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -16,9 +15,7 @@ import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import nl.deltares.emails.RegistrationEmail;
 import nl.deltares.emails.serializer.RegisterEmailSerializer;
 import nl.deltares.forms.exception.RegistrationFormException;
-import nl.deltares.model.BadgeInfo;
-import nl.deltares.model.BillingInfo;
-import nl.deltares.model.RegistrationInfo;
+import nl.deltares.model.*;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
@@ -33,51 +30,37 @@ import java.util.stream.Collectors;
 public class SubmitOrderDisplayContext {
 
     private final DSDSiteConfiguration _configuration;
-    private final boolean _showTerms;
-    private final List<RegistrationInfo> _registrationInfos;
-    private final ThemeDisplay _themeDisplay;
-    private final DsdParserUtils _dsdParserUtils;
-    private final HttpServletRequest _httpServletRequest;
+    private final User _loggedInUser;
+    private final RegistrationFormContext _context;
     private final WebinarUtilsFactory _webinarUtilsFactory;
     private final DsdSessionUtils _dsdSessionUtils;
     private final AdminUtils _adminUtils;
-    private final AccountEntryLocalService _accountEntryLocalService;
-    private final Event _event;
     private final UserLocalService _userLocalService;
+    private final DsdParserUtils _dsdParserUtils;
 
     public SubmitOrderDisplayContext(HttpServletRequest httpServletRequest, ConfigurationProvider configurationProvider,
-                                     DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils,
-                                     WebinarUtilsFactory webinarUtilsFactory, AdminUtils adminUtils, UserLocalService userLocalService,
-                                     AccountEntryLocalService accountEntryLocalService) throws Exception {
+                                     DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils, WebinarUtilsFactory webinarUtilsFactory,
+                                     AdminUtils adminUtils, UserLocalService userLocalService) throws Exception {
 
-        CPRequestHelper cpRequestHelper = new CPRequestHelper(httpServletRequest);
-        _themeDisplay = cpRequestHelper.getThemeDisplay();
-        _configuration = configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, _themeDisplay.getScopeGroupId());
-        _httpServletRequest = httpServletRequest;
-        _dsdParserUtils = dsdParserUtils;
         _dsdSessionUtils = dsdSessionUtils;
+        _dsdParserUtils = dsdParserUtils;
         _webinarUtilsFactory = webinarUtilsFactory;
         _adminUtils = adminUtils;
         _userLocalService = userLocalService;
-        _accountEntryLocalService = accountEntryLocalService;
 
-        _registrationInfos = (List<RegistrationInfo>) httpServletRequest.getSession().getAttribute("registrationInfos");
-        if (_registrationInfos == null || _registrationInfos.isEmpty()) {
+        ThemeDisplay themeDisplay = new CPRequestHelper(httpServletRequest).getThemeDisplay();
+        _configuration = configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class,
+                themeDisplay.getScopeGroupId());
+        _loggedInUser = themeDisplay.getUser();
+
+        _context = (RegistrationFormContext) httpServletRequest.getSession().getAttribute("registration-context");
+        if (_context == null || _context.getRegistrationsInfo() == null || _context.getRegistrationsInfo().getAllUserRegistrations().isEmpty()) {
             throw new RegistrationFormException("No registrations in session!");
         }
-        Optional<RegistrationInfo> payedInstance = _registrationInfos.stream()
-                .filter(registrationInfo -> registrationInfo.getPrice() > 0).findFirst();
-        _showTerms = payedInstance.isPresent();
-
-        _event = _dsdParserUtils.getEvent(_themeDisplay.getSiteGroupId(), String.valueOf(_configuration.eventId()), _themeDisplay.getLocale());
-    }
-
-    public long getCompanyId() {
-        return 10131;
     }
 
     public boolean showTerms() {
-        return _showTerms;
+        return _context.getRegistrationsInfo().isPaymentRequired();
     }
 
     public String getTermsURL() {
@@ -92,14 +75,25 @@ public class SubmitOrderDisplayContext {
         return _configuration.contactURL();
     }
 
-    public List<Exception> storeUserInformation() {
+    public long getEventId() {
+        return _configuration.eventId();
+    }
 
+    public List<Exception> loadEvents(ThemeDisplay themeDisplay){
         List<Exception> exceptions = new ArrayList<>();
-        BillingInfo billingInfo = (BillingInfo) _httpServletRequest.getSession().getAttribute("billingInfo");
-        Long accountEntryId = (Long) _httpServletRequest.getSession().getAttribute("selectedAccountEntryId");
-        for (RegistrationInfo registrationInfo : _registrationInfos) {
+        RegistrationsInfo registrationsInfo = _context.getRegistrationsInfo();
+        for (RegistrationInfo userRegistration : registrationsInfo.getAllUserRegistrations()) {
+
             try {
-                storeUserInformation(registrationInfo, billingInfo, accountEntryId);
+                Registration registration = registrationsInfo.getRegistration(userRegistration.getArticleId());
+                Event event = registrationsInfo.getEvent(String.valueOf(registration.getEventId()));
+                if (event == null) {
+                    event = _dsdParserUtils.getEvent(
+                            themeDisplay.getSiteGroupId(),
+                            String.valueOf(registration.getEventId()),
+                            themeDisplay.getLocale());
+                    registrationsInfo.putEvent(event);
+                }
             } catch (Exception e) {
                 exceptions.add(new RegistrationFormException(e.getMessage()));
             }
@@ -107,38 +101,51 @@ public class SubmitOrderDisplayContext {
         return exceptions;
     }
 
-    private void storeUserInformation(RegistrationInfo registrationInfo, BillingInfo billingInfo, Long accountEntryId) throws Exception {
+    public List<Exception> storeUserInformation() {
 
-        Registration registration = _dsdParserUtils.getRegistration(_themeDisplay.getSiteGroupId(), registrationInfo.getArticleId());
+        List<Exception> exceptions = new ArrayList<>();
+        BillingInfo billingInfo = _context.getBillingInfo();
+        AccountInfo accountInfo = _context.getAccountInfo();
+        RegistrationsInfo registrationsInfo = _context.getRegistrationsInfo();
+        for (RegistrationInfo userRegistration : registrationsInfo.getAllUserRegistrations()) {
 
-        User loggedInUser = _themeDisplay.getUser();
-        User registrationUser = _adminUtils.getOrCreateRegistrationUser(_themeDisplay.getCompanyId(), loggedInUser,
-                registrationInfo.getEmail(), registrationInfo.getFirstName(), registrationInfo.getLastName(), registrationInfo.getSalutation(),
-                _themeDisplay.getLocale());
+            try {
+                Registration registration = registrationsInfo.getRegistration(userRegistration.getArticleId());
+                Event event = registrationsInfo.getEvent(String.valueOf(registration.getEventId()));
+                storeUserInformation(userRegistration, accountInfo, billingInfo, registration, event);
+            } catch (Exception e) {
+                exceptions.add(new RegistrationFormException(e.getMessage()));
+            }
+        }
+        return exceptions;
+    }
 
+    private void storeUserInformation(RegistrationInfo userRegistration, AccountInfo accountInfo, BillingInfo billingInfo,
+                                      Registration registration, Event event) throws Exception {
 
-        storeBadgeSettings(registrationUser, loggedInUser);
+        User registrationUser = _adminUtils.getOrCreateRegistrationUser(accountInfo.getCompanyId(), _loggedInUser,
+                userRegistration.getEmail(), userRegistration.getFirstName(), userRegistration.getLastName(),
+                userRegistration.getSalutation(), _loggedInUser.getLocale());
+
+        storeBadgeSettings(registrationUser, _loggedInUser);
 
         Map<String, String> registrationAttributes = new HashMap<>();
-        if (!registrationInfo.getRemarks().isEmpty()) {
-            registrationAttributes.put("remarks", registrationInfo.getRemarks());
+        if (!userRegistration.getRemarks().isEmpty()) {
+            registrationAttributes.put("remarks", userRegistration.getRemarks());
         }
 
         if (billingInfo != null) {
             addBillingAttributes(billingInfo, registrationAttributes);
         }
-        AccountEntry accountEntry = null;
-        if (accountEntryId != null){
-            accountEntry = _accountEntryLocalService.fetchAccountEntry(accountEntryId);
-            if (accountEntry != null) {
-                registrationAttributes.put("accountEntryId", String.valueOf(accountEntry.getAccountEntryId()));
-            }
+        AccountEntry accountEntry = accountInfo.getSelectedAccountEntry();
+        if (accountEntry != null) {
+            registrationAttributes.put("accountEntryId", String.valueOf(accountEntry.getAccountEntryId()));
         }
+
         if (_webinarUtilsFactory.isWebinarSupported(registration)) {
             registerWebinar(registrationUser, (SessionRegistration) registration, accountEntry, registrationAttributes);
         }
-
-        _dsdSessionUtils.registerUser(registrationUser, registration, registrationAttributes, loggedInUser, _event);
+        _dsdSessionUtils.registerUser(registrationUser, registration, registrationAttributes, _loggedInUser, event);
     }
 
     private static void storeBadgeSettings(User registrationUser, User loggedInUser) throws PortalException {
@@ -220,10 +227,10 @@ public class SubmitOrderDisplayContext {
 
     }
 
-    public void sendRegistrationEmails() throws Exception {
+    public void sendRegistrationEmails(ThemeDisplay themeDisplay) throws Exception {
         if (!_configuration.enableEmails()) return;
 
-        ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", _themeDisplay.getLocale(), getClass());
+        ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", themeDisplay.getLocale(), getClass());
 
         RegistrationEmail registrationEmail = new RegistrationEmail(resourceBundle);
         registrationEmail.setReplyToEmail(_configuration.replyToEmail());
@@ -235,18 +242,24 @@ public class SubmitOrderDisplayContext {
             registrationEmail.addBCCEmail(email);
         }
 
-        String subject = LanguageUtil.format(resourceBundle, "dsd.register.subject", _event.getTitle());
-        registrationEmail.setSubject(subject);
-        registrationEmail.setEmailBanner(_event.getEmailBannerURL(), _event.getEmailBannerFileEntryId());
-        registrationEmail.setEmailFooter(_event.getEmailFooterURL(), _event.getEmailFooterFileEntryId());
-        registrationEmail.addCCEmail(_themeDisplay.getUser().getEmailAddress());
+        RegistrationsInfo registrationsInfo = _context.getRegistrationsInfo();
+        Event event = registrationsInfo.getEvent(String.valueOf(_configuration.eventId()));
+        if (event != null) {
+            String subject = LanguageUtil.format(resourceBundle, "dsd.register.subject", event.getTitle());
+            registrationEmail.setSubject(subject);
+            registrationEmail.setEmailBanner(event.getEmailBannerURL(), event.getEmailBannerFileEntryId());
+            registrationEmail.setEmailFooter(event.getEmailFooterURL(), event.getEmailFooterFileEntryId());
+        }
+
+        registrationEmail.addCCEmail(_loggedInUser.getEmailAddress());
 
         RegisterEmailSerializer serializer = new RegisterEmailSerializer();
 
-        Map<User, List<Registration>> mappedInfos = mapRegistrationsByUser(_registrationInfos);
+        List<RegistrationInfo> allUserRegistrations = registrationsInfo.getAllUserRegistrations();
+        Map<User, List<Registration>> mappedInfos = mapRegistrationsByUser(allUserRegistrations, themeDisplay);
         for (Map.Entry<User, List<Registration>> entry : mappedInfos.entrySet()) {
             registrationEmail.sendRegisterEmail(serializer, entry.getKey(), entry.getValue(),
-                    getRegistrationInfosForUser(_registrationInfos, entry.getKey()));
+                    getRegistrationInfosForUser(allUserRegistrations, entry.getKey()));
         }
     }
 
@@ -254,15 +267,16 @@ public class SubmitOrderDisplayContext {
         return registrationInfos.stream().filter(info -> info.getEmail().equals(user.getEmailAddress())).collect(Collectors.toList());
     }
 
-    private Map<User, List<Registration>> mapRegistrationsByUser(List<RegistrationInfo> registrationInfos) throws PortalException {
+    private Map<User, List<Registration>> mapRegistrationsByUser(List<RegistrationInfo> registrationInfos, ThemeDisplay themeDisplay) throws PortalException {
         HashMap<User, List<Registration>> map = new HashMap<>();
         for (RegistrationInfo registrationInfo : registrationInfos) {
-            User user = _userLocalService.fetchUserByEmailAddress(_themeDisplay.getCompanyId(), registrationInfo.getEmail());
+            User user = _userLocalService.fetchUserByEmailAddress(themeDisplay.getCompanyId(), registrationInfo.getEmail());
             if (user == null) continue;
-            Registration registration = _dsdParserUtils.getRegistration(_themeDisplay.getSiteGroupId(), registrationInfo.getArticleId());
+            Registration registration = _dsdParserUtils.getRegistration(themeDisplay.getSiteGroupId(), registrationInfo.getArticleId());
             List<Registration> list = map.computeIfAbsent(user, k -> new ArrayList<>());
             list.add(registration);
         }
         return map;
     }
+
 }

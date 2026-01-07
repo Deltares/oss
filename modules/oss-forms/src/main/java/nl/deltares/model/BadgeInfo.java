@@ -15,12 +15,16 @@ public class BadgeInfo implements Serializable {
     public final static String badge_initials = "badge_initials";
     public final static String[] ATTRIBUTES = new String[]{badge_name_setting, badge_title_setting,badge_title, badge_initials};
 
+    String event_title = null;
+    String event_time = null;
+    String banner_url = null;
     String name_setting = "name";
     String title_setting = "no";
     String title = null;
     String initials = null;
     String firstName = null;
     String lastName = null;
+
 
 
     public void setAttribute(String key, String value){
@@ -161,4 +165,27 @@ public class BadgeInfo implements Serializable {
     }
 
 
+    public void setEventTitle(String title) {
+        this.event_title = title;
+    }
+
+    public void setEventTime(String dateString) {
+        this.event_time = dateString;
+    }
+
+    public void setEventBannerURL(String bannerURL) {
+        this.banner_url = bannerURL;
+    }
+
+    public String getEventBannerURL() {
+        return banner_url == null ? "" : banner_url;
+    }
+
+    public String getEventTitle() {
+        return event_title == null ? "" : event_title;
+    }
+
+    public String getEventDate() {
+        return event_time == null ? "" : event_time;
+    }
 }

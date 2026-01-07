@@ -1,3 +1,4 @@
+<%@ page import="nl.deltares.model.RegistrationsInfo" %>
 <%@ include file="init.jsp" %>
 <div class="prose prose--app">
 <h3><liferay-ui:message key="registrationform.user.information"/></h3>
@@ -5,7 +6,8 @@
 <br/>
 <%
     UserRegistrationDisplayContext displayContext = (UserRegistrationDisplayContext) request.getAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT);
-    List<Registration> registrations = displayContext != null ? displayContext.getRegistrations() : Collections.emptyList();
+    RegistrationsInfo registrationsInfo = displayContext.getRegistrationsInfo();
+    List<Registration> registrations = registrationsInfo.getRegistrations();
     NumberFormat currencyInstance = NumberFormat.getInstance(themeDisplay.getLocale());
     currencyInstance.setMaximumFractionDigits(2);
     currencyInstance.setMinimumFractionDigits(2);
@@ -24,8 +26,8 @@
         } else {
             price = LanguageUtil.format(locale, "dsd.theme.session.free", java.util.Optional.empty());
         }
-        List<RegistrationInfo> registrationInfos = displayContext.getRegistrationInfos(registration);
-        int quantity = registrationInfos.size();
+        List<RegistrationInfo> userRegistrations = registrationsInfo.getUserRegistrations(registration.getArticleId());
+        int quantity = userRegistrations.size();
         String removeFromCartText = LanguageUtil.get(request, "registrationform.item.remove");
         String copyFormPreviousText = LanguageUtil.get(request, "registrationform.item.copy");
         if (first) {
@@ -113,7 +115,7 @@
                 int counter = 0;
                 String postfix = "";
             %>
-            <c:forEach items="<%=registrationInfos%>" var="registrationInfo">
+            <c:forEach items="<%=userRegistrations%>" var="registrationInfo">
                 <tr>
                     <td>
                         <aui:input

@@ -11,8 +11,6 @@ import java.util.Map;
 
 public class BillingInfo implements Serializable {
 
-    private final Map<String, Registration> currentRegistrations = new HashMap<>();
-
     public enum ATTRIBUTES {
         billing_company,
         billing_email,
@@ -275,21 +273,21 @@ public class BillingInfo implements Serializable {
         this.lastName = lastName;
     }
 
-    public Registration getRegistration(String registrationId){
-        return currentRegistrations.get(registrationId);
-    }
-
-    public void setRegistrations(List<Registration> registrations){
-        currentRegistrations.clear();
-        for (Registration registration : registrations) {
-            currentRegistrations.put(registration.getArticleId(), registration);
-        }
-    }
-
-    public boolean isPaymentRequired() {
-        for (Registration value : currentRegistrations.values()) {
-            if (value.getPrice() > 0) return true;
-        }
-        return false;
-    }
+//    public Registration getRegistration(String registrationId){
+//        return currentRegistrations.get(registrationId);
+//    }
+//
+//    public void setRegistrations(List<Registration> registrations){
+//        currentRegistrations.clear();
+//        for (Registration registration : registrations) {
+//            currentRegistrations.put(registration.getArticleId(), registration);
+//        }
+//    }
+//
+//    public boolean isPaymentRequired() {
+//        for (Registration value : currentRegistrations.values()) {
+//            if (value.getPrice() > 0) return true;
+//        }
+//        return false;
+//    }
 }

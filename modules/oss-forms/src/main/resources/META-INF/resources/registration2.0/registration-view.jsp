@@ -1,8 +1,8 @@
 <div class="row no-gutters">
     <%
-        String viewURL = displayContext.getViewURL(registration);
+        String viewURL = displayContext.getViewURL(registration.getArticleId());
         viewURL += "?redirect=" + PortalUtil.getCurrentURL(request);
-        String imageUrl = registration.getSmallImageURL(displayContext.getThemeDisplay());
+        String imageUrl = registration.getSmallImageURL(themeDisplay);
         String title = registration.getTitle();
         String timeZoneId = registration.getTimeZoneId();
     %>

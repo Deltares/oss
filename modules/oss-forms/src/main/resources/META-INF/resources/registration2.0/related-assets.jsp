@@ -1,11 +1,11 @@
 <%@ include file="init.jsp" %>
 <%
     RelatedAssetsDisplayContext displayContext = (RelatedAssetsDisplayContext) request.getAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT);
-    String relatedAssetsTemplate = (String) request.getAttribute("relatedAssetsTemplate");
-    String selectedAssetsTemplate = (String) request.getAttribute("selectedAssetsTemplate");
+    String relatedAssetsTemplate = displayContext.getRelatedAssetsTemplate();
+    String selectedAssetsTemplate = displayContext.getSelectedAssetsTemplate();
 
-    List<String> selectedArticleIds = displayContext != null ? displayContext.getSelectedArticleIds() : Collections.emptyList();
-    List<Registration> relatedArticles = displayContext != null ? displayContext.getRelatedArticles() : Collections.emptyList();
+    List<String> selectedArticleIds = displayContext.getSelectedArticleIds();
+    List<Registration> relatedArticles = displayContext.getRelatedArticles();
 
 %>
     <div class="prose prose--app">
@@ -25,7 +25,7 @@
     <%
         }
 
-        if (relatedArticles.size() > 0) {
+        if (!relatedArticles.isEmpty()) {
     %>
 <br />
     <div class="prose prose--app">

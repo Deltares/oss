@@ -29,7 +29,7 @@ import java.util.Collections;
 )
 public class UserRegistrationCheckoutStep extends BaseCheckoutStep {
 
-    public static final String NAME = "cart-content";
+    public static final String NAME = "registrations-info";
 
     @Override
     public String getName() {
@@ -41,24 +41,18 @@ public class UserRegistrationCheckoutStep extends BaseCheckoutStep {
 
         HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
         UserInputValidationContext _registrationContext = new UserInputValidationContext(
-                httpServletRequest, _dsdSessionUtils, _dsdParserUtils, _userLocalService, _accountEntryLocalService);
-        _registrationContext.validateRequestData();
-        httpServletRequest.getSession().setAttribute("registrationInfos", _registrationContext.getRegistrationInformation());
+                httpServletRequest, _dsdSessionUtils, _dsdParserUtils, _userLocalService);
+
+        _registrationContext.storeUserRegistrationInfos(httpServletRequest);
+        _registrationContext.validateRequestData(httpServletRequest);
     }
 
     @Override
     public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 
-        try {
-            UserRegistrationDisplayContext displayContext = new UserRegistrationDisplayContext(httpServletRequest,
-                    _dsdParserUtils);
-            httpServletRequest.setAttribute(
-                    CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT,
-                    displayContext);
-        } catch (Exception e) {
-            SessionErrors.add(httpServletRequest, RegistrationFormException.class, Collections.singletonList(
-                    new RegistrationFormException(e.getMessage(), e)));
-        }
+        UserRegistrationDisplayContext displayContext = new UserRegistrationDisplayContext(httpServletRequest,
+                _dsdParserUtils);
+        httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, displayContext);
 
         _jspRenderer.renderJSP(
                 httpServletRequest, httpServletResponse,
@@ -79,8 +73,5 @@ public class UserRegistrationCheckoutStep extends BaseCheckoutStep {
 
     @Reference
     private UserLocalService _userLocalService;
-
-    @Reference
-    private AccountEntryLocalService _accountEntryLocalService;
 
 }

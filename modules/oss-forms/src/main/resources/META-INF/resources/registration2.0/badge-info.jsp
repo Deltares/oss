@@ -12,9 +12,9 @@
 <div class="row">
     <div class="col-md-12">
         <%
-            String emailBannerURL = displayContext.getBannerUrl();
-            String eventTitle = displayContext.getEventTitle();
-            String eventDate = displayContext.getEventDate();
+            String emailBannerURL = badgeInfo.getEventBannerURL();
+            String eventTitle = badgeInfo.getEventTitle();
+            String eventDate = badgeInfo.getEventDate();
         %>
         <div class="card mb-3">
             <% if (emailBannerURL != null) { %>

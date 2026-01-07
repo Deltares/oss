@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import nl.deltares.forms.constants.OrganizationConstants;
 import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.model.AccountInfo;
+import nl.deltares.model.RegistrationFormContext;
 import nl.deltares.portal.configuration.SiteMapConfiguration;
 import nl.deltares.portal.utils.AccountUtils;
 
@@ -45,8 +46,13 @@ public class AccountSelectionCheckoutStepDisplayContext{
         _userLocalService = userLocalService;
         _commerceUtils = commerceUtils;
 
-        Object accountInfo = request.getSession().getAttribute("account-info");
-        if (accountInfo == null){
+        RegistrationFormContext context = (RegistrationFormContext) request.getSession().getAttribute("registration-context");
+        if (context == null) {
+            context = new RegistrationFormContext();
+            request.getSession().setAttribute("registration-context", context);
+        }
+        AccountInfo accountInfo = context.getAccountInfo();
+        if (accountInfo == null) {
             CPRequestHelper cpRequestHelper = new CPRequestHelper(request);
             ThemeDisplay themeDisplay = cpRequestHelper.getThemeDisplay();
 
@@ -55,14 +61,10 @@ public class AccountSelectionCheckoutStepDisplayContext{
             _accountInfo.setCurrentUser(themeDisplay.getUser());
             _accountInfo.setCompanyId(_configuration.accountsCompanyId());
             loadAccounts(_accountInfo);
-            request.getSession().setAttribute("account-info", _accountInfo);
+            context.setAccountInfo(_accountInfo);
         } else {
-            _accountInfo = (AccountInfo) accountInfo;
+            _accountInfo = accountInfo;
         }
-    }
-
-    AccountInfo getAccountInfo(){
-        return _accountInfo;
     }
 
     public AccountEntry getSelectedAccountEntry(){
@@ -107,10 +109,6 @@ public class AccountSelectionCheckoutStepDisplayContext{
             return attribute == null ? "" : (String) attribute;
         }
         return "";
-    }
-
-    public AccountEntry getAccountEntry(long accountEntryId) {
-        return  _accountInfo.getAccountEntry(accountEntryId);
     }
 
     public Address addOrUpdateBillingAddress(HttpServletRequest request, AccountEntry accountEntry, long selectedAddressId) throws PortalException {
