@@ -14,6 +14,6 @@ jobs:
       - name: Sync to GitLab
         uses: keninkujovic/gitlab-sync@2.1.0
         with:
-          gitlab_url: ${{ secrets.GITLAB_OSS_URL }}
+          gitlab_url: https://open-git.deltares.nl/mydeltares/oss.git
           username: ${{ secrets.GITLAB_USERNAME }}
           gitlab_pat: ${{ secrets.GITLAB_PAT }}
