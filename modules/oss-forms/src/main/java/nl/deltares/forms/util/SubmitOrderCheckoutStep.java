@@ -44,20 +44,14 @@ public class SubmitOrderCheckoutStep extends BaseCheckoutStep {
         SubmitOrderDisplayContext _submitOrderDisplayContext = new SubmitOrderDisplayContext(httpServletRequest, _configurationProvider,
                 _dsdParserUtils, _dsdSessionUtils, _webinarUtilsFactory, _adminUtils, _userLocalService);
 
+        List<Exception> exceptions = _submitOrderDisplayContext.storeUserInformation();
+        if (!exceptions.isEmpty()) {
+            httpServletRequest.setAttribute("action", "register-error");
+            SessionErrors.add(httpServletRequest, RegistrationFormException.class, exceptions);
+            return;
+        }
         ThemeDisplay themeDisplay = new CPRequestHelper(httpServletRequest).getThemeDisplay();
-        List<Exception> exceptions = _submitOrderDisplayContext.loadEvents(themeDisplay);
-        if (!exceptions.isEmpty()) {
-            httpServletRequest.setAttribute("action", "register-error");
-            SessionErrors.add(httpServletRequest, RegistrationFormException.class, exceptions);
-            return;
-        }
 
-        exceptions = _submitOrderDisplayContext.storeUserInformation();
-        if (!exceptions.isEmpty()) {
-            httpServletRequest.setAttribute("action", "register-error");
-            SessionErrors.add(httpServletRequest, RegistrationFormException.class, exceptions);
-            return;
-        }
         try {
             _submitOrderDisplayContext.sendRegistrationEmails(themeDisplay);
         } catch (Exception e) {

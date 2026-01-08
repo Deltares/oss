@@ -49,7 +49,9 @@ public class RelatedAssetsDisplayContext {
                 themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
 
         RegistrationsInfo.loadRegistrations(request, _registrationsInfo, dsdParserUtils, themeDisplay);
+        RegistrationsInfo.loadRegistrationEvents(_registrationsInfo, dsdParserUtils);
         RegistrationsInfo.loadRelatedArticles(_registrationsInfo, dsdJournalArticleUtils, dsdParserUtils);
+        RegistrationsInfo.loadChildArticles(_registrationsInfo);
     }
 
     public JournalArticleDisplay getArticleDisplay(PortletRequest portletRequest, PortletResponse portletResponse,

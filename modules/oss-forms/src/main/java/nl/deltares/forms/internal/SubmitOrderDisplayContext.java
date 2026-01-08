@@ -79,28 +79,6 @@ public class SubmitOrderDisplayContext {
         return _configuration.eventId();
     }
 
-    public List<Exception> loadEvents(ThemeDisplay themeDisplay){
-        List<Exception> exceptions = new ArrayList<>();
-        RegistrationsInfo registrationsInfo = _context.getRegistrationsInfo();
-        for (RegistrationInfo userRegistration : registrationsInfo.getAllUserRegistrations()) {
-
-            try {
-                Registration registration = registrationsInfo.getRegistration(userRegistration.getArticleId());
-                Event event = registrationsInfo.getEvent(String.valueOf(registration.getEventId()));
-                if (event == null) {
-                    event = _dsdParserUtils.getEvent(
-                            themeDisplay.getSiteGroupId(),
-                            String.valueOf(registration.getEventId()),
-                            themeDisplay.getLocale());
-                    registrationsInfo.putEvent(event);
-                }
-            } catch (Exception e) {
-                exceptions.add(new RegistrationFormException(e.getMessage()));
-            }
-        }
-        return exceptions;
-    }
-
     public List<Exception> storeUserInformation() {
 
         List<Exception> exceptions = new ArrayList<>();

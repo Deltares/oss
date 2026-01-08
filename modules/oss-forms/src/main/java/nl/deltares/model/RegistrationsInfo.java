@@ -83,6 +83,21 @@ public class RegistrationsInfo {
         registrationsInfo.setRegistrations(newRegistrations);
     }
 
+    public static void loadRegistrationEvents(RegistrationsInfo registrationsInfo, DsdParserUtils dsdParserUtils){
+        List<Registration> selectedRegistrations = registrationsInfo.getRegistrations();
+        for (Registration selectedRegistration : selectedRegistrations) {
+            long eventId = selectedRegistration.getEventId();
+            Event event = registrationsInfo.getEvent(String.valueOf(eventId));
+            if (event == null){
+                try {
+                    event = dsdParserUtils.getEvent(registrationsInfo.getRegistrationsGroupId(), String.valueOf(eventId), selectedRegistration.getLocale());
+                    registrationsInfo.putEvent(event);
+                } catch (PortalException e) {
+                    //
+                }
+            }
+        }
+    }
     public static void loadRelatedArticles(RegistrationsInfo registrationsInfo, DsdJournalArticleUtils dsdJournalArticleUtils,
                                            DsdParserUtils dsdParserUtils) throws Exception {
 
@@ -105,6 +120,32 @@ public class RegistrationsInfo {
             }
         }
         registrationsInfo.setRelatedArticles(relatedRegistrations);
+    }
+
+    public static void loadChildArticles(RegistrationsInfo registrationsInfo) {
+        List<String> selectedRegistrationIds = registrationsInfo.getRegistrationArticleIds();
+        List<Registration> relatedArticles = registrationsInfo.getRelatedArticles();
+        Collection<Event> loadedEvents = registrationsInfo.eventsMap.values();
+        for (Event loadedEvent : loadedEvents) {
+            List<Registration> eventRegistrations = loadedEvent.getRegistrations(loadedEvent.getLocale());
+            for (Registration registration : eventRegistrations) {
+                if (registration.hasParent()){
+
+                    Registration parent = registration.getParentRegistration();
+
+                    boolean childIsSelected = selectedRegistrationIds.contains(registration.getArticleId());
+                    boolean parentIsSelected = selectedRegistrationIds.contains(parent.getArticleId());
+                    if ( childIsSelected && !parentIsSelected){
+                        //This is a parent registration that has not been selected yet
+                        relatedArticles.add(parent);
+                    } else if (parentIsSelected && !childIsSelected) {
+                        //This is a child registration that has not been selected yet
+                        relatedArticles.add(registration);
+                    }
+                }
+            }
+        }
+        registrationsInfo.setRelatedArticles(relatedArticles);
     }
 
     public static void loadUserRegistrations(RegistrationsInfo registrationsInfo, User user) {
