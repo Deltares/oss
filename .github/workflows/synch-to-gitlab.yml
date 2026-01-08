@@ -7,9 +7,12 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Sync to GitLab
-        uses: keninkujovic/gitlab-sync@2.1.0
+      - uses: actions/checkout@v4
         with:
-          gitlab_url: https://open-git.deltares.nl/mydeltares/oss.git
-          username: ${{ secrets.GITLAB_USERNAME }}
-          gitlab_pat: ${{ secrets.GITLAB_PAT }}
+         fetch-depth: 0
+      - name: Sync to GitLab
+        uses: yesolutions/mirror-action@master
+        with:
+          REMOTE: https://open-git.deltares.nl/mydeltares/oss.git
+          GIT_USERNAME: ${{ secrets.GITLAB_USERNAME }}
+          GIT_PASSWORD: ${{ secrets.GITLAB_PAT }}
