@@ -7,7 +7,8 @@
     <#assign articleId = .vars['reserved-article-id'].getData() />
     <#assign urltitle=.vars['reserved-article-url-title'].data />
     <#assign registration = dsdParserUtils.getRegistration(groupId,articleId) />
-    <#assign childRegistrations = dsdSessionUtils.getChildRegistrations(registration) />
+    <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string, locale) />
+    <#assign childRegistrations = dsdSessionUtils.getChildRegistrations(registration, event.getRegistrations(locale)) />
     <#assign displayContext = dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay) />
     <#assign timeZoneId = registration.getTimeZoneId() />
     <#assign timeZone = timeZoneUtil.getTimeZone(timeZoneId) />

@@ -104,7 +104,7 @@
 						</div>
                         <br/>
                         <#if registration.getEventId() gt 0 >
-                            <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string, themeDisplay.getLocale()) />
+                            <#assign event = dsdParserUtils.getEvent(groupId, registration.getEventId()?string, locale) />
                         </#if>
                             ${languageUtil.get(locale, "dsd.theme.session.room")} :
                         <#if room??>
@@ -145,7 +145,8 @@
                         </#if>
                         <#else >
                             <#if registration.canUserRegister(user.getUserId()) && themeDisplay.isSignedIn() && available gt 0>
-                                <#assign relatedArticles = dsdSessionUtils.getChildRegistrations(registration) />
+                                <#assign eventRegistrations = event.getRegistrations(locale) />
+                                <#assign relatedArticles = dsdSessionUtils.getChildRegistrations(registration, eventRegistrations) />
                                 <#assign args = "["/>
                                 <#list relatedArticles as relatedArticle >
                                     <#assign args = args + relatedArticle.getArticleId() />
