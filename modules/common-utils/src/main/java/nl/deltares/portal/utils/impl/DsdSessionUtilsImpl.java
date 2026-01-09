@@ -7,6 +7,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.GroupServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.portal.exception.ValidationException;
 import nl.deltares.portal.model.database.RegistrationData;
@@ -100,18 +101,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
                 registerWebinarUser(user, userAttributes, (SessionRegistration) registration, registrationProperties);
             }
         } finally {
-            long parentId = registration.getParentRegistration() == null ? 0 : registration.getParentRegistration().getResourceId();
-
-            long eventResourcePrimaryKey = 0;
-            if (event != null) eventResourcePrimaryKey = event.getResourceId();
-            long registeredByUserId = 0;
-            if (registrationUser != null && registrationUser != user) {
-                registeredByUserId = registrationUser.getUserId();
-            }
-            RegistrationLocalServiceUtil.addUserRegistration(
-                    registration.getCompanyId(), registration.getGroupId(), registration.getResourceId(), eventResourcePrimaryKey,
-                    parentId, user.getUserId(),
-                    registration.getStartTime(), registration.getEndTime(), JsonContentUtils.formatMapToJson(registrationProperties), registeredByUserId);
+            registerUser(user, registration, registrationProperties, registrationUser, event);
         }
     }
 
@@ -401,9 +391,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
                 RegistrationLocalServiceUtil.getEventRegistrations(event.getGroupId(), event.getResourceId());
         List<RegistrationData> registrations = new ArrayList<>();
         dbRegistrations.forEach(dbRegistration ->
-        {
-            registrations.add(getRegistrationData(dbRegistration));
-        });
+                registrations.add(getRegistrationData(dbRegistration)));
         return registrations;
     }
 
@@ -413,7 +401,11 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         registrationData.setCompanyId(dbRegistration.getCompanyId());
         registrationData.setGroupId(dbRegistration.getGroupId());
         registrationData.setAuthorId(dbRegistration.getRegisteredByUserId());
+        User author = UserLocalServiceUtil.fetchUser(dbRegistration.getRegisteredByUserId());
+        if (author != null) registrationData.setAuthorFullName(author.getFullName());
         registrationData.setUserId(dbRegistration.getUserId());
+        User user = UserLocalServiceUtil.fetchUser(dbRegistration.getUserId());
+        if (user != null) registrationData.setUserFullName(user.getFullName());
         registrationData.setResourceId(dbRegistration.getResourcePrimaryKey());
         registrationData.setEventResourceId(dbRegistration.getEventResourcePrimaryKey());
         registrationData.setParentResourceId(dbRegistration.getParentResourcePrimaryKey());

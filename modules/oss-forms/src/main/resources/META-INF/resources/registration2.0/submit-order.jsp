@@ -20,6 +20,7 @@
 <div class="form-group-autofit">
     <aui:a href="<%=displayContext.getTermsURL()%>"
            wrapperCssClass="form-group-item"
+           target="_blank"
            label="registrationform.terms.view"/>
 </div>
 <%

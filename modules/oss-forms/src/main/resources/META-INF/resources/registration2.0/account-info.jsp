@@ -149,6 +149,10 @@
 
     //store the account information
     let accountSelection = document.getElementById("<portlet:namespace />accountSelection");
+    if (!accountSelection){
+        CommonFormsUtil.writeError("<portlet:namespace />", "Please reload the page, an error occurred while loading the account selection.");
+        return;
+    }
     accountSelection.onchange = function (event){
         RegistrationFormsUtil.accountSelectionChanged("<portlet:namespace />", event.target, "<%=paramName%>" )
     }

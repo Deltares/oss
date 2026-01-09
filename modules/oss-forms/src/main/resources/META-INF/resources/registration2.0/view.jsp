@@ -1,4 +1,3 @@
-<%@ page import="com.liferay.portal.kernel.util.*" %>
 <%@ include file="init.jsp"%>
 
 <portlet:actionURL name="<%= OssConstants.SUBMIT_REGISTER_FORM_URL %>" var="submitRegisterForm"/>
@@ -7,7 +6,7 @@
 <div class="row">
    <div class="commerce-checkout container-fluid container-fluid-max-xl">
         <c:choose>
-            <c:when test="<%= ids == null || ids.isEmpty() %>">
+            <c:when test="<%= ids == null || ids.isEmpty()%>">
                 <div class="alert alert-info mx-auto">
                     <liferay-ui:message key="the-cart-is-empty" />
                     <liferay-ui:message key="please-add-products-to-proceed-with-the-checkout" />

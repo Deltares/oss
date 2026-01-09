@@ -42,23 +42,18 @@ public class SubmitOrderCheckoutStep extends BaseCheckoutStep {
 
         HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
         SubmitOrderDisplayContext _submitOrderDisplayContext = new SubmitOrderDisplayContext(httpServletRequest, _configurationProvider,
-                _dsdParserUtils, _dsdSessionUtils, _webinarUtilsFactory, _adminUtils, _userLocalService);
+                _dsdParserUtils, _dsdSessionUtils, _dsdJournalArticleUtils, _webinarUtilsFactory, _adminUtils, _userLocalService);
 
         List<Exception> exceptions = _submitOrderDisplayContext.storeUserInformation();
         if (!exceptions.isEmpty()) {
             httpServletRequest.setAttribute("action", "register-error");
-            SessionErrors.add(httpServletRequest, RegistrationFormException.class, exceptions);
             return;
         }
         ThemeDisplay themeDisplay = new CPRequestHelper(httpServletRequest).getThemeDisplay();
-
         try {
             _submitOrderDisplayContext.sendRegistrationEmails(themeDisplay);
         } catch (Exception e) {
             httpServletRequest.setAttribute("action", "register-error");
-            SessionErrors.add(httpServletRequest, RegistrationFormException.class, Collections.singletonList(
-                    new RegistrationFormException(e.getMessage())
-            ));
         }
 
         if (SessionErrors.isEmpty(httpServletRequest)) {
@@ -72,7 +67,7 @@ public class SubmitOrderCheckoutStep extends BaseCheckoutStep {
     public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 
         SubmitOrderDisplayContext _submitOrderDisplayContext = new SubmitOrderDisplayContext(httpServletRequest, _configurationProvider,
-                _dsdParserUtils, _dsdSessionUtils, _webinarUtilsFactory, _adminUtils, _userLocalService);
+                _dsdParserUtils, _dsdSessionUtils, _dsdJournalArticleUtils, _webinarUtilsFactory, _adminUtils, _userLocalService);
         httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, _submitOrderDisplayContext);
 
         _jspRenderer.renderJSP(
@@ -94,6 +89,9 @@ public class SubmitOrderCheckoutStep extends BaseCheckoutStep {
 
     @Reference
     private DsdSessionUtils _dsdSessionUtils;
+
+    @Reference
+    private DsdJournalArticleUtils _dsdJournalArticleUtils;
 
     @Reference
     private WebinarUtilsFactory _webinarUtilsFactory;

@@ -197,6 +197,10 @@ public class AccountSelectionCheckoutStepDisplayContext{
         try {
             selectedAccountEntry = addOrUpdateAccountEntry(httpServletRequest, accountEntryId);
             _accountInfo.setSelectedAccount(selectedAccountEntry);
+            if (selectedAccountEntry != null && _accountInfo.getAccountEntry(selectedAccountEntry.getAccountEntryId()) == null) {
+                _accountInfo.addAccount(selectedAccountEntry);
+            }
+
         } catch (Exception e) {
             SessionErrors.add(httpServletRequest, RegistrationFormException.class.getName(),
                     Collections.singletonList(new RegistrationFormException(e.getMessage())));

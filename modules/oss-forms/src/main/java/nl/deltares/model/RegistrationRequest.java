@@ -143,10 +143,10 @@ public class RegistrationRequest {
     }
 
     public void setSubscribableMailingIds(String mailingIds) {
-        if (mailingIds == null || mailingIds.length() == 0) return;
+        if (mailingIds == null || mailingIds.isEmpty()) return;
         this.mailingIds = new ArrayList<>();
         String[] split = mailingIds.split(";");
-        Arrays.stream(split).forEach(id -> {if (id.trim().length() > 0) this.mailingIds.add(id); });
+        Arrays.stream(split).forEach(id -> {if (!id.trim().isEmpty()) this.mailingIds.add(id); });
     }
 
     public List<String> getSubscribableMailingIds() {

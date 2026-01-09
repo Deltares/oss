@@ -24,6 +24,8 @@ public class RegistrationEmail {
     private User _user;
     private List<Registration> _registrations;
     private List<RegistrationInfo> _registrationInfos;
+    private String siteUrl;
+    private Map<String, String> typeTranslations = new HashMap<>();
 
     public RegistrationEmail(ResourceBundle bundle) {
         this.bundle = bundle;
@@ -114,5 +116,21 @@ public class RegistrationEmail {
     public String getRemarks(String articleId) {
         Optional<RegistrationInfo> first = _registrationInfos.stream().filter(info -> info.getArticleId().equals(articleId)).findFirst();
         return first.map(RegistrationInfo::getRemarks).orElse(null);
+    }
+
+    public void setSiteUrl(String siteUrl) {
+        this.siteUrl = siteUrl;
+    }
+
+    public String getSiteUrl() {
+        return siteUrl;
+    }
+
+    public String translateRegistrationType(String type) {
+        return typeTranslations.getOrDefault(type, type);
+    }
+
+    public void setTypeTranslations(Map<String, String> typeTranslations) {
+        this.typeTranslations = typeTranslations;
     }
 }

@@ -11,7 +11,9 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.GroupServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import nl.deltares.emails.RegistrationEmail;
 import nl.deltares.emails.serializer.RegisterEmailSerializer;
 import nl.deltares.forms.exception.RegistrationFormException;
@@ -34,16 +36,19 @@ public class SubmitOrderDisplayContext {
     private final RegistrationFormContext _context;
     private final WebinarUtilsFactory _webinarUtilsFactory;
     private final DsdSessionUtils _dsdSessionUtils;
+    private final DsdJournalArticleUtils _dsdJournalArticleUtils;
     private final AdminUtils _adminUtils;
     private final UserLocalService _userLocalService;
     private final DsdParserUtils _dsdParserUtils;
 
     public SubmitOrderDisplayContext(HttpServletRequest httpServletRequest, ConfigurationProvider configurationProvider,
-                                     DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils, WebinarUtilsFactory webinarUtilsFactory,
+                                     DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils, DsdJournalArticleUtils dsdJournalArticleUtils,
+                                     WebinarUtilsFactory webinarUtilsFactory,
                                      AdminUtils adminUtils, UserLocalService userLocalService) throws Exception {
 
         _dsdSessionUtils = dsdSessionUtils;
         _dsdParserUtils = dsdParserUtils;
+        _dsdJournalArticleUtils = dsdJournalArticleUtils;
         _webinarUtilsFactory = webinarUtilsFactory;
         _adminUtils = adminUtils;
         _userLocalService = userLocalService;
@@ -101,7 +106,7 @@ public class SubmitOrderDisplayContext {
     private void storeUserInformation(RegistrationInfo userRegistration, AccountInfo accountInfo, BillingInfo billingInfo,
                                       Registration registration, Event event) throws Exception {
 
-        User registrationUser = _adminUtils.getOrCreateRegistrationUser(accountInfo.getCompanyId(), _loggedInUser,
+        User registrationUser = _adminUtils.getOrCreateRegistrationUser(_loggedInUser.getCompanyId(), _loggedInUser,
                 userRegistration.getEmail(), userRegistration.getFirstName(), userRegistration.getLastName(),
                 userRegistration.getSalutation(), _loggedInUser.getLocale());
 
@@ -220,14 +225,27 @@ public class SubmitOrderDisplayContext {
             registrationEmail.addBCCEmail(email);
         }
 
+        String siteUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay, themeDisplay.getLocale());
+        registrationEmail.setSiteUrl(siteUrl);
+
         RegistrationsInfo registrationsInfo = _context.getRegistrationsInfo();
         Event event = registrationsInfo.getEvent(String.valueOf(_configuration.eventId()));
         if (event != null) {
+            String baseUrl = themeDisplay.getCDNBaseURL();
             String subject = LanguageUtil.format(resourceBundle, "dsd.register.subject", event.getTitle());
             registrationEmail.setSubject(subject);
-            registrationEmail.setEmailBanner(event.getEmailBannerURL(), event.getEmailBannerFileEntryId());
-            registrationEmail.setEmailFooter(event.getEmailFooterURL(), event.getEmailFooterFileEntryId());
+            registrationEmail.setEmailBanner(baseUrl + event.getEmailBannerURL(), event.getEmailBannerFileEntryId());
+            registrationEmail.setEmailFooter(baseUrl + event.getEmailFooterURL(), event.getEmailFooterFileEntryId());
         }
+
+        String[] structureKeys = getStructureKeys(_configuration);
+        String dsdRegistrationTypeField = _configuration.dsdRegistrationTypeField();
+        Map<String, String> typeTranslations = new HashMap<>();
+        for (String structureKey : structureKeys) {
+            typeTranslations.putAll(_dsdJournalArticleUtils.getStructureFieldOptions(themeDisplay.getSiteGroupId(),
+                    structureKey, dsdRegistrationTypeField, themeDisplay.getLocale()));
+        }
+        registrationEmail.setTypeTranslations(typeTranslations);
 
         registrationEmail.addCCEmail(_loggedInUser.getEmailAddress());
 
@@ -243,6 +261,15 @@ public class SubmitOrderDisplayContext {
 
     private List<RegistrationInfo> getRegistrationInfosForUser(List<RegistrationInfo> registrationInfos, User user) {
         return registrationInfos.stream().filter(info -> info.getEmail().equals(user.getEmailAddress())).collect(Collectors.toList());
+    }
+
+    private String[] getStructureKeys(DSDSiteConfiguration configuration) {
+        if (configuration == null) return new String[0];
+        String structureList = configuration.dsdRegistrationStructures();
+        if (structureList != null && !structureList.isEmpty()){
+            return StringUtil.split(structureList, ' ');
+        }
+        return new String[0];
     }
 
     private Map<User, List<Registration>> mapRegistrationsByUser(List<RegistrationInfo> registrationInfos, ThemeDisplay themeDisplay) throws PortalException {

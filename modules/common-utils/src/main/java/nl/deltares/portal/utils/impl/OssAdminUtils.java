@@ -14,6 +14,8 @@ import com.liferay.message.boards.model.MBMessage;
 import com.liferay.message.boards.model.MBThread;
 import com.liferay.message.boards.service.*;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.*;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.*;
@@ -50,6 +52,8 @@ public class OssAdminUtils implements AdminUtils {
 
     @Reference
     private PortalPreferencesLocalService portalPreferencesLocalService;
+
+    private static final Log LOG = LogFactoryUtil.getLog(OssAdminUtils.class);
 
     public KeycloakUtils getKeycloakUtils() {
         return keycloakUtils;
@@ -136,19 +140,15 @@ public class OssAdminUtils implements AdminUtils {
         }
 
         if (registrationUser == null){
-            String userName;
-            try {
-                userName = getUserName(registrationEmail);
-            } catch (Exception e) {
-                userName = registrationEmail.split("@")[0];
-            }
+            String optionalUserName = getUsernameFromKeycloak(registrationEmail);
             final ServiceContext serviceContext = new ServiceContext();
-            serviceContext.setScopeGroupId(loggedInUser.getGroupId());
-            return userLocalService.addUser(loggedInUser.getUserId(), companyId, true,
-                    null, null, false, userName, registrationEmail,
+            serviceContext.setCompanyId(companyId);
+            serviceContext.setUserId(loggedInUser.getUserId());
+            return userLocalService.addOrUpdateUser(
+                    null,loggedInUser.getUserId(), companyId, true, null, null,
+                    true, optionalUserName, registrationEmail,
                     locale, firstName, null, lastName, 0, 0, true,
-                    1, 1, 1970, salutation, 1, new long[0],
-                    new long[0], new long[0], new long[0], false, serviceContext);
+                    1, 1, 1970, salutation, false, serviceContext);
 
         } else {
 
@@ -161,25 +161,30 @@ public class OssAdminUtils implements AdminUtils {
 
     }
 
-    private String getUserName(String registrationEmail) throws Exception {
-        final Map<String, String> keycloakUser = keycloakUtils.getUserInfo(registrationEmail);
-        String userName = null;
-        if (keycloakUser.isEmpty()) {
-            for (int i = 0; i < 3; i++) {
-                String testUserName = KeycloakUtils.extractUsernameFromEmail(registrationEmail, i);
-                if (!keycloakUtils.isExistingUsername(testUserName)) {
-                    //do not create user, instead check if username is taken.
-                    userName = testUserName;
-                    break;
-                }
-            }
-        } else {
-            userName = keycloakUser.get("username");
+    private String getUsernameFromKeycloak(String registrationEmail) {
+        //Check if user already exists in Liferay
+        if (!keycloakUtils.isActive()) {
+            return null;
         }
-        if (userName == null || userName.isEmpty()) {
-            userName = registrationEmail.split("@")[0];
+        //Check if user already exists in Keycloak if Keycloak is active
+        final Map<String, String> keycloakUser;
+        try {
+            keycloakUser = keycloakUtils.getUserInfo(registrationEmail);
+        } catch (Exception e) {
+            LOG.warn("Failed to get user info from Keycloak for email " + registrationEmail + ": " + e.getMessage());
+            return null;
         }
-        return userName;
+        return keycloakUser.get("username");
+    }
+
+    public static String generateRandomString(int length) {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return sb.toString();
     }
 
     public void deleteLiferayUser(User user, PrintWriter writer) {

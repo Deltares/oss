@@ -6,6 +6,8 @@ import nl.deltares.emails.RegistrationEmail;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.Period;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.TimeZone;
 
 public abstract class AbsRegisterEmailSerializer implements EmailSerializer<RegistrationEmail> {
 
+    private final NumberFormat currencyFormat = new DecimalFormat("#0.00");
     private SimpleDateFormat dateFormat;
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("kk:mm");
 
@@ -50,6 +53,7 @@ public abstract class AbsRegisterEmailSerializer implements EmailSerializer<Regi
         }
         writer.append("</table>");
 
+        appendNotice(writer, content);
 
         writer.append("</br>");
         writer.append("</br>");
@@ -64,6 +68,8 @@ public abstract class AbsRegisterEmailSerializer implements EmailSerializer<Regi
 
     abstract String getEventTitle();
 
+    abstract void appendNotice(StringBuilder writer, RegistrationEmail content);
+
     private void setTimeZone(String timeZoneId) {
         final TimeZone timeZone = TimeZone.getTimeZone(timeZoneId);
         timeFormat.setTimeZone(timeZone);
@@ -75,6 +81,13 @@ public abstract class AbsRegisterEmailSerializer implements EmailSerializer<Regi
         writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "dsd.email.registration.name", null)).append("</td>");
         writer.append("<td>");
         writer.append(registration.getTitle());
+        writer.append("</td>");
+        writer.append("</tr>");
+
+        writer.append("<tr>");
+        writer.append("<td class=\"type\">").append(LanguageUtil.format(content.getBundle(), "dsd.email.registration.type", null)).append("</td>");
+        writer.append("<td>");
+        writer.append(content.translateRegistrationType(registration.getType()));
         writer.append("</td>");
         writer.append("</tr>");
 
@@ -152,7 +165,7 @@ public abstract class AbsRegisterEmailSerializer implements EmailSerializer<Regi
     private String getPrice(ResourceBundle bundle, Registration registration) {
 
         if (registration.getPrice() > 0) {
-            return registration.getCurrency() + ' ' + registration.getPrice();
+            return registration.getCurrency() + ' ' + currencyFormat.format(registration.getPrice());
         }
         return LanguageUtil.format(bundle, "dsd.theme.session.free", null);
     }

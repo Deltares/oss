@@ -49,7 +49,7 @@
 <portlet:defineObjects/>
 
 <%
-    String ids = (String) request.getAttribute("ids");
+   String ids = (String) request.getAttribute("ids");
     CheckoutDisplayContext checkoutDisplayContext = (CheckoutDisplayContext) request.getAttribute(CheckoutWebKeys.PORTLET_DISPLAY_CONTEXT);
     String currentURL = PortalUtil.getCurrentURL(request);
 %>

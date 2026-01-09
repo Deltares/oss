@@ -577,7 +577,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     private void writeUserInfo(RegistrationData record, User user, StringBuilder line) {
         if (user == null){
             writeField(line, String.valueOf(record.getUserId()));
-            writeField(line,null);
+            writeField(line,record.getUserFullName());
             writeField(line,null);
         } else {
             writeField(line, user.getEmailAddress());

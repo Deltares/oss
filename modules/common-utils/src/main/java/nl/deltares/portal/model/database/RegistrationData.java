@@ -20,6 +20,8 @@ public class RegistrationData {
     long registrationTime;
     List<Period> periods = new ArrayList<Period>();
     Map<String, String> attributes = new HashMap<String, String>();
+    private String userFullName;
+    private String authorFullName;
 
     public long getCompanyId() {
         return companyId;
@@ -77,12 +79,28 @@ public class RegistrationData {
         this.userId = userId;
     }
 
+    public String getUserFullName(){
+        return userFullName;
+    }
+
+    public void setUserFullName(String userFullName) {
+        this.userFullName = userFullName;
+    }
+
     public long getAuthorId() {
         return authorId;
     }
 
     public void setAuthorId(long authorId) {
         this.authorId = authorId;
+    }
+
+    public String getAuthorFullName() {
+        return authorFullName;
+    }
+
+    public void setAuthorFullName(String authorFullName) {
+        this.authorFullName = authorFullName;
     }
 
     public long getRegistrationTime() {
