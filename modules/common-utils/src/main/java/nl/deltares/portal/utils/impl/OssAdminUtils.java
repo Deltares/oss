@@ -177,16 +177,6 @@ public class OssAdminUtils implements AdminUtils {
         return keycloakUser.get("username");
     }
 
-    public static String generateRandomString(int length) {
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            sb.append(chars.charAt(random.nextInt(chars.length())));
-        }
-        return sb.toString();
-    }
-
     public void deleteLiferayUser(User user, PrintWriter writer) {
         deleteUserPortrait(writer, user);
 
