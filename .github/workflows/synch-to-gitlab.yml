@@ -14,5 +14,5 @@ jobs:
         uses: yesolutions/mirror-action@master
         with:
           REMOTE: https://open-git.deltares.nl/mydeltares/${{ github.event.repository.name }}.git
-          GIT_USERNAME: ${{ secrets.GITLAB_OSS_USERNAME }}
-          GIT_PASSWORD: ${{ secrets.GITLAB_OSS_PAT }}
+          GIT_USERNAME: ${{ secrets.GITLAB_USERNAME }}
+          GIT_PASSWORD: ${{ secrets.GITLAB_PAT }}
