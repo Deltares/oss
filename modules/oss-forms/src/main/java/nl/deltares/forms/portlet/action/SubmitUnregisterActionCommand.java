@@ -45,9 +45,8 @@ public class SubmitUnregisterActionCommand extends BaseMVCActionCommand {
         try {
             unregisterDisplayContext.unRegisterUser(articleId, userId);
         } catch (Exception e) {
-            SessionErrors.add(httpServletRequest, RegistrationFormException.class, Collections.singletonList(
-                    new RegistrationFormException(e.getMessage()))
-            );
+            httpServletRequest.getSession().setAttribute("registration-errors", Collections.singletonList(
+                    new RegistrationFormException(e.getMessage())));
         }
 
         if (SessionErrors.isEmpty(httpServletRequest)) {

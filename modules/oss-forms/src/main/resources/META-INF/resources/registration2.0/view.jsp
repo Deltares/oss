@@ -103,6 +103,7 @@
             List<RegistrationFormException> errors = (List<RegistrationFormException>) SessionErrors.get(request, RegistrationFormException.class);
             for (RegistrationFormException error : errors) {
                 String message = error.getMessage();
+                if (message == null) continue;
                 String replace = message.replace("\"", "'");
         %>
             CommonFormsUtil.writeError("<portlet:namespace />", "<%= replace %>");

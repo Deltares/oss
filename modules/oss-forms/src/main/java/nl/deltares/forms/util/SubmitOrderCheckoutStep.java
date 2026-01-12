@@ -47,6 +47,8 @@ public class SubmitOrderCheckoutStep extends BaseCheckoutStep {
         List<Exception> exceptions = _submitOrderDisplayContext.storeUserInformation();
         if (!exceptions.isEmpty()) {
             httpServletRequest.setAttribute("action", "register-error");
+            //Pass errors on to the next form
+            httpServletRequest.getSession().setAttribute("registration-errors", exceptions);
             return;
         }
         ThemeDisplay themeDisplay = new CPRequestHelper(httpServletRequest).getThemeDisplay();
@@ -54,13 +56,10 @@ public class SubmitOrderCheckoutStep extends BaseCheckoutStep {
             _submitOrderDisplayContext.sendRegistrationEmails(themeDisplay);
         } catch (Exception e) {
             httpServletRequest.setAttribute("action", "register-error");
+            //Pass errors on to the next form
+            httpServletRequest.getSession().setAttribute("registration-errors", Collections.singletonList(new RegistrationFormException("Error sending registration emails: " + e.getMessage())));
         }
-
-        if (SessionErrors.isEmpty(httpServletRequest)) {
-            httpServletRequest.setAttribute("action", "register-success");
-        } else {
-            httpServletRequest.setAttribute("action", "register-error");
-        }
+        httpServletRequest.setAttribute("action", "register-success");
     }
 
     @Override

@@ -2,7 +2,9 @@ package nl.deltares.forms.util;
 
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.servlet.SessionErrors;
 import nl.deltares.forms.constants.CheckoutWebKeys;
+import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.forms.internal.CheckoutStatusDisplayContext;
 import nl.deltares.portal.constants.OssConstants;
 import org.osgi.service.component.annotations.Component;
@@ -47,6 +49,11 @@ public class CheckoutStatusCheckoutStep extends BaseCheckoutStep {
             httpServletRequest.setAttribute("redirect", redirect);
         }
 
+        Object errors = httpServletRequest.getSession().getAttribute("registration-errors");
+        if (errors != null) {
+            httpServletRequest.getSession().removeAttribute("registration-errors");
+            SessionErrors.add(httpServletRequest, RegistrationFormException.class, errors);
+        }
         _jspRenderer.renderJSP(httpServletRequest, httpServletResponse, "/registration2.0/status.jsp");
 
     }
