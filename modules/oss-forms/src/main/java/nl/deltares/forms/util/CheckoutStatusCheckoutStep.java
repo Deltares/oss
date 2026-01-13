@@ -38,16 +38,10 @@ public class CheckoutStatusCheckoutStep extends BaseCheckoutStep {
     @Override
     public void render(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 
-        String action = httpServletRequest.getParameter("action");
-        Object redirect = httpServletRequest.getSession().getAttribute("callerURL");
-        CheckoutStatusDisplayContext displayContext = new CheckoutStatusDisplayContext(httpServletRequest, action, _configurationProvider);
+        CheckoutStatusDisplayContext displayContext = new CheckoutStatusDisplayContext(httpServletRequest, _configurationProvider);
         httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, displayContext);
-        httpServletRequest.setAttribute(OssConstants.MY_REGISTRATIONS_URL, "/my-registrations");
-        if (redirect == null || redirect.toString().isEmpty()) {
-            httpServletRequest.setAttribute("redirect", "/program");
-        } else {
-            httpServletRequest.setAttribute("redirect", redirect);
-        }
+        httpServletRequest.setAttribute(OssConstants.MY_REGISTRATIONS_URL, displayContext.redirectOneURL());
+        httpServletRequest.setAttribute("redirect", displayContext.redirectTwoURL());
 
         Object errors = httpServletRequest.getSession().getAttribute("registration-errors");
         if (errors != null) {

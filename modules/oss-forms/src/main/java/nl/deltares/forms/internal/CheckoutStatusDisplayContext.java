@@ -17,17 +17,30 @@ public class CheckoutStatusDisplayContext {
     private final HttpServletRequest _httpServletRequest;
     private final DSDSiteConfiguration _configuration;
     private final ThemeDisplay _themeDisplay;
+    private final String _redirect;
 
-    public CheckoutStatusDisplayContext(HttpServletRequest httpServletRequest, String action, ConfigurationProvider configurationProvider) throws ConfigurationException {
+    public CheckoutStatusDisplayContext(HttpServletRequest httpServletRequest, ConfigurationProvider configurationProvider) throws ConfigurationException {
 
         CPRequestHelper cpRequestHelper = new CPRequestHelper(httpServletRequest);
         _themeDisplay = cpRequestHelper.getThemeDisplay();
         _httpServletRequest = httpServletRequest;
         _configuration = configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, _themeDisplay.getScopeGroupId());
-        this._action = action;
+        _action = httpServletRequest.getParameter("action");
+        _redirect = (String) httpServletRequest.getSession().getAttribute("callerURL");
+
     }
 
+    public String redirectOneURL() {
+        return _themeDisplay.getSiteGroup().getDisplayURL(_themeDisplay) + "/my-registrations";
+    }
 
+    public String redirectTwoURL() {
+        if (_redirect == null || _redirect.isEmpty()) {
+            return _themeDisplay.getSiteGroup().getDisplayURL(_themeDisplay) + "/program";
+        } else {
+            return _redirect;
+        }
+    }
     public String getImageURL() {
 
         String imagePath;
@@ -78,12 +91,10 @@ public class CheckoutStatusDisplayContext {
     }
 
     public String[] getPaymentMessageArguments() {
-        switch (_action) {
-            case "unregister-success":
-                final String language = _themeDisplay.getLocale().getLanguage();
-                return new String[] {getLocalizedValue(_configuration.conditionsURL(), language)};
-            default:
-                return new String[0];
+        if (_action.equals("unregister-success")) {
+            final String language = _themeDisplay.getLocale().getLanguage();
+            return new String[]{getLocalizedValue(_configuration.conditionsURL(), language)};
         }
+        return new String[0];
     }
 }
