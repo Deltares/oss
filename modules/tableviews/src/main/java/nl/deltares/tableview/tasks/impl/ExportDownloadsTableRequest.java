@@ -181,7 +181,7 @@ public class ExportDownloadsTableRequest extends AbstractDataRequest {
                 } else {
                     expiryDate = "";
                 }
-                writer.println(String.format("%d,%s,%s,%s,%s,\"%s\",%s,%s,%s,%s",
+                writer.println(String.format("%d,%s,%s,\"%s\",%s,\"%s\",\"%s\",%s,%s,%s",
                         download.getDownloadId(), modifiedDate, expiryDate,
                         download.getFileName(), email, download.getOrganization(),
                         city, countryCode, download.getFileShareUrl(), download.getLicenseDownloadUrl()));
