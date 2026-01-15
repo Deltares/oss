@@ -1,5 +1,6 @@
 package nl.deltares.portal.utils;
 
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.model.User;
 import nl.deltares.portal.model.impl.LicenseFile;
@@ -14,5 +15,7 @@ public interface LicenseManagerUtils {
     Map<String, String> encryptLicense(LicenseFile licenseFile, User user) throws IOException, JSONException;
 
     Map<String, String> encryptLicense(String licenseType, User user) throws IOException, JSONException;
+
+    JSONArray getCustomerLicenses(User user, String status)  throws IOException, JSONException;
 
 }
