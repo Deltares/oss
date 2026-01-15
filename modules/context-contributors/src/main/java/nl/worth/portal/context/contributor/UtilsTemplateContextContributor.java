@@ -11,12 +11,10 @@ import com.liferay.portal.kernel.template.TemplateContextContributor;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.*;
-import nl.deltares.portal.utils.impl.LanguageImpl;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.Map;
 
 @Component(
@@ -39,9 +37,6 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
 
     @Reference
     private DDLUtils ddlUtils;
-
-    @Reference
-    private KeycloakUtils keycloakUtils;
 
     @Reference
     private URLUtils urlUtils;
@@ -77,11 +72,9 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
         }
         contextObjects.put("is_site_admin", isAdmin);
         contextObjects.put("user_signout_url", themeDisplay.getURLSignOut());
-        if (keycloakUtils.isActive()) {
-            contextObjects.put("user_mailing_url", "/subscriptions");
-            contextObjects.put("user_account_url", "/account");
-            contextObjects.put("user_announcements_url", "/announcements");
-        }
+        contextObjects.put("user_mailing_url", "/subscriptions");
+        contextObjects.put("user_account_url", "/account");
+        contextObjects.put("user_announcements_url", "/announcements");
 
         String checkoutCartUrl = "";
         String downloadCartURL = "";
