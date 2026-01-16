@@ -54,3 +54,7 @@
     color: #00E399
   }
 }
+
+.h1 {
+  text-transform: none;
+}
