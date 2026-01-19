@@ -1,4 +1,4 @@
-package nl.deltares.emails;
+package nl.deltares.common.emails;
 
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
@@ -47,7 +47,7 @@ public class EmailUtils {
         return response.toString();
     }
 
-    static void sendEmail(String body, String subject, String sendToEmail, List<String> sendCcEmail, List<String> sendBccEmail,
+    public static void sendEmail(String body, String subject, String sendToEmail, List<String> sendCcEmail, List<String> sendBccEmail,
                           String sendFromEmail, String replyToEmail,  Map<String, Object> data, Map<String, File> attachments) throws Exception {
 
         setMailCommandProperties();
@@ -127,7 +127,7 @@ public class EmailUtils {
         return props;
     }
 
-    static void sendEmail(String body, String subject, String sendToEmail, String sendCcEmail, String sendBccEmail,
+    public static void sendEmail(String body, String subject, String sendToEmail, String sendCcEmail, String sendBccEmail,
                           String sendFromEmail, String replyToEmail,  Map<String, Object> data, Map<String, File> attachments) throws Exception {
 
         setMailCommandProperties();

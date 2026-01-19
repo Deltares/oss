@@ -1,4 +1,4 @@
-package nl.deltares.emails.serializer;
+package nl.deltares.common.emails.serializer;
 
 public interface EmailSerializer<C> {
 

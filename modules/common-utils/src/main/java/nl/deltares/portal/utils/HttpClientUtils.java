@@ -137,6 +137,21 @@ public abstract class HttpClientUtils implements BaseLocalService {
         return HttpRequest.BodyPublishers.ofByteArrays(byteArrays);
     }
 
+    public static void readToFile(HttpURLConnection connection, File destFile) throws IOException{
+        try (InputStream is = connection.getInputStream()) {
+
+            FileOutputStream result = new FileOutputStream(destFile);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+            result.flush();
+            result.close();
+        } finally {
+            connection.disconnect();
+        }
+    }
     public static byte[] readAllBytes(HttpURLConnection connection) throws IOException {
         try (InputStream is = connection.getInputStream()) {
 

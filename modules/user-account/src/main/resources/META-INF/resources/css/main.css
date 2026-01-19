@@ -58,3 +58,10 @@
 .h1 {
   text-transform: none;
 }
+
+.bottom-align {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  padding-bottom: 15px;
+}

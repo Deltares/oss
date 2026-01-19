@@ -58,9 +58,14 @@ public class DataRequestManager {
     public void fireStateChanged(DataRequest changedRequest) {
         DataRequest.STATUS status = changedRequest.getStatus();
         if (status == DataRequest.STATUS.available
-                || status == DataRequest.STATUS.terminated ){
+                || status == DataRequest.STATUS.terminated
+                || status == DataRequest.STATUS.dispose ){
             changedRequest.setDataRequestManager(null); //stop listening
             startNextRequest();
+        }
+
+        if (status == DataRequest.STATUS.dispose){
+            dataRequests.remove(changedRequest.getId());
         }
     }
 

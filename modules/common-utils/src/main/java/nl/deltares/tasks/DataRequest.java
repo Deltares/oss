@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 
 public interface DataRequest extends Callable<DataRequest.STATUS> {
 
-    enum STATUS {pending, running, terminated, expired, available, nodata}
+    enum STATUS {pending, running, terminated, expired, available, nodata, dispose}
 
     String getId();
 

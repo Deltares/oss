@@ -1,13 +1,12 @@
 package nl.deltares.emails;
 
 import com.liferay.portal.kernel.model.User;
-import nl.deltares.emails.serializer.EmailSerializer;
+import nl.deltares.common.emails.serializer.EmailSerializer;
+import nl.deltares.common.emails.EmailUtils;
 import nl.deltares.model.RegistrationInfo;
 import nl.deltares.portal.model.impl.Registration;
 
 import java.util.*;
-
-import static nl.deltares.emails.EmailUtils.sendEmail;
 
 public class RegistrationEmail {
 
@@ -57,7 +56,7 @@ public class RegistrationEmail {
         _registrationInfos = Collections.emptyList();
         StringBuilder bodyBuilder = new StringBuilder();
         serializer.serialize(this, bodyBuilder);
-        sendEmail(bodyBuilder.toString(), subject, _user.getEmailAddress(), sendCCEmail, sendBCCEmail, sendFromEmail, replyToEmail,
+        EmailUtils.sendEmail(bodyBuilder.toString(), subject, _user.getEmailAddress(), sendCCEmail, sendBCCEmail, sendFromEmail, replyToEmail,
                 loadImageMap(), Collections.emptyMap());
     }
 
@@ -70,7 +69,7 @@ public class RegistrationEmail {
         StringBuilder bodyBuilder = new StringBuilder();
         serializer.serialize(this, bodyBuilder);
 
-        sendEmail(bodyBuilder.toString(), subject, _user.getEmailAddress(), sendCCEmail, sendBCCEmail, sendFromEmail, replyToEmail,
+        EmailUtils.sendEmail(bodyBuilder.toString(), subject, _user.getEmailAddress(), sendCCEmail, sendBCCEmail, sendFromEmail, replyToEmail,
                 loadImageMap(), Collections.emptyMap());
     }
 

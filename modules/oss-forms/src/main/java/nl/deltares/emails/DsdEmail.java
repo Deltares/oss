@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
-import static nl.deltares.emails.EmailUtils.sendEmail;
+import static nl.deltares.common.emails.EmailUtils.sendEmail;
 
 public class DsdEmail {
 

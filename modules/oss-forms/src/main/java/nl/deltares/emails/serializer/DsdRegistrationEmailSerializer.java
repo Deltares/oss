@@ -2,6 +2,7 @@ package nl.deltares.emails.serializer;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.User;
+import nl.deltares.common.emails.serializer.EmailSerializer;
 import nl.deltares.model.RegistrationRequest;
 import nl.deltares.emails.DsdEmail;
 import nl.deltares.portal.model.impl.Event;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
-public abstract class DsdRegistrationEmailSerializer implements EmailSerializer<DsdEmail>{
+public abstract class DsdRegistrationEmailSerializer implements EmailSerializer<DsdEmail> {
 
     private SimpleDateFormat dateFormat ;
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("kk:mm");

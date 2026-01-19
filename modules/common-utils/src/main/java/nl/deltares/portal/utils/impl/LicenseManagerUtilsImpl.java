@@ -13,10 +13,7 @@ import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.LicenseManagerUtils;
 import org.osgi.service.component.annotations.Component;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -124,11 +121,10 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
 
     }
 
-    @Override
-    public JSONArray getCustomerLicenses(User user, String state) throws IOException, JSONException {
+    public JSONArray getCustomerContacts(User user) throws IOException, JSONException {
 
         if (!isActive()) {
-            LOG.warn("Unable to retrieve license files as the LicenseManager is not active!");
+            LOG.warn("Unable to retrieve customer contacts as the LicenseManager is not active!");
             return null;
         }
         if (user == null || user.isGuestUser()) return null;
@@ -142,38 +138,100 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
         checkResponse(connection);
 
         String customerContactsViewResponse = readAll(connection);
-        JSONArray customerContactsArray = JsonContentUtils.parseContentArray(customerContactsViewResponse);
-        Long[] customerIds = parseCustomerIds(customerContactsArray);
+        return JsonContentUtils.parseContentArray(customerContactsViewResponse);
+    }
 
-        if (customerIds.length == 0){
-            LOG.warn(String.format("Found no customer ID for CLM user %s!", user.getEmailAddress()));
+    @Override
+    public JSONArray getCustomerLicenses(User user, String state, Long customerId) throws IOException, JSONException {
+
+        if (!isActive()) {
+            LOG.warn("Unable to retrieve license files as the LicenseManager is not active!");
             return null;
         }
-        if (customerIds.length > 1){
-            LOG.warn(String.format("Found more than one customer ID for CLM user %s!", user.getEmailAddress()));
-        }
+        if (user == null || user.isGuestUser()) return null;
+        if (customerId == null || customerId <= 0) return null;
+
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + getAccessToken());
 
         if (state==null) {
             state = "Active";
         }
-        queryParameters = String.format("?state=%s", state);
+        String queryParameters = String.format("?state=%s", state);
 
-        connection = getConnection(getBasePath() + "clm/customers/" + customerIds[0] + "/subscriptions/suites" + queryParameters, "GET", headers);
+        HttpURLConnection connection = getConnection(getBasePath() + "clm/customers/" + customerId + "/subscriptions/suites" + queryParameters, "GET", headers);
         checkResponse(connection);
 
         return JsonContentUtils.parseContentArray(readAll(connection));
 
     }
 
-    private Long[] parseCustomerIds(JSONArray customerContactsArray) {
-
-        List<Long> ids = new ArrayList<>(customerContactsArray.length());
-        for (int i = 0; i < customerContactsArray.length(); i++) {
-            JSONObject customerContactView = customerContactsArray.getJSONObject(i);
-            long customerContactCustomerId = customerContactView.getLong("customerContactCustomerId");
-            if (!ids.contains(customerContactCustomerId)) {ids.add(customerContactCustomerId);}
+    @Override
+    public JSONObject generateCustomerLicenseFiles(Long customerId) throws IOException, JSONException {
+        if (!isActive()) {
+            LOG.warn("Unable to retrieve customer licenses as the LicenseManager is not active!");
+            return null;
         }
-        return ids.toArray(new Long[0]);
+        if (customerId == null || customerId < 1) return null;
+
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + getAccessToken());
+
+        HttpURLConnection connection = getConnection(getBasePath() + "clm/licenses/customers/" + customerId, "GET", headers);
+        checkResponse(connection);
+
+        String customerContactsViewResponse = readAll(connection);
+        return JsonContentUtils.parseContent(customerContactsViewResponse);
+    }
+
+    @Override
+    public JSONObject getProgress(String requestId) throws IOException, JSONException {
+        if (!isActive()) {
+            LOG.warn("Unable to retrieve progress as the LicenseManager is not active!");
+            return null;
+        }
+        if (requestId == null) return null;
+
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + getAccessToken());
+
+        HttpURLConnection connection = getConnection(getBasePath() + "clm/licenses/progress/" + requestId, "GET", headers);
+        checkResponse(connection);
+
+        String customerContactsViewResponse = readAll(connection);
+        return JsonContentUtils.parseContent(customerContactsViewResponse);
+    }
+
+    @Override
+    public void download(String requestId, File downloadFile) throws IOException, JSONException {
+        if (!isActive()) {
+            LOG.warn("Unable to retrieve file as the LicenseManager is not active!");
+            return;
+        }
+        if (requestId == null) return;
+
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/zip");
+        headers.put("Authorization", "Bearer " + getAccessToken());
+
+        HttpURLConnection connection = getConnection(getBasePath() + "clm/licenses/download/" + requestId, "GET", headers);
+        checkResponse(connection);
+
+        readToFile(connection, downloadFile);
+
+        cleanup(requestId);
+    }
+
+    private void cleanup(String requestId) throws IOException {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer " + getAccessToken());
+
+        HttpURLConnection connection = getConnection(getBasePath() + "clm/licenses/cleanup/" + requestId, "GET", headers);
+        checkResponse(connection);
+
     }
 
     private String replaceTags(LicenseFile licenseFile, User user) {

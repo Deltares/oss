@@ -4,7 +4,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.emails.EmailUtils;
+import nl.deltares.common.emails.EmailUtils;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.tasks.DataRequestManager;
 import org.osgi.service.component.annotations.Component;

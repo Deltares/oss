@@ -2,6 +2,7 @@ package nl.deltares.emails.serializer;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.User;
+import nl.deltares.common.emails.serializer.EmailSerializer;
 import nl.deltares.emails.RegistrationEmail;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.Period;

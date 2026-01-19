@@ -3,13 +3,12 @@ package nl.deltares.emails;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.User;
 import nl.deltares.emails.serializer.DownloadsEmailSerializer;
+import nl.deltares.common.emails.EmailUtils;
 import nl.deltares.model.BillingInfo;
 import nl.deltares.model.DownloadRequest;
 
 import java.util.Collections;
 import java.util.ResourceBundle;
-
-import static nl.deltares.emails.EmailUtils.sendEmail;
 
 public class DownloadEmail {
 
@@ -62,7 +61,7 @@ public class DownloadEmail {
 
         loadEmailAddresses();
 
-        sendEmail(bodyBuilder.toString(), subject, sendToEmail, sendCCEmail, sendBCCEmail, sendFromEmail, replyToEmail, Collections.emptyMap(), Collections.emptyMap());
+        EmailUtils.sendEmail(bodyBuilder.toString(), subject, sendToEmail, sendCCEmail, sendBCCEmail, sendFromEmail, replyToEmail, Collections.emptyMap(), Collections.emptyMap());
     }
 
     public User getUser() {

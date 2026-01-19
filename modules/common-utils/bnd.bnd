@@ -1,6 +1,6 @@
 Bundle-Name: common-utils
 Bundle-SymbolicName: nl.deltares.portal.common-utils
-Bundle-Version: 1.1.16
+Bundle-Version: 1.1.17
 Export-Package: \
   nl.deltares.portal.constants, \
   nl.deltares.portal.utils, \
@@ -14,7 +14,8 @@ Export-Package: \
   nl.deltares.portal.configuration, \
   nl.deltares.portal.kernel.util.comparator, \
   nl.deltares.tasks, \
-  nl.deltares.tasks.impl
+  nl.deltares.tasks.impl, \
+  nl.deltares.common.*
 Import-Package: \
   nl.deltares.dsd.registration.service.*,\
   nl.deltares.oss.download.service.*,\
