@@ -28,9 +28,9 @@ import static nl.deltares.portal.utils.HttpClientUtils.readAll;
         immediate = true,
         service = EmailSubscriptionUtils.class
 )
-public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
+public class BrevoUtilsImpl implements EmailSubscriptionUtils {
 
-    private static final Log LOG = LogFactoryUtil.getLog(SendinblueUtilsImpl.class);
+    private static final Log LOG = LogFactoryUtil.getLog(BrevoUtilsImpl.class);
 
     private static final String API_KEY = "sendinblue.apikey";
     private static final String API_NAME = "api-key";
@@ -165,24 +165,24 @@ public class SendinblueUtilsImpl implements EmailSubscriptionUtils {
         headers.put("Content-Type", "application/json");
         headers.put(API_NAME, PropsUtil.get(API_KEY));
 
-        //open connection
-        HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/lists?limit=50",
-                "GET", headers);
-        checkResponse(connection);
-
-        String jsonResponse = readAll(connection);
         List<SubscriptionSelection> subscriptions = new ArrayList<>();
-        try {
-            final JSONObject jsonObject = JsonContentUtils.parseContent(jsonResponse);
-            final JSONArray lists = jsonObject.getJSONArray("lists");
-            for (int i = 0; i < lists.length(); i++) {
-                final JSONObject list = lists.getJSONObject(i);
-                final int folderId = list.getInt("folderId");
-                if (folderIds.length > 0 && Arrays.stream(folderIds).noneMatch(id -> id == folderId)) continue;
-                subscriptions.add(new SubscriptionSelection(list.getString("id"), list.getString("name")));
+        for (int folderId : folderIds) {
+            //open connection
+            HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/folders/" + folderId + "/lists?limit=50",
+                    "GET", headers);
+            checkResponse(connection);
+            String jsonResponse = readAll(connection);
+            try {
+                final JSONObject jsonObject = JsonContentUtils.parseContent(jsonResponse);
+                final JSONArray lists = jsonObject.getJSONArray("lists");
+                for (int i = 0; i < lists.length(); i++) {
+                    final JSONObject list = lists.getJSONObject(i);
+                    subscriptions.add(new SubscriptionSelection(list.getString("id"), list.getString("name")));
+                }
+            } catch (JSONException e) {
+                LOG.warn(String.format("Failed to parse lists from response for folder  %s : %s", Arrays.toString(folderIds), e.getMessage()));
             }
-        } catch (JSONException e) {
-            LOG.warn(String.format("Failed to parse lists from response for folder  %s : %s", Arrays.toString(folderIds), e.getMessage()));
+
         }
 
         if (emailAddress != null) setUserSubscriptionSelection(emailAddress, subscriptions);
