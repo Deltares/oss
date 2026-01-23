@@ -15,10 +15,12 @@ public class SendLicenseFilesRequest extends AbstractDataRequest {
     private final LicenseManagerUtils licenseManagerUtils;
     private final Long customerId;
     private final LicenseFilesEmail confirmationEmail;
+    private final User user;
 
     public SendLicenseFilesRequest(String id, Long customerId, User user, LicenseFilesEmail confirmationEmail, LicenseManagerUtils licenseManagerUtils) throws IOException {
         super(id, user.getUserId());
 
+        this.user = user;
         this.customerId = customerId;
         this.licenseManagerUtils = licenseManagerUtils;
         this.confirmationEmail = confirmationEmail;
@@ -33,7 +35,11 @@ public class SendLicenseFilesRequest extends AbstractDataRequest {
         init();
         try {
 
-            JSONObject response = licenseManagerUtils.generateCustomerLicenseFiles(customerId);
+            String filterEmail = null;
+            if (user != null) {
+                filterEmail = user.getEmailAddress();
+            }
+            JSONObject response = licenseManagerUtils.generateCustomerLicenseFiles(customerId, filterEmail);
             String requestId = response.getString("requestViewRequestId");
 
             JSONObject progress = licenseManagerUtils.getProgress(requestId);

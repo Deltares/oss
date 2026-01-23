@@ -168,7 +168,7 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
     }
 
     @Override
-    public JSONObject generateCustomerLicenseFiles(Long customerId) throws IOException, JSONException {
+    public JSONObject generateCustomerLicenseFiles(Long customerId, String filterEmail) throws IOException, JSONException {
         if (!isActive()) {
             LOG.warn("Unable to retrieve customer licenses as the LicenseManager is not active!");
             return null;
@@ -179,7 +179,11 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getAccessToken());
 
-        HttpURLConnection connection = getConnection(getBasePath() + "clm/licenses/customers/" + customerId, "GET", headers);
+        String requestUrl = getBasePath() + "clm/licenses/customers/" + customerId;
+        if (filterEmail != null) {
+            requestUrl += "?email=" + URLEncoder.encode(filterEmail, StandardCharsets.UTF_8);
+        }
+        HttpURLConnection connection = getConnection(requestUrl , "GET", headers);
         checkResponse(connection);
 
         String customerContactsViewResponse = readAll(connection);

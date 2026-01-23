@@ -36,7 +36,7 @@ public interface LicenseManagerUtils {
 
     }
 
-    JSONObject generateCustomerLicenseFiles(Long customerId) throws IOException, JSONException;
+    JSONObject generateCustomerLicenseFiles(Long customerId, String filterEmail) throws IOException, JSONException;
 
     JSONObject getProgress(String requestId) throws IOException, JSONException;
 
