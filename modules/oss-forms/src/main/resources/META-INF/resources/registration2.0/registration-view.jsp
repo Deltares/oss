@@ -1,3 +1,4 @@
+<%@ page import="java.util.TimeZone" %>
 <div class="row no-gutters">
     <%
         String viewURL = displayContext.getViewURL(registration.getArticleId());
@@ -5,6 +6,7 @@
         String imageUrl = registration.getSmallImageURL(themeDisplay);
         String title = registration.getTitle();
         String timeZoneId = registration.getTimeZoneId();
+        TimeZone tz = TimeZone.getTimeZone(timeZoneId);
     %>
     <div class="col-2">
         <a href="<%=viewURL%>" >
@@ -24,16 +26,16 @@
                 <c:choose>
                     <c:when test="<%=registration.isDaily()%>">
                         <span class="c-sessions__item__time-date-place__time">
-                            <%=DateUtil.getDate(registration.getStartTime(), "dd MMM yyyy HH:mm", locale) + " - " +
-                            DateUtil.getDate(registration.getEndTime(), "HH:mm", locale) + '(' + timeZoneId + ')' %>
+                            <%=DateUtil.getDate(registration.getStartTime(), "dd MMM yyyy HH:mm", locale, tz) + " - " +
+                            DateUtil.getDate(registration.getEndTime(), "HH:mm", locale, tz) + '(' + timeZoneId + ')' %>
                         </span>
                     </c:when>
                     <c:otherwise>
                         <c:forEach items="<%=registration.getStartAndEndTimesPerDay()%>" var="period">
                             <% Period period = (Period) pageContext.getAttribute("period"); %>
                             <span class="c-sessions__item__time-date-place__time">
-                                <%=DateUtil.getDate(period.getStartDate(), "dd MMM yyyy HH:mm", locale) + " - " +
-                                    DateUtil.getDate(period.getEndDate(), "HH:mm", locale) + '(' + timeZoneId + ')' %>
+                                <%=DateUtil.getDate(period.getStartDate(), "dd MMM yyyy HH:mm", locale, tz) + " - " +
+                                    DateUtil.getDate(period.getEndDate(), "HH:mm", locale, tz) + '(' + timeZoneId + ')' %>
                             </span>
                             <br />
                         </c:forEach>
@@ -42,8 +44,8 @@
             </c:when>
             <c:otherwise>
                 <span class="c-sessions__item__time-date-place__time">
-                    <%=DateUtil.getDate(registration.getStartTime(), "dd MMM yyyy HH:mm", locale) + " - " +
-                            DateUtil.getDate(registration.getEndTime(), "HH:mm", locale) + '(' + timeZoneId + ')' %>
+                    <%=DateUtil.getDate(registration.getStartTime(), "dd MMM yyyy HH:mm", locale, tz) + " - " +
+                            DateUtil.getDate(registration.getEndTime(), "HH:mm", locale, tz) + '(' + timeZoneId + ')' %>
                 </span>
             </c:otherwise>
         </c:choose>

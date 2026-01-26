@@ -231,11 +231,10 @@ public class SubmitOrderDisplayContext {
         RegistrationsInfo registrationsInfo = _context.getRegistrationsInfo();
         Event event = registrationsInfo.getEvent(String.valueOf(_configuration.eventId()));
         if (event != null) {
-            String baseUrl = themeDisplay.getCDNBaseURL();
             String subject = LanguageUtil.format(resourceBundle, "dsd.register.subject", event.getTitle());
             registrationEmail.setSubject(subject);
-            registrationEmail.setEmailBanner(baseUrl + event.getEmailBannerURL(), event.getEmailBannerFileEntryId());
-            registrationEmail.setEmailFooter(baseUrl + event.getEmailFooterURL(), event.getEmailFooterFileEntryId());
+            registrationEmail.setEmailBanner(event.getEmailBannerURL(), event.getEmailBannerFileEntryId());
+            registrationEmail.setEmailFooter(event.getEmailFooterURL(), event.getEmailFooterFileEntryId());
         }
 
         String[] structureKeys = getStructureKeys(_configuration);

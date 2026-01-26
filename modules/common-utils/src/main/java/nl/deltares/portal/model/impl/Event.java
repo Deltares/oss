@@ -57,7 +57,7 @@ public class Event extends AbsDsdArticle {
         if (footerImageJson != null) {
             JSONObject footerImage = JsonContentUtils.parseContent(footerImageJson);
             emailFooterFileEntryId = footerImage.getLong("fileEntryId");
-            emailFooterURL = JsonContentUtils.parseImageJson(emailBannerFileEntryId);
+            emailFooterURL = JsonContentUtils.parseImageJson(emailFooterFileEntryId);
         }
 
     }
