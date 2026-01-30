@@ -194,27 +194,6 @@
                     </div>
                 </td>
             </tr>
-            <tr>
-                <td style="text-align:right">
-                    <liferay-ui:message key="registrationform.price.tax"/>
-                </td>
-                <td>
-                    <div id="registrationform.price.tax" style="text-align:right">
-
-                    </div>
-                </td>
-            </tr>
-
-            <tr>
-                <td style="text-align:right">
-                    <liferay-ui:message key="registrationform.price.total"/>
-                </td>
-                <td>
-                    <div id="registrationform.price.total" style="text-align:right">
-
-                    </div>
-                </td>
-            </tr>
             </tbody>
         </table>
     </div>

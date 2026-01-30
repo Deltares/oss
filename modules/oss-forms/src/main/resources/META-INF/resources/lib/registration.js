@@ -233,27 +233,27 @@ var RegistrationFormsUtil = {
         let quantityList = document.getElementsByClassName("registration-quantity");
 
         let priceSubTotal = 0;
-        let vatTotal = 0;
-        let priceTotal = 0;
+        // let vatTotal = 0;
+        // let priceTotal = 0;
         let currency;
         for (let i = 0; i < quantityList.length; i++){
 
             let quantityElm = quantityList.item(i);
             let quantity = quantityElm.value;
-            let vat = quantityElm.dataset.vat;
+            // let vat = quantityElm.dataset.vat;
             let price = quantityElm.dataset.price;
             currency = quantityElm.dataset.currency;
 
             let priceItem = (price * quantity)
-            let vatItem = priceItem * vat * 0.01;
+            // let vatItem = priceItem * vat * 0.01;
             priceSubTotal += priceItem;
-            vatTotal += vatItem;
+            // vatTotal += vatItem;
         }
-        priceTotal = priceSubTotal + vatTotal;
+        // priceTotal = priceSubTotal + vatTotal;
 
         document.getElementById("registrationform.price.subtotal").innerHTML = currency + ' ' + priceSubTotal.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-        document.getElementById("registrationform.price.tax").innerHTML = currency + ' ' + vatTotal.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-        document.getElementById("registrationform.price.total").innerHTML = currency + ' ' + priceTotal.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        // document.getElementById("registrationform.price.tax").innerHTML = currency + ' ' + vatTotal.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        // document.getElementById("registrationform.price.total").innerHTML = currency + ' ' + priceTotal.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
     },
 
