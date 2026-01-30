@@ -251,7 +251,7 @@ var RegistrationFormsUtil = {
         }
         // priceTotal = priceSubTotal + vatTotal;
 
-        document.getElementById("registrationform.price.subtotal").innerHTML = currency + ' ' + priceSubTotal.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        document.getElementById("registrationform.price.subtotal").innerHTML = currency + ' ' + priceSubTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         // document.getElementById("registrationform.price.tax").innerHTML = currency + ' ' + vatTotal.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         // document.getElementById("registrationform.price.total").innerHTML = currency + ' ' + priceTotal.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
