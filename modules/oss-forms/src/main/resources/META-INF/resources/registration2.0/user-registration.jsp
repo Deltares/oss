@@ -1,4 +1,5 @@
 <%@ page import="nl.deltares.model.RegistrationsInfo" %>
+<%@ page import="java.text.DecimalFormat" %>
 <%@ include file="init.jsp" %>
 <div class="prose prose--app">
 <h3><liferay-ui:message key="registrationform.user.information"/></h3>
@@ -8,9 +9,7 @@
     UserRegistrationDisplayContext displayContext = (UserRegistrationDisplayContext) request.getAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT);
     RegistrationsInfo registrationsInfo = displayContext.getRegistrationsInfo();
     List<Registration> registrations = registrationsInfo.getRegistrations();
-    NumberFormat currencyInstance = NumberFormat.getInstance(themeDisplay.getLocale());
-    currencyInstance.setMaximumFractionDigits(2);
-    currencyInstance.setMinimumFractionDigits(2);
+    NumberFormat currencyInstance = new DecimalFormat("#,##0.00");
     String currency = "€";
     boolean first = true;
     String srcArticleId= "";
