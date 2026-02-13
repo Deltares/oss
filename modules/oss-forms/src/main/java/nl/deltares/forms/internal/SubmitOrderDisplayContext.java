@@ -283,4 +283,7 @@ public class SubmitOrderDisplayContext {
         return map;
     }
 
+    public RegistrationsInfo getRegistrationsInfo() {
+        return null;
+    }
 }
