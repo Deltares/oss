@@ -28,7 +28,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.*;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -76,25 +75,32 @@ public class ClmLicensesPortlet extends MVCPortlet {
 
         try {
             String selectedState = ParamUtil.getString(renderRequest, "filterSelection", "Active");
+            long customerSelection = ParamUtil.getLong(renderRequest, "customerSelection", 0L);
             User user = themeDisplay.getUser();
             JSONArray customerContacts = licenseManagerUtils.getCustomerContacts(user);
-            AbstractMap.SimpleEntry<Long, String> customerInfo = LicenseManagerUtils.parseCustomerIdAndName(customerContacts);
-            JSONArray customerLicenses = null;
-            if (customerInfo.getKey() == null) {
+            Map<Long, String> customerInfo = LicenseManagerUtils.parseCustomerIdAndName(customerContacts);
+
+            if (customerInfo.isEmpty()) {
                 logger.warn(String.format("Found no customer ID for CLM user %s!", user.getEmailAddress()));
             } else {
-                Long customerId = customerInfo.getKey();
-                renderRequest.setAttribute("customerId", customerId);
-                renderRequest.setAttribute("customerName", customerInfo.getValue());
-                customerLicenses = licenseManagerUtils.getCustomerLicenses(user, selectedState, customerId);
-            }
-            if (customerLicenses != null && customerLicenses.length() > 0) {
-                List<SoftwareSuite> suites = convertToModel(customerLicenses);
-                renderRequest.setAttribute("records", suites);
-            } else {
-                renderRequest.setAttribute("records", Collections.emptyList());
+                renderRequest.setAttribute("customerInfo", customerInfo);
+                Long customerId;
+                if (customerSelection == 0L) {
+                    customerId = customerInfo.keySet().iterator().next();
+                } else {
+                    customerId = customerSelection;
+                }
+                JSONArray customerLicenses = licenseManagerUtils.getCustomerLicenses(user, selectedState, customerId);
+                if (customerLicenses != null && customerLicenses.length() > 0) {
+                    List<SoftwareSuite> suites = convertToModel(customerLicenses);
+                    renderRequest.setAttribute("records", suites);
+                } else {
+                    renderRequest.setAttribute("records", Collections.emptyList());
+                }
+
             }
             renderRequest.setAttribute("filterSelection", selectedState);
+            renderRequest.setAttribute("customerSelection", customerSelection);
         } catch (JSONException | ParseException e) {
             throw new PortletException(e);
         }
@@ -115,11 +121,25 @@ public class ClmLicensesPortlet extends MVCPortlet {
     }
 
     /**
+     * Pass the selected filter options to the render request
+     *
+     * @param actionRequest  Filter action
+     * @param actionResponse Filter response
+     */
+    @SuppressWarnings("unused")
+    public void customerSelect(ActionRequest actionRequest, ActionResponse actionResponse) {
+
+        final Long filter = ParamUtil.getLong(actionRequest, "customerSelection", 0L);
+        actionResponse.getRenderParameters().setValue("customerSelection", String.valueOf(filter));
+    }
+
+    /**
      * Call sendLicenseFile action
      *
      * @param actionRequest  Filter action
      * @param actionResponse Filter response
      */
+    @SuppressWarnings("unused")
     public void sendLicenseFiles(ActionRequest actionRequest, ActionResponse actionResponse) {
 
         final long customerId = ParamUtil.getLong(actionRequest, "customerId", 0);
@@ -135,11 +155,6 @@ public class ClmLicensesPortlet extends MVCPortlet {
         DataRequestManager instance = DataRequestManager.getInstance();
         String dataRequestId = SendLicenseFilesRequest.class.getName() + "_" + customerId + "_" + themeDisplay.getUser().getUserId();
 
-        HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
-        if (httpServletRequest.getSession().getAttribute(dataRequestId) != null) {
-            SessionMessages.add(actionRequest, "send-licenses-success");
-            return;
-        }
         DataRequest dataRequest = instance.getDataRequest(dataRequestId);
         if (dataRequest != null) {
             if (dataRequest.getStatus() == DataRequest.STATUS.pending ||
@@ -161,7 +176,6 @@ public class ClmLicensesPortlet extends MVCPortlet {
             return;
         }
         instance.addToQueue(dataRequest);
-        httpServletRequest.getSession().setAttribute(dataRequestId, "already-sent");
         SessionMessages.add(actionRequest, "send-licenses-success");
 
     }
