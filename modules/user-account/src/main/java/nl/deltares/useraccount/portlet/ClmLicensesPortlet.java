@@ -90,7 +90,10 @@ public class ClmLicensesPortlet extends MVCPortlet {
                 } else {
                     customerId = customerSelection;
                 }
-                JSONArray customerLicenses = licenseManagerUtils.getCustomerLicenses(user, selectedState, customerId);
+                Map<String, Object> customerContactInfo = LicenseManagerUtils.parseCustomerContact(customerContacts, customerId);
+                Long customerContactId = (Long) customerContactInfo.getOrDefault("customerContactId", 0L);
+                Boolean customerContactManageLicenses = (Boolean) customerContactInfo.getOrDefault("customerContactManageLicenses", false);
+                JSONArray customerLicenses = licenseManagerUtils.getCustomerLicenses(user, selectedState, customerId, customerContactId, customerContactManageLicenses);
                 if (customerLicenses != null && customerLicenses.length() > 0) {
                     List<SoftwareSuite> suites = convertToModel(customerLicenses);
                     renderRequest.setAttribute("records", suites);

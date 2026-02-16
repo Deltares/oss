@@ -142,7 +142,7 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
     }
 
     @Override
-    public JSONArray getCustomerLicenses(User user, String state, Long customerId) throws IOException, JSONException {
+    public JSONArray getCustomerLicenses(User user, String state, Long customerId, Long customerContactId, boolean customerContactManageLicenses) throws IOException, JSONException {
 
         if (!isActive()) {
             LOG.warn("Unable to retrieve license files as the LicenseManager is not active!");
@@ -158,7 +158,14 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
         if (state==null) {
             state = "Active";
         }
-        String queryParameters = String.format("?state=%s", state);
+
+        String queryParameters;
+        if (customerContactManageLicenses){
+            queryParameters = String.format("?state=%s", state);
+        } else {
+            queryParameters = String.format("?state=%s&customerContactId=%d", state, customerContactId);
+        }
+
 
         HttpURLConnection connection = getConnection(getBasePath() + "clm/customers/" + customerId + "/subscriptions/suites" + queryParameters, "GET", headers);
         checkResponse(connection);
