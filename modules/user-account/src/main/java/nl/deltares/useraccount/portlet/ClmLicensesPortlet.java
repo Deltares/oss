@@ -11,7 +11,6 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.emails.LicenseFilesEmail;
@@ -58,9 +57,6 @@ public class ClmLicensesPortlet extends MVCPortlet {
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     @Reference
-    private Portal _portal;
-
-    @Reference
     private LicenseManagerUtils licenseManagerUtils;
 
     public ClmLicensesPortlet() {
@@ -77,7 +73,7 @@ public class ClmLicensesPortlet extends MVCPortlet {
             String selectedState = ParamUtil.getString(renderRequest, "filterSelection", "Active");
             long customerSelection = ParamUtil.getLong(renderRequest, "customerSelection", 0L);
             User user = themeDisplay.getUser();
-            JSONArray customerContacts = licenseManagerUtils.getCustomerContacts(user);
+            JSONArray customerContacts = licenseManagerUtils.getCustomerContactsForUser(user);
             Map<Long, String> customerInfo = LicenseManagerUtils.parseCustomerIdAndName(customerContacts);
 
             if (customerInfo.isEmpty()) {

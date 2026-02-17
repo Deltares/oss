@@ -20,7 +20,9 @@ public interface LicenseManagerUtils {
 
     Map<String, String> encryptLicense(String licenseType, User user) throws IOException, JSONException;
 
-    JSONArray getCustomerContacts(User user)  throws IOException, JSONException;
+    JSONArray getCustomerContactsForUser(User user)  throws IOException, JSONException;
+
+    JSONArray getCustomerContactsForCustomerAndFilter(long customerId, boolean filterBetaTesters, boolean filterLicenseManagers)  throws IOException, JSONException;
 
     static Map<Long, String> parseCustomerIdAndName(JSONArray customerContactsArray) {
 

@@ -19,4 +19,7 @@ public class UserProfilePortletKeys {
 
 	public static final String CLM_LICENSES =
 			"nl_deltares_useraccount_Clm_LicensesPortlet";
+
+	public static final String CLM_CUSTOMER_CONTACTS =
+			"nl_deltares_useraccount_Clm_CustomerContactsPortlet";
 }

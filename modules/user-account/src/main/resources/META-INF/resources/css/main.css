@@ -1,3 +1,26 @@
+.c-yesno {
+  align-items: center;
+  border-radius: 17px;
+  display: flex;
+  font-size: 12px;
+  font-weight: 600;
+  justify-content: center;
+  padding: 3px 5px 1px;
+  text-align: center;
+
+
+  &.c-yes {
+    background-color: greenyellow;
+    color: #FFFFFF;
+  }
+
+  &.c-no {
+    background-color: red;
+    color: #FFFFFF;
+  }
+
+}
+
 .c-subscription-container {
   padding: 5px;
   &:hover {
