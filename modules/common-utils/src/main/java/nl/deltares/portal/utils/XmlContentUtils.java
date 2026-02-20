@@ -82,7 +82,7 @@ public class XmlContentUtils {
     private static void addNodesWithNameToList(NodeList nodeList, String name, List<Node> matchingNodes) {
         for (int i = 0; i < nodeList.getLength(); i++) {
             final Element item = (Element) nodeList.item(i);
-            if (name == null || name.equals(item.getAttribute("name"))) {
+            if (name == null || name.equals(item.getAttribute("name")) || name.equals(item.getAttribute("field-reference"))) {
                 matchingNodes.add(item);
             } else {
                 addNodesWithNameToList(item.getElementsByTagName("dynamic-element"), name, matchingNodes);
