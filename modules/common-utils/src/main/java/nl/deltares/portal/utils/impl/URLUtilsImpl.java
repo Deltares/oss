@@ -23,6 +23,8 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component(
         immediate = true,
@@ -176,6 +178,18 @@ public class URLUtilsImpl implements URLUtils {
         newUrl.append(namespaceKey).append('=').append(URLEncoder.encode(value, StandardCharsets.UTF_8));
 
         return newUrl.toString();
+    }
+
+    @Override
+    public Map<String, String> parseQueryParameters(String queryString) {
+
+        HashMap<String, String> map = new HashMap<>();
+        String[] split = queryString.split("&");
+        for (String part : split) {
+            String[] parts = part.split("=");
+            map.put(parts[0], parts[1]);
+        }
+        return map;
     }
 
     @Reference
