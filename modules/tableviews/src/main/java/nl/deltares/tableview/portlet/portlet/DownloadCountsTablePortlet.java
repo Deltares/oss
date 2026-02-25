@@ -71,7 +71,7 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 
-        final int cur = ParamUtil.getInteger(renderRequest, "cur", 0);
+        final int cur = ParamUtil.getInteger(renderRequest, "cur", 1);
         final int deltas = ParamUtil.getInteger(renderRequest, "delta", 25);
         String filterId = ParamUtil.getString(renderRequest, "filterId", "none");
         final String orderByCol = ParamUtil.getString(renderRequest, "orderByCol", "fileTopic");
@@ -164,7 +164,7 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
                                 RenderRequest renderRequest, Map<String, String> topicMap) {
 
         final List<DisplayDownloadCount> displayCounts = new ArrayList<>();
-        int start = cur * deltas;
+        int start = (cur - 1) * deltas;
         int end = start + deltas;
         final int[] counter = {0};
         try {
