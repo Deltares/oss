@@ -51,8 +51,8 @@
                 <div class="d-flex justify-content-start">
                     <aui:select name="filterSelection" label="customercontacts.filter.label"  value="<%=filterSelection%>" onChange="submit()">
                         <aui:option value="all" label="All" selected="true"/>
-                        <aui:option value="license-manager" label="License manager"/>
-                        <aui:option value="beta-tester" label="Beta tester"/>
+                        <aui:option value="license-manager" label="license-manager.label"/>
+                        <aui:option value="beta-tester" label="beta-tester.label"/>
                     </aui:select>
                 </div>
             </aui:form>
