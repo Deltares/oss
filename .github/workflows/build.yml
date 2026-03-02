@@ -33,4 +33,5 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN_2025 }}
+          SONAR_SCANNER_SKIP_JRE_PROVISIONING: true
         run: ./gradlew build sonar --info
