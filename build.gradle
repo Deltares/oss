@@ -9,6 +9,7 @@ sonar {
     properties {
         property "sonar.projectKey", "Deltares_oss"
         property "sonar.organization", "deltares"
+        property "sonar.scanner.skipJreProvisioning", "true"
     }
 }
 project.ext {
