@@ -235,7 +235,7 @@ public class DownloadTablePortlet extends MVCPortlet {
             if (dataRequest == null) {
                 dataRequest = new DeletedSelectedDownloadsRequest(dataRequestId, themeDisplay.getUserId(), Arrays.asList(selectedIds));
                 instance.addToQueue(dataRequest);
-            } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
+            } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
                 instance.removeDataRequest(dataRequest);
             }
             response.setStatus(HttpServletResponse.SC_OK);
@@ -255,7 +255,7 @@ public class DownloadTablePortlet extends MVCPortlet {
         if (dataRequest == null) {
             dataRequest = new ExportDownloadsTableRequest(dataRequestId, filterValue, filterSelection, themeDisplay.getUserId(), themeDisplay.getSiteGroup(), keycloakUtils);
             instance.addToQueue(dataRequest);
-        } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
+        } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
             instance.removeDataRequest(dataRequest);
         }
         response.setStatus(HttpServletResponse.SC_OK);

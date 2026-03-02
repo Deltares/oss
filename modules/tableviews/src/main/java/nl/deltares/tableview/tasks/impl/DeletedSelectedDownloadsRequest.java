@@ -39,8 +39,8 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
 
     @Override
     public STATUS call() {
-        if (getStatus() == available) return status;
-        status = running;
+        if (getStatus() == AVAILABLE) return status;
+        status = RUNNING;
         statusMessage = "start deleting...";
         init();
         try {
@@ -49,15 +49,15 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
 
             try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
                 deleteSelectedRecords(writer);
-                if (status != terminated) {
-                    status = available;
+                if (status != TERMINATED) {
+                    status = AVAILABLE;
                 }
             } catch (Exception e) {
                 errorMessage = e.getMessage();
                 logger.warn("Error serializing csv content: %s", e);
-                status = terminated;
+                status = TERMINATED;
             }
-            if (status == available){
+            if (status == AVAILABLE){
                 this.dataFile = new File(getExportDir(), id + ".csv");
                 if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
                 Files.move(tempFile.toPath(), dataFile.toPath());
@@ -65,7 +65,7 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
 
         } catch (Exception e) {
             errorMessage = e.getMessage();
-            status = terminated;
+            status = TERMINATED;
         }
         fireStateChanged();
 
@@ -78,7 +78,7 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
         totalCount = selectedRecords.size();
 
         selectedRecords.forEach(id -> {
-            if (status == terminated) return;
+            if (status == TERMINATED) return;
             try {
                 final Download download = DownloadLocalServiceUtil.deleteDownload(Long.parseLong(id));
                 final User user = UserLocalServiceUtil.fetchUser(download.getUserId());
@@ -99,7 +99,7 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
                 incrementProcessCount(1);
             }
             if (Thread.interrupted()) {
-                status = terminated;
+                status = TERMINATED;
                 errorMessage = String.format("Thread 'DeletedSelectedDownloadsRequest' with id %s is interrupted!", id);
             }
         });

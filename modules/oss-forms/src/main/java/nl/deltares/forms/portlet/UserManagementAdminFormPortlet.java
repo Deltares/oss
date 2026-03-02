@@ -163,7 +163,7 @@ public class UserManagementAdminFormPortlet extends MVCPortlet {
             if (dataRequest == null) {
                 dataRequest = new CheckNonKeycloakUsersRequest(dataRequestId, themeDisplay.getUserId(), usersFilePath, adminUtils);
                 instance.addToQueue(dataRequest);
-            } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
+            } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
                 instance.removeDataRequest(dataRequest);
             }
             resourceResponse.setStatus(HttpServletResponse.SC_OK);
@@ -183,7 +183,7 @@ public class UserManagementAdminFormPortlet extends MVCPortlet {
             if (dataRequest == null) {
                 dataRequest = new DeleteUsersRequest(dataRequestId, themeDisplay.getUserId(), usersFilePath, adminUtils);
                 instance.addToQueue(dataRequest);
-            } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
+            } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
                 instance.removeDataRequest(dataRequest);
             }
             resourceResponse.setStatus(HttpServletResponse.SC_OK);
@@ -204,7 +204,7 @@ public class UserManagementAdminFormPortlet extends MVCPortlet {
                 dataRequest = new ImportAccountsRequest(dataRequestId, themeDisplay.getUserId(),
                         companyId == null ? themeDisplay.getCompanyId(): companyId, accountsFilePath, accountsUtils);
                 instance.addToQueue(dataRequest);
-            } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
+            } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
                 instance.removeDataRequest(dataRequest);
             }
             resourceResponse.setStatus(HttpServletResponse.SC_OK);
@@ -234,7 +234,7 @@ public class UserManagementAdminFormPortlet extends MVCPortlet {
         if (dataRequest == null) {
             dataRequest = new DownloadInvalidUsersRequest(dataRequestId, themeDisplay.getUserId(), adminUtils);
             instance.addToQueue(dataRequest);
-        } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
+        } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
             instance.removeDataRequest(dataRequest);
         }
         resourceResponse.setStatus(HttpServletResponse.SC_OK);
@@ -259,7 +259,7 @@ public class UserManagementAdminFormPortlet extends MVCPortlet {
         if (dataRequest == null) {
             dataRequest = new DeleteBannedUsersRequest(dataRequestId, themeDisplay.getUserId(), bannedUsers, adminUtils);
             instance.addToQueue(dataRequest);
-        } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
+        } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
             instance.removeDataRequest(dataRequest);
         }
         resourceResponse.setStatus(HttpServletResponse.SC_OK);

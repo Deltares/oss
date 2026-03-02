@@ -156,8 +156,8 @@ public class ClmLicensesPortlet extends MVCPortlet {
 
         DataRequest dataRequest = instance.getDataRequest(dataRequestId);
         if (dataRequest != null) {
-            if (dataRequest.getStatus() == DataRequest.STATUS.pending ||
-                dataRequest.getStatus() == DataRequest.STATUS.running) {
+            if (dataRequest.getStatus() == DataRequest.STATUS.PENDING ||
+                dataRequest.getStatus() == DataRequest.STATUS.RUNNING) {
                 SessionMessages.add(actionRequest, "send-licenses-success");
                 return;
             } else {

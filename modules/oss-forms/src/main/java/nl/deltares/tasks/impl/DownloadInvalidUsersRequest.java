@@ -26,10 +26,10 @@ public class DownloadInvalidUsersRequest extends AbstractDataRequest {
     @Override
     public STATUS call() {
 
-        if (status == available || status == nodata) return status;
+        if (status == AVAILABLE || status == NODATA) return status;
 
         init();
-        status = running;
+        status = RUNNING;
 
         //dummy set something to show in progress bar
         totalCount = 100;
@@ -41,20 +41,20 @@ public class DownloadInvalidUsersRequest extends AbstractDataRequest {
             try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
                 adminUtils.getKeycloakUtils().downloadInvalidUsers(writer);
                 incrementProcessCount(100);
-                status = available;
+                status = AVAILABLE;
             } catch (Exception e) {
                 errorMessage = e.getMessage();
                 logger.warn("Error serializing csv content: %s", e);
-                status = terminated;
+                status = TERMINATED;
             }
-            if (status == available) {
+            if (status == AVAILABLE) {
                 this.dataFile = new File(getExportDir(), id + ".data");
                 if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
                 Files.move(tempFile.toPath(), dataFile.toPath());
             }
         } catch (IOException e) {
             errorMessage = e.getMessage();
-            status = terminated;
+            status = TERMINATED;
         }
         fireStateChanged();
 
@@ -65,7 +65,7 @@ public class DownloadInvalidUsersRequest extends AbstractDataRequest {
     @Override
     public String getStatusMessage() {
         //dummy something to show in progress bar.
-        if (status == running){
+        if (status == RUNNING){
             int processedCount = super.getProcessedCount();
             processedCount++;
             if (processedCount == totalCount) super.setProcessCount(0);

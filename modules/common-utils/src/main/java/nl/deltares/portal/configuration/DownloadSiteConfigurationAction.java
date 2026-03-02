@@ -35,6 +35,9 @@ import javax.servlet.http.HttpServletResponse;
 
 public class DownloadSiteConfigurationAction extends DefaultConfigurationAction {
 
+    private static final String CONTACT_URL = "contactURL";
+    private static final String PRIVACY_URL = "privacyURL";
+
     @Override
     public void include(PortletConfig portletConfig, HttpServletRequest httpServletRequest,
                         HttpServletResponse httpServletResponse) throws Exception {
@@ -45,8 +48,8 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
 
         try {
             ThemeDisplay themeDisplay = (ThemeDisplay) httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY);
-            httpServletRequest.setAttribute("contactURL", getParameter(themeDisplay, _configurationProvider, "contactURL"));
-            httpServletRequest.setAttribute("privacyURL", getParameter(themeDisplay, _configurationProvider, "privacyURL"));
+            httpServletRequest.setAttribute(CONTACT_URL, getParameter(themeDisplay, _configurationProvider, CONTACT_URL));
+            httpServletRequest.setAttribute(PRIVACY_URL, getParameter(themeDisplay, _configurationProvider, PRIVACY_URL));
 
         } catch (PortalException e) {
             throw new PortletException("Could not get configuration for DownloadSiteConfiguration: " + e.getMessage(), e);
@@ -62,8 +65,8 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
         String downloadURL = ParamUtil.getString(actionRequest, "downloadURL");
-        String privacyURL = ParamUtil.getString(actionRequest, "privacyURL");
-        String contactURL = ParamUtil.getString(actionRequest, "contactURL");
+        String privacyURL = ParamUtil.getString(actionRequest, PRIVACY_URL);
+        String contactURL = ParamUtil.getString(actionRequest, CONTACT_URL);
         String sendFromEmail = ParamUtil.getString(actionRequest, "sendFromEmail");
         String replyToEmail = ParamUtil.getString(actionRequest, "replyToEmail");
         String bccToEmail = ParamUtil.getString(actionRequest, "bccToEmail");
@@ -77,8 +80,8 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
                 settings.getModifiableSettings();
 
         modifiableSettings.setValue("downloadURL", downloadURL);
-        modifiableSettings.setValue("privacyURL", privacyURL);
-        modifiableSettings.setValue("contactURL", contactURL);
+        modifiableSettings.setValue(PRIVACY_URL, privacyURL);
+        modifiableSettings.setValue(CONTACT_URL, contactURL);
         modifiableSettings.setValue("bannerURL", bannerURL);
         modifiableSettings.setValue("sendFromEmail", sendFromEmail);
         modifiableSettings.setValue("replyToEmail", replyToEmail);
@@ -107,9 +110,9 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
             throw new PortalException(String.format("Error getting DSD siteConfiguration: %s", e.getMessage()));
         }
         switch (parameterId) {
-            case "contactURL":
+            case CONTACT_URL:
                 return siteConfiguration.contactURL();
-            case "privacyURL":
+            case PRIVACY_URL:
                 return siteConfiguration.privacyURL();
             default:
                 return null;

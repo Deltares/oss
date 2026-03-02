@@ -165,7 +165,7 @@ public class DsdAdminFormPortlet extends MVCPortlet {
 						webinarUtilsFactory, primKey, delete, deleteMissing, downloadAction);
 			}
 			instance.addToQueue(dataRequest);
-		} else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata){
+		} else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA){
 			instance.removeDataRequest(dataRequest);
 		}
 		resourceResponse.setStatus(HttpServletResponse.SC_OK);

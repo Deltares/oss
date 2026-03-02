@@ -41,8 +41,8 @@ public class DeletedSelectedDownloadCountsRequest extends AbstractDataRequest {
 
     @Override
     public STATUS call() throws Exception {
-        if (getStatus() == available) return status;
-        status = running;
+        if (getStatus() == AVAILABLE) return status;
+        status = RUNNING;
         statusMessage = "start deleting...";
         init();
         try {
@@ -51,15 +51,15 @@ public class DeletedSelectedDownloadCountsRequest extends AbstractDataRequest {
 
             try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
                 deleteSelectedRecords(writer);
-                if (status != terminated) {
-                    status = available;
+                if (status != TERMINATED) {
+                    status = AVAILABLE;
                 }
             } catch (Exception e) {
                 errorMessage = e.getMessage();
                 logger.warn("Error serializing csv content: %s", e);
-                status = terminated;
+                status = TERMINATED;
             }
-            if (status == available) {
+            if (status == AVAILABLE) {
                 this.dataFile = new File(getExportDir(), id + ".csv");
                 if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
                 Files.move(tempFile.toPath(), dataFile.toPath());
@@ -67,7 +67,7 @@ public class DeletedSelectedDownloadCountsRequest extends AbstractDataRequest {
 
         } catch (Exception e) {
             errorMessage = e.getMessage();
-            status = terminated;
+            status = TERMINATED;
         }
         fireStateChanged();
 
@@ -80,7 +80,7 @@ public class DeletedSelectedDownloadCountsRequest extends AbstractDataRequest {
         totalCount = selectedRecords.size();
 
         selectedRecords.forEach(id -> {
-            if (status == terminated) return;
+            if (status == TERMINATED) return;
             try {
                 final DownloadCount download = DownloadCountLocalServiceUtil.deleteDownloadCount(Long.parseLong(id));
                 final String downloadIdString = String.valueOf(download.getDownloadId());
@@ -93,7 +93,7 @@ public class DeletedSelectedDownloadCountsRequest extends AbstractDataRequest {
                 incrementProcessCount(1);
             }
             if (Thread.interrupted()) {
-                status = terminated;
+                status = TERMINATED;
                 errorMessage = String.format("Thread 'DeletedSelectedDownloadCountssRequest' with id %s is interrupted!", id);
             }
         });

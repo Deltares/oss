@@ -36,11 +36,11 @@ public class DataRequestManager {
 
     public void addToQueue(DataRequest dataRequest){
         if (dataRequest == null) throw new IllegalArgumentException("dataRequest == null");
-        if (dataRequest.getStatus() != DataRequest.STATUS.pending)
+        if (dataRequest.getStatus() != DataRequest.STATUS.PENDING)
             throw new IllegalStateException(String.format("Data request %s has invalid state %s! State must be 'pending' to add to queue.", dataRequest.getId(), dataRequest.getStatus()));
 
         DataRequest existingRequest = dataRequests.get(dataRequest.getId());
-        if (existingRequest != null && existingRequest.getStatus() == DataRequest.STATUS.running){
+        if (existingRequest != null && existingRequest.getStatus() == DataRequest.STATUS.RUNNING){
             throw new IllegalStateException(String.format("Data request %s is still running! Either terminate this request or wait for it to complete.", dataRequest.getId()));
         }
         dataRequests.put(dataRequest.getId(), dataRequest);
@@ -57,14 +57,14 @@ public class DataRequestManager {
 
     public void fireStateChanged(DataRequest changedRequest) {
         DataRequest.STATUS status = changedRequest.getStatus();
-        if (status == DataRequest.STATUS.available
-                || status == DataRequest.STATUS.terminated
-                || status == DataRequest.STATUS.dispose ){
+        if (status == DataRequest.STATUS.AVAILABLE
+                || status == DataRequest.STATUS.TERMINATED
+                || status == DataRequest.STATUS.DISPOSE){
             changedRequest.setDataRequestManager(null); //stop listening
             startNextRequest();
         }
 
-        if (status == DataRequest.STATUS.dispose){
+        if (status == DataRequest.STATUS.DISPOSE){
             dataRequests.remove(changedRequest.getId());
         }
     }
@@ -99,11 +99,11 @@ public class DataRequestManager {
             dataRequestNotExistsError(dataRequestId, resourceResponse);
         } else {
             String statusMessage;
-            if (dataRequest.getStatus() == DataRequest.STATUS.nodata) {
+            if (dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
                 resourceResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
                 statusMessage = "No data found!";
                 removeDataRequest(dataRequest);
-            } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated){
+            } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED){
                 resourceResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 statusMessage = dataRequest.getErrorMessage();
                 removeDataRequest(dataRequest);
@@ -124,7 +124,7 @@ public class DataRequestManager {
             return;
         }
         DataRequest.STATUS status = dataRequest.getStatus();
-        if (status == DataRequest.STATUS.available && dataRequest.getDataFile().exists()){
+        if (status == DataRequest.STATUS.AVAILABLE && dataRequest.getDataFile().exists()){
 
             resourceResponse.setStatus(HttpServletResponse.SC_OK);
             resourceResponse.setContentType("text/plain");
@@ -143,12 +143,12 @@ public class DataRequestManager {
             resourceResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resourceResponse.setContentType("text/plain");
             PrintWriter writer = resourceResponse.getWriter();
-            if (status != DataRequest.STATUS.available) {
+            if (status != DataRequest.STATUS.AVAILABLE) {
                 writer.printf("Requested log file is not available yet: %s", dataRequestId);
             } else if (!dataRequest.getDataFile().exists()){
                 writer.printf("Requested log file does not exist: %s", dataRequest.getDataFile().getAbsolutePath());
                 removeDataRequest(dataRequest);
-            } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated){
+            } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED){
                 writer.printf("Requested log file task has been terminated");
                 removeDataRequest(dataRequest);
             }

@@ -94,8 +94,8 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     @Override
     public STATUS call() {
 
-        if (getStatus() == available) return status;
-        status = running;
+        if (getStatus() == AVAILABLE) return status;
+        status = RUNNING;
         statusMessage = "starting download";
         init();
 
@@ -128,7 +128,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             } catch (Exception e) {
                 errorMessage = e.getMessage();
                 logger.warn("Error serializing csv content: %s", e);
-                status = terminated;
+                status = TERMINATED;
                 statusMessage = errorMessage;
             }
 
@@ -145,7 +145,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
         } catch (Exception e) {
             errorMessage = e.getMessage();
-            status = terminated;
+            status = TERMINATED;
         }
         fireStateChanged();
 
@@ -205,7 +205,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
         totalCount = dsdSessionUtils.getRegistrationCount();
         if (totalCount == 0){
-            status = nodata;
+            status = NODATA;
             setProcessCount(0);
             return;
         }
@@ -217,7 +217,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             int end = i + 500;
             final List<RegistrationData> registrationRecordsToProcess = dsdSessionUtils.getRegistrations(start, end);
             registrationRecordsToProcess.forEach(recordObjects -> {
-                if (status == terminated) return;
+                if (status == TERMINATED) return;
                 incrementProcessCount(1);
                 Long eventResourcePrimaryKey = recordObjects.getEventResourceId();
                 Event event = (Event) getDsdArticle(eventResourcePrimaryKey, cache);
@@ -244,15 +244,15 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                             null, locale);
                 }
                 if (Thread.interrupted()) {
-                    status = terminated;
+                    status = TERMINATED;
                     errorMessage = String.format("Thread 'DownloadEventRegistrationsRequest' with id %s is interrupted!", id);
                 }
             });
 
             i = end;
         }
-        if (status != terminated) {
-            status = available;
+        if (status != TERMINATED) {
+            status = AVAILABLE;
         }
 
 
@@ -264,14 +264,14 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         registrationRecordsToProcess.addAll(dsdSessionUtils.getEventRegistrations(group.getGroupId(), resourceId));
 
         if (registrationRecordsToProcess.isEmpty()) {
-            status = nodata;
+            status = NODATA;
             setProcessCount(0);
             return;
         }
         totalCount = registrationRecordsToProcess.size();
 
         registrationRecordsToProcess.forEach(recordObjects -> {
-            if (status == terminated) return;
+            if (status == TERMINATED) return;
             incrementProcessCount(1);
             long resourcePrimaryKey = recordObjects.getResourceId();
             statusMessage = "procession resourcePrimaryKey=" + resourcePrimaryKey;
@@ -293,13 +293,13 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                     null, locale);
             }
             if (Thread.interrupted()) {
-                status = terminated;
+                status = TERMINATED;
                 errorMessage = String.format("Thread 'DownloadEventRegistrationsRequest' with id %s is interrupted!", id);
             }
 
         });
-        if (status != terminated) {
-            status = available;
+        if (status != TERMINATED) {
+            status = AVAILABLE;
         }
 
 
@@ -315,14 +315,14 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             List<RegistrationData> registrationRecordsToProcess = getRegistrationRecordsByYear(groupId, year);
 
             if (registrationRecordsToProcess.isEmpty()) {
-                status = nodata;
+                status = NODATA;
                 setProcessCount(0);
                 return;
             }
             totalCount = registrationRecordsToProcess.size();
 
             registrationRecordsToProcess.forEach(recordObjects -> {
-                if (status == terminated) return;
+                if (status == TERMINATED) return;
                 incrementProcessCount(1);
                 Long resourcePrimaryKey = recordObjects.getResourceId();
                 statusMessage = "procession resourcePrimaryKey=" + resourcePrimaryKey;
@@ -354,19 +354,19 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                             webinarKeyCache, locale);
                 }
                 if (Thread.interrupted()) {
-                    status = terminated;
+                    status = TERMINATED;
                     errorMessage = String.format("Thread 'DownloadEventRegistrationsRequest' with id %s is interrupted!", id);
                 }
 
 
             });
-            if (status != terminated) {
-                status = available;
+            if (status != TERMINATED) {
+                status = AVAILABLE;
             }
 
         } catch (PortalException e) {
             errorMessage = e.getMessage();
-            status = terminated;
+            status = TERMINATED;
         }
     }
     private void downloadRequestedArticleRegistrations(String articleId, PrintWriter writer) {
@@ -383,14 +383,14 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                     article, registrationCache);
 
             if (registrationRecordsToProcess.isEmpty()) {
-                status = nodata;
+                status = NODATA;
                 setProcessCount(0);
                 return;
             }
             totalCount = registrationRecordsToProcess.size();
 
             registrationRecordsToProcess.forEach(recordObjects -> {
-                if (status == terminated) return;
+                if (status == TERMINATED) return;
                 incrementProcessCount(1);
                 Long resourcePrimaryKey = recordObjects.getResourceId();
                 statusMessage = "procession resourcePrimaryKey=" + resourcePrimaryKey;
@@ -419,19 +419,19 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                             webinarKeyCache, locale);
                 }
                 if (Thread.interrupted()) {
-                    status = terminated;
+                    status = TERMINATED;
                     errorMessage = String.format("Thread 'DownloadEventRegistrationsRequest' with id %s is interrupted!", id);
                 }
 
 
             });
-            if (status != terminated) {
-                status = available;
+            if (status != TERMINATED) {
+                status = AVAILABLE;
             }
 
         } catch (PortalException e) {
             errorMessage = e.getMessage();
-            status = terminated;
+            status = TERMINATED;
         }
     }
 

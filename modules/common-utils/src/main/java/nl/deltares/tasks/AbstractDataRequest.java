@@ -24,7 +24,7 @@ public abstract class AbstractDataRequest implements DataRequest {
 
     protected final String id;
     protected final long currentUserId;
-    protected STATUS status = pending;
+    protected STATUS status = PENDING;
     private int processedCount = 0;
     protected int totalCount = 0;
     protected File tempDir;
@@ -57,7 +57,7 @@ public abstract class AbstractDataRequest implements DataRequest {
     @Override
     public void dispose() {
 
-        status = terminated;
+        status = TERMINATED;
         if (dataFile != null && dataFile.exists()) {
             try {
                 Files.deleteIfExists(dataFile.toPath());
@@ -90,13 +90,13 @@ public abstract class AbstractDataRequest implements DataRequest {
     @Override
     public STATUS getStatus() {
 
-        if (status == running) checkProgress();
+        if (status == RUNNING) checkProgress();
         return status;
     }
 
     private void checkProgress() {
         if (System.currentTimeMillis() - lastProgressCheck > progressTimeOut){
-            status = terminated;
+            status = TERMINATED;
         }
     }
 
@@ -107,7 +107,7 @@ public abstract class AbstractDataRequest implements DataRequest {
 
     @Override
     public File getDataFile() {
-        if (status != available) throw new IllegalStateException("Data not available! Check if state is 'available'!");
+        if (status != AVAILABLE) throw new IllegalStateException("Data not available! Check if state is 'available'!");
         return dataFile;
     }
 

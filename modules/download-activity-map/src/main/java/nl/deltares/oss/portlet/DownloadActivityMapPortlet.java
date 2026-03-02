@@ -95,7 +95,7 @@ public class DownloadActivityMapPortlet extends MVCPortlet {
             writeToResponse(resourceResponse, null);
         } else if ("download".equals(action)) {
             final DataRequest downloadRequest = DataRequestManager.getInstance().getDataRequest(id);
-            if (Objects.requireNonNull(downloadRequest.getStatus()) == DataRequest.STATUS.available) {
+            if (Objects.requireNonNull(downloadRequest.getStatus()) == DataRequest.STATUS.AVAILABLE) {
                 final File dataFile = downloadRequest.getDataFile();
                 try {
                     if (dataFile != null && dataFile.exists()) {
@@ -173,7 +173,7 @@ public class DownloadActivityMapPortlet extends MVCPortlet {
             queryParameters.put(DownloadActivityMapRequest.QUERY_PARAMETER_MAXRECORDS, 1000);
             dataRequest = new DownloadActivityMapRequest(id, themeDisplay.getUserId(), downloadSiteId, dsdParserUtils, queryParameters);
             instance.addToQueue(dataRequest);
-        } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
+        } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
             instance.removeDataRequest(dataRequest);
         }
         return dataRequest;

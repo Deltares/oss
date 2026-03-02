@@ -160,7 +160,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         final DataRequestManager instance = DataRequestManager.getInstance();
         DataRequest dataRequest = instance.getDataRequest(id);
         if (dataRequest != null) {
-            if (dataRequest.getStatus() == DataRequest.STATUS.running || dataRequest.getStatus() == DataRequest.STATUS.pending) {
+            if (dataRequest.getStatus() == DataRequest.STATUS.RUNNING || dataRequest.getStatus() == DataRequest.STATUS.PENDING) {
                 SessionMessages.add(actionRequest, String.format("Download process is still running. %s", dataRequest.getStatusMessage()));
                 return false;
             }

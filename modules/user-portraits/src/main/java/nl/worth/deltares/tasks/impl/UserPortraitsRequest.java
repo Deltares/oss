@@ -41,8 +41,8 @@ public class UserPortraitsRequest extends AbstractDataRequest {
 
     @Override
     public STATUS call() {
-        if (getStatus() == available) return status;
-        status = running;
+        if (getStatus() == AVAILABLE) return status;
+        status = RUNNING;
         statusMessage = "Start UserPortraitRequest";
         init();
 
@@ -56,13 +56,13 @@ public class UserPortraitsRequest extends AbstractDataRequest {
             if (userPortraits.length() > 0)
                 writeResultsToFile(userPortraits, dataFile);
 
-            status = available;
+            status = AVAILABLE;
 
             statusMessage = String.format("%d user portraits have been processed.", getProcessedCount());
             LOG.info(statusMessage);
         } catch (Exception e) {
             errorMessage = e.getMessage();
-            status = terminated;
+            status = TERMINATED;
         } finally {
             fireStateChanged();
         }
@@ -125,7 +125,7 @@ public class UserPortraitsRequest extends AbstractDataRequest {
 
             }
             if (Thread.interrupted()) {
-                status = terminated;
+                status = TERMINATED;
                 errorMessage = String.format("Thread 'UserPortraitsRequest' with id %s is interrupted!", id);
                 break;
             }

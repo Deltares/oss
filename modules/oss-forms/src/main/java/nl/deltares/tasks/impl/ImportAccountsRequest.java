@@ -48,22 +48,22 @@ public class ImportAccountsRequest extends AbstractDataRequest {
         final File accountsFile = new File(_accountFilePath);
         if (!accountsFile.exists()) {
             errorMessage = "File containing account data does not exist: " + _accountFilePath;
-            status = terminated;
+            status = TERMINATED;
             fireStateChanged();
             return status;
         }
 
-        if (status == available || status == nodata) {
+        if (status == AVAILABLE || status == NODATA) {
             return status;
         }
         init();
-        status = running;
+        status = RUNNING;
 
         try {
             totalCount = (int) Files.size(accountsFile.toPath());
         } catch (IOException e) {
             errorMessage = "Error getting file size: " + e.getMessage();
-            status = terminated;
+            status = TERMINATED;
             fireStateChanged();
             return status;
         }
@@ -122,17 +122,17 @@ public class ImportAccountsRequest extends AbstractDataRequest {
             } catch (Exception e) {
                 errorMessage = e.getMessage();
                 logger.warn(String.format("Error importing account data: %s", errorMessage), e);
-                status = terminated;
+                status = TERMINATED;
             }
-            if (status != terminated) {
+            if (status != TERMINATED) {
                 this.dataFile = new File(getExportDir(), id + ".data");
                 if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
                 Files.move(tempFile.toPath(), dataFile.toPath());
-                status = available;
+                status = AVAILABLE;
             }
         } catch (IOException e) {
             errorMessage = e.getMessage();
-            status = terminated;
+            status = TERMINATED;
         }
         fireStateChanged();
 
@@ -193,7 +193,7 @@ public class ImportAccountsRequest extends AbstractDataRequest {
     @Override
     public String getStatusMessage() {
         //dummy something to show in progress bar.
-        if (status == running){
+        if (status == RUNNING){
             int processedCount = super.getProcessedCount();
             processedCount++;
             if (processedCount == totalCount) super.setProcessCount(0);

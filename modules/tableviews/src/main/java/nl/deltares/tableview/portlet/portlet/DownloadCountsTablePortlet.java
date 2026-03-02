@@ -128,7 +128,7 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
                 dataRequest = new DeletedSelectedDownloadCountsRequest(dataRequestId, themeDisplay.getUserId(),
                         Arrays.asList(selectedIds), dsdParserUtils);
                 instance.addToQueue(dataRequest);
-            } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
+            } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
                 instance.removeDataRequest(dataRequest);
             }
             response.setStatus(HttpServletResponse.SC_OK);

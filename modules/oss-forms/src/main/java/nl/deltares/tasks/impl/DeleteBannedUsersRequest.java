@@ -30,16 +30,16 @@ public class DeleteBannedUsersRequest extends AbstractDataRequest {
         this.bannedUsers = bannedUsers;
         this.adminUtils = adminUtils;
         totalCount = bannedUsers.size();
-        if (totalCount == 0) status = nodata;
+        if (totalCount == 0) status = NODATA;
     }
 
     @Override
     public STATUS call() {
 
-        if (status == available || status == nodata) return status;
+        if (status == AVAILABLE || status == NODATA) return status;
 
         init();
-        status = running;
+        status = RUNNING;
 
         try {
             File tempFile = new File(getExportDir(), id + ".tmp");
@@ -74,12 +74,12 @@ public class DeleteBannedUsersRequest extends AbstractDataRequest {
                     writer.flush();
                     incrementProcessCount(1);
                     if (Thread.interrupted()) {
-                        status = terminated;
+                        status = TERMINATED;
                         errorMessage = String.format("Thread 'DeleteBannedUsersRequest' with id %s is interrupted!", id);
                         break;
                     }
                 }
-                if (status != terminated) {
+                if (status != TERMINATED) {
                     for (User deletionUser : deletionUsers) {
                         writer.printf("********** Start deleting user %s (%s) in company %d  ***********\n",
                                 deletionUser.getScreenName(), deletionUser.getEmailAddress(), deletionUser.getCompanyId());
@@ -96,22 +96,22 @@ public class DeleteBannedUsersRequest extends AbstractDataRequest {
                                 deletionUser.getScreenName(), deletionUser.getEmailAddress(), deletionUser.getCompanyId());
                     }
                 }
-                if (status != terminated) {
-                    status = available;
+                if (status != TERMINATED) {
+                    status = AVAILABLE;
                 }
             } catch (Exception e) {
                 errorMessage = e.getMessage();
                 logger.warn("Error serializing csv content: %s", e);
-                status = terminated;
+                status = TERMINATED;
             }
-            if (status == available) {
+            if (status == AVAILABLE) {
                 this.dataFile = new File(getExportDir(), id + ".data");
                 if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
                 Files.move(tempFile.toPath(), dataFile.toPath());
             }
         } catch (IOException e) {
             errorMessage = e.getMessage();
-            status = terminated;
+            status = TERMINATED;
         }
         fireStateChanged();
 
