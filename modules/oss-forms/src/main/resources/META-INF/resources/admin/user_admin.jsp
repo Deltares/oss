@@ -30,7 +30,7 @@
         <aui:fieldset >
             <aui:row>
                 <aui:col width="50">
-                    <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.deleteBannedTitle"/></div>
+                    <div class="panel-title" id="deleteBannedUsersTitle"><liferay-ui:message key="oss.admin.deleteBannedTitle"/></div>
                 </aui:col>
                 <aui:col width="45">
                     <div class="control-label"><liferay-ui:message key="oss.admin.deleteBannedInfo"/></div>
@@ -46,7 +46,7 @@
         <aui:fieldset >
             <aui:row>
                 <aui:col width="50">
-                    <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.downloadDisabledTitle"/></div>
+                    <div class="panel-title" ><liferay-ui:message key="oss.admin.downloadDisabledTitle"/></div>
                 </aui:col>
                 <aui:col width="45">
                     <div class="control-label"><liferay-ui:message key="oss.admin.downloadDisabledInfo"/></div>
@@ -62,7 +62,7 @@
         <aui:fieldset >
             <aui:row>
                 <aui:col width="50">
-                    <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.checkUsersExistTitle"/></div>
+                    <div class="panel-title" ><liferay-ui:message key="oss.admin.checkUsersExistTitle"/></div>
                 </aui:col>
                 <aui:col width="45">
                     <aui:row>
@@ -83,7 +83,7 @@
         <aui:fieldset >
             <aui:row>
                 <aui:col width="50">
-                    <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.deleteUsersTitle"/></div>
+                    <div class="panel-title" ><liferay-ui:message key="oss.admin.deleteUsersTitle"/></div>
                 </aui:col>
                 <aui:col width="45">
                     <aui:row>
@@ -104,7 +104,7 @@
         <aui:fieldset >
             <aui:row>
                 <aui:col width="50">
-                    <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.importAccountsTitle"/></div>
+                    <div class="panel-title" ><liferay-ui:message key="oss.admin.importAccountsTitle"/></div>
                 </aui:col>
                 <aui:col width="45">
                     <aui:row>
@@ -126,7 +126,7 @@
             <aui:input name="action" type="hidden" value="changeUserEmail" />
             <aui:row>
                 <aui:col width="50">
-                    <div class="panel-title" id="Title"><liferay-ui:message key="oss.admin.changeUserEmailTitle"/></div>
+                    <div class="panel-title" ><liferay-ui:message key="oss.admin.changeUserEmailTitle"/></div>
                 </aui:col>
                 <aui:col width="45">
                     <aui:row>
