@@ -11,10 +11,11 @@ import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RegistrationsInfo {
+public class RegistrationsInfo implements Serializable {
 
     private final Map<String, Event> eventsMap = new HashMap<>();
     private final Map<String, Registration> registrationsMap = new HashMap<>();

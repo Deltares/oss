@@ -2,11 +2,12 @@ package nl.deltares.model;
 
 import nl.deltares.portal.utils.Period;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class RegistrationInfo {
+public class RegistrationInfo implements Serializable {
 
     private String salutation = null;
     private String firstName = null;
@@ -19,7 +20,7 @@ public class RegistrationInfo {
     private String title;
     private long parentResourceId = 0;
     private String parentTitle = null;
-    private final List<Period> periods = new ArrayList<Period>();
+    private final List<Period> periods = new ArrayList<>();
 
     public void addPeriod(Period period) {
         periods.add(period);

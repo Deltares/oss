@@ -1,6 +1,8 @@
 package nl.deltares.model;
 
-public class RegistrationFormContext {
+import java.io.Serializable;
+
+public class RegistrationFormContext implements Serializable {
 
     private AccountInfo accountInfo;
     private BillingInfo billingInfo;
