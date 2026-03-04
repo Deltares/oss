@@ -29,8 +29,9 @@ jobs:
 
       - name: SonarQube analysis
         run: >
-          ./gradlew --no-daemon sonar --info
+          ./gradlew --no-daemon sonar --info --debug
           -Dsonar.token=${{ secrets.SONARCLOUD_TOKEN_2025 }}
           -Djavax.net.ssl.trustStore=sonarcloud-truststore.p12
           -Djavax.net.ssl.trustStorePassword=${{ secrets.SONARCLOUD_TRUSTSTORE_PASS }}
           -Djavax.net.ssl.trustStoreType=PKCS12
+          -Djavax.net.debug="ssl,handshake"
