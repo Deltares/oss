@@ -285,3 +285,4 @@ license*.xml
 /docker/resources/example-portal-ext.properties
 /modules/common-utils/src/test/resources/goto/pertal-ext.properties
 /docker/liferay/resources/context.xml
+/sonarcloud.truststore.pass
