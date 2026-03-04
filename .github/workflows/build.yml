@@ -19,6 +19,9 @@ jobs:
           distribution: temurin
           cache: gradle
 
+      - name: Build
+        run: ./gradlew --no-daemon clean build
+
       - name: SonarQube analysis
         run: >
           ./gradlew --no-daemon sonarqube --info
