@@ -22,7 +22,7 @@ jobs:
       - name: Prepare truststore
         run: echo "$SONARCLOUD_TRUSTSTORE_B64" | base64 --decode > sonarcloud-truststore.p12
         env:
-          SONARCLOUD_TRUSTSTORE_B64: ${{ secrets.SONARCLOUD_TRUSTSTORE_PASS }}
+          SONARCLOUD_TRUSTSTORE_B64: ${{ secrets.SONARCLOUD_TRUSTSTORE_B64 }}
 
       - name: Build
         run: ./gradlew --no-daemon clean build

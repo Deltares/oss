@@ -286,3 +286,4 @@ license*.xml
 /modules/common-utils/src/test/resources/goto/pertal-ext.properties
 /docker/liferay/resources/context.xml
 /sonarcloud.truststore.pass
+/sonarcloud-truststore.p12.b64
