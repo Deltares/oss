@@ -19,25 +19,15 @@ jobs:
           distribution: temurin
           cache: gradle
 
-      - name: Prepare truststore
-        run: echo "$SONARCLOUD_TRUSTSTORE_B64" | base64 --decode > sonarcloud-truststore.p12
-        env:
-          SONARCLOUD_TRUSTSTORE_B64: ${{ secrets.SONARCLOUD_TRUSTSTORE_B64 }}
+#      - name: Prepare truststore
+#        run: echo "$SONARCLOUD_TRUSTSTORE_B64" | base64 --decode > sonarcloud-truststore.p12
+#        env:
+#          SONARCLOUD_TRUSTSTORE_B64: ${{ secrets.SONARCLOUD_TRUSTSTORE_B64 }}
 
       - name: Build
         run: ./gradlew --no-daemon clean build
 
-      - name: Set up JDK 21 for Sonar
-        uses: actions/setup-java@v4
-        with:
-          java-version: 21
-          distribution: temurin
-
       - name: SonarQube analysis
         run: >
-          ./gradlew --no-daemon sonar --info
-          -Dsonar.token=${{ secrets.SONARCLOUD_TOKEN_2025 }}
-          -Dsonar.scanner.truststorePath=${{ github.workspace }}/sonarcloud-truststore.p12
-          -Dsonar.scanner.truststorePassword=${{ secrets.SONARCLOUD_TRUSTSTORE_PASS }}
-          -Djavax.net.ssl.trustStoreType=PKCS12
+          ./gradlew --no-daemon sonar --info --debug
 
