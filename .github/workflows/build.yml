@@ -20,9 +20,9 @@ jobs:
           cache: gradle
 
       - name: SonarQube analysis
-        run: |
-          ./gradlew --no-daemon sonarqube --info \        
-            -Dsonar.token=${{ secrets.SONARCLOUD_TOKEN_2025 }} \
-            -Djavax.net.ssl.trustStore=sonarcloud-truststore.p12 \ 
-            -Djavax.net.ssl.trustStorePassword=${{ secrets.SONARCLOUD_TRUSTSTORE_PASS }} \
-            -Djavax.net.ssl.trustStoreType=PKCS12
+        run: >
+          ./gradlew --no-daemon sonarqube --info
+          -Dsonar.token=${{ secrets.SONARCLOUD_TOKEN_2025 }}
+          -Djavax.net.ssl.trustStore=sonarcloud-truststore.p12
+          -Djavax.net.ssl.trustStorePassword=${{ secrets.SONARCLOUD_TRUSTSTORE_PASS }}
+          -Djavax.net.ssl.trustStoreType=PKCS12
