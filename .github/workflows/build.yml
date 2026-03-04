@@ -19,10 +19,10 @@ jobs:
           distribution: temurin
           cache: gradle
 
-#      - name: Prepare truststore
-#        run: echo "$SONARCLOUD_TRUSTSTORE_B64" | base64 --decode > sonarcloud-truststore.p12
-#        env:
-#          SONARCLOUD_TRUSTSTORE_B64: ${{ secrets.SONARCLOUD_TRUSTSTORE_B64 }}
+      - name: Prepare truststore
+        run: echo "$SONARCLOUD_TRUSTSTORE_B64" | base64 --decode > sonarcloud-truststore.p12
+        env:
+          SONARCLOUD_TRUSTSTORE_B64: ${{ secrets.SONARCLOUD_TRUSTSTORE_B64 }}
 
       - name: Build
         run: ./gradlew --no-daemon clean build
@@ -34,4 +34,3 @@ jobs:
           -Djavax.net.ssl.trustStore=sonarcloud-truststore.p12
           -Djavax.net.ssl.trustStorePassword=${{ secrets.SONARCLOUD_TRUSTSTORE_PASS }}
           -Djavax.net.ssl.trustStoreType=PKCS12
-          -Djavax.net.debug="ssl,handshake"
