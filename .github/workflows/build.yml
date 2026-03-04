@@ -12,10 +12,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 11 for build
         uses: actions/setup-java@v4
         with:
-          java-version: 17
+          java-version: 11
           distribution: temurin
           cache: gradle
 
@@ -27,9 +27,15 @@ jobs:
       - name: Build
         run: ./gradlew --no-daemon clean build
 
+      - name: Set up JDK 21 for Sonar
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: temurin
+
       - name: SonarQube analysis
         run: >
-          ./gradlew --no-daemon sonar --info --debug
+          ./gradlew --no-daemon sonar --info
           -Dsonar.token=${{ secrets.SONARCLOUD_TOKEN_2025 }}
           -Djavax.net.ssl.trustStore=sonarcloud-truststore.p12
           -Djavax.net.ssl.trustStorePassword=${{ secrets.SONARCLOUD_TRUSTSTORE_PASS }}
