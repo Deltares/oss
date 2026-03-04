@@ -29,5 +29,6 @@ jobs:
 
       - name: SonarQube analysis
         run: >
-          ./gradlew --no-daemon sonar --info --debug
+          ./gradlew --no-daemon sonar --info
+          -Dsonar.token=${{ secrets.SONARCLOUD_TOKEN_2025 }}
 
