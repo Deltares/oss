@@ -11,6 +11,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -37,13 +38,13 @@ public class XmlContentUtils {
     }
 
     public static Document parseContent(String siteName, InputStream xmlInputStream) throws PortalException {
-        //Parser that produces DOM object trees from XML content
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
         try {
-            //API to obtain DOM Document instance
+            // Parser that produces DOM object trees from XML content (hardened against XXE)
+            DocumentBuilderFactory factory = newSecureDocumentBuilderFactory();
+
+            // API to obtain DOM Document instance
             DocumentBuilder builder = factory.newDocumentBuilder();
-            //Parse the content to Document object
+            // Parse the content to Document object
             return builder.parse(xmlInputStream);
         } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new PortalException(String.format("Could not parse content for site %s: %s", siteName, e));
@@ -182,6 +183,45 @@ public class XmlContentUtils {
             }
         });
         return nodeValues.toArray(new String[0]);
+    }
+
+    /**
+     * Creates a hardened {@link DocumentBuilderFactory} which rejects DOCTYPE declarations and
+     * prevents resolving any external entities.
+     */
+    private static DocumentBuilderFactory newSecureDocumentBuilderFactory() throws ParserConfigurationException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+        factory.setNamespaceAware(true);
+        factory.setXIncludeAware(false);
+        factory.setExpandEntityReferences(false);
+
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
+        // Disallow any DOCTYPE.
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+
+        // Disable external entities.
+        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+
+        // Disable external DTDs.
+        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
+        // JAXP properties (supported on Java 8uXX+/11+/17+; harmless if unsupported).
+        try {
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        }
+        catch (IllegalArgumentException ignored) {
+        }
+
+        try {
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        }
+        catch (IllegalArgumentException ignored) {
+        }
+
+        return factory;
     }
 
 }
