@@ -33,6 +33,10 @@ jobs:
           ./gradlew --version
 
       - name: SonarQube analysis
-        env:
-          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN_2025 }}
-        run: ./gradlew build sonar --info --stacktrace
+        run: >
+          ./gradlew sonar --info --stacktrace
+          -Dsonar.token=${{ secrets.SONARCLOUD_TOKEN_2025 }}
+          -Dsonar.scanner.truststorePath=${{ github.workspace }}/sonarcloud-truststore.p12
+          -Dsonar.scanner.truststorePassword=${{ secrets.SONARCLOUD_TRUSTSTORE_PASS }}
+          -Djavax.net.ssl.trustStoreType=PKCS12
+
