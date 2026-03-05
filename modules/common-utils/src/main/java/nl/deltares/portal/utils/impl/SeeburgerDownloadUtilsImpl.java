@@ -30,11 +30,7 @@ public class SeeburgerDownloadUtilsImpl extends AbsDownloadUtilsImpl  {
     private final int maxDownloads = 5;
     private final long validPeriodMillis = TimeUnit.DAYS.toMillis(5);
     private static final Log LOG = LogFactoryUtil.getLog(SeeburgerDownloadUtilsImpl.class);
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-    static {
-        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-    }
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public SeeburgerDownloadUtilsImpl() {
         String APP_NAME = PropsUtil.get(APP_NAME_KEY);
@@ -44,7 +40,7 @@ public class SeeburgerDownloadUtilsImpl extends AbsDownloadUtilsImpl  {
         if (URL_PREFIX != null){
             FILE_PATH_PREFIX = URL_PREFIX;
         }
-
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         if (!DownloadUtils.APP_NAME.seeburger.name().equals(APP_NAME)){
             active = false;
             LOG.info("SeeburgerDownloadUtils is not configured.");
