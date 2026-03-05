@@ -38,6 +38,4 @@ jobs:
       - name: SonarQube analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN_2025 }}
-          SONAR_SCANNER_OPTS: >-
-            -Djavax.net.debug=ssl:handshake
         run: ./gradlew sonar --info --stacktrace
