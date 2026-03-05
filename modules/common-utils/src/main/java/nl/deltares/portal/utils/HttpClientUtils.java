@@ -120,8 +120,7 @@ public abstract class HttpClientUtils implements BaseLocalService {
         for (Map.Entry<Object, Object> entry : data.entrySet()) {
             byteArrays.add(separator);
 
-            if (entry.getValue() instanceof Path) {
-                var path = (Path) entry.getValue();
+            if (entry.getValue() instanceof Path path) {
                 String mimeType = Files.probeContentType(path);
                 byteArrays.add(("\"" + entry.getKey() + "\"; filename=\"" + path.getFileName()
                         + "\"\r\nContent-Type: " + mimeType + "\r\n\r\n")
@@ -140,14 +139,14 @@ public abstract class HttpClientUtils implements BaseLocalService {
     public static void readToFile(HttpURLConnection connection, File destFile) throws IOException{
         try (InputStream is = connection.getInputStream()) {
 
-            FileOutputStream result = new FileOutputStream(destFile);
+            try (FileOutputStream result = new FileOutputStream(destFile)) {
             byte[] buffer = new byte[1024];
             int length;
             while ((length = is.read(buffer)) != -1) {
                 result.write(buffer, 0, length);
             }
             result.flush();
-            result.close();
+        }
         } finally {
             connection.disconnect();
         }
