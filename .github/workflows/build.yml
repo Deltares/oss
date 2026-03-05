@@ -5,6 +5,7 @@ on:
       - Liferay7.4
   pull_request:
     types: [opened, synchronize, reopened]
+
 jobs:
   build:
     name: Build and analyze
@@ -12,27 +13,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: 17
-          distribution: 'zulu' # Alternative distribution options are available
-      - name: Cache SonarQube packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v2
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Print tool versions
+        run: |
+          java -version
+          ./gradlew --version
+
       - name: Build
-        run: ./gradlew build --info
+        run: ./gradlew build --info --stacktrace
+
       - name: SonarQube analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN_2025 }}
-        run: ./gradlew sonar --info
+          SONAR_SCANNER_OPTS: >-
+            -Djavax.net.debug=ssl:handshake
+        run: ./gradlew sonar --info --stacktrace
