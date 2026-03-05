@@ -32,10 +32,7 @@ jobs:
           java -version
           ./gradlew --version
 
-      - name: Build
-        run: ./gradlew build --info --stacktrace
-
       - name: SonarQube analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN_2025 }}
-        run: ./gradlew sonar --info --stacktrace
+        run: ./gradlew build sonar --info --stacktrace
