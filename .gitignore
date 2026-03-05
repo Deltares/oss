@@ -287,3 +287,4 @@ license*.xml
 /docker/liferay/resources/context.xml
 /sonarcloud.truststore.pass
 /sonarcloud-truststore.p12.b64
+/sonarcloud.token
