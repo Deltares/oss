@@ -288,3 +288,4 @@ license*.xml
 /sonarcloud.truststore.pass
 /sonarcloud-truststore.p12.b64
 /sonarcloud.token
+/run-sonar-locally.bat
