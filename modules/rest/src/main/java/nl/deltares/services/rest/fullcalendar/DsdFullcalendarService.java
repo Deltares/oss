@@ -133,11 +133,6 @@ public class DsdFullcalendarService {
             }
             eventIds = String.valueOf(siteConfiguration.eventId());
         }
-        //sercurity check:
-        if (localeStr != null){
-            localeStr = localeStr.replaceAll("[\n\r]", "_");
-        }
-
         Locale locale = LocaleUtil.fromLanguageId(localeStr);
         String[] ids = eventIds.split(",");
         List<Resource> allResources = new ArrayList<>();
