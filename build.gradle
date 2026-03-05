@@ -5,6 +5,17 @@ plugins {
     id ("org.sonarqube") version "6.0.0.5145"
 }
 
+// Prevent runtime NoSuchMethodError due to mismatched org.apache.commons:commons-compress versions
+// pulled in by different plugins/tools during CI (e.g., Sonar/Gradle).
+allprojects {
+    configurations.configureEach {
+        resolutionStrategy {
+            // commons-compress 1.26.x contains the TarArchiveInputStream APIs expected by modern tooling.
+            force "org.apache.commons:commons-compress:1.26.2"
+        }
+    }
+}
+
 project.ext {
     environment = getEnvProperty('env', 'docker') as Object
     bundleDir = getEnvProperty('liferay.workspace.home.dir', project.projectDir.toString() + '/bundles')
