@@ -261,8 +261,9 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
                 RegistrationLocalServiceUtil.getRegistrations(registration.getGroupId(), user.getUserId(), registration.getResourceId());
 
-        for (nl.deltares.dsd.registration.model.Registration dbRegistration : dbRegistrations) {
-            return getUserPreferencesMap(dbRegistration);
+        Optional<nl.deltares.dsd.registration.model.Registration> first = dbRegistrations.stream().findFirst();
+        if (first.isPresent()) {
+            return getUserPreferencesMap(first.get());
         }
         return Collections.emptyMap();
     }
