@@ -95,7 +95,7 @@ public class DateRangeFacetPortlet extends MVCPortlet {
                 if (!_configuration.endDate().isEmpty()) {
                     endDate = _configuration.endDate();
                     if (endDate != null){
-                        FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(),"endDate", startDate, renderRequest);
+                        FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(),"endDate", endDate, renderRequest);
                     }
                 }
             }
