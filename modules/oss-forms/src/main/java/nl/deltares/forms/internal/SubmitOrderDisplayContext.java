@@ -26,6 +26,7 @@ import nl.deltares.portal.utils.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,7 +41,7 @@ public class SubmitOrderDisplayContext {
     private final AdminUtils _adminUtils;
     private final UserLocalService _userLocalService;
     private final DsdParserUtils _dsdParserUtils;
-
+    private final SimpleDateFormat dateTimeFormatter;
     public SubmitOrderDisplayContext(HttpServletRequest httpServletRequest, ConfigurationProvider configurationProvider,
                                      DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils, DsdJournalArticleUtils dsdJournalArticleUtils,
                                      WebinarUtilsFactory webinarUtilsFactory,
@@ -52,6 +53,9 @@ public class SubmitOrderDisplayContext {
         _webinarUtilsFactory = webinarUtilsFactory;
         _adminUtils = adminUtils;
         _userLocalService = userLocalService;
+
+        dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+        dateTimeFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
 
         ThemeDisplay themeDisplay = new CPRequestHelper(httpServletRequest).getThemeDisplay();
         _configuration = configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class,
@@ -116,6 +120,7 @@ public class SubmitOrderDisplayContext {
         if (!userRegistration.getRemarks().isEmpty()) {
             registrationAttributes.put("remarks", userRegistration.getRemarks());
         }
+        registrationAttributes.put("registration_time", dateTimeFormatter.format(new Date()));
 
         if (billingInfo != null) {
             addBillingAttributes(billingInfo, registrationAttributes);

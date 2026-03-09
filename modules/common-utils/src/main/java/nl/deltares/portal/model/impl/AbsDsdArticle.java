@@ -18,18 +18,19 @@ import nl.deltares.portal.utils.DuplicateCheck;
 import nl.deltares.portal.utils.JsonContentUtils;
 import org.w3c.dom.Document;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public abstract class AbsDsdArticle implements DsdArticle {
+public abstract class AbsDsdArticle implements DsdArticle, Serializable {
 
     private final JournalArticle _article;
     public final long _instantiationTime;
-    protected final DsdParserUtils _dsdParserUtils;
-    protected final DsdJournalArticleUtils _dsdJournalArticleUtils;
+    protected transient final DsdParserUtils _dsdParserUtils;
+    protected transient final DsdJournalArticleUtils _dsdJournalArticleUtils;
     private final Locale _locale;
-    private List<DDMFormFieldValue> _ddmFormFieldValues;
-    private final SimpleDateFormat _dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+    private transient List<DDMFormFieldValue> _ddmFormFieldValues;
+    private transient final SimpleDateFormat _dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
 
     @Override
     public void validate() throws PortalException {
@@ -148,9 +149,6 @@ public abstract class AbsDsdArticle implements DsdArticle {
         return extractStringValues(getDdmFormFieldValues(searchList, fieldName, optional));
     }
 
-    public List<String> getFormFieldArrayValue(List<DDMFormFieldValue> searchList, String fieldName, boolean optional) throws PortalException {
-        return extractStringArray(getDdmFormFieldValue(searchList, fieldName, optional));
-    }
 
     public List<String> getFormFieldArrayValue(String fieldName, boolean optional) throws PortalException {
         return extractStringArray(getDdmFormFieldValue(_ddmFormFieldValues, fieldName, optional));
@@ -248,7 +246,9 @@ public abstract class AbsDsdArticle implements DsdArticle {
         try {
             final JSONArray jsonArray = JsonContentUtils.parseContentArray(localStringValue);
             final ArrayList<String> values = new ArrayList<>();
-            jsonArray.forEach(o -> values.add(String.valueOf(o)));
+            for (Object o : jsonArray) {
+                values.add(String.valueOf(o));
+            }
             return values;
         } catch (JSONException e) {
             return Collections.singletonList(localStringValue);

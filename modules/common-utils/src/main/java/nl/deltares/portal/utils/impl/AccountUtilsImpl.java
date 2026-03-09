@@ -4,6 +4,8 @@ import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.account.service.AccountEntryUserRelLocalService;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
+import com.liferay.expando.kernel.model.ExpandoValue;
+import com.liferay.expando.kernel.service.ExpandoValueLocalService;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -15,7 +17,9 @@ import nl.deltares.portal.utils.AccountUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Component(
         immediate = true,
@@ -24,14 +28,25 @@ import java.util.List;
 public class AccountUtilsImpl implements AccountUtils {
 
     final static String PERSONAL_ACCOUNT_PREFIX = "Personal_account_";
+    final static String CUSTOM_FIELD_DOMAIN = "Email domain";
+
     @Override
     public List<AccountEntry> getAccountsByDomain(String domain, long companyId) {
 
-        final DynamicQuery dynamicQuery = _accountEntryLocalService.dynamicQuery();
-        dynamicQuery.add(RestrictionsFactoryUtil.like("domains", '%' + domain + '%'));
-        dynamicQuery.add(RestrictionsFactoryUtil.eq("status", 0));
-        dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", companyId));
-        return _accountEntryLocalService.dynamicQuery(dynamicQuery);
+        List<ExpandoValue> domainValues = _expandoValueLocalService.getColumnValues(companyId, AccountEntry.class.getName(), "CUSTOM_FIELDS", CUSTOM_FIELD_DOMAIN, domain, 0, 1);
+        if (domainValues.isEmpty()) {
+            final DynamicQuery dynamicQuery = _accountEntryLocalService.dynamicQuery();
+            dynamicQuery.add(RestrictionsFactoryUtil.like("domains", '%' + domain + '%'));
+            dynamicQuery.add(RestrictionsFactoryUtil.eq("status", 0));
+            dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+            return _accountEntryLocalService.dynamicQuery(dynamicQuery);
+
+        } else {
+            Optional<ExpandoValue> first = domainValues.stream().findFirst();
+            ExpandoValue expandoValue = first.get();
+            long accountEntryId = expandoValue.getClassPK();
+            return Collections.singletonList(_accountEntryLocalService.fetchAccountEntry(accountEntryId));
+        }
     }
 
     @Override
@@ -47,7 +62,7 @@ public class AccountUtilsImpl implements AccountUtils {
     public AccountEntry createPersonAccountEntry(User localUser, long accountCompanyId) throws PortalException {
 
         User centralLiferayUser = _userLocalService.fetchUserByScreenName(accountCompanyId, "liferay");
-        if (centralLiferayUser == null){
+        if (centralLiferayUser == null) {
             throw new PortalException("Liferay user does not exist for company with ID " + accountCompanyId);
         }
         final ServiceContext serviceContext = new ServiceContext();
@@ -84,7 +99,7 @@ public class AccountUtilsImpl implements AccountUtils {
         );
 
         String website = accountInfo.getWebsite();
-        if(website != null) {
+        if (website != null) {
             if (!accountEntry.getExpandoBridge().hasAttribute("website")) {
                 accountEntry.getExpandoBridge().addAttribute("website");
             }
@@ -106,7 +121,9 @@ public class AccountUtilsImpl implements AccountUtils {
     @Override
     public Address createOrUpdateAddress(AddressInfo addressInfo, long companyId, long currentUserId, AccountEntry accountEntry) throws PortalException {
 
-        if (addressInfo == null) {return null;}
+        if (addressInfo == null) {
+            return null;
+        }
 
         String countryA2Code = addressInfo.getCountryA2Code();
         Country companyCountry = _countryLocalService.getCountryByA2(companyId, countryA2Code);
@@ -156,6 +173,9 @@ public class AccountUtilsImpl implements AccountUtils {
 
     @Reference
     private AccountEntryLocalService _accountEntryLocalService;
+
+    @Reference
+    private ExpandoValueLocalService _expandoValueLocalService;
 
     @Reference
     private AccountEntryUserRelLocalService _accountEntryUserRelLocalService;

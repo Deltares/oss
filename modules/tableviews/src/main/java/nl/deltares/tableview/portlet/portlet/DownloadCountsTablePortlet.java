@@ -6,6 +6,7 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.StringComparator;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.oss.download.model.DownloadCount;
 import nl.deltares.oss.download.service.DownloadCountLocalServiceUtil;
@@ -29,6 +30,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author rooij_e
@@ -69,8 +71,8 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 
-        final int cur = ParamUtil.getInteger(renderRequest, "cur", 0);
-        final int deltas = ParamUtil.getInteger(renderRequest, "delta", 50);
+        final int cur = ParamUtil.getInteger(renderRequest, "cur", 1);
+        final int deltas = ParamUtil.getInteger(renderRequest, "delta", 25);
         String filterId = ParamUtil.getString(renderRequest, "filterId", "none");
         final String orderByCol = ParamUtil.getString(renderRequest, "orderByCol", "fileTopic");
         final String orderByType = ParamUtil.getString(renderRequest, "orderByType", "asc");
@@ -126,7 +128,7 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
                 dataRequest = new DeletedSelectedDownloadCountsRequest(dataRequestId, themeDisplay.getUserId(),
                         Arrays.asList(selectedIds), dsdParserUtils);
                 instance.addToQueue(dataRequest);
-            } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
+            } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
                 instance.removeDataRequest(dataRequest);
             }
             response.setStatus(HttpServletResponse.SC_OK);
@@ -147,18 +149,27 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
         } catch (PortalException e) {
             topicMap = Collections.emptyMap();
         }
-        return topicMap;
+        return topicMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(new StringComparator(true, false)))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
     }
 
     private void doFilterValues(String filterId, int cur, int deltas, String orderByCol, String orderByType,
                                 RenderRequest renderRequest, Map<String, String> topicMap) {
 
         final List<DisplayDownloadCount> displayCounts = new ArrayList<>();
-        final int end = cur + deltas;
+        int start = (cur - 1) * deltas;
+        int end = start + deltas;
+        final int[] counter = {0};
         try {
-            final List<DownloadCount> downloadCounts = DownloadCountLocalServiceUtil.fetchDownloadCounts(cur, end);
+            final List<DownloadCount> downloadCounts = DownloadCountLocalServiceUtil.fetchDownloadCounts(0, 500);
             downloadCounts.forEach(downloadCount -> {
-
                 final long downloadId = downloadCount.getDownloadId();
                 final long groupId = downloadCount.getGroupId();
                 AbsDsdArticle dsdArticle;
@@ -180,14 +191,18 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
                     topic = "";
                 }
                 if (filterId != null && !filterId.equals(topicKey)) return;
-                displayCounts.add(new DisplayDownloadCount(downloadCount.getId(), fileName, topic, downloadCount.getCount()));
+                counter[0]++;
+                if (counter[0] >= start && counter[0] < end) {
+                    displayCounts.add(new DisplayDownloadCount(downloadCount.getId(), fileName, topic, downloadCount.getCount()));
+                }
+
             });
             sortDownloads(displayCounts, orderByCol, orderByType);
         } catch (Exception e) {
             SessionErrors.add(renderRequest, "filter-failed", e.getMessage());
         }
         renderRequest.setAttribute("records", displayCounts);
-        renderRequest.setAttribute("total", displayCounts.size());
+        renderRequest.setAttribute("total", counter[0]);
         renderRequest.setAttribute("topics", topicMap);
         renderRequest.setAttribute("filterId", filterId);
     }

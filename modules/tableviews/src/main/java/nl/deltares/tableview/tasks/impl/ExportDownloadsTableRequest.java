@@ -27,7 +27,7 @@ import java.util.TimeZone;
 import static nl.deltares.portal.utils.KeycloakUtils.ATTRIBUTES.org_city;
 import static nl.deltares.portal.utils.KeycloakUtils.ATTRIBUTES.org_country;
 import static nl.deltares.tasks.DataRequest.STATUS.*;
-import static nl.deltares.tasks.DataRequest.STATUS.terminated;
+import static nl.deltares.tasks.DataRequest.STATUS.TERMINATED;
 
 public class ExportDownloadsTableRequest extends AbstractDataRequest {
 
@@ -58,26 +58,26 @@ public class ExportDownloadsTableRequest extends AbstractDataRequest {
 
     @Override
     public STATUS call()  {
-        if (getStatus() == available) return status;
+        if (getStatus() == AVAILABLE) return status;
         String filter = filterSelection == null ? "none": filterSelection + " = " + filterValue;
         statusMessage = "starting exporting for filter " + filter;
         init();
-        status = running;
+        status = RUNNING;
         try {
             File tempFile = new File(getExportDir(), id + ".tmp");
             if (tempFile.exists()) Files.deleteIfExists(tempFile.toPath());
 
             try (PrintWriter writer = new PrintWriter(new FileWriter(tempFile))) {
                 exportAllRecords(writer);
-                if (status != terminated) {
-                    status = available;
+                if (status != TERMINATED) {
+                    status = AVAILABLE;
                 }
             } catch (Exception e) {
                 errorMessage = e.getMessage();
                 logger.warn("Error serializing csv content: %s", e);
-                status = terminated;
+                status = TERMINATED;
             }
-            if (status == available){
+            if (status == AVAILABLE){
                 this.dataFile = new File(getExportDir(), id + ".csv");
                 if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
                 Files.move(tempFile.toPath(), dataFile.toPath());
@@ -85,10 +85,10 @@ public class ExportDownloadsTableRequest extends AbstractDataRequest {
 
         } catch (Exception e) {
             errorMessage = e.getMessage();
-            status = terminated;
+            status = TERMINATED;
         } finally {
-            if (status == running || status == pending){
-                status = terminated;
+            if (status == RUNNING || status == PENDING){
+                status = TERMINATED;
             }
         }
         fireStateChanged();
@@ -120,7 +120,7 @@ public class ExportDownloadsTableRequest extends AbstractDataRequest {
         }
 
         for (int i = 0; i < totalCount; ) {
-            if (status == terminated) return;
+            if (status == TERMINATED) return;
             final List<Download> downloads;
             if (filterUser != null) {
                 downloads = DownloadLocalServiceUtil.findDownloadsByUserId(group.getGroupId(), filterUser.getUserId(), start, end);
@@ -137,7 +137,7 @@ public class ExportDownloadsTableRequest extends AbstractDataRequest {
 
             HashMap<Long, Map<String, String>> userAttributesCache = new HashMap<>();
             downloads.forEach(download -> {
-                if (status == terminated) return;
+                if (status == TERMINATED) return;
                 incrementProcessCount(1);
                 if (group.getGroupId() != download.getGroupId()) return;
                 String email = "";
@@ -187,7 +187,7 @@ public class ExportDownloadsTableRequest extends AbstractDataRequest {
                         city, countryCode, download.getFileShareUrl(), download.getLicenseDownloadUrl()));
 
                 if (Thread.interrupted()) {
-                    status = terminated;
+                    status = TERMINATED;
                     errorMessage = String.format("Thread 'DeletedSelectedDownloadsRequest' with id %s is interrupted!", id);
                 }
             });

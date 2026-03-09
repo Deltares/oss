@@ -35,6 +35,9 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
     private static final String BASEURL_KEY = "license.baseurl";
     private String basePath;
     private final boolean CACHE_TOKEN;
+    private static final String AUTHORIZATION = "Authorization";
+    private static final String BEARER = "Bearer";
+    private static final String APPLICATION_JSON = "application/json";
 
     public LicenseManagerUtilsImpl() {
         CACHE_TOKEN = Boolean.parseBoolean(PropsUtil.get("license.cache.token"));
@@ -61,7 +64,7 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
         String boundaryString = "----SignLicense";
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "multipart/form-data; boundary=" + boundaryString );
-        headers.put("Authorization", "Bearer " + getAccessToken());
+        headers.put(AUTHORIZATION, BEARER + " " + getAccessToken());
 
         HttpURLConnection connection = getConnection(getBasePath() + "/sign-lic", "POST", headers);
         connection.setDoOutput(true);
@@ -107,7 +110,7 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
 
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/x-www-form-urlencoded");
-        headers.put("Authorization", "Bearer " + getAccessToken());
+        headers.put(AUTHORIZATION, BEARER + " " + getAccessToken());
 
         String queryParameters = String.format("first_name=%s&last_name=%s&email=%s",
                 URLEncoder.encode(user.getFirstName(), StandardCharsets.UTF_8),
@@ -121,7 +124,7 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
 
     }
 
-    public JSONArray getCustomerContacts(User user) throws IOException, JSONException {
+    public JSONArray getCustomerContactsForUser(User user) throws IOException, JSONException {
 
         if (!isActive()) {
             LOG.warn("Unable to retrieve customer contacts as the LicenseManager is not active!");
@@ -130,8 +133,8 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
         if (user == null || user.isGuestUser()) return null;
 
         HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Authorization", "Bearer " + getAccessToken());
+        headers.put("Content-Type", APPLICATION_JSON);
+        headers.put(AUTHORIZATION, BEARER + " " + getAccessToken());
 
         String queryParameters = String.format("?email=%s",URLEncoder.encode(user.getEmailAddress(), StandardCharsets.UTF_8));
         HttpURLConnection connection = getConnection(getBasePath() + "clm/customers/contact/search" + queryParameters, "GET", headers);
@@ -141,8 +144,28 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
         return JsonContentUtils.parseContentArray(customerContactsViewResponse);
     }
 
+    public JSONArray getCustomerContactsForCustomerAndFilter(long customerId, boolean filterBetaTesters, boolean filterManageLicenses) throws IOException, JSONException {
+
+        if (!isActive()) {
+            LOG.warn("Unable to retrieve customer contacts as the LicenseManager is not active!");
+            return null;
+        }
+        if (customerId == 0) return null;
+
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", APPLICATION_JSON);
+        headers.put(AUTHORIZATION, BEARER + " " + getAccessToken());
+
+        String queryParameters = String.format("?customerId=%d&filterBetaTesters=%b&filterManageLicenses=%b",customerId, filterBetaTesters, filterManageLicenses);
+        HttpURLConnection connection = getConnection(getBasePath() + "clm/customers/contact/search" + queryParameters, "GET", headers);
+        checkResponse(connection);
+
+        String customerContactsViewResponse = readAll(connection);
+        return JsonContentUtils.parseContentArray(customerContactsViewResponse);
+    }
+
     @Override
-    public JSONArray getCustomerLicenses(User user, String state, Long customerId) throws IOException, JSONException {
+    public JSONArray getCustomerLicenses(User user, String state, Long customerId, Long customerContactId, boolean customerContactManageLicenses) throws IOException, JSONException {
 
         if (!isActive()) {
             LOG.warn("Unable to retrieve license files as the LicenseManager is not active!");
@@ -152,13 +175,20 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
         if (customerId == null || customerId <= 0) return null;
 
         HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Authorization", "Bearer " + getAccessToken());
+        headers.put("Content-Type", APPLICATION_JSON);
+        headers.put(AUTHORIZATION, BEARER + " " + getAccessToken());
 
         if (state==null) {
             state = "Active";
         }
-        String queryParameters = String.format("?state=%s", state);
+
+        String queryParameters;
+        if (customerContactManageLicenses){
+            queryParameters = String.format("?state=%s", state);
+        } else {
+            queryParameters = String.format("?state=%s&customerContactId=%d", state, customerContactId);
+        }
+
 
         HttpURLConnection connection = getConnection(getBasePath() + "clm/customers/" + customerId + "/subscriptions/suites" + queryParameters, "GET", headers);
         checkResponse(connection);
@@ -176,8 +206,8 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
         if (customerId == null || customerId < 1) return null;
 
         HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Authorization", "Bearer " + getAccessToken());
+        headers.put("Content-Type", APPLICATION_JSON);
+        headers.put(AUTHORIZATION, BEARER + " " + getAccessToken());
 
         String requestUrl = getBasePath() + "clm/licenses/customers/" + customerId;
         if (filterEmail != null) {
@@ -199,8 +229,8 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
         if (requestId == null) return null;
 
         HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Authorization", "Bearer " + getAccessToken());
+        headers.put("Content-Type", APPLICATION_JSON);
+        headers.put(AUTHORIZATION, BEARER + " " + getAccessToken());
 
         HttpURLConnection connection = getConnection(getBasePath() + "clm/licenses/progress/" + requestId, "GET", headers);
         checkResponse(connection);
@@ -219,7 +249,7 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
 
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/zip");
-        headers.put("Authorization", "Bearer " + getAccessToken());
+        headers.put(AUTHORIZATION, BEARER + " " + getAccessToken());
 
         HttpURLConnection connection = getConnection(getBasePath() + "clm/licenses/download/" + requestId, "GET", headers);
         checkResponse(connection);
@@ -231,7 +261,7 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
 
     private void cleanup(String requestId) throws IOException {
         HashMap<String, String> headers = new HashMap<>();
-        headers.put("Authorization", "Bearer " + getAccessToken());
+        headers.put(AUTHORIZATION, BEARER + " " + getAccessToken());
 
         HttpURLConnection connection = getConnection(getBasePath() + "clm/licenses/cleanup/" + requestId, "GET", headers);
         checkResponse(connection);

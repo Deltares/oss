@@ -8,21 +8,29 @@
 <%@ page import="nl.deltares.useraccount.model.SoftwareSuite" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
+<%@ page import="java.util.Map" %>
 
 <liferay-theme:defineObjects/>
 <portlet:defineObjects/>
 
 <%
-    List<SoftwareSuite> suiteList = (List<SoftwareSuite>) renderRequest.getAttribute("records");
-    final String customerId = String.valueOf(renderRequest.getAttribute("customerId"));
-    final String customerName = String.valueOf(renderRequest.getAttribute("customerName"));
+    Map<Long, String> customerInfo = (Map<Long, String>) renderRequest.getAttribute("customerInfo");
+    List<SoftwareSuite> suiteListSelection = (List<SoftwareSuite>) renderRequest.getAttribute("records");
     final String filterSelection = (String) request.getAttribute("filterSelection");
+    final Long customerSelection = (Long) request.getAttribute("customerSelection");
 %>
 
-<portlet:actionURL name="filter" var="filterCustomerLicensesURL" />
+<portlet:actionURL name="filter" var="filterCustomerLicensesURL" >
+    <portlet:param name="customerSelection" value="<%=String.valueOf(customerSelection)%>"/>
+</portlet:actionURL>
+<portlet:actionURL name="customerSelect" var="selectCustomerURL" >
+    <portlet:param name="filterSelection" value="<%=filterSelection%>" />
+</portlet:actionURL>
 <portlet:actionURL name="sendLicenseFiles" var="sendLicenseFilesURL" >
-    <portlet:param name="customerId" value="<%=customerId%>"/>
-    <portlet:param name="customerName" value="<%=customerName%>"/>
+    <portlet:param name="customerId" value="<%=String.valueOf(customerSelection)%>"/>
+    <portlet:param name="customerName" value="<%=customerInfo.get(customerSelection)%>"/>
+    <portlet:param name="filterSelection" value="<%=filterSelection%>" />
+    <portlet:param name="customerSelection" value="<%=String.valueOf(customerSelection)%>"/>
 </portlet:actionURL>
 
 <liferay-ui:success key="send-licenses-success" embed="true" targetNode="">
@@ -37,6 +45,23 @@
 <aui:fieldset>
     <aui:row>
         <aui:col width="25">
+            <aui:form action="<%=selectCustomerURL%>" name="customerSelectionForm" >
+                <div class="d-flex justify-content-start">
+                    <aui:select name="customerSelection" label="customer.select.label" value="<%=customerSelection%>" onChange="submit()">
+
+                        <%
+                            for (Long customerId : customerInfo.keySet()) {
+                                String customerName = customerInfo.get(customerId);
+                        %>
+                                <aui:option value="<%=customerId%>" label="<%=customerName%>" />
+                        <%
+                            }
+                        %>
+                    </aui:select>
+                </div>
+            </aui:form>
+        </aui:col>
+        <aui:col width="25">
             <aui:form action="<%=filterCustomerLicensesURL%>" name="filterForm" >
                 <div class="d-flex justify-content-start">
                     <aui:select name="filterSelection" label="softwaresuites.filter.label"  value="<%=filterSelection%>" onChange="submit()">
@@ -47,7 +72,7 @@
                 </div>
             </aui:form>
         </aui:col>
-        <aui:col cssClass="bottom-align" width="75">
+        <aui:col cssClass="bottom-align" width="50">
             <aui:button-row>
                 <aui:button name="sendButton" href="<%=sendLicenseFilesURL%>" cssClass="sendButton" value="Send license files" />
             </aui:button-row>
@@ -56,13 +81,13 @@
 </aui:fieldset>
 
 <%
-    if (suiteList.isEmpty()){
+    if (suiteListSelection.isEmpty()){
 %>
 <div><strong>There a no licenses with state '<%=filterSelection%>' registered under e-mail address '<%=themeDisplay.getUser().getEmailAddress()%>'.</strong></div>
 <%
     }
 
-    for (SoftwareSuite softwareSuite : suiteList) {
+    for (SoftwareSuite softwareSuite : suiteListSelection) {
 %>
 
     <aui:fieldset>

@@ -8,7 +8,8 @@ import nl.deltares.portal.model.impl.LicenseFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.AbstractMap;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public interface LicenseManagerUtils {
@@ -19,22 +20,46 @@ public interface LicenseManagerUtils {
 
     Map<String, String> encryptLicense(String licenseType, User user) throws IOException, JSONException;
 
-    JSONArray getCustomerLicenses(User user, String status, Long customerId)  throws IOException, JSONException;
+    JSONArray getCustomerContactsForUser(User user)  throws IOException, JSONException;
 
-    JSONArray getCustomerContacts(User user)  throws IOException, JSONException;
+    JSONArray getCustomerContactsForCustomerAndFilter(long customerId, boolean filterBetaTesters, boolean filterLicenseManagers)  throws IOException, JSONException;
 
-    static AbstractMap.SimpleEntry<Long, String> parseCustomerIdAndName(JSONArray customerContactsArray) {
+    static Map<Long, String> parseCustomerIdAndName(JSONArray customerContactsArray) {
 
         if (customerContactsArray == null || customerContactsArray.length() == 0) {
-            return new AbstractMap.SimpleEntry<>(null, null);
+            return Collections.emptyMap();
         }
-        JSONObject customerContactView = customerContactsArray.getJSONObject(0);
-        JSONObject customerContactCustomer = customerContactView.getJSONObject("customerContactCustomer");
-        long customerId = customerContactCustomer.getLong("customerId");
-        String customerName = customerContactCustomer.getString("customerName");
-        return new AbstractMap.SimpleEntry<>(customerId, customerName);
+        HashMap<Long, String> map = new HashMap<>();
+        for (int i = 0; i < customerContactsArray.length(); i++) {
+            JSONObject customerContactView = customerContactsArray.getJSONObject(i);
+            JSONObject customerContactCustomer = customerContactView.getJSONObject("customerContactCustomer");
+            long customerId = customerContactCustomer.getLong("customerId");
+            String customerName = customerContactCustomer.getString("customerName");
+            map.put(customerId, customerName);
+        }
+        return map;
 
     }
+
+    static Map<String, Object> parseCustomerContact(JSONArray customerContactsArray, Long searchCustomerId) {
+        if (customerContactsArray == null || customerContactsArray.length() == 0) {
+            return Collections.emptyMap();
+        }
+        HashMap<String, Object> map = new HashMap<>();
+        for (int i = 0; i < customerContactsArray.length(); i++) {
+            JSONObject customerContactView = customerContactsArray.getJSONObject(i);
+            JSONObject customerContactCustomer = customerContactView.getJSONObject("customerContactCustomer");
+            long customerId = customerContactCustomer.getLong("customerId");
+            if (!searchCustomerId.equals(customerId)) continue;
+            long customerContactId = customerContactView.getLong("customerContactId");
+            map.put("customerContactId", customerContactId);
+            boolean customerContactManageLicenses = customerContactView.getBoolean("customerContactManageLicenses");
+            map.put("customerContactManageLicenses", customerContactManageLicenses);
+        }
+        return map;
+    }
+
+    JSONArray getCustomerLicenses(User user, String state, Long customerId, Long customerContactId, boolean customerContactManageLicenses) throws IOException, JSONException;
 
     JSONObject generateCustomerLicenseFiles(Long customerId, String filterEmail) throws IOException, JSONException;
 

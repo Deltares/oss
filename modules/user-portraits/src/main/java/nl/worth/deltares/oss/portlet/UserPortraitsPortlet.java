@@ -79,7 +79,7 @@ public class UserPortraitsPortlet extends MVCPortlet {
                 writeToResponse(resourceResponse, cachedPortraits);
             } else {
                 final DataRequest downloadRequest = DataRequestManager.getInstance().getDataRequest(id);
-                if (Objects.requireNonNull(downloadRequest.getStatus()) == DataRequest.STATUS.available) {
+                if (Objects.requireNonNull(downloadRequest.getStatus()) == DataRequest.STATUS.AVAILABLE) {
                     final File dataFile = downloadRequest.getDataFile();
                     try {
                         if (dataFile != null && dataFile.exists()) {
@@ -130,7 +130,7 @@ public class UserPortraitsPortlet extends MVCPortlet {
 
             dataRequest = new UserPortraitsRequest(id, themeDisplay.getUserId(), themeDisplay);
             instance.addToQueue(dataRequest);
-        } else if (dataRequest.getStatus() == DataRequest.STATUS.terminated || dataRequest.getStatus() == DataRequest.STATUS.nodata) {
+        } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
             instance.removeDataRequest(dataRequest);
         }
         return dataRequest;

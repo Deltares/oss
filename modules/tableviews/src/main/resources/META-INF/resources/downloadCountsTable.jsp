@@ -25,6 +25,10 @@
         <portlet:param name="mvcPath" value="/downloadCountsTable.jsp" />
     </portlet:renderURL>
 
+    <liferay-portlet:renderURL varImpl="iteratorURL">
+        <portlet:param name="filterId" value="<%= filterId %>" />
+    </liferay-portlet:renderURL>
+
     <portlet:actionURL name="filter" var="filterTableURL" />
     <portlet:actionURL name="deleteSelection" var="deleteSelectionURL" />
 
@@ -62,7 +66,7 @@
     <aui:form >
         <jsp:useBean id="records" type="java.util.List" scope="request"/>
 
-        <liferay-ui:search-container id="tableResults" delta="50" emptyResultsMessage='<%=LanguageUtil.get(locale, "no-download-count-records")%>'
+        <liferay-ui:search-container id="tableResults" iteratorURL="<%=iteratorURL%>" delta="25" emptyResultsMessage='<%=LanguageUtil.get(locale, "no-download-count-records")%>'
                                      total="<%=count%>">
             <liferay-ui:search-container-results results="<%= records %>" />
 
@@ -88,7 +92,6 @@
             </liferay-ui:search-container-row>
             <liferay-ui:search-iterator/>
         </liferay-ui:search-container>
-        <aui:input name="selectedFilterId" type="hidden" value="<%=filterId%>"/>
 
         <aui:button-row>
             <% if(isAdmin) { %>

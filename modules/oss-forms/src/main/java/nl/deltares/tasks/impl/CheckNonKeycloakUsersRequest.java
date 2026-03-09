@@ -31,17 +31,17 @@ public class CheckNonKeycloakUsersRequest extends AbstractDataRequest {
         final File usersFile = new File(usersFilePath);
         if (!usersFile.exists()) {
             errorMessage = "File containing users does not exist: " + usersFilePath;
-            status = terminated;
+            status = TERMINATED;
             fireStateChanged();
             return status;
         }
 
-        if (status == available || status == nodata) {
+        if (status == AVAILABLE || status == NODATA) {
             return status;
         }
 
         init();
-        status = running;
+        status = RUNNING;
 
         //dummy set something to show in progress bar
         totalCount = 100;
@@ -59,17 +59,17 @@ public class CheckNonKeycloakUsersRequest extends AbstractDataRequest {
             } catch (Exception e) {
                 errorMessage = e.getMessage();
                 logger.warn(String.format("Error calling 'check-users-exist': %s", errorMessage), e);
-                status = terminated;
+                status = TERMINATED;
             }
-            if (status != terminated) {
+            if (status != TERMINATED) {
                 this.dataFile = new File(getExportDir(), id + ".data");
                 if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
                 Files.move(tempFile.toPath(), dataFile.toPath());
-                status = available;
+                status = AVAILABLE;
             }
         } catch (IOException e) {
             errorMessage = e.getMessage();
-            status = terminated;
+            status = TERMINATED;
         }
         fireStateChanged();
 
@@ -80,7 +80,7 @@ public class CheckNonKeycloakUsersRequest extends AbstractDataRequest {
     @Override
     public String getStatusMessage() {
         //dummy something to show in progress bar.
-        if (status == running){
+        if (status == RUNNING){
             int processedCount = super.getProcessedCount();
             processedCount++;
             if (processedCount == totalCount) super.setProcessCount(0);

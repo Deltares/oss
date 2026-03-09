@@ -38,8 +38,8 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
     @Override
     public STATUS call() {
 
-        if (getStatus() == available) return status;
-        status = running;
+        if (getStatus() == AVAILABLE) return status;
+        status = RUNNING;
         statusMessage = "Start creating share links";
         init();
 
@@ -92,12 +92,12 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
                 incrementProcessCount(1);
 
                 if (Thread.interrupted()) {
-                    status = terminated;
+                    status = TERMINATED;
                     errorMessage = String.format("Thread 'CreateDownloadLinksRequest' with id %s is interrupted!", id);
                     break;
                 }
             }
-            status = available;
+            status = AVAILABLE;
 
             if (confirmationEmail != null){
                 confirmationEmail.sendDownloadsEmail();
@@ -106,7 +106,7 @@ public class CreateDownloadLinksRequest extends AbstractDataRequest {
             LOG.info(statusMessage);
         } catch (Exception e) {
             errorMessage = e.getMessage();
-            status = terminated;
+            status = TERMINATED;
         } finally {
             fireStateChanged();
         }

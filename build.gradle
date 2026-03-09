@@ -2,15 +2,9 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import org.codehaus.groovy.runtime.GStringImpl
 
 plugins {
-  id "org.sonarqube" version "7.0.1.6134"
+    id ("org.sonarqube") version "6.0.0.5145"
 }
 
-sonar {
-    properties {
-        property "sonar.projectKey", "Deltares_oss"
-        property "sonar.organization", "deltares"
-    }
-}
 project.ext {
     environment = getEnvProperty('env', 'docker') as Object
     bundleDir = getEnvProperty('liferay.workspace.home.dir', project.projectDir.toString() + '/bundles')
@@ -204,4 +198,17 @@ def getLocalProperty(Properties properties, String propertyName, String defaultV
         return properties.get(propertyName) ?: defaultValue
     }
     return getEnvProperty(propertyName, defaultValue)
+}
+
+sonar {
+    properties {
+        properties(new Properties().with { p ->
+            file("sonar-project.properties").withInputStream { s -> p.load(s) }
+            p
+        })
+    }
+}
+
+subprojects {
+    apply plugin: "org.sonarqube"
 }

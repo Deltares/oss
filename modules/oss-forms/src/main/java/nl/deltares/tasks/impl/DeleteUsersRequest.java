@@ -35,23 +35,23 @@ public class DeleteUsersRequest extends AbstractDataRequest {
         final File usersFile = new File(usersFilePath);
         if (!usersFile.exists()) {
             errorMessage = "File containing users does not exist: " + usersFilePath;
-            status = terminated;
+            status = TERMINATED;
             fireStateChanged();
             return status;
         }
 
-        if (status == available || status == nodata) {
+        if (status == AVAILABLE || status == NODATA) {
             return status;
         }
 
         init();
-        status = running;
+        status = RUNNING;
 
         try {
             totalCount = (int) Files.size(usersFile.toPath());
         } catch (IOException e) {
             errorMessage = "Error getting file size: " + e.getMessage();
-            status = terminated;
+            status = TERMINATED;
             fireStateChanged();
             return status;
         }
@@ -61,7 +61,7 @@ public class DeleteUsersRequest extends AbstractDataRequest {
             currentUser = UserLocalServiceUtil.getUser(currentUserId);
         } catch (PortalException e) {
             errorMessage = "Error getting currentUser for userId " + currentUserId + ": " + e.getMessage();
-            status = terminated;
+            status = TERMINATED;
             fireStateChanged();
             return status;
         }
@@ -117,7 +117,7 @@ public class DeleteUsersRequest extends AbstractDataRequest {
                         }
 
                         if (Thread.interrupted()) {
-                            status = terminated;
+                            status = TERMINATED;
                             errorMessage = String.format("Thread 'DeleteUsersRequest' with id %s is interrupted!", id);
                             logger.warn(errorMessage);
                             break;
@@ -126,24 +126,24 @@ public class DeleteUsersRequest extends AbstractDataRequest {
                 }
                 if (processedUsers == 0) {
                     writer.println("no users found.");
-                    status = nodata;
-                } else if (status != terminated) {
-                    status = available;
+                    status = NODATA;
+                } else if (status != TERMINATED) {
+                    status = AVAILABLE;
                 }
                 logger.info(String.format("Finished deleting %d users from file: %s", processedUsers,  usersFilePath));
             } catch (Exception e) {
                 errorMessage = e.getMessage();
                 logger.warn("Error serializing csv content: %s", e);
-                status = terminated;
+                status = TERMINATED;
             }
-            if (status == available) {
+            if (status == AVAILABLE) {
                 this.dataFile = new File(getExportDir(), id + ".data");
                 if (dataFile.exists()) Files.deleteIfExists(dataFile.toPath());
                 Files.move(tempFile.toPath(), dataFile.toPath());
             }
         } catch (IOException e) {
             errorMessage = e.getMessage();
-            status = terminated;
+            status = TERMINATED;
         }
         fireStateChanged();
 

@@ -48,8 +48,8 @@ public class DownloadActivityMapRequest extends AbstractDataRequest {
 
     @Override
     public STATUS call() {
-        if (getStatus() == available) return status;
-        status = running;
+        if (getStatus() == AVAILABLE) return status;
+        status = RUNNING;
         statusMessage = "Start DownloadActivityMapRequest";
         init();
         if (dataFile.exists()) {
@@ -127,20 +127,20 @@ public class DownloadActivityMapRequest extends AbstractDataRequest {
                     incrementProcessCount(1);
 
                     if (Thread.interrupted()) {
-                        status = terminated;
+                        status = TERMINATED;
                         errorMessage = String.format("Thread 'DownloadActivityMapRequest' with id %s is interrupted!", id);
                         break;
                     }
                 }
             }
             writer.append("]");
-            status = available;
+            status = AVAILABLE;
 
             statusMessage = String.format("%d download locations have been processed.", getProcessedCount());
             LOG.info(statusMessage);
         } catch (Exception e) {
             errorMessage = e.getMessage();
-            status = terminated;
+            status = TERMINATED;
         } finally {
             fireStateChanged();
         }

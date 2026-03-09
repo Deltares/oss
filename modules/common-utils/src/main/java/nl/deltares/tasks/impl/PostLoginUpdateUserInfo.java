@@ -31,13 +31,13 @@ public class PostLoginUpdateUserInfo extends AbstractDataRequest {
 
     @Override
     public STATUS call() throws Exception {
-        if (getStatus() == available) return status;
-        status = running;
+        if (getStatus() == AVAILABLE) return status;
+        status = RUNNING;
         statusMessage = "Start post login user update";
         init();
 
         if (keycloakUtils == null || !keycloakUtils.isActive()) {
-            status = terminated;
+            status = TERMINATED;
             return status;
         }
 
@@ -67,12 +67,12 @@ public class PostLoginUpdateUserInfo extends AbstractDataRequest {
                 throw e;
             }
 
-            status = available;
+            status = AVAILABLE;
             statusMessage = String.format("Post login activity completed for user %s", user.getEmailAddress());
             LOG.info(statusMessage);
         } catch (Exception e) {
             LOG.warn(errorMessage, e);
-            status = terminated;
+            status = TERMINATED;
         } finally {
             fireStateChanged();
         }

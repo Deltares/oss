@@ -3,15 +3,16 @@ package nl.deltares.model;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.portal.kernel.model.User;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccountInfo {
+public class AccountInfo implements Serializable {
 
     AccountEntry selectedAccount;
     User currentUser;
 
-    List<AccountEntry> accounts = new ArrayList<AccountEntry>();
+    List<AccountEntry> accounts = new ArrayList<>();
     private Long companyId;
 
     public void setCurrentUser(User user) {

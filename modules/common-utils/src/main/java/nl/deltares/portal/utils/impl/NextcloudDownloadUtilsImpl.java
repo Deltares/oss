@@ -35,12 +35,8 @@ public class NextcloudDownloadUtilsImpl extends AbsDownloadUtilsImpl {
     private final long THREE_DAYS_MILLIS = TimeUnit.DAYS.toMillis(3);
 
     private static final Log LOG = LogFactoryUtil.getLog(NextcloudDownloadUtilsImpl.class);
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-    private static final SimpleDateFormat expireDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-    static {
-        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-    }
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    private final SimpleDateFormat expireDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     private String SHARE_PATH;
 
@@ -49,6 +45,9 @@ public class NextcloudDownloadUtilsImpl extends AbsDownloadUtilsImpl {
 
     public NextcloudDownloadUtilsImpl() {
 
+        TimeZone gmt = TimeZone.getTimeZone("GMT");
+        dateFormat.setTimeZone(gmt);
+        expireDateFormat.setTimeZone(gmt);
         if (hasMultipleDownloadUrls()){
             initMultipleUrls();
         } else {

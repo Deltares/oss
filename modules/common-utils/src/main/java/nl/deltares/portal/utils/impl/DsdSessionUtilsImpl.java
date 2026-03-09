@@ -1,11 +1,15 @@
 package nl.deltares.portal.utils.impl;
 
+import com.liferay.account.model.AccountEntry;
+import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.AddressLocalService;
 import com.liferay.portal.kernel.service.GroupServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
@@ -32,6 +36,12 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     @Reference
     DsdJournalArticleUtils dsdJournalArticleUtils;
+
+    @Reference
+    AccountEntryLocalService accountEntryLocalService;
+
+    @Reference
+    AddressLocalService addressLocalService;
 
     @Override
     public void deleteRegistrations(Registration registration) {
@@ -251,8 +261,9 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
                 RegistrationLocalServiceUtil.getRegistrations(registration.getGroupId(), user.getUserId(), registration.getResourceId());
 
-        for (nl.deltares.dsd.registration.model.Registration dbRegistration : dbRegistrations) {
-            return getUserPreferencesMap(dbRegistration);
+        Optional<nl.deltares.dsd.registration.model.Registration> first = dbRegistrations.stream().findFirst();
+        if (first.isPresent()) {
+            return getUserPreferencesMap(first.get());
         }
         return Collections.emptyMap();
     }
@@ -374,7 +385,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
                 RegistrationLocalServiceUtil.getRegistrationDataByAuthorAndResourceId(author.getUserId(), resourceId);
         return dbRegistrations.stream()
                 .filter(registration -> registration.getUserId() != registration.getRegisteredByUserId())
-                .map(DsdSessionUtilsImpl::getRegistrationData)
+                .map(this::getRegistrationData)
                 .collect(Collectors.toList());
     }
 
@@ -382,7 +393,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     public List<RegistrationData> getRegistrationDataByUserAndResourceId(User user, long resourceId) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
                 RegistrationLocalServiceUtil.getRegistrationDataByUserAndResourceId(user.getUserId(), resourceId);
-        return dbRegistrations.stream().map(DsdSessionUtilsImpl::getRegistrationData).collect(Collectors.toList());
+        return dbRegistrations.stream().map(this::getRegistrationData).collect(Collectors.toList());
     }
 
     @Override
@@ -395,7 +406,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         return registrations;
     }
 
-    private static RegistrationData getRegistrationData(nl.deltares.dsd.registration.model.Registration dbRegistration) {
+    private RegistrationData getRegistrationData(nl.deltares.dsd.registration.model.Registration dbRegistration) {
         RegistrationData registrationData = new RegistrationData();
         registrationData.setRegistrationRecordId(dbRegistration.getRegistrationId());
         registrationData.setCompanyId(dbRegistration.getCompanyId());
@@ -417,6 +428,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
             } catch (JSONException e) {
                 LOG.warn("Error parsing userPreferences JSON: " + userPreferences, e);
             }
+            loadBillingInfo(registrationData);
         }
 
         registrationData.addPeriod(new Period(dbRegistration.getStartTime(), dbRegistration.getEndTime()));
@@ -458,6 +470,36 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     @Override
     public void deleteEventRegistrations(long groupId, long resourceId) {
         RegistrationLocalServiceUtil.deleteAllEventRegistrations(groupId, resourceId);
+    }
+
+
+    private void loadBillingInfo(RegistrationData registrationData) {
+
+        String accountEntryId = registrationData.getAttributes().get("accountEntryId");
+        String billingAddressId = registrationData.getAttributes().get("billing_addressid");
+        Address billingAddress = null;
+        if (billingAddressId != null) {
+            billingAddress = addressLocalService.fetchAddress(Long.parseLong(billingAddressId));
+        }
+        if  (accountEntryId != null) {
+            AccountEntry accountEntry = accountEntryLocalService.fetchAccountEntry(Long.parseLong(accountEntryId));
+            if (accountEntry != null){
+                registrationData.putAttribute("billing_company", accountEntry.getName());
+                registrationData.putAttribute("billing_vat", accountEntry.getTaxIdNumber());
+
+                if (billingAddress == null){
+                    billingAddress = accountEntry.getDefaultBillingAddress();
+                }
+            }
+        }
+        if (billingAddress != null) {
+            registrationData.putAttribute("billing_address", billingAddress.getStreet1());
+            registrationData.putAttribute("billing_postal", billingAddress.getZip());
+            registrationData.putAttribute("billing_city", billingAddress.getCity());
+            registrationData.putAttribute("billing_country", billingAddress.getCountry().getName());
+            registrationData.putAttribute("billing_phone", billingAddress.getPhoneNumber());
+        }
+
     }
 
     private static final Log LOG = LogFactoryUtil.getLog(DsdSessionUtilsImpl.class);

@@ -29,8 +29,8 @@ public class SendLicenseFilesRequest extends AbstractDataRequest {
     @Override
     public STATUS call() {
 
-        if (getStatus() == available) return status;
-        status = running;
+        if (getStatus() == AVAILABLE) return status;
+        status = RUNNING;
         statusMessage = "starting license request";
         init();
         try {
@@ -48,7 +48,7 @@ public class SendLicenseFilesRequest extends AbstractDataRequest {
                     Thread.sleep(1000); // sleep for 1 second
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt(); // recommended practice // handle interruption
-                    status = dispose;
+                    status = DISPOSE;
                     errorMessage = "Progress thread was interrupted";
                     break;
                 }
@@ -59,19 +59,19 @@ public class SendLicenseFilesRequest extends AbstractDataRequest {
                 if (progress.getString("requestProgress").equals("Done")) {
                     licenseManagerUtils.download(requestId, dataFile);
                     confirmationEmail.sendLicenseFilesEmail(dataFile);
-                    status = dispose; //cleanup once completed
+                    status = DISPOSE; //cleanup once completed
                 } else {
                     errorMessage = progress.getString("message");
-                    status = dispose;
+                    status = DISPOSE;
                 }
             } else {
-                status = dispose;
+                status = DISPOSE;
             }
 
 
         } catch (Exception e) {
             errorMessage = e.getMessage();
-            status = dispose;
+            status = DISPOSE;
         }
         fireStateChanged();
 

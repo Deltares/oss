@@ -284,3 +284,8 @@ license*.xml
 /yarn.lock
 /docker/resources/example-portal-ext.properties
 /modules/common-utils/src/test/resources/goto/pertal-ext.properties
+/docker/liferay/resources/context.xml
+/sonarcloud.truststore.pass
+/sonarcloud-truststore.p12.b64
+/sonarcloud.token
+/run-sonar-locally.bat
