@@ -50,8 +50,7 @@ public abstract class HttpClientUtils implements BaseLocalService {
         }
     }
 
-    public static HttpURLConnection getConnection(String path, String method, Map<String, String> headers) throws IOException {
-
+    public static HttpURLConnection getConnection(String path, String method, Map<String, String> headers, int connectionTimeout) throws IOException {
         URL url;
         try {
             url = new URL(path);
@@ -63,7 +62,8 @@ public abstract class HttpClientUtils implements BaseLocalService {
         urlConnection.setDoInput(true);
         urlConnection.setDoOutput(false);
         urlConnection.setRequestMethod(method);
-        urlConnection.setConnectTimeout(1000);
+        urlConnection.setConnectTimeout(connectionTimeout);
+        urlConnection.setReadTimeout(connectionTimeout);
 
         if (headers != null) {
             Set<String> keys = headers.keySet();
@@ -72,6 +72,9 @@ public abstract class HttpClientUtils implements BaseLocalService {
             }
         }
         return urlConnection;
+    }
+    public static HttpURLConnection getConnection(String path, String method, Map<String, String> headers) throws IOException {
+        return getConnection(path, method, headers, 1000);
     }
 
     public static void writePostParameters(HttpURLConnection connection, Map<String, String> parameters) throws IOException {

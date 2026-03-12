@@ -64,6 +64,11 @@ public class RegistrationsInfo implements Serializable {
         String ids = ParamUtil.getString(httpServletRequest, "ids");
         String[] registrationIds = ids.split(",", -1);
 
+        //Check for selection changes. If there are no changes, keep the existing registrations to prevent unnecessary reloads and potential loss of user input.
+        if (Arrays.stream(registrationIds).allMatch(registrationId -> registrationsInfo.getRegistrationArticleIds().contains(registrationId))){
+            if (new HashSet<>(registrationsInfo.getRegistrationArticleIds()).containsAll(List.of(registrationIds))){return;}
+        }
+
         List<Registration> newRegistrations = new ArrayList<>();
         for (String registrationId : registrationIds) {
             if (registrationId == null || registrationId.isEmpty()) continue;

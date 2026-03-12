@@ -1,0 +1,20 @@
+{
+  "isValid": true,
+  "requestDate": "2026-03-12T07:40:19.998Z",
+  "userError": "VALID",
+  "name": "---",
+  "address": "---",
+  "requestIdentifier": "",
+  "originalVatNumber": "ESB85097962",
+  "vatNumber": "B85097962",
+  "viesApproximate": {
+    "matchName": 3,
+    "matchStreet": 3,
+    "matchPostalCode": 3,
+    "matchCity": 3,
+    "matchCompanyType": 3
+  },
+  "rulesApplied": [
+    "COUNTRY"
+  ]
+}

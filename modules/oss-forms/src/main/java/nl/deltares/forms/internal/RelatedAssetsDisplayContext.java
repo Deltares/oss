@@ -35,23 +35,25 @@ public class RelatedAssetsDisplayContext {
             context = new RegistrationFormContext();
             request.getSession().setAttribute("registration-context", context);
         }
+        CPRequestHelper cpRequestHelper = new CPRequestHelper(request);
+        ThemeDisplay themeDisplay = cpRequestHelper.getThemeDisplay();
+
         RegistrationsInfo registrationsInfo = context.getRegistrationsInfo();
         if (registrationsInfo == null) {
             _registrationsInfo = new RegistrationsInfo();
             context.setRegistrationsInfo(_registrationsInfo);
+
+            RegistrationsInfo.loadRegistrations(request, _registrationsInfo, dsdParserUtils, themeDisplay);
+            RegistrationsInfo.loadRegistrationEvents(_registrationsInfo, dsdParserUtils);
+            RegistrationsInfo.loadRelatedArticles(_registrationsInfo, dsdJournalArticleUtils, dsdParserUtils);
+            RegistrationsInfo.loadChildArticles(_registrationsInfo);
+
         } else {
             _registrationsInfo = registrationsInfo;
         }
-        CPRequestHelper cpRequestHelper = new CPRequestHelper(request);
-        ThemeDisplay themeDisplay = cpRequestHelper.getThemeDisplay();
-
         _portletInstanceConfiguration = configurationProvider.getPortletInstanceConfiguration(RegistrationFormConfiguration.class,
                 themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
 
-        RegistrationsInfo.loadRegistrations(request, _registrationsInfo, dsdParserUtils, themeDisplay);
-        RegistrationsInfo.loadRegistrationEvents(_registrationsInfo, dsdParserUtils);
-        RegistrationsInfo.loadRelatedArticles(_registrationsInfo, dsdJournalArticleUtils, dsdParserUtils);
-        RegistrationsInfo.loadChildArticles(_registrationsInfo);
     }
 
     public JournalArticleDisplay getArticleDisplay(PortletRequest portletRequest, PortletResponse portletResponse,

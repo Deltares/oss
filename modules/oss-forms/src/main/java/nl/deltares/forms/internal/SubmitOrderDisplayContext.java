@@ -42,16 +42,19 @@ public class SubmitOrderDisplayContext {
     private final UserLocalService _userLocalService;
     private final DsdParserUtils _dsdParserUtils;
     private final SimpleDateFormat dateTimeFormatter;
+    private final TaxCalculator _taxCalculator;
+
     public SubmitOrderDisplayContext(HttpServletRequest httpServletRequest, ConfigurationProvider configurationProvider,
                                      DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils, DsdJournalArticleUtils dsdJournalArticleUtils,
-                                     WebinarUtilsFactory webinarUtilsFactory,
-                                     AdminUtils adminUtils, UserLocalService userLocalService) throws Exception {
+                                     WebinarUtilsFactory webinarUtilsFactory, AdminUtils adminUtils,
+                                     UserLocalService userLocalService, TaxCalculator taxCalculator) throws Exception {
 
         _dsdSessionUtils = dsdSessionUtils;
         _dsdParserUtils = dsdParserUtils;
         _dsdJournalArticleUtils = dsdJournalArticleUtils;
         _webinarUtilsFactory = webinarUtilsFactory;
         _adminUtils = adminUtils;
+        _taxCalculator = taxCalculator;
         _userLocalService = userLocalService;
 
         dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
@@ -66,6 +69,28 @@ public class SubmitOrderDisplayContext {
         if (_context == null || _context.getRegistrationsInfo() == null || _context.getRegistrationsInfo().getAllUserRegistrations().isEmpty()) {
             throw new RegistrationFormException("No registrations in session!");
         }
+    }
+
+    public float defineTaxPercentage(Registration registration) {
+
+        boolean onlineCourse = "onlinecourse".equals(registration.getType());
+        String taxIdNumber = null;
+        String userCountry = null;
+
+        AccountEntry selectedAccountEntry = _context.getAccountInfo().getSelectedAccountEntry();
+        if (selectedAccountEntry != null) {
+            Address billingAddress = selectedAccountEntry.getDefaultBillingAddress();
+            taxIdNumber = selectedAccountEntry.getTaxIdNumber();
+            if (billingAddress != null) {
+                userCountry = billingAddress.getCountry().getA2();
+            }
+        }
+        return _taxCalculator.defineTaxPercentage(
+                onlineCourse,
+                registration.getVAT(),
+                taxIdNumber,
+                userCountry);
+
     }
 
     public boolean showTerms() {
@@ -289,6 +314,6 @@ public class SubmitOrderDisplayContext {
     }
 
     public RegistrationsInfo getRegistrationsInfo() {
-        return null;
+        return _context.getRegistrationsInfo();
     }
 }
