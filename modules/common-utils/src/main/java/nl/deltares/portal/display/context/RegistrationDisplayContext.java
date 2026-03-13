@@ -33,8 +33,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import static nl.deltares.portal.utils.LocalizationUtils.getLocalizedValue;
-
 @SuppressWarnings("unused")
 public class RegistrationDisplayContext {
 
@@ -255,8 +253,7 @@ public class RegistrationDisplayContext {
 
     public String getCourseConditionsUrl() {
         if (_dsdSiteConfiguration != null) {
-            final String language = _themeDisplay.getLocale().getLanguage();
-            return getLocalizedValue(_dsdSiteConfiguration.conditionsURL(), language);
+            return _dsdSiteConfiguration.conditionsURL();
         }
         return "";
     }

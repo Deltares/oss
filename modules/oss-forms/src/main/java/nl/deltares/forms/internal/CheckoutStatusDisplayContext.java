@@ -8,8 +8,6 @@ import nl.deltares.portal.configuration.DSDSiteConfiguration;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static nl.deltares.portal.utils.LocalizationUtils.getLocalizedValue;
-
 public class CheckoutStatusDisplayContext {
 
 
@@ -92,8 +90,7 @@ public class CheckoutStatusDisplayContext {
 
     public String[] getPaymentMessageArguments() {
         if (_action.equals("unregister-success")) {
-            final String language = _themeDisplay.getLocale().getLanguage();
-            return new String[]{getLocalizedValue(_configuration.conditionsURL(), language)};
+            return new String[]{_configuration.conditionsURL()};
         }
         return new String[0];
     }
