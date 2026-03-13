@@ -139,7 +139,7 @@ public class DownloadTablePortlet extends MVCPortlet {
                 Map<String, String> attributes = userAttributeCache.get(userId);
                 if (attributes == null){
                     final User user = UserLocalServiceUtil.fetchUser(userId);
-                    if (user != null) {
+                    if (user != null && keycloakUtils.isActive()) {
                         try {
                             attributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
                             userAttributeCache.put(userId, attributes);

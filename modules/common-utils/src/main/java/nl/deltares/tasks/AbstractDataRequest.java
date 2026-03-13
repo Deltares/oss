@@ -121,7 +121,7 @@ public abstract class AbstractDataRequest implements DataRequest {
         JSONObject statusJson = JSONFactoryUtil.createJSONObject();
         statusJson.put("id", id);
         statusJson.put("request", this.getClass().getSimpleName());
-        statusJson.put("status", status.toString());
+        statusJson.put("status", status.toString().toLowerCase());
         statusJson.put("progress", processedCount);
         statusJson.put("total", totalCount);
         statusJson.put("message", statusMessage);

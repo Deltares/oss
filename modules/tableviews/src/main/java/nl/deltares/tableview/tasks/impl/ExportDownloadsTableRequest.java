@@ -97,7 +97,7 @@ public class ExportDownloadsTableRequest extends AbstractDataRequest {
     }
 
     private void exportAllRecords(PrintWriter writer) {
-        writer.println("downloadId,modifiedDate,expirationDate,fileName,email,organization,city,country,shareUrl,licenseUrl");
+        writer.println("downloadId,modifiedDate,expirationDate,fileName,email,name,organization,city,country,shareUrl,licenseUrl");
 
         int start = 0;
         int end = 100;
@@ -141,22 +141,25 @@ public class ExportDownloadsTableRequest extends AbstractDataRequest {
                 incrementProcessCount(1);
                 if (group.getGroupId() != download.getGroupId()) return;
                 String email = "";
+                String fullName = "";
                 if (filterUser != null){
                     email = filterValue;
+                    fullName = filterUser.getFullName();
                 } else {
                     final User user = UserLocalServiceUtil.fetchUser(download.getUserId());
                     if (user != null) {
                         email = user.getEmailAddress();
+                        fullName = user.getFullName();
                     }
                 }
-                String city;
-                String countryCode;
+                String city = "";
+                String countryCode = "";
                 try {
                     if (download.getGeoLocationId() > 0) {
                         final GeoLocation geoLocation = GeoLocationLocalServiceUtil.getGeoLocation(download.getGeoLocationId());
                         city = geoLocation.getCityName();
                         countryCode = CountryServiceUtil.getCountry(geoLocation.getCountryId()).getA2();
-                    } else {
+                    } else if (keycloakUtils.isActive()) {
                         Map<String, String> attributes = userAttributesCache.get(download.getUserId());
                         if (attributes == null){
                             attributes = keycloakUtils.getUserAttributes(email);
@@ -181,9 +184,9 @@ public class ExportDownloadsTableRequest extends AbstractDataRequest {
                 } else {
                     expiryDate = "";
                 }
-                writer.println(String.format("%d,%s,%s,\"%s\",%s,\"%s\",\"%s\",%s,%s,%s",
+                writer.println(String.format("%d,%s,%s,\"%s\",%s,\"%s\",\"%s\",\"%s\",%s,%s,%s",
                         download.getDownloadId(), modifiedDate, expiryDate,
-                        download.getFileName(), email, download.getOrganization(),
+                        download.getFileName(), email, fullName, download.getOrganization(),
                         city, countryCode, download.getFileShareUrl(), download.getLicenseDownloadUrl()));
 
                 if (Thread.interrupted()) {
