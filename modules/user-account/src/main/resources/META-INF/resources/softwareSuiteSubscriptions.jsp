@@ -27,10 +27,15 @@
 
         String subscriptionState = entry.getSubscriptionState();
 
+        String licenseCount;
         if ("Active".equals(subscriptionState)){
             subscriptionState = "Running";
         }
-
+        if (entry.getLicenseCount() == -1){
+            licenseCount = "&infin;";
+        } else {
+            licenseCount = String.valueOf(entry.getLicenseCount());
+        }
         String contractType = LanguageUtil.get(request, entry.getContractType());
 %>
 
@@ -78,7 +83,7 @@
         </aui:col>
         <aui:col width="33">
             <div>Number of users / licenses:</div>
-            <strong><span><%=entry.getLicenseUsed()%> / <%=entry.getLicenseCount()%></span></strong>
+            <strong><span><%=entry.getLicenseUsed()%> / <%= licenseCount %></span></strong>
         </aui:col>
     </aui:row>
     <br/>
