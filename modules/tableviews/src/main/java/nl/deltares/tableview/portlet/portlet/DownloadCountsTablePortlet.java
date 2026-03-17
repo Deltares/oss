@@ -181,13 +181,13 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
                 String fileName;
                 String topic;
                 String topicKey = null;
-                if (dsdArticle != null) {
+                if (dsdArticle instanceof Download) {
                     final Download download = (Download) dsdArticle;
                     fileName = download.getFileName();
                     topicKey = download.getFileTopic();
                     topic = topicMap.getOrDefault(topicKey, topicKey);
                 } else {
-                    fileName = String.valueOf(downloadId);
+                    fileName = dsdArticle == null ? String.valueOf(downloadId) : dsdArticle.getTitle();
                     topic = "";
                 }
                 if (filterId != null && !filterId.equals(topicKey)) return;
