@@ -82,14 +82,19 @@ public class ClmCustomerContactsPortlet extends MVCPortlet {
                 }
 
                 if (hasManageLicensesPermission) {
+                    final int curPage = ParamUtil.getInteger(renderRequest, "cur", 1);
+                    final int deltas = ParamUtil.getInteger(renderRequest, "delta", 25);
+                    int start = (curPage - 1) * deltas;
+                    int end = start + deltas;
 
                     List<CustomerContact> filteredContacts = new ArrayList<>();
                     JSONArray customerContactsForCustomer = licenseManagerUtils.getCustomerContactsForCustomerAndFilter(
                             customerSelection, "beta-tester".equals(filter), "license-manager".equals(filter));
-                    for (int i = 0; i < customerContactsForCustomer.length(); i++) {
+                    for (int i = start; i < end; i++) {
                         filteredContacts.add(convertToContact(customerContactsForCustomer.getJSONObject(i)));
                     }
                     renderRequest.setAttribute("customerContactList", filteredContacts);
+                    renderRequest.setAttribute("totalCustomerContactCount", customerContactsForCustomer.length());
 
                 }
 

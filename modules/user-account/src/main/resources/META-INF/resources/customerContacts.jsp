@@ -27,6 +27,11 @@
     <portlet:param name="filterSelection" value="<%=filterSelection%>" />
 </portlet:actionURL>
 
+<liferay-portlet:renderURL varImpl="iteratorURL">
+    <portlet:param name="customerSelection" value="<%=String.valueOf(customerSelection)%>" />
+    <portlet:param name="filterSelection" value="<%= filterSelection %>" />
+</liferay-portlet:renderURL>
+
 <aui:fieldset>
     <aui:row>
         <aui:col width="25">
@@ -74,10 +79,11 @@
 %>
 <aui:form name="customerContacts" >
     <jsp:useBean id="customerContactList" type="java.util.List" scope="request"/>
+    <jsp:useBean id="totalCustomerContactCount" type="java.lang.Integer" scope="request"/>
 
-    <liferay-ui:search-container id="tableResults"
+    <liferay-ui:search-container id="tableResults" iteratorURL="<%= iteratorURL %>" delta="25"
                                  emptyResultsMessage='<%=("There are no contacts for customer '" + (selectedCustomerName) + "' and selection '" + (filterSelection) + "'")%>'
-                                 total="<%=customerContactList.size()%>">
+                                 total="<%=totalCustomerContactCount%>">
         <liferay-ui:search-container-results results="<%= customerContactList %>"/>
 
         <liferay-ui:search-container-row
