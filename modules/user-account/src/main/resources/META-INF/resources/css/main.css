@@ -2,6 +2,11 @@
   padding: 5px;
 }
 
+.panel-body hr {
+  border-top-color: black;
+  border-top-width: 3px;
+}
+
 .c-yesno {
   align-items: center;
   border-radius: 17px;
