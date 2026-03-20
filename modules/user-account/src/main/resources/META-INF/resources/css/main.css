@@ -1,3 +1,7 @@
+.page-item {
+  padding: 5px;
+}
+
 .c-yesno {
   align-items: center;
   border-radius: 17px;
