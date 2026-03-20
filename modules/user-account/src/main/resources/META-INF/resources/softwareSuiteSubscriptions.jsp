@@ -44,6 +44,15 @@
             lincenseUsed = String.valueOf(entry.getLicenseUsed());
         }
         String contractType = LanguageUtil.get(request, entry.getContractType());
+
+        String supportHours;
+        if (entry.getSupportHours() == -1){
+            supportHours = "Within reasonable limits";
+        } else {
+            supportHours = entry.getSupportHours() + " hours";
+        }
+
+
 %>
 
 <aui:fieldset cssClass="c-subscription-container">
@@ -86,7 +95,7 @@
         </aui:col>
         <aui:col width="33">
             <div>Support hours:</div>
-            <div><strong><%=Math.max(entry.getSupportHours(), 0) %>&nbsp;hours</strong></div>
+            <div><strong><%= supportHours %></strong></div>
         </aui:col>
         <aui:col width="33">
             <div>Number of users / licenses:</div>
