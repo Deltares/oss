@@ -3,12 +3,12 @@ package nl.deltares.useraccount.comparator;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import nl.deltares.useraccount.model.DisplayDownload;
 
-public class DownloadFiledComparator extends OrderByComparator<DisplayDownload> {
+public class DownloadFieldComparator extends OrderByComparator<DisplayDownload> {
 
     private final boolean _ascending;
     private final String _orderByField;
 
-    public DownloadFiledComparator(String field, boolean ascending) {
+    public DownloadFieldComparator(String field, boolean ascending) {
         this._ascending = ascending;
         this._orderByField = field;
     }

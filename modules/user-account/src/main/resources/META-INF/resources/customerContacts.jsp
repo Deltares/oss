@@ -89,11 +89,12 @@
         <liferay-ui:search-container-row
                 className="nl.deltares.useraccount.model.CustomerContact"
                 modelVar="entry"
+                keyProperty="contactId"
         >
             <liferay-ui:search-container-column-text cssClass="col-1" property="contactSalutation" name="customercontactform.salutation">
             </liferay-ui:search-container-column-text>
-            <liferay-ui:search-container-column-text cssClass="col-2" property="contactName" name="customercontactform.name" />
-            <liferay-ui:search-container-column-text cssClass="col-2" property="contactEmail" name="customercontactform.email" />
+            <liferay-ui:search-container-column-text cssClass="col-2" property="contactName" name="customercontactform.name" orderable="true" orderableProperty="contactName"/>
+            <liferay-ui:search-container-column-text cssClass="col-2" property="contactEmail" name="customercontactform.email" orderable="true" orderableProperty="contactEmail"/>
         </liferay-ui:search-container-row>
         <liferay-ui:search-iterator/>
     </liferay-ui:search-container>

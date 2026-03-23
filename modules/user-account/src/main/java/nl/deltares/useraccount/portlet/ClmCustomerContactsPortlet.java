@@ -12,6 +12,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.LicenseManagerUtils;
+import nl.deltares.useraccount.comparator.CustomerContactComparator;
 import nl.deltares.useraccount.constants.UserProfilePortletKeys;
 import nl.deltares.useraccount.model.CustomerContact;
 import org.osgi.service.component.annotations.Component;
@@ -58,6 +59,8 @@ public class ClmCustomerContactsPortlet extends MVCPortlet {
         try {
             String filter = ParamUtil.getString(renderRequest, "filterSelection", "all");
             long customerSelection = ParamUtil.getLong(renderRequest, "customerSelection", 0L);
+            final String orderByCol = ParamUtil.getString(renderRequest, "orderByCol", "contactName");
+            final String orderByType = ParamUtil.getString(renderRequest, "orderByType", "desc");
             User user = themeDisplay.getUser();
             JSONArray customerContactsForUser = licenseManagerUtils.getCustomerContactsForUser(user);
             Map<Long, String> customerInfo = LicenseManagerUtils.parseCustomerIdAndName(customerContactsForUser);
@@ -94,6 +97,7 @@ public class ClmCustomerContactsPortlet extends MVCPortlet {
                     for (int i = start; i < end; i++) {
                         filteredContacts.add(convertToContact(customerContactsForCustomer.getJSONObject(i)));
                     }
+                    sortContacts(filteredContacts, orderByCol, orderByType);
                     renderRequest.setAttribute("customerContactList", filteredContacts);
                     renderRequest.setAttribute("totalCustomerContactCount", customerContactsForCustomer.length());
 
@@ -107,6 +111,12 @@ public class ClmCustomerContactsPortlet extends MVCPortlet {
             throw new PortletException(e);
         }
         super.render(renderRequest, renderResponse);
+    }
+
+    private void sortContacts(List<CustomerContact> displays, String orderByCol, String orderByType) {
+
+        final CustomerContactComparator comparator = new CustomerContactComparator(orderByCol, orderByType.equals("asc"));
+        displays.sort(comparator);
     }
 
     /**

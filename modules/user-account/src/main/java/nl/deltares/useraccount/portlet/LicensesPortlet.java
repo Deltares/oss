@@ -16,7 +16,7 @@ import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
 import nl.deltares.portal.configuration.SiteMapConfiguration;
 import nl.deltares.portal.utils.DsdParserUtils;
-import nl.deltares.useraccount.comparator.DownloadFiledComparator;
+import nl.deltares.useraccount.comparator.DownloadFieldComparator;
 import nl.deltares.useraccount.constants.UserProfilePortletKeys;
 import nl.deltares.useraccount.model.DisplayDownload;
 import org.osgi.service.component.annotations.Component;
@@ -96,7 +96,7 @@ public class LicensesPortlet extends MVCPortlet {
 
     private void sortDownloads(List<DisplayDownload> displays, String orderByCol, String orderByType) {
 
-        final DownloadFiledComparator comparator = new DownloadFiledComparator(orderByCol, orderByType.equals("asc"));
+        final DownloadFieldComparator comparator = new DownloadFieldComparator(orderByCol, orderByType.equals("asc"));
         displays.sort(comparator);
 
     }
