@@ -1,4 +1,28 @@
 <nav class="flex flex-row justify-end">
+    <#if menu_extensions_items?? && menu_extensions_items?size != 0>
+    <ol class="flex flex-row">
+        <#list menu_extensions_items as menu_extension_item>
+            <#assign  settings = unicodePropertiesBuilder.fastLoad(menu_extension_item.getTypeSettings()).build() />
+
+            <#if settings?? && settings.get("url")?? >
+                <#assign
+                    url= settings.get("url")
+                    defaultLanguageId = settings.get("defaultLanguageId")
+                    name = settings.get("name_" + defaultLanguageId)
+                    newTab = settings.get("useNewTab")
+                    target = (newTab?string == "true")?then("_blank", "_self")
+                />
+                <li class="px-3">
+                    <a class="block text-sm font-sm text-white leading-none" href="${url}" target="${target}">
+                        ${name}
+                    </a>
+                </li>
+            </#if>
+        </#list>
+        <div class="border-right" />
+    </ol>
+    </#if>
+
     <#if unread_announcements?? && unread_announcements gt 0 >
     <ol class="flex flex-row">
         <li class="px-3 account-link">

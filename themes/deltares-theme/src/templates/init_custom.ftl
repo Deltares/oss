@@ -20,6 +20,17 @@ site_name = htmlUtil.escape(themeDisplay.getSiteGroupName())
 
 <#assign footerContentID = getterUtil.getString(theme_settings["page-footer-webcontent-id"]) >
 <#assign registration_form_id = getterUtil.getString(theme_settings["registration-form-id"]) >
+<#assign menu_extensions_name = getterUtil.getString(theme_settings["menu-extensions-name"]) >
+
+<#if menu_extensions_name ?? && menu_extensions_name != "" >
+    <#assign
+        navigationMenuLocalService = serviceLocator.findService("com.liferay.site.navigation.service.SiteNavigationMenuLocalService")
+        navigationMenuItemLocalService = serviceLocator.findService("com.liferay.site.navigation.service.SiteNavigationMenuItemLocalService")
+        unicodePropertiesBuilder = staticUtil["com.liferay.portal.kernel.util.UnicodePropertiesBuilder"]
+        menu_extensions = navigationMenuLocalService.fetchSiteNavigationMenuByName(themeDisplay.getScopeGroupId(), menu_extensions_name)
+        menu_extensions_items = navigationMenuItemLocalService.getSiteNavigationMenuItems(menu_extensions.getSiteNavigationMenuId())
+    />
+</#if>
 
 <#-- If this page has an open day colour scheme, drop the banner on -->
 
