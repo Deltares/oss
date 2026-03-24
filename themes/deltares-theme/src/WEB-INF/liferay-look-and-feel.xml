@@ -8,7 +8,6 @@
 	<theme id="deltares-theme" name="Deltares Theme">
 		<template-extension>ftl</template-extension>
 		<settings>
-			<setting configurable="true" key="google-tag-id" type="text" value="" />
 			<setting configurable="true" key="page-footer-webcontent-id" type="text" value="" />
 			<setting configurable="true" key="shopping-cart" type="checkbox" value="false" />
 			<setting configurable="true" key="registration-form-id" type="text" value="dsd_RegistrationFormPortlet" />
