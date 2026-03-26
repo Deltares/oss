@@ -28,8 +28,7 @@
     }
   }
 
-  .mobile-navpanel,
-  .language-panel {
+  .mobile-navpanel {
     height: 0;
     opacity: 0;
     transform: translateY(120%);
@@ -134,36 +133,6 @@
     }
   }
 
-  .language-panel {
-    height: inherit;
-
-    &.is-open {
-      height: inherit;
-
-      .has-control-menu .control-menu + #wrapper & {
-        height: inherit;
-      }
-    }
-
-    > ol {
-      padding-bottom: 0.75rem;
-      padding-top: 0.75rem;
-
-      li {
-        > span {
-          margin-bottom: 0.75rem;
-
-          > svg {
-            margin-right: 0.75rem;
-          }
-        }
-
-        a {
-          pointer-events: inherit;
-        }
-      }
-    }
-  }
 }
 
 @media (max-width: 767px) {
