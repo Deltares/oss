@@ -7,6 +7,9 @@
 			</svg>
 			<span class="sr-only"><@liferay.language key='dsd.theme.logo.link.description' /></span>
 		</a>
+		<#if site_name??>
+			<div class="site-logo h1">${site_name}</div>
+		</#if>
 	</div>
 	<div class="ignore-close flex flex-row items-center w-full">
 		<div class="nav-menu ml-auto">

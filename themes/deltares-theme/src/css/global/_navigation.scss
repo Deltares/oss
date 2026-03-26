@@ -191,16 +191,6 @@
   }
 }
 
-.menu-overlay {
-  z-index: -1;
-
-  &.is-open {
-    height: 115vh;
-    opacity: 0.8;
-    z-index: 10;
-  }
-}
-
 @keyframes subpanel-fade-in {
   0% {
     display: none;
@@ -213,19 +203,6 @@
   }
 }
 
-@media (max-width: 1023px) {
-  .menu-overlay {
-    &.is-open {
-      z-index: 501;
-    }
-  }
-}
-
-@media (min-width: 1024px) {
-  .menu-overlay {
-    top: 0;
-  }
-}
 
 @media (min-width: 1280px) {
   #header {

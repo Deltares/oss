@@ -400,52 +400,59 @@ var ShoppingCart = {
         }
     }
 
+function closeMenuButtons(menuPrefix){
+    document.querySelector('.' + menuPrefix + '-navpanel').classList.remove('is-open');
+    document.querySelectorAll('.' + menuPrefix + '-menu-btn').forEach((btn) => {
+        btn.classList.remove('opened');
+        btn.setAttribute('aria-expanded', 'false');
+    });
+    document.querySelectorAll('.' + menuPrefix + '-icon-menu').forEach((btn) => {btn.classList.remove('hidden');});
+    document.querySelectorAll('.' + menuPrefix + '-icon-close').forEach((btn) => {btn.classList.add('hidden');});
+}
+
+function openMenuButtons(menuPrefix){
+    document.querySelector('.' + menuPrefix + '-navpanel').classList.add('is-open');
+    document.querySelectorAll('.' + menuPrefix + '-menu-btn').forEach((btn) => {
+        btn.classList.add('opened');
+        btn.setAttribute('aria-expanded', 'true');
+    });
+    document.querySelectorAll('.' + menuPrefix + '-icon-menu').forEach((btn) => {btn.classList.add('hidden');});
+    document.querySelectorAll('.' + menuPrefix + '-icon-close').forEach((btn) => {btn.classList.remove('hidden');});
+}
+
+var navMenu = document.querySelector('.main-navbar .nav-menu');
 
     // Mobile menu
 var mobileContainer = document.querySelector('.mobile-container');
 if ( mobileContainer ) {
-    var mobileButtons = mobileContainer.querySelectorAll('.mobile-btn');
-    var mobileMenuButton = mobileContainer.querySelector('.mobile-menu-btn');
-    var mobileMainnav = mobileContainer.querySelector('.mobile-mainnav');
-
+    let mobileButtons = mobileContainer.querySelectorAll('.mobile-btn');
     mobileButtons.forEach(function (mobileButton) {
         mobileButton.addEventListener('click', function () {
             if (this.classList.contains('opened')) {
-                menuOverlay.classList.remove('is-open');
-                mobileContainer.querySelector('.mobile-navpanel').classList.remove('is-open');
-                mobileContainer.querySelector('.language-panel').classList.remove('is-open');
                 navMenu.querySelector('button').setAttribute('aria-expanded', 'false');
                 navMenu.querySelector('button').classList.remove('opened'); // Reset all nav-menu buttons
                 navMenu.querySelector('.nav-subpanel').classList.remove('is-open'); // Reset open nav-subpanels
                 document.querySelector('body').classList.remove('overflow-hidden');
             } else {
-                mobileContainer.querySelector('.mobile-icon').classList.remove('hidden');
-                mobileContainer.querySelector('.mobile-icon-close').classList.add('hidden');
-                mobileButton.setAttribute('aria-expanded', 'false');
-                mobileButton.classList.remove('opened');
-                menuOverlay.classList.add('is-open');
                 document.querySelector('body').classList.add('overflow-hidden');
             }
         });
     });
 
-    mobileMenuButton.addEventListener('click', function () {
-        if (this.classList.contains('opened')) {
-            this.setAttribute('aria-expanded', 'false');
-            this.classList.remove('opened');
-            this.querySelector('.mobile-icon-menu').classList.remove('hidden');
-            this.querySelector('.mobile-icon-close').classList.add('hidden');
-        } else {
-            this.setAttribute('aria-expanded', 'true');
-            this.classList.add('opened');
-            this.querySelector('.mobile-icon-menu').classList.add('hidden');
-            this.querySelector('.mobile-icon-close').classList.remove('hidden');
-            mobileContainer.querySelector('.mobile-navpanel').classList.add('is-open');
-            mobileContainer.querySelector('.language-panel').classList.remove('is-open');
-        }
-    });
+    let mobileMenuButtons = mobileContainer.querySelectorAll('.mobile-menu-btn');
+    mobileMenuButtons.forEach(function (mobileMenuButton) {
+        mobileMenuButton.addEventListener('click', function () {
+            if (this.classList.contains('opened')) {
+                closeMenuButtons('mobile');
+            } else {
+                openMenuButtons('mobile');
+            }
+            closeMenuButtons('sites');
+        });
+    })
 
-    var mobileMainnavs = mobileMainnav.querySelectorAll('button');
+    let mobileMainnav = mobileContainer.querySelector('.mobile-mainnav');
+    let mobileMainnavs = mobileMainnav.querySelectorAll('button');
     mobileMainnavs.forEach(function (mobileMainnavButton) {
 
         mobileMainnavButton.addEventListener('click', function () {
@@ -470,20 +477,48 @@ if ( mobileContainer ) {
             }
         });
     });
+}
+
+var sitesContainer = document.querySelector('.sites-container');
+if ( sitesContainer ) {
+
+    let sitesButtons = sitesContainer.querySelectorAll('.sites-btn');
+    sitesButtons.forEach(function (sitesButton) {
+        sitesButton.addEventListener('click', function () {
+            if (this.classList.contains('opened')) {
+                // document.querySelector('.sites-navpanel').classList.remove('is-open');
+                navMenu.querySelector('button').setAttribute('aria-expanded', 'false');
+                navMenu.querySelector('button').classList.remove('opened'); // Reset all nav-menu buttons
+                navMenu.querySelector('.nav-subpanel').classList.remove('is-open'); // Reset open nav-subpanels
+                document.querySelector('body').classList.remove('overflow-hidden');
+            } else {
+                document.querySelector('body').classList.add('overflow-hidden');
+            }
+        });
+    });
+
+    let sitesMenuButtons = document.querySelectorAll('.sites-menu-btn');
+    sitesMenuButtons.forEach(function (sitesButton) {
+        sitesButton.addEventListener('click', function () {
+            if (this.classList.contains('opened')) {
+                closeMenuButtons('sites');
+            } else {
+                openMenuButtons('sites');
+            }
+            closeMenuButtons('mobile');
+        });
+    });
 
 }
 // Main navigation (desktop)
-var navMenu = document.querySelector('.main-navbar .nav-menu');
 if ( navMenu ) {
-    var menuOverlay = document.querySelector('.menu-overlay');
-    var navMenuButtons = navMenu.querySelectorAll('button');
+    let navMenuButtons = navMenu.querySelectorAll('button');
 
     navMenuButtons.forEach(function (navMenuButton) {
         navMenuButton.addEventListener('click', function () {
             if (this.classList.contains('opened')) {
                 this.setAttribute('aria-expanded', 'false');
                 this.classList.remove('opened');
-                menuOverlay.classList.remove('is-open');
                 this.nextElementSibling.classList.remove('is-open');
                 document.querySelector('body').classList.remove('overflow-hidden');
             } else {
@@ -493,32 +528,11 @@ if ( navMenu ) {
                 this.classList.add('opened');
                 navMenu.querySelector('.nav-subpanel').classList.remove('is-open'); // Reset open nav-subpanels
                 this.nextElementSibling.classList.add('is-open');
-                menuOverlay.classList.add('is-open');
                 document.querySelector('body').classList.add('overflow-hidden');
             }
         });
     });
 
-    menuOverlay.addEventListener('click', function () {
-        // When opened, reset mobile menu
-        mobileButtons.forEach(function (mobileButton) {
-            if (mobileButton.classList.contains('opened')) {
-                mobileButton.setAttribute('aria-expanded', 'false');
-                mobileButton.classList.remove('opened');
-                mobileContainer.querySelector('.mobile-icon').classList.remove('hidden');
-                mobileContainer.querySelector('.mobile-icon-close').classList.add('hidden');
-            }
-        })
-        this.classList.remove('is-open');
-        mobileContainer.querySelector('.mobile-navpanel').classList.remove('is-open');
-        mobileContainer.querySelector('.language-panel').classList.remove('is-open');
-        navMenu.querySelectorAll('button').forEach(button => {
-            button.setAttribute('aria-expanded', false);
-            button.classList.remove('opened');
-        });
-        navMenu.querySelector('.nav-subpanel').classList.remove('is-open');
-        document.querySelector('body').classList.remove('overflow-hidden');
-    });
 }
 
 function checkStep(form, requiredStep) {

@@ -82,7 +82,6 @@ Actions:
 <ol type="1">
 <li>Set theme to <strong>deltares-fews-theme</strong>. Make sure to copy the settings as they get lost when changing themes;<br>
 <ul>
-<li>google-tag-id</li>
 <li>page-footer-webcontent-id</li>
 <li>Shopping Cart</li>
 </ul>
@@ -98,7 +97,6 @@ Actions:
 <ol type="1">
 <li>Set theme to <strong>deltares-theme</strong>. Make sure to copy the settings as they get lost when changing themes;<br>
 <ul>
-<li>google-tag-id</li>
 <li>page-footer-webcontent-id</li>
 <li>Shopping Cart</li>
 </ul>
@@ -114,7 +112,6 @@ Actions:
 <ol type="1">
 <li>Set theme to <strong>deltares-theme</strong>. Make sure to copy the settings as they get lost when changing themes;<br>
 <ul>
-<li>google-tag-id</li>
 <li>page-footer-webcontent-id</li>
 <li>Shopping Cart</li>
 </ul>

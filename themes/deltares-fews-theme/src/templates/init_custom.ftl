@@ -34,6 +34,3 @@ company_logo = htmlUtil.escape(themeDisplay.getCompanyLogo())
 <#if is_site_admin?? && !is_site_admin >
     <#assign css_class = stringUtil.replace(css_class, "open", "closed") />
 </#if>
-
-<#-- Get Google Tag Manager ID -->
-<#assign google_tag_id = getterUtil.getString(themeDisplay.getThemeSetting("google-tag-id"))/>

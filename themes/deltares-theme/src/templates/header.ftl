@@ -8,6 +8,10 @@
         <div class="mobile-container">
             <#include "${full_templates_path}/mobile_menu.ftl" />
         </div>
-        <div class="menu-overlay fixed bottom-0 left-0 w-full bg-app-blue--egyptian opacity-0 transition-all duration-200 v-navi-overlay"></div>
+        <#if menu_sites_items?? && menu_sites_items?size != 0>
+            <div class="sites-container">
+                <#include "${full_templates_path}/sites_navigation.ftl" />
+            </div>
+        </#if>
     </div>
 </header>

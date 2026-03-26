@@ -1,0 +1,88 @@
+.sites-container {
+  position: relative;
+  z-index: 502;
+
+  > ol {
+    li {
+      &:first-child {
+        &.btn-empty {
+          width: 60px; // Allocate width when empty
+        }
+      }
+
+      &:last-child {
+        &.btn-empty {
+          width: 44px; // Allocate width when empty
+        }
+      }
+    }
+  }
+
+  button {
+    outline: none;
+  }
+
+  .site-logo {
+    &:hover {
+      color: $dark-blue;
+    }
+  }
+
+  .sites-navpanel {
+    height: 0;
+    opacity: 0;
+    transform: translateY(120%);
+    transition: all .35s ease-in-out 50ms;
+
+    &.is-open {
+      height: calc(100vh - 115px);
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .sites-navpanel {
+
+    .sites-mainnav{
+      > ol {
+        margin-bottom: 2rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
+
+        > li {
+          > svg {
+            margin-top: 1.75rem;
+          }
+        }
+      }
+
+      li {
+        &.selected {
+          > svg {
+            display: block;
+          }
+        }
+
+        > svg {
+          display: none;
+        }
+      }
+
+      a {
+        text-decoration: none;
+      }
+    }
+
+  }
+
+}
+
+@media (max-width: 1025px) {
+  .sites-container {
+    .sites-navpanel{
+      &.is-open {
+        margin-top: 58px;
+      }
+    }
+  }
+}

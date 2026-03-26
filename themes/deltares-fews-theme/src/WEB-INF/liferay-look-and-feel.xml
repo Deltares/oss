@@ -8,7 +8,6 @@
 	<theme id="deltares-fews-theme" name="Deltares FEWS Theme">
 		<template-extension>ftl</template-extension>
 		<settings>
-			<setting configurable="true" key="google-tag-id" type="text" value="" />
 			<setting configurable="true" key="page-footer-webcontent-id" type="text" value="" />
 			<setting configurable="true" key="shopping-cart" type="checkbox" value="false" />
 		</settings>

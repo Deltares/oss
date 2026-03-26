@@ -40,10 +40,15 @@
 
     .mobile-container {
       .site-logo {
-        padding: 0.125rem 0.5rem;
+        padding: 0.5rem;
+        display: inline-flex;
 
         img {
           height: 2.29rem;
+        }
+
+        &.h1 {
+          width: max-content;
         }
       }
     }
@@ -61,7 +66,15 @@
 
       .site-logo {
         height: 92.92px;
+        display: inline-flex;
+        align-items: baseline;
+
+        .h1 {
+          width: max-content;
+          padding-left: 10px;
+        }
       }
+
     }
 
     .mobile-container {
