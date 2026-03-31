@@ -39,6 +39,8 @@ public class CheckboxFacetPortletSharedSearchContributor implements PortletShare
         String structureName = (String) portalCache.get("structureName");
         String fieldName = (String) portalCache.get("fieldName");
         String name = (String) portalCache.get("name"); //important to use '-' because this translates to JSP id
+        Boolean visible = (Boolean) portalCache.getOrDefault("visible", true);
+        Boolean defaultValue = (Boolean) portalCache.getOrDefault("defaultValue", null);
         final Long groupId = (Long) portalCache.get("groupId");
         final Locale siteDefaultLocale = (Locale) portalCache.get("siteDefaultLocale");
 
@@ -48,10 +50,15 @@ public class CheckboxFacetPortletSharedSearchContributor implements PortletShare
         String selection = selectionOptional.orElseGet(() -> FacetUtils.getFromSession(
                 portletSharedSearchSettings.getPortletId(),
                 name, portletSharedSearchSettings.getRenderRequest()));
-        if (selection == null) {
+        final Boolean option;
+        if (selection != null){
+            option = FacetUtils.parseYesNo(selection);
+        } else if(!visible && defaultValue != null){
+            option = defaultValue;
+        } else {
             return;
         }
-        final Boolean option = FacetUtils.parseYesNo(selection);
+
         if (option != null) {
             if (explicit) {
                 //look only for article containing the search field
