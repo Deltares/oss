@@ -60,7 +60,7 @@
     <ol class="flex flex-row">
         <#if is_signed_in>
             <#if user_account_url??>
-                <li class="px-3 account-link">
+                <li class="px-3 account-link"  style="width: max-content;">
                     <a class="block text-sm font-sm font-bold text-white leading-none relative" href="${user_account_url}">
                         <#if user_avatar_url??>
                             <div id="user-avatar" class="aspect-ratio-bg-cover user-icon" style="background-image:url(${user_avatar_url})"></div>
@@ -69,7 +69,7 @@
                     </a>
                 </li>
             <#else>
-                <li class="px-3 account-link">
+                <li class="px-3 account-link"  style="width: max-content;">
                     <a class="block text-sm font-sm font-bold text-white leading-none relative">
                         <#if user_avatar_url??>
                             <div id="user-avatar" class="aspect-ratio-bg-cover user-icon" style="background-image:url(${user_avatar_url})"></div>
