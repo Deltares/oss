@@ -146,10 +146,13 @@ public class UserInputValidationContext {
                     List<String> collect = allUserRegistrations.stream()
                             .filter(registrationInfo ->
                                     registrationInfo.getEmail().equals(email) &&
-                                            registrationInfo.getResourceId() != info.getResourceId()
-                                            && registrationInfo.isAnyTimeCommon(info.getPeriods()))
+                                            registrationInfo.getResourceId() != info.getResourceId() &&
+                                            registrationInfo.getParentResourceId() != info.getResourceId() &&
+                                            registrationInfo.getResourceId() != info.getParentResourceId() &&
+                                            registrationInfo.isAnyTimeCommon(info.getPeriods()))
                             .map(RegistrationInfo::getTitle)
                             .collect(Collectors.toList());
+
                     overlapping.addAll(collect);
 
                     //Check for overlapping registrations in the database.
