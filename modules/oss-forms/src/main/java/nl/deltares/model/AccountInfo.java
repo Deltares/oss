@@ -14,6 +14,7 @@ public class AccountInfo implements Serializable {
 
     List<AccountEntry> accounts = new ArrayList<>();
     private Long companyId;
+    private Long siteId;
 
     public void setCurrentUser(User user) {
         currentUser = user;
@@ -63,6 +64,14 @@ public class AccountInfo implements Serializable {
 
     public void setCompanyId(Long companyId) {
         this.companyId = companyId;
+    }
+
+    public Long getSiteId() {
+        return siteId;
+    }
+
+    public void setSiteId(Long siteId) {
+        this.siteId = siteId;
     }
 
     public Long getCompanyId() {

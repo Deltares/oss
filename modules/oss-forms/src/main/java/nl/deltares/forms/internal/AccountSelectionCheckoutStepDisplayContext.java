@@ -13,10 +13,12 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import nl.deltares.forms.constants.OrganizationConstants;
 import nl.deltares.forms.exception.RegistrationFormException;
+import nl.deltares.forms.portlet.PortletPermissionUtils;
 import nl.deltares.model.AccountInfo;
 import nl.deltares.model.RegistrationFormContext;
 import nl.deltares.portal.configuration.SiteMapConfiguration;
 import nl.deltares.portal.utils.AccountUtils;
+import nl.deltares.portal.utils.PermissionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
@@ -59,6 +61,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
             SiteMapConfiguration _configuration = configurationProvider.getSystemConfiguration(SiteMapConfiguration.class);
             _accountInfo = new AccountInfo();
             _accountInfo.setCurrentUser(themeDisplay.getUser());
+            _accountInfo.setSiteId(themeDisplay.getSiteGroupId());
             _accountInfo.setCompanyId(_configuration.accountsCompanyId());
             loadAccounts(_accountInfo);
             context.setAccountInfo(_accountInfo);
@@ -281,5 +284,19 @@ public class AccountSelectionCheckoutStepDisplayContext{
 
     public User getCurrentUser(){
         return _accountInfo.getCurrentUser();
+    }
+
+    public void addAccountEntry(String accountEntryId) throws Exception {
+
+
+        if (!PortletPermissionUtils.isUserSiteAdministrator(_accountInfo.getCurrentUser().getUserId(), _accountInfo.getSiteId() )) {
+            throw new Exception("User does not have permission to access the selected account.");
+        }
+
+        AccountEntry accountEntry = _accountEntryLocalService.fetchAccountEntry(Long.parseLong(accountEntryId));
+        if (accountEntry != null){
+            _accountInfo.addAccount(accountEntry);
+        }
+
     }
 }

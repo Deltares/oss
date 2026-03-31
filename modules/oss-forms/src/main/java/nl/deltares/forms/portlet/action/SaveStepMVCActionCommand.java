@@ -51,11 +51,18 @@ public class SaveStepMVCActionCommand extends BaseMVCActionCommand {
 				actionRequest, actionResponse, checkoutStepName);
 		}
 
-		DeltaresCheckoutStep commerceCheckoutStep =
-			_checkoutStepRegistry.getNextCheckoutStep(
-				checkoutStepName, httpServletRequest,
-				_portal.getHttpServletResponse(actionResponse));
-
+		boolean stayOnPage = ParamUtil.getBoolean(
+				actionRequest, "stayonpage");
+		DeltaresCheckoutStep commerceCheckoutStep;
+		if (stayOnPage) {
+			commerceCheckoutStep =
+					_checkoutStepRegistry.getCheckoutStep(checkoutStepName);
+		} else {
+			commerceCheckoutStep =
+					_checkoutStepRegistry.getNextCheckoutStep(
+							checkoutStepName, httpServletRequest,
+							_portal.getHttpServletResponse(actionResponse));
+		}
 		if (commerceCheckoutStep == null) {
 			return ParamUtil.getString(actionRequest, "redirect");
 		}
@@ -95,6 +102,7 @@ public class SaveStepMVCActionCommand extends BaseMVCActionCommand {
 		if (action.isEmpty()){
 			action = (String)((LiferayActionRequest) actionRequest).getHttpServletRequest().getAttribute("action");
 		}
+		String filterValue = ParamUtil.getString(actionRequest, "filterValue");
 
 		return PortletURLBuilder.createRenderURL(
 			_portal.getLiferayPortletResponse(actionResponse)
@@ -104,13 +112,15 @@ public class SaveStepMVCActionCommand extends BaseMVCActionCommand {
 			"ids", ids
 		).setParameter(
 			"action", action
+		).setParameter(
+			"filterValue", filterValue
 		).buildString();
 	}
 
 	@Reference
-	private DeltaresCheckoutStepRegistry _checkoutStepRegistry;
+	DeltaresCheckoutStepRegistry _checkoutStepRegistry;
 
 	@Reference
-	private Portal _portal;
+	Portal _portal;
 
 }

@@ -10,11 +10,11 @@ public class PortletPermissionUtils {
 
     private static final Log LOG = LogFactoryUtil.getLog(PortletPermissionUtils.class);
 
-    static boolean isUserSiteAdministrator(long userId, long siteGroupId){
+    public static boolean isUserSiteAdministrator(long userId, long siteGroupId){
         return isUserInSiteRole(userId, siteGroupId, "Site Administrator");
     }
 
-    static boolean isUserInSiteRole(long userId, long siteGroupId, String role) {
+    public static boolean isUserInSiteRole(long userId, long siteGroupId, String role) {
 
         try {
             for (Role userGroupRole : RoleServiceUtil.getUserGroupRoles(userId, siteGroupId)) {

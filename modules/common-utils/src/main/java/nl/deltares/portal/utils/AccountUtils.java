@@ -11,6 +11,10 @@ import java.util.List;
 
 public interface AccountUtils {
 
+    List<AccountEntry> searchAccountsByName(String filterValue, long companyId, int start, int end);
+
+    long searchAccountsByNameCount(String filterValue, long companyId);
+
     List<AccountEntry> getAccountsByDomain(String domain, long companyId);
 
     AccountEntry getPersonalAccount(User user, long accountCompanyId);

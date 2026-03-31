@@ -7,6 +7,7 @@ import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.expando.kernel.model.ExpandoValue;
 import com.liferay.expando.kernel.service.ExpandoValueLocalService;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.*;
@@ -30,6 +31,31 @@ public class AccountUtilsImpl implements AccountUtils {
     final static String PERSONAL_ACCOUNT_PREFIX = "Personal_account_";
     final static String CUSTOM_FIELD_DOMAIN = "Email domain";
 
+    @Override
+    public List<AccountEntry> searchAccountsByName(String filterValue, long companyId, int start, int end) {
+
+        final DynamicQuery dynamicQuery = _accountEntryLocalService.dynamicQuery();
+        dynamicQuery.add(RestrictionsFactoryUtil.like("name", '%' + filterValue + '%'));
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("status", 0));
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("type", "business"));
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+        dynamicQuery.setLimit(start, end);
+        dynamicQuery.addOrder(OrderFactoryUtil.asc("name"));
+        return _accountEntryLocalService.dynamicQuery(dynamicQuery);
+
+    }
+
+    @Override
+    public long searchAccountsByNameCount(String filterValue, long companyId) {
+
+        final DynamicQuery dynamicQuery = _accountEntryLocalService.dynamicQuery();
+        dynamicQuery.add(RestrictionsFactoryUtil.like("name", '%' + filterValue + '%'));
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("status", 0));
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("type", "business"));
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+        return _accountEntryLocalService.dynamicQueryCount(dynamicQuery);
+
+    }
     @Override
     public List<AccountEntry> getAccountsByDomain(String domain, long companyId) {
 
