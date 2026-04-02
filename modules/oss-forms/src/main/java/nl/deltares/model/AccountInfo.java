@@ -28,6 +28,13 @@ public class AccountInfo implements Serializable {
         accounts.addAll(accountEntries);
     }
 
+    public boolean containsAccountEntry(long accountEntryId) {
+        for (AccountEntry account : accounts) {
+            if (account.getAccountEntryId() == accountEntryId) return true;
+        }
+        return false;
+    }
+
     public void addAccount(AccountEntry accountEntry) {
         accounts.add(accountEntry);
     }

@@ -9,7 +9,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import nl.deltares.forms.util.DeltaresCheckoutStepRegistry;
-import nl.deltares.forms.util.FilterAccountSelectionCheckoutStep;
+import nl.deltares.forms.util.SelectAdditionalAccountsCheckoutStep;
 import nl.deltares.portal.constants.OssConstants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -37,7 +37,7 @@ public class SelectOrganizationActionCommand extends SaveStepMVCActionCommand {
         String checkoutStepName = ParamUtil.getString(
                 actionRequest, "checkoutStepName");
 
-        assert FilterAccountSelectionCheckoutStep.NAME.equals(checkoutStepName);
+        assert SelectAdditionalAccountsCheckoutStep.NAME.equals(checkoutStepName);
 
         super._checkoutStepRegistry = _checkoutStepRegistry;
         super._portal = _portal;

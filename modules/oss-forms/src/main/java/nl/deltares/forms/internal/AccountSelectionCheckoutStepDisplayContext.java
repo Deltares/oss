@@ -18,7 +18,6 @@ import nl.deltares.model.AccountInfo;
 import nl.deltares.model.RegistrationFormContext;
 import nl.deltares.portal.configuration.SiteMapConfiguration;
 import nl.deltares.portal.utils.AccountUtils;
-import nl.deltares.portal.utils.PermissionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
@@ -288,9 +287,12 @@ public class AccountSelectionCheckoutStepDisplayContext{
 
     public void addAccountEntry(String accountEntryId) throws Exception {
 
-
         if (!PortletPermissionUtils.isUserSiteAdministrator(_accountInfo.getCurrentUser().getUserId(), _accountInfo.getSiteId() )) {
             throw new Exception("User does not have permission to access the selected account.");
+        }
+
+        if (_accountInfo.containsAccountEntry(Long.parseLong(accountEntryId))){
+            return;
         }
 
         AccountEntry accountEntry = _accountEntryLocalService.fetchAccountEntry(Long.parseLong(accountEntryId));

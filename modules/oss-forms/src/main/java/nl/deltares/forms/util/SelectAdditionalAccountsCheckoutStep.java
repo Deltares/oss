@@ -8,7 +8,6 @@ package nl.deltares.forms.util;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.AddressLocalService;
 import com.liferay.portal.kernel.service.CountryLocalService;
@@ -24,7 +23,6 @@ import nl.deltares.forms.internal.AccountSelectionCheckoutStepDisplayContext;
 import nl.deltares.forms.internal.FilterAccountSelectionCheckoutStepDisplayContext;
 import nl.deltares.forms.portlet.PortletPermissionUtils;
 import nl.deltares.portal.utils.AccountUtils;
-import nl.deltares.portal.utils.PermissionUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -41,12 +39,12 @@ import java.util.Collections;
  */
 @Component(
         property = {
-                "checkout.step.name=" + FilterAccountSelectionCheckoutStep.NAME,
+                "checkout.step.name=" + SelectAdditionalAccountsCheckoutStep.NAME,
                 "checkout.step.order:Integer=4"
         },
         service = DeltaresCheckoutStep.class
 )
-public class FilterAccountSelectionCheckoutStep extends BaseCheckoutStep {
+public class SelectAdditionalAccountsCheckoutStep extends BaseCheckoutStep {
 
     public static final String NAME = "account-filter";
 
@@ -58,7 +56,7 @@ public class FilterAccountSelectionCheckoutStep extends BaseCheckoutStep {
     @Override
     public void processAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
 
-        String selectedAccountEntry = ParamUtil.getString(actionRequest, "accountEntryId");
+        String selectedAccountEntry = ParamUtil.getString(actionRequest, "selectedAccountEntryId");
         if (selectedAccountEntry != null && !selectedAccountEntry.isEmpty()) {
 
             HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
@@ -83,7 +81,6 @@ public class FilterAccountSelectionCheckoutStep extends BaseCheckoutStep {
                 httpServletRequest, _commerceUtils, _configurationProvider);
 
         httpServletRequest.setAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT, _displayContext);
-
         _jspRenderer.renderJSP(
                 httpServletRequest, httpServletResponse,
                 "/registration2.0/select-account.jsp");
@@ -96,6 +93,11 @@ public class FilterAccountSelectionCheckoutStep extends BaseCheckoutStep {
         CPRequestHelper cpRequestHelper = new CPRequestHelper(httpServletRequest);
         ThemeDisplay themeDisplay = cpRequestHelper.getThemeDisplay();
         return PortletPermissionUtils.isUserSiteAdministrator(themeDisplay.getUserId(), themeDisplay.getSiteGroupId());
+    }
+
+    @Override
+    public boolean showControls(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        return false;
     }
 
     @Reference
