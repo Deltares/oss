@@ -15,6 +15,7 @@
 package nl.deltares.oss.download.service.impl;
 
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.aop.AopService;
@@ -54,17 +55,31 @@ public class DownloadLocalServiceImpl extends DownloadLocalServiceBaseImpl {
 	}
 
     public List<Download> findDownloadsByFileName(long groupId, String fileName, int start, int end){
-        final DynamicQuery fileNameQuery = getFileNameQuery(groupId, fileName);
+        final DynamicQuery fileNameQuery = getFileNameQuery(groupId, fileName, null, null);
+        return DownloadUtil.findWithDynamicQuery(fileNameQuery, start, end);
+    }
+
+    public List<Download> findDownloadsByFileName(long groupId, String fileName, int start, int end, String orderByCol, String orderByType){
+        final DynamicQuery fileNameQuery = getFileNameQuery(groupId, fileName, orderByCol, orderByType);
         return DownloadUtil.findWithDynamicQuery(fileNameQuery, start, end);
     }
 
     public int countDownloadsByFileName(long groupId, String fileName){
-        final DynamicQuery fileNameQuery = getFileNameQuery(groupId, fileName);
+        final DynamicQuery fileNameQuery = getFileNameQuery(groupId, fileName, null, null);
         return (int) DownloadUtil.countWithDynamicQuery(fileNameQuery);
     }
 
-    private DynamicQuery getFileNameQuery(long groupId, String fileName) {
+    private DynamicQuery getFileNameQuery(long groupId, String fileName, String orderByCol, String orderByType) {
         final DynamicQuery dynamicQuery = dynamicQuery();
+
+        if (orderByCol != null && orderByType != null) {
+            boolean isAsc = "asc".equalsIgnoreCase(orderByType);
+            if (isAsc) {
+                dynamicQuery.addOrder(OrderFactoryUtil.asc(orderByCol));
+            } else {
+                dynamicQuery.addOrder(OrderFactoryUtil.desc(orderByCol));
+            }
+        }
         dynamicQuery
                 .add(RestrictionsFactoryUtil.eq("groupId", groupId))
                 .add(RestrictionsFactoryUtil.like("fileName", '%' + fileName + '%'));
@@ -79,7 +94,24 @@ public class DownloadLocalServiceImpl extends DownloadLocalServiceBaseImpl {
 		return DownloadUtil.findByGroupDownloads(groupId, start, end);
 	}
 
-	public int countDownloads(long groupId){
+    public List<Download> findDownloads(long groupId, int start, int end, String orderByCol, String orderByType){
+        DynamicQuery dynamicQuery = getDynamicQuery(groupId, orderByCol, orderByType);;
+        return DownloadUtil.getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
+    }
+
+    private DynamicQuery getDynamicQuery(long groupId, String orderByCol, String orderByType) {
+        final DynamicQuery dynamicQuery = dynamicQuery();
+        boolean isAsc = "asc".equalsIgnoreCase(orderByType);
+        if (isAsc) {
+            dynamicQuery.addOrder(OrderFactoryUtil.asc(orderByCol));
+        } else {
+            dynamicQuery.addOrder(OrderFactoryUtil.desc(orderByCol));
+        }
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+        return dynamicQuery;
+    }
+
+    public int countDownloads(long groupId){
 		return DownloadUtil.countByGroupDownloads(groupId);
 	}
 
@@ -99,6 +131,12 @@ public class DownloadLocalServiceImpl extends DownloadLocalServiceBaseImpl {
         return DownloadUtil.findByUserDownloads(groupId, userId);
     }
 
+    public List<Download> findDownloadsByUserId(long groupId, long userId, int start, int end, String orderByCol, String orderByType){
+
+        DynamicQuery dynamicQuery = getDynamicQuery(groupId, orderByCol, orderByType);
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("userId", userId));
+        return DownloadUtil.getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
+    }
     public List<Download> findDownloadsByUserId(long groupId, long userId, int start, int end){
         return DownloadUtil.findByUserDownloads(groupId, userId);
     }

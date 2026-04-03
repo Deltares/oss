@@ -235,6 +235,14 @@ public class DownloadLocalServiceUtil {
 		return getService().findDownloads(groupId, start, end);
 	}
 
+	public static List<Download> findDownloads(
+		long groupId, int start, int end, String orderByCol,
+		String orderByType) {
+
+		return getService().findDownloads(
+			groupId, start, end, orderByCol, orderByType);
+	}
+
 	public static List<Download> findDownloadsByArticleId(
 		long groupId, long articleId) {
 
@@ -255,6 +263,14 @@ public class DownloadLocalServiceUtil {
 			groupId, fileName, start, end);
 	}
 
+	public static List<Download> findDownloadsByFileName(
+		long groupId, String fileName, int start, int end, String orderByCol,
+		String orderByType) {
+
+		return getService().findDownloadsByFileName(
+			groupId, fileName, start, end, orderByCol, orderByType);
+	}
+
 	public static List<Download> findDownloadsByUserId(
 		long groupId, long userId) {
 
@@ -265,6 +281,14 @@ public class DownloadLocalServiceUtil {
 		long groupId, long userId, int start, int end) {
 
 		return getService().findDownloadsByUserId(groupId, userId, start, end);
+	}
+
+	public static List<Download> findDownloadsByUserId(
+		long groupId, long userId, int start, int end, String orderByCol,
+		String orderByType) {
+
+		return getService().findDownloadsByUserId(
+			groupId, userId, start, end, orderByCol, orderByType);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery

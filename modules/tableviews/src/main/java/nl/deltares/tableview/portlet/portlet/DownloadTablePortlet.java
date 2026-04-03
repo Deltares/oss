@@ -100,22 +100,22 @@ public class DownloadTablePortlet extends MVCPortlet {
                 switch (filterSelection) {
                     case "email":
                         User user = UserLocalServiceUtil.getUserByEmailAddress(themeDisplay.getCompanyId(), filterValue);
-                        downloads = DownloadLocalServiceUtil.findDownloadsByUserId(siteGroupId, user.getUserId(), start, end);
+                        downloads = DownloadLocalServiceUtil.findDownloadsByUserId(siteGroupId, user.getUserId(), start, end, orderByCol, orderByType);
                         downloadsCount = DownloadLocalServiceUtil.countDownloadsByUserId(siteGroupId, user.getUserId());
                         break;
                     case "fileName":
-                        downloads = DownloadLocalServiceUtil.findDownloadsByFileName(siteGroupId, filterValue, start, end);
+                        downloads = DownloadLocalServiceUtil.findDownloadsByFileName(siteGroupId, filterValue, start, end, orderByCol, orderByType);
                         downloadsCount = DownloadLocalServiceUtil.countDownloadsByFileName(siteGroupId, filterValue);
                         break;
                 }
             }
             if (downloads == null) {
-                downloads = DownloadLocalServiceUtil.findDownloads(siteGroupId, start, end);
+                downloads = DownloadLocalServiceUtil.findDownloads(siteGroupId, start, end, orderByCol, orderByType);
                 downloadsCount = DownloadLocalServiceUtil.countDownloads(siteGroupId);
             }
 
             final List<DisplayDownload> displays = convertToDisplayDownloads(downloads);
-            sortDownloads(displays, orderByCol, orderByType);
+
             renderRequest.setAttribute("records", displays);
             renderRequest.setAttribute("total", downloadsCount);
             renderRequest.setAttribute("filterValue", filterValue);

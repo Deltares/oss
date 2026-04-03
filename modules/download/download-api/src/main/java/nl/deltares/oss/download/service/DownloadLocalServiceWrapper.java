@@ -271,6 +271,16 @@ public class DownloadLocalServiceWrapper
 
 	@Override
 	public java.util.List<nl.deltares.oss.download.model.Download>
+		findDownloads(
+			long groupId, int start, int end, String orderByCol,
+			String orderByType) {
+
+		return _downloadLocalService.findDownloads(
+			groupId, start, end, orderByCol, orderByType);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.oss.download.model.Download>
 		findDownloadsByArticleId(long groupId, long articleId) {
 
 		return _downloadLocalService.findDownloadsByArticleId(
@@ -297,6 +307,16 @@ public class DownloadLocalServiceWrapper
 
 	@Override
 	public java.util.List<nl.deltares.oss.download.model.Download>
+		findDownloadsByFileName(
+			long groupId, String fileName, int start, int end,
+			String orderByCol, String orderByType) {
+
+		return _downloadLocalService.findDownloadsByFileName(
+			groupId, fileName, start, end, orderByCol, orderByType);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.oss.download.model.Download>
 		findDownloadsByUserId(long groupId, long userId) {
 
 		return _downloadLocalService.findDownloadsByUserId(groupId, userId);
@@ -308,6 +328,16 @@ public class DownloadLocalServiceWrapper
 
 		return _downloadLocalService.findDownloadsByUserId(
 			groupId, userId, start, end);
+	}
+
+	@Override
+	public java.util.List<nl.deltares.oss.download.model.Download>
+		findDownloadsByUserId(
+			long groupId, long userId, int start, int end, String orderByCol,
+			String orderByType) {
+
+		return _downloadLocalService.findDownloadsByUserId(
+			groupId, userId, start, end, orderByCol, orderByType);
 	}
 
 	@Override

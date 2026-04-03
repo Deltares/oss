@@ -209,6 +209,10 @@ public interface DownloadLocalService
 
 	public List<Download> findDownloads(long groupId, int start, int end);
 
+	public List<Download> findDownloads(
+		long groupId, int start, int end, String orderByCol,
+		String orderByType);
+
 	public List<Download> findDownloadsByArticleId(
 		long groupId, long articleId);
 
@@ -218,10 +222,18 @@ public interface DownloadLocalService
 	public List<Download> findDownloadsByFileName(
 		long groupId, String fileName, int start, int end);
 
+	public List<Download> findDownloadsByFileName(
+		long groupId, String fileName, int start, int end, String orderByCol,
+		String orderByType);
+
 	public List<Download> findDownloadsByUserId(long groupId, long userId);
 
 	public List<Download> findDownloadsByUserId(
 		long groupId, long userId, int start, int end);
+
+	public List<Download> findDownloadsByUserId(
+		long groupId, long userId, int start, int end, String orderByCol,
+		String orderByType);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
