@@ -78,6 +78,17 @@
     />
 </div>
 
+
+<div class="form-group-autofit">
+    <aui:input
+            name="<%=BillingConstants.REMARKS%>"
+            label="registrationform.billing.remarks"
+            wrapperCssClass="form-group-item"
+            value=""
+            type="textarea"
+    />
+</div>
+
 <h3><strong><liferay-ui:message key="registrationform.billing.address.select"/></strong></h3>
 
 <div class="form-group-autofit">

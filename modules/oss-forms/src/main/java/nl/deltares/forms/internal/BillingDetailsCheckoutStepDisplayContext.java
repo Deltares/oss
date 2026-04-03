@@ -162,6 +162,7 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
         _billingInfo.setPhoneNumber(ParamUtil.getString(httpServletRequest, BillingConstants.ORG_PHONE));
         _billingInfo.setPaymentyPreference(ParamUtil.getString(httpServletRequest, BillingConstants.PAYMENT_METHOD));
         _billingInfo.setPaymentReference(ParamUtil.getString(httpServletRequest, BillingConstants.PAYMENT_REFERENCE));
+        _billingInfo.setRemarks(ParamUtil.getString(httpServletRequest, BillingConstants.REMARKS));
 
     }
 

@@ -9,5 +9,6 @@ public class BillingConstants {
     public static final String PAYMENT_REFERENCE="billing_payment_reference";
     public static final String PAYMENT_METHOD="billing_payment_method";
     public static final String ORG_PHONE="billing_org_phone";
+    public static final String REMARKS="billing_remarks";
 
 }

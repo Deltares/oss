@@ -24,7 +24,8 @@ public class BillingInfo implements Serializable {
         billing_vat,
         billing_preference,
         billing_phone,
-        billing_addressid
+        billing_addressid,
+        billing_remarks
     }
 
     String companyName = null;
@@ -39,6 +40,7 @@ public class BillingInfo implements Serializable {
     String reference = "";
     String preference = "payLink";
     String phone = "";
+    String remarks = "";
 
 
     long billingAddressId = 0;
@@ -273,21 +275,11 @@ public class BillingInfo implements Serializable {
         this.lastName = lastName;
     }
 
-//    public Registration getRegistration(String registrationId){
-//        return currentRegistrations.get(registrationId);
-//    }
-//
-//    public void setRegistrations(List<Registration> registrations){
-//        currentRegistrations.clear();
-//        for (Registration registration : registrations) {
-//            currentRegistrations.put(registration.getArticleId(), registration);
-//        }
-//    }
-//
-//    public boolean isPaymentRequired() {
-//        for (Registration value : currentRegistrations.values()) {
-//            if (value.getPrice() > 0) return true;
-//        }
-//        return false;
-//    }
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
 }

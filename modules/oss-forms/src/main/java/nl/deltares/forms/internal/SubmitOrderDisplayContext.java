@@ -118,7 +118,7 @@ public class SubmitOrderDisplayContext {
 
         Map<String, String> registrationAttributes = new HashMap<>();
         if (!userRegistration.getRemarks().isEmpty()) {
-            registrationAttributes.put("remarks", userRegistration.getRemarks());
+            registrationAttributes.put("remarks", "\"" + userRegistration.getRemarks() + "\"");
         }
         registrationAttributes.put("registration_time", dateTimeFormatter.format(new Date()));
 
@@ -177,6 +177,10 @@ public class SubmitOrderDisplayContext {
         String reference = billingInfo.getReference();
         if (reference != null && !reference.isEmpty()) {
             registrationAttributes.put(BillingInfo.ATTRIBUTES.billing_reference.name(), reference);
+        }
+        String remarks = billingInfo.getRemarks();
+        if (remarks != null && !remarks.isEmpty()) {
+            registrationAttributes.put(BillingInfo.ATTRIBUTES.billing_reference.name(), "\"" + remarks + "\"");
         }
         String preference = billingInfo.getPreference();
         if (preference != null && !preference.isEmpty()) {
