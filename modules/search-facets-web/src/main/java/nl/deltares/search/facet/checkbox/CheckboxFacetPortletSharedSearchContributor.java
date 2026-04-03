@@ -1,8 +1,11 @@
 package nl.deltares.search.facet.checkbox;
 
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
-import nl.deltares.portal.utils.DeltaresCacheUtils;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
@@ -10,7 +13,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 
 @Component(
@@ -20,29 +22,25 @@ import java.util.Optional;
 )
 public class CheckboxFacetPortletSharedSearchContributor implements PortletSharedSearchContributor {
 
-    @Reference
-    private DeltaresCacheUtils deltaresCacheUtils;
 
     @Override
     public void contribute(PortletSharedSearchSettings portletSharedSearchSettings) {
-
-
-        String portletConfigCacheId = deltaresCacheUtils.getPortletConfigCacheId(
-                portletSharedSearchSettings.getPortletId(),
-                portletSharedSearchSettings.getThemeDisplay());
-        final Map<String, Object> portalCache = deltaresCacheUtils.findPortletConfig(portletConfigCacheId);
-
-        if (portalCache == null) {
-            return;
+        final Group scopeGroup = portletSharedSearchSettings.getThemeDisplay().getScopeGroup();
+        long groupId = scopeGroup.getGroupId();
+        final Locale siteDefaultLocale = LocaleUtil.fromLanguageId(scopeGroup.getDefaultLanguageId());
+        CheckboxFacetConfiguration checkboxFacetConfiguration;
+        try {
+            checkboxFacetConfiguration = _configurationProvider.getPortletInstanceConfiguration(
+                    CheckboxFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
+        } catch (ConfigurationException e) {
+            throw new RuntimeException(e);
         }
-        final boolean explicit = portalCache.get("explicitSearch") != null && (Boolean) portalCache.get("explicitSearch");
-        String structureName = (String) portalCache.get("structureName");
-        String fieldName = (String) portalCache.get("fieldName");
-        String name = (String) portalCache.get("name"); //important to use '-' because this translates to JSP id
-        Boolean visible = (Boolean) portalCache.getOrDefault("visible", true);
-        Boolean defaultValue = (Boolean) portalCache.getOrDefault("defaultValue", null);
-        final Long groupId = (Long) portalCache.get("groupId");
-        final Locale siteDefaultLocale = (Locale) portalCache.get("siteDefaultLocale");
+
+        final boolean explicit = Boolean.parseBoolean(checkboxFacetConfiguration.explicitSearch());
+        String structureName = checkboxFacetConfiguration.structureName();
+        String fieldName = checkboxFacetConfiguration.fieldName();
+        String name = structureName + '-' + fieldName; //important to use '-' because this translates to JSP id
+        boolean defaultValue = Boolean.parseBoolean(checkboxFacetConfiguration.defaultValue());
 
         Optional<String> selectionOptional = portletSharedSearchSettings.getParameterOptional(name);
         //check for parameter is in namespace of searchResultsPortlet
@@ -50,29 +48,30 @@ public class CheckboxFacetPortletSharedSearchContributor implements PortletShare
         String selection = selectionOptional.orElseGet(() -> FacetUtils.getFromSession(
                 portletSharedSearchSettings.getPortletId(),
                 name, portletSharedSearchSettings.getRenderRequest()));
-        final Boolean option;
-        if (selection != null){
-            option = FacetUtils.parseYesNo(selection);
-        } else if(!visible && defaultValue != null){
+        final boolean option;
+        if (selection == null){
+            if (Boolean.parseBoolean(checkboxFacetConfiguration.visible())){
+                return; //nothing selected so do not filter.
+            }
             option = defaultValue;
         } else {
-            return;
+            option = Boolean.TRUE.equals(FacetUtils.parseYesNo(selection));
         }
 
-        if (option != null) {
-            if (explicit) {
-                //look only for article containing the search field
-                _dsdJournalArticleUtils.queryDdmFieldValue(groupId, fieldName, Boolean.toString(option), new String[]{structureName},
-                        portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
-            } else {
-                //exclude all articles containing the opposite value, allowing all articles without value to pass through
-                _dsdJournalArticleUtils.queryExcludeDdmFieldValue(groupId, fieldName, Boolean.toString(!option), new String[]{structureName},
-                        portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
-            }
-
+        if (explicit) {
+            //look only for article containing the search field
+            _dsdJournalArticleUtils.queryDdmFieldValue(groupId, fieldName, Boolean.toString(option), new String[]{structureName},
+                    portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
+        } else {
+            //exclude all articles containing the opposite value, allowing all articles without value to pass through
+            _dsdJournalArticleUtils.queryExcludeDdmFieldValue(groupId, fieldName, Boolean.toString(!option), new String[]{structureName},
+                    portletSharedSearchSettings.getSearchContext(), siteDefaultLocale);
         }
 
     }
+
+    @Reference
+    private ConfigurationProvider _configurationProvider;
 
     @Reference
     private DsdJournalArticleUtils _dsdJournalArticleUtils;

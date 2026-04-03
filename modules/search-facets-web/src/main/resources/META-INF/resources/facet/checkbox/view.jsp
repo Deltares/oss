@@ -8,6 +8,9 @@
 	String selection = (String)renderRequest.getAttribute("selection");
 	final Map<String, String> yesNoFieldOptions = FacetUtils.getYesNoFieldOptions();
 
+	if (selection == null) {
+		selection = "undefined";
+	}
 %>
 
 <liferay-portlet:actionURL

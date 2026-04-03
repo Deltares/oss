@@ -69,12 +69,8 @@ public class EventFacetPortletSharedSearchContributor implements PortletSharedSe
     @Reference
     private DsdJournalArticleUtils _dsdJournalArticleUtils;
 
-    private ConfigurationProvider _configurationProvider;
-
     @Reference
-    protected void setConfigurationProvider(ConfigurationProvider configurationProvider) {
-        _configurationProvider = configurationProvider;
-    }
+    private ConfigurationProvider _configurationProvider;
 
     private static final Log LOG = LogFactoryUtil.getLog(EventFacetPortletSharedSearchContributor.class);
 }

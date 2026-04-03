@@ -3,14 +3,12 @@ package nl.deltares.search.facet.checkbox;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.portal.utils.DeltaresCacheUtils;
-import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
-import nl.deltares.search.util.FacetUtils;
-import org.osgi.service.component.annotations.*;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
+import org.osgi.service.component.annotations.Modified;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -29,9 +27,6 @@ import java.util.Map;
 )
 public class CheckboxFacetConfigurationAction extends DefaultConfigurationAction {
 
-
-    @Reference
-    private DeltaresCacheUtils dsdCache;
     @Override
     public void include(PortletConfig portletConfig, HttpServletRequest httpServletRequest,
                         HttpServletResponse httpServletResponse) throws Exception {
@@ -46,16 +41,9 @@ public class CheckboxFacetConfigurationAction extends DefaultConfigurationAction
     public void processAction(PortletConfig portletConfig, ActionRequest actionRequest, ActionResponse actionResponse)
             throws Exception {
 
-        String portletResource = ParamUtil.getString(actionRequest, "portletResource");
-        ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
-
-        String cacheId = portletResource + themeDisplay.getLayout().getLayoutId() + themeDisplay.getSiteGroupId();
-        dsdCache.putPortletConfig(cacheId , null);
-
         setPreference(actionRequest, "structureName", ParamUtil.getString(actionRequest, "structureName"));
         setPreference(actionRequest, "fieldName", ParamUtil.getString(actionRequest, "fieldName"));
-        Map<String, String> titleMap = FacetUtils.getLanguageFieldValueMap(actionRequest, "title");
-        setPreference(actionRequest, "titleMap", JsonContentUtils.formatMapToJson(titleMap));
+        setPreference(actionRequest, "title", ParamUtil.getString(actionRequest, "title"));
         setPreference(actionRequest, "visible", ParamUtil.getString(actionRequest, "visible"));
         setPreference(actionRequest, "defaultValue", ParamUtil.getString(actionRequest, "defaultValue"));
         setPreference(actionRequest, "explicitSearch", ParamUtil.getString(actionRequest, "explicitSearch"));
@@ -65,7 +53,7 @@ public class CheckboxFacetConfigurationAction extends DefaultConfigurationAction
     /**
      *
      * (1)If a method is annoted with @Activate then the method will be called at the time of activation of the component
-     *  so that we can perform initialization task
+     * so that we can perform initialization task
      * <p>
      * (2) This class is annoted with @Component where we have used configurationPid with id com.proliferay.configuration.DemoConfiguration
      * So if we modify any configuration then this method will be called.

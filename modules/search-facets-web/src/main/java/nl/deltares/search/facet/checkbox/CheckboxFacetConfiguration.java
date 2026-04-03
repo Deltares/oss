@@ -14,16 +14,16 @@ public interface CheckboxFacetConfiguration {
     @Meta.AD(required = false, deflt = "", description = "Configure the field name of the checkbox")
     String fieldName();
 
-    @Meta.AD(required = false, deflt = "{}" , description = "Configure the title of facet per language")
-    String titleMap();
+    @Meta.AD(required = false, deflt = "" , description = "Configure the title of facet")
+    String title();
 
-    @Meta.AD(required = false, deflt = "", description = "Toggle visibility of facet portlet.")
+    @Meta.AD(required = false, deflt = "true", description = "Toggle visibility of facet portlet.")
     String visible();
 
-    @Meta.AD(required = false, deflt = "", description = "Set the default value for the facet portlet.")
+    @Meta.AD(required = false, deflt = "false", description = "Set the default value for the facet portlet.")
     String defaultValue();
 
-    @Meta.AD(required = false, deflt = "", description = "If selected only return items with matching field. If not selected also include that do not contain field.")
+    @Meta.AD(required = false, deflt = "false", description = "If selected only return items with matching field. If not selected also include that do not contain field.")
     String explicitSearch();
 
 }
