@@ -63,13 +63,13 @@ public class ClmCustomerContactsPortlet extends MVCPortlet {
             final String orderByType = ParamUtil.getString(renderRequest, "orderByType", "desc");
             User user = themeDisplay.getUser();
             JSONArray customerContactsForUser = licenseManagerUtils.getCustomerContactsForUser(user);
+            List<CustomerContact> filteredContacts = new ArrayList<>();
+            int totalCustomerCount = 0;
             Map<Long, String> customerInfo = LicenseManagerUtils.parseCustomerIdAndName(customerContactsForUser);
             if (customerInfo.isEmpty()) {
                 logger.warn(String.format("Found no customer ID for CLM user %s!", user.getEmailAddress()));
             } else {
-                renderRequest.setAttribute("customerInfo", customerInfo);
-
-                if (customerSelection == 0L && !customerInfo.isEmpty()) {
+                if (customerSelection == 0L) {
                     customerSelection = customerInfo.keySet().iterator().next();
                 }
 
@@ -88,23 +88,23 @@ public class ClmCustomerContactsPortlet extends MVCPortlet {
                     final int curPage = ParamUtil.getInteger(renderRequest, "cur", 1);
                     final int deltas = ParamUtil.getInteger(renderRequest, "delta", 25);
                     int start = (curPage - 1) * deltas;
-
-                    List<CustomerContact> filteredContacts = new ArrayList<>();
                     JSONArray customerContactsForCustomer = licenseManagerUtils.getCustomerContactsForCustomerAndFilter(
                             customerSelection, "beta-tester".equals(filter), "license-manager".equals(filter));
 
-                    int end = Math.min(start + deltas, customerContactsForCustomer.length());
+                    totalCustomerCount = customerContactsForCustomer.length();
+                    int end = Math.min(start + deltas, totalCustomerCount);
                     for (int i = start; i < end; i++) {
                         filteredContacts.add(convertToContact(customerContactsForCustomer.getJSONObject(i)));
                     }
                     sortContacts(filteredContacts, orderByCol, orderByType);
-                    renderRequest.setAttribute("customerContactList", filteredContacts);
-                    renderRequest.setAttribute("totalCustomerContactCount", customerContactsForCustomer.length());
 
                 }
 
 
             }
+            renderRequest.setAttribute("customerContactList", filteredContacts);
+            renderRequest.setAttribute("totalCustomerContactCount", totalCustomerCount);
+            renderRequest.setAttribute("customerInfo", customerInfo);
             renderRequest.setAttribute("filterSelection", filter);
             renderRequest.setAttribute("customerSelection", customerSelection);
         } catch (JSONException e) {

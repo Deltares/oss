@@ -75,11 +75,10 @@ public class ClmLicensesPortlet extends MVCPortlet {
             User user = themeDisplay.getUser();
             JSONArray customerContacts = licenseManagerUtils.getCustomerContactsForUser(user);
             Map<Long, String> customerInfo = LicenseManagerUtils.parseCustomerIdAndName(customerContacts);
-
+            List<SoftwareSuite> suites = null;
             if (customerInfo.isEmpty()) {
                 logger.warn(String.format("Found no customer ID for CLM user %s!", user.getEmailAddress()));
             } else {
-                renderRequest.setAttribute("customerInfo", customerInfo);
                 Long customerId;
                 if (customerSelection == 0L) {
                     customerId = customerInfo.keySet().iterator().next();
@@ -91,13 +90,11 @@ public class ClmLicensesPortlet extends MVCPortlet {
                 Boolean customerContactManageLicenses = (Boolean) customerContactInfo.getOrDefault("customerContactManageLicenses", false);
                 JSONArray customerLicenses = licenseManagerUtils.getCustomerLicenses(user, selectedState, customerId, customerContactId, customerContactManageLicenses);
                 if (customerLicenses != null && customerLicenses.length() > 0) {
-                    List<SoftwareSuite> suites = convertToModel(customerLicenses);
-                    renderRequest.setAttribute("records", suites);
-                } else {
-                    renderRequest.setAttribute("records", Collections.emptyList());
+                    suites = convertToModel(customerLicenses);
                 }
-
             }
+            renderRequest.setAttribute("records", suites == null ? Collections.emptyList() : suites);
+            renderRequest.setAttribute("customerInfo", customerInfo);
             renderRequest.setAttribute("filterSelection", selectedState);
             renderRequest.setAttribute("customerSelection", customerSelection);
         } catch (JSONException | ParseException e) {

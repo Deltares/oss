@@ -5,9 +5,8 @@
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
-<%@ page import="nl.deltares.useraccount.model.SoftwareSuite" %>
-<%@ page import="java.util.List" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
+<%@ page import="nl.deltares.useraccount.model.SoftwareSuite" %>
 <%@ page import="java.util.Map" %>
 
 <liferay-theme:defineObjects/>
@@ -20,16 +19,16 @@
     final Long customerSelection = (Long) request.getAttribute("customerSelection");
 %>
 
-<portlet:actionURL name="filter" var="filterCustomerLicensesURL" >
+<portlet:actionURL name="filter" var="filterCustomerLicensesURL">
     <portlet:param name="customerSelection" value="<%=String.valueOf(customerSelection)%>"/>
 </portlet:actionURL>
-<portlet:actionURL name="customerSelect" var="selectCustomerURL" >
-    <portlet:param name="filterSelection" value="<%=filterSelection%>" />
+<portlet:actionURL name="customerSelect" var="selectCustomerURL">
+    <portlet:param name="filterSelection" value="<%=filterSelection%>"/>
 </portlet:actionURL>
-<portlet:actionURL name="sendLicenseFiles" var="sendLicenseFilesURL" >
+<portlet:actionURL name="sendLicenseFiles" var="sendLicenseFilesURL">
     <portlet:param name="customerId" value="<%=String.valueOf(customerSelection)%>"/>
     <portlet:param name="customerName" value="<%=customerInfo.get(customerSelection)%>"/>
-    <portlet:param name="filterSelection" value="<%=filterSelection%>" />
+    <portlet:param name="filterSelection" value="<%=filterSelection%>"/>
     <portlet:param name="customerSelection" value="<%=String.valueOf(customerSelection)%>"/>
 </portlet:actionURL>
 
@@ -45,15 +44,16 @@
 <aui:fieldset>
     <aui:row>
         <aui:col width="25">
-            <aui:form action="<%=selectCustomerURL%>" name="customerSelectionForm" >
+            <aui:form action="<%=selectCustomerURL%>" name="customerSelectionForm">
                 <div class="d-flex justify-content-start">
-                    <aui:select name="customerSelection" label="customer.select.label" value="<%=customerSelection%>" onChange="submit()">
+                    <aui:select name="customerSelection" label="customer.select.label" value="<%=customerSelection%>"
+                                onChange="submit()">
 
                         <%
                             for (Long customerId : customerInfo.keySet()) {
                                 String customerName = customerInfo.get(customerId);
                         %>
-                                <aui:option value="<%=customerId%>" label="<%=customerName%>" />
+                        <aui:option value="<%=customerId%>" label="<%=customerName%>"/>
                         <%
                             }
                         %>
@@ -62,9 +62,10 @@
             </aui:form>
         </aui:col>
         <aui:col width="25">
-            <aui:form action="<%=filterCustomerLicensesURL%>" name="filterForm" >
+            <aui:form action="<%=filterCustomerLicensesURL%>" name="filterForm">
                 <div class="d-flex justify-content-start">
-                    <aui:select name="filterSelection" label="softwaresuites.filter.label"  value="<%=filterSelection%>" onChange="submit()">
+                    <aui:select name="filterSelection" label="softwaresuites.filter.label" value="<%=filterSelection%>"
+                                onChange="submit()">
                         <aui:option value="Active" label="Running" selected="true"/>
                         <aui:option value="Expired" label="Expired"/>
                         <aui:option value="Terminated" label="Terminated"/>
@@ -74,24 +75,28 @@
         </aui:col>
         <aui:col cssClass="bottom-align" width="50">
             <aui:button-row>
-                <aui:button name="sendButton" href="<%=sendLicenseFilesURL%>" cssClass="sendButton" value="Send license files" />
+                <aui:button name="sendButton" href="<%=sendLicenseFilesURL%>" cssClass="sendButton"
+                            value="Send license files"/>
             </aui:button-row>
         </aui:col>
     </aui:row>
 </aui:fieldset>
 
 <%
-    if (suiteListSelection.isEmpty()){
+    if (suiteListSelection.isEmpty()) {
 %>
-<div><strong>There a no licenses with state '<%=filterSelection%>' registered under e-mail address '<%=themeDisplay.getUser().getEmailAddress()%>'.</strong></div>
+<div><strong><liferay-ui:message key="no-license-records"
+                                 arguments='<%=new String[]{filterSelection, themeDisplay.getUser().getEmailAddress()} %>'/></strong>
+</div>
 <%
     }
 
     for (SoftwareSuite softwareSuite : suiteListSelection) {
 %>
 
-    <aui:fieldset>
-        <a href="#softwareSuite-<%=softwareSuite.getSuiteCode()%>" aria-controls="site_configContent" aria-expanded="false" class="collapse-icon collapse-icon-middle sheet-subtitle collapsed" data-toggle="liferay-collapse"  role="button">
+<aui:fieldset>
+    <a href="#softwareSuite-<%=softwareSuite.getSuiteCode()%>" aria-controls="site_configContent" aria-expanded="false"
+       class="collapse-icon collapse-icon-middle sheet-subtitle collapsed" data-toggle="liferay-collapse" role="button">
             <span class="c-inner" tabindex="-1">
                 <span class="collapse-icon-closed">
                     <svg aria-hidden="true" class="lexicon-icon lexicon-icon-plus">
@@ -106,12 +111,12 @@
                 &nbsp;
                 <span class="h1"><%=softwareSuite.getSuiteName()%></span>
             </span>
-        </a>
+    </a>
 
-        <div class="panel-collapse collapse" id="softwareSuite-<%=softwareSuite.getSuiteCode()%>">
-            <%@ include file="softwareSuiteSubscriptions.jsp" %>
-        </div>
+    <div class="panel-collapse collapse" id="softwareSuite-<%=softwareSuite.getSuiteCode()%>">
+        <%@ include file="softwareSuiteSubscriptions.jsp" %>
+    </div>
 
-    </aui:fieldset>
+</aui:fieldset>
 
 <% } %>
