@@ -133,9 +133,9 @@ public class RegistrationsInfo implements Serializable {
                 if (registration.hasParent()){
 
                     Registration parent = registration.getParentRegistration();
-
+                    boolean parentIsSelected = parent != null && selectedRegistrationIds.contains(parent.getArticleId());
                     boolean childIsSelected = selectedRegistrationIds.contains(registration.getArticleId());
-                    boolean parentIsSelected = selectedRegistrationIds.contains(parent.getArticleId());
+
                     if ( childIsSelected && !parentIsSelected){
                         //This is a parent registration that has not been selected yet
                         relatedArticles.add(parent);
