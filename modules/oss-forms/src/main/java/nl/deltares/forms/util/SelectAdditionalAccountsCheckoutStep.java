@@ -46,7 +46,7 @@ import java.util.Collections;
 )
 public class SelectAdditionalAccountsCheckoutStep extends BaseCheckoutStep {
 
-    public static final String NAME = "account-filter";
+    public static final String NAME = "account-selection";
 
     @Override
     public String getName() {

@@ -80,10 +80,6 @@
                         <hr style="margin-bottom: 1rem; margin-top: 1rem"/>
                     <aui:button-row>
                         <c:if test="<%= Validator.isNotNull(checkoutDisplayContext.getPreviousCheckoutStepName()) %>">
-                            <portlet:renderURL var="previousStepURL">
-                                <portlet:param name="checkoutStepName" value="<%= checkoutDisplayContext.getPreviousCheckoutStepName() %>" />
-                                <portlet:param name="ids" value="<%= ids %>" />
-                            </portlet:renderURL>
                             <aui:button cssClass="pull-left btn-primary" href="<%= previousStepURL %>" value="previous" />
                         </c:if>
 

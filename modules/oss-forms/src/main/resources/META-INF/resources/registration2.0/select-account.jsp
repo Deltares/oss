@@ -75,7 +75,7 @@
 
 <hr style="margin-bottom: 1rem; margin-top: 1rem"/>
 <aui:button-row>
-    <aui:button cssClass="pull-right btn-primary nav-button" name="previous" type="submit" value="previous"/>
+    <aui:button cssClass="pull-right btn-primary nav-button" name="previous" href="<%= previousStepURL %>" type="submit" value="previous"/>
     <aui:button cssClass="pull-right btn-primary nav-button" name="continue" type="submit" value="continue"/>
 </aui:button-row>
 

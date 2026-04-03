@@ -53,3 +53,8 @@
     CheckoutDisplayContext checkoutDisplayContext = (CheckoutDisplayContext) request.getAttribute(CheckoutWebKeys.PORTLET_DISPLAY_CONTEXT);
     String currentURL = PortalUtil.getCurrentURL(request);
 %>
+<portlet:renderURL var="previousStepURL">
+    <portlet:param name="checkoutStepName" value="<%= checkoutDisplayContext.getPreviousCheckoutStepName() %>" />
+    <portlet:param name="ids" value="<%= ids %>" />
+</portlet:renderURL>
+
