@@ -163,6 +163,11 @@ public class PostLoginAction implements LifecycleAction {
     }
 
     private String getSiteId(String redirectUrl) {
+
+        if (redirectUrl == null || redirectUrl.isEmpty()) {
+            return null;
+        }
+
         try {
             URL url = new URL(redirectUrl);
             String host = url.getHost();
