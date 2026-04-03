@@ -180,7 +180,7 @@ public class SubmitOrderDisplayContext {
         }
         String remarks = billingInfo.getRemarks();
         if (remarks != null && !remarks.isEmpty()) {
-            registrationAttributes.put(BillingInfo.ATTRIBUTES.billing_reference.name(), "\"" + remarks + "\"");
+            registrationAttributes.put(BillingInfo.ATTRIBUTES.billing_remarks.name(), "\"" + remarks + "\"");
         }
         String preference = billingInfo.getPreference();
         if (preference != null && !preference.isEmpty()) {
