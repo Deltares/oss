@@ -55,6 +55,8 @@ public interface LicenseManagerUtils {
             map.put("customerContactId", customerContactId);
             boolean customerContactManageLicenses = customerContactView.getBoolean("customerContactManageLicenses");
             map.put("customerContactManageLicenses", customerContactManageLicenses);
+            String maconomyId = customerContactCustomer.getString("customerMaconomyId");
+            map.put("customerMaconomyId", maconomyId);
         }
         return map;
     }

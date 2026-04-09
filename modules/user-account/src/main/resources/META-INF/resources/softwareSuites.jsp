@@ -17,6 +17,7 @@
     List<SoftwareSuite> suiteListSelection = (List<SoftwareSuite>) renderRequest.getAttribute("records");
     final String filterSelection = (String) request.getAttribute("filterSelection");
     final Long customerSelection = (Long) request.getAttribute("customerSelection");
+    final String maconomyId = (String) request.getAttribute("maconomyId");
 %>
 
 <portlet:actionURL name="filter" var="filterCustomerLicensesURL">

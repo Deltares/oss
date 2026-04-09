@@ -2,7 +2,6 @@ package nl.deltares.useraccount.comparator;
 
 import com.liferay.portal.kernel.util.OrderByComparator;
 import nl.deltares.useraccount.model.CustomerContact;
-import nl.deltares.useraccount.model.DisplayDownload;
 
 public class CustomerContactComparator extends OrderByComparator<CustomerContact> {
 
@@ -25,6 +24,17 @@ public class CustomerContactComparator extends OrderByComparator<CustomerContact
         } else {
             fieldValue1 = o1.getContactName();
             fieldValue2 = o2.getContactName();
+        }
+
+        // Handle null field values (email/name)
+        if (fieldValue1 == null && fieldValue2 == null) {
+            return 0;
+        }
+        if (fieldValue1 == null) {
+            return isAscending() ? -1 : 1;
+        }
+        if (fieldValue2 == null) {
+            return isAscending() ? 1 : -1;
         }
 
         if (isAscending()){

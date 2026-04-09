@@ -24,16 +24,12 @@
         Date startDate = entry.getStartDate();
         Date endDate = entry.getEndDate();
         String subscriptionPeriod = (startDate == null ? "" : format.format(startDate)) + " - " + (endDate == null ? "" : format.format(endDate));
+        Date terminationDate = entry.getTerminationDate();
+        String terminationDateString = terminationDate == null ? "" : format.format(terminationDate);
 
         String subscriptionState = entry.getSubscriptionState();
-        String subscriptionStateKey = subscriptionState.toLowerCase();
-
-        if ("Active".equals(subscriptionState) ){
+        if (subscriptionState.startsWith("Active")){
             subscriptionState = "Running";
-            subscriptionStateKey = "running";
-        } else if ("ActiveButTerminated".equals(subscriptionState)){
-            subscriptionState = "Running but terminated";
-            subscriptionStateKey = "running";
         }
 
         String licenseCount;
@@ -64,8 +60,17 @@
     <aui:row>
 
         <aui:col width="33">
+            <div>MaconomyId:</div>
+            <div><strong><%=maconomyId%></strong></div>
+        </aui:col>
+
+    </aui:row>
+    <br />
+    <aui:row>
+
+        <aui:col width="33">
             <div>Status:</div>
-            <span class="c-subscription c-state-<%=subscriptionStateKey%>"><%=subscriptionState%></span>
+            <span class="c-subscription c-state-<%=subscriptionState.toLowerCase()%>"><%=subscriptionState%></span>
         </aui:col>
         <aui:col width="33">
             <div>Contract type:</div>
@@ -80,6 +85,18 @@
 <br/>
     <aui:row>
         <aui:col width="66">
+            <div>Service package:</div>
+            <div><strong><%=entry.getServicePackageName() == null ? "" : entry.getServicePackageName() %></strong></div>
+        </aui:col>
+        <aui:col width="33">
+            <div>Termination date:</div>
+            <div><strong><%=terminationDateString%></strong></div>
+        </aui:col>
+
+    </aui:row>
+    <br/>
+    <aui:row>
+        <aui:col width="33">
             <div>Software product:</div>
             <div><strong><%=entry.getSoftwareProductName()%></strong></div>
         </aui:col>

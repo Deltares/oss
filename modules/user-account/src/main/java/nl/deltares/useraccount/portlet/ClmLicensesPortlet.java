@@ -76,6 +76,7 @@ public class ClmLicensesPortlet extends MVCPortlet {
             JSONArray customerContacts = licenseManagerUtils.getCustomerContactsForUser(user);
             Map<Long, String> customerInfo = LicenseManagerUtils.parseCustomerIdAndName(customerContacts);
             List<SoftwareSuite> suites = null;
+            String maconomyId = "";
             if (customerInfo.isEmpty()) {
                 logger.warn(String.format("Found no customer ID for CLM user %s!", user.getEmailAddress()));
             } else {
@@ -92,9 +93,11 @@ public class ClmLicensesPortlet extends MVCPortlet {
                 if (customerLicenses != null && customerLicenses.length() > 0) {
                     suites = convertToModel(customerLicenses);
                 }
+                maconomyId = (String) customerContactInfo.getOrDefault("customerMaconomyId", "");
             }
             renderRequest.setAttribute("records", suites == null ? Collections.emptyList() : suites);
             renderRequest.setAttribute("customerInfo", customerInfo);
+            renderRequest.setAttribute("maconomyId", maconomyId);
             renderRequest.setAttribute("filterSelection", selectedState);
             renderRequest.setAttribute("customerSelection", customerSelection);
         } catch (JSONException | ParseException e) {
@@ -214,6 +217,8 @@ public class ClmLicensesPortlet extends MVCPortlet {
         if (startDateString != null) subscription.setStartDate(dateFormat.parse(startDateString));
         String endDateString = subscriptionObject.getString("subscriptionEndDate", null);
         if (endDateString != null) subscription.setEndDate(dateFormat.parse(endDateString));
+        String terminationDateString = subscriptionObject.getString("subscriptionTerminationDate", null);
+        if (terminationDateString != null) subscription.setTerminationDate(dateFormat.parse(terminationDateString));
         subscription.setLicenseCount(subscriptionObject.getInt("subscriptionLicenseCount"));
         subscription.setLicenseUsed(subscriptionObject.getInt("subscriptionLicenseUsed"));
         subscription.setSupportHours(subscriptionObject.getInt("subscriptionSupportHours"));
@@ -236,6 +241,11 @@ public class ClmLicensesPortlet extends MVCPortlet {
         JSONArray contactsArray = subscriptionObject.getJSONArray("subscriptionCustomerContacts");
         for (int i = 0; i < contactsArray.length(); i++) {
             subscription.addCustomerContact(convertToContact(contactsArray.getJSONObject(i)));
+        }
+
+        JSONObject subscriptionPackage = subscriptionObject.getJSONObject("subscriptionPackage");
+        if (subscriptionPackage != null) {
+            subscription.setServicePackageName(subscriptionPackage.getString("packageName"));
         }
 
         return subscription;

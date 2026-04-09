@@ -8,12 +8,14 @@ import java.util.List;
 public class SoftwareSuiteSubscription {
 
     private String softwareProductName;
+    private String servicePackageName;
     private String softwareVersion;
     private String subscriptionState;
     private long subscriptionId;
     private String contractType;
     private Date startDate;
     private Date endDate;
+    private Date terminationDate;
     private int licenseCount;
     private int licenseUsed;
     private String supportLevelName;
@@ -27,12 +29,26 @@ public class SoftwareSuiteSubscription {
 
     }
 
-    public String getSoftwareProductName() {
-        return softwareProductName;
-    }
+    public String getSoftwareProductName() { return softwareProductName;}
 
     public void setSoftwareProductName(String softwareProductName) {
         this.softwareProductName = softwareProductName;
+    }
+
+    public String getServicePackageName() {
+        return servicePackageName;
+    }
+
+    public void setServicePackageName(String servicePackageName) {
+        this.servicePackageName = servicePackageName;
+    }
+
+    public Date getTerminationDate() {
+        return terminationDate;
+    }
+
+    public void setTerminationDate(Date terminationDate) {
+        this.terminationDate = terminationDate;
     }
 
     public String getSoftwareVersion() {
