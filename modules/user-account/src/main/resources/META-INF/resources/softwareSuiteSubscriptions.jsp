@@ -26,9 +26,14 @@
         String subscriptionPeriod = (startDate == null ? "" : format.format(startDate)) + " - " + (endDate == null ? "" : format.format(endDate));
 
         String subscriptionState = entry.getSubscriptionState();
+        String subscriptionStateKey = subscriptionState.toLowerCase();
 
-        if ("Active".equals(subscriptionState)){
+        if ("Active".equals(subscriptionState) ){
             subscriptionState = "Running";
+            subscriptionStateKey = "running";
+        } else if ("ActiveButTerminated".equals(subscriptionState)){
+            subscriptionState = "Running but terminated";
+            subscriptionStateKey = "running";
         }
 
         String licenseCount;
@@ -60,7 +65,7 @@
 
         <aui:col width="33">
             <div>Status:</div>
-            <span class="c-subscription c-state-<%=subscriptionState.toLowerCase()%>"><%=subscriptionState%></span>
+            <span class="c-subscription c-state-<%=subscriptionStateKey%>"><%=subscriptionState%></span>
         </aui:col>
         <aui:col width="33">
             <div>Contract type:</div>
