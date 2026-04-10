@@ -14,6 +14,19 @@
     boolean first = true;
     String srcArticleId= "";
 %>
+
+<% if ( displayContext.isAdmin()) { %>
+    <div class="row">
+        <aui:input
+                name="skip_emailcheck"
+                label="Skip email check (admin only)"
+                type="checkbox"
+                checked="false"
+        />
+    </div>
+
+<% } %>
+
 <c:forEach var="registration" items="<%=registrations%>">
     <%
         Registration registration = (Registration) pageContext.getAttribute("registration");

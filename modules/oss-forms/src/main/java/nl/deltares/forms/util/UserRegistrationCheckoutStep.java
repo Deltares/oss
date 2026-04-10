@@ -1,14 +1,12 @@
 package nl.deltares.forms.util;
 
-import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
 import com.liferay.portal.kernel.service.UserLocalService;
-import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.Portal;
 import nl.deltares.forms.constants.CheckoutWebKeys;
-import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.forms.internal.UserInputValidationContext;
 import nl.deltares.forms.internal.UserRegistrationDisplayContext;
+import nl.deltares.portal.utils.AccountUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
 import org.osgi.service.component.annotations.Component;
@@ -18,7 +16,6 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
 
 @Component(
         property = {
@@ -41,7 +38,7 @@ public class UserRegistrationCheckoutStep extends BaseCheckoutStep {
 
         HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
         UserInputValidationContext _registrationContext = new UserInputValidationContext(
-                httpServletRequest, _dsdSessionUtils, _dsdParserUtils, _userLocalService);
+                httpServletRequest, _dsdSessionUtils, _dsdParserUtils, _userLocalService, _accountUtils);
 
         _registrationContext.storeUserRegistrationInfos(httpServletRequest);
         _registrationContext.validateRequestData(httpServletRequest);
@@ -73,5 +70,8 @@ public class UserRegistrationCheckoutStep extends BaseCheckoutStep {
 
     @Reference
     private UserLocalService _userLocalService;
+
+    @Reference
+    private AccountUtils _accountUtils;
 
 }

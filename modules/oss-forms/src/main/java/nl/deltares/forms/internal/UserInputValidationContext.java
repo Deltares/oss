@@ -14,11 +14,13 @@ import nl.deltares.model.RegistrationFormContext;
 import nl.deltares.model.RegistrationInfo;
 import nl.deltares.model.RegistrationsInfo;
 import nl.deltares.portal.model.impl.Registration;
+import nl.deltares.portal.utils.AccountUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,11 +29,11 @@ public class UserInputValidationContext {
 
     private final DsdSessionUtils _sessionUtils;
     private final UserLocalService _userLocalService;
-    private final String _validEmailDomains;
+    private final String[] _validEmailDomains;
     private final RegistrationsInfo _registrationsInfo;
 
     public UserInputValidationContext(HttpServletRequest request, DsdSessionUtils sessionUtils,
-                                      DsdParserUtils dsdParserUtils, UserLocalService userLocalService) {
+                                      DsdParserUtils dsdParserUtils, UserLocalService userLocalService, AccountUtils accountUtils) {
         _sessionUtils = sessionUtils;
         _userLocalService = userLocalService;
 
@@ -55,9 +57,9 @@ public class UserInputValidationContext {
         AccountInfo accountInfo = context.getAccountInfo();
         if (accountInfo != null) {
             AccountEntry selectedAccountEntry = accountInfo.getSelectedAccountEntry();
-            _validEmailDomains = selectedAccountEntry == null ? "" : selectedAccountEntry.getDomains();
+            _validEmailDomains = selectedAccountEntry == null ? new String[0] : accountUtils.getAccountsDomains(selectedAccountEntry.getAccountEntryId());
         } else {
-            _validEmailDomains = "";
+            _validEmailDomains = new String[0];
         }
 
     }
@@ -107,8 +109,10 @@ public class UserInputValidationContext {
     public void validateRequestData(HttpServletRequest request)  {
 
         boolean addIfExceptions = false;
+        boolean skipEmailcheck = ParamUtil.getBoolean(request, "skip_emailcheck", false);
         List<RegistrationFormException> exceptions;
         if (SessionErrors.contains(request, RegistrationFormException.class)) {
+            //noinspection unchecked
             exceptions = (List<RegistrationFormException>) SessionErrors.get(request, RegistrationFormException.class);
         } else {
             addIfExceptions = true;
@@ -125,8 +129,9 @@ public class UserInputValidationContext {
                 continue;
             }
             String domain = email.split("@")[1];
-            if (!_validEmailDomains.isEmpty() && !_validEmailDomains.contains(domain)) {
-                exceptions.add(new RegistrationFormException(String.format("Invalid email domain for user '%s'. Required one of the following email domains '%s'", email, _validEmailDomains)));
+            if (!skipEmailcheck && _validEmailDomains.length > 0  &&
+                    Arrays.stream(_validEmailDomains).noneMatch(validDomain -> validDomain.equalsIgnoreCase(domain))) {
+                exceptions.add(new RegistrationFormException(String.format("Invalid email domain for user '%s'. Required one of the following email domains '%s'", email, Arrays.toString(_validEmailDomains))));
                 continue;
             }
 

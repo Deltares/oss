@@ -2,6 +2,7 @@ package nl.deltares.forms.internal;
 
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import nl.deltares.forms.portlet.PortletPermissionUtils;
 import nl.deltares.model.RegistrationFormContext;
 import nl.deltares.model.RegistrationsInfo;
 import nl.deltares.portal.model.impl.Registration;
@@ -13,6 +14,7 @@ public class UserRegistrationDisplayContext {
 
     private final RegistrationsInfo _registrationsInfo;
     private final String _displayURL;
+    private final boolean isAdmin;
 
     public UserRegistrationDisplayContext(HttpServletRequest request, DsdParserUtils dsdParserUtils) {
 
@@ -35,6 +37,7 @@ public class UserRegistrationDisplayContext {
         RegistrationsInfo.loadRegistrations(request, _registrationsInfo, dsdParserUtils, themeDisplay);
         RegistrationsInfo.loadUserRegistrations(_registrationsInfo, themeDisplay.getUser());
 
+        isAdmin = PortletPermissionUtils.isUserSiteAdministrator(themeDisplay.getUserId(), themeDisplay.getSiteGroupId());
     }
 
     public String getViewURL(String articleId) {
@@ -47,5 +50,9 @@ public class UserRegistrationDisplayContext {
 
     public RegistrationsInfo getRegistrationsInfo() {
         return _registrationsInfo;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
     }
 }

@@ -17,6 +17,8 @@ public interface AccountUtils {
 
     List<AccountEntry> getAccountsByDomain(String domain, long companyId);
 
+    String[] getAccountsDomains(long accountEntryId);
+
     AccountEntry getPersonalAccount(User user, long accountCompanyId);
 
     AccountEntry createPersonAccountEntry(User user, long companyId) throws PortalException;

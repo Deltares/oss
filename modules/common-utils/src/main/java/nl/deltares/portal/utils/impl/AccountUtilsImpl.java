@@ -10,6 +10,8 @@ import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.*;
 import com.liferay.portal.kernel.service.*;
 import nl.deltares.portal.model.AccountInfo;
@@ -27,6 +29,8 @@ import java.util.Optional;
         service = AccountUtils.class
 )
 public class AccountUtilsImpl implements AccountUtils {
+
+    private static final Log LOG = LogFactoryUtil.getLog(AccountUtilsImpl.class);
 
     final static String PERSONAL_ACCOUNT_PREFIX = "Personal_account_";
     final static String CUSTOM_FIELD_DOMAIN = "Email domain";
@@ -73,6 +77,32 @@ public class AccountUtilsImpl implements AccountUtils {
             long accountEntryId = expandoValue.getClassPK();
             return Collections.singletonList(_accountEntryLocalService.fetchAccountEntry(accountEntryId));
         }
+    }
+
+    @Override
+    public String[] getAccountsDomains(long accountEntryId) {
+
+        AccountEntry accountEntry = _accountEntryLocalService.fetchAccountEntry(accountEntryId);
+        if (accountEntry == null) {
+            LOG.warn("No account entry found with id " + accountEntryId + " while trying to retrieve account domains");
+            return new String[0];
+        }
+
+        String domains = accountEntry.getDomains();
+        if (domains != null && !domains.isEmpty()) {
+            return domains.split(";");
+        }
+
+        try {
+            domains = _expandoValueLocalService.getData(accountEntry.getCompanyId(), AccountEntry.class.getName(), "CUSTOM_FIELDS", CUSTOM_FIELD_DOMAIN, accountEntryId).toString();
+            if (domains != null && !domains.isEmpty()) {
+                return domains.split(";");
+            }
+        } catch (PortalException e) {
+            LOG.warn("Error getting domain values from Expando for  accountEntryId " + accountEntryId + ": " + e.getMessage());
+            return new String[0];
+        }
+        return new String[0];
     }
 
     @Override
