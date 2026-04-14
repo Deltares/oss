@@ -90,13 +90,13 @@ public class AccountUtilsImpl implements AccountUtils {
 
         String domains = accountEntry.getDomains();
         if (domains != null && !domains.isEmpty()) {
-            return domains.split(";");
+            return AccountUtils.getSplitDomains(domains);
         }
 
         try {
             domains = _expandoValueLocalService.getData(accountEntry.getCompanyId(), AccountEntry.class.getName(), "CUSTOM_FIELDS", CUSTOM_FIELD_DOMAIN, accountEntryId).toString();
             if (domains != null && !domains.isEmpty()) {
-                return domains.split(";");
+                return AccountUtils.getSplitDomains(domains);
             }
         } catch (PortalException e) {
             LOG.warn("Error getting domain values from Expando for  accountEntryId " + accountEntryId + ": " + e.getMessage());

@@ -27,4 +27,15 @@ public interface AccountUtils {
     AccountEntry createOrUpdateBusinessAccountEntry(AccountInfo accountInfo, long companyId, long currentUserId) throws PortalException;
 
     Address createOrUpdateAddress(AddressInfo addressInfo, long companyId, long currentUserId, AccountEntry accountEntry) throws PortalException;
+
+    static String[] getSplitDomains(String domains) {
+
+        if (domains.contains(",")) {
+            return domains.split(",");
+        } else if (domains.contains(";")) {
+            return domains.split(";");
+        } else {
+            return new String[]{domains};
+        }
+    }
 }

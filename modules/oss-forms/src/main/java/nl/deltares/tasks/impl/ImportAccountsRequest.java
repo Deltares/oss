@@ -157,7 +157,7 @@ public class ImportAccountsRequest extends AbstractDataRequest {
         columnIndex = csvParser.getColumnIndex(CompanyName);
         if (columnIndex != -1) accountInfo.setCompanyName(line[columnIndex]);
         columnIndex = csvParser.getColumnIndex(Domain);
-        if (columnIndex != -1) accountInfo.setEmailDomains(parseDomains(line[columnIndex]));
+        if (columnIndex != -1) accountInfo.setEmailDomains(AccountUtils.getSplitDomains(line[columnIndex]));
         columnIndex = csvParser.getColumnIndex(Website);
         if (columnIndex != -1) accountInfo.setWebsite(line[columnIndex]);
         columnIndex = csvParser.getColumnIndex(VAT);
@@ -182,11 +182,6 @@ public class ImportAccountsRequest extends AbstractDataRequest {
         accountInfo.setAddressInfo(addressInfo);
 
         return accountInfo;
-    }
-
-    private static String[] parseDomains(String line) {
-        if (line == null) return new String[0];
-        return line.split(";");
     }
 
 
