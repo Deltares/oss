@@ -7,6 +7,12 @@ import aQute.bnd.annotation.metatype.Meta;
 )
 public interface UserProgramFacetConfiguration {
 
+    @Meta.AD(required = false, deflt = "false", description = "Toggle visibility of facet portlet.")
+    String visible();
+
+    @Meta.AD(required = false, deflt = "", description = "List of companyIds for filtering registrations. (space separated)")
+    String companyIds();
+
     @Meta.AD(required = false, deflt = "false", description = "Show my registrations made for other users.")
     String showRegistrationsMadeForOthers();
 

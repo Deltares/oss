@@ -7,6 +7,8 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.search.facet.Facet;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
@@ -14,10 +16,12 @@ import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.facet.program.builder.UserProgramFacetBuilder;
 import nl.deltares.search.facet.program.builder.UserProgramFacetFactory;
+import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component(
@@ -28,13 +32,23 @@ import java.util.stream.Collectors;
 public class UserProgramFacetPortletSharedContributor implements PortletSharedSearchContributor {
     @Override
     public void contribute(PortletSharedSearchSettings portletSharedSearchSettings) {
+        Optional<String> selectionOptional = portletSharedSearchSettings.getParameterOptional("user-program-facet-selection");
+        //check for parameter is in namespace of searchResultsPortlet
+        String selection = selectionOptional.orElseGet(() -> FacetUtils.getFromSession(
+                portletSharedSearchSettings.getPortletId(), "user-program-facet-selection", portletSharedSearchSettings.getRenderRequest()));
+
         ThemeDisplay themeDisplay = portletSharedSearchSettings.getThemeDisplay();
-        User user = themeDisplay.getUser();
-        final Group scopeGroup = portletSharedSearchSettings.getThemeDisplay().getScopeGroup();
-        long groupId = scopeGroup.getGroupId();
-
+        User user;
+        long groupId = 0L;
+        if (selection == null) {
+            user = themeDisplay.getUser();
+            groupId = themeDisplay.getSiteGroupId();
+        } else {
+            long companyId = Long.parseLong(selection);
+            user = UserLocalServiceUtil.fetchUserByEmailAddress(Long.getLong(selection), themeDisplay.getUser().getEmailAddress());
+            List<Group> siteGroups = GroupLocalServiceUtil.getGroups(companyId, 0, true);
+        }
         try {
-
             List<String> entryClassPKs;
             if (showRegistrationForOthers(portletSharedSearchSettings)){
                 entryClassPKs = _dsdSessionUtils.getResourceIdsByAuthorAndGroup(user, groupId)

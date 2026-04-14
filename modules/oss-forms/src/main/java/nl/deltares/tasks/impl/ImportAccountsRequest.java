@@ -186,7 +186,13 @@ public class ImportAccountsRequest extends AbstractDataRequest {
 
     private static String[] parseDomains(String line) {
         if (line == null) return new String[0];
-        return line.split(";");
+        if (line.contains(",")) {
+            return line.split(",");
+        } else if (line.contains(";")) {
+            return line.split(";");
+        } else {
+            return new String[]{line};
+        }
     }
 
 
