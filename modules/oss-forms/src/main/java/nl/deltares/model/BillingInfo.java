@@ -1,12 +1,9 @@
 package nl.deltares.model;
 
-import com.liferay.portal.kernel.util.Validator;
-import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.KeycloakUtils;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class BillingInfo implements Serializable {
@@ -101,6 +98,8 @@ public class BillingInfo implements Serializable {
                 return phone;
             case billing_company:
                 return companyName;
+            case billing_remarks:
+                return remarks;
             default:
                 throw new UnsupportedOperationException("Unsupported billing attribute: " + key);
         }
@@ -152,12 +151,13 @@ public class BillingInfo implements Serializable {
         }
 
     }
-
     public Map<String, String> toMap(){
         final HashMap<String, String> map = new HashMap<>();
         for (ATTRIBUTES key : ATTRIBUTES.values()) {
             final String value = getAttribute(key);
-            if (Validator.isNotNull(value)) map.put(key.name(), value);
+            if (value != null){
+                map.put(key.name(), value);
+            }
 
         }
         return map;
