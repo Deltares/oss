@@ -10,10 +10,13 @@ import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
+import nl.deltares.search.facet.DeltaresTermFieldValueFacet;
+import nl.deltares.search.facet.DeltaresTermsFieldValueFacet;
 import nl.deltares.search.facet.program.builder.UserProgramFacetBuilder;
 import nl.deltares.search.facet.program.builder.UserProgramFacetFactory;
 import nl.deltares.search.util.FacetUtils;
@@ -38,19 +41,28 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
                 portletSharedSearchSettings.getPortletId(), "user-program-facet-selection", portletSharedSearchSettings.getRenderRequest()));
 
         ThemeDisplay themeDisplay = portletSharedSearchSettings.getThemeDisplay();
+        SearchRequestBuilder searchRequestBuilder = portletSharedSearchSettings.getSearchRequestBuilder();
         User user;
-        long groupId = 0L;
+        long groupId;
         if (selection == null) {
             user = themeDisplay.getUser();
             groupId = themeDisplay.getSiteGroupId();
         } else {
-            long companyId = Long.parseLong(selection);
-            user = UserLocalServiceUtil.fetchUserByEmailAddress(Long.getLong(selection), themeDisplay.getUser().getEmailAddress());
-            List<Group> siteGroups = GroupLocalServiceUtil.getGroups(companyId, 0, true);
+            groupId = Long.parseLong(selection);
+            Group siteGroup = GroupLocalServiceUtil.fetchGroup(groupId);
+            user = UserLocalServiceUtil.fetchUserByEmailAddress(siteGroup.getCompanyId(), themeDisplay.getUser().getEmailAddress());
+            searchRequestBuilder.companyId(siteGroup.getCompanyId());
+            searchRequestBuilder.indexes("liferay-" + siteGroup.getCompanyId());
+            portletSharedSearchSettings.addFacet(new DeltaresTermFieldValueFacet("head", "true",
+                    portletSharedSearchSettings.getSearchContext()));
+
+            portletSharedSearchSettings.addFacet(new DeltaresTermsFieldValueFacet("status", new String[]{"0"},
+                    portletSharedSearchSettings.getSearchContext()));
+
         }
         try {
             List<String> entryClassPKs;
-            if (showRegistrationForOthers(portletSharedSearchSettings)){
+            if (showRegistrationForOthers(portletSharedSearchSettings)) {
                 entryClassPKs = _dsdSessionUtils.getResourceIdsByAuthorAndGroup(user, groupId)
                         .stream()
                         .map(String::valueOf)

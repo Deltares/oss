@@ -1,13 +1,15 @@
 package nl.deltares.search.facet.program;
 
-import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
@@ -15,7 +17,10 @@ import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.*;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component(
         configurationPid = "nl.deltares.search.facet.program.UserProgramFacetConfiguration",
@@ -47,7 +52,7 @@ public class UserProgramFacetPortlet extends MVCPortlet {
         final boolean visible = Boolean.parseBoolean(configuration.visible());
         if (!visible) {
             renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, false);
-            renderRequest.setAttribute("selection", String.valueOf(themeDisplay.getCompanyId()));
+            renderRequest.setAttribute("selection", String.valueOf(themeDisplay.getSiteGroupId()));
         } else {
             //First retrieve from request URL then try from session.
             String selection = FacetUtils.getRequestParameter("user-program-facet-selection", renderRequest);
@@ -57,25 +62,38 @@ public class UserProgramFacetPortlet extends MVCPortlet {
             if (selection != null) {
                 renderRequest.setAttribute("selection", selection);
             }
-        }
+            Map<Long, List<Long>> registrationSiteIds = _dsdSessionUtils.getRegistrationSiteIds();
+            renderRequest.setAttribute("selectionMap", convertToOptions(registrationSiteIds, themeDisplay.getSiteGroup()));
 
-        renderRequest.setAttribute("selectionMap", convertToOptions(configuration.companyIds(), themeDisplay.getCompany()));
+        }
         renderRequest.setAttribute("showRegistrationsMadeForOthers", configuration.showRegistrationsMadeForOthers());
         super.render(renderRequest, renderResponse);
     }
 
-    private Map<String, String> convertToOptions(String companyIds, Company currentCompany) {
-        if (companyIds == null || companyIds.isEmpty()) {
-            return Collections.singletonMap(String.valueOf(currentCompany.getCompanyId()), currentCompany.getName());
+    private Map<String, String> convertToOptions(Map<Long, List<Long>> sitesMap, Group currentSite) throws PortletException {
+        if (sitesMap == null || sitesMap.isEmpty()) {
+            try {
+                return Collections.singletonMap(String.valueOf(currentSite.getGroupId()), currentSite.getDescriptiveName());
+            } catch (PortalException e) {
+                throw new PortletException(e);
+            }
         }
 
-        Map<String, String> options = new HashMap<>();
-        String[] ids = companyIds.split(" ");
-        for (String id : ids) {
-            Company company = CompanyLocalServiceUtil.fetchCompany(Long.parseLong(id));
-            options.put(String.valueOf(company.getCompanyId()), company.getName());
+        Map<String, String> siteNames = new HashMap<>();
+        for (Long siteGroupId : sitesMap.keySet()) {
+            List<Long> siteChildIds = sitesMap.get(siteGroupId);
+            for (Long siteChildId : siteChildIds) {
+                Group group = GroupLocalServiceUtil.fetchGroup(siteChildId);
+                if (group != null) {
+                    try {
+                        siteNames.put(String.valueOf(siteChildId), group.getDescriptiveName());
+                    } catch (PortalException e) {
+                        throw new PortletException(e);
+                    }
+                }
+            }
         }
-        return options;
+        return siteNames;
 
     }
 
@@ -102,7 +120,7 @@ public class UserProgramFacetPortlet extends MVCPortlet {
         final UserProgramFacetConfiguration configuration = getConfiguration(themeDisplay);
         String selection = ParamUtil.getString(actionRequest, "user-program-facet-selection");
 
-        if ("undefined".equals(selection)) {
+        if ("current".equals(selection)) {
             FacetUtils.removeFromSession(themeDisplay.getPortletDisplay().getId(), "user-program-facet-selection", actionRequest);
         } else {
             FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(), "user-program-facet-selection", selection, actionRequest);
@@ -111,4 +129,6 @@ public class UserProgramFacetPortlet extends MVCPortlet {
     @Reference
     private ConfigurationProvider _configurationProvider;
 
+    @Reference
+    private DsdSessionUtils _dsdSessionUtils;
 }

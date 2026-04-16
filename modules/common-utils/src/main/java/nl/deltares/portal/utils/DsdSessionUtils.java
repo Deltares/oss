@@ -76,6 +76,8 @@ public interface DsdSessionUtils {
      */
     int getRegistrationCount(Registration registration);
 
+    Map<Long, List<Long>> getRegistrationSiteIds();
+
     /** Return list of registrations that reference this registration a parent.
      *
      * @param registration Parent registration

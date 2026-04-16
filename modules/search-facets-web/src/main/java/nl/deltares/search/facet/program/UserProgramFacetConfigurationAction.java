@@ -43,7 +43,6 @@ public class UserProgramFacetConfigurationAction extends DefaultConfigurationAct
 
         setPreference(actionRequest, "showRegistrationsMadeForOthers", ParamUtil.getString(actionRequest, "showRegistrationsMadeForOthers"));
         setPreference(actionRequest, "visible", ParamUtil.getString(actionRequest, "visible"));
-        setPreference(actionRequest, "companyIds", ParamUtil.getString(actionRequest, "companyIds"));
         super.processAction(portletConfig, actionRequest, actionResponse);
     }
 

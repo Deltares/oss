@@ -15,6 +15,7 @@
 <%@ page import="nl.deltares.search.util.FacetUtils" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="javax.portlet.PortletURL" %>
+<%@ page import="nl.deltares.portal.model.impl.Registration" %>
 
 <liferay-theme:defineObjects/>
 
@@ -81,8 +82,10 @@
                 </div>
             </c:if>
             <%
+                Registration registration = context.getRegistration();
                 JournalArticleDisplay articleDisplay = FacetUtils
-                        .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, templateKey, context.getRegistration().getArticleId(), themeDisplay);
+                        .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, templateKey,
+                                registration.getGroupId(), registration.getArticleId(), themeDisplay);
             %>
             <liferay-journal:journal-article-display
                     articleDisplay="<%= articleDisplay %>"

@@ -10,10 +10,8 @@
 
     String visible = null;
     String showRegistrationsMadeForOthers = null;
-    String compnayIds = null;
     if (Validator.isNotNull(configuration)){
         visible = portletPreferences.getValue("visible", configuration.visible());
-        compnayIds = portletPreferences.getValue("companyIds", configuration.companyIds());
         showRegistrationsMadeForOthers = portletPreferences.getValue("showRegistrationsMadeForOthers", configuration.showRegistrationsMadeForOthers());
     }
 %>
@@ -49,14 +47,6 @@
                 label="Show portlet"
                 type="checkbox"
                 value='<%= visible %>'
-        >
-        </aui:input>
-
-        <aui:input
-                name="companyIds"
-                label="CompanyIds (space separated)"
-                type="text"
-                value='<%= compnayIds %>'
         >
         </aui:input>
 

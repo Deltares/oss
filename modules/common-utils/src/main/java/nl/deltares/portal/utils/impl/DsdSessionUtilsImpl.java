@@ -3,6 +3,7 @@ package nl.deltares.portal.utils.impl;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.portal.kernel.dao.orm.*;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
@@ -211,6 +212,29 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         }
     }
 
+    @Override
+    public Map<Long, List<Long>> getRegistrationSiteIds() {
+
+        DynamicQuery dynamicQuery = RegistrationLocalServiceUtil.dynamicQuery();
+
+        ProjectionList projection = ProjectionFactoryUtil.projectionList()
+                .add(ProjectionFactoryUtil.groupProperty("companyId"))
+                .add(ProjectionFactoryUtil.groupProperty("groupId"));
+        Projection distinct = ProjectionFactoryUtil.distinct(projection);
+        dynamicQuery.setProjection(distinct);
+        List<Object> objects = RegistrationLocalServiceUtil.dynamicQuery(dynamicQuery);
+
+        Map<Long, List<Long>> registrationSiteIds = new HashMap<>();
+        for (Object object : objects) {
+            Object[] array = (Object[]) object;
+            long companyId = (long) array[0];
+            long groupId = (long) array[1];
+            List<Long> siteIds = registrationSiteIds.getOrDefault(companyId, new ArrayList<>());
+            siteIds.add(groupId);
+            registrationSiteIds.put(companyId, siteIds);
+        }
+        return  registrationSiteIds;
+    }
     private void dbValidationChecks(User user, Registration registration) throws PortalException {
         if (isUserRegisteredFor(user, registration)) {
             throw new ValidationException(String.format("User already registered for %s !", registration.getTitle()));
