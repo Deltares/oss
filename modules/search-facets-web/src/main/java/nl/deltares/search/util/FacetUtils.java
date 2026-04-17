@@ -1,7 +1,6 @@
 
 package nl.deltares.search.util;
 
-import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleDisplay;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -82,22 +81,6 @@ public class FacetUtils {
         } catch (Exception e) {
             String message = String.format("Error getting article display object for article [%s] with template ID [%s]",
                     articleId, ddmTemplateKey);
-            LOG.debug(message, e);
-        }
-        return articleDisplay;
-    }
-
-    public static JournalArticleDisplay getArticleDisplay(PortletRequest portletRequest, PortletResponse portletResponse,
-                                                          String ddmTemplateKey, JournalArticle journalArticle, ThemeDisplay themeDisplay) {
-        JournalArticleDisplay articleDisplay = null;
-        try {
-            articleDisplay = JournalArticleLocalServiceUtil.getArticleDisplay(
-                    journalArticle, ddmTemplateKey, "VIEW",
-                    themeDisplay.getLanguageId(), 1, new PortletRequestModel(portletRequest, portletResponse),
-                    themeDisplay);
-        } catch (Exception e) {
-            String message = String.format("Error getting article display object for article [%s] with template ID [%s]",
-                    journalArticle.getArticleId(), ddmTemplateKey);
             LOG.debug(message, e);
         }
         return articleDisplay;

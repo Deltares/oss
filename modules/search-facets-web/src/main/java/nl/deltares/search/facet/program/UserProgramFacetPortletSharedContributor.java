@@ -48,14 +48,19 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
             user = themeDisplay.getUser();
             groupId = themeDisplay.getSiteGroupId();
         } else {
+            //Lookup current user by e-mail in different site.
             groupId = Long.parseLong(selection);
             Group siteGroup = GroupLocalServiceUtil.fetchGroup(groupId);
             user = UserLocalServiceUtil.fetchUserByEmailAddress(siteGroup.getCompanyId(), themeDisplay.getUser().getEmailAddress());
+
+            //Tell searchrequest in which Elasticsearch index to look for articles
             searchRequestBuilder.companyId(siteGroup.getCompanyId());
             searchRequestBuilder.indexes("liferay-" + siteGroup.getCompanyId());
+
+            //Only return latest version of article
             portletSharedSearchSettings.addFacet(new DeltaresTermFieldValueFacet("head", "true",
                     portletSharedSearchSettings.getSearchContext()));
-
+            //Only return active articles
             portletSharedSearchSettings.addFacet(new DeltaresTermsFieldValueFacet("status", new String[]{"0"},
                     portletSharedSearchSettings.getSearchContext()));
 
