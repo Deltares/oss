@@ -9,14 +9,12 @@ import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.search.facet.Facet;
-import com.liferay.portal.search.filter.FilterBuilders;
 
 public class UserProgramFacet extends BaseFacet implements Facet {
 
-    public UserProgramFacet(String field, SearchContext searchContext, FilterBuilders filterBuilders) {
+    public UserProgramFacet(String field, SearchContext searchContext) {
         super(searchContext);
         setFieldName(field);
-        _filterBuilders = filterBuilders;
     }
 
     @Override
@@ -58,6 +56,5 @@ public class UserProgramFacet extends BaseFacet implements Facet {
     }
 
     private String _aggregationName;
-    private final FilterBuilders _filterBuilders;
     private String[] _selections;
 }

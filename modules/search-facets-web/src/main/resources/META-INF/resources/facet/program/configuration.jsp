@@ -8,8 +8,10 @@
             (UserProgramFacetConfiguration)
                     renderRequest.getAttribute(UserProgramFacetConfiguration.class.getName());
 
+    String visible = null;
     String showRegistrationsMadeForOthers = null;
     if (Validator.isNotNull(configuration)){
+        visible = portletPreferences.getValue("visible", configuration.visible());
         showRegistrationsMadeForOthers = portletPreferences.getValue("showRegistrationsMadeForOthers", configuration.showRegistrationsMadeForOthers());
     }
 %>
@@ -38,6 +40,13 @@
     />
 
     <aui:fieldset>
+        <aui:input
+                name="visible"
+                label="Show portlet"
+                type="checkbox"
+                value='<%= visible %>'
+        >
+        </aui:input>
 
         <aui:input
                 name="showRegistrationsMadeForOthers"

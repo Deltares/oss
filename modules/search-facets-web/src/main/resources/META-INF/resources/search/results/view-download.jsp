@@ -50,7 +50,8 @@
         >
             <%
                 JournalArticleDisplay articleDisplay = FacetUtils
-                        .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, templateKey, article.getArticleId(), themeDisplay);
+                        .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, templateKey,
+                                article.getGroupId(), article.getArticleId(), themeDisplay);
             %>
 
             <liferay-journal:journal-article-display

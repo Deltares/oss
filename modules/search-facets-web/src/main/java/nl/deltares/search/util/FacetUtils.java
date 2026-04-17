@@ -71,11 +71,11 @@ public class FacetUtils {
     }
 
     public static JournalArticleDisplay getArticleDisplay(PortletRequest portletRequest, PortletResponse portletResponse,
-                                                          String ddmTemplateKey, String articleId, ThemeDisplay themeDisplay) {
+                                                          String ddmTemplateKey, long groupId, String articleId, ThemeDisplay themeDisplay) {
         JournalArticleDisplay articleDisplay = null;
         try {
             articleDisplay = JournalArticleLocalServiceUtil.getArticleDisplay(
-                    themeDisplay.getScopeGroupId(), articleId, ddmTemplateKey, "VIEW",
+                    groupId, articleId, ddmTemplateKey, "VIEW",
                     themeDisplay.getLanguageId(), 1, new PortletRequestModel(portletRequest, portletResponse),
                     themeDisplay);
         } catch (Exception e) {

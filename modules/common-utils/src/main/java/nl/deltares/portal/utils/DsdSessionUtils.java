@@ -76,6 +76,12 @@ public interface DsdSessionUtils {
      */
     int getRegistrationCount(Registration registration);
 
+    /**
+     * Return map of site groupIds grouped tegether by their company groupId.
+     * @return map of siteId grouped by company groupId
+     */
+    Map<Long, List<Long>> getRegistrationSiteIds();
+
     /** Return list of registrations that reference this registration a parent.
      *
      * @param registration Parent registration
@@ -137,8 +143,22 @@ public interface DsdSessionUtils {
      */
     List<Long> getResourceIdsByAuthorAndGroup(User user, long groupId);
 
-    List<RegistrationData> getRegistrationDataByAuthorAndResourceId(User user, long resourceId);
+    /**
+     * Get registration data by resourceId and author of that registration.
+     * @param author    User Id of user that made registration
+     * @param resourceId  Registration resourceId
+     * @return List of records
+     */
+    @SuppressWarnings("unused")
+    List<RegistrationData> getRegistrationDataByAuthorAndResourceId(User author, long resourceId);
 
+    /**
+     * Get registration data by resourceId and user of that registration.
+     * @param user    User Id of user that made registration
+     * @param resourceId  Registration resourceId
+     * @return List of records
+     */
+    @SuppressWarnings("unused")
     List<RegistrationData> getRegistrationDataByUserAndResourceId(User user, long resourceId);
     /**
      * Get all registrations records for given event.

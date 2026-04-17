@@ -42,6 +42,7 @@ public class UserProgramFacetConfigurationAction extends DefaultConfigurationAct
             throws Exception {
 
         setPreference(actionRequest, "showRegistrationsMadeForOthers", ParamUtil.getString(actionRequest, "showRegistrationsMadeForOthers"));
+        setPreference(actionRequest, "visible", ParamUtil.getString(actionRequest, "visible"));
         super.processAction(portletConfig, actionRequest, actionResponse);
     }
 

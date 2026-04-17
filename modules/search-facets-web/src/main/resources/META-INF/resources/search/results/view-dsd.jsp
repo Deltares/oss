@@ -7,14 +7,13 @@
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 <%@ taglib uri="http://liferay.com/tld/journal" prefix="liferay-journal" %>
 
-<%@ page import="com.liferay.journal.model.JournalArticleDisplay" %>
 <%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
 <%@ page import="com.liferay.portal.kernel.util.HtmlUtil" %>
 <%@ page import="com.liferay.portal.kernel.util.WebKeys" %>
 <%@ page import="nl.deltares.search.results.SearchResultsPortletDisplayContext" %>
-<%@ page import="nl.deltares.search.util.FacetUtils" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="javax.portlet.PortletURL" %>
+<%@ page import="nl.deltares.portal.model.impl.Registration" %>
 
 <liferay-theme:defineObjects/>
 
@@ -81,11 +80,11 @@
                 </div>
             </c:if>
             <%
-                JournalArticleDisplay articleDisplay = FacetUtils
-                        .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, templateKey, context.getRegistration().getArticleId(), themeDisplay);
+                Registration registration = context.getRegistration();
+//                themeDisplay.setScopeGroupId(registration.getGroupId());
             %>
-            <liferay-journal:journal-article-display
-                    articleDisplay="<%= articleDisplay %>"
+            <liferay-journal:journal-article
+                    article="<%= registration.getJournalArticle() %>" ddmTemplateKey="<%= templateKey %>" groupId="<%= registration.getGroupId() %>"
             />
         </liferay-ui:search-container-column-text>
 
