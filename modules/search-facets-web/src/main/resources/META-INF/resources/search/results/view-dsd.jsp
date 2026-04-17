@@ -12,10 +12,10 @@
 <%@ page import="com.liferay.portal.kernel.util.HtmlUtil" %>
 <%@ page import="com.liferay.portal.kernel.util.WebKeys" %>
 <%@ page import="nl.deltares.search.results.SearchResultsPortletDisplayContext" %>
-<%@ page import="nl.deltares.search.util.FacetUtils" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="javax.portlet.PortletURL" %>
 <%@ page import="nl.deltares.portal.model.impl.Registration" %>
+<%@ page import="com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil" %>
 
 <liferay-theme:defineObjects/>
 
@@ -83,12 +83,10 @@
             </c:if>
             <%
                 Registration registration = context.getRegistration();
-                JournalArticleDisplay articleDisplay = FacetUtils
-                        .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, templateKey,
-                                registration.getGroupId(), registration.getArticleId(), themeDisplay);
+                themeDisplay.setScopeGroupId(registration.getGroupId());
             %>
-            <liferay-journal:journal-article-display
-                    articleDisplay="<%= articleDisplay %>"
+            <liferay-journal:journal-article
+                    article="<%= registration.getJournalArticle() %>" ddmTemplateKey="<%= templateKey %>" groupId="<%= registration.getGroupId() %>"
             />
         </liferay-ui:search-container-column-text>
 
