@@ -48,14 +48,13 @@
                 ${languageUtil.get(locale, "dsd.theme.session.free")}
             </#if>
             <#if showButtons >
-                <#assign userId = themeDisplay.getUserId() />
-                <#assign registrationDatas = dsdSessionUtils.getRegistrationDataByUserAndResourceId(themeDisplay.getUser(), registration.getResourceId()) />
+                <#assign registrationDatas = dsdSessionUtils.getRegistrationDataByUserAndResourceId(displayContext.getScopeUserId(), registration.getResourceId()) />
                 <span class="d-block" style="float:right">
                     <table >
                         <#list registrationDatas as registrationData>
 
                         <tr><td>
-                            <a href="${displayContext.getUnregisterURL(renderRequest, themeDisplay.getUserId(),
+                            <a href="${displayContext.getUnregisterURL(renderRequest, displayContext.getScopeUserId(),
                             displayContext.getConfiguredRegistrationFormId(),  "/submit/unregister/form") }" class="btn-lg btn-primary" role="button" aria-pressed="true" style="color:#fff">
                                 ${languageUtil.get(locale, "registrationform.unregister")}
                             </a>

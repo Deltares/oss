@@ -48,8 +48,8 @@
                 ${languageUtil.get(locale, "dsd.theme.session.free")}
             </#if>
             <#if showButtons >
-                <#assign userId = themeDisplay.getUserId() />
-                <#assign registrationDatas = dsdSessionUtils.getRegistrationDataByAuthorAndResourceId(themeDisplay.getUser(), registration.getResourceId()) />
+                <#assign registrationDatas = dsdSessionUtils.getRegistrationDataByAuthorAndResourceId(
+                displayContext.getScopeUserId(), registration.getResourceId()) />
                 <span class="d-block" style="float:right">
                     <table >
                         <#list registrationDatas as registrationData>

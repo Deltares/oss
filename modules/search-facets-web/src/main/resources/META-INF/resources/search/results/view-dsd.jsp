@@ -65,6 +65,7 @@
             try {
                 portletSession.setAttribute("program-list-registration-articleId", context.getRegistration().getArticleId());
                 portletSession.setAttribute("program-list-registration-day", context.getDayCount());
+                portletSession.setAttribute("program-list-registration-userId", searchResultsPortletDisplayContext.getScopeUserId());
             } catch (Exception e){
                 SessionErrors.add(renderRequest, "session error " + e.getMessage());
             }
@@ -81,7 +82,7 @@
             </c:if>
             <%
                 Registration registration = context.getRegistration();
-//                themeDisplay.setScopeGroupId(registration.getGroupId());
+                themeDisplay.setScopeGroupId(registration.getGroupId());
             %>
             <liferay-journal:journal-article
                     article="<%= registration.getJournalArticle() %>" ddmTemplateKey="<%= templateKey %>" groupId="<%= registration.getGroupId() %>"
@@ -93,6 +94,7 @@
             try {
                 portletSession.setAttribute("program-list-registration-articleId", null);
                 portletSession.setAttribute("program-list-registration-day", null);
+                portletSession.setAttribute("program-list-registration-userId", null);
             } catch (Exception e){
                 SessionErrors.add(renderRequest, "session error " + e.getMessage());
             }

@@ -145,21 +145,21 @@ public interface DsdSessionUtils {
 
     /**
      * Get registration data by resourceId and author of that registration.
-     * @param author    User Id of user that made registration
+     * @param authorId    User Id of user that made registration
      * @param resourceId  Registration resourceId
      * @return List of records
      */
     @SuppressWarnings("unused")
-    List<RegistrationData> getRegistrationDataByAuthorAndResourceId(User author, long resourceId);
+    List<RegistrationData> getRegistrationDataByAuthorAndResourceId(long authorId, long resourceId);
 
     /**
      * Get registration data by resourceId and user of that registration.
-     * @param user    User Id of user that made registration
+     * @param userId    User Id of user that made registration
      * @param resourceId  Registration resourceId
      * @return List of records
      */
     @SuppressWarnings("unused")
-    List<RegistrationData> getRegistrationDataByUserAndResourceId(User user, long resourceId);
+    List<RegistrationData> getRegistrationDataByUserAndResourceId(long userId, long resourceId);
     /**
      * Get all registrations records for given event.
      * @param event Event for which to retrieve registrations

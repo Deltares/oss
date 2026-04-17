@@ -35,6 +35,7 @@ public class SubmitUnregisterActionCommand extends BaseMVCActionCommand {
     protected void doProcessAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
         String articleId = ParamUtil.getString(actionRequest, "articleId");
         Long userId = ParamUtil.getLong(actionRequest, "userId");
+        Long scopeGroupId = ParamUtil.getLong(actionRequest, "scopeGroupId");
         String redirect = ParamUtil.getString(actionRequest, "redirect");
 
         HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
@@ -43,7 +44,7 @@ public class SubmitUnregisterActionCommand extends BaseMVCActionCommand {
                 _configurationProvider, _dsdParserUtils, _dsdSessionUtils);
 
         try {
-            unregisterDisplayContext.unRegisterUser(articleId, userId);
+            unregisterDisplayContext.unRegisterUser(articleId, userId, scopeGroupId);
         } catch (Exception e) {
             httpServletRequest.getSession().setAttribute("registration-errors", Collections.singletonList(
                     new RegistrationFormException(e.getMessage())));

@@ -19,6 +19,7 @@ import nl.deltares.portal.utils.DsdSessionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class UnregisterDisplayContext {
@@ -71,7 +72,7 @@ public class UnregisterDisplayContext {
         registrationEmail.sendUnregisterEmail(serializer, user, Collections.singletonList(registration));
     }
 
-    public void unRegisterUser(String articleId, Long userId) throws Exception {
+    public void unRegisterUser(String articleId, Long userId, Long scopeGroupId) throws Exception {
 
         if (userId == null) return;
 
@@ -81,7 +82,9 @@ public class UnregisterDisplayContext {
             return;
         }
 
-        Registration registration = _dsdParserUtils.getRegistration(_themeDisplay.getSiteGroupId(), articleId);
+        long groupId = Objects.requireNonNullElseGet(scopeGroupId, _themeDisplay::getSiteGroupId);
+
+        Registration registration = _dsdParserUtils.getRegistration(groupId, articleId);
         _dsdSessionUtils.unRegisterUser(user, registration);
 
         sendUnregisterEmail(user, registration);

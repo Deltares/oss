@@ -404,9 +404,9 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
                 .map(nl.deltares.dsd.registration.model.Registration::getResourcePrimaryKey).collect(Collectors.toList());
     }
     @Override
-    public List<RegistrationData> getRegistrationDataByAuthorAndResourceId(User author, long resourceId) {
+    public List<RegistrationData> getRegistrationDataByAuthorAndResourceId(long authorId, long resourceId) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
-                RegistrationLocalServiceUtil.getRegistrationDataByAuthorAndResourceId(author.getUserId(), resourceId);
+                RegistrationLocalServiceUtil.getRegistrationDataByAuthorAndResourceId(authorId, resourceId);
         return dbRegistrations.stream()
                 .filter(registration -> registration.getUserId() != registration.getRegisteredByUserId())
                 .map(this::getRegistrationData)
@@ -414,9 +414,9 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
-    public List<RegistrationData> getRegistrationDataByUserAndResourceId(User user, long resourceId) {
+    public List<RegistrationData> getRegistrationDataByUserAndResourceId(long userId, long resourceId) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
-                RegistrationLocalServiceUtil.getRegistrationDataByUserAndResourceId(user.getUserId(), resourceId);
+                RegistrationLocalServiceUtil.getRegistrationDataByUserAndResourceId(userId, resourceId);
         return dbRegistrations.stream().map(this::getRegistrationData).collect(Collectors.toList());
     }
 

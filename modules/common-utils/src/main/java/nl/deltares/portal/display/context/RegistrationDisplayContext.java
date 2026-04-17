@@ -37,10 +37,11 @@ import java.util.TimeZone;
 public class RegistrationDisplayContext {
 
 
-    public RegistrationDisplayContext(Registration registration, int dayIndex, ThemeDisplay themeDisplay) {
+    public RegistrationDisplayContext(Registration registration, int dayIndex, ThemeDisplay themeDisplay, long scopeUserId) {
         this._themeDisplay = themeDisplay;
         this._registration = registration;
         this._dayIndex = dayIndex;
+        this._scopeUserId = scopeUserId;
 
         ConfigurationProvider configurationProvider = ConfigurationProviderUtil.getConfigurationProvider();
         if (configurationProvider != null) {
@@ -210,7 +211,7 @@ public class RegistrationDisplayContext {
     }
 
     public boolean canUserRegister() {
-        return getRegistration() != null && getRegistration().canUserRegister(_themeDisplay.getUserId());
+        return getRegistration() != null && getRegistration().canUserRegister(_scopeUserId);
     }
 
     public String getStartTime() {
@@ -333,11 +334,14 @@ public class RegistrationDisplayContext {
         return session.getPresentations();
     }
 
+    public long getScopeUserId() {
+        return _scopeUserId;
+    }
 
     public String getPortletRequest(PortletRequest portletRequest, String action, Long userId, String formName, String actionCommand) {
 
         if (_dsdSiteConfiguration != null) {
-            long groupId = _themeDisplay.getScopeGroupId();
+            long groupId = getRegistration().getGroupId();
 
             try {
                 Layout registrationPage = LayoutLocalServiceUtil
@@ -353,6 +357,7 @@ public class RegistrationDisplayContext {
                     portletURL.setPortletMode(LiferayPortletMode.VIEW);
                     portletURL.setParameter("javax.portlet.action", actionCommand);
                     portletURL.setParameter("articleId", getRegistration().getArticleId());
+                    portletURL.setParameter("scopeGroupId", String.valueOf(groupId));
                     portletURL.setParameter("action", action);
                     if (userId != null) portletURL.setParameter("userId", userId.toString());
                     return portletURL.toString();
@@ -368,6 +373,11 @@ public class RegistrationDisplayContext {
     private final ThemeDisplay _themeDisplay;
     private final Registration _registration;
     private final int _dayIndex;
+    private long _scopeUserId;
 
     private static final Log LOG = LogFactoryUtil.getLog(RegistrationDisplayContext.class);
+
+    public void setScopeUserId(long scopeUserId) {
+        this._scopeUserId = scopeUserId;
+    }
 }

@@ -47,23 +47,25 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
         if (selection == null) {
             user = themeDisplay.getUser();
             groupId = themeDisplay.getSiteGroupId();
+
+            FacetUtils.removeFromSession("user-program-facet", "facet-scopeUserId", portletSharedSearchSettings.getRenderRequest());
         } else {
             //Lookup current user by e-mail in different site.
             groupId = Long.parseLong(selection);
             Group siteGroup = GroupLocalServiceUtil.fetchGroup(groupId);
             user = UserLocalServiceUtil.fetchUserByEmailAddress(siteGroup.getCompanyId(), themeDisplay.getUser().getEmailAddress());
 
+            FacetUtils.storeInSession("user-program-facet", "facet-scopeUserId", String.valueOf(user.getUserId()), portletSharedSearchSettings.getRenderRequest());
+
             //Tell searchrequest in which Elasticsearch index to look for articles
             searchRequestBuilder.companyId(siteGroup.getCompanyId());
             searchRequestBuilder.indexes("liferay-" + siteGroup.getCompanyId());
-
             //Only return latest version of article
             portletSharedSearchSettings.addFacet(new DeltaresTermFieldValueFacet("head", "true",
                     portletSharedSearchSettings.getSearchContext()));
             //Only return active articles
             portletSharedSearchSettings.addFacet(new DeltaresTermsFieldValueFacet("status", new String[]{"0"},
                     portletSharedSearchSettings.getSearchContext()));
-
         }
         try {
             List<String> entryClassPKs;

@@ -13,6 +13,7 @@ import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRe
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
+import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -97,6 +98,9 @@ public class SearchResultsPortlet extends MVCPortlet {
         displayContext.setPaginationStart((cur - 1) * deltas);
         displayContext.setTotalHits(searchResponse.getTotalHits());
         displayContext.setResultsDocuments(portletSharedSearchResponse.getDocuments(), type, reverseOrder);
+
+        String scopeUserId = FacetUtils.getFromSession("user-program-facet", "facet-scopeUserId", renderRequest);
+        displayContext.setScopeUserId(scopeUserId == null ? null : Long.parseLong(scopeUserId));
 
         return displayContext;
     }

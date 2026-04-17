@@ -164,8 +164,10 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
 
         String articleAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?program-list-registration-articleId";
         String dayAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?program-list-registration-day";
+        String userIdAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?program-list-registration-userId";
         final Object sessionArticleId = themeDisplay.getRequest().getSession().getAttribute(articleAttrName);
         final Object day = themeDisplay.getRequest().getSession().getAttribute(dayAttrName);
+        final Object scopeUserId = themeDisplay.getRequest().getSession().getAttribute(userIdAttrName);
         int dayIndex = 0;
         if (articleId.equals(sessionArticleId) && day instanceof Integer){
             dayIndex = (Integer) day;
@@ -182,8 +184,13 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
         } catch (Exception e) {
             LOG.error("Error getting Registration instance [" + articleId + "]", e);
         }
-
-        return new RegistrationDisplayContext(registration, dayIndex, themeDisplay);
+        long userId;
+        if (scopeUserId != null) {
+            userId = Long.parseLong(String.valueOf(scopeUserId));
+        } else {
+            userId = themeDisplay.getUserId();
+        }
+        return new RegistrationDisplayContext(registration, dayIndex, themeDisplay, userId);
     }
 
     private ConfigurationProvider _configurationProvider;

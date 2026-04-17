@@ -34,10 +34,12 @@ public class SearchResultsPortletDisplayContext implements Serializable {
     private int totalLoadedRecords = 0;
     private List<RegistrationDisplayContext> registrations = Collections.emptyList();
     private List<DsdArticle> dsdArticles = Collections.emptyList();
+    private Long scopeUserId;
 
     public SearchResultsPortletDisplayContext(DsdParserUtils dsdParserUtils, ThemeDisplay themeDisplay) {
         this.dsdParserUtils = dsdParserUtils;
         this.themeDisplay = themeDisplay;
+        this.scopeUserId = themeDisplay.getUserId();
     }
 
     public boolean isRenderNothing() {
@@ -152,15 +154,30 @@ public class SearchResultsPortletDisplayContext implements Serializable {
             if (registration.isMultiDayEvent() && !registration.isShowMultipleDaysAsSingleDate()) {
                 final List<Period> startAndEndTimesPerDay = registration.getStartAndEndTimesPerDay();
                 for (int i = 0; i < startAndEndTimesPerDay.size(); i++) {
-                    final RegistrationDisplayContext displayContext = new RegistrationDisplayContext(registration, i, themeDisplay);
+                    final RegistrationDisplayContext displayContext = new RegistrationDisplayContext(registration, i,
+                            themeDisplay, scopeUserId);
                     registrationDisplayContexts.add(displayContext);
                 }
             } else {
-                final RegistrationDisplayContext displayContext = new RegistrationDisplayContext(registration, 0, themeDisplay);
+                final RegistrationDisplayContext displayContext = new RegistrationDisplayContext(registration, 0,
+                        themeDisplay, scopeUserId);
                 registrationDisplayContexts.add(displayContext);
             }
         }
 
     }
 
+    public void setScopeUserId(Long scopeUserId) {
+        this.scopeUserId = scopeUserId;
+
+        if (scopeUserId != null) {
+            for (RegistrationDisplayContext registration : registrations) {
+                registration.setScopeUserId(scopeUserId);
+            }
+        }
+    }
+
+    public Long getScopeUserId() {
+        return scopeUserId;
+    }
 }
