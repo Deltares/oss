@@ -14,6 +14,8 @@
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="javax.portlet.PortletURL" %>
 <%@ page import="nl.deltares.portal.model.impl.Registration" %>
+<%@ page import="nl.deltares.search.util.FacetUtils" %>
+<%@ page import="nl.deltares.portal.model.facet.FacetSelection" %>
 
 <liferay-theme:defineObjects/>
 
@@ -21,6 +23,8 @@
 <%
 
     String lastDate = "";
+    FacetSelection facetSelection = (FacetSelection) FacetUtils.getFromSession("global", "facet-selection", renderRequest);
+
     SearchResultsPortletDisplayContext searchResultsPortletDisplayContext =
             (SearchResultsPortletDisplayContext) java.util.Objects.requireNonNull(request.getAttribute(WebKeys.PORTLET_DISPLAY_CONTEXT));
 
@@ -65,7 +69,9 @@
             try {
                 portletSession.setAttribute("program-list-registration-articleId", context.getRegistration().getArticleId());
                 portletSession.setAttribute("program-list-registration-day", context.getDayCount());
-                portletSession.setAttribute("program-list-registration-userId", searchResultsPortletDisplayContext.getScopeUserId());
+                if (facetSelection != null){
+                    portletSession.setAttribute("program-list-facet-selection", facetSelection);
+                }
             } catch (Exception e){
                 SessionErrors.add(renderRequest, "session error " + e.getMessage());
             }
@@ -82,10 +88,13 @@
             </c:if>
             <%
                 Registration registration = context.getRegistration();
-                themeDisplay.setScopeGroupId(registration.getGroupId());
+                //Point to the site of the article.
+                if (facetSelection != null){
+                    themeDisplay.setScopeGroupId(facetSelection.getSiteGroupId());
+                }
             %>
             <liferay-journal:journal-article
-                    article="<%= registration.getJournalArticle() %>" ddmTemplateKey="<%= templateKey %>" groupId="<%= registration.getGroupId() %>"
+                    article="<%= registration.getJournalArticle() %>" ddmTemplateKey="<%= templateKey %>" groupId="<%= themeDisplay.getSiteGroupId() %>"
             />
         </liferay-ui:search-container-column-text>
 
@@ -94,7 +103,7 @@
             try {
                 portletSession.setAttribute("program-list-registration-articleId", null);
                 portletSession.setAttribute("program-list-registration-day", null);
-                portletSession.setAttribute("program-list-registration-userId", null);
+                portletSession.setAttribute("program-list-facet-selection", null);
             } catch (Exception e){
                 SessionErrors.add(renderRequest, "session error " + e.getMessage());
             }

@@ -69,12 +69,12 @@ public class DateRangeFacetPortlet extends MVCPortlet {
         // Try to get the start date from the session
         String startDate = FacetUtils.getRequestParameter("startDate", renderRequest);
         if (startDate == null) {
-            startDate = FacetUtils.getFromSession(themeDisplay.getPortletDisplay().getId(), "startDate", renderRequest);
+            startDate = (String) FacetUtils.getFromSession(themeDisplay.getPortletDisplay().getId(), "startDate", renderRequest);
         }
         // Try to get the end date from the session
         String endDate = FacetUtils.getRequestParameter("endDate", renderRequest);
         if (endDate == null) {
-            endDate = FacetUtils.getFromSession(themeDisplay.getPortletDisplay().getId(), "endDate", renderRequest);
+            endDate = (String) FacetUtils.getFromSession(themeDisplay.getPortletDisplay().getId(), "endDate", renderRequest);
         }
         final String portletId = themeDisplay.getPortletDisplay().getId();
 

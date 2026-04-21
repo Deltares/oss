@@ -130,7 +130,7 @@ public class SelectionFacetPortlet extends MVCPortlet {
         //First retrieve from request URL then try from session.
         String selection = FacetUtils.getRequestParameter(name, renderRequest);
         if (selection == null) {
-            selection = FacetUtils.getFromSession(themeDisplay.getPortletDisplay().getId(), name, renderRequest);
+            selection = (String) FacetUtils.getFromSession(themeDisplay.getPortletDisplay().getId(), name, renderRequest);
         }
         if (selection != null) {
             renderRequest.setAttribute("selection", selection);

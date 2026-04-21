@@ -20,6 +20,7 @@ import nl.deltares.portal.configuration.StructureKeyMapConfiguration;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.display.context.RegistrationDisplayContext;
 import nl.deltares.portal.model.DsdArticle;
+import nl.deltares.portal.model.facet.FacetSelection;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
@@ -164,10 +165,10 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
 
         String articleAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?program-list-registration-articleId";
         String dayAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?program-list-registration-day";
-        String userIdAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?program-list-registration-userId";
+        String facetSelectionAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?program-list-facet-selection";
         final Object sessionArticleId = themeDisplay.getRequest().getSession().getAttribute(articleAttrName);
         final Object day = themeDisplay.getRequest().getSession().getAttribute(dayAttrName);
-        final Object scopeUserId = themeDisplay.getRequest().getSession().getAttribute(userIdAttrName);
+        final Object facetSelection = themeDisplay.getRequest().getSession().getAttribute(facetSelectionAttrName);
         int dayIndex = 0;
         if (articleId.equals(sessionArticleId) && day instanceof Integer){
             dayIndex = (Integer) day;
@@ -184,13 +185,7 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
         } catch (Exception e) {
             LOG.error("Error getting Registration instance [" + articleId + "]", e);
         }
-        long userId;
-        if (scopeUserId != null) {
-            userId = Long.parseLong(String.valueOf(scopeUserId));
-        } else {
-            userId = themeDisplay.getUserId();
-        }
-        return new RegistrationDisplayContext(registration, dayIndex, themeDisplay, userId);
+        return new RegistrationDisplayContext(registration, dayIndex, themeDisplay, (FacetSelection) facetSelection);
     }
 
     private ConfigurationProvider _configurationProvider;

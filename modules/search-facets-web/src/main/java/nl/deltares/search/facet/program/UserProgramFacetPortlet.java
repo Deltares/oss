@@ -2,13 +2,16 @@ package nl.deltares.search.facet.program;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import nl.deltares.portal.model.facet.FacetSelection;
 import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
@@ -52,18 +55,15 @@ public class UserProgramFacetPortlet extends MVCPortlet {
         final boolean visible = Boolean.parseBoolean(configuration.visible());
         if (!visible) {
             renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, false);
-            renderRequest.setAttribute("selection", String.valueOf(themeDisplay.getSiteGroupId()));
+            renderRequest.setAttribute("site-selection", String.valueOf(themeDisplay.getSiteGroupId()));
         } else {
             //First retrieve from request URL then try from session.
-            String selection = FacetUtils.getRequestParameter("user-program-facet-selection", renderRequest);
-            if (selection == null) {
-                selection = FacetUtils.getFromSession(themeDisplay.getPortletDisplay().getId(), "user-program-facet-selection", renderRequest);
-            }
-            if (selection != null) {
-                renderRequest.setAttribute("selection", selection);
+            Object selection = FacetUtils.getFromSession("global", "facet-selection", renderRequest);
+            if (selection instanceof FacetSelection) {
+                renderRequest.setAttribute("site-selection", String.valueOf(((FacetSelection)selection).getSiteGroupId()));
             }
             Map<Long, List<Long>> registrationSiteIds = _dsdSessionUtils.getRegistrationSiteIds();
-            renderRequest.setAttribute("selectionMap", convertToOptions(registrationSiteIds, themeDisplay.getSiteGroup()));
+            renderRequest.setAttribute("site-selectionMap", convertToOptions(registrationSiteIds, themeDisplay.getSiteGroup()));
 
         }
         renderRequest.setAttribute("showRegistrationsMadeForOthers", configuration.showRegistrationsMadeForOthers());
@@ -118,12 +118,15 @@ public class UserProgramFacetPortlet extends MVCPortlet {
     public void submitForm(ActionRequest actionRequest, ActionResponse actionResponse) throws PortletException {
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
         final UserProgramFacetConfiguration configuration = getConfiguration(themeDisplay);
-        String selection = ParamUtil.getString(actionRequest, "user-program-facet-selection");
+        String selection = ParamUtil.getString(actionRequest, "user-program-site-selection");
 
         if ("current".equals(selection)) {
-            FacetUtils.removeFromSession(themeDisplay.getPortletDisplay().getId(), "user-program-facet-selection", actionRequest);
+            FacetUtils.removeFromSession("global", "facet-selection", actionRequest);
         } else {
-            FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(), "user-program-facet-selection", selection, actionRequest);
+            Group selectedSiteGroup = GroupLocalServiceUtil.fetchGroup(Long.parseLong(selection));
+            User selectedSiteUser = UserLocalServiceUtil.fetchUserByEmailAddress(selectedSiteGroup.getCompanyId(), themeDisplay.getUser().getEmailAddress());
+            FacetSelection facetSelection = new FacetSelection(selectedSiteGroup.getCompanyId(), selectedSiteGroup.getGroupId(), selectedSiteUser.getUserId());
+            FacetUtils.storeInSession("global", "facet-selection", facetSelection, actionRequest);
         }
     }
     @Reference

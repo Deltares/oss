@@ -45,7 +45,7 @@ public class CheckboxFacetPortletSharedSearchContributor implements PortletShare
         Optional<String> selectionOptional = portletSharedSearchSettings.getParameterOptional(name);
         //check for parameter is in namespace of searchResultsPortlet
 
-        String selection = selectionOptional.orElseGet(() -> FacetUtils.getFromSession(
+        String selection = selectionOptional.orElseGet(() -> (String) FacetUtils.getFromSession(
                 portletSharedSearchSettings.getPortletId(),
                 name, portletSharedSearchSettings.getRenderRequest()));
         final boolean option;

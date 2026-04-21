@@ -2,17 +2,16 @@ package nl.deltares.search.facet.program;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.search.facet.Facet;
-import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
+import nl.deltares.portal.model.facet.FacetSelection;
 import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.facet.DeltaresTermFieldValueFacet;
@@ -24,7 +23,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component(
@@ -35,31 +33,32 @@ import java.util.stream.Collectors;
 public class UserProgramFacetPortletSharedContributor implements PortletSharedSearchContributor {
     @Override
     public void contribute(PortletSharedSearchSettings portletSharedSearchSettings) {
-        Optional<String> selectionOptional = portletSharedSearchSettings.getParameterOptional("user-program-facet-selection");
         //check for parameter is in namespace of searchResultsPortlet
-        String selection = selectionOptional.orElseGet(() -> FacetUtils.getFromSession(
-                portletSharedSearchSettings.getPortletId(), "user-program-facet-selection", portletSharedSearchSettings.getRenderRequest()));
+        Object selectionObj = FacetUtils.getFromSession(
+                "global", "facet-selection", portletSharedSearchSettings.getRenderRequest());
 
         ThemeDisplay themeDisplay = portletSharedSearchSettings.getThemeDisplay();
         SearchRequestBuilder searchRequestBuilder = portletSharedSearchSettings.getSearchRequestBuilder();
         User user;
         long groupId;
+
+        FacetSelection selection = null;
+        if (selectionObj instanceof FacetSelection) {
+            selection = (FacetSelection) selectionObj;
+        } else {
+            FacetUtils.removeFromSession("global", "facet-selection", portletSharedSearchSettings.getRenderRequest());
+        }
+
         if (selection == null) {
             user = themeDisplay.getUser();
             groupId = themeDisplay.getSiteGroupId();
-
-            FacetUtils.removeFromSession("user-program-facet", "facet-scopeUserId", portletSharedSearchSettings.getRenderRequest());
         } else {
-            //Lookup current user by e-mail in different site.
-            groupId = Long.parseLong(selection);
-            Group siteGroup = GroupLocalServiceUtil.fetchGroup(groupId);
-            user = UserLocalServiceUtil.fetchUserByEmailAddress(siteGroup.getCompanyId(), themeDisplay.getUser().getEmailAddress());
-
-            FacetUtils.storeInSession("user-program-facet", "facet-scopeUserId", String.valueOf(user.getUserId()), portletSharedSearchSettings.getRenderRequest());
+            user = UserLocalServiceUtil.fetchUser(selection.getUserId());
+            groupId = selection.getSiteGroupId();
 
             //Tell searchrequest in which Elasticsearch index to look for articles
-            searchRequestBuilder.companyId(siteGroup.getCompanyId());
-            searchRequestBuilder.indexes("liferay-" + siteGroup.getCompanyId());
+            searchRequestBuilder.companyId(selection.getCompanyId());
+            searchRequestBuilder.indexes("liferay-" + selection.getCompanyId());
             //Only return latest version of article
             portletSharedSearchSettings.addFacet(new DeltaresTermFieldValueFacet("head", "true",
                     portletSharedSearchSettings.getSearchContext()));
@@ -86,7 +85,7 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
         }
     }
 
-    private boolean showRegistrationForOthers(PortletSharedSearchSettings portletSharedSearchSettings){
+    private boolean showRegistrationForOthers(PortletSharedSearchSettings portletSharedSearchSettings) {
 
         try {
             UserProgramFacetConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(UserProgramFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());

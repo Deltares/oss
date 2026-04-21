@@ -59,7 +59,7 @@ public class UnregisterDisplayContext {
             registrationEmail.addBCCEmail(email);
         }
 
-        Event _event = _dsdParserUtils.getEvent(_themeDisplay.getSiteGroupId(), String.valueOf(registration.getEventId()),
+        Event _event = _dsdParserUtils.getEvent(registration.getGroupId(), String.valueOf(registration.getEventId()),
                 _themeDisplay.getLocale());
 
         String subject = LanguageUtil.format(resourceBundle, "dsd.unregister.subject", _event.getTitle());
@@ -72,7 +72,7 @@ public class UnregisterDisplayContext {
         registrationEmail.sendUnregisterEmail(serializer, user, Collections.singletonList(registration));
     }
 
-    public void unRegisterUser(String articleId, Long userId, Long scopeGroupId) throws Exception {
+    public void unRegisterUser(String articleId, Long userId, Long siteGroupId) throws Exception {
 
         if (userId == null) return;
 
@@ -82,7 +82,7 @@ public class UnregisterDisplayContext {
             return;
         }
 
-        long groupId = Objects.requireNonNullElseGet(scopeGroupId, _themeDisplay::getSiteGroupId);
+        long groupId = Objects.requireNonNullElseGet(siteGroupId, _themeDisplay::getSiteGroupId);
 
         Registration registration = _dsdParserUtils.getRegistration(groupId, articleId);
         _dsdSessionUtils.unRegisterUser(user, registration);

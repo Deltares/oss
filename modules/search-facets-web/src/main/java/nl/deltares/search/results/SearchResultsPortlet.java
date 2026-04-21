@@ -11,6 +11,7 @@ import com.liferay.portal.search.searcher.SearchRequest;
 import com.liferay.portal.search.searcher.SearchResponse;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
+import nl.deltares.portal.model.facet.FacetSelection;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
@@ -85,6 +86,11 @@ public class SearchResultsPortlet extends MVCPortlet {
                                                                     RenderRequest renderRequest, ThemeDisplay themeDisplay, String type, boolean reverseOrder) {
 
         final SearchResultsPortletDisplayContext displayContext = new SearchResultsPortletDisplayContext(dsdParserUtils, themeDisplay);
+
+        Object facetSelection = FacetUtils.getFromSession("global", "facet-selection", renderRequest);
+        if (facetSelection == null) {
+            displayContext.setFacetSelection((FacetSelection) facetSelection);
+        }
         final SearchResponse searchResponse = portletSharedSearchResponse.getSearchResponse();
         SearchRequest searchRequest = searchResponse.getRequest();
 
@@ -98,10 +104,6 @@ public class SearchResultsPortlet extends MVCPortlet {
         displayContext.setPaginationStart((cur - 1) * deltas);
         displayContext.setTotalHits(searchResponse.getTotalHits());
         displayContext.setResultsDocuments(portletSharedSearchResponse.getDocuments(), type, reverseOrder);
-
-        String scopeUserId = FacetUtils.getFromSession("user-program-facet", "facet-scopeUserId", renderRequest);
-        displayContext.setScopeUserId(scopeUserId == null ? null : Long.parseLong(scopeUserId));
-
         return displayContext;
     }
 

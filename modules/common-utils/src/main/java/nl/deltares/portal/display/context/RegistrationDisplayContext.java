@@ -3,9 +3,11 @@ package nl.deltares.portal.display.context;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
@@ -13,6 +15,7 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletMode;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
+import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.DateUtil;
@@ -22,12 +25,15 @@ import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.OssConfigurationConstants;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.DsdArticle;
+import nl.deltares.portal.model.facet.FacetSelection;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.Period;
 
+import javax.portlet.MutableRenderParameters;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -36,23 +42,20 @@ import java.util.TimeZone;
 @SuppressWarnings("unused")
 public class RegistrationDisplayContext {
 
-
-    public RegistrationDisplayContext(Registration registration, int dayIndex, ThemeDisplay themeDisplay, long scopeUserId) {
+    public RegistrationDisplayContext(Registration registration, int dayIndex, ThemeDisplay themeDisplay, FacetSelection facetSelection) {
         this._themeDisplay = themeDisplay;
         this._registration = registration;
         this._dayIndex = dayIndex;
-        this._scopeUserId = scopeUserId;
-
+        this._facetSelection = facetSelection;
         ConfigurationProvider configurationProvider = ConfigurationProviderUtil.getConfigurationProvider();
         if (configurationProvider != null) {
             try {
                 _dsdSiteConfiguration = configurationProvider
-                        .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
+                        .getGroupConfiguration(DSDSiteConfiguration.class, this._registration.getGroupId());
             } catch (ConfigurationException e) {
                 LOG.error("Error retrieving DsdSiteConfiguration: ", e);
             }
         }
-
     }
 
     public double getPrice() {
@@ -211,7 +214,12 @@ public class RegistrationDisplayContext {
     }
 
     public boolean canUserRegister() {
-        return getRegistration() != null && getRegistration().canUserRegister(_scopeUserId);
+
+        if (_facetSelection != null) {
+            return getRegistration() != null && getRegistration().canUserRegister(_facetSelection.getUserId());
+        } else {
+            return getRegistration() != null && getRegistration().canUserRegister(_themeDisplay.getUserId());
+        }
     }
 
     public String getStartTime() {
@@ -261,7 +269,7 @@ public class RegistrationDisplayContext {
 
     @SuppressWarnings("unused")
     public String getUnregisterURL(HttpServletRequest httpServletRequest) {
-        return getPortletRequest(httpServletRequest, OssConfigurationConstants.REGISTRATION_UNREGISTER, null, _themeDisplay.getURLCurrent());
+        return getPortletRequest(httpServletRequest, OssConfigurationConstants.REGISTRATION_UNREGISTER, getScopeUserId(), _themeDisplay.getURLCurrent());
     }
 
     @SuppressWarnings("unused")
@@ -270,7 +278,7 @@ public class RegistrationDisplayContext {
     }
 
     public String getUnregisterURL(PortletRequest portletRequest) {
-        return getPortletRequest(portletRequest, OssConfigurationConstants.REGISTRATION_UNREGISTER, null, getConfiguredRegistrationFormId(), OssConstants.SUBMIT_REGISTER_FORM_URL);
+        return getPortletRequest(portletRequest, OssConfigurationConstants.REGISTRATION_UNREGISTER, getScopeUserId(), getConfiguredRegistrationFormId(), OssConstants.SUBMIT_REGISTER_FORM_URL);
     }
 
     @SuppressWarnings("unused")
@@ -284,17 +292,47 @@ public class RegistrationDisplayContext {
     }
 
     public String getViewURL(DsdArticle article) {
-        return _themeDisplay.getSiteGroup().getDisplayURL(_themeDisplay) + "/-/" + article.getJournalArticle().getUrlTitle();
+        return getViewURL(article, true);
+    }
+
+    public String getViewURL(DsdArticle article, boolean redirect) {
+
+        String redirectURL = _themeDisplay.getURLPortal() +  _themeDisplay.getURLCurrent();
+        String portalURL = "";
+        if (_facetSelection == null) {
+            portalURL =  "/-/" + article.getJournalArticle().getUrlTitle();
+        } else {
+            Company company = CompanyLocalServiceUtil.fetchCompany(_facetSelection.getCompanyId());
+            long siteGroupId = _facetSelection.getSiteGroupId();
+
+            try {
+                int port = _themeDisplay.getServerPort();
+                portalURL = company.getPortalURL(siteGroupId);
+                URI uri = URI.create(portalURL);
+                if (uri.getPort() == port){
+                    return portalURL;
+                }
+                portalURL = portalURL.replace(":" + uri.getPort(), ":" + port);
+                portalURL += "/-/" + article.getJournalArticle().getUrlTitle();
+            } catch (PortalException e) {
+                LOG.warn("Could not get the PortalURL for company [" + company.getCompanyId() + "]");
+            }
+        }
+
+        if (redirect) {
+            portalURL += "?redirect=" + redirectURL;
+        }
+        return portalURL;
     }
 
     private String getPortletRequest(HttpServletRequest httpServletRequest, String action, Long userId, String redirect) {
 
         if (_dsdSiteConfiguration != null) {
-            long groupId = _themeDisplay.getScopeGroupId();
+            long siteGroupId = getSiteGroupId();
 
             try {
                 Layout registrationPage = LayoutLocalServiceUtil
-                        .fetchLayoutByFriendlyURL(groupId, false, _dsdSiteConfiguration.registrationURL());
+                        .fetchLayoutByFriendlyURL(siteGroupId, false, _dsdSiteConfiguration.registrationURL());
 
                 if (registrationPage != null) {
                     PortletURL portletURL = PortletURLFactoryUtil
@@ -318,7 +356,7 @@ public class RegistrationDisplayContext {
         return "";
     }
 
-    public String getConfiguredRegistrationFormId(){
+    public String getConfiguredRegistrationFormId() {
         return _themeDisplay.getThemeSetting("registration-form-id");
     }
 
@@ -335,17 +373,26 @@ public class RegistrationDisplayContext {
     }
 
     public long getScopeUserId() {
-        return _scopeUserId;
+        if (_facetSelection == null) {
+            return _themeDisplay.getUserId();
+        }
+        return _facetSelection.getUserId();
+    }
+
+    public long getSiteGroupId() {
+        if (_facetSelection == null) {
+            return _themeDisplay.getSiteGroupId();
+        }
+        return _facetSelection.getSiteGroupId();
     }
 
     public String getPortletRequest(PortletRequest portletRequest, String action, Long userId, String formName, String actionCommand) {
 
         if (_dsdSiteConfiguration != null) {
-            long groupId = getRegistration().getGroupId();
 
             try {
                 Layout registrationPage = LayoutLocalServiceUtil
-                        .fetchLayoutByFriendlyURL(groupId, false, _dsdSiteConfiguration.registrationURL());
+                        .fetchLayoutByFriendlyURL(_themeDisplay.getScopeGroupId(), false, _dsdSiteConfiguration.registrationURL());
 
                 if (registrationPage != null) {
                     PortletURL portletURL = PortletURLFactoryUtil
@@ -355,11 +402,13 @@ public class RegistrationDisplayContext {
                                     action.equals("unregister") ? PortletRequest.ACTION_PHASE : PortletRequest.RENDER_PHASE);
                     portletURL.setWindowState(LiferayWindowState.NORMAL);
                     portletURL.setPortletMode(LiferayPortletMode.VIEW);
-                    portletURL.setParameter("javax.portlet.action", actionCommand);
-                    portletURL.setParameter("articleId", getRegistration().getArticleId());
-                    portletURL.setParameter("scopeGroupId", String.valueOf(groupId));
-                    portletURL.setParameter("action", action);
-                    if (userId != null) portletURL.setParameter("userId", userId.toString());
+                    MutableRenderParameters renderParameters = portletURL.getRenderParameters();
+                    renderParameters.setValue("javax.portlet.action", action);
+                    renderParameters.setValue("javax.portlet.action", actionCommand);
+                    renderParameters.setValue("articleId", getRegistration().getArticleId());
+                    renderParameters.setValue("action", action);
+                    if (userId != null) renderParameters.setValue("userId", userId.toString());
+                    renderParameters.setValue("siteGroupId", String.valueOf(getSiteGroupId()));
                     return portletURL.toString();
                 }
             } catch (Exception e) {
@@ -373,11 +422,9 @@ public class RegistrationDisplayContext {
     private final ThemeDisplay _themeDisplay;
     private final Registration _registration;
     private final int _dayIndex;
-    private long _scopeUserId;
+    private final FacetSelection _facetSelection;
+
 
     private static final Log LOG = LogFactoryUtil.getLog(RegistrationDisplayContext.class);
 
-    public void setScopeUserId(long scopeUserId) {
-        this._scopeUserId = scopeUserId;
-    }
 }

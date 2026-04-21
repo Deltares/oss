@@ -107,14 +107,14 @@ public class FacetUtils {
 
     }
 
-    public static void storeInSession(String portletId, String fieldName, String fieldValue, PortletRequest request) {
+    public static void storeInSession(String portletId, String fieldName, Object fieldValue, PortletRequest request) {
         PortletSession portletSession = request.getPortletSession(true);
         portletSession.setAttribute("LIFERAY_SHARED_" + portletId + fieldName, fieldValue, PortletSession.APPLICATION_SCOPE);
     }
 
-    public static String getFromSession(String portletId, String fieldName, PortletRequest request) {
+    public static Object getFromSession(String portletId, String fieldName, PortletRequest request) {
         PortletSession portletSession = request.getPortletSession(true);
-        return (String) portletSession.getAttribute("LIFERAY_SHARED_" + portletId + fieldName, PortletSession.APPLICATION_SCOPE);
+        return portletSession.getAttribute("LIFERAY_SHARED_" + portletId + fieldName, PortletSession.APPLICATION_SCOPE);
     }
 
     public static void removeFromSession(String portletId, String fieldName, PortletRequest request) {

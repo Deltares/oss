@@ -1,13 +1,11 @@
 <#assign dsdParserUtils = serviceLocator.findService("nl.deltares.portal.utils.DsdParserUtils") />
 <#assign title=.vars['reserved-article-title'].data />
-<#assign urltitle=.vars['reserved-article-url-title'].data />
 <#assign articleId = .vars['reserved-article-id'].getData() />
 <#assign displayContext = dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay) />
 <#assign registration = displayContext.getRegistration() />
 <#assign timeZoneId = registration.getTimeZoneId() />
 <#assign showButtons = displayContext.canUserRegister() && themeDisplay.isSignedIn() />
 <#assign cancellationExceeded = registration.isCancellationPeriodExceeded() />
-<#assign redirectUrl= themeDisplay.getSiteGroup().getDisplayURL(themeDisplay) + "/program" />
 <#if registration.isMultiDayEvent() >
     <#assign title = displayContext.getTitle() />
 </#if>
@@ -19,7 +17,7 @@
     </div>
     <div class="col-10 px-3">
         <h4>
-            <a href="-/${urltitle}?redirect=${redirectUrl}" >
+            <a href="${displayContext.getViewURL(registration)}" >
                 <strong>${title}</strong>
             </a>
         </h4>

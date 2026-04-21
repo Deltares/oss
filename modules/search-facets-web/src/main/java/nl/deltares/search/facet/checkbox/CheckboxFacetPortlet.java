@@ -69,7 +69,7 @@ public class CheckboxFacetPortlet extends MVCPortlet {
         renderRequest.setAttribute("name", name);
         String selection = FacetUtils.getRequestParameter(name, renderRequest);
         if (selection == null) {
-            selection = FacetUtils.getFromSession(themeDisplay.getPortletDisplay().getId(), name, renderRequest);
+            selection = (String) FacetUtils.getFromSession(themeDisplay.getPortletDisplay().getId(), name, renderRequest);
         }
 
         if (selection == null) {
