@@ -169,4 +169,8 @@ public class SearchResultsPortletDisplayContext implements Serializable {
     public void setFacetSelection(FacetSelection facetSelection) {
         this.facetSelection = facetSelection;
     }
+
+    public FacetSelection getFacetSelection() {
+        return facetSelection;
+    }
 }

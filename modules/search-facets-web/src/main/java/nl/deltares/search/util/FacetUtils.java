@@ -6,13 +6,18 @@ import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.PortletRequestModel;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
+import nl.deltares.portal.model.facet.FacetSelection;
 
 import javax.portlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -86,6 +91,20 @@ public class FacetUtils {
         return articleDisplay;
     }
 
+    public static FacetSelection getFacetSelection(long siteGroupId, ThemeDisplay themeDisplay) {
+        FacetSelection defaultFacetSelection = new FacetSelection(themeDisplay.getCompanyId(), themeDisplay.getSiteGroupId(), themeDisplay.getUserId());
+
+        Group selectedSiteGroup = GroupLocalServiceUtil.fetchGroup(siteGroupId);
+        if (selectedSiteGroup == null) {
+            return defaultFacetSelection;
+        }
+        long groupId = selectedSiteGroup.getGroupId();
+        User user = UserLocalServiceUtil.fetchUserByEmailAddress(selectedSiteGroup.getCompanyId(), themeDisplay.getUser().getEmailAddress());
+        if (user == null) {
+            return  defaultFacetSelection;
+        };
+        return new FacetSelection(selectedSiteGroup.getCompanyId(), groupId, user.getUserId());
+    }
     /**
      * Find a request parameter in the request string of the search results iterator
      *

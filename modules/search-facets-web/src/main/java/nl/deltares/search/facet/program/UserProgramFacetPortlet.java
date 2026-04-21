@@ -2,19 +2,15 @@ package nl.deltares.search.facet.program;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
-import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.portal.model.facet.FacetSelection;
 import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
-import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -57,14 +53,12 @@ public class UserProgramFacetPortlet extends MVCPortlet {
             renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, false);
             renderRequest.setAttribute("site-selection", String.valueOf(themeDisplay.getSiteGroupId()));
         } else {
-            //First retrieve from request URL then try from session.
-            Object selection = FacetUtils.getFromSession("global", "facet-selection", renderRequest);
-            if (selection instanceof FacetSelection) {
-                renderRequest.setAttribute("site-selection", String.valueOf(((FacetSelection)selection).getSiteGroupId()));
-            }
+
+            String siteSelection = ParamUtil.getString(renderRequest, "user-program-site-selection", String.valueOf(themeDisplay.getSiteGroupId()));
+            renderRequest.setAttribute("site-selection", siteSelection);
+
             Map<Long, List<Long>> registrationSiteIds = _dsdSessionUtils.getRegistrationSiteIds();
             renderRequest.setAttribute("site-selectionMap", convertToOptions(registrationSiteIds, themeDisplay.getSiteGroup()));
-
         }
         renderRequest.setAttribute("showRegistrationsMadeForOthers", configuration.showRegistrationsMadeForOthers());
         super.render(renderRequest, renderResponse);
@@ -119,15 +113,8 @@ public class UserProgramFacetPortlet extends MVCPortlet {
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
         final UserProgramFacetConfiguration configuration = getConfiguration(themeDisplay);
         String selection = ParamUtil.getString(actionRequest, "user-program-site-selection");
-
-        if ("current".equals(selection)) {
-            FacetUtils.removeFromSession("global", "facet-selection", actionRequest);
-        } else {
-            Group selectedSiteGroup = GroupLocalServiceUtil.fetchGroup(Long.parseLong(selection));
-            User selectedSiteUser = UserLocalServiceUtil.fetchUserByEmailAddress(selectedSiteGroup.getCompanyId(), themeDisplay.getUser().getEmailAddress());
-            FacetSelection facetSelection = new FacetSelection(selectedSiteGroup.getCompanyId(), selectedSiteGroup.getGroupId(), selectedSiteUser.getUserId());
-            FacetUtils.storeInSession("global", "facet-selection", facetSelection, actionRequest);
-        }
+        if (selection == null || selection.isEmpty()) return;
+        actionRequest.setAttribute("site-selection", String.valueOf(themeDisplay.getSiteGroupId()));
     }
     @Reference
     private ConfigurationProvider _configurationProvider;

@@ -130,18 +130,18 @@ public interface DsdSessionUtils {
 
     /**
      * Get user's registrations records for given event.
-     * @param user User Id
+     * @param userId User Id
      * @param groupId Site id for which to retrieve registrations
      * @return List of user registration records
      */
-    List<Long> getResourceIdsByUserAndGroup(User user, long groupId);
+    List<Long> getResourceIdsByUserAndGroup(long userId, long groupId);
 
     /**
      * Find all user registrations that this user made for other user .
-     * @param user User Id of user that made registration
+     * @param userId User Id of user that made registration
      * @return List of user registration records
      */
-    List<Long> getResourceIdsByAuthorAndGroup(User user, long groupId);
+    List<Long> getResourceIdsByAuthorAndGroup(long userId, long groupId);
 
     /**
      * Get registration data by resourceId and author of that registration.

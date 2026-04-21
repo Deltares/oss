@@ -87,9 +87,10 @@ public class SearchResultsPortlet extends MVCPortlet {
 
         final SearchResultsPortletDisplayContext displayContext = new SearchResultsPortletDisplayContext(dsdParserUtils, themeDisplay);
 
-        Object facetSelection = FacetUtils.getFromSession("global", "facet-selection", renderRequest);
-        if (facetSelection == null) {
-            displayContext.setFacetSelection((FacetSelection) facetSelection);
+        String requestParameter = FacetUtils.getRequestParameter("user-program-site-selection", renderRequest);
+        if (requestParameter != null && !requestParameter.isEmpty()) {
+            FacetSelection facetSelection = FacetUtils.getFacetSelection(Long.parseLong(requestParameter), themeDisplay);
+            displayContext.setFacetSelection(facetSelection);
         }
         final SearchResponse searchResponse = portletSharedSearchResponse.getSearchResponse();
         SearchRequest searchRequest = searchResponse.getRequest();

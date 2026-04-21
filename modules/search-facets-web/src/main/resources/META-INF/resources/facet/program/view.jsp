@@ -20,7 +20,6 @@
             type="select"
             label="facet.program.select-site.label"
             value="<%= selection  %>">
-        <aui:option value="current" label ="facet.program.select-site.current" />
         <% for (String selectionValue : selectionMap.keySet()) { %>
         <aui:option value="<%=selectionValue%>" label ="<%=selectionMap.get(selectionValue)%>" />
         <%}%>

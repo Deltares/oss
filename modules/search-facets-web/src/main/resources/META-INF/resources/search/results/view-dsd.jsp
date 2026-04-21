@@ -14,7 +14,6 @@
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="javax.portlet.PortletURL" %>
 <%@ page import="nl.deltares.portal.model.impl.Registration" %>
-<%@ page import="nl.deltares.search.util.FacetUtils" %>
 <%@ page import="nl.deltares.portal.model.facet.FacetSelection" %>
 
 <liferay-theme:defineObjects/>
@@ -23,8 +22,6 @@
 <%
 
     String lastDate = "";
-    FacetSelection facetSelection = (FacetSelection) FacetUtils.getFromSession("global", "facet-selection", renderRequest);
-
     SearchResultsPortletDisplayContext searchResultsPortletDisplayContext =
             (SearchResultsPortletDisplayContext) java.util.Objects.requireNonNull(request.getAttribute(WebKeys.PORTLET_DISPLAY_CONTEXT));
 
@@ -34,6 +31,7 @@
     String templateKey = (String) renderRequest.getAttribute("displayTemplate");
     PortletURL iteratorURL = (PortletURL) renderRequest.getAttribute("iteratorURL");
 
+    FacetSelection facetSelection = searchResultsPortletDisplayContext.getFacetSelection();
 %>
 
 <liferay-ui:search-container

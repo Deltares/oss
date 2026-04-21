@@ -2,11 +2,9 @@ package nl.deltares.search.facet.program;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.search.facet.Facet;
-import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
@@ -33,32 +31,22 @@ import java.util.stream.Collectors;
 public class UserProgramFacetPortletSharedContributor implements PortletSharedSearchContributor {
     @Override
     public void contribute(PortletSharedSearchSettings portletSharedSearchSettings) {
-        //check for parameter is in namespace of searchResultsPortlet
-        Object selectionObj = FacetUtils.getFromSession(
-                "global", "facet-selection", portletSharedSearchSettings.getRenderRequest());
-
         ThemeDisplay themeDisplay = portletSharedSearchSettings.getThemeDisplay();
         SearchRequestBuilder searchRequestBuilder = portletSharedSearchSettings.getSearchRequestBuilder();
-        User user;
+        long userId;
         long groupId;
-
-        FacetSelection selection = null;
-        if (selectionObj instanceof FacetSelection) {
-            selection = (FacetSelection) selectionObj;
-        } else {
-            FacetUtils.removeFromSession("global", "facet-selection", portletSharedSearchSettings.getRenderRequest());
-        }
-
-        if (selection == null) {
-            user = themeDisplay.getUser();
+        String selection = FacetUtils.getRequestParameter("user-program-site-selection", portletSharedSearchSettings.getRenderRequest());
+        if (selection == null || selection.isEmpty()) {
+            userId = themeDisplay.getUserId();
             groupId = themeDisplay.getSiteGroupId();
         } else {
-            user = UserLocalServiceUtil.fetchUser(selection.getUserId());
-            groupId = selection.getSiteGroupId();
+            FacetSelection facetSelection = FacetUtils.getFacetSelection(Long.parseLong(selection), themeDisplay);
+            groupId = facetSelection.getSiteGroupId();
+            userId = facetSelection.getUserId();
 
             //Tell searchrequest in which Elasticsearch index to look for articles
-            searchRequestBuilder.companyId(selection.getCompanyId());
-            searchRequestBuilder.indexes("liferay-" + selection.getCompanyId());
+            searchRequestBuilder.companyId(facetSelection.getCompanyId());
+            searchRequestBuilder.indexes("liferay-" + facetSelection.getCompanyId());
             //Only return latest version of article
             portletSharedSearchSettings.addFacet(new DeltaresTermFieldValueFacet("head", "true",
                     portletSharedSearchSettings.getSearchContext()));
@@ -69,19 +57,19 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
         try {
             List<String> entryClassPKs;
             if (showRegistrationForOthers(portletSharedSearchSettings)) {
-                entryClassPKs = _dsdSessionUtils.getResourceIdsByAuthorAndGroup(user, groupId)
+                entryClassPKs = _dsdSessionUtils.getResourceIdsByAuthorAndGroup(userId, groupId)
                         .stream()
                         .map(String::valueOf)
                         .collect(Collectors.toList());
             } else {
-                entryClassPKs = _dsdSessionUtils.getResourceIdsByUserAndGroup(user, groupId)
+                entryClassPKs = _dsdSessionUtils.getResourceIdsByUserAndGroup(userId, groupId)
                         .stream()
                         .map(String::valueOf)
                         .collect(Collectors.toList());
             }
             portletSharedSearchSettings.addFacet(buildFacet(entryClassPKs, portletSharedSearchSettings));
         } catch (Exception e) {
-            LOG.debug("Could not get registrations for user [" + user.getUserId() + "]", e);
+            LOG.debug("Could not get registrations for user [" + userId + "]", e);
         }
     }
 

@@ -389,16 +389,16 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         return registrationsCount > 0;
     }
 
-    public List<Long> getResourceIdsByUserAndGroup(User user, long groupId) {
+    public List<Long> getResourceIdsByUserAndGroup(long userId, long groupId) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
-                RegistrationLocalServiceUtil.getRegistrationDataByUserAndGroupId(user.getUserId(), groupId);
+                RegistrationLocalServiceUtil.getRegistrationDataByUserAndGroupId(userId, groupId);
         return dbRegistrations.stream().map(nl.deltares.dsd.registration.model.Registration::getResourcePrimaryKey).collect(Collectors.toList());
     }
 
     @Override
-    public List<Long> getResourceIdsByAuthorAndGroup(User user, long groupId) {
+    public List<Long> getResourceIdsByAuthorAndGroup(long userId, long groupId) {
         List<nl.deltares.dsd.registration.model.Registration> dbRegistrations =
-                RegistrationLocalServiceUtil.getRegistrationDataByAuthorAndGroupId(user.getUserId(), groupId);
+                RegistrationLocalServiceUtil.getRegistrationDataByAuthorAndGroupId(userId, groupId);
         return dbRegistrations.stream()
                 .filter(registration -> registration.getUserId() != registration.getRegisteredByUserId())
                 .map(nl.deltares.dsd.registration.model.Registration::getResourcePrimaryKey).collect(Collectors.toList());
