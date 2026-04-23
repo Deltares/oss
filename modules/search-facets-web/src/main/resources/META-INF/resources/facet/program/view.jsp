@@ -3,7 +3,7 @@
 <%@ include file="/META-INF/resources/init.jsp" %>
 
 <%
-    String selection = (String) renderRequest.getAttribute("site-selection");
+    String selection = (String) renderRequest.getAttribute("user-program-site-selection");
     Map<String, String> selectionMap = (Map) renderRequest.getAttribute("site-selectionMap");
     if (selectionMap == null){
         selectionMap = Collections.emptyMap();
@@ -12,7 +12,6 @@
 
 <liferay-portlet:actionURL
         var="submitURL"
-        name="submitForm"
 />
 <aui:form method="post" name="programFacetForm" action="<%=submitURL%>" cssClass="program-facet-form">
     <aui:select

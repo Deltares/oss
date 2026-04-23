@@ -31,14 +31,19 @@ import java.util.stream.Collectors;
 public class UserProgramFacetPortletSharedContributor implements PortletSharedSearchContributor {
     @Override
     public void contribute(PortletSharedSearchSettings portletSharedSearchSettings) {
+
         ThemeDisplay themeDisplay = portletSharedSearchSettings.getThemeDisplay();
+        String currentPortletId = portletSharedSearchSettings.getPortletId();
         SearchRequestBuilder searchRequestBuilder = portletSharedSearchSettings.getSearchRequestBuilder();
         long userId;
         long groupId;
-        String selection = FacetUtils.getRequestParameter("user-program-site-selection", portletSharedSearchSettings.getRenderRequest());
+        String selection = (String) FacetUtils.getFromSession(currentPortletId, "user-program-site-selection", portletSharedSearchSettings.getRenderRequest());
         if (selection == null || selection.isEmpty()) {
             userId = themeDisplay.getUserId();
             groupId = themeDisplay.getSiteGroupId();
+            //Copy FacetSelection to the context of the SearchResultsPortlet
+            FacetUtils.removeFromSession(themeDisplay.getPortletDisplay().getId(), "facet-selection", portletSharedSearchSettings.getRenderRequest());
+
         } else {
             FacetSelection facetSelection = FacetUtils.getFacetSelection(Long.parseLong(selection), themeDisplay);
             groupId = facetSelection.getSiteGroupId();
@@ -53,6 +58,9 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
             //Only return active articles
             portletSharedSearchSettings.addFacet(new DeltaresTermsFieldValueFacet("status", new String[]{"0"},
                     portletSharedSearchSettings.getSearchContext()));
+
+            //Copy FacetSelection to the context of the SearchResultsPortlet
+            FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(), "facet-selection", facetSelection, portletSharedSearchSettings.getRenderRequest());
         }
         try {
             List<String> entryClassPKs;

@@ -11,6 +11,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
+import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -50,12 +51,18 @@ public class UserProgramFacetPortlet extends MVCPortlet {
 
         final boolean visible = Boolean.parseBoolean(configuration.visible());
         if (!visible) {
+            String selection = String.valueOf(themeDisplay.getSiteGroupId());
             renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, false);
-            renderRequest.setAttribute("site-selection", String.valueOf(themeDisplay.getSiteGroupId()));
+            renderRequest.setAttribute("user-program-site-selection", selection);
+            FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(), "user-program-site-selection", selection, renderRequest);
         } else {
-
-            String siteSelection = ParamUtil.getString(renderRequest, "user-program-site-selection", String.valueOf(themeDisplay.getSiteGroupId()));
-            renderRequest.setAttribute("site-selection", siteSelection);
+            String siteSelection = ParamUtil.getString(renderRequest, "user-program-site-selection", null);
+            if (siteSelection == null || siteSelection.isEmpty()) {
+                FacetUtils.removeFromSession(themeDisplay.getPortletDisplay().getId(), "user-program-site-selection", renderRequest);
+            } else {
+                FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(), "user-program-site-selection", siteSelection, renderRequest);
+            }
+            renderRequest.setAttribute("user-program-site-selection", siteSelection);
 
             Map<Long, List<Long>> registrationSiteIds = _dsdSessionUtils.getRegistrationSiteIds();
             renderRequest.setAttribute("site-selectionMap", convertToOptions(registrationSiteIds, themeDisplay.getSiteGroup()));
@@ -102,20 +109,6 @@ public class UserProgramFacetPortlet extends MVCPortlet {
         }
     }
 
-    /**
-     * Pass the selected filter options to the render request
-     *
-     * @param actionRequest  Filter action
-     * @param actionResponse Filter response
-     */
-    @SuppressWarnings("unused")
-    public void submitForm(ActionRequest actionRequest, ActionResponse actionResponse) throws PortletException {
-        ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
-        final UserProgramFacetConfiguration configuration = getConfiguration(themeDisplay);
-        String selection = ParamUtil.getString(actionRequest, "user-program-site-selection");
-        if (selection == null || selection.isEmpty()) return;
-        actionRequest.setAttribute("site-selection", String.valueOf(themeDisplay.getSiteGroupId()));
-    }
     @Reference
     private ConfigurationProvider _configurationProvider;
 

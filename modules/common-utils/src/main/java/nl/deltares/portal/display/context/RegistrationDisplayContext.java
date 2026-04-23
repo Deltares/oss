@@ -48,7 +48,7 @@ public class RegistrationDisplayContext {
         this._dayIndex = dayIndex;
         this._facetSelection = facetSelection;
         ConfigurationProvider configurationProvider = ConfigurationProviderUtil.getConfigurationProvider();
-        if (configurationProvider != null) {
+        if (configurationProvider != null && _registration != null) {
             try {
                 _dsdSiteConfiguration = configurationProvider
                         .getGroupConfiguration(DSDSiteConfiguration.class, this._registration.getGroupId());

@@ -178,9 +178,11 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
             long groupId = themeDisplay.getScopeGroupId();
             JournalArticle registrationArticle = JournalArticleLocalServiceUtil
                     .fetchArticle(groupId, articleId);
-            AbsDsdArticle parentInstance = toDsdArticle(registrationArticle);
-            if (parentInstance instanceof Registration) {
-                registration = (Registration) parentInstance;
+            if (registrationArticle != null) {
+                AbsDsdArticle parentInstance = toDsdArticle(registrationArticle);
+                if (parentInstance instanceof Registration) {
+                    registration = (Registration) parentInstance;
+                }
             }
         } catch (Exception e) {
             LOG.error("Error getting Registration instance [" + articleId + "]", e);
