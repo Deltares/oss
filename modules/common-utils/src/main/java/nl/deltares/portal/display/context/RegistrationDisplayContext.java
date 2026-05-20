@@ -76,7 +76,16 @@ public class RegistrationDisplayContext {
                 url = ((DinnerRegistration) registration).getRestaurant().getSmallImageURL(_themeDisplay);
             }
         }
-        return url;
+
+        if (_facetSelection != null && url != null && !url.toLowerCase().startsWith("http")) {
+            //Relative path
+            String portalUrl = getPortalUrl();
+            portalUrl += url;
+            return portalUrl;
+        } else {
+            return url;
+        }
+
     }
 
     public int getPresenterCount() {
@@ -298,31 +307,36 @@ public class RegistrationDisplayContext {
     public String getViewURL(DsdArticle article, boolean redirect) {
 
         String redirectURL = _themeDisplay.getURLPortal() +  _themeDisplay.getURLCurrent();
-        String portalURL = "";
+
+        String portalURL = getPortalUrl();
+        portalURL += "/-/" + article.getJournalArticle().getUrlTitle();
+
+        if (redirect) {
+            portalURL += "?redirect=" + redirectURL;
+        }
+        return portalURL;
+    }
+
+    private String getPortalUrl() {
         if (_facetSelection == null) {
-            portalURL =  "/-/" + article.getJournalArticle().getUrlTitle();
+            return "";
         } else {
             Company company = CompanyLocalServiceUtil.fetchCompany(_facetSelection.getCompanyId());
             long siteGroupId = _facetSelection.getSiteGroupId();
 
             try {
                 int port = _themeDisplay.getServerPort();
-                portalURL = company.getPortalURL(siteGroupId);
+                String portalURL = company.getPortalURL(siteGroupId);
                 URI uri = URI.create(portalURL);
                 if (uri.getPort() == port){
                     return portalURL;
                 }
-                portalURL = portalURL.replace(":" + uri.getPort(), ":" + port);
-                portalURL += "/-/" + article.getJournalArticle().getUrlTitle();
+                return portalURL.replace(":" + uri.getPort(), ":" + port);
             } catch (PortalException e) {
                 LOG.warn("Could not get the PortalURL for company [" + company.getCompanyId() + "]");
+                return "";
             }
         }
-
-        if (redirect) {
-            portalURL += "?redirect=" + redirectURL;
-        }
-        return portalURL;
     }
 
     private String getPortletRequest(HttpServletRequest httpServletRequest, String action, Long userId, String redirect) {
