@@ -84,10 +84,14 @@
 </aui:fieldset>
 
 <%
-    if (suiteListSelection.isEmpty()) {
+    if (!themeDisplay.isSignedIn()) {
 %>
-<div><strong><liferay-ui:message key="no-license-records"
-                                 arguments='<%=new String[]{filterSelection, themeDisplay.getUser().getEmailAddress()} %>'/></strong>
+<div class="alert alert-info" ><liferay-ui:message key="not-logged-in"/></div>
+<%
+    } else if (suiteListSelection.isEmpty()) {
+%>
+<div class="alert alert-info" ><liferay-ui:message key="no-clm-records"
+                                 arguments='<%=new String[]{themeDisplay.getUser().getEmailAddress()} %>'/>
 </div>
 <%
     }

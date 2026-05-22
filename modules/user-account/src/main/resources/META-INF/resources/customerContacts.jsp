@@ -7,6 +7,7 @@
 
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
 
 <liferay-theme:defineObjects/>
 <portlet:defineObjects/>
@@ -80,9 +81,16 @@
 <aui:form name="customerContacts" >
     <jsp:useBean id="customerContactList" type="java.util.List" scope="request"/>
     <jsp:useBean id="totalCustomerContactCount" type="java.lang.Integer" scope="request"/>
-
+    <%
+        String emptyResultsMessage = "";
+        if (!themeDisplay.isSignedIn()) {
+            emptyResultsMessage = LanguageUtil.format(request, "not-logged-in", new Object[0]);
+        } else if (totalCustomerContactCount == 0) {
+            emptyResultsMessage = LanguageUtil.format(request, "no-clm-records", new Object[]{themeDisplay.getUser().getEmailAddress()});
+        }
+    %>
     <liferay-ui:search-container id="tableResults" iteratorURL="<%= iteratorURL %>" delta="25"
-                                 emptyResultsMessage='<%=("There are no contacts for customer '" + (selectedCustomerName) + "' and selection '" + (filterSelection) + "'")%>'
+                                 emptyResultsMessage='<%=emptyResultsMessage%>'
                                  total="<%=totalCustomerContactCount%>">
         <liferay-ui:search-container-results results="<%= customerContactList %>"/>
 
