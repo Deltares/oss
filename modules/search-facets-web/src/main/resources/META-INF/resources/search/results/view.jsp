@@ -14,4 +14,7 @@
     <c:when test='<%=( displayType.equals("download") ) %>'>
         <jsp:include page="view-download.jsp"/>
     </c:when>
+    <c:when test='<%=( displayType.equals("article") ) %>'>
+        <jsp:include page="view-articles.jsp"/>
+    </c:when>
 </c:choose>

@@ -13,6 +13,8 @@
 <%@ page import="com.liferay.portal.kernel.util.WebKeys" %>
 <%@ page import="nl.deltares.search.results.SearchResultsPortletDisplayContext" %>
 <%@ page import="nl.deltares.search.util.FacetUtils" %>
+<%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
+<%@ page import="nl.deltares.portal.model.facet.FacetSelection" %>
 
 <liferay-theme:defineObjects/>
 
@@ -26,10 +28,14 @@
         return;
     }
     String templateKey = (String) renderRequest.getAttribute("displayTemplate");
+    FacetSelection facetSelection = searchResultsPortletDisplayContext.getFacetSelection();
 %>
 <liferay-portlet:renderURL varImpl="iteratorURL">
     <portlet:param name="mvcPath" value="/search/results/view-download.jsp" />
 </liferay-portlet:renderURL>
+
+
+<div class="c-events c-row">
 
 <liferay-ui:search-container
         emptyResultsMessage='<%= LanguageUtil.format(request, "no-results-were-found-that-matched-the-keywords-x", "<strong>" + HtmlUtil.escape(searchResultsPortletDisplayContext.getKeywords()) + "</strong>", false) %>'
@@ -45,20 +51,28 @@
             modelVar="article"
     >
 
-        <liferay-ui:search-container-column-text
-                colspan="<%= 2 %>"
-        >
-            <%
-                JournalArticleDisplay articleDisplay = FacetUtils
-                        .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, templateKey,
-                                article.getGroupId(), article.getArticleId(), themeDisplay);
-            %>
+        <%
+            try {
+                portletSession.setAttribute("search-results-registration-articleId", article.getArticleId());
+                if (facetSelection != null){
+                    portletSession.setAttribute("search-results-facet-selection", facetSelection);
+                }
+            } catch (Exception e){
+                SessionErrors.add(renderRequest, "session error " + e.getMessage());
+            }
 
-            <liferay-journal:journal-article-display
-                    articleDisplay="<%= articleDisplay %>"
-            />
-        </liferay-ui:search-container-column-text>
+        %>
 
+
+        <%
+            JournalArticleDisplay articleDisplay = FacetUtils
+                    .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, templateKey,
+                            article.getGroupId(), article.getArticleId(), themeDisplay);
+        %>
+
+        <liferay-journal:journal-article-display
+                articleDisplay="<%= articleDisplay %>"
+        />
     </liferay-ui:search-container-row>
     <liferay-ui:search-iterator
             displayStyle="descriptive"
@@ -66,3 +80,4 @@
             type="more"
     />
 </liferay-ui:search-container>
+</div>

@@ -1,30 +1,17 @@
 package nl.deltares.portal.display.context;
 
-import com.liferay.asset.kernel.model.AssetEntry;
-import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
-import com.liferay.journal.model.JournalArticle;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Layout;
-import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletMode;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
-import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.DateUtil;
-import com.liferay.portal.kernel.util.HtmlUtil;
-import com.liferay.portal.kernel.util.StringUtil;
-import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.OssConfigurationConstants;
 import nl.deltares.portal.constants.OssConstants;
-import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.facet.FacetSelection;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.Period;
@@ -33,44 +20,34 @@ import javax.portlet.MutableRenderParameters;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
 @SuppressWarnings("unused")
-public class RegistrationDisplayContext {
+public class RegistrationDisplayContext extends DSDArticleDisplayContext {
 
     public RegistrationDisplayContext(Registration registration, int dayIndex, ThemeDisplay themeDisplay, FacetSelection facetSelection) {
-        this._themeDisplay = themeDisplay;
-        this._registration = registration;
+        super(registration, themeDisplay, facetSelection);
         this._dayIndex = dayIndex;
-        this._facetSelection = facetSelection;
-        ConfigurationProvider configurationProvider = ConfigurationProviderUtil.getConfigurationProvider();
-        if (configurationProvider != null && _registration != null) {
-            try {
-                _dsdSiteConfiguration = configurationProvider
-                        .getGroupConfiguration(DSDSiteConfiguration.class, this._registration.getGroupId());
-            } catch (ConfigurationException e) {
-                LOG.error("Error retrieving DsdSiteConfiguration: ", e);
-            }
-        }
     }
 
     public double getPrice() {
-        return _registration == null ? 0 : _registration.getPrice();
+        Registration registration = getRegistration();
+        return registration == null ? 0 : registration.getPrice();
     }
 
     public String getCurrency() {
-        return _registration == null ? "€" : _registration.getCurrency();
+        Registration registration = getRegistration();
+        return registration == null ? "€" : registration.getCurrency();
     }
 
     public String getSmallImageURL() {
         String url = "";
         Registration registration = getRegistration();
         if (registration != null) {
-            url = registration.getSmallImageURL(_themeDisplay);
+            url = registration.getSmallImageURL(super._themeDisplay);
 
             if ((url == null || url.isEmpty()) && registration instanceof DinnerRegistration) {
                 url = ((DinnerRegistration) registration).getRestaurant().getSmallImageURL(_themeDisplay);
@@ -119,16 +96,17 @@ public class RegistrationDisplayContext {
     }
 
     public Registration getRegistration() {
-        return _registration;
+        if (super._article instanceof Registration) return (Registration) super._article;
+        return null;
     }
 
     private SessionRegistration getSession() {
         SessionRegistration sessionRegistration = null;
 
-        if (_registration instanceof SessionRegistration) {
-            sessionRegistration = (SessionRegistration) _registration;
+        Registration registration = getRegistration();
+        if (registration instanceof SessionRegistration) {
+            sessionRegistration = (SessionRegistration) registration;
         }
-
         return sessionRegistration;
     }
 
@@ -189,8 +167,9 @@ public class RegistrationDisplayContext {
     }
 
     public String getTitle() {
-        final String title = _registration.getTitle();
-        if (_registration.isShowMultipleDaysAsSingleDate()) return title;
+        final String title = super.getTitle();
+        Registration registration = getRegistration();
+        if (registration.isShowMultipleDaysAsSingleDate()) return title;
         final String postFix = LanguageUtil.format(_themeDisplay.getLocale(),
                 "program-list.day.count", new String[]{String.valueOf((getDayCount() + 1)), String.valueOf(getNumberOfDays())});
         return (title + " (" + postFix + ")");
@@ -201,8 +180,9 @@ public class RegistrationDisplayContext {
     }
 
     public int getNumberOfDays() {
-        if (!_registration.isMultiDayEvent()) return 0;
-        return _registration.getStartAndEndTimesPerDay().size();
+        Registration registration = getRegistration();
+        if (!registration.isMultiDayEvent()) return 0;
+        return registration.getStartAndEndTimesPerDay().size();
     }
 
     public boolean isPastEvent() {
@@ -210,7 +190,7 @@ public class RegistrationDisplayContext {
         if (registration != null) {
 
             if (registration.isToBeDetermined()) return false;
-            return getEndDate(_registration).getTime() < System.currentTimeMillis();
+            return getEndDate(registration).getTime() < System.currentTimeMillis();
         }
         return true;
     }
@@ -223,7 +203,6 @@ public class RegistrationDisplayContext {
     }
 
     public boolean canUserRegister() {
-
         if (_facetSelection != null) {
             return getRegistration() != null && getRegistration().canUserRegister(_facetSelection.getUserId());
         } else {
@@ -245,33 +224,6 @@ public class RegistrationDisplayContext {
         if (registration != null) {
             return DateUtil.getDate(getEndDate(registration), "HH:mm", _themeDisplay.getLocale(),
                     TimeZone.getTimeZone(registration.getTimeZoneId()));
-        }
-        return "";
-    }
-
-    public String getSummary() {
-        String summary = "";
-        if (_registration == null) return summary;
-        try {
-            AssetEntry assetEntry = AssetEntryLocalServiceUtil
-                    .getEntry(JournalArticle.class.getName(), _registration.getJournalArticle().getResourcePrimKey());
-            summary = StringUtil.shorten(HtmlUtil.stripHtml(assetEntry.getSummary(_themeDisplay.getLocale())), 150);
-        } catch (Exception e) {
-            LOG.debug("Could not get the AssetEntry for article [" + _registration.getArticleId() + "]");
-        }
-        return summary;
-    }
-
-    public String getContactEmail() {
-        if (_dsdSiteConfiguration != null) {
-            return _dsdSiteConfiguration.replyToEmail();
-        }
-        return "mydeltares@deltares.nl";
-    }
-
-    public String getCourseConditionsUrl() {
-        if (_dsdSiteConfiguration != null) {
-            return _dsdSiteConfiguration.conditionsURL();
         }
         return "";
     }
@@ -298,45 +250,6 @@ public class RegistrationDisplayContext {
     @SuppressWarnings("unused")
     public String getRegisterURL(PortletRequest portletRequest) {
         return getPortletRequest(portletRequest, "register", null, getConfiguredRegistrationFormId(), OssConstants.SUBMIT_REGISTER_FORM_URL);
-    }
-
-    public String getViewURL(DsdArticle article) {
-        return getViewURL(article, true);
-    }
-
-    public String getViewURL(DsdArticle article, boolean redirect) {
-
-        String redirectURL = _themeDisplay.getURLPortal() +  _themeDisplay.getURLCurrent();
-
-        String portalURL = getPortalUrl();
-        portalURL += "/-/" + article.getJournalArticle().getUrlTitle();
-
-        if (redirect) {
-            portalURL += "?redirect=" + redirectURL;
-        }
-        return portalURL;
-    }
-
-    private String getPortalUrl() {
-        if (_facetSelection == null) {
-            return "";
-        } else {
-            Company company = CompanyLocalServiceUtil.fetchCompany(_facetSelection.getCompanyId());
-            long siteGroupId = _facetSelection.getSiteGroupId();
-
-            try {
-                int port = _themeDisplay.getServerPort();
-                String portalURL = company.getPortalURL(siteGroupId);
-                URI uri = URI.create(portalURL);
-                if (uri.getPort() == port){
-                    return portalURL;
-                }
-                return portalURL.replace(":" + uri.getPort(), ":" + port);
-            } catch (PortalException e) {
-                LOG.warn("Could not get the PortalURL for company [" + company.getCompanyId() + "]");
-                return "";
-            }
-        }
     }
 
     private String getPortletRequest(HttpServletRequest httpServletRequest, String action, Long userId, String redirect) {
@@ -370,10 +283,6 @@ public class RegistrationDisplayContext {
         return "";
     }
 
-    public String getConfiguredRegistrationFormId() {
-        return _themeDisplay.getThemeSetting("registration-form-id");
-    }
-
     public boolean hasPresentations() {
         final SessionRegistration session = getSession();
         if (session == null) return false;
@@ -384,20 +293,6 @@ public class RegistrationDisplayContext {
         final SessionRegistration session = getSession();
         if (session == null) return Collections.emptyList();
         return session.getPresentations();
-    }
-
-    public long getScopeUserId() {
-        if (_facetSelection == null) {
-            return _themeDisplay.getUserId();
-        }
-        return _facetSelection.getUserId();
-    }
-
-    public long getSiteGroupId() {
-        if (_facetSelection == null) {
-            return _themeDisplay.getSiteGroupId();
-        }
-        return _facetSelection.getSiteGroupId();
     }
 
     public String getPortletRequest(PortletRequest portletRequest, String action, Long userId, String formName, String actionCommand) {
@@ -432,13 +327,7 @@ public class RegistrationDisplayContext {
         return "";
     }
 
-    private DSDSiteConfiguration _dsdSiteConfiguration = null;
-    private final ThemeDisplay _themeDisplay;
-    private final Registration _registration;
     private final int _dayIndex;
-    private final FacetSelection _facetSelection;
-
-
     private static final Log LOG = LogFactoryUtil.getLog(RegistrationDisplayContext.class);
 
 }

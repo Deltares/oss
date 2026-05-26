@@ -73,6 +73,7 @@
                 value="<%= displayType %>">
             <aui:option value="dsd" >Software Days</aui:option>
             <aui:option value="download" >Download</aui:option>
+            <aui:option value="article" >DSD Articles</aui:option>
         </aui:select>
 
     </aui:fieldset>

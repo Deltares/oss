@@ -65,10 +65,10 @@
                 colorClass = "upcoming-event";
             }
             try {
-                portletSession.setAttribute("program-list-registration-articleId", context.getRegistration().getArticleId());
-                portletSession.setAttribute("program-list-registration-day", context.getDayCount());
+                portletSession.setAttribute("search-results-registration-articleId", context.getRegistration().getArticleId());
+                portletSession.setAttribute("search-results-registration-day", context.getDayCount());
                 if (facetSelection != null){
-                    portletSession.setAttribute("program-list-facet-selection", facetSelection);
+                    portletSession.setAttribute("search-results-facet-selection", facetSelection);
                 }
             } catch (Exception e){
                 SessionErrors.add(renderRequest, "session error " + e.getMessage());
@@ -99,9 +99,9 @@
         <%
             //clean up after use (still to be tested)
             try {
-                portletSession.setAttribute("program-list-registration-articleId", null);
-                portletSession.setAttribute("program-list-registration-day", null);
-                portletSession.setAttribute("program-list-facet-selection", null);
+                portletSession.setAttribute("search-results-registration-articleId", null);
+                portletSession.setAttribute("search-results-registration-day", null);
+                portletSession.setAttribute("search-results-facet-selection", null);
             } catch (Exception e){
                 SessionErrors.add(renderRequest, "session error " + e.getMessage());
             }

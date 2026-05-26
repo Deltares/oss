@@ -54,7 +54,7 @@ public class SearchResultsPortletDisplayContext implements Serializable {
 
         if ("dsd".equals(type)){
             loadRegistrations(documents, reverseSortOrder);
-        } else if ("download".equals(type)){
+        } else {
             loadDownloads(documents, reverseSortOrder);
         }
 

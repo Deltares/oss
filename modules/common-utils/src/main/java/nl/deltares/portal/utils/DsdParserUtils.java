@@ -4,6 +4,7 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import nl.deltares.portal.display.context.DSDArticleDisplayContext;
 import nl.deltares.portal.display.context.RegistrationDisplayContext;
 import nl.deltares.portal.model.impl.*;
 
@@ -36,6 +37,8 @@ public interface DsdParserUtils {
     Expert getExpert(JournalArticle article) throws PortalException;
 
     RegistrationDisplayContext getDisplayContextInstance(String articleId, ThemeDisplay themeDisplay);
+
+    DSDArticleDisplayContext getDSDArticleDisplayContextInstance(long groupId, String articleId, ThemeDisplay themeDisplay);
 
     AbsDsdArticle toDsdArticle(long siteId, String articleId) throws PortalException;
 

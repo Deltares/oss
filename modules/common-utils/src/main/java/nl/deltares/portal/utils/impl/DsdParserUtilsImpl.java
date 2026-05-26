@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import nl.deltares.portal.configuration.StructureKeyMapConfiguration;
 import nl.deltares.portal.constants.OssConstants;
+import nl.deltares.portal.display.context.DSDArticleDisplayContext;
 import nl.deltares.portal.display.context.RegistrationDisplayContext;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.facet.FacetSelection;
@@ -163,9 +164,9 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
     @Override
     public RegistrationDisplayContext getDisplayContextInstance(String articleId, ThemeDisplay themeDisplay) {
 
-        String articleAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?program-list-registration-articleId";
-        String dayAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?program-list-registration-day";
-        String facetSelectionAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?program-list-facet-selection";
+        String articleAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?search-results-registration-articleId";
+        String dayAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?search-results-registration-day";
+        String facetSelectionAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?search-results-facet-selection";
         final Object sessionArticleId = themeDisplay.getRequest().getSession().getAttribute(articleAttrName);
         final Object day = themeDisplay.getRequest().getSession().getAttribute(dayAttrName);
         final Object facetSelection = themeDisplay.getRequest().getSession().getAttribute(facetSelectionAttrName);
@@ -188,6 +189,25 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
             LOG.error("Error getting Registration instance [" + articleId + "]", e);
         }
         return new RegistrationDisplayContext(registration, dayIndex, themeDisplay, (FacetSelection) facetSelection);
+    }
+
+    @Override
+    public DSDArticleDisplayContext getDSDArticleDisplayContextInstance(long groupId, String articleId, ThemeDisplay themeDisplay) {
+
+        String facetSelectionAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?search-results-facet-selection";
+        final Object facetSelection = themeDisplay.getRequest().getSession().getAttribute(facetSelectionAttrName);
+
+        try {
+            JournalArticle registrationArticle = JournalArticleLocalServiceUtil
+                    .fetchArticle(groupId, articleId);
+            if (registrationArticle != null) {
+                AbsDsdArticle parentInstance = toDsdArticle(registrationArticle);
+                return new DSDArticleDisplayContext(parentInstance, themeDisplay, (FacetSelection) facetSelection);
+            }
+        } catch (Exception e) {
+            LOG.error("Error getting Registration instance [" + articleId + "]", e);
+        }
+        return null;
     }
 
     private ConfigurationProvider _configurationProvider;
