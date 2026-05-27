@@ -194,15 +194,12 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
     @Override
     public DSDArticleDisplayContext getDSDArticleDisplayContextInstance(long groupId, String articleId, ThemeDisplay themeDisplay) {
 
-        String facetSelectionAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?search-results-facet-selection";
-        final Object facetSelection = themeDisplay.getRequest().getSession().getAttribute(facetSelectionAttrName);
-
         try {
             JournalArticle registrationArticle = JournalArticleLocalServiceUtil
                     .fetchArticle(groupId, articleId);
             if (registrationArticle != null) {
                 AbsDsdArticle parentInstance = toDsdArticle(registrationArticle);
-                return new DSDArticleDisplayContext(parentInstance, themeDisplay, (FacetSelection) facetSelection);
+                return new DSDArticleDisplayContext(parentInstance, themeDisplay, null);
             }
         } catch (Exception e) {
             LOG.error("Error getting Registration instance [" + articleId + "]", e);

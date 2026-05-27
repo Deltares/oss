@@ -4,11 +4,12 @@ import com.liferay.portal.kernel.search.BooleanClause;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.BaseFacet;
-import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
-import com.liferay.portal.kernel.search.filter.TermFilter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
 import com.liferay.portal.kernel.search.generic.BooleanClauseImpl;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Search for articles with an exact ddmfieldvalue. Ddmfield value is passed using the fieldvaluekeywordvalue
@@ -17,13 +18,13 @@ import com.liferay.portal.kernel.search.generic.BooleanClauseImpl;
 public class DeltaresTermsFieldValueFacet extends BaseFacet {
 
     @SuppressWarnings("FieldCanBeLocal")
-    private final String[] _termFieldValues;
+    private final ArrayList<String> _termFieldValues = new ArrayList<>();
     private boolean exclude = false;
 
     public DeltaresTermsFieldValueFacet(String fieldName, String[] fieldValues, SearchContext searchContext) {
         super(searchContext);
         setFieldName(fieldName);
-        _termFieldValues = fieldValues;
+        _termFieldValues.addAll(Arrays.asList(fieldValues));
     }
 
     /**
@@ -34,12 +35,16 @@ public class DeltaresTermsFieldValueFacet extends BaseFacet {
         this.exclude = exclude;
     }
 
+    public void addValues(String[] fieldValues) {
+        _termFieldValues.addAll(Arrays.asList(fieldValues));
+    }
+
     @SuppressWarnings("DuplicatedCode")
     @Override
     protected BooleanClause<Filter> doGetFacetFilterBooleanClause() {
 
         TermsFilter termsFilter = new TermsFilter(getFieldName());
-        termsFilter.addValues(_termFieldValues);
+        termsFilter.addValues(_termFieldValues.toArray(new String[0]));
 
         if (exclude) {
             return new BooleanClauseImpl<>(termsFilter, BooleanClauseOccur.MUST_NOT);

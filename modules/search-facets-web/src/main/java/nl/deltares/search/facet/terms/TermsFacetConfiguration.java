@@ -7,7 +7,7 @@ import aQute.bnd.annotation.metatype.Meta;
 )
 public interface TermsFacetConfiguration {
 
-    @Meta.AD(required = false, deflt = "", description = "Company Id to retrieve articles from.")
+    @Meta.AD(required = false, deflt = "", description = "Id of company from which to retrieve articles.")
     String companyId();
 
     @Meta.AD(required = false, deflt = "", description = "DDMStructureKey of the articles to retrieve")

@@ -11,8 +11,6 @@
 <%@ page import="com.liferay.portal.kernel.util.WebKeys" %>
 <%@ page import="nl.deltares.search.results.SearchResultsPortletDisplayContext" %>
 <%@ page import="nl.deltares.search.util.FacetUtils" %>
-<%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
-<%@ page import="nl.deltares.portal.model.facet.FacetSelection" %>
 <%@ page import="nl.deltares.portal.model.DsdArticle" %>
 <%@ page import="java.util.List" %>
 
@@ -28,22 +26,11 @@
         return;
     }
     String templateKey = (String) renderRequest.getAttribute("displayTemplate");
-    FacetSelection facetSelection = searchResultsPortletDisplayContext.getFacetSelection();
-
     List<DsdArticle> dsdArticleResults = searchResultsPortletDisplayContext.getDsdArticleResults();
 %>
 <div class="c-events c-row">
 
     <% for (DsdArticle article : dsdArticleResults) {
-
-        try {
-            portletSession.setAttribute("search-results-registration-articleId", article.getArticleId());
-            if (facetSelection != null){
-                portletSession.setAttribute("search-results-facet-selection", facetSelection);
-            }
-        } catch (Exception e){
-            SessionErrors.add(renderRequest, "session error " + e.getMessage());
-        }
 
         JournalArticleDisplay articleDisplay = FacetUtils
                 .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, templateKey,

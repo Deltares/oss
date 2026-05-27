@@ -2,6 +2,7 @@ package nl.deltares.search.facet.terms;
 
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
@@ -11,7 +12,7 @@ import nl.deltares.search.facet.DeltaresTermsFieldValueFacet;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import java.util.Arrays;
+import java.util.Map;
 
 @Component(
         immediate = true,
@@ -25,12 +26,18 @@ public class TermsFacetPortletSharedSearchContributor implements PortletSharedSe
     @Override
     public void contribute(PortletSharedSearchSettings portletSharedSearchSettings) {
 
+        Map<String, Facet> existringFacets = portletSharedSearchSettings.getSearchContext().getFacets();
+
         //Only return latest version of article
-        portletSharedSearchSettings.addFacet(new DeltaresTermFieldValueFacet("head", "true",
-                portletSharedSearchSettings.getSearchContext()));
+        if (!existringFacets.containsKey("head")) {
+            portletSharedSearchSettings.addFacet(new DeltaresTermFieldValueFacet("head", "true",
+                    portletSharedSearchSettings.getSearchContext()));
+        }
         //Only return active articles
-        portletSharedSearchSettings.addFacet(new DeltaresTermsFieldValueFacet("status", new String[]{"0"},
-                portletSharedSearchSettings.getSearchContext()));
+        if (!existringFacets.containsKey("status")) {
+            portletSharedSearchSettings.addFacet(new DeltaresTermsFieldValueFacet("status", new String[]{"0"},
+                    portletSharedSearchSettings.getSearchContext()));
+        }
 
         SearchRequestBuilder searchRequestBuilder = portletSharedSearchSettings.getSearchRequestBuilder();
         try {
@@ -45,10 +52,13 @@ public class TermsFacetPortletSharedSearchContributor implements PortletSharedSe
             String groupIdsConfig = termsPortletConfiguration.groupIds();
             if (!groupIdsConfig.isEmpty()) {
                 String[] groupIds = groupIdsConfig.split(" ");
-                long[] array = Arrays.stream(groupIds).mapToLong(Long::parseLong).toArray();
-                searchRequestBuilder.groupIds(array);
-                portletSharedSearchSettings.addFacet(new DeltaresTermsFieldValueFacet("groupId", groupIds,
-                        portletSharedSearchSettings.getSearchContext()));
+                Facet groupIdFacet = existringFacets.get("groupId");
+                if (groupIdFacet == null) {
+                    portletSharedSearchSettings.addFacet(new DeltaresTermsFieldValueFacet("groupId", groupIds,
+                            portletSharedSearchSettings.getSearchContext()));
+                } else {
+                    ((DeltaresTermsFieldValueFacet)groupIdFacet).addValues(groupIds);
+                }
             }
 
             String articleIdsConfig = termsPortletConfiguration.articleIds();
@@ -60,8 +70,14 @@ public class TermsFacetPortletSharedSearchContributor implements PortletSharedSe
                 }
             } else {
                 String[] articleIds = articleIdsConfig.split(" ");
-                portletSharedSearchSettings.addFacet(new DeltaresTermsFieldValueFacet("articleId", articleIds,
-                        portletSharedSearchSettings.getSearchContext()));
+                Facet articleIdFacet = existringFacets.get("articleId_String_sortable");
+                if (articleIdFacet == null) {
+                    portletSharedSearchSettings.addFacet(new DeltaresTermsFieldValueFacet("articleId_String_sortable", articleIds,
+                            portletSharedSearchSettings.getSearchContext()));
+                } else {
+                    ((DeltaresTermsFieldValueFacet)articleIdFacet).addValues(articleIds);
+                }
+
             }
 
         } catch (ConfigurationException e) {

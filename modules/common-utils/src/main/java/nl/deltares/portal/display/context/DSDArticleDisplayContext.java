@@ -7,10 +7,12 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -108,25 +110,32 @@ public class DSDArticleDisplayContext {
     }
 
     protected String getPortalUrl() {
+        final long companyId;
+        final long groupId;
         if (_facetSelection == null) {
-            return "";
+            companyId = _article.getCompanyId();
+            groupId = _article.getGroupId();
         } else {
-            Company company = CompanyLocalServiceUtil.fetchCompany(_facetSelection.getCompanyId());
-            long siteGroupId = _facetSelection.getSiteGroupId();
-
-            try {
-                int port = _themeDisplay.getServerPort();
-                String portalURL = company.getPortalURL(siteGroupId);
-                URI uri = URI.create(portalURL);
-                if (uri.getPort() == port) {
-                    return portalURL;
-                }
-                return portalURL.replace(":" + uri.getPort(), ":" + port);
-            } catch (PortalException e) {
-                LOG.warn("Could not get the PortalURL for company [" + company.getCompanyId() + "]");
-                return "";
-            }
+            companyId = _facetSelection.getCompanyId();
+            groupId = _facetSelection.getSiteGroupId();
         }
+        Company company = CompanyLocalServiceUtil.fetchCompany(companyId);
+        Group group = GroupLocalServiceUtil.fetchGroup(groupId);
+        try {
+            int port = _themeDisplay.getServerPort();
+            String portalURL = company.getPortalURL(groupId);
+            String friendlyURL = group.getFriendlyURL();
+            String siteUrl = portalURL.concat("/web").concat(friendlyURL);
+            URI uri = URI.create(siteUrl);
+            if (uri.getPort() == port) {
+                return siteUrl;
+            }
+            return siteUrl.replace(":" + uri.getPort(), ":" + port);
+        } catch (PortalException e) {
+            LOG.warn("Could not get the PortalURL for company [" + companyId + "]");
+            return "";
+        }
+
     }
 
     public String getConfiguredRegistrationFormId() {
