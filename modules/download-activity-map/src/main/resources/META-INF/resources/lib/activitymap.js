@@ -6,8 +6,6 @@ var ActivityMapUtil = {
 
     initMap: function (namespace, title, subtitle) {
 
-        if(mapControl) return mapControl;
-
         const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 20,
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap.</a>'
