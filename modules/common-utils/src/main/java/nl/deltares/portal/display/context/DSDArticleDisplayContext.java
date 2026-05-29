@@ -46,7 +46,7 @@ public class DSDArticleDisplayContext {
         if (registration != null) {
             url = registration.getSmallImageURL(_themeDisplay);
         }
-        if (_facetSelection != null && url != null && !url.toLowerCase().startsWith("http")) {
+        if (url != null && url.toLowerCase().startsWith("/documents")) {
             //Relative path
             String portalUrl = getPortalUrl();
             portalUrl += url;
@@ -124,13 +124,11 @@ public class DSDArticleDisplayContext {
         try {
             int port = _themeDisplay.getServerPort();
             String portalURL = company.getPortalURL(groupId);
-            String friendlyURL = group.getFriendlyURL();
-            String siteUrl = portalURL.concat("/web").concat(friendlyURL);
-            URI uri = URI.create(siteUrl);
+            URI uri = URI.create(portalURL);
             if (uri.getPort() == port) {
-                return siteUrl;
+                return portalURL;
             }
-            return siteUrl.replace(":" + uri.getPort(), ":" + port);
+            return portalURL.replace(":" + uri.getPort(), ":" + port);
         } catch (PortalException e) {
             LOG.warn("Could not get the PortalURL for company [" + companyId + "]");
             return "";
