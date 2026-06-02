@@ -42,17 +42,18 @@ public class UserInputValidationContext {
             context = new RegistrationFormContext();
             request.getSession().setAttribute("registration-context", context);
         }
+        CPRequestHelper cpRequestHelper = new CPRequestHelper(request);
+        ThemeDisplay themeDisplay = cpRequestHelper.getThemeDisplay();
+
         RegistrationsInfo registrationsInfo = context.getRegistrationsInfo();
         if (registrationsInfo == null) {
-            _registrationsInfo = new RegistrationsInfo();
+            _registrationsInfo = new RegistrationsInfo(dsdParserUtils, themeDisplay);
             context.setRegistrationsInfo(_registrationsInfo);
         } else {
             _registrationsInfo = registrationsInfo;
         }
 
-        CPRequestHelper cpRequestHelper = new CPRequestHelper(request);
-        ThemeDisplay themeDisplay = cpRequestHelper.getThemeDisplay();
-        RegistrationsInfo.loadRegistrations(request, _registrationsInfo, dsdParserUtils, themeDisplay);
+        RegistrationsInfo.loadRegistrations(request, _registrationsInfo);
 
         AccountInfo accountInfo = context.getAccountInfo();
         if (accountInfo != null) {

@@ -11,7 +11,6 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.forms.portlet.RegistrationFormConfiguration;
 import nl.deltares.model.RegistrationFormContext;
 import nl.deltares.model.RegistrationsInfo;
-import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 
@@ -35,21 +34,22 @@ public class RelatedAssetsDisplayContext {
             context = new RegistrationFormContext();
             request.getSession().setAttribute("registration-context", context);
         }
+        CPRequestHelper cpRequestHelper = new CPRequestHelper(request);
+        ThemeDisplay themeDisplay = cpRequestHelper.getThemeDisplay();
+
         RegistrationsInfo registrationsInfo = context.getRegistrationsInfo();
         if (registrationsInfo == null) {
-            _registrationsInfo = new RegistrationsInfo();
+            _registrationsInfo = new RegistrationsInfo(dsdParserUtils, themeDisplay);
             context.setRegistrationsInfo(_registrationsInfo);
         } else {
             _registrationsInfo = registrationsInfo;
         }
-        CPRequestHelper cpRequestHelper = new CPRequestHelper(request);
-        ThemeDisplay themeDisplay = cpRequestHelper.getThemeDisplay();
 
         _portletInstanceConfiguration = configurationProvider.getPortletInstanceConfiguration(RegistrationFormConfiguration.class,
                 themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
 
-        RegistrationsInfo.loadRegistrations(request, _registrationsInfo, dsdParserUtils, themeDisplay);
-        RegistrationsInfo.loadRegistrationEvents(_registrationsInfo, dsdParserUtils);
+        RegistrationsInfo.loadRegistrations(request, _registrationsInfo);
+        RegistrationsInfo.loadRegistrationEvents(_registrationsInfo);
         RegistrationsInfo.loadRelatedArticles(_registrationsInfo, dsdJournalArticleUtils, dsdParserUtils);
         RegistrationsInfo.loadChildArticles(_registrationsInfo);
     }
@@ -74,8 +74,8 @@ public class RelatedAssetsDisplayContext {
         return _registrationsInfo.getRegistrationArticleIds();
     }
 
-    public List<Registration> getRelatedArticles() {
-        return _registrationsInfo.getRelatedArticles();
+    public List<String> getRelatedArticleIds() {
+        return _registrationsInfo.getRelatedArticleIds();
     }
 
     public String getRelatedAssetsTemplate(){
@@ -87,6 +87,6 @@ public class RelatedAssetsDisplayContext {
     }
 
     public boolean isActive() {
-        return _portletInstanceConfiguration.alwaysShowRelatedInfo() || !_registrationsInfo.getRelatedArticles().isEmpty();
+        return _portletInstanceConfiguration.alwaysShowRelatedInfo() || !_registrationsInfo.getRelatedArticleIds().isEmpty();
     }
 }

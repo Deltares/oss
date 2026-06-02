@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 public class Event extends AbsDsdArticle {
 
     private static final Log LOG = LogFactoryUtil.getLog(Event.class);
-    private List<Registration> registrations = Collections.emptyList();
     private EventLocation eventLocation = null;
     private Date startTime = null;
     private Date endTime = null;
@@ -148,12 +147,16 @@ public class Event extends AbsDsdArticle {
     }
 
     public List<Registration> getRegistrations(Locale locale)  {
-        loadRegistrations(locale);
-        return Collections.unmodifiableList(registrations);
+        try {
+            return Collections.unmodifiableList(_dsdParserUtils.getRegistrations(getCompanyId(), getGroupId(), getArticleId(), getRegistrationsStructureKey(), locale));
+        } catch (PortalException e) {
+            LOG.error(String.format("Error parsing registrations for event %s: %s", getTitle(), e.getMessage()));
+        }
+        return Collections.emptyList();
     }
 
     public Registration getRegistration(long resourceId, Locale locale) {
-        loadRegistrations(locale);
+        List<Registration> registrations = getRegistrations(locale);
         for (Registration registration : registrations) {
             if (registration.getResourceId() == resourceId) return registration;
         }
@@ -178,20 +181,6 @@ public class Event extends AbsDsdArticle {
                 .collect(Collectors.toList());
     }
 
-    private synchronized void loadRegistrations(Locale locale){
 
-        if (!registrations.isEmpty()) {
-            return;
-        }
-        try {
-            parseRegistrations(locale);
-        } catch (PortalException e) {
-            LOG.error(String.format("Error parsing registrations for event %s: %s", getTitle(), e.getMessage()));
-        }
-    }
-
-    private void parseRegistrations(Locale locale) throws PortalException {
-        this.registrations = _dsdParserUtils.getRegistrations(getCompanyId(), getGroupId(), getArticleId(), getRegistrationsStructureKey(),locale);
-    }
 
 }

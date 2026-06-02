@@ -2,8 +2,6 @@ package nl.deltares.include;
 
 import com.liferay.portal.kernel.servlet.taglib.BaseDynamicInclude;
 import com.liferay.portal.kernel.servlet.taglib.DynamicInclude;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.WebKeys;
 import org.osgi.service.component.annotations.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,9 +19,7 @@ public class TopJsDynamicInclude extends BaseDynamicInclude {
     public void include(HttpServletRequest request, HttpServletResponse response, String key) throws IOException {
         PrintWriter printWriter = response.getWriter();
 
-        ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
-
-        String content = "<script charset=\"utf-8\" src=\"" + themeDisplay.getPathThemeJavaScript() + "/tiny-slider/tiny-slider.js\"></script>";
+        String content =  "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js\"></script>";
         printWriter.println(content);
     }
 

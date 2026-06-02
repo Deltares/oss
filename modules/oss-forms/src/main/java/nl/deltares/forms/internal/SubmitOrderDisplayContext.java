@@ -98,7 +98,7 @@ public class SubmitOrderDisplayContext {
 
             try {
                 Registration registration = registrationsInfo.getRegistration(userRegistration.getArticleId());
-                Event event = registrationsInfo.getEvent(String.valueOf(registration.getEventId()));
+                Event event = registrationsInfo.getEvent(registration.getEventId());
                 storeUserInformation(userRegistration, accountInfo, billingInfo, registration, event);
             } catch (Exception e) {
                 exceptions.add(new RegistrationFormException(e.getMessage()));
@@ -238,7 +238,7 @@ public class SubmitOrderDisplayContext {
         registrationEmail.setSiteUrl(siteUrl);
 
         RegistrationsInfo registrationsInfo = _context.getRegistrationsInfo();
-        Event event = registrationsInfo.getEvent(String.valueOf(_configuration.eventId()));
+        Event event = registrationsInfo.getEvent(_configuration.eventId());
         if (event != null) {
             String subject = LanguageUtil.format(resourceBundle, "dsd.register.subject", event.getTitle());
             registrationEmail.setSubject(subject);

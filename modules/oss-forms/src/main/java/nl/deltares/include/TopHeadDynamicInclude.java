@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @Component(
         immediate = true,
@@ -15,7 +16,10 @@ import java.io.IOException;
 public class TopHeadDynamicInclude extends BaseDynamicInclude {
     @Override
     public void include(HttpServletRequest request, HttpServletResponse response, String key) throws IOException {
+        PrintWriter printWriter = response.getWriter();
 
+        String content = "<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css\">";
+        printWriter.println(content);
     }
 
     @Override

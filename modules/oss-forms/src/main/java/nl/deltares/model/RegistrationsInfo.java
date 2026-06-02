@@ -2,6 +2,8 @@ package nl.deltares.model;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -17,146 +19,171 @@ import java.util.stream.Collectors;
 
 public class RegistrationsInfo implements Serializable {
 
-    private final Map<String, Event> eventsMap = new HashMap<>();
-    private final Map<String, Registration> registrationsMap = new HashMap<>();
-    private final List<Registration> relatedArticles = new ArrayList<>();
+    private final long scopedGroupId;
+    private final User user;
+    private final ArrayList<String> eventIds = new ArrayList<>();
+    private final ArrayList<String> registrationArticleIds = new ArrayList<>();
+    private final List<String> relatedArticleIds = new ArrayList<>();
     private final Map<String, List<RegistrationInfo>> userRegistrationsMap = new HashMap<>();
+    private final DsdParserUtils dsdParserUtils;
+
+    private static final Log LOG = LogFactoryUtil.getLog(RegistrationsInfo.class);
+
+
+    public RegistrationsInfo(DsdParserUtils dsdParserUtils, ThemeDisplay themeDisplay) {
+        this.dsdParserUtils = dsdParserUtils;
+        this.scopedGroupId = themeDisplay.getSiteGroupId();
+        this.user = themeDisplay.getUser();
+
+    }
 
     public List<Registration> getRegistrations() {
-        return new ArrayList<>(registrationsMap.values());
+        return getRegistrations(registrationArticleIds);
+    }
+
+    private List<Registration> getRegistrations(List<String> registrationArticleIds) {
+        return registrationArticleIds.stream().map(articleId -> {
+            try {
+                return dsdParserUtils.getRegistration(scopedGroupId, articleId);
+            } catch (PortalException e) {
+                LOG.warn("Error retrieving registration: " + e.getMessage());
+                return null;
+            }
+        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     public List<String> getRegistrationArticleIds() {
-        return new ArrayList<>(registrationsMap.keySet());
+        return Collections.unmodifiableList(registrationArticleIds);
     }
 
-    public Registration getRegistration(String articleId){
-        return registrationsMap.get(articleId);
+    public Registration getRegistration(String articleId) {
+        try {
+            return dsdParserUtils.getRegistration(scopedGroupId, articleId);
+        } catch (PortalException e) {
+            LOG.warn("Error retrieving registration: " + e.getMessage());
+            return null;
+        }
     }
 
     public List<RegistrationInfo> getUserRegistrations(String articleId) {
-        return userRegistrationsMap.getOrDefault(articleId, Collections.emptyList());
+        return Collections.unmodifiableList(userRegistrationsMap.getOrDefault(articleId, Collections.emptyList()));
     }
 
-    public List<Registration> getRelatedArticles() {
-        return new ArrayList<>(relatedArticles);
+    public List<String> getRelatedArticleIds() {
+        return Collections.unmodifiableList(relatedArticleIds);
     }
 
-    public void setRegistrations(List<Registration> registrations) {
-        this.registrationsMap.clear();
+    public void setRegistrations(List<String> registrationsIds) {
+        this.registrationArticleIds.clear();
 
-        Map<String, List<RegistrationInfo>> userRegistrationsCopy = new HashMap<>(registrations.size());
-        for (Registration registration : registrations) {
-            registrationsMap.put(registration.getArticleId(), registration);
-            List<RegistrationInfo> registrationInfos = userRegistrationsMap.get(registration.getArticleId());
-            if (registrationInfos != null) userRegistrationsCopy.put(registration.getArticleId(), registrationInfos);
+        Map<String, List<RegistrationInfo>> userRegistrationsCopy = new HashMap<>(registrationsIds.size());
+        for (String registrationId : registrationsIds) {
+            this.registrationArticleIds.add(registrationId);
+            List<RegistrationInfo> registrationInfos = userRegistrationsMap.get(registrationId);
+            if (registrationInfos != null) {
+                userRegistrationsCopy.put(registrationId, registrationInfos);
+            }
         }
         userRegistrationsMap.clear();
         userRegistrationsMap.putAll(userRegistrationsCopy);
     }
 
     public boolean isPaymentRequired() {
-        return registrationsMap.values().stream().anyMatch(registration -> registration.getPrice() > 0);
+
+        return registrationArticleIds.stream().anyMatch(articleId -> {
+            try {
+                Registration registration = dsdParserUtils.getRegistration(scopedGroupId, articleId);
+                if (registration != null) {
+                    return registration.getPrice() > 0;
+                }
+            } catch (PortalException e) {
+                LOG.warn("Error retrieving registration: " + e.getMessage());
+            }
+            return false;
+        });
+
     }
 
-    public static void loadRegistrations(HttpServletRequest httpServletRequest, RegistrationsInfo registrationsInfo, DsdParserUtils dsdParserUtils, ThemeDisplay themeDisplay) {
+    public static void loadRegistrations(HttpServletRequest httpServletRequest, RegistrationsInfo registrationsInfo) {
 
         String ids = ParamUtil.getString(httpServletRequest, "ids");
         String[] registrationIds = ids.split(",", -1);
-
-        List<Registration> newRegistrations = new ArrayList<>();
-        for (String registrationId : registrationIds) {
-            if (registrationId == null || registrationId.isEmpty()) continue;
-            Registration registration = registrationsInfo.getRegistration(registrationId);
-
-            if (registration == null) {
-                try {
-                    registration = dsdParserUtils.getRegistration(
-                            themeDisplay.getScopeGroupId(), registrationId);
-                } catch (PortalException e) {
-                    continue;
-                }
-            }
-            if (registration != null){
-                newRegistrations.add(registration);
-            }
-        }
-        registrationsInfo.setRegistrations(newRegistrations);
+        registrationsInfo.setRegistrations(Arrays.stream(registrationIds).collect(Collectors.toList()));
     }
 
-    public static void loadRegistrationEvents(RegistrationsInfo registrationsInfo, DsdParserUtils dsdParserUtils){
+    public static void loadRegistrationEvents(RegistrationsInfo registrationsInfo) {
         List<Registration> selectedRegistrations = registrationsInfo.getRegistrations();
         for (Registration selectedRegistration : selectedRegistrations) {
             long eventId = selectedRegistration.getEventId();
-            Event event = registrationsInfo.getEvent(String.valueOf(eventId));
-            if (event == null){
-                try {
-                    event = dsdParserUtils.getEvent(registrationsInfo.getRegistrationsGroupId(), String.valueOf(eventId), selectedRegistration.getLocale());
-                    registrationsInfo.putEvent(event);
-                } catch (PortalException e) {
-                    //
-                }
+            if (eventId > 0) {
+                registrationsInfo.putEventArticleId(eventId);
             }
         }
     }
+
     public static void loadRelatedArticles(RegistrationsInfo registrationsInfo, DsdJournalArticleUtils dsdJournalArticleUtils,
                                            DsdParserUtils dsdParserUtils) throws Exception {
 
-        List<String> selectedRegistrations = registrationsInfo.getRegistrationArticleIds();
-        long registrationsGroupId = registrationsInfo.getRegistrationsGroupId();
+        List<String> selectedRegistrationIds = registrationsInfo.getRegistrationArticleIds();
         List<JournalArticle> relatedArticles = dsdJournalArticleUtils.getRelatedArticles(
-                registrationsGroupId, selectedRegistrations.toArray(new String[0]));
-        List<Registration> relatedRegistrations = new ArrayList<>();
+                registrationsInfo.scopedGroupId, selectedRegistrationIds.toArray(new String[0]));
+        List<String> relatedRegistrationIds = new ArrayList<>();
         for (JournalArticle relatedArticle : relatedArticles) {
             if (relatedArticle == null) {
                 continue;
             }
-            if (selectedRegistrations.stream().anyMatch(registrationId -> relatedArticle.getArticleId().equals(registrationId))) {
+            if (selectedRegistrationIds.stream().anyMatch(registrationId -> relatedArticle.getArticleId().equals(registrationId))) {
                 continue;
             }
 
             Registration registration = dsdParserUtils.getRegistration(relatedArticle);
-            if (registration.canUserRegister(registrationsGroupId)) {
-                relatedRegistrations.add(registration);
+            if (registration.canUserRegister(registrationsInfo.user.getUserId())) {
+                relatedRegistrationIds.add(registration.getArticleId());
             }
         }
-        registrationsInfo.setRelatedArticles(relatedRegistrations);
+        registrationsInfo.setRelatedArticles(relatedRegistrationIds);
     }
 
     public static void loadChildArticles(RegistrationsInfo registrationsInfo) {
         List<String> selectedRegistrationIds = registrationsInfo.getRegistrationArticleIds();
-        List<Registration> relatedArticles = registrationsInfo.getRelatedArticles();
-        Collection<Event> loadedEvents = registrationsInfo.eventsMap.values();
+        List<String> relatedArticles = registrationsInfo.getRelatedArticleIds();
+        ArrayList<String> updatedRelatedArticles = new ArrayList<>(relatedArticles.size());
+        updatedRelatedArticles.addAll(relatedArticles);
+        Collection<Event> loadedEvents = registrationsInfo.eventIds.stream().map(eventId ->
+                registrationsInfo.getEvent(Long.valueOf(eventId))).filter(Objects::nonNull).collect(Collectors.toList());
         for (Event loadedEvent : loadedEvents) {
             List<Registration> eventRegistrations = loadedEvent.getRegistrations(loadedEvent.getLocale());
             for (Registration registration : eventRegistrations) {
-                if (registration.hasParent()){
+                if (registration.hasParent()) {
 
                     Registration parent = registration.getParentRegistration();
                     boolean parentIsSelected = parent != null && selectedRegistrationIds.contains(parent.getArticleId());
                     boolean childIsSelected = selectedRegistrationIds.contains(registration.getArticleId());
 
-                    if ( childIsSelected && !parentIsSelected){
+                    if (parent != null && childIsSelected && !parentIsSelected) {
+                        if (!parent.canUserRegister(registrationsInfo.user.getUserId())) continue;
+
                         //This is a parent registration that has not been selected yet
-                        relatedArticles.add(parent);
+                        updatedRelatedArticles.add(parent.getArticleId());
                     } else if (parentIsSelected && !childIsSelected) {
+                        if (!registration.canUserRegister(registrationsInfo.user.getUserId())) continue;
                         //This is a child registration that has not been selected yet
-                        relatedArticles.add(registration);
+                        updatedRelatedArticles.add(registration.getArticleId());
                     }
                 }
             }
         }
-        registrationsInfo.setRelatedArticles(relatedArticles);
+        registrationsInfo.setRelatedArticles(updatedRelatedArticles);
     }
 
-    public static void loadUserRegistrations(RegistrationsInfo registrationsInfo, User user) {
+    public static void loadUserRegistrations(RegistrationsInfo registrationsInfo) {
 
         List<Registration> registrations = registrationsInfo.getRegistrations();
         for (Registration registration : registrations) {
 
             List<RegistrationInfo> userRegistrations = registrationsInfo.getUserRegistrations(registration.getArticleId());
-            if (userRegistrations.isEmpty()){
-                RegistrationInfo registrationInfo = getRegistrationInfo(user, registration);
+            if (userRegistrations.isEmpty()) {
+                RegistrationInfo registrationInfo = getRegistrationInfo(registrationsInfo.user, registration);
                 registrationsInfo.setUserRegistrations(registration.getArticleId(), Collections.singletonList(registrationInfo));
             }
 
@@ -175,9 +202,9 @@ public class RegistrationsInfo implements Serializable {
         return registrationInfo;
     }
 
-    public void setRelatedArticles(List<Registration> relatedArticles) {
-        this.relatedArticles.clear();
-        this.relatedArticles.addAll(relatedArticles);
+    public void setRelatedArticles(List<String> relatedArticleIds) {
+        this.relatedArticleIds.clear();
+        this.relatedArticleIds.addAll(relatedArticleIds);
     }
 
     public void setUserRegistrations(String articleId, List<RegistrationInfo> userRegistrations) {
@@ -188,29 +215,35 @@ public class RegistrationsInfo implements Serializable {
         return userRegistrationsMap.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
     }
 
-    public Event getEvent(String eventId) {
-        return eventsMap.get(eventId);
-    }
-
-    public void putEvent(Event event){
-        eventsMap.put(event.getArticleId(), event);
-    }
-
-    public long getRegistrationsCompanyId(){
-        for (Registration registration : registrationsMap.values()) {
-            if (registration.getCompanyId() > 0) {
-                return registration.getCompanyId();
-            }
+    public Event getEvent(Long eventId) {
+        try {
+            return dsdParserUtils.getEvent(scopedGroupId, String.valueOf(eventId));
+        } catch (PortalException e) {
+            LOG.warn("Error retrieving event: " + e.getMessage());
         }
-        return 0;
+        return null;
     }
 
-    public long getRegistrationsGroupId(){
-        for (Registration registration : registrationsMap.values()) {
-            if (registration.getGroupId() > 0) {
-                return registration.getGroupId();
-            }
+    public void putEventArticleId(Long articleId) {
+        String eventId = String.valueOf(articleId);
+        if (!eventIds.contains(eventId)) {
+            eventIds.add(eventId);
         }
-        return 0;
+    }
+
+    public long getRegistrationsCompanyId() {
+        Optional<Long> first = registrationArticleIds.stream().map(articleId -> {
+            try {
+                return dsdParserUtils.getRegistration(scopedGroupId, String.valueOf(articleId)).getCompanyId();
+            } catch (PortalException e) {
+                return 0L;
+            }
+        }).filter(companyId -> companyId > 0).findFirst();
+
+        return first.isEmpty() ? 0 : first.get();
+    }
+
+    public long getRegistrationsGroupId() {
+        return scopedGroupId;
     }
 }

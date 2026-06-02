@@ -67,16 +67,17 @@ public class BillingDetailsCheckoutStepDisplayContext extends AccountSelectionCh
             _billingInfo = billingInfo;
         }
 
+        CPRequestHelper cpRequestHelper = new CPRequestHelper(request);
+        ThemeDisplay themeDisplay = cpRequestHelper.getThemeDisplay();
         RegistrationsInfo registrationsInfo = context.getRegistrationsInfo();
         if (registrationsInfo == null) {
-            _registrationsInfo = new RegistrationsInfo();
+            _registrationsInfo = new RegistrationsInfo(dsdParserUtils, themeDisplay);
             context.setRegistrationsInfo(_registrationsInfo);
         } else {
             _registrationsInfo = registrationsInfo;
         }
-        CPRequestHelper cpRequestHelper = new CPRequestHelper(request);
-        ThemeDisplay themeDisplay = cpRequestHelper.getThemeDisplay();
-        RegistrationsInfo.loadRegistrations(request, _registrationsInfo, dsdParserUtils, themeDisplay);
+
+        RegistrationsInfo.loadRegistrations(request, _registrationsInfo);
 
         if (_selectedAccountEntry != null) {
             _billingInfo.setVat(_selectedAccountEntry.getTaxIdNumber());

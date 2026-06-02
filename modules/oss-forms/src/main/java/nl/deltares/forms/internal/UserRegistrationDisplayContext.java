@@ -29,13 +29,13 @@ public class UserRegistrationDisplayContext {
         }
         RegistrationsInfo registrationsInfo = context.getRegistrationsInfo();
         if (registrationsInfo == null) {
-            _registrationsInfo = new RegistrationsInfo();
+            _registrationsInfo = new RegistrationsInfo(dsdParserUtils, themeDisplay);
             context.setRegistrationsInfo(_registrationsInfo);
         } else {
             _registrationsInfo = registrationsInfo;
         }
-        RegistrationsInfo.loadRegistrations(request, _registrationsInfo, dsdParserUtils, themeDisplay);
-        RegistrationsInfo.loadUserRegistrations(_registrationsInfo, themeDisplay.getUser());
+        RegistrationsInfo.loadRegistrations(request, _registrationsInfo);
+        RegistrationsInfo.loadUserRegistrations(_registrationsInfo);
 
         isAdmin = PortletPermissionUtils.isUserSiteAdministrator(themeDisplay.getUserId(), themeDisplay.getSiteGroupId());
     }

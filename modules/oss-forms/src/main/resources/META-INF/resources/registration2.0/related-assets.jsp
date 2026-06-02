@@ -5,13 +5,13 @@
     String selectedAssetsTemplate = displayContext.getSelectedAssetsTemplate();
 
     List<String> selectedArticleIds = displayContext.getSelectedArticleIds();
-    List<Registration> relatedArticles = displayContext.getRelatedArticles();
+    List<String> relatedArticleIds = displayContext.getRelatedArticleIds();
 
 %>
     <div class="prose prose--app">
         <h3><liferay-ui:message key="registrationform.selected.assets"/></h3>
     </div>
-<br />
+    <br />
     <%
         for (String selectedArticleId : selectedArticleIds) {
             JournalArticleDisplay articleDisplay = displayContext
@@ -25,7 +25,7 @@
     <%
         }
 
-        if (!relatedArticles.isEmpty()) {
+        if (!relatedArticleIds.isEmpty()) {
     %>
 <br />
     <div class="prose prose--app">
@@ -34,18 +34,24 @@
 
     <div class="flex flex-row pb-2 lg:pb-0 spotlight-slider">
     <%
-        for (Registration relatedArticle : relatedArticles) {
+        for (String relatedArticleId : relatedArticleIds) {
             JournalArticleDisplay articleDisplay = displayContext
-                    .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, relatedAssetsTemplate, relatedArticle.getGroupId(),
-                            relatedArticle.getJournalArticle().getArticleId(), themeDisplay);
+                    .getArticleDisplay(liferayPortletRequest, liferayPortletResponse, relatedAssetsTemplate, themeDisplay.getSiteGroupId(),
+                            relatedArticleId, themeDisplay);
 
     %>
+        <div class="flex flex-col items-center justify-center w-full">
     <liferay-journal:journal-article-display
             articleDisplay="<%= articleDisplay %>"
     />
+        </div>
     <%
         }
     %>
+    </div>
+    <div class="tns-controls" aria-label="Carousel Navigation" tabindex="0">
+        <button id="tns-prev-button" data-controls="prev" tabindex="-1" aria-controls="tns1" >prev</button>
+        <button id="tns-next-button" data-controls="next" tabindex="-1" aria-controls="tns1">next</button>
     </div>
 <%
     }
@@ -80,14 +86,14 @@
         container: '.spotlight-slider',
         arrowKeys: true,
         autoWidth: false,
-        controls: true,
+        controls: false,
         controlsPosition: 'bottom',
-        edgePadding: 16,
-        gutter: 10,
+        edgePadding: 5,
+        gutter: 5,
         items: 2,
         lazyload: true,
         loop: false,
-        mouseDrag: true,
+        mouseDrag: false,
         navPosition: 'bottom',
         preventScrollOnTouch: 'auto',
         fixedWidth: 254,
@@ -101,5 +107,14 @@
         },
         speed: 400,
         swipeAngle: false
+    });
+
+    document.querySelector('#tns-prev-button').addEventListener('click', function (evt) {
+        evt.preventDefault();
+        slider.goTo('prev');
+    });
+    document.querySelector('#tns-next-button').addEventListener('click', function (evt) {
+        evt.preventDefault();
+        slider.goTo('next');
     });
 </aui:script>
