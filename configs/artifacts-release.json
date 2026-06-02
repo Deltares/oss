@@ -38,7 +38,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.portal.common-utils",
-    "version" : "1.1.35",
+    "version" : "1.1.36",
     "extension" : "jar"
   },
   {
@@ -86,7 +86,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "nl.deltares.search.facet",
-    "version" : "1.1.8",
+    "version" : "1.1.9",
     "extension" : "jar"
   },
 
@@ -111,7 +111,7 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "deltares-theme",
-    "version" : "1.1.10",
+    "version" : "1.1.11",
     "extension" : "war"
   },
   {
