@@ -6,6 +6,7 @@
 <#assign articleId = .vars['reserved-article-id'].getData() />
 <#assign displayContext = dsdParserUtils.getDisplayContextInstance(articleId, themeDisplay) />
 <#assign registration = displayContext.getRegistration() />
+<#assign timeZoneId = registration.getTimeZoneId() />
 <#assign redirectUrl = themeDisplay.getURLCurrent() />
 
 <#assign imageUrl = displayContext.getSmallImageURL() />
@@ -21,7 +22,11 @@
 <a href="-/${urltitle}?redirect=${redirectUrl}" class="group flex flex-col relative h-full font-medium font-sans transition duration-200 items-start leading-none cursor-pointer text-white z-0" title="read more about ${title}">
     <div class="flex flex-col justify-start self-stretch grow order-2 relative w-full -mt-20 pt-20 px-3 z-20 spotlight-gradient">
         <h3 class="order-2 text-lg leading-tight text-white font-semibold">${title}</h3>
-        <span class="order-1 mb-1 pt-2 text-sm font-medium leading-tight">${dateUtil.getDate(registration.getStartTime(), "d MMMM yyyy", locale)}</span>
+        <span class="order-1 mb-1 pt-2 text-sm font-medium leading-tight">
+                          ${dateUtil.getDate(registration.getStartTime(), "d MMMM yyyy", locale)}
+                            <br/>
+                            ${displayContext.getStartTime()} - ${displayContext.getEndTime()} (${timeZoneId})
+                        </span>
     </div>
     <div class="order-1 w-full relative z-10 overflow-hidden">
         <div class="block w-full object-cover">
