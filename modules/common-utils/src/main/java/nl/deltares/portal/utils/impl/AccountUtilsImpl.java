@@ -38,28 +38,30 @@ public class AccountUtilsImpl implements AccountUtils {
     @Override
     public List<AccountEntry> searchAccountsByName(String filterValue, long companyId, int start, int end) {
 
-        final DynamicQuery dynamicQuery = _accountEntryLocalService.dynamicQuery();
-        dynamicQuery.add(RestrictionsFactoryUtil.like("name", '%' + filterValue + '%'));
-        dynamicQuery.add(RestrictionsFactoryUtil.eq("status", 0));
-        dynamicQuery.add(RestrictionsFactoryUtil.eq("type", "business"));
-        dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+        final DynamicQuery dynamicQuery = getDynamicQuery(filterValue, companyId);
         dynamicQuery.setLimit(start, end);
         dynamicQuery.addOrder(OrderFactoryUtil.asc("name"));
         return _accountEntryLocalService.dynamicQuery(dynamicQuery);
-
     }
 
     @Override
     public long searchAccountsByNameCount(String filterValue, long companyId) {
 
-        final DynamicQuery dynamicQuery = _accountEntryLocalService.dynamicQuery();
-        dynamicQuery.add(RestrictionsFactoryUtil.like("name", '%' + filterValue + '%'));
-        dynamicQuery.add(RestrictionsFactoryUtil.eq("status", 0));
-        dynamicQuery.add(RestrictionsFactoryUtil.eq("type", "business"));
-        dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+        final DynamicQuery dynamicQuery = getDynamicQuery(filterValue, companyId);
         return _accountEntryLocalService.dynamicQueryCount(dynamicQuery);
-
     }
+
+    private DynamicQuery getDynamicQuery(String filterValue, long companyId) {
+        final DynamicQuery dynamicQuery = _accountEntryLocalService.dynamicQuery();
+        dynamicQuery.add(RestrictionsFactoryUtil.or(
+                RestrictionsFactoryUtil.like("name", '%' + filterValue + '%'),
+                RestrictionsFactoryUtil.eq("emailAddress", filterValue)
+        ));
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("status", 0));
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+        return dynamicQuery;
+    }
+
     @Override
     public List<AccountEntry> getAccountsByDomain(String domain, long companyId) {
 
