@@ -34,7 +34,6 @@ public abstract class Registration extends AbsDsdArticle {
     private String type = "unknown";
     private String topic = "unknown";
     private final List<Registration> relatedRegistrations = new ArrayList<>();
-    private boolean overlapWithParent = false;
     private boolean hasParent = false;
     Date startTime = new Date(0);
     Date endTime = new Date(0);
@@ -73,10 +72,8 @@ public abstract class Registration extends AbsDsdArticle {
             String parentJson = getFormFieldValue("parent", true);
             String relationType = getFormFieldValue("relationType", true);
             if (parentJson != null) {
-                overlapWithParent = Boolean.parseBoolean(getFormFieldValue( "overlaps", true));
                 hasParent = true;
             } else if (relationType != null) {
-                overlapWithParent = true;
                 hasParent = relationType.equals("child");
             }
             requiredTeam = getFormFieldValue( "requiredTeam", true);
@@ -271,10 +268,6 @@ public abstract class Registration extends AbsDsdArticle {
             LOG.error(String.format("Error parsing parent registration for registration %s: %s", getTitle(), e.getMessage()));
             hasParent = false;
         }
-    }
-
-    public boolean isOverlapWithParent() {
-        return overlapWithParent;
     }
 
     public Date getStartTime() {

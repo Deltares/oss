@@ -318,7 +318,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
 
     private boolean canOverlapWithParent(Registration child, Registration parent) {
         if (child.getParentRegistration() == null) return false; //no parent so cannot overlap
-        return child.getParentRegistration().getArticleId().equals(parent.getArticleId()) && child.isOverlapWithParent();
+        return child.getParentRegistration().getArticleId().equals(parent.getArticleId());
     }
 
     private boolean periodsOverlap(Registration reg1, Registration reg2) {
@@ -335,21 +335,29 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
-    public List<String> getOverlappingRegistrationTitles(long groupId, long userId, long resourceId, List<Period> periods) {
+    public List<String> getOverlappingRegistrationTitles(long groupId, long userId, long resourceId, List<Period> periods, long parentResourceId) {
 
         List<Long> overlappingRegistrationIds = new ArrayList<>();
         periods.forEach(period -> {
             List<nl.deltares.dsd.registration.model.Registration> overlappingRegistrations =
                     RegistrationLocalServiceUtil.getRegistrationsWithOverlappingPeriod(groupId, userId,
                      period.getStartDate(), period.getEndDate());
-            for (nl.deltares.dsd.registration.model.Registration overlappingRegistration : overlappingRegistrations) {
-                long registrationResourceId = overlappingRegistration.getResourcePrimaryKey();
-                if (resourceId == registrationResourceId) continue;
-                if (overlappingRegistrationIds.contains(registrationResourceId)) continue;
-                overlappingRegistrationIds.add(registrationResourceId);
-            }
+            overlappingRegistrationIds.addAll(getOverlappingResouceIds(resourceId, parentResourceId, overlappingRegistrations));
         });
         return Arrays.asList(getTitles(overlappingRegistrationIds));
+    }
+
+    private List<Long> getOverlappingResouceIds(long resourceId, long parentResourceId, List<nl.deltares.dsd.registration.model.Registration> overlappingRegistrations) {
+
+        List<Long> overlappingRegistrationIds  = new ArrayList<>();
+        for (nl.deltares.dsd.registration.model.Registration overlappingRegistration : overlappingRegistrations) {
+            long registrationResourceId = overlappingRegistration.getResourcePrimaryKey();
+            if (resourceId == registrationResourceId) continue;
+            if (parentResourceId == registrationResourceId) continue;
+            if (overlappingRegistrationIds.contains(registrationResourceId)) continue;
+            overlappingRegistrationIds.add(registrationResourceId);
+        }
+        return overlappingRegistrationIds;
     }
 
     private List<Long> getOverlappingRegistrationIds(User user, Registration registration) {
@@ -357,21 +365,14 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
         /*
          * Some parallel sessions can overlap with their parent session. These need to be removed.
          */
-        long parentId = registration.getParentRegistration() == null ? -1 : registration.getParentRegistration().getResourceId();
-        boolean overlapWithParent = registration.isOverlapWithParent();
+        long parentResourceId = registration.getParentRegistration() == null ? -1 : registration.getParentRegistration().getResourceId();
 
         long searchResourceId = registration.getResourceId();
         List<Long> resourcesWithOverlappingPeriod = new ArrayList<>();
         registration.getStartAndEndTimesPerDay().forEach(startAndEndTimesPerDay -> {
             List<nl.deltares.dsd.registration.model.Registration> overlappingRegistrations = RegistrationLocalServiceUtil.getRegistrationsWithOverlappingPeriod(registration.getGroupId(), user.getUserId(),
                     registration.getStartTime(), registration.getEndTime());
-            for (nl.deltares.dsd.registration.model.Registration overlappingRegistration : overlappingRegistrations) {
-                long registrationResourceId = overlappingRegistration.getResourcePrimaryKey();
-                if (searchResourceId == registrationResourceId) continue;
-                if (parentId == registrationResourceId && overlapWithParent) continue;
-                if (resourcesWithOverlappingPeriod.contains(registrationResourceId)) continue;
-                resourcesWithOverlappingPeriod.add(registrationResourceId);
-            }
+            resourcesWithOverlappingPeriod.addAll(getOverlappingResouceIds(searchResourceId, parentResourceId, overlappingRegistrations));
 
         });
         return resourcesWithOverlappingPeriod;

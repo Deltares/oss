@@ -163,7 +163,7 @@ public class UserInputValidationContext {
 
                     //Check for overlapping registrations in the database.
                     List<String> overlappingRegistrationTitles = _sessionUtils.getOverlappingRegistrationTitles(
-                            groupId, user.getUserId(), info.getResourceId(), info.getPeriods());
+                            groupId, user.getUserId(), info.getResourceId(), info.getPeriods(), info.getParentResourceId());
                     overlapping.addAll(overlappingRegistrationTitles);
                     if (!overlapping.isEmpty()) {
                         overlapping.add(info.getTitle());
