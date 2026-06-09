@@ -4,6 +4,7 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
@@ -53,6 +54,16 @@ public class DinnerRegistration extends Registration {
             }
         }
         return restaurant;
+    }
+
+    @Override
+    public String getSmallImageURL(ThemeDisplay themeDisplay) {
+        String url = super.getSmallImageURL(themeDisplay);
+        Location restaurant = getRestaurant();
+        if ((url == null || url.isEmpty())) {
+            url = restaurant.getSmallImageURL(themeDisplay);
+        }
+        return url;
     }
 
     private void parserRestaurant() throws PortalException {

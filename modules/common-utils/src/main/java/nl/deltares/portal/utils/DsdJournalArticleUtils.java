@@ -2,6 +2,7 @@ package nl.deltares.portal.utils;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 
@@ -38,6 +39,8 @@ public interface DsdJournalArticleUtils {
     void queryExcludeDdmFieldValue(long groupId, String ddmFieldName, String ddmFieldValue, String[] structureKeys, SearchContext searchContext, Locale locale);
 
     void queryDateRange(long groupId, Date startDate, Date endDate, String[] structureKeys, String dateFieldName, SearchContext searchContext, Locale locale);
+
+    Map<String, String> getPicklistFieldOptions(long groupId, String picklistExternalIdentifier, Locale locale, User user) throws PortalException;
 
     Map<String, String> getStructureFieldOptions(long groupId, String structureName, String optionsField, Locale locale) throws PortalException;
 //    String getJournalArticleDisplayContent(PortletRequest portletRequest, PortletResponse portletResponse, String articleId, ThemeDisplay themeDisplay) throws PortalException;

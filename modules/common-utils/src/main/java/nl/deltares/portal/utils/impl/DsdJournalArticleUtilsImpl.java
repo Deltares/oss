@@ -8,10 +8,14 @@ import com.liferay.asset.kernel.service.persistence.AssetEntryQuery;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.headless.admin.list.type.dto.v1_0.ListTypeDefinition;
+import com.liferay.headless.admin.list.type.dto.v1_0.ListTypeEntry;
+import com.liferay.headless.admin.list.type.resource.v1_0.ListTypeDefinitionResource;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.*;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -35,6 +39,9 @@ import java.util.*;
         service = DsdJournalArticleUtils.class
 )
 public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
+
+    @Reference
+    private ListTypeDefinitionResource.Factory _listTypeDefinitionResourceFactory;
 
     @Reference
     DDMStructureUtil ddmStructureUtil;
@@ -139,7 +146,28 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
         return check.filterLatest(structureArticles);
     }
 
-    @Override
+    public Map<String, String> getPicklistFieldOptions(long groupId, String picklistExternalIdentifier, Locale locale, User user) throws PortalException {
+
+        ListTypeDefinition picklist = null;
+        try {
+            ListTypeDefinitionResource.Builder builder = _listTypeDefinitionResourceFactory.create();
+            ListTypeDefinitionResource build = builder.preferredLocale(locale).user(user).checkPermissions(false).build();
+            picklist = build.getListTypeDefinitionByExternalReferenceCode(picklistExternalIdentifier);
+        } catch (Exception e) {
+            throw new PortalException(String.format("Could not retrieve Picklist '%s': %s", picklistExternalIdentifier, e.getMessage()));
+        }
+
+        if (picklist != null) {
+            Map<String, String> optionValues = new TreeMap<>();
+            for (ListTypeEntry listTypeEntry : picklist.getListTypeEntries()) {
+                optionValues.put(listTypeEntry.getKey(), listTypeEntry.getName());
+            }
+            return optionValues;
+        }
+        return Collections.emptyMap();
+
+    }
+
     public Map<String, String> getStructureFieldOptions(long groupId, String structureName, String optionsField, Locale locale) throws PortalException {
 
         Optional<DDMStructure> ddmStructureByName = ddmStructureUtil.getDDMStructureByName(groupId, structureName, locale);

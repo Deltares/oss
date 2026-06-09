@@ -8,8 +8,6 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.DeltaresCacheUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
-import nl.deltares.portal.utils.JsonContentUtils;
-import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.*;
 
 import javax.portlet.ActionRequest;
@@ -56,8 +54,10 @@ public class SelectionFacetConfigurationAction extends DefaultConfigurationActio
         setPreference(actionRequest, "structureName", structureName);
         String fieldName = ParamUtil.getString(actionRequest, "fieldName");
         setPreference(actionRequest, "fieldName", fieldName);
-        Map<String, String> titleMap = FacetUtils.getLanguageFieldValueMap(actionRequest, "title");
-        setPreference(actionRequest, "titleMap", JsonContentUtils.formatMapToJson(titleMap));
+        String picklistExternalIdentifier = ParamUtil.getString(actionRequest, "picklistExternalIdentifier");
+        setPreference(actionRequest, "picklistExternalIdentifier", picklistExternalIdentifier);
+        String title = ParamUtil.getString(actionRequest, "title");
+        setPreference(actionRequest, "title", title);
 
         super.processAction(portletConfig, actionRequest, actionResponse);
     }

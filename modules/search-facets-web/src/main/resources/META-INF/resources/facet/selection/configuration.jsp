@@ -1,11 +1,5 @@
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
 <%@ page import="nl.deltares.search.facet.selection.SelectionFacetConfiguration" %>
-<%@ page import="com.liferay.portal.kernel.util.Validator" %>
-<%@ page import="java.util.HashMap" %>
-<%@ page import="nl.deltares.portal.utils.JsonContentUtils" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="com.liferay.portal.kernel.json.JSONException" %>
-<%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
 <%@ include file="/META-INF/resources/init.jsp" %>
 
 <%
@@ -14,21 +8,14 @@
             (SelectionFacetConfiguration)
                     renderRequest.getAttribute(SelectionFacetConfiguration.class.getName());
 
-    Map<String, String> titleMap = new HashMap<>();
     String structureName = "";
     String fieldName = "";
-    if (Validator.isNotNull(sel_configuration)){
-        String title = portletPreferences.getValue("titleMap", sel_configuration.titleMap());
+    String picklistExternalIdentifier = "";
+    String title = "";
+    if (Validator.isNotNull(sel_configuration)) {
+        title = portletPreferences.getValue("title", sel_configuration.title());
         structureName = portletPreferences.getValue("structureName", sel_configuration.structureName());
-        try {
-            titleMap = JsonContentUtils.parseJsonToMap(title);
-            Map<String, String> finalTitleMap = titleMap;
-            LanguageUtil.getAvailableLocales(themeDisplay.getSiteGroupId()).forEach(availableLocale ->
-                    finalTitleMap.putIfAbsent(availableLocale.toString(), "Title " + availableLocale.getDisplayLanguage()));
-
-        } catch (JSONException e) {
-            System.out.println(e.getMessage());
-        }
+        picklistExternalIdentifier = portletPreferences.getValue("picklistExternalIdentifier", sel_configuration.picklistExternalIdentifier());
         fieldName = portletPreferences.getValue("fieldName", sel_configuration.fieldName());
     }
 %>
@@ -58,24 +45,29 @@
 
     <aui:fieldset>
 
-        <% for (String key : titleMap.keySet()) { %>
         <aui:input
-                label='<%="Title of facet (" + ( key ) + ")"%>'
-                name='<%="title_" + ( key )%>'
-                value='<%= titleMap.get(key) %>'
+                label='<%="Title of facet"%>'
+                name='<%="title"%>'
+                value='<%= title %>'
         >
         </aui:input>
-        <% } %>
         <aui:input
-                label="Name of structure containing selection list"
+                label="Name of structure to use as terms in facet search"
                 name="structureName"
                 value='<%= structureName %>'
         >
         </aui:input>
         <aui:input
-                label="Name of field containing selection list"
+                label="Name of field to use as terms in facet search"
                 name="fieldName"
                 value='<%= fieldName %>'
+        >
+        </aui:input>
+
+        <aui:input
+                label="Name of picklist containing selection list"
+                name="picklistExternalIdentifier"
+                value='<%= picklistExternalIdentifier %>'
         >
         </aui:input>
 

@@ -1,7 +1,6 @@
 package nl.deltares.search.facet.selection;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
@@ -12,7 +11,6 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.DeltaresCacheUtils;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
-import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
@@ -28,23 +26,23 @@ import java.util.Map;
  */
 @Component(
         configurationPid = "nl.deltares.search.facet.selection.SelectionFacetConfiguration",
-  immediate = true,
-  property = {
-    "com.liferay.portlet.css-class-wrapper=portlet-selection-facet",
-    "com.liferay.portlet.display-category=OSS-search",
-    "com.liferay.portlet.header-portlet-css=/css/main.css",
-    "com.liferay.portlet.instanceable=true",
-    "javax.portlet.display-name=SelectionFacet",
-    "javax.portlet.expiration-cache=0",
-    "javax.portlet.init-param.template-path=/",
-    "javax.portlet.init-param.config-template=/facet/selection/configuration.jsp",
-    "javax.portlet.init-param.view-template=/facet/selection/view.jsp",
-    "javax.portlet.name=" + SearchModuleKeys.SELECTION_FACET_PORTLET,
-    "javax.portlet.resource-bundle=content.Language",
-    "javax.portlet.security-role-ref=power-user,user",
-          "javax.portlet.version=3.0"
-  },
-  service = Portlet.class
+        immediate = true,
+        property = {
+                "com.liferay.portlet.css-class-wrapper=portlet-selection-facet",
+                "com.liferay.portlet.display-category=OSS-search",
+                "com.liferay.portlet.header-portlet-css=/css/main.css",
+                "com.liferay.portlet.instanceable=true",
+                "javax.portlet.display-name=SelectionFacet",
+                "javax.portlet.expiration-cache=0",
+                "javax.portlet.init-param.template-path=/",
+                "javax.portlet.init-param.config-template=/facet/selection/configuration.jsp",
+                "javax.portlet.init-param.view-template=/facet/selection/view.jsp",
+                "javax.portlet.name=" + SearchModuleKeys.SELECTION_FACET_PORTLET,
+                "javax.portlet.resource-bundle=content.Language",
+                "javax.portlet.security-role-ref=power-user,user",
+                "javax.portlet.version=3.0"
+        },
+        service = Portlet.class
 )
 public class SelectionFacetPortlet extends MVCPortlet {
 
@@ -69,7 +67,6 @@ public class SelectionFacetPortlet extends MVCPortlet {
         } catch (ConfigurationException e) {
             throw new PortletException(String.format("Could not get configuration for portlet '%s': %s", portletId, e.getMessage()), e);
         }
-
         String structureName = configuration.structureName().toLowerCase();
         String fieldName = configuration.fieldName();
         final String name = structureName + '-' + fieldName;
@@ -77,29 +74,37 @@ public class SelectionFacetPortlet extends MVCPortlet {
         portletConfig.put("name", name); //important to use '-' because this translates to JSP id
         portletConfig.put("fieldName", fieldName);
         portletConfig.put("structureName", structureName);
-        try {
-            portletConfig.put("titleMap", JsonContentUtils.parseJsonToMap(configuration.titleMap()));
-        } catch (JSONException e) {
-            //ignore
-        }
+        portletConfig.put("title", configuration.title());
 
         final Group scopeGroup = themeDisplay.getScopeGroup();
         long groupId = scopeGroup.getGroupId();
         portletConfig.put("groupId", groupId);
         portletConfig.put("siteDefaultLocale", LocaleUtil.fromLanguageId(scopeGroup.getDefaultLanguageId()));
 
-        try {
-            portletConfig.put("selectionMap", dsdJournalArticleUtils.getStructureFieldOptions(siteGroupId,
-                    structureName,
-                    fieldName, themeDisplay.getLocale()));
-        } catch (PortalException e) {
-            throw new PortletException(String.format("Could not get options for field '%s' in structure %s: %s", fieldName, structureName, e.getMessage()), e);
+        String picklistExternalIdentifier = configuration.picklistExternalIdentifier();
+        if ("".equals(picklistExternalIdentifier)) {
+            try {
+                portletConfig.put("selectionMap", dsdJournalArticleUtils.getStructureFieldOptions(siteGroupId,
+                        structureName,
+                        fieldName, themeDisplay.getLocale()));
+            } catch (PortalException e) {
+                throw new PortletException(String.format("Could not get options for field '%s' in structure %s: %s", fieldName, structureName, e.getMessage()), e);
+            }
+        } else {
+            try {
+                portletConfig.put("selectionMap", dsdJournalArticleUtils.getPicklistFieldOptions(siteGroupId,
+                        picklistExternalIdentifier, themeDisplay.getLocale(), themeDisplay.getUser()));
+            } catch (PortalException e) {
+                throw new PortletException(String.format("Could not get picklist for '%s' : %s", picklistExternalIdentifier, e.getMessage()), e);
+            }
         }
+
         deltaresCacheUtils.putPortletConfig(cacheId, portletConfig);
 
         return portletConfig;
     }
 
+    @SuppressWarnings("unused")
     public void submitForm(ActionRequest actionRequest, ActionResponse actionResponse) throws PortletException {
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
         final Map<String, Object> configuration = getConfiguration(themeDisplay);
@@ -120,10 +125,7 @@ public class SelectionFacetPortlet extends MVCPortlet {
         final Map<String, Object> configuration = getConfiguration(themeDisplay);
         final String name = (String) configuration.get("name");
         renderRequest.setAttribute("name", name);
-        @SuppressWarnings("unchecked") final Map<String, String> titleMap = (Map<String, String>) configuration.get("titleMap");
-        if (titleMap != null) {
-            renderRequest.setAttribute("title", titleMap.getOrDefault(themeDisplay.getLanguageId(), "Checkbox Title"));
-        }
+        renderRequest.setAttribute("title", configuration.get("title"));
         @SuppressWarnings("unchecked") final Map<String, String> selectionMap = (Map<String, String>) configuration.get("selectionMap");
         if (selectionMap != null && !selectionMap.isEmpty()) renderRequest.setAttribute("selectionMap", selectionMap);
 
