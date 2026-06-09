@@ -148,7 +148,7 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
 
     public Map<String, String> getPicklistFieldOptions(long groupId, String picklistExternalIdentifier, Locale locale, User user) throws PortalException {
 
-        ListTypeDefinition picklist = null;
+        ListTypeDefinition picklist;
         try {
             ListTypeDefinitionResource.Builder builder = _listTypeDefinitionResourceFactory.create();
             ListTypeDefinitionResource build = builder.preferredLocale(locale).user(user).checkPermissions(false).build();
