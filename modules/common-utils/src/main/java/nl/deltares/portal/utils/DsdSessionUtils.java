@@ -80,7 +80,7 @@ public interface DsdSessionUtils {
      * Return map of site groupIds grouped tegether by their company groupId.
      * @return map of siteId grouped by company groupId
      */
-    Map<Long, List<Long>> getRegistrationSiteIds();
+    Map<Long, List<Long>> getRegistrationSiteIds(Long[] includeGroupIds, Long[] excludeGroupIds);
 
     /** Return list of registrations that reference this registration a parent.
      *

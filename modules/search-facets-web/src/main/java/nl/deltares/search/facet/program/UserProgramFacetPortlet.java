@@ -17,10 +17,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.*;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component(
         configurationPid = "nl.deltares.search.facet.program.UserProgramFacetConfiguration",
@@ -64,7 +61,11 @@ public class UserProgramFacetPortlet extends MVCPortlet {
             }
             renderRequest.setAttribute("user-program-site-selection", siteSelection);
 
-            Map<Long, List<Long>> registrationSiteIds = _dsdSessionUtils.getRegistrationSiteIds();
+            String[] idstrings = configuration.includedSiteGroupIds().split(" ");
+            Long[] inludeids = Arrays.stream(idstrings).filter(s -> !s.isEmpty()).map(Long::parseLong).toArray(Long[]::new);
+            idstrings = configuration.excludedSiteGroupIds().split(" ");
+            Long[] excludeids = Arrays.stream(idstrings).filter(s -> !s.isEmpty()).map(Long::parseLong).toArray(Long[]::new);
+            Map<Long, List<Long>> registrationSiteIds = _dsdSessionUtils.getRegistrationSiteIds(inludeids, excludeids);
             renderRequest.setAttribute("site-selectionMap", convertToOptions(registrationSiteIds, themeDisplay.getSiteGroup()));
         }
         renderRequest.setAttribute("showRegistrationsMadeForOthers", configuration.showRegistrationsMadeForOthers());

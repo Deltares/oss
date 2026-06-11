@@ -213,7 +213,7 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
     }
 
     @Override
-    public Map<Long, List<Long>> getRegistrationSiteIds() {
+    public Map<Long, List<Long>> getRegistrationSiteIds(Long[] includeIds, Long[] excludeIds) {
 
         DynamicQuery dynamicQuery = RegistrationLocalServiceUtil.dynamicQuery();
 
@@ -229,6 +229,15 @@ public class DsdSessionUtilsImpl implements DsdSessionUtils {
             Object[] array = (Object[]) object;
             long companyId = (long) array[0];
             long groupId = (long) array[1];
+
+            boolean addToList = true;
+            if (includeIds != null && includeIds.length > 0) {
+                addToList = Arrays.binarySearch(includeIds, groupId) > -1;
+            } else if (excludeIds != null && excludeIds.length > 0) {
+                addToList = Arrays.binarySearch(excludeIds, groupId) < 0;
+            }
+            if (!addToList) continue;
+
             List<Long> siteIds = registrationSiteIds.getOrDefault(companyId, new ArrayList<>());
             siteIds.add(groupId);
             registrationSiteIds.put(companyId, siteIds);

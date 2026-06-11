@@ -10,9 +10,14 @@
 
     String visible = null;
     String showRegistrationsMadeForOthers = null;
+    String excludedSiteGroupIds = "";
+    String includedSiteGroupIds = "";
+
     if (Validator.isNotNull(configuration)){
         visible = portletPreferences.getValue("visible", configuration.visible());
         showRegistrationsMadeForOthers = portletPreferences.getValue("showRegistrationsMadeForOthers", configuration.showRegistrationsMadeForOthers());
+        excludedSiteGroupIds = portletPreferences.getValue("excludedSiteGroupIds", configuration.excludedSiteGroupIds());
+        includedSiteGroupIds = portletPreferences.getValue("includedSiteGroupIds", configuration.includedSiteGroupIds());
     }
 %>
 
@@ -56,6 +61,22 @@
         >
         </aui:input>
 
+        <aui:input
+                label="Excluded site group IDs"
+                name="excludedSiteGroupIds"
+                helpMessage="Site group IDs of sites from which to exclude articles. Space separated"
+                value='<%= excludedSiteGroupIds %>'
+        >
+        </aui:input>
+
+
+        <aui:input
+                label="Included site group IDs"
+                name="includedSiteGroupIds"
+                helpMessage="Site group IDs of sites from which to include articles. Space separated"
+                value='<%= includedSiteGroupIds %>'
+        >
+        </aui:input>
     </aui:fieldset>
 
     <aui:button-row>
