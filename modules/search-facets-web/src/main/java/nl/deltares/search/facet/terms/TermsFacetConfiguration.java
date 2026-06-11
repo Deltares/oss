@@ -7,11 +7,17 @@ import aQute.bnd.annotation.metatype.Meta;
 )
 public interface TermsFacetConfiguration {
 
-    @Meta.AD(required = false, deflt = "", description = "Id of company from which to retrieve articles.")
-    String companyId();
+    @Meta.AD(required = false, deflt = "", description = "Company Ids of companies from which to retrieve articles. Space separated")
+    String companyIds();
 
-    @Meta.AD(required = false, deflt = "", description = "DDMStructureKey of the articles to retrieve")
-    String ddmStructureKey();
+    @Meta.AD(required = false, deflt = "", description = "Term field name of the articles to retrieve")
+    String termFieldName();
+
+    @Meta.AD(required = false, deflt = "", description = "Term value of the articles to retrieve")
+    String termValue();
+
+    @Meta.AD(required = false, deflt = "false", description = "Does the Term value contain wildcard")
+    String useWildcard();
 
     @Meta.AD(required = false, deflt = "", description = "Article Ids of articles to retrieve, separated by space. If specified, only these articles will be retrieved, otherwise all articles matching the companyId and ddmStructureKey will be retrieved.")
     String articleIds();

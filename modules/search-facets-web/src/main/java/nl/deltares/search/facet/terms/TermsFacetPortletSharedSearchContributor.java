@@ -12,6 +12,7 @@ import nl.deltares.search.facet.DeltaresTermsFieldValueFacet;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import java.util.Arrays;
 import java.util.Map;
 
 @Component(
@@ -43,10 +44,11 @@ public class TermsFacetPortletSharedSearchContributor implements PortletSharedSe
         try {
             TermsFacetConfiguration termsPortletConfiguration = _configurationProvider.getPortletInstanceConfiguration(TermsFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
 
-            String companyId = termsPortletConfiguration.companyId();
-            if (!companyId.isEmpty()) {
-                searchRequestBuilder.companyId(Long.parseLong(companyId));
-                searchRequestBuilder.addIndex("liferay-" + companyId);
+            String companyIds = termsPortletConfiguration.companyIds();
+            if (!companyIds.isEmpty()) {
+                Arrays.stream(companyIds.split(" ")).forEach(companyId ->
+                    searchRequestBuilder.addIndex("liferay-" + companyId)
+                );
             }
 
             String groupIdsConfig = termsPortletConfiguration.groupIds();
@@ -63,9 +65,11 @@ public class TermsFacetPortletSharedSearchContributor implements PortletSharedSe
 
             String articleIdsConfig = termsPortletConfiguration.articleIds();
             if (articleIdsConfig.isEmpty()) {
-                String ddmStructureKey = termsPortletConfiguration.ddmStructureKey();
-                if (!ddmStructureKey.isEmpty()) {
-                    portletSharedSearchSettings.addFacet(new DeltaresTermFieldValueFacet("ddmStructureKey", ddmStructureKey,
+                String termFieldName = termsPortletConfiguration.termFieldName();
+                String termFieldValue = termsPortletConfiguration.termValue();
+                if (!termFieldValue.isEmpty()) {
+                    portletSharedSearchSettings.addFacet(new DeltaresTermFieldValueFacet(termFieldName, termFieldValue,
+                            Boolean.parseBoolean(termsPortletConfiguration.useWildcard()),
                             portletSharedSearchSettings.getSearchContext()));
                 }
             } else {

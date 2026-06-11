@@ -40,15 +40,12 @@ public class TermsFacetConfigurationAction extends DefaultConfigurationAction {
     @Override
     public void processAction(PortletConfig portletConfig, ActionRequest actionRequest, ActionResponse actionResponse)
             throws Exception {
-
-        String companyId = ParamUtil.getString(actionRequest, "companyId");
-        setPreference(actionRequest, "companyId", companyId);
-        String articleIds = ParamUtil.getString(actionRequest, "articleIds");
-        setPreference(actionRequest, "articleIds", articleIds);
-        String groupIds = ParamUtil.getString(actionRequest, "groupIds");
-        setPreference(actionRequest, "groupIds", groupIds);
-        String ddmStructureKey = ParamUtil.getString(actionRequest, "ddmStructureKey");
-        setPreference(actionRequest, "ddmStructureKey", ddmStructureKey);
+        setPreference(actionRequest, "companyIds", ParamUtil.getString(actionRequest, "companyIds"));
+        setPreference(actionRequest, "articleIds", ParamUtil.getString(actionRequest, "articleIds"));
+        setPreference(actionRequest, "groupIds", ParamUtil.getString(actionRequest, "groupIds"));
+        setPreference(actionRequest, "termFieldName", ParamUtil.getString(actionRequest, "termFieldName"));
+        setPreference(actionRequest, "termValue", ParamUtil.getString(actionRequest, "termValue"));
+        setPreference(actionRequest, "useWildcard",String.valueOf(ParamUtil.getBoolean(actionRequest, "useWildcard")));
         super.processAction(portletConfig, actionRequest, actionResponse);
     }
 

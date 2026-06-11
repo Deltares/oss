@@ -8,24 +8,20 @@
             (TermsFacetConfiguration)
                     renderRequest.getAttribute(TermsFacetConfiguration.class.getName());
 
-    String companyId = "";
-    if (Validator.isNotNull(reg_configuration)){
-        companyId = portletPreferences.getValue("companyId", reg_configuration.companyId());
-    }
-
+    String companyIds = "";
     String groupIds = "";
-    if (Validator.isNotNull(reg_configuration)){
-        groupIds = portletPreferences.getValue("groupIds", reg_configuration.groupIds());
-    }
-
     String articleIds = "";
-    if (Validator.isNotNull(reg_configuration)){
-        articleIds = portletPreferences.getValue("articleIds", reg_configuration.articleIds());
-    }
+    String termValue = "";
+    String termFieldName = "";
+    String useWildcard = "false";
 
-    String ddmStructureKey = "";
     if (Validator.isNotNull(reg_configuration)){
-        ddmStructureKey = portletPreferences.getValue("ddmStructureKey", reg_configuration.ddmStructureKey());
+        companyIds = portletPreferences.getValue("companyIds", reg_configuration.companyIds());
+        groupIds = portletPreferences.getValue("groupIds", reg_configuration.groupIds());
+        articleIds = portletPreferences.getValue("articleIds", reg_configuration.articleIds());
+        termValue = portletPreferences.getValue("termValue", reg_configuration.termValue());
+        termFieldName = portletPreferences.getValue("termFieldName", reg_configuration.termFieldName());
+        useWildcard = portletPreferences.getValue("useWildcard", reg_configuration.useWildcard());
     }
 %>
 
@@ -56,21 +52,38 @@
 
         <aui:input
                 label="Company ID"
-                name="companyId"
-                value='<%= companyId %>'
+                name="companyIds"
+                helpMessage="Company Ids of companies from which to retrieve articles. Space separated"
+                value='<%= companyIds %>'
         >
         </aui:input>
 
         <aui:input
-                label="DDM Structure Key"
-                name="ddmStructureKey"
-                value='<%= ddmStructureKey %>'
+                label="Term field name"
+                name="termFieldName"
+                helpMessage="Term field name of the articles to retrieve"
+                value='<%= termFieldName %>'
         >
         </aui:input>
-
+        <aui:input
+                label="Term value"
+                name="termValue"
+                helpMessage="Term value of the articles to retrieve"
+                value='<%= termValue %>'
+        >
+        </aui:input>
+        <aui:input
+                label="Use wildcard"
+                name="useWildcard"
+                helpMessage="Does the Term value contain wildcards? If true, the term value will be used as is, if false, the term value will be wrapped in asterisks to match any term containing the value."
+                value='<%= useWildcard %>'
+                type="toggle-switch"
+        >
+        </aui:input>
         <aui:input
                 label="Group IDs (space separated)"
                 name="groupIds"
+                helpMessage="Group Ids of all sites to search, separated by space. If specified, articles will only be retrieved from given sites."
                 value='<%= groupIds %>'
         >
         </aui:input>
@@ -78,6 +91,7 @@
         <aui:input
                 label="Article IDs (space separated)"
                 name="articleIds"
+                helpMessage="Article Ids of articles to retrieve, separated by space. If specified, only these articles will be retrieved, otherwise all articles matching the companyId and ddmStructureKey will be retrieved."
                 value='<%= articleIds %>'
         >
         </aui:input>
