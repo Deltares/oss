@@ -29,6 +29,9 @@ public class SearchModuleKeys {
     public static final String TERMS_FACET_PORTLET =
             "nl_deltares_search_facet_terms_TermsFacetPortlet";
 
+    public static final String RANGE_FACET_PORTLET =
+            "nl_deltares_search_facet_range_RangeFacetPortlet";
+
     public static final String USER_PROGRAM_FACET_PORTLET =
             "nl_deltares_search_facet_event_UserProgramFacetPortlet";
 
