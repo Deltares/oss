@@ -32,6 +32,18 @@ public class DeltaresTermFieldValueFacet extends BaseFacet {
         _useWildCard = userWildcard;
     }
 
+    public String getTermFieldValue() {
+        return _termFieldValue;
+    }
+
+    public boolean useWildCard() {
+        return _useWildCard;
+    }
+
+    public boolean isExclude() {
+        return exclude;
+    }
+
     /**
      * Exclude wil result in a negative search of this field value. So if an item contains the field it will not
      * be added to the results

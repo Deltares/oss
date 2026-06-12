@@ -5,10 +5,9 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.search.sort.SortOrder;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
-import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
 import nl.deltares.search.util.FacetUtils;
@@ -39,6 +38,8 @@ public class SearchResultsPortletSharedSearchContributor implements PortletShare
             reverseOrder = false;
         }
 
+        _dsDsdJournalArticleUtils.addDefaultFacets(portletSharedSearchSettings);
+
         String namespace = '_' + portletSharedSearchSettings.getPortletId() + '_';
 
         final String deltaParam = FacetUtils.getRequestParameter(namespace + "delta", portletSharedSearchSettings.getRenderRequest());
@@ -52,24 +53,8 @@ public class SearchResultsPortletSharedSearchContributor implements PortletShare
             portletSharedSearchSettings.setPaginationStart(Integer.parseInt(curParam));
         }
 
-        try {
-            DSDSiteConfiguration dsdSiteConfiguration = _configurationProvider.getPortletInstanceConfiguration(DSDSiteConfiguration.class,
-                    themeDisplay.getLayout(), portletSharedSearchSettings.getPortletId());
-
-            String dateFieldName = dsdSiteConfiguration.dsdRegistrationDateField();
-            String[] structureKeys;
-            String structureList = dsdSiteConfiguration.dsdRegistrationStructures();
-            if (structureList != null && !structureList.isEmpty()){
-                structureKeys =  StringUtil.split(structureList, ' ');
-            } else {
-                structureKeys = new String[0];
-            }
-
-            _dsDsdJournalArticleUtils.sortByDDMFieldArrayField(themeDisplay.getSiteGroupId(), structureKeys, dateFieldName,
-                    portletSharedSearchSettings.getSearchRequestBuilder(), themeDisplay.getLocale(), reverseOrder);
-        } catch (ConfigurationException e) {
-            LOG.warn("Could not get DsdSiteConfiguration for portlet " + portletSharedSearchSettings.getPortletId(), e);
-        }
+        //Sort values based on modification time. Sorting on registrationDate field does not work properly over entire index
+        _dsDsdJournalArticleUtils.addSortTerm(portletSharedSearchSettings, "modified_sortable", reverseOrder ? SortOrder.DESC : SortOrder.ASC);
 
     }
 

@@ -17,17 +17,18 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.*;
+import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.sort.SortOrder;
+import com.liferay.portal.search.sort.Sorts;
+import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 import nl.deltares.portal.utils.DDMStructureUtil;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DuplicateCheck;
-import nl.deltares.search.facet.DeltaresDateRangeFacet;
-import nl.deltares.search.facet.DeltaresDdmFieldValueFacet;
-import nl.deltares.search.facet.DeltaresMultipleFieldValueFacet;
+import nl.deltares.search.facet.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -48,6 +49,9 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
 
     @Reference
     AssetEntryService _assetEntryService;
+
+    @Reference
+    private Sorts _sorts;
 
     @Override
     public List<JournalArticle> getRelatedArticles(long groupId, String[] articleIds) throws PortalException {
@@ -204,13 +208,8 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
     }
 
     @Override
-    public void sortByDDMFieldArrayField(long groupId, String[] structureKeys, String dateFieldName,
-                                         SearchRequestBuilder searchRequestBuilder, Locale locale, boolean reverseOrder) {
-
-        final List<String> fieldNameValues = ddmStructureUtil.getEncodedFieldNamesForStructures(groupId, dateFieldName, structureKeys, locale);
-        searchRequestBuilder.sorts(ddmStructureUtil.buildDDMFieldArraySort(fieldNameValues.toArray(new String[0]),
-                reverseOrder ? SortOrder.DESC : SortOrder.ASC));
-
+    public void addSortTerm(PortletSharedSearchSettings portletSharedSearchSettings, String sortField, SortOrder sortOrder) {
+        portletSharedSearchSettings.getSearchRequestBuilder().sorts(_sorts.field(sortField, sortOrder));
     }
 
     @Override
@@ -253,6 +252,121 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
     }
 
     @Override
+    public void addDefaultFacets(PortletSharedSearchSettings portletSharedSearchSettings) {
+        Map<String, Facet> existringFacets = portletSharedSearchSettings.getSearchContext().getFacets();
+
+        //Only return latest version of article
+        if (!existringFacets.containsKey("head")) {
+            portletSharedSearchSettings.addFacet(new DeltaresTermFieldValueFacet("head", "true",
+                    portletSharedSearchSettings.getSearchContext()));
+        }
+        //Only return active articles
+        if (!existringFacets.containsKey("status")) {
+            portletSharedSearchSettings.addFacet(new DeltaresTermsFieldValueFacet("status", new String[]{"0"},
+                    portletSharedSearchSettings.getSearchContext()));
+        }
+
+    }
+
+    @Override
+    public void addTermFacet(PortletSharedSearchSettings portletSharedSearchSettings, String termName, String termValue,
+                             boolean exclude, boolean wildCard) throws PortalException {
+
+        Map<String, Facet> existringFacets = portletSharedSearchSettings.getSearchContext().getFacets();
+
+        //Check if already exists
+        if (existringFacets.containsKey(termName)) {
+            Facet oldFacet = existringFacets.get(termName);
+            if (oldFacet instanceof DeltaresTermFieldValueFacet) {
+                //Convert existing TermFacet to a TermsFacet
+                DeltaresTermFieldValueFacet oldTermFacet = (DeltaresTermFieldValueFacet) oldFacet;
+                if (oldTermFacet.useWildCard() || wildCard) {
+                    throw new PortalException(String.format("Could not add TermFacet '%s' as it already exists and uses WildCards.", termName));
+                }
+                if (oldTermFacet.isExclude() != exclude) {
+                    throw new PortalException(String.format("Could not add TermFacet '%s' as it already exists and exclude value does not match.", termName));
+                }
+                DeltaresTermsFieldValueFacet termsFacet = new DeltaresTermsFieldValueFacet(termName,
+                        new String[]{oldTermFacet.getTermFieldValue()},
+                        portletSharedSearchSettings.getSearchContext());
+                termsFacet.setExclude(exclude);
+                termsFacet.addValues(new String[]{termValue});
+                existringFacets.put(termName, termsFacet);
+
+            } else if (oldFacet instanceof DeltaresTermsFieldValueFacet) {
+                DeltaresTermsFieldValueFacet oldTermsFacet = (DeltaresTermsFieldValueFacet) oldFacet;
+                if (oldTermsFacet.isExclude() != exclude) {
+                    throw new PortalException(String.format("Could not add term to TermsFacet '%s' because exclude value does not match.", termName));
+                }
+                if (wildCard) {
+                    throw new PortalException(String.format("Could not add term to existing TermsFacet '%s' because using WildCard.", termName));
+                }
+                oldTermsFacet.addValues(new String[]{termValue});
+            }
+        } else {
+            DeltaresTermFieldValueFacet termFacet = new DeltaresTermFieldValueFacet(termName, termValue, wildCard,
+                    portletSharedSearchSettings.getSearchContext());
+            termFacet.setExclude(exclude);
+            existringFacets.put(termName, termFacet);
+        }
+    }
+
+    @Override
+    public void addTermsFacet(PortletSharedSearchSettings portletSharedSearchSettings, String termName, String[] termValues, boolean exclude) throws PortalException {
+        Map<String, Facet> existringFacets = portletSharedSearchSettings.getSearchContext().getFacets();
+
+        //Check if already exists
+        DeltaresTermsFieldValueFacet termsFacet;
+        if (existringFacets.containsKey(termName)) {
+            Facet oldFacet = existringFacets.get(termName);
+            if (oldFacet instanceof DeltaresTermFieldValueFacet) {
+                //Convert existing TermFacet to a TermsFacet
+                DeltaresTermFieldValueFacet oldTermsFacet = (DeltaresTermFieldValueFacet) oldFacet;
+                if (oldTermsFacet.useWildCard()) {
+                    throw new PortalException(String.format("Could not convert TermFacet '%s' to TermsFacet because it uses WildCards.", termName));
+                }
+                if (oldTermsFacet.isExclude() != exclude) {
+                    throw new PortalException(String.format("Could not convert TermFacet '%s' to TermsFacet because exclude value does not match.", termName));
+                }
+                termsFacet = new DeltaresTermsFieldValueFacet(termName,
+                        new String[]{oldTermsFacet.getTermFieldValue()},
+                        portletSharedSearchSettings.getSearchContext());
+                termsFacet.setExclude(exclude);
+                termsFacet.addValues(termValues);
+                existringFacets.put(termName, termsFacet);
+
+            } else if (oldFacet instanceof DeltaresTermsFieldValueFacet) {
+                DeltaresTermsFieldValueFacet oldTermsFacet = (DeltaresTermsFieldValueFacet) oldFacet;
+                if (oldTermsFacet.isExclude() != exclude) {
+                    throw new PortalException(String.format("Could not add terms to TermsFacet '%s' because exclude value does not match.", termName));
+                }
+                oldTermsFacet.addValues(termValues);
+            }
+        } else {
+            termsFacet = new DeltaresTermsFieldValueFacet(termName, termValues,
+                    portletSharedSearchSettings.getSearchContext());
+            termsFacet.setExclude(exclude);
+            existringFacets.put(termName, termsFacet);
+        }
+
+    }
+
+
+    /**
+     * In order to search for assets located within a given company, the corresponding index needs to be added to the search request.
+     *
+     * @param portletSharedSearchSettings Shared search context
+     * @param companyIds                  List of company ids
+     */
+    @Override
+    public void addCompanyIndexers(PortletSharedSearchSettings portletSharedSearchSettings, String[] companyIds) {
+        SearchRequestBuilder searchRequestBuilder = portletSharedSearchSettings.getSearchRequestBuilder();
+        for (String companyId : companyIds) {
+            searchRequestBuilder.addIndex("liferay-" + companyId);
+        }
+    }
+
+    @Override
     public void queryMultipleFieldValues(long groupId, String[] structureKeys, SearchContext searchContext, Locale locale) {
         final List<Optional<DDMStructure>> ddmStructuresOptionals = ddmStructureUtil.getDDMStructuresByName(groupId, structureKeys, locale);
         final DeltaresMultipleFieldValueFacet facet = new DeltaresMultipleFieldValueFacet("ddmStructureKey", searchContext);
@@ -284,7 +398,6 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
         sc.setEnd(QueryUtil.ALL_POS);
         return sc;
     }
-
 
     @Override
     public JournalArticle getJournalArticle(long groupId, String articleId) throws PortalException {

@@ -14,8 +14,6 @@ public interface DDMStructureUtil {
 
     List<Optional<DDMStructure>> getDDMStructuresByName(long groupId, String[] names, Locale locale);
 
-    Sort buildDDMFieldArraySort(String[] structureNames, SortOrder sortOrder);
-
     List<String> getEncodedFieldNamesForStructures(long groupId, String fieldName, String[] structureNames, Locale locale);
     Optional<DDMTemplate> getDDMTemplateByName(long groupId, String name, Locale locale);
 

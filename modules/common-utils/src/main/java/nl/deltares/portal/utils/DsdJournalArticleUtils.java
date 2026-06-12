@@ -4,7 +4,8 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.search.searcher.SearchRequestBuilder;
+import com.liferay.portal.search.sort.SortOrder;
+import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 
 import java.util.Date;
 import java.util.List;
@@ -27,10 +28,17 @@ public interface DsdJournalArticleUtils {
 
     List<JournalArticle> getRegistrationsForPeriod(long companyId, long groupId, Date startTime, Date endTime,
                                                    String[] structureKeys, String dateFieldName, Locale locale) throws PortalException;
-    void queryMultipleFieldValues(long groupId, String[] structureKeys, SearchContext searchContext, Locale locale);
 
-    void sortByDDMFieldArrayField(long groupId, String[] structureKeys, String dateFieldName,
-                                  SearchRequestBuilder searchRequestBuilder, Locale locale, boolean ascending);
+    void addDefaultFacets(PortletSharedSearchSettings portletSharedSearchSettings);
+
+    void addTermFacet(PortletSharedSearchSettings portletSharedSearchSettings, String termName, String termValue,
+                      boolean exclude, boolean wildCard) throws PortalException;
+
+    void addTermsFacet(PortletSharedSearchSettings portletSharedSearchSettings, String termName, String[] termValues, boolean exclude) throws PortalException;
+
+    void addCompanyIndexers(PortletSharedSearchSettings portletSharedSearchSettings, String[] companyIds);
+
+    void queryMultipleFieldValues(long groupId, String[] structureKeys, SearchContext searchContext, Locale locale);
 
     void queryDdmFieldValue(long groupId, String ddmFieldName, String ddmFieldValue, String[] structureKeys, SearchContext searchContext, Locale locale);
 
@@ -43,5 +51,6 @@ public interface DsdJournalArticleUtils {
     Map<String, String> getPicklistFieldOptions(long groupId, String picklistExternalIdentifier, Locale locale, User user) throws PortalException;
 
     Map<String, String> getStructureFieldOptions(long groupId, String structureName, String optionsField, Locale locale) throws PortalException;
-//    String getJournalArticleDisplayContent(PortletRequest portletRequest, PortletResponse portletResponse, String articleId, ThemeDisplay themeDisplay) throws PortalException;
+
+    void addSortTerm(PortletSharedSearchSettings portletSharedSearchSettings, String sortField, SortOrder sortOrder);
 }

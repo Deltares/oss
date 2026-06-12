@@ -27,6 +27,10 @@ public class DeltaresTermsFieldValueFacet extends BaseFacet {
         _termFieldValues.addAll(Arrays.asList(fieldValues));
     }
 
+    public boolean isExclude() {
+        return exclude;
+    }
+
     /**
      * Exclude wil result in a negative search of this field value. So if an item contains the field it will not
      * be added to the results
