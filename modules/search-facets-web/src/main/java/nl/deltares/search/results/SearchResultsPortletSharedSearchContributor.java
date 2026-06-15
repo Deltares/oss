@@ -29,10 +29,12 @@ public class SearchResultsPortletSharedSearchContributor implements PortletShare
         ThemeDisplay themeDisplay = portletSharedSearchSettings.getThemeDisplay();
         SearchResultsPortletConfiguration searchResultsConfiguration;
         boolean reverseOrder;
+        int delta = -1;
         try {
             searchResultsConfiguration = _configurationProvider.getPortletInstanceConfiguration(
                     SearchResultsPortletConfiguration.class, themeDisplay.getLayout(), portletSharedSearchSettings.getPortletId());
             reverseOrder = Boolean.parseBoolean(searchResultsConfiguration.reverseOrder());
+            delta = Integer.parseInt(searchResultsConfiguration.numberOfResults().isEmpty() ? "20" : searchResultsConfiguration.numberOfResults());
         } catch (ConfigurationException e) {
             LOG.warn(String.format("Could not get SearchResultsConfiguration for portlet '%s': %s", portletSharedSearchSettings.getPortletId(), e.getMessage()));
             reverseOrder = false;
@@ -43,18 +45,19 @@ public class SearchResultsPortletSharedSearchContributor implements PortletShare
         String namespace = '_' + portletSharedSearchSettings.getPortletId() + '_';
 
         final String deltaParam = FacetUtils.getRequestParameter(namespace + "delta", portletSharedSearchSettings.getRenderRequest());
-        final String curParam = FacetUtils.getRequestParameter(namespace + "cur", portletSharedSearchSettings.getRenderRequest());
         if (deltaParam != null) {
-            portletSharedSearchSettings.setPaginationDelta(Integer.parseInt(deltaParam));
-        } else {
-            portletSharedSearchSettings.setPaginationDelta(20);
+            delta = Integer.parseInt(deltaParam);
         }
+        final String curParam = FacetUtils.getRequestParameter(namespace + "cur", portletSharedSearchSettings.getRenderRequest());
+        portletSharedSearchSettings.setPaginationDelta(delta);
+
         if (curParam != null) {
             portletSharedSearchSettings.setPaginationStart(Integer.parseInt(curParam));
         }
 
         //Sort values based on modification time. Sorting on registrationDate field does not work properly over entire index
-        _dsDsdJournalArticleUtils.addSortTerm(portletSharedSearchSettings, "modified_sortable", reverseOrder ? SortOrder.DESC : SortOrder.ASC);
+        SortOrder sortOrder = reverseOrder ? SortOrder.DESC : SortOrder.ASC;
+        _dsDsdJournalArticleUtils.addDDMFieldSortTerm(portletSharedSearchSettings, "ddmFieldArray", "registrationDate", null, sortOrder);
 
     }
 

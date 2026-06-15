@@ -53,4 +53,7 @@ public interface DsdJournalArticleUtils {
     Map<String, String> getStructureFieldOptions(long groupId, String structureName, String optionsField, Locale locale) throws PortalException;
 
     void addSortTerm(PortletSharedSearchSettings portletSharedSearchSettings, String sortField, SortOrder sortOrder);
+
+    void addDDMFieldSortTerm(PortletSharedSearchSettings portletSharedSearchSettings, String path, String sortByFieldValue, Locale locale, SortOrder sortOrder);
+
 }

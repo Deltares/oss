@@ -18,7 +18,7 @@ public interface SearchResultsPortletConfiguration {
     @Meta.AD(required = false, deflt = "false", description = "Reverse sort order")
     String reverseOrder();
 
-    @Meta.AD(required = false, deflt = "false", description = "Maximum number of results to display")
-    String maxResults();
+    @Meta.AD(required = false, deflt = "20", description = "Maximum number of items to display")
+    String numberOfResults();
 
 }

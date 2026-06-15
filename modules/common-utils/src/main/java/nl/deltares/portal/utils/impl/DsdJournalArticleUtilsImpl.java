@@ -21,7 +21,11 @@ import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.DateUtil;
+import com.liferay.portal.search.query.Queries;
+import com.liferay.portal.search.query.WildcardQuery;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
+import com.liferay.portal.search.sort.FieldSort;
+import com.liferay.portal.search.sort.NestedSort;
 import com.liferay.portal.search.sort.SortOrder;
 import com.liferay.portal.search.sort.Sorts;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
@@ -52,6 +56,9 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
 
     @Reference
     private Sorts _sorts;
+
+    @Reference
+    private Queries _queries;
 
     @Override
     public List<JournalArticle> getRelatedArticles(long groupId, String[] articleIds) throws PortalException {
@@ -209,7 +216,29 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
 
     @Override
     public void addSortTerm(PortletSharedSearchSettings portletSharedSearchSettings, String sortField, SortOrder sortOrder) {
-        portletSharedSearchSettings.getSearchRequestBuilder().sorts(_sorts.field(sortField, sortOrder));
+        portletSharedSearchSettings.getSearchRequestBuilder().addSort(_sorts.field(sortField, sortOrder));
+    }
+
+    @Override
+    public void addDDMFieldSortTerm(PortletSharedSearchSettings portletSharedSearchSettings, String path, String sortByFielNamedValue, Locale locale, SortOrder sortOrder) {
+
+        String sortField;
+        if (locale != null){
+            String language = locale.toString();
+            sortField = path + ".ddmFieldValueKeyword_" + language + "_String_sortable";
+        } else {
+            sortField = path + ".ddmFieldValueKeyword_String_sortable";
+        }
+        FieldSort fieldSort = _sorts.field(sortField);
+        NestedSort nested = _sorts.nested(path);
+
+        WildcardQuery filterQuery = _queries.wildcard(path + ".ddmFieldName", String.format("ddm__keyword__*__%s*", sortByFielNamedValue));
+        nested.setFilterQuery(filterQuery);
+
+        fieldSort.setNestedSort(nested);
+        fieldSort.setSortOrder(sortOrder);
+
+        portletSharedSearchSettings.getSearchRequestBuilder().addSort(fieldSort);
     }
 
     @Override
