@@ -32,7 +32,7 @@ public interface DsdJournalArticleUtils {
     void addDefaultFacets(PortletSharedSearchSettings portletSharedSearchSettings);
 
     void addTermFacet(PortletSharedSearchSettings portletSharedSearchSettings, String termName, String termValue,
-                      boolean exclude, boolean wildCard) throws PortalException;
+                      boolean exclude, boolean wildCard, boolean isDdmField) throws PortalException;
 
     void addTermsFacet(PortletSharedSearchSettings portletSharedSearchSettings, String termName, String[] termValues, boolean exclude) throws PortalException;
 
@@ -46,6 +46,9 @@ public interface DsdJournalArticleUtils {
 
     void queryExcludeDdmFieldValue(long groupId, String ddmFieldName, String ddmFieldValue, String[] structureKeys, SearchContext searchContext, Locale locale);
 
+    /**
+     * Query ddmFieldArray date values. This method can be applied to date fields that are language sensitive.
+     */
     void queryDateRange(long groupId, Date startDate, Date endDate, String[] structureKeys, String dateFieldName, SearchContext searchContext, Locale locale);
 
     Map<String, String> getPicklistFieldOptions(long groupId, String picklistExternalIdentifier, Locale locale, User user) throws PortalException;

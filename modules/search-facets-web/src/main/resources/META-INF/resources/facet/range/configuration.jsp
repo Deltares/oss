@@ -8,18 +8,16 @@
             (RangeFacetConfiguration)
                     renderRequest.getAttribute(RangeFacetConfiguration.class.getName());
 
-    String companyIds = "";
-    String groupIds = "";
     String termFieldName = "";
     String upperValue = "";
     String lowerValue = "";
+    String isDdmField = "";
 
     if (Validator.isNotNull(reg_configuration)){
-        companyIds = portletPreferences.getValue("companyIds", reg_configuration.companyIds());
-        groupIds = portletPreferences.getValue("groupIds", reg_configuration.groupIds());
         termFieldName = portletPreferences.getValue("termFieldName", reg_configuration.termFieldName());
         upperValue = portletPreferences.getValue("upperValue", reg_configuration.upperValue());
         lowerValue = portletPreferences.getValue("lowerValue", reg_configuration.lowerValue());
+        isDdmField = portletPreferences.getValue("isDdmField", reg_configuration.isDdmField());
 
     }
 %>
@@ -50,20 +48,21 @@
     <aui:fieldset>
 
         <aui:input
-                label="Company ID"
-                name="companyIds"
-                helpMessage="Company Ids of companies from which to retrieve articles. Space separated"
-                value='<%= companyIds %>'
-        >
-        </aui:input>
-
-        <aui:input
                 label="Term field name"
                 name="termFieldName"
                 helpMessage="Term field name of the articles to retrieve"
                 value='<%= termFieldName %>'
         >
         </aui:input>
+
+        <aui:input
+                name="isDdmField"
+                label="Is this a Ddm Field"
+                type="toggle-switch"
+                value='<%= isDdmField %>'
+        >
+        </aui:input>
+
         <aui:input
                 label="Lower value"
                 name="lowerValue"
@@ -77,14 +76,7 @@
                 helpMessage="Upper value of range. If ommitted then no upper range applied. Dates are expected in format yyyy-MM-dd"
                 value='<%= upperValue %>'
         >
-        </aui:input>        <aui:input
-                label="Group IDs (space separated)"
-                name="groupIds"
-                helpMessage="Group Ids of all sites to search, separated by space. If specified, articles will only be retrieved from given sites."
-                value='<%= groupIds %>'
-        >
         </aui:input>
-
     </aui:fieldset>
 
     <aui:button-row>

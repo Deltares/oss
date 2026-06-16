@@ -7,21 +7,18 @@
     TermsFacetConfiguration reg_configuration =
             (TermsFacetConfiguration)
                     renderRequest.getAttribute(TermsFacetConfiguration.class.getName());
-
-    String companyIds = "";
-    String groupIds = "";
-    String articleIds = "";
+    String multipleTermValues = "";
     String termValue = "";
     String termFieldName = "";
     String useWildcard = "false";
+    String isDdmField = "";
 
     if (Validator.isNotNull(reg_configuration)){
-        companyIds = portletPreferences.getValue("companyIds", reg_configuration.companyIds());
-        groupIds = portletPreferences.getValue("groupIds", reg_configuration.groupIds());
-        articleIds = portletPreferences.getValue("articleIds", reg_configuration.articleIds());
+        multipleTermValues = portletPreferences.getValue("multipleTermValues", reg_configuration.multipleTermValues());
         termValue = portletPreferences.getValue("termValue", reg_configuration.termValue());
         termFieldName = portletPreferences.getValue("termFieldName", reg_configuration.termFieldName());
         useWildcard = portletPreferences.getValue("useWildcard", reg_configuration.useWildcard());
+        isDdmField = portletPreferences.getValue("isDdmField", reg_configuration.isDdmField());
     }
 %>
 
@@ -51,14 +48,6 @@
     <aui:fieldset>
 
         <aui:input
-                label="Company ID"
-                name="companyIds"
-                helpMessage="Company Ids of companies from which to retrieve articles. Space separated"
-                value='<%= companyIds %>'
-        >
-        </aui:input>
-
-        <aui:input
                 label="Term field name"
                 name="termFieldName"
                 helpMessage="Term field name of the articles to retrieve"
@@ -72,6 +61,7 @@
                 value='<%= termValue %>'
         >
         </aui:input>
+
         <aui:input
                 label="Use wildcard"
                 name="useWildcard"
@@ -80,19 +70,21 @@
                 type="toggle-switch"
         >
         </aui:input>
+
         <aui:input
-                label="Group IDs (space separated)"
-                name="groupIds"
-                helpMessage="Group Ids of all sites to search, separated by space. If specified, articles will only be retrieved from given sites."
-                value='<%= groupIds %>'
+                name="isDdmField"
+                label="Is this a Ddm Field"
+                type="toggle-switch"
+                value='<%= isDdmField %>'
         >
         </aui:input>
 
         <aui:input
-                label="Article IDs (space separated)"
-                name="articleIds"
-                helpMessage="Article Ids of articles to retrieve, separated by space. If specified, only these articles will be retrieved, otherwise all articles matching the companyId and ddmStructureKey will be retrieved."
-                value='<%= articleIds %>'
+                label="Term field contains multiple values (space separated)"
+                name="multipleTermValues"
+                helpMessage="If the terms field contains multiple values then a TermsFilter is applied."
+                value='<%= multipleTermValues %>'
+                type="toggle-switch"
         >
         </aui:input>
 

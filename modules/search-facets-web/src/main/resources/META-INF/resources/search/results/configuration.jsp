@@ -18,11 +18,13 @@
     SearchResultsPortletConfiguration configuration =
             (SearchResultsPortletConfiguration) renderRequest.getAttribute(SearchResultsPortletConfiguration.class.getName());
 
+    String companyIds = "";
     String displayTemplate = "";
     String displayType = "";
     boolean reverseOrder = false;
     String numberOfResults = "";
     if (Validator.isNotNull(configuration)) {
+        companyIds = portletPreferences.getValue("companyIds", configuration.companyIds());
         displayTemplate = portletPreferences.getValue("displayTemplate", configuration.displayTemplate());
         displayType = portletPreferences.getValue("displayType", configuration.displayType());
         reverseOrder = Boolean.parseBoolean(portletPreferences.getValue("reverseOrder", configuration.reverseOrder()));
@@ -40,6 +42,15 @@
 />
 
 <aui:form action="<%= configurationActionURL %>" method="post" name="fm">
+
+    <aui:input
+            label="Company ID"
+            name="companyIds"
+            helpMessage="Company Ids of companies from which to retrieve articles. Space separated"
+            value='<%= companyIds %>'
+    >
+    </aui:input>
+
     <aui:input
             name="<%= Constants.CMD %>"
             type="hidden"

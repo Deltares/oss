@@ -41,6 +41,7 @@ public class SearchResultsPortletConfigurationAction extends DefaultConfiguratio
     public void processAction(PortletConfig portletConfig, ActionRequest actionRequest, ActionResponse actionResponse)
             throws Exception {
 
+        setPreference(actionRequest, "companyIds", ParamUtil.getString(actionRequest, "companyIds"));
         String displayTemplate = ParamUtil.getString(actionRequest, "displayTemplate");
         setPreference(actionRequest, "displayTemplate", displayTemplate);
         String displayType = ParamUtil.getString(actionRequest, "displayType");
@@ -49,7 +50,8 @@ public class SearchResultsPortletConfigurationAction extends DefaultConfiguratio
         setPreference(actionRequest, "reverseOrder", String.valueOf(reverseOrder));
         String numberOfResults = ParamUtil.getString(actionRequest, "numberOfResults");
         setPreference(actionRequest, "numberOfResults", String.valueOf(numberOfResults));
-
+        String ddmSortByField = ParamUtil.getString(actionRequest, "ddmSortByField");
+        setPreference(actionRequest, "ddmSortByField", ddmSortByField);
         super.processAction(portletConfig, actionRequest, actionResponse);
     }
 

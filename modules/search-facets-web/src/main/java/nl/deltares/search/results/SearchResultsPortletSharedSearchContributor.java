@@ -27,17 +27,25 @@ public class SearchResultsPortletSharedSearchContributor implements PortletShare
     public void contribute(PortletSharedSearchSettings portletSharedSearchSettings) {
 
         ThemeDisplay themeDisplay = portletSharedSearchSettings.getThemeDisplay();
-        SearchResultsPortletConfiguration searchResultsConfiguration;
         boolean reverseOrder;
+        String ddmSortByField;
         int delta = -1;
         try {
-            searchResultsConfiguration = _configurationProvider.getPortletInstanceConfiguration(
+            SearchResultsPortletConfiguration searchResultsConfiguration = _configurationProvider.getPortletInstanceConfiguration(
                     SearchResultsPortletConfiguration.class, themeDisplay.getLayout(), portletSharedSearchSettings.getPortletId());
             reverseOrder = Boolean.parseBoolean(searchResultsConfiguration.reverseOrder());
             delta = Integer.parseInt(searchResultsConfiguration.numberOfResults().isEmpty() ? "20" : searchResultsConfiguration.numberOfResults());
+            ddmSortByField = searchResultsConfiguration.ddmSortByField();
+
+            String companyIds = searchResultsConfiguration.companyIds();
+            if (!companyIds.isEmpty()) {
+                String[] ids = companyIds.split(" ");
+                _dsDsdJournalArticleUtils.addCompanyIndexers(portletSharedSearchSettings, ids);
+            }
         } catch (ConfigurationException e) {
             LOG.warn(String.format("Could not get SearchResultsConfiguration for portlet '%s': %s", portletSharedSearchSettings.getPortletId(), e.getMessage()));
             reverseOrder = false;
+            ddmSortByField = "registrationDate";
         }
 
         _dsDsdJournalArticleUtils.addDefaultFacets(portletSharedSearchSettings);
@@ -57,7 +65,7 @@ public class SearchResultsPortletSharedSearchContributor implements PortletShare
 
         //Sort values based on modification time. Sorting on registrationDate field does not work properly over entire index
         SortOrder sortOrder = reverseOrder ? SortOrder.DESC : SortOrder.ASC;
-        _dsDsdJournalArticleUtils.addDDMFieldSortTerm(portletSharedSearchSettings, "ddmFieldArray", "registrationDate", null, sortOrder);
+        _dsDsdJournalArticleUtils.addDDMFieldSortTerm(portletSharedSearchSettings, "ddmFieldArray", ddmSortByField, null, sortOrder);
 
     }
 

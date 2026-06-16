@@ -299,7 +299,7 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
 
     @Override
     public void addTermFacet(PortletSharedSearchSettings portletSharedSearchSettings, String termName, String termValue,
-                             boolean exclude, boolean wildCard) throws PortalException {
+                             boolean exclude, boolean wildCard, boolean isDdmField) throws PortalException {
 
         Map<String, Facet> existringFacets = portletSharedSearchSettings.getSearchContext().getFacets();
 
@@ -333,9 +333,18 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
                 oldTermsFacet.addValues(new String[]{termValue});
             }
         } else {
-            DeltaresTermFieldValueFacet termFacet = new DeltaresTermFieldValueFacet(termName, termValue, wildCard,
-                    portletSharedSearchSettings.getSearchContext());
-            termFacet.setExclude(exclude);
+            Facet termFacet;
+            if (isDdmField) {
+                DeltaresDdmTermFieldValueFacet deltaresFacet = new DeltaresDdmTermFieldValueFacet(termName, termValue, wildCard,
+                        portletSharedSearchSettings.getSearchContext());
+                deltaresFacet.setExclude(exclude);
+                termFacet = deltaresFacet;
+            } else {
+                DeltaresTermFieldValueFacet deltaresFacet = new DeltaresTermFieldValueFacet(termName, termValue, wildCard,
+                        portletSharedSearchSettings.getSearchContext());
+                deltaresFacet.setExclude(exclude);
+                termFacet = deltaresFacet;
+            }
             existringFacets.put(termName, termFacet);
         }
     }

@@ -28,44 +28,21 @@ public class TermsFacetPortletSharedSearchContributor implements PortletSharedSe
 
         try {
             TermsFacetConfiguration termsPortletConfiguration = _configurationProvider.getPortletInstanceConfiguration(TermsFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
-
-            String companyIds = termsPortletConfiguration.companyIds();
-            if (!companyIds.isEmpty()) {
-                String[] ids = companyIds.split(" ");
-                _dsdJournalArticleUtils.addCompanyIndexers(portletSharedSearchSettings, ids);
-            }
-            String groupIdsConfig = termsPortletConfiguration.groupIds();
-            if (!groupIdsConfig.isEmpty()) {
-                String[] groupIds = groupIdsConfig.split(" ");
+            String termFieldName = termsPortletConfiguration.termFieldName();
+            String termFieldValue = termsPortletConfiguration.termValue();
+            boolean multipleTermValues = Boolean.parseBoolean(termsPortletConfiguration.multipleTermValues());
+            if (!termFieldValue.isEmpty()) {
                 try {
-                    _dsdJournalArticleUtils.addTermsFacet(portletSharedSearchSettings, "groupId", groupIds, false);
-                } catch (PortalException e) {
-                    LOG.warn(e);
-                }
-            }
-
-            String articleIdsConfig = termsPortletConfiguration.articleIds();
-            if (articleIdsConfig.isEmpty()) {
-                String termFieldName = termsPortletConfiguration.termFieldName();
-                String termFieldValue = termsPortletConfiguration.termValue();
-                if (!termFieldValue.isEmpty()) {
-                    try {
+                    if (multipleTermValues) {
+                        _dsdJournalArticleUtils.addTermsFacet(portletSharedSearchSettings, termFieldName, termFieldValue.split(" "),false);
+                    } else {
                         _dsdJournalArticleUtils.addTermFacet(portletSharedSearchSettings, termFieldName, termFieldValue,
-                                false, Boolean.parseBoolean(termsPortletConfiguration.useWildcard()));
-                    } catch (PortalException e) {
-                        LOG.warn(e);
+                                false, Boolean.parseBoolean(termsPortletConfiguration.useWildcard()), Boolean.parseBoolean(termsPortletConfiguration.isDdmField()));
                     }
-                }
-            } else {
-                String[] articleIds = articleIdsConfig.split(" ");
-                try {
-                    _dsdJournalArticleUtils.addTermsFacet(portletSharedSearchSettings, "articleId_String_sortable", articleIds, false);
                 } catch (PortalException e) {
                     LOG.warn(e);
                 }
-
             }
-
         } catch (ConfigurationException e) {
             throw new RuntimeException(e);
         }

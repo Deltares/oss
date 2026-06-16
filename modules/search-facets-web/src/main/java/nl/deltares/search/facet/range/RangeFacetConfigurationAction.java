@@ -40,11 +40,10 @@ public class RangeFacetConfigurationAction extends DefaultConfigurationAction {
     @Override
     public void processAction(PortletConfig portletConfig, ActionRequest actionRequest, ActionResponse actionResponse)
             throws Exception {
-        setPreference(actionRequest, "companyIds", ParamUtil.getString(actionRequest, "companyIds"));
-        setPreference(actionRequest, "groupIds", ParamUtil.getString(actionRequest, "groupIds"));
         setPreference(actionRequest, "termFieldName", ParamUtil.getString(actionRequest, "termFieldName"));
         setPreference(actionRequest, "lowerValue", ParamUtil.getString(actionRequest, "lowerValue"));
         setPreference(actionRequest, "upperValue", ParamUtil.getString(actionRequest, "upperValue"));
+        setPreference(actionRequest, "isDdmField", ParamUtil.getString(actionRequest, "isDdmField"));
         super.processAction(portletConfig, actionRequest, actionResponse);
     }
 
