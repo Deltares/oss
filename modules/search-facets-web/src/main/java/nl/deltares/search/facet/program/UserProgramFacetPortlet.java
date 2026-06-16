@@ -53,20 +53,22 @@ public class UserProgramFacetPortlet extends MVCPortlet {
             renderRequest.setAttribute("user-program-site-selection", selection);
             FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(), "user-program-site-selection", selection, renderRequest);
         } else {
-            String siteSelection = ParamUtil.getString(renderRequest, "user-program-site-selection", null);
-            if (siteSelection == null || siteSelection.isEmpty()) {
-                FacetUtils.removeFromSession(themeDisplay.getPortletDisplay().getId(), "user-program-site-selection", renderRequest);
-            } else {
-                FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(), "user-program-site-selection", siteSelection, renderRequest);
-            }
-            renderRequest.setAttribute("user-program-site-selection", siteSelection);
 
             String[] idstrings = configuration.includedSiteGroupIds().split(" ");
             Long[] inludeids = Arrays.stream(idstrings).filter(s -> !s.isEmpty()).map(Long::parseLong).toArray(Long[]::new);
             idstrings = configuration.excludedSiteGroupIds().split(" ");
             Long[] excludeids = Arrays.stream(idstrings).filter(s -> !s.isEmpty()).map(Long::parseLong).toArray(Long[]::new);
             Map<Long, List<Long>> registrationSiteIds = _dsdSessionUtils.getRegistrationSiteIds(inludeids, excludeids);
-            renderRequest.setAttribute("site-selectionMap", convertToOptions(registrationSiteIds, themeDisplay.getSiteGroup()));
+            Map<String, String> selectionMap = convertToOptions(registrationSiteIds, themeDisplay.getSiteGroup());
+            renderRequest.setAttribute("site-selectionMap", selectionMap);
+
+            String siteSelection = ParamUtil.getString(renderRequest, "user-program-site-selection", null);
+            if (siteSelection == null || siteSelection.isEmpty()) {
+                siteSelection = selectionMap.keySet().iterator().next();
+            }
+            FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(), "user-program-site-selection", siteSelection, renderRequest);
+            renderRequest.setAttribute("user-program-site-selection", siteSelection);
+
         }
         renderRequest.setAttribute("showRegistrationsMadeForOthers", configuration.showRegistrationsMadeForOthers());
         super.render(renderRequest, renderResponse);

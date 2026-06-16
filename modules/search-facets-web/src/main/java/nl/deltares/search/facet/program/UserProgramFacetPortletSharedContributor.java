@@ -34,7 +34,6 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
 
         ThemeDisplay themeDisplay = portletSharedSearchSettings.getThemeDisplay();
         String currentPortletId = portletSharedSearchSettings.getPortletId();
-        SearchRequestBuilder searchRequestBuilder = portletSharedSearchSettings.getSearchRequestBuilder();
         long userId;
         long groupId;
         String selection = (String) FacetUtils.getFromSession(currentPortletId, "user-program-site-selection", portletSharedSearchSettings.getRenderRequest());
@@ -48,16 +47,6 @@ public class UserProgramFacetPortletSharedContributor implements PortletSharedSe
             FacetSelection facetSelection = FacetUtils.getFacetSelection(Long.parseLong(selection), themeDisplay);
             groupId = facetSelection.getSiteGroupId();
             userId = facetSelection.getUserId();
-
-            //Tell searchrequest in which Elasticsearch index to look for articles
-            searchRequestBuilder.companyId(facetSelection.getCompanyId());
-            searchRequestBuilder.indexes("liferay-" + facetSelection.getCompanyId());
-            //Only return latest version of article
-            portletSharedSearchSettings.addFacet(new DeltaresTermFieldValueFacet("head", "true",
-                    portletSharedSearchSettings.getSearchContext()));
-            //Only return active articles
-            portletSharedSearchSettings.addFacet(new DeltaresTermsFieldValueFacet("status", new String[]{"0"},
-                    portletSharedSearchSettings.getSearchContext()));
 
             //Copy FacetSelection to the context of the SearchResultsPortlet
             FacetUtils.storeInSession(themeDisplay.getPortletDisplay().getId(), "facet-selection", facetSelection, portletSharedSearchSettings.getRenderRequest());
