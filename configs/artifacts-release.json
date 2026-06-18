@@ -111,13 +111,13 @@
   {
     "groupId" : "nl.deltares",
     "artifactId" : "deltares-theme",
-    "version" : "1.1.11",
+    "version" : "1.1.12",
     "extension" : "war"
   },
   {
     "groupId" : "nl.deltares",
     "artifactId" : "deltares-fews-theme",
-    "version" : "1.1.4",
+    "version" : "1.1.5",
     "extension" : "war"
   }
 ]
