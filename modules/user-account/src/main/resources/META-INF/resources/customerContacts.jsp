@@ -5,7 +5,6 @@
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
-<%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
 
@@ -17,7 +16,9 @@
     final String filterSelection = (String) request.getAttribute("filterSelection");
     final Long customerSelection = (Long) request.getAttribute("customerSelection");
 
-    final String selectedCustomerName = customerInfo.getOrDefault(customerSelection, "");
+    final String customerContactsError = (String) request.getAttribute("customer-contacts-error");
+
+//    final String selectedCustomerName = customerInfo.getOrDefault(customerSelection, "");
 
 %>
 
@@ -68,22 +69,14 @@
     </aui:row>
 </aui:fieldset>
 
-<%
-    if (SessionErrors.contains(liferayPortletRequest, "customer-contacts-unauthorized")) {
-%>
-<liferay-ui:error key="customer-contacts-unauthorized">
-    <liferay-ui:message key="customer.contacts.unauthorized"
-                        arguments='<%= SessionErrors.get(liferayPortletRequest, "customer-contacts-unauthorized") %>'/>
-</liferay-ui:error>
-<%
-    } else {
-%>
 <aui:form name="customerContacts" >
     <jsp:useBean id="customerContactList" type="java.util.List" scope="request"/>
     <jsp:useBean id="totalCustomerContactCount" type="java.lang.Integer" scope="request"/>
     <%
         String emptyResultsMessage = "";
-        if (!themeDisplay.isSignedIn()) {
+        if (customerContactsError != null){
+            emptyResultsMessage = customerContactsError;
+        }else if (!themeDisplay.isSignedIn()) {
             emptyResultsMessage = LanguageUtil.format(request, "not-logged-in", new Object[0]);
         } else if (totalCustomerContactCount == 0) {
             emptyResultsMessage = LanguageUtil.format(request, "no-clm-records", new Object[]{themeDisplay.getUser().getEmailAddress()});
@@ -107,6 +100,3 @@
         <liferay-ui:search-iterator/>
     </liferay-ui:search-container>
 </aui:form>
-<%
-    }
-%>

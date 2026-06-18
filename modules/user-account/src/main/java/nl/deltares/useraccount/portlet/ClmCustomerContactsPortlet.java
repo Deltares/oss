@@ -3,6 +3,7 @@ package nl.deltares.useraccount.portlet;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -10,6 +11,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.portal.utils.LicenseManagerUtils;
 import nl.deltares.useraccount.comparator.CustomerContactComparator;
@@ -77,11 +79,8 @@ public class ClmCustomerContactsPortlet extends MVCPortlet {
                 for (int i = 0; i < customerContactsForUser.length(); i++) {
                     CustomerContact customerContact = convertToContact(customerContactsForUser.getJSONObject(i));
                     if (customerContact.getCustomerId() != customerSelection) continue;
-                    if (!customerContact.isContactManageLicenses()){
-                        SessionErrors.add(renderRequest, "customer-contacts-unauthorized", customerInfo.get(customerSelection));
-                        break;
-                    }
-                        hasManageLicensesPermission = true;
+                    hasManageLicensesPermission = customerContact.isContactManageLicenses();
+                    break;
                 }
 
                 if (hasManageLicensesPermission) {
@@ -98,6 +97,9 @@ public class ClmCustomerContactsPortlet extends MVCPortlet {
                     }
                     sortContacts(filteredContacts, orderByCol, orderByType);
 
+                } else {
+                    ResourceBundle resourceBundle = ResourceBundleUtil.getBundle("content.Language", themeDisplay.getLocale(), getClass());
+                    renderRequest.setAttribute("customer-contacts-error", LanguageUtil.format(resourceBundle, "customer.contacts.unauthorized", customerInfo.get(customerSelection)));
                 }
 
 
@@ -107,6 +109,7 @@ public class ClmCustomerContactsPortlet extends MVCPortlet {
             renderRequest.setAttribute("customerInfo", customerInfo);
             renderRequest.setAttribute("filterSelection", filter);
             renderRequest.setAttribute("customerSelection", customerSelection);
+
         } catch (JSONException e) {
             throw new PortletException(e);
         }
