@@ -1,7 +1,7 @@
 services:
 
   database:
-    image: mariadb:10.6.27-jammy
+    image: mariadb:11.2-rc
     container_name: oss-mariadb-74
     ports:
       - "3307:3306"
@@ -9,14 +9,13 @@ services:
       - .env
     volumes:
       - dbliferay74:/var/lib/mysql
-      - ./resources/dump-liferay.sql:/docker-entrypoint-initdb.d/dump.sql
+#      - ./resources/dump-liferay.sql:/docker-entrypoint-initdb.d/dump.sql
     restart: always
-    command: [ 'mysqld', '--character-set-server=utf8', '--collation-server=utf8_general_ci', '--innodb-use-native-aio=0' ]
     networks:
       - liferay
 
   mariadb-keycloak:
-    image: mariadb:10.6.27-jammy
+    image: mariadb:11.2-rc
     container_name: keycloak-mariadb-74
     ports:
       - "3308:3306"
@@ -28,9 +27,8 @@ services:
       - HOSTNAME=mariadb-keycloak
     volumes:
       - dbkeycloak74:/var/lib/mysql
-      - ./resources/dump-keycloak.sql:/docker-entrypoint-initdb.d/dump.sql
+#      - ./resources/dump-keycloak.sql:/docker-entrypoint-initdb.d/dump.sql
     restart: always
-    command: [ 'mysqld', '--character-set-server=utf8', '--collation-server=utf8_general_ci', '--innodb-use-native-aio=0' ]
     networks:
       - liferay
 
@@ -50,11 +48,13 @@ services:
       - ./liferay/geoip:/opt/liferay/geoip
       - ./liferay/lmcrypt:/opt/liferay/lmcrypt
       - ./liferay/patching:/mnt/liferay/patching
-      - ${LIFERAY_BUNDLE_DIR}/deploy:/opt/liferay/deploy
-      - ${LIFERAY_BUNDLE_DIR}/osgi/modules:/opt/liferay/osgi/modules
+      - type: bind
+        source: ${LIFERAY_BUNDLE_DIR}/deploy
+        target: /opt/liferay/deploy
+      - type: bind
+        source: ${LIFERAY_BUNDLE_DIR}/osgi/modules
+        target: /opt/liferay/osgi/modules
     restart: always
-    networks:
-      - liferay
 
   elasticsearch:
     container_name: oss-elastic-74
@@ -81,16 +81,14 @@ services:
       - liferay
 
   keycloak:
-    image: quay.io/keycloak/keycloak:24.0.1
+    image: quay.io/keycloak/keycloak:26.6.3
     ports:
       - 8080:8080
       - 8787:8787
     entrypoint: [ "/opt/keycloak/bin/kc.sh", "start-dev", "--import-realm", "--log-level=INFO" ]
     volumes:
       - ./keycloak/deployments:/opt/keycloak/providers
-      - ./resources/realm-export.json:/opt/keycloak/data/import/realm-export.json
       - ./resources/keycloak.conf:/opt/keycloak/conf/keycloak.conf
-    restart: always
     networks:
       - liferay
     environment:
@@ -112,3 +110,4 @@ volumes:
 
 networks:
   liferay:
+    driver: bridge

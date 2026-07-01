@@ -51,18 +51,16 @@ task startContainers(
 ) {
     doLast {
 
-        print 'Pulling Liferay image'
-        exec {
-            executable 'podman'
-            args('build', '-t', 'liferay', '-f', liferayDockerPath)
-            environment('LIFERAY_BUNDLE_DIR', bundleDir)
-        }
-        print 'Running compose command'
-
+        System.out.println('Running compose command with arguments: ')
+        System.out.println('dockerContainerPrefix: ' + dockerContainerPrefix)
+        System.out.println('dockerComposeFilePath: ' + dockerComposeFilePath)
+        System.out.println('bundleDir: ' + bundleDir)
         exec {
             executable 'podman'
             args('compose', '-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'up', '--build', '--force-recreate', '-d')
             environment('LIFERAY_BUNDLE_DIR', bundleDir)
+            standardOutput = System.out
+            errorOutput = System.err
         }
     }
 }
@@ -145,6 +143,8 @@ task stopLiferay(
         exec {
             executable 'podman'
             args('compose', '-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'down', '--rmi', 'local')
+            standardOutput = System.out
+            errorOutput = System.err
         }
         print "stop"
     }
