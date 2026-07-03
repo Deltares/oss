@@ -12,6 +12,7 @@ project.ext {
     liferayMount = project.projectDir.toString() + '/docker/liferay/mount/files'
     dockerContainerPrefix = getEnvProperty('liferay.docker.container.prefix', 'oss')
     dockerComposeFilePath = getEnvProperty('liferay.docker.compose.path', project.projectDir.toString() + '/docker/docker-compose.yml')
+    liferayDockerPath = getEnvProperty('liferay.docker.compose.path', project.projectDir.toString() + '/docker/liferay/Dockerfile')
     deployFolder = "${bundleDir}/deploy" as GStringImpl
     bundleDirectories = [
             file("$bundleDir/deploy"),
@@ -21,16 +22,16 @@ project.ext {
             file("$liferayMount")
     ]
     Properties localProperties = new Properties()
-    localProperties.load(file("${project.projectDir.toString()}/gradle-local.properties").newDataInputStream())
-    dbName = getLocalProperty(localProperties,'dbName', 'liferay')
-    dbUser = getLocalProperty(localProperties,'dbUser', 'liferay')
-    dbPassword = getLocalProperty(localProperties,'dbPassword', 'liferay')
-    defaultLiferayAdminPassword = getLocalProperty(localProperties,'default.admin.password', 'test')
+    localProperties.load(file("${project.projectDir.toString()}/gradle-local-with-pw.properties").newDataInputStream())
+    dbName = getLocalProperty(localProperties, 'dbName', 'liferay')
+    dbUser = getLocalProperty(localProperties, 'dbUser', 'liferay')
+    dbPassword = getLocalProperty(localProperties, 'dbPassword', 'liferay')
+    defaultLiferayAdminPassword = getLocalProperty(localProperties, 'default.admin.password', 'test')
     keyUrl = getLocalProperty(localProperties, 'KEYCLOAK_URL', '')
     keyClient = getLocalProperty(localProperties, 'KEYCLOAK_CLIENTID', '')
     keySecret = getLocalProperty(localProperties, 'KEYCLOAK_CLIENTSECRET', '')
     emailUser = getLocalProperty(localProperties, 'EMAIL_USER', '')
-    emailPass = getLocalProperty(localProperties, 'EMAIL_PASSWORD','')
+    emailPass = getLocalProperty(localProperties, 'EMAIL_PASSWORD', '')
     downloadUrl = getEnvProperty('DOWNLOAD_URL', '')
     downloadName = getEnvProperty('DOWNLOAD_APPNAME', '')
     downloadUser = getEnvProperty('DOWNLOAD_APPUSER', '')
@@ -49,14 +50,37 @@ task startContainers(
         group: 'docker'
 ) {
     doLast {
+
+        System.out.println('Running compose command with arguments: ')
+        System.out.println('dockerContainerPrefix: ' + dockerContainerPrefix)
+        System.out.println('dockerComposeFilePath: ' + dockerComposeFilePath)
+        System.out.println('bundleDir: ' + bundleDir)
         exec {
-            executable 'docker-compose'
-            args('-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'up', '--build', '--force-recreate', '-d')
+            executable 'podman'
+            args('compose', '-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'up', '--build', '--force-recreate', '-d')
             environment('LIFERAY_BUNDLE_DIR', bundleDir)
+            standardOutput = System.out
+            errorOutput = System.err
         }
     }
 }
-
+//task pullLiferayImage(
+//        description: 'Download Liferay image',
+//        group: 'docker'
+//) {
+//    doLast {
+//
+//        liferayDockerPath = getEnvProperty('liferay.docker.compose.path', project.projectDir.toString() + '/docker/liferay/Dockerfile')
+//
+//        print 'Pulling Liferay image'
+//        exec {
+//            executable 'podman'
+//            args('build', '-t', 'liferay', '-f', liferayDockerPath)
+//            environment('LIFERAY_BUNDLE_DIR', bundleDir)
+//        }
+//    }
+//    finalizedBy startContainers
+//}
 task startLiferay(
         'description': 'Start Liferay stack',
         'group': 'docker'
@@ -133,8 +157,10 @@ task stopLiferay(
 ) {
     doLast {
         exec {
-            executable 'docker-compose'
-            args('-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'down', '--rmi', 'local')
+            executable 'podman'
+            args('compose', '-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'down', '--rmi', 'local')
+            standardOutput = System.out
+            errorOutput = System.err
         }
         print "stop"
     }
@@ -146,16 +172,11 @@ task dumpDB(
 ) {
     doLast {
         exec {
-            executable 'docker'
-            args('exec', '-t', "${dockerContainerPrefix}-mariadb", 'mysqldump', "-u${dbUser}", "-p${dbPassword}",
+            executable 'podman'
+            args('exec', '-t', "${dockerContainerPrefix}-mariadb-74", 'mysqldump', "-u${dbUser}", "-p${dbPassword}",
                     '--extended-insert=FALSE', '--no-autocommit', '--opt', "${dbName}")
-            standardOutput new FileOutputStream("${projectDir}/docker/mariadb/docker-entrypoint-initdb.d/${dbName}.sql")
+            standardOutput new FileOutputStream("${projectDir}/docker/resources/dump-${dbName}.sql")
         }
-        exec {
-            executable 'bash'
-            args('-c', "sed -i'' -e '1d' ${projectDir}/docker/mariadb/docker-entrypoint-initdb.d/${dbName}.sql")
-        }
-        delete("${projectDir}/docker/mariadb/docker-entrypoint-initdb.d/${dbName}.sql-e")
     }
 }
 

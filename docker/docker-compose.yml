@@ -50,8 +50,12 @@ services:
       - ./liferay/geoip:/opt/liferay/geoip
       - ./liferay/lmcrypt:/opt/liferay/lmcrypt
       - ./liferay/patching:/mnt/liferay/patching
-      - ${LIFERAY_BUNDLE_DIR}/deploy:/opt/liferay/deploy
-      - ${LIFERAY_BUNDLE_DIR}/osgi/modules:/opt/liferay/osgi/modules
+      - type: bind
+        source: ${LIFERAY_BUNDLE_DIR}/deploy
+        target: /opt/liferay/deploy
+      - type: bind
+        source: ${LIFERAY_BUNDLE_DIR}/osgi/modules
+        target: /opt/liferay/osgi/modules
     restart: always
     networks:
       - liferay
