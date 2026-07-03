@@ -64,6 +64,7 @@ task startContainers(
         }
     }
 }
+
 task startLiferay(
         'description': 'Start Liferay stack',
         'group': 'docker'
@@ -162,6 +163,7 @@ task dumpDB(
         }
     }
 }
+
 task geoipDownload{
     group = 'Deltares'
     description = 'Downloads GeoIp2-Lite database'
