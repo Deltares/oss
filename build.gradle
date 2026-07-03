@@ -64,23 +64,6 @@ task startContainers(
         }
     }
 }
-//task pullLiferayImage(
-//        description: 'Download Liferay image',
-//        group: 'docker'
-//) {
-//    doLast {
-//
-//        liferayDockerPath = getEnvProperty('liferay.docker.compose.path', project.projectDir.toString() + '/docker/liferay/Dockerfile')
-//
-//        print 'Pulling Liferay image'
-//        exec {
-//            executable 'podman'
-//            args('build', '-t', 'liferay', '-f', liferayDockerPath)
-//            environment('LIFERAY_BUNDLE_DIR', bundleDir)
-//        }
-//    }
-//    finalizedBy startContainers
-//}
 task startLiferay(
         'description': 'Start Liferay stack',
         'group': 'docker'
