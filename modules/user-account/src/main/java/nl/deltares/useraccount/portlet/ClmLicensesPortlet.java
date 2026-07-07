@@ -80,16 +80,13 @@ public class ClmLicensesPortlet extends MVCPortlet {
             if (customerInfo.isEmpty()) {
                 logger.warn(String.format("Found no customer ID for CLM user %s!", user.getEmailAddress()));
             } else {
-                Long customerId;
                 if (customerSelection == 0L) {
-                    customerId = customerInfo.keySet().iterator().next();
-                } else {
-                    customerId = customerSelection;
+                    customerSelection = customerInfo.keySet().iterator().next();
                 }
-                Map<String, Object> customerContactInfo = LicenseManagerUtils.parseCustomerContact(customerContacts, customerId);
+                Map<String, Object> customerContactInfo = LicenseManagerUtils.parseCustomerContact(customerContacts, customerSelection);
                 Long customerContactId = (Long) customerContactInfo.getOrDefault("customerContactId", 0L);
                 Boolean customerContactManageLicenses = (Boolean) customerContactInfo.getOrDefault("customerContactManageLicenses", false);
-                JSONArray customerLicenses = licenseManagerUtils.getCustomerLicenses(user, selectedState, customerId, customerContactId, customerContactManageLicenses);
+                JSONArray customerLicenses = licenseManagerUtils.getCustomerLicenses(user, selectedState, customerSelection, customerContactId, customerContactManageLicenses);
                 if (customerLicenses != null && customerLicenses.length() > 0) {
                     suites = convertToModel(customerLicenses);
                 }

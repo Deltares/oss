@@ -9,7 +9,7 @@ services:
       - .env
     volumes:
       - dbliferay74:/var/lib/mysql
-#      - ./resources/dump-liferay.sql:/docker-entrypoint-initdb.d/dump.sql
+      - ./resources/dump-liferay.sql:/docker-entrypoint-initdb.d/dump.sql
     restart: always
     networks:
       - liferay
@@ -27,7 +27,7 @@ services:
       - HOSTNAME=mariadb-keycloak
     volumes:
       - dbkeycloak74:/var/lib/mysql
-#      - ./resources/dump-keycloak.sql:/docker-entrypoint-initdb.d/dump.sql
+      - ./resources/dump-keycloak.sql:/docker-entrypoint-initdb.d/dump.sql
     restart: always
     networks:
       - liferay
