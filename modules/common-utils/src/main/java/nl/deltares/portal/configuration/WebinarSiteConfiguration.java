@@ -23,7 +23,7 @@ public interface WebinarSiteConfiguration {
     @Meta.AD(required = false, deflt = "", description = "GOTO Client Id for this site")
     String gotoClientId();
 
-    @Meta.AD(required = false, deflt = "", description = "GOTO Client Secret for this site")
+    @Meta.AD(required = false, deflt = "", type = Meta.Type.Password, description = "GOTO Client Secret for this site")
     String gotoClientSecret();
 
     @Meta.AD(required = false, deflt = "", description = "GOTO User for this site")
@@ -31,6 +31,12 @@ public interface WebinarSiteConfiguration {
 
     @Meta.AD(required = false, deflt = "",type = Meta.Type.Password, description = "GOTO User password for this site")
     String gotoUserPassword();
+
+    @Meta.AD(required = false, deflt = "", type = Meta.Type.Password, description = "GOTO Client Person Access Token")
+    String gotoPAT();
+
+    @Meta.AD(required = false, deflt = "collab: identity:scim.me identity:scim.org", description = "GOTO scope that goes with PAT")
+    String gotoPATScope();
 
     @Meta.AD(required = false, deflt = "true",type = Meta.Type.Boolean, description = "Cache GOTO tokens for this site?")
     boolean gotoCacheToken();
@@ -41,7 +47,7 @@ public interface WebinarSiteConfiguration {
     @Meta.AD(required = false, deflt = "https://deltares.anewspring.nl/api/", description = "Base URL of aNewSpring website")
     String aNewSpringURL();
 
-    @Meta.AD(required = false, deflt = "", description = "aNewSpring API key for this site")
+    @Meta.AD(required = false, deflt = "", type = Meta.Type.Password, description = "aNewSpring API key for this site")
     String aNewSpringApiKey();
 
     @Meta.AD(required = false, deflt = "true", type = Meta.Type.Boolean, description = "Cache aNewSpring tokens for this site?")

@@ -53,6 +53,8 @@ public class WebinarSiteConfigurationAction extends DefaultConfigurationAction {
         String gotoClientSecret = ParamUtil.getString(actionRequest, "gotoClientSecret");
         String gotoUserName = ParamUtil.getString(actionRequest, "gotoUserName");
         String gotoUserPassword = ParamUtil.getString(actionRequest, "gotoUserPassword");
+        String gotoPAT = ParamUtil.getString(actionRequest, "gotoPAT");
+        String gotoPATScope = ParamUtil.getString(actionRequest, "gotoPATScope");
         boolean gotoCacheToken = ParamUtil.getBoolean(actionRequest, "gotoCacheToken");
         boolean gotoCacheResponse = ParamUtil.getBoolean(actionRequest, "gotoCacheResponse");
 
@@ -71,6 +73,8 @@ public class WebinarSiteConfigurationAction extends DefaultConfigurationAction {
         modifiableSettings.setValue("gotoClientSecret", gotoClientSecret);
         modifiableSettings.setValue("gotoUserName", gotoUserName);
         modifiableSettings.setValue("gotoUserPassword", gotoUserPassword);
+        modifiableSettings.setValue("gotoPAT", gotoPAT);
+        modifiableSettings.setValue("gotoPATScope", gotoPATScope);
         modifiableSettings.setValue("gotoCacheToken", String.valueOf(gotoCacheToken));
         modifiableSettings.setValue("gotoCacheResponse", String.valueOf(gotoCacheResponse));
 

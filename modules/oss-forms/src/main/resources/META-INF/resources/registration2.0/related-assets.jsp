@@ -81,40 +81,41 @@
         });
 
     })
-
-    var slider = tns({
-        container: '.spotlight-slider',
-        arrowKeys: true,
-        autoWidth: false,
-        controls: false,
-        controlsPosition: 'bottom',
-        edgePadding: 5,
-        gutter: 5,
-        items: 2,
-        lazyload: true,
-        loop: false,
-        mouseDrag: false,
-        navPosition: 'bottom',
-        preventScrollOnTouch: 'auto',
-        fixedWidth: 254,
-        responsive: {
-            760: {
-                edgePadding: 50
+    if (document.getElementsByClassName('spotlight-slider').length > 0) {
+        var slider = tns({
+            container: '.spotlight-slider',
+            arrowKeys: true,
+            autoWidth: false,
+            controls: false,
+            controlsPosition: 'bottom',
+            edgePadding: 5,
+            gutter: 5,
+            items: 2,
+            lazyload: true,
+            loop: false,
+            mouseDrag: false,
+            navPosition: 'bottom',
+            preventScrollOnTouch: 'auto',
+            fixedWidth: 254,
+            responsive: {
+                760: {
+                    edgePadding: 50
+                },
+                1024: {
+                    edgePadding: 80
+                }
             },
-            1024: {
-                edgePadding: 80
-            }
-        },
-        speed: 400,
-        swipeAngle: false
-    });
+            speed: 400,
+            swipeAngle: false
+        });
 
-    document.querySelector('#tns-prev-button').addEventListener('click', function (evt) {
+        document.querySelector('#tns-prev-button').addEventListener('click', function (evt) {
         evt.preventDefault();
         slider.goTo('prev');
-    });
-    document.querySelector('#tns-next-button').addEventListener('click', function (evt) {
+        });
+        document.querySelector('#tns-next-button').addEventListener('click', function (evt) {
         evt.preventDefault();
         slider.goTo('next');
-    });
+        });
+    }
 </aui:script>

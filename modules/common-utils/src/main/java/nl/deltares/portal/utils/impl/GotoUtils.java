@@ -298,9 +298,13 @@ public class GotoUtils extends HttpClientUtils implements WebinarUtils, JoinCons
     private Map<String, String> getOAuthParameters() {
         Map<String,String> pathParameters = new HashMap<>();
         String cachedToken = CACHE_TOKEN ? getCachedToken(CACHED_REFRESH_TOKEN_KEY, CACHED_REFRESH_EXPIRY_KEY) : null;
-        if (cachedToken != null){
+        if (cachedToken != null) {
             pathParameters.put("grant_type", "refresh_token");
             pathParameters.put("refresh_token", cachedToken);
+        } else if(configuration.gotoPAT() != null && !configuration.gotoPAT().isEmpty()) {
+            pathParameters.put("grant_type", "personal_access_token");
+            pathParameters.put("pat", configuration.gotoPAT());
+            pathParameters.put("scope", configuration.gotoPATScope());
         } else {
             pathParameters.put("grant_type", "password");
             pathParameters.put("username", configuration.gotoUserName());

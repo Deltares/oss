@@ -70,13 +70,28 @@
         <aui:input
                 label="GOTO user name"
                 name="gotoUserName"
+                helpMessage="Autentication username. Not required when using PAT"
                 value="<%= configuration.gotoUserName() %>"/>
 
         <aui:input
                 label="GOTO user password"
                 name="gotoUserPassword"
                 type="password"
+                helpMessage="Autentication password. Not required when using PAT"
                 value="<%= configuration.gotoUserPassword() %>"/>
+
+        <aui:input
+                label="GOTO Personal Access Token (PAT)"
+                name="gotoPAT"
+                type="password"
+                helpMessage="Personal Access Token. To be used instead of username & password."
+                value="<%= configuration.gotoPAT() %>"/>
+
+        <aui:input
+                label="GOTO PAT scope"
+                name="gotoPATScope"
+                helpMessage="PAT scope. To be used when using PAT."
+                value="<%= configuration.gotoPATScope() %>"/>
 
         <aui:input
                 label="Cache GOTO tokens?"
