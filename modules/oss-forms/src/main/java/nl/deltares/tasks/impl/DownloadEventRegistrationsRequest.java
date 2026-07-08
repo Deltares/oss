@@ -636,11 +636,15 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     private void writeField(StringBuilder line, String value) {
         if (value != null) {
             if (value.contains("\n")) {
-                value = value.replaceAll("\n", " ");
+                value = value.replace("\n", " ");
             }
             //Change ; -> , to avoid problems with regional settings.
             if (value.contains(";")) {
-                value = value.replaceAll(";", ",");
+                value = value.replace(";", ",");
+            }
+            //Remove any \" values to make sure value is only wrapped once between quotes.
+            if  (value.contains("\"")) {
+                value = value.replace("\"", "");
             }
             boolean addQuotes = value.contains(",");
             if (addQuotes){
