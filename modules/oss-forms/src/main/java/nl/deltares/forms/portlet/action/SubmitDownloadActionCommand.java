@@ -1,10 +1,10 @@
 package nl.deltares.forms.portlet.action;
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
@@ -12,6 +12,8 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.*;
+import jakarta.portlet.ActionRequest;
+import jakarta.portlet.ActionResponse;
 import nl.deltares.emails.DownloadEmail;
 import nl.deltares.forms.portlet.DownloadFormConfiguration;
 import nl.deltares.model.BillingInfo;
@@ -30,12 +32,9 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component(
         immediate = true,
@@ -133,13 +132,11 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
         try {
             String configuredForward = null;
             final DownloadFormConfiguration configuration =  _configurationProvider.getPortletInstanceConfiguration(DownloadFormConfiguration.class, themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
-            switch (key){
-                case "success":
-                    configuredForward =  configuration.successURL();
-                    break;
-                case "fail":
-                    configuredForward =  configuration.failureURL();
-            }
+            configuredForward = switch (key) {
+                case "success" -> configuration.successURL();
+                case "fail" -> configuration.failureURL();
+                default -> configuredForward;
+            };
 
             if (configuredForward == null || configuredForward.isEmpty()) {
                 friendlyUrl = redirectUrl;
@@ -233,7 +230,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
                 .filter(key -> ParamUtil.getBoolean(actionRequest, key))
                 .map(key -> key.substring(DOWNLOAD_PREFIX.length()))
                 .peek(LOG::info)
-                .collect(Collectors.toList());
+                .toList();
 
         try {
             long siteId = themeDisplay.getSiteGroupId();
@@ -353,7 +350,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
                                                ThemeDisplay themeDisplay, @SuppressWarnings("SameParameterValue") String action) {
         try {
             DownloadSiteConfiguration configuration = _configurationProvider
-                    .getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
+                    .getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 
             if (!configuration.enableEmails()) return null;
 

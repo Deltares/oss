@@ -1,9 +1,9 @@
 package nl.deltares.portal.utils.impl;
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import nl.deltares.portal.configuration.WebinarSiteConfiguration;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
@@ -24,40 +24,27 @@ public class WebinarUtilsFactoryImpl implements WebinarUtilsFactory {
             throw new UnsupportedOperationException("unsupported registration type " + registration.getClass().getSimpleName());
         }
         String webinarProvider = ((SessionRegistration) registration).getWebinarProvider();
-        return newInstance(registration.getGroupId(), webinarProvider.toLowerCase());
+        return newInstance(registration.getCompanyId(), registration.getGroupId(), webinarProvider.toLowerCase());
     }
 
-    public WebinarUtils newInstance(long groupId, String  webinarProvider) throws Exception{
+    public WebinarUtils newInstance(long companyId, long groupId, String  webinarProvider) throws Exception{
 
         Class<? extends HttpClientUtils> webinarClass = getWebinarClass(webinarProvider);
-        WebinarUtils webinarUtils;
-        switch (webinarProvider){
-            case "goto":
-                webinarUtils = new GotoUtils(getSiteConfiguration(groupId));
-                break;
-            case "anewspring" :
-                webinarUtils = new ANewSpringUtils(getSiteConfiguration(groupId));
-                break;
-            case "msteams" :
-                webinarUtils = new MSTeamsUtils();
-                break;
-            default:
-                throw new UnsupportedOperationException("unsupported provider " + webinarClass.getSimpleName());
-        }
-        return webinarUtils;
+        return switch (webinarProvider) {
+            case "goto" -> new GotoUtils(getSiteConfiguration(companyId, groupId));
+            case "anewspring" -> new ANewSpringUtils(getSiteConfiguration(companyId, groupId));
+            case "msteams" -> new MSTeamsUtils();
+            default -> throw new UnsupportedOperationException("unsupported provider " + webinarClass.getSimpleName());
+        };
     }
 
     private Class<? extends HttpClientUtils> getWebinarClass(String webinarProvider) {
-        switch (webinarProvider){
-            case "goto":
-                return GotoUtils.class;
-            case "anewspring":
-                return ANewSpringUtils.class;
-            case "msteams":
-                return MSTeamsUtils.class;
-            default:
-                throw new UnsupportedOperationException("webinar class unsupported: " + webinarProvider);
-        }
+        return switch (webinarProvider) {
+            case "goto" -> GotoUtils.class;
+            case "anewspring" -> ANewSpringUtils.class;
+            case "msteams" -> MSTeamsUtils.class;
+            default -> throw new UnsupportedOperationException("webinar class unsupported: " + webinarProvider);
+        };
     }
 
     public boolean isWebinarSupported(Registration registration){
@@ -75,10 +62,10 @@ public class WebinarUtilsFactoryImpl implements WebinarUtilsFactory {
         return false;
     }
 
-    private WebinarSiteConfiguration getSiteConfiguration(long siteId) {
+    private WebinarSiteConfiguration getSiteConfiguration(long companyId, long siteId) {
         WebinarSiteConfiguration groupConfiguration = null;
         try {
-            groupConfiguration = _configurationProvider.getGroupConfiguration(WebinarSiteConfiguration.class, siteId);
+            groupConfiguration = _configurationProvider.getGroupConfiguration(WebinarSiteConfiguration.class, companyId, siteId);
             if (groupConfiguration == null){
                 return _configurationProvider.getSystemConfiguration(WebinarSiteConfiguration.class);
             }

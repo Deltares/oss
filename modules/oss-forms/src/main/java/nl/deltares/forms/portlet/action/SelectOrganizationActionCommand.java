@@ -8,14 +8,13 @@ package nl.deltares.forms.portlet.action;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import jakarta.portlet.ActionRequest;
+import jakarta.portlet.ActionResponse;
 import nl.deltares.forms.util.DeltaresCheckoutStepRegistry;
 import nl.deltares.forms.util.SelectAdditionalAccountsCheckoutStep;
 import nl.deltares.portal.constants.OssConstants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
 
 /**
  * @author Marco Leo

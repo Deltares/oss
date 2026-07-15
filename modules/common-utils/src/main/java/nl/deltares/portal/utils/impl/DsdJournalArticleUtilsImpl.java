@@ -21,7 +21,7 @@ import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.DateUtil;
-import com.liferay.portal.search.query.Queries;
+import com.liferay.portal.search.query.QueriesUtil;
 import com.liferay.portal.search.query.WildcardQuery;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.sort.FieldSort;
@@ -56,9 +56,6 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
 
     @Reference
     private Sorts _sorts;
-
-    @Reference
-    private Queries _queries;
 
     @Override
     public List<JournalArticle> getRelatedArticles(long groupId, String[] articleIds) throws PortalException {
@@ -232,7 +229,7 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
         FieldSort fieldSort = _sorts.field(sortField);
         NestedSort nested = _sorts.nested(path);
 
-        WildcardQuery filterQuery = _queries.wildcard(path + ".ddmFieldName", String.format("ddm__keyword__*__%s*", sortByFielNamedValue));
+        WildcardQuery filterQuery = QueriesUtil.wildcard(path + ".ddmFieldName", String.format("ddm__keyword__*__%s*", sortByFielNamedValue));
         nested.setFilterQuery(filterQuery);
 
         fieldSort.setNestedSort(nested);
@@ -306,9 +303,8 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
         //Check if already exists
         if (existringFacets.containsKey(termName)) {
             Facet oldFacet = existringFacets.get(termName);
-            if (oldFacet instanceof DeltaresTermFieldValueFacet) {
+            if (oldFacet instanceof DeltaresTermFieldValueFacet oldTermFacet) {
                 //Convert existing TermFacet to a TermsFacet
-                DeltaresTermFieldValueFacet oldTermFacet = (DeltaresTermFieldValueFacet) oldFacet;
                 if (oldTermFacet.useWildCard() || wildCard) {
                     throw new PortalException(String.format("Could not add TermFacet '%s' as it already exists and uses WildCards.", termName));
                 }
@@ -322,8 +318,7 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
                 termsFacet.addValues(new String[]{termValue});
                 existringFacets.put(termName, termsFacet);
 
-            } else if (oldFacet instanceof DeltaresTermsFieldValueFacet) {
-                DeltaresTermsFieldValueFacet oldTermsFacet = (DeltaresTermsFieldValueFacet) oldFacet;
+            } else if (oldFacet instanceof DeltaresTermsFieldValueFacet oldTermsFacet) {
                 if (oldTermsFacet.isExclude() != exclude) {
                     throw new PortalException(String.format("Could not add term to TermsFacet '%s' because exclude value does not match.", termName));
                 }
@@ -357,9 +352,8 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
         DeltaresTermsFieldValueFacet termsFacet;
         if (existringFacets.containsKey(termName)) {
             Facet oldFacet = existringFacets.get(termName);
-            if (oldFacet instanceof DeltaresTermFieldValueFacet) {
+            if (oldFacet instanceof DeltaresTermFieldValueFacet oldTermsFacet) {
                 //Convert existing TermFacet to a TermsFacet
-                DeltaresTermFieldValueFacet oldTermsFacet = (DeltaresTermFieldValueFacet) oldFacet;
                 if (oldTermsFacet.useWildCard()) {
                     throw new PortalException(String.format("Could not convert TermFacet '%s' to TermsFacet because it uses WildCards.", termName));
                 }
@@ -373,8 +367,7 @@ public class DsdJournalArticleUtilsImpl implements DsdJournalArticleUtils {
                 termsFacet.addValues(termValues);
                 existringFacets.put(termName, termsFacet);
 
-            } else if (oldFacet instanceof DeltaresTermsFieldValueFacet) {
-                DeltaresTermsFieldValueFacet oldTermsFacet = (DeltaresTermsFieldValueFacet) oldFacet;
+            } else if (oldFacet instanceof DeltaresTermsFieldValueFacet oldTermsFacet) {
                 if (oldTermsFacet.isExclude() != exclude) {
                     throw new PortalException(String.format("Could not add terms to TermsFacet '%s' because exclude value does not match.", termName));
                 }

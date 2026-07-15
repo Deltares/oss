@@ -9,10 +9,10 @@ import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
-import com.liferay.portal.kernel.search.generic.BooleanClauseImpl;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Validator;
+
+import java.util.Objects;
 
 /**
  * Search for any article with a non-nested field value that matches one of the provided values.
@@ -37,12 +37,7 @@ public class DeltaresMultipleFieldValueFacet extends BaseFacet {
      * @param fieldValues List of search values
      */
     public void setFieldValues(String... fieldValues){
-        if (fieldValues != null) {
-            _fieldValues = fieldValues;
-        }
-        else {
-            _fieldValues = new String[0];
-        }
+        _fieldValues = Objects.requireNonNullElseGet(fieldValues, () -> new String[0]);
     }
 
     @Override
@@ -60,10 +55,14 @@ public class DeltaresMultipleFieldValueFacet extends BaseFacet {
             _StructureFieldNamesFilter.addValues(_fieldValues);
             booleanFilter.add(_StructureFieldNamesFilter, BooleanClauseOccur.MUST);
         }
-        BooleanQuery booleanQuery = new BooleanQueryImpl();
-        booleanQuery.setPreBooleanFilter(booleanFilter);
+        BooleanQuery booleanQuery = new BooleanQuery(){
+            {
+                this.setPreBooleanFilter(booleanFilter);
+            }
+        };
+
         QueryFilter queryFilter = new QueryFilter(booleanQuery);
-        return new BooleanClauseImpl<>(queryFilter, BooleanClauseOccur.MUST);
+        return new BooleanClause<>(queryFilter, BooleanClauseOccur.MUST);
     }
 
 }

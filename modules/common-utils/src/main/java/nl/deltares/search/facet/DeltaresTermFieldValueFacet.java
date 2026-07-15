@@ -8,8 +8,6 @@ import com.liferay.portal.kernel.search.facet.BaseFacet;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.filter.TermFilter;
-import com.liferay.portal.kernel.search.generic.BooleanClauseImpl;
-import com.liferay.portal.kernel.search.generic.WildcardQueryImpl;
 
 /**
  * Search for articles with an exact ddmfieldvalue. Ddmfield value is passed using the fieldvaluekeywordvalue
@@ -58,16 +56,16 @@ public class DeltaresTermFieldValueFacet extends BaseFacet {
 
         Filter filter;
         if  (_useWildCard) {
-            WildcardQuery wildcardQuery = new WildcardQueryImpl(getFieldName(), _termFieldValue);
+            WildcardQuery wildcardQuery = new WildcardQuery(getFieldName(), _termFieldValue);
             filter = new QueryFilter(wildcardQuery);
         } else {
             filter = new TermFilter(getFieldName(), _termFieldValue);
         }
 
         if (exclude) {
-            return new BooleanClauseImpl<>(filter, BooleanClauseOccur.MUST_NOT);
+            return new BooleanClause<>(filter, BooleanClauseOccur.MUST_NOT);
         } else {
-            return new BooleanClauseImpl<>(filter, BooleanClauseOccur.MUST);
+            return new BooleanClause<>(filter, BooleanClauseOccur.MUST);
         }
 
     }

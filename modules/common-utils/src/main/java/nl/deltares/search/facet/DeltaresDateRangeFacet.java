@@ -1,20 +1,16 @@
 package nl.deltares.search.facet;
 
-import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseOccur;
-import com.liferay.portal.kernel.search.BooleanQuery;
-import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.*;
 import com.liferay.portal.kernel.search.facet.BaseFacet;
 import com.liferay.portal.kernel.search.filter.*;
-import com.liferay.portal.kernel.search.generic.BooleanClauseImpl;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
-import com.liferay.portal.kernel.search.generic.NestedQuery;
 import com.liferay.portal.kernel.util.Validator;
+
+import java.util.Objects;
 
 /**
  * Search for articles with a ddmfieldvalue date within a given date range.
  * It is possible to provide only an upper or lower date value.
- *
+ * <p>
  * Use te fieldnamevalues to search over multiple structure types; session, dinner, bustransfer
  */
 public class DeltaresDateRangeFacet extends BaseFacet {
@@ -38,16 +34,12 @@ public class DeltaresDateRangeFacet extends BaseFacet {
      * @param fieldValues indexed name of ddmfield
      */
     public void setFieldNameValues(String... fieldValues) {
-        if (fieldValues != null) {
-            _ddmFieldNameValues = fieldValues;
-        } else {
-            _ddmFieldNameValues = new String[0];
-        }
+        _ddmFieldNameValues = Objects.requireNonNullElseGet(fieldValues, () -> new String[0]);
     }
 
     /**
      * Field name of containing the search values. Defaults to 'ddmFieldValueKeyword'
-     *
+     * <p>
      * If field supports localization, it is necessary to provided localized field name
      * @param fieldName name of field
      */
@@ -58,9 +50,9 @@ public class DeltaresDateRangeFacet extends BaseFacet {
 
     /**
      * Lowest date boundary of search period.
-     *
+     * <p>
      * Expected date format; YYYY-MM-dd
-     *
+     * <p>
      * If omitted the lower boundary is not included in the query
      *
      * @param formattedDate date string
@@ -71,9 +63,9 @@ public class DeltaresDateRangeFacet extends BaseFacet {
 
     /**
      * Upper date boundary of search period.
-     *
+     * <p>
      * Expected date format; YYYY-MM-dd
-     *
+     * <p>
      * If omitted the upper boundary is not included in the query
      *
      * @param formattedDate date string
@@ -107,13 +99,16 @@ public class DeltaresDateRangeFacet extends BaseFacet {
         Filter dateRangeFilter = new DateRangeTermFilter(_path + '.' + _ddmFieldValueKeywordName,
                 includeLower, includeUpper, _ddmFieldValueKeywordStartValue, _ddmFieldValueKeywordEndValue);
         booleanFilter.add(dateRangeFilter, BooleanClauseOccur.MUST);
-        BooleanQuery booleanQuery = new BooleanQueryImpl();
-        booleanQuery.setPreBooleanFilter(booleanFilter);
+        BooleanQuery booleanQuery = new BooleanQuery() {
+            {
+                this.setPreBooleanFilter(booleanFilter);
+            }
+        };
+
         NestedQuery nestedQuery = new NestedQuery(_path, booleanQuery);
 
         QueryFilter queryFilter = new QueryFilter(nestedQuery);
-
-        return new BooleanClauseImpl<>(queryFilter, BooleanClauseOccur.MUST);
+        return new BooleanClause<>(queryFilter, BooleanClauseOccur.MUST);
     }
 
 

@@ -10,16 +10,16 @@ import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.DateUtil;
+import jakarta.portlet.MutableRenderParameters;
+import jakarta.portlet.PortletRequest;
+import jakarta.portlet.PortletURL;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.deltares.portal.constants.OssConfigurationConstants;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.facet.FacetSelection;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.Period;
 
-import javax.portlet.MutableRenderParameters;
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletURL;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -252,6 +252,7 @@ public class RegistrationDisplayContext extends DSDArticleDisplayContext {
         return getPortletRequest(portletRequest, "register", null, getConfiguredRegistrationFormId(), OssConstants.SUBMIT_REGISTER_FORM_URL);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private String getPortletRequest(HttpServletRequest httpServletRequest, String action, Long userId, String redirect) {
 
         if (_dsdSiteConfiguration != null) {

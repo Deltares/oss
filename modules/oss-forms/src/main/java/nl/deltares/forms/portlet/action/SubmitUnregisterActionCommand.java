@@ -1,11 +1,14 @@
 package nl.deltares.forms.portlet.action;
 
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import jakarta.portlet.ActionRequest;
+import jakarta.portlet.ActionResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.forms.internal.UnregisterDisplayContext;
 import nl.deltares.portal.constants.OssConstants;
@@ -15,9 +18,6 @@ import nl.deltares.portal.utils.URLUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 
 @Component(

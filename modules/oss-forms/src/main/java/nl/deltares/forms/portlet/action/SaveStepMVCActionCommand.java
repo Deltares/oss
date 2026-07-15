@@ -11,15 +11,14 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.*;
+import jakarta.portlet.ActionRequest;
+import jakarta.portlet.ActionResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.deltares.forms.util.DeltaresCheckoutStep;
 import nl.deltares.forms.util.DeltaresCheckoutStepRegistry;
 import nl.deltares.portal.constants.OssConstants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Marco Leo
@@ -94,8 +93,8 @@ public class SaveStepMVCActionCommand extends BaseMVCActionCommand {
 	}
 
 	private String _getPortletURL(
-		ActionRequest actionRequest, ActionResponse actionResponse,
-		String checkoutStepName) {
+            ActionRequest actionRequest, ActionResponse actionResponse,
+            String checkoutStepName) {
 
 		String ids = ParamUtil.getString(actionRequest, "ids");
 		String action = ParamUtil.getString(actionRequest, "action");

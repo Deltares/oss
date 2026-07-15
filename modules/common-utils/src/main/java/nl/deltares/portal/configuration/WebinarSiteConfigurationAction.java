@@ -1,25 +1,23 @@
 package nl.deltares.portal.configuration;
 
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
 import com.liferay.portal.kernel.settings.ModifiableSettings;
 import com.liferay.portal.kernel.settings.Settings;
-import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.ActionRequest;
+import jakarta.portlet.ActionResponse;
+import jakarta.portlet.PortletConfig;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nl.deltares.portal.constants.OssConstants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
-
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.portlet.PortletConfig;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @Component(
         configurationPid = OssConstants.WEBINAR_SITE_CONFIGURATIONS_PID,
@@ -62,8 +60,8 @@ public class WebinarSiteConfigurationAction extends DefaultConfigurationAction {
         String aNewSpringApiKey = ParamUtil.getString(actionRequest, "aNewSpringApiKey");
         boolean aNewSpringCacheToken = ParamUtil.getBoolean(actionRequest, "aNewSpringCacheToken");
 
-        Settings settings = SettingsFactoryUtil.getSettings(
-                new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), WebinarSiteConfiguration.class.getName()));
+        GroupServiceSettingsLocator groupServiceSettingsLocator = new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), WebinarSiteConfiguration.class.getName());
+        Settings settings = groupServiceSettingsLocator.getSettings();
 
         ModifiableSettings modifiableSettings =
                 settings.getModifiableSettings();

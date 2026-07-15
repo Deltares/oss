@@ -1,18 +1,11 @@
 package nl.deltares.search.facet;
 
-import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseOccur;
-import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.WildcardQuery;
+import com.liferay.portal.kernel.search.*;
 import com.liferay.portal.kernel.search.facet.BaseFacet;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.QueryFilter;
 import com.liferay.portal.kernel.search.filter.TermFilter;
-import com.liferay.portal.kernel.search.generic.BooleanClauseImpl;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
-import com.liferay.portal.kernel.search.generic.NestedQuery;
-import com.liferay.portal.kernel.search.generic.WildcardQueryImpl;
 
 /**
  * Search for articles with an exact ddmfieldvalue. Ddmfield value is passed using the fieldvaluekeywordvalue
@@ -49,24 +42,27 @@ public class DeltaresDdmTermFieldValueFacet extends BaseFacet {
     protected BooleanClause<Filter> doGetFacetFilterBooleanClause() {
 
         BooleanFilter booleanFilter = new BooleanFilter();
-        QueryFilter queryFilter = new QueryFilter(new WildcardQueryImpl("ddmFieldArray.ddmFieldName", String.format("ddm__keyword__*__%s*", getFieldName())));
+        QueryFilter queryFilter = new QueryFilter(new WildcardQuery("ddmFieldArray.ddmFieldName", String.format("ddm__keyword__*__%s*", getFieldName())));
         booleanFilter.add(queryFilter, BooleanClauseOccur.MUST);
 
         if  (_useWildCard) {
-            WildcardQuery wildcardQuery = new WildcardQueryImpl("ddmFieldArray.ddmFieldValueKeyword_String_sortable", _termFieldValue);
+            WildcardQuery wildcardQuery = new WildcardQuery("ddmFieldArray.ddmFieldValueKeyword_String_sortable", _termFieldValue);
             booleanFilter.add(new QueryFilter(wildcardQuery), BooleanClauseOccur.MUST);
         } else {
             booleanFilter.add(new TermFilter("ddmFieldArray.ddmFieldValueKeyword_String_sortable", _termFieldValue), BooleanClauseOccur.MUST);
         }
 
-        BooleanQueryImpl booleanQuery = new BooleanQueryImpl();
-        booleanQuery.setPreBooleanFilter(booleanFilter);
+        BooleanQuery booleanQuery = new BooleanQuery(){
+            {
+                this.setPreBooleanFilter(booleanFilter);
+            }
+        };
         NestedQuery nestedQuery = new NestedQuery("ddmFieldArray", booleanQuery);
 
         if (exclude) {
-            return new BooleanClauseImpl<>(new QueryFilter(nestedQuery), BooleanClauseOccur.MUST_NOT);
+            return new BooleanClause<>(new QueryFilter(nestedQuery), BooleanClauseOccur.MUST_NOT);
         } else {
-            return new BooleanClauseImpl<>(new QueryFilter(nestedQuery), BooleanClauseOccur.MUST);
+            return new BooleanClause<>(new QueryFilter(nestedQuery), BooleanClauseOccur.MUST);
         }
 
     }

@@ -1,16 +1,12 @@
 package nl.deltares.search.facet;
 
-import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseOccur;
-import com.liferay.portal.kernel.search.BooleanQuery;
-import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.*;
 import com.liferay.portal.kernel.search.facet.BaseFacet;
 import com.liferay.portal.kernel.search.filter.*;
-import com.liferay.portal.kernel.search.generic.BooleanClauseImpl;
-import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
-import com.liferay.portal.kernel.search.generic.NestedQuery;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Validator;
+
+import java.util.Objects;
 
 /**
  * Search for articles with an exact ddmfieldvalue. Ddmfield value is passed using the fieldvaluekeywordvalue
@@ -41,17 +37,12 @@ public class DeltaresDdmFieldValueFacet extends BaseFacet {
      * @param fieldValues indexed name of ddmfield
      */
     public void setFieldNameValues(String... fieldValues) {
-        if (fieldValues != null) {
-            _ddmFieldNameValues = fieldValues;
-        }
-        else {
-            _ddmFieldNameValues = new String[0];
-        }
+        _ddmFieldNameValues = Objects.requireNonNullElseGet(fieldValues, () -> new String[0]);
     }
 
     /**
      * Field name of containing the search values. Defaults to 'ddmFieldValueKeyword'
-     *
+     * <p>
      * If field supports localization, it is necessary to provided localized field name
      * @param fieldName name of field
      */
@@ -136,15 +127,18 @@ public class DeltaresDdmFieldValueFacet extends BaseFacet {
                     booleanClauseOccur);
         }
 
-        BooleanQuery booleanQuery = new BooleanQueryImpl();
-        booleanQuery.setPreBooleanFilter(booleanFilter);
+        BooleanQuery booleanQuery = new BooleanQuery(){
+            {
+                this.setPreBooleanFilter(booleanFilter);
+            }
+        };
         NestedQuery nestedQuery = new NestedQuery(_path, booleanQuery);
         QueryFilter queryFilter = new QueryFilter(nestedQuery);
 
         if (exclude){
-            return new BooleanClauseImpl<>(queryFilter, BooleanClauseOccur.MUST_NOT);
+            return new BooleanClause<>(queryFilter, BooleanClauseOccur.MUST_NOT);
         } else {
-            return new BooleanClauseImpl<>(queryFilter, BooleanClauseOccur.MUST);
+            return new BooleanClause<>(queryFilter, BooleanClauseOccur.MUST);
         }
 
     }

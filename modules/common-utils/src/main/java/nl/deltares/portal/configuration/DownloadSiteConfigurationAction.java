@@ -1,28 +1,26 @@
 package nl.deltares.portal.configuration;
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
 import com.liferay.portal.kernel.settings.ModifiableSettings;
 import com.liferay.portal.kernel.settings.Settings;
-import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.ActionRequest;
+import jakarta.portlet.ActionResponse;
+import jakarta.portlet.PortletConfig;
+import jakarta.portlet.PortletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nl.deltares.portal.constants.OssConstants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
-
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.portlet.PortletConfig;
-import javax.portlet.PortletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @Component(
         configurationPid = OssConstants.Download_SITE_CONFIGURATIONS_PID,
@@ -73,8 +71,8 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
         String bannerURL = ParamUtil.getString(actionRequest, "bannerURL");
         boolean isSendEmails = ParamUtil.getBoolean(actionRequest, "enableEmails");
 
-        Settings settings = SettingsFactoryUtil.getSettings(
-                new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), DownloadSiteConfiguration.class.getName()));
+        GroupServiceSettingsLocator groupServiceSettingsLocator = new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), DownloadSiteConfiguration.class.getName());
+        Settings settings = groupServiceSettingsLocator.getSettings();
 
         ModifiableSettings modifiableSettings =
                 settings.getModifiableSettings();
@@ -104,19 +102,16 @@ public class DownloadSiteConfigurationAction extends DefaultConfigurationAction 
         DownloadSiteConfiguration siteConfiguration;
         try {
             siteConfiguration = configurationProvider
-                    .getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getSiteGroupId());
+                    .getGroupConfiguration(DownloadSiteConfiguration.class,themeDisplay.getCompanyId(), themeDisplay.getSiteGroupId());
 
         } catch (ConfigurationException e) {
             throw new PortalException(String.format("Error getting DSD siteConfiguration: %s", e.getMessage()));
         }
-        switch (parameterId) {
-            case CONTACT_URL:
-                return siteConfiguration.contactURL();
-            case PRIVACY_URL:
-                return siteConfiguration.privacyURL();
-            default:
-                return null;
-        }
+        return switch (parameterId) {
+            case CONTACT_URL -> siteConfiguration.contactURL();
+            case PRIVACY_URL -> siteConfiguration.privacyURL();
+            default -> null;
+        };
 
     }
 }

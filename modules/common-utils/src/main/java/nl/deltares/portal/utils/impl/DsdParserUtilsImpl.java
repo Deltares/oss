@@ -1,18 +1,18 @@
 package nl.deltares.portal.utils.impl;
 
 import com.liferay.asset.kernel.model.AssetEntry;
-import com.liferay.asset.kernel.model.AssetLink;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
-import com.liferay.asset.kernel.service.AssetLinkLocalService;
+import com.liferay.asset.link.model.AssetLink;
+import com.liferay.asset.link.service.AssetLinkLocalService;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -317,7 +317,7 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
         if (groupMap == null || groupMap.isEmpty()) {
             //Now structure keys are LONG identifiers and need to be mapped.
             StructureKeyMapConfiguration configuration = _configurationProvider.getGroupConfiguration(
-                    StructureKeyMapConfiguration.class, groupId);
+                    StructureKeyMapConfiguration.class, journalArticle.getCompanyId(), groupId);
             try {
                 groupMap = new HashMap<>(JsonContentUtils.parseJsonToMap(configuration.structureKeyMap()));
             } catch (JSONException e) {

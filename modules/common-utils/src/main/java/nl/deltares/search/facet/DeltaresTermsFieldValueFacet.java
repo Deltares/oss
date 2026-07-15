@@ -6,7 +6,6 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.BaseFacet;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
-import com.liferay.portal.kernel.search.generic.BooleanClauseImpl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,9 +50,9 @@ public class DeltaresTermsFieldValueFacet extends BaseFacet {
         termsFilter.addValues(_termFieldValues.toArray(new String[0]));
 
         if (exclude) {
-            return new BooleanClauseImpl<>(termsFilter, BooleanClauseOccur.MUST_NOT);
+            return new BooleanClause<>(termsFilter, BooleanClauseOccur.MUST_NOT);
         } else {
-            return new BooleanClauseImpl<>(termsFilter, BooleanClauseOccur.MUST);
+            return new BooleanClause<>(termsFilter, BooleanClauseOccur.MUST);
         }
 
     }

@@ -1,7 +1,8 @@
 package nl.deltares.tasks;
 
-import javax.portlet.ResourceResponse;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.portlet.ResourceResponse;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;

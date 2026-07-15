@@ -1,15 +1,17 @@
 package nl.deltares.forms.portlet.action;
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.ActionRequest;
+import jakarta.portlet.ActionResponse;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.BusTransfer;
@@ -22,8 +24,6 @@ import nl.deltares.portal.utils.KeycloakUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
 
 @Component(
         immediate = true,
@@ -56,7 +56,7 @@ public class SubmitBusRegistrationActionActionCommand extends BaseMVCActionComma
                 user = themeDisplay.getUser();
             }
             DSDSiteConfiguration configuration = _configurationProvider
-                    .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
+                    .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 
             Event event = parserUtils.getEvent(groupId, String.valueOf(configuration.eventId()), themeDisplay.getLocale());
 

@@ -6,7 +6,6 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.BaseFacet;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.RangeTermFilter;
-import com.liferay.portal.kernel.search.generic.BooleanClauseImpl;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -88,7 +87,7 @@ public class DeltaresRangeFieldValueFacet extends BaseFacet {
     protected BooleanClause<Filter> doGetFacetFilterBooleanClause() {
 
 
-        return new BooleanClauseImpl<>( new RangeTermFilter(getFieldName(), true, true, _lowerValue, _upperValue) , BooleanClauseOccur.MUST);
+        return new BooleanClause<>( new RangeTermFilter(getFieldName(), true, true, _lowerValue, _upperValue) , BooleanClauseOccur.MUST);
     }
 
 

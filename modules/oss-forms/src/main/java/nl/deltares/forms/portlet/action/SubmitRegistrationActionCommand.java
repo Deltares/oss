@@ -1,10 +1,10 @@
 package nl.deltares.forms.portlet.action;
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
@@ -12,6 +12,8 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.*;
+import jakarta.portlet.ActionRequest;
+import jakarta.portlet.ActionResponse;
 import nl.deltares.emails.DsdEmail;
 import nl.deltares.forms.portlet.DsdRegistrationFormConfiguration;
 import nl.deltares.model.BadgeInfo;
@@ -26,8 +28,6 @@ import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -69,7 +69,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         User user = themeDisplay.getUser();
 
         DSDSiteConfiguration configuration = _configurationProvider
-                .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
+                .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getCompanyId(),themeDisplay.getScopeGroupId());
 
         RegistrationRequest registrationRequest = getRegistrationRequest(actionRequest, themeDisplay, action, configuration);
         if (registrationRequest == null) {
@@ -147,20 +147,14 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         try {
             String configuredRedirect = null;
             final DsdRegistrationFormConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(DsdRegistrationFormConfiguration.class, themeDisplay.getLayout(), themeDisplay.getPortletDisplay().getId());
-            switch (key){
-                case "register_success":
-                    configuredRedirect =  configuration.registerSuccessURL();
-                    break;
-                case "unregister_success":
-                    configuredRedirect =  configuration.unregisterSuccessURL();
-                    break;
-                case "update_success":
-                    configuredRedirect =  configuration.updateSuccessURL();
-                    break;
-                default:
+            configuredRedirect = switch (key) {
+                case "register_success" -> configuration.registerSuccessURL();
+                case "unregister_success" -> configuration.unregisterSuccessURL();
+                case "update_success" -> configuration.updateSuccessURL();
+                default ->
                     //todo: specify failure types
-                    configuredRedirect =  configuration.failURL();
-            }
+                        configuration.failURL();
+            };
 
             if (configuredRedirect == null || configuredRedirect.isEmpty()) {
                 friendlyUrl = PortalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay, themeDisplay.getLocale());
@@ -451,17 +445,17 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             }
             email.setBCCToEmail(bccToEmail);
             email.setSendFromEmail(configuration.sendFromEmail());
-            switch (action) {
-                case "register":
-                case "update":
+            return switch (action) {
+                case "register", "update" -> {
                     email.sendRegisterEmail();
-                    return true;
-                case OssConfigurationConstants.REGISTRATION_UNREGISTER:
+                    yield true;
+                }
+                case OssConfigurationConstants.REGISTRATION_UNREGISTER -> {
                     email.sendUnregisterEmail();
-                    return true;
-                default:
-                    return false;
-            }
+                    yield true;
+                }
+                default -> false;
+            };
 
         } catch (Exception e) {
             SessionErrors.add(actionRequest, "send-email-failed", "Could not send " + action + " email for user [" + user.getEmailAddress() + "] : " + e.getMessage());

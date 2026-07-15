@@ -1,26 +1,26 @@
 package nl.deltares.portal.utils.impl;
 
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.*;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.PortletRequest;
+import jakarta.portlet.PortletURL;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.configuration.DownloadSiteConfiguration;
 import nl.deltares.portal.utils.URLUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletURL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -115,7 +115,7 @@ public class URLUtilsImpl implements URLUtils {
         if (_configurationProvider != null) {
             try {
                 DSDSiteConfiguration urlsConfiguration = _configurationProvider
-                        .getGroupConfiguration(DSDSiteConfiguration.class, groupId);
+                        .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getCompanyId(), groupId);
 
                 Group group = GroupLocalServiceUtil.getGroup(groupId);
                 if (group != null) {
@@ -139,7 +139,7 @@ public class URLUtilsImpl implements URLUtils {
         if (_configurationProvider != null) {
             try {
                 DownloadSiteConfiguration urlsConfiguration = _configurationProvider
-                        .getGroupConfiguration(DownloadSiteConfiguration.class, groupId);
+                        .getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getCompanyId(), groupId);
 
                 Group group = GroupLocalServiceUtil.getGroup(groupId);
 

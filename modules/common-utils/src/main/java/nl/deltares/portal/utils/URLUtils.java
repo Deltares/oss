@@ -1,8 +1,8 @@
 package nl.deltares.portal.utils;
 
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import jakarta.portlet.PortletRequest;
 
-import javax.portlet.PortletRequest;
 import java.util.Map;
 
 public interface URLUtils {
