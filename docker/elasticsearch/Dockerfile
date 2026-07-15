@@ -1,4 +1,4 @@
-FROM docker.elastic.co/elasticsearch/elasticsearch:7.17.28
+FROM docker.elastic.co/elasticsearch/elasticsearch:8.19.18
 
 RUN /usr/share/elasticsearch/bin/elasticsearch-plugin install --batch analysis-icu
 RUN /usr/share/elasticsearch/bin/elasticsearch-plugin install --batch analysis-kuromoji

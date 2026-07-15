@@ -1,4 +1,4 @@
-<h1>Upgrade script for upgrade Keycloak from 24.0.2 to 26.6.3</h1>
+<h1>Upgrade script for upgrade Liferay DXP from 7.4 to 2026.qxxxx</h1>
 
 <h2>Step 1 - Podman preparation</h2>
 
@@ -11,14 +11,14 @@ Before we can upgrade the database we need to clean up data and make some prepar
 Follow these steps:
 <ol type="1">
 <li>Obtain a database dump of the production database from Firelay.</li>
-<li>Copy and rename the dump file over file /docker/resources/dump-keycloak.sql (do not commit to github)</li>
-<li>In the file /docker/docker-compose.yml, comment out all services except for 'database'. This will assure that Keycloak is not loaded.</li>
+<li>Copy and rename the dump file over file /docker/resources/dump-liferay.sql (do not commit to github)</li>
+<li>In the file /docker/docker-compose.yml, comment out all services except for 'database'. This will assure that Liferay is not loaded.</li>
 <li>Start Podman by running the following command in the 'Terminal' panel from the 'docker' folder!<br>
 <code>podman compose -f docker-compose.yml up -d</code>
 </li>
 <li>Check the container logs in Podman to see if MariaDB started correctly and the DB import finished without errors.<br> 
 <li>Connect to the database using a DB viewer such as DBeaver.<br> 
-<code>jdbc:mariadb://localhost:3308/keycloak</code><br>
+<code>jdbc:mariadb://localhost:3307/liferay</code><br>
 <code> user: keycloak, password: password</code>
 </li>
 <li>Stop Podman by running the following command in the 'Terminal' panel from the 'docker' folder!<br>
@@ -26,14 +26,67 @@ Follow these steps:
 </li>
 </ol>
 
-<h2>Step 3 - Run the Keycloak Upgrade</h2>
+<h3>Prepare DB dump file before loading</h3>
 
-The Keycloak upgrade needs to run incrementally. First we start Keycloak with the currently active version: <strong>24.0.2</strong> 
+Here is a list of issues that need to be fixed in the Production Liferay DB Dump before the database dump can be loaded.
+
+<ol>
+<li>
+Replace all values of <strong>utf8mb3</strong> with the value <strong>utf8mb4</strong>.<br />
+Replace all values of <strong>utf8mb3_general_ci</strong> with the value <strong>utf8mb4_unicode_ci</strong>.<br />
+</li>
+<li>
+Error 'Unable to get user personal site group...': <br />
+Remove all User Personal Site records from TABLE Group_. These are all records with friendlyURL = '/personal_site' 
+</li>
+<li>Switch OFF SAML login for all Virtual Hosts. Search in TABLE Configuration_ for SAML records.<code>configurationId like '%SAML%'</code></li>
+<li>Set password for users Liferay and rooij_e in TABLE User_.</li>
+<li>Remove all Forum content for specific site: <br />
+Lookup GroupId of the specific site. In all TABLES starting with 'MB...', lookup and delete all records with groupId == "site group id".
+</li>
+</ol>
+
+<h3>Cleanup unused content</h3>
+
+Before starting the upgrade proces, it is a good time to clean up all outdated content in the Liferay instance.
+
+Follow these steps:
+<ol type="1">
+<li>In docker-compose.yml enable the Liferay configurations again.</li>
+<li>Start Liferay podman container</li>
+<li>Deploy all modules to the container</li>
+<li>Login to Liferay and clean all unused; virtual instances, sites, message boards, content</li>
+<li>Once you are satisfied with the results, create a DB Dump from the Liferay database</li>
+<li>Shutdown containers</li>
+</ol>
+
+
+<h2>Step 3 - Run the Liferay Upgrade</h2>
+
+The Liferay upgrade needs to run incrementally. If your are feeling lucky you can start by trying to upgrade
+strait to the target version of Liferay
+
+> When upgrading to Liferay 2026 you will need to upgrade the MySql connector JAR. 
+>
+> This can be downloaded from <a href="https://dev.mysql.com/downloads/file/?id=552109">MySql Connector JAR</a> and Store this JAR
+> in directory /configs/common/tomcat/.../mysql.jar
+> 
+> Also in the portal-ext.properties file update the DB connection variable: 
+> 
+> jdbc.default.url = jdbc:mysql://database/@MYSQL_DATABASE@?characterEncoding=UTF-8&dontTrackOpenResources=true&holdResultsOpenOverStatementClose=true&serverTimezone=GMT&useFastDateParsing=false&useUnicode=true&permitMysqlScheme&sslMode=trust
+> 
+> Additionally update the MariaDB version to 11.8.8
+> 
+> In configuration file docker-compose.yml update the MariaDB image to mariadb:11.8.8
+
+> Upgrade the elasticsearch engine to version 8.19.18
+> 
+> In configuration file /docker/elasticsearch/Dockerfile, update the image version to 8.19.18
 
 <ol type="1">
-<li>Update 'docker-compose.yml' to activate the Keycloak configuration and set the image version to 24.0.2</li>
+<li>Update 'liferay/Dockerfile' to activate the Liferay configuration and set the image version to 2026.q?.? </li>
 <li>Start the configuration using the startup command: <br/>
-<code>podman compose -f docker-compose.yml up -d</code>
+<code>./gradlew startLiferay</code>
 </li>
 <li>Check the container logs for Keycloak to see if the container started without errors and if the DB upgrade ran and completed without error. <br/>
 Make sure the the DB upgrade is completed.</li>
@@ -46,52 +99,15 @@ Make sure the the DB upgrade is completed.</li>
 Suggested increments for updating Keycloak; 24.0.2, 25.0.5 & 26.0.8, 26.1.5, 26.2.5, 26.3.5, 26.4.7, 26.5.7 and 26.6.3.</li>
 </ol>
 
-<h3>What to do when one of the Keycloak increments fails?</h2>
+<h3>Errors/Warns that occur during the Liferay DB upgrade process</h2>
 <ol type="1">
 <li>
-Stop the containers as described above.
+WARN utf8mb3 character set and utf8mb3_general_ci collation, but database has utf8mb4 character set and utf8mb4_general_ci collation. Recommended character set is utf8mb4 and recommended collation is utf8mb4_unicode_ci
+<br />
+Dump the upgraded DB from Liferay and convert the character set values. Then restore the dump.
 </li>
-<li>
-Delete the 'volume' named 'docker_dbkeycloak74' in Podman.
-</li>
-<li>
-Update the 'docker-compose.yml' file by commenting out the Keycloak section.
-</li>
-<li>
-Copy the last DB dump file to folder and rename to <code>./docker/resouces/dump-keycloak.sql</code>
-</li>
-<li>
-Restart the docker configuration again as described above. And check that DB is successfully rebuilt.
-</li>
-<li>Go back to the begining of Step 3, but decrease the step size for Keycloak and/or resolve any problems.</li>
 </ol>
 
-<h3>Known DB upgrade errors</h3>
-<ol type="1">
-<li>Upgrading to Keycloak > 26.1.* resulted in a DB upgrade error related to creating table KEYCLOAK_GROUP<br/>
-This is a known issue and resolution can be fownd in following link: <a href="https://github.com/keycloak/keycloak/issues/48782">Foreign key constraint is incorrectly formed/a> <br/>
-<p>
-Although the above issue does not seem to be the cause of our problem, it did tigger me to find the following issue:<br/>
-Table ORG and some others had character set <code>utf8mb4</code> active while all other tables had <code>utf8mb3</code>
-</p>
-<p>
-Replace all <code>utf8mb4</code> by <code>utf8mb3</code> in the <strong>dump-keycloak.sql</strong> before restoring the DB resolves this problem.
-</p>
-
-</li>
-
-</ol>
-
-<h2>Step 4 - Deploy the mydeltares-keycloak JARS</h2>
-Once you have verified that Keycloak is running under 26.6.3, it is time to test the Deltares JAR files:
-<p>
-Verify this by copying JAR files;
-
-- mydeltares-keycloak-spi-5.0.0.jar &
-- mydeltares-keycloak-theme-5.0.0.jar
-
-into the folder <code>keycloak/deployments</code>. Now restart Keycloak and check the logs for errors.
-</p>
 
 <h2>Step 5 - Testing</h2>
 

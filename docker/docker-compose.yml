@@ -1,22 +1,22 @@
 services:
 
   database:
-    image: mariadb:11.2-rc
-    container_name: oss-mariadb-74
+    image: mariadb:11.8.8
+    container_name: oss-mariadb-2026
     ports:
       - "3307:3306"
     env_file:
       - .env
     volumes:
-      - dbliferay74:/var/lib/mysql
+      - dbliferay2026:/var/lib/mysql
       - ./resources/dump-liferay.sql:/docker-entrypoint-initdb.d/dump.sql
     restart: always
     networks:
       - liferay
 
   mariadb-keycloak:
-    image: mariadb:11.2-rc
-    container_name: keycloak-mariadb-74
+    image: mariadb:11.8.8
+    container_name: keycloak-mariadb-2026
     ports:
       - "3308:3306"
     environment:
@@ -26,14 +26,14 @@ services:
       - MYSQL_PASSWORD=password
       - HOSTNAME=mariadb-keycloak
     volumes:
-      - dbkeycloak74:/var/lib/mysql
+      - dbkeycloak2026:/var/lib/mysql
       - ./resources/dump-keycloak.sql:/docker-entrypoint-initdb.d/dump.sql
     restart: always
     networks:
       - liferay
 
   liferay:
-    container_name: oss-liferay-74
+    container_name: oss-liferay-2026
     build: liferay
     depends_on:
       - elasticsearch
@@ -59,7 +59,7 @@ services:
       - liferay
 
   elasticsearch:
-    container_name: oss-elastic-74
+    container_name: oss-elastic-2026
     build: elasticsearch
     environment:
       - cluster.name=oss-cluster
@@ -70,7 +70,7 @@ services:
     ports:
       - 9200:9200
     volumes:
-      - esdata74:/usr/share/elasticsearch/data
+      - esdata2026:/usr/share/elasticsearch/data
     ulimits:
       memlock:
         soft: -1
@@ -104,11 +104,11 @@ services:
       - mariadb-keycloak
 
 volumes:
-  esdata74:
+  esdata2026:
     driver: local
-  dbliferay74:
+  dbliferay2026:
     driver: local
-  dbkeycloak74:
+  dbkeycloak2026:
     driver: local
 
 networks:

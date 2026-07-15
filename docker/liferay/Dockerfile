@@ -1,4 +1,4 @@
-FROM liferay/dxp:7.4.13-u77
+FROM liferay/dxp:2026.q2.7
 
 MAINTAINER Erik de Rooij <erik.derooij@deltares.nl>
 
@@ -22,5 +22,4 @@ ENV LOGGING_LEVEL DEBUG
 ENV HOSTNAME liferay
 ENV LIFERAY_JVM_OPTS -Djdk.util.zip.disableZip64ExtraFieldValidation=true
 ENV CATALINA_OPTS -Xdebug -Xrunjdwp:transport=dt_socket,address=*:8000,server=y,suspend=n -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=12345 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.rmi.port=12345 -Djava.rmi.server.hostname=$HOSTNAME
-
 ENTRYPOINT /bin/bash /etc/liferay/wait-for-it.sh database:3306 --strict -- /usr/local/bin/liferay_entrypoint.sh

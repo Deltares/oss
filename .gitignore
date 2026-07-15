@@ -289,3 +289,5 @@ license*.xml
 /sonarcloud-truststore.p12.b64
 /sonarcloud.token
 /run-sonar-locally.bat
+/docker/resources/dump-liferay.sql
+/docker/resources/dump-keycloak.sql
