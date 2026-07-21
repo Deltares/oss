@@ -7,6 +7,8 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.*;
+import jakarta.servlet.http.HttpServletResponse;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.kernel.util.comparator.JournalArticleComparator;
 import nl.deltares.portal.utils.*;
@@ -16,8 +18,6 @@ import nl.deltares.tasks.impl.DownloadEventRegistrationsRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.*;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;

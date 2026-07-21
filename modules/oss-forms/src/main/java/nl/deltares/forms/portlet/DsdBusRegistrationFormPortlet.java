@@ -3,7 +3,7 @@ package nl.deltares.forms.portlet;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -18,10 +18,10 @@ import nl.deltares.portal.utils.DsdTransferUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.Portlet;
-import javax.portlet.PortletException;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
+import jakarta.portlet.Portlet;
+import jakarta.portlet.PortletException;
+import jakarta.portlet.RenderRequest;
+import jakarta.portlet.RenderResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -51,8 +51,8 @@ public class DsdBusRegistrationFormPortlet extends MVCPortlet {
 
         DSDSiteConfiguration configuration;
         try {
-            configuration = _configurationProvider
-                    .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
+            configuration = _configurationProvider.getGroupConfiguration(
+                            DSDSiteConfiguration.class, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
         } catch (ConfigurationException e) {
             throw new PortletException("Could not get configuration instance", e);
         }
@@ -60,7 +60,7 @@ public class DsdBusRegistrationFormPortlet extends MVCPortlet {
         try {
             event = parserUtils.getEvent(groupId, String.valueOf(configuration.eventId()), themeDisplay.getLocale());
         } catch (PortalException e) {
-            throw new PortletException(String.format("Could not get event for %d: %s" + configuration.eventId(), e.getMessage()));
+            throw new PortletException(String.format("Could not get event for %d: %s", configuration.eventId(), e.getMessage()));
         }
         renderRequest.setAttribute("event", event);
         final List<BusTransfer> busTransfers = event.getBusTransfers(themeDisplay.getLocale());

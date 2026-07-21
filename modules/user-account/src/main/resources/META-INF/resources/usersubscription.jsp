@@ -1,6 +1,5 @@
 <%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%@ taglib uri="http://xmlns.jcp.org/portlet_3_0" prefix="portlet" %>
 

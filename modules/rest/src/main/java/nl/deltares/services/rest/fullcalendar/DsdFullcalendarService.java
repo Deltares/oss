@@ -1,16 +1,17 @@
 package nl.deltares.services.rest.fullcalendar;
 
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.GroupServiceUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.impl.*;
 import nl.deltares.portal.utils.DsdParserUtils;
@@ -18,7 +19,6 @@ import nl.deltares.portal.utils.Period;
 import nl.deltares.services.rest.fullcalendar.models.Event;
 import nl.deltares.services.rest.fullcalendar.models.Resource;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -38,6 +38,11 @@ public class DsdFullcalendarService {
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
     private final ConfigurationProvider configurationProvider;
     private final DsdParserUtils parserUtils;
+
+    private DsdFullcalendarService() {
+        configurationProvider = null;
+        parserUtils = null;
+    }
 
     public DsdFullcalendarService(ConfigurationProvider configurationProvider, DsdParserUtils parserUtils) {
         this.configurationProvider = configurationProvider;
@@ -97,11 +102,13 @@ public class DsdFullcalendarService {
 
             List<Registration> registrations = new ArrayList<>();
             if (ids.length == 0){
+                assert parserUtils != null;
                 registrations.addAll(parserUtils.getRegistrations(group.getCompanyId(), Long.parseLong(siteId), startSearch, endSearch,
                         getStructureKeys(siteConfiguration), siteConfiguration.dsdRegistrationDateField(), locale));
             } else {
                 for (String id : ids) {
                     try {
+                        assert parserUtils != null;
                         nl.deltares.portal.model.impl.Event event = parserUtils.getEvent(Long.parseLong(siteId), id, locale);
                         registrations.addAll(event.getRegistrations(locale));
                     } catch (PortalException e) {
@@ -139,7 +146,8 @@ public class DsdFullcalendarService {
         for (String id : ids) {
             nl.deltares.portal.model.impl.Event dsdEvent;
             try {
-                 dsdEvent = parserUtils.getEvent(Long.parseLong(siteId), id, locale);
+                assert parserUtils != null;
+                dsdEvent = parserUtils.getEvent(Long.parseLong(siteId), id, locale);
                 List<Resource> resources = getResources(dsdEvent, locale);
                 resources.forEach(resource -> {
                     if (!allResources.contains(resource)){
@@ -191,20 +199,26 @@ public class DsdFullcalendarService {
     private Event createCalendarEvent(Registration registration, int dayCount, long startDay, long endDay, DSDSiteConfiguration siteConfiguration) {
         Event event = new Event();
         event.setId(registration.getArticleId() + '_' + dayCount);
-        if (registration instanceof SessionRegistration) {
-            event.setResourceId(String.valueOf(((SessionRegistration) registration).getRoom().getResourceId()));
-            event.setUrl("-/" + registration.getJournalArticle().getUrlTitle());
-        } else if (registration instanceof DinnerRegistration) {
-            event.setResourceId(String.valueOf(((DinnerRegistration) registration).getRestaurant().getResourceId()));
-            if (siteConfiguration != null && siteConfiguration.travelStayURL() != null && !siteConfiguration.travelStayURL().isEmpty()) {
-                event.setUrl(getPageUrl(registration.getGroupId(), siteConfiguration.travelStayURL()));
-            } else {
+        switch (registration) {
+            case SessionRegistration sessionRegistration -> {
+                event.setResourceId(String.valueOf(sessionRegistration.getRoom().getResourceId()));
                 event.setUrl("-/" + registration.getJournalArticle().getUrlTitle());
             }
-        } else if (registration instanceof BusTransfer) {
-            event.setResourceId("bustransfer");
-            if (siteConfiguration != null && siteConfiguration.busTransferURL() != null) {
-                event.setUrl(getPageUrl(registration.getGroupId(), siteConfiguration.busTransferURL()));
+            case DinnerRegistration dinnerRegistration -> {
+                event.setResourceId(String.valueOf(dinnerRegistration.getRestaurant().getResourceId()));
+                if (siteConfiguration != null && siteConfiguration.travelStayURL() != null && !siteConfiguration.travelStayURL().isEmpty()) {
+                    event.setUrl(getPageUrl(registration.getGroupId(), siteConfiguration.travelStayURL()));
+                } else {
+                    event.setUrl("-/" + registration.getJournalArticle().getUrlTitle());
+                }
+            }
+            case BusTransfer busTransfer -> {
+                event.setResourceId("bustransfer");
+                if (siteConfiguration != null && siteConfiguration.busTransferURL() != null) {
+                    event.setUrl(getPageUrl(registration.getGroupId(), siteConfiguration.busTransferURL()));
+                }
+            }
+            default -> {
             }
         }
         event.setStart(startDay);
@@ -287,8 +301,16 @@ public class DsdFullcalendarService {
 
     private DSDSiteConfiguration getSiteConfiguration(String siteId) throws ConfigurationException {
         DSDSiteConfiguration siteConfiguration;
-        siteConfiguration = configurationProvider
-                .getGroupConfiguration(DSDSiteConfiguration.class, Long.parseLong(siteId));
+
+        long groupId = Long.parseLong(siteId);
+        Group group = GroupLocalServiceUtil.fetchGroup(groupId);
+        if (group == null) {
+            throw new ConfigurationException("Not a valid siteId " + groupId);
+        }
+        long companyId = group.getCompanyId();
+        assert configurationProvider != null;
+        siteConfiguration = configurationProvider.getGroupConfiguration(
+                        DSDSiteConfiguration.class, companyId, groupId);
         return siteConfiguration;
     }
 }

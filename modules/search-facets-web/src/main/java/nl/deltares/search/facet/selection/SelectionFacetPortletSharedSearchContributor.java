@@ -11,7 +11,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 @Component(
         immediate = true,
@@ -40,10 +39,12 @@ public class SelectionFacetPortletSharedSearchContributor implements PortletShar
         final Long groupId = (Long) portalCache.get("groupId");
         final Locale siteDefaultLocale = (Locale) portalCache.get("siteDefaultLocale");
 
-        Optional<String> selectionOptional = portletSharedSearchSettings.getParameterOptional(name);
+        String selection = portletSharedSearchSettings.getParameter(name);
         //check for parameter is in namespace of searchResultsPortlet
-        String selection = selectionOptional.orElseGet(() -> (String) FacetUtils.getFromSession(
-                portletSharedSearchSettings.getPortletId(), name, portletSharedSearchSettings.getRenderRequest()));
+        if (selection == null) {
+            selection = (String) FacetUtils.getFromSession(
+                    portletSharedSearchSettings.getPortletId(), name, portletSharedSearchSettings.getRenderRequest());
+        }
         if (selection == null) {
             return;
         }

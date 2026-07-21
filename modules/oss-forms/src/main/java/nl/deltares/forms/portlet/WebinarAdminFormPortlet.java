@@ -4,7 +4,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import nl.deltares.portal.constants.OssConstants;
 import org.osgi.service.component.annotations.Component;
 
-import javax.portlet.Portlet;
+import jakarta.portlet.Portlet;
 
 /**
  * @author rooij_e

@@ -8,14 +8,14 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.*;
+import jakarta.servlet.http.HttpServletResponse;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
 import nl.worth.deltares.oss.portlet.constants.UserPortraitsPortletKeys;
 import nl.worth.deltares.tasks.impl.UserPortraitsRequest;
 import org.osgi.service.component.annotations.Component;
 
-import javax.portlet.*;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;

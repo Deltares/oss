@@ -7,13 +7,13 @@ import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.*;
 import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 import nl.deltares.portal.utils.EmailSubscriptionUtils;
 import nl.deltares.useraccount.constants.UserProfilePortletKeys;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
     public void render(RenderRequest request, RenderResponse response) throws IOException, PortletException {
         ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
         User user = themeDisplay.getUser();
-        if (!user.isDefaultUser() && user.isActive()) {
+        if (!user.isGuestUser() && user.isActive()) {
             try {
                 final List<SubscriptionSelection> mailings = subscriptionUtils.getSubscriptions(user.getEmailAddress());
                 request.setAttribute("subscriptions", mailings);

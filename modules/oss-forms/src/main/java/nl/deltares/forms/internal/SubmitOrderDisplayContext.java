@@ -3,17 +3,18 @@ package nl.deltares.forms.internal;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
 import com.liferay.expando.kernel.model.ExpandoBridge;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.GroupServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.deltares.emails.RegistrationEmail;
 import nl.deltares.emails.serializer.RegisterEmailSerializer;
 import nl.deltares.forms.exception.RegistrationFormException;
@@ -24,7 +25,6 @@ import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.model.impl.SessionRegistration;
 import nl.deltares.portal.utils.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -59,7 +59,7 @@ public class SubmitOrderDisplayContext {
 
         ThemeDisplay themeDisplay = new CPRequestHelper(httpServletRequest).getThemeDisplay();
         _configuration = configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class,
-                themeDisplay.getScopeGroupId());
+                themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
         _loggedInUser = themeDisplay.getUser();
 
         _context = (RegistrationFormContext) httpServletRequest.getSession().getAttribute("registration-context");

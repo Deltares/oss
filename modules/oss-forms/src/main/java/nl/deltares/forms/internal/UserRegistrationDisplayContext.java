@@ -2,13 +2,12 @@ package nl.deltares.forms.internal;
 
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.deltares.forms.portlet.PortletPermissionUtils;
 import nl.deltares.model.RegistrationFormContext;
 import nl.deltares.model.RegistrationsInfo;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.DsdParserUtils;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class UserRegistrationDisplayContext {
 

@@ -4,13 +4,13 @@ import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.portal.utils.GeoIpUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.services.utils.Helper;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -28,6 +28,12 @@ public class DownloadRestService {
     private final DownloadUtils downloadUtils;
     private final GeoIpUtils geoIpUtils;
     private final KeycloakUtils keycloakUtils;
+
+    private DownloadRestService() {
+        downloadUtils =null;
+        geoIpUtils = null;
+        keycloakUtils = null;
+    }
 
     public DownloadRestService(DownloadUtils downloadUtils, GeoIpUtils geoIpUtils, KeycloakUtils keycloakUtils) {
         this.downloadUtils = downloadUtils;
@@ -64,6 +70,7 @@ public class DownloadRestService {
         }
         final Map<String, String> shareInfo;
         try {
+            assert downloadUtils != null;
             if (downloadUtils.hasMultipleDownloadUrls()) {
                 shareInfo = downloadUtils.createShareLink(countryCode, filePath, user.getEmailAddress(), false);
             } else {
@@ -135,9 +142,10 @@ public class DownloadRestService {
 
         final Map<String, String> attributes = new HashMap<>(parseGeoLocationFromIp(request));
 
-        if (user == null || user.isDefaultUser()) return attributes;
+        if (user == null || user.isGuestUser()) return attributes;
 
         try {
+            assert keycloakUtils != null;
             attributes.putAll(keycloakUtils.getUserAttributes(user.getEmailAddress()));
         } catch (Exception e) {
             LOG.warn(String.format("Error getting user attributes for user %s: %s", user.getEmailAddress(), e.getMessage()));

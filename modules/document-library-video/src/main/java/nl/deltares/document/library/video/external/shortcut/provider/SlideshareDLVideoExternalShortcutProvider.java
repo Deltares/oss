@@ -9,9 +9,9 @@ import com.liferay.document.library.video.external.shortcut.DLVideoExternalShort
 import com.liferay.document.library.video.external.shortcut.provider.DLVideoExternalShortcutProvider;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
+import jakarta.servlet.http.HttpServletRequest;
 import org.osgi.service.component.annotations.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -79,6 +79,7 @@ public class SlideshareDLVideoExternalShortcutProvider
         return null;
     }
 
+    @SuppressWarnings("RegExpRedundantEscape")
     private static final List<Pattern> _urlPatterns = Arrays.asList(
             Pattern.compile("https?:\\/\\/(?:www\\.)?slideshare\\.com\\/slideshow\\/.*\\/(\\S*)$"),
             Pattern.compile("https?:\\/\\/(?:www\\.)?slideshare\\.net\\/slideshow\\/.*\\/(\\S*)$"));

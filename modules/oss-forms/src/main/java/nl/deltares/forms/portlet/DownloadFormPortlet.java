@@ -1,16 +1,20 @@
 package nl.deltares.forms.portlet;
 
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.Portlet;
+import jakarta.portlet.PortletException;
+import jakarta.portlet.RenderRequest;
+import jakarta.portlet.RenderResponse;
 import nl.deltares.portal.configuration.DownloadSiteConfiguration;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Download;
@@ -20,10 +24,6 @@ import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.Portlet;
-import javax.portlet.PortletException;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
 import java.io.IOException;
 import java.util.*;
 
@@ -96,7 +96,8 @@ public class DownloadFormPortlet extends MVCPortlet {
                 request.setAttribute("attributes", new HashMap<>());
             }
             try {
-                DownloadSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DownloadSiteConfiguration.class, themeDisplay.getScopeGroupId());
+                DownloadSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(
+                        DownloadSiteConfiguration.class, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
                 request.setAttribute("privacyURL", dsdConfig.privacyURL());
                 request.setAttribute("contactURL", dsdConfig.contactURL());
 

@@ -4,16 +4,16 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.Portlet;
+import jakarta.portlet.PortletException;
+import jakarta.portlet.ResourceRequest;
+import jakarta.portlet.ResourceResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import nl.deltares.common.emails.EmailUtils;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.tasks.DataRequestManager;
 import org.osgi.service.component.annotations.Component;
 
-import javax.portlet.Portlet;
-import javax.portlet.PortletException;
-import javax.portlet.ResourceRequest;
-import javax.portlet.ResourceResponse;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**

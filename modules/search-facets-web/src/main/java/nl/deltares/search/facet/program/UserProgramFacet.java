@@ -1,7 +1,6 @@
 package nl.deltares.search.facet.program;
 
 import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.BaseFacet;
@@ -51,8 +50,7 @@ public class UserProgramFacet extends BaseFacet implements Facet {
         SearchContext searchContext = getSearchContext();
         TermsFilter articleIdsFilter = new TermsFilter(getFieldName());
         articleIdsFilter.addValues(getSelections());
-        return BooleanClauseFactoryUtil.createFilter(
-                searchContext, articleIdsFilter, BooleanClauseOccur.MUST);
+        return new BooleanClause<>(articleIdsFilter, BooleanClauseOccur.MUST);
     }
 
     private String _aggregationName;

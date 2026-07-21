@@ -1,26 +1,25 @@
 package nl.deltares.forms.portlet;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
 import com.liferay.portal.kernel.settings.ModifiableSettings;
 import com.liferay.portal.kernel.settings.Settings;
-import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nl.deltares.portal.constants.OssConstants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.portlet.PortletConfig;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.portlet.ActionRequest;
+import jakarta.portlet.ActionResponse;
+import jakarta.portlet.PortletConfig;
 
 
 @Component(
@@ -44,7 +43,7 @@ public class DsdRegistrationFormConfigurationAction extends DefaultConfiguration
         try {
             ThemeDisplay themeDisplay = (ThemeDisplay) httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY);
             DsdRegistrationFormConfiguration siteConfiguration = _configurationProvider
-                    .getGroupConfiguration(DsdRegistrationFormConfiguration.class, themeDisplay.getSiteGroupId());
+                    .getGroupConfiguration(DsdRegistrationFormConfiguration.class, themeDisplay.getCompanyId(), themeDisplay.getSiteGroupId());
 
             httpServletRequest.setAttribute("childHeaderText", siteConfiguration.childHeaderText());
             httpServletRequest.setAttribute("registerSuccessURL", siteConfiguration.registerSuccessURL());
@@ -64,8 +63,9 @@ public class DsdRegistrationFormConfigurationAction extends DefaultConfiguration
 
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
-        Settings settings = SettingsFactoryUtil.getSettings(
-                new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), DsdRegistrationFormConfiguration.class.getName()));
+        Settings settings =
+                new GroupServiceSettingsLocator(themeDisplay.getScopeGroupId(), DsdRegistrationFormConfiguration.class.getName())
+                        .getSettings();
 
         ModifiableSettings modifiableSettings =
                 settings.getModifiableSettings();

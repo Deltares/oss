@@ -13,6 +13,9 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
 import nl.deltares.oss.geolocation.model.GeoLocation;
@@ -28,9 +31,6 @@ import nl.deltares.tasks.DataRequestManager;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -199,23 +199,23 @@ public class DownloadTablePortlet extends MVCPortlet {
         String filterValue = ParamUtil.getString(request, "filterValue", null);
         String filterSelection = ParamUtil.getString(request, "filterSelection", null);
 
-        if ("export".equals(action)) {
-            if (id == null) {
-                id = DownloadTablePortlet.class.getName() + themeDisplay.getUserId();
+        switch (action) {
+            case "export" -> {
+                if (id == null) {
+                    id = DownloadTablePortlet.class.getName() + themeDisplay.getUserId();
+                }
+                exportTable(id, filterValue, filterSelection, response, themeDisplay);
             }
-            exportTable(id, filterValue, filterSelection, response, themeDisplay);
-        } else if ("delete-selected".equals(action)) {
-            if (id == null) {
-                id = DownloadTablePortlet.class.getName() + themeDisplay.getUserId();
+            case "delete-selected" -> {
+                if (id == null) {
+                    id = DownloadTablePortlet.class.getName() + themeDisplay.getUserId();
+                }
+                deletedSelected(id, request, response, themeDisplay);
             }
-            deletedSelected(id, request, response, themeDisplay);
-
-        } else if ("updateStatus".equals(action)) {
-            DataRequestManager.getInstance().updateStatus(id, response);
-        } else if ("downloadLog".equals(action)) {
-            DataRequestManager.getInstance().downloadDataFile(id, response);
-        } else {
-            DataRequestManager.getInstance().writeError("Unsupported Action error: " + action, response);
+            case "updateStatus" -> DataRequestManager.getInstance().updateStatus(id, response);
+            case "downloadLog" -> DataRequestManager.getInstance().downloadDataFile(id, response);
+            case null, default ->
+                    DataRequestManager.getInstance().writeError("Unsupported Action error: " + action, response);
         }
 
     }

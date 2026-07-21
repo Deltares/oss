@@ -1,7 +1,10 @@
 package nl.deltares.services.rest.exception;
 
+import java.io.Serial;
+
 public class LiferayRestException  extends Exception{
 
+    @Serial
     private static final long serialVersionUID = -8999932578270387947L;
 
     /**

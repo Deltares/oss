@@ -5,23 +5,22 @@ import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Portal;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nl.deltares.forms.constants.CheckoutWebKeys;
 import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.forms.internal.BadgeConfigCheckoutStepDisplayContext;
 import nl.deltares.forms.portlet.RegistrationFormConfiguration;
-import nl.deltares.model.BadgeInfo;
 import nl.deltares.portal.utils.DsdParserUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.portlet.ActionRequest;
+import jakarta.portlet.ActionResponse;
 import java.util.Collections;
 
 @Component(

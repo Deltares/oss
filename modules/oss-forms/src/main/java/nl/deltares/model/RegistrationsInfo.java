@@ -7,12 +7,12 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -150,7 +150,7 @@ public class RegistrationsInfo implements Serializable {
         ArrayList<String> updatedRelatedArticles = new ArrayList<>(relatedArticles.size());
         updatedRelatedArticles.addAll(relatedArticles);
         Collection<Event> loadedEvents = registrationsInfo.eventIds.stream().map(eventId ->
-                registrationsInfo.getEvent(Long.valueOf(eventId))).filter(Objects::nonNull).collect(Collectors.toList());
+                registrationsInfo.getEvent(Long.valueOf(eventId))).filter(Objects::nonNull).toList();
         for (Event loadedEvent : loadedEvents) {
             List<Registration> eventRegistrations = loadedEvent.getRegistrations(loadedEvent.getLocale());
             for (Registration registration : eventRegistrations) {

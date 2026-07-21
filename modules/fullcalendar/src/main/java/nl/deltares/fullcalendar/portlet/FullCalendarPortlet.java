@@ -1,11 +1,12 @@
 package nl.deltares.fullcalendar.portlet;
 
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.*;
 import nl.deltares.fullcalendar.constants.FullcalendarPortletKeys;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import org.osgi.service.component.annotations.Activate;
@@ -13,12 +14,12 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.*;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import static nl.deltares.fullcalendar.portlet.FullCalendarUtils.getTypeMap;
@@ -64,11 +65,7 @@ public class FullCalendarPortlet extends MVCPortlet {
         }
 
         String eventIds = getFromSession("eventIds", renderRequest);
-        if (eventIds != null) {
-            renderRequest.setAttribute("eventIds", eventIds);
-        } else {
-            renderRequest.setAttribute("eventIds", "");
-        }
+        renderRequest.setAttribute("eventIds", Objects.requireNonNullElse(eventIds, ""));
 
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
         try {

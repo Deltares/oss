@@ -2,7 +2,7 @@ package nl.deltares.search.facet.checkbox;
 
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
@@ -13,7 +13,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.util.Locale;
-import java.util.Optional;
 
 @Component(
         immediate = true,
@@ -42,12 +41,14 @@ public class CheckboxFacetPortletSharedSearchContributor implements PortletShare
         String name = structureName + '-' + fieldName; //important to use '-' because this translates to JSP id
         boolean defaultValue = Boolean.parseBoolean(checkboxFacetConfiguration.defaultValue());
 
-        Optional<String> selectionOptional = portletSharedSearchSettings.getParameterOptional(name);
+        String selection = portletSharedSearchSettings.getParameter(name);
         //check for parameter is in namespace of searchResultsPortlet
 
-        String selection = selectionOptional.orElseGet(() -> (String) FacetUtils.getFromSession(
-                portletSharedSearchSettings.getPortletId(),
-                name, portletSharedSearchSettings.getRenderRequest()));
+        if (selection == null) {
+            selection = (String) FacetUtils.getFromSession(
+                    portletSharedSearchSettings.getPortletId(),
+                    name, portletSharedSearchSettings.getRenderRequest());
+        }
         final boolean option;
         if (selection == null){
             if (Boolean.parseBoolean(checkboxFacetConfiguration.visible())){

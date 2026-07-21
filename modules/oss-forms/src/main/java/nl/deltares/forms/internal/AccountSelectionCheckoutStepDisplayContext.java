@@ -3,14 +3,15 @@ package nl.deltares.forms.internal;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.*;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.*;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.deltares.forms.constants.OrganizationConstants;
 import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.forms.portlet.PortletPermissionUtils;
@@ -19,7 +20,6 @@ import nl.deltares.model.RegistrationFormContext;
 import nl.deltares.portal.configuration.SiteMapConfiguration;
 import nl.deltares.portal.utils.AccountUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -146,12 +146,12 @@ public class AccountSelectionCheckoutStepDisplayContext{
         serviceContext.setCompanyId(accountEntry.getCompanyId());
         serviceContext.setUserId(accountEntry.getUserId());
         if (billingAddress == null) {
-            final ListType accountType = ListTypeLocalServiceUtil.getListType(
+            final ListType accountType = ListTypeLocalServiceUtil.getListType(accountEntry.getCompanyId(),
                     "billing", "com.liferay.account.model.AccountEntry.address");
             billingAddress = _addressLocalService.addAddress(
                     null, accountEntry.getUserId(), AccountEntry.class.getName(),
-                    accountEntry.getAccountEntryId(), name, null, street, null, null, city, postal, regionId, companyCountry.getCountryId(),
-                    accountType.getListTypeId(), true, true, phoneNumber, serviceContext);
+                    accountEntry.getAccountEntryId(), companyCountry.getCountryId(), accountType.getListTypeId(), regionId,
+                    city, null, false, name, false, street, null, null, null, postal, phoneNumber,serviceContext);
 
             if (accountEntry.getDefaultBillingAddress() == null) {
                 accountEntry.setDefaultBillingAddressId(billingAddress.getAddressId());
@@ -172,13 +172,13 @@ public class AccountSelectionCheckoutStepDisplayContext{
             List<Phone> phones = _phoneLocalService.getPhones(getCompanyId(), "com.liferay.portal.kernel.model.Address", billingAddress.getAddressId());
             Phone phone;
             if (phones.isEmpty()) {
-                final ListType phoneType = ListTypeLocalServiceUtil.getListType(
+                final ListType phoneType = ListTypeLocalServiceUtil.getListType(accountEntry.getCompanyId(),
                         "phone-number", "com.liferay.portal.kernel.model.Address.phone");
-                _phoneLocalService.addPhone(
+                _phoneLocalService.addPhone(null,
                         accountEntry.getUserId(), "com.liferay.portal.kernel.model.Address", billingAddress.getAddressId(),
                         phoneNumber, null, phoneType.getListTypeId(), true, serviceContext);
             } else {
-                phone = phones.get(0);
+                phone = phones.getFirst();
                 phone.setNumber(phoneNumber);
                 _phoneLocalService.updatePhone(phone);
             }
@@ -267,7 +267,7 @@ public class AccountSelectionCheckoutStepDisplayContext{
         if (accountEntry.isPersonalAccount()){
             List<Address> accountAddresses = getAccountAddresses(accountEntry);
             if (!accountAddresses.isEmpty()){
-                return accountAddresses.get(0);
+                return accountAddresses.getFirst();
             }
         }
         return null;

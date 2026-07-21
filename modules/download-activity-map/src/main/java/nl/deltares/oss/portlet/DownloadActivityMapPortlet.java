@@ -1,17 +1,24 @@
 package nl.deltares.oss.portlet;
 
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.cache.PortalCacheHelperUtil;
 import com.liferay.portal.kernel.cache.PortalCacheManagerNames;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.Portlet;
+import jakarta.portlet.PortletException;
+import jakarta.portlet.RenderRequest;
+import jakarta.portlet.RenderResponse;
+import jakarta.portlet.ResourceRequest;
+import jakarta.portlet.ResourceResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import nl.deltares.oss.portlet.constants.ActivityMapPortletKeys;
 import nl.deltares.portal.configuration.SiteMapConfiguration;
 import nl.deltares.portal.utils.DsdParserUtils;
@@ -21,8 +28,6 @@ import nl.deltares.tasks.impl.DownloadActivityMapRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.*;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -90,34 +95,35 @@ public class DownloadActivityMapPortlet extends MVCPortlet {
 
         final String id = getId(themeDisplay);
 
-        if ("start".equals(action)) {
-            getDownloadRequest(id, themeDisplay);
-            writeToResponse(resourceResponse, null);
-        } else if ("download".equals(action)) {
-            final DataRequest downloadRequest = DataRequestManager.getInstance().getDataRequest(id);
-            if (Objects.requireNonNull(downloadRequest.getStatus()) == DataRequest.STATUS.AVAILABLE) {
-                final File dataFile = downloadRequest.getDataFile();
-                try {
-                    if (dataFile != null && dataFile.exists()) {
-                        final byte[] content = Files.readAllBytes(dataFile.toPath());
-                        final String data = new String(content, StandardCharsets.UTF_8);
-                        //Escape characters when writing to the cache otherwise the render request returns invalid content.
-                        cacheDownloads(id, escapeCharacters(data));
-                        writeToResponse(resourceResponse, data);
-                    }
-                } catch (Exception e) {
-                    DataRequestManager.getInstance().writeError(e.getMessage(), resourceResponse);
-                } finally {
-                    DataRequestManager.getInstance().removeDataRequest(downloadRequest);
-                }
-            } else {
-                resourceResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        switch (action) {
+            case "start" -> {
+                getDownloadRequest(id, themeDisplay);
+                writeToResponse(resourceResponse, null);
             }
-
-        } else if ("updateStatus".equals(action)) {
-            DataRequestManager.getInstance().updateStatus(id, resourceResponse);
-        } else {
-            DataRequestManager.getInstance().writeError("Unsupported Action error: " + action, resourceResponse);
+            case "download" -> {
+                final DataRequest downloadRequest = DataRequestManager.getInstance().getDataRequest(id);
+                if (Objects.requireNonNull(downloadRequest.getStatus()) == DataRequest.STATUS.AVAILABLE) {
+                    final File dataFile = downloadRequest.getDataFile();
+                    try {
+                        if (dataFile != null && dataFile.exists()) {
+                            final byte[] content = Files.readAllBytes(dataFile.toPath());
+                            final String data = new String(content, StandardCharsets.UTF_8);
+                            //Escape characters when writing to the cache otherwise the render request returns invalid content.
+                            cacheDownloads(id, escapeCharacters(data));
+                            writeToResponse(resourceResponse, data);
+                        }
+                    } catch (Exception e) {
+                        DataRequestManager.getInstance().writeError(e.getMessage(), resourceResponse);
+                    } finally {
+                        DataRequestManager.getInstance().removeDataRequest(downloadRequest);
+                    }
+                } else {
+                    resourceResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
+            }
+            case "updateStatus" -> DataRequestManager.getInstance().updateStatus(id, resourceResponse);
+            case null, default ->
+                    DataRequestManager.getInstance().writeError("Unsupported Action error: " + action, resourceResponse);
         }
     }
 

@@ -1,19 +1,16 @@
 package nl.deltares.search.facet.program;
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 import nl.deltares.portal.model.facet.FacetSelection;
 import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
-import nl.deltares.search.facet.DeltaresTermFieldValueFacet;
-import nl.deltares.search.facet.DeltaresTermsFieldValueFacet;
 import nl.deltares.search.facet.program.builder.UserProgramFacetBuilder;
 import nl.deltares.search.facet.program.builder.UserProgramFacetFactory;
 import nl.deltares.search.util.FacetUtils;

@@ -4,13 +4,13 @@ import com.liferay.journal.model.JournalArticleDisplay;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import jakarta.portlet.PortletRequest;
+import jakarta.portlet.PortletResponse;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
 
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

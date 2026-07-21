@@ -1,7 +1,5 @@
 package nl.deltares.model;
 
-import java.util.concurrent.locks.Lock;
-
 public class LicenseInfo {
 
     public enum LOCKTYPES { new_usb_dongle, existing_usb_dongle, mac_address, not_provided }

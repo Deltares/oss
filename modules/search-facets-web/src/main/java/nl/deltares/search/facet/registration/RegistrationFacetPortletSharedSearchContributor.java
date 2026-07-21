@@ -3,7 +3,7 @@ package nl.deltares.search.facet.registration;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -16,7 +16,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.util.Locale;
-import java.util.Optional;
 
 @Component(
         immediate = true,
@@ -41,26 +40,29 @@ public class RegistrationFacetPortletSharedSearchContributor implements PortletS
 
     private String[] getStructureKeys(PortletSharedSearchSettings portletSharedSearchSettings) {
 
-        Optional<String> optional = portletSharedSearchSettings.getParameterOptional("structureList");
-        return optional.map(s -> s.split(" ")).orElseGet(() -> {
-            String structureList = getConfiguredValue( portletSharedSearchSettings);
-            if (structureList != null && !structureList.isEmpty()){
+        String optional = portletSharedSearchSettings.getParameter("structureList");
+        if (optional != null && !optional.isEmpty()) {
+            return optional.split(" ");
+        } else {
+            String structureList = getConfiguredValue(portletSharedSearchSettings);
+            if (structureList != null && !structureList.isEmpty()) {
                 return StringUtil.split(structureList, ' ');
             }
             return new String[0];
-        });
+        }
     }
 
     @SuppressWarnings("SameParameterValue")
     private String getConfiguredValue(PortletSharedSearchSettings portletSharedSearchSettings){
 
         try {
-            RegistrationFacetConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(RegistrationFacetConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getLayout(), portletSharedSearchSettings.getPortletId());
+            ThemeDisplay themeDisplay = portletSharedSearchSettings.getThemeDisplay();
+            RegistrationFacetConfiguration configuration = _configurationProvider.getPortletInstanceConfiguration(RegistrationFacetConfiguration.class, themeDisplay.getLayout(), portletSharedSearchSettings.getPortletId());
             String overrulingStructures = configuration.structureList();
             if (overrulingStructures.isEmpty()){
 
-                DSDSiteConfiguration siteConfiguration = _configurationProvider
-                            .getGroupConfiguration(DSDSiteConfiguration.class, portletSharedSearchSettings.getThemeDisplay().getSiteGroupId());
+                DSDSiteConfiguration siteConfiguration = _configurationProvider.getGroupConfiguration(
+                        DSDSiteConfiguration.class, themeDisplay.getCompanyId(), themeDisplay.getSiteGroupId());
                 return siteConfiguration.dsdRegistrationStructures();
             }
             return overrulingStructures;

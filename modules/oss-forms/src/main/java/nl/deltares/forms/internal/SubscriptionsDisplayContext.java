@@ -1,17 +1,17 @@
 package nl.deltares.forms.internal;
 
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 import nl.deltares.portal.utils.EmailSubscriptionUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 public class SubscriptionsDisplayContext {

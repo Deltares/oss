@@ -10,10 +10,10 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.deltares.portal.utils.JsonContentUtils;
 import nl.deltares.services.rest.exception.LiferayRestException;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -82,7 +82,7 @@ public class Helper {
         return APP_MESSAGES;
     }
 
-    public static Response toResponse(List pojos) {
+    public static Response toResponse(List<Object> pojos) {
 
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode arrayNode = mapper.createArrayNode();

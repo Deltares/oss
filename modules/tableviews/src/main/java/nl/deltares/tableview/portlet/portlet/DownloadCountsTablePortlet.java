@@ -8,6 +8,9 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringComparator;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nl.deltares.oss.download.model.DownloadCount;
 import nl.deltares.oss.download.service.DownloadCountLocalServiceUtil;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
@@ -23,9 +26,6 @@ import nl.deltares.tasks.DataRequestManager;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -97,17 +97,17 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
         String action = ParamUtil.getString(request, "action");
         String id = ParamUtil.getString(request, "id", null);
 
-        if ("delete-selected".equals(action)) {
-            if (id == null) {
-                id = DownloadCountsTablePortlet.class.getName() + themeDisplay.getUserId();
+        switch (action) {
+            case "delete-selected" -> {
+                if (id == null) {
+                    id = DownloadCountsTablePortlet.class.getName() + themeDisplay.getUserId();
+                }
+                deletedSelected(id, request, response, themeDisplay);
             }
-            deletedSelected(id, request, response, themeDisplay);
-        } else if ("updateStatus".equals(action)) {
-            DataRequestManager.getInstance().updateStatus(id, response);
-        } else if ("downloadLog".equals(action)) {
-            DataRequestManager.getInstance().downloadDataFile(id, response);
-        } else {
-            DataRequestManager.getInstance().writeError("Unsupported Action error: " + action, response);
+            case "updateStatus" -> DataRequestManager.getInstance().updateStatus(id, response);
+            case "downloadLog" -> DataRequestManager.getInstance().downloadDataFile(id, response);
+            case null, default ->
+                    DataRequestManager.getInstance().writeError("Unsupported Action error: " + action, response);
         }
 
     }
@@ -181,8 +181,7 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
                 String fileName;
                 String topic;
                 String topicKey = null;
-                if (dsdArticle instanceof Download) {
-                    final Download download = (Download) dsdArticle;
+                if (dsdArticle instanceof Download download) {
                     fileName = download.getFileName();
                     topicKey = download.getFileTopic();
                     topic = topicMap.getOrDefault(topicKey, topicKey);

@@ -1,12 +1,11 @@
 package nl.deltares.forms.internal;
 
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class CheckoutStatusDisplayContext {
 
@@ -22,7 +21,7 @@ public class CheckoutStatusDisplayContext {
         CPRequestHelper cpRequestHelper = new CPRequestHelper(httpServletRequest);
         _themeDisplay = cpRequestHelper.getThemeDisplay();
         _httpServletRequest = httpServletRequest;
-        _configuration = configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, _themeDisplay.getScopeGroupId());
+        _configuration = configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, _themeDisplay.getCompanyId(), _themeDisplay.getScopeGroupId());
         _action = httpServletRequest.getParameter("action");
         _redirect = (String) httpServletRequest.getSession().getAttribute("callerURL");
 
@@ -51,41 +50,30 @@ public class CheckoutStatusDisplayContext {
     }
 
     public String getHeaderKey() {
-        switch (_action) {
-            case "unregister-success":
-                return "registrationform.unregister.success";
-            case "unregister-error":
-                return "registrationform.unregister.error";
-            case "register-success":
-                return "registrationform.register.success";
-            case "register-error":
-                return "registrationform.register.error";
-            default:
-                return "";
-        }
+        return switch (_action) {
+            case "unregister-success" -> "registrationform.unregister.success";
+            case "unregister-error" -> "registrationform.unregister.error";
+            case "register-success" -> "registrationform.register.success";
+            case "register-error" -> "registrationform.register.error";
+            default -> "";
+        };
 
     }
 
     public String getEmailMessageKey() {
-        switch (_action) {
-            case "unregister-success":
-                return "registrationform.unregister.email";
-            case "register-success":
-                return "registrationform.register.email";
-            default:
-                return "";
-        }
+        return switch (_action) {
+            case "unregister-success" -> "registrationform.unregister.email";
+            case "register-success" -> "registrationform.register.email";
+            default -> "";
+        };
     }
 
     public String getPaymentMessageKey() {
-        switch (_action) {
-            case "unregister-success":
-                return "registrationform.unregister.payment";
-            case "register-success":
-                return "registrationform.register.payment";
-            default:
-                return "";
-        }
+        return switch (_action) {
+            case "unregister-success" -> "registrationform.unregister.payment";
+            case "register-success" -> "registrationform.register.payment";
+            default -> "";
+        };
     }
 
     public String[] getPaymentMessageArguments() {

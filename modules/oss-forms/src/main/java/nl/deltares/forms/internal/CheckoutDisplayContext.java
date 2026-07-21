@@ -10,12 +10,12 @@ import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.taglib.servlet.PipingServletResponseFactory;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.jsp.PageContext;
 import nl.deltares.forms.util.DeltaresCheckoutStep;
 import nl.deltares.forms.util.DeltaresCheckoutStepRegistry;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.PageContext;
 import java.util.List;
 
 /**
@@ -47,7 +47,7 @@ public class CheckoutDisplayContext {
                     checkoutStepRegistry.getCheckoutSteps(
                             _httpServletRequest, _httpServletResponse, true);
 
-            commerceCheckoutStep = commerceCheckoutSteps.get(0);
+            commerceCheckoutStep = commerceCheckoutSteps.getFirst();
         }
 
         _commerceCheckoutStep = commerceCheckoutStep;

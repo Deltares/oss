@@ -3,20 +3,20 @@ package nl.deltares.forms.internal;
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
 import com.liferay.journal.model.JournalArticleDisplay;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.PortletRequestModel;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import jakarta.portlet.PortletRequest;
+import jakarta.portlet.PortletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.deltares.forms.portlet.RegistrationFormConfiguration;
 import nl.deltares.model.RegistrationFormContext;
 import nl.deltares.model.RegistrationsInfo;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public class RelatedAssetsDisplayContext {

@@ -13,6 +13,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.*;
 import nl.deltares.emails.LicenseFilesEmail;
 import nl.deltares.portal.utils.LicenseManagerUtils;
 import nl.deltares.tasks.DataRequest;
@@ -26,7 +27,6 @@ import nl.deltares.useraccount.model.SoftwareSuiteSubscription;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.*;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

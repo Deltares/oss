@@ -8,6 +8,7 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.model.AccountInfo;
 import nl.deltares.model.RegistrationFormContext;
@@ -18,12 +19,10 @@ import nl.deltares.portal.utils.AccountUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class UserInputValidationContext {
 
@@ -157,7 +156,7 @@ public class UserInputValidationContext {
                                             registrationInfo.getResourceId() != info.getParentResourceId() &&
                                             registrationInfo.isAnyTimeCommon(info.getPeriods()))
                             .map(RegistrationInfo::getTitle)
-                            .collect(Collectors.toList());
+                            .toList();
 
                     overlapping.addAll(collect);
 

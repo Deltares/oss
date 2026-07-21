@@ -4,12 +4,13 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
+import jakarta.portlet.RenderRequest;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.search.constans.SearchModuleKeys;
@@ -17,11 +18,9 @@ import nl.deltares.search.util.FacetUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.RenderRequest;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Optional;
 
 @Component(
         immediate = true,
@@ -61,11 +60,13 @@ public class DateRangeFacetPortletSharedSearchContributor implements PortletShar
 
     private Date getDate(PortletSharedSearchSettings portletSharedSearchSettings, String dateField) {
 
-        Optional<String> optional = portletSharedSearchSettings.getParameterOptional(dateField);
+        String dateValue = portletSharedSearchSettings.getParameter(dateField);
         //check for parameter is in namespace of searchResultsPortlet
         RenderRequest renderRequest = portletSharedSearchSettings.getRenderRequest();
-        String dateValue = optional.orElseGet(() -> (String) FacetUtils.getFromSession(
-                portletSharedSearchSettings.getPortletId(), dateField, renderRequest));
+        if (dateValue == null) {
+            dateValue = (String) FacetUtils.getFromSession(
+                    portletSharedSearchSettings.getPortletId(), dateField, renderRequest);
+        }
 
         if (dateValue == null) {
             //Update value in session for callendar

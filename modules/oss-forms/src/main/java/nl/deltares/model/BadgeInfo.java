@@ -1,6 +1,5 @@
 package nl.deltares.model;
 
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
@@ -47,13 +46,13 @@ public class BadgeInfo implements Serializable {
     }
 
     public String getAttribute(String  key){
-        switch (key) {
-            case badge_name_setting : return name_setting;
-            case badge_title_setting : return title_setting;
-            case badge_title : return title;
-            case badge_initials : return initials;
-            default : throw new UnsupportedOperationException("Unsupported billing attribute: " + key);
-        }
+        return switch (key) {
+            case badge_name_setting -> name_setting;
+            case badge_title_setting -> title_setting;
+            case badge_title -> title;
+            case badge_initials -> initials;
+            default -> throw new UnsupportedOperationException("Unsupported billing attribute: " + key);
+        };
     }
 
     public boolean isShowTitle(){
@@ -137,31 +136,31 @@ public class BadgeInfo implements Serializable {
 
     public String formatBadgeName(String firstName, String lastName){
 
-        final StringBundler stringBundler = new StringBundler();
+        final StringBuilder stringBuilder = new StringBuilder();
         if (isShowTitle() && title != null){
-            stringBundler.append(title);
-            stringBundler.append(' ');
+            stringBuilder.append(title);
+            stringBuilder.append(' ');
         }
         if (initials == null) name_setting = "name";
         switch (name_setting){
             case "initials":
-                stringBundler.append(initials);
-                stringBundler.append(' ');
+                stringBuilder.append(initials);
+                stringBuilder.append(' ');
                 break;
             case "both":
-                stringBundler.append(initials);
-                stringBundler.append(" (");
-                stringBundler.append(firstName);
-                stringBundler.append(") ");
+                stringBuilder.append(initials);
+                stringBuilder.append(" (");
+                stringBuilder.append(firstName);
+                stringBuilder.append(") ");
                 break;
             case "name" :
-                stringBundler.append(firstName);
-                stringBundler.append(' ');
+                stringBuilder.append(firstName);
+                stringBuilder.append(' ');
                 break;
         }
-        stringBundler.append(lastName);
+        stringBuilder.append(lastName);
 
-        return stringBundler.toString();
+        return stringBuilder.toString();
     }
 
 

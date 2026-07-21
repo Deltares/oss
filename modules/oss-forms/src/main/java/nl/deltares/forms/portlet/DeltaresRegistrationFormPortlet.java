@@ -6,6 +6,11 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.Portlet;
+import jakarta.portlet.PortletException;
+import jakarta.portlet.RenderRequest;
+import jakarta.portlet.RenderResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.deltares.forms.constants.CheckoutWebKeys;
 import nl.deltares.forms.internal.CheckoutDisplayContext;
 import nl.deltares.forms.util.DeltaresCheckoutStepRegistry;
@@ -13,8 +18,6 @@ import nl.deltares.portal.constants.OssConstants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.*;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**

@@ -16,11 +16,14 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.ActionRequest;
+import jakarta.portlet.PortletRequest;
+import jakarta.portlet.PortletResponse;
+import jakarta.portlet.PortletSession;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.facet.FacetSelection;
 
-import javax.portlet.*;
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,14 +51,11 @@ public class FacetUtils {
     }
 
     public static Boolean parseYesNo(String value) {
-        switch (value) {
-            case "yes":
-                return true;
-            case "no":
-                return false;
-            default:
-                return null;
-        }
+        return switch (value) {
+            case "yes" -> true;
+            case "no" -> false;
+            default -> null;
+        };
     }
 
     public static String serializeYesNo(boolean value) {

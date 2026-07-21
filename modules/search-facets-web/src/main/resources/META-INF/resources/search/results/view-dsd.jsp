@@ -1,4 +1,3 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 <%@ taglib uri="http://liferay.com/tld/asset" prefix="liferay-asset" %>
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
@@ -12,9 +11,9 @@
 <%@ page import="com.liferay.portal.kernel.util.WebKeys" %>
 <%@ page import="nl.deltares.search.results.SearchResultsPortletDisplayContext" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
-<%@ page import="javax.portlet.PortletURL" %>
 <%@ page import="nl.deltares.portal.model.impl.Registration" %>
 <%@ page import="nl.deltares.portal.model.facet.FacetSelection" %>
+<%@ page import="jakarta.portlet.PortletURL" %>
 
 <liferay-theme:defineObjects/>
 

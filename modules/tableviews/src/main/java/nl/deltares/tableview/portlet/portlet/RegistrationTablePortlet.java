@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.*;
 import nl.deltares.dsd.registration.model.Registration;
 import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
@@ -24,7 +25,6 @@ import nl.deltares.tableview.portlet.constants.TablePortletKeys;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.*;
 import java.io.IOException;
 import java.util.*;
 

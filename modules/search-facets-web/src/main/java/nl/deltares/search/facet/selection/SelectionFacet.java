@@ -2,7 +2,6 @@ package nl.deltares.search.facet.selection;
 
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.BaseFacet;
@@ -67,8 +66,7 @@ public class SelectionFacet extends BaseFacet implements Facet {
         TermFilter termFilter = new TermFilter(
                 getFieldName(), selection);
 
-        return BooleanClauseFactoryUtil.createFilter(
-                searchContext, termFilter, BooleanClauseOccur.MUST);
+        return new BooleanClause<>(termFilter, BooleanClauseOccur.MUST);
     }
 
     private String _aggregationName;

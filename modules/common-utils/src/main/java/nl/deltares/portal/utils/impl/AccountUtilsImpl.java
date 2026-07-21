@@ -191,12 +191,11 @@ public class AccountUtilsImpl implements AccountUtils {
 
         Address address = _addressLocalService.fetchAddressByExternalReferenceCode(addressInfo.getAddressIdentifier(), companyId);
         if (address == null) {
-            ListType type = ListTypeLocalServiceUtil.getListType("billing", "com.liferay.account.model.AccountEntry.address");
-            address = _addressLocalService.addAddress(addressInfo.getAddressIdentifier(), currentUserId,
-                    "com.liferay.account.model.AccountEntry", accountEntry.getAccountEntryId(),
-                    "Billing address", null, addressInfo.getStreet(), null, null,
-                    addressInfo.getCity(), addressInfo.getPostal(), 0, companyCountry.getCountryId(), type.getListTypeId(),
-                    false, false, addressInfo.getPhone(), serviceContext);
+            ListType type = ListTypeLocalServiceUtil.getListType(companyId,"billing", "com.liferay.account.model.AccountEntry.address");
+            address = _addressLocalService.addAddress(addressInfo.getAddressIdentifier(), currentUserId, "com.liferay.account.model.AccountEntry",
+                    accountEntry.getAccountEntryId(), companyCountry.getCountryId(), type.getListTypeId(), 0,
+                    addressInfo.getCity(), null, false, "Billing address", false, addressInfo.getStreet(), null, null,
+                    null, addressInfo.getPostal(), addressInfo.getPhone(), serviceContext);
         } else {
             address.setStreet1(addressInfo.getStreet());
             address.setCity(addressInfo.getCity());
@@ -210,7 +209,7 @@ public class AccountUtilsImpl implements AccountUtils {
                 List<Phone> phones = _phoneLocalService.getPhones(companyId, "com.liferay.portal.kernel.model.Address", address.getAddressId());
                 Phone phone;
                 if (phones.isEmpty()) {
-                    ListType _phoneType = ListTypeLocalServiceUtil.getListType(
+                    ListType _phoneType = ListTypeLocalServiceUtil.getListType(companyId,
                             "phone-number", "com.liferay.portal.kernel.model.Address.phone");
                     phone = _phoneLocalService.createPhone(CounterLocalServiceUtil.increment(PhoneLocalService.class.getName()));
                     phone.setCompanyId(companyId);
@@ -219,7 +218,7 @@ public class AccountUtilsImpl implements AccountUtils {
                     phone.setListTypeId(_phoneType.getListTypeId());
                     phone.setPrimary(true);
                 } else {
-                    phone = phones.get(0);
+                    phone = phones.getFirst();
                 }
                 phone.setNumber(phoneNumber);
                 _phoneLocalService.updatePhone(phone);

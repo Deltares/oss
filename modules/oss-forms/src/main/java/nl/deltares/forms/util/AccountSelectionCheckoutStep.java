@@ -7,22 +7,22 @@ package nl.deltares.forms.util;
 
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.AddressLocalService;
 import com.liferay.portal.kernel.service.CountryLocalService;
 import com.liferay.portal.kernel.service.PhoneLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.Portal;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nl.deltares.forms.constants.CheckoutWebKeys;
 import nl.deltares.forms.internal.AccountSelectionCheckoutStepDisplayContext;
 import nl.deltares.portal.utils.AccountUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.portlet.ActionRequest;
+import jakarta.portlet.ActionResponse;
 
 /**
  * @author Andrea Di Giorgi
@@ -43,6 +43,11 @@ public class AccountSelectionCheckoutStep extends BaseCheckoutStep {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public boolean isVisible(HttpServletRequest request, HttpServletResponse response) {
+        return false;
     }
 
     @Override

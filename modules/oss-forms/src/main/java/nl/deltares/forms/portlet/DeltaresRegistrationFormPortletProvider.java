@@ -13,13 +13,12 @@ import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.PortletRequest;
+import jakarta.portlet.PortletURL;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.deltares.portal.constants.OssConstants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletURL;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Luca Pellizzon
@@ -54,6 +53,11 @@ public class DeltaresRegistrationFormPortletProvider extends BasePortletProvider
         return PortletURLFactoryUtil.create(
                 httpServletRequest, getPortletName(), plid,
                 PortletRequest.RENDER_PHASE);
+    }
+
+    @Override
+    public Action[] getSupportedActions() {
+        return new Action[0];
     }
 
     @Reference

@@ -23,9 +23,10 @@ import nl.deltares.tasks.impl.PostLoginUpdateUserInfo;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
-
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.Principal;
 import java.util.Date;
@@ -169,7 +170,7 @@ public class PostLoginAction implements LifecycleAction {
         }
 
         try {
-            URL url = new URL(redirectUrl);
+            URL url = new URI(redirectUrl).toURL();
             String host = url.getHost();
             String path = url.getPath();
             if (path != null && path.contains("web/")) {
@@ -191,7 +192,7 @@ public class PostLoginAction implements LifecycleAction {
             } else {
                 return host;
             }
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             return null;
         }
 

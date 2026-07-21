@@ -4,12 +4,13 @@ import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.portlet.Portlet;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.constants.OssConfigurationConstants;
 import nl.deltares.portal.constants.OssConstants;
@@ -18,10 +19,9 @@ import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.Portlet;
-import javax.portlet.PortletException;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
+import jakarta.portlet.PortletException;
+import jakarta.portlet.RenderRequest;
+import jakarta.portlet.RenderResponse;
 import java.io.IOException;
 import java.util.*;
 
@@ -83,7 +83,8 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 			}
 
 			try {
-				DSDSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getScopeGroupId());
+				DSDSiteConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(
+						DSDSiteConfiguration.class, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 				request.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONDITIONS_URL, dsdConfig.conditionsURL());
 				request.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL, dsdConfig.privacyURL());
 				request.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL, dsdConfig.contactURL());
@@ -96,7 +97,8 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 				request.setAttribute("subscribed", false);
 			}
 			try {
-				DsdRegistrationFormConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(DsdRegistrationFormConfiguration.class, themeDisplay.getScopeGroupId());
+				DsdRegistrationFormConfiguration dsdConfig = _configurationProvider.getGroupConfiguration(
+						DsdRegistrationFormConfiguration.class, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 				request.setAttribute("childHeaderText", dsdConfig.childHeaderText());
 			} catch (Exception e) {
 				LOG.warn("Error getting DsdRegistrationFormConfiguration: " + e.getMessage());

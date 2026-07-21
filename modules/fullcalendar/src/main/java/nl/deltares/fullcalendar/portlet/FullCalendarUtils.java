@@ -1,8 +1,8 @@
 package nl.deltares.fullcalendar.portlet;
 
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.StringUtil;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
@@ -29,7 +29,7 @@ public class FullCalendarUtils {
         DSDSiteConfiguration siteConfiguration;
         try {
             siteConfiguration = configurationProvider
-                    .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getSiteGroupId());
+                    .getGroupConfiguration(DSDSiteConfiguration.class, themeDisplay.getCompanyId(), themeDisplay.getSiteGroupId());
 
         } catch (ConfigurationException e) {
             throw new PortalException(String.format("Error getting DSD siteConfiguration: %s", e.getMessage()));

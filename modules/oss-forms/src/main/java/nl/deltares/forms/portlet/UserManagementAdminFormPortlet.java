@@ -3,7 +3,7 @@ package nl.deltares.forms.portlet;
 import com.liferay.message.boards.model.MBBan;
 import com.liferay.message.boards.service.MBBanLocalServiceUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
@@ -12,6 +12,7 @@ import com.liferay.portal.kernel.upload.UploadRequest;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import jakarta.servlet.http.HttpServletResponse;
 import nl.deltares.portal.configuration.SiteMapConfiguration;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.utils.AccountUtils;
@@ -22,8 +23,7 @@ import nl.deltares.tasks.impl.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.*;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.portlet.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -107,28 +107,24 @@ public class UserManagementAdminFormPortlet extends MVCPortlet {
         String action = ParamUtil.getString(resourceRequest, "action");
         String id = DataRequest.class.getName().concat("_").concat(String.valueOf(themeDisplay.getCompanyId()))
                 .concat("_").concat(String.valueOf(themeDisplay.getSiteGroupId())).concat(String.valueOf(themeDisplay.getUserId()));
-        if ("deleteBannedUsers".equals(action)) {
-            deleteBannedUsersAction(id, resourceResponse, themeDisplay);
-        } else if ("updateStatus".equals(action)) {
-            DataRequestManager.getInstance().updateStatus(id, resourceResponse);
-        } else if ("downloadLog".equals(action)) {
-            DataRequestManager.getInstance().downloadDataFile(id, resourceResponse);
-        } else if ("downloadInvalidUsers".equals(action)) {
-            downloadInvalidUsersAction(id, resourceResponse, themeDisplay);
-        } else if ("checkUsersExist".equals(action)) {
-            checkUsersExistAction(id, resourceRequest, resourceResponse, themeDisplay);
-        } else if ("deleteUsers".equals(action)) {
-            deleteUsersAction(id, resourceRequest, resourceResponse, themeDisplay);
-        } else if ("importAccounts".equals(action)) {
-            SiteMapConfiguration systemConfiguration = null;
-            try {
-                systemConfiguration = configurationProvider.getSystemConfiguration(SiteMapConfiguration.class);
-            } catch (ConfigurationException e) {
-                throw new IOException(e.getMessage());
+        switch (action) {
+            case "deleteBannedUsers" -> deleteBannedUsersAction(id, resourceResponse, themeDisplay);
+            case "updateStatus" -> DataRequestManager.getInstance().updateStatus(id, resourceResponse);
+            case "downloadLog" -> DataRequestManager.getInstance().downloadDataFile(id, resourceResponse);
+            case "downloadInvalidUsers" -> downloadInvalidUsersAction(id, resourceResponse, themeDisplay);
+            case "checkUsersExist" -> checkUsersExistAction(id, resourceRequest, resourceResponse, themeDisplay);
+            case "deleteUsers" -> deleteUsersAction(id, resourceRequest, resourceResponse, themeDisplay);
+            case "importAccounts" -> {
+                SiteMapConfiguration systemConfiguration = null;
+                try {
+                    systemConfiguration = configurationProvider.getSystemConfiguration(SiteMapConfiguration.class);
+                } catch (ConfigurationException e) {
+                    throw new IOException(e.getMessage());
+                }
+                importAccountsAction(id, systemConfiguration.accountsCompanyId(), resourceRequest, resourceResponse, themeDisplay);
             }
-            importAccountsAction(id, systemConfiguration.accountsCompanyId(), resourceRequest, resourceResponse, themeDisplay);
-        } else {
-            DataRequestManager.getInstance().writeError("Unsupported action error: " + action, resourceResponse);
+            case null, default ->
+                    DataRequestManager.getInstance().writeError("Unsupported action error: " + action, resourceResponse);
         }
     }
 

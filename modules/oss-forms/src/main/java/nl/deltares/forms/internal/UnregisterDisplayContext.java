@@ -1,14 +1,15 @@
 package nl.deltares.forms.internal;
 
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import nl.deltares.emails.RegistrationEmail;
 import nl.deltares.emails.serializer.UnRegisterEmailSerializer;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
@@ -17,7 +18,6 @@ import nl.deltares.portal.model.impl.Registration;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -36,7 +36,8 @@ public class UnregisterDisplayContext {
 
         CPRequestHelper cpRequestHelper = new CPRequestHelper(httpServletRequest);
         _themeDisplay = cpRequestHelper.getThemeDisplay();
-        _configuration = configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, _themeDisplay.getScopeGroupId());
+        _configuration = configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class,
+                _themeDisplay.getCompanyId(), _themeDisplay.getScopeGroupId());
         _dsdParserUtils = dsdParserUtils;
         _dsdSessionUtils = dsdSessionUtils;
 

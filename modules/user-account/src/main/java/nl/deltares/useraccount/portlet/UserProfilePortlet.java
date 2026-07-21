@@ -10,12 +10,12 @@ import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.util.*;
+import jakarta.portlet.*;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.useraccount.constants.UserProfilePortletKeys;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.*;
 import java.io.*;
 import java.io.File;
 import java.util.HashMap;
@@ -49,7 +49,7 @@ public class UserProfilePortlet extends MVCPortlet {
     public void render(RenderRequest request, RenderResponse response) throws IOException, PortletException {
         ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
         User user = themeDisplay.getUser();
-        if (!user.isDefaultUser() && user.isActive()) {
+        if (!user.isGuestUser() && user.isActive()) {
             try {
                 final Map<String, String> userAttributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
                 request.setAttribute("attributes", userAttributes);
@@ -69,7 +69,7 @@ public class UserProfilePortlet extends MVCPortlet {
      * @param actionResponse Save response
      */
     @SuppressWarnings("unused")
-    public void saveUserProfile(ActionRequest actionRequest, ActionResponse actionResponse) {
+    public void saveUserProfile(jakarta.portlet.ActionRequest actionRequest, jakarta.portlet.ActionResponse actionResponse) {
 
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
         User user = themeDisplay.getUser();

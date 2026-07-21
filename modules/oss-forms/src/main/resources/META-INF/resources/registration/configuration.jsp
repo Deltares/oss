@@ -1,4 +1,3 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://xmlns.jcp.org/portlet_3_0" prefix="portlet" %>
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
 <%@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %>
@@ -7,7 +6,8 @@
 
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
 <%@ page import="nl.deltares.forms.portlet.DsdRegistrationFormConfiguration" %>
-<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationProvider" %>
+<%@ page import="com.liferay.portal.configuration.module.configuration.ConfigurationProvider" %>
+<%@ page import="com.liferay.portal.kernel.module.configuration.ConfigurationException" %>
 
 <liferay-theme:defineObjects/>
 
@@ -17,7 +17,13 @@
     ConfigurationProvider configurationProvider =
             (ConfigurationProvider) request.getAttribute(ConfigurationProvider.class.getName());
 
-    DsdRegistrationFormConfiguration configuration = configurationProvider.getGroupConfiguration(DsdRegistrationFormConfiguration.class, themeDisplay.getScopeGroupId());
+    DsdRegistrationFormConfiguration configuration = null;
+    try {
+        configuration = configurationProvider.getGroupConfiguration(
+                DsdRegistrationFormConfiguration.class, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+    } catch (ConfigurationException e) {
+        throw new RuntimeException(e);
+    }
 
 %>
 

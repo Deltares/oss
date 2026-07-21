@@ -3,10 +3,9 @@ package nl.deltares.model;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import nl.deltares.portal.model.impl.*;
 
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 
@@ -105,16 +104,16 @@ public class RegistrationRequest {
         return siteUrl;
     }
 
-    public URL getBannerURL() throws MalformedURLException {
+    public URL getBannerURL() throws Exception {
         final String emailBannerURL = event.getEmailBannerURL();
         if (emailBannerURL == null || emailBannerURL.isBlank()) return null;
-        return new URL(baseUrl + emailBannerURL);
+        return new URI(baseUrl + emailBannerURL).toURL();
     }
 
-    public URL getFooterURL() throws MalformedURLException {
+    public URL getFooterURL() throws Exception {
         final String emailFooterURL = event.getEmailFooterURL();
         if (emailFooterURL == null || emailFooterURL.isBlank()) return  null;
-        return new URL(baseUrl + emailFooterURL);
+        return new URI(baseUrl + emailFooterURL).toURL();
     }
 
     public void setBusInfo(boolean enableBusInfo) {
@@ -131,7 +130,7 @@ public class RegistrationRequest {
 
     public String getBusTransferUrl() {
         if (busTransferUrl == null) return null;
-        return StringBundler.concat(siteUrl, busTransferUrl);
+        return siteUrl + busTransferUrl;
     }
 
     public String translateRegistrationType(String type){
