@@ -36,13 +36,13 @@ import static nl.deltares.fullcalendar.portlet.FullCalendarUtils.getTypeMap;
                 "com.liferay.portlet.header-portlet-javascript=/lib/main.js",
                 "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.instanceable=true",
-                "javax.portlet.display-name=FullCalendar Portlet",
-                "javax.portlet.init-param.config-template=/configuration.jsp",
-                "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.view-template=/view.jsp",
-                "javax.portlet.name=" + FullcalendarPortletKeys.FULLCALENDAR,
-                "javax.portlet.resource-bundle=content.Language",
-                "javax.portlet.security-role-ref=power-user,user"
+                "jakarta.portlet.display-name=FullCalendar Portlet",
+                "jakarta.portlet.init-param.config-template=/configuration.jsp",
+                "jakarta.portlet.init-param.template-path=/",
+                "jakarta.portlet.init-param.view-template=/view.jsp",
+                "jakarta.portlet.name=" + FullcalendarPortletKeys.FULLCALENDAR,
+                "jakarta.portlet.resource-bundle=content.Language",
+                "jakarta.portlet.security-role-ref=power-user,user"
         },
         service = Portlet.class
 

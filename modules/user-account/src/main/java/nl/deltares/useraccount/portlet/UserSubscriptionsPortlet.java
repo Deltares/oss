@@ -25,16 +25,16 @@ import java.util.List;
 @Component(
         immediate = true,
         property = {
-                "javax.portlet.version=3.0",
+                "jakarta.portlet.version=4.0",
                 "com.liferay.portlet.display-category=OSS-account",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.instanceable=false",
-                "javax.portlet.display-name=UserSubscription",
-                "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.view-template=/usersubscription.jsp",
-                "javax.portlet.name=" + UserProfilePortletKeys.USERSUBSCRIPTION,
-                "javax.portlet.resource-bundle=content.Language",
-                "javax.portlet.security-role-ref=power-user,user"
+                "jakarta.portlet.display-name=UserSubscription",
+                "jakarta.portlet.init-param.template-path=/",
+                "jakarta.portlet.init-param.view-template=/usersubscription.jsp",
+                "jakarta.portlet.name=" + UserProfilePortletKeys.USERSUBSCRIPTION,
+                "jakarta.portlet.resource-bundle=content.Language",
+                "jakarta.portlet.security-role-ref=power-user,user"
         },
         service = Portlet.class
 )

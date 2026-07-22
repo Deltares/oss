@@ -78,7 +78,7 @@ public class URLUtilsImpl implements URLUtils {
 
         portletURL.setWindowState(LiferayWindowState.NORMAL);
         portletURL.setPortletMode(LiferayPortletMode.VIEW);
-        portletURL.getRenderParameters().setValue("javax.portlet.action", "/submit/unregister/form");
+        portletURL.getRenderParameters().setValue("jakarta.portlet.action", "/submit/unregister/form");
         portletURL.getRenderParameters().setValue("articleId", articleId);
         portletURL.getRenderParameters().setValue("userId", String.valueOf(userId));
         portletURL.getRenderParameters().setValue("redirect", redirect);

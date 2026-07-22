@@ -42,18 +42,18 @@ import java.util.*;
 @Component(
         immediate = true,
         property = {
-                "javax.portlet.version=3.0",
+                "jakarta.portlet.version=4.0",
                 "com.liferay.portlet.display-category=OSS-table",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.header-portlet-javascript=/lib/downloadtableview.js",
                 "com.liferay.portlet.header-portlet-javascript=/lib/common.js",
                 "com.liferay.portlet.instanceable=true",
-                "javax.portlet.display-name=DownloadTable",
-                "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.view-template=/downloadsTable.jsp",
-                "javax.portlet.name=" + TablePortletKeys.DOWNLOADTABLE,
-                "javax.portlet.resource-bundle=content.Language",
-                "javax.portlet.security-role-ref=power-user,user"
+                "jakarta.portlet.display-name=DownloadTable",
+                "jakarta.portlet.init-param.template-path=/",
+                "jakarta.portlet.init-param.view-template=/downloadsTable.jsp",
+                "jakarta.portlet.name=" + TablePortletKeys.DOWNLOADTABLE,
+                "jakarta.portlet.resource-bundle=content.Language",
+                "jakarta.portlet.security-role-ref=power-user,user"
         },
         service = Portlet.class
 )

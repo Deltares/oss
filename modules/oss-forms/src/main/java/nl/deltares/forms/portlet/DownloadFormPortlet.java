@@ -33,19 +33,19 @@ import java.util.*;
 @Component(
         immediate = true,
         property = {
-                "javax.portlet.version=3.0",
+                "jakarta.portlet.version=4.0",
                 "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.header-portlet-javascript=/lib/download.js",
                 "com.liferay.portlet.header-portlet-javascript=/lib/common.js",
                 "com.liferay.portlet.instanceable=false",
-                "javax.portlet.display-name=Download Form",
-                "javax.portlet.init-param.config-template=/download/configuration.jsp",
-                "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.view-template=/download/download.jsp",
-                "javax.portlet.name=" + OssConstants.DOWNLOADFORM,
-                "javax.portlet.resource-bundle=content.Language",
-                "javax.portlet.security-role-ref=user"
+                "jakarta.portlet.display-name=Download Form",
+                "jakarta.portlet.init-param.config-template=/download/configuration.jsp",
+                "jakarta.portlet.init-param.template-path=/",
+                "jakarta.portlet.init-param.view-template=/download/download.jsp",
+                "jakarta.portlet.name=" + OssConstants.DOWNLOADFORM,
+                "jakarta.portlet.resource-bundle=content.Language",
+                "jakarta.portlet.security-role-ref=user"
         },
         service = Portlet.class
 )

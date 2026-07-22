@@ -19,7 +19,7 @@ import java.util.Map;
         configurationPid = OssConstants.REGISTRATIONFORM_CONFIGURATIONS_PID,
         configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
         property = {
-                "javax.portlet.name=" + OssConstants.REGISTRATIONFORM
+                "jakarta.portlet.name=" + OssConstants.REGISTRATIONFORM
         },
         service = ConfigurationAction.class
 )

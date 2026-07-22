@@ -6,16 +6,24 @@ Make sure to clean all the containers & volumes from the Podman instance
 
 <h2>Pre upgrade configuration</h2>
 
-Comment out obsolete properties.
+<u>Obsolete entries in portal-ext.properties</u>
+
 The following properties in the portal-ext.properties file have become obsolete:
 
 - all mail.session.mail.* properties
 - work.dir.override.enabled
 
-Changes made to EHCACHE
+<u>Upgrade to EHCACHE v3</u>
 
 When getting error: 
 <code>�org.ehcache.xml.exceptions.XmlConfigurationException: Error parsing XML configuration at bundleresource://1556.fwk334216619/META-INF/module-single-vm.xml</code>
+
+This is resolved by updating the *module-single-vm.xml* file to match with EHCACHE v3 format.
+
+<u>New version of GeoLite2-City database</u>
+
+From the <a href="https://www.maxmind.com">Maxmind</a> website the newest version of the GeoLite2-City database can be downloaded.
+
 
 <h2>Pre upgrade data preparation</h2>
 

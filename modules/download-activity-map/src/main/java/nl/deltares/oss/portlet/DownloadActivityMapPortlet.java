@@ -46,17 +46,17 @@ import java.util.concurrent.TimeUnit;
 @Component(
         immediate = true,
         property = {
-                "javax.portlet.version=3.0",
+                "jakarta.portlet.version=4.0",
                 "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.instanceable=false",
                 "com.liferay.portlet.footer-portlet-css=/css/main.css",
                 "com.liferay.portlet.header-portlet-javascript=/lib/activitymap.js",
-                "javax.portlet.display-name=Download ActivityMap Portlet",
-                "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.view-template=/view-leaflet.jsp",
-                "javax.portlet.name=" + ActivityMapPortletKeys.ACTIVITY_MAP,
-                "javax.portlet.resource-bundle=content.Language",
-                "javax.portlet.security-role-ref=power-user,user"
+                "jakarta.portlet.display-name=Download ActivityMap Portlet",
+                "jakarta.portlet.init-param.template-path=/",
+                "jakarta.portlet.init-param.view-template=/view-leaflet.jsp",
+                "jakarta.portlet.name=" + ActivityMapPortletKeys.ACTIVITY_MAP,
+                "jakarta.portlet.resource-bundle=content.Language",
+                "jakarta.portlet.security-role-ref=power-user,user"
         },
         service = Portlet.class
 )

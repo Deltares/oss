@@ -28,15 +28,15 @@ import java.time.format.DateTimeFormatter;
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.header-portlet-javascript=/js/facet_util.js",
                 "com.liferay.portlet.instanceable=true",
-                "javax.portlet.display-name=DateRangeFacet",
-                "javax.portlet.expiration-cache=0",
-                "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.config-template=/facet/date/configuration.jsp",
-                "javax.portlet.init-param.view-template=/facet/date/view.jsp",
-                "javax.portlet.name=" + SearchModuleKeys.DATE_RANGE_FACET_PORTLET,
-                "javax.portlet.resource-bundle=content.Language",
-                "javax.portlet.security-role-ref=power-user,user",
-                "javax.portlet.version=3.0"
+                "jakarta.portlet.display-name=DateRangeFacet",
+                "jakarta.portlet.expiration-cache=0",
+                "jakarta.portlet.init-param.template-path=/",
+                "jakarta.portlet.init-param.config-template=/facet/date/configuration.jsp",
+                "jakarta.portlet.init-param.view-template=/facet/date/view.jsp",
+                "jakarta.portlet.name=" + SearchModuleKeys.DATE_RANGE_FACET_PORTLET,
+                "jakarta.portlet.resource-bundle=content.Language",
+                "jakarta.portlet.security-role-ref=power-user,user",
+                "jakarta.portlet.version=4.0"
         },
         service = Portlet.class
 )

@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Component(
         immediate = true,
-        property = "javax.portlet.name=" + SearchModuleKeys.SELECTION_FACET_PORTLET,
+        property = "jakarta.portlet.name=" + SearchModuleKeys.SELECTION_FACET_PORTLET,
         service = PortletSharedSearchContributor.class
 )
 public class SelectionFacetPortletSharedSearchContributor implements PortletSharedSearchContributor {

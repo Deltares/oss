@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Component(
         immediate = true,
-        property = "javax.portlet.name=" + SearchModuleKeys.USER_PROGRAM_FACET_PORTLET,
+        property = "jakarta.portlet.name=" + SearchModuleKeys.USER_PROGRAM_FACET_PORTLET,
         service = PortletSharedSearchContributor.class
 )
 public class UserProgramFacetPortletSharedContributor implements PortletSharedSearchContributor {

@@ -20,7 +20,7 @@ import java.util.Locale;
 @Component(
         immediate = true,
         property = {
-                "javax.portlet.name=" + SearchModuleKeys.EVENT_FACET_PORTLET
+                "jakarta.portlet.name=" + SearchModuleKeys.EVENT_FACET_PORTLET
         },
         service = PortletSharedSearchContributor.class
 )

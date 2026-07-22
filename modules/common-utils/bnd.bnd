@@ -1,26 +1,26 @@
 Bundle-Name: common-utils
 Bundle-SymbolicName: nl.deltares.portal.common-utils
 Bundle-Version: 2.0.0
-Export-Package: \
-  nl.deltares.portal.constants, \
-  nl.deltares.portal.utils, \
-  nl.deltares.portal.utils.impl, \
-  nl.deltares.portal.model.*, \
-  nl.deltares.portal.exception, \
-  nl.deltares.portal.display.context, \
-  nl.deltares.portal.configuration, \
-  nl.deltares.portal.kernel.util.comparator, \
-  nl.deltares.tasks, \
-  nl.deltares.tasks.impl, \
-  nl.deltares.common.*
-Import-Package: \
-  nl.deltares.dsd.registration.service.*,\
-  nl.deltares.oss.download.service.*,\
-  !org.apache.avalon.framework.logger, \
-  !org.apache.log, \
-  !org.apache.log4j, \
-  *
--liferay-aggregate-resource-bundles:
-  global-resource-bundle
+Export-Package:\
+	nl.deltares.portal.constants,\
+	nl.deltares.portal.utils,\
+	nl.deltares.portal.utils.impl,\
+	nl.deltares.portal.model.*,\
+	nl.deltares.portal.exception,\
+	nl.deltares.portal.display.context,\
+	nl.deltares.portal.configuration,\
+	nl.deltares.portal.kernel.util.comparator,\
+	nl.deltares.tasks,\
+	nl.deltares.tasks.impl,\
+	nl.deltares.common.*
+Import-Package:\
+	nl.deltares.dsd.registration.service.*,\
+	nl.deltares.oss.download.service.*,\
+	!org.apache.avalon.framework.logger,\
+	!org.apache.log,\
+	!org.apache.log4j,\
+	*
+global-resource-bundle: 
 -fixupmessages: Classes found in the wrong directory: ...;is:=ignore
+-liferay-aggregate-resource-bundles: 
 -noee: true

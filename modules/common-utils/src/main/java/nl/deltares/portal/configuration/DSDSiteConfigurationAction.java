@@ -27,7 +27,7 @@ import org.osgi.service.component.annotations.Reference;
         configurationPid = OssConstants.DSD_SITE_CONFIGURATIONS_PID,
         configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
         property = {
-                "javax.portlet.name=" + OssConstants.DSD_ADMIN_FORM,
+                "jakarta.portlet.name=" + OssConstants.DSD_ADMIN_FORM,
         },
         service = ConfigurationAction.class
 )

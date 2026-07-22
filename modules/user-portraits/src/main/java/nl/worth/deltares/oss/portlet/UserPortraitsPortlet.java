@@ -36,12 +36,12 @@ import java.util.concurrent.TimeUnit;
                 "com.liferay.portlet.instanceable=false",
                 "com.liferay.portlet.footer-portlet-css=/css/main.css",
                 "com.liferay.portlet.header-portlet-javascript=/lib/userportraits.js",
-                "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.view-template=/view.jsp",
-                "javax.portlet.name=" + UserPortraitsPortletKeys.USER_PORTRAITS,
-                "javax.portlet.resource-bundle=content.Language",
-                "javax.portlet.security-role-ref=power-user,user",
-                "javax.portlet.version=3.0"
+                "jakarta.portlet.init-param.template-path=/",
+                "jakarta.portlet.init-param.view-template=/view.jsp",
+                "jakarta.portlet.name=" + UserPortraitsPortletKeys.USER_PORTRAITS,
+                "jakarta.portlet.resource-bundle=content.Language",
+                "jakarta.portlet.security-role-ref=power-user,user",
+                "jakarta.portlet.version=4.0"
         },
         service = Portlet.class
 )

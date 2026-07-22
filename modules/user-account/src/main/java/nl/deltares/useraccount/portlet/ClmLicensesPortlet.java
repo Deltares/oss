@@ -38,16 +38,16 @@ import java.util.*;
 @Component(
         immediate = true,
         property = {
-                "javax.portlet.version=3.0",
+                "jakarta.portlet.version=4.0",
                 "com.liferay.portlet.display-category=OSS-account",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.instanceable=true",
-                "javax.portlet.display-name=CLM Licenses",
-                "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.view-template=/softwareSuites.jsp",
-                "javax.portlet.name=" + UserProfilePortletKeys.CLM_LICENSES,
-                "javax.portlet.resource-bundle=content.Language",
-                "javax.portlet.security-role-ref=power-user,user"
+                "jakarta.portlet.display-name=CLM Licenses",
+                "jakarta.portlet.init-param.template-path=/",
+                "jakarta.portlet.init-param.view-template=/softwareSuites.jsp",
+                "jakarta.portlet.name=" + UserProfilePortletKeys.CLM_LICENSES,
+                "jakarta.portlet.resource-bundle=content.Language",
+                "jakarta.portlet.security-role-ref=power-user,user"
         },
         service = Portlet.class
 )

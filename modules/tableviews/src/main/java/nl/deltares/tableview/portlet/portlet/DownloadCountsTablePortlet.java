@@ -38,18 +38,18 @@ import java.util.stream.Collectors;
 @Component(
         immediate = true,
         property = {
-                "javax.portlet.version=3.0",
+                "jakarta.portlet.version=4.0",
                 "com.liferay.portlet.display-category=OSS-table",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.header-portlet-javascript=/lib/downloadcountstableview.js",
                 "com.liferay.portlet.header-portlet-javascript=/lib/common.js",
                 "com.liferay.portlet.instanceable=true",
-                "javax.portlet.display-name=DownloadCountsTable",
-                "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.view-template=/downloadCountsTable.jsp",
-                "javax.portlet.name=" + TablePortletKeys.DOWNLOADCOUNTTABLE,
-                "javax.portlet.resource-bundle=content.Language",
-                "javax.portlet.security-role-ref=power-user,user"
+                "jakarta.portlet.display-name=DownloadCountsTable",
+                "jakarta.portlet.init-param.template-path=/",
+                "jakarta.portlet.init-param.view-template=/downloadCountsTable.jsp",
+                "jakarta.portlet.name=" + TablePortletKeys.DOWNLOADCOUNTTABLE,
+                "jakarta.portlet.resource-bundle=content.Language",
+                "jakarta.portlet.security-role-ref=power-user,user"
         },
         service = Portlet.class
 )

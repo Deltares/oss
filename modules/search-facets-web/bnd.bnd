@@ -2,7 +2,7 @@ Bundle-Name: search-facets-web
 Bundle-SymbolicName: nl.deltares.search.facet
 Bundle-Version: 2.0.0
 Export-Package: nl.deltares.search.facet
+Import-Package:\
+	nl.deltares.portal.model.facet.*,\
+	*
 Web-ContextPath: /deltares-search-web
-Import-Package: \
-    nl.deltares.portal.model.facet.*, \
-    *

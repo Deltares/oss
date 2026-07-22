@@ -29,16 +29,16 @@ import java.util.Optional;
 @Component(
         immediate = true,
         property = {
-                "javax.portlet.version=3.0",
+                "jakarta.portlet.version=4.0",
                 "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.instanceable=false",
-                "javax.portlet.display-name=DsdBusRegistrationForm",
-                "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.view-template=/bus_registration/view.jsp",
-                "javax.portlet.name=" + OssConstants.DSD_BUS_REGISTRATION_FORM,
-                "javax.portlet.resource-bundle=content.Language",
-                "javax.portlet.security-role-ref=power-user,user"
+                "jakarta.portlet.display-name=DsdBusRegistrationForm",
+                "jakarta.portlet.init-param.template-path=/",
+                "jakarta.portlet.init-param.view-template=/bus_registration/view.jsp",
+                "jakarta.portlet.name=" + OssConstants.DSD_BUS_REGISTRATION_FORM,
+                "jakarta.portlet.resource-bundle=content.Language",
+                "jakarta.portlet.security-role-ref=power-user,user"
         },
         service = Portlet.class
 )

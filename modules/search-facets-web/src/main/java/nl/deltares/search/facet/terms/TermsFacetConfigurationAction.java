@@ -21,7 +21,7 @@ import java.util.Map;
         configurationPid = "nl.deltares.search.facet.terms.TermsFacetConfiguration",
         configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
         property = {
-                "javax.portlet.name=" + SearchModuleKeys.TERMS_FACET_PORTLET
+                "jakarta.portlet.name=" + SearchModuleKeys.TERMS_FACET_PORTLET
         },
         service = ConfigurationAction.class
 )

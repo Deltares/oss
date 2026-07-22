@@ -16,7 +16,7 @@ import org.osgi.service.component.annotations.Reference;
 
 @Component(
         immediate = true,
-        property = "javax.portlet.name=" + SearchModuleKeys.SEARCH_RESULTS_PORTLET,
+        property = "jakarta.portlet.name=" + SearchModuleKeys.SEARCH_RESULTS_PORTLET,
         service = PortletSharedSearchContributor.class
 )
 public class SearchResultsPortletSharedSearchContributor implements PortletSharedSearchContributor {

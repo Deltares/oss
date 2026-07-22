@@ -29,15 +29,15 @@ import java.util.*;
                 "com.liferay.portlet.display-category=OSS-search",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.instanceable=true",
-                "javax.portlet.display-name=UserProgramFacet",
-                "javax.portlet.expiration-cache=0",
-                "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.config-template=/facet/program/configuration.jsp",
-                "javax.portlet.init-param.view-template=/facet/program/view.jsp",
-                "javax.portlet.name=" + SearchModuleKeys.USER_PROGRAM_FACET_PORTLET,
-                "javax.portlet.resource-bundle=content.Language",
-                "javax.portlet.security-role-ref=power-user,user",
-                "javax.portlet.version=3.0"
+                "jakarta.portlet.display-name=UserProgramFacet",
+                "jakarta.portlet.expiration-cache=0",
+                "jakarta.portlet.init-param.template-path=/",
+                "jakarta.portlet.init-param.config-template=/facet/program/configuration.jsp",
+                "jakarta.portlet.init-param.view-template=/facet/program/view.jsp",
+                "jakarta.portlet.name=" + SearchModuleKeys.USER_PROGRAM_FACET_PORTLET,
+                "jakarta.portlet.resource-bundle=content.Language",
+                "jakarta.portlet.security-role-ref=power-user,user",
+                "jakarta.portlet.version=4.0"
         },
         service = Portlet.class
 )

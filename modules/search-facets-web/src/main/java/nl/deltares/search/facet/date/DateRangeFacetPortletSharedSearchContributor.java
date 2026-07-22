@@ -24,7 +24,7 @@ import java.util.Locale;
 
 @Component(
         immediate = true,
-        property = "javax.portlet.name=" + SearchModuleKeys.DATE_RANGE_FACET_PORTLET,
+        property = "jakarta.portlet.name=" + SearchModuleKeys.DATE_RANGE_FACET_PORTLET,
         service = PortletSharedSearchContributor.class
 )
 public class DateRangeFacetPortletSharedSearchContributor implements PortletSharedSearchContributor {

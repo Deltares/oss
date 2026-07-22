@@ -32,20 +32,20 @@ import java.util.*;
 		configurationPid = OssConstants.DSD_REGISTRATIONFORM_CONFIGURATIONS_PID,
 	immediate = true,
 	property = {
-			"javax.portlet.version=3.0",
+			"jakarta.portlet.version=4.0",
 			"com.liferay.portlet.display-category=OSS",
 			"com.liferay.portlet.header-portlet-css=/css/main.css",
 			"com.liferay.portlet.header-portlet-javascript=/lib/dsd-registration.js",
 			"com.liferay.portlet.header-portlet-javascript=/lib/common.js",
 			"com.liferay.portlet.instanceable=false",
-			"javax.portlet.display-name=DsdRegistrationForm",
-			"javax.portlet.init-param.config-template=/registration/configuration.jsp",
-			"javax.portlet.init-param.template-path=/",
-			"javax.portlet.init-param.view-template=/registration/dsd_register.jsp",
-			"javax.portlet.name=" + OssConstants.DSD_REGISTRATIONFORM,
-			"javax.portlet.resource-bundle=content.Language",
-			"javax.portlet.supported-locale=en",
-			"javax.portlet.security-role-ref=power-user,user"
+			"jakarta.portlet.display-name=DsdRegistrationForm",
+			"jakarta.portlet.init-param.config-template=/registration/configuration.jsp",
+			"jakarta.portlet.init-param.template-path=/",
+			"jakarta.portlet.init-param.view-template=/registration/dsd_register.jsp",
+			"jakarta.portlet.name=" + OssConstants.DSD_REGISTRATIONFORM,
+			"jakarta.portlet.resource-bundle=content.Language",
+			"jakarta.portlet.supported-locale=en",
+			"jakarta.portlet.security-role-ref=power-user,user"
 	},
 	service = Portlet.class
 )

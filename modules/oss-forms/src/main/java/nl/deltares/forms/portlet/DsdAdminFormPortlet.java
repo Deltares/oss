@@ -28,19 +28,19 @@ import java.util.*;
 @Component(
 	immediate = true,
 	property = {
-			"javax.portlet.version=3.0",
+			"jakarta.portlet.version=4.0",
 			"com.liferay.portlet.display-category=OSS",
 			"com.liferay.portlet.header-portlet-css=/css/main.css",
 			"com.liferay.portlet.header-portlet-javascript=/lib/dsd-admin.js",
 			"com.liferay.portlet.header-portlet-javascript=/lib/common.js",
 			"com.liferay.portlet.instanceable=true",
-			"javax.portlet.display-name=DSD Admin Form",
-			"javax.portlet.init-param.config-template=/admin/configuration/dsd_configuration.jsp",
-			"javax.portlet.init-param.template-path=/",
-			"javax.portlet.init-param.view-template=/admin/dsd_admin.jsp",
-			"javax.portlet.name=" + OssConstants.DSD_ADMIN_FORM,
-			"javax.portlet.resource-bundle=content.Language",
-			"javax.portlet.security-role-ref=power-user,user"
+			"jakarta.portlet.display-name=DSD Admin Form",
+			"jakarta.portlet.init-param.config-template=/admin/configuration/dsd_configuration.jsp",
+			"jakarta.portlet.init-param.template-path=/",
+			"jakarta.portlet.init-param.view-template=/admin/dsd_admin.jsp",
+			"jakarta.portlet.name=" + OssConstants.DSD_ADMIN_FORM,
+			"jakarta.portlet.resource-bundle=content.Language",
+			"jakarta.portlet.security-role-ref=power-user,user"
 	},
 	service = Portlet.class
 )

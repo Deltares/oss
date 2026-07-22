@@ -1,116 +1,116 @@
-services:
-
-  database:
-    image: mariadb:11.8.8
-    container_name: oss-mariadb-2026
-    ports:
-      - "3307:3306"
-    env_file:
-      - .env
-    volumes:
-      - dbliferay2026:/var/lib/mysql
-      - ./resources/dump-liferay.sql:/docker-entrypoint-initdb.d/dump.sql
-    restart: always
-    networks:
-      - liferay
-
-#  mariadb-keycloak:
-#    image: mariadb:11.8.8
-#    container_name: keycloak-mariadb-2026
-#    ports:
-#      - "3308:3306"
-#    environment:
-#      - MYSQL_ROOT_PASSWORD=rootpassword
-#      - MYSQL_DATABASE=keycloak
-#      - MYSQL_USER=keycloak
-#      - MYSQL_PASSWORD=password
-#      - HOSTNAME=mariadb-keycloak
-#    volumes:
-#      - dbkeycloak2026:/var/lib/mysql
-#      - ./resources/dump-keycloak.sql:/docker-entrypoint-initdb.d/dump.sql
-#    restart: always
-#    networks:
-#      - liferay
-
-  liferay:
-    container_name: oss-liferay-2026
-    build: liferay
-    depends_on:
-      - elasticsearch
-      - database
-    ports:
-      #      - 80:8080
-      - 8081:8080
-      - 8000:8000
-    volumes:
-      - ./liferay/data:/opt/liferay/data/document_library
-      - ./liferay/mount/files:/mnt/liferay/files
-      - ./liferay/geoip:/opt/liferay/geoip
-      - ./liferay/lmcrypt:/opt/liferay/lmcrypt
-      - ./liferay/patching:/mnt/liferay/patching
-      - type: bind
-        source: ${LIFERAY_BUNDLE_DIR}/deploy
-        target: /opt/liferay/deploy
-      - type: bind
-        source: ${LIFERAY_BUNDLE_DIR}/osgi/modules
-        target: /opt/liferay/osgi/modules
-    restart: always
-    networks:
-      - liferay
-
-  elasticsearch:
-    container_name: oss-elastic-2026
-    build: elasticsearch
-    environment:
-      - cluster.name=oss-cluster
-      - bootstrap.memory_lock=true
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms2048m -Xmx2048m"
-    ports:
-      - 9200:9200
-    volumes:
-      - esdata2026:/usr/share/elasticsearch/data
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65536
-        hard: 65536
-    restart: always
-    networks:
-      - liferay
-
-#  keycloak:
-#    image: quay.io/keycloak/keycloak:26.6.3
-#    ports:
-#      - 8080:8080
-#      - 8787:8787
-#    entrypoint: [ "/opt/keycloak/bin/kc.sh", "start-dev", "--import-realm", "--log-level=INFO" ]
-#    volumes:
-#      - ./keycloak/deployments:/opt/keycloak/providers
-#      - ./resources/keycloak.conf:/opt/keycloak/conf/keycloak.conf
-#    restart: always
-#    networks:
-#      - liferay
-#    environment:
-#      - KEYCLOAK_ADMIN=admin
-#      - KEYCLOAK_ADMIN_PASSWORD=Pa55w0rd
-#      - DEBUG=true
-#      - DEBUG_PORT=*:8787
-#      - KC_HTTP_RELATIVE_PATH=/auth
-#    depends_on:
-#      - mariadb-keycloak
-
-volumes:
-  esdata2026:
-    driver: local
-  dbliferay2026:
-    driver: local
-  dbkeycloak2026:
-    driver: local
-
-networks:
-  liferay:
+services:
+
+  database:
+    image: mariadb:11.8.8
+    container_name: oss-mariadb-2026
+    ports:
+      - "3307:3306"
+    env_file:
+      - .env
+    volumes:
+      - dbliferay2026:/var/lib/mysql
+      - ./resources/dump-liferay.sql:/docker-entrypoint-initdb.d/dump.sql
+    restart: always
+    networks:
+      - liferay
+
+#  mariadb-keycloak:
+#    image: mariadb:11.8.8
+#    container_name: keycloak-mariadb-2026
+#    ports:
+#      - "3308:3306"
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=rootpassword
+#      - MYSQL_DATABASE=keycloak
+#      - MYSQL_USER=keycloak
+#      - MYSQL_PASSWORD=password
+#      - HOSTNAME=mariadb-keycloak
+#    volumes:
+#      - dbkeycloak2026:/var/lib/mysql
+#      - ./resources/dump-keycloak.sql:/docker-entrypoint-initdb.d/dump.sql
+#    restart: always
+#    networks:
+#      - liferay
+
+  liferay:
+    container_name: oss-liferay-2026
+    build: liferay
+    depends_on:
+      - elasticsearch
+      - database
+    ports:
+      #      - 80:8080
+      - 8081:8080
+      - 8000:8000
+    volumes:
+      - ./liferay/data:/opt/liferay/data/document_library
+      - ./liferay/mount/files:/mnt/liferay/files
+      - ./liferay/geoip:/opt/liferay/geoip
+      - ./liferay/lmcrypt:/opt/liferay/lmcrypt
+      - ./liferay/patching:/mnt/liferay/patching
+      - type: bind
+        source: ${LIFERAY_BUNDLE_DIR}/deploy
+        target: /opt/liferay/deploy
+      - type: bind
+        source: ${LIFERAY_BUNDLE_DIR}/osgi/modules
+        target: /opt/liferay/osgi/modules
+    restart: always
+    networks:
+      - liferay
+
+  elasticsearch:
+    container_name: oss-elastic-2026
+    build: elasticsearch
+    environment:
+      - cluster.name=oss-cluster
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms2048m -Xmx2048m"
+    ports:
+      - 9200:9200
+    volumes:
+      - esdata2026:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    restart: always
+    networks:
+      - liferay
+
+#  keycloak:
+#    image: quay.io/keycloak/keycloak:26.6.3
+#    ports:
+#      - 8080:8080
+#      - 8787:8787
+#    entrypoint: [ "/opt/keycloak/bin/kc.sh", "start-dev", "--import-realm", "--log-level=INFO" ]
+#    volumes:
+#      - ./keycloak/deployments:/opt/keycloak/providers
+#      - ./resources/keycloak.conf:/opt/keycloak/conf/keycloak.conf
+#    restart: always
+#    networks:
+#      - liferay
+#    environment:
+#      - KEYCLOAK_ADMIN=admin
+#      - KEYCLOAK_ADMIN_PASSWORD=Pa55w0rd
+#      - DEBUG=true
+#      - DEBUG_PORT=*:8787
+#      - KC_HTTP_RELATIVE_PATH=/auth
+#    depends_on:
+#      - mariadb-keycloak
+
+volumes:
+  esdata2026:
+    driver: local
+  dbliferay2026:
+    driver: local
+  dbkeycloak2026:
+    driver: local
+
+networks:
+  liferay:
     driver: bridge

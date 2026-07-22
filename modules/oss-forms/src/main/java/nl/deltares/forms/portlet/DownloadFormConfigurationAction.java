@@ -21,7 +21,7 @@ import java.util.Map;
         configurationPid = OssConstants.DOWNLOADFORM_CONFIGURATIONS_PID,
         configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
         property = {
-                "javax.portlet.name=" + OssConstants.DOWNLOADFORM
+                "jakarta.portlet.name=" + OssConstants.DOWNLOADFORM
         },
         service = ConfigurationAction.class
 )

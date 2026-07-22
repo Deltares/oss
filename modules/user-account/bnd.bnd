@@ -2,6 +2,6 @@ Bundle-Name: user-account
 Bundle-SymbolicName: nl.deltares.useraccount
 Bundle-Version: 2.0.0
 Export-Package: nl.deltares.useraccount.constants
-Import-Package: \
-    nl.deltares.common.*, \
-    *
+Import-Package:\
+	nl.deltares.common.*,\
+	*

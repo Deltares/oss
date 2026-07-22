@@ -26,7 +26,7 @@ import jakarta.portlet.PortletConfig;
         configurationPid = OssConstants.DSD_REGISTRATIONFORM_CONFIGURATIONS_PID,
         configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
         property = {
-                "javax.portlet.name=" + OssConstants.DSD_REGISTRATIONFORM
+                "jakarta.portlet.name=" + OssConstants.DSD_REGISTRATIONFORM
         },
         service = ConfigurationAction.class
 )

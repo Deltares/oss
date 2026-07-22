@@ -16,7 +16,7 @@ import java.util.Locale;
 
 @Component(
         immediate = true,
-        property = "javax.portlet.name=" + SearchModuleKeys.CHECKBOX_FACET_PORTLET,
+        property = "jakarta.portlet.name=" + SearchModuleKeys.CHECKBOX_FACET_PORTLET,
         service = PortletSharedSearchContributor.class
 )
 public class CheckboxFacetPortletSharedSearchContributor implements PortletSharedSearchContributor {

@@ -21,7 +21,7 @@ import java.util.Map;
         configurationPid = "nl.deltares.search.facet.checkbox.CheckboxFacetConfiguration",
         configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
         property = {
-                "javax.portlet.name=" + SearchModuleKeys.CHECKBOX_FACET_PORTLET
+                "jakarta.portlet.name=" + SearchModuleKeys.CHECKBOX_FACET_PORTLET
         },
         service = ConfigurationAction.class
 )

@@ -28,7 +28,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
         immediate = true,
         property = {
-                "javax.portlet.name=" + OssConstants.DSD_BUS_REGISTRATION_FORM,
+                "jakarta.portlet.name=" + OssConstants.DSD_BUS_REGISTRATION_FORM,
                 "mvc.command.name=/submit/transfer/form"
         },
         service = MVCActionCommand.class

@@ -27,20 +27,20 @@ import java.io.IOException;
         configurationPid = OssConstants.REGISTRATIONFORM_CONFIGURATIONS_PID,
         immediate = true,
         property = {
-                "javax.portlet.version=3.0",
+                "jakarta.portlet.version=4.0",
                 "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.header-portlet-javascript=/lib/registration.js",
                 "com.liferay.portlet.header-portlet-javascript=/lib/common.js",
                 "com.liferay.portlet.instanceable=false",
-                "javax.portlet.display-name=Deltares Registration Form",
-                "javax.portlet.init-param.config-template=/registration2.0/configuration.jsp",
-                "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.view-template=/registration2.0/view.jsp",
-                "javax.portlet.name=" + OssConstants.REGISTRATIONFORM,
-                "javax.portlet.resource-bundle=content.Language",
-                "javax.portlet.supported-locale=en",
-                "javax.portlet.security-role-ref=power-user,user"
+                "jakarta.portlet.display-name=Deltares Registration Form",
+                "jakarta.portlet.init-param.config-template=/registration2.0/configuration.jsp",
+                "jakarta.portlet.init-param.template-path=/",
+                "jakarta.portlet.init-param.view-template=/registration2.0/view.jsp",
+                "jakarta.portlet.name=" + OssConstants.REGISTRATIONFORM,
+                "jakarta.portlet.resource-bundle=content.Language",
+                "jakarta.portlet.supported-locale=en",
+                "jakarta.portlet.security-role-ref=power-user,user"
         },
         service = Portlet.class
 )

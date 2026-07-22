@@ -1,14 +1,13 @@
 Bundle-Name: oss-forms
 Bundle-SymbolicName: nl.deltares.forms
 Bundle-Version: 2.0.0
--sources: true
--metatype: *
+Export-Package: nl.deltares.forms.portlet
+Import-Package:\
+	nl.deltares.portal.utils.*,\
+	nl.deltares.portal.constants.*,\
+	nl.deltares.tasks.*,\
+	nl.deltares.common.*,\
+	*
 Web-ContextPath: /dsd-registration
-Export-Package: \
-    nl.deltares.forms.portlet
-Import-Package: \
-    nl.deltares.portal.utils.*, \
-    nl.deltares.portal.constants.*, \
-    nl.deltares.tasks.*, \
-    nl.deltares.common.*, \
-    *
+-metatype: *
+-sources: true

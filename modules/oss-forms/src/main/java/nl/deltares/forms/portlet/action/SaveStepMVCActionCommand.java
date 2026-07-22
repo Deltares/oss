@@ -25,7 +25,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	property = {
-		"javax.portlet.name=" + OssConstants.REGISTRATIONFORM,
+		"jakarta.portlet.name=" + OssConstants.REGISTRATIONFORM,
 		"mvc.command.name=/submit/register/save_step"
 	},
 	service = MVCActionCommand.class

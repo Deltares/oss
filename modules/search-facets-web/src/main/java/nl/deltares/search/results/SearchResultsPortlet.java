@@ -35,14 +35,14 @@ import java.util.Optional;
                 "com.liferay.portlet.display-category=OSS-search",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.instanceable=true",
-                "javax.portlet.display-name=Search Results",
-                "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.config-template=/search/results/configuration.jsp",
-                "javax.portlet.init-param.view-template=/search/results/view.jsp",
-                "javax.portlet.name=" + SearchModuleKeys.SEARCH_RESULTS_PORTLET,
-                "javax.portlet.resource-bundle=content.Language",
-                "javax.portlet.security-role-ref=power-user,user",
-                "javax.portlet.version=3.0"
+                "jakarta.portlet.display-name=Search Results",
+                "jakarta.portlet.init-param.template-path=/",
+                "jakarta.portlet.init-param.config-template=/search/results/configuration.jsp",
+                "jakarta.portlet.init-param.view-template=/search/results/view.jsp",
+                "jakarta.portlet.name=" + SearchModuleKeys.SEARCH_RESULTS_PORTLET,
+                "jakarta.portlet.resource-bundle=content.Language",
+                "jakarta.portlet.security-role-ref=power-user,user",
+                "jakarta.portlet.version=4.0"
         },
         service = Portlet.class
 )

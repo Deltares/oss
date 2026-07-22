@@ -39,7 +39,7 @@ import java.util.*;
 @Component(
         immediate = true,
         property = {
-                "javax.portlet.name=" + OssConstants.DOWNLOADFORM,
+                "jakarta.portlet.name=" + OssConstants.DOWNLOADFORM,
                 "mvc.command.name=/submit/download/form"
         },
         service = MVCActionCommand.class

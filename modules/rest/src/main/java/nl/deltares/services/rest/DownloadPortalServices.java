@@ -1,9 +1,9 @@
 package nl.deltares.services.rest;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.Response;
 import nl.deltares.portal.utils.DownloadUtils;
 import nl.deltares.portal.utils.GeoIpUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
@@ -15,11 +15,10 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.jakarta.rs.json.JacksonJsonProvider;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Response;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -95,12 +94,8 @@ public class DownloadPortalServices extends Application {
 
         JacksonJsonProvider jacksonJsonProvider = new JacksonJsonProvider();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        // Prevent serialization of null and empty string values
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-
-        jacksonJsonProvider.setMapper(objectMapper);
+        JsonMapper build = JsonMapper.builder().build();
+        jacksonJsonProvider.setMapper(build);
         jacksonJsonProvider.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         return jacksonJsonProvider;

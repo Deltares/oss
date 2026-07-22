@@ -164,9 +164,9 @@ public class DsdParserUtilsImpl implements DsdParserUtils{
     @Override
     public RegistrationDisplayContext getDisplayContextInstance(String articleId, ThemeDisplay themeDisplay) {
 
-        String articleAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?search-results-registration-articleId";
-        String dayAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?search-results-registration-day";
-        String facetSelectionAttrName = "equinox.http.deltares-search-webjavax.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?search-results-facet-selection";
+        String articleAttrName = "equinox.http.deltares-search-webjakarta.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?search-results-registration-articleId";
+        String dayAttrName = "equinox.http.deltares-search-webjakarta.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?search-results-registration-day";
+        String facetSelectionAttrName = "equinox.http.deltares-search-webjakarta.portlet.p." + themeDisplay.getPortletDisplay().getId() + "_LAYOUT_" + themeDisplay.getLayout().getPlid() + "?search-results-facet-selection";
         final Object sessionArticleId = themeDisplay.getRequest().getSession().getAttribute(articleAttrName);
         final Object day = themeDisplay.getRequest().getSession().getAttribute(dayAttrName);
         final Object facetSelection = themeDisplay.getRequest().getSession().getAttribute(facetSelectionAttrName);

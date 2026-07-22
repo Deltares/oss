@@ -270,7 +270,7 @@ public class RegistrationDisplayContext extends DSDArticleDisplayContext {
                                     action.equals(OssConfigurationConstants.REGISTRATION_UNREGISTER) ? PortletRequest.ACTION_PHASE : PortletRequest.RENDER_PHASE);
                     portletURL.setWindowState(LiferayWindowState.NORMAL);
                     portletURL.setPortletMode(LiferayPortletMode.VIEW);
-                    portletURL.getRenderParameters().setValue("javax.portlet.action", OssConstants.SUBMIT_REGISTER_FORM_URL);
+                    portletURL.getRenderParameters().setValue("jakarta.portlet.action", OssConstants.SUBMIT_REGISTER_FORM_URL);
                     portletURL.getRenderParameters().setValue("articleId", getRegistration().getArticleId());
                     portletURL.getRenderParameters().setValue("action", action);
                     if (userId != null) portletURL.getRenderParameters().setValue("userId", userId.toString());
@@ -313,8 +313,8 @@ public class RegistrationDisplayContext extends DSDArticleDisplayContext {
                     portletURL.setWindowState(LiferayWindowState.NORMAL);
                     portletURL.setPortletMode(LiferayPortletMode.VIEW);
                     MutableRenderParameters renderParameters = portletURL.getRenderParameters();
-                    renderParameters.setValue("javax.portlet.action", action);
-                    renderParameters.setValue("javax.portlet.action", actionCommand);
+                    renderParameters.setValue("jakarta.portlet.action", action);
+                    renderParameters.setValue("jakarta.portlet.action", actionCommand);
                     renderParameters.setValue("articleId", getRegistration().getArticleId());
                     renderParameters.setValue("action", action);
                     if (userId != null) renderParameters.setValue("userId", userId.toString());

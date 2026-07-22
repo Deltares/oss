@@ -36,8 +36,8 @@ import java.util.stream.Collectors;
 @Component(
         immediate = true,
         property = {
-                "javax.portlet.name=" + OssConstants.REGISTRATIONFORM,
-                "javax.portlet.name=" + OssConstants.DSD_REGISTRATIONFORM,
+                "jakarta.portlet.name=" + OssConstants.REGISTRATIONFORM,
+                "jakarta.portlet.name=" + OssConstants.DSD_REGISTRATIONFORM,
                 "mvc.command.name=/submit/register/form"
         },
         service = MVCActionCommand.class

@@ -2,9 +2,11 @@ package nl.deltares.services.rest.exception;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.liferay.portal.kernel.exception.PortalException;
+import jakarta.ws.rs.core.Response;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
-import javax.ws.rs.core.Response;
-
+@XmlRootElement(name = "ErrorMessage")
 public class ErrorMessage {
 
     /** contains the same HTTP Status code returned by the server */
@@ -19,6 +21,7 @@ public class ErrorMessage {
     /** extra information that might useful for developers */
     String developerMessage;
 
+    @XmlElement(name = "status")
     public int getStatus() {
         return status;
     }
@@ -27,6 +30,7 @@ public class ErrorMessage {
         this.status = status;
     }
 
+    @XmlElement(name = "message")
     public String getMessage() {
         return message;
     }
@@ -35,6 +39,7 @@ public class ErrorMessage {
         this.message = message;
     }
 
+    @XmlElement(name = "developerMessage")
     public String getDeveloperMessage() {
         return developerMessage;
     }

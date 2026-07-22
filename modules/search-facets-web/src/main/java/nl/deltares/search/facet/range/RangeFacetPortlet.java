@@ -26,15 +26,15 @@ import java.util.Map;
                 "com.liferay.portlet.display-category=OSS-search",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.instanceable=true",
-                "javax.portlet.display-name=RangeFacet",
-                "javax.portlet.expiration-cache=0",
-                "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.config-template=/facet/range/configuration.jsp",
-                "javax.portlet.init-param.view-template=/facet/range/view.jsp",
-                "javax.portlet.name=" + SearchModuleKeys.RANGE_FACET_PORTLET,
-                "javax.portlet.resource-bundle=content.Language",
-                "javax.portlet.security-role-ref=power-user,user",
-                "javax.portlet.version=3.0"
+                "jakarta.portlet.display-name=RangeFacet",
+                "jakarta.portlet.expiration-cache=0",
+                "jakarta.portlet.init-param.template-path=/",
+                "jakarta.portlet.init-param.config-template=/facet/range/configuration.jsp",
+                "jakarta.portlet.init-param.view-template=/facet/range/view.jsp",
+                "jakarta.portlet.name=" + SearchModuleKeys.RANGE_FACET_PORTLET,
+                "jakarta.portlet.resource-bundle=content.Language",
+                "jakarta.portlet.security-role-ref=power-user,user",
+                "jakarta.portlet.version=4.0"
         },
         service = Portlet.class
 )

@@ -23,8 +23,8 @@ import java.util.Collections;
 @Component(
         immediate = true,
         property = {
-                "javax.portlet.name=" + OssConstants.REGISTRATIONFORM,
-                "javax.portlet.name=" + OssConstants.DSD_REGISTRATIONFORM,
+                "jakarta.portlet.name=" + OssConstants.REGISTRATIONFORM,
+                "jakarta.portlet.name=" + OssConstants.DSD_REGISTRATIONFORM,
                 "mvc.command.name=/submit/unregister/form"
         },
         service = MVCActionCommand.class

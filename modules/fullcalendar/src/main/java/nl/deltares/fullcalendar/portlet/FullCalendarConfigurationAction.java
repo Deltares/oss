@@ -29,7 +29,7 @@ import static nl.deltares.fullcalendar.portlet.FullCalendarUtils.getTypeMap;
         configurationPid = "nl.deltares.npm.react.portlet.fullcalendar.portlet.FullCalendarConfiguration",
         configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
         property = {
-                "javax.portlet.name=" + FullcalendarPortletKeys.FULLCALENDAR
+                "jakarta.portlet.name=" + FullcalendarPortletKeys.FULLCALENDAR
         },
         service = ConfigurationAction.class
 )
