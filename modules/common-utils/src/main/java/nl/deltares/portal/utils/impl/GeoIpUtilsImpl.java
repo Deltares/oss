@@ -69,13 +69,13 @@ public class GeoIpUtilsImpl implements GeoIpUtils {
         try {
             InetAddress inetAddress = InetAddress.getByName(ipAddress);
             CityResponse city = reader.city(inetAddress);
-            info.put("city", city.getCity().getName());
-            info.put("postal", city.getPostal().getCode());
-            info.put("country", city.getCountry().getName());
-            info.put("iso_code", city.getCountry().getIsoCode());
-            info.put("latitude", String.valueOf(city.getLocation().getLatitude()));
-            info.put("longitude", String.valueOf(city.getLocation().getLongitude()));
-            LOG.info(String.format("Parsed geolocation %s, %s from IP %s", city.getCity().getName(), city.getCountry().getName(), ipAddress));
+            info.put("city", city.city().name());
+            info.put("postal", city.postal().code());
+            info.put("country", city.country().name());
+            info.put("iso_code", city.country().isoCode());
+            info.put("latitude", String.valueOf(city.location().latitude()));
+            info.put("longitude", String.valueOf(city.location().longitude()));
+            LOG.info(String.format("Parsed geolocation %s, %s from IP %s", city.city().name(), city.country().name(), ipAddress));
 
             if (registerIfMissing) registerGeolocationIfMissing(info);
         } catch (Exception e) {

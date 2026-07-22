@@ -1,20 +1,10 @@
 dependencies {
 
     implementation('com.liferay.portal:release.dxp.api')
-
-    implementation 'biz.aQute.bnd:biz.aQute.bnd.gradle:3.4.0'
-    implementation 'javax.mail:mail:1.4.7'
-//    implementation 'javax.portlet:portlet-api'
-//    implementation 'javax.servlet:javax.servlet-api'
-    compileInclude 'com.maxmind.geoip2:geoip2:2.15.0'
+    compileInclude 'com.maxmind.geoip2:geoip2:5.1.0'
 
     implementation(project(":modules:registration-service:registration-service-api"))
     implementation(project(":modules:download:download-api"))
     implementation(project(":modules:geolocation:geolocation-api"))
-
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'org.jodd:jodd-json'
-    testImplementation 'commons-io:commons-io:2.11.0'
-    testImplementation 'com.maxmind.geoip2:geoip2:2.15.0'
 
 }

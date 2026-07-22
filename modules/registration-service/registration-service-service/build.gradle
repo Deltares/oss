@@ -1,19 +1,19 @@
 dependencies {
 	compileOnly project(":modules:registration-service:registration-service-api")
 
-	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
-	compileOnly group: 'com.liferay', name: 'com.liferay.petra.string'
-	compileOnly group: 'com.liferay', name: 'com.liferay.petra.lang'
-	compileOnly group: 'com.liferay', name: 'com.liferay.petra.io'
-	compileOnly group: 'com.liferay', name: 'com.liferay.petra.function'
-	compileOnly group: 'com.liferay', name: 'com.liferay.petra.sql.dsl.api'
-	compileOnly group: 'com.liferay', name:	'com.liferay.portal.aop.api'
-	compileOnly group: "com.liferay", name: "com.liferay.journal.api"
-	compileOnly group: 'org.osgi', name: 'org.osgi.annotation.versioning'
-	compileOnly group: 'org.osgi', name: 'org.osgi.service.component.annotations'
+	compileOnly "com.liferay.portal:com.liferay.portal.kernel"
+    compileOnly "com.liferay:com.liferay.petra.string"
+    compileOnly "com.liferay:com.liferay.petra.lang"
+    compileOnly "com.liferay:com.liferay.petra.io"
+	compileOnly "com.liferay:com.liferay.petra.function"
+	compileOnly "com.liferay:com.liferay.petra.sql.dsl.api"
+	compileOnly "com.liferay:com.liferay.portal.aop.api"
+	compileOnly "com.liferay:com.liferay.journal.api"
+	compileOnly "org.osgi:org.osgi.annotation.versioning"
+	compileOnly "org.osgi:org.osgi.service.component.annotations"
 
 
-	implementation group: "com.liferay", name: "com.liferay.portal.upgrade.api", version: "2.0.3"
+	implementation "com.liferay:com.liferay.portal.upgrade.api:2.0.3"
 
 }
 

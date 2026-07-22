@@ -1,11 +1,4 @@
 dependencies {
 	implementation('com.liferay.portal:release.dxp.api')
-	compileOnly "com.liferay.portal:com.liferay.portal.kernel"
-    compileOnly "com.liferay:com.liferay.journal.api"
-//	compileOnly group: 'javax.portlet', name: 'portlet-api'
-//	compileOnly group: 'javax.servlet', name: 'javax.servlet-api'
-	compileOnly "org.osgi:org.osgi.service.component.annotations"
-    compileOnly "biz.aQute.bnd:biz.aQute.bndlib:6.4.0"
-
     compileOnly project(":modules:common-utils")
 }

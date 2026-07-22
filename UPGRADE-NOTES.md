@@ -1,10 +1,23 @@
 <h1>Upgrade script for upgrade Liferay DXP from 7.4 to 2026.qxxxx</h1>
 
-<h2>Step 1 - Podman preparation</h2>
+<h2>Podman preparation</h2>
 
 Make sure to clean all the containers & volumes from the Podman instance
 
-<h2>Step 2 - Pre upgrade data preparation</h2>
+<h2>Pre upgrade configuration</h2>
+
+Comment out obsolete properties.
+The following properties in the portal-ext.properties file have become obsolete:
+
+- all mail.session.mail.* properties
+- work.dir.override.enabled
+
+Changes made to EHCACHE
+
+When getting error: 
+<code>�org.ehcache.xml.exceptions.XmlConfigurationException: Error parsing XML configuration at bundleresource://1556.fwk334216619/META-INF/module-single-vm.xml</code>
+
+<h2>Pre upgrade data preparation</h2>
 
 Before we can upgrade the database we need to clean up data and make some preparations.
 
