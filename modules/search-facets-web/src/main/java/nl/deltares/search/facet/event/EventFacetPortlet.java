@@ -19,7 +19,7 @@ import java.util.Map;
  * @author allan
  */
 @Component(
-        configurationPid = "nl.deltares.search.facet.registration.EventFacetConfiguration",
+        configurationPid = "nl.deltares.search.facet.event.EventFacetConfiguration",
         immediate = true,
         property = {
                 "com.liferay.portlet.css-class-wrapper=portlet-event-facet",

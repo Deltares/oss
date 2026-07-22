@@ -1,9 +1,9 @@
 package nl.deltares.search.facet.event;
 
 import aQute.bnd.annotation.metatype.Meta;
-
 @Meta.OCD(
-        id = "nl.deltares.search.facet.registration.EventFacetConfiguration"
+        id = "nl.deltares.search.facet.event.EventFacetConfiguration",
+        localization = "content/Language", name = "event-facet-configuration"
 )
 public interface EventFacetConfiguration {
 

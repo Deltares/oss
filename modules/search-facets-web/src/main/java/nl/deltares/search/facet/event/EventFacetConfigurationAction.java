@@ -18,7 +18,7 @@ import org.osgi.service.component.annotations.Modified;
 import java.util.Map;
 
 @Component(
-        configurationPid = "nl.deltares.search.facet.registration.EventFacetConfiguration",
+        configurationPid = "nl.deltares.search.facet.event.EventFacetConfiguration",
         configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
         property = {
                 "jakarta.portlet.name=" + SearchModuleKeys.EVENT_FACET_PORTLET

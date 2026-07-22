@@ -1,6 +1,5 @@
 dependencies {
 	compileOnly 'com.liferay.portal:release.dxp.api'
-    compileOnly "org.osgi:org.osgi.service.jaxrs:1.0.1"
-    compileInclude "tools.jackson.jakarta.rs:jackson-jakarta-rs-json-provider:3.2.1"
+    compileOnly "com.liferay:org.osgi.service.jaxrs:1.0.0.JAKARTA-LIFERAY-PATCHED-1"
     compileOnly project(":modules:common-utils")
 }

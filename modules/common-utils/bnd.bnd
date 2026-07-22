@@ -20,6 +20,9 @@ Import-Package:\
 	!org.apache.log,\
 	!org.apache.log4j,\
 	*
+Provide-Capability:\
+	liferay.language.resources;\
+		resource.bundle.base.name="content.Language"
 global-resource-bundle: 
 -fixupmessages: Classes found in the wrong directory: ...;is:=ignore
 -liferay-aggregate-resource-bundles: 

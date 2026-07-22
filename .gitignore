@@ -291,3 +291,4 @@ license*.xml
 /run-sonar-locally.bat
 /docker/resources/dump-liferay.sql
 /docker/resources/dump-keycloak.sql
+/docker/liferay/geoip/GeoLite2-City.mmdb

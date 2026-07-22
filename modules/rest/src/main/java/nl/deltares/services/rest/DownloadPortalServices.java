@@ -15,9 +15,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
-import tools.jackson.databind.DeserializationFeature;
-import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.jakarta.rs.json.JacksonJsonProvider;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -78,7 +75,6 @@ public class DownloadPortalServices extends Application {
     public Set<Object> getSingletons() {
         Set<Object> singletons = new HashSet<>();
         singletons.add(this);
-        singletons.add(getJacksonJsonProvider());
         //Services for FullCalendar
         singletons.add(new DownloadRestService(downloadUtils, geoIpUtils, keycloakUtils));
         return singletons;
@@ -90,14 +86,4 @@ public class DownloadPortalServices extends Application {
         return Response.ok().entity("Deltares.Rest.Download service is up and running").build();
     }
 
-    private static JacksonJsonProvider getJacksonJsonProvider() {
-
-        JacksonJsonProvider jacksonJsonProvider = new JacksonJsonProvider();
-
-        JsonMapper build = JsonMapper.builder().build();
-        jacksonJsonProvider.setMapper(build);
-        jacksonJsonProvider.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        return jacksonJsonProvider;
-    }
 }
