@@ -1,6 +1,9 @@
 Bundle-Name: tableviews
 Bundle-SymbolicName: nl.deltares.tableview.portlet
 Bundle-Version: 2.0.0
+Provide-Capability:\
+	liferay.language.resources;\
+		resource.bundle.base.name="content.Language"
 Export-Package: nl.deltares.tableview.portlet.constants
 Import-Package:\
 	nl.deltares.tasks.*,\

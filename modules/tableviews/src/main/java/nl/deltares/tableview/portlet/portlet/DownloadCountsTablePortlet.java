@@ -36,9 +36,7 @@ import java.util.stream.Collectors;
  * @author rooij_e
  */
 @Component(
-        immediate = true,
         property = {
-                "jakarta.portlet.version=4.0",
                 "com.liferay.portlet.display-category=OSS-table",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
                 "com.liferay.portlet.header-portlet-javascript=/lib/downloadcountstableview.js",
