@@ -1,3 +1,6 @@
 Bundle-Name: global-resource-bundle
 Bundle-SymbolicName: nl.deltares.oss.language
 Bundle-Version: 2.0.0
+Provide-Capability:\
+	liferay.language.resources;\
+		resource.bundle.base.name="content.Language"
