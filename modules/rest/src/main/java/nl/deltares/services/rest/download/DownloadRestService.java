@@ -29,12 +29,6 @@ public class DownloadRestService {
     private final GeoIpUtils geoIpUtils;
     private final KeycloakUtils keycloakUtils;
 
-    private DownloadRestService() {
-        downloadUtils =null;
-        geoIpUtils = null;
-        keycloakUtils = null;
-    }
-
     public DownloadRestService(DownloadUtils downloadUtils, GeoIpUtils geoIpUtils, KeycloakUtils keycloakUtils) {
         this.downloadUtils = downloadUtils;
         this.geoIpUtils = geoIpUtils;

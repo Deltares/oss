@@ -39,11 +39,6 @@ public class DsdFullcalendarService {
     private final ConfigurationProvider configurationProvider;
     private final DsdParserUtils parserUtils;
 
-    private DsdFullcalendarService() {
-        configurationProvider = null;
-        parserUtils = null;
-    }
-
     public DsdFullcalendarService(ConfigurationProvider configurationProvider, DsdParserUtils parserUtils) {
         this.configurationProvider = configurationProvider;
         this.parserUtils = parserUtils;

@@ -1,6 +1,9 @@
 Bundle-Name: search-facets-web
 Bundle-SymbolicName: nl.deltares.search.facet
 Bundle-Version: 2.0.0
+Provide-Capability:\
+	liferay.language.resources;\
+		resource.bundle.base.name="content.Language"
 Export-Package: nl.deltares.search.facet
 Import-Package:\
 	nl.deltares.portal.model.facet.*,\

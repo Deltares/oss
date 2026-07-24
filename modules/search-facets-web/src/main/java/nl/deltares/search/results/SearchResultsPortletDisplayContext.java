@@ -33,8 +33,8 @@ public class SearchResultsPortletDisplayContext implements Serializable {
     private int delta;
     private int totalHits = 0;
     private int totalLoadedRecords = 0;
-    private List<RegistrationDisplayContext> registrations = Collections.emptyList();
-    private List<DsdArticle> dsdArticles = Collections.emptyList();
+    private final List<RegistrationDisplayContext> registrations = new ArrayList<>();
+    private final List<DsdArticle> dsdArticles = new ArrayList<>();
     private FacetSelection facetSelection;
 
     public SearchResultsPortletDisplayContext(DsdParserUtils dsdParserUtils, ThemeDisplay themeDisplay) {
@@ -61,7 +61,7 @@ public class SearchResultsPortletDisplayContext implements Serializable {
     }
 
     private void loadDownloads(List<Document> documents, boolean reverseSortOrder) {
-        dsdArticles = loadDsdArticles(documents);
+        loadDsdArticles(documents);
         final DsdArticleComparator c = new DsdArticleComparator();
         if (reverseSortOrder) {
             dsdArticles.sort(c.reversed());
@@ -72,8 +72,9 @@ public class SearchResultsPortletDisplayContext implements Serializable {
 
     }
     private void loadRegistrations(List<Document> documents, boolean reverseSortOrder) {
-        registrations = new ArrayList<>(documents.size() + 20);
-        splitMultiDayRegistrations(loadDsdArticles(documents), registrations);
+        registrations.clear();
+        loadDsdArticles(documents);
+        splitMultiDayRegistrations(dsdArticles, registrations);
         final RegistrationDisplayContextComparator c = new RegistrationDisplayContextComparator();
         if (reverseSortOrder){
             registrations.sort(c.reversed());
@@ -109,6 +110,7 @@ public class SearchResultsPortletDisplayContext implements Serializable {
     }
 
     public List<DsdArticle> getDsdArticleResults() {
+        if (dsdArticles.isEmpty()){return Collections.emptyList();}
         return dsdArticles.subList(getStartIndex(), getEndIndex());
     }
 
@@ -127,8 +129,8 @@ public class SearchResultsPortletDisplayContext implements Serializable {
         //does nothing
     }
 
-    private List<DsdArticle> loadDsdArticles(List<Document> results) {
-        final ArrayList<DsdArticle> articles = new ArrayList<>();
+    private void loadDsdArticles(List<Document> results) {
+        dsdArticles.clear();
         for (Document result : results) {
             if (!result.getFields().containsKey("entryClassPK")) continue;
             final Field classPK = result.getField("entryClassPK");
@@ -138,19 +140,17 @@ public class SearchResultsPortletDisplayContext implements Serializable {
             }
             try {
                 final AbsDsdArticle absDsdArticle = dsdParserUtils.toDsdArticle(registrationArticle);
-                articles.add(absDsdArticle);
+                dsdArticles.add(absDsdArticle);
             } catch (PortalException e) {
                 LOG.warn("Error parsing DSD article " + registrationArticle.getTitle());
             }
         }
-        return articles;
     }
 
     private void splitMultiDayRegistrations(List<DsdArticle> registrations, List<RegistrationDisplayContext> registrationDisplayContexts) {
 
         for (DsdArticle dsdArticle : registrations) {
-            if (!(dsdArticle instanceof Registration)) continue;
-            Registration registration = (Registration) dsdArticle;
+            if (!(dsdArticle instanceof Registration registration)) continue;
             if (registration.isMultiDayEvent() && !registration.isShowMultipleDaysAsSingleDate()) {
                 final List<Period> startAndEndTimesPerDay = registration.getStartAndEndTimesPerDay();
                 for (int i = 0; i < startAndEndTimesPerDay.size(); i++) {
