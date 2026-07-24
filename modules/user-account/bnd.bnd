@@ -1,6 +1,9 @@
 Bundle-Name: user-account
 Bundle-SymbolicName: nl.deltares.useraccount
 Bundle-Version: 2.0.0
+Provide-Capability:\
+	liferay.language.resources;\
+		resource.bundle.base.name="content.Language"
 Export-Package: nl.deltares.useraccount.constants
 Import-Package:\
 	nl.deltares.common.*,\

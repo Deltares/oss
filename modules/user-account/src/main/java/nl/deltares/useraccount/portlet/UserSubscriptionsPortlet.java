@@ -23,7 +23,6 @@ import java.util.List;
  * @author rooij_e
  */
 @Component(
-        immediate = true,
         property = {
                 "jakarta.portlet.version=4.0",
                 "com.liferay.portlet.display-category=OSS-account",
