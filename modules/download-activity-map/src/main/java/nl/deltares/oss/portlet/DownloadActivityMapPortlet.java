@@ -44,7 +44,6 @@ import java.util.concurrent.TimeUnit;
  * @author Pier-Angelo Gaetani @ Worth Systems
  */
 @Component(
-        immediate = true,
         property = {
                 "jakarta.portlet.version=4.0",
                 "com.liferay.portlet.display-category=OSS",
