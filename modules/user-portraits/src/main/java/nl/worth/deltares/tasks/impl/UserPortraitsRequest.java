@@ -110,10 +110,7 @@ public class UserPortraitsRequest extends AbstractDataRequest {
                 try {
                     Image image = ImageLocalServiceUtil.getImage(checkUser.getPortraitId());
                     if (image == null || image.getTextObj() == null) {
-                        //This portraitId is not valid so remove it.
-                        LOG.warn(String.format("Un-setting portrait %d for user %s", checkUser.getPortraitId(), checkUser.getScreenName()));
-                        checkUser.setPortraitId(0);
-                        UserLocalServiceUtil.updateUser(checkUser);
+                        //This portraitId is not valid so skip it.
                     } else {
                         //Found a portrait so add it.
                         usersWithPortrait.add(checkUser);

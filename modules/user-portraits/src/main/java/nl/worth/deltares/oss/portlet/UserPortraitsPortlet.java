@@ -30,7 +30,6 @@ import java.util.concurrent.TimeUnit;
  * @author Pier-Angelo Gaetani @ Worth Systems
  */
 @Component(
-        immediate = true,
         property = {
                 "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.instanceable=false",
