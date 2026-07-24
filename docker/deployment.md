@@ -25,6 +25,12 @@ Before running the stack, ensure Podman is installed and running:
    Podman against Docker Hub so it can pull the private `liferay/dxp` image. Podman caches the
    token locally so you won't be asked again until the token expires.
 
+## Podman network issue
+
+Often we see network connection issues after a few re-deployements in Podman.
+
+A good link to check these issues is:
+<a href="https://oneuptime.com/blog/post/2026-03-18-fix-rootless-podman-network-issues/view" >Fix Rootless Podman Network Issues</a>
 ### Start Liferay
 To start Liferay run the following command in your project root folder.
 ```

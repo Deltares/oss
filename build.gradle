@@ -141,6 +141,8 @@ task stopLiferay(
 ) {
     doLast {
         exec {
+//            executable 'docker-compose'
+//            args('-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'down', '--rmi', 'local')
             executable 'podman'
             args('compose', '-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'down', '--rmi', 'local')
             standardOutput = System.out
@@ -156,6 +158,8 @@ task dumpDB(
 ) {
     doLast {
         exec {
+//            executable 'docker-compose'
+//            args('-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'up', '--build', '--force-recreate', '-d')
             executable 'podman'
             args('exec', '-t', "${dockerContainerPrefix}-mariadb-74", 'mysqldump', "-u${dbUser}", "-p${dbPassword}",
                     '--extended-insert=FALSE', '--no-autocommit', '--opt', "${dbName}")

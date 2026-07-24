@@ -24,6 +24,9 @@ This is resolved by updating the *module-single-vm.xml* file to match with EHCAC
 
 From the <a href="https://www.maxmind.com">Maxmind</a> website the newest version of the GeoLite2-City database can be downloaded.
 
+<u>Updates portal-ext.properties</u>
+
+Add virtual.hosts.valid.hosts=* or write all hosts ',' separated 
 
 <h2>Pre upgrade data preparation</h2>
 
