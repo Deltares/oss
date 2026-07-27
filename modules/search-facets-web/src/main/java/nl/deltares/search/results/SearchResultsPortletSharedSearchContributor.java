@@ -57,15 +57,19 @@ public class SearchResultsPortletSharedSearchContributor implements PortletShare
             delta = Integer.parseInt(deltaParam);
         }
         final String curParam = FacetUtils.getRequestParameter(namespace + "cur", portletSharedSearchSettings.getRenderRequest());
-        portletSharedSearchSettings.setPaginationDelta(delta);
+        portletSharedSearchSettings.getSearchRequestBuilder().size(delta);
 
         if (curParam != null) {
-            portletSharedSearchSettings.setPaginationStart(Integer.parseInt(curParam));
+            portletSharedSearchSettings.getSearchRequestBuilder().from((Integer.parseInt(curParam) - 1) * delta);
         }
 
         //Sort values based on modification time. Sorting on registrationDate field does not work properly over entire index
         SortOrder sortOrder = reverseOrder ? SortOrder.DESC : SortOrder.ASC;
-        _dsDsdJournalArticleUtils.addDDMFieldSortTerm(portletSharedSearchSettings, "ddmFieldArray", ddmSortByField, null, sortOrder);
+        if (ddmSortByField == null || ddmSortByField.isEmpty()) {
+            _dsDsdJournalArticleUtils.addSortTerm(portletSharedSearchSettings, "createDate", sortOrder);
+        } else {
+            _dsDsdJournalArticleUtils.addDDMFieldSortTerm(portletSharedSearchSettings, "ddmFieldArray", ddmSortByField, null, sortOrder);
+        }
 
     }
 

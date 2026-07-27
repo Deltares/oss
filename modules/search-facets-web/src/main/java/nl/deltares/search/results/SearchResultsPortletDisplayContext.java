@@ -9,8 +9,6 @@ import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import nl.deltares.portal.display.context.RegistrationDisplayContext;
-import nl.deltares.portal.kernel.util.comparator.DsdArticleComparator;
-import nl.deltares.portal.kernel.util.comparator.RegistrationDisplayContextComparator;
 import nl.deltares.portal.model.DsdArticle;
 import nl.deltares.portal.model.facet.FacetSelection;
 import nl.deltares.portal.model.impl.AbsDsdArticle;
@@ -20,7 +18,6 @@ import nl.deltares.portal.utils.Period;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class SearchResultsPortletDisplayContext implements Serializable {
@@ -32,7 +29,6 @@ public class SearchResultsPortletDisplayContext implements Serializable {
     private String _keywords;
     private int delta;
     private int totalHits = 0;
-    private int totalLoadedRecords = 0;
     private final List<RegistrationDisplayContext> registrations = new ArrayList<>();
     private final List<DsdArticle> dsdArticles = new ArrayList<>();
     private FacetSelection facetSelection;
@@ -50,46 +46,23 @@ public class SearchResultsPortletDisplayContext implements Serializable {
         _renderNothing = renderNothing;
     }
 
-    public void setResultsDocuments(List<Document> documents, String type, boolean reverseSortOrder){
+    public void setResultsDocuments(List<Document> documents, String type){
 
         if ("dsd".equals(type)){
-            loadRegistrations(documents, reverseSortOrder);
+            loadRegistrations(documents);
         } else {
-            loadDownloads(documents, reverseSortOrder);
+            loadDownloads(documents);
         }
-
     }
 
-    private void loadDownloads(List<Document> documents, boolean reverseSortOrder) {
+    private void loadDownloads(List<Document> documents) {
         loadDsdArticles(documents);
-        final DsdArticleComparator c = new DsdArticleComparator();
-        if (reverseSortOrder) {
-            dsdArticles.sort(c.reversed());
-        } else {
-            dsdArticles.sort(c);
-        }
-        totalLoadedRecords = dsdArticles.size();
 
     }
-    private void loadRegistrations(List<Document> documents, boolean reverseSortOrder) {
+    private void loadRegistrations(List<Document> documents) {
         registrations.clear();
         loadDsdArticles(documents);
         splitMultiDayRegistrations(dsdArticles, registrations);
-        final RegistrationDisplayContextComparator c = new RegistrationDisplayContextComparator();
-        if (reverseSortOrder){
-            registrations.sort(c.reversed());
-        } else {
-            registrations.sort(c);
-        }
-        totalLoadedRecords = registrations.size();
-    }
-
-    private int getEndIndex() {
-        return totalLoadedRecords;
-    }
-
-    private int getStartIndex() {
-        return 0;
     }
 
     public String getKeywords() {
@@ -110,12 +83,11 @@ public class SearchResultsPortletDisplayContext implements Serializable {
     }
 
     public List<DsdArticle> getDsdArticleResults() {
-        if (dsdArticles.isEmpty()){return Collections.emptyList();}
-        return dsdArticles.subList(getStartIndex(), getEndIndex());
+        return dsdArticles;
     }
 
     public List<RegistrationDisplayContext> getRegistrationResults() {
-        return registrations.subList(getStartIndex(), getEndIndex());
+        return registrations;
     }
 
     public void setDelta(int delta) {
@@ -124,9 +96,6 @@ public class SearchResultsPortletDisplayContext implements Serializable {
 
     public void setTotalHits(int totalHits) {
         this.totalHits = totalHits;
-    }
-    public void setPaginationStart(int paginationStart) {
-        //does nothing
     }
 
     private void loadDsdArticles(List<Document> results) {

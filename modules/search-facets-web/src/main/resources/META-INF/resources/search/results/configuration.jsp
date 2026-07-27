@@ -22,12 +22,14 @@
     String displayType = "";
     boolean reverseOrder = false;
     String numberOfResults = "";
+    String ddmSortByField = "";
     if (Validator.isNotNull(configuration)) {
         companyIds = portletPreferences.getValue("companyIds", configuration.companyIds());
         displayTemplate = portletPreferences.getValue("displayTemplate", configuration.displayTemplate());
         displayType = portletPreferences.getValue("displayType", configuration.displayType());
         reverseOrder = Boolean.parseBoolean(portletPreferences.getValue("reverseOrder", configuration.reverseOrder()));
         numberOfResults = portletPreferences.getValue("numberOfResults", configuration.numberOfResults());
+        ddmSortByField = portletPreferences.getValue("ddmSortByField", configuration.ddmSortByField());
     }
 %>
 <liferay-portlet:actionURL
@@ -42,13 +44,6 @@
 
 <aui:form action="<%= configurationActionURL %>" method="post" name="fm">
 
-    <aui:input
-            label="Company ID"
-            name="companyIds"
-            helpMessage="Company Ids of companies from which to retrieve articles. Space separated"
-            value='<%= companyIds %>'
-    >
-    </aui:input>
 
     <aui:input
             name="<%= Constants.CMD %>"
@@ -63,6 +58,14 @@
     />
 
     <aui:fieldset>
+
+        <aui:input
+                label="Company ID"
+                name="companyIds"
+                helpMessage="Company Ids of companies from which to retrieve articles. Space separated"
+                value='<%= companyIds %>'
+        >
+        </aui:input>
 
         <aui:input
                 name="reverseOrder"
@@ -94,6 +97,13 @@
             <aui:option value="download" >Download</aui:option>
             <aui:option value="article" >DSD Articles</aui:option>
         </aui:select>
+
+        <aui:input
+                name="ddmSortByField"
+                label="DDM Sort By Field"
+                helpMessage="Allows results to be sorted by a specific Structure field. Defaults to 'createDate' is empty"
+                value="<%= ddmSortByField %>">
+        </aui:input>
 
     </aui:fieldset>
 

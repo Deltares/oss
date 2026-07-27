@@ -75,18 +75,17 @@ public class SearchResultsPortlet extends MVCPortlet {
         renderRequest.setAttribute("displayTemplate", configuration.displayTemplate());
         final String type = configuration.displayType();
         renderRequest.setAttribute("displayType", type);
-        final boolean reverseOrder = Boolean.parseBoolean(configuration.reverseOrder());
 
         PortletSharedSearchResponse portletSharedSearchResponse = portletSharedSearchRequest.search(renderRequest);
         SearchResultsPortletDisplayContext displayContext = _buildDisplayContext(portletSharedSearchResponse, renderRequest,
-                themeDisplay, type, reverseOrder);
+                themeDisplay, type);
         renderRequest.setAttribute(WebKeys.PORTLET_DISPLAY_CONTEXT, displayContext);
 
         super.render(renderRequest, renderResponse);
     }
 
     private SearchResultsPortletDisplayContext _buildDisplayContext(PortletSharedSearchResponse portletSharedSearchResponse,
-                                                                    RenderRequest renderRequest, ThemeDisplay themeDisplay, String type, boolean reverseOrder) {
+                                                                    RenderRequest renderRequest, ThemeDisplay themeDisplay, String type) {
 
         final SearchResultsPortletDisplayContext displayContext = new SearchResultsPortletDisplayContext(dsdParserUtils, themeDisplay);
 
@@ -99,16 +98,15 @@ public class SearchResultsPortlet extends MVCPortlet {
         final SearchResponse searchResponse = portletSharedSearchResponse.getSearchResponse();
         SearchRequest searchRequest = searchResponse.getRequest();
 
-        final int cur = ParamUtil.getInteger(renderRequest, "cur", 1);
         final int deltas = ParamUtil.getInteger(renderRequest, "delta", 20);
 
         Optional<String> keywordsOptional = Optional.ofNullable(searchRequest.getQueryString());
         displayContext.setKeywords(keywordsOptional.orElse(StringPool.BLANK));
         displayContext.setRenderNothing(isRenderNothing(renderRequest, searchRequest));
         displayContext.setDelta(deltas);
-        displayContext.setPaginationStart((cur - 1) * deltas);
         displayContext.setTotalHits(searchResponse.getTotalHits());
-        displayContext.setResultsDocuments(portletSharedSearchResponse.getDocuments(), type, reverseOrder);
+        displayContext.setResultsDocuments(
+                portletSharedSearchResponse.getDocuments(), type);
         return displayContext;
     }
 

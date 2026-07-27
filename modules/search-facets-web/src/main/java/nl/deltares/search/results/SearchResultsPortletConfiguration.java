@@ -24,7 +24,7 @@ public interface SearchResultsPortletConfiguration {
     @Meta.AD(required = false, deflt = "20", description = "Maximum number of items to display")
     String numberOfResults();
 
-    @Meta.AD(required = false, deflt = "registrationDate", description = "DdmFieldArray value by which to sort results returned by Elastic Search")
+    @Meta.AD(required = false, deflt = "", description = "DdmFieldArray value by which to sort results returned by Elastic Search")
     String ddmSortByField();
 
 }

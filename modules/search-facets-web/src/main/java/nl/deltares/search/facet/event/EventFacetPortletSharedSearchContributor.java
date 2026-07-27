@@ -43,7 +43,7 @@ public class EventFacetPortletSharedSearchContributor implements PortletSharedSe
         }
         try {
             DSDSiteConfiguration siteConfiguration = _configurationProvider.
-                    getGroupConfiguration(DSDSiteConfiguration.class, groupId);
+                    getGroupConfiguration(DSDSiteConfiguration.class, scopeGroup.getCompanyId(), groupId);
             structureKeys = FacetUtils.getStructureKeys(siteConfiguration);
             if (eventsList == null || eventsList.isEmpty()) {
                 eventsList = String.valueOf(siteConfiguration.eventId());

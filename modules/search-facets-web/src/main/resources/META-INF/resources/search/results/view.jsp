@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
-
+<%@ taglib prefix="portlet" uri="http://xmlns.jcp.org/portlet_3_0" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <portlet:defineObjects/>
 
 <%
