@@ -14,39 +14,33 @@
 %>
 
 <%--@elvariable id="registrationList" type="java.util.List"--%>
-<c:forEach var="registrationId" items="${registrationList}">
+<% for (String registrationId : registrationList) {
 
-    <c:if test="${not empty registrationId}">
-
-        <%
-            String registrationId = (String) pageContext.getAttribute("registrationId");
-        %>
-
-        <%
-            Registration mainRegistration;
+    if (!registrationId.isEmpty()){
+        Registration mainRegistration;
+        try {
+            mainRegistration = dsdParserUtils.getRegistration(
+                    themeDisplay.getScopeGroupId(), registrationId);
+        } catch (PortalException e) {
+            throw new RuntimeException(e);
+        }
+        if (mainRegistration != null) {
+            //load the stored attributes from the database.
+            Map<String, String> userPreferences;
             try {
-                mainRegistration = dsdParserUtils.getRegistration(
-                        themeDisplay.getScopeGroupId(), registrationId);
+                userPreferences = dsdSessionUtils.getUserPreferences(user, mainRegistration);
             } catch (PortalException e) {
                 throw new RuntimeException(e);
             }
-            if (mainRegistration != null) {
-                //load the stored attributes from the database.
-                Map<String, String> userPreferences;
-                try {
-                    userPreferences = dsdSessionUtils.getUserPreferences(user, mainRegistration);
-                } catch (PortalException e) {
-                    throw new RuntimeException(e);
-                }
-                if (!userPreferences.isEmpty()) attributes.putAll(userPreferences);
-                hideButton = dsdSessionUtils.isUserRegisteredFor(user, mainRegistration);
-            %>
+            if (!userPreferences.isEmpty()) attributes.putAll(userPreferences);
+            hideButton = dsdSessionUtils.isUserRegisteredFor(user, mainRegistration);
+        %>
             <div class="registration-item">
 
                 <div class="d-flex">
                     <div class="float-left p-3">
                         <aui:input
-                                name="parent_registration_${registrationId}"
+                                name='<%="parent_registration_" + ( registrationId )%>'
                                 label=""
                                 type="checkbox"
                                 data-price="<%= mainRegistration.getPrice() %>"
@@ -65,11 +59,11 @@
                     </div>
                     <div class="float-right p-3">
                         <% if(hideButton) {%>
-                            <a href="#" data-article-id="${registrationId}" class="btn-lg btn-primary add-to-cart" role="button"
+                            <a href="#" data-article-id="<%= registrationId %>" class="btn-lg btn-primary add-to-cart" role="button"
                                aria-pressed="true"  style="color:#fff" hidden >
                             </a>
                         <% } else {%>
-                            <a href="#" data-article-id="${registrationId}" class="btn-lg btn-primary add-to-cart" role="button"
+                            <a href="#" data-article-id="<%= registrationId %>" class="btn-lg btn-primary add-to-cart" role="button"
                                aria-pressed="true"  style="color:#fff" >
                             </a>
                         <% } %>
@@ -89,10 +83,7 @@
                             <%= childHeaderText %>
                         <% }
                      }
-                %>
-                <c:forEach var="childRegistration" items="<%= children %>">
-                    <%
-                        Registration childRegistration = (Registration) pageContext.getAttribute("childRegistration");
+                    for (Registration childRegistration : children) {
                         boolean checked = registrationList.contains(childRegistration.getArticleId()) || dsdSessionUtils.isUserRegisteredFor(user, childRegistration);
 
                         int count = dsdSessionUtils.getRegistrationCount(childRegistration);
@@ -103,26 +94,26 @@
                         <div class="float-left p-3">
                             <% if (disableSelection) { %>
                             <aui:input
-                                    name="child_registration_${childRegistration.articleId}"
+                                    name='<%="child_registration_" + ( childRegistration.getArticleId() )%>'
                                     label=""
                                     type="checkbox"
-                                    data-price="${childRegistration.getPrice()}"
-                                    course="${childRegistration.isCourse()}"
-                                    data-parentid="${registrationId}"
-                                    data-childid="${childRegistration.articleId}"
+                                    data-price="<%=childRegistration.getPrice()%>"
+                                    course="<%=childRegistration.isCourse()%>"
+                                    data-parentid="<%=registrationId%>"
+                                    data-childid="<%=childRegistration.getArticleId()%>"
                                     cssClass="child-registration"
                                     checked="<%=checked%>"
                                     disabled="true"
                             />
                             <% } else { %>
                             <aui:input
-                                    name="child_registration_${childRegistration.articleId}"
+                                    name='<%="child_registration_" + ( childRegistration.getArticleId() )%>'
                                     label=""
                                     type="checkbox"
-                                    data-price="${childRegistration.getPrice()}"
-                                    course="${childRegistration.isCourse()}"
-                                    data-parentid="${registrationId}"
-                                    data-childid="${childRegistration.articleId}"
+                                    data-price="<%=childRegistration.getPrice()%>"
+                                    course="<%=childRegistration.isCourse()%>"
+                                    data-parentid="<%=registrationId%>"
+                                    data-childid="<%=childRegistration.getArticleId()%>"
                                     cssClass="child-registration"
                                     checked="<%=checked%>"
                             />
@@ -130,10 +121,8 @@
                         </div>
                         <div class="float-left w-100">
                             <%
-                                Registration childArticle = (Registration) pageContext.getAttribute("childRegistration");
-
                                 JournalArticleDisplay childrenArticleDisplay = registrationFormDisplayContext
-                                        .getArticleDisplay(ddmTemplateKey, childArticle.getJournalArticle().getArticleId(), themeDisplay);
+                                        .getArticleDisplay(ddmTemplateKey, childRegistration.getJournalArticle().getArticleId(), themeDisplay);
                             %>
                             <liferay-journal:journal-article-display
                                     articleDisplay="<%= childrenArticleDisplay %>"
@@ -145,13 +134,11 @@
                             <%}%>
                         </div>
                     </div>
-                </c:forEach>
-
+                <% } %>
             </div>
         <% } %>
-    </c:if>
-
-</c:forEach>
+    <% }%>
+<%}%>
 <aui:script use="event, node, aui-base, aui-progressbar">
 
     let removeButtons = document.getElementsByClassName("add-to-cart");

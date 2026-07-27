@@ -4,6 +4,7 @@
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <%@ taglib uri="http://liferay.com/tld/journal" prefix="liferay-journal" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page import="com.liferay.journal.model.JournalArticleDisplay" %>
 <%@ page import="nl.deltares.forms.internal.RegistrationDisplayUtils" %>
 <%@ page import="nl.deltares.portal.model.impl.BusTransfer" %>

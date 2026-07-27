@@ -8,6 +8,9 @@ Import-Package:\
 	nl.deltares.tasks.*,\
 	nl.deltares.common.*,\
 	*
+Provide-Capability:\
+	liferay.language.resources;\
+		resource.bundle.base.name="content.Language"
 Web-ContextPath: /dsd-registration
 -metatype: *
 -sources: true

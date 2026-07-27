@@ -27,25 +27,23 @@
 
 <% } %>
 
-<c:forEach var="registration" items="<%=registrations%>">
-    <%
-        Registration registration = (Registration) pageContext.getAttribute("registration");
-        String articleId = registration.getArticleId();
-        currency = registration.getCurrency();
-        String price;
-        if (registration.getPrice() > 0) {
-            price = String.format("%s %s", currency, currencyInstance.format(registration.getPrice()));
-        } else {
-            price = LanguageUtil.format(locale, "dsd.theme.session.free", java.util.Optional.empty());
-        }
-        List<RegistrationInfo> userRegistrations = registrationsInfo.getUserRegistrations(registration.getArticleId());
-        int quantity = userRegistrations.size();
-        String removeFromCartText = LanguageUtil.get(request, "registrationform.item.remove");
-        String copyFormPreviousText = LanguageUtil.get(request, "registrationform.item.copy");
-        if (first) {
-            srcArticleId = articleId;
-        }
-    %>
+<% for (Registration registration : registrations) {
+    String articleId = registration.getArticleId();
+    currency = registration.getCurrency();
+    String price;
+    if (registration.getPrice() > 0) {
+        price = String.format("%s %s", currency, currencyInstance.format(registration.getPrice()));
+    } else {
+        price = LanguageUtil.format(locale, "dsd.theme.session.free", java.util.Optional.empty());
+    }
+    List<RegistrationInfo> userRegistrations = registrationsInfo.getUserRegistrations(registration.getArticleId());
+    int quantity = userRegistrations.size();
+    String removeFromCartText = LanguageUtil.get(request, "registrationform.item.remove");
+    String copyFormPreviousText = LanguageUtil.get(request, "registrationform.item.copy");
+    if (first) {
+        srcArticleId = articleId;
+    }
+%>
     <div class="row">
         <div class="col-md-12">
             <div class="d-flex">
@@ -127,7 +125,7 @@
                 int counter = 0;
                 String postfix = "";
             %>
-            <c:forEach items="<%=userRegistrations%>" var="registrationInfo">
+            <% for (RegistrationInfo registrationInfo : userRegistrations) { %>
                 <tr>
                     <td>
                         <aui:input
@@ -135,7 +133,7 @@
                                 name='<%="salutation_" + articleId + postfix%>'
                                 data-rownumber="<%=counter%>"
                                 data-articleId="<%=articleId%>"
-                                value='${registrationInfo.salutation}'>
+                                value='<%=registrationInfo.getSalutation()%>'>
                         </aui:input>
                     </td>
                     <td>
@@ -144,7 +142,7 @@
                                 name='<%="firstName_" + articleId + postfix%>'
                                 data-rownumber="<%=counter%>"
                                 data-articleId="<%=articleId%>"
-                                value='${registrationInfo.firstName}'>
+                                value='<%=registrationInfo.getFirstName()%>'>
                         </aui:input>
                     </td>
                     <td>
@@ -153,7 +151,7 @@
                                 name='<%="lastName_" + articleId + postfix%>'
                                 data-rownumber="<%=counter%>"
                                 data-articleId="<%=articleId%>"
-                                value='${registrationInfo.lastName}'>
+                                value='<%=registrationInfo.getLastName()%>'>
                         </aui:input>
                     </td>
                     <td>
@@ -162,7 +160,7 @@
                                 name='<%="email_" + articleId + postfix%>'
                                 data-rownumber="<%=counter%>"
                                 data-articleId="<%=articleId%>"
-                                value='${registrationInfo.email}'>
+                                value='<%=registrationInfo.getEmail()%>'>
                         </aui:input>
                     </td>
                     <td>
@@ -172,7 +170,7 @@
                                 cssClass="remarks"
                                 data-rownumber="<%=counter%>"
                                 data-articleId="<%=articleId%>"
-                                value="${registrationInfo.remarks}"
+                                value='<%=registrationInfo.getRemarks()%>'
                                 label="">
                         </aui:input>
                     </td>
@@ -181,14 +179,14 @@
                     counter++;
                     postfix = "_" + counter;
                 %>
-            </c:forEach>
+            <% } %>
 
             </tbody>
         </table>
 
     </div>
     <% first = false; %>
-</c:forEach>
+<% } %>
 
 <div class="form-group-autofit">
     <div class="col-md-12">
