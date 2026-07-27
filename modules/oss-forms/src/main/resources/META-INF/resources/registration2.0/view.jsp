@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ include file="init.jsp"%>
 
 <portlet:actionURL name="<%= OssConstants.SUBMIT_REGISTER_FORM_URL %>" var="submitRegisterForm"/>
@@ -72,20 +73,20 @@
                             error = e.getMessage();
                         }
                     %>
-                    <c:if test="<%=error != null%>">
+                    <% if (error != null) { %>
                         <liferay-ui:error message="<%= error %>" />
-                    </c:if>
+                    <% } %>
 
-                    <c:if test="<%= checkoutDisplayContext.showControls() %>">
+                    <% if (checkoutDisplayContext.showControls()) { %>
                         <hr style="margin-bottom: 1rem; margin-top: 1rem"/>
-                    <aui:button-row>
-                        <c:if test="<%= Validator.isNotNull(checkoutDisplayContext.getPreviousCheckoutStepName()) %>">
-                            <aui:button cssClass="pull-left btn-primary" href="<%= previousStepURL %>" value="previous" />
-                        </c:if>
+                        <aui:button-row>
+                            <% if (Validator.isNotNull(checkoutDisplayContext.getPreviousCheckoutStepName())) { %>
+                                <aui:button cssClass="pull-left btn-primary" href="<%= previousStepURL %>" value="previous" />
+                            <% } %>
 
-                        <aui:button cssClass="pull-right btn-primary" name="continue" type="submit" value="continue" />
-                    </aui:button-row>
-                    </c:if>
+                            <aui:button cssClass="pull-right btn-primary" name="continue" type="submit" value="continue" />
+                        </aui:button-row>
+                    <% } %>
                 </aui:form>
 
             </c:otherwise>
@@ -94,8 +95,8 @@
 </div>
 <aui:script>
 
-    <c:if test='<%= SessionErrors.contains(request, RegistrationFormException.class) %>'>
-        <%
+    <%
+        if(SessionErrors.contains(request, RegistrationFormException.class)){
             List<RegistrationFormException> errors = (List<RegistrationFormException>) SessionErrors.get(request, RegistrationFormException.class);
             for (RegistrationFormException error : errors) {
                 String message = error.getMessage();
@@ -106,6 +107,8 @@
         <%
             }
         %>
-    </c:if>
+    <%
+        }
+    %>
 
 </aui:script>

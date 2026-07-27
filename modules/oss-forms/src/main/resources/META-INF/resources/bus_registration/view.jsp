@@ -65,10 +65,10 @@
         </aui:row>
     </c:forEach>
 
-    <c:if test="<%=themeDisplay.isSignedIn()%>">
+    <% if (themeDisplay.isSignedIn()) { %>
         <aui:button-row>
             <aui:button type="submit" value="dsd.transfer.save" />
         </aui:button-row>
-    </c:if>
+    <% } %>
 
 </aui:form>

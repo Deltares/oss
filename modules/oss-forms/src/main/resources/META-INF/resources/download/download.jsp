@@ -218,5 +218,7 @@
     document.getElementById(namespace + "use_organization_address").addEventListener('change', function() {
     CommonFormsUtil.updatePaymentAddress(namespace, this.checked);
     });
-    <c:if test='<%= !SessionErrors.isEmpty(liferayPortletRequest) %>'>shoppingCart.clearDownloadsCart()</c:if>
+    <% if (!SessionErrors.isEmpty(liferayPortletRequest)) { %>
+        shoppingCart.clearDownloadsCart();
+    <% } %>
 </aui:script>
