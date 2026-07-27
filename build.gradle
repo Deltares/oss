@@ -55,9 +55,16 @@ task startContainers(
         System.out.println('dockerContainerPrefix: ' + dockerContainerPrefix)
         System.out.println('dockerComposeFilePath: ' + dockerComposeFilePath)
         System.out.println('bundleDir: ' + bundleDir)
+//        exec {
+//            executable 'podman'
+//            args('compose', '-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'up', '--build', '--force-recreate', '-d')
+//            environment('LIFERAY_BUNDLE_DIR', bundleDir)
+//            standardOutput = System.out
+//            errorOutput = System.err
+//        }
         exec {
-            executable 'podman'
-            args('compose', '-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'up', '--build', '--force-recreate', '-d')
+            executable 'docker-compose'
+            args('-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'up', '--build', '--force-recreate', '-d')
             environment('LIFERAY_BUNDLE_DIR', bundleDir)
             standardOutput = System.out
             errorOutput = System.err
@@ -141,10 +148,10 @@ task stopLiferay(
 ) {
     doLast {
         exec {
-//            executable 'docker-compose'
-//            args('-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'down', '--rmi', 'local')
-            executable 'podman'
-            args('compose', '-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'down', '--rmi', 'local')
+            executable 'docker-compose'
+            args('-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'down', '--rmi', 'local')
+//            executable 'podman'
+//            args('compose', '-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'down', '--rmi', 'local')
             standardOutput = System.out
             errorOutput = System.err
         }
@@ -158,11 +165,11 @@ task dumpDB(
 ) {
     doLast {
         exec {
-//            executable 'docker-compose'
-//            args('-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'up', '--build', '--force-recreate', '-d')
-            executable 'podman'
-            args('exec', '-t', "${dockerContainerPrefix}-mariadb-74", 'mysqldump', "-u${dbUser}", "-p${dbPassword}",
-                    '--extended-insert=FALSE', '--no-autocommit', '--opt', "${dbName}")
+            executable 'docker-compose'
+            args('-p', dockerContainerPrefix, '-f', dockerComposeFilePath, 'up', '--build', '--force-recreate', '-d')
+//            executable 'podman'
+//            args('exec', '-t', "${dockerContainerPrefix}-mariadb-74", 'mysqldump', "-u${dbUser}", "-p${dbPassword}",
+//                    '--extended-insert=FALSE', '--no-autocommit', '--opt', "${dbName}")
             standardOutput new FileOutputStream("${projectDir}/docker/resources/dump-${dbName}.sql")
         }
     }
