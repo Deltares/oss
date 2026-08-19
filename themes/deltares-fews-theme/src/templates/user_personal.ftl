@@ -29,11 +29,6 @@
                     </a>
                 </li>
             </#if>
-            <#if user_mailing_url??>
-                <li class="px-3 account-link">
-                    <a class="block text-sm font-sm text-white leading-none" href="${user_mailing_url}">Subscriptions</a>
-                </li>
-            </#if>
             <li class="px-3 border-white border-left">
                 <a class="block text-sm font-sm text-white leading-none" href="${user_signout_url}">Logout</a>
             </li>
