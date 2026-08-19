@@ -72,7 +72,6 @@ public class UtilsTemplateContextContributor implements TemplateContextContribut
         }
         contextObjects.put("is_site_admin", isAdmin);
         contextObjects.put("user_signout_url", themeDisplay.getURLSignOut());
-        contextObjects.put("user_mailing_url", "/subscriptions");
         contextObjects.put("user_account_url", "/account");
         contextObjects.put("user_announcements_url", "/announcements");
 
