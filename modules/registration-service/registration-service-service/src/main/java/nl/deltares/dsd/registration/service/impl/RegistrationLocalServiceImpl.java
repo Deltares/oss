@@ -173,6 +173,41 @@ public class RegistrationLocalServiceImpl
 
     }
 
+    public List<Long> getDistinctEventResourceIds(long companyId, long groupId) {
+
+        Criterion checkCompanyId = PropertyFactoryUtil.forName("companyId").eq(companyId);
+        Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
+
+        DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader())
+                .add(checkCompanyId).add(checkGroupId);
+
+        Projection distinct = ProjectionFactoryUtil.distinct(PropertyFactoryUtil.forName("eventResourcePrimaryKey"));
+        query.setProjection(distinct);
+
+        return RegistrationUtil.getPersistence().findWithDynamicQuery(query);
+    }
+
+    public List<Long> getDistinctRegistrationResourceIds(long companyId, long groupId, long eventResourceId, long userId) {
+
+        Criterion checkCompanyId = PropertyFactoryUtil.forName("companyId").eq(companyId);
+        Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
+
+        DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader())
+                .add(checkCompanyId).add(checkGroupId);
+        if (eventResourceId > 0L) {
+            Criterion checkEventResourceId = PropertyFactoryUtil.forName("eventResourcePrimaryKey").eq(eventResourceId);
+            query.add(checkEventResourceId);
+        }
+        if (userId > 0L) {
+            Criterion checkUserId = PropertyFactoryUtil.forName("userId").eq(userId);
+            query.add(checkUserId);
+        }
+        Projection distinct = ProjectionFactoryUtil.distinct(PropertyFactoryUtil.forName("resourcePrimaryKey"));
+        query.setProjection(distinct);
+
+        return RegistrationUtil.getPersistence().findWithDynamicQuery(query);
+    }
+
     private DynamicQuery getDynamicQuery(long groupId, long resourceId, long userId, Date startDate) {
         Criterion checkUserId = PropertyFactoryUtil.forName("userId").eq(userId);
         Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
@@ -240,7 +275,6 @@ public class RegistrationLocalServiceImpl
 
     public List<Registration> getUserEventRegistrations(long groupId, long userId, long eventResourceId) {
         return RegistrationUtil.findByUserEventRegistrations(groupId, userId, eventResourceId);
-
     }
 
     public List<Registration> getEventRegistrations(long groupId, long eventResourceId) {

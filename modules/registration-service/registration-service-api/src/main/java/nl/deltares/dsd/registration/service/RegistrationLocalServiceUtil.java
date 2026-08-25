@@ -316,6 +316,19 @@ public class RegistrationLocalServiceUtil {
 			groupId, articleResourceId, start, end);
 	}
 
+	public static List<Long> getDistinctEventResourceIds(
+		long companyId, long groupId) {
+
+		return getService().getDistinctEventResourceIds(companyId, groupId);
+	}
+
+	public static List<Long> getDistinctRegistrationResourceIds(
+		long companyId, long groupId, long eventResourceId, long userId) {
+
+		return getService().getDistinctRegistrationResourceIds(
+			companyId, groupId, eventResourceId, userId);
+	}
+
 	public static List<Registration> getEventRegistrations(
 		long groupId, long eventResourceId) {
 

@@ -271,6 +271,13 @@ public interface RegistrationLocalService
 		long groupId, long articleResourceId, int start, int end);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Long> getDistinctEventResourceIds(long companyId, long groupId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Long> getDistinctRegistrationResourceIds(
+		long companyId, long groupId, long eventResourceId, long userId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Registration> getEventRegistrations(
 		long groupId, long eventResourceId);
 

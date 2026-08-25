@@ -355,6 +355,22 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List<Long> getDistinctEventResourceIds(
+		long companyId, long groupId) {
+
+		return _registrationLocalService.getDistinctEventResourceIds(
+			companyId, groupId);
+	}
+
+	@Override
+	public java.util.List<Long> getDistinctRegistrationResourceIds(
+		long companyId, long groupId, long eventResourceId, long userId) {
+
+		return _registrationLocalService.getDistinctRegistrationResourceIds(
+			companyId, groupId, eventResourceId, userId);
+	}
+
+	@Override
 	public java.util.List<nl.deltares.dsd.registration.model.Registration>
 		getEventRegistrations(long groupId, long eventResourceId) {
 
