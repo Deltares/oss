@@ -87,6 +87,10 @@ public class DownloadLocalServiceUtil {
 		return getService().createPersistedModel(primaryKeyObj);
 	}
 
+	public static int deleteAllUserDownloads(long userId) {
+		return getService().deleteAllUserDownloads(userId);
+	}
+
 	/**
 	 * Deletes the download from the database. Also notifies the appropriate model listeners.
 	 *

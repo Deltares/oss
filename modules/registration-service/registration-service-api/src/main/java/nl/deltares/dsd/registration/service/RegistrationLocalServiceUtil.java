@@ -147,6 +147,16 @@ public class RegistrationLocalServiceUtil {
 	}
 
 	/**
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
+	 * @param userId Article Identifier of Event being removed.
+	 */
+	public static int deleteAllUserRegistrations(long userId) {
+		return getService().deleteAllUserRegistrations(userId);
+	}
+
+	/**
 	 * @throws PortalException
 	 */
 	public static PersistedModel deletePersistedModel(

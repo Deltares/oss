@@ -112,6 +112,24 @@ public class RegistrationLocalServiceImpl
      * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
      * that matches 'resourceId'.
      *
+     * @param userId Article Identifier of Event being removed.
+     */
+    public int deleteAllUserRegistrations(long userId) {
+
+        //Remove all registrations with a parentArticleId equal to resourceId
+        DynamicQuery dynamicQuery = dynamicQuery();
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("userId", userId));
+        List<Registration> withDynamicQuery = RegistrationUtil.findWithDynamicQuery(dynamicQuery);
+        for (Registration registration : withDynamicQuery) {
+            RegistrationUtil.removeByUserRegistrations(registration.getGroupId(), registration.getUserId());
+        }
+        return withDynamicQuery.size();
+    }
+
+    /**
+     * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+     * that matches 'resourceId'.
+     *
      * @param groupId         Site Identifier
      * @param eventResourceId Article Identifier of Event being removed.
      */

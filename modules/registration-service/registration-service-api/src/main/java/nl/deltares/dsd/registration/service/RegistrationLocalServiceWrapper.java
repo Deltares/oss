@@ -154,6 +154,17 @@ public class RegistrationLocalServiceWrapper
 	}
 
 	/**
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
+	 * @param userId Article Identifier of Event being removed.
+	 */
+	@Override
+	public int deleteAllUserRegistrations(long userId) {
+		return _registrationLocalService.deleteAllUserRegistrations(userId);
+	}
+
+	/**
 	 * @throws PortalException
 	 */
 	@Override

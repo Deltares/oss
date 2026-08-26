@@ -136,6 +136,14 @@ public interface RegistrationLocalService
 		long groupId, long userId, long eventResourceId);
 
 	/**
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
+	 * @param userId Article Identifier of Event being removed.
+	 */
+	public int deleteAllUserRegistrations(long userId);
+
+	/**
 	 * @throws PortalException
 	 */
 	@Override
