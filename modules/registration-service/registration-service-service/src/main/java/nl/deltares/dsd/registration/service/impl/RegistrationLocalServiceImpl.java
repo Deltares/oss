@@ -126,6 +126,18 @@ public class RegistrationLocalServiceImpl
      * that matches 'resourceId'.
      *
      * @param groupId         Site Identifier
+     * @param registrationResourceId Article Identifier of Event being removed.
+     */
+    public void deleteAllRegistrations(long groupId, long registrationResourceId) {
+
+        //Remove all registrations with a parentArticleId equal to resourceId
+        RegistrationUtil.removeByArticleRegistrations(groupId, registrationResourceId);
+    }
+    /**
+     * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+     * that matches 'resourceId'.
+     *
+     * @param groupId         Site Identifier
      * @param userId          User id
      * @param eventResourceId Article Identifier of Event being removed.
      */

@@ -25,17 +25,14 @@
 <span id="<portlet:namespace/>group-message-block"></span>
 <aui:fieldset label="table.registration.title" collapsible="true">
 
-    <portlet:renderURL var="viewURL">
-        <portlet:param name="mvcPath" value="/registrationTable.jsp"/>
-    </portlet:renderURL>
-
     <liferay-portlet:renderURL varImpl="iteratorURL">
         <portlet:param name="filterEmailValue" value="<%=filterEmailValue%>"/>
         <portlet:param name="filterEventValue" value="<%=filterEventValue%>"/>
         <portlet:param name="filterRegistrationValue" value="<%=filterRegistrationValue%>"/>
     </liferay-portlet:renderURL>
 
-    <portlet:actionURL name="filter" var="filterTableURL"/>
+    <portlet:actionURL name="filterEmail" var="filterEmailURL"/>
+    <portlet:actionURL name="filterSelections" var="filterSelectionURL"/>
 
     <liferay-ui:success key="action-success" message="">
         <liferay-ui:message key="action-success"
@@ -51,16 +48,27 @@
                             arguments='<%= SessionErrors.get(liferayPortletRequest, "filter-failed") %>'/>
     </liferay-ui:error>
 
-    <aui:form action="<%=filterTableURL%>" name="<portlet:namespace />filterForm">
+    <aui:form action="<%=filterEmailURL%>" name="filterEmailForm">
+        <!-- Hidden field to indicate which action was triggered. The id is namespaced for uniqueness on the page. -->
         <aui:fieldset>
             <aui:row>
                 <aui:col width="20">
                     <div class="control-label"><liferay-ui:message key="table.filter.email.label"/></div>
                 </aui:col>
-                <aui:col width="80">
+                <aui:col width="70">
                     <aui:input name="filterEmailValue" label="" value="<%=filterEmailValue%>"/>
                 </aui:col>
+                <aui:col width="10">
+                    <aui:button-row>
+                        <aui:button type="submit" value="table.filter.button" cssClass="float-right" />
+                    </aui:button-row>
+                </aui:col>
             </aui:row>
+        </aui:fieldset>
+    </aui:form>
+    <aui:form action="<%=filterSelectionURL%>" name="filterSelectionForm">
+        <!-- Hidden field to indicate which action was triggered. The id is namespaced for uniqueness on the page. -->
+        <aui:fieldset>
             <aui:row>
                 <aui:col width="20">
                     <div class="control-label"><liferay-ui:message key="table.filter.selection.label"/></div>
@@ -78,7 +86,7 @@
                     </aui:select>
                 </aui:col>
                 <aui:col width="40">
-                    <aui:select name="filterRegistrationValue" label="Registration" value="<%=filterRegistrationValue%>">
+                    <aui:select name="filterRegistrationValue" label="Registration" value="<%=filterRegistrationValue%>" onChange="submit()" >
                         <aui:option value="0">Select...</aui:option>
                         <%
                             for (Map.Entry<Long, String> registrationInfo : registrationTitles.entrySet()) {
@@ -90,12 +98,16 @@
                     </aui:select>
                 </aui:col>
             </aui:row>
-            <aui:button-row>
-                <aui:button type="submit" value="table.filter.button"/>
-                <aui:button type="submit" onClick="<%= viewURL %>" value="table.filter.clear"/>
-            </aui:button-row>
+
         </aui:fieldset>
     </aui:form>
+    <aui:button-row>
+        <%--    Don't pass filter values so filter fields will be emptied.--%>
+        <portlet:renderURL var="clearFilterURL">
+            <portlet:param name="mvcPath" value="/registrationTable.jsp"/>
+        </portlet:renderURL>
+        <aui:button type="submit" value="table.filter.clear" href="<%=clearFilterURL%>"/>
+    </aui:button-row>
     <hr>
     <aui:form>
         <jsp:useBean id="records" type="java.util.List" scope="request"/>
@@ -135,6 +147,7 @@
                             <portlet:param name="filterEventValue" value="<%=filterEventValue%>"/>
                             <portlet:param name="filterRegistrationValue" value="<%=filterRegistrationValue%>"/>
                         </portlet:actionURL>
+
                         <aui:button name="editButton" type="submit" value="Edit" href="<%=editRegistrationURL%>"/>
                         <aui:button name="deleteButton" type="submit" cssClass="deleteButton" value="Delete"
                                     href="<%=deleteRegistrationURL%>"/>

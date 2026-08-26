@@ -58,7 +58,7 @@ public class RegistrationTablePortlet extends MVCPortlet {
 
         final int curPage = ParamUtil.getInteger(renderRequest, "cur", 1);
         final int deltas = ParamUtil.getInteger(renderRequest, "delta", 25);
-        final String filterEmailValue = ParamUtil.getString(renderRequest, "filterEmailValue", null);
+        final String filterEmailValue = ParamUtil.getString(renderRequest, "filterEmailValue", "");
         final long filterEventValue = Long.parseLong(ParamUtil.getString(renderRequest, "filterEventValue", "0"));
         final long filterRegistrationValue = Long.parseLong(ParamUtil.getString(renderRequest, "filterRegistrationValue", "0"));
         final String path = ParamUtil.getString(renderRequest, "mvcPath", null);
@@ -69,9 +69,15 @@ public class RegistrationTablePortlet extends MVCPortlet {
             doFilterValues(filterEmailValue, filterEventValue, filterRegistrationValue, curPage, deltas, renderRequest);
         }
 
-        if (filterEmailValue != null) renderRequest.setAttribute("filterEmailValue", filterEmailValue);
-        if (filterRegistrationValue > 0) renderRequest.setAttribute("filterRegistrationValue", String.valueOf(filterRegistrationValue));
-        if (filterEventValue > 0) renderRequest.setAttribute("filterEventValue", String.valueOf(filterEventValue));
+        if (filterEmailValue.isEmpty()) {
+            renderRequest.setAttribute("filterEmailValue", "");
+            renderRequest.setAttribute("filterRegistrationValue", String.valueOf(filterRegistrationValue));
+            renderRequest.setAttribute("filterEventValue", String.valueOf(filterEventValue));
+        } else {
+            renderRequest.setAttribute("filterEmailValue", filterEmailValue);
+            renderRequest.setAttribute("filterRegistrationValue", "0");
+            renderRequest.setAttribute("filterEventValue", "0");
+        }
 
         super.render(renderRequest, renderResponse);
     }
@@ -272,15 +278,48 @@ public class RegistrationTablePortlet extends MVCPortlet {
      * @param actionResponse Filter response
      */
     @SuppressWarnings("unused")
-    public void filter(ActionRequest actionRequest, ActionResponse actionResponse) {
+    public void filterEmail(ActionRequest actionRequest, ActionResponse actionResponse) {
 
-        final String selectedEmail = ParamUtil.getString(actionRequest, "filterEmailValue", null);
-        final String filterEventValue = ParamUtil.getString(actionRequest, "filterEventValue", null);
-        final String filterRegistrationValue = ParamUtil.getString(actionRequest, "filterRegistrationValue", null);
+        final String selectedEmail = ParamUtil.getString(actionRequest, "filterEmailValue", "");
 
-        actionResponse.getRenderParameters().setValue("filterEmailValue", selectedEmail);
-        actionResponse.getRenderParameters().setValue("filterEventValue", selectedEmail);
-        actionResponse.getRenderParameters().setValue("filterRegistrationValue", selectedEmail);
+        if ( !selectedEmail.isEmpty() ) {
+            RenderURL redirectURL = actionResponse.createRedirectURL(MimeResponse.Copy.ALL);
+            redirectURL.getRenderParameters().setValue("filterEmailValue", selectedEmail);
+            redirectURL.getRenderParameters().setValue("filterEventValue", "0");
+            redirectURL.getRenderParameters().setValue("filterRegistrationValue", "0");
+
+            try {
+                actionResponse.sendRedirect(redirectURL.toString());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    /**
+     * Pass the selected filter options to the render request
+     *
+     * @param actionRequest  Filter action
+     * @param actionResponse Filter response
+     */
+    @SuppressWarnings("unused")
+    public void filterSelections(ActionRequest actionRequest, ActionResponse actionResponse) {
+
+        final String selectedEventValue = ParamUtil.getString(actionRequest, "filterEventValue", "");
+        final String selectedRegistrationValue = ParamUtil.getString(actionRequest, "filterRegistrationValue", "");
+
+        if ( !selectedEventValue.isEmpty() ) {
+            RenderURL redirectURL = actionResponse.createRedirectURL(MimeResponse.Copy.ALL);
+            redirectURL.getRenderParameters().setValue("filterEmailValue", "");
+            redirectURL.getRenderParameters().setValue("filterEventValue", selectedEventValue);
+            redirectURL.getRenderParameters().setValue("filterRegistrationValue", selectedRegistrationValue);
+
+            try {
+                actionResponse.sendRedirect(redirectURL.toString());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     /**

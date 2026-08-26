@@ -108,6 +108,16 @@ public interface RegistrationLocalService
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
+	 * @param groupId         Site Identifier
+	 * @param registrationResourceId Article Identifier of Event being removed.
+	 */
+	public void deleteAllRegistrations(
+		long groupId, long registrationResourceId);
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
 	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
 	 */
