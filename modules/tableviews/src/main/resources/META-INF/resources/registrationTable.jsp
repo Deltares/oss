@@ -9,30 +9,31 @@
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionMessages" %>
 <%@ page import="com.liferay.portal.kernel.dao.search.RowChecker" %>
+<%@ page import="java.util.Map" %>
 <liferay-theme:defineObjects/>
 
 <portlet:defineObjects/>
 
 <%
     final Integer count = (Integer) request.getAttribute("total");
-    final String filterValue = (String) request.getAttribute("filterValue");
-    final String filterSelection = (String) request.getAttribute("filterSelection");
+    final String filterEmailValue = (String) request.getAttribute("filterEmailValue");
+    final String filterEventValue = (String) request.getAttribute("filterEventValue");
+    final String filterRegistrationValue = (String) request.getAttribute("filterRegistrationValue");
+    final Map<Long, String> eventTitles = (Map) request.getAttribute("eventTitles");
+    final Map<Long, String> registrationTitles = (Map) request.getAttribute("registrationTitles");
 
 %>
-<aui:input name="runningProcess" type="hidden"/>
 <span id="<portlet:namespace/>group-message-block"></span>
 <aui:fieldset label="table.registration.title" collapsible="true">
 
-    <portlet:renderURL var="viewURL">
-        <portlet:param name="mvcPath" value="/registrationTable.jsp" />
-    </portlet:renderURL>
-
     <liferay-portlet:renderURL varImpl="iteratorURL">
-        <portlet:param name="filterValue" value="<%=filterValue%>" />
-        <portlet:param name="filterSelection" value="<%= filterSelection %>" />
+        <portlet:param name="filterEmailValue" value="<%=filterEmailValue%>"/>
+        <portlet:param name="filterEventValue" value="<%=filterEventValue%>"/>
+        <portlet:param name="filterRegistrationValue" value="<%=filterRegistrationValue%>"/>
     </liferay-portlet:renderURL>
 
-    <portlet:actionURL name="filter" var="filterTableURL" />
+    <portlet:actionURL name="filterEmail" var="filterEmailURL"/>
+    <portlet:actionURL name="filterSelections" var="filterSelectionURL"/>
 
     <liferay-ui:success key="action-success" message="">
         <liferay-ui:message key="action-success"
@@ -48,84 +49,109 @@
                             arguments='<%= SessionErrors.get(liferayPortletRequest, "filter-failed") %>'/>
     </liferay-ui:error>
 
-    <aui:form action="<%=filterTableURL%>" name="<portlet:namespace />filterForm" >
+    <aui:form action="<%=filterEmailURL%>" name="filterEmailForm">
+        <!-- Hidden field to indicate which action was triggered. The id is namespaced for uniqueness on the page. -->
         <aui:fieldset>
             <aui:row>
                 <aui:col width="20">
-                    <div class="control-label"><liferay-ui:message key="table.filter.label"/></div>
+                    <div class="control-label"><liferay-ui:message key="table.filter.email.label"/></div>
                 </aui:col>
-                <aui:col width="20">
-                    <aui:input name="filterValue" label="" value="<%=filterValue%>"/>
+                <aui:col width="70">
+                    <aui:input name="filterEmailValue" label="" value="<%=filterEmailValue%>"/>
                 </aui:col>
-                <aui:col width="50">
-                    <div class="d-flex justify-content-start">
-                        <div class="pr-3">
-                            <aui:input
-                                    name="filterSelection"
-                                    label="E-mail"
-                                    type="radio"
-                                    value="email"
-                                    checked='<%="email".equals(filterSelection)%>'/>
-                        </div>
-                        <div class="pr-3">
-                            <aui:input
-                                    name="filterSelection"
-                                    label="Resource ID"
-                                    type="radio"
-                                    value="resourceid"
-                                    checked='<%="resourceid".equals(filterSelection)%>'/>
-                        </div>
-                        <div class="pr-3">
-                            <aui:input
-                                    name="filterSelection"
-                                    label="Event Resource ID"
-                                    type="radio"
-                                    value="eventid"
-                                    checked='<%="eventid".equals(filterSelection)%>'/>
-                        </div>
-                    </div>
-                </aui:col>
-                <aui:col width="20">
-                    <aui:button type="submit" value="table.filter.button" />
-                    <aui:button type="submit" onClick="<%= viewURL %>" value="table.filter.clear"/>
+                <aui:col width="10">
+                    <aui:button-row>
+                        <aui:button type="submit" value="table.filter.button" cssClass="float-right" />
+                    </aui:button-row>
                 </aui:col>
             </aui:row>
         </aui:fieldset>
     </aui:form>
+    <aui:form action="<%=filterSelectionURL%>" name="filterSelectionForm">
+        <!-- Hidden field to indicate which action was triggered. The id is namespaced for uniqueness on the page. -->
+        <aui:fieldset>
+            <aui:row>
+                <aui:col width="20">
+                    <div class="control-label"><liferay-ui:message key="table.filter.selection.label"/></div>
+                </aui:col>
+                <aui:col width="40">
+                    <aui:select name="filterEventValue" label="Event" value="<%=filterEventValue%>" onChange="submit()">
+                        <aui:option value="0">Select...</aui:option>
+                        <%
+                            for (Map.Entry<Long, String> eventInfo : eventTitles.entrySet()) {
+                        %>
+                        <aui:option value="<%=eventInfo.getKey()%>" label="<%=eventInfo.getValue()%>"/>
+                        <%
+                            }
+                        %>
+                    </aui:select>
+                </aui:col>
+                <aui:col width="40">
+                    <aui:select name="filterRegistrationValue" label="Registration" value="<%=filterRegistrationValue%>" onChange="submit()" >
+                        <aui:option value="0">Select...</aui:option>
+                        <%
+                            for (Map.Entry<Long, String> registrationInfo : registrationTitles.entrySet()) {
+                        %>
+                        <aui:option value="<%=registrationInfo.getKey()%>" label="<%=registrationInfo.getValue()%>"/>
+                        <%
+                            }
+                        %>
+                    </aui:select>
+                </aui:col>
+            </aui:row>
+        </aui:fieldset>
+    </aui:form>
+    <aui:button-row>
+        <%--    Don't pass filter values so filter fields will be emptied.--%>
+        <portlet:renderURL var="clearFilterURL">
+            <portlet:param name="mvcPath" value="/registrationTable.jsp"/>
+        </portlet:renderURL>
+        <aui:button type="submit" value="table.filter.clear" href="<%=clearFilterURL%>"/>
+    </aui:button-row>
     <hr>
-    <aui:form >
+    <aui:form>
         <jsp:useBean id="records" type="java.util.List" scope="request"/>
 
-        <liferay-ui:search-container id="tableResults" iteratorURL="<%= iteratorURL %>" delta="25" emptyResultsMessage='<%=LanguageUtil.get(locale, "no-registration-records")%>'
-                                     total="<%=count%>" rowChecker="<%= new RowChecker(renderResponse) %>" >
-            <liferay-ui:search-container-results results="<%= records %>" />
+        <liferay-ui:search-container id="tableResults" iteratorURL="<%= iteratorURL %>" delta="25"
+                                     emptyResultsMessage='<%=LanguageUtil.get(locale, "no-registration-records")%>'
+                                     total="<%=count%>" rowChecker="<%= new RowChecker(renderResponse) %>">
+            <liferay-ui:search-container-results results="<%= records %>"/>
 
             <liferay-ui:search-container-row
                     className="nl.deltares.tableview.model.DisplayRegistration"
                     modelVar="entry"
             >
-                <liferay-ui:search-container-column-text property="eventName" name="Event" orderable="true" orderableProperty="eventName"/>
-                <liferay-ui:search-container-column-text property="registrationName" name="Registration" orderable="true" orderableProperty="registrationName"/>
-                <liferay-ui:search-container-column-text property="email" name="E-Mail" orderable="true" orderableProperty="email"/>
-                <liferay-ui:search-container-column-text property="startTime" name="Start (GMT)" orderable="true" orderableProperty="startTime"/>
-                <liferay-ui:search-container-column-text property="endTime" name="End (GMT)" orderable="true" orderableProperty="endTime"/>
-                <liferay-ui:search-container-column-text property="eventResourceId" name="Event Resource ID" orderable="true" orderableProperty="eventResourceId"/>
-                <liferay-ui:search-container-column-text property="resourceId" name="Resource ID" orderable="true" orderableProperty="resourceId"/>
-                <%--                <liferay-ui:search-container-column-text property="preferences" name="Prefferences"/>--%>
+                <liferay-ui:search-container-column-text property="eventName" name="Event" orderable="true"
+                                                         orderableProperty="eventName"/>
+                <liferay-ui:search-container-column-text property="registrationName" name="Registration"
+                                                         orderable="true" orderableProperty="registrationName"/>
+                <liferay-ui:search-container-column-text property="email" name="E-Mail" orderable="true"
+                                                         orderableProperty="email"/>
+                <liferay-ui:search-container-column-text property="startTime" name="Start (GMT)" orderable="true"
+                                                         orderableProperty="startTime"/>
+                <liferay-ui:search-container-column-text property="endTime" name="End (GMT)" orderable="true"
+                                                         orderableProperty="endTime"/>
                 <liferay-ui:search-container-column-text name="Actions">
                     <aui:button-row>
                         <portlet:renderURL var="editRegistrationURL">
-                            <portlet:param name="mvcPath" value="/editRegistration.jsp" />
+                            <portlet:param name="mvcPath" value="/editRegistration.jsp"/>
                             <portlet:param name="recordId" value="${entry.getRecordId()}"/>
-                            <portlet:param name="filterEmail" value="${entry.getEmail()}"/>
+                            <portlet:param name="editEmailValue" value="${entry.getEmail()}"/>
+                            <portlet:param name="filterEmailValue" value="<%=filterEmailValue%>"/>
+                            <portlet:param name="filterEventValue" value="<%=filterEventValue%>"/>
+                            <portlet:param name="filterRegistrationValue" value="<%=filterRegistrationValue%>"/>
                         </portlet:renderURL>
                         <portlet:actionURL var="deleteRegistrationURL" name="delete">
                             <portlet:param name="recordId" value="${entry.getRecordId()}"/>
-                            <portlet:param name="filterEmail" value="${entry.getEmail()}"/>
+                            <portlet:param name="filterEmailValue" value="<%=filterEmailValue%>"/>
+                            <portlet:param name="filterEventValue" value="<%=filterEventValue%>"/>
+                            <portlet:param name="filterRegistrationValue" value="<%=filterRegistrationValue%>"/>
                         </portlet:actionURL>
+
                         <aui:button name="editButton" type="submit" value="Edit" href="<%=editRegistrationURL%>"/>
-                        <aui:button name="deleteButton" type="submit" cssClass="deleteButton" value="Delete" href="<%=deleteRegistrationURL%>"  />
-                   </aui:button-row>
+                        <aui:button name="deleteButton" type="submit" cssClass="deleteButton" value="Delete"
+                                    href="<%=deleteRegistrationURL%>"/>
+                    </aui:button-row>
                 </liferay-ui:search-container-column-text>
             </liferay-ui:search-container-row>
             <liferay-ui:search-iterator/>
@@ -142,7 +168,7 @@
 
     let deleteButtons = document.getElementsByClassName("deleteButton");
     Array.from(deleteButtons).forEach(function (button) {
-        button.addEventListener('click', function (event){
+        button.addEventListener('click', function (event) {
             if (confirm("You are about to delete this registration.\nDo you want to continue?") === false) {
                 event.preventDefault();
             }

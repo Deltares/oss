@@ -6,6 +6,7 @@ import com.liferay.account.service.AccountEntryUserRelLocalService;
 import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.expando.kernel.model.ExpandoValue;
 import com.liferay.expando.kernel.service.ExpandoValueLocalService;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
@@ -13,7 +14,9 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.*;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.service.*;
+import nl.deltares.portal.configuration.SiteMapConfiguration;
 import nl.deltares.portal.model.AccountInfo;
 import nl.deltares.portal.model.AddressInfo;
 import nl.deltares.portal.utils.AccountUtils;
@@ -228,6 +231,28 @@ public class AccountUtilsImpl implements AccountUtils {
         return address;
     }
 
+    @Override
+    public int deleteUserPersonalAccount(String screenName) {
+
+        String externalReferenceCode = PERSONAL_ACCOUNT_PREFIX + screenName;
+        long companyId = 101331;
+        try {
+            SiteMapConfiguration _configuration = _configurationProvider.getSystemConfiguration(SiteMapConfiguration.class);
+            companyId = _configuration.accountsCompanyId();
+        } catch (ConfigurationException e) {
+            //
+        }
+        AccountEntry accountEntry = _accountEntryLocalService.fetchAccountEntryByExternalReferenceCode(externalReferenceCode, companyId);
+        if  (accountEntry == null) return 0;
+
+        try {
+            _accountEntryLocalService.deleteAccountEntry(accountEntry.getAccountEntryId());
+        } catch (PortalException e) {
+            return 0;
+        }
+        return 1;
+    }
+
     @Reference
     private AccountEntryLocalService _accountEntryLocalService;
 
@@ -248,5 +273,8 @@ public class AccountUtilsImpl implements AccountUtils {
 
     @Reference
     private UserLocalService _userLocalService;
+
+    @Reference
+    private ConfigurationProvider _configurationProvider;
 }
 

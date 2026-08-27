@@ -16,6 +16,7 @@
     final DisplayRegistration displayRegistration = (DisplayRegistration) request.getAttribute("record");
     String recordId = "";
     String registrationId = "";
+    String eventRegistrationId = "";
     String registrationName = "";
     String eventName = "";
     String email = "";
@@ -25,6 +26,8 @@
         registrationName = displayRegistration.getRegistrationName();
         eventName = displayRegistration.getEventName();
         email = displayRegistration.getEmail();
+        registrationId = String.valueOf(displayRegistration.getResourceId());
+        eventRegistrationId = String.valueOf(displayRegistration.getEventResourceId());
         preferences = displayRegistration.getPreferences();
     }
 
@@ -35,11 +38,16 @@
 
     <portlet:renderURL var="viewURL">
         <portlet:param name="mvcPath" value="/registrationTable.jsp"/>
-        <portlet:param name="filterEmail" value="<%=email%>"/>
+        <portlet:param name="filterEmailValue" value="<%=email%>"/>
+        <portlet:param name="filterEventValue" value="<%=eventRegistrationId%>"/>
+        <portlet:param name="filterRegistrationValue" value="<%=registrationId%>"/>
+
     </portlet:renderURL>
 
     <portlet:actionURL name="save" var="saveRegistrationURL">
-        <portlet:param name="filterEmail" value="<%=email%>"/>
+        <portlet:param name="filterEmailValue" value="<%=email%>"/>
+        <portlet:param name="filterEventValue" value="<%=eventRegistrationId%>"/>
+        <portlet:param name="filterRegistrationValue" value="<%=registrationId%>"/>
         <portlet:param name="recordId" value="<%=recordId%>"/>
     </portlet:actionURL>
 

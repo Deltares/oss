@@ -1,6 +1,6 @@
 Bundle-Name: tableviews
 Bundle-SymbolicName: nl.deltares.tableview.portlet
-Bundle-Version: 2.0.0
+Bundle-Version: 2.0.1
 Provide-Capability:\
 	liferay.language.resources;\
 		resource.bundle.base.name="content.Language"
