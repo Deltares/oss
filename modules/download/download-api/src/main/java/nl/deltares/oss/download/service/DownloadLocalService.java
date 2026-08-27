@@ -90,6 +90,8 @@ public interface DownloadLocalService
 	public PersistedModel createPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
+	public int deleteAllUserDownloads(long userId);
+
 	/**
 	 * Deletes the download from the database. Also notifies the appropriate model listeners.
 	 *
@@ -302,3 +304,4 @@ public interface DownloadLocalService
 	public Download updateDownload(Download download);
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:46977407

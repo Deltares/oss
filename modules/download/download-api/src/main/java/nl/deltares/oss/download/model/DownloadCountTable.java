@@ -37,3 +37,4 @@ public class DownloadCountTable extends BaseTable<DownloadCountTable> {
 	}
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-6756049

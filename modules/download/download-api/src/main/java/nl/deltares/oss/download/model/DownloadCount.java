@@ -50,3 +50,4 @@ public interface DownloadCount extends DownloadCountModel, PersistedModel {
 		};
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-508704173

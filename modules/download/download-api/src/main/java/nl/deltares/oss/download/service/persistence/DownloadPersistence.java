@@ -46,7 +46,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns a range of all the downloads where groupId = &#63; and downloadId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -62,7 +62,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns an ordered range of all the downloads where groupId = &#63; and downloadId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -81,7 +81,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns an ordered range of all the downloads where groupId = &#63; and downloadId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -125,50 +125,6 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 		long groupId, long downloadId,
 		com.liferay.portal.kernel.util.OrderByComparator<Download>
 			orderByComparator);
-
-	/**
-	 * Returns the last download in the ordered set where groupId = &#63; and downloadId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param downloadId the download ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching download
-	 * @throws NoSuchDownloadException if a matching download could not be found
-	 */
-	public Download findByDownloads_Last(
-			long groupId, long downloadId,
-			com.liferay.portal.kernel.util.OrderByComparator<Download>
-				orderByComparator)
-		throws NoSuchDownloadException;
-
-	/**
-	 * Returns the last download in the ordered set where groupId = &#63; and downloadId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param downloadId the download ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching download, or <code>null</code> if a matching download could not be found
-	 */
-	public Download fetchByDownloads_Last(
-		long groupId, long downloadId,
-		com.liferay.portal.kernel.util.OrderByComparator<Download>
-			orderByComparator);
-
-	/**
-	 * Returns the downloads before and after the current download in the ordered set where groupId = &#63; and downloadId = &#63;.
-	 *
-	 * @param id the primary key of the current download
-	 * @param groupId the group ID
-	 * @param downloadId the download ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next download
-	 * @throws NoSuchDownloadException if a download with the primary key could not be found
-	 */
-	public Download[] findByDownloads_PrevAndNext(
-			long id, long groupId, long downloadId,
-			com.liferay.portal.kernel.util.OrderByComparator<Download>
-				orderByComparator)
-		throws NoSuchDownloadException;
 
 	/**
 	 * Removes all the downloads where groupId = &#63; and downloadId = &#63; from the database.
@@ -259,7 +215,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns a range of all the downloads where groupId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -275,7 +231,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns an ordered range of all the downloads where groupId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -294,7 +250,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns an ordered range of all the downloads where groupId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -340,50 +296,6 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 			orderByComparator);
 
 	/**
-	 * Returns the last download in the ordered set where groupId = &#63; and userId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching download
-	 * @throws NoSuchDownloadException if a matching download could not be found
-	 */
-	public Download findByUserDownloads_Last(
-			long groupId, long userId,
-			com.liferay.portal.kernel.util.OrderByComparator<Download>
-				orderByComparator)
-		throws NoSuchDownloadException;
-
-	/**
-	 * Returns the last download in the ordered set where groupId = &#63; and userId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching download, or <code>null</code> if a matching download could not be found
-	 */
-	public Download fetchByUserDownloads_Last(
-		long groupId, long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<Download>
-			orderByComparator);
-
-	/**
-	 * Returns the downloads before and after the current download in the ordered set where groupId = &#63; and userId = &#63;.
-	 *
-	 * @param id the primary key of the current download
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next download
-	 * @throws NoSuchDownloadException if a download with the primary key could not be found
-	 */
-	public Download[] findByUserDownloads_PrevAndNext(
-			long id, long groupId, long userId,
-			com.liferay.portal.kernel.util.OrderByComparator<Download>
-				orderByComparator)
-		throws NoSuchDownloadException;
-
-	/**
 	 * Removes all the downloads where groupId = &#63; and userId = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -412,7 +324,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns a range of all the downloads where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -427,7 +339,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns an ordered range of all the downloads where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -445,7 +357,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns an ordered range of all the downloads where groupId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -486,47 +398,6 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 		long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<Download>
 			orderByComparator);
-
-	/**
-	 * Returns the last download in the ordered set where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching download
-	 * @throws NoSuchDownloadException if a matching download could not be found
-	 */
-	public Download findByGroupDownloads_Last(
-			long groupId,
-			com.liferay.portal.kernel.util.OrderByComparator<Download>
-				orderByComparator)
-		throws NoSuchDownloadException;
-
-	/**
-	 * Returns the last download in the ordered set where groupId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching download, or <code>null</code> if a matching download could not be found
-	 */
-	public Download fetchByGroupDownloads_Last(
-		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<Download>
-			orderByComparator);
-
-	/**
-	 * Returns the downloads before and after the current download in the ordered set where groupId = &#63;.
-	 *
-	 * @param id the primary key of the current download
-	 * @param groupId the group ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next download
-	 * @throws NoSuchDownloadException if a download with the primary key could not be found
-	 */
-	public Download[] findByGroupDownloads_PrevAndNext(
-			long id, long groupId,
-			com.liferay.portal.kernel.util.OrderByComparator<Download>
-				orderByComparator)
-		throws NoSuchDownloadException;
 
 	/**
 	 * Removes all the downloads where groupId = &#63; from the database.
@@ -604,7 +475,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns a range of all the downloads.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of downloads
@@ -617,7 +488,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns an ordered range of all the downloads.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of downloads
@@ -634,7 +505,7 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	 * Returns an ordered range of all the downloads.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>DownloadModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.oss.download.model.impl.DownloadModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of downloads
@@ -662,3 +533,4 @@ public interface DownloadPersistence extends BasePersistence<Download> {
 	public int countAll();
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:1274807696

@@ -357,3 +357,4 @@ public class DownloadCountLocalServiceWrapper
 	private DownloadCountLocalService _downloadCountLocalService;
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-643077308

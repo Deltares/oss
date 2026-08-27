@@ -453,3 +453,4 @@ public class DownloadWrapper
 	}
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-796880431

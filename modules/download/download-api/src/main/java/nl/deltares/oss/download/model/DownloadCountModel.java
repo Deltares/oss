@@ -125,3 +125,4 @@ public interface DownloadCountModel
 	}
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-36807763

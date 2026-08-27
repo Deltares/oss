@@ -265,3 +265,4 @@ public interface DownloadCountLocalService
 	public DownloadCount updateDownloadCount(DownloadCount downloadCount);
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-1692425691

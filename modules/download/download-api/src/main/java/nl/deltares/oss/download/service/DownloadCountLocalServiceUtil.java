@@ -9,6 +9,7 @@ import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.module.service.Snapshot;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
 import java.io.Serializable;
@@ -298,13 +299,13 @@ public class DownloadCountLocalServiceUtil {
 	}
 
 	public static DownloadCountLocalService getService() {
-		return _service;
+		return _serviceSnapshot.get();
 	}
 
-	public static void setService(DownloadCountLocalService service) {
-		_service = service;
-	}
-
-	private static volatile DownloadCountLocalService _service;
+	private static final Snapshot<DownloadCountLocalService> _serviceSnapshot =
+		new Snapshot<>(
+			DownloadCountLocalServiceUtil.class,
+			DownloadCountLocalService.class);
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:1588456609

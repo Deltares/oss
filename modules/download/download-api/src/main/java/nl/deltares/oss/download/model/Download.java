@@ -48,3 +48,4 @@ public interface Download extends DownloadModel, PersistedModel {
 		};
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-1093380071

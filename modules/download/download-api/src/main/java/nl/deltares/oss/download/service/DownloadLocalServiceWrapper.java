@@ -89,6 +89,11 @@ public class DownloadLocalServiceWrapper
 		return _downloadLocalService.createPersistedModel(primaryKeyObj);
 	}
 
+	@Override
+	public int deleteAllUserDownloads(long userId) {
+		return _downloadLocalService.deleteAllUserDownloads(userId);
+	}
+
 	/**
 	 * Deletes the download from the database. Also notifies the appropriate model listeners.
 	 *
@@ -452,3 +457,4 @@ public class DownloadLocalServiceWrapper
 	private DownloadLocalService _downloadLocalService;
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-952919049

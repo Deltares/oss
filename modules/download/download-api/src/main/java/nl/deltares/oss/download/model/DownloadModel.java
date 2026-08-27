@@ -257,3 +257,4 @@ public interface DownloadModel extends BaseModel<Download>, ShardedModel {
 	}
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-1665693078
