@@ -38,4 +38,6 @@ public interface AccountUtils {
             return new String[]{domains};
         }
     }
+
+    int deleteUserPersonalAccount(String  screenName);
 }
