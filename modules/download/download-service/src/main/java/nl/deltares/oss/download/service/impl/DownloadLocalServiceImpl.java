@@ -158,5 +158,14 @@ public class DownloadLocalServiceImpl extends DownloadLocalServiceBaseImpl {
         return dynamicQuery;
     }
 
+    public int deleteAllUserDownloads(long userId){
+        DynamicQuery dynamicQuery = dynamicQuery();
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("userId", userId));
+        List<Download> withDynamicQuery = DownloadUtil.findWithDynamicQuery(dynamicQuery);
+        for (Download download : withDynamicQuery) {
+            DownloadUtil.removeByDownloads(download.getGroupId(), download.getDownloadId());
+        }
+        return withDynamicQuery.size();
+    }
 
-}
+    }

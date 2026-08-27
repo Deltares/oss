@@ -132,3 +132,4 @@ public class DownloadModelArgumentsResolver implements ArgumentsResolver {
 	}
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-1451933960

@@ -39,3 +39,4 @@ public abstract class DownloadCountBaseImpl
 	}
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:2112082655

@@ -237,3 +237,4 @@ public class DownloadCacheModel
 	public String licenseDownloadUrl;
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:1773717055

@@ -117,3 +117,4 @@ public class DownloadCountCacheModel
 	public int count;
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-1031717972

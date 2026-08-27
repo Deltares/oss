@@ -84,7 +84,6 @@ public class DownloadCountPersistenceImpl
 	private FinderPath _finderPathWithoutPaginationFindAll;
 	private FinderPath _finderPathCountAll;
 	private FinderPath _finderPathFetchByDownloadCountByGroup;
-	private FinderPath _finderPathCountByDownloadCountByGroup;
 
 	/**
 	 * Returns the download count where groupId = &#63; and downloadId = &#63; or throws a <code>NoSuchDownloadCountException</code> if it could not be found.
@@ -258,49 +257,14 @@ public class DownloadCountPersistenceImpl
 	 */
 	@Override
 	public int countByDownloadCountByGroup(long groupId, long downloadId) {
-		FinderPath finderPath = _finderPathCountByDownloadCountByGroup;
+		DownloadCount downloadCount = fetchByDownloadCountByGroup(
+			groupId, downloadId);
 
-		Object[] finderArgs = new Object[] {groupId, downloadId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(3);
-
-			sb.append(_SQL_COUNT_DOWNLOADCOUNT_WHERE);
-
-			sb.append(_FINDER_COLUMN_DOWNLOADCOUNTBYGROUP_GROUPID_2);
-
-			sb.append(_FINDER_COLUMN_DOWNLOADCOUNTBYGROUP_DOWNLOADID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(groupId);
-
-				queryPos.add(downloadId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
+		if (downloadCount == null) {
+			return 0;
 		}
 
-		return count.intValue();
+		return 1;
 	}
 
 	private static final String _FINDER_COLUMN_DOWNLOADCOUNTBYGROUP_GROUPID_2 =
@@ -311,7 +275,6 @@ public class DownloadCountPersistenceImpl
 			"downloadCount.downloadId = ?";
 
 	private FinderPath _finderPathFetchByDownloadCount;
-	private FinderPath _finderPathCountByDownloadCount;
 
 	/**
 	 * Returns the download count where downloadId = &#63; or throws a <code>NoSuchDownloadCountException</code> if it could not be found.
@@ -464,45 +427,13 @@ public class DownloadCountPersistenceImpl
 	 */
 	@Override
 	public int countByDownloadCount(long downloadId) {
-		FinderPath finderPath = _finderPathCountByDownloadCount;
+		DownloadCount downloadCount = fetchByDownloadCount(downloadId);
 
-		Object[] finderArgs = new Object[] {downloadId};
-
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
-
-		if (count == null) {
-			StringBundler sb = new StringBundler(2);
-
-			sb.append(_SQL_COUNT_DOWNLOADCOUNT_WHERE);
-
-			sb.append(_FINDER_COLUMN_DOWNLOADCOUNT_DOWNLOADID_2);
-
-			String sql = sb.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query query = session.createQuery(sql);
-
-				QueryPos queryPos = QueryPos.getInstance(query);
-
-				queryPos.add(downloadId);
-
-				count = (Long)query.uniqueResult();
-
-				finderCache.putResult(finderPath, finderArgs, count);
-			}
-			catch (Exception exception) {
-				throw processException(exception);
-			}
-			finally {
-				closeSession(session);
-			}
+		if (downloadCount == null) {
+			return 0;
 		}
 
-		return count.intValue();
+		return 1;
 	}
 
 	private static final String _FINDER_COLUMN_DOWNLOADCOUNT_DOWNLOADID_2 =
@@ -623,15 +554,11 @@ public class DownloadCountPersistenceImpl
 		};
 
 		finderCache.putResult(
-			_finderPathCountByDownloadCountByGroup, args, Long.valueOf(1));
-		finderCache.putResult(
 			_finderPathFetchByDownloadCountByGroup, args,
 			downloadCountModelImpl);
 
 		args = new Object[] {downloadCountModelImpl.getDownloadId()};
 
-		finderCache.putResult(
-			_finderPathCountByDownloadCount, args, Long.valueOf(1));
 		finderCache.putResult(
 			_finderPathFetchByDownloadCount, args, downloadCountModelImpl);
 	}
@@ -1074,21 +1001,10 @@ public class DownloadCountPersistenceImpl
 			new String[] {Long.class.getName(), Long.class.getName()},
 			new String[] {"groupId", "downloadId"}, true);
 
-		_finderPathCountByDownloadCountByGroup = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByDownloadCountByGroup",
-			new String[] {Long.class.getName(), Long.class.getName()},
-			new String[] {"groupId", "downloadId"}, false);
-
 		_finderPathFetchByDownloadCount = new FinderPath(
 			FINDER_CLASS_NAME_ENTITY, "fetchByDownloadCount",
 			new String[] {Long.class.getName()}, new String[] {"downloadId"},
 			true);
-
-		_finderPathCountByDownloadCount = new FinderPath(
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByDownloadCount",
-			new String[] {Long.class.getName()}, new String[] {"downloadId"},
-			false);
 
 		DownloadCountUtil.setPersistence(this);
 	}
@@ -1164,3 +1080,4 @@ public class DownloadCountPersistenceImpl
 	}
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-2085680695

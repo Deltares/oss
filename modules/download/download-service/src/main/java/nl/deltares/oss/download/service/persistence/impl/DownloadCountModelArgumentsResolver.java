@@ -115,3 +115,4 @@ public class DownloadCountModelArgumentsResolver implements ArgumentsResolver {
 		new ConcurrentHashMap<>();
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:68663598

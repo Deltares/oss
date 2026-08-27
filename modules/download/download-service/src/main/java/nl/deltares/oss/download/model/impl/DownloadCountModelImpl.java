@@ -662,3 +662,4 @@ public class DownloadCountModelImpl
 	private DownloadCount _escapedModel;
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-2035808874

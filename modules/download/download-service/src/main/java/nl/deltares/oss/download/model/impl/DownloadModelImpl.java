@@ -995,3 +995,4 @@ public class DownloadModelImpl
 	private Download _escapedModel;
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-133924363
