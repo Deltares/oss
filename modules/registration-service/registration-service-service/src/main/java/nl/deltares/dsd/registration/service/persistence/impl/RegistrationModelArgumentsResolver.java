@@ -133,3 +133,4 @@ public class RegistrationModelArgumentsResolver implements ArgumentsResolver {
 	}
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-1574341984

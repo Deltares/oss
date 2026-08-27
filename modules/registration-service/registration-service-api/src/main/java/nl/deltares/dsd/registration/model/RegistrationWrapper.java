@@ -421,3 +421,4 @@ public class RegistrationWrapper
 	}
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:819242895

@@ -61,3 +61,4 @@ public class RegistrationTable extends BaseTable<RegistrationTable> {
 	}
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-2123768599

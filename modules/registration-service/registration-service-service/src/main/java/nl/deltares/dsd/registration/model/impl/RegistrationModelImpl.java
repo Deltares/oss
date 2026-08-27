@@ -968,3 +968,4 @@ public class RegistrationModelImpl
 	private Registration _escapedModel;
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-235879929

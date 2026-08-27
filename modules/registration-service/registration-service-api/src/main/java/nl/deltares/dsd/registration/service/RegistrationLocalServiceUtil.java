@@ -9,6 +9,7 @@ import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.module.service.Snapshot;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
 import java.io.Serializable;
@@ -108,6 +109,19 @@ public class RegistrationLocalServiceUtil {
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
+	 * @param groupId         Site Identifier
+	 * @param registrationResourceId Article Identifier of Event being removed.
+	 */
+	public static void deleteAllRegistrations(
+		long groupId, long registrationResourceId) {
+
+		getService().deleteAllRegistrations(groupId, registrationResourceId);
+	}
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
 	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
 	 */
@@ -131,6 +145,16 @@ public class RegistrationLocalServiceUtil {
 
 		getService().deleteAllUserEventRegistrations(
 			groupId, userId, eventResourceId);
+	}
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
+	 * @param userId Article Identifier of Event being removed.
+	 */
+	public static int deleteAllUserRegistrations(long userId) {
+		return getService().deleteAllUserRegistrations(userId);
 	}
 
 	/**
@@ -314,6 +338,19 @@ public class RegistrationLocalServiceUtil {
 
 		return getService().getArticleRegistrations(
 			groupId, articleResourceId, start, end);
+	}
+
+	public static List<Long> getDistinctEventResourceIds(
+		long companyId, long groupId) {
+
+		return getService().getDistinctEventResourceIds(companyId, groupId);
+	}
+
+	public static List<Long> getDistinctRegistrationResourceIds(
+		long companyId, long groupId, long eventResourceId, long userId) {
+
+		return getService().getDistinctRegistrationResourceIds(
+			companyId, groupId, eventResourceId, userId);
 	}
 
 	public static List<Registration> getEventRegistrations(
@@ -528,13 +565,12 @@ public class RegistrationLocalServiceUtil {
 	}
 
 	public static RegistrationLocalService getService() {
-		return _service;
+		return _serviceSnapshot.get();
 	}
 
-	public static void setService(RegistrationLocalService service) {
-		_service = service;
-	}
-
-	private static volatile RegistrationLocalService _service;
+	private static final Snapshot<RegistrationLocalService> _serviceSnapshot =
+		new Snapshot<>(
+			RegistrationLocalServiceUtil.class, RegistrationLocalService.class);
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-1505873865

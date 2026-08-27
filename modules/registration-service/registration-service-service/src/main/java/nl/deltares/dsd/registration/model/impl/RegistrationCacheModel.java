@@ -187,3 +187,4 @@ public class RegistrationCacheModel
 	public long registeredByUserId;
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-344282587

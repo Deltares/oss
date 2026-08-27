@@ -108,6 +108,16 @@ public interface RegistrationLocalService
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
+	 * @param groupId         Site Identifier
+	 * @param registrationResourceId Article Identifier of Event being removed.
+	 */
+	public void deleteAllRegistrations(
+		long groupId, long registrationResourceId);
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
 	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
 	 */
@@ -124,6 +134,14 @@ public interface RegistrationLocalService
 	 */
 	public void deleteAllUserEventRegistrations(
 		long groupId, long userId, long eventResourceId);
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
+	 * @param userId Article Identifier of Event being removed.
+	 */
+	public int deleteAllUserRegistrations(long userId);
 
 	/**
 	 * @throws PortalException
@@ -271,6 +289,13 @@ public interface RegistrationLocalService
 		long groupId, long articleResourceId, int start, int end);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Long> getDistinctEventResourceIds(long companyId, long groupId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Long> getDistinctRegistrationResourceIds(
+		long companyId, long groupId, long eventResourceId, long userId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Registration> getEventRegistrations(
 		long groupId, long eventResourceId);
 
@@ -416,3 +441,4 @@ public interface RegistrationLocalService
 	public Registration updateRegistration(Registration registration);
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-1825392221

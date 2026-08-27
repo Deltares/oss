@@ -129,7 +129,7 @@ public class RegistrationUtil {
 	 * Returns a range of all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -149,7 +149,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -171,7 +171,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -228,62 +228,6 @@ public class RegistrationUtil {
 	}
 
 	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and eventResourcePrimaryKey = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param eventResourcePrimaryKey the event resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration
-	 * @throws NoSuchRegistrationException if a matching registration could not be found
-	 */
-	public static Registration findByEventRegistrations_Last(
-			long groupId, long eventResourcePrimaryKey,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByEventRegistrations_Last(
-			groupId, eventResourcePrimaryKey, orderByComparator);
-	}
-
-	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and eventResourcePrimaryKey = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param eventResourcePrimaryKey the event resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
-	 */
-	public static Registration fetchByEventRegistrations_Last(
-		long groupId, long eventResourcePrimaryKey,
-		OrderByComparator<Registration> orderByComparator) {
-
-		return getPersistence().fetchByEventRegistrations_Last(
-			groupId, eventResourcePrimaryKey, orderByComparator);
-	}
-
-	/**
-	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and eventResourcePrimaryKey = &#63;.
-	 *
-	 * @param registrationId the primary key of the current registration
-	 * @param groupId the group ID
-	 * @param eventResourcePrimaryKey the event resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next registration
-	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
-	 */
-	public static Registration[] findByEventRegistrations_PrevAndNext(
-			long registrationId, long groupId, long eventResourcePrimaryKey,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByEventRegistrations_PrevAndNext(
-			registrationId, groupId, eventResourcePrimaryKey,
-			orderByComparator);
-	}
-
-	/**
 	 * Removes all the registrations where groupId = &#63; and eventResourcePrimaryKey = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -329,7 +273,7 @@ public class RegistrationUtil {
 	 * Returns a range of all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -351,7 +295,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -375,7 +319,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -435,66 +379,6 @@ public class RegistrationUtil {
 	}
 
 	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param eventResourcePrimaryKey the event resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration
-	 * @throws NoSuchRegistrationException if a matching registration could not be found
-	 */
-	public static Registration findByUserEventRegistrations_Last(
-			long groupId, long userId, long eventResourcePrimaryKey,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByUserEventRegistrations_Last(
-			groupId, userId, eventResourcePrimaryKey, orderByComparator);
-	}
-
-	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param eventResourcePrimaryKey the event resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
-	 */
-	public static Registration fetchByUserEventRegistrations_Last(
-		long groupId, long userId, long eventResourcePrimaryKey,
-		OrderByComparator<Registration> orderByComparator) {
-
-		return getPersistence().fetchByUserEventRegistrations_Last(
-			groupId, userId, eventResourcePrimaryKey, orderByComparator);
-	}
-
-	/**
-	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63;.
-	 *
-	 * @param registrationId the primary key of the current registration
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param eventResourcePrimaryKey the event resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next registration
-	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
-	 */
-	public static Registration[] findByUserEventRegistrations_PrevAndNext(
-			long registrationId, long groupId, long userId,
-			long eventResourcePrimaryKey,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByUserEventRegistrations_PrevAndNext(
-			registrationId, groupId, userId, eventResourcePrimaryKey,
-			orderByComparator);
-	}
-
-	/**
 	 * Removes all the registrations where groupId = &#63; and userId = &#63; and eventResourcePrimaryKey = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -540,7 +424,7 @@ public class RegistrationUtil {
 	 * Returns a range of all the registrations where groupId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -560,7 +444,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -582,7 +466,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -638,61 +522,6 @@ public class RegistrationUtil {
 	}
 
 	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration
-	 * @throws NoSuchRegistrationException if a matching registration could not be found
-	 */
-	public static Registration findByUserRegistrations_Last(
-			long groupId, long userId,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByUserRegistrations_Last(
-			groupId, userId, orderByComparator);
-	}
-
-	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
-	 */
-	public static Registration fetchByUserRegistrations_Last(
-		long groupId, long userId,
-		OrderByComparator<Registration> orderByComparator) {
-
-		return getPersistence().fetchByUserRegistrations_Last(
-			groupId, userId, orderByComparator);
-	}
-
-	/**
-	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and userId = &#63;.
-	 *
-	 * @param registrationId the primary key of the current registration
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next registration
-	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
-	 */
-	public static Registration[] findByUserRegistrations_PrevAndNext(
-			long registrationId, long groupId, long userId,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByUserRegistrations_PrevAndNext(
-			registrationId, groupId, userId, orderByComparator);
-	}
-
-	/**
 	 * Removes all the registrations where groupId = &#63; and userId = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -731,7 +560,7 @@ public class RegistrationUtil {
 	 * Returns a range of all the registrations where groupId = &#63; and registeredByUserId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -751,7 +580,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations where groupId = &#63; and registeredByUserId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -773,7 +602,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations where groupId = &#63; and registeredByUserId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -830,63 +659,6 @@ public class RegistrationUtil {
 	}
 
 	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and registeredByUserId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param registeredByUserId the registered by user ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration
-	 * @throws NoSuchRegistrationException if a matching registration could not be found
-	 */
-	public static Registration findByUserRegistrationsRegisteredByMe_Last(
-			long groupId, long registeredByUserId,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByUserRegistrationsRegisteredByMe_Last(
-			groupId, registeredByUserId, orderByComparator);
-	}
-
-	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and registeredByUserId = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param registeredByUserId the registered by user ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
-	 */
-	public static Registration fetchByUserRegistrationsRegisteredByMe_Last(
-		long groupId, long registeredByUserId,
-		OrderByComparator<Registration> orderByComparator) {
-
-		return getPersistence().fetchByUserRegistrationsRegisteredByMe_Last(
-			groupId, registeredByUserId, orderByComparator);
-	}
-
-	/**
-	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and registeredByUserId = &#63;.
-	 *
-	 * @param registrationId the primary key of the current registration
-	 * @param groupId the group ID
-	 * @param registeredByUserId the registered by user ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next registration
-	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
-	 */
-	public static Registration[]
-			findByUserRegistrationsRegisteredByMe_PrevAndNext(
-				long registrationId, long groupId, long registeredByUserId,
-				OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().
-			findByUserRegistrationsRegisteredByMe_PrevAndNext(
-				registrationId, groupId, registeredByUserId, orderByComparator);
-	}
-
-	/**
 	 * Removes all the registrations where groupId = &#63; and registeredByUserId = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -932,7 +704,7 @@ public class RegistrationUtil {
 	 * Returns a range of all the registrations where groupId = &#63; and registeredByUserId = &#63; and eventResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -954,7 +726,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations where groupId = &#63; and registeredByUserId = &#63; and eventResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -978,7 +750,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations where groupId = &#63; and registeredByUserId = &#63; and eventResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1043,71 +815,6 @@ public class RegistrationUtil {
 	}
 
 	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and registeredByUserId = &#63; and eventResourcePrimaryKey = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param registeredByUserId the registered by user ID
-	 * @param eventResourcePrimaryKey the event resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration
-	 * @throws NoSuchRegistrationException if a matching registration could not be found
-	 */
-	public static Registration findByUserEventRegistrationsRegisteredByMe_Last(
-			long groupId, long registeredByUserId, long eventResourcePrimaryKey,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByUserEventRegistrationsRegisteredByMe_Last(
-			groupId, registeredByUserId, eventResourcePrimaryKey,
-			orderByComparator);
-	}
-
-	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and registeredByUserId = &#63; and eventResourcePrimaryKey = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param registeredByUserId the registered by user ID
-	 * @param eventResourcePrimaryKey the event resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
-	 */
-	public static Registration fetchByUserEventRegistrationsRegisteredByMe_Last(
-		long groupId, long registeredByUserId, long eventResourcePrimaryKey,
-		OrderByComparator<Registration> orderByComparator) {
-
-		return getPersistence().
-			fetchByUserEventRegistrationsRegisteredByMe_Last(
-				groupId, registeredByUserId, eventResourcePrimaryKey,
-				orderByComparator);
-	}
-
-	/**
-	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and registeredByUserId = &#63; and eventResourcePrimaryKey = &#63;.
-	 *
-	 * @param registrationId the primary key of the current registration
-	 * @param groupId the group ID
-	 * @param registeredByUserId the registered by user ID
-	 * @param eventResourcePrimaryKey the event resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next registration
-	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
-	 */
-	public static Registration[]
-			findByUserEventRegistrationsRegisteredByMe_PrevAndNext(
-				long registrationId, long groupId, long registeredByUserId,
-				long eventResourcePrimaryKey,
-				OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().
-			findByUserEventRegistrationsRegisteredByMe_PrevAndNext(
-				registrationId, groupId, registeredByUserId,
-				eventResourcePrimaryKey, orderByComparator);
-	}
-
-	/**
 	 * Removes all the registrations where groupId = &#63; and registeredByUserId = &#63; and eventResourcePrimaryKey = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -1154,7 +861,7 @@ public class RegistrationUtil {
 	 * Returns a range of all the registrations where groupId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1174,7 +881,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations where groupId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1196,7 +903,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations where groupId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1253,61 +960,6 @@ public class RegistrationUtil {
 	}
 
 	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and resourcePrimaryKey = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param resourcePrimaryKey the resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration
-	 * @throws NoSuchRegistrationException if a matching registration could not be found
-	 */
-	public static Registration findByArticleRegistrations_Last(
-			long groupId, long resourcePrimaryKey,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByArticleRegistrations_Last(
-			groupId, resourcePrimaryKey, orderByComparator);
-	}
-
-	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and resourcePrimaryKey = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param resourcePrimaryKey the resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
-	 */
-	public static Registration fetchByArticleRegistrations_Last(
-		long groupId, long resourcePrimaryKey,
-		OrderByComparator<Registration> orderByComparator) {
-
-		return getPersistence().fetchByArticleRegistrations_Last(
-			groupId, resourcePrimaryKey, orderByComparator);
-	}
-
-	/**
-	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and resourcePrimaryKey = &#63;.
-	 *
-	 * @param registrationId the primary key of the current registration
-	 * @param groupId the group ID
-	 * @param resourcePrimaryKey the resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next registration
-	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
-	 */
-	public static Registration[] findByArticleRegistrations_PrevAndNext(
-			long registrationId, long groupId, long resourcePrimaryKey,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByArticleRegistrations_PrevAndNext(
-			registrationId, groupId, resourcePrimaryKey, orderByComparator);
-	}
-
-	/**
 	 * Removes all the registrations where groupId = &#63; and resourcePrimaryKey = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -1353,7 +1005,7 @@ public class RegistrationUtil {
 	 * Returns a range of all the registrations where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1375,7 +1027,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1398,7 +1050,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1458,66 +1110,6 @@ public class RegistrationUtil {
 	}
 
 	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param resourcePrimaryKey the resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration
-	 * @throws NoSuchRegistrationException if a matching registration could not be found
-	 */
-	public static Registration findByUserArticleRegistrations_Last(
-			long groupId, long userId, long resourcePrimaryKey,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByUserArticleRegistrations_Last(
-			groupId, userId, resourcePrimaryKey, orderByComparator);
-	}
-
-	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param resourcePrimaryKey the resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
-	 */
-	public static Registration fetchByUserArticleRegistrations_Last(
-		long groupId, long userId, long resourcePrimaryKey,
-		OrderByComparator<Registration> orderByComparator) {
-
-		return getPersistence().fetchByUserArticleRegistrations_Last(
-			groupId, userId, resourcePrimaryKey, orderByComparator);
-	}
-
-	/**
-	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63;.
-	 *
-	 * @param registrationId the primary key of the current registration
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param resourcePrimaryKey the resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next registration
-	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
-	 */
-	public static Registration[] findByUserArticleRegistrations_PrevAndNext(
-			long registrationId, long groupId, long userId,
-			long resourcePrimaryKey,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByUserArticleRegistrations_PrevAndNext(
-			registrationId, groupId, userId, resourcePrimaryKey,
-			orderByComparator);
-	}
-
-	/**
 	 * Removes all the registrations where groupId = &#63; and userId = &#63; and resourcePrimaryKey = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -1565,7 +1157,7 @@ public class RegistrationUtil {
 	 * Returns a range of all the registrations where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1587,7 +1179,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1611,7 +1203,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1671,67 +1263,6 @@ public class RegistrationUtil {
 	}
 
 	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param parentResourcePrimaryKey the parent resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration
-	 * @throws NoSuchRegistrationException if a matching registration could not be found
-	 */
-	public static Registration findByUserChildArticleRegistrations_Last(
-			long groupId, long userId, long parentResourcePrimaryKey,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByUserChildArticleRegistrations_Last(
-			groupId, userId, parentResourcePrimaryKey, orderByComparator);
-	}
-
-	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param parentResourcePrimaryKey the parent resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
-	 */
-	public static Registration fetchByUserChildArticleRegistrations_Last(
-		long groupId, long userId, long parentResourcePrimaryKey,
-		OrderByComparator<Registration> orderByComparator) {
-
-		return getPersistence().fetchByUserChildArticleRegistrations_Last(
-			groupId, userId, parentResourcePrimaryKey, orderByComparator);
-	}
-
-	/**
-	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63;.
-	 *
-	 * @param registrationId the primary key of the current registration
-	 * @param groupId the group ID
-	 * @param userId the user ID
-	 * @param parentResourcePrimaryKey the parent resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next registration
-	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
-	 */
-	public static Registration[]
-			findByUserChildArticleRegistrations_PrevAndNext(
-				long registrationId, long groupId, long userId,
-				long parentResourcePrimaryKey,
-				OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByUserChildArticleRegistrations_PrevAndNext(
-			registrationId, groupId, userId, parentResourcePrimaryKey,
-			orderByComparator);
-	}
-
-	/**
 	 * Removes all the registrations where groupId = &#63; and userId = &#63; and parentResourcePrimaryKey = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -1778,7 +1309,7 @@ public class RegistrationUtil {
 	 * Returns a range of all the registrations where groupId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1798,7 +1329,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations where groupId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1820,7 +1351,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations where groupId = &#63; and parentResourcePrimaryKey = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -1874,62 +1405,6 @@ public class RegistrationUtil {
 
 		return getPersistence().fetchByChildArticleRegistrations_First(
 			groupId, parentResourcePrimaryKey, orderByComparator);
-	}
-
-	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and parentResourcePrimaryKey = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimaryKey the parent resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration
-	 * @throws NoSuchRegistrationException if a matching registration could not be found
-	 */
-	public static Registration findByChildArticleRegistrations_Last(
-			long groupId, long parentResourcePrimaryKey,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByChildArticleRegistrations_Last(
-			groupId, parentResourcePrimaryKey, orderByComparator);
-	}
-
-	/**
-	 * Returns the last registration in the ordered set where groupId = &#63; and parentResourcePrimaryKey = &#63;.
-	 *
-	 * @param groupId the group ID
-	 * @param parentResourcePrimaryKey the parent resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching registration, or <code>null</code> if a matching registration could not be found
-	 */
-	public static Registration fetchByChildArticleRegistrations_Last(
-		long groupId, long parentResourcePrimaryKey,
-		OrderByComparator<Registration> orderByComparator) {
-
-		return getPersistence().fetchByChildArticleRegistrations_Last(
-			groupId, parentResourcePrimaryKey, orderByComparator);
-	}
-
-	/**
-	 * Returns the registrations before and after the current registration in the ordered set where groupId = &#63; and parentResourcePrimaryKey = &#63;.
-	 *
-	 * @param registrationId the primary key of the current registration
-	 * @param groupId the group ID
-	 * @param parentResourcePrimaryKey the parent resource primary key
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next registration
-	 * @throws NoSuchRegistrationException if a registration with the primary key could not be found
-	 */
-	public static Registration[] findByChildArticleRegistrations_PrevAndNext(
-			long registrationId, long groupId, long parentResourcePrimaryKey,
-			OrderByComparator<Registration> orderByComparator)
-		throws nl.deltares.dsd.registration.exception.
-			NoSuchRegistrationException {
-
-		return getPersistence().findByChildArticleRegistrations_PrevAndNext(
-			registrationId, groupId, parentResourcePrimaryKey,
-			orderByComparator);
 	}
 
 	/**
@@ -2042,7 +1517,7 @@ public class RegistrationUtil {
 	 * Returns a range of all the registrations.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of registrations
@@ -2057,7 +1532,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of registrations
@@ -2075,7 +1550,7 @@ public class RegistrationUtil {
 	 * Returns an ordered range of all the registrations.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>RegistrationModelImpl</code>.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>nl.deltares.dsd.registration.model.impl.RegistrationModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of registrations
@@ -2119,3 +1594,4 @@ public class RegistrationUtil {
 	private static volatile RegistrationPersistence _persistence;
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:-758924261

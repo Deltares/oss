@@ -50,3 +50,4 @@ public interface Registration extends PersistedModel, RegistrationModel {
 		};
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:817675479

@@ -111,6 +111,21 @@ public class RegistrationLocalServiceWrapper
 	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
 	 * that matches 'resourceId'.
 	 *
+	 * @param groupId         Site Identifier
+	 * @param registrationResourceId Article Identifier of Event being removed.
+	 */
+	@Override
+	public void deleteAllRegistrations(
+		long groupId, long registrationResourceId) {
+
+		_registrationLocalService.deleteAllRegistrations(
+			groupId, registrationResourceId);
+	}
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
 	 * @param groupId    Site Identifier
 	 * @param resourceId Article Identifier being removed.
 	 */
@@ -136,6 +151,17 @@ public class RegistrationLocalServiceWrapper
 
 		_registrationLocalService.deleteAllUserEventRegistrations(
 			groupId, userId, eventResourceId);
+	}
+
+	/**
+	 * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+	 * that matches 'resourceId'.
+	 *
+	 * @param userId Article Identifier of Event being removed.
+	 */
+	@Override
+	public int deleteAllUserRegistrations(long userId) {
+		return _registrationLocalService.deleteAllUserRegistrations(userId);
 	}
 
 	/**
@@ -352,6 +378,22 @@ public class RegistrationLocalServiceWrapper
 
 		return _registrationLocalService.getArticleRegistrations(
 			groupId, articleResourceId, start, end);
+	}
+
+	@Override
+	public java.util.List<Long> getDistinctEventResourceIds(
+		long companyId, long groupId) {
+
+		return _registrationLocalService.getDistinctEventResourceIds(
+			companyId, groupId);
+	}
+
+	@Override
+	public java.util.List<Long> getDistinctRegistrationResourceIds(
+		long companyId, long groupId, long eventResourceId, long userId) {
+
+		return _registrationLocalService.getDistinctRegistrationResourceIds(
+			companyId, groupId, eventResourceId, userId);
 	}
 
 	@Override
@@ -633,3 +675,4 @@ public class RegistrationLocalServiceWrapper
 	private RegistrationLocalService _registrationLocalService;
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:1403864321

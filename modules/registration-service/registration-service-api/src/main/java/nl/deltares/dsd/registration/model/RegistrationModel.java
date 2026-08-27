@@ -241,3 +241,4 @@ public interface RegistrationModel
 	}
 
 }
+// LIFERAY-SERVICE-BUILDER-HASH:1693744145

@@ -112,6 +112,24 @@ public class RegistrationLocalServiceImpl
      * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
      * that matches 'resourceId'.
      *
+     * @param userId Article Identifier of Event being removed.
+     */
+    public int deleteAllUserRegistrations(long userId) {
+
+        //Remove all registrations with a parentArticleId equal to resourceId
+        DynamicQuery dynamicQuery = dynamicQuery();
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("userId", userId));
+        List<Registration> withDynamicQuery = RegistrationUtil.findWithDynamicQuery(dynamicQuery);
+        for (Registration registration : withDynamicQuery) {
+            RegistrationUtil.removeByUserRegistrations(registration.getGroupId(), registration.getUserId());
+        }
+        return withDynamicQuery.size();
+    }
+
+    /**
+     * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+     * that matches 'resourceId'.
+     *
      * @param groupId         Site Identifier
      * @param eventResourceId Article Identifier of Event being removed.
      */
@@ -121,6 +139,18 @@ public class RegistrationLocalServiceImpl
         RegistrationUtil.removeByEventRegistrations(groupId, eventResourceId);
     }
 
+    /**
+     * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
+     * that matches 'resourceId'.
+     *
+     * @param groupId         Site Identifier
+     * @param registrationResourceId Article Identifier of Event being removed.
+     */
+    public void deleteAllRegistrations(long groupId, long registrationResourceId) {
+
+        //Remove all registrations with a parentArticleId equal to resourceId
+        RegistrationUtil.removeByArticleRegistrations(groupId, registrationResourceId);
+    }
     /**
      * Delete all registrations related to 'resourceId'. This includes all registration with a parentArticleId
      * that matches 'resourceId'.
@@ -171,6 +201,41 @@ public class RegistrationLocalServiceImpl
             RegistrationUtil.remove(registration.getRegistrationId());
         }
 
+    }
+
+    public List<Long> getDistinctEventResourceIds(long companyId, long groupId) {
+
+        Criterion checkCompanyId = PropertyFactoryUtil.forName("companyId").eq(companyId);
+        Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
+
+        DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader())
+                .add(checkCompanyId).add(checkGroupId);
+
+        Projection distinct = ProjectionFactoryUtil.distinct(PropertyFactoryUtil.forName("eventResourcePrimaryKey"));
+        query.setProjection(distinct);
+
+        return RegistrationUtil.getPersistence().findWithDynamicQuery(query);
+    }
+
+    public List<Long> getDistinctRegistrationResourceIds(long companyId, long groupId, long eventResourceId, long userId) {
+
+        Criterion checkCompanyId = PropertyFactoryUtil.forName("companyId").eq(companyId);
+        Criterion checkGroupId = PropertyFactoryUtil.forName("groupId").eq(groupId);
+
+        DynamicQuery query = DynamicQueryFactoryUtil.forClass(Registration.class, getClass().getClassLoader())
+                .add(checkCompanyId).add(checkGroupId);
+        if (eventResourceId > 0L) {
+            Criterion checkEventResourceId = PropertyFactoryUtil.forName("eventResourcePrimaryKey").eq(eventResourceId);
+            query.add(checkEventResourceId);
+        }
+        if (userId > 0L) {
+            Criterion checkUserId = PropertyFactoryUtil.forName("userId").eq(userId);
+            query.add(checkUserId);
+        }
+        Projection distinct = ProjectionFactoryUtil.distinct(PropertyFactoryUtil.forName("resourcePrimaryKey"));
+        query.setProjection(distinct);
+
+        return RegistrationUtil.getPersistence().findWithDynamicQuery(query);
     }
 
     private DynamicQuery getDynamicQuery(long groupId, long resourceId, long userId, Date startDate) {
@@ -240,7 +305,6 @@ public class RegistrationLocalServiceImpl
 
     public List<Registration> getUserEventRegistrations(long groupId, long userId, long eventResourceId) {
         return RegistrationUtil.findByUserEventRegistrations(groupId, userId, eventResourceId);
-
     }
 
     public List<Registration> getEventRegistrations(long groupId, long eventResourceId) {
