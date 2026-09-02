@@ -83,7 +83,9 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
                 final Download download = DownloadLocalServiceUtil.deleteDownload(Long.parseLong(id));
                 final User user = UserLocalServiceUtil.fetchUser(download.getUserId());
                 String email = "";
-                if (user != null){
+                if (user == null){
+                    email = String.valueOf(download.getUserId());
+                } else {
                     email = user.getEmailAddress();
                 }
                 final Date modifiedDate = download.getModifiedDate();

@@ -6,6 +6,7 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.CountryServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
 import nl.deltares.oss.geolocation.model.GeoLocation;
@@ -19,48 +20,45 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
-import static nl.deltares.portal.utils.KeycloakUtils.ATTRIBUTES.org_city;
-import static nl.deltares.portal.utils.KeycloakUtils.ATTRIBUTES.org_country;
+import static nl.deltares.portal.utils.KeycloakUtils.ATTRIBUTES.*;
 import static nl.deltares.tasks.DataRequest.STATUS.*;
 import static nl.deltares.tasks.DataRequest.STATUS.TERMINATED;
 
-public class ExportDownloadsTableRequest extends AbstractDataRequest {
+public class ExportSelectedDownloadsTableRequest extends AbstractDataRequest {
 
-    private static final Log logger = LogFactoryUtil.getLog(ExportDownloadsTableRequest.class);
+    private static final Log logger = LogFactoryUtil.getLog(ExportSelectedDownloadsTableRequest.class);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     static {
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
-
     private final Group group;
     private final String filterValue;
-    private final String filterSelection;
     private final boolean findByUser;
-    private final boolean findByArticleId;
     protected KeycloakUtils keycloakUtils;
 
-    public ExportDownloadsTableRequest(String id, String filterValue, String filterSelection, long currentUserId, Group siteGroup, KeycloakUtils keycloakUtils) throws IOException {
+    public ExportSelectedDownloadsTableRequest(String id, String filterValue, long currentUserId, Group siteGroup, KeycloakUtils keycloakUtils) throws IOException {
         super(id, currentUserId);
         this.group = siteGroup;
-        this.filterValue = filterValue;
-        this.filterSelection = filterSelection;
-
-        this.findByUser = "email".equals(filterSelection);
-        this.findByArticleId = "fileName".equals(filterSelection);
-
+        if (filterValue != null && filterValue.trim().isEmpty()){
+            this.filterValue = null;
+        } else {
+            this.filterValue = filterValue;
+        }
+        this.findByUser = Validator.isEmailAddress(filterValue);
         this.keycloakUtils = keycloakUtils;
     }
 
     @Override
     public STATUS call()  {
         if (getStatus() == AVAILABLE) return status;
-        String filter = filterSelection == null ? "none": filterSelection + " = " + filterValue;
-        statusMessage = "starting exporting for filter " + filter;
+
+        if (filterValue == null){
+            status = NODATA;
+            return status;
+        }
+        statusMessage = "starting exporting for filter " + filterValue;
         init();
         status = RUNNING;
         try {
@@ -102,21 +100,22 @@ public class ExportDownloadsTableRequest extends AbstractDataRequest {
         int start = 0;
         int end = 100;
 
-        final User filterUser;
-        final String fileName;
+        HashMap<Long, Map<String, String>> userAttributesCache = new HashMap<>();
+        User filterUser;
         if (findByUser) {
-            fileName = null;
             filterUser = UserLocalServiceUtil.fetchUserByEmailAddress(group.getCompanyId(), filterValue);
-            if (filterUser != null) totalCount = DownloadLocalServiceUtil.countDownloadsByUserId(group.getGroupId(), filterUser.getUserId());
-        } else if (findByArticleId) {
+            if (filterUser == null){
+                totalCount = 0;
+            } else {
+                totalCount = DownloadLocalServiceUtil.countDownloadsByUserId(group.getGroupId(), filterUser.getUserId());
+            }
+        } else {
             filterUser = null;
-            fileName = filterValue;
-            totalCount = DownloadLocalServiceUtil.countDownloadsByFileName(group.getGroupId(), fileName);
-        } else
-        {
-            fileName = null;
-            filterUser = null;
-            totalCount = DownloadLocalServiceUtil.countDownloads(group.getGroupId());
+            if (filterValue != null) {
+                totalCount = DownloadLocalServiceUtil.countDownloadsByFileName(group.getGroupId(), filterValue);
+            } else {
+                totalCount = 0;
+            }
         }
 
         for (int i = 0; i < totalCount; ) {
@@ -124,47 +123,29 @@ public class ExportDownloadsTableRequest extends AbstractDataRequest {
             final List<Download> downloads;
             if (filterUser != null) {
                 downloads = DownloadLocalServiceUtil.findDownloadsByUserId(group.getGroupId(), filterUser.getUserId(), start, end);
-            } else if (fileName != null ) {
-                downloads = DownloadLocalServiceUtil.findDownloadsByFileName(group.getGroupId(), fileName, start, end);
-            } else
-            {
-                downloads = DownloadLocalServiceUtil.findDownloads(group.getGroupId(), start, end);
+            } else {
+                downloads = DownloadLocalServiceUtil.findDownloadsByFileName(group.getGroupId(), filterValue, start, end);
             }
             if (downloads.isEmpty()) {
                 setProcessCount(totalCount);
                 return;
             }
 
-            HashMap<Long, Map<String, String>> userAttributesCache = new HashMap<>();
             downloads.forEach(download -> {
                 if (status == TERMINATED) return;
                 incrementProcessCount(1);
-                if (group.getGroupId() != download.getGroupId()) return;
-                String email = "";
-                String fullName = "";
-                if (filterUser != null){
-                    email = filterValue;
-                    fullName = filterUser.getFullName();
-                } else {
-                    final User user = UserLocalServiceUtil.fetchUser(download.getUserId());
-                    if (user != null) {
-                        email = user.getEmailAddress();
-                        fullName = user.getFullName();
-                    }
-                }
                 String city = "";
                 String countryCode = "";
+                String fullName;
+                String email;
+                User downloadUser = filterUser != null ? filterUser : UserLocalServiceUtil.fetchUser(download.getUserId());
                 try {
                     if (download.getGeoLocationId() > 0) {
                         final GeoLocation geoLocation = GeoLocationLocalServiceUtil.getGeoLocation(download.getGeoLocationId());
                         city = geoLocation.getCityName();
                         countryCode = CountryServiceUtil.getCountry(geoLocation.getCountryId()).getA2();
-                    } else if (keycloakUtils.isActive()) {
-                        Map<String, String> attributes = userAttributesCache.get(download.getUserId());
-                        if (attributes == null){
-                            attributes = keycloakUtils.getUserAttributes(email);
-                            userAttributesCache.put(download.getUserId(), attributes);
-                        }
+                    } else if (keycloakUtils.isActive() && downloadUser != null) {
+                        Map<String, String> attributes = getUserAttributes(downloadUser, userAttributesCache);
                         city = attributes.get(org_city.name());
                         countryCode = attributes.get(org_country.name());
                     }
@@ -177,6 +158,13 @@ public class ExportDownloadsTableRequest extends AbstractDataRequest {
                     modifiedDate = dateFormat.format(download.getModifiedDate());
                 } else {
                     modifiedDate = "";
+                }
+                if (downloadUser != null) {
+                    fullName = downloadUser.getFullName();
+                    email = downloadUser.getEmailAddress();
+                } else {
+                    fullName = String.valueOf(download.getUserId());
+                    email = "";
                 }
                 final String expiryDate;
                 if (download.getExpiryDate() != null) {
@@ -199,6 +187,22 @@ public class ExportDownloadsTableRequest extends AbstractDataRequest {
             end += 100;
         }
 
+    }
+
+    private Map<String, String> getUserAttributes(User user, HashMap<Long, Map<String, String>> userAttributeCache) {
+        long userId = user.getUserId();
+        Map<String, String> attributes = userAttributeCache.get(userId);
+        if (attributes == null) {
+            try {
+                attributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
+                userAttributeCache.put(userId, attributes);
+            } catch (Exception e) {
+                logger.warn(String.format("Error getting user attributes for %s: %s", user.getEmailAddress(), e.getMessage()));
+                attributes = Collections.emptyMap();
+                userAttributeCache.put(userId, attributes);
+            }
+        }
+        return attributes;
     }
 
 }

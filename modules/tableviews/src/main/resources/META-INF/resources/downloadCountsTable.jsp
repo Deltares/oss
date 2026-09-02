@@ -40,7 +40,7 @@
         <aui:fieldset>
             <aui:row>
                 <aui:col width="20">
-                    <div class="control-label"><liferay-ui:message key="table.filter.label"/></div>
+                    <div class="control-label"><liferay-ui:message key="table.filter.selection.label"/></div>
                 </aui:col>
                 <aui:col width="20">
                     <aui:select name="filterSelection" label="" value="<%=filterId%>">

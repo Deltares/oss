@@ -12,17 +12,17 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
 import nl.deltares.oss.geolocation.model.GeoLocation;
 import nl.deltares.oss.geolocation.service.GeoLocationLocalServiceUtil;
 import nl.deltares.portal.utils.KeycloakUtils;
-import nl.deltares.tableview.comparator.DownloadComparator;
 import nl.deltares.tableview.model.DisplayDownload;
 import nl.deltares.tableview.portlet.constants.TablePortletKeys;
 import nl.deltares.tableview.tasks.impl.DeletedSelectedDownloadsRequest;
-import nl.deltares.tableview.tasks.impl.ExportDownloadsTableRequest;
+import nl.deltares.tableview.tasks.impl.ExportSelectedDownloadsTableRequest;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
 import org.osgi.service.component.annotations.Component;
@@ -75,20 +75,30 @@ public class DownloadTablePortlet extends MVCPortlet {
 
         final int curPage = ParamUtil.getInteger(renderRequest, "cur", 1);
         final int deltas = ParamUtil.getInteger(renderRequest, "delta", 25);
-        final String filterValue = ParamUtil.getString(renderRequest, "filterValue", null);
-        final String filterSelection = ParamUtil.getString(renderRequest, "filterSelection", null);
+        final String filterValue = ParamUtil.getString(renderRequest, "filterValue", "");
         final String orderByCol = ParamUtil.getString(renderRequest, "orderByCol", "modifiedDate");
         final String orderByType = ParamUtil.getString(renderRequest, "orderByType", "desc");
 
-        doFilterValues(filterValue, filterSelection, curPage, deltas, orderByCol, orderByType, renderRequest);
+        doFilterValues(filterValue, curPage, deltas, orderByCol, orderByType, renderRequest);
+
+        renderRequest.setAttribute("filterValue", filterValue);
 
         super.render(renderRequest, renderResponse);
     }
 
-    private void doFilterValues(String filterValue, String filterSelection, int curPage, int deltas,
+    private void doFilterValues(String filterValue, int curPage, int deltas,
                                 String orderByCol, String orderByType, RenderRequest renderRequest) {
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest
                 .getAttribute(WebKeys.THEME_DISPLAY);
+
+        long userId = 0;
+        String fileNameFilter = null;
+        if (Validator.isEmailAddress(filterValue)) {
+            User user = UserLocalServiceUtil.fetchUserByEmailAddress(themeDisplay.getCompanyId(), filterValue);
+            userId = user != null ? user.getUserId() : 0;
+        } else if (filterValue != null && !filterValue.trim().isEmpty()) {
+            fileNameFilter = filterValue.trim();
+        }
 
         final long siteGroupId = themeDisplay.getSiteGroupId();
         List<Download> downloads = null;
@@ -96,36 +106,29 @@ public class DownloadTablePortlet extends MVCPortlet {
         final int start = (curPage - 1) * deltas;
         final int end = curPage * deltas;
         try {
-            if (filterValue != null && !filterValue.trim().isEmpty()) {
-                switch (filterSelection) {
-                    case "email":
-                        User user = UserLocalServiceUtil.getUserByEmailAddress(themeDisplay.getCompanyId(), filterValue);
-                        downloads = DownloadLocalServiceUtil.findDownloadsByUserId(siteGroupId, user.getUserId(), start, end, orderByCol, orderByType);
-                        downloadsCount = DownloadLocalServiceUtil.countDownloadsByUserId(siteGroupId, user.getUserId());
-                        break;
-                    case "fileName":
-                        downloads = DownloadLocalServiceUtil.findDownloadsByFileName(siteGroupId, filterValue, start, end, orderByCol, orderByType);
-                        downloadsCount = DownloadLocalServiceUtil.countDownloadsByFileName(siteGroupId, filterValue);
-                        break;
-                }
+            if (userId > 0) {
+                downloads = DownloadLocalServiceUtil.findDownloadsByUserId(siteGroupId, userId, start, end, orderByCol, orderByType);
+                downloadsCount = DownloadLocalServiceUtil.countDownloadsByUserId(siteGroupId, userId);
+            } else if (fileNameFilter != null) {
+                downloads = DownloadLocalServiceUtil.findDownloadsByFileName(siteGroupId, fileNameFilter, start, end, orderByCol, orderByType);
+                downloadsCount = DownloadLocalServiceUtil.countDownloadsByFileName(siteGroupId, fileNameFilter);
             }
             if (downloads == null) {
-                downloads = DownloadLocalServiceUtil.findDownloads(siteGroupId, start, end, orderByCol, orderByType);
-                downloadsCount = DownloadLocalServiceUtil.countDownloads(siteGroupId);
+                renderRequest.setAttribute("records", Collections.emptyList());
+                renderRequest.setAttribute("total", 0);
+            } else {
+                final List<DisplayDownload> displays = convertToDisplayDownloads(downloads);
+                renderRequest.setAttribute("records", displays);
+                renderRequest.setAttribute("total", downloadsCount);
             }
-
-            final List<DisplayDownload> displays = convertToDisplayDownloads(downloads);
-
-            renderRequest.setAttribute("records", displays);
-            renderRequest.setAttribute("total", downloadsCount);
             renderRequest.setAttribute("filterValue", filterValue);
-            renderRequest.setAttribute("filterSelection", filterSelection);
         } catch (Exception e) {
             SessionErrors.add(renderRequest, "filter-failed", e.getMessage());
             renderRequest.setAttribute("records", Collections.emptyList());
             renderRequest.setAttribute("total", 0);
         }
     }
+
     private List<DisplayDownload> convertToDisplayDownloads(List<Download> downloads) {
         final ArrayList<DisplayDownload> displays = new ArrayList<>(downloads.size());
 
@@ -134,39 +137,42 @@ public class DownloadTablePortlet extends MVCPortlet {
             final DisplayDownload displayDownload = new DisplayDownload(download);
             displays.add(displayDownload);
 
-            if (download.getGeoLocationId() == 0){
-                final long userId = download.getUserId();
-                Map<String, String> attributes = userAttributeCache.get(userId);
-                if (attributes == null){
-                    final User user = UserLocalServiceUtil.fetchUser(userId);
-                    if (user != null && keycloakUtils.isActive()) {
-                        try {
-                            attributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
-                            userAttributeCache.put(userId, attributes);
-                        } catch (Exception e) {
-                            logger.warn(String.format("Error getting user attributes for %s: %s", user.getEmailAddress(), e.getMessage()));
-                            attributes = Collections.emptyMap();
-                            userAttributeCache.put(userId, attributes);
-                        }
-                    } else {
-                        attributes = Collections.emptyMap();
-                    }
-                }
+            if (download.getGeoLocationId() == 0) {
+                Map<String, String> attributes = getUserAttributes(download.getUserId(), userAttributeCache);
                 displayDownload.setCity(attributes.get(KeycloakUtils.ATTRIBUTES.org_city.name()));
                 final Country country = CountryLocalServiceUtil.fetchCountryByName(download.getCompanyId(), attributes.get(KeycloakUtils.ATTRIBUTES.org_country.name()));
                 if (country != null) displayDownload.setCountryCode(country.getA2());
-            } else {
+            } else if (download.getGeoLocationId() > 0) {
                 final long geoLocationId = download.getGeoLocationId();
                 final GeoLocation geoLocation = GeoLocationLocalServiceUtil.fetchGeoLocation(geoLocationId);
-                if (geoLocation != null){
+                if (geoLocation != null) {
                     displayDownload.setCity(geoLocation.getCityName());
                     Country country = CountryServiceUtil.fetchCountry(geoLocation.getCountryId());
                     displayDownload.setCountryCode(country.getA2());
                 }
             }
-
         });
         return displays;
+    }
+
+    private Map<String, String> getUserAttributes(long userId, HashMap<Long, Map<String, String>> userAttributeCache) {
+        Map<String, String> attributes = userAttributeCache.get(userId);
+        if (attributes == null) {
+            final User user = UserLocalServiceUtil.fetchUser(userId);
+            if (user != null && keycloakUtils.isActive()) {
+                try {
+                    attributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
+                    userAttributeCache.put(userId, attributes);
+                } catch (Exception e) {
+                    logger.warn(String.format("Error getting user attributes for %s: %s", user.getEmailAddress(), e.getMessage()));
+                    attributes = Collections.emptyMap();
+                    userAttributeCache.put(userId, attributes);
+                }
+            } else {
+                attributes = Collections.emptyMap();
+            }
+        }
+        return attributes;
     }
 
     /**
@@ -176,12 +182,10 @@ public class DownloadTablePortlet extends MVCPortlet {
      * @param actionResponse Filter response
      */
     @SuppressWarnings("unused")
-    public void filter(ActionRequest actionRequest, ActionResponse actionResponse) {
+    public void filterDownloads(ActionRequest actionRequest, ActionResponse actionResponse) {
 
         final String filter = ParamUtil.getString(actionRequest, "filterValue", "none");
         actionResponse.getRenderParameters().setValue("filterValue", filter);
-        final String filterSelection = ParamUtil.getString(actionRequest, "filterSelection", "none");
-        actionResponse.getRenderParameters().setValue("filterSelection", filterSelection);
     }
 
     @Override
@@ -197,13 +201,12 @@ public class DownloadTablePortlet extends MVCPortlet {
         String action = ParamUtil.getString(request, "action");
         String id = ParamUtil.getString(request, "id", null);
         String filterValue = ParamUtil.getString(request, "filterValue", null);
-        String filterSelection = ParamUtil.getString(request, "filterSelection", null);
 
         if ("export".equals(action)) {
             if (id == null) {
                 id = DownloadTablePortlet.class.getName() + themeDisplay.getUserId();
             }
-            exportTable(id, filterValue, filterSelection, response, themeDisplay);
+            exportTable(id, filterValue, response, themeDisplay);
         } else if ("delete-selected".equals(action)) {
             if (id == null) {
                 id = DownloadTablePortlet.class.getName() + themeDisplay.getUserId();
@@ -248,12 +251,12 @@ public class DownloadTablePortlet extends MVCPortlet {
     }
 
 
-    private void exportTable(String dataRequestId, String filterValue, String filterSelection, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
+    private void exportTable(String dataRequestId, String filterValue, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
         response.setContentType("text/csv");
         DataRequestManager instance = DataRequestManager.getInstance();
         DataRequest dataRequest = instance.getDataRequest(dataRequestId);
         if (dataRequest == null) {
-            dataRequest = new ExportDownloadsTableRequest(dataRequestId, filterValue, filterSelection, themeDisplay.getUserId(), themeDisplay.getSiteGroup(), keycloakUtils);
+            dataRequest = new ExportSelectedDownloadsTableRequest(dataRequestId, filterValue, themeDisplay.getUserId(), themeDisplay.getSiteGroup(), keycloakUtils);
             instance.addToQueue(dataRequest);
         } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
             instance.removeDataRequest(dataRequest);
@@ -263,13 +266,6 @@ public class DownloadTablePortlet extends MVCPortlet {
         response.setContentLength(statusMessage.length());
         PrintWriter writer = response.getWriter();
         writer.println(statusMessage);
-
-    }
-
-    private void sortDownloads(List<DisplayDownload> displays, String orderByCol, String orderByType) {
-
-        final DownloadComparator comparator = new DownloadComparator(orderByCol, orderByType.equals("asc"));
-        displays.sort(comparator);
 
     }
 
