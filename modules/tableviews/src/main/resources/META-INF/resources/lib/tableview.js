@@ -14,7 +14,7 @@ var TableFormsUtil = {
         let selected = [];
         this.loadSelection(namespace, selected);
         if (selected.length === 0){
-            alert("Please select one or more downloads before continuing.");
+            alert("Please select one or more records before continuing.");
         } else {
             this.callResourceUrl(resourceUrl, namespace, filename, "delete-selected", selected, renderUrl);
         }

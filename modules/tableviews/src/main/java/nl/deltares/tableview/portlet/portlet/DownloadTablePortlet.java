@@ -45,7 +45,7 @@ import java.util.*;
                 "javax.portlet.version=3.0",
                 "com.liferay.portlet.display-category=OSS-table",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
-                "com.liferay.portlet.header-portlet-javascript=/lib/downloadtableview.js",
+                "com.liferay.portlet.header-portlet-javascript=/lib/tableview.js",
                 "com.liferay.portlet.header-portlet-javascript=/lib/common.js",
                 "com.liferay.portlet.instanceable=true",
                 "javax.portlet.display-name=DownloadTable",

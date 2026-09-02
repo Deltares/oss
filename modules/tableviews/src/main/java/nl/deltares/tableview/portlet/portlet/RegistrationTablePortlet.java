@@ -3,8 +3,6 @@ package nl.deltares.tableview.portlet.portlet;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
@@ -18,14 +16,21 @@ import nl.deltares.dsd.registration.model.Registration;
 import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
-import nl.deltares.tableview.comparator.RegistrationComparator;
 import nl.deltares.tableview.model.DisplayRegistration;
 import nl.deltares.tableview.portlet.constants.TablePortletKeys;
+import nl.deltares.tableview.tasks.impl.DeletedSelectedRegistrationsRequest;
+import nl.deltares.tableview.tasks.impl.ExportSelectedRegistrationsTableRequest;
+import nl.deltares.tableview.utils.RegistrationUtils;
+import nl.deltares.tasks.DataRequest;
+import nl.deltares.tasks.DataRequestManager;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 /**
@@ -37,6 +42,8 @@ import java.util.*;
                 "javax.portlet.version=3.0",
                 "com.liferay.portlet.display-category=OSS-table",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
+                "com.liferay.portlet.header-portlet-javascript=/lib/tableview.js",
+                "com.liferay.portlet.header-portlet-javascript=/lib/common.js",
                 "com.liferay.portlet.instanceable=true",
                 "javax.portlet.display-name=RegistrationTable",
                 "javax.portlet.init-param.template-path=/",
@@ -82,41 +89,6 @@ public class RegistrationTablePortlet extends MVCPortlet {
         super.render(renderRequest, renderResponse);
     }
 
-    private Map<Long, String> doLoadEventTitles(ThemeDisplay themeDisplay) {
-
-        Map<Long, String> titles = new HashMap<>();
-
-        List<Long> resourceIds = RegistrationLocalServiceUtil.getDistinctEventResourceIds(
-                themeDisplay.getCompanyId(), themeDisplay.getSiteGroupId());
-        doLoadResourceTitle(resourceIds, titles);
-        return titles;
-    }
-
-    private Map<Long, String> doLoadRegistrationTitles(ThemeDisplay themeDisplay, Long selectedEventResourceId, Long selectedUserId) {
-
-        if (selectedEventResourceId == null) {return Collections.emptyMap();}
-
-        Map<Long, String> titles = new HashMap<>();
-        List<Long> resourceIds = RegistrationLocalServiceUtil.getDistinctRegistrationResourceIds(
-                themeDisplay.getCompanyId(), themeDisplay.getSiteGroupId(), selectedEventResourceId, selectedUserId);
-        doLoadResourceTitle(resourceIds, titles);
-        return titles;
-    }
-
-    private void doLoadResourceTitle(List<Long> resourcePrimaryKeys, Map<Long, String> titles) {
-        for (Long resourceId : resourcePrimaryKeys) {
-            if (titles.containsKey(resourceId)) {continue;}
-            try {
-                JournalArticle journalArticle = dsdJournalArticleUtils.getLatestArticle(resourceId);
-                if (journalArticle != null)  titles.put(resourceId, journalArticle.getTitle());
-            } catch (PortalException e) {
-
-                //Article no longer exists;
-                titles.put(resourceId, String.valueOf(resourceId));
-            }
-        }
-    }
-
     private void doLoadRegistration(RenderRequest renderRequest) {
 
         final String recordId = ParamUtil.getString(renderRequest, "recordId", null);
@@ -134,45 +106,27 @@ public class RegistrationTablePortlet extends MVCPortlet {
             return;
         }
 
-        String eventName;
-        long eventResourceId;
-        final JournalArticle eventArticle = getArticleByResourcePrimaryKey(registration.getEventResourcePrimaryKey(), new HashMap<>());
-        if (eventArticle != null) {
-            eventName = eventArticle.getTitle();
-            eventResourceId = registration.getEventResourcePrimaryKey();
-        } else {
-            eventName = "";
-            eventResourceId = registration.getEventResourcePrimaryKey();
-        }
-        String sessionName;
-        try {
-            final JournalArticle registrationArticle = dsdJournalArticleUtils.getLatestArticle(registration.getResourcePrimaryKey());
-            sessionName = registrationArticle.getTitle();
-        } catch (PortalException e) {
-            sessionName = String.valueOf(registration.getResourcePrimaryKey());
-        }
+        long eventResourceId = registration.getEventResourcePrimaryKey();
+        String eventName = RegistrationUtils.getArticleTitleByResourcePrimaryKey(
+                registration.getEventResourcePrimaryKey(), new HashMap<>(), dsdJournalArticleUtils, String.valueOf(eventResourceId));
+
+        String sessionName = RegistrationUtils.getArticleTitleByResourcePrimaryKey(
+                registration.getResourcePrimaryKey(), new HashMap<>(), dsdJournalArticleUtils, String.valueOf(registration.getResourcePrimaryKey()));
+
         final String email = ParamUtil.getString(renderRequest, "editEmailValue", null);
         renderRequest.setAttribute("record",
-                new DisplayRegistration(id, registration.getResourcePrimaryKey(), eventResourceId, email, eventName, sessionName, formatJson(registration.getUserPreferences()),
+                new DisplayRegistration(id, registration.getResourcePrimaryKey(), eventResourceId, email, eventName, sessionName,
+                        RegistrationUtils.formatJson(registration.getUserPreferences()),
                         registration.getStartTime(), registration.getEndTime()));
-    }
-
-    private String formatJson(String json) {
-
-        try {
-            final JSONObject jsonObject = JSONFactoryUtil.createJSONObject(json);
-            return jsonObject.toString(4);
-        } catch (JSONException e) {
-            return json;
-        }
-
     }
 
     private void doFilterValues(String filterEmailValue, long filterEventValue, long filterRegistrationValue, int curPage, int deltas, RenderRequest renderRequest) {
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest
                 .getAttribute(WebKeys.THEME_DISPLAY);
 
-        Map<Long, String> eventTitles = doLoadEventTitles(themeDisplay);
+        Map<Long, JournalArticle> articleCache = new HashMap<>();
+        Map<Long, String> eventTitles = RegistrationUtils.doLoadEventTitles(themeDisplay.getCompanyId(), themeDisplay.getSiteGroupId(),
+                articleCache, dsdJournalArticleUtils);
         renderRequest.setAttribute("eventTitles", eventTitles);
 
         long userId = 0;
@@ -181,9 +135,10 @@ public class RegistrationTablePortlet extends MVCPortlet {
             userId = user != null ? user.getUserId() : 0;
         }
 
-        Map<Long, String> registrationTitles = doLoadRegistrationTitles(themeDisplay, filterEventValue, userId);
-        renderRequest.setAttribute("registrationTitles", registrationTitles);
+        Map<Long, String> registrationTitles = RegistrationUtils.doLoadRegistrationTitles(themeDisplay.getCompanyId(),
+                themeDisplay.getSiteGroupId(), filterEventValue, userId, articleCache, dsdJournalArticleUtils);
 
+        renderRequest.setAttribute("registrationTitles", registrationTitles);
         final long siteGroupId = themeDisplay.getSiteGroupId();
 
         List<Registration> registrations;
@@ -205,11 +160,12 @@ public class RegistrationTablePortlet extends MVCPortlet {
                 registrations = Collections.emptyList();
                 recordCount = 0;
             }
-            List<DisplayRegistration> displays  = convertToDisplayValues(registrations, eventTitles, registrationTitles);
+            List<DisplayRegistration> displays = RegistrationUtils.convertToDisplayValues(registrations, articleCache
+                    , dsdJournalArticleUtils);
 
             String orderByCol = ParamUtil.getString(renderRequest, "orderByCol");
             String orderByType = ParamUtil.getString(renderRequest, "orderByType");
-            sortDownloads(displays, orderByCol, orderByType);
+            RegistrationUtils.sortDownloads(displays, orderByCol, orderByType);
 
             renderRequest.setAttribute("records", displays);
             renderRequest.setAttribute("total", recordCount);
@@ -220,55 +176,90 @@ public class RegistrationTablePortlet extends MVCPortlet {
 
     }
 
-    private JournalArticle getArticleByResourcePrimaryKey(long resourceId, Map<Long, JournalArticle> cache) {
+    @Override
+    public void serveResource(ResourceRequest request, ResourceResponse response) throws IOException, PortletException {
 
-        JournalArticle journalArticle = cache.get(resourceId);
-        if (journalArticle != null) return journalArticle;
-        try {
-            journalArticle = dsdJournalArticleUtils.getLatestArticle(resourceId);
-            if (journalArticle != null) cache.put(resourceId, journalArticle);
-            return journalArticle;
-        } catch (PortalException e) {
-            return null;
+        ThemeDisplay themeDisplay = (ThemeDisplay) request
+                .getAttribute(WebKeys.THEME_DISPLAY);
+        if (!themeDisplay.isSignedIn() || !request.isUserInRole("administrator")) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().println("Unauthorized request!");
+            return;
+        }
+        String action = ParamUtil.getString(request, "action");
+        String id = ParamUtil.getString(request, "id", null);
+        final String filterEmailValue = ParamUtil.getString(request, "filterEmailValue", "");
+        final long filterEventValue = Long.parseLong(ParamUtil.getString(request, "filterEventValue", "0"));
+        final long filterRegistrationValue = Long.parseLong(ParamUtil.getString(request, "filterRegistrationValue", "0"));
+
+        if ("export".equals(action)) {
+            if (id == null) {
+                id = RegistrationTablePortlet.class.getName() + themeDisplay.getUserId();
+            }
+            exportTable(id, filterEmailValue, filterEventValue, filterRegistrationValue, response, themeDisplay);
+        } else if ("delete-selected".equals(action)) {
+            if (id == null) {
+                id = RegistrationTablePortlet.class.getName() + themeDisplay.getUserId();
+            }
+            deletedSelected(id, request, response, themeDisplay);
+
+        } else if ("updateStatus".equals(action)) {
+            DataRequestManager.getInstance().updateStatus(id, response);
+        } else if ("downloadLog".equals(action)) {
+            DataRequestManager.getInstance().downloadDataFile(id, response);
+        } else {
+            DataRequestManager.getInstance().writeError("Unsupported Action error: " + action, response);
+        }
+        super.serveResource(request, response);
+
+    }
+
+    private void deletedSelected(String dataRequestId, ResourceRequest request, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
+
+        final HttpServletRequest httpReq = PortalUtil.getOriginalServletRequest(PortalUtil.getHttpServletRequest(request));
+        final String[] selectedIds = httpReq.getParameterValues("selection");
+
+        if (selectedIds.length == 0) {
+            response.setContentType("text/plain");
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        } else {
+            response.setContentType("text/csv");
+            DataRequestManager instance = DataRequestManager.getInstance();
+            DataRequest dataRequest = instance.getDataRequest(dataRequestId);
+            if (dataRequest == null) {
+                dataRequest = new DeletedSelectedRegistrationsRequest(dataRequestId, Arrays.asList(selectedIds), themeDisplay.getUserId(), dsdJournalArticleUtils);
+                instance.addToQueue(dataRequest);
+            } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
+                instance.removeDataRequest(dataRequest);
+            }
+            response.setStatus(HttpServletResponse.SC_OK);
+            String statusMessage = dataRequest.getStatusMessage();
+            response.setContentLength(statusMessage.length());
+            PrintWriter writer = response.getWriter();
+            writer.println(statusMessage);
+
         }
     }
 
-    private List<DisplayRegistration> convertToDisplayValues(List<Registration> registrations,
-                                                             Map<Long, String> eventTitles, Map<Long, String> registrationTitles) {
 
-        final ArrayList<DisplayRegistration> displays = new ArrayList<>(registrations.size());
-        Map<Long, JournalArticle> articleCache = new HashMap<>();
-        registrations.forEach(registration -> {
-            final long registrationPrimaryKey = registration.getResourcePrimaryKey();
+    private void exportTable(String dataRequestId, String filterEmailValue, long filterEventValue, long filterRegistrationValue,
+                             ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
+        response.setContentType("text/csv");
+        DataRequestManager instance = DataRequestManager.getInstance();
+        DataRequest dataRequest = instance.getDataRequest(dataRequestId);
+        if (dataRequest == null) {
+            dataRequest = new ExportSelectedRegistrationsTableRequest(dataRequestId, filterEmailValue, filterEventValue,
+                    filterRegistrationValue, themeDisplay, dsdJournalArticleUtils);
+            instance.addToQueue(dataRequest);
+        } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
+            instance.removeDataRequest(dataRequest);
+        }
+        response.setStatus(HttpServletResponse.SC_OK);
+        String statusMessage = dataRequest.getStatusMessage();
+        response.setContentLength(statusMessage.length());
+        PrintWriter writer = response.getWriter();
+        writer.println(statusMessage);
 
-            String registrationTitle = registrationTitles.get(registrationPrimaryKey);
-            if (registrationTitle == null) {
-                JournalArticle registrationArticle = getArticleByResourcePrimaryKey(registrationPrimaryKey, articleCache);
-                if (registrationArticle != null) {
-                    registrationTitle = registrationArticle.getTitle();
-                    registrationTitles.put(registrationPrimaryKey, registrationTitle);
-                } else {
-                    registrationTitle = String.valueOf(registrationPrimaryKey);
-                }
-            }
-
-            final long eventResourcePrimaryKey = registration.getEventResourcePrimaryKey();
-            String eventTitle = eventTitles.get(eventResourcePrimaryKey);
-            if (eventTitle == null) {
-                JournalArticle eventArticle = getArticleByResourcePrimaryKey(eventResourcePrimaryKey, articleCache);
-                if (eventArticle != null) {
-                    eventTitle = eventArticle.getTitle();
-                    eventTitles.put(eventResourcePrimaryKey, eventTitle);
-                } else {
-                    eventTitle = String.valueOf(eventResourcePrimaryKey);
-                }
-            }
-            final User user = UserLocalServiceUtil.fetchUser(registration.getUserId());
-            final String email = user != null ? user.getEmailAddress() : String.valueOf(registration.getUserId());
-            displays.add(new DisplayRegistration(registration.getRegistrationId(), registrationPrimaryKey, eventResourcePrimaryKey,
-                    email, eventTitle, registrationTitle, null, registration.getStartTime(), registration.getEndTime()));
-        });
-        return displays;
     }
 
     /**
@@ -282,7 +273,7 @@ public class RegistrationTablePortlet extends MVCPortlet {
 
         final String selectedEmail = ParamUtil.getString(actionRequest, "filterEmailValue", "");
 
-        if ( !selectedEmail.isEmpty() ) {
+        if (!selectedEmail.isEmpty()) {
             RenderURL redirectURL = actionResponse.createRedirectURL(MimeResponse.Copy.ALL);
             redirectURL.getRenderParameters().setValue("filterEmailValue", selectedEmail);
             redirectURL.getRenderParameters().setValue("filterEventValue", "0");
@@ -308,7 +299,7 @@ public class RegistrationTablePortlet extends MVCPortlet {
         final String selectedEventValue = ParamUtil.getString(actionRequest, "filterEventValue", "");
         final String selectedRegistrationValue = ParamUtil.getString(actionRequest, "filterRegistrationValue", "");
 
-        if ( !selectedEventValue.isEmpty() ) {
+        if (!selectedEventValue.isEmpty()) {
             RenderURL redirectURL = actionResponse.createRedirectURL(MimeResponse.Copy.ALL);
             redirectURL.getRenderParameters().setValue("filterEmailValue", "");
             redirectURL.getRenderParameters().setValue("filterEventValue", selectedEventValue);
@@ -320,32 +311,6 @@ public class RegistrationTablePortlet extends MVCPortlet {
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    /**
-     * Delete selected registration
-     *
-     * @param actionRequest  Delete action
-     * @param actionResponse Delete response
-     */
-    @SuppressWarnings("unused")
-    public void delete(ActionRequest actionRequest, ActionResponse actionResponse) {
-
-        final String recordId = ParamUtil.getString(actionRequest, "recordId", null);
-        try {
-            Registration registration = RegistrationLocalServiceUtil.deleteRegistration(Long.parseLong(recordId));
-            SessionMessages.add(actionRequest, "action-success", String.format("Delete registration %s", recordId));
-        } catch (Exception e) {
-            SessionErrors.add(actionRequest, "action-failed", String.format("Failed to delete registration: %s", e.getMessage()));
-        }
-
-        final String selectedEmail = ParamUtil.getString(actionRequest, "filterEmailValue", null);
-        final String filterEventValue = ParamUtil.getString(actionRequest, "filterEventValue", null);
-        final String filterRegistrationValue = ParamUtil.getString(actionRequest, "filterRegistrationValue", null);
-
-        actionResponse.getRenderParameters().setValue("filterEmailValue", selectedEmail);
-        actionResponse.getRenderParameters().setValue("filterRegistrationValue", selectedEmail);
-        actionResponse.getRenderParameters().setValue("filterEmailValue", selectedEmail);
     }
 
     /**
@@ -389,10 +354,5 @@ public class RegistrationTablePortlet extends MVCPortlet {
 
     }
 
-    private void sortDownloads(List<DisplayRegistration> displays, String orderByCol, String orderByType) {
 
-        final RegistrationComparator comparator = new RegistrationComparator(orderByCol, orderByType.equals("asc"));
-        displays.sort(comparator);
-
-    }
 }

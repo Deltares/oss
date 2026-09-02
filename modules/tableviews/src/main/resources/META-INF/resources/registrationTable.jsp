@@ -22,6 +22,7 @@
     final Map<Long, String> registrationTitles = (Map) request.getAttribute("registrationTitles");
 
 %>
+<aui:input name="runningProcess" type="hidden"/>
 <span id="<portlet:namespace/>group-message-block"></span>
 <aui:fieldset label="table.registration.title" collapsible="true">
 
@@ -120,6 +121,7 @@
             <liferay-ui:search-container-row
                     className="nl.deltares.tableview.model.DisplayRegistration"
                     modelVar="entry"
+                    keyProperty="recordId"
             >
                 <liferay-ui:search-container-column-text property="eventName" name="Event" orderable="true"
                                                          orderableProperty="eventName"/>
@@ -149,13 +151,17 @@
                         </portlet:actionURL>
 
                         <aui:button name="editButton" type="submit" value="Edit" href="<%=editRegistrationURL%>"/>
-                        <aui:button name="deleteButton" type="submit" cssClass="deleteButton" value="Delete"
-                                    href="<%=deleteRegistrationURL%>"/>
+<%--                        <aui:button name="deleteButton" type="submit" cssClass="deleteButton" value="Delete"--%>
+<%--                                    href="<%=deleteRegistrationURL%>"/>--%>
                     </aui:button-row>
                 </liferay-ui:search-container-column-text>
             </liferay-ui:search-container-row>
             <liferay-ui:search-iterator/>
         </liferay-ui:search-container>
+        <aui:button-row>
+            <aui:button name="exportResultsButton" type="submit" value="Export"/>
+            <aui:button name="deleteSelectedButton" type="submit" value="Delete selected"/>
+        </aui:button-row>
     </aui:form>
     <hr>
     <aui:row>
@@ -164,16 +170,20 @@
         </aui:col>
     </aui:row>
 </aui:fieldset>
-<aui:script use="event, node, aui-base, aui-progressbar">
+<aui:script use="event, io, aui-io-request, node, aui-base, aui-progressbar">
 
-    let deleteButtons = document.getElementsByClassName("deleteButton");
-    Array.from(deleteButtons).forEach(function (button) {
-        button.addEventListener('click', function (event) {
-            if (confirm("You are about to delete this registration.\nDo you want to continue?") === false) {
-                event.preventDefault();
-            }
-        });
-    });
+
+    let exportResultsButton = document.getElementById('<portlet:namespace/>exportResultsButton');
+    exportResultsButton.onclick = function(event){
+        event.preventDefault();
+        TableFormsUtil.exportResults("<portlet:resourceURL/>", "<portlet:namespace/>", "export-registrations.csv")
+    };
+
+    let deleteSelectedButton = document.getElementById('<portlet:namespace/>deleteSelectedButton');
+    deleteSelectedButton.onclick = function(event){
+        event.preventDefault();
+        TableFormsUtil.deleteSelected("<portlet:resourceURL/>", "<liferay-portlet:renderURL/>", "<portlet:namespace/>", "delete-selected-registrations.csv")
+    };
 
 </aui:script>
 
