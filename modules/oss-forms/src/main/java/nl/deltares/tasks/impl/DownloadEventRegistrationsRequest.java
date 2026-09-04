@@ -577,7 +577,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     private void writeUserInfo(RegistrationData record, User user, StringBuilder line) {
         if (user == null){
             writeField(line, String.valueOf(record.getUserId()));
-            writeField(line,record.getUserFullName());
+            writeField(line,null);
             writeField(line,null);
         } else {
             writeField(line, user.getEmailAddress());
@@ -620,6 +620,9 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         Map<String, String> userPreferences = record.getAttributes();
         if (user != null) {
             writeWebinarInfo(line, user, dsdRegistration, courseRegistrationsCache, userPreferences);
+        } else {
+            line.append(','); //webinarprovider
+            line.append(','); //registrationstatus
         }
         writeField(line, userPreferences.get("remarks"));
         writeBillingInfo(line, userPreferences, false);
