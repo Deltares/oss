@@ -222,7 +222,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 Long eventResourcePrimaryKey = recordObjects.getEventResourceId();
                 Event event = (Event) getDsdArticle(eventResourcePrimaryKey, cache);
                 Long resourcePrimaryKey = recordObjects.getResourceId();
-                Registration registration = (Registration) getDsdArticle(resourcePrimaryKey, cache);
+                AbsDsdArticle registration = (AbsDsdArticle) getDsdArticle(resourcePrimaryKey, cache);
 
                 statusMessage = String.format("procession eventResourcePrimaryKey=%d and resourcePrimaryKey=%d",
                         eventResourcePrimaryKey, resourcePrimaryKey);
@@ -517,7 +517,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     }
 
     private void writeReproRecord(PrintWriter writer, RegistrationData record, Event event,
-                             Registration dsdRegistration, User user) {
+                             AbsDsdArticle dsdRegistration, User user) {
 
         StringBuilder line = new StringBuilder();
         if (event == null) {
@@ -542,14 +542,18 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     }
 
     private void writeLightRecord(PrintWriter writer, RegistrationData record,
-                             Registration dsdRegistration, User user) {
+                                  AbsDsdArticle dsdRegistration, User user) {
 
         StringBuilder line = new StringBuilder();
         if (dsdRegistration == null) {
             writeField(line, null);
             writeField(line, String.valueOf(record.getResourceId()));
         } else {
-            writeField(line, dsdRegistration.getProjectNumber());
+            if (dsdRegistration instanceof Registration) {
+                writeField(line, ((Registration)dsdRegistration).getProjectNumber());
+            } else {
+               line.append(',');
+            }
             writeField(line, dsdRegistration.getTitle());
         }
         writeUserInfo(record, user, line);
@@ -580,7 +584,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
     }
 
     private void writeRecord(PrintWriter writer, RegistrationData record, Event event,
-                             Registration dsdRegistration, User user, Map<String, List<String>> courseRegistrationsCache, Locale locale) {
+                             AbsDsdArticle dsdRegistration, User user, Map<String, List<String>> courseRegistrationsCache, Locale locale) {
 
         StringBuilder line = new StringBuilder();
         if (event == null) {
@@ -594,24 +598,31 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             writeField(line, null);
             writeField(line, String.valueOf(record.getResourceId()));
             writeField(line, null);
+        } else if (dsdRegistration instanceof Registration) {
+            writeField(line, ((Registration)dsdRegistration).getProjectNumber());
+            writeField(line, dsdRegistration.getArticleId());
+            writeField(line, dsdRegistration.getTitle());
         } else {
-            writeField(line, dsdRegistration.getProjectNumber());
+            line.append(',');
             writeField(line, dsdRegistration.getArticleId());
             writeField(line, dsdRegistration.getTitle());
         }
         Date startDate = record.getPeriods().get(0).getStartDate();
         writeField(line, DateUtil.getDate(startDate,"yyyy-MM-dd", locale));
-        if (dsdRegistration == null){
+        if (dsdRegistration == null) {
             writeField(line, null);
             writeField(line, null);
+        } else if (dsdRegistration instanceof Registration) {
+            writeField(line, ((Registration)dsdRegistration).getTopic());
+            writeField(line, ((Registration)dsdRegistration).getType());
         } else {
-            writeField(line, dsdRegistration.getTopic());
-            writeField(line, dsdRegistration.getType());
+            line.append(',');
+            line.append(',');
         }
         writeUserInfo(record, user, line);
         Map<String, String> userPreferences = record.getAttributes();
-        if (user != null) {
-            writeWebinarInfo(line, user, dsdRegistration, courseRegistrationsCache, userPreferences);
+        if (user != null && dsdRegistration instanceof Registration) {
+            writeWebinarInfo(line, user, (Registration) dsdRegistration, courseRegistrationsCache, userPreferences);
         } else {
             line.append(','); //webinarprovider
             line.append(','); //registrationstatus
