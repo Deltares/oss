@@ -558,7 +558,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         writeBillingInfo(line, userPreferences, true);
         writeField(line, userPreferences.get("registration_time"));
         writeField(line, userPreferences.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
-        if (removeMissing && dsdRegistration == null){
+        if (removeMissing && (dsdRegistration == null || user == null)){
             deleteBrokenRegistration(record.getResourceId());
             writeField(line, "deleted record");
         }
@@ -628,7 +628,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             User author = getUserById(authorId);
             writeField(line, author == null ? String.valueOf(authorId) : author.getEmailAddress());
         }
-        if (removeMissing && dsdRegistration == null){
+        if (removeMissing && (dsdRegistration == null || user == null)){
             deleteBrokenRegistration(record.getRegistrationRecordId());
             writeField(line, "deleted record");
         }
