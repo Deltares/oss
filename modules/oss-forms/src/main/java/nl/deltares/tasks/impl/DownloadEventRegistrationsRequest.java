@@ -227,12 +227,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 statusMessage = String.format("procession eventResourcePrimaryKey=%d and resourcePrimaryKey=%d",
                         eventResourcePrimaryKey, resourcePrimaryKey);
 
-                User matchingUser = null;
-                try {
-                    matchingUser = UserLocalServiceUtil.getUser(recordObjects.getUserId());
-                } catch (PortalException e) {
-                    //
-                }
+                User matchingUser = getUserById(recordObjects.getUserId());
                 if (downloadAction == DOWNLOAD_ACTIONS.downloadRepro) {
                     //write short output for printing badges
                     writeReproRecord(writer, recordObjects, event, registration, matchingUser);
@@ -258,6 +253,16 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
 
     }
 
+    private static User getUserById(long userId) {
+        User matchingUser = null;
+        try {
+            matchingUser = UserLocalServiceUtil.getUser(userId);
+        } catch (PortalException e) {
+            //
+        }
+        return matchingUser;
+    }
+
     private void downloadRequestedResourceIdRegistrations(long resourceId, PrintWriter writer) {
 
         List<RegistrationData> registrationRecordsToProcess = dsdSessionUtils.getRegistrations(group.getGroupId(), resourceId);
@@ -276,12 +281,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             long resourcePrimaryKey = recordObjects.getResourceId();
             statusMessage = "procession resourcePrimaryKey=" + resourcePrimaryKey;
 
-            User matchingUser = null;
-            try {
-                matchingUser = UserLocalServiceUtil.getUser(recordObjects.getUserId());
-            } catch (PortalException e) {
-                //
-            }
+            User matchingUser = getUserById(recordObjects.getUserId());
             if (downloadAction == DOWNLOAD_ACTIONS.downloadRepro) {
                 //write short output for printing badges
                 writeReproRecord(writer, recordObjects, null, null, matchingUser);
@@ -331,12 +331,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                     matchingRegistration = (Registration) getDsdArticle(resourcePrimaryKey, articleCache);
                 }
 
-                User matchingUser = null;
-                try {
-                    matchingUser = UserLocalServiceUtil.getUser(recordObjects.getUserId());
-                } catch (PortalException e) {
-                    //
-                }
+                User matchingUser = getUserById(recordObjects.getUserId());
                 final Long eventResourcePrimaryKey = recordObjects.getEventResourceId();
                 Event event = (Event) articleCache.get(eventResourcePrimaryKey);
                 if (event == null){
@@ -396,12 +391,7 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
                 statusMessage = "procession resourcePrimaryKey=" + resourcePrimaryKey;
                 Registration matchingRegistration = registrationCache.get(resourcePrimaryKey);
 
-                User matchingUser = null;
-                try {
-                    matchingUser = UserLocalServiceUtil.getUser(recordObjects.getUserId());
-                } catch (PortalException e) {
-                    //
-                }
+                User matchingUser = getUserById(recordObjects.getUserId());
                 final Long eventResourcePrimaryKey = recordObjects.getEventResourceId();
                 Event event = (Event) eventCache.get(eventResourcePrimaryKey);
                 if (event == null){
@@ -451,13 +441,15 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
             header.append(",organization");
 
         } else {
-            header = new StringBuilder("eventId, eventTitle, projectNumber, registrationId, registrationTitle,start date,topic,type,email,firstName,lastName,webinarProvider,registrationStatus,remarks");
+            header = new StringBuilder("eventId, eventTitle, projectNumber, registrationId, registrationTitle,start date," +
+                    "topic,type,email,firstName,lastName,webinarProvider,registrationStatus,remarks");
             for (BillingInfo.ATTRIBUTES value : BillingInfo.ATTRIBUTES.values()) {
                 header.append(',');
                 header.append(value.name());
             }
             header.append(",registration time");
             header.append(",organization");
+            header.append(",authorEmail");
         }
         writer.println(header);
     }
@@ -628,6 +620,14 @@ public class DownloadEventRegistrationsRequest extends AbstractDataRequest {
         writeBillingInfo(line, userPreferences, false);
         writeField(line, userPreferences.get("registration_time"));
         writeField(line, userPreferences.get(KeycloakUtils.ATTRIBUTES.org_name.name()));
+        //write registered by user
+        long authorId = record.getAuthorId();
+        if (authorId == record.getUserId()) {
+            line.append(','); //authorEmail
+        } else {
+            User author = getUserById(authorId);
+            writeField(line, author == null ? String.valueOf(authorId) : author.getEmailAddress());
+        }
         if (removeMissing && dsdRegistration == null){
             deleteBrokenRegistration(record.getRegistrationRecordId());
             writeField(line, "deleted record");
