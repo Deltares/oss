@@ -10,10 +10,7 @@ import com.liferay.portal.kernel.service.CountryServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.util.*;
 import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
 import nl.deltares.oss.geolocation.model.GeoLocation;
@@ -76,17 +73,20 @@ public class DownloadTablePortlet extends MVCPortlet {
         final int curPage = ParamUtil.getInteger(renderRequest, "cur", 1);
         final int deltas = ParamUtil.getInteger(renderRequest, "delta", 25);
         final String filterValue = ParamUtil.getString(renderRequest, "filterValue", "");
+        final boolean filterEmptyFileNames = Boolean.parseBoolean(
+                ParamUtil.getString(renderRequest, "filterEmpty", "false")
+        );
         final String orderByCol = ParamUtil.getString(renderRequest, "orderByCol", "modifiedDate");
         final String orderByType = ParamUtil.getString(renderRequest, "orderByType", "desc");
 
-        doFilterValues(filterValue, curPage, deltas, orderByCol, orderByType, renderRequest);
+        doFilterValues(filterValue, filterEmptyFileNames, curPage, deltas, orderByCol, orderByType, renderRequest);
 
         renderRequest.setAttribute("filterValue", filterValue);
-
+        if (filterEmptyFileNames) renderRequest.setAttribute("filterEmpty", "true");
         super.render(renderRequest, renderResponse);
     }
 
-    private void doFilterValues(String filterValue, int curPage, int deltas,
+    private void doFilterValues(String filterValue, boolean filterEmptyFileNames, int curPage, int deltas,
                                 String orderByCol, String orderByType, RenderRequest renderRequest) {
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest
                 .getAttribute(WebKeys.THEME_DISPLAY);
@@ -112,7 +112,11 @@ public class DownloadTablePortlet extends MVCPortlet {
             } else if (fileNameFilter != null) {
                 downloads = DownloadLocalServiceUtil.findDownloadsByFileName(siteGroupId, fileNameFilter, start, end, orderByCol, orderByType);
                 downloadsCount = DownloadLocalServiceUtil.countDownloadsByFileName(siteGroupId, fileNameFilter);
+            } else if (filterEmptyFileNames) {
+                downloads = DownloadLocalServiceUtil.findDownloadsWithEmptyFileName(siteGroupId, start, end, orderByCol, orderByType);
+                downloadsCount = DownloadLocalServiceUtil.countDownloadsWithEmptyFileName(siteGroupId);
             }
+
             if (downloads == null) {
                 renderRequest.setAttribute("records", Collections.emptyList());
                 renderRequest.setAttribute("total", 0);
@@ -184,8 +188,9 @@ public class DownloadTablePortlet extends MVCPortlet {
     @SuppressWarnings("unused")
     public void filterDownloads(ActionRequest actionRequest, ActionResponse actionResponse) {
 
-        final String filter = ParamUtil.getString(actionRequest, "filterValue", "none");
+        final String filter = ParamUtil.getString(actionRequest, "filterValue", "");
         actionResponse.getRenderParameters().setValue("filterValue", filter);
+        actionResponse.getRenderParameters().setValue("filterEmpty", "false");
     }
 
     @Override
@@ -199,20 +204,13 @@ public class DownloadTablePortlet extends MVCPortlet {
             return;
         }
         String action = ParamUtil.getString(request, "action");
-        String id = ParamUtil.getString(request, "id", null);
-        String filterValue = ParamUtil.getString(request, "filterValue", null);
-
+        String id = getTaskId(request, themeDisplay);
         if ("export".equals(action)) {
-            if (id == null) {
-                id = DownloadTablePortlet.class.getName() + themeDisplay.getUserId();
-            }
-            exportTable(id, filterValue, response, themeDisplay);
+            exportTable(id, request, response, themeDisplay);
         } else if ("delete-selected".equals(action)) {
-            if (id == null) {
-                id = DownloadTablePortlet.class.getName() + themeDisplay.getUserId();
-            }
             deletedSelected(id, request, response, themeDisplay);
-
+        } else if ("delete-all".equals(action)) {
+            deletedAll(id, request, response, themeDisplay);
         } else if ("updateStatus".equals(action)) {
             DataRequestManager.getInstance().updateStatus(id, response);
         } else if ("downloadLog".equals(action)) {
@@ -221,6 +219,14 @@ public class DownloadTablePortlet extends MVCPortlet {
             DataRequestManager.getInstance().writeError("Unsupported Action error: " + action, response);
         }
 
+    }
+
+    private static String getTaskId(ResourceRequest request, ThemeDisplay themeDisplay) {
+        String id = ParamUtil.getString(request, "id", null);
+        if (id == null) {
+            id = DownloadTablePortlet.class.getName() + themeDisplay.getUserId();
+        }
+        return id;
     }
 
     private void deletedSelected(String dataRequestId, ResourceRequest request, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
@@ -250,13 +256,43 @@ public class DownloadTablePortlet extends MVCPortlet {
         }
     }
 
+    private void deletedAll(String dataRequestId, ResourceRequest request, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
 
-    private void exportTable(String dataRequestId, String filterValue, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
+        final String filterValue = ParamUtil.getString(request, "filterValue", "");
+        final boolean filterEmpty = Boolean.parseBoolean(ParamUtil.getString(request,"filterEmpty", "false"));
+
+        if (filterValue.isEmpty() && !filterEmpty) {
+            response.setContentType("text/plain");
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        } else {
+            response.setContentType("text/csv");
+            DataRequestManager instance = DataRequestManager.getInstance();
+            DataRequest dataRequest = instance.getDataRequest(dataRequestId);
+            if (dataRequest == null) {
+                dataRequest = new DeletedSelectedDownloadsRequest(dataRequestId, filterValue, filterEmpty, themeDisplay.getUserId(), themeDisplay.getSiteGroup());
+                instance.addToQueue(dataRequest);
+            } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
+                instance.removeDataRequest(dataRequest);
+            }
+            response.setStatus(HttpServletResponse.SC_OK);
+            String statusMessage = dataRequest.getStatusMessage();
+            response.setContentLength(statusMessage.length());
+            PrintWriter writer = response.getWriter();
+            writer.println(statusMessage);
+
+        }
+    }
+
+    private void exportTable(String dataRequestId, ResourceRequest request, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
         response.setContentType("text/csv");
         DataRequestManager instance = DataRequestManager.getInstance();
         DataRequest dataRequest = instance.getDataRequest(dataRequestId);
         if (dataRequest == null) {
-            dataRequest = new ExportSelectedDownloadsTableRequest(dataRequestId, filterValue, themeDisplay.getUserId(), themeDisplay.getSiteGroup(), keycloakUtils);
+
+            String filterValue = ParamUtil.getString(request, "filterValue", null);
+            boolean filterEmpty = Boolean.parseBoolean(ParamUtil.getString(request, "filterEmpty", "false"));
+
+            dataRequest = new ExportSelectedDownloadsTableRequest(dataRequestId, filterValue, filterEmpty, themeDisplay.getUserId(), themeDisplay.getSiteGroup(), keycloakUtils);
             instance.addToQueue(dataRequest);
         } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
             instance.removeDataRequest(dataRequest);

@@ -16,13 +16,30 @@ var TableFormsUtil = {
         if (selected.length === 0){
             alert("Please select one or more records before continuing.");
         } else {
-            this.callResourceUrl(resourceUrl, namespace, filename, "delete-selected", selected, renderUrl);
+
+            if (confirm("You are about to delete the selected records from the table!\nDo you want to continue?") === false) {
+                return;
+            }
+
+            let data = {
+                selection : selected
+            }
+            this.callResourceUrl(resourceUrl, namespace, filename, "delete-selected", data, renderUrl);
         }
 
     },
 
+    deleteAll: function(resourceUrl, renderUrl, namespace, filename){
+
+        if (confirm("You are about to delete all filtered records from the table!\nDo you want to continue?") === false) {
+            return;
+        }
+
+        this.callResourceUrl(resourceUrl, namespace, filename, "delete-all", {}, renderUrl);
+    },
+
     exportResults: function(resourceUrl, namespace, filename){
-        this.callResourceUrl(resourceUrl, namespace, filename, "export", null, null);
+        this.callResourceUrl(resourceUrl, namespace, filename, "export", {}, null);
     },
 
     callResourceUrl: function(resourceUrl, namespace, filename, action, data, redirectUrl){
@@ -36,9 +53,7 @@ var TableFormsUtil = {
 
             method: 'POST',
             type: 'json',
-            data: {
-                selection : data
-            },
+            data: data,
             on : {
                 success : function(response, status, xhr) {
                     if (xhr.status > 299){
@@ -52,7 +67,8 @@ var TableFormsUtil = {
                     } else if (xhr.status === 200){
                         let jsonResponse = JSON.parse(xhr.responseText);
                         if (jsonResponse.status === 'nodata'){
-                            CommonFormsUtil.writeInfo("No data found for request");
+                            CommonFormsUtil.writeInfo(namespace, "No data found for request");
+                            return true;
                         } else {
                             CommonFormsUtil.startProgressMonitor(namespace);
                             CommonFormsUtil.setRunningProcess(namespace, setInterval(function () {

@@ -14,6 +14,7 @@
 <%
     final Integer count = (Integer) request.getAttribute("total");
     final String filterValue = (String) request.getAttribute("filterValue");
+    final String filterEmpty = (String) request.getAttribute("filterEmpty");
 %>
 <aui:input name="runningProcess" type="hidden"/>
 <span id="<portlet:namespace/>group-message-block"></span>
@@ -41,6 +42,7 @@
     <aui:form action="<%=filterDownloadURL%>" name="filterDownloadForm">
         <!-- Hidden field to indicate which action was triggered. The id is namespaced for uniqueness on the page. -->
         <aui:fieldset>
+            <aui:input name="filterEmpty" type="hidden" value="<%=filterEmpty%>" />
             <aui:row>
                 <aui:col width="20">
                     <div class="control-label"><liferay-ui:message key="table.filter.selection.label"/></div>
@@ -62,6 +64,11 @@
             <portlet:param name="mvcPath" value="/downloadsTable.jsp"/>
         </portlet:renderURL>
         <aui:button type="submit" value="table.filter.clear" href="<%=clearFilterURL%>"/>
+        <portlet:renderURL var="emptyFileNameFilterURL">
+            <portlet:param name="mvcPath" value="/downloadsTable.jsp"/>
+            <portlet:param name="filterEmpty" value="true"/>
+        </portlet:renderURL>
+        <aui:button type="submit" value="table.filter.empty" href="<%=emptyFileNameFilterURL%>" />
     </aui:button-row>
     <hr>
     <aui:form >
@@ -93,6 +100,7 @@
         <aui:button-row>
             <aui:button name="exportResultsButton" type="submit" value="Export"/>
             <aui:button name="deleteSelectedButton" type="submit" value="Delete selected"/>
+            <aui:button name="deleteAllButton" type="submit" value="Delete all"/>
         </aui:button-row>
     </aui:form>
     <hr>
@@ -116,6 +124,11 @@
         TableFormsUtil.deleteSelected("<portlet:resourceURL/>", "<liferay-portlet:renderURL/>", "<portlet:namespace/>", "delete-selected-downloads.csv")
     };
 
+    let deleteAllButton = document.getElementById('<portlet:namespace/>deleteAllButton');
+    deleteAllButton.onclick = function(event){
+        event.preventDefault();
+        TableFormsUtil.deleteAll("<portlet:resourceURL/>", "<liferay-portlet:renderURL/>", "<portlet:namespace/>", "delete-all-downloads.csv")
+    };
 </aui:script>
 
 

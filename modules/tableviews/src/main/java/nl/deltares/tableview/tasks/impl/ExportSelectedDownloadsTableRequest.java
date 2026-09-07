@@ -36,9 +36,10 @@ public class ExportSelectedDownloadsTableRequest extends AbstractDataRequest {
     private final Group group;
     private final String filterValue;
     private final boolean findByUser;
+    private final boolean filterEmptyFileName;
     protected KeycloakUtils keycloakUtils;
 
-    public ExportSelectedDownloadsTableRequest(String id, String filterValue, long currentUserId, Group siteGroup, KeycloakUtils keycloakUtils) throws IOException {
+    public ExportSelectedDownloadsTableRequest(String id, String filterValue, boolean filterEmptyFileName, long currentUserId, Group siteGroup, KeycloakUtils keycloakUtils) throws IOException {
         super(id, currentUserId);
         this.group = siteGroup;
         if (filterValue != null && filterValue.trim().isEmpty()){
@@ -46,6 +47,7 @@ public class ExportSelectedDownloadsTableRequest extends AbstractDataRequest {
         } else {
             this.filterValue = filterValue;
         }
+        this.filterEmptyFileName = filterEmptyFileName;
         this.findByUser = Validator.isEmailAddress(filterValue);
         this.keycloakUtils = keycloakUtils;
     }
@@ -54,11 +56,11 @@ public class ExportSelectedDownloadsTableRequest extends AbstractDataRequest {
     public STATUS call()  {
         if (getStatus() == AVAILABLE) return status;
 
-        if (filterValue == null){
+        if (filterValue == null && !filterEmptyFileName) {
             status = NODATA;
             return status;
         }
-        statusMessage = "starting exporting for filter " + filterValue;
+        statusMessage = "starting exporting for filter";
         init();
         status = RUNNING;
         try {
@@ -104,11 +106,14 @@ public class ExportSelectedDownloadsTableRequest extends AbstractDataRequest {
         User filterUser;
         if (findByUser) {
             filterUser = UserLocalServiceUtil.fetchUserByEmailAddress(group.getCompanyId(), filterValue);
-            if (filterUser == null){
+            if (filterUser == null) {
                 totalCount = 0;
             } else {
                 totalCount = DownloadLocalServiceUtil.countDownloadsByUserId(group.getGroupId(), filterUser.getUserId());
             }
+        } else if (filterEmptyFileName) {
+            filterUser = null;
+            totalCount = DownloadLocalServiceUtil.countDownloadsWithEmptyFileName(group.getGroupId());
         } else {
             filterUser = null;
             if (filterValue != null) {
@@ -122,9 +127,11 @@ public class ExportSelectedDownloadsTableRequest extends AbstractDataRequest {
             if (status == TERMINATED) return;
             final List<Download> downloads;
             if (filterUser != null) {
-                downloads = DownloadLocalServiceUtil.findDownloadsByUserId(group.getGroupId(), filterUser.getUserId(), start, end);
+                downloads = DownloadLocalServiceUtil.findDownloadsByUserId(group.getGroupId(), filterUser.getUserId(), start, end, "createDate", "asc");
+            } else if(filterEmptyFileName) {
+                downloads = DownloadLocalServiceUtil.findDownloadsWithEmptyFileName(group.getGroupId(), start, end, "createDate", "asc");
             } else {
-                downloads = DownloadLocalServiceUtil.findDownloadsByFileName(group.getGroupId(), filterValue, start, end);
+                downloads = DownloadLocalServiceUtil.findDownloadsByFileName(group.getGroupId(), filterValue, start, end, "createDate", "asc");
             }
             if (downloads.isEmpty()) {
                 setProcessCount(totalCount);
@@ -175,7 +182,8 @@ public class ExportSelectedDownloadsTableRequest extends AbstractDataRequest {
                 writer.println(String.format("%d,%s,%s,\"%s\",%s,\"%s\",\"%s\",\"%s\",%s,%s,%s",
                         download.getDownloadId(), modifiedDate, expiryDate,
                         download.getFileName(), email, fullName, download.getOrganization(),
-                        city, countryCode, download.getFileShareUrl(), download.getLicenseDownloadUrl()));
+                        city == null ? "" : city, countryCode == null ? "" : countryCode, download.getFileShareUrl(),
+                        download.getLicenseDownloadUrl()));
 
                 if (Thread.interrupted()) {
                     status = TERMINATED;

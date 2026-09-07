@@ -1,6 +1,6 @@
 Bundle-Name: tableviews
 Bundle-SymbolicName: nl.deltares.tableview.portlet
-Bundle-Version: 1.1.11
+Bundle-Version: 1.1.12
 Export-Package: nl.deltares.tableview.portlet.constants
 Import-Package: \
     nl.deltares.tasks.*, \
