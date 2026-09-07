@@ -14,10 +14,7 @@
 
 package nl.deltares.oss.download.service.impl;
 
-import com.liferay.portal.kernel.dao.orm.DynamicQuery;
-import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.*;
 import com.liferay.portal.aop.AopService;
 
 import nl.deltares.oss.download.model.Download;
@@ -57,6 +54,34 @@ public class DownloadLocalServiceImpl extends DownloadLocalServiceBaseImpl {
     public List<Download> findDownloadsByFileName(long groupId, String fileName, int start, int end){
         final DynamicQuery fileNameQuery = getFileNameQuery(groupId, fileName, null, null);
         return DownloadUtil.findWithDynamicQuery(fileNameQuery, start, end);
+    }
+
+    public List<Download> findDownloadsWithEmptyFileName(long groupId, int start, int end,  String orderByCol, String orderByType){
+        final DynamicQuery dynamicQuery = getEmptyFileNameQuery(groupId, orderByCol, orderByType );
+        return DownloadUtil.findWithDynamicQuery(dynamicQuery, start, end);
+    }
+
+    public int countDownloadsWithEmptyFileName(long groupId){
+        final DynamicQuery fileNameQuery = getEmptyFileNameQuery(groupId, null, null);
+        return (int) DownloadUtil.countWithDynamicQuery(fileNameQuery);
+    }
+
+    private DynamicQuery getEmptyFileNameQuery(long groupId, String orderByCol, String orderByType) {
+        final DynamicQuery dynamicQuery = dynamicQuery();
+        if (orderByCol != null && orderByType != null) {
+            boolean isAsc = "asc".equalsIgnoreCase(orderByType);
+            if (isAsc) {
+                dynamicQuery.addOrder(OrderFactoryUtil.asc(orderByCol));
+            } else {
+                dynamicQuery.addOrder(OrderFactoryUtil.desc(orderByCol));
+            }
+        }
+        dynamicQuery
+                .add(RestrictionsFactoryUtil.eq("groupId", groupId));
+        dynamicQuery.add(
+            RestrictionsFactoryUtil.sqlRestriction("fileName is null or fileName = ''")
+        );
+        return dynamicQuery;
     }
 
     public List<Download> findDownloadsByFileName(long groupId, String fileName, int start, int end, String orderByCol, String orderByType){

@@ -6,6 +6,7 @@
 package nl.deltares.oss.download.service;
 
 import com.liferay.petra.sql.dsl.query.DSLQuery;
+import com.liferay.portal.kernel.dao.orm.*;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
@@ -74,6 +75,8 @@ public interface DownloadLocalService
 	public int countDownloadsByFileName(long groupId, String fileName);
 
 	public int countDownloadsByUserId(long groupId, long userId);
+
+	public int countDownloadsWithEmptyFileName(long groupId);
 
 	/**
 	 * Creates a new download with the primary key. Does not add the download to the database.
@@ -235,6 +238,10 @@ public interface DownloadLocalService
 
 	public List<Download> findDownloadsByUserId(
 		long groupId, long userId, int start, int end, String orderByCol,
+		String orderByType);
+
+	public List<Download> findDownloadsWithEmptyFileName(
+		long groupId, int start, int end, String orderByCol,
 		String orderByType);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)

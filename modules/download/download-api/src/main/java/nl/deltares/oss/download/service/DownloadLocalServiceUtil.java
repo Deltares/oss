@@ -67,6 +67,10 @@ public class DownloadLocalServiceUtil {
 		return getService().countDownloadsByUserId(groupId, userId);
 	}
 
+	public static int countDownloadsWithEmptyFileName(long groupId) {
+		return getService().countDownloadsWithEmptyFileName(groupId);
+	}
+
 	/**
 	 * Creates a new download with the primary key. Does not add the download to the database.
 	 *
@@ -293,6 +297,14 @@ public class DownloadLocalServiceUtil {
 
 		return getService().findDownloadsByUserId(
 			groupId, userId, start, end, orderByCol, orderByType);
+	}
+
+	public static List<Download> findDownloadsWithEmptyFileName(
+		long groupId, int start, int end, String orderByCol,
+		String orderByType) {
+
+		return getService().findDownloadsWithEmptyFileName(
+			groupId, start, end, orderByCol, orderByType);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
