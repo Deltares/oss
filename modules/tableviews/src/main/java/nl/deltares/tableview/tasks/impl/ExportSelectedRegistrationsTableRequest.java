@@ -9,7 +9,6 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.dsd.registration.model.Registration;
-import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.tableview.model.DisplayRegistration;
 import nl.deltares.tableview.utils.RegistrationUtils;
@@ -20,7 +19,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,22 +95,19 @@ public class ExportSelectedRegistrationsTableRequest extends AbstractDataRequest
 
     private void exportSelectedRecords(PrintWriter writer) {
 
-        long companyId = group.getCompanyId();
-        long groupId = group.getGroupId();
-
-        User filterUser = null;
-        Map<Long, JournalArticle> articleCache = new HashMap<>();
+        long[] filterUerId = new long[1];
         if (findByUser) {
-            filterUser = UserLocalServiceUtil.fetchUserByEmailAddress(companyId, filterEmail);
+            User filterUser = UserLocalServiceUtil.fetchUserByEmailAddress(group.getCompanyId(), filterEmail);
             if (filterUser == null) {
-                totalCount = 0;
-            } else {
-                totalCount = RegistrationLocalServiceUtil.getUserRegistrationsCount(groupId, filterUser.getUserId());
+                status = NODATA;
+                errorMessage = String.format("User not found for email %s", filterEmail);
+                setProcessCount(totalCount);
+                return;
             }
-        } else {
-            totalCount = RegistrationLocalServiceUtil.getEventRegistrationsCount(groupId, filterEventId);
+            filterUerId[0] = filterUser.getUserId();
         }
 
+        totalCount = RegistrationUtils.getTotalRegistrationsCountForFilterSelection(group, filterUerId[0], filterEventId, filterRegistrationId);
         if (totalCount == 0) {
             status = NODATA;
             setProcessCount(0);
@@ -121,22 +116,18 @@ public class ExportSelectedRegistrationsTableRequest extends AbstractDataRequest
 
         writer.println("event,registration,email,start,end");
 
+        long groupId = group.getGroupId();
+
+        Map<Long, JournalArticle> articleCache = new HashMap<>();
+
         int start = 0;
         int end = 100;
 
         for (int i = 0; i < totalCount; ) {
             if (status == TERMINATED) return;
-            final List<Registration> registrations;
+            final List<Registration> registrations = RegistrationUtils.getRegistrationsForFilterSelection(groupId,
+                    filterUerId[0], filterEventId, filterRegistrationId, start, end);
 
-            if (filterUser != null) {
-                registrations = RegistrationLocalServiceUtil.getUserRegistrations(groupId, filterUser.getUserId(), start, end);
-            } else if (filterRegistrationId > 0) {
-                registrations = RegistrationLocalServiceUtil.getArticleRegistrations(groupId, filterRegistrationId, start, end);
-            } else if (filterEventId > 0) {
-                registrations = RegistrationLocalServiceUtil.getEventRegistrations(groupId, filterEventId, start, end);
-            } else {
-                registrations = Collections.emptyList();
-            }
             List<DisplayRegistration> displayRegistrations = RegistrationUtils.convertToDisplayValues(registrations,
                     articleCache, dsdJournalArticleUtils);
 

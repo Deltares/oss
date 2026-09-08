@@ -8,10 +8,10 @@ import com.liferay.portal.kernel.service.CountryServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.oss.download.model.Download;
-import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
 import nl.deltares.oss.geolocation.model.GeoLocation;
 import nl.deltares.oss.geolocation.service.GeoLocationLocalServiceUtil;
 import nl.deltares.portal.utils.KeycloakUtils;
+import nl.deltares.tableview.utils.RegistrationUtils;
 import nl.deltares.tasks.AbstractDataRequest;
 
 import java.io.File;
@@ -99,40 +99,31 @@ public class ExportSelectedDownloadsTableRequest extends AbstractDataRequest {
     private void exportAllRecords(PrintWriter writer) {
         writer.println("downloadId,modifiedDate,expirationDate,fileName,email,name,organization,city,country,shareUrl,licenseUrl");
 
+        final User filterUser;
+        final long[] filterUserId = new long[1];
+        if (findByUser) {
+            filterUser = UserLocalServiceUtil.fetchUserByEmailAddress(group.getCompanyId(), filterValue);
+            if (filterUser == null) {
+                status = NODATA;
+                errorMessage = String.format("User not found for email %s", filterValue);
+                setProcessCount(totalCount);
+                return;
+            }
+            filterUserId[0] = filterUser.getUserId();
+        } else {
+            filterUser = null;
+        }
+
+        totalCount = RegistrationUtils.getTotalDownloadsCountForFilterSelection(group, filterValue, filterEmptyFileName, filterUserId[0]);
+
         int start = 0;
         int end = 100;
 
         HashMap<Long, Map<String, String>> userAttributesCache = new HashMap<>();
-        User filterUser;
-        if (findByUser) {
-            filterUser = UserLocalServiceUtil.fetchUserByEmailAddress(group.getCompanyId(), filterValue);
-            if (filterUser == null) {
-                totalCount = 0;
-            } else {
-                totalCount = DownloadLocalServiceUtil.countDownloadsByUserId(group.getGroupId(), filterUser.getUserId());
-            }
-        } else if (filterEmptyFileName) {
-            filterUser = null;
-            totalCount = DownloadLocalServiceUtil.countDownloadsWithEmptyFileName(group.getGroupId());
-        } else {
-            filterUser = null;
-            if (filterValue != null) {
-                totalCount = DownloadLocalServiceUtil.countDownloadsByFileName(group.getGroupId(), filterValue);
-            } else {
-                totalCount = 0;
-            }
-        }
-
         for (int i = 0; i < totalCount; ) {
             if (status == TERMINATED) return;
-            final List<Download> downloads;
-            if (filterUser != null) {
-                downloads = DownloadLocalServiceUtil.findDownloadsByUserId(group.getGroupId(), filterUser.getUserId(), start, end, "createDate", "asc");
-            } else if(filterEmptyFileName) {
-                downloads = DownloadLocalServiceUtil.findDownloadsWithEmptyFileName(group.getGroupId(), start, end, "createDate", "asc");
-            } else {
-                downloads = DownloadLocalServiceUtil.findDownloadsByFileName(group.getGroupId(), filterValue, start, end, "createDate", "asc");
-            }
+            final List<Download> downloads = RegistrationUtils.getDownloadsForFilterSelection(group.getGroupId(),
+                    filterValue, filterUserId[0], filterEmptyFileName, start, end);
             if (downloads.isEmpty()) {
                 setProcessCount(totalCount);
                 return;

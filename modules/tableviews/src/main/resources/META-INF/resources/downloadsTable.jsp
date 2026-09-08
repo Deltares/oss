@@ -100,7 +100,7 @@
         <aui:button-row>
             <aui:button name="exportResultsButton" type="submit" value="Export"/>
             <aui:button name="deleteSelectedButton" type="submit" value="Delete selected"/>
-            <aui:button name="deleteAllButton" type="submit" value="Delete all"/>
+            <aui:button name="deleteAllButton" type="submit" cssClass="btn btn-danger" value="Delete all"/>
         </aui:button-row>
     </aui:form>
     <hr>

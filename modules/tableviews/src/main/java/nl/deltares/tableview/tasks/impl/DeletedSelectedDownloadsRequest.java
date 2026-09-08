@@ -9,6 +9,7 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.Validator;
 import nl.deltares.oss.download.model.Download;
 import nl.deltares.oss.download.service.DownloadLocalServiceUtil;
+import nl.deltares.tableview.utils.RegistrationUtils;
 import nl.deltares.tasks.AbstractDataRequest;
 
 import java.io.File;
@@ -105,36 +106,23 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
     }
     private void deleteByFilterSelection(PrintWriter writer) {
 
-        User filterUser;
+        final long[] filterUserId = new long[1];
         if (findByUser) {
-            filterUser = UserLocalServiceUtil.fetchUserByEmailAddress(group.getCompanyId(), filterValue);
+            User filterUser = UserLocalServiceUtil.fetchUserByEmailAddress(group.getCompanyId(), filterValue);
             if (filterUser == null) {
-                totalCount = 0;
-            } else {
-                totalCount = DownloadLocalServiceUtil.countDownloadsByUserId(group.getGroupId(), filterUser.getUserId());
+                status = NODATA;
+                errorMessage = String.format("User not found for email %s", filterValue);
+                setProcessCount(totalCount);
+                return;
             }
-        } else if (filterEmptyFileName) {
-            filterUser = null;
-            totalCount = DownloadLocalServiceUtil.countDownloadsWithEmptyFileName(group.getGroupId());
-        } else {
-            filterUser = null;
-            if (filterValue != null) {
-                totalCount = DownloadLocalServiceUtil.countDownloadsByFileName(group.getGroupId(), filterValue);
-            } else {
-                totalCount = 0;
-            }
+            filterUserId[0] = filterUser.getUserId();
         }
+        totalCount = RegistrationUtils.getTotalDownloadsCountForFilterSelection(group, filterValue, filterEmptyFileName, filterUserId[0]);
 
         for (int i = 0; i < totalCount; ) {
             if (status == TERMINATED) return;
-            final List<Download> downloads;
-            if (filterUser != null) {
-                downloads = DownloadLocalServiceUtil.findDownloadsByUserId(group.getGroupId(), filterUser.getUserId(), 0, 100, "createDate", "asc");
-            } else if(filterEmptyFileName) {
-                downloads = DownloadLocalServiceUtil.findDownloadsWithEmptyFileName(group.getGroupId(), 0, 100, "createDate", "asc");
-            } else {
-                downloads = DownloadLocalServiceUtil.findDownloadsByFileName(group.getGroupId(), filterValue, 0, 100, "createDate", "asc");
-            }
+            final List<Download> downloads = RegistrationUtils.getDownloadsForFilterSelection(group.getGroupId(),
+                    filterValue, filterUserId[0], filterEmptyFileName, 0, 100);
             if (downloads.isEmpty()) {
                 setProcessCount(totalCount);
                 return;
@@ -143,7 +131,7 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
             downloads.forEach(download -> {
                 try {
                     DownloadLocalServiceUtil.deleteDownload(download);
-                    writeToLogMessage(writer, download);
+                    writeToLogMessage(writer, download, filterUserId[0]);
                 } finally {
                     incrementProcessCount(1);
                 }
@@ -157,8 +145,8 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
         }
     }
 
-    private static void writeToLogMessage(PrintWriter writer, Download download) {
-        String email = getEmail(download);
+    private static void writeToLogMessage(PrintWriter writer, Download download, long filterUserId) {
+        String email = RegistrationUtils.getEmail(filterUserId > 0 ? filterUserId : download.getUserId());
         final Date modifiedDate = download.getModifiedDate();
         final Date expiryDate = download.getExpiryDate();
         writer.println(String.format("%d,%s,%s,%s,%s,%s,%s,%d",
@@ -166,17 +154,6 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
                 dateFormat.format(expiryDate == null ? new Date() : expiryDate),
                 download.getFileName(), download.getFileShareUrl(), email, download.getOrganization(),
                 download.getGeoLocationId()));
-    }
-
-    private static String getEmail(Download download) {
-        final User user = UserLocalServiceUtil.fetchUser(download.getUserId());
-        String email = "";
-        if (user == null){
-            email = String.valueOf(download.getUserId());
-        } else {
-            email = user.getEmailAddress();
-        }
-        return email;
     }
 
     private void deleteBySelectedIds(PrintWriter writer) {
@@ -187,7 +164,7 @@ public class DeletedSelectedDownloadsRequest extends AbstractDataRequest {
             if (status == TERMINATED) return;
             try {
                 final Download download = DownloadLocalServiceUtil.deleteDownload(Long.parseLong(id));
-                writeToLogMessage(writer, download);
+                writeToLogMessage(writer, download, 0);
             } catch (PortalException e) {
                 writer.println(String.format("Failed to delete record %s: %s", id, e.getMessage()));
             } finally {

@@ -18,6 +18,7 @@ import nl.deltares.tableview.comparator.DownloadCountComparator;
 import nl.deltares.tableview.model.DisplayDownloadCount;
 import nl.deltares.tableview.portlet.constants.TablePortletKeys;
 import nl.deltares.tableview.tasks.impl.DeletedSelectedDownloadCountsRequest;
+import nl.deltares.tableview.utils.RegistrationUtils;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
 import org.osgi.service.component.annotations.Component;
@@ -71,6 +72,8 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 
+        if (RegistrationUtils.isUnAuthorizied(renderRequest, renderResponse)) return;
+
         final int cur = ParamUtil.getInteger(renderRequest, "cur", 1);
         final int deltas = ParamUtil.getInteger(renderRequest, "delta", 25);
         String filterId = ParamUtil.getString(renderRequest, "filterId", "none");
@@ -87,13 +90,11 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
     @Override
     public void serveResource(ResourceRequest request, ResourceResponse response) throws IOException {
 
+        if (RegistrationUtils.isUnAuthorizied(request, response)) return;
+
         ThemeDisplay themeDisplay = (ThemeDisplay) request
                 .getAttribute(WebKeys.THEME_DISPLAY);
-        if (!themeDisplay.isSignedIn() || !request.isUserInRole("administrator")) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().println("Unauthorized request!");
-            return;
-        }
+        if (themeDisplay == null) return;
         String action = ParamUtil.getString(request, "action");
         String id = ParamUtil.getString(request, "id", null);
 
@@ -111,7 +112,6 @@ public class DownloadCountsTablePortlet extends MVCPortlet {
         }
 
     }
-
     private void deletedSelected(String dataRequestId, ResourceRequest request, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
 
         final HttpServletRequest httpReq = PortalUtil.getOriginalServletRequest(PortalUtil.getHttpServletRequest(request));

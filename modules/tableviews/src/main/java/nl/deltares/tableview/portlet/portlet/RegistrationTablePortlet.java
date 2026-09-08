@@ -63,6 +63,8 @@ public class RegistrationTablePortlet extends MVCPortlet {
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 
+        if (RegistrationUtils.isUnAuthorizied(renderRequest, renderResponse)) return;
+
         final int curPage = ParamUtil.getInteger(renderRequest, "cur", 1);
         final int deltas = ParamUtil.getInteger(renderRequest, "delta", 25);
         final String filterEmailValue = ParamUtil.getString(renderRequest, "filterEmailValue", "");
@@ -179,30 +181,19 @@ public class RegistrationTablePortlet extends MVCPortlet {
     @Override
     public void serveResource(ResourceRequest request, ResourceResponse response) throws IOException, PortletException {
 
+        if (RegistrationUtils.isUnAuthorizied(request, response)) return;
+
         ThemeDisplay themeDisplay = (ThemeDisplay) request
                 .getAttribute(WebKeys.THEME_DISPLAY);
-        if (!themeDisplay.isSignedIn() || !request.isUserInRole("administrator")) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().println("Unauthorized request!");
-            return;
-        }
+
         String action = ParamUtil.getString(request, "action");
-        String id = ParamUtil.getString(request, "id", null);
-        final String filterEmailValue = ParamUtil.getString(request, "filterEmailValue", "");
-        final long filterEventValue = Long.parseLong(ParamUtil.getString(request, "filterEventValue", "0"));
-        final long filterRegistrationValue = Long.parseLong(ParamUtil.getString(request, "filterRegistrationValue", "0"));
-
+        String id = RegistrationUtils.getTaskId(request, themeDisplay, RegistrationTablePortlet.class);
         if ("export".equals(action)) {
-            if (id == null) {
-                id = RegistrationTablePortlet.class.getName() + themeDisplay.getUserId();
-            }
-            exportTable(id, filterEmailValue, filterEventValue, filterRegistrationValue, response, themeDisplay);
+            exportTable(id, request, response, themeDisplay);
         } else if ("delete-selected".equals(action)) {
-            if (id == null) {
-                id = RegistrationTablePortlet.class.getName() + themeDisplay.getUserId();
-            }
             deletedSelected(id, request, response, themeDisplay);
-
+        } else if ("delete-all".equals(action)) {
+            deletedAll(id, request, response, themeDisplay);
         } else if ("updateStatus".equals(action)) {
             DataRequestManager.getInstance().updateStatus(id, response);
         } else if ("downloadLog".equals(action)) {
@@ -214,12 +205,13 @@ public class RegistrationTablePortlet extends MVCPortlet {
 
     }
 
-    private void deletedSelected(String dataRequestId, ResourceRequest request, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
+    private void deletedAll(String dataRequestId, ResourceRequest request, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
 
-        final HttpServletRequest httpReq = PortalUtil.getOriginalServletRequest(PortalUtil.getHttpServletRequest(request));
-        final String[] selectedIds = httpReq.getParameterValues("selection");
+        final String filterEmailValue = ParamUtil.getString(request, "filterEmailValue", "");
+        final long filterEventValue = Long.parseLong(ParamUtil.getString(request, "filterEventValue", "0"));
+        final long filterRegistrationValue = Long.parseLong(ParamUtil.getString(request, "filterRegistrationValue", "0"));
 
-        if (selectedIds.length == 0) {
+        if (filterEmailValue.isEmpty() && filterEventValue == 0 && filterRegistrationValue == 0) {
             response.setContentType("text/plain");
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         } else {
@@ -227,7 +219,8 @@ public class RegistrationTablePortlet extends MVCPortlet {
             DataRequestManager instance = DataRequestManager.getInstance();
             DataRequest dataRequest = instance.getDataRequest(dataRequestId);
             if (dataRequest == null) {
-                dataRequest = new DeletedSelectedRegistrationsRequest(dataRequestId, Arrays.asList(selectedIds), themeDisplay.getUserId(), dsdJournalArticleUtils);
+                dataRequest = new DeletedSelectedRegistrationsRequest(dataRequestId, filterEmailValue, filterEventValue,
+                        filterRegistrationValue, themeDisplay, dsdJournalArticleUtils);
                 instance.addToQueue(dataRequest);
             } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
                 instance.removeDataRequest(dataRequest);
@@ -241,9 +234,46 @@ public class RegistrationTablePortlet extends MVCPortlet {
         }
     }
 
+    private void deletedSelected(String dataRequestId, ResourceRequest request, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
 
-    private void exportTable(String dataRequestId, String filterEmailValue, long filterEventValue, long filterRegistrationValue,
+        final HttpServletRequest httpReq = PortalUtil.getOriginalServletRequest(PortalUtil.getHttpServletRequest(request));
+        final String[] selectedIds = httpReq.getParameterValues("selection");
+
+        if (selectedIds.length == 0) {
+            response.setContentType("text/plain");
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        } else {
+            response.setContentType("text/csv");
+            DataRequest dataRequest = getDataRequest(dataRequestId, themeDisplay, selectedIds);
+            response.setStatus(HttpServletResponse.SC_OK);
+            String statusMessage = dataRequest.getStatusMessage();
+            response.setContentLength(statusMessage.length());
+            PrintWriter writer = response.getWriter();
+            writer.println(statusMessage);
+
+        }
+    }
+
+    private DataRequest getDataRequest(String dataRequestId, ThemeDisplay themeDisplay, String[] selectedIds) throws IOException {
+        DataRequestManager instance = DataRequestManager.getInstance();
+        DataRequest dataRequest = instance.getDataRequest(dataRequestId);
+        if (dataRequest == null) {
+            dataRequest = new DeletedSelectedRegistrationsRequest(dataRequestId, Arrays.asList(selectedIds), themeDisplay.getUserId(), dsdJournalArticleUtils);
+            instance.addToQueue(dataRequest);
+        } else if (dataRequest.getStatus() == DataRequest.STATUS.TERMINATED || dataRequest.getStatus() == DataRequest.STATUS.NODATA) {
+            instance.removeDataRequest(dataRequest);
+        }
+        return dataRequest;
+    }
+
+
+    private void exportTable(String dataRequestId, ResourceRequest resourceRequest,
                              ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
+
+        final String filterEmailValue = ParamUtil.getString(resourceRequest, "filterEmailValue", "");
+        final long filterEventValue = Long.parseLong(ParamUtil.getString(resourceRequest, "filterEventValue", "0"));
+        final long filterRegistrationValue = Long.parseLong(ParamUtil.getString(resourceRequest, "filterRegistrationValue", "0"));
+
         response.setContentType("text/csv");
         DataRequestManager instance = DataRequestManager.getInstance();
         DataRequest dataRequest = instance.getDataRequest(dataRequestId);
@@ -271,6 +301,8 @@ public class RegistrationTablePortlet extends MVCPortlet {
     @SuppressWarnings("unused")
     public void filterEmail(ActionRequest actionRequest, ActionResponse actionResponse) {
 
+        if (RegistrationUtils.isUnAuthorizied(actionRequest, actionResponse)) {return;}
+
         final String selectedEmail = ParamUtil.getString(actionRequest, "filterEmailValue", "");
 
         if (!selectedEmail.isEmpty()) {
@@ -295,6 +327,8 @@ public class RegistrationTablePortlet extends MVCPortlet {
      */
     @SuppressWarnings("unused")
     public void filterSelections(ActionRequest actionRequest, ActionResponse actionResponse) {
+
+        if (RegistrationUtils.isUnAuthorizied(actionRequest, actionResponse)) {return;}
 
         final String selectedEventValue = ParamUtil.getString(actionRequest, "filterEventValue", "");
         final String selectedRegistrationValue = ParamUtil.getString(actionRequest, "filterRegistrationValue", "");
@@ -321,6 +355,8 @@ public class RegistrationTablePortlet extends MVCPortlet {
      */
     @SuppressWarnings("unused")
     public void save(ActionRequest actionRequest, ActionResponse actionResponse) {
+
+        if (RegistrationUtils.isUnAuthorizied(actionRequest, actionResponse)) {return;}
 
         final String userPreferences = ParamUtil.getString(actionRequest, "preferences", null);
         final String recordId = ParamUtil.getString(actionRequest, "recordId", null);
@@ -353,6 +389,5 @@ public class RegistrationTablePortlet extends MVCPortlet {
         JsonContentUtils.parseContent(preferences);
 
     }
-
 
 }

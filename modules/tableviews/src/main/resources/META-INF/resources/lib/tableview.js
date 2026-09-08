@@ -31,7 +31,11 @@ var TableFormsUtil = {
 
     deleteAll: function(resourceUrl, renderUrl, namespace, filename){
 
-        if (confirm("You are about to delete all filtered records from the table!\nDo you want to continue?") === false) {
+        if (confirm("You are about to delete all records from the table for the current selection!\n\n" +
+            "If you are deleting an Event and have not selected a Session, all sessions related to this Event " +
+            "will be deleted! \n\n" +
+            "If you are deleting downloads, all downloads will be deleted, including the downloads on the other pages.\n\n" +
+            "Do you want to continue?") === false) {
             return;
         }
 

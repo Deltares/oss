@@ -87,7 +87,7 @@
                     </aui:select>
                 </aui:col>
                 <aui:col width="40">
-                    <aui:select name="filterRegistrationValue" label="Registration" value="<%=filterRegistrationValue%>" onChange="submit()" >
+                    <aui:select name="filterRegistrationValue" label="Session" value="<%=filterRegistrationValue%>" onChange="submit()" >
                         <aui:option value="0">Select...</aui:option>
                         <%
                             for (Map.Entry<Long, String> registrationInfo : registrationTitles.entrySet()) {
@@ -161,6 +161,7 @@
         <aui:button-row>
             <aui:button name="exportResultsButton" type="submit" value="Export"/>
             <aui:button name="deleteSelectedButton" type="submit" value="Delete selected"/>
+            <aui:button name="deleteAllButton" type="submit" cssClass="btn btn-danger" value="Delete all"/>
         </aui:button-row>
     </aui:form>
     <hr>
@@ -185,6 +186,11 @@
         TableFormsUtil.deleteSelected("<portlet:resourceURL/>", "<liferay-portlet:renderURL/>", "<portlet:namespace/>", "delete-selected-registrations.csv")
     };
 
+    let deleteAllButton = document.getElementById('<portlet:namespace/>deleteAllButton');
+    deleteAllButton.onclick = function(event){
+        event.preventDefault();
+        TableFormsUtil.deleteAll("<portlet:resourceURL/>", "<liferay-portlet:renderURL/>", "<portlet:namespace/>", "delete-all-downloads.csv")
+    };
 </aui:script>
 
 

@@ -20,6 +20,7 @@ import nl.deltares.tableview.model.DisplayDownload;
 import nl.deltares.tableview.portlet.constants.TablePortletKeys;
 import nl.deltares.tableview.tasks.impl.DeletedSelectedDownloadsRequest;
 import nl.deltares.tableview.tasks.impl.ExportSelectedDownloadsTableRequest;
+import nl.deltares.tableview.utils.RegistrationUtils;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
 import org.osgi.service.component.annotations.Component;
@@ -69,6 +70,8 @@ public class DownloadTablePortlet extends MVCPortlet {
 
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
+
+        if (RegistrationUtils.isUnAuthorizied(renderRequest, renderResponse)) {return;}
 
         final int curPage = ParamUtil.getInteger(renderRequest, "cur", 1);
         final int deltas = ParamUtil.getInteger(renderRequest, "delta", 25);
@@ -188,6 +191,8 @@ public class DownloadTablePortlet extends MVCPortlet {
     @SuppressWarnings("unused")
     public void filterDownloads(ActionRequest actionRequest, ActionResponse actionResponse) {
 
+        if (RegistrationUtils.isUnAuthorizied(actionRequest, actionResponse)) return;
+
         final String filter = ParamUtil.getString(actionRequest, "filterValue", "");
         actionResponse.getRenderParameters().setValue("filterValue", filter);
         actionResponse.getRenderParameters().setValue("filterEmpty", "false");
@@ -196,15 +201,13 @@ public class DownloadTablePortlet extends MVCPortlet {
     @Override
     public void serveResource(ResourceRequest request, ResourceResponse response) throws IOException {
 
+        if (RegistrationUtils.isUnAuthorizied(request, response)) return;
+
         ThemeDisplay themeDisplay = (ThemeDisplay) request
                 .getAttribute(WebKeys.THEME_DISPLAY);
-        if (!themeDisplay.isSignedIn() || !request.isUserInRole("administrator")) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().println("Unauthorized request!");
-            return;
-        }
+
         String action = ParamUtil.getString(request, "action");
-        String id = getTaskId(request, themeDisplay);
+        String id = RegistrationUtils.getTaskId(request, themeDisplay, DownloadTablePortlet.class);
         if ("export".equals(action)) {
             exportTable(id, request, response, themeDisplay);
         } else if ("delete-selected".equals(action)) {
@@ -219,14 +222,6 @@ public class DownloadTablePortlet extends MVCPortlet {
             DataRequestManager.getInstance().writeError("Unsupported Action error: " + action, response);
         }
 
-    }
-
-    private static String getTaskId(ResourceRequest request, ThemeDisplay themeDisplay) {
-        String id = ParamUtil.getString(request, "id", null);
-        if (id == null) {
-            id = DownloadTablePortlet.class.getName() + themeDisplay.getUserId();
-        }
-        return id;
     }
 
     private void deletedSelected(String dataRequestId, ResourceRequest request, ResourceResponse response, ThemeDisplay themeDisplay) throws IOException {
@@ -304,5 +299,4 @@ public class DownloadTablePortlet extends MVCPortlet {
         writer.println(statusMessage);
 
     }
-
 }
