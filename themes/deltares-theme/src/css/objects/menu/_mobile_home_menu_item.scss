@@ -3,7 +3,7 @@
   .home-menu-holder {
     float: left;
     width: 30%;
-    padding: 0.4em;
+    padding: 6.4em 0.4em 0.4em 0.4em;
   }
 }
 
@@ -24,6 +24,7 @@
       font-size: large;
       text-align: center;
       color: var(--bg-button--hover);
+      margin-bottom: 10px;
     }
 
   }
@@ -54,6 +55,7 @@
       font-size: large;
       text-align: center;
       color: var(--text-secondary);
+      margin-bottom: 5px;
     }
 
   }

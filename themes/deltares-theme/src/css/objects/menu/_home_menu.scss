@@ -1,30 +1,9 @@
-$items: 11;
-$transition-duration: 0.5s;
-$transition-delay: 0.05s;
+@use "liferay-frontend-css-common/liferay/variables" ;
 
-/* Basic Styles */
-
-.nav-menu {
-    position: relative;
-    
-    /* Toggle Functionality */
-    #toggle-menu{
-        display: none; //hides the checkbox
-    }
-    
-    a {
-        text-transform: uppercase;
-        font-weight: normal;
-    }
-    
-    @media (max-width: $screen-sm-max) {
-        @import "mobile_home_menu_item";
-    }
-    
-    @media (min-width: $screen-md-min) {
-        order: 3; 
-        @import "home_menu_item";
-    }
+@media (max-width: variables.$screen-sm-max) {
+    @import "mobile_home_menu_item";
 }
 
-
+@media (min-width: variables.$screen-md-min) {
+    @import "home_menu_item";
+}
