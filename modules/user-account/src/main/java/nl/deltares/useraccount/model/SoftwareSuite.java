@@ -1,8 +1,6 @@
 package nl.deltares.useraccount.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class SoftwareSuite {
 
@@ -11,6 +9,7 @@ public class SoftwareSuite {
     private long suiteId;
     private String suiteCode;
     private final List<SoftwareSuiteSubscription> subscriptionList = new ArrayList<>();
+    private final List<SoftwareGroup> groups = new ArrayList<>();
 
     public SoftwareSuite() {
 
@@ -46,5 +45,14 @@ public class SoftwareSuite {
 
     public void addSubscription(SoftwareSuiteSubscription subscription) {
         subscriptionList.add(subscription);
+    }
+
+    public void addGroup(SoftwareGroup softwareGroup) {
+        if (groups.contains(softwareGroup)) {return;}
+        groups.add(softwareGroup);
+    }
+
+    public List<SoftwareGroup> getGroups() {
+        return new ArrayList<>(groups);
     }
 }

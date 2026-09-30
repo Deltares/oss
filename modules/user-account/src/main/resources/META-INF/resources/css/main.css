@@ -97,3 +97,8 @@
   justify-content: end;
   padding-bottom: 15px;
 }
+
+.portlet-navigation .nav-pills > li.active > a {
+  background-color: #0b5fff;
+  color: #fff;
+}

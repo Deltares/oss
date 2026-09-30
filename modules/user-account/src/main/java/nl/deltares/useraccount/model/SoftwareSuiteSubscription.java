@@ -10,6 +10,7 @@ public class SoftwareSuiteSubscription {
     private String softwareProductName;
     private String servicePackageName;
     private String softwareVersion;
+    private final List<String> groups = new ArrayList<>();
     private String subscriptionState;
     private long subscriptionId;
     private String contractType;
@@ -26,7 +27,6 @@ public class SoftwareSuiteSubscription {
     private final List<Asset> assetList = new ArrayList<>();
 
     public SoftwareSuiteSubscription() {
-
     }
 
     public String getSoftwareProductName() { return softwareProductName;}
@@ -53,6 +53,15 @@ public class SoftwareSuiteSubscription {
 
     public String getSoftwareVersion() {
         return softwareVersion;
+    }
+
+    public List<String> getGroups(){
+        return Collections.unmodifiableList(groups);
+    }
+
+    public void addGroup(String group) {
+        if (this.groups.contains(group)) return;
+        this.groups.add(group);
     }
 
     public void setSoftwareVersion(String softwareVersion) {

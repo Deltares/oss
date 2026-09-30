@@ -104,7 +104,10 @@
             <div>Version:</div>
             <div><strong><%=entry.getSoftwareVersion()%></strong></div>
         </aui:col>
-
+        <aui:col width="33">
+            <div>Groups:</div>
+            <div><strong><%=entry.getGroups() == null ? "" : entry.getGroups() %></strong></div>
+        </aui:col>
     </aui:row>
     <br/>
     <%

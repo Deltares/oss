@@ -19,10 +19,7 @@ import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
 import nl.deltares.tasks.impl.SendLicenseFilesRequest;
 import nl.deltares.useraccount.constants.UserProfilePortletKeys;
-import nl.deltares.useraccount.model.Asset;
-import nl.deltares.useraccount.model.CustomerContact;
-import nl.deltares.useraccount.model.SoftwareSuite;
-import nl.deltares.useraccount.model.SoftwareSuiteSubscription;
+import nl.deltares.useraccount.model.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -44,7 +41,7 @@ import java.util.*;
                 "com.liferay.portlet.instanceable=true",
                 "javax.portlet.display-name=CLM Licenses",
                 "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.view-template=/softwareSuites.jsp",
+                "javax.portlet.init-param.view-template=/softwareMainPage.jsp",
                 "javax.portlet.name=" + UserProfilePortletKeys.CLM_LICENSES,
                 "javax.portlet.resource-bundle=content.Language",
                 "javax.portlet.security-role-ref=power-user,user"
@@ -72,10 +69,11 @@ public class ClmLicensesPortlet extends MVCPortlet {
         try {
             String selectedState = ParamUtil.getString(renderRequest, "filterSelection", "Active");
             long customerSelection = ParamUtil.getLong(renderRequest, "customerSelection", 0L);
+            String tabSelection =  ParamUtil.getString(renderRequest, "tabSelection", "softwareSuites");
             User user = themeDisplay.getUser();
             JSONArray customerContacts = licenseManagerUtils.getCustomerContactsForUser(user);
             Map<Long, String> customerInfo = LicenseManagerUtils.parseCustomerIdAndName(customerContacts);
-            List<SoftwareSuite> suites = null;
+            List<?> models = null;
             String maconomyId = "";
             if (customerInfo.isEmpty()) {
                 logger.warn(String.format("Found no customer ID for CLM user %s!", user.getEmailAddress()));
@@ -88,15 +86,20 @@ public class ClmLicensesPortlet extends MVCPortlet {
                 Boolean customerContactManageLicenses = (Boolean) customerContactInfo.getOrDefault("customerContactManageLicenses", false);
                 JSONArray customerLicenses = licenseManagerUtils.getCustomerLicenses(user, selectedState, customerSelection, customerContactId, customerContactManageLicenses);
                 if (customerLicenses != null && customerLicenses.length() > 0) {
-                    suites = convertToModel(customerLicenses);
+                    if (tabSelection.equals("softwareSuites")) {
+                        models = convertToSoftwareSuiteModel(customerLicenses);
+                    } else {
+                        models = convertToSoftwareGroupModel(customerLicenses);
+                    }
                 }
                 maconomyId = (String) customerContactInfo.getOrDefault("customerMaconomyId", "");
             }
-            renderRequest.setAttribute("records", suites == null ? Collections.emptyList() : suites);
+            renderRequest.setAttribute("records", models == null ? Collections.emptyList() : models);
             renderRequest.setAttribute("customerInfo", customerInfo);
             renderRequest.setAttribute("maconomyId", maconomyId);
             renderRequest.setAttribute("filterSelection", selectedState);
             renderRequest.setAttribute("customerSelection", customerSelection);
+            renderRequest.setAttribute("tabSelection", tabSelection);
         } catch (JSONException | ParseException e) {
             throw new PortletException(e);
         }
@@ -113,7 +116,9 @@ public class ClmLicensesPortlet extends MVCPortlet {
     public void filter(ActionRequest actionRequest, ActionResponse actionResponse) {
 
         final String filter = ParamUtil.getString(actionRequest, "filterSelection", "Active");
+        String tabSelection =  ParamUtil.getString(actionRequest, "tabSelection", "softwareSuites");
         actionResponse.getRenderParameters().setValue("filterSelection", filter);
+        actionResponse.getRenderParameters().setValue("tabSelection", tabSelection);
     }
 
     /**
@@ -126,7 +131,9 @@ public class ClmLicensesPortlet extends MVCPortlet {
     public void customerSelect(ActionRequest actionRequest, ActionResponse actionResponse) {
 
         final Long filter = ParamUtil.getLong(actionRequest, "customerSelection", 0L);
+        String tabSelection =  ParamUtil.getString(actionRequest, "tabSelection", "softwareSuites");
         actionResponse.getRenderParameters().setValue("customerSelection", String.valueOf(filter));
+        actionResponse.getRenderParameters().setValue("tabSelection", tabSelection);
     }
 
     /**
@@ -138,6 +145,7 @@ public class ClmLicensesPortlet extends MVCPortlet {
     @SuppressWarnings("unused")
     public void sendLicenseFiles(ActionRequest actionRequest, ActionResponse actionResponse) {
 
+        String tabSelection =  ParamUtil.getString(actionRequest, "tabSelection", "softwareSuites");
         final long customerId = ParamUtil.getLong(actionRequest, "customerId", 0);
         final String customerName = ParamUtil.getString(actionRequest, "customerName", "");
         if (customerId == 0) {
@@ -176,7 +184,7 @@ public class ClmLicensesPortlet extends MVCPortlet {
 
     }
 
-    private List<SoftwareSuite> convertToModel(JSONArray customerData) throws ParseException {
+    private List<SoftwareSuite> convertToSoftwareSuiteModel(JSONArray customerData) throws ParseException {
 
         ArrayList<SoftwareSuite> suites = new ArrayList<>();
         for (int i = 0; i < customerData.length(); i++) {
@@ -184,6 +192,31 @@ public class ClmLicensesPortlet extends MVCPortlet {
             suites.add(convertToSuit(suiteObject));
         }
         return suites;
+    }
+
+    private List<SoftwareGroup> convertToSoftwareGroupModel(JSONArray customerData) throws ParseException {
+
+        ArrayList<SoftwareGroup> groups = new ArrayList<>();
+        for (int i = 0; i < customerData.length(); i++) {
+            JSONObject suiteObject = customerData.getJSONObject(i);
+            SoftwareSuite softwareSuite = convertToSuit(suiteObject);
+            List<SoftwareSuiteSubscription> subscriptionList = softwareSuite.getSubscriptionList();
+            if (subscriptionList.isEmpty()) continue;
+            for (SoftwareSuiteSubscription subscription : subscriptionList) {
+                for (String suiteGroup : subscription.getGroups()) {
+                    SoftwareGroup softwareGroup = new SoftwareGroup(suiteGroup);
+                    int index = groups.indexOf(softwareGroup);
+                    if (index >= 0) {
+                        softwareGroup = groups.get(index);
+                    } else {
+                        groups.add(softwareGroup);
+                    }
+                    softwareGroup.addPackageName(subscription.getServicePackageName());
+
+                }
+            }
+        }
+        return groups;
     }
 
     private SoftwareSuite convertToSuit(JSONObject suiteObject) throws ParseException {
@@ -209,7 +242,6 @@ public class ClmLicensesPortlet extends MVCPortlet {
         subscription.setContractType(subscriptionObject.getString("subscriptionType"));
         subscription.setSubscriptionState(subscriptionObject.getString("subscriptionState"));
         subscription.setSoftwareVersion(subscriptionObject.getString("subscriptionLatestVersion"));
-
         String startDateString = subscriptionObject.getString("subscriptionStartDate", null);
         if (startDateString != null) subscription.setStartDate(dateFormat.parse(startDateString));
         String endDateString = subscriptionObject.getString("subscriptionEndDate", null);
@@ -243,6 +275,12 @@ public class ClmLicensesPortlet extends MVCPortlet {
         JSONObject subscriptionPackage = subscriptionObject.getJSONObject("subscriptionPackage");
         if (subscriptionPackage != null) {
             subscription.setServicePackageName(subscriptionPackage.getString("packageName"));
+            JSONArray packageGroupNames = subscriptionPackage.getJSONArray("packageGroupNames");
+            if (packageGroupNames != null && packageGroupNames.length() > 0) {
+                for (int i = 0; i < packageGroupNames.length(); i++) {
+                    subscription.addGroup(packageGroupNames.getString(i));
+                }
+            }
         }
 
         return subscription;
