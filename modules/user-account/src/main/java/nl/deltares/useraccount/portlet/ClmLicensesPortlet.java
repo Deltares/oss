@@ -135,9 +135,6 @@ public class ClmLicensesPortlet extends MVCPortlet {
     }
     /**
      * Update user group memberschip
-     * @param actionRequest
-     * @param actionResponse
-     * @throws Exception
      */
     @SuppressWarnings("unused")
     public void updateUserGroup(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
