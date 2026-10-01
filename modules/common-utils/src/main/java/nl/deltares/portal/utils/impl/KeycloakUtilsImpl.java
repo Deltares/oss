@@ -16,16 +16,15 @@ import org.osgi.service.component.annotations.Component;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.time.LocalDateTime.now;
+import static nl.deltares.portal.utils.KeycloakUtils.ATTRIBUTES.email;
 
 @Component(
         immediate = true,
@@ -128,7 +127,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils 
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Authorization", "Bearer " + getAccessToken());
 
-        final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null);
+        final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null, true);
         //open connection
         HttpURLConnection connection = getConnection(getAvatarPath() + '/' + userRepresentation.get("id"), "DELETE", headers);
 
@@ -138,7 +137,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils 
 
     @Override
     public void updateUserAvatar(String email, File avatarFile) throws Exception {
-        final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null);
+        final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null, true);
 
         String boundary = "UploadAvatarBoundary";
         Map<Object, Object> data = new LinkedHashMap<>();
@@ -163,7 +162,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils 
     @Override
     public Map<String, String> getUserAttributes(String email) throws Exception {
 
-        final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null);
+        final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null, true);
         String attributesJson = userRepresentation.get("attributes");
         Map<String, String> unfiltered = JsonContentUtils.parseJsonToMap(attributesJson);
         HashMap<String, String> filteredAttributes = new HashMap<>();
@@ -178,7 +177,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils 
     @Override
     public Map<String, String> getUserInfo(String email) throws Exception {
 
-        Map<String, String> unfiltered = getKeycloakUserRepresentation(email, null);
+        Map<String, String> unfiltered = getKeycloakUserRepresentation(email, null, true);
         if (unfiltered.isEmpty()) return unfiltered;
         HashMap<String, String> filteredInfo = new HashMap<>();
         filteredInfo.put(ATTRIBUTES.first_name.name(), unfiltered.get("firstName"));
@@ -193,11 +192,11 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils 
     @Override
     public boolean isExistingUsername(String username) throws Exception {
 
-        Map<String, String> unfiltered = getKeycloakUserRepresentation(null, username);
+        Map<String, String> unfiltered = getKeycloakUserRepresentation(null, username, true);
         return !unfiltered.isEmpty();
     }
 
-    private Map<String, String> getKeycloakUserRepresentation(String email, String username) throws Exception {
+    private Map<String, String> getKeycloakUserRepresentation(String email, String username, boolean briefRepresentation) throws Exception {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getAccessToken());
@@ -209,6 +208,8 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils 
         } else {
             throw new IOException("Both email and username missing!");
         }
+        query += "&briefRepresentation=" + briefRepresentation;
+
         HttpURLConnection connection = getConnection(getKeycloakUsersPath() + query, "GET", headers);
 
         checkResponse(connection);
@@ -220,7 +221,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils 
 
     private Map<String, String> getUserAttributesFromCacheOrKeycloak(String email, String[] searchKeys) throws Exception {
 
-        final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null);
+        final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null, false);
         String attributesJson = userRepresentation.get("attributes");
         Map<String, String> unfiltered = JsonContentUtils.parseJsonToMap(attributesJson);
         HashMap<String, String> filteredAttributes = new HashMap<>();
@@ -254,7 +255,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils 
             jsonUser.put("attributes", jsonAttributes);
         }
         for (ATTRIBUTES key : ATTRIBUTES.values()) {
-            if (key == ATTRIBUTES.email) continue;
+            if (key == email) continue;
             if (key == ATTRIBUTES.first_name) continue;
             if (key == ATTRIBUTES.last_name) continue;
             final String value = attributes.get(key.name());
@@ -409,6 +410,69 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils 
         //get response
         return checkResponse(connection);
 
+    }
+
+    @Override
+    public int addUserGroup(String keycloakUserId, String keycloakUserGroupId) throws Exception {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + getAccessToken());
+
+        String query = '/' + keycloakUserId + "/groups/" + keycloakUserGroupId;
+
+        HttpURLConnection connection = getConnection(getKeycloakUsersPath() + query, "PUT", headers);
+
+        return checkResponse(connection);
+    }
+
+    @Override
+    public String getGroupIdentifier(String groupName) throws Exception {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + getAccessToken());
+        String query = "?briefRepresentation=true&search=" +
+                URLEncoder.encode(groupName, StandardCharsets.UTF_8).replace("+", "%20");
+
+        HttpURLConnection connection = getConnection(getKeycloakBaseApiPath() + "groups" + query, "GET", headers);
+
+        checkResponse(connection);
+        String jsonResponse = readAll(connection);
+        List<Map<String, String>> userMapArray = JsonContentUtils.parseJsonArrayToMap(jsonResponse);
+        if (userMapArray.isEmpty()) return null;
+        return userMapArray.get(0).get("id");
+
+    }
+
+    @Override
+    public Map<String, String> getUserGroups(String keycloakUserId) throws Exception {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + getAccessToken());
+
+        String query = '/' + keycloakUserId + "/groups?briefRepresentation=true";
+
+        HttpURLConnection connection = getConnection(getKeycloakUsersPath() + query, "GET", headers);
+
+        checkResponse(connection);
+        String jsonResponse = readAll(connection);
+        List<Map<String, String>> userMapArray = JsonContentUtils.parseJsonArrayToMap(jsonResponse);
+        if (userMapArray.isEmpty()) return Collections.emptyMap();
+        HashMap<String, String> groups = new HashMap<>();
+        userMapArray.forEach(map -> groups.put(map.get("name"), map.get("id")));
+        return groups;
+    }
+
+    @Override
+    public int removeUserGroup(String keycloakUserId, String keycloakUserGroupId) throws Exception {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + getAccessToken());
+
+        String query = '/' + keycloakUserId + "/groups/" + keycloakUserGroupId;
+
+        HttpURLConnection connection = getConnection(getKeycloakUsersPath() + query, "DELETE", headers);
+
+        return checkResponse(connection);
     }
 
     private String getKeycloakUsersPath() {

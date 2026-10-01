@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import nl.deltares.emails.LicenseFilesEmail;
+import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.portal.utils.LicenseManagerUtils;
 import nl.deltares.tasks.DataRequest;
 import nl.deltares.tasks.DataRequestManager;
@@ -56,6 +57,9 @@ public class ClmLicensesPortlet extends MVCPortlet {
     @Reference
     private LicenseManagerUtils licenseManagerUtils;
 
+    @Reference
+    private KeycloakUtils keycloakUtils;
+
     public ClmLicensesPortlet() {
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
@@ -75,6 +79,7 @@ public class ClmLicensesPortlet extends MVCPortlet {
             Map<Long, String> customerInfo = LicenseManagerUtils.parseCustomerIdAndName(customerContacts);
             List<?> models = null;
             String maconomyId = "";
+            Map<String, String> keycloakGroups = null;
             if (customerInfo.isEmpty()) {
                 logger.warn(String.format("Found no customer ID for CLM user %s!", user.getEmailAddress()));
             } else {
@@ -89,51 +94,65 @@ public class ClmLicensesPortlet extends MVCPortlet {
                     if (tabSelection.equals("softwareSuites")) {
                         models = convertToSoftwareSuiteModel(customerLicenses);
                     } else {
+                        keycloakGroups = getKeycloakGroups(user);
                         models = convertToSoftwareGroupModel(customerLicenses);
                     }
                 }
                 maconomyId = (String) customerContactInfo.getOrDefault("customerMaconomyId", "");
             }
+            renderRequest.setAttribute("keycloakGroups", keycloakGroups == null ? Collections.emptyList() : keycloakGroups);
             renderRequest.setAttribute("records", models == null ? Collections.emptyList() : models);
             renderRequest.setAttribute("customerInfo", customerInfo);
             renderRequest.setAttribute("maconomyId", maconomyId);
             renderRequest.setAttribute("filterSelection", selectedState);
             renderRequest.setAttribute("customerSelection", customerSelection);
             renderRequest.setAttribute("tabSelection", tabSelection);
-        } catch (JSONException | ParseException e) {
+        } catch (Exception e) {
             throw new PortletException(e);
         }
         super.render(renderRequest, renderResponse);
     }
 
-    /**
-     * Pass the selected filter options to the render request
-     *
-     * @param actionRequest  Filter action
-     * @param actionResponse Filter response
-     */
-    @SuppressWarnings("unused")
-    public void filter(ActionRequest actionRequest, ActionResponse actionResponse) {
+    private Map<String, String> getKeycloakGroups(User user) throws Exception {
 
-        final String filter = ParamUtil.getString(actionRequest, "filterSelection", "Active");
-        String tabSelection =  ParamUtil.getString(actionRequest, "tabSelection", "softwareSuites");
-        actionResponse.getRenderParameters().setValue("filterSelection", filter);
-        actionResponse.getRenderParameters().setValue("tabSelection", tabSelection);
+        Map<String, String> userInfo = keycloakUtils.getUserInfo(user.getEmailAddress());
+        if (userInfo.isEmpty()) {return Collections.emptyMap();}
+        return keycloakUtils.getUserGroups(userInfo.get("id"));
+
     }
 
+    private void updateGroupMemberschip(User user, String groupName, boolean member) throws Exception {
+        Map<String, String> userInfo = keycloakUtils.getUserInfo(user.getEmailAddress());
+        if (userInfo.isEmpty()) return;
+        String keycloakUserId = userInfo.get("id");
+        String keycloakGroupId = keycloakUtils.getGroupIdentifier(groupName);
+
+        if (member) {
+            keycloakUtils.addUserGroup(keycloakUserId, keycloakGroupId);
+        } else {
+            keycloakUtils.removeUserGroup(keycloakUserId, keycloakGroupId);
+        }
+
+    }
     /**
-     * Pass the selected filter options to the render request
-     *
-     * @param actionRequest  Filter action
-     * @param actionResponse Filter response
+     * Update user group memberschip
+     * @param actionRequest
+     * @param actionResponse
+     * @throws Exception
      */
     @SuppressWarnings("unused")
-    public void customerSelect(ActionRequest actionRequest, ActionResponse actionResponse) {
+    public void updateUserGroup(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
 
-        final Long filter = ParamUtil.getLong(actionRequest, "customerSelection", 0L);
-        String tabSelection =  ParamUtil.getString(actionRequest, "tabSelection", "softwareSuites");
-        actionResponse.getRenderParameters().setValue("customerSelection", String.valueOf(filter));
-        actionResponse.getRenderParameters().setValue("tabSelection", tabSelection);
+        String changedGroupName = actionRequest.getActionParameters().getValue("checkboxNames");
+        if (changedGroupName == null) return;
+        String changedGroupValue = actionRequest.getActionParameters().getValue(changedGroupName);
+        if (changedGroupValue == null) return;
+
+        ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest
+                .getAttribute(WebKeys.THEME_DISPLAY);
+        User user = themeDisplay.getUser();
+        updateGroupMemberschip(user, changedGroupName, Boolean.parseBoolean(changedGroupValue));
+
     }
 
     /**

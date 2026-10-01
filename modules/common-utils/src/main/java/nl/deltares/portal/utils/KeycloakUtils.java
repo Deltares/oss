@@ -64,4 +64,12 @@ public interface KeycloakUtils {
     int deleteUserWithId(String id) throws Exception;
 
     int resetPassword(String username, String currentPassword, String newPassword) throws Exception;
+
+    String getGroupIdentifier(String groupName) throws Exception;
+
+    Map<String, String> getUserGroups(String keycloakUserId) throws Exception;
+
+    int addUserGroup(String keycloakUserId, String keycloakUserGroupId) throws Exception;
+
+    int removeUserGroup(String keycloakUserId, String keycloakUserGroupId) throws Exception;
 }

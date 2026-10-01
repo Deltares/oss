@@ -102,3 +102,7 @@
   background-color: #0b5fff;
   color: #fff;
 }
+
+.form-group{
+  float: right;
+}

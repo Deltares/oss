@@ -1,11 +1,33 @@
 <%@ page import="nl.deltares.useraccount.model.SoftwareGroup" %>
 <%
+    final Map<String, String> groups = (Map<String, String>) request.getAttribute("keycloakGroups");
     for (SoftwareGroup softwareGroup : (List<SoftwareGroup>) records) {
-        String encodedGroupName = softwareGroup.getGroupName().replace(" ", "_");
+        String groupName = softwareGroup.getGroupName();
+        String encodedGroupName = groupName.replace(" ", "_");
+        boolean contains = groups.containsKey(groupName);
+        boolean isActive = "Active".equals(filterSelection);
 %>
 
+<portlet:actionURL name="updateUserGroup" var="updateUserGroupURL">
+    <portlet:param name="filterSelection" value="<%=filterSelection%>"/>
+    <portlet:param name="customerSelection" value="<%=String.valueOf(customerSelection)%>"/>
+    <portlet:param name="tabSelection" value="<%=tabSelection%>"/>
+</portlet:actionURL>
 
 <aui:fieldset>
+
+    <aui:form action="<%=updateUserGroupURL%>" name='<%="form_" + (groupName)%>' >
+        <aui:input
+                disabled="<%=!isActive%>"
+                name='<%=groupName%>'
+                label="Member of group: "
+                inlineLabel="left"
+                type="toggle-switch"
+                changesContext=""
+                onChange="submit()"
+                checked="<%=contains%>"/>
+    </aui:form>
+
     <a href="#softwareGroup-<%=encodedGroupName%>" aria-controls="site_configContent" aria-expanded="false"
        class="collapse-icon collapse-icon-middle sheet-subtitle collapsed" data-toggle="liferay-collapse" role="button">
             <span class="c-inner" tabindex="-1">
@@ -20,10 +42,9 @@
                     </svg>
                 </span>
                 &nbsp;
-                <span class="h1"><%=softwareGroup.getGroupName()%></span>
+                <span class="h1"><%=groupName%></span>
             </span>
     </a>
-
     <div class="panel-collapse collapse" id="softwareGroup-<%=encodedGroupName%>">
         <%@ include file="softwareGroupSuites.jsp" %>
     </div>

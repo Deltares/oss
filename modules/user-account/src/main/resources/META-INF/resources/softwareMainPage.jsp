@@ -26,11 +26,11 @@
     String cssSoftwareGroups = tabSelection.equals("softwareGroups") ? "active selected" : "";
 %>
 
-<portlet:actionURL name="filter" var="filterCustomerLicensesURL">
+<portlet:actionURL var="filterCustomerLicensesURL">
     <portlet:param name="customerSelection" value="<%=String.valueOf(customerSelection)%>"/>
     <portlet:param name="tabSelection" value="<%=tabSelection%>"/>
 </portlet:actionURL>
-<portlet:actionURL name="customerSelect" var="selectCustomerURL">
+<portlet:actionURL var="selectCustomerURL">
     <portlet:param name="filterSelection" value="<%=filterSelection%>"/>
     <portlet:param name="tabSelection" value="<%=tabSelection%>"/>
 </portlet:actionURL>
