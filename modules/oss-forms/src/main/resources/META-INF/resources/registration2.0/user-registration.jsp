@@ -45,6 +45,7 @@
         if (first) {
             srcArticleId = articleId;
         }
+        int remainingPlacesCount = registration.getRemainingPlacesCount();
     %>
     <div class="row">
         <div class="col-md-12">
@@ -54,7 +55,9 @@
                 </div>
                 <div class="col-4 float-right">
                     <div class="row">
-                        <div class="col"><liferay-ui:message key="registrationform.item.count"/></div>
+                        <div class="col"><liferay-ui:message key="registrationform.item.count"/>&nbsp;
+                            <div class="small"> <liferay-ui:message key="registrationform.item.remainingcount" arguments="<%=remainingPlacesCount%>"/></div>
+                        </div>
                         <div class="col"><liferay-ui:message key="registrationform.item.price"/></div>
                         <div class="col"></div>
                     </div>
@@ -64,6 +67,8 @@
                                     name='<%="count_registration_" + articleId%>'
                                     label=""
                                     value="<%=quantity%>"
+                                    min="0"
+                                    max="<%=remainingPlacesCount%>"
                                     type="number"
                                     data-articleId="<%=articleId%>"
                                     data-vat="<%=registration.getVAT()%>"
@@ -223,8 +228,6 @@
             RegistrationFormsUtil.updateTable('<portlet:namespace/>', event.target);
             RegistrationFormsUtil.updatePrice('<portlet:namespace/>', event.target);
         }
-        button.setAttribute('min', 1);
-        button.setAttribute('max', 10);
     });
 
     let removeButtons = document.getElementsByClassName("remove-from-cart");

@@ -28,6 +28,9 @@
                 <strong>${title}</strong>
             </a>
         </h4>
+        <#if !registration.isOpen() || registration.isEventInPast() >
+            <b>${languageUtil.get(locale, "dsd.theme.session.closed")}</b>
+        </#if>
         <div>
             <#assign count = displayContext.getPresenterCount()/>
             <#if count gt 0>

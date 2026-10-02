@@ -6,10 +6,12 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Team;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.TeamLocalServiceUtil;
 import com.liferay.portal.kernel.service.TeamServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import nl.deltares.dsd.registration.service.RegistrationLocalServiceUtil;
 import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
@@ -188,6 +190,25 @@ public abstract class Registration extends AbsDsdArticle {
         }
     }
 
+    public int getRemainingPlacesCount() {
+        int count = RegistrationLocalServiceUtil.getRegistrationsCount(getGroupId(), getResourceId());;
+        return Math.max(0, getCapacity() - count);
+    }
+
+    public void validateIfUserCanRegister(User user, String email) throws PortalException {
+        if (!open || isEventInPast()) throw new PortalException(String.format("'%s' is closed for registration!", getTitle()));
+        if (requiredTeam != null){
+            Team team = TeamLocalServiceUtil.getTeam(getGroupId(), requiredTeam);
+            if (user == null || !TeamServiceUtil.hasUserTeam(user.getUserId(), team.getTeamId())){
+                throw new PortalException(String.format("User '%s' is not member of required Team '%s'!", email, team.getName()));
+            }
+        }
+        int count = RegistrationLocalServiceUtil.getRegistrationsCount(getGroupId(), getResourceId());
+        if (count >= getCapacity()){
+            throw new PortalException(String.format("Registration '%s' is full!", getTitle()));
+        }
+
+    }
     public boolean canUserRegister(long userId){
 
         if (!open) return false;

@@ -2,6 +2,7 @@ package nl.deltares.forms.internal;
 
 import com.liferay.account.model.AccountEntry;
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -123,6 +124,10 @@ public class UserInputValidationContext {
         List<RegistrationInfo> allUserRegistrations = _registrationsInfo.getAllUserRegistrations();
         long companyId = _registrationsInfo.getRegistrationsCompanyId();
         long groupId = _registrationsInfo.getRegistrationsGroupId();
+
+        if (allUserRegistrations.isEmpty()) {
+            exceptions.add(new RegistrationFormException("No registrations selected!"));
+        }
         for (RegistrationInfo info : allUserRegistrations) {
             String email = info.getEmail();
             if (!Validator.isEmailAddress(email)) {
@@ -137,6 +142,14 @@ public class UserInputValidationContext {
             }
 
             User user = _userLocalService.fetchUserByEmailAddress(companyId, email);
+            Registration registration = _registrationsInfo.getRegistration(info.getArticleId());
+            try {
+                registration.validateIfUserCanRegister(user, email);
+            } catch (PortalException e) {
+                exceptions.add(new RegistrationFormException(e.getMessage()));
+                continue;
+            }
+
             if (user != null) {
                 //Check if user is already registered for this registration
                 if (_sessionUtils.isUserRegisteredFor(groupId, user.getUserId(), info.getResourceId())) {
