@@ -22,6 +22,7 @@
                 name='<%=groupName%>'
                 label="Member of group: "
                 inlineLabel="left"
+                wrapperCssClass="float-right"
                 type="toggle-switch"
                 changesContext=""
                 onChange="submit()"
