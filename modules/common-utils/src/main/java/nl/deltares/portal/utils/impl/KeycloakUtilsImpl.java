@@ -162,7 +162,7 @@ public class KeycloakUtilsImpl extends HttpClientUtils implements KeycloakUtils 
     @Override
     public Map<String, String> getUserAttributes(String email) throws Exception {
 
-        final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null, true);
+        final Map<String, String> userRepresentation = getKeycloakUserRepresentation(email, null, false);
         String attributesJson = userRepresentation.get("attributes");
         Map<String, String> unfiltered = JsonContentUtils.parseJsonToMap(attributesJson);
         HashMap<String, String> filteredAttributes = new HashMap<>();

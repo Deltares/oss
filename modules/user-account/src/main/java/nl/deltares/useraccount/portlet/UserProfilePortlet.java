@@ -49,7 +49,7 @@ public class UserProfilePortlet extends MVCPortlet {
     public void render(RenderRequest request, RenderResponse response) throws IOException, PortletException {
         ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
         User user = themeDisplay.getUser();
-        if (!user.isDefaultUser() && user.isActive()) {
+        if (!user.isGuestUser() && user.isActive()) {
             try {
                 final Map<String, String> userAttributes = keycloakUtils.getUserAttributes(user.getEmailAddress());
                 request.setAttribute("attributes", userAttributes);
