@@ -1,6 +1,7 @@
 <%@ page import="nl.deltares.useraccount.model.SoftwareGroup" %>
 <%
-    final Map<String, String> groups = (Map<String, String>) request.getAttribute("keycloakGroups");
+    Map<String, String> groups = (Map<String, String>) request.getAttribute("keycloakGroups");
+    if (groups == null) groups = Collections.emptyMap();
     for (SoftwareGroup softwareGroup : (List<SoftwareGroup>) records) {
         String groupName = softwareGroup.getGroupName();
         String encodedGroupName = groupName.replace(" ", "_");

@@ -61,7 +61,7 @@ public interface LicenseManagerUtils {
         return map;
     }
 
-    JSONArray getCustomerLicenses(User user, String state, Long customerId, Long customerContactId, boolean customerContactManageLicenses) throws IOException, JSONException;
+    JSONArray getCustomerLicenses(String state, Long customerId, Long customerContactId, boolean customerContactManageLicenses) throws IOException, JSONException;
 
     JSONObject generateCustomerLicenseFiles(Long customerId, String filterEmail) throws IOException, JSONException;
 

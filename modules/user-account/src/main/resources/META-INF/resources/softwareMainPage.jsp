@@ -6,17 +6,23 @@
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
-<%@ page import="java.util.Map" %>
+<%@ page import="java.util.*" %>
 
 <liferay-theme:defineObjects/>
 <portlet:defineObjects/>
 
 <%
     Map<Long, String> customerInfo = (Map<Long, String>) renderRequest.getAttribute("customerInfo");
+    if (customerInfo == null){
+        customerInfo = Collections.emptyMap();
+    }
     final String filterSelection = (String) request.getAttribute("filterSelection");
     final Long customerSelection = (Long) request.getAttribute("customerSelection");
     final String maconomyId = (String) request.getAttribute("maconomyId");
     List<?> records = (List<?>) renderRequest.getAttribute("records");
+    if (records == null){
+        records = Collections.emptyList();
+    }
     String tabSelection = (String) request.getAttribute("tabSelection");
     if (tabSelection == null){
         tabSelection = "softwareSuites";
@@ -55,7 +61,10 @@
     <portlet:param name="customerSelection" value="<%=String.valueOf(customerSelection)%>"/>
 </portlet:renderURL>
 
-
+<liferay-ui:error key="error-loading-license">
+    <liferay-ui:message key="error-loading-license"
+                        arguments='<%= SessionErrors.get(liferayPortletRequest, "error-loading-license") %>'/>
+</liferay-ui:error>
 <liferay-ui:error key="send-licenses-failed">
     <liferay-ui:message key="send.licenses.failed"
                         arguments='<%= SessionErrors.get(liferayPortletRequest, "send-licenses-failed") %>'/>

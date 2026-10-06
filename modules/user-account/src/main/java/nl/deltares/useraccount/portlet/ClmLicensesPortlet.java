@@ -88,7 +88,7 @@ public class ClmLicensesPortlet extends MVCPortlet {
                 Map<String, Object> customerContactInfo = LicenseManagerUtils.parseCustomerContact(customerContacts, customerSelection);
                 Long customerContactId = (Long) customerContactInfo.getOrDefault("customerContactId", 0L);
                 Boolean customerContactManageLicenses = (Boolean) customerContactInfo.getOrDefault("customerContactManageLicenses", false);
-                JSONArray customerLicenses = licenseManagerUtils.getCustomerLicenses(user, selectedState, customerSelection, customerContactId, customerContactManageLicenses);
+                JSONArray customerLicenses = licenseManagerUtils.getCustomerLicenses(selectedState, customerSelection, customerContactId, customerContactManageLicenses);
                 if (customerLicenses != null && customerLicenses.length() > 0) {
                     if (tabSelection.equals("softwareSuites")) {
                         models = convertToSoftwareSuiteModel(customerLicenses);
@@ -107,7 +107,7 @@ public class ClmLicensesPortlet extends MVCPortlet {
             renderRequest.setAttribute("customerSelection", customerSelection);
             renderRequest.setAttribute("tabSelection", tabSelection);
         } catch (Exception e) {
-            throw new PortletException(e);
+            SessionErrors.add(renderRequest, "error-loading-license",e.getMessage());
         }
         super.render(renderRequest, renderResponse);
     }

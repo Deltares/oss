@@ -124,11 +124,10 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
 
     }
 
-    public JSONArray getCustomerContactsForUser(User user) throws IOException, JSONException {
+    public JSONArray getCustomerContactsForUser(User user) throws IOException {
 
         if (!isActive()) {
-            LOG.warn("Unable to retrieve customer contacts as the LicenseManager is not active!");
-            return null;
+            throw new IOException("Unable to retrieve customer contacts as the LicenseManager is not active!");
         }
         if (user == null || user.isGuestUser()) return null;
 
@@ -136,19 +135,22 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
         headers.put("Content-Type", APPLICATION_JSON);
         headers.put(AUTHORIZATION, BEARER + " " + getAccessToken());
 
-        String queryParameters = String.format("?email=%s",URLEncoder.encode(user.getEmailAddress(), StandardCharsets.UTF_8));
-        HttpURLConnection connection = getConnection(getBasePath() + "clm/customers/contact/search" + queryParameters, "GET", headers);
-        checkResponse(connection);
+        try {
+            String queryParameters = String.format("?email=%s",URLEncoder.encode(user.getEmailAddress(), StandardCharsets.UTF_8));
+            HttpURLConnection connection = getConnection(getBasePath() + "clm/customers/contact/search" + queryParameters, "GET", headers);
+            checkResponse(connection);
 
-        String customerContactsViewResponse = readAll(connection);
-        return JsonContentUtils.parseContentArray(customerContactsViewResponse);
+            String customerContactsViewResponse = readAll(connection);
+            return JsonContentUtils.parseContentArray(customerContactsViewResponse);
+        } catch (Exception e) {
+            throw new IOException("Failed to retrieve customer contacts for user '" + user.getEmailAddress() + "'", e);
+        }
     }
 
-    public JSONArray getCustomerContactsForCustomerAndFilter(long customerId, boolean filterBetaTesters, boolean filterManageLicenses) throws IOException, JSONException {
+    public JSONArray getCustomerContactsForCustomerAndFilter(long customerId, boolean filterBetaTesters, boolean filterManageLicenses) throws IOException {
 
         if (!isActive()) {
-            LOG.warn("Unable to retrieve customer contacts as the LicenseManager is not active!");
-            return null;
+            throw new IOException("Unable to retrieve customer contacts as the LicenseManager is not active!");
         }
         if (customerId == 0) return null;
 
@@ -156,22 +158,24 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
         headers.put("Content-Type", APPLICATION_JSON);
         headers.put(AUTHORIZATION, BEARER + " " + getAccessToken());
 
-        String queryParameters = String.format("?customerId=%d&filterBetaTesters=%b&filterManageLicenses=%b",customerId, filterBetaTesters, filterManageLicenses);
-        HttpURLConnection connection = getConnection(getBasePath() + "clm/customers/contact/search" + queryParameters, "GET", headers);
-        checkResponse(connection);
+        try {
+            String queryParameters = String.format("?customerId=%d&filterBetaTesters=%b&filterManageLicenses=%b",customerId, filterBetaTesters, filterManageLicenses);
+            HttpURLConnection connection = getConnection(getBasePath() + "clm/customers/contact/search" + queryParameters, "GET", headers);
+            checkResponse(connection);
 
-        String customerContactsViewResponse = readAll(connection);
-        return JsonContentUtils.parseContentArray(customerContactsViewResponse);
+            String customerContactsViewResponse = readAll(connection);
+            return JsonContentUtils.parseContentArray(customerContactsViewResponse);
+        } catch (Exception e) {
+            throw new IOException("Failed to retrieve customer contacts for customer '" + customerId + "'", e);
+        }
     }
 
     @Override
-    public JSONArray getCustomerLicenses(User user, String state, Long customerId, Long customerContactId, boolean customerContactManageLicenses) throws IOException, JSONException {
+    public JSONArray getCustomerLicenses(String state, Long customerId, Long customerContactId, boolean customerContactManageLicenses) throws IOException, JSONException {
 
         if (!isActive()) {
-            LOG.warn("Unable to retrieve license files as the LicenseManager is not active!");
-            return null;
+            throw new IOException("Unable to retrieve customer licenses as the LicenseManager is not active!");
         }
-        if (user == null || user.isGuestUser()) return null;
         if (customerId == null || customerId <= 0) return null;
 
         HashMap<String, String> headers = new HashMap<>();
@@ -189,19 +193,21 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
             queryParameters = String.format("?state=%s&customerContactId=%d", state, customerContactId);
         }
 
+        try {
 
-        HttpURLConnection connection = getConnection(getBasePath() + "clm/customers/" + customerId + "/subscriptions/suites" + queryParameters, "GET", headers);
-        checkResponse(connection);
-
-        return JsonContentUtils.parseContentArray(readAll(connection));
+            HttpURLConnection connection = getConnection(getBasePath() + "clm/customers/" + customerId + "/subscriptions/suites" + queryParameters, "GET", headers);
+            checkResponse(connection);
+            return JsonContentUtils.parseContentArray(readAll(connection));
+        } catch (Exception e) {
+            throw new IOException("Failed to retrieve customer licenses for customer '" + customerId + "'", e);
+        }
 
     }
 
     @Override
     public JSONObject generateCustomerLicenseFiles(Long customerId, String filterEmail) throws IOException, JSONException {
         if (!isActive()) {
-            LOG.warn("Unable to retrieve customer licenses as the LicenseManager is not active!");
-            return null;
+            throw new IOException("Unable to retrieve customer licenses as the LicenseManager is not active!");
         }
         if (customerId == null || customerId < 1) return null;
 
@@ -213,11 +219,15 @@ public class LicenseManagerUtilsImpl extends HttpClientUtils implements LicenseM
         if (filterEmail != null) {
             requestUrl += "?email=" + URLEncoder.encode(filterEmail, StandardCharsets.UTF_8);
         }
-        HttpURLConnection connection = getConnection(requestUrl , "GET", headers);
-        checkResponse(connection);
+        try {
+            HttpURLConnection connection = getConnection(requestUrl, "GET", headers);
+            checkResponse(connection);
 
-        String customerContactsViewResponse = readAll(connection);
-        return JsonContentUtils.parseContent(customerContactsViewResponse);
+            String customerContactsViewResponse = readAll(connection);
+            return JsonContentUtils.parseContent(customerContactsViewResponse);
+        } catch (Exception e) {
+            throw new IOException("Failed to retrieve customer licenses for customer '" + customerId + "'", e);
+        }
     }
 
     @Override
