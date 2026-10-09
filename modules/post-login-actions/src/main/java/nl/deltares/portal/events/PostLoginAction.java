@@ -12,9 +12,12 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import nl.deltares.portal.configuration.SiteMapConfiguration;
 import nl.deltares.portal.utils.GeoIpUtils;
 import nl.deltares.portal.utils.KeycloakUtils;
 import nl.deltares.portal.utils.SanctionCheckUtils;
@@ -57,6 +60,9 @@ public class PostLoginAction implements LifecycleAction {
     protected SanctionCheckUtils sanctionCheckUtils;
 
     private GeoIpUtils geoIpUtils;
+
+    @Reference
+    private ConfigurationProvider _configurationProvider;
 
     @Reference(
             unbind = "-",
@@ -136,21 +142,35 @@ public class PostLoginAction implements LifecycleAction {
     }
 
     private int getUnreadUserAnnouncements(User user) {
+
+        long companyId = user.getCompanyId();
+        try {
+            SiteMapConfiguration _configuration = _configurationProvider.getSystemConfiguration(SiteMapConfiguration.class);
+            companyId = _configuration.accountsCompanyId();
+        } catch (ConfigurationException e) {
+            //
+        }
+
         final DynamicQuery dynamicQuery = AnnouncementsEntryLocalServiceUtil.dynamicQuery();
-        dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", user.getCompanyId()));
+        dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", companyId));
         final Date timeNow = new Date(System.currentTimeMillis());
         dynamicQuery.add(RestrictionsFactoryUtil.le("displayDate", timeNow));
         dynamicQuery.add(RestrictionsFactoryUtil.eq("alert", false));
         dynamicQuery.add(RestrictionsFactoryUtil.ge("expirationDate", timeNow));
         final List<AnnouncementsEntry> entries = AnnouncementsEntryLocalServiceUtil.dynamicQuery(dynamicQuery);
 
+        User companyUser = UserLocalServiceUtil.fetchUserByEmailAddress(companyId, user.getEmailAddress());
+        if (companyUser == null) {
+            return entries.size();
+        }
+
         int unreadAnnouncements = 0;
         for (AnnouncementsEntry entry : entries) {
             try {
                 //flagValue 1 = unread, 2 = read
-                AnnouncementsFlagLocalServiceUtil.getFlag(user.getUserId(), entry.getEntryId(), 1);
+                AnnouncementsFlagLocalServiceUtil.getFlag(companyUser.getUserId(), entry.getEntryId(), 1);
                 try {
-                    AnnouncementsFlagLocalServiceUtil.getFlag(user.getUserId(), entry.getEntryId(), 2);
+                    AnnouncementsFlagLocalServiceUtil.getFlag(companyUser.getUserId(), entry.getEntryId(), 2);
                 } catch (PortalException ignored) {
                     //no read flag found, so this is an unread announcement
                     unreadAnnouncements++;
