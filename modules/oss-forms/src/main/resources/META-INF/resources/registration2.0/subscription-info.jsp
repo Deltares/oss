@@ -6,7 +6,7 @@
 <br/>
 <%
     SubscriptionsDisplayContext displayContext = (SubscriptionsDisplayContext) request.getAttribute(CheckoutWebKeys.CHECKOUT_STEP_DISPLAY_CONTEXT);
-    List<SubscriptionSelection> subscriptionSelections = displayContext.getSubscriptions();
+    List<SubscriptionSelection> subscriptionSelections = displayContext.getSubscriptions(request);
 
     for (SubscriptionSelection subscriptionSelection : subscriptionSelections) {
 

@@ -1,6 +1,9 @@
 package nl.deltares.model;
 
+import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
+
 import java.io.Serializable;
+import java.util.List;
 
 public class RegistrationFormContext implements Serializable {
 
@@ -8,6 +11,7 @@ public class RegistrationFormContext implements Serializable {
     private BillingInfo billingInfo;
     private BadgeInfo badgeInfo;
     private RegistrationsInfo registrationsInfo;
+    private List<SubscriptionSelection> subscriptions;
 
     public AccountInfo getAccountInfo() {
         return accountInfo;
@@ -39,5 +43,13 @@ public class RegistrationFormContext implements Serializable {
 
     public void setRegistrationsInfo(RegistrationsInfo registrationsInfo) {
         this.registrationsInfo = registrationsInfo;
+    }
+
+    public List<SubscriptionSelection> getSubscriptions() {
+        return subscriptions;
+    }
+
+    public void setSubscriptions(List<SubscriptionSelection> subscriptions) {
+        this.subscriptions = subscriptions;
     }
 }
