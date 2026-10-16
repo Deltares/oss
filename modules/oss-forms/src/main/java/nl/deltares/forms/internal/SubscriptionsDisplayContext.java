@@ -3,17 +3,12 @@ package nl.deltares.forms.internal;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
-import nl.deltares.model.RegistrationFormContext;
-import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 import nl.deltares.portal.utils.EmailSubscriptionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,18 +29,7 @@ public class SubscriptionsDisplayContext {
 
     }
 
-    public List<SubscriptionSelection> getSubscriptions(HttpServletRequest request) {
-
-        RegistrationFormContext context = (RegistrationFormContext) request.getSession().getAttribute("registration-context");
-        List<SubscriptionSelection> subscriptions;
-        if (context != null && context.getSubscriptions() != null) {
-            return context.getSubscriptions();
-        } else {
-            subscriptions = new ArrayList<>();
-            if (context != null) {
-                context.setSubscriptions(subscriptions);
-            }
-        }
+    public List<SubscriptionSelection> getSubscriptions() {
 
         String emailAddress = _user.getEmailAddress();
         List<SubscriptionSelection> subscriptionSelections;
@@ -55,6 +39,7 @@ public class SubscriptionsDisplayContext {
             LOG.warn("Error retrieving subscriptions: " + e.getMessage());
             return Collections.emptyList();
         }
+        List<SubscriptionSelection> subscriptions = new ArrayList<>();
         for (SubscriptionSelection subscription : subscriptionSelections) {
             if (_subscriptionIds.contains(subscription.getId())) {
                 subscriptions.add(subscription);
@@ -67,7 +52,7 @@ public class SubscriptionsDisplayContext {
 
         List<String> subscribeIds = new ArrayList<>();
         List<String> unsubscribeIds = new ArrayList<>();
-        List<SubscriptionSelection> subscriptions = getSubscriptions(httpServletRequest);
+        List<SubscriptionSelection> subscriptions = getSubscriptions();
         subscriptions.forEach(subscription -> {
             String mailingId = subscription.getId();
             final String selected = ParamUtil.getString(httpServletRequest, "subscription-" + mailingId);
