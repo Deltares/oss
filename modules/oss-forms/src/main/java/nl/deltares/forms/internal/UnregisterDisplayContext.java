@@ -103,8 +103,11 @@ public class UnregisterDisplayContext {
         long groupId = Objects.requireNonNullElseGet(siteGroupId, _themeDisplay::getSiteGroupId);
 
         Registration registration = _dsdParserUtils.getRegistration(groupId, articleId);
-        _dsdSessionUtils.unRegisterUser(user, registration);
+        try {
+            sendUnregisterEmail(user, registration);
+        } finally {
+            _dsdSessionUtils.unRegisterUser(user, registration);
+        }
 
-        sendUnregisterEmail(user, registration);
     }
 }
