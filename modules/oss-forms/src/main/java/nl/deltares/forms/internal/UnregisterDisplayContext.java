@@ -76,11 +76,18 @@ public class UnregisterDisplayContext {
         registrationEmail.setTypeTranslations(typeTranslations);
 
         //Get any related child registrations
+        ArrayList<Registration> unregister = new ArrayList<>();
+        unregister.add(registration);
         List<Registration> childRegistrations = _dsdSessionUtils.getChildRegistrations(registration, _event.getRegistrations(_themeDisplay.getLocale()));
-        Collections.addAll(childRegistrations, registration);
+
+        for (Registration childRegistration : childRegistrations) {
+            if (_dsdSessionUtils.isUserRegisteredFor(user, childRegistration)){
+                unregister.add(childRegistration);
+            }
+        }
 
         UnRegisterEmailSerializer serializer = new UnRegisterEmailSerializer();
-        registrationEmail.sendUnregisterEmail(serializer, user, childRegistrations);
+        registrationEmail.sendUnregisterEmail(serializer, user, unregister);
     }
 
     public void unRegisterUser(String articleId, Long userId, Long siteGroupId) throws Exception {
