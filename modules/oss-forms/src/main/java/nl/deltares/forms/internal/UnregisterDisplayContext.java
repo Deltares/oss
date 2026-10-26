@@ -14,13 +14,12 @@ import nl.deltares.emails.serializer.UnRegisterEmailSerializer;
 import nl.deltares.portal.configuration.DSDSiteConfiguration;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class UnregisterDisplayContext {
 
@@ -30,14 +29,16 @@ public class UnregisterDisplayContext {
     private final ThemeDisplay _themeDisplay;
     private final DsdParserUtils _dsdParserUtils;
     private final DsdSessionUtils _dsdSessionUtils;
+    private final DsdJournalArticleUtils _dsdJournalArticleUtils;
 
     public UnregisterDisplayContext(HttpServletRequest httpServletRequest, ConfigurationProvider configurationProvider,
-                                    DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils) throws Exception {
+                                    DsdParserUtils dsdParserUtils, DsdSessionUtils dsdSessionUtils, DsdJournalArticleUtils dsdJournalArticleUtils) throws Exception {
 
         CPRequestHelper cpRequestHelper = new CPRequestHelper(httpServletRequest);
         _themeDisplay = cpRequestHelper.getThemeDisplay();
         _configuration = configurationProvider.getGroupConfiguration(DSDSiteConfiguration.class, _themeDisplay.getScopeGroupId());
         _dsdParserUtils = dsdParserUtils;
+        _dsdJournalArticleUtils = dsdJournalArticleUtils;
         _dsdSessionUtils = dsdSessionUtils;
 
     }
@@ -68,8 +69,18 @@ public class UnregisterDisplayContext {
         registrationEmail.setEmailFooter(_event.getEmailFooterURL(), _event.getEmailFooterFileEntryId());
         registrationEmail.addCCEmail(_themeDisplay.getUser().getEmailAddress());
 
+        String[] structureKeys = RegistrationDisplayUtils.getStructureKeys(_configuration);
+        Map<String, String> typeTranslations = RegistrationDisplayUtils.getTypeTranslations(
+                _configuration.dsdRegistrationTypeField(), structureKeys, _dsdJournalArticleUtils,
+                _themeDisplay);
+        registrationEmail.setTypeTranslations(typeTranslations);
+
+        //Get any related child registrations
+        List<Registration> childRegistrations = _dsdSessionUtils.getChildRegistrations(registration, _event.getRegistrations(_themeDisplay.getLocale()));
+        Collections.addAll(childRegistrations, registration);
+
         UnRegisterEmailSerializer serializer = new UnRegisterEmailSerializer();
-        registrationEmail.sendUnregisterEmail(serializer, user, Collections.singletonList(registration));
+        registrationEmail.sendUnregisterEmail(serializer, user, childRegistrations);
     }
 
     public void unRegisterUser(String articleId, Long userId, Long siteGroupId) throws Exception {

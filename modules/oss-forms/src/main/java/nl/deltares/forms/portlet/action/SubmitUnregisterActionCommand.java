@@ -9,6 +9,7 @@ import com.liferay.portal.kernel.util.Portal;
 import nl.deltares.forms.exception.RegistrationFormException;
 import nl.deltares.forms.internal.UnregisterDisplayContext;
 import nl.deltares.portal.constants.OssConstants;
+import nl.deltares.portal.utils.DsdJournalArticleUtils;
 import nl.deltares.portal.utils.DsdParserUtils;
 import nl.deltares.portal.utils.DsdSessionUtils;
 import nl.deltares.portal.utils.URLUtils;
@@ -41,7 +42,7 @@ public class SubmitUnregisterActionCommand extends BaseMVCActionCommand {
         HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(actionRequest);
 
         UnregisterDisplayContext unregisterDisplayContext = new UnregisterDisplayContext(httpServletRequest,
-                _configurationProvider, _dsdParserUtils, _dsdSessionUtils);
+                _configurationProvider, _dsdParserUtils, _dsdSessionUtils, _dsdJournalArticleUtils);
 
         try {
             unregisterDisplayContext.unRegisterUser(articleId, userId, siteGroupId);
@@ -67,6 +68,9 @@ public class SubmitUnregisterActionCommand extends BaseMVCActionCommand {
 
     @Reference
     private DsdSessionUtils _dsdSessionUtils;
+
+    @Reference
+    private DsdJournalArticleUtils _dsdJournalArticleUtils;
 
     @Reference
     private ConfigurationProvider _configurationProvider;

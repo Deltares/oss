@@ -13,7 +13,6 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 import nl.deltares.emails.RegistrationEmail;
 import nl.deltares.emails.serializer.RegisterEmailSerializer;
 import nl.deltares.forms.exception.RegistrationFormException;
@@ -246,13 +245,10 @@ public class SubmitOrderDisplayContext {
             registrationEmail.setEmailFooter(event.getEmailFooterURL(), event.getEmailFooterFileEntryId());
         }
 
-        String[] structureKeys = getStructureKeys(_configuration);
-        String dsdRegistrationTypeField = _configuration.dsdRegistrationTypeField();
-        Map<String, String> typeTranslations = new HashMap<>();
-        for (String structureKey : structureKeys) {
-            typeTranslations.putAll(_dsdJournalArticleUtils.getStructureFieldOptions(themeDisplay.getSiteGroupId(),
-                    structureKey, dsdRegistrationTypeField, themeDisplay.getLocale()));
-        }
+        String[] structureKeys = RegistrationDisplayUtils.getStructureKeys(_configuration);
+        Map<String, String> typeTranslations = RegistrationDisplayUtils.getTypeTranslations(
+                _configuration.dsdRegistrationTypeField(), structureKeys, _dsdJournalArticleUtils,
+                themeDisplay);
         registrationEmail.setTypeTranslations(typeTranslations);
 
         registrationEmail.addCCEmail(_loggedInUser.getEmailAddress());
@@ -271,14 +267,7 @@ public class SubmitOrderDisplayContext {
         return registrationInfos.stream().filter(info -> info.getEmail().equals(user.getEmailAddress())).collect(Collectors.toList());
     }
 
-    private String[] getStructureKeys(DSDSiteConfiguration configuration) {
-        if (configuration == null) return new String[0];
-        String structureList = configuration.dsdRegistrationStructures();
-        if (structureList != null && !structureList.isEmpty()){
-            return StringUtil.split(structureList, ' ');
-        }
-        return new String[0];
-    }
+
 
     private Map<User, List<Registration>> mapRegistrationsByUser(List<RegistrationInfo> registrationInfos, ThemeDisplay themeDisplay) throws PortalException {
         HashMap<User, List<Registration>> map = new HashMap<>();
