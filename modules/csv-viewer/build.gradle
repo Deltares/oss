@@ -1,0 +1,5 @@
+dependencies {
+    implementation('com.liferay.portal:release.dxp.api')
+    compileInclude "org.apache.commons:commons-csv:1.10.0"
+    compileOnly(project(":modules:common-utils"))
+}

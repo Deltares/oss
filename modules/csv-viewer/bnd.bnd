@@ -1,0 +1,12 @@
+Bundle-Name: csv-viewer
+Bundle-SymbolicName: nl.deltares.csvviewer
+Bundle-Version: 1.0.0
+-sources: true
+-metatype: *
+Web-ContextPath: /csv-viewer
+Import-Package: \
+    nl.deltares.portal.utils.*, \
+    *
+Export-Package: \
+    nl.deltares.csvviewer.portlet, \
+    nl.deltares.csvviewer.constants
