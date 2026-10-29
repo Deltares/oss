@@ -42,8 +42,7 @@ public class CsvViewerConfigurationAction extends DefaultConfigurationAction {
         setPreference(actionRequest, "csvFileUrl", ParamUtil.getString(actionRequest, "csvFileUrl"));
         setPreference(actionRequest, "username", ParamUtil.getString(actionRequest, "username"));
         setPreference(actionRequest, "password", ParamUtil.getString(actionRequest, "password"));
-        setPreference(actionRequest, "filterableColumns", ParamUtil.getString(actionRequest, "filterableColumns"));
-        setPreference(actionRequest, "strictValidation", String.valueOf(ParamUtil.getBoolean(actionRequest, "strictValidation")));
+        setPreference(actionRequest, "displayColumns", ParamUtil.getString(actionRequest, "displayColumns"));
         super.processAction(portletConfig, actionRequest, actionResponse);
     }
 

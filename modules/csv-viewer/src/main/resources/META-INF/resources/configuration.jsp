@@ -1,6 +1,20 @@
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
 <%@ include file="init.jsp" %>
 
+<%
+    CsvViewerConfiguration configuration = (CsvViewerConfiguration) renderRequest.getAttribute(CsvViewerConfiguration.class.getName());
+    String csvFileUrl = "";
+    String password = "";
+    String username = "";
+    String displayColumns = "";
+    if (Validator.isNotNull(configuration)) {
+        csvFileUrl = portletPreferences.getValue("csvFileUrl", configuration.csvFileUrl());
+        username = portletPreferences.getValue("username", configuration.username());
+        password = portletPreferences.getValue("password", configuration.password());
+        displayColumns = portletPreferences.getValue("displayColumns", configuration.displayColumns());
+    }
+%>
+
 <liferay-portlet:actionURL
     portletConfiguration="<%= true %>"
     var="configurationActionURL"
@@ -46,20 +60,13 @@
         />
 
         <aui:input
-            label="Filterable columns"
-            name="filterableColumns"
+            label="Display columns"
+            name="displayColumns"
             type="text"
-            value="<%= filterableColumns %>"
-            helpMessage="Comma-separated list of columns that should be filterable in the table."
+            value="<%= displayColumns %>"
+            helpMessage="Comma-separated list of columns that should be displayed in the table."
         />
 
-        <aui:input
-            checked="<%= strictValidation %>"
-            label="Strict validation"
-            name="strictValidation"
-            type="checkbox"
-            value="true"
-        />
     </aui:fieldset>
 
     <aui:button-row>

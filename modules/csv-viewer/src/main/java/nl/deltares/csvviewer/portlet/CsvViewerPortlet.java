@@ -1,5 +1,6 @@
 package nl.deltares.csvviewer.portlet;
 
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
@@ -44,6 +45,17 @@ public class CsvViewerPortlet extends MVCPortlet {
     @Override
     public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException, IOException {
 
+        final int curPage = ParamUtil.getInteger(renderRequest, "cur", 1);
+        final int deltas = ParamUtil.getInteger(renderRequest, "delta", 25);
+        final String filterColumn = ParamUtil.getString(renderRequest, "filterColumn", "");
+        final String filterValue = ParamUtil.getString(renderRequest, "filterValue", "");
+
+        final String orderByCol = ParamUtil.getString(renderRequest, "orderByCol");
+        final String orderByType = ParamUtil.getString(renderRequest, "orderByType");
+
+        renderRequest.setAttribute("filterColumn", filterColumn);
+        renderRequest.setAttribute("filterValue", filterValue);
+
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
         PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
         final String portletId = portletDisplay.getId();
@@ -53,39 +65,62 @@ public class CsvViewerPortlet extends MVCPortlet {
                     CsvViewerConfiguration.class, themeDisplay.getLayout(), portletId);
             renderRequest.setAttribute(CsvViewerConfiguration.class.getName(), configuration);
         } catch (ConfigurationException e) {
-            SessionErrors.add(renderRequest, "get-config-failed", e.getMessage());
+            SessionErrors.add(renderRequest, "config-error", e.getMessage());
         }
-
+        final String path = ParamUtil.getString(renderRequest, "mvcPath", null);
+        final int rowNumber = ParamUtil.getInteger(renderRequest, "rowNumber", -1);
         if (configuration != null && configuration.csvFileUrl() != null && !configuration.csvFileUrl().isEmpty()) {
-            String jsonCsv = CsvDataService.loadCsvAsJson(
-                    configuration.csvFileUrl(),
-                    configuration.username(),
-                    configuration.password(),
-                    configuration.filterableColumns(),
-                    configuration.strictValidation()
-            );
-            renderRequest.setAttribute("jsonCsv", jsonCsv);
+            try {
+                JSONObject jsonCsv;
+                if (path != null && path.endsWith("viewEntry.jsp") && rowNumber >= 0) {
+                    jsonCsv = CsvDataService.loadCsvAsJson(
+                            configuration.csvFileUrl(),
+                            configuration.username(),
+                            configuration.password(),
+                            rowNumber
+                    );
+                } else {
+                    jsonCsv = CsvDataService.loadCsvAsJson(
+                            configuration.csvFileUrl(),
+                            configuration.username(),
+                            configuration.password(),
+                            configuration.displayColumns(),
+                            (curPage-1)*deltas, deltas,
+                            filterColumn, filterValue,
+                            orderByCol, orderByType
+                    );
+                }
+                renderRequest.setAttribute("jsonCsv", jsonCsv);
+            } catch (IOException e) {
+                SessionErrors.add(renderRequest, "csv-error", e.getMessage());
+            }
         }
 
         super.render(renderRequest, renderResponse);
     }
 
-    @Override
-    public void serveResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws IOException {
-        ThemeDisplay themeDisplay = (ThemeDisplay) resourceRequest
-                .getAttribute(WebKeys.THEME_DISPLAY);
+    /**
+     * Pass the selected filter options to the render request
+     *
+     * @param actionRequest  Filter action
+     * @param actionResponse Filter response
+     */
+    @SuppressWarnings("unused")
+    public void filter(ActionRequest actionRequest, ActionResponse actionResponse) {
 
-        String action = ParamUtil.getString(resourceRequest, "action");
+        final String selectedColumn = ParamUtil.getString(actionRequest, "filterColumn", "");
+        final String selectedValue = ParamUtil.getString(actionRequest, "filterValue", "");
 
-//        if ("loadCsv".equals(action)) {
-//            resourceResponse.setContentType("application/json");
-//            String json = CsvDataService.loadCsvAsJson(
-//                    configuration.csvFileUrl(),
-//                    configuration.filterableColumns(),
-//                    configuration.strictValidation()
-//            );
-//            resourceResponse.getWriter().write(json);
-//        }
+        if (!selectedValue.isEmpty()) {
+            RenderURL redirectURL = actionResponse.createRedirectURL(MimeResponse.Copy.ALL);
+            redirectURL.getRenderParameters().setValue("filterColumn", selectedColumn);
+            redirectURL.getRenderParameters().setValue("filterValue", selectedValue);
+            try {
+                actionResponse.sendRedirect(redirectURL.toString());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private ConfigurationProvider _configurationProvider;

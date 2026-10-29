@@ -35,17 +35,10 @@ public interface CsvViewerConfiguration {
     @Meta.AD(
             required = false,
             deflt = "",
-            name = "Filterable columns",
-            description = "Comma-separated list of columns that may be filtered"
+            name = "Display columns",
+            description = "Comma-separated list of columns that may be displayed"
     )
-    String filterableColumns();
+    String displayColumns();
 
-    @Meta.AD(
-            required = false,
-            deflt = "true",
-            name = "Strict validation",
-            description = "Report invalid rows and empty values"
-    )
-    boolean strictValidation();
 }
 

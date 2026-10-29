@@ -1,8 +1,8 @@
 package nl.deltares.csvviewer.service;
 
-import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import nl.deltares.csvviewer.comparator.CsvJSONObjectComparator;
 import nl.deltares.portal.utils.HttpClientUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -19,98 +19,143 @@ import java.util.*;
 
 public class CsvDataService {
 
-    public static String loadCsvAsJson(String csvUrl, String username, String password, String filterableColumns) {
-        return loadCsvAsJson(csvUrl, username, password, filterableColumns, true);
-    }
+    public static JSONObject loadCsvAsJson(String csvUrl, String username, String password,
+                                           int searchRowNumber) throws IOException {
 
-    public static String loadCsvAsJson(String csvUrl, String username,  String password, String filterableColumns, boolean strictValidation) {
-        try {
-            HashMap<String, String> headers = new HashMap<>();
-            if (!username.isEmpty()) {
-                headers.put("Authorization", "Basic " + HttpClientUtils.getBasicAuthorization(username, password));
-            }
-            HttpURLConnection connection = HttpClientUtils.getConnection(csvUrl, "GET", headers);
-            HttpClientUtils.checkResponse(connection);
+        HttpURLConnection connection = getConnection(csvUrl, username, password);
+        JSONObject row = JSONFactoryUtil.createJSONObject();
+        try (InputStream inputStream = connection.getInputStream();
+             BufferedInputStream bufferedInput = new BufferedInputStream(inputStream)) {
 
-            try (InputStream inputStream = connection.getInputStream();
-                 BufferedInputStream bufferedInput = new BufferedInputStream(inputStream)) {
-                bufferedInput.mark(8192);
-                byte[] sample = readSample(bufferedInput, 8192);
-                Charset charset = detectCharset(sample);
-                char delimiter = detectDelimiter(sample, charset);
-                bufferedInput.reset();
+            try (CSVParser parser = getParser(bufferedInput)) {
 
-                CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
-                        .setHeader()
-                        .setSkipHeaderRecord(true)
-                        .setIgnoreSurroundingSpaces(true)
-                        .setTrim(true)
-                        .setDelimiter(delimiter)
-                        .build();
-
-                try (CSVParser parser = CSVParser.parse(bufferedInput, charset, csvFormat)) {
-                    List<String> csvHeaders = parser.getHeaderNames();
-                    List<String> filterable = parseFilterableColumns(filterableColumns, csvHeaders);
-                    JSONArray rows = JSONFactoryUtil.createJSONArray();
-
-                    int rowNumber = 0;
-                    for (CSVRecord record : parser) {
-                        rowNumber++;
-                        Map<String, String> values = new LinkedHashMap<>();
-                        List<String> invalidColumns = new ArrayList<>();
-                        String invalidReason = "";
-
-                        for (String header : csvHeaders) {
-                            String value = record.isSet(header) ? record.get(header) : "";
-                            value = value == null ? "" : value.trim();
-                            values.put(header, value);
-
-                            if (value.isEmpty() && strictValidation) {
-                                invalidColumns.add(header);
-                            }
-
-                            if (isUrl(value)) {
-                                values.put(header + "__link", value);
-                            }
-                        }
-
-                        if (!invalidColumns.isEmpty()) {
-                            invalidReason = "Empty values in columns: " + String.join(", ", invalidColumns);
-                        }
-
-                        JSONObject row = JSONFactoryUtil.createJSONObject();
-                        row.put("rowNumber", rowNumber);
-                        row.put("values", values);
-                        row.put("valid", invalidReason.isEmpty());
-                        row.put("invalidReason", invalidReason);
-                        row.put("filterableColumns", filterable);
-                        rows.put(row);
+                int rowNumber = 0;
+                for (CSVRecord record : parser) {
+                    rowNumber++;
+                    if (rowNumber != searchRowNumber) {
+                        continue;
                     }
 
-                    JSONObject response = JSONFactoryUtil.createJSONObject();
-                    response.put("columns", csvHeaders);
-                    response.put("rows", rows);
-                    response.put("totalRows", rows.length());
-                    response.put("validRows", countValidRows(rows));
-                    response.put("invalidRows", rows.length() - countValidRows(rows));
-                    response.put("filterableColumns", filterable);
-                    return response.toJSONString();
+                    Map<String, String> values = readValues(parser.getHeaderNames(), record);
+
+                    row.put("rowNumber", rowNumber);
+                    row.put("values", values);
+                    break;
                 }
+
             }
-        } catch (Exception e) {
-            JSONObject error = JSONFactoryUtil.createJSONObject();
-            error.put("error", e.getMessage());
-            return error.toJSONString();
+
         }
+        return row;
     }
 
-    private static byte[] readSample(InputStream inputStream, int maxBytes) throws IOException {
+
+    public static JSONObject loadCsvAsJson(String csvUrl, String username, String password, String displayColumns,
+                                           int startRow, int delta, String filterColumn, String filterValue,
+                                           String orderByColumn, String orderByType) throws IOException {
+
+        HttpURLConnection connection = getConnection(csvUrl, username, password);
+
+        try (InputStream inputStream = connection.getInputStream();
+             BufferedInputStream bufferedInput = new BufferedInputStream(inputStream)) {
+
+            try (CSVParser parser = getParser(bufferedInput)) {
+                List<String> csvHeaders = parser.getHeaderNames();
+                List<String> displayable = parseDisplayColumns(displayColumns, csvHeaders);
+                List<JSONObject> rows = new ArrayList<>();
+
+                int rowNumber = 0;
+                for (CSVRecord record : parser) {
+                    rowNumber++;
+                    if (!checkFilter(record, filterColumn, filterValue)) {
+                        continue;
+                    }
+
+                    Map<String, String> values = readValues(displayable, record);
+
+                    JSONObject row = JSONFactoryUtil.createJSONObject();
+                    row.put("rowNumber", rowNumber);
+                    row.put("values", values);
+                    rows.add(row);
+                }
+
+                sortRows(rows, orderByColumn, orderByType);
+                int endRow = Math.min(startRow + delta, rows.size());
+                JSONObject response = JSONFactoryUtil.createJSONObject();
+                response.put("columns", displayable);
+                response.put("rows", rows.subList(startRow, endRow));
+                response.put("totalRows", rows.size());
+
+                return response;
+            }
+        }
+
+    }
+
+    private static void sortRows(List<JSONObject> rows, String orderByCol, String orderByType) {
+
+        final CsvJSONObjectComparator comparator = new CsvJSONObjectComparator(orderByType.equals("asc"), orderByCol);
+        rows.sort(comparator);
+    }
+
+    private static Map<String, String> readValues(List<String> parser, CSVRecord record) {
+        Map<String, String> values = new LinkedHashMap<>();
+
+        for (String header : parser) {
+            String value = record.isSet(header) ? record.get(header) : "";
+            value = value == null ? "" : value.trim();
+            values.put(header, value);
+        }
+        return values;
+    }
+
+    private static CSVParser getParser(BufferedInputStream bufferedInput) throws IOException {
+        bufferedInput.mark(8192);
+        byte[] sample = readSample(bufferedInput);
+        Charset charset = detectCharset(sample);
+        char delimiter = detectDelimiter(sample, charset);
+        bufferedInput.reset();
+
+        CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
+                .setHeader()
+                .setSkipHeaderRecord(true)
+                .setIgnoreSurroundingSpaces(true)
+                .setTrim(true)
+                .setDelimiter(delimiter)
+                .build();
+
+        return CSVParser.parse(bufferedInput, charset, csvFormat);
+    }
+
+    private static HttpURLConnection getConnection(String csvUrl, String username, String password) throws IOException {
+        HashMap<String, String> headers = new HashMap<>();
+        if (!username.isEmpty()) {
+            headers.put("Authorization", "Basic " + HttpClientUtils.getBasicAuthorization(username, password));
+        }
+        HttpURLConnection connection = HttpClientUtils.getConnection(csvUrl, "GET", headers);
+        HttpClientUtils.checkResponse(connection);
+        return connection;
+    }
+
+    private static boolean checkFilter(CSVRecord record, String filterColumn, String filterValue) {
+        if (filterColumn == null || filterColumn.trim().isEmpty()) {
+            return true;
+        }
+        if (filterValue == null || filterValue.trim().isEmpty()) {
+            return true;
+        }
+        String value = record.isSet(filterColumn) ? record.get(filterColumn) : "";
+        value = value == null ? "" : value.trim();
+        return value.toLowerCase().contains(filterValue.toLowerCase().trim());
+    }
+
+    private static byte[] readSample(InputStream inputStream) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[4096];
         int totalRead = 0;
         int read;
 
-        while (totalRead < maxBytes && (read = inputStream.read(buffer, 0, Math.min(buffer.length, maxBytes - totalRead))) != -1) {
+        while (totalRead < 8192 && (read = inputStream.read(buffer, 0, Math.min(buffer.length, 8192 - totalRead))) != -1) {
             outputStream.write(buffer, 0, read);
             totalRead += read;
         }
@@ -152,7 +197,7 @@ public class CsvDataService {
         return ',';
     }
 
-    private static boolean isUrl(String value) {
+    public static boolean isUrl(String value) {
         if (value == null || value.trim().isEmpty()) {
             return false;
         }
@@ -161,7 +206,7 @@ public class CsvDataService {
         return trimmed.startsWith("http://") || trimmed.startsWith("https://");
     }
 
-    private static List<String> parseFilterableColumns(String columns, List<String> availableHeaders) {
+    private static List<String> parseDisplayColumns(String columns, List<String> availableHeaders) {
         List<String> result = new ArrayList<>();
         if (columns == null || columns.trim().isEmpty()) {
             return result;
@@ -186,14 +231,4 @@ public class CsvDataService {
         return count;
     }
 
-    private static int countValidRows(JSONArray rows) {
-        int valid = 0;
-        for (int i = 0; i < rows.length(); i++) {
-            JSONObject row = rows.getJSONObject(i);
-            if (row != null && row.getBoolean("valid")) {
-                valid++;
-            }
-        }
-        return valid;
-    }
 }
