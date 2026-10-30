@@ -76,16 +76,21 @@
                 className="com.liferay.portal.kernel.json.JSONObject"
                 modelVar="entry" keyProperty=""
         >
+
             <%
                 Map<String, String> values = (Map<String, String>) entry.get("values");
                 int rowNumber = entry.getInt("rowNumber");
             %>
-            <portlet:renderURL var="rowURL">
-                <portlet:param name="mvcPath" value="/viewEntry.jsp" />
-                <portlet:param name="rowNumber" value="<%= String.valueOf(rowNumber) %>" />
-                <portlet:param name="filterColumn" value="<%=filterColumn%>"/>
-                <portlet:param name="filterValue" value="<%=filterValue%>"/>
-            </portlet:renderURL>
+            <liferay-ui:search-container-column-text name="" align="center">
+                <portlet:renderURL var="rowURL">
+                    <portlet:param name="mvcPath" value="/viewEntry.jsp" />
+                    <portlet:param name="rowNumber" value="<%= String.valueOf(rowNumber) %>" />
+                    <portlet:param name="filterColumn" value="<%=filterColumn%>"/>
+                    <portlet:param name="filterValue" value="<%=filterValue%>"/>
+                </portlet:renderURL>
+                <liferay-ui:icon icon="info-circle-open" message="info" url="<%=rowURL%>" />
+            </liferay-ui:search-container-column-text>
+
             <%
                 for (String columnName : columnNames) {
                     String columnValue = values.get(columnName);

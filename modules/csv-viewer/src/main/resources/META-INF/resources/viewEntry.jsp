@@ -1,6 +1,7 @@
 <%@ page import="com.liferay.portal.kernel.json.JSONObject" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.Collections" %>
+<%@ page import="nl.deltares.csvviewer.service.CsvDataService" %>
 <%@ include file="init.jsp" %>
 <%
     final JSONObject record = (JSONObject) request.getAttribute("jsonCsv");
@@ -25,16 +26,24 @@
                 for (Map.Entry<String, String> entrySet : values.entrySet()) {
                     String key = entrySet.getKey();
                     String value = entrySet.getValue();
+                    boolean isUrl = CsvDataService.isUrl(value);
                     String inputTYpe = value.length() > 50 ? "textarea" : "text";
             %>
 
             <aui:row>
                 <aui:col width="100">
-                    <aui:input name="<%=key%>"
-                            label="<%=key%>"
-                            disabled="true"
-                            value="<%=value%>"
-                            type="<%=inputTYpe%>"/>
+
+                    <% if (isUrl) { %>
+                        <label><%=key%></label><br/>
+                        <aui:a href="<%= value %>" target="_blank">
+                            <%= value %>
+                        </aui:a>
+                    <% } else { %>
+                        <aui:input name="<%=key%>"
+                                label="<%=key%>"
+                                value="<%=value%>"
+                                type="<%=inputTYpe%>"/>
+                    <%}%>
                 </aui:col>
             </aui:row>
 
