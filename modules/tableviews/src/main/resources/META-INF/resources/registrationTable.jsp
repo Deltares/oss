@@ -9,6 +9,8 @@
 <%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ page import="com.liferay.portal.kernel.servlet.SessionMessages" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
 <liferay-theme:defineObjects/>
 
 <portlet:defineObjects/>
@@ -78,7 +80,10 @@
                     <aui:select name="filterEventValue" label="Event" value="<%=filterEventValue%>" onChange="submit()">
                         <aui:option value="0">Select...</aui:option>
                         <%
-                            for (Map.Entry<Long, String> eventInfo : eventTitles.entrySet()) {
+                            List<Map.Entry<Long, String>> sortedEntries = new ArrayList<>(eventTitles.entrySet());
+                            sortedEntries.sort(Map.Entry.comparingByValue());
+
+                            for (Map.Entry<Long, String> eventInfo : sortedEntries) {
                         %>
                         <aui:option value="<%=eventInfo.getKey()%>" label="<%=eventInfo.getValue()%>"/>
                         <%
@@ -90,7 +95,10 @@
                     <aui:select name="filterRegistrationValue" label="Session" value="<%=filterRegistrationValue%>" onChange="submit()" >
                         <aui:option value="0">Select...</aui:option>
                         <%
-                            for (Map.Entry<Long, String> registrationInfo : registrationTitles.entrySet()) {
+                            List<Map.Entry<Long, String>> sortedRegistrationEntries = new ArrayList<>(registrationTitles.entrySet());
+                            sortedRegistrationEntries.sort(Map.Entry.comparingByValue());
+
+                            for (Map.Entry<Long, String> registrationInfo : sortedRegistrationEntries) {
                         %>
                         <aui:option value="<%=registrationInfo.getKey()%>" label="<%=registrationInfo.getValue()%>"/>
                         <%
