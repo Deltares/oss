@@ -1,7 +1,3 @@
-<%@ page import="com.liferay.portal.kernel.json.JSONObject" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="java.util.Collections" %>
-<%@ page import="nl.deltares.csvviewer.service.CsvDataService" %>
 <%@ include file="init.jsp" %>
 <%
     final JSONObject record = (JSONObject) request.getAttribute("jsonCsv");

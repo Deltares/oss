@@ -20,6 +20,11 @@
     --md-default-fg-color--light: #4e4f5f;
 }
 
+.portlet-navigation .nav-pills > li.active > a {
+    background-color: #0b5fff;
+    color: #fff;
+}
+
 .float-right {
     float: right;
 }
@@ -42,6 +47,17 @@
 .searchcontainer-content{
     display: table;
     width: 100%;
+}
+
+.color-column {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 14px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    white-space: nowrap;
+    border: 1px solid transparent;
 }
 
 .searchcontainer-content > table {

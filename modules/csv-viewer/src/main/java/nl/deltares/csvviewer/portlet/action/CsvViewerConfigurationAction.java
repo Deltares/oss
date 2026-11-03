@@ -6,16 +6,16 @@ import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.util.ParamUtil;
 import nl.deltares.csvviewer.configuration.CsvViewerConfiguration;
 import nl.deltares.csvviewer.constants.CsvViewerPortletKeys;
+import nl.deltares.portal.utils.JsonContentUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Modified;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.portlet.PortletConfig;
+import javax.portlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.Map;
 
 @Component(
@@ -43,7 +43,34 @@ public class CsvViewerConfigurationAction extends DefaultConfigurationAction {
         setPreference(actionRequest, "username", ParamUtil.getString(actionRequest, "username"));
         setPreference(actionRequest, "password", ParamUtil.getString(actionRequest, "password"));
         setPreference(actionRequest, "displayColumns", ParamUtil.getString(actionRequest, "displayColumns"));
+        setPreference(actionRequest, "resourceColumn", ParamUtil.getString(actionRequest, "resourceColumn"));
+        setPreference(actionRequest, "eventTitleColumn", ParamUtil.getString(actionRequest, "eventTitleColumn"));
+        setPreference(actionRequest, "eventStartColumn", ParamUtil.getString(actionRequest, "eventStartColumn"));
+        setPreference(actionRequest, "eventEndColumn", ParamUtil.getString(actionRequest, "eventEndColumn"));
+        setPreference(actionRequest, "eventColorColumn", ParamUtil.getString(actionRequest, "eventColorColumn"));
+
+        Map<String, String> colorMap = convertColorsToMap(actionRequest);
+        setPreference(actionRequest, "colorMap", JsonContentUtils.formatMapToJson(colorMap));
         super.processAction(portletConfig, actionRequest, actionResponse);
+    }
+
+    private Map<String, String> convertColorsToMap(ActionRequest actionRequest) {
+
+        HashMap<String, String> colorMap = new HashMap<>();
+
+        ActionParameters actionParameters = actionRequest.getActionParameters();
+        actionParameters.getNames().forEach((key) -> {
+            if (key.startsWith("col_key_")){
+                String columnValue = key.substring(8);
+                String[] values = actionParameters.getValues("col_value_" + columnValue);
+                if (values != null && values.length > 0) {
+                    colorMap.put(columnValue, values[0]);
+                }
+
+            }
+        });
+        return colorMap;
+
     }
 
     @Activate

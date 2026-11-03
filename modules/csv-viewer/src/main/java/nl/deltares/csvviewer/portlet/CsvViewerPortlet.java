@@ -25,7 +25,9 @@ import java.io.IOException;
                 "com.liferay.portlet.css-class-wrapper=portlet-checkbox-facet",
                 "com.liferay.portlet.display-category=OSS",
                 "com.liferay.portlet.header-portlet-css=/css/main.css",
+                "com.liferay.portlet.header-portlet-css=/css/fullcalendar.css",
                 "com.liferay.portlet.footer-portlet-javascript=/js/main.js",
+                "com.liferay.portlet.footer-portlet-javascript=/js/fullcalendar.js",
                 "com.liferay.portlet.instanceable=true",
                 "javax.portlet.display-name=CSV-Viewer",
                 "javax.portlet.expiration-cache=0",
@@ -52,9 +54,13 @@ public class CsvViewerPortlet extends MVCPortlet {
 
         final String orderByCol = ParamUtil.getString(renderRequest, "orderByCol");
         final String orderByType = ParamUtil.getString(renderRequest, "orderByType");
+        final String tabSelection =  ParamUtil.getString(renderRequest, "tabSelection");
 
         renderRequest.setAttribute("filterColumn", filterColumn);
         renderRequest.setAttribute("filterValue", filterValue);
+        renderRequest.setAttribute("orderByCol", orderByCol);
+        renderRequest.setAttribute("orderByType", orderByType);
+        renderRequest.setAttribute("tabSelection", tabSelection);
 
         ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
         PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
@@ -89,6 +95,7 @@ public class CsvViewerPortlet extends MVCPortlet {
                             filterColumn, filterValue,
                             orderByCol, orderByType
                     );
+
                 }
                 renderRequest.setAttribute("jsonCsv", jsonCsv);
             } catch (IOException e) {

@@ -4,6 +4,7 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import nl.deltares.csvviewer.comparator.CsvJSONObjectComparator;
 import nl.deltares.portal.utils.HttpClientUtils;
+import nl.deltares.portal.utils.Period;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -15,7 +16,12 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Year;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class CsvDataService {
 
@@ -231,4 +237,81 @@ public class CsvDataService {
         return count;
     }
 
+    public static List<String> getColumnValueKeys(String columnName, String csvUrl, String username, String password) throws IOException {
+
+        List<String> displayable = Collections.singletonList(columnName);
+        List<String> uniqueColumnValues = new ArrayList<>();
+        HttpURLConnection connection = getConnection(csvUrl, username, password);
+
+        try (InputStream inputStream = connection.getInputStream();
+             BufferedInputStream bufferedInput = new BufferedInputStream(inputStream)) {
+
+            try (CSVParser parser = getParser(bufferedInput)) {
+                for (CSVRecord record : parser) {
+                    Map<String, String> values = readValues(displayable, record);
+
+                    String value = values.get(columnName);
+                    if (value == null) continue;
+                    value = value.trim();
+                    if (value.isEmpty() || uniqueColumnValues.contains(value)) continue;
+                    uniqueColumnValues.add(value);
+                }
+                Collections.sort(uniqueColumnValues);
+                return uniqueColumnValues;
+            }
+        }
+    }
+
+    public static List<String> getColumnValueKeys(String columnName, List<JSONObject> rows) {
+
+        List<String> uniqueColumnValues = new ArrayList<>();
+        for (JSONObject row : rows) {
+            Map<String, String> values = (Map<String, String>) row.get("values");
+            String value = values.get(columnName);
+            if (value == null) continue;
+            value = value.trim();
+            if (value.isEmpty() || uniqueColumnValues.contains(value)) continue;
+            uniqueColumnValues.add(value);
+        }
+        Collections.sort(uniqueColumnValues);
+        return uniqueColumnValues;
+    }
+
+    public static Period getDateRange(String startColumn, String endColumn, List<JSONObject> rows) {
+
+        NumberFormat numberInstance = NumberFormat.getIntegerInstance();
+        int minStart = 9999;
+        int maxEnd = 0;
+
+        for (JSONObject row : rows) {
+            Map<String, String> values = (Map<String, String>) row.get("values");
+            String startValue = values.get(startColumn);
+            if (startValue != null && !startValue.trim().isEmpty()){
+                try{
+                    int start = numberInstance.parse(startValue).intValue();
+                    minStart = Math.min(minStart, start);
+                } catch (ParseException e) {
+                    //
+                }
+            }
+            String endValue = values.get(endColumn);
+            if (endValue != null && !endValue.trim().isEmpty()){
+                try{
+                    int end = numberInstance.parse(endValue).intValue();
+                    maxEnd = Math.max(maxEnd, end);
+                } catch (ParseException e) {
+                    //
+                }
+            }
+
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, minStart);
+        calendar.set(Calendar.MONTH, 0);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        Date startDate = calendar.getTime();
+        calendar.set(Calendar.YEAR, maxEnd);
+        Date endDate = calendar.getTime();
+        return new Period(startDate, endDate);
+    }
 }

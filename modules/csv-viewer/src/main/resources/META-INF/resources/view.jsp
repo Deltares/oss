@@ -1,119 +1,73 @@
-<%@ page import="com.liferay.portal.kernel.json.JSONObject" %>
-<%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
-<%@ page import="java.util.Collections" %>
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
-<%@ page import="nl.deltares.csvviewer.service.CsvDataService" %>
 <%@ include file="init.jsp" %>
-
 <%
     JSONObject jsonCsv = (JSONObject) renderRequest.getAttribute("jsonCsv");
-
     int totalCount = jsonCsv != null ? jsonCsv.getInt("totalRows") : 0;
-    List<String> columnNames = jsonCsv != null ? (List<String>) jsonCsv.get("columns") : Collections.emptyList();
+
     List<JSONObject> rows = jsonCsv != null ? (List<JSONObject>) jsonCsv.get("rows") : Collections.emptyList();
 
-    final String filterColumn = (String) request.getAttribute("filterColumn");
-    final String filterValue = (String) request.getAttribute("filterValue");
-%>
+    String tabSelection = (String) request.getAttribute("tabSelection");
+    if (tabSelection == null || tabSelection.isEmpty()){
+        tabSelection = "viewTable";
+    }
 
-<portlet:actionURL name="filter" var="filterURL">
-    <portlet:param name="filterColumn" value="<%=filterColumn%>"/>
-    <portlet:param name="filterValue" value="<%=filterValue%>"/>
-</portlet:actionURL>
-<portlet:renderURL var="clearFilterURL">
-    <portlet:param name="mvcPath" value="/view.jsp"/>
+    String cssViewTable = tabSelection.equals("viewTable") ? "active selected" : "";
+    String cssViewTimeLine = tabSelection.equals("viewTimeLine") ? "active selected" : "";
+
+    CsvViewerConfiguration configuration = (CsvViewerConfiguration) renderRequest.getAttribute(CsvViewerConfiguration.class.getName());
+    //General
+    String colorMap ="{}";
+
+    //Timeline
+    String eventColorColumn = "";
+
+    if (Validator.isNotNull(configuration)) {
+        eventColorColumn = portletPreferences.getValue("eventColorColumn", configuration.eventColorColumn());
+        colorMap = portletPreferences.getValue("colorMap", configuration.colorMap());
+    }
+    Map<String, String> map;
+    try {
+        map = JsonContentUtils.parseJsonToMap(colorMap);
+    } catch (JSONException e) {
+        map = new HashMap<>(0);
+    }
+%>
+<portlet:renderURL var="viewTableURL">
+    <portlet:param name="tabSelection" value="viewTable"/>
+</portlet:renderURL>
+<portlet:renderURL var="viewTimeLineURL">
+    <portlet:param name="tabSelection" value="viewTimeLine"/>
 </portlet:renderURL>
 
-<liferay-portlet:renderURL varImpl="iteratorURL">
-    <portlet:param name="filterColumn" value="<%=filterColumn%>"/>
-    <portlet:param name="filterValue" value="<%=filterValue%>"/>
-</liferay-portlet:renderURL>
-
-<aui:fieldset>
-    <aui:form action="<%=filterURL%>" name="filterForm" >
-
-        <aui:row>
-            <aui:col width="20">
-                <div class="d-flex justify-content-start">
-                    <aui:select name="filterColumn" label="column.select.label" value="<%=filterColumn%>" >
-
-                        <%
-                            for (String columnName : columnNames) {
-                        %>
-                        <aui:option value="<%=columnName%>" label="<%=columnName%>" />
-                        <%
-                            }
-                        %>
-                    </aui:select>
-                </div>
-            </aui:col>
-            <aui:col width="50">
-                <aui:input name="filterValue" label="filter.value.label" value="<%=filterValue%>"/>
-            </aui:col>
-            <aui:col width="30">
-                <aui:button-row cssClass="align-center float-right">
-                    <aui:button type="submit" value="table.filter.button"  />
-                    <aui:button type="submit" value="table.filter.clear" href="<%=clearFilterURL%>"/>
-                </aui:button-row>
-            </aui:col>
-        </aui:row>
-    </aui:form>
-
-</aui:fieldset>
-
-<aui:form>
-
-    <liferay-ui:search-container id="tableResults" iteratorURL="<%= iteratorURL %>" delta="25"
-                                 emptyResultsMessage='<%=LanguageUtil.get(locale, "no-csv-records")%>'
-                                 total='<%=totalCount%>'  >
-
-        <liferay-ui:search-container-results results='<%= rows %>' />
-
-
-        <liferay-ui:search-container-row
-                className="com.liferay.portal.kernel.json.JSONObject"
-                modelVar="entry" keyProperty=""
-        >
-
-            <%
-                Map<String, String> values = (Map<String, String>) entry.get("values");
-                int rowNumber = entry.getInt("rowNumber");
-            %>
-            <liferay-ui:search-container-column-text name="" align="center">
-                <portlet:renderURL var="rowURL">
-                    <portlet:param name="mvcPath" value="/viewEntry.jsp" />
-                    <portlet:param name="rowNumber" value="<%= String.valueOf(rowNumber) %>" />
-                    <portlet:param name="filterColumn" value="<%=filterColumn%>"/>
-                    <portlet:param name="filterValue" value="<%=filterValue%>"/>
-                </portlet:renderURL>
-                <liferay-ui:icon icon="info-circle-open" message="info" url="<%=rowURL%>" />
-            </liferay-ui:search-container-column-text>
-
-            <%
-                for (String columnName : columnNames) {
-                    String columnValue = values.get(columnName);
-                    boolean isUrl = CsvDataService.isUrl(columnValue);
-            %>
-                <liferay-ui:search-container-column-text value="<%=columnValue%>" name="<%=columnName%>"
-                                                         orderable="true" orderableProperty="<%=columnName%>"
-                                                         href="<%=isUrl ? columnValue : null %>" target="_blank"/>
-            <%
-                }
-            %>
-        </liferay-ui:search-container-row>
-        <liferay-ui:search-iterator/>
-    </liferay-ui:search-container>
-
-</aui:form>
-
-
-<liferay-ui:error key="config-error">
-    <liferay-ui:message key="config-error" arguments='<%= SessionErrors.get(liferayPortletRequest, "config-error") %>' />
-</liferay-ui:error>
-
-<liferay-ui:error key="csv-error">
-    <liferay-ui:message key="csv-error" arguments='<%= SessionErrors.get(liferayPortletRequest, "csv-error") %>' />
-</liferay-ui:error>
-
+<%
+    if (!themeDisplay.isSignedIn()) {
+%>
+<div class="alert alert-info" ><liferay-ui:message key="not-logged-in"/></div>
+<%
+} else {
+%>
+<div class="portlet-navigation">
+    <ul class="nav nav-pills navbar-site">
+        <li class="lfr-nav-item nav-item <%=cssViewTable%>">
+            <a href="<%= viewTableURL %> " class="nav-link text-truncate" >View Table</a>
+        </li>
+        <li class="lfr-nav-item nav-item <%=cssViewTimeLine%>">
+            <a href="<%= viewTimeLineURL %> " class="nav-link text-truncate" >View Time Line</a>
+        </li>
+    </ul>
+</div>
+<% if (totalCount == 0) { %>
+<div class="alert alert-info" >
+    <liferay-ui:message key="no-csv-records" />
+</div>
+<%
+} else if (tabSelection.equals("viewTable")) {
+%>
+    <%@ include file="viewTable.jsp" %>
+<%
+} else {
+%>
+    <%@ include file="viewTimeLine.jsp" %>
+<%
+        }
+    }
+%>
