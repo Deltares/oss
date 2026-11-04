@@ -50,34 +50,24 @@ public class SubscriptionsDisplayContext {
 
     public void storeSubscriptionInfo(HttpServletRequest httpServletRequest) {
 
-        List<String> subscribeIds = new ArrayList<>();
-        List<String> unsubscribeIds = new ArrayList<>();
-        List<SubscriptionSelection> subscriptions = getSubscriptions();
+        List<SubscriptionSelection> subscriptions = new ArrayList<>();
+        try {
+            subscriptions.addAll(_subscriptionUtil.getSubscriptions(_user.getEmailAddress()));
+        } catch (Exception e) {
+            LOG.warn("Error retrieving subscriptions: " + e.getMessage());
+        }
         subscriptions.forEach(subscription -> {
             String mailingId = subscription.getId();
-            final String selected = ParamUtil.getString(httpServletRequest, "subscription-" + mailingId);
+            final String selected = ParamUtil.getString(httpServletRequest, "subscription-" + mailingId, "false");
             boolean bSelected = Boolean.parseBoolean(selected);
-            if (bSelected) {
-                subscribeIds.add(mailingId);
-            } else {
-                unsubscribeIds.add(mailingId);
-            }
             subscription.setSelected(bSelected);
         });
 
-        if (!subscribeIds.isEmpty()) {
-            try {
-                _subscriptionUtil.subscribeAll(_user, subscribeIds);
-            } catch (Exception e) {
-                LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", _user.getEmailAddress(), subscribeIds, e.getMessage()));
-            }
+        try {
+            _subscriptionUtil.updateSubscriptions(_user, subscriptions);
+        } catch (Exception e) {
+            LOG.warn(String.format("Failed to update subscriptions for user %s: %s", _user.getEmailAddress(), e.getMessage()));
         }
-        if (!unsubscribeIds.isEmpty()) {
-            try {
-                _subscriptionUtil.unsubscribeAll(_user.getEmailAddress(), unsubscribeIds);
-            } catch (Exception e) {
-                LOG.warn(String.format("Failed to unsubscribe user %s for mailing %s: %s", _user.getEmailAddress(), unsubscribeIds, e.getMessage()));
-            }
-        }
+
     }
 }

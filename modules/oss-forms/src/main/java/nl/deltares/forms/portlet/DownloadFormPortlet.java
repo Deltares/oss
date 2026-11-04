@@ -183,20 +183,24 @@ public class DownloadFormPortlet extends MVCPortlet {
 
     private List<SubscriptionSelection> getSubscriptionSelection(String email, List<Download> downloads) {
 
+        //Get user's current selection
+        List<SubscriptionSelection> userSubscriptions = new ArrayList<>();
+        try {
+            userSubscriptions.addAll(subscriptionUtils.getSubscriptions(email));
+        } catch (Exception e) {
+            LOG.warn(String.format("Error getting subscriptions for email %s: %s", email, e.getMessage()));
+        }
         List<SubscriptionSelection> subscriptionSelection = new ArrayList<>();
         try {
             for (Download download : downloads) {
 
                 final List<nl.deltares.portal.model.impl.Subscription> subscriptions = download.getSubscriptions();
                 subscriptions.forEach(subscription -> {
-                    final SubscriptionSelection displaySubscription = new SubscriptionSelection(subscription.getId(), subscription.getName());
-                    if (subscriptionSelection.contains(displaySubscription)) return; //do not check multiple times
-                    try {
-                        displaySubscription.setSelected(subscriptionUtils.isSubscribed(email, subscription.getId()));
-                    } catch (Exception e) {
-                        displaySubscription.setSelected(false);
-                    }
-                    subscriptionSelection.add(displaySubscription);
+                    SubscriptionSelection userSubscription = userSubscriptions.stream().filter(
+                            s -> s.getId().equals(subscription.getId())
+                    ).findFirst().orElse(null);
+                    if (userSubscription == null || subscriptionSelection.contains(userSubscription)) return; //do not check multiple times
+                    subscriptionSelection.add(userSubscription);
                 });
             }
         } catch (Exception e) {

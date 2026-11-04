@@ -89,8 +89,9 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 				request.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL, dsdConfig.contactURL());
 				request.setAttribute("eventId", dsdConfig.eventId());
 				List<String> mailingIdsList = Arrays.asList(dsdConfig.mailingIds().split(";"));
-				request.setAttribute("subscriptionSelection", getSubscriptionSelection(user.getEmailAddress(), mailingIdsList));
-				request.setAttribute("subscribed", subscriptionUtils.isSubscribed(user.getEmailAddress(), mailingIdsList));
+				List<SubscriptionSelection> subscriptionSelection = getSubscriptionSelection(user.getEmailAddress(), mailingIdsList);
+				request.setAttribute("subscriptionSelection", subscriptionSelection);
+				request.setAttribute("subscribed", !subscriptionSelection.isEmpty());
 			} catch (Exception e) {
 				LOG.warn("Error getting DSDSiteConfiguration: " + e.getMessage());
 				request.setAttribute("subscribed", false);

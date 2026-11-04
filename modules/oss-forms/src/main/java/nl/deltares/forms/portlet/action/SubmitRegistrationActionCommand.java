@@ -22,6 +22,7 @@ import nl.deltares.portal.constants.OssConfigurationConstants;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
+import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -213,29 +214,19 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
 
         List<String> subscribableMailingIds = registrationRequest.getSubscribableMailingIds();
         if (subscribableMailingIds != null) {
-            List<String> subscribeIds = new ArrayList<>();
-            List<String> unsubscribeIds = new ArrayList<>();
+            ArrayList<SubscriptionSelection> subscriptions = new ArrayList<>();
             subscribableMailingIds.forEach(mailingId -> {
                 final String selected = ParamUtil.getString(actionRequest, "subscription-" + mailingId);
-                if (Boolean.parseBoolean(selected)) {
-                    subscribeIds.add(mailingId);
-                } else {
-                    unsubscribeIds.add(mailingId);
-                }
+                SubscriptionSelection sub = new SubscriptionSelection(mailingId, mailingId);
+                sub.setSelected(Boolean.parseBoolean(selected));
+                subscriptions.add(sub);
             });
 
-            if (!subscribeIds.isEmpty()) {
+            if (!subscriptions.isEmpty()) {
                 try {
-                    subscriptionUtils.subscribeAll(user, subscribeIds);
+                    subscriptionUtils.updateSubscriptions(user, subscriptions);
                 } catch (Exception e) {
-                    LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", user.getEmailAddress(), subscribeIds, e.getMessage()));
-                }
-            }
-            if (!unsubscribeIds.isEmpty()) {
-                try {
-                    subscriptionUtils.unsubscribeAll(user.getEmailAddress(), unsubscribeIds);
-                } catch (Exception e) {
-                    LOG.warn(String.format("Failed to unsubscribe user %s for mailing %s: %s", user.getEmailAddress(), unsubscribeIds, e.getMessage()));
+                    LOG.warn(String.format("Failed to update subscriptions for user %s: %s", user.getEmailAddress(), e.getMessage()));
                 }
             }
         }

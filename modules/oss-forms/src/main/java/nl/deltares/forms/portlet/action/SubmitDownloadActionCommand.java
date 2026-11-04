@@ -193,33 +193,14 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
 
     private boolean updateSubscriptions(DownloadRequest downloadRequest, User user) {
         List<SubscriptionSelection> subscriptionSelections = downloadRequest.getSubscriptionSelections();
-        if (subscriptionSelections != null) {
-            List<String> subscribeIds = new ArrayList<>();
-            List<String> unsubscribeIds = new ArrayList<>();
-            for (SubscriptionSelection subscription : subscriptionSelections) {
-                if (subscription.isSelected()) {
-                    subscribeIds.add(subscription.getId());
-                } else {
-                    unsubscribeIds.add(subscription.getId());
-                }
-            }
-            if (!subscribeIds.isEmpty()) {
-                try {
-                    subscriptionUtils.subscribeAll(user, subscribeIds);
-                } catch (Exception e) {
-                    LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", user.getEmailAddress(), subscribeIds, e.getMessage()));
-                }
-            }
-            if (!unsubscribeIds.isEmpty()) {
-                try {
-                    subscriptionUtils.unsubscribeAll(user.getEmailAddress(), unsubscribeIds);
-                } catch (Exception e) {
-                    LOG.warn(String.format("Failed to unsubscribe user %s for mailing %s: %s", user.getEmailAddress(), unsubscribeIds, e.getMessage()));
-                }
-            }
-
+        try {
+            subscriptionUtils.updateSubscriptions(user, subscriptionSelections);
+            return true;
+        } catch (Exception e) {
+            LOG.warn(String.format("Failed to subscribe user %s: %s", user.getEmailAddress(), e.getMessage()));
+            return false;
         }
-        return true;
+
     }
 
     private DownloadRequest getDownloadRequest(ActionRequest actionRequest, ThemeDisplay themeDisplay) {

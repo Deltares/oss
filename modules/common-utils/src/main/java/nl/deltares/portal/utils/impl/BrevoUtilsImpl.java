@@ -8,6 +8,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.util.PropsUtil;
+import nl.deltares.portal.model.subscriptions.ConsentGroup;
 import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 import nl.deltares.portal.utils.EmailSubscriptionUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
@@ -36,37 +37,11 @@ public class BrevoUtilsImpl implements EmailSubscriptionUtils {
     private static final String API_NAME = "api-key";
     private static final String BASEURL_KEY = "sendinblue.baseurl";
     private static final String FOLDER_ID_KEY = "sendinblue.folderid";
-    private static final String DEFAULT_KEY = "sendinblue.subscriptions.default";
     private String baseApiPath;
-    private Boolean defaultSubscriptionsUtil = null;
-
-    @Override
-    public boolean isDefault() {
-        if (defaultSubscriptionsUtil != null) return defaultSubscriptionsUtil;
-        if (PropsUtil.contains(DEFAULT_KEY)) {
-            defaultSubscriptionsUtil = Boolean.parseBoolean(PropsUtil.get(DEFAULT_KEY));
-        } else {
-            defaultSubscriptionsUtil = false;
-        }
-        return defaultSubscriptionsUtil;
-    }
 
     @Override
     public boolean isActive() {
         return PropsUtil.contains(API_KEY);
-    }
-
-    @Override
-    public boolean isSubscribed(String emailAddress, final List<String> subscriptionIds) throws IOException {
-
-        final JSONObject contactInfo = getContactInfo(emailAddress);
-        if (contactInfo == null) return false;
-
-        //Keycloak wraps all attributes in a json array. we need to remove this
-        final ArrayList<Integer> intList = new ArrayList<>();
-        subscriptionIds.forEach(s -> intList.add(Integer.parseInt(s)));
-        return isSubscriptionInList(intList, contactInfo.getJSONArray("listIds"));
-
     }
 
     private boolean isSubscriptionInList(int subscriptionId, JSONArray listIds) {
@@ -82,79 +57,136 @@ public class BrevoUtilsImpl implements EmailSubscriptionUtils {
         return subscribed[0];
     }
 
-    private boolean isSubscriptionInList(List<Integer> subscriptionIds, JSONArray listIds) {
-        boolean[] subscribed = {false};
-
-        if (listIds == null) return false;
-        for (int i = 0; i < listIds.length(); i++) {
-            if (subscriptionIds.contains(listIds.getInt(i))) {
-                subscribed[0] = true;
-                break;
-            }
-        }
-        return subscribed[0];
-    }
-
     @Override
-    public boolean isSubscribed(String email, String subscriptionId) throws IOException {
-        return isSubscribed(email, Collections.singletonList(subscriptionId));
-    }
+    public List<ConsentGroup> getConsentGroups(String emailAddress) {
 
-    @Override
-    public void subscribe(User user, String subscriptionId) throws Exception {
-        subscribeAll(user, Collections.singletonList(subscriptionId));
-    }
-
-    @Override
-    public void subscribeAll(User user, List<String> subscriptionIds) throws Exception {
-
-        final JSONObject contactInfo = getContactInfo(user.getEmailAddress());
-        JSONObject jsonUser = convertToContact(user, contactInfo);
-        if (addSubscriptions(jsonUser, subscriptionIds)) {
-            if (contactInfo == null) {
-                addContact(jsonUser);
-            } else {
-                updateContact(jsonUser);
-            }
-            LOG.info(String.format("User %s is subscribed for subscriptions %s", user.getEmailAddress(), subscriptionIds));
-        }
-    }
-
-
-    @Override
-    public void unsubscribe(String email, String subscriptionId) throws Exception {
-        unsubscribeAll(email, Collections.singletonList(subscriptionId));
-    }
-
-    @Override
-    public void unsubscribeAll(String email, List<String> subscriptionIds) throws Exception {
-
-        final JSONObject contactInfo = getContactInfo(email);
-        if (contactInfo == null) return; // user doesn't exist
-
-        JSONObject jsonUser = convertToContact(null, contactInfo);
-        if (removeSubscriptions(jsonUser, subscriptionIds)) {
-            updateContact(jsonUser);
-            LOG.info(String.format("User %s is un-subscribed for subscription %s", email, subscriptionIds));
-        }
-    }
-
-    @Override
-    public void deleteUser(String emailAddress) throws IOException {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put(API_NAME, PropsUtil.get(API_KEY));
 
-        //open connection
-        HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/" + URLEncoder.encode(emailAddress, StandardCharsets.UTF_8),
-                "DELETE", headers);
+        List<ConsentGroup> consentGroups = new ArrayList<>();
 
-        final int response = checkResponse(connection);
-        if (response == 404) {
-            LOG.info(String.format("User %s is not an existing Sendinblue contact", emailAddress));
-        } else {
-            LOG.info(String.format("User %s is removed from Sendinblue contacts", emailAddress));
+        //open connection
+        String jsonResponse;
+        try {
+            HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/" + emailAddress,
+                    "GET", headers);
+            checkResponse(connection);
+            jsonResponse = readAll(connection);
+        } catch (Exception e) {
+            LOG.warn(String.format("Failed to get consent groups for %s: %s", emailAddress, e.getMessage()));
+            return Collections.emptyList();
         }
+
+        try {
+            final JSONObject jsonObject = JsonContentUtils.parseContent(jsonResponse);
+            final JSONArray groups = jsonObject.getJSONArray("consentGroups");
+            for (int i = 0; i < groups.length(); i++) {
+                final JSONObject group = groups.getJSONObject(i);
+                ConsentGroup consentGroup = getConsentGroup(group.getString("id"));
+                if (consentGroup != null) {
+                    consentGroup.setSelected(group.getString("status").equals("subscribed"));
+                    consentGroups.add(consentGroup);
+                }
+            }
+        } catch (JSONException e) {
+            LOG.warn(String.format("Failed to parse consent groups: %s", e.getMessage()));
+        }
+        return consentGroups;
+    }
+
+    private ConsentGroup getConsentGroup(String id) {
+
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put(API_NAME, PropsUtil.get(API_KEY));
+
+        String jsonResponse;
+        try {
+            HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/consent-groups/" + id,
+                    "GET", headers);
+            checkResponse(connection);
+            jsonResponse = readAll(connection);
+        } catch (Exception e) {
+            LOG.warn(String.format("Failed to get consent group %s: %s", id, e.getMessage()));
+            return null;
+        }
+
+        try {
+            final JSONObject jsonObject = JsonContentUtils.parseContent(jsonResponse);
+            final String name = jsonObject.getString("name");
+            final String description = jsonObject.getString("description");
+            return new ConsentGroup(id, name, description);
+        } catch (JSONException e) {
+            LOG.warn(String.format("Failed to parse consent groups: %s", e.getMessage()));
+        }
+
+        return null;
+    }
+
+    @Override
+    public void updateConsentGroups(User user, List<ConsentGroup> consentGroups) throws Exception {
+        JSONObject contactInfo = getContactInfo(user.getEmailAddress());
+        if (contactInfo == null) {
+            contactInfo = createContact(user);
+            addContact(contactInfo);
+        }
+        updateConsentGroups(consentGroups, contactInfo);
+    }
+
+    private void updateConsentGroups(List<ConsentGroup> consentGroups, JSONObject contactInfo) throws IOException {
+        JSONObject unlinkGroupObject = JSONFactoryUtil.createJSONObject();
+        JSONArray unlinkGroupIds = JSONFactoryUtil.createJSONArray();
+        unlinkGroupObject.put("email", unlinkGroupIds);
+        JSONObject lingGroupObject = JSONFactoryUtil.createJSONObject();
+        JSONArray lingGroupIds = JSONFactoryUtil.createJSONArray();
+        lingGroupObject.put("email", lingGroupIds);
+        contactInfo.put("unlinkConsentGroupIds", unlinkGroupObject);
+        contactInfo.put("consentGroupIds", lingGroupObject);
+
+        for (ConsentGroup consentGroup : consentGroups) {
+            int id = Integer.parseInt(consentGroup.getId());
+            if (consentGroup.isSelected()){
+                lingGroupIds.put(id);
+            } else {
+                unlinkGroupIds.put(id);
+            }
+        }
+        updateContact(contactInfo);
+    }
+
+    @Override
+    public void updateSubscriptions(User user, List<SubscriptionSelection> subscriptions) throws Exception {
+        JSONObject contactInfo = getContactInfo(user.getEmailAddress());
+        if (contactInfo == null) {
+            contactInfo = createContact(user);
+            addContact(contactInfo);
+        }
+        updateSubscriptions(contactInfo, subscriptions);
+    }
+
+    private void updateSubscriptions(JSONObject contactInfo, List<SubscriptionSelection> subscriptions) throws IOException {
+
+        JSONArray linkListIds = JSONFactoryUtil.createJSONArray();
+        contactInfo.put("listIds", linkListIds);
+        JSONArray unlinkListIds = JSONFactoryUtil.createJSONArray();
+        contactInfo.put("unlinkListIds", unlinkListIds);
+
+        for (SubscriptionSelection subscription : subscriptions) {
+            int id;
+            try {
+                id = Integer.parseInt(subscription.getId());
+            } catch (NumberFormatException e) {
+                LOG.warn(String.format("Invalid subscription id %s: %s", subscription.getId(), e.getMessage()));
+                continue;
+            }
+            if (subscription.isSelected()){
+                linkListIds.put(id);
+            } else {
+                unlinkListIds.put(id);
+            }
+        }
+        updateContact(contactInfo);
     }
 
     @Override
@@ -177,14 +209,15 @@ public class BrevoUtilsImpl implements EmailSubscriptionUtils {
                 final JSONArray lists = jsonObject.getJSONArray("lists");
                 for (int i = 0; i < lists.length(); i++) {
                     final JSONObject list = lists.getJSONObject(i);
-                    subscriptions.add(new SubscriptionSelection(list.getString("id"), list.getString("name")));
+                    SubscriptionSelection subscription = new SubscriptionSelection(list.getString("id"), list.getString("name"));
+                    subscription.setSelected(false);
+                    subscriptions.add(subscription);
                 }
             } catch (JSONException e) {
                 LOG.warn(String.format("Failed to parse lists from response for folder  %s : %s", Arrays.toString(folderIds), e.getMessage()));
             }
 
         }
-
         if (emailAddress != null) setUserSubscriptionSelection(emailAddress, subscriptions);
         return subscriptions;
     }
@@ -224,9 +257,9 @@ public class BrevoUtilsImpl implements EmailSubscriptionUtils {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put(API_NAME, PropsUtil.get(API_KEY));
-        final String email = jsonUser.getString("email");
+        final String id = jsonUser.getString("id");
         //open connection
-        HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/" + email, "PUT", headers);
+        HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/" + id, "PUT", headers);
         connection.setDoOutput(true);
         try (Writer w = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8)) {
             w.write(jsonUser.toJSONString());
@@ -247,61 +280,18 @@ public class BrevoUtilsImpl implements EmailSubscriptionUtils {
         checkResponse(connection);
     }
 
-    private boolean addSubscriptions(JSONObject jsonUser, List<String> newIds) {
-        final JSONArray listIds = jsonUser.getJSONArray("listIds");
-        final JSONArray newArray = JSONFactoryUtil.createJSONArray();
-        for (String newId : newIds) {
-            final int intId = Integer.parseInt(newId);
-            if (!isSubscriptionInList(Collections.singletonList(intId), listIds)) {
-                newArray.put(intId);
-            }
-        }
-        jsonUser.put("listIds", newArray); //put only the values that need to be added
-        return newArray.length() > 0;
-    }
+    private JSONObject createContact(User user) {
 
-    private boolean removeSubscriptions(JSONObject jsonUser, List<String> removeIds) {
-        final JSONArray listIds = jsonUser.getJSONArray("listIds");
-        jsonUser.remove("listIds");
-        final JSONArray removeArray = JSONFactoryUtil.createJSONArray();
-        for (int i = 0; i < listIds.length(); i++) {
-            final String id = listIds.getString(i);
-            if (removeIds.contains(id)) {
-                removeArray.put(listIds.getInt(i));
-            }
-        }
-        jsonUser.put("unlinkListIds", removeArray);
-        return removeArray.length() > 0;
-    }
-
-    private JSONObject convertToContact(User user, JSONObject contactInfo) {
-
-        String firstName;
-        String lastName;
-        String email;
-        JSONArray listIds;
-        if (contactInfo != null) {
-            firstName = contactInfo.getJSONObject("attributes").getString("FIRSTNAME");
-            lastName = contactInfo.getJSONObject("attributes").getString("LASTNAME");
-            email = contactInfo.getString("email");
-            listIds = contactInfo.getJSONArray("listIds");
-        } else {
-            firstName = user.getFirstName();
-            lastName = user.getLastName();
-            email = user.getEmailAddress();
-            listIds = JSONFactoryUtil.createJSONArray();
-        }
-        final JSONObject jsonUser = JSONFactoryUtil.createJSONObject();
-        final JSONObject jsonAttributes = JSONFactoryUtil.createJSONObject();
-        jsonAttributes.put("FIRSTNAME", firstName);
-        jsonAttributes.put("LASTNAME", lastName);
-        jsonUser.put("attributes", jsonAttributes);
-        jsonUser.put("email", email);
-        jsonUser.put("emailBlacklisted", false);
-        jsonUser.put("smsBlacklisted", false);
-        jsonUser.put("updateEnabled", contactInfo != null);
-        jsonUser.put("listIds", listIds);
-        return jsonUser;
+       JSONObject contactInfo = JSONFactoryUtil.createJSONObject();
+       final JSONObject jsonAttributes = JSONFactoryUtil.createJSONObject();
+       jsonAttributes.put("FIRSTNAME", user.getFirstName());
+       jsonAttributes.put("LASTNAME", user.getLastName());
+       contactInfo.put("attributes", jsonAttributes);
+       contactInfo.put("email", user.getEmailAddress());
+       contactInfo.put("emailBlacklisted", false);
+       contactInfo.put("smsBlacklisted", false);
+       contactInfo.put("updateEnabled", false);
+       return contactInfo;
     }
 
     public static int checkResponse(HttpURLConnection urlConnection) throws IOException {
