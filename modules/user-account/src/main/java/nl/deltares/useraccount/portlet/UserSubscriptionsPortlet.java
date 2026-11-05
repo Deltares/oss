@@ -1,15 +1,12 @@
 package nl.deltares.useraccount.portlet;
 
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.module.configuration.ConfigurationException;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import nl.deltares.portal.configuration.SiteMapConfiguration;
 import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 import nl.deltares.portal.utils.EmailSubscriptionUtils;
 import nl.deltares.useraccount.constants.UserProfilePortletKeys;
@@ -51,20 +48,8 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
         User user = themeDisplay.getUser();
         if (!user.isGuestUser() && user.isActive()) {
 
-            SiteMapConfiguration  configuration;
             try {
-                configuration = _configurationProvider.getSystemConfiguration(SiteMapConfiguration.class);
-            } catch (ConfigurationException e) {
-                throw new PortletException("Could not get configuration instance", e);
-            }
-
-            try {
-                final List<SubscriptionSelection> mailings;
-                if (configuration.showConsentGroups()) {
-                    mailings = subscriptionUtils.getConsentGroups(user.getEmailAddress());
-                } else {
-                     mailings = subscriptionUtils.getSubscriptions(user.getEmailAddress());
-                }
+                final List<SubscriptionSelection> mailings = subscriptionUtils.getSubscriptions(user.getEmailAddress());;
                 request.setAttribute("subscriptions", mailings);
             } catch (Exception e) {
                 SessionErrors.add(request, "update-subscription-failed", "Error reading subscriptions: " + e.getMessage());
@@ -95,20 +80,8 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
             return;
         }
 
-        SiteMapConfiguration  configuration;
         try {
-            configuration = _configurationProvider.getSystemConfiguration(SiteMapConfiguration.class);
-        } catch (ConfigurationException e) {
-            SessionErrors.add(actionRequest, "update-subscription-failed", "Could not get configuration instance: " + e.getMessage());
-            return;
-        }
-
-        try {
-            if (configuration.showConsentGroups()) {
-                subscriptionUtils.updateConsentGroups(user, selectedSubscriptions);
-            } else {
-                subscriptionUtils.updateSubscriptions(user, selectedSubscriptions);
-            }
+            subscriptionUtils.updateSubscriptions(user, selectedSubscriptions);
             SessionMessages.add(actionRequest, "update-subscription-success");
         } catch (Exception e) {
             SessionErrors.add(actionRequest, "update-subscription-failed", e.getMessage());
@@ -128,6 +101,4 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
     }
 
 
-    @Reference
-    private ConfigurationProvider _configurationProvider;
 }

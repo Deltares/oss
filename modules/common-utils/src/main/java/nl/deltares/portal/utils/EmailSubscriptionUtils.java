@@ -12,8 +12,4 @@ public interface EmailSubscriptionUtils {
     List<SubscriptionSelection> getSubscriptions(String emailAddress) throws Exception;
 
     void updateSubscriptions(User user, List<SubscriptionSelection> subscriptions) throws Exception;
-
-    List<SubscriptionSelection> getConsentGroups(String emailAddress) throws Exception;
-
-    void updateConsentGroups(User user, List<SubscriptionSelection> consentGroups) throws Exception;
 }

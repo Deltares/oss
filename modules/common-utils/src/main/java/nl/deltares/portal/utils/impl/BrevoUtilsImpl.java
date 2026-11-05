@@ -7,11 +7,15 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.util.PropsUtil;
+import nl.deltares.portal.configuration.SiteMapConfiguration;
 import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 import nl.deltares.portal.utils.EmailSubscriptionUtils;
 import nl.deltares.portal.utils.JsonContentUtils;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -32,6 +36,9 @@ public class BrevoUtilsImpl implements EmailSubscriptionUtils {
 
     private static final Log LOG = LogFactoryUtil.getLog(BrevoUtilsImpl.class);
 
+    @Reference
+    private ConfigurationProvider _configurationProvider;
+
     private static final String API_KEY = "sendinblue.apikey";
     private static final String API_NAME = "api-key";
     private static final String BASEURL_KEY = "sendinblue.baseurl";
@@ -43,37 +50,42 @@ public class BrevoUtilsImpl implements EmailSubscriptionUtils {
         return PropsUtil.contains(API_KEY);
     }
 
-    private boolean isSubscriptionInList(String subscriptionId, JSONArray listIds) {
-        if (listIds == null) return false;
-        for (int i = 0; i < listIds.length(); i++) {
-            if (subscriptionId.equals(listIds.getString(i))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isSubscriptionInConsentGroups(String subscriptionId, JSONArray consentGroupIds) {
-        if (consentGroupIds == null) return false;
-        for (int i = 0; i < consentGroupIds.length(); i++) {
-            JSONObject consentGroup = consentGroupIds.getJSONObject(i);
-            if (subscriptionId.equals(consentGroup.getString("id")) &&
-            consentGroup.getString("status").equals("subscribed")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
-    public List<SubscriptionSelection> getConsentGroups(String emailAddress) throws IOException{
+    public List<SubscriptionSelection> getSubscriptions(String emailAddress) throws IOException {
 
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put(API_NAME, PropsUtil.get(API_KEY));
 
+        List<SubscriptionSelection> subscriptions;
+        if (showConsentGroups()){
+            subscriptions = getAvailableConsentGroups(headers);
+        } else {
+            subscriptions = getAvailableSubscriptions(headers);
+        }
+
+        if (emailAddress != null) setUserSubscriptionSelection(emailAddress, subscriptions);
+        return subscriptions;
+    }
+
+    @Override
+    public void updateSubscriptions(User user, List<SubscriptionSelection> subscriptions) throws Exception {
+        JSONObject contactInfo = getContactInfo(user.getEmailAddress());
+        if (contactInfo == null) {
+            contactInfo = createContact(user);
+            addContact(contactInfo);
+        }
+        if (showConsentGroups()) {
+            updateConsentGroups(contactInfo, subscriptions);
+        } else {
+            updateSubscriptions(contactInfo, subscriptions);
+        }
+
+    }
+
+    private List<SubscriptionSelection> getAvailableConsentGroups(HashMap<String, String> headers){
         List<SubscriptionSelection> consentGroups = new ArrayList<>();
-            //open connection
+        //open connection
         try {
             HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/consent-groups?limit=50",
                     "GET", headers);
@@ -90,24 +102,40 @@ public class BrevoUtilsImpl implements EmailSubscriptionUtils {
                 consentGroups.add(subscription);
             }
         } catch (Exception e) {
-            LOG.warn(String.format("Failed to get consent groups for %s: %s", emailAddress, e.getMessage()));
+            LOG.warn(String.format("Failed to get consent groups: %s", e.getMessage()));
             return Collections.emptyList();
         }
-        if (emailAddress != null) setUserSubscriptionSelection(emailAddress, consentGroups);
         return consentGroups;
     }
 
-    @Override
-    public void updateConsentGroups(User user, List<SubscriptionSelection> consentGroups) throws Exception {
-        JSONObject contactInfo = getContactInfo(user.getEmailAddress());
-        if (contactInfo == null) {
-            contactInfo = createContact(user);
-            addContact(contactInfo);
+    private List<SubscriptionSelection> getAvailableSubscriptions(HashMap<String, String> headers) throws IOException {
+
+        final int[] folderIds = getFolderIds();
+        List<SubscriptionSelection> subscriptions = new ArrayList<>();
+        for (int folderId : folderIds) {
+            //open connection
+            HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/folders/" + folderId + "/lists?limit=50",
+                    "GET", headers);
+            checkResponse(connection);
+            String jsonResponse = readAll(connection);
+            try {
+                final JSONObject jsonObject = JsonContentUtils.parseContent(jsonResponse);
+                final JSONArray lists = jsonObject.getJSONArray("lists");
+                for (int i = 0; i < lists.length(); i++) {
+                    final JSONObject list = lists.getJSONObject(i);
+                    SubscriptionSelection subscription = new SubscriptionSelection(list.getString("id"), list.getString("name"));
+                    subscription.setSelected(false);
+                    subscriptions.add(subscription);
+                }
+            } catch (JSONException e) {
+                LOG.warn(String.format("Failed to parse lists from response for folder  %s : %s", Arrays.toString(folderIds), e.getMessage()));
+            }
+
         }
-        updateConsentGroups(consentGroups, contactInfo);
+        return subscriptions;
     }
 
-    private void updateConsentGroups(List<SubscriptionSelection> consentGroups, JSONObject contactInfo) throws IOException {
+    private void updateConsentGroups(JSONObject contactInfo, List<SubscriptionSelection> consentGroups) throws IOException {
         JSONObject unlinkGroupObject = JSONFactoryUtil.createJSONObject();
         JSONArray unlinkGroupIds = JSONFactoryUtil.createJSONArray();
         unlinkGroupObject.put("email", unlinkGroupIds);
@@ -126,16 +154,6 @@ public class BrevoUtilsImpl implements EmailSubscriptionUtils {
             }
         }
         updateContact(contactInfo);
-    }
-
-    @Override
-    public void updateSubscriptions(User user, List<SubscriptionSelection> subscriptions) throws Exception {
-        JSONObject contactInfo = getContactInfo(user.getEmailAddress());
-        if (contactInfo == null) {
-            contactInfo = createContact(user);
-            addContact(contactInfo);
-        }
-        updateSubscriptions(contactInfo, subscriptions);
     }
 
     private void updateSubscriptions(JSONObject contactInfo, List<SubscriptionSelection> subscriptions) throws IOException {
@@ -162,37 +180,35 @@ public class BrevoUtilsImpl implements EmailSubscriptionUtils {
         updateContact(contactInfo);
     }
 
-    @Override
-    public List<SubscriptionSelection> getSubscriptions(String emailAddress) throws IOException {
-        final int[] folderIds = getFolderIds();
-
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put(API_NAME, PropsUtil.get(API_KEY));
-
-        List<SubscriptionSelection> subscriptions = new ArrayList<>();
-        for (int folderId : folderIds) {
-            //open connection
-            HttpURLConnection connection = getConnection(getBaseApiPath() + "contacts/folders/" + folderId + "/lists?limit=50",
-                    "GET", headers);
-            checkResponse(connection);
-            String jsonResponse = readAll(connection);
-            try {
-                final JSONObject jsonObject = JsonContentUtils.parseContent(jsonResponse);
-                final JSONArray lists = jsonObject.getJSONArray("lists");
-                for (int i = 0; i < lists.length(); i++) {
-                    final JSONObject list = lists.getJSONObject(i);
-                    SubscriptionSelection subscription = new SubscriptionSelection(list.getString("id"), list.getString("name"));
-                    subscription.setSelected(false);
-                    subscriptions.add(subscription);
-                }
-            } catch (JSONException e) {
-                LOG.warn(String.format("Failed to parse lists from response for folder  %s : %s", Arrays.toString(folderIds), e.getMessage()));
-            }
-
+    private boolean showConsentGroups() {
+        try {
+            SiteMapConfiguration configuration = _configurationProvider.getSystemConfiguration(SiteMapConfiguration.class);
+            return configuration.showConsentGroups();
+        } catch (ConfigurationException e) {
+            LOG.warn(e);
+            return false;
         }
-        if (emailAddress != null) setUserSubscriptionSelection(emailAddress, subscriptions);
-        return subscriptions;
+    }
+    private boolean isSubscriptionInList(String subscriptionId, JSONArray listIds) {
+        if (listIds == null) return false;
+        for (int i = 0; i < listIds.length(); i++) {
+            if (subscriptionId.equals(listIds.getString(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isSubscriptionInConsentGroups(String subscriptionId, JSONArray consentGroupIds) {
+        if (consentGroupIds == null) return false;
+        for (int i = 0; i < consentGroupIds.length(); i++) {
+            JSONObject consentGroup = consentGroupIds.getJSONObject(i);
+            if (subscriptionId.equals(consentGroup.getString("id")) &&
+                    consentGroup.getString("status").equals("subscribed")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private int[] getFolderIds() {
