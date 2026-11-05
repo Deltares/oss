@@ -9,6 +9,7 @@ import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import nl.deltares.portal.configuration.SiteMapConfiguration;
 import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 import nl.deltares.portal.utils.EmailSubscriptionUtils;
 import nl.deltares.useraccount.constants.UserProfilePortletKeys;
@@ -24,7 +25,6 @@ import java.util.List;
  * @author rooij_e
  */
 @Component(
-        configurationPid = UserProfilePortletKeys.USERSUBSCRIPTION_CONFIGURATION,
         immediate = true,
         property = {
                 "javax.portlet.version=3.0",
@@ -33,7 +33,6 @@ import java.util.List;
                 "com.liferay.portlet.instanceable=false",
                 "javax.portlet.display-name=UserSubscription",
                 "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.config-template=/subscriptions/configuration.jsp",
                 "javax.portlet.init-param.view-template=/subscriptions/usersubscription.jsp",
                 "javax.portlet.name=" + UserProfilePortletKeys.USERSUBSCRIPTION,
                 "javax.portlet.resource-bundle=content.Language",
@@ -52,18 +51,16 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
         User user = themeDisplay.getUser();
         if (!user.isGuestUser() && user.isActive()) {
 
-            UserSubscriptionsConfiguration configuration;
+            SiteMapConfiguration  configuration;
             try {
-                configuration = _configurationProvider
-                        .getPortletInstanceConfiguration(UserSubscriptionsConfiguration.class, themeDisplay.getLayout(),
-                                themeDisplay.getPortletDisplay().getId());
+                configuration = _configurationProvider.getSystemConfiguration(SiteMapConfiguration.class);
             } catch (ConfigurationException e) {
                 throw new PortletException("Could not get configuration instance", e);
             }
 
             try {
                 final List<SubscriptionSelection> mailings;
-                if (Boolean.parseBoolean(configuration.showConsentGroups())) {
+                if (configuration.showConsentGroups()) {
                     mailings = subscriptionUtils.getConsentGroups(user.getEmailAddress());
                 } else {
                      mailings = subscriptionUtils.getSubscriptions(user.getEmailAddress());
@@ -98,18 +95,16 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
             return;
         }
 
-        UserSubscriptionsConfiguration configuration;
+        SiteMapConfiguration  configuration;
         try {
-            configuration = _configurationProvider
-                    .getPortletInstanceConfiguration(UserSubscriptionsConfiguration.class, themeDisplay.getLayout(),
-                            themeDisplay.getPortletDisplay().getId());
+            configuration = _configurationProvider.getSystemConfiguration(SiteMapConfiguration.class);
         } catch (ConfigurationException e) {
             SessionErrors.add(actionRequest, "update-subscription-failed", "Could not get configuration instance: " + e.getMessage());
             return;
         }
 
         try {
-            if (Boolean.parseBoolean(configuration.showConsentGroups())) {
+            if (configuration.showConsentGroups()) {
                 subscriptionUtils.updateConsentGroups(user, selectedSubscriptions);
             } else {
                 subscriptionUtils.updateSubscriptions(user, selectedSubscriptions);
