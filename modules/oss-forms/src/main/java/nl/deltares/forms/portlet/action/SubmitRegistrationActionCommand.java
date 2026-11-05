@@ -212,24 +212,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             return false;
         }
 
-        List<String> subscribableMailingIds = registrationRequest.getSubscribableMailingIds();
-        if (subscribableMailingIds != null) {
-            ArrayList<SubscriptionSelection> subscriptions = new ArrayList<>();
-            subscribableMailingIds.forEach(mailingId -> {
-                final String selected = ParamUtil.getString(actionRequest, "subscription-" + mailingId);
-                SubscriptionSelection sub = new SubscriptionSelection(mailingId, mailingId);
-                sub.setSelected(Boolean.parseBoolean(selected));
-                subscriptions.add(sub);
-            });
-
-            if (!subscriptions.isEmpty()) {
-                try {
-                    subscriptionUtils.updateSubscriptions(user, subscriptions);
-                } catch (Exception e) {
-                    LOG.warn(String.format("Failed to update subscriptions for user %s: %s", user.getEmailAddress(), e.getMessage()));
-                }
-            }
-        }
+        updateSubscriptions(actionRequest, user);
 
         HashMap<String, String> userPreferences = new HashMap<>();
         if (registrationRequest.getRemarks() != null){
@@ -274,6 +257,23 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         return success;
     }
 
+    private void updateSubscriptions(ActionRequest actionRequest, User user) {
+
+        try {
+            List<SubscriptionSelection> subscriptions = subscriptionUtils.getSubscriptions(null);
+            for (SubscriptionSelection subscription : subscriptions) {
+                final String selected = ParamUtil.getString(actionRequest, "subscription-" + subscription.getId());
+                subscription.setSelected(Boolean.parseBoolean(selected));
+            }
+            subscriptionUtils.updateSubscriptions(user, subscriptions);
+
+        } catch (Exception e) {
+            LOG.warn(String.format("Failed to subscribe user %s: %s", user.getEmailAddress(), e.getMessage()));
+        }
+
+    }
+
+
     private List<Registration> getChildRegistrations(RegistrationRequest registrationRequest) {
         final ArrayList<Registration> children = new ArrayList<>();
         for (Registration registration : registrationRequest.getRegistrations()) {
@@ -310,9 +310,6 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             registrationRequest.setBillingInfo(billingInfo);
             registrationRequest.setBadgeInfo(badgeInfo);
             registrationRequest.setRemarks(ParamUtil.getString(actionRequest, "remarks_registration", null));
-            if (!configuration.mailingIds().isEmpty()) {
-                registrationRequest.setSubscribableMailingIds(configuration.mailingIds());
-            }
             registrationRequest.setSubscribe(ParamUtil.getBoolean(actionRequest, "subscribe_newsletter", false));
             registrationRequest.setBusInfo(configuration.enableBusInfo());
             registrationRequest.setBusTransferUrl(configuration.busTransferURL());

@@ -23,7 +23,6 @@ public class RegistrationRequest {
     private String busTransferUrl;
     private Map<String, String> typeTranslations = new HashMap<>();
     private String remarks;
-    private List<String> mailingIds = Collections.emptyList();
     private boolean subscribe;
 
     public RegistrationRequest(ThemeDisplay themeDisplay) throws PortalException {
@@ -140,17 +139,6 @@ public class RegistrationRequest {
 
     public void setTypeTranslations(Map<String, String> typeTranslations) {
         this.typeTranslations = typeTranslations;
-    }
-
-    public void setSubscribableMailingIds(String mailingIds) {
-        if (mailingIds == null || mailingIds.isEmpty()) return;
-        this.mailingIds = new ArrayList<>();
-        String[] split = mailingIds.split(";");
-        Arrays.stream(split).forEach(id -> {if (!id.trim().isEmpty()) this.mailingIds.add(id); });
-    }
-
-    public List<String> getSubscribableMailingIds() {
-        return mailingIds;
     }
 
     public void setSubscribe(boolean subscribe) {

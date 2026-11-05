@@ -133,7 +133,7 @@ public class DownloadFormPortlet extends MVCPortlet {
         if (!downloadIds.isEmpty()) {
             final List<Download> downloads = toDownloads(themeDisplay.getScopeGroupId(), downloadIds);
             request.setAttribute("downloads", downloads);
-            request.setAttribute("subscriptionSelections", getSubscriptionSelection(user.getEmailAddress(), downloads));
+            request.setAttribute("subscriptionSelections", getSubscriptionSelection(user.getEmailAddress()));
             request.setAttribute("terms", getTerms(downloads));
             final boolean[] requiredTypes = getRequiredTypes(downloads);
             request.setAttribute("showLockTypes", requiredTypes[0]);
@@ -181,31 +181,12 @@ public class DownloadFormPortlet extends MVCPortlet {
         return downloads;
     }
 
-    private List<SubscriptionSelection> getSubscriptionSelection(String email, List<Download> downloads) {
-
-        //Get user's current selection
-        List<SubscriptionSelection> userSubscriptions = new ArrayList<>();
+    private List<SubscriptionSelection> getSubscriptionSelection(String email) {
         try {
-            userSubscriptions.addAll(subscriptionUtils.getSubscriptions(email));
+            return subscriptionUtils.getSubscriptions(email);
         } catch (Exception e) {
             LOG.warn(String.format("Error getting subscriptions for email %s: %s", email, e.getMessage()));
         }
-        List<SubscriptionSelection> subscriptionSelection = new ArrayList<>();
-        try {
-            for (Download download : downloads) {
-
-                final List<nl.deltares.portal.model.impl.Subscription> subscriptions = download.getSubscriptions();
-                subscriptions.forEach(subscription -> {
-                    SubscriptionSelection userSubscription = userSubscriptions.stream().filter(
-                            s -> s.getId().equals(subscription.getId())
-                    ).findFirst().orElse(null);
-                    if (userSubscription == null || subscriptionSelection.contains(userSubscription)) return; //do not check multiple times
-                    subscriptionSelection.add(userSubscription);
-                });
-            }
-        } catch (Exception e) {
-            return Collections.emptyList();
-        }
-        return subscriptionSelection;
+        return Collections.emptyList();
     }
 }

@@ -18,7 +18,9 @@
     <aui:input
             name ="<%= id %>"
             label="<%= name %>"
-            type="checkbox"
+            helpMessage="<%= subscriptionSelection.getDescription() %>"
+            inlineLabel="right"
+            type="toggle-switch"
             checked="<%=selected%>" />
 </div>
 <%

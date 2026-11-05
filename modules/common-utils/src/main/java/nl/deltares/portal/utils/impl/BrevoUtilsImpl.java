@@ -233,7 +233,7 @@ public class BrevoUtilsImpl implements EmailSubscriptionUtils {
         if (contactInfo == null) return;
 
         final JSONArray listIds = contactInfo.getJSONArray("listIds");
-        final JSONArray consentGroups = contactInfo.getJSONArray("consentGroupIds");
+        final JSONArray consentGroups = contactInfo.getJSONArray("consentGroups");
 
         allSubscriptions.forEach(subscription -> {
 

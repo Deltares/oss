@@ -88,8 +88,7 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 				request.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_PRIVACY_URL, dsdConfig.privacyURL());
 				request.setAttribute(OssConfigurationConstants.DSD_SITE_CONFIG_CONTACT_URL, dsdConfig.contactURL());
 				request.setAttribute("eventId", dsdConfig.eventId());
-				List<String> mailingIdsList = Arrays.asList(dsdConfig.mailingIds().split(";"));
-				List<SubscriptionSelection> subscriptionSelection = getSubscriptionSelection(user.getEmailAddress(), mailingIdsList);
+				List<SubscriptionSelection> subscriptionSelection = getSubscriptionSelection(user.getEmailAddress());
 				request.setAttribute("subscriptionSelection", subscriptionSelection);
 				request.setAttribute("subscribed", !subscriptionSelection.isEmpty());
 			} catch (Exception e) {
@@ -135,15 +134,9 @@ public class DsdRegistrationFormPortlet extends MVCPortlet {
 		}
 	}
 
-	private List<SubscriptionSelection> getSubscriptionSelection(String email, List<String> configuredSubscriptionIds) {
-
+	private List<SubscriptionSelection> getSubscriptionSelection(String email) {
 		try {
-			final List<SubscriptionSelection> subset = new ArrayList<>();
-			final List<SubscriptionSelection> allSubscriptionSelections = subscriptionUtils.getSubscriptions(email);
-			allSubscriptionSelections.forEach(s -> {
-				if (configuredSubscriptionIds.contains(s.getId())) subset.add(s);
-			});
-			return subset;
+			return subscriptionUtils.getSubscriptions(email);
 		} catch (Exception e) {
 			return Collections.emptyList();
 		}
