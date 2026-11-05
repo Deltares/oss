@@ -1,6 +1,8 @@
 package nl.deltares.useraccount.portlet;
 
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
@@ -22,6 +24,7 @@ import java.util.List;
  * @author rooij_e
  */
 @Component(
+        configurationPid = UserProfilePortletKeys.USERSUBSCRIPTION_CONFIGURATION,
         immediate = true,
         property = {
                 "javax.portlet.version=3.0",
@@ -30,7 +33,8 @@ import java.util.List;
                 "com.liferay.portlet.instanceable=false",
                 "javax.portlet.display-name=UserSubscription",
                 "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.view-template=/usersubscription.jsp",
+                "javax.portlet.init-param.config-template=/subscriptions/configuration.jsp",
+                "javax.portlet.init-param.view-template=/subscriptions/usersubscription.jsp",
                 "javax.portlet.name=" + UserProfilePortletKeys.USERSUBSCRIPTION,
                 "javax.portlet.resource-bundle=content.Language",
                 "javax.portlet.security-role-ref=power-user,user"
@@ -47,8 +51,23 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
         ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
         User user = themeDisplay.getUser();
         if (!user.isGuestUser() && user.isActive()) {
+
+            UserSubscriptionsConfiguration configuration;
             try {
-                final List<SubscriptionSelection> mailings = subscriptionUtils.getSubscriptions(user.getEmailAddress());
+                configuration = _configurationProvider
+                        .getPortletInstanceConfiguration(UserSubscriptionsConfiguration.class, themeDisplay.getLayout(),
+                                themeDisplay.getPortletDisplay().getId());
+            } catch (ConfigurationException e) {
+                throw new PortletException("Could not get configuration instance", e);
+            }
+
+            try {
+                final List<SubscriptionSelection> mailings;
+                if (Boolean.parseBoolean(configuration.showConsentGroups())) {
+                    mailings = subscriptionUtils.getConsentGroups(user.getEmailAddress());
+                } else {
+                     mailings = subscriptionUtils.getSubscriptions(user.getEmailAddress());
+                }
                 request.setAttribute("subscriptions", mailings);
             } catch (Exception e) {
                 SessionErrors.add(request, "update-subscription-failed", "Error reading subscriptions: " + e.getMessage());
@@ -78,8 +97,23 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
             SessionErrors.add(actionRequest, "update-subscription-failed", e.getMessage());
             return;
         }
+
+        UserSubscriptionsConfiguration configuration;
         try {
-            subscriptionUtils.updateSubscriptions(user, selectedSubscriptions);
+            configuration = _configurationProvider
+                    .getPortletInstanceConfiguration(UserSubscriptionsConfiguration.class, themeDisplay.getLayout(),
+                            themeDisplay.getPortletDisplay().getId());
+        } catch (ConfigurationException e) {
+            SessionErrors.add(actionRequest, "update-subscription-failed", "Could not get configuration instance: " + e.getMessage());
+            return;
+        }
+
+        try {
+            if (Boolean.parseBoolean(configuration.showConsentGroups())) {
+                subscriptionUtils.updateConsentGroups(user, selectedSubscriptions);
+            } else {
+                subscriptionUtils.updateSubscriptions(user, selectedSubscriptions);
+            }
             SessionMessages.add(actionRequest, "update-subscription-success");
         } catch (Exception e) {
             SessionErrors.add(actionRequest, "update-subscription-failed", e.getMessage());
@@ -98,4 +132,7 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
         return allSubscriptions;
     }
 
+
+    @Reference
+    private ConfigurationProvider _configurationProvider;
 }

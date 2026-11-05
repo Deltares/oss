@@ -1,7 +1,6 @@
 package nl.deltares.portal.utils;
 
 import com.liferay.portal.kernel.model.User;
-import nl.deltares.portal.model.subscriptions.ConsentGroup;
 import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 
 import java.util.List;
@@ -14,7 +13,7 @@ public interface EmailSubscriptionUtils {
 
     void updateSubscriptions(User user, List<SubscriptionSelection> subscriptions) throws Exception;
 
-    List<ConsentGroup> getConsentGroups(String emailAddress) throws Exception;
+    List<SubscriptionSelection> getConsentGroups(String emailAddress) throws Exception;
 
-    void updateConsentGroups(User user, List<ConsentGroup> consentGroups) throws Exception;
+    void updateConsentGroups(User user, List<SubscriptionSelection> consentGroups) throws Exception;
 }
