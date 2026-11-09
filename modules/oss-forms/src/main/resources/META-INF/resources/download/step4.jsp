@@ -15,7 +15,9 @@
             <aui:input
                     name="<%=id%>"
                     label="<%=name%>"
-                    type="checkbox"
+                    inlineLabel="right"
+                    type="toggle-switch"
+                    helpMessage="<%=subscriptionSelection.getDescription()%>"
                     checked="<%=subscriptionSelection.isSelected()%>"
             />
         </div>

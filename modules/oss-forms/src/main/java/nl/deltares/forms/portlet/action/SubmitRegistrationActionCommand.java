@@ -22,6 +22,7 @@ import nl.deltares.portal.constants.OssConfigurationConstants;
 import nl.deltares.portal.constants.OssConstants;
 import nl.deltares.portal.model.impl.Event;
 import nl.deltares.portal.model.impl.Registration;
+import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 import nl.deltares.portal.utils.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -211,34 +212,7 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             return false;
         }
 
-        List<String> subscribableMailingIds = registrationRequest.getSubscribableMailingIds();
-        if (subscribableMailingIds != null) {
-            List<String> subscribeIds = new ArrayList<>();
-            List<String> unsubscribeIds = new ArrayList<>();
-            subscribableMailingIds.forEach(mailingId -> {
-                final String selected = ParamUtil.getString(actionRequest, "subscription-" + mailingId);
-                if (Boolean.parseBoolean(selected)) {
-                    subscribeIds.add(mailingId);
-                } else {
-                    unsubscribeIds.add(mailingId);
-                }
-            });
-
-            if (!subscribeIds.isEmpty()) {
-                try {
-                    subscriptionUtils.subscribeAll(user, subscribeIds);
-                } catch (Exception e) {
-                    LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", user.getEmailAddress(), subscribeIds, e.getMessage()));
-                }
-            }
-            if (!unsubscribeIds.isEmpty()) {
-                try {
-                    subscriptionUtils.unsubscribeAll(user.getEmailAddress(), unsubscribeIds);
-                } catch (Exception e) {
-                    LOG.warn(String.format("Failed to unsubscribe user %s for mailing %s: %s", user.getEmailAddress(), unsubscribeIds, e.getMessage()));
-                }
-            }
-        }
+        updateSubscriptions(actionRequest, user);
 
         HashMap<String, String> userPreferences = new HashMap<>();
         if (registrationRequest.getRemarks() != null){
@@ -283,6 +257,23 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
         return success;
     }
 
+    private void updateSubscriptions(ActionRequest actionRequest, User user) {
+
+        try {
+            List<SubscriptionSelection> subscriptions = subscriptionUtils.getSubscriptions(null);
+            for (SubscriptionSelection subscription : subscriptions) {
+                final String selected = ParamUtil.getString(actionRequest, "subscription-" + subscription.getId());
+                subscription.setSelected(Boolean.parseBoolean(selected));
+            }
+            subscriptionUtils.updateSubscriptions(user, subscriptions);
+
+        } catch (Exception e) {
+            LOG.warn(String.format("Failed to subscribe user %s: %s", user.getEmailAddress(), e.getMessage()));
+        }
+
+    }
+
+
     private List<Registration> getChildRegistrations(RegistrationRequest registrationRequest) {
         final ArrayList<Registration> children = new ArrayList<>();
         for (Registration registration : registrationRequest.getRegistrations()) {
@@ -319,9 +310,6 @@ public class SubmitRegistrationActionCommand extends BaseMVCActionCommand {
             registrationRequest.setBillingInfo(billingInfo);
             registrationRequest.setBadgeInfo(badgeInfo);
             registrationRequest.setRemarks(ParamUtil.getString(actionRequest, "remarks_registration", null));
-            if (!configuration.mailingIds().isEmpty()) {
-                registrationRequest.setSubscribableMailingIds(configuration.mailingIds());
-            }
             registrationRequest.setSubscribe(ParamUtil.getBoolean(actionRequest, "subscribe_newsletter", false));
             registrationRequest.setBusInfo(configuration.enableBusInfo());
             registrationRequest.setBusTransferUrl(configuration.busTransferURL());

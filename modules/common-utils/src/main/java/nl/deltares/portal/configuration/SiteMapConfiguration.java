@@ -20,4 +20,6 @@ public interface SiteMapConfiguration {
     @Meta.AD(required = false, deflt = "10131", description = "Company ID for storing accounts")
     Long accountsCompanyId();
 
+    @Meta.AD(required = false, deflt = "false", description = "Switch to toggle between showing List items and Consent Groups")
+    Boolean showConsentGroups();
 }

@@ -4,9 +4,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
 import nl.deltares.portal.model.impl.Download;
-import nl.deltares.portal.model.impl.Subscription;
 import nl.deltares.portal.model.impl.Terms;
-import nl.deltares.portal.model.subscriptions.SubscriptionSelection;
 
 import java.util.*;
 
@@ -17,7 +15,6 @@ public class DownloadRequest {
     private final HashMap<String, String> userAttributes = new HashMap<>();
     private final long groupId;
     private BillingInfo billingInfo;
-    final private List<SubscriptionSelection> subscriptionSelections = new ArrayList<>();
     final private Map<String, Map<String, String>> shareInfo = new HashMap<>();
     private LicenseInfo licenseInfo;
     private String downloadServerCode;
@@ -33,13 +30,6 @@ public class DownloadRequest {
 
     public void addDownload(Download download) {
         downloads.add(download);
-        final List<Subscription> subs = download.getSubscriptions();
-
-        subs.forEach(sub -> {
-            final SubscriptionSelection subSelection = new SubscriptionSelection(sub.getId(), sub.getName());
-            subSelection.setSelected(false);
-            if (!subscriptionSelections.contains(subSelection)) subscriptionSelections.add(subSelection);
-        });
     }
 
     public List<Download> getDownloads() {
@@ -52,10 +42,6 @@ public class DownloadRequest {
 
     public BillingInfo getBillingInfo() {
         return billingInfo;
-    }
-
-    public List<SubscriptionSelection> getSubscriptionSelections() {
-        return subscriptionSelections;
     }
 
     @SuppressWarnings({"unused", "Used by Freemarker"})

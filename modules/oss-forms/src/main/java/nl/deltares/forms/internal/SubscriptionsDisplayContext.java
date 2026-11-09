@@ -16,68 +16,38 @@ public class SubscriptionsDisplayContext {
 
     private static final Log LOG = LogFactoryUtil.getLog(SubscriptionsDisplayContext.class);
 
-    private final List<String> _subscriptionIds = new ArrayList<>();
     private final EmailSubscriptionUtils _subscriptionUtil;
     private final User _user;
 
-    public SubscriptionsDisplayContext(User user, List<String> subscriptionIds,
-                                       EmailSubscriptionUtils subscriptionUtil) {
+    public SubscriptionsDisplayContext(User user, EmailSubscriptionUtils subscriptionUtil) {
 
         _subscriptionUtil = subscriptionUtil;
-        _subscriptionIds.addAll(subscriptionIds);
         _user = user;
 
     }
 
     public List<SubscriptionSelection> getSubscriptions() {
-
-        String emailAddress = _user.getEmailAddress();
-        List<SubscriptionSelection> subscriptionSelections;
         try {
-            subscriptionSelections = _subscriptionUtil.getSubscriptions(emailAddress);
+            return _subscriptionUtil.getSubscriptions(_user.getEmailAddress());
         } catch (Exception e) {
             LOG.warn("Error retrieving subscriptions: " + e.getMessage());
             return Collections.emptyList();
         }
-        List<SubscriptionSelection> subscriptions = new ArrayList<>();
-        for (SubscriptionSelection subscription : subscriptionSelections) {
-            if (_subscriptionIds.contains(subscription.getId())) {
-                subscriptions.add(subscription);
-            }
-        }
-        return subscriptions;
     }
 
     public void storeSubscriptionInfo(HttpServletRequest httpServletRequest) {
 
-        List<String> subscribeIds = new ArrayList<>();
-        List<String> unsubscribeIds = new ArrayList<>();
-        List<SubscriptionSelection> subscriptions = getSubscriptions();
-        subscriptions.forEach(subscription -> {
-            String mailingId = subscription.getId();
-            final String selected = ParamUtil.getString(httpServletRequest, "subscription-" + mailingId);
-            boolean bSelected = Boolean.parseBoolean(selected);
-            if (bSelected) {
-                subscribeIds.add(mailingId);
-            } else {
-                unsubscribeIds.add(mailingId);
-            }
-            subscription.setSelected(bSelected);
-        });
-
-        if (!subscribeIds.isEmpty()) {
-            try {
-                _subscriptionUtil.subscribeAll(_user, subscribeIds);
-            } catch (Exception e) {
-                LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", _user.getEmailAddress(), subscribeIds, e.getMessage()));
-            }
-        }
-        if (!unsubscribeIds.isEmpty()) {
-            try {
-                _subscriptionUtil.unsubscribeAll(_user.getEmailAddress(), unsubscribeIds);
-            } catch (Exception e) {
-                LOG.warn(String.format("Failed to unsubscribe user %s for mailing %s: %s", _user.getEmailAddress(), unsubscribeIds, e.getMessage()));
-            }
+        try {
+            List<SubscriptionSelection> subscriptions = _subscriptionUtil.getSubscriptions(null);
+            subscriptions.forEach(subscription -> {
+                String mailingId = subscription.getId();
+                final String selected = ParamUtil.getString(httpServletRequest, "subscription-" + mailingId, "false");
+                boolean bSelected = Boolean.parseBoolean(selected);
+                subscription.setSelected(bSelected);
+            });
+            _subscriptionUtil.updateSubscriptions(_user, subscriptions);
+        } catch (Exception e) {
+            LOG.warn(String.format("Failed to update subscriptions for user %s: %s", _user.getEmailAddress(), e.getMessage()));
         }
     }
 }
