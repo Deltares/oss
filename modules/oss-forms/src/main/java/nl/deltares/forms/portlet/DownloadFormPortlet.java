@@ -133,7 +133,7 @@ public class DownloadFormPortlet extends MVCPortlet {
         if (!downloadIds.isEmpty()) {
             final List<Download> downloads = toDownloads(themeDisplay.getScopeGroupId(), downloadIds);
             request.setAttribute("downloads", downloads);
-            request.setAttribute("subscriptionSelections", getSubscriptionSelection(user.getEmailAddress(), downloads));
+            request.setAttribute("subscriptionSelections", getSubscriptionSelection(user.getEmailAddress()));
             request.setAttribute("terms", getTerms(downloads));
             final boolean[] requiredTypes = getRequiredTypes(downloads);
             request.setAttribute("showLockTypes", requiredTypes[0]);
@@ -181,27 +181,12 @@ public class DownloadFormPortlet extends MVCPortlet {
         return downloads;
     }
 
-    private List<SubscriptionSelection> getSubscriptionSelection(String email, List<Download> downloads) {
-
-        List<SubscriptionSelection> subscriptionSelection = new ArrayList<>();
+    private List<SubscriptionSelection> getSubscriptionSelection(String email) {
         try {
-            for (Download download : downloads) {
-
-                final List<nl.deltares.portal.model.impl.Subscription> subscriptions = download.getSubscriptions();
-                subscriptions.forEach(subscription -> {
-                    final SubscriptionSelection displaySubscription = new SubscriptionSelection(subscription.getId(), subscription.getName());
-                    if (subscriptionSelection.contains(displaySubscription)) return; //do not check multiple times
-                    try {
-                        displaySubscription.setSelected(subscriptionUtils.isSubscribed(email, subscription.getId()));
-                    } catch (Exception e) {
-                        displaySubscription.setSelected(false);
-                    }
-                    subscriptionSelection.add(displaySubscription);
-                });
-            }
+            return subscriptionUtils.getSubscriptions(email);
         } catch (Exception e) {
-            return Collections.emptyList();
+            LOG.warn(String.format("Error getting subscriptions for email %s: %s", email, e.getMessage()));
         }
-        return subscriptionSelection;
+        return Collections.emptyList();
     }
 }

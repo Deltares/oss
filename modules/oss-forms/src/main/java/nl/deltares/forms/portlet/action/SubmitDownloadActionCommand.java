@@ -105,7 +105,7 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
 
             }
             if (success && downloadRequest.isShowSubscription()) {
-                success = updateSubscriptions(downloadRequest, user);
+                success = updateSubscriptions(actionRequest, user);
             }
 
             if (success) {
@@ -191,35 +191,22 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
 
     }
 
-    private boolean updateSubscriptions(DownloadRequest downloadRequest, User user) {
-        List<SubscriptionSelection> subscriptionSelections = downloadRequest.getSubscriptionSelections();
-        if (subscriptionSelections != null) {
-            List<String> subscribeIds = new ArrayList<>();
-            List<String> unsubscribeIds = new ArrayList<>();
-            for (SubscriptionSelection subscription : subscriptionSelections) {
-                if (subscription.isSelected()) {
-                    subscribeIds.add(subscription.getId());
-                } else {
-                    unsubscribeIds.add(subscription.getId());
-                }
-            }
-            if (!subscribeIds.isEmpty()) {
-                try {
-                    subscriptionUtils.subscribeAll(user, subscribeIds);
-                } catch (Exception e) {
-                    LOG.warn(String.format("Failed to subscribe user %s for mailing %s: %s", user.getEmailAddress(), subscribeIds, e.getMessage()));
-                }
-            }
-            if (!unsubscribeIds.isEmpty()) {
-                try {
-                    subscriptionUtils.unsubscribeAll(user.getEmailAddress(), unsubscribeIds);
-                } catch (Exception e) {
-                    LOG.warn(String.format("Failed to unsubscribe user %s for mailing %s: %s", user.getEmailAddress(), unsubscribeIds, e.getMessage()));
-                }
-            }
+    private boolean updateSubscriptions(ActionRequest actionRequest, User user) {
 
+        try {
+            List<SubscriptionSelection> subscriptions = subscriptionUtils.getSubscriptions(null);
+            for (SubscriptionSelection subscription : subscriptions) {
+                final String selected = ParamUtil.getString(actionRequest, "subscription-" + subscription.getId());
+                subscription.setSelected(Boolean.parseBoolean(selected));
+            }
+            subscriptionUtils.updateSubscriptions(user, subscriptions);
+            return true;
+
+        } catch (Exception e) {
+            LOG.warn(String.format("Failed to subscribe user %s: %s", user.getEmailAddress(), e.getMessage()));
+            return false;
         }
-        return true;
+
     }
 
     private DownloadRequest getDownloadRequest(ActionRequest actionRequest, ThemeDisplay themeDisplay) {
@@ -246,7 +233,6 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
                 Download downloadArticle = (Download) dsdParserUtils.toDsdArticle(siteId, articleId);
                 downloadRequest.addDownload(downloadArticle);
             }
-            setSubscriptionSelection(actionRequest, downloadRequest);
             return downloadRequest;
 
         } catch (PortalException e) {
@@ -274,18 +260,6 @@ public class SubmitDownloadActionCommand extends BaseMVCActionCommand {
             licenseInfo.setDongleNumber(ParamUtil.getString(actionRequest, LicenseInfo.ATTRIBUTES.lock_address.name()));
         }
         return licenseInfo;
-    }
-
-    /**
-     * Get selection for subscriptions from request
-     */
-    private void setSubscriptionSelection(ActionRequest actionRequest, DownloadRequest downloadRequest) {
-
-        final List<SubscriptionSelection> subscriptions = downloadRequest.getSubscriptionSelections();
-        for (SubscriptionSelection subscription : subscriptions) {
-            final String selected = ParamUtil.getString(actionRequest, "subscription-" + subscription.getId());
-            subscription.setSelected(Boolean.parseBoolean(selected));
-        }
     }
 
     private BillingInfo getBillingInfo(ActionRequest actionRequest, User user) {

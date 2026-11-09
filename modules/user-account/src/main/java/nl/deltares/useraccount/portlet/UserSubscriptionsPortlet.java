@@ -15,7 +15,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.*;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,7 +30,7 @@ import java.util.List;
                 "com.liferay.portlet.instanceable=false",
                 "javax.portlet.display-name=UserSubscription",
                 "javax.portlet.init-param.template-path=/",
-                "javax.portlet.init-param.view-template=/usersubscription.jsp",
+                "javax.portlet.init-param.view-template=/subscriptions/usersubscription.jsp",
                 "javax.portlet.name=" + UserProfilePortletKeys.USERSUBSCRIPTION,
                 "javax.portlet.resource-bundle=content.Language",
                 "javax.portlet.security-role-ref=power-user,user"
@@ -47,9 +46,10 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
     public void render(RenderRequest request, RenderResponse response) throws IOException, PortletException {
         ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
         User user = themeDisplay.getUser();
-        if (!user.isDefaultUser() && user.isActive()) {
+        if (!user.isGuestUser() && user.isActive()) {
+
             try {
-                final List<SubscriptionSelection> mailings = subscriptionUtils.getSubscriptions(user.getEmailAddress());
+                final List<SubscriptionSelection> mailings = subscriptionUtils.getSubscriptions(user.getEmailAddress());;
                 request.setAttribute("subscriptions", mailings);
             } catch (Exception e) {
                 SessionErrors.add(request, "update-subscription-failed", "Error reading subscriptions: " + e.getMessage());
@@ -79,7 +79,13 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
             SessionErrors.add(actionRequest, "update-subscription-failed", e.getMessage());
             return;
         }
-        updateUserSubscriptions(actionRequest, user, selectedSubscriptions);
+
+        try {
+            subscriptionUtils.updateSubscriptions(user, selectedSubscriptions);
+            SessionMessages.add(actionRequest, "update-subscription-success");
+        } catch (Exception e) {
+            SessionErrors.add(actionRequest, "update-subscription-failed", e.getMessage());
+        }
 
     }
 
@@ -94,26 +100,5 @@ public class UserSubscriptionsPortlet extends MVCPortlet {
         return allSubscriptions;
     }
 
-    private void updateUserSubscriptions(ActionRequest actionRequest, User user, List<SubscriptionSelection> subscriptions) {
-
-        final String emailAddress = user.getEmailAddress();
-        try {
-            List<String> subscribeIds = new ArrayList<>();
-            List<String> unsubscribeIds = new ArrayList<>();
-            for (SubscriptionSelection subscription : subscriptions) {
-                if (subscription.isSelected()) {
-                    subscribeIds.add(subscription.getId());
-                } else {
-                    unsubscribeIds.add(subscription.getId());
-                }
-            }
-            subscriptionUtils.subscribeAll(user, subscribeIds);
-            subscriptionUtils.unsubscribeAll(emailAddress, unsubscribeIds);
-            SessionMessages.add(actionRequest, "update-subscription-success");
-        } catch (Exception e) {
-            SessionErrors.add(actionRequest, "update-subscription-failed", e.getMessage());
-        }
-
-    }
 
 }

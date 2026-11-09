@@ -12,7 +12,6 @@
 </div>
 <%
     for (SubscriptionSelection subscriptionSelection : subscriptionSelections) {
-        final Boolean selected = subscriptionSelection.isSelected();
         final String name = subscriptionSelection.getName();
         final String id = "subscription-" + subscriptionSelection.getId();
 %>
@@ -21,8 +20,10 @@
                 <aui:input
                         name="<%=id%>"
                         label="<%=name%>"
-                        type="checkbox"
-                        checked="<%=selected%>"
+                        inlineLabel="right"
+                        type="toggle-switch"
+                        helpMessage="<%=subscriptionSelection.getDescription()%>"
+                        checked="<%=subscriptionSelection.isSelected()%>"
                 />
             </div>
         </div>
