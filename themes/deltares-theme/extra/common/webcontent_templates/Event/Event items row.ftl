@@ -10,13 +10,13 @@
 <#assign startDayString = dateUtil.getDate(event.getStartTime(), "dd", locale) >
 <#assign startMonthString = dateUtil.getDate(event.getStartTime(), "MMM", locale) >
 <#assign startDateString = dateUtil.getDate(event.getStartTime(), "dd MMMM yyyy", locale) >
-<#assign startYearString=dateUtil.getDate(event.getStartTime(), "yyyy" , locale) />
+<#assign startYearString = dateUtil.getDate(event.getStartTime(), "yyyy" , locale) />
 <#assign locationString><#if location.isOnline() >${location.getTitle()}<#else>${location.getCity()}, ${location.getCountry()}</#if></#assign>
 <#assign viewURL = displayContext.getViewURL(event) />
 <#assign entryTitle = displayContext.getTitle() />
 <div class="c-events__item ${isEventPast}">
     <div class="c-events__item__date">
-        <span>${startDayString}</span>${startMonthString}
+        <span>${startDayString}</span>${startMonthString} ${startYearString}
     </div>
     <h4 class="c-events__item__title h1"><a class="type-inherit" href="${viewURL}" title="read more about ${event.getTitle()}">${event.getTitle()}</a></h4>
     <p class="c-events__item__time-date-place">

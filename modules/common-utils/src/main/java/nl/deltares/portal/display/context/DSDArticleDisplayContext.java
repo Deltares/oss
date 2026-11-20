@@ -124,6 +124,10 @@ public class DSDArticleDisplayContext {
         try {
             int port = _themeDisplay.getServerPort();
             String portalURL = company.getPortalURL(groupId);
+            String friendlyURL = group.getFriendlyURL();
+            if (friendlyURL != null && !friendlyURL.isEmpty()) {
+                portalURL = portalURL + "/web" + friendlyURL;
+            }
             URI uri = URI.create(portalURL);
             if (uri.getPort() == port) {
                 return portalURL;
