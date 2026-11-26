@@ -48,7 +48,7 @@ public class DSDArticleDisplayContext {
         }
         if (url != null && url.toLowerCase().startsWith("/documents")) {
             //Relative path
-            String portalUrl = getPortalUrl();
+            String portalUrl = getPortalUrl(false);
             portalUrl += url;
             return portalUrl;
         } else {
@@ -110,6 +110,9 @@ public class DSDArticleDisplayContext {
     }
 
     protected String getPortalUrl() {
+        return getPortalUrl(true);
+    }
+    protected String getPortalUrl(boolean addGroupPath) {
         final long companyId;
         final long groupId;
         if (_facetSelection == null) {
@@ -124,9 +127,11 @@ public class DSDArticleDisplayContext {
         try {
             int port = _themeDisplay.getServerPort();
             String portalURL = company.getPortalURL(groupId);
-            String friendlyURL = group.getFriendlyURL();
-            if (friendlyURL != null && !friendlyURL.isEmpty()) {
-                portalURL = portalURL + "/web" + friendlyURL;
+            if (addGroupPath) {
+                String friendlyURL = group.getFriendlyURL();
+                if (friendlyURL != null && !friendlyURL.isEmpty()) {
+                    portalURL = portalURL + "/web" + friendlyURL;
+                }
             }
             URI uri = URI.create(portalURL);
             if (uri.getPort() == port) {
